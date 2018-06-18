@@ -213,6 +213,30 @@ function checkExpectedValue(expected, index)
                     break;
             }
         }
+    } else if (property == "background-position-x" || property == "background-position-y") {
+        computedValue = window.getComputedStyle(document.getElementById(elementId)).backgroundPosition;
+
+        const leftCharIndex = computedValue.indexOf("left");
+        const rightCharIndex = computedValue.indexOf("right");
+        const topCharIndex = computedValue.indexOf("top");
+        const bottomCharIndex = computedValue.indexOf("bottom");
+
+        let firstCharIndex, lastCharIndex;
+        if (property == "background-position-x") {
+            if (computedValue.startsWith("left"))
+                firstCharIndex = 4;
+            else if (computedValue.startsWith("right"))
+                firstCharIndex = 5;
+            lastCharIndex = Math.max(topCharIndex, bottomCharIndex);
+        } else {
+            if (topCharIndex > -1)
+                firstCharIndex = topCharIndex + 3;
+            else
+                firstCharIndex = bottomCharIndex + 6;
+            lastCharIndex = computedValue.length;
+        }
+
+        pass = computedValue.substring(firstCharIndex, lastCharIndex).trim() == expectedValue;
     } else if (property == "fill" || property == "stroke") {
         computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).rgbColor;
         if (compareRGB([computedValue.red.cssText, computedValue.green.cssText, computedValue.blue.cssText], expectedValue, tolerance))

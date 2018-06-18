@@ -82,13 +82,6 @@ void DeclarativeAnimation::initialize(const Element& target, const RenderStyle* 
 
 void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
 {
-    suspendEffectInvalidation();
-
-    auto* timing = effect()->timing();
-    timing->setDelay(Seconds(m_backingAnimation->delay()));
-    timing->setIterationDuration(Seconds(m_backingAnimation->duration()));
-
-    unsuspendEffectInvalidation();
 }
 
 void DeclarativeAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)

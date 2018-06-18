@@ -1,4 +1,7 @@
-PASS - "background-position" property for "box1" element at 0.5s saw something close to: 45,60
-PASS - "background-position" property for "box2" element at 0.5s saw something close to: 45,60
-PASS - "background-position" property for "box3" element at 0.5s saw something close to: 10,0.5,100,80,0,0.5,20,0.5,100,100,0,0.5
+PASS - "background-position-x" property for "box1" element at 0.5s saw something close to: 45px
+PASS - "background-position-y" property for "box1" element at 0.5s saw something close to: 60px
+PASS - "background-position-x" property for "box2" element at 0.5s saw something close to: 45px
+PASS - "background-position-y" property for "box2" element at 0.5s saw something close to: 60px
+PASS - "background-position-x" property for "box3" element at 0.5s saw something close to: calc((10px * 0.5) + ((100% - 80px) * 0.5))
+PASS - "background-position-y" property for "box3" element at 0.5s saw something close to: calc((20px * 0.5) + ((100% - 100px) * 0.5))
 

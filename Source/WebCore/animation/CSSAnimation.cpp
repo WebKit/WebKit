@@ -87,10 +87,13 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     auto iterationCount = animation.iterationCount();
     timing->setIterations(iterationCount == Animation::IterationCountInfinite ? std::numeric_limits<double>::infinity() : iterationCount);
 
+    timing->setDelay(Seconds(animation.delay()));
+    timing->setIterationDuration(Seconds(animation.duration()));
+
     // Synchronize the play state
-    if (backingAnimation().playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused)
+    if (animation.playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused)
         play();
-    else if (backingAnimation().playState() == AnimationPlayState::Paused && playState() == WebAnimation::PlayState::Running)
+    else if (animation.playState() == AnimationPlayState::Paused && playState() == WebAnimation::PlayState::Running)
         pause();
 
     unsuspendEffectInvalidation();

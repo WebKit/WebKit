@@ -37,23 +37,29 @@ class RenderStyle;
 
 class CSSTransition final : public DeclarativeAnimation {
 public:
-    static Ref<CSSTransition> create(Element&, CSSPropertyID, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    static Ref<CSSTransition> create(Element&, CSSPropertyID, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
     ~CSSTransition() = default;
 
     bool isCSSTransition() const override { return true; }
     String transitionProperty() const { return getPropertyNameString(m_property); }
     CSSPropertyID property() const { return m_property; }
+    const RenderStyle& targetStyle() const { return *m_targetStyle; }
+    const RenderStyle& currentStyle() const { return *m_currentStyle; }
+    const RenderStyle& reversingAdjustedStartStyle() const { return *m_reversingAdjustedStartStyle; }
+    double reversingShorteningFactor() const { return m_reversingShorteningFactor; }
 
-    bool matchesBackingAnimationAndStyles(const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle) const;
     bool canBeListed() const final;
-
-protected:
-    void initialize(const Element&, const RenderStyle* oldStyle, const RenderStyle& newStyle) final;
+    void resolve(RenderStyle&) final;
 
 private:
-    CSSTransition(Element&, CSSPropertyID, const Animation&);
+    CSSTransition(Element&, CSSPropertyID, const Animation&, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
+    void setTimingProperties(Seconds delay, Seconds duration);
 
     CSSPropertyID m_property;
+    std::unique_ptr<RenderStyle> m_targetStyle;
+    std::unique_ptr<RenderStyle> m_currentStyle;
+    std::unique_ptr<RenderStyle> m_reversingAdjustedStartStyle;
+    double m_reversingShorteningFactor;
 
 };
 

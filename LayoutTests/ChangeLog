@@ -1,3 +1,28 @@
+2018-06-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement "Starting of transitions" section from CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=186517
+        <rdar://problem/41000798>
+
+        Reviewed by Dean Jackson.
+
+        Implementing the CSS Transitions spec for starting transitions highlighted a couple of issues with existing tests.
+
+        * TestExpectations: The test imported/mozilla/css-transitions/test_animation-ready.html now passes reliably.
+        * animations/transition-and-animation-3-expected.txt:
+        * animations/transition-and-animation-3.html: This test was mistakenly expecting a retargeted transition to pick
+        up from the underlying value (100px) rather than the interrupted transition's value (~0px). We update the test
+        to be more obvious about what it is testing and with the correct behavior per the spec.
+        * transitions/background-position-transitions-expected.txt:
+        * transitions/background-position-transitions.html: Shorthand properties are expected to yield a transitiong for
+        each shorthand property, so we update this test to check the background-position shorthand properties.
+        * transitions/resources/transition-test-helpers.js: We uncovered a crash, which is not new to this patch, that forces
+        us to work around using the background-position longhand properties. So we work around this by reading from the shorthand
+        background-position property and manually parsing the value. Fixing this crash is tracked by webkit.org/b/186766.
+        * transitions/transition-to-from-auto-expected.txt:
+        * transitions/transition-to-from-auto.html: Update the test to check that we only yield transitions when interpolating
+        between non-auto values, as mandated by the spec.
+
 2018-06-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Document should not be mutated under SMILTimeContainer::updateAnimations()

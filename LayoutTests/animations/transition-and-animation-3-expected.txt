@@ -1,4 +1,13 @@
-Once animation has finished, box should be running left transition from 100px to 200px.
+Once animation has finished, box should be running left transition from 0px to 200px.
 
-PASS - "left" property for "test" element at 0.2s saw something close to: 100
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS animations.length is 1
+PASS animations[0] instanceof CSSTransition is true
+PASS animations[0].effect.getKeyframes()[0].left is not "100px"
+PASS animations[0].effect.getKeyframes()[1].left is "200px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

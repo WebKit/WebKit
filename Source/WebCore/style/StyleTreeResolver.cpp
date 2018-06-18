@@ -292,11 +292,13 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
         // on the document timeline. Note that we get timeline() on the Document here because we need a timeline created
         // in case no Web Animations have been created through the JS API.
-        if ((oldStyle && oldStyle->hasTransitions()) || newStyle->hasTransitions())
-            m_document.timeline().updateCSSTransitionsForElement(element, *newStyle, oldStyle);
+        if (element.document().pageCacheState() == Document::NotInPageCache && !element.document().renderView()->printing()) {
+            if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
+                m_document.timeline().updateCSSTransitionsForElement(element, *oldStyle, *newStyle);
 
-        if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
-            m_document.timeline().updateCSSAnimationsForElement(element, *newStyle, oldStyle);
+            if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
+                m_document.timeline().updateCSSAnimationsForElement(element, oldStyle, *newStyle);
+        }
     }
 
     if (auto timeline = m_document.existingTimeline()) {

@@ -32,45 +32,52 @@
 
 namespace WebCore {
 
-Ref<CSSTransition> CSSTransition::create(Element& target, CSSPropertyID property, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+Ref<CSSTransition> CSSTransition::create(Element& target, CSSPropertyID property, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
-    auto result = adoptRef(*new CSSTransition(target, property, backingAnimation));
+    auto result = adoptRef(*new CSSTransition(target, property, backingAnimation, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
     result->initialize(target, oldStyle, newStyle);
+    result->setTimingProperties(delay, duration);
     return result;
 }
 
-CSSTransition::CSSTransition(Element& element, CSSPropertyID property, const Animation& backingAnimation)
+CSSTransition::CSSTransition(Element& element, CSSPropertyID property, const Animation& backingAnimation, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
     : DeclarativeAnimation(element, backingAnimation)
     , m_property(property)
+    , m_targetStyle(RenderStyle::clonePtr(targetStyle))
+    , m_reversingAdjustedStartStyle(RenderStyle::clonePtr(reversingAdjustedStartStyle))
+    , m_reversingShorteningFactor(reversingShorteningFactor)
 {
 }
 
-void CSSTransition::initialize(const Element& target, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+void CSSTransition::resolve(RenderStyle& targetStyle)
 {
-    DeclarativeAnimation::initialize(target, oldStyle, newStyle);
+    DeclarativeAnimation::resolve(targetStyle);
+    m_currentStyle = RenderStyle::clonePtr(targetStyle);
+}
 
+void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
+{
     suspendEffectInvalidation();
 
+    auto* timing = effect()->timing();
     // In order for CSS Transitions to be seeked backwards, they need to have their fill mode set to backwards
     // such that the original CSS value applied prior to the transition is used for a negative current time.
-    effect()->timing()->setFill(FillMode::Backwards);
+    
+    timing->setFill(FillMode::Backwards);
+    timing->setDelay(delay);
+    timing->setIterationDuration(duration);
 
     unsuspendEffectInvalidation();
 }
 
-bool CSSTransition::matchesBackingAnimationAndStyles(const Animation& newBackingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle) const
-{
-    // See if the animations match, excluding the property since we can move from an "all" transition to an explicit property transition.
-    bool backingAnimationsMatch = backingAnimation().animationsMatch(newBackingAnimation, false);
-    if (!oldStyle || !effect())
-        return backingAnimationsMatch;
-    return backingAnimationsMatch && !downcast<KeyframeEffectReadOnly>(effect())->stylesWouldYieldNewCSSTransitionsBlendingKeyframes(*oldStyle, newStyle);
-}
-
 bool CSSTransition::canBeListed() const
 {
-    if (!downcast<KeyframeEffectReadOnly>(effect())->hasBlendingKeyframes())
-        return false;
+    if (auto* transitionEffect = effect()) {
+        if (is<KeyframeEffectReadOnly>(transitionEffect)) {
+            if (!downcast<KeyframeEffectReadOnly>(effect())->hasBlendingKeyframes())
+                return false;
+        }
+    }
     return WebAnimation::canBeListed();
 }
 

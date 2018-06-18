@@ -877,25 +877,6 @@ void KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes(const RenderS
     setBlendingKeyframes(keyframeList);
 }
 
-bool KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const
-{
-    ASSERT(is<CSSTransition>(animation()));
-
-    // We don't yet have blending keyframes to compare with, so these wouldn't be new keyframes, but the fisrt ones.
-    if (!hasBlendingKeyframes())
-        return false;
-
-    auto property = downcast<CSSTransition>(animation())->property();
-
-    // There cannot be new keyframes if the start and to values are the same.
-    if (CSSPropertyAnimation::propertiesEqual(property, &oldStyle, &newStyle))
-        return false;
-
-    // Otherwise, we would create new blending keyframes provided the current end keyframe holds a different
-    // value than the new end style for this property.
-    return !CSSPropertyAnimation::propertiesEqual(property, m_blendingKeyframes[1].style(), &newStyle);
-}
-
 void KeyframeEffectReadOnly::computedNeedsForcedLayout()
 {
     m_needsForcedLayout = false;

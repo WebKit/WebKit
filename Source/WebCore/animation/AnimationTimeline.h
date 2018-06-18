@@ -63,8 +63,8 @@ public:
     void animationWasAddedToElement(WebAnimation&, Element&);
     void animationWasRemovedFromElement(WebAnimation&, Element&);
 
-    void updateCSSAnimationsForElement(Element&, const RenderStyle& newStyle, const RenderStyle* oldStyle);
-    void updateCSSTransitionsForElement(Element&, const RenderStyle& newStyle, const RenderStyle* oldStyle);
+    void updateCSSAnimationsForElement(Element&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);
+    void updateCSSTransitionsForElement(Element&, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle);
 
     virtual ~AnimationTimeline();
 
@@ -96,7 +96,8 @@ private:
     ListHashSet<RefPtr<WebAnimation>> m_animations;
 
     HashMap<Element*, HashMap<String, RefPtr<CSSAnimation>>> m_elementToCSSAnimationByName;
-    HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToCSSTransitionByCSSPropertyID;
+    HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToRunningCSSTransitionByCSSPropertyID;
+    HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToCompletedCSSTransitionByCSSPropertyID;
 };
 
 } // namespace WebCore

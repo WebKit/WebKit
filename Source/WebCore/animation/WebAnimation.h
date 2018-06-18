@@ -99,7 +99,7 @@ public:
     ExceptionOr<void> reverse();
 
     Seconds timeToNextRequiredTick() const;
-    void resolve(RenderStyle&);
+    virtual void resolve(RenderStyle&);
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
     void acceleratedStateDidChange();
     void applyPendingAcceleratedActions();

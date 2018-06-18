@@ -1,3 +1,65 @@
+2018-06-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement "Starting of transitions" section from CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=186517
+        <rdar://problem/41000798>
+
+        Reviewed by Dean Jackson.
+
+        We implement the whole section at https://drafts.csswg.org/css-transitions-1/#starting so that we have spec-compliant starting of CSS Transitions.
+        To correctly implement this we now maintain two maps of transitions for a given property, a set of running transitions (m_elementToRunningCSSTransitionByCSSPropertyID)
+        and a set of completed transition (m_elementToCompletedCSSTransitionByCSSPropertyID).
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::removeCSSTransitionFromMap): Add a utility to remove a CSSTransition from one of the two HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>>
+        managed by AnimationTimeline (m_elementToRunningCSSTransitionByCSSPropertyID and m_elementToCompletedCSSTransitionByCSSPropertyID).
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement): Use the new removeCSSTransitionFromMap() utility.
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): We rename "oldStyle" to "currentStyle" to align with the naming used by updateCSSAnimationsForElement().
+        We also remove an initial check that has been pushed up to Style::TreeResolver::createAnimatedElementUpdate().
+        (WebCore::propertyInStyleMatchesValueForTransitionInMap): When running the steps mandated by the spec we often need to check whether a given property has a transition
+        in an AnimationList that matches the value used in a given RenderStyle.
+        (WebCore::transitionCombinedDuration): We need to compute the combined duration twice while running the steps mandated by the spec, so we have a dedicated utility.
+        (WebCore::transitionMatchesProperty): New utility that indicates whether a WebCore::Animation matches a given property, by virtue of targeting it directly, targeting
+        a shorthand for which this property is a longhand, or targeting "all".
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): This is where all of the new implementation for starting transitions happens. We implement the steps
+        as they appear in the spec.
+        (WebCore::shouldBackingAnimationBeConsideredForCSSTransition): Deleted.
+        * animation/AnimationTimeline.h:
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation): Since only CSS Animations respect the delay and duration values as parsed directly in a WebCore:Animation
+        object, we move code that was previously in DeclarativeAnimation::syncPropertiesWithBackingAnimation to this method. CSS Transitions set those values based on the
+        delay and duration parameters passed to CSSTransition::create() and computed in AnimationTimeline::updateCSSTransitionsForElement().
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::create): Since the transition's delay and duration is computed in AnimationTimeline::updateCSSTransitionsForElement(), we now require them
+        to be passed when creating a CSSTransition and pass those to the new setTimingProperties() function. We also expect a target style and reversing-adjusted start style,
+        as well as a reversing-shortening factor.
+        (WebCore::CSSTransition::CSSTransition): 
+        (WebCore::CSSTransition::resolve): We need to be able to query the last style computed by a call to resolve() from AnimationTimeline::updateCSSTransitionsForElement(),
+        we subclass this newly-virtual WebAnimation method and clone the style after we blended the property targeted by this transition.
+        (WebCore::CSSTransition::setTimingProperties): Set the transition delay and duration as provided in the call to create().
+        (WebCore::CSSTransition::canBeListed const): Fix a crash that was found while working on this bug where we could access a null effect.
+        (WebCore::CSSTransition::initialize): Deleted.
+        (WebCore::CSSTransition::matchesBackingAnimationAndStyles const): Deleted.
+        * animation/CSSTransition.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::syncPropertiesWithBackingAnimation): This virtual method now has an empty definition since the timing properties are now only set
+        for CSSAnimation.
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes const): Deleted.
+        * animation/KeyframeEffectReadOnly.h:
+        * animation/WebAnimation.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::AnimationPropertyWrapperBase::canInterpolate const): Since we need to be able to determine whether some property values can be interpolated, we add a new
+        canInterpolate() method to the base wrapper class so the cases where we can't interpolate values (length with an "auto" type) may return false.
+        (WebCore::LengthPropertyWrapper::LengthPropertyWrapper): Lengths can only be interpolated if both the start and end values are not "auto".
+        (WebCore::LengthVariantPropertyWrapper::LengthVariantPropertyWrapper):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        (WebCore::CSSPropertyAnimation::canPropertyBeInterpolated):
+        * page/animation/CSSPropertyAnimation.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate): Move a check found in both updateCSSAnimationsForElement() and updateCSSTransitionsForElement() to their
+        shared call site.
+
 2018-06-18  Nan Wang  <n_wang@apple.com>
 
         AX: [macOS] When zoom is enabled, focus doesn't follow text cursor

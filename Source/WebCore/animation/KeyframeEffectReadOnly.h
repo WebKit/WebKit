@@ -114,7 +114,6 @@ public:
     bool colorFilterFunctionListsMatch() const override { return m_colorFilterFunctionListsMatch; }
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
-    bool stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const;
     bool hasBlendingKeyframes() const { return m_blendingKeyframes.size(); }
     const HashSet<CSSPropertyID>& animatedProperties() const { return m_blendingKeyframes.properties(); }
 

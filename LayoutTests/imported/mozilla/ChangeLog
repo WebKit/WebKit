@@ -1,3 +1,16 @@
+2018-06-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement "Starting of transitions" section from CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=186517
+        <rdar://problem/41000798>
+
+        Reviewed by Dean Jackson.
+
+        Mark some progressions in the Mozilla CSS Animations and CSS Transitions tests.
+
+        * css-transitions/test_animation-cancel-expected.txt:
+        * css-transitions/test_animation-ready-expected.txt:
+
 2018-06-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] CSS Animations should take precedence over CSS Transitions

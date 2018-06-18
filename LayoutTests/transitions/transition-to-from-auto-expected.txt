@@ -1,4 +1,3 @@
-PASS - "left" property for "test1" element at 1s saw something close to: 0
-PASS - "left" property for "test2" element at 1s saw something close to: 100
+Total number of animations: 1 
 PASS - "left" property for "test3" element at 1s saw something close to: 50
 

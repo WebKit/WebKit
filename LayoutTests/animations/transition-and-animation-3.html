@@ -11,58 +11,62 @@
             background-color: blue;
         }
 
-        .box.animating {
-            -webkit-animation: move 0.1s linear;
+        .box.transitioning {
+            transition: left 10s linear;
             left: 100px;
-            -webkit-transition: left 10s linear;
+        }
+
+        .box.animating {
+            animation: move 0.1s linear;
         }
         
-        /* When the animation is done, the box should be running a transition from 100px to 200px */
-        .box.animating.moved {
+        .box.retargeted {
             left: 200px;
         }
         
-        @-webkit-keyframes move {
-            from {
-                left: 500px;
-            }
-            to   {
-                left: 501px;
-            }
+        @keyframes move {
+            from { left: 500px }
+            to   { left: 501px }
         }
         
-        #result {
-            margin-top: 130px;
-        }
     </style>
-    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
-
-      const expectedValues = [
-        // [animation-name, time, element-id, property, expected-value, tolerance]
-        [null, 0.2, "test", "left", 100, 10],
-      ];
-
-      function animationStarted()
-      {
-          document.getElementById('test').className = 'animating moved box';
-      }
-
-      function setupTest()
-      {
-        document.getElementById('test').className = 'animating box';
-        runAnimationTest(expectedValues, animationStarted);
-      }
-      
-      window.addEventListener('load', function() {
-          window.setTimeout(setupTest, 0);
-      }, false);
-
-    </script>
+    <script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
-    <p>Once animation has finished, box should be running left transition from 100px to 200px.</p>
     <div id="test" class="box"></div>
-    <div id="result"></div>
+    <script type="text/javascript" charset="utf-8">
+
+    description("Once animation has finished, box should be running left transition from 0px to 200px.");
+
+    window.jsTestIsAsync = true;
+
+    let animations;
+    const testElement = document.getElementById('test');
+
+    // Start the test by starting a transition from 0 to 100px.
+    window.setTimeout(() => testElement.classList.add("transitioning"));
+
+    // Then, once the transition has started, start an animation.
+    testElement.addEventListener("transitionstart", event => {
+        setTimeout(() => testElement.classList.add("animating"));
+    });
+
+    // Then wait for the animation to start and change the underlying left value.
+    testElement.addEventListener("animationstart", event => {
+        testElement.classList.add("retargeted");
+    });
+
+    // When the animation has ended, check that we're transitioning from ~0 > 200, and not 100 > 200.
+    testElement.addEventListener("animationend", event => {
+        animations = testElement.getAnimations();
+        shouldBe("animations.length", "1");
+        shouldBeTrue("animations[0] instanceof CSSTransition");
+        shouldNotBeEqualToString("animations[0].effect.getKeyframes()[0].left", "100px");
+        shouldBeEqualToString("animations[0].effect.getKeyframes()[1].left", "200px");
+        finishJSTest();
+    });
+
+    </script>
+    <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -41,9 +41,12 @@
     <script>
         const expectedValues = [
         // [time, element-id, property, expected-value, tolerance]
-        [0.5, 'box1', 'background-position', [45, 60], 2],
-        [0.5, 'box2', 'background-position', [45, 60], 2],
-        [0.5, 'box3', 'background-position', [10,0.5,100,80,0,0.5,20,0.5,100,100,0,0.5], 2], // Numbers extracted from a calc() expression.
+        [0.5, 'box1', 'background-position-x', "45px"],
+        [0.5, 'box1', 'background-position-y', "60px"],
+        [0.5, 'box2', 'background-position-x', "45px"],
+        [0.5, 'box2', 'background-position-y', "60px"],
+        [0.5, 'box3', 'background-position-x', "calc((10px * 0.5) + ((100% - 80px) * 0.5))"],
+        [0.5, 'box3', 'background-position-y', "calc((20px * 0.5) + ((100% - 100px) * 0.5))"],
         ];
 
         function setupTest()

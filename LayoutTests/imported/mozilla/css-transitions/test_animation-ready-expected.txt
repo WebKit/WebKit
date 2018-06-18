@@ -1,5 +1,5 @@
 
 PASS A new ready promise is created each time play() is called the animation property 
 PASS ready promise is rejected when a transition is cancelled by updating transition-property 
-FAIL ready promise is rejected when a transition is cancelled by changing the transition property to something not interpolable assert_equals: Animation is idle after transition was cancelled expected "idle" but got "paused"
+PASS ready promise is rejected when a transition is cancelled by changing the transition property to something not interpolable 
 
