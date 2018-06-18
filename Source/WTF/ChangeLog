@@ -1,3 +1,14 @@
+2018-06-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WTF] Remove workarounds needed to support libstdc++-4
+        https://bugs.webkit.org/show_bug.cgi?id=186762
+
+        Reviewed by Michael Catanzaro.
+
+        Revert r226299, r226300 r226301 and r226302-
+
+        * wtf/StdLibExtras.h:
+
 2018-06-12  Darin Adler  <darin@apple.com>
 
         [Cocoa] Make some RetainPtr refinements to get more ready for ARC

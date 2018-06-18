@@ -1,3 +1,15 @@
+2018-06-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WTF] Remove workarounds needed to support libstdc++-4
+        https://bugs.webkit.org/show_bug.cgi?id=186762
+
+        Reviewed by Michael Catanzaro.
+
+        Revert r226299, r226300 r226301 and r226302.
+
+        * API/tests/TypedArrayCTest.cpp:
+        (assertEqualsAsNumber):
+
 2018-06-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r227717): Hardcoded page size causing JSC crashes on platforms with page size bigger than 16 KB
