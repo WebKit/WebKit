@@ -4,7 +4,7 @@ PASS After canceling a transition, it can still be re-used
 PASS After cancelling a finished transition, it can still be re-used 
 PASS After cancelling a transition, updating transition properties doesn't make it live again 
 PASS Setting display:none on an element cancels its transitions 
-FAIL Setting display:none cancels transitions on a child element assert_equals: expected "idle" but got "running"
+PASS Setting display:none cancels transitions on a child element 
 PASS Removing a property from transition-property cancels transitions on that property 
 PASS Setting zero combined duration 
 PASS Changing style to another interpolable value cancels the original transition 

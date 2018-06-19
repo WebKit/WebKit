@@ -168,6 +168,14 @@ void AnimationTimeline::removeAnimationsForElement(Element& element)
     }
 }
 
+void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
+{
+    for (auto& cssTransition : m_elementToCSSTransitionsMap.get(&element))
+        cssTransition->cancel();
+    for (auto& cssAnimation : m_elementToCSSAnimationsMap.get(&element))
+        cssAnimation->cancel();
+}
+
 void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle)
 {
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.

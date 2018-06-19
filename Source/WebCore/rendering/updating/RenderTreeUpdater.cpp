@@ -554,8 +554,12 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 
             if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations) {
                 if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-                    if (timeline && document.renderTreeBeingDestroyed())
-                        timeline->removeAnimationsForElement(element);
+                    if (timeline) {
+                        if (document.renderTreeBeingDestroyed())
+                            timeline->removeAnimationsForElement(element);
+                        else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
+                            timeline->cancelDeclarativeAnimationsForElement(element);
+                    }
                 } else
                     animationController.cancelAnimations(element);
             }

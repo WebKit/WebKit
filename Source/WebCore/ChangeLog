@@ -1,3 +1,21 @@
+2018-06-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_animation-cancel.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183821
+        <rdar://problem/40997034>
+
+        Reviewed by Dean Jackson.
+
+        If an element gets a "display: none" style RenderTreeUpdater::tearDownRenderers() will be called with a RendererUpdateCancelingAnimations
+        teardown type on all of its children. We need to ensure all declarative animations, and only those since regular Web Animations should be
+        kept active regardless of their target's style, are canceled in this situation.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForElement):
+        * animation/AnimationTimeline.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2018-06-19  David Kilzer  <ddkilzer@apple.com>
 
         Add logging when splashboardd enables WebThread
