@@ -165,7 +165,7 @@ public:
     void rootOrBodyStyleChanged(RenderElement&, const RenderStyle* oldStyle);
 
     // Called after the view transparency, or the document or base background color change.
-    void rootBackgroundTransparencyChanged();
+    void rootBackgroundColorOrTransparencyChanged();
     
     // Repaint the appropriate layers when the given RenderLayer starts or stops being composited.
     void repaintOnCompositingChange(RenderLayer&);
@@ -313,7 +313,6 @@ public:
     
     void didPaintBacking(RenderLayerBacking*);
 
-    void setRootExtendedBackgroundColor(const Color&);
     const Color& rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
 
     void updateRootContentLayerClipping();
@@ -481,6 +480,8 @@ private:
 
     bool documentUsesTiledBacking() const;
     bool isMainFrameCompositor() const;
+    
+    void setRootLayerConfigurationNeedsUpdate() { m_rootLayerConfigurationNeedsUpdate = true; }
 
 private:
     RenderView& m_renderView;
@@ -501,6 +502,7 @@ private:
 
     bool m_compositing { false };
     bool m_compositingLayersNeedRebuild { false };
+    bool m_rootLayerConfigurationNeedsUpdate { false };
     bool m_flushingLayers { false };
     bool m_shouldFlushOnReattach { false };
     bool m_forceCompositingMode { false };
@@ -561,6 +563,7 @@ private:
     double m_secondaryBackingStoreBytes { 0 };
 #endif
 
+    Color m_viewBackgroundColor;
     Color m_rootExtendedBackgroundColor;
 
     HashMap<ScrollingNodeID, RenderLayer*> m_scrollingNodeToLayerMap;

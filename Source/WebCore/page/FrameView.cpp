@@ -2896,7 +2896,7 @@ void FrameView::setTransparent(bool isTransparent)
     if (!isViewForDocumentInFrame())
         return;
 
-    renderView()->compositor().rootBackgroundTransparencyChanged();
+    renderView()->compositor().rootBackgroundColorOrTransparencyChanged();
     setNeedsLayout();
 }
 
@@ -2912,12 +2912,7 @@ Color FrameView::baseBackgroundColor() const
 
 void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 {
-    bool wasOpaque = m_baseBackgroundColor.isOpaque();
-
-    if (!backgroundColor.isValid())
-        m_baseBackgroundColor = Color::white;
-    else
-        m_baseBackgroundColor = backgroundColor;
+    m_baseBackgroundColor = backgroundColor.isValid() ? backgroundColor : Color::white;
 
     if (!isViewForDocumentInFrame())
         return;
@@ -2925,8 +2920,7 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
     recalculateScrollbarOverlayStyle();
     setNeedsLayout();
 
-    if (m_baseBackgroundColor.isOpaque() != wasOpaque)
-        renderView()->compositor().rootBackgroundTransparencyChanged();
+    renderView()->compositor().rootBackgroundColorOrTransparencyChanged();
 }
 
 void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
@@ -2970,7 +2964,7 @@ FrameView::ExtendedBackgroundMode FrameView::calculateExtendedBackgroundMode() c
 
     // Just because Settings::backgroundShouldExtendBeyondPage() is true does not necessarily mean
     // that the background rect needs to be extended for painting. Simple backgrounds can be extended
-    // just with RenderLayerCompositor::setRootExtendedBackgroundColor(). More complicated backgrounds,
+    // just with RenderLayerCompositor's rootExtendedBackgroundColor. More complicated backgrounds,
     // such as images, require extending the background rect to continue painting into the extended
     // region. This function finds out if it is necessary to extend the background rect for painting.
 
@@ -3024,7 +3018,6 @@ void FrameView::updateTilesForExtendedBackgroundMode(ExtendedBackgroundMode mode
     if (existingMode == mode)
         return;
 
-    renderView->compositor().setRootExtendedBackgroundColor(mode == ExtendedBackgroundModeAll ? Color() : documentBackgroundColor());
     backing->setTiledBackingHasMargins(mode & ExtendedBackgroundModeHorizontal, mode & ExtendedBackgroundModeVertical);
 }
 

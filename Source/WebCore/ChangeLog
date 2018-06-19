@@ -1,3 +1,64 @@
+2018-06-19  Tim Horton  <timothy_horton@apple.com>
+
+        Unpainted area while scrolling in Reader is white
+        https://bugs.webkit.org/show_bug.cgi?id=186541
+        <rdar://problem/40471363>
+
+        Reviewed by Timothy Hatcher.
+
+        New test: tiled-drawing/simple-document-with-dynamic-background-color.html
+
+        For platforms that do not use the overhang layer, we depend on
+        RenderView's background color to fill unpainted space.
+
+        RenderView's background color is only updated inside updateRootLayerConfiguration,
+        and it is possible with a simple enough page to change the document's
+        background color without running that code.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setTransparent):
+        (WebCore::FrameView::setBaseBackgroundColor):
+        Make use of the newly added rootBackgroundColorOrTransparencyChanged.
+
+        (WebCore::FrameView::calculateExtendedBackgroundMode const):
+        Update a comment, since the function it mentioned is no longer.
+
+        (WebCore::FrameView::updateTilesForExtendedBackgroundMode):
+        Remove this code that clears the root extended background color
+        if using tiles to extend in both directions. Two reasons:
+        1) it seems harmless to also have a root extended background color
+        2) this just gets clobbered by the call in RenderView::paintBoxDecorations
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        Add a bit that will do a updateConfiguration() on the root layer if no
+        other work needs to be done, so that we can update the root layer's
+        transparency or background color without doing a full layer rebuild.
+
+        (WebCore::RenderLayerCompositor::rootOrBodyStyleChanged):
+        Make use of the newly added rootBackgroundColorOrTransparencyChanged.
+
+        (WebCore::RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged):
+        Change rootBackgroundTransparencyChanged to also cover color changes.
+        Fold setRootExtendedBackgroundColor in here, and make use of
+        setRootLayerConfigurationNeedsUpdate() instead of doing a full rebuild.
+        Previously, we would bail if the transparency state hadn't changed;
+        now, we'll also update the root layer's background color and the
+        exposed-to-WebKit extended background color if they change too.
+
+        (WebCore::RenderLayerCompositor::rootBackgroundTransparencyChanged): Deleted.
+        (WebCore::RenderLayerCompositor::setRootExtendedBackgroundColor): Deleted.
+
+        * rendering/RenderLayerCompositor.h:
+        Add setRootLayerConfigurationNeedsUpdate, remove setRootExtendedBackgroundColor,
+        and add both a bit indicating that the root layer configuration needs updating
+        and the cached view background color to make the early return in
+        rootBackgroundColorOrTransparencyChanged possible.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        Make use of the newly added rootBackgroundColorOrTransparencyChanged.
+
 2018-06-19  Youenn Fablet  <youenn@apple.com>
 
         Need to properly handle removal of worker in SWServer::unregisterServiceWorkerClient timer lambda

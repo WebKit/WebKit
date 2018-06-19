@@ -669,6 +669,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     
     bool checkForHierarchyUpdate = m_reevaluateCompositingAfterLayout;
     bool needGeometryUpdate = false;
+    bool needRootLayerConfigurationUpdate = m_rootLayerConfigurationNeedsUpdate;
 
     switch (updateType) {
     case CompositingUpdateType::AfterStyleChange:
@@ -683,7 +684,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         break;
     }
 
-    if (!checkForHierarchyUpdate && !needGeometryUpdate)
+    if (!checkForHierarchyUpdate && !needGeometryUpdate && !needRootLayerConfigurationUpdate)
         return false;
 
     bool needHierarchyUpdate = m_compositingLayersNeedRebuild;
@@ -691,6 +692,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     // Only clear the flag if we're updating the entire hierarchy.
     m_compositingLayersNeedRebuild = false;
+    m_rootLayerConfigurationNeedsUpdate = false;
     updateRoot = &rootRenderLayer();
 
     if (isFullUpdate && updateType == CompositingUpdateType::AfterLayout)
@@ -752,7 +754,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         // most of the time, geometry is updated via RenderLayer::styleChanged().
         updateLayerTreeGeometry(*updateRoot, 0);
         ASSERT(!isFullUpdate || !m_subframeScrollLayersNeedReattach);
-    }
+    } else if (needRootLayerConfigurationUpdate)
+        m_renderView.layer()->backing()->updateConfiguration();
     
 #if !LOG_DISABLED
     if (compositingLogEnabled() && isFullUpdate && (needHierarchyUpdate || needGeometryUpdate)) {
@@ -3106,7 +3109,7 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
         oldBackgroundColor = oldStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 
     if (oldBackgroundColor != renderer.style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor))
-        rootBackgroundTransparencyChanged();
+        rootBackgroundColorOrTransparencyChanged();
 
     bool hadFixedBackground = oldStyle && oldStyle->hasEntirelyFixedBackground();
     if (hadFixedBackground != renderer.style().hasEntirelyFixedBackground()) {
@@ -3115,42 +3118,44 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
     }
 }
 
-void RenderLayerCompositor::rootBackgroundTransparencyChanged()
+void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
 {
     if (!inCompositingMode())
         return;
 
-    bool isTransparent = viewHasTransparentBackground();
+    Color backgroundColor;
+    bool isTransparent = viewHasTransparentBackground(&backgroundColor);
+    
+    Color extendedBackgroundColor = m_renderView.settings().backgroundShouldExtendBeyondPage() ? backgroundColor : Color();
+    
+    bool transparencyChanged = m_viewBackgroundIsTransparent != isTransparent;
+    bool backgroundColorChanged = m_viewBackgroundColor != backgroundColor;
+    bool extendedBackgroundColorChanged = m_rootExtendedBackgroundColor != extendedBackgroundColor;
 
-    LOG(Compositing, "RenderLayerCompositor %p rootBackgroundTransparencyChanged. isTransparent=%d, changed=%d", this, isTransparent, m_viewBackgroundIsTransparent != isTransparent);
-    if (m_viewBackgroundIsTransparent == isTransparent)
+    LOG(Compositing, "RenderLayerCompositor %p rootBackgroundColorOrTransparencyChanged. isTransparent=%d, transparencyChanged=%d, backgroundColorChanged=%d, extendedBackgroundColorChanged=%d", this, isTransparent, transparencyChanged, backgroundColorChanged, extendedBackgroundColorChanged);
+    if (!transparencyChanged && !backgroundColorChanged && !extendedBackgroundColorChanged)
         return;
 
     m_viewBackgroundIsTransparent = isTransparent;
-
-    // FIXME: We should do something less expensive than a full layer rebuild.
-    setCompositingLayersNeedRebuild();
-    scheduleCompositingLayerUpdate();
-}
-
-void RenderLayerCompositor::setRootExtendedBackgroundColor(const Color& color)
-{
-    if (color == m_rootExtendedBackgroundColor)
-        return;
-
-    m_rootExtendedBackgroundColor = color;
-
-    page().chrome().client().pageExtendedBackgroundColorDidChange(color);
-
+    m_viewBackgroundColor = backgroundColor;
+    m_rootExtendedBackgroundColor = extendedBackgroundColor;
+    
+    if (extendedBackgroundColorChanged) {
+        page().chrome().client().pageExtendedBackgroundColorDidChange(m_rootExtendedBackgroundColor);
+        
 #if ENABLE(RUBBER_BANDING)
-    if (!m_layerForOverhangAreas)
-        return;
-
-    m_layerForOverhangAreas->setBackgroundColor(m_rootExtendedBackgroundColor);
-
-    if (!m_rootExtendedBackgroundColor.isValid())
-        m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
+        if (!m_layerForOverhangAreas)
+            return;
+        
+        m_layerForOverhangAreas->setBackgroundColor(m_rootExtendedBackgroundColor);
+        
+        if (!m_rootExtendedBackgroundColor.isValid())
+            m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
 #endif
+    }
+    
+    setRootLayerConfigurationNeedsUpdate();
+    scheduleCompositingLayerUpdate();
 }
 
 void RenderLayerCompositor::updateOverflowControlsLayers()

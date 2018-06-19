@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            if (!window.internals)
+                return;
+
+            document.body.style.backgroundColor = "black";
+
+            // The RenderView's background color should be black.
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES) + "\n\n";
+
+            document.body.style.backgroundColor = "red";
+
+            // The RenderView's background color should be red.
+            document.getElementById('layers').innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+            testRunner.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+
+<body>
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>

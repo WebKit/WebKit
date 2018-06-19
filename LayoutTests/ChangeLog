@@ -1,3 +1,22 @@
+2018-06-19  Tim Horton  <timothy_horton@apple.com>
+
+        Unpainted area while scrolling in Reader is white
+        https://bugs.webkit.org/show_bug.cgi?id=186541
+        <rdar://problem/40471363>
+
+        Reviewed by Timothy Hatcher.
+
+        * tiled-drawing/background-transparency-toggle-expected.txt:
+        This is a progression; the extended background color now matches the color
+        of the page at this point (#CCCCCC is the specified body background, black
+        with 0.2 alpha, blended with the root's white background).
+
+        * tiled-drawing/simple-document-with-dynamic-background-color-expected.txt: Added.
+        * tiled-drawing/simple-document-with-dynamic-background-color.html: Added.
+        Added a test that ensures that dynamically changing the background color
+        actually applies to the RenderView background. Previously, the second layer
+        tree dump would have a black background where it should be red.
+
 2018-06-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, revert some bad gardening.
