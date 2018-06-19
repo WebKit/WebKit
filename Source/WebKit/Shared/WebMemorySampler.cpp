@@ -29,7 +29,7 @@
 #if ENABLE(MEMORY_SAMPLER)
 
 #include <stdio.h>
-#include <unistd.h>
+#include <wtf/ProcessID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -89,7 +89,7 @@ void WebMemorySampler::start(SandboxExtension::Handle&& sampleLogFileHandle, con
 void WebMemorySampler::initializeTimers(double interval)
 {
     m_sampleTimer.startRepeating(1_s);
-    printf("Started memory sampler for process %s %d", processName().utf8().data(), getpid());
+    printf("Started memory sampler for process %s %d", processName().utf8().data(), getCurrentProcessID());
     if (interval > 0) {
         m_stopTimer.startOneShot(1_s * interval);
         printf(" for a interval of %g seconds", interval);
@@ -106,7 +106,7 @@ void WebMemorySampler::stop()
     m_sampleTimer.stop();
     FileSystem::closeFile(m_sampleLogFile);
 
-    printf("Stopped memory sampler for process %s %d\n", processName().utf8().data(), getpid());
+    printf("Stopped memory sampler for process %s %d\n", processName().utf8().data(), getCurrentProcessID());
     // Flush stdout buffer so python script can be guaranteed to read up to this point.
     fflush(stdout);
     m_isRunning = false;
@@ -143,7 +143,7 @@ void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sam
 
 void WebMemorySampler::writeHeaders()
 {
-    String processDetails = String::format("Process: %s Pid: %d\n", processName().utf8().data(), getpid());
+    String processDetails = String::format("Process: %s Pid: %d\n", processName().utf8().data(), getCurrentProcessID());
 
     CString utf8String = processDetails.utf8();
     FileSystem::writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());

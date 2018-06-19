@@ -57,6 +57,7 @@
 #include <WebCore/ServiceWorkerJobDataIdentifier.h>
 #include <WebCore/UserAgent.h>
 #include <pal/SessionID.h>
+#include <wtf/ProcessID.h>
 
 #if USE(QUICK_LOOK)
 #include <WebCore/PreviewLoaderClient.h>
@@ -160,7 +161,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, sessionID, String { m_userAgent }, WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
     SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));
 
-    LOG(ServiceWorker, "Context process PID: %i created worker thread\n", getpid());
+    LOG(ServiceWorker, "Context process PID: %i created worker thread\n", getCurrentProcessID());
 }
 
 void WebSWContextManagerConnection::setUserAgent(String&& userAgent)
