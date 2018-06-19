@@ -1,3 +1,15 @@
+2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
+
+        Test262-Runner: Improve files queue to optimize CPU usage/balancing
+        https://bugs.webkit.org/show_bug.cgi?id=186443
+
+        Reviewed by Michael Saboff.
+
+        This patch creates a queue manager for to keep the child process open while the parent process feed each child with test files to run.
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+        (main):
+
 2018-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Vend username text content type when using scribble in login fields

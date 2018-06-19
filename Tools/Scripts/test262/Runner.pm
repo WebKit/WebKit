@@ -42,6 +42,8 @@ use FindBin;
 use Env qw(DYLD_FRAMEWORK_PATH);
 use Config;
 use Time::HiRes qw(time);
+use IO::Handle;
+use IO::Select;
 
 my $Bin;
 BEGIN {
@@ -74,7 +76,7 @@ if (eval {require Pod::Usage; 1;}) {
 }
 
 # Commandline settings
-my $max_process;
+my $maxProcesses;
 my @cliTestDirs;
 my $verbose;
 my $JSC;
@@ -126,7 +128,7 @@ sub processCLI {
         'j|jsc=s' => \$JSC,
         't|t262=s' => \$test262Dir,
         'o|test-only=s@' => \@cliTestDirs,
-        'p|child-processes=i' => \$max_process,
+        'p|child-processes=i' => \$maxProcesses,
         'h|help' => \$help,
         'release' => \$release,
         'v|verbose' => \$verbose,
@@ -255,12 +257,12 @@ sub processCLI {
         %filterFeatures = map { $_ => 1 } @features;
     }
 
-    $max_process ||= getProcesses();
+    $maxProcesses ||= getProcesses();
 
     print "\nSettings:\n"
         . "Test262 Dir: " . abs2rel($test262Dir) . "\n"
         . "JSC: " . abs2rel($JSC) . "\n"
-        . "Child Processes: $max_process\n";
+        . "Child Processes: $maxProcesses\n";
 
     print "Test timeout: $timeout\n" if $timeout;
     print "DYLD_FRAMEWORK_PATH: $DYLD_FRAMEWORK_PATH\n" if $DYLD_FRAMEWORK_PATH;
@@ -277,7 +279,6 @@ sub processCLI {
 
     print "---\n\n";
 }
-
 
 sub main {
     processCLI();
@@ -313,52 +314,107 @@ sub main {
         }
     }
 
-    # If we are processing many files, fork process
-    if (scalar @files > $max_process * 5) {
+    my $pm = Parallel::ForkManager->new($maxProcesses);
+    my $select = IO::Select->new();
+
+    my @children;
+    my @parents;
+    my $activeChildren = 0;
+
+    my @resultsfhs;
+
+    # Open each process
+    PROCESSES:
+    foreach (0..$maxProcesses-1) {
+        my $i = $_;
 
         # Make temporary files to record results
-        my @resultsfhs;
-        for (my $i = 0; $i <= $max_process-1; $i++) {
-            my ($fh, $filename) = getTempFile();
-            $resultsfhs[$i] = $fh;
+        my ($fh, $filename) = getTempFile();
+        $resultsfhs[$i] = $fh;
+
+        socketpair($children[$i], $parents[$i], 1, 1, 0);
+        my $child = $children[$i];
+        my $parent = $parents[$i];
+        $child->autoflush(1);
+        $parent->autoflush(1);
+
+        # seeds each child with a file;
+
+        my $pid = $pm->start;
+        if ($pid) { # parent
+            $select->add($child);
+            # each child starts with a file;
+            my $file = shift @files;
+            chomp $file;
+            if ($file) {
+                print $child "$file\n";
+                $activeChildren++;
+            }
+
+            next PROCESSES;
         }
 
-        my $pm = Parallel::ForkManager->new($max_process);
-        my $filesperprocess = int(scalar @files / $max_process);
+        # children will start here
+        srand(time ^ $$); # Creates a new seed for each fork
+        CHILD:
+        while (<$parent>) {
+            my $file = $_;
+            chomp $file;
+            if ($file eq 'END') {
+                last;
+            }
 
-        FILES:
-        for (my $i = 0; $i <= $max_process-1; $i++) {
-            $pm->start and next FILES; # do the fork
-            srand(time ^ $$); # Creates a new seed for each fork
+            processFile($file, $resultsfhs[$i]);
+            print $parent "signal\n";
+        }
 
-            my $first = $filesperprocess * $i;
-            my $last = $i == $max_process-1 ? scalar @files : $filesperprocess * ($i+1);
+        $child->close();
+        $pm->finish;
+    }
 
-            for (my $j = $first; $j < $last; $j++) {
-                processFile($files[$j], $resultsfhs[$i]);
-            };
-
-            $pm->finish; # do the exit in the child process
-        };
-
-        $pm->wait_all_children;
-
-        # Read results from file into @results and close
-        for (my $i = 0; $i <= $max_process-1; $i++) {
-            seek($resultsfhs[$i], 0, 0);
-            push @results, LoadFile($resultsfhs[$i]);
-            close $resultsfhs[$i];
+    my @ready;
+    FILES:
+    while ($activeChildren and @ready = $select->can_read($timeout)) {
+        foreach (@ready) {
+            my $readyChild = $_;
+            my $childMsg = <$readyChild>;
+            chomp $childMsg;
+            $activeChildren--;
+            my $file = shift @files;
+            if ($file) {
+                chomp $file;
+                print $readyChild "$file\n";
+                $activeChildren++;
+            } elsif (!$activeChildren) {
+                last FILES;
+            }
         }
     }
-    # Otherwising, running sequentially is fine
-    else {
-        my ($resfh, $resfilename) = getTempFile();
-        foreach my $file (@files) {
-            processFile($file, $resfh);
-        };
-        seek($resfh, 0, 0);
-        @results = LoadFile($resfh);
-        close $resfh;
+
+    foreach (@children) {
+        print $_ "END\n";
+    }
+
+    foreach (@parents) {
+        $_->close();
+    }
+
+    my $count = 0;
+    for my $parent (@parents) {
+        my $child = $children[$count];
+        print $child "END\n";
+        $parent->close();
+        $count++;
+    }
+
+    $pm->wait_all_children;
+
+    # Read results from file into @results and close
+    foreach (0..$maxProcesses-1) {
+        my $i = $_;
+        seek($resultsfhs[$i], 0, 0);
+        push @results, LoadFile($resultsfhs[$i]);
+        close $resultsfhs[$i];
     }
 
     close $deffh;
@@ -1035,7 +1091,7 @@ Print a brief help message and exits.
 
 =item B<--child-processes, -p>
 
-Specify number of child processes.
+Specify the number of child processes.
 
 =item B<--t262, -t>
 
