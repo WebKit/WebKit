@@ -349,7 +349,7 @@ const assertOpThrows = (opFn, message) => {
 })();
 
 (function InvalidFunctionParameters() {
-    for (let invalid of ["", "void", "bool", "any", "struct", 0, 3.14, undefined, [], {}]) {
+    for (let invalid of ["", "bool", "any", "struct", 0, 3.14, undefined, [], {}]) {
         const c = (new Builder()).Code();
         assert.throws(() => c.Function({ params: [invalid] }), Error, `Expected truthy: Type parameter ${invalid} needs a valid value type`);
     }

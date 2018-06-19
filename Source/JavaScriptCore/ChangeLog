@@ -1,3 +1,14 @@
+2018-06-19  Saam Barati  <sbarati@apple.com>
+
+        Wasm: Any function argument of type Void should be a validation error
+        https://bugs.webkit.org/show_bug.cgi?id=186794
+        <rdar://problem/41140257>
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseType):
+
 2018-06-18  Keith Miller  <keith_miller@apple.com>
 
         JSImmutableButterfly should assert m_header is adjacent to the data

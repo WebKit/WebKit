@@ -126,7 +126,7 @@ auto ModuleParser::parseType() -> PartialResult
 
         for (unsigned i = 0; i < argumentCount; ++i) {
             Type argumentType;
-            WASM_PARSER_FAIL_IF(!parseResultType(argumentType), "can't get ", i, "th argument Type");
+            WASM_PARSER_FAIL_IF(!parseValueType(argumentType), "can't get ", i, "th argument Type");
             signature->argument(i) = argumentType;
         }
 
