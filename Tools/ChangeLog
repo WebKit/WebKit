@@ -4,6 +4,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=186291
         <rdar://problem/40829658>
 
+        Update comment in AbstractEarlyWarningSystem.refetch_patch() to reference <https://bugs.webkit.org/show_bug.cgi?id=186817>.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.refetch_patch):
+
+2018-06-19  Daniel Bates  <dabates@apple.com>
+
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
         Reviewed by Lucas Forschler.
 
         Part 1 of 2.

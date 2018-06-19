@@ -157,7 +157,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         except Bugzilla.AccessError as e:
             # FIXME: Need a way to ask the status server to fetch the patch again. For now
             # we return the attachment as it was when it was originally uploaded to the
-            # status server.
+            # status server. See <https://bugs.webkit.org/show_bug.cgi?id=186817>.
             if e.error_code == Bugzilla.AccessError.NOT_PERMITTED:
                 patch = self._tool.status_server.fetch_attachment(patch_id)
         return patch
