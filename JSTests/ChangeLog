@@ -1,3 +1,18 @@
+2018-06-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        ShadowChicken crashes with stack overflow in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=186540
+        <rdar://problem/39682133>
+
+        Reviewed by Saam Barati.
+
+        Add test that stack overflows and crashes on ShadowChicken when JIT is
+        disabled and forceDebuggerBytecodeGeneration is enabled.
+
+        * stress/llint-stack-overflow-debugging-opcodes.js: Added.
+        (foo):
+        (catch):
+
 2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
 
         [test262-runner] More updates to the skip list

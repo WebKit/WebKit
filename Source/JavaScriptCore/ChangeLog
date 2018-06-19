@@ -1,3 +1,20 @@
+2018-06-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        ShadowChicken crashes with stack overflow in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=186540
+        <rdar://problem/39682133>
+
+        Reviewed by Saam Barati.
+
+        Stack overflows in the LLInt were crashing in ShadowChicken when compiling
+        with debug opcodes because it was accessing the scope of the incomplete top
+        frame, which hadn't been set yet. Check that we have moved past the first
+        opcode (enter) and that the scope is not undefined (enter will
+        initialize it to undefined).
+
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+
 2018-06-19  Keith Miller  <keith_miller@apple.com>
 
         constructArray variants should take the slow path for subclasses of Array

@@ -300,8 +300,11 @@ void ShadowChicken::update(VM& vm, ExecState* exec)
             bool isTailDeleted = false;
             JSScope* scope = nullptr;
             CodeBlock* codeBlock = callFrame->codeBlock();
-            if (codeBlock && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid()) {
-                scope = callFrame->scope(codeBlock->scopeRegister().offset());
+            JSValue scopeValue = callFrame->bytecodeOffset() && codeBlock && codeBlock->scopeRegister().isValid()
+                ? callFrame->registers()[codeBlock->scopeRegister().offset()].jsValue()
+                : jsUndefined();
+            if (!scopeValue.isUndefined() && codeBlock->wasCompiledWithDebuggingOpcodes()) {
+                scope = jsCast<JSScope*>(scopeValue.asCell());
                 RELEASE_ASSERT(scope->inherits<JSScope>(vm));
             } else if (foundFrame) {
                 scope = m_log[indexInLog].scope;
