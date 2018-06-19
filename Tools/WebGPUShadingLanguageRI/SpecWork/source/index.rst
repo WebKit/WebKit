@@ -1,0 +1,121 @@
+.. WSL documentation master file, created by
+   sphinx-quickstart on Thu Jun  7 15:53:54 2018.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+WSL Specification
+#################
+
+Grammar
+=======
+
+Lexical analysis
+----------------
+
+Parsing
+-------
+
+Notations
+"""""""""
+
+Top-level declarations
+""""""""""""""""""""""
+
+Statements
+""""""""""
+
+Types
+"""""
+
+Expressions
+"""""""""""
+
+Static rules
+============
+
+Phase 1: Desugaring
+-------------------
+
+TODO, desugaring statements:
+
+- for (X; e; e') s --> {X; while (e) {s e';}}
+  With special cases for if X is empty/vdecl/effectful expr
+  if e is empty/an expr
+  if e' is empty/an expr
+- while (e) s --> if (e) do s while (e);
+- if (e) s --> if (e) s else {}
+- t vdecl0, vdecl1 .. vdecln --> t vdecl0; t vdecl1 .. vdecln (premise: n > 0)
+- t x = e; --> t x; x = e;
+- ; --> {}
+
+TODO, desugaring expressions:
+
+- e != e' --> ! (e == e')
+- foo(x0, .., xn) --> foo<>(x0, .., xn)
+
+Phase 2: Gathering declarations
+-------------------------------
+
+TODO: the goal is to build the global typing environment, as well as the global execution environment.
+
+
+Phase 3: Local typing and early validation
+------------------------------------------
+
+TODO:
+
+- checking no recursive types (both structs and typedefs.. maybe as part of the computation of the size of each type)
+- check that enums do not have duplicate values, and have one zero-valued element.
+- check that operator.field, operator.field=, operator[] and operator[]= are not defined for pointer types, nor declared for pointer types in a protocol.
+- check that operator.field= is only defined if operator.field is as well, and that they agree on their return type in that case.
+- check that operator[]= is only defined if operator[] is as well, and that they agree on their return type in that case.
+- check that all of the type parameters of each operator declaration/definition are inferrable from their arguments (and from its return type in the case of cast operators).
+- check that each signature inside a protocol refers to the protocol name (aka type variable).
+- check that the extension relation on protocols is sane (at the very least acyclic, maybe also no incompatible signatures for the same function name).
+- typing rules (this and everything that follows can be managed by just a pair of judgements that type stmts/exprs)
+- checking returns
+- check that every variable declaration is in a block or at the top-level
+- check that no variable declaration shadows another one at the same scope
+- check that switch statements treat all cases
+- check that every case in a switch statement ends in a terminator (fallthrough/break/return/continue/trap)
+- check that literals fit into the type they are stored into (optional?)
+
+Phase 4: Monomorphisation and late validation
+---------------------------------------------
+
+TODO:
+
+- monomorphisation itself
+- resolving function calls (probably done as part of monomorphisation)
+- checking no recursive functions (seems very hard to do before that step, as it requires resolving overloaded functions)
+- allocating a unique store identifier to each function parameter and variable declaration
+- annotating each array access with the stride used by that array type? If we do it here and not at runtime, then each assignment would also need a size annotation..
+- checks of proper use of address spaces
+
+Dynamic rules
+=============
+
+Definitions
+-----------
+
+Execution of statements
+-----------------------
+
+Execution of expressions
+------------------------
+
+Memory model
+------------
+
+Standard library
+================
+
+Interface with JavaScript
+=========================
+
+Indices and tables
+##################
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -1,0 +1,298 @@
+metavar x, y ::=
+indexvar i, j, k, n, m ::=
+
+grammar
+s :: stmt_ ::= {{com statement}}
+    | if ( e ) s else s' :: :: if
+    | do s while ( e ) ; :: :: do_while
+    | switch ( e ) { sc0 : sblock0 .. scn : sblockn } :: :: switch
+    | break ; :: :: break
+    | continue ; :: :: continue
+    | fallthrough ; :: :: fallthrough
+    | return e ; :: :: return
+    | return ; :: :: return_void
+    | trap ; :: :: trap
+    | { s0 .. sn } :: :: block
+    | t x ; :: :: variable_decl
+    % TODO: instead of a type, we should have the elements of a type here, and explicitely resolve typedefs, since they can be shadowed, and need to be in the typing environment
+    | e ; :: :: effectful_expr
+
+sc :: switch_case_ ::=
+    | case e :: :: case
+    | default :: :: default
+
+sblock :: switch_block_ ::=
+    | s0 .. sn :: :: statements
+
+fs :: full_statement_ ::= {{com full statement (pre-desugaring)}}
+    | if ( e ) fs :: :: if_then
+    | if ( e ) fs else fs' :: :: if_then_else
+    | do fs while ( e ) ; :: :: do_while
+    | for ( e ; e' ; e'' ) fs :: :: for_three_expr
+    | while ( e ) fs :: :: while
+    | switch ( e ) { sc0 : fsblock0 .. scn : fsblockn } :: :: switch
+    | break ; :: :: break
+    | continue ; :: :: continue
+    | fallthrough ; :: :: fallthrough
+    | return e ; :: :: return
+    | return ; :: :: return_void
+    | trap ; :: :: trap
+    | { fs0 .. fsn } :: :: block
+    | ; :: :: empty_stmt
+    | t vdecl0 , .. , vdecln ; :: :: vdecls
+    % TODO: instead of a type, we should have the elements of a type here, and explicitely resolve typedefs, since they can be shadowed, and need to be in the typing environment
+    | e ; :: :: effectful_expr
+
+fsblock :: full_switch_block_ ::=
+    | fs0 .. fsn :: :: statements
+
+vdecl :: variable_declaration_ ::=
+    | x :: :: uninitialized
+    | x = e :: :: initialized
+
+e :: expr_ ::= {{com expression}}
+    | true :: :: lit_true
+    | false :: :: lit_false
+    | e || e' :: :: or
+    | e && e' :: :: and
+    | e = e' :: :: assignment
+    | x :: :: variable_name
+    | * e :: :: ptr_deref
+    | & e :: :: address_taking
+    | @ e :: :: array_reference_making
+    | e [ e' ] :: :: array_index
+
+G {{tex \Gamma}} :: env_ ::= {{com typing environment}}
+    | G [ x : t ] :: :: update_with_var {{com update the environment with "x is of type t"}}
+    | G [ x = t ] :: :: update_with_typedef {{com update the environment with "x is a typedef of type t"}}
+
+B :: behaviour_ ::= {{com statement behaviour}}
+    | { b0 , .. , bn } :: :: set
+    | B + B' :: :: union {{tex [[B]] \cup [[B']]}}
+    | B \ B' :: :: difference {{tex [[B]] \backslash [[B']]}}
+    | U B0 .. Bn :: :: big_union
+    | ( B ) :: :: parens {{tex [[B]]}} {{com artificial, teaches ott the precedence of previous rules}}
+
+b :: single_behaviour_ ::=
+    | Return t :: :: return
+    | Break :: :: break
+    | Continue :: :: continue
+    | Fallthrough :: :: fallthrough
+    | Nothing :: :: Nothing
+
+t {{tex \tau}} :: type_ ::= {{com type}}
+    | LVal ( t ) :: :: lval {{com left value}}
+    | Ptr ( t ) :: :: ptr {{com pointer}}
+    | Ref ( t ) :: :: array_ref {{com array reference}}
+    | [ t ] :: :: array {{com array}}
+    | bool :: :: bool
+    | uint32 :: :: uint32 % TODO: fix typesetting
+    | void :: :: void
+    % TODO: should I make it explicit that nested LVal are forbidden in a valid type?
+
+terminals :: terminals_ ::=
+    | U :: :: big_union {{tex \bigcup}}
+    | |- :: :: vdash {{tex \vdash}}
+    | --> :: :: desugars {{tex \leadsto}}
+
+formula :: formula_ ::=
+    | judgement :: :: judgement
+    | formula0 .. formulan :: :: several_formula
+    | n > 0 :: :: int_positive
+    | n > 1 :: :: int_greater_than_one
+    | x : t in G :: :: env_mapping_exists {{tex [[x]] : [[t]] \in [[G]]}}
+    | G |- isInteger ( t ) :: :: is_integer 
+    | s != s' :: :: stmt_not_eq {{tex [[s]] \neq [[s']]}}
+    | b in B :: :: behaviour_in {{tex [[b]] \in [[B]]}}
+    | b not in B :: :: behaviour_not_in {{tex [[b]] \not\in [[B]]}}
+    | B = B' :: :: behaviour_eq
+
+defns
+desugaring :: '' ::=
+defn
+fs --> fs' :: :: desugaring :: '' {{com Desugaring statements}} by
+% TODO: decide whether I even want to make the desugaring so formal.
+
+    ----------------------------- :: if_then
+    if (e) fs --> if (e) fs else {}
+
+    -------- :: empty_stmt
+    ; --> {}
+
+    -------------------------------------- :: while
+    while (e) fs --> if (e) do fs while (e);
+
+    ------------------------------------------------- :: for_three_exprs
+    for (e ; e' ; e'') fs --> {e; while(e') {fs e'';}}
+    % TODO: cover all variations of for loops: if the condition is empty, if the increment is empty, if the initialization is empty,
+    % if two of the three are empty, if all three are empty, if the initialization is a vdecl and not an expression,
+    % etc..
+
+    k > 1
+    -------------------------------------------------------------------------------------- :: multiple_vdecls
+    { fs0..fsn t vdecl0, vdecl1, .., vdeclk; fs'0..fs'm} --> {fs0..fsn t vdecl0; t vdecl1, .., vdeclk; fs'0..fs'm}
+
+    ------------------------------------------------------------- :: initialized_vdecl
+    { fs0..fsn t x = e; fs'0..fs'm} --> {fs0..fsn t x; x = e; fs'0..fs'm}
+
+% TODO: desugar expressions, namely replace e != e' by ! (e == e'); and replace foo(e0,..,en) by foo<>(e0,..,en)
+
+defns
+typing :: '' ::=
+defn
+G |- s : B :: :: typing_statement :: '' by
+
+    G |- e : bool
+    G |- s : B
+    G |- s' : B'
+    ------------------------------ :: if
+    G |- if (e) s else s' : B + B'
+
+    G |- e : bool
+    G |- s : B
+    ---------------------------------------------------------- :: do_while
+    G |- do s while (e); : (B \ {Break, Continue}) + {Nothing}
+    % Note: we could make this rule a bit more precise in the cases where we know that s always return/trap/break.. but such a piece of code is almost certainly a bug.
+
+    G |- e : t
+    G |- isInteger(t)
+    G |- sc0: t .. G |- scn: t
+    G |- sblock0: B0 .. G |- sblockn: Bn
+    Nothing not in B0 .. Nothing not in Bn
+    B = U B0 .. Bn
+    --------------------------------------------------------------------------- :: switch
+    G |- switch (e) {sc0: sblock0 .. scn : sblockn } : B \ {Break, Fallthrough}
+
+    --------------------- :: break
+    G |- break; : {Break}
+
+    --------------------------- :: continue
+    G |- continue; : {Continue}
+
+    --------------------------------- :: fallthrough
+    G |- fallthrough; : {Fallthrough}
+
+    G |- e : t
+    --------------------------- :: return
+    G |- return e; : {Return t}
+
+    ----------------------------- :: return_void
+    G |- return ; : {Return void}
+
+    ----------------------- :: trap
+    G |- trap; : {Return t}
+
+    ------------------- :: empty_block
+    G |- {} : {Nothing}
+
+    G[x : LVal(t)] |- {s0 .. sn} : B
+    s0 != t' x; .. sn != t' x;
+    --------------------------------- :: variable_decl
+    G |- {t x; s0 .. sn} : B
+    % Note: there is a minor ambiguity between this rule and the next two, but it is harmless as the next two rules both fail in the next step
+    % if they are applied where s is a variable declaration.
+    % Note: the second premise prevents redeclaration of a variable in the same scope it was declared in.
+    % Implemented naively it takes O(n**2) to check, but can trivially be optimized.
+
+    G |- s : B
+    ------------ :: trivial_block
+    G |- {s} : B
+
+    G |- s : B
+    G |- {s0 .. sn} : B'
+    n > 0
+    Nothing in B
+    -------------------------------------- :: block
+    G |- {s s0 .. sn} : (B \ {Nothing}) + B'
+    % Note: the last premise forbids trivially dead code. It is optional and could be removed with no consequences on the rest of the language.
+
+    G |- e : t
+    ------------------- :: expr
+    G |- e; : {Nothing}
+
+defn
+G |- sc : t :: :: typing_switch_case :: '' by
+
+    G |- e : t
+    --------------- :: case
+    G |- case e : t
+
+    ---------------- :: default
+    G |- default : t
+
+defn
+G |- sblock : B :: :: typing_switch_block :: '' by
+
+    G |- { s0 .. sn } : B
+    --------------------- :: switch_block
+    G |- s0 .. sn : B
+
+defn
+G |- e : t :: :: typing_rval :: '' by
+
+    ---------------- :: literal_true
+    G |- true : bool
+
+    ----------------- :: literal_false
+    G |- false : bool
+
+    G |- e : bool
+    G |- e' : bool
+    ------------------- :: or
+    G |- e || e' : bool
+
+    G |- e : bool
+    G |- e' : bool
+    ------------------- :: and
+    G |- e && e' : bool
+
+    G |- e : LVal(t)
+    G |- e' : t
+    ----------------- :: assignment
+    G |- e = e' : t
+
+    x : t in G
+    ----------- :: variable_name
+    G |- x : t
+
+    G |- e : LVal(t)
+    ---------------- :: lval_access
+    G |- e : t
+
+    G |- e : LVal(t)
+    ---------------- :: address_taking
+    G |- &e : Ptr(t)
+    % can the unary operator & be overloaded?
+    % It seems that no
+
+    G |- e : Ptr(t)
+    ----------------- :: ptr_deref
+    G |- *e : LVal(t)
+    % can the unary operator * be overloaded?
+    % It seems that no
+
+    % Note: We currently do not have any special interaction between pointers and array references in these rules
+    
+    G |- e : LVal(t)
+    ---------------- :: take_ref_lval
+    G |- @e : Ref(t)
+    % Note: in the execution rules, the behaviour depends on whether that LVal points to an array, but here we don't need to track it.
+
+    G |- e : LVal([t])
+    G |- e' : uint32
+    -------------------- :: array_index_lval
+    G |- e[e'] : LVal(t)
+
+    G |- e : [t]
+    G |- e' : uint32
+    ---------------- :: array_index_rval
+    G |- e[e'] : t
+    % There is a choice between applying array_index_lval and then lval_access, or lval_access and then array_index_rval.
+    % It is not problematic, because the rules are confluent, so either choice leads to the same result.
+    % TODO: should we refuse during validation the case where e' is a constant that falls out of the bounds of e ?
+    % I think it should be an allowed behaviour but not required of the implementation.
+
+    G |- e : Ref(t)
+    G |- e' : uint32
+    -------------------- :: array_ref_index
+    G |- e[e'] : LVal(t)

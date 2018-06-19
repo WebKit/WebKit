@@ -1,0 +1,376 @@
+metavar x, y ::= {{ com variable name }}
+indexvar index, i, j, k, n, m ::=
+
+grammar
+s :: 'stmt_' ::= {{com statement}}
+    | if ( e ) s :: :: if_then
+    | if ( e ) s else s' :: :: if_then_expr
+    | while ( e ) s :: :: while
+    | do s while ( e ) ; :: :: do_while
+    | for ( epre ; econd ; eincr ) s :: :: for_expr
+    | for ( vdecls ; econd ; eincr ) s :: :: for_vdecls
+    | switch ( e ) { se0 .. sen } :: :: switch
+    | break ; :: :: break
+    | continue ; :: :: continue
+    | fallthrough ; :: :: fallthrough
+    | return e ; :: :: return
+    | { s0 .. sn } :: :: block
+    | { G s0 .. sn } :: :: block_annotated {{com Special, annotated block}}
+    %TODO: find a clean way of making G be a subscript of the opening brace
+    | Loop ( s1 , s2 ) :: :: loop {{com Special, loop construct}}
+    | Cases ( sblock0 , .. , sblockn ) :: :: cases {{com Special, switch-cases construct}}
+    | vdecls ; :: :: variables_declaration {{com variables declaration}}
+    | e ; :: :: effectful_expr {{com effectful expr}}
+    | ; :: :: nil {{tex \emptyset ; }} {{com empty statement}}
+
+se :: 'switch_elem_' ::= {{com switch element}}
+    | case rval : sblock :: :: case
+    | default : sblock :: :: default
+
+sblock :: 'sblock_' ::= {{com Special block with no effect on scoping, used for switches}}
+    | s0 .. sn :: :: stmt_list
+
+e, epre {{tex e_{pre} }}, econd {{tex e_{cond} }}, eincr {{tex e_{incr} }} :: 'expr_' ::= {{com expression}}
+    | e || e' :: :: or
+    | e && e' :: :: and
+    | e ? e1 : e2 :: :: ternary
+    | Comma ( e0 , .. , en ) :: :: comma {{com Comma is just a way to disambiguate this in the rules}}
+    | e = e' :: :: assignment
+    | x :: :: identifier
+    | fid < rval0 , .. , rvaln > ( e0 , .. , em ) :: :: call
+    % TODO: way too much space around '<' and '>'
+    | Call s :: :: call_construct {{com Special, call construct}}
+    | e [ e' ] :: :: array_access % TODO: add the rules for that one
+    | True :: :: true
+    | False :: :: false
+    | Void :: :: void {{com Special, void value}}
+    | { x0 : rval0 ; .. ; xn : rvaln } :: :: struct
+    | [ rval0 , .. , rvaln ] :: :: array
+    | sid offset0 .. offsetn :: :: sid {{com Special, store location}}
+
+fid :: 'fid_' ::= {{com function identifier}}
+
+v :: 'val_' ::= {{com value}}
+    | True :: :: true
+    | False :: :: false
+    | Void :: :: void {{com Special, void value}}
+    | { x0 : rval0 ; .. ; xn : rvaln } :: :: struct
+    | [ rval0 , .. , rvaln ] :: :: array
+    | sid offset0 .. offsetn :: :: sid {{com Special, store location}}
+
+rval, rv :: 'rval_' ::= {{com right-side value}}
+    | True :: :: true
+    | False :: :: false
+    | Void :: :: void {{com Special, void value}}
+    | { x0 : rval0 ; .. ; xn : rvaln } :: :: struct
+    | [ rval0 , .. , rvaln ] :: :: array
+
+lval :: 'lval_' ::= {{com left-side value}}
+    | sid offset0 .. offsetn :: :: sid {{com Special, store location}}
+
+offset :: 'offset_' ::=
+    | . x :: :: field {{com field offset}}
+    | [ i ] :: :: array {{com array offset}}
+
+vdecls :: 'vdecls_' ::= {{com variables declaration}}
+    | t vdecl1 , .. , vdecln :: :: vdecls
+
+t {{tex \tau}} :: 'type_' ::= {{com type}}
+    | bool :: :: bool
+
+vdecl :: vdecl' ::=
+    | x : sid :: :: uninitialized
+    | x : sid = e :: :: initialized
+
+sid :: 'sid' ::= {{com store identifier}}
+
+G {{tex \Gamma}}, Gout {{tex \Gamma_{out} }}, Gglobal {{tex \Gamma_{global} }} :: 'gamma_' ::= {{com environment}}
+    | Empty :: :: empty {{ tex \emptyset }} 
+    | G [ envMapping0 , .. , envMappingn ] :: :: update
+
+envMapping :: 'env_mapping_' ::= {{com environment mapping}}
+    | x -> sid :: :: in_store {{com in store}} {{tex [[x]] \mapsto [[sid]]}}
+    | x -> rval :: :: constexpr {{com constexpr}} {{tex [[x]] \mapsto [[rval]]}}
+
+S {{tex \Sigma}} :: 'sigma_' ::= {{com store}}
+    | Empty :: :: empty {{ tex \emptyset }}
+    | S [ storeMapping0 , .. , storeMappingn ] :: :: update
+
+storeMapping :: 'store_mapping_' ::= {{com store mapping}}
+    | sid -> rval :: :: mapping {{tex [[sid]] \mapsto [[rval]]}}
+
+formula :: formula_ ::=  
+    | judgement :: :: judgement
+    | rval = Default ( t ) :: :: default_value
+    | rval = rval' :: :: rval_equality
+    | isNotLVal ( e ) :: :: is_not_lval
+    | sid -> rval in S :: :: mapping_in_store {{tex ([[sid]] \mapsto [[rval]]) \in [[S]] }}
+    | x -> sid in G :: :: mapping_in_env {{tex ([[x]] \mapsto [[sid]]) \in [[G]] }}
+    | n > 0 :: :: index_positive
+    | rval not found in se0 .. sen :: :: not_found_in_switch
+    | se0 = _ : sblock0 .. sen = _ : sblockn :: :: destruct_switch_elems
+    | fid -> x0 .. xn ; x'0 : sid0 .. x'm : sidm ; s0 .. sk :: :: function_resolution
+    %TODO: find a clean way of replacing -> by a \mapsto
+    | S = S' :: :: store_equality
+    | G = G' :: :: env_equality
+
+subrules
+    rval <:: v
+    lval <:: v
+    v <:: e
+
+defns
+reduction :: '' ::=
+defn
+s1 => s2 :: :: reduce_basic_stmt :: '' {{ tex [[s1]] \Rightarrow [[s2]]}} by
+
+    ------------------------------- :: if_then_desugar
+    if ( e ) s => if ( e ) s else ;
+
+    -------------------------- :: if_true
+    if ( True ) s else s' => s
+
+    ---------------------------- :: if_false
+    if ( False ) s else s' => s'
+
+    ------------------------------ :: block_next_stmt
+    {G ; s0 .. sn} => {G s0 .. sn}
+
+    ----------------------------------- :: block_break
+    {G break; s0 .. sn} => break;
+
+    ----------------------------------------- :: block_fallthrough
+    {G fallthrough; s0 .. sn} => fallthrough;
+
+    ----------------------------------- :: block_continue
+    {G continue; s0 .. sn} => continue;
+
+    ----------------------------------- :: block_return
+    {G return rval; s0 .. sn} => return rval;
+
+    --------- :: block_empty
+    {G } => ;
+
+    ---------- :: effectful_expr_value
+    rval; => ;
+
+    --------------------- :: loop_break
+    Loop(break ;, s) => ;
+
+    ------------------------ :: loop_continue
+    Loop(continue ;, s) => s
+
+    ------------------------------------- :: loop_fallthrough
+    Loop(fallthrough;, s) => fallthrough;
+
+    ------------------------------- :: loop_return
+    Loop(return e;, s) => return e;
+
+    --------------- :: loop_iteration_finished
+    Loop(;, s) => s
+
+    ----------------------------------------------- :: cases_break
+    Cases(break; s0 .. sn, sblock0, .., sblockm) => ;
+
+    ------------------------------------------------------------ :: cases_continue
+    Cases(continue; s0 .. sn, sblock0, .., sblockm) => continue;
+
+    ----------------------------------------------------------------------------- :: cases_fallthrough
+    Cases(fallthrough; s0 .. sn, sblock0, .., sblockm) => Cases(sblock0, .., sblockm)
+
+    ---------------------------------------------------------- :: cases_return
+    Cases(return e; s0 .. sn, sblock0, .., sblockm) => return e;
+
+    ----------------------------------------------------------------------------- :: cases_next_stmt
+    Cases( ; s0 .. sn, sblock0, .., sblockm) => Cases(s0 .. sn, sblock0, .., sblockm)
+
+    ------------ :: cases_empty
+    Cases() => ;
+
+    ------------------------------------------ :: while_loop
+    while (e) s => if (e) Loop(s, while (e) s)
+    % Note: this relies on the absence of variable declarations outside of blocks
+    % if this is not guaranteed by the validation phase, replace the production by if(e) Loop({s}, while (e) s)
+
+    ------------------------------------- :: do_while_loop
+    do s while(e); => Loop(s, while(e) s)
+    % Note: this relies on the absence of variable declarations outside of blocks
+    % if this is not guaranteed by the validation phase, replace the production by Loop({s}, while (e) s)
+
+    --------------------------------------------------------------- :: for_expr_loop
+    for (epre; econd; eincr) s => { epre; while(econd) {s eincr;} }
+    % Note: this relies on the absence of variable declarations outside of blocks
+    % if this is not guaranteed by the validation phase, replace {s eincr} by {{s} eincr}
+
+    --------------------------------------------------------------- :: for_decls_loop
+    for (vdecls; econd; eincr) s => { vdecls; while(econd) {s eincr;} }
+    % Note: this relies on the absence of variable declarations outside of blocks
+    % if this is not guaranteed by the validation phase, replace {s eincr} by {{s} eincr}
+
+    rval = rval'
+    se'0 = _ : sblock'0 .. se'm = _ : sblock'm
+    -------------------------------------------------------------------------------------------------- :: switch_case_found
+    switch (rval) {se0 .. sen case rval' : sblock se'0 .. se'm} => {Cases(sblock, sblock'0, .., sblock'm)}
+
+    rval not found in se0 .. sen
+    rval not found in se'0 .. se'm
+    se'0 = _ : sblock'0 .. se'm = _ : sblock'm
+    -------------------------------------------------------------------------------------------------- :: switch_case_not_found
+    switch (rval) {se0 .. sen default : sblock se'0 .. se'm} => {Cases(sblock, sblock'0, .., sblock'm)}
+
+    n > 0
+    ------------------------------------------------------------------------------------------ :: vdecls_multi
+    {G t vdecl0, vdecl1, .., vdecln; s0 .. sm} => {G t vdecl0; t vdecl1, .., vdecln; s0 .. sm}
+
+    ------------------------------------------------------------- :: vdecl_initializer
+    {G t x : sid = e; s0 .. sn} => {G t x : sid; x = e; s0 .. sn}
+
+defn
+s1 , G1 , S1 => s2 , G2 , S2 :: :: reduce_stmt :: '' {{ tex [[s1]], [[G1]], [[S1]] \Rightarrow [[s2]], [[G2]], [[S2]] }} by
+   
+    s => s'
+    -------------------- :: reduce_stmt_basic
+    s, G, S => s', G, S
+
+    ---------------------------------------------- :: annotate_block
+    {s0 .. sn}, G, S => {G s0 .. sn}, G, S
+
+    G |- e, S -> e', S'
+    ---------------------- :: effectful_expr_reduce
+    e;, G, S => e';, G, S'
+
+    G |- e, S -> e', S'
+    -------------------------------------------------- :: if_reduce
+    if (e) s else s', G, S => if (e') s else s', G, S'
+
+    G |- e, S -> e', S'
+    ------------------------------------------------------------------------------------------------ :: switch_reduce
+    switch (e) {se0 .. sen}, G, S => switch (e') {se0 .. sen}, G, S'
+
+    s, G, S => s', G', S'
+    -------------------------------------------------------- :: block_reduce
+    {G s s0 .. sn}, Gout, S => {G' s' s0 .. sn}, Gout, S'
+
+    s, G, S => s', G', S'
+    ---------------------------------------- :: loop_reduce
+    Loop(s, s2), G, S => Loop(s', s2), G', S'
+    % Note: if G and G' are not equal, something very wrong is going on.
+    % s should always be either a block (so no change to the environment), or a statement that is not a variable declaration (same)
+
+    s0, G, S => s0', G', S'
+    ----------------------------------------------------------------------------------------------- :: cases_reduce_first_stmt
+    Cases(s0 s1 .. sn, sblock0, .., sblockm), G, S => Cases(s0' s1 .. sn, sblock0, .., sblockm), G', S'
+
+    G |- e, S -> e', S'
+    ---------------------------------- :: return_reduce
+    return e;, G, S => return e';, G, S'
+
+    rval = Default(t)
+    ----------------------------------------------- :: vdecl_uninitialized
+    t x : sid;, G, S => ;, G[x -> sid], S[sid -> rval]
+
+defn
+e1 -> e2 :: :: reduce_basic_expr :: '' {{ tex [[e1]] \rightarrow [[e2]] }} by
+    
+    -------------- :: boolean_and_true
+    True && e -> e
+
+    ------------------- :: boolean_and_false
+    False && e -> False
+
+    --------------- :: boolean_or_false
+    False || e -> e
+
+    ----------------- :: boolean_or_true
+    True || e -> True
+
+    -------------------- :: ternary_true
+    True ? e1 : e2 -> e1
+
+    -------------------- :: ternary_false
+    False ? e1 : e2 -> e2
+
+    ------------------ :: comma_last_expr
+    Comma (e) -> e
+
+    -------------------------------------------------- :: comma_first_rval
+    Comma(rval, e, e0, .., en) -> Comma(e, e0, .., en)
+
+    ------------------------ :: call_construct_return
+    Call return rval; -> rval
+
+    --------------- :: call_construct_void
+    Call ; -> Void
+
+defn
+G |- e1 , S1 -> e2 , S2 :: :: reduce_expr :: '' {{ tex [[G]] \vdash [[e1]], [[S1]] \rightarrow [[e2]], [[S2]] }} by
+    e1 -> e2
+    ------------------- :: reduce_expr_basic
+    G |- e1, S -> e2, S
+
+    G |- e1, S -> e1', S'
+    ------------------------------------- :: boolean_and_reduce
+    G |- e1 && e2, S -> e1' && e2, S'
+    
+    G |- e1, S -> e1', S'
+    ------------------------------------- :: boolean_or_reduce
+    G |- e1 || e2, S -> e1' || e2, S'
+
+    G |- e, S -> e', S'
+    --------------------------------------- :: ternary_reduce
+    G |- e ? e1 : e2, S -> e' ? e1 : e2, S'
+
+    G |- e, S -> e', S'
+    ----------------------------------------------------------------- :: comma_reduce
+    G |- Comma(e, e0, e1, .., en), S -> Comma(e', e0, e1, .., en), S'
+
+    G |- e, S -> e', S'
+    ----------------------------------------------------------------------------------------------------------------- :: call_reduce
+    G |- fid<</rv // i/>>(</rval // j/>, e, </e // k/>), S -> fid<</rv // i/>>(</rval // j/>, e', </e // k/>), S'
+
+    fid -> </x//i/> ; </y : sid//j/> ; </s//k/>
+    G = Gglobal [</x -> rv//i/>, </y -> sid//j/>]
+    S' = S [</sid -> rval//j/>]
+    ----------------------------------------------------------------------- :: call_resolve
+    Gout |- fid<</rv//i/>>(</rval//j/>), S -> Call { G </s//k/> }, S'
+
+    s, G, S => s', G, S'
+    ----------------------------- :: call_construct_reduce
+    G |- Call s, S -> Call s', S'
+    % Note: the requirement that G remains the same is not that onerous or weird, since we only construct a Call with an annotated block inside it.
+
+    isNotLVal(e1)
+    G |- e1, S -> e1', S' 
+    ------------------------------- :: assign_reduce_left
+    G |- e1 = e2, S -> e1' = e2, S'
+
+    G |- e2, S -> e2', S'
+    ---------------------------------- :: assign_reduce_right
+    G |- lval = e2, S -> lval = e2', S
+
+    sid -> rv in S
+    rv[</offset // i/> := rval] = rv'
+    ------------------------------------------ :: assign_execute
+    G |- sid </offset // i/> = rval, S -> Void, S[sid -> rv']
+
+    x -> sid in G
+    ------------------- :: environment_access
+    G |- x, S -> sid, S
+
+    sid -> rval in S
+    ---------------------- :: store_access
+    G |- sid, S -> rval, S
+
+defn
+rv0 [ offset0 .. offsetn := rv1 ] = rv2 :: :: value_update :: '' by
+
+    ------------------- :: no_path
+    rv0[ := rv1] = rv1
+
+    rv[offset0 .. offsetk := rval] = rv'
+    ----------------------------------------------------------------------------------------------------------------------------------------------- :: struct
+    {</xi : rvi // i /> ; x : rv ; </ x'j : rv'j // j />}[ .x offset0 .. offsetk := rval] = {</ xi : rvi // i /> ; x : rv' ; </ x'j : rv'j // j />} 
+    
+    rv[offset0 .. offsetk := rval] = rv'
+    ------------------------------------------------------------------------------------------------------------------------------- :: array
+    [</rv//i IN 0..n-1/>, rv, </rv'//j IN 0..m/>][ [n] offset0 .. offsetk := rval] = [</rv//i IN 0..n-1/>, rv', </rv'//j IN 0..m/>]

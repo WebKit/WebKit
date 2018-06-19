@@ -1,3 +1,36 @@
+2018-06-18  Robin Morisset  <rmorisset@apple.com>
+
+        [WSL] Starting to write the spec
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        This is a snapshot of my current work on the WSL spec (I will try to commit more regularly in the future).
+
+        WSL.g4 is the grammar, in antlr4 format. I only made minor changes in it since last time.
+
+        source/index.rst is the Sphinx document. 
+        It currently only contain a very rough outline, and some TODOs.
+        It can be compiled with make html or make pdf, and relies on Makefile and source/conf.py.
+
+        WSL_exec.ott is the current set of execution rules I have formalized.
+        They will need a fair bit of refactoring, to account for the new desugaring phase,
+            to be compatible with whatever memory model we decide on,
+            and to be explicit about the memory layout of structs and arrays
+        They can be compiled to latex with OTT (which in turn requires OCaml and opam).
+            Just ask me by email if you want a pdf of all the rules without having to install all that.
+
+        WSL_type.ott is the current set of local typing rules I have formalized.
+            Like WSL_exex.ott, it is very incomplete, lacking all function calls among other things.
+
+        * WebGPUShadingLanguageRI/SpecWork/Makefile: Added.
+        * WebGPUShadingLanguageRI/SpecWork/WSL.g4:
+        * WebGPUShadingLanguageRI/SpecWork/WSL_exec.ott: Added.
+        * WebGPUShadingLanguageRI/SpecWork/WSL_type.ott: Added.
+        * WebGPUShadingLanguageRI/SpecWork/source: Added.
+        * WebGPUShadingLanguageRI/SpecWork/source/conf.py: Added.
+        * WebGPUShadingLanguageRI/SpecWork/source/index.rst: Added.
+
 2018-06-18  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebProcessPool::networkProcessFailedToLaunch():

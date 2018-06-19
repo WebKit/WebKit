@@ -44,9 +44,9 @@ DO: 'do';
 RETURN: 'return';
 TRAP: 'trap';
 
-fragment NULL: 'null' | 'NULL' ;
-fragment TRUE: 'true' | 'True' ;
-fragment FALSE: 'false' | 'False' ;
+fragment NULL: 'null';
+fragment TRUE: 'true';
+fragment FALSE: 'false';
 // Note: We could make these three fully case sensitive or insensitive. to bikeshed.
 
 CONSTANT: 'constant';
@@ -182,7 +182,10 @@ variableDecl: Identifier ('=' expr)? ;
 /* 
  * Parser: Expressions
  */
-constexpr: Literal | Identifier;
+constexpr
+    : Literal 
+    | Identifier // to get the (constexpr) value of a type variable
+    | Identifier '.' Identifier; // to get a value out of an enum
 
 // Note: we separate effectful expressions from normal expressions, and only allow the former in statement positions, to disambiguate the following:
 // "x * y;". Without this trick, it would look like both an expression and a variable declaration, and could not be disambiguated until name resolution.
