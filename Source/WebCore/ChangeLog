@@ -1,3 +1,19 @@
+2018-06-19  David Kilzer  <ddkilzer@apple.com>
+
+        Add logging when splashboardd enables WebThread
+        <https://webkit.org/b/186793>
+        <rdar://problem/41213255>
+
+        Reviewed by Daniel Bates.
+
+        * platform/RuntimeApplicationChecks.h:
+        (WebCore::IOSApplication::isSplashBoardd): Add declaration.
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isSplashBoardd): Add implementation.
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadEnable): Call RELEASE_LOG_FAULT() if this is called by
+        splashboardd.
+
 2018-06-19  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE][Nicosia] Add environment variable to enable threaded rendering and set the number of painting threads
