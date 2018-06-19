@@ -76,9 +76,10 @@ void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, SecItem
     }
 
     case SecItemRequestData::Add: {
-        CFTypeRef resultObject = 0;
-        OSStatus resultCode = SecItemAdd(request.query(), &resultObject);
-        response = SecItemResponseData(resultCode, adoptCF(resultObject).get());
+        // Return value of SecItemAdd is often ignored. Even if it isn't, we don't have the ability to
+        // serialize SecKeychainItemRef.
+        OSStatus resultCode = SecItemAdd(request.query(), nullptr);
+        response = SecItemResponseData(resultCode, nullptr);
         break;
     }
 

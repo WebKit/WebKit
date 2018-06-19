@@ -99,14 +99,19 @@ static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
     return response->resultCode();
 }
 
-static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
+static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* unusedResult)
 {
+    // Return value of SecItemAdd should be ignored for WebKit use cases. WebKit can't serialize SecKeychainItemRef, so we do not use it.
+    // If someone passes a result value to be populated, the API contract is being violated so we should assert.
+    if (unusedResult) {
+        ASSERT_NOT_REACHED();
+        return errSecParam;
+    }
+
     auto response = sendSecItemRequest(SecItemRequestData::Add, query);
     if (!response)
         return errSecInteractionNotAllowed;
 
-    if (result)
-        *result = response->resultObject().leakRef();
     return response->resultCode();
 }
 

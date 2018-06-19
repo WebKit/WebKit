@@ -771,7 +771,6 @@ bool decode(Decoder& decoder, RetainPtr<SecKeychainItemRef>& result)
 #if HAVE(SEC_ACCESS_CONTROL)
 void encode(Encoder& encoder, SecAccessControlRef accessControl)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
     RetainPtr<CFDataRef> data = adoptCF(SecAccessControlCopyData(accessControl));
     if (data)
         encode(encoder, data.get());
@@ -779,7 +778,6 @@ void encode(Encoder& encoder, SecAccessControlRef accessControl)
 
 bool decode(Decoder& decoder, RetainPtr<SecAccessControlRef>& result)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
     RetainPtr<CFDataRef> data;
     if (!decode(decoder, data))
         return false;

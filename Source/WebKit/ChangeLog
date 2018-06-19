@@ -1,3 +1,29 @@
+2018-06-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Make SecItemShim to not send return value for SecItemAdd
+        https://bugs.webkit.org/show_bug.cgi?id=186789
+        <rdar://problem/40892596>
+
+        Reviewed by Brent Fulgham.
+
+        Return value of SecItemAdd is often ignored. Even if it isn't, we don't have the ability to serialize SecKeychainItemRef.
+        Otherwise, it would go through the weird route of serializing SecKeychainItemRef by asking Keychain for its persistent
+        reference. This route contradicts the purpose of SecItemShim, which is to proxy all Keychain operations to UIProcess.
+
+        Also, this patch removes the release assertion on encode(Encoder&, SecAccessControlRef) and decode(Decoder&, RetainPtr<SecAccessControlRef>&)
+        as they don't query Keychain.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode):
+        (IPC::decode):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        (WebKit::webSecItemAdd):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::secItemRequest):
+        * UIProcess/mac/SecItemShimProxy.h:
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+
 2018-06-19  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r231850): Cookie file cannot be read or written by network process
