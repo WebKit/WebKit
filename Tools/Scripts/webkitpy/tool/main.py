@@ -30,9 +30,11 @@
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
 from optparse import make_option
+import logging
 import os
 import threading
 
+from webkitpy.common.checkout.scm import Git
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.host import Host
 from webkitpy.common.net.irc import ircproxy
@@ -40,12 +42,14 @@ from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.tool import commands
 
+_log = logging.getLogger(__name__)
 
 class WebKitPatch(MultiCommandTool, Host):
     global_options = [
         make_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="enable all logging"),
         make_option("-d", "--directory", action="append", dest="patch_directories", default=[], help="Directory to look at for changed files"),
         make_option("--status-host", action="store", dest="status_host", type="string", help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
+        make_option("--status-host-uses-http", action="store_false", default=True, dest="status_host_uses_https", help="Use HTTP when querying the status host."),
         make_option("--bot-id", action="store", dest="bot_id", type="string", help="Identifier for this bot (if multiple bots are running for a queue)"),
         make_option("--irc-password", action="store", dest="irc_password", type="string", help="Password to use when communicating via IRC."),
         make_option("--seconds-to-sleep", action="store", default=120, type="int", help="Number of seconds to sleep in the task queue."),
@@ -89,11 +93,37 @@ class WebKitPatch(MultiCommandTool, Host):
             return self.scm().supports_local_commits()
         return True
 
+    @staticmethod
+    def _status_server_api_key_from_git():
+        try:
+            if not Git.in_working_directory(os.getcwd()):
+                return None
+            return Git.read_git_config('webkit.status_api_key')
+        except OSError as e:
+            # Catch and ignore OSError exceptions such as "no such file
+            # or directory" (OSError errno 2), which imply that the Git
+            # command cannot be found/is not installed.
+            _log.warning('Could not read API key from Git: {}'.format(str(e)))
+        return None
+
+    @staticmethod
+    def _status_server_api_key():
+        api_key = os.environ.get('WEBKIT_STATUS_API_KEY')
+        if not api_key:
+            api_key = WebKitPatch._status_server_api_key_from_git()
+        return api_key
+
     # FIXME: This may be unnecessary since we pass global options to all commands during execute() as well.
     def handle_global_options(self, options):
         self.initialize_scm(options.patch_directories)
+
+        api_key = self._status_server_api_key()
+        if api_key:
+            self.status_server.set_api_key(api_key)
+
         if options.status_host:
             self.status_server.set_host(options.status_host)
+        self.status_server.set_use_https(options.status_host_uses_https)
         if options.bot_id:
             self.status_server.set_bot_id(options.bot_id)
         if options.irc_password:

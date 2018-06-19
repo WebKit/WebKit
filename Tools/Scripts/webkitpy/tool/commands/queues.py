@@ -40,7 +40,7 @@ from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.config.ports import DeprecatedPort
-from webkitpy.common.net.bugzilla import Attachment
+from webkitpy.common.net.bugzilla import Bugzilla, Attachment
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
@@ -217,7 +217,11 @@ class AbstractPatchQueue(AbstractQueue):
             patch_id = self._tool.status_server.next_work_item(self.name)
             if not patch_id:
                 return None
-            patch = self._tool.bugs.fetch_attachment(patch_id)
+            try:
+                patch = self._tool.bugs.fetch_attachment(patch_id, throw_on_access_error=True)
+            except Bugzilla.AccessError as e:
+                if e.error_code == Bugzilla.AccessError.NOT_PERMITTED:
+                    patch = self._tool.status_server.fetch_attachment(patch_id)
             if not patch:
                 # FIXME: Using a fake patch because release_work_item has the wrong API.
                 # We also don't really need to release the lock (although that's fine),

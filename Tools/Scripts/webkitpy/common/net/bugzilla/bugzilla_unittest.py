@@ -167,6 +167,19 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
 </bugzilla>
 """ % _bug_xml
 
+    _single_not_permitted_bug_xml = """
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "https://bugs.webkit.org/bugzilla.dtd">
+<bugzilla version="3.2.3"
+          urlbase="https://bugs.webkit.org/"
+          maintainer="admin@webkit.org"
+>
+    <bug error="NotPermitted">
+        <bug_id>32585</bug_id>
+    </bug>
+</bugzilla>
+"""
+
     _expected_example_bug_parsing = {
         "id" : 32585,
         "title" : u"bug to test webkit-patch's and commit-queue's failures",
@@ -186,6 +199,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
             'type': 'text/plain',
             'id': 45548
         }],
+        'groups': frozenset(),
         "comments" : [{
                 'comment_date': datetime.datetime(2009, 12, 15, 15, 17, 28),
                 'comment_email': 'eric@webkit.org',
@@ -206,6 +220,10 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
     def test_parse_bug_dictionary_from_xml(self):
         bug = Bugzilla()._parse_bug_dictionary_from_xml(self._single_bug_xml)
         self._assert_dictionaries_equal(bug, self._expected_example_bug_parsing)
+
+    def test_parse_bug_dictionary_from_xml_for_not_permitted_bug(self):
+        bug = Bugzilla()._parse_bug_dictionary_from_xml(self._single_not_permitted_bug_xml)
+        self.assertEqual(bug, {})
 
     _sample_multi_bug_xml = """
 <bugzilla version="3.2.3" urlbase="https://bugs.webkit.org/" maintainer="admin@webkit.org" exporter="eric@webkit.org">
@@ -245,7 +263,7 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
 
     def test_attachment_detail_bug_parsing(self):
         bugzilla = Bugzilla()
-        self.assertEqual(27314, bugzilla._parse_bug_id_from_attachment_page(self._sample_attachment_detail_page))
+        self.assertEqual((27314, None), bugzilla._parse_bug_id_from_attachment_page(self._sample_attachment_detail_page))
 
     def test_add_cc_to_bug(self):
         bugzilla = Bugzilla()

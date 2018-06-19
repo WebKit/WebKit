@@ -1,5 +1,163 @@
 2018-06-19  Daniel Bates  <dabates@apple.com>
 
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
+        Reviewed by Lucas Forschler.
+
+        Part 1 of 2.
+
+        Implements support for EWS processing of patches on security sensitive bugs. We add new
+        endpoints to the status server to support uploading and downloading of patches and associated
+        metadata. When webkit-patch submits a patch for EWS processing it will now upload the contents
+        and metadata for the patch to the status server if the patch is on a security sensitive bug.
+        We teach the EWS machinery in webkitpy to query the status server for a patch only if fetching
+        the patch from Bugzilla is not permitted due to an authorization error.
+
+        Fetching patches from the status server requires an API key. The API key is read from the
+        environment variable WEBKIT_STATUS_API_KEY or the value of the Git configuration key webkit.status_api_key
+        (in that order). Contact me or another Apple engineer for an API key.
+
+        Additionally, default to using HTTPS when querying the status server and expose an optional
+        command line option called --status-host-uses-http to use the former behavior of querying
+        over HTTP.
+
+        * QueueStatusServer/config/authorization.py: Added.
+        (_path_to_authorized_api_keys_file): Returns the absolute filesystem path to the file authorized_api_keys.txt.
+        (_parse_authorized_api_keys):
+        (authorized_api_keys):
+        (_parse_authorization_header): Parses the API key from the Authorization header. We use a
+        custom authentication scheme: "apikey". See remark below for more details.
+        (is_authorized): Checks if the request includes an API key and whether that API key is in the
+        list of authorized keys (performs a case-sensitive match). The API key may be specified either
+        in a HTTP header Authorization or in the query string argument "apikey". When using the HTTP
+        headers approach the Authorization header should have the form: "Authorization: apikey X" where
+        X is the case-sensitive API key.
+        * QueueStatusServer/handlers/fetchattachment.py: Added.
+        (FetchAttachment):
+        (FetchAttachment.get):
+        * QueueStatusServer/handlers/releasepatch.py:
+        (ReleasePatch.check_processed_by_all_queues): Returns whether the specified attachment was processed by all the queues.
+        (ReleasePatch.post): Delete the patch from AppEngine (if we have it) once the patch was processed
+        by all the queues.
+        * QueueStatusServer/handlers/submittoews.py:
+        (SubmitToEWS._should_add_to_ews_queue): Fix a typo in a comment while I am working in this code.
+        * QueueStatusServer/handlers/uploadattachment.py: Added.
+        (UploadAttachment):
+        (UploadAttachment.get):
+        (UploadAttachment.post):
+        * QueueStatusServer/main.py: Add new routes /upload-attachment and /attachment to upload an attachment
+        and view an attachment (or its metadata), respectively.
+        * QueueStatusServer/model/attachmentdata.py: Added.
+        (AttachmentData):
+        (AttachmentData.add_attachment_data):
+        (AttachmentData.lookup_if_exists):
+        (AttachmentData.remove_attachment_data):
+        * QueueStatusServer/templates/uploadattachment.html: Added.
+        * Scripts/webkitpy/common/net/bugzilla/attachment.py:
+        (Attachment.committer):
+        (Attachment):
+        (Attachment.to_json): Serialize to JSON so that we can upload it to AppEngine.
+        (Attachment.from_json): Deserialize from JSON. This is used as part of downloading a patch from AppEngine.
+        * Scripts/webkitpy/common/net/bugzilla/attachment_unittest.py:
+        (AttachmentTest.test_convert_to_json_and_back): Added.
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        (Bug.groups): Returns a frozenset of groups that the bug is a member of.
+        (Bug.is_security_sensitive): Returns whether the bug is in group Security-Sensitive.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries.fetch_attachment_ids_from_review_queue): Modified to take an optional boolean, only_security_bugs,
+        as to whether to only fetch attachment ids for unreviewed patches associated with security bugs. By default, we
+        keep the current behavior and query for the attachment ids of all unreviewed patches that the currently logged in
+        Bugzilla user can see, which may include patches associated with security bugs.
+        (Bugzilla._parse_date): Update for moved and renamed constant. See remark for class Bugzilla.
+        (Bugzilla._parse_bug_dictionary_from_xml): Modified to return an empty dictionary if we do not have access to view the bug.
+        Otherwise, extract the name of the group the bug is in.
+        (Bugzilla.fetch_bug): Modified to return None if we do not have access to view the bug.
+        (Bugzilla._parse_bug_title_from_attachment_page): Extracted out logic to parse the title of the Attachment page
+        from _parse_bug_id_from_attachment_page() so that it can be used from both _parse_bug_id_from_attachment_page()
+        and get_bug_id_for_attachment_id().
+        (Bugzilla): Moved class constant _bugzilla_date_format to Scripts/webkitpy/common/net/bugzilla/constants.py
+        and renamed it to BUGZILLA_DATE_FORMAT.
+        (Bugzilla.AccessError):
+        (Bugzilla.AccessError.__init__):
+        (Bugzilla._parse_bug_id_from_attachment_page): Modified to return a tuple of ("bug id", "error code") so that
+        the caller can know the reason the parse failed if it did. The parse will fail if we do not have access to view
+        the bug.
+        (Bugzilla.bug_id_for_attachment_id): Modified to take a boolean throw_on_access_error (default: False)
+        as to whether to raise a Bugzilla.AccessError exception and pass it through to get_bug_id_for_attachment_id().
+        (Bugzilla.get_bug_id_for_attachment_id): Modified to take a boolean throw_on_access_error (default: False)
+        as to whether to raise a Bugzilla.AccessError exception if we do not have access to the bug associated with
+        the specified attachment id.
+        (Bugzilla.fetch_attachment):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzillaQueries.fetch_attachment_ids_from_review_queue):
+        (MockBugzilla):
+        (MockBugzilla.fetch_attachment):
+        (MockBugzilla.fetch_attachment_contents):
+        (MockBugzilla.add_patch_to_bug):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/bugzilla/constants.py: Added.
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer)
+        (StatusServer.__init__): Modified to take an boolean use_https as to whether to query the server using
+        HTTPS (default: True - use HTTPS).
+        (StatusServer.set_host): Moved logic to compute the server URL from her to _server_url().
+        (StatusServer.set_use_https): Added.
+        (StatusServer.set_api_key): Added.
+        (StatusServer._server_url): Added.
+        (StatusServer._authorization_header_name_and_value_pair): Added.
+        (StatusServer.results_url_for_status): Update to use _server_url().
+        (StatusServer._post_status_to_server): Ditto.
+        (StatusServer._post_svn_revision_to_server): Ditto.
+        (StatusServer._post_work_items_to_server): Ditto.
+        (StatusServer._upload_attachment_to_server): Added.
+        (StatusServer.upload_attachment): Added.
+        (StatusServer._post_work_item_to_ews): Update to use _server_url().
+        (StatusServer.next_work_item): Ditto.
+        (StatusServer._post_release_work_item): Ditto.
+        (StatusServer._post_release_lock): Ditto.
+        (StatusServer._fetch_attachment_page): Added.
+        (StatusServer.fetch_attachment): Added.
+        (StatusServer._fetch_url): Add the API Key to the request if we have one.
+        (StatusServer.patch_status): Update to use _server_url().
+        (StatusServer.svn_revision): Ditto.
+        * Scripts/webkitpy/common/net/statusserver_mock.py:
+        (MockStatusServer.upload_attachment): Added.
+        (MockStatusServer.fetch_attachment): Added.
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        (EWSFeeder.feed): Modified to download patches on security bugs and upload them to the status server (AppEngine).
+        * Scripts/webkitpy/tool/commands/download.py:
+        (ProcessAttachmentsMixin._fetch_list_of_patches_to_process): Modified to handle the case when fetching the
+        bug details from Bugzilla fail, say because we are not allowed to the view the bug.
+        (ProcessBugsMixin._fetch_list_of_patches_to_process): Filter out None values for attachments that we failed
+        to fetch, say because we are not allowed to the view the bug the attachment is on.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.refetch_patch): For now, refetch the patch from the status server. Ideally, we
+        need a way to ask the status server to fetch the patch again from Bugzilla (or at least its metadata) so
+        that the EWS can check the current state of the patch (i.e. is it still marked r?).
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (QueryCommandsTest.test_patches_to_review): Update expected result.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractPatchQueue._next_patch): Fetch the patch  from the status server if we failed to fetch it from
+        Bugzilla because we do not have permission to view it.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (test_upload_of_security_sensitive_patch_with_no_review_and_ews): Added.
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch):
+        (WebKitPatch._status_server_api_key_from_git): Read the API key from the Git configuration key webkit.status_api_key.
+        (WebKitPatch._status_server_api_key): Read the API key from the environment variable WEBKIT_STATUS_API_KEY.
+        (WebKitPatch.handle_global_options): Read the API key and update the state of the StatusServer object, if applicable.
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        (ObsoletePatches.run): Modified to handle the case when fetching the bug details from Bugzilla fail, say because we
+        are not allowed to the view the bug.
+        * Scripts/webkitpy/tool/steps/submittoews.py:
+        (SubmitToEWS.run): Upload the contents of the patch and the Bugzilla metadata about it to the status server
+        if the patch was posted to a security bug.
+
+2018-06-19  Daniel Bates  <dabates@apple.com>
+
         QueueStatusServer: "'NoneType' object has no attribute 'message'" in ReleasePatch.get()
         when attachment is skipped by queue
         https://bugs.webkit.org/show_bug.cgi?id=186748

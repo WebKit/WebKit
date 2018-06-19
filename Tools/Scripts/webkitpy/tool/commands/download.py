@@ -217,20 +217,26 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
 
 class ProcessAttachmentsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
-        return map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args)
+        return filter(None, map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args))
 
 
 class ProcessBugsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         all_patches = []
         for bug_id in args:
-            patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
+            bug = tool.bugs.fetch_bug(bug_id)
+            if not bug:
+                continue
+            patches = bug.reviewed_patches()
             _log.info("%s found on bug %s." % (pluralize(len(patches), "reviewed patch"), bug_id))
             all_patches += patches
         if not all_patches:
             _log.info("No reviewed patches found, looking for unreviewed patches.")
             for bug_id in args:
-                patches = tool.bugs.fetch_bug(bug_id).patches()
+                bug = tool.bugs.fetch_bug(bug_id)
+                if not bug:
+                    continue
+                patches = bug.patches()
                 _log.info("%s found on bug %s." % (pluralize(len(patches), "patch"), bug_id))
                 all_patches += patches
         return all_patches

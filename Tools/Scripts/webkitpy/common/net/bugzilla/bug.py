@@ -69,6 +69,12 @@ class Bug(object):
     def status(self):
         return self.bug_dictionary["bug_status"]
 
+    def groups(self):
+        return self.bug_dictionary.get('groups', frozenset())
+
+    def is_security_sensitive(self):
+        return 'Security-Sensitive' in self.groups()
+
     # Bugzilla has many status states we don't really use in WebKit:
     # https://bugs.webkit.org/page.cgi?id=fields.html#status
     _open_states = ["UNCONFIRMED", "NEW", "ASSIGNED", "REOPENED"]

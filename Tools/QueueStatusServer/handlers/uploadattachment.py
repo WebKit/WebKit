@@ -20,20 +20,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from google.appengine.ext import webapp, db
+from google.appengine.ext.webapp import template
 
-from datetime import datetime
-from webkitpy.common.net.bugzilla.constants import BUGZILLA_DATE_FORMAT
-
-from .attachment import Attachment
+from handlers.updatebase import UpdateBase
+from model.attachmentdata import AttachmentData
 
 
-class AttachmentTest(unittest.TestCase):
-    def test_no_bug_id(self):
-        self.assertEqual(Attachment({'id': 12345}, None).bug_id(), None)
+class UploadAttachment(UpdateBase):
+    def get(self):
+        self.response.out.write(template.render("templates/uploadattachment.html", None))
 
-    def test_convert_to_json_and_back(self):
-        bugzilla_formatted_date_string = datetime.today().strftime(BUGZILLA_DATE_FORMAT)
-        expected_date = datetime.strptime(bugzilla_formatted_date_string, BUGZILLA_DATE_FORMAT)
-        attachment = Attachment({'attach_date': expected_date}, None)
-        self.assertEqual(Attachment.from_json(attachment.to_json()).attach_date(), expected_date)
+    def post(self):
+        attachment_id = self._int_from_request("attachment_id")
+        attachment_metadata = self.request.get("attachment_metadata")
+        attachment_data = self.request.get("attachment_data")
+        AttachmentData.add_attachment_data(attachment_id, str(attachment_metadata), str(attachment_data))
+        self.response.out.write(attachment_id)

@@ -41,7 +41,7 @@ class SubmitToEWS(UpdateBase):
 
     def _should_add_to_ews_queue(self, queue, attachment):
         # This assert() is here to make sure we're not submitting to the commit-queue.
-        # The commit-queue clients check each patch anyway, but there is not sense
+        # The commit-queue clients check each patch anyway, but there is no sense
         # in adding things to the commit-queue when they won't be processed by it.
         assert(queue.is_ews())
         latest_status = attachment.status_for_queue(queue)

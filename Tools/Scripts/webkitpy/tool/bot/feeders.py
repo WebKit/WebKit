@@ -1,4 +1,5 @@
 # Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -84,9 +85,20 @@ class EWSFeeder(AbstractFeeder):
         AbstractFeeder.__init__(self, tool)
 
     def feed(self):
-        ids_needing_review = set(self._tool.bugs.queries.fetch_attachment_ids_from_review_queue(datetime.today() - timedelta(7)))
+        current_time = datetime.today()
+        ids_needing_review = set(self._tool.bugs.queries.fetch_attachment_ids_from_review_queue(current_time - timedelta(7)))
+        security_ids_needing_review = frozenset(self._tool.bugs.queries.fetch_attachment_ids_from_review_queue(current_time - timedelta(7), only_security_bugs=True))
         new_ids = ids_needing_review.difference(self._ids_sent_to_server)
         _log.info("Feeding EWS (%s, %s new)" % (pluralize(len(ids_needing_review), "r? patch"), len(new_ids)))
         for attachment_id in new_ids:  # Order doesn't really matter for the EWS.
+            # Download patches from security sensitive bugs and upload them to the status server since the
+            # EWS queues do not have permission to fetch them directly from Bugzilla.
+            attachment_data = None
+            if attachment_id in security_ids_needing_review:
+                attachment = self._tool.bugs.fetch_attachment(attachment_id)
+                if not attachment:
+                    _log.error('Failed to retrieve attachment {}'.format(attachment_id))
+                    continue
+                self._tool.status_server.upload_attachment(attachment)
             self._tool.status_server.submit_to_ews(attachment_id)
             self._ids_sent_to_server.add(attachment_id)

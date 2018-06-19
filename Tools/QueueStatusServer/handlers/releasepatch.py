@@ -32,12 +32,17 @@ from google.appengine.ext.webapp import template
 from handlers.updatebase import UpdateBase
 from loggers.recordpatchevent import RecordPatchEvent
 from model.attachment import Attachment
+from model.attachmentdata import AttachmentData
 from model.queues import Queue
 
 
 class ReleasePatch(UpdateBase):
     def get(self):
         self.response.out.write(template.render("templates/releasepatch.html", None))
+
+    @staticmethod
+    def _check_processed_by_all_queues(attachment):
+        return all(attachment.position_in_queue(queue) is None for queue in Queue.all_ews())
 
     def post(self):
         queue_name = self.request.get("queue_name")
@@ -58,3 +63,6 @@ class ReleasePatch(UpdateBase):
         RecordPatchEvent.stopped(attachment_id, queue_name, last_status.message)
 
         queue.active_work_items().expire_item(attachment_id)
+
+        if self._check_processed_by_all_queues(attachment):
+            AttachmentData.remove_attachment_data(attachment_id)

@@ -20,20 +20,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
-from datetime import datetime
-from webkitpy.common.net.bugzilla.constants import BUGZILLA_DATE_FORMAT
-
-from .attachment import Attachment
+from config import authorization
+from google.appengine.ext import webapp
+from model.attachmentdata import AttachmentData
 
 
-class AttachmentTest(unittest.TestCase):
-    def test_no_bug_id(self):
-        self.assertEqual(Attachment({'id': 12345}, None).bug_id(), None)
-
-    def test_convert_to_json_and_back(self):
-        bugzilla_formatted_date_string = datetime.today().strftime(BUGZILLA_DATE_FORMAT)
-        expected_date = datetime.strptime(bugzilla_formatted_date_string, BUGZILLA_DATE_FORMAT)
-        attachment = Attachment({'attach_date': expected_date}, None)
-        self.assertEqual(Attachment.from_json(attachment.to_json()).attach_date(), expected_date)
+class FetchAttachment(webapp.RequestHandler):
+    def get(self, action, attachment_id_string):
+        if action not in ["data", "metadata"]:
+            self.error(400)
+            return
+        if not authorization.is_authorized(self.request):
+            # Return an HTTP 404 response code instead of an HTTP 401 to avoid leaking whether
+            # the attachment id is known.
+            self.error(404)
+            return
+        attachment_data = AttachmentData.lookup_if_exists(int(attachment_id_string))
+        if not attachment_data:
+            self.error(404)
+            return
+        if action == "metadata":
+            self.response.out.write(attachment_data.metadata)
+        else:
+            self.response.out.write(attachment_data.data)

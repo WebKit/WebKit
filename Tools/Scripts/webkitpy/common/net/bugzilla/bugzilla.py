@@ -1,5 +1,5 @@
 # Copyright (c) 2011 Google Inc. All rights reserved.
-# Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2009, 2018 Apple Inc. All rights reserved.
 # Copyright (c) 2010 Research In Motion Limited. All rights reserved.
 # Copyright (c) 2013 University of Szeged. All rights reserved.
 #
@@ -45,6 +45,7 @@ from .bug import Bug
 
 from webkitpy.common.config import committers
 import webkitpy.common.config.urls as config_urls
+from webkitpy.common.net.bugzilla.constants import BUGZILLA_DATE_FORMAT
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.system.user import User
@@ -278,8 +279,10 @@ class BugzillaQueries(object):
 
     # NOTE: This is the only client of _fetch_attachment_ids_request_query
     # This method only makes one request to bugzilla.
-    def fetch_attachment_ids_from_review_queue(self, since=None):
+    def fetch_attachment_ids_from_review_queue(self, since=None, only_security_bugs=False):
         review_queue_url = "request.cgi?action=queue&type=review&group=type"
+        if only_security_bugs:
+            review_queue_url += '&product=Security'
         return self._fetch_attachment_ids_request_query(review_queue_url, since)
 
     # This only works if your account has edituser privileges.
@@ -399,12 +402,6 @@ class Bugzilla(object):
         # convert from NavigableString to a real unicode() object using unicode().
         return unicode(soup.string)
 
-    # Example: 2010-01-20 14:31 PST
-    # FIXME: Some bugzilla dates seem to have seconds in them?
-    # Python does not support timezones out of the box.
-    # Assume that bugzilla always uses PST (which is true for bugs.webkit.org)
-    _bugzilla_date_format = "%Y-%m-%d %H:%M:%S"
-
     @classmethod
     def _parse_date(cls, date_string):
         (date, time, time_zone) = date_string.split(" ")
@@ -413,7 +410,7 @@ class Bugzilla(object):
             time += ':0'
         # Ignore the timezone because python doesn't understand timezones out of the box.
         date_string = "%s %s" % (date, time)
-        return datetime.strptime(date_string, cls._bugzilla_date_format)
+        return datetime.strptime(date_string, BUGZILLA_DATE_FORMAT)
 
     def _date_contents(self, soup):
         return self._parse_date(self._string_contents(soup))
@@ -451,6 +448,10 @@ class Bugzilla(object):
 
     def _parse_bug_dictionary_from_xml(self, page):
         soup = BeautifulStoneSoup(page, convertEntities=BeautifulStoneSoup.XML_ENTITIES)
+        bug_element = soup.find('bug')
+        if bug_element and bug_element.get('error', '') == 'NotPermitted':
+            _log.warning("You don't have permission to view this bug.")
+            return {}
         bug = {}
         bug["id"] = int(soup.find("bug_id").string)
         bug["title"] = self._string_contents(soup.find("short_desc"))
@@ -463,6 +464,7 @@ class Bugzilla(object):
         bug["cc_emails"] = [self._string_contents(element) for element in soup.findAll('cc')]
         bug["attachments"] = [self._parse_attachment_element(element, bug["id"]) for element in soup.findAll('attachment')]
         bug["comments"] = [self._parse_log_descr_element(element) for element in soup.findAll('long_desc')]
+        bug['groups'] = frozenset([self._string_contents(group) for group in soup.findAll('group')])
 
         return bug
 
@@ -484,7 +486,10 @@ class Bugzilla(object):
     # FIXME: A BugzillaCache object should provide all these fetch_ methods.
 
     def fetch_bug(self, bug_id):
-        return Bug(self.fetch_bug_dictionary(bug_id), self)
+        bug_dictionary = self.fetch_bug_dictionary(bug_id)
+        if bug_dictionary:
+            return Bug(bug_dictionary, self)
+        return None
 
     def fetch_attachment_contents(self, attachment_id):
         attachment_url = self.attachment_url_for_id(attachment_id)
@@ -493,37 +498,58 @@ class Bugzilla(object):
         self.authenticate()
         return self.open_url(attachment_url).read()
 
+    class AccessError(Exception):
+        NOT_PERMITTED = 1
+        OTHER = 2
+
+        def __init__(self, attachment_id, error_code, bug_title):
+            super(Bugzilla.AccessError, self).__init__('Failed to access {}'.format(attachment_id))
+            self.attachment_id = attachment_id
+            self.error_code = error_code
+            self.bug_title = bug_title
+
+    def _parse_bug_title_from_attachment_page(self, page):
+        return BeautifulSoup(page).find('div', attrs={'id': 'bug_title'})
+
     def _parse_bug_id_from_attachment_page(self, page):
         # The "Up" relation happens to point to the bug.
-        title = BeautifulSoup(page).find('div', attrs={'id':'bug_title'})
-        if not title :
-            _log.warning("This attachment does not exist (or you don't have permissions to view it).")
-            return None
+        title = self._parse_bug_title_from_attachment_page(page)
+        if not title:
+            _log.warning("This attachment does not exist (or you don't have permission to view it).")
+            return (None, Bugzilla.AccessError.OTHER)
+        if title.getText() == 'Bug Access Denied':
+            _log.warning("You don't have permission to view this attachment.")
+            return (None, Bugzilla.AccessError.NOT_PERMITTED)
         match = re.search("show_bug.cgi\?id=(?P<bug_id>\d+)", str(title))
         if not match:
             _log.warning("Unable to parse bug id from attachment")
-            return None
-        return int(match.group('bug_id'))
+            return (None, None)
+        return (int(match.group('bug_id')), None)
 
-    def bug_id_for_attachment_id(self, attachment_id):
-        return NetworkTransaction().run(lambda: self.get_bug_id_for_attachment_id(attachment_id))
+    def bug_id_for_attachment_id(self, attachment_id, throw_on_access_error=False):
+        return NetworkTransaction().run(lambda: self.get_bug_id_for_attachment_id(attachment_id, throw_on_access_error))
 
-    def get_bug_id_for_attachment_id(self, attachment_id):
+    def get_bug_id_for_attachment_id(self, attachment_id, throw_on_access_error=False):
         self.authenticate()
 
         attachment_url = self.attachment_url_for_id(attachment_id, 'edit')
         _log.info("Fetching: %s" % attachment_url)
         page = self.open_url(attachment_url)
-        return self._parse_bug_id_from_attachment_page(page)
+        bug_id, error_code = self._parse_bug_id_from_attachment_page(page)
+        if bug_id:
+            return bug_id
+        if error_code is not None and throw_on_access_error:
+            raise Bugzilla.AccessError(attachment_id, error_code, str(self._parse_bug_title_from_attachment_page(page)))
+        return None
 
     # FIXME: This should just return Attachment(id), which should be able to
     # lazily fetch needed data.
 
-    def fetch_attachment(self, attachment_id):
+    def fetch_attachment(self, attachment_id, throw_on_access_error=False):
         # We could grab all the attachment details off of the attachment edit
         # page but we already have working code to do so off of the bugs page,
         # so re-use that.
-        bug_id = self.bug_id_for_attachment_id(attachment_id)
+        bug_id = self.bug_id_for_attachment_id(attachment_id, throw_on_access_error)
         if not bug_id:
             _log.warning("Unable to parse bug_id from attachment {}".format(attachment_id))
             return None

@@ -20,20 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
-from datetime import datetime
-from webkitpy.common.net.bugzilla.constants import BUGZILLA_DATE_FORMAT
-
-from .attachment import Attachment
+from google.appengine.ext import db
 
 
-class AttachmentTest(unittest.TestCase):
-    def test_no_bug_id(self):
-        self.assertEqual(Attachment({'id': 12345}, None).bug_id(), None)
+class AttachmentData(db.Model):
+    attachment_id = db.IntegerProperty()
+    metadata = db.BlobProperty()
+    data = db.BlobProperty()
 
-    def test_convert_to_json_and_back(self):
-        bugzilla_formatted_date_string = datetime.today().strftime(BUGZILLA_DATE_FORMAT)
-        expected_date = datetime.strptime(bugzilla_formatted_date_string, BUGZILLA_DATE_FORMAT)
-        attachment = Attachment({'attach_date': expected_date}, None)
-        self.assertEqual(Attachment.from_json(attachment.to_json()).attach_date(), expected_date)
+    @classmethod
+    def add_attachment_data(cls, attachment_id, metadata, data):
+        cls.get_or_insert(str(attachment_id), attachment_id=attachment_id, metadata=db.Blob(metadata), data=db.Blob(data))
+
+    @classmethod
+    def lookup_if_exists(cls, attachment_id):
+        return cls.get_by_key_name(str(attachment_id))
+
+    @classmethod
+    def remove_attachment_data(cls, attachment_id):
+        attachment_data = cls.lookup_if_exists(attachment_id)
+        if attachment_data:
+            attachment_data.delete()

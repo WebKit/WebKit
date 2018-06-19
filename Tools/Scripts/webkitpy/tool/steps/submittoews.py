@@ -35,4 +35,9 @@ class SubmitToEWS(AbstractStep):
 
     def run(self, state):
         for attachment_id in state.get('attachment_ids', []):
+            attachment = self._tool.bugs.fetch_attachment(attachment_id)
+            if not attachment:
+                continue  # Either Bugzilla is down or we do not have permission to view the attachment.
+            if attachment.bug().is_security_sensitive():
+                self._tool.status_server.upload_attachment(attachment)
             self._tool.status_server.submit_to_ews(attachment_id)

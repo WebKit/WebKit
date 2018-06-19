@@ -143,7 +143,9 @@ MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Reje
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/contributors.json by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 Feeding commit-queue high priority items [10005], regular items [10000]
 MOCK: update_work_items: commit-queue [10005, 10000]
-Feeding EWS (1 r? patch, 1 new)
+Feeding EWS (2 r? patches, 2 new)
+MOCK: upload_attachment: 10008
+MOCK: submit_to_ews: 10008
 MOCK: submit_to_ews: 10002
 """,
             "handle_unexpected_error": "Mock error message\n",
@@ -159,7 +161,7 @@ class AbstractPatchQueueTest(CommandsTest):
         queue._options = Mock()
         queue._options.port = None
         self.assertIsNone(queue._next_patch())
-        tool.status_server = MockStatusServer(work_items=[2, 10000, 10001])
+        tool.status_server = MockStatusServer(work_items=[2, 10000, 10001, 10008])
         expected_stdout = "MOCK: fetch_attachment: 2 is not a known attachment id\n"  # A mock-only message to prevent us from making mistakes.
         expected_logs = """MOCK: update_status: None Skip
 MOCK: release_work_item: None 2
@@ -168,6 +170,7 @@ MOCK: release_work_item: None 2
         # The patch.id() == 2 is ignored because it doesn't exist.
         self.assertEqual(patch.id(), 10000)
         self.assertEqual(queue._next_patch().id(), 10001)
+        self.assertEqual(queue._next_patch().id(), 10008)
         self.assertEqual(queue._next_patch(), None)    # When the queue is empty
 
 
