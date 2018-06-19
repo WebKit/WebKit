@@ -54,4 +54,6 @@ void JSImmutableButterfly::copyToArguments(ExecState* exec, VirtualRegister firs
     }
 }
 
+static_assert(JSImmutableButterfly::offsetOfData() == sizeof(JSImmutableButterfly), "m_header needs to be adjacent to Data");
+
 } // namespace JSC

@@ -101,12 +101,12 @@ public:
             toButterfly()->contiguous().atUnsafe(index).set(vm, this, value);
     }
 
-private:
     static constexpr size_t offsetOfData()
     {
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSImmutableButterfly));
     }
 
+private:
     static Checked<size_t, RecordOverflow> allocationSize(Checked<size_t, RecordOverflow> numItems)
     {
         return offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>);
