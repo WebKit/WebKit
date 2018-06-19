@@ -1,3 +1,12 @@
+2018-06-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, revert some bad gardening.
+
+        I should not have added image results for a reftest.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001-expected.png: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003-expected.png: Removed.
+
 2018-06-19  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-playstate.html pass reliably
