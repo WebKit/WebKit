@@ -1,8 +1,21 @@
-metavar x, y ::=
+metavar x, y, f ::=
 indexvar i, j, k, n, m ::=
 
 grammar
+td :: top_level_decl_ ::= {{com top-level declaration}}
+    | t f <( tparam0 , .. , tparamk )> ( t0 x0 , .. , tm xm ) { s0 .. sn } :: :: func_decl
+
+tparam :: type_parameter_ ::= {{com type parameter}}
+    | t x :: :: constexpr
+    | x : y0 + .. + yn :: :: type_variable
+
 s :: stmt_ ::= {{com statement}}
+    | if ( e ) s :: :: if_then {{com Desugared}}
+    | while ( e ) s :: :: while {{com Desugared}}
+    | for ( eOrVDecls ; eOrNothing ; eOrNothing' ) s :: :: for {{com Desugared}}
+    | t vdecl0 , .. , vdecln ; :: :: multi_vdecls {{com partly desugared}}
+    % TODO: instead of a type, we should have the elements of a type here, and explicitely resolve typedefs, since they can be shadowed, and need to be in the typing environment
+    | ; :: :: empty {{com Desugared}}
     | if ( e ) s else s' :: :: if
     | do s while ( e ) ; :: :: do_while
     | switch ( e ) { sc0 : sblock0 .. scn : sblockn } :: :: switch
@@ -13,8 +26,6 @@ s :: stmt_ ::= {{com statement}}
     | return ; :: :: return_void
     | trap ; :: :: trap
     | { s0 .. sn } :: :: block
-    | t x ; :: :: variable_decl
-    % TODO: instead of a type, we should have the elements of a type here, and explicitely resolve typedefs, since they can be shadowed, and need to be in the typing environment
     | e ; :: :: effectful_expr
 
 sc :: switch_case_ ::=
@@ -24,37 +35,30 @@ sc :: switch_case_ ::=
 sblock :: switch_block_ ::=
     | s0 .. sn :: :: statements
 
-fs :: full_statement_ ::= {{com full statement (pre-desugaring)}}
-    | if ( e ) fs :: :: if_then
-    | if ( e ) fs else fs' :: :: if_then_else
-    | do fs while ( e ) ; :: :: do_while
-    | for ( e ; e' ; e'' ) fs :: :: for_three_expr
-    | while ( e ) fs :: :: while
-    | switch ( e ) { sc0 : fsblock0 .. scn : fsblockn } :: :: switch
-    | break ; :: :: break
-    | continue ; :: :: continue
-    | fallthrough ; :: :: fallthrough
-    | return e ; :: :: return
-    | return ; :: :: return_void
-    | trap ; :: :: trap
-    | { fs0 .. fsn } :: :: block
-    | ; :: :: empty_stmt
-    | t vdecl0 , .. , vdecln ; :: :: vdecls
-    % TODO: instead of a type, we should have the elements of a type here, and explicitely resolve typedefs, since they can be shadowed, and need to be in the typing environment
-    | e ; :: :: effectful_expr
-
-fsblock :: full_switch_block_ ::=
-    | fs0 .. fsn :: :: statements
-
 vdecl :: variable_declaration_ ::=
     | x :: :: uninitialized
     | x = e :: :: initialized
 
+eOrVDecls :: expr_or_vdecl_ ::=
+    | e :: :: expr
+    | t vdecl0 , .. , vdecln :: :: vdecl
+    | :: :: nothing
+
+eOrNothing :: expr_or_nothing_ ::=
+    | e :: :: expr
+    | :: :: nothing
+
 e :: expr_ ::= {{com expression}}
+    | null :: :: lit_null
     | true :: :: lit_true
     | false :: :: lit_false
-    | e || e' :: :: or
-    | e && e' :: :: and
+    | ( e ) :: :: parens
+    | e , e' :: :: comma
+    | e || e' :: :: or {{tex [[e]]\:{||}\:[[e']]}}
+    | e && e' :: :: and {{tex [[e]]\:{\&\&}\:[[e']]}}
+    | ! e :: :: not
+    | e == e' :: :: equals_operator
+    | e != e' :: :: not_equals_operator {{com Desugared}} {{tex [[e]]\;!\mkern-\thickmuskip=[[e']]}}
     | e = e' :: :: assignment
     | x :: :: variable_name
     | * e :: :: ptr_deref
@@ -62,16 +66,17 @@ e :: expr_ ::= {{com expression}}
     | @ e :: :: array_reference_making
     | e [ e' ] :: :: array_index
 
-G {{tex \Gamma}} :: env_ ::= {{com typing environment}}
-    | G [ x : t ] :: :: update_with_var {{com update the environment with "x is of type t"}}
-    | G [ x = t ] :: :: update_with_typedef {{com update the environment with "x is a typedef of type t"}}
+G {{tex \Gamma}} , Gglobal {{tex \Gamma_{global} }} :: env_ ::= {{com typing environment}}
+    | G [ x : t ] :: :: update_with_var {{com update the environment with "$x$ is of type $\tau$"}}
+    | G [ x = t ] :: :: update_with_typedef {{com update the environment with "$x$ is a typedef of type $\tau$"}}
+    | G [ x : { y0 , .. , yn } ] :: :: update_with_tvar {{com update the environment with "$x$ is a type variable that implements all of the protocol $y_0$ to $y_n$"}}
 
 B :: behaviour_ ::= {{com statement behaviour}}
     | { b0 , .. , bn } :: :: set
     | B + B' :: :: union {{tex [[B]] \cup [[B']]}}
     | B \ B' :: :: difference {{tex [[B]] \backslash [[B']]}}
     | U B0 .. Bn :: :: big_union
-    | ( B ) :: :: parens {{tex [[B]]}} {{com artificial, teaches ott the precedence of previous rules}}
+    | ( B ) :: :: parens
 
 b :: single_behaviour_ ::=
     | Return t :: :: return
@@ -94,14 +99,15 @@ terminals :: terminals_ ::=
     | U :: :: big_union {{tex \bigcup}}
     | |- :: :: vdash {{tex \vdash}}
     | --> :: :: desugars {{tex \leadsto}}
+    | <( :: :: generic_open {{tex {<} }} % For removing extraneous spaces around '<' and '>' when they are used in that position.
+    | )> :: :: generic_close {{tex {>} }}
 
 formula :: formula_ ::=
     | judgement :: :: judgement
     | formula0 .. formulan :: :: several_formula
     | n > 0 :: :: int_positive
-    | n > 1 :: :: int_greater_than_one
     | x : t in G :: :: env_mapping_exists {{tex [[x]] : [[t]] \in [[G]]}}
-    | G |- isInteger ( t ) :: :: is_integer 
+    | G |- isInteger ( t ) :: :: is_integer
     | s != s' :: :: stmt_not_eq {{tex [[s]] \neq [[s']]}}
     | b in B :: :: behaviour_in {{tex [[b]] \in [[B]]}}
     | b not in B :: :: behaviour_not_in {{tex [[b]] \not\in [[B]]}}
@@ -110,32 +116,67 @@ formula :: formula_ ::=
 defns
 desugaring :: '' ::=
 defn
-fs --> fs' :: :: desugaring :: '' {{com Desugaring statements}} by
-% TODO: decide whether I even want to make the desugaring so formal.
+s --> s' :: :: desugaring_stmt :: '' {{com Desugaring statements}} by
 
     ----------------------------- :: if_then
-    if (e) fs --> if (e) fs else {}
+    if (e) s --> if (e) s else {}
 
     -------- :: empty_stmt
     ; --> {}
 
     -------------------------------------- :: while
-    while (e) fs --> if (e) do fs while (e);
+    while (e) s --> if (e) do s while (e);
 
-    ------------------------------------------------- :: for_three_exprs
-    for (e ; e' ; e'') fs --> {e; while(e') {fs e'';}}
-    % TODO: cover all variations of for loops: if the condition is empty, if the increment is empty, if the initialization is empty,
-    % if two of the three are empty, if all three are empty, if the initialization is a vdecl and not an expression,
-    % etc..
+    -------------------------------------------------------------------------- :: for_empty_cond
+    for (eOrVDecls ; ; eOrNothing) s --> for (eOrVDecls ; true ; eOrNothing) s
 
-    k > 1
+    --------------------------------------------------------------------------- :: for_empty_incr
+    for (eOrVDecls ; eOrNothing ; ) s --> for (eOrVDecls ; eOrNothing ; null) s
+
+    ------------------------------------------------ :: for_init_expr
+    for (e ; e' ; e'') s --> {e; while(e') {s e'';}}
+
+    ------------------------------------------------ :: for_init_empty
+    for ( ; e' ; e'') s --> while(e') {s e'';}
+
+    ------------------------------------------------------------------------------------------ :: for_init_vdecls
+    for (t vdecl0 , .. , vdecln ; e' ; e'') s --> {t vdecl0 , .. , vdecln; while(e') {s e'';}}
+
+    k > 0
     -------------------------------------------------------------------------------------- :: multiple_vdecls
-    { fs0..fsn t vdecl0, vdecl1, .., vdeclk; fs'0..fs'm} --> {fs0..fsn t vdecl0; t vdecl1, .., vdeclk; fs'0..fs'm}
+    { s0..sn t vdecl0, vdecl1, .., vdeclk; s'0..s'm} --> {s0..sn t vdecl0; t vdecl1, .., vdeclk; s'0..s'm}
 
     ------------------------------------------------------------- :: initialized_vdecl
-    { fs0..fsn t x = e; fs'0..fs'm} --> {fs0..fsn t x; x = e; fs'0..fs'm}
+    { s0..sn t x = e; s'0..s'm} --> {s0..sn t x; x = e; s'0..s'm}
 
-% TODO: desugar expressions, namely replace e != e' by ! (e == e'); and replace foo(e0,..,en) by foo<>(e0,..,en)
+% TODO: replace foo(e0,..,en) by foo<>(e0,..,en)
+% Both in expressions, and in top-level declarations
+defn
+e --> e' :: :: desugaring_expr :: '' {{com Desugaring expressions}} by
+    
+    ----------------------- :: not_equals_operator
+    e != e' --> ! (e == e')
+
+defns
+well_formed :: '' ::=
+defn
+G |- well_formed ( td ) :: :: top_level :: '' by
+
+    G |- {s0..sn} : {Return t}
+    ---------------------------------- :: func_trivial
+    G |- well_formed(t f<()>() {s0..sn})
+
+    G[x0 : LVal(t0)] |- well_formed (t f<()>(t1 x1, .., tm xm) {s0..sn})
+    -------------------------------------------------------------------- :: func_param
+    G |- well_formed (t f<()>(t0 x0, t1 x1, .., tm xm) {s0..sn})
+
+    G[x : {y0, .., yi}] |- well_formed (t f<(tparam0, .., tparamk)> (t0 x0, .., tm xm) {s0..sn}) 
+    -------------------------------------------------------------------------------------------- :: func_tvar
+    G |- well_formed (t f<(x : y0 + .. + yi, tparam0, .., tparamk)> (t0 x0, .., tm xm) {s0..sn}) 
+
+    G[x : t'] |- well_formed (t f<(tparam0, .., tparamk)> (t0 x0, .., tm xm) {s0..sn}) 
+    ---------------------------------------------------------------------------------- :: func_constexpr
+    G |- well_formed (t f<(t' x, tparam0, .., tparamk)> (t0 x0, .., tm xm) {s0..sn}) 
 
 defns
 typing :: '' ::=
@@ -192,18 +233,18 @@ G |- s : B :: :: typing_statement :: '' by
     % Note: there is a minor ambiguity between this rule and the next two, but it is harmless as the next two rules both fail in the next step
     % if they are applied where s is a variable declaration.
     % Note: the second premise prevents redeclaration of a variable in the same scope it was declared in.
-    % Implemented naively it takes O(n**2) to check, but can trivially be optimized.
+    % Implemented naively it takes O(n**2) to check, but can easily be optimized.
 
     G |- s : B
     ------------ :: trivial_block
     G |- {s} : B
 
     G |- s : B
-    G |- {s0 .. sn} : B'
+    G |- {s1 .. sn} : B'
     n > 0
     Nothing in B
     -------------------------------------- :: block
-    G |- {s s0 .. sn} : (B \ {Nothing}) + B'
+    G |- {s s1 .. sn} : (B \ {Nothing}) + B'
     % Note: the last premise forbids trivially dead code. It is optional and could be removed with no consequences on the rest of the language.
 
     G |- e : t
@@ -230,11 +271,26 @@ G |- sblock : B :: :: typing_switch_block :: '' by
 defn
 G |- e : t :: :: typing_rval :: '' by
 
+    ------------------- :: null_lit_array_ref
+    G |- null : Ref (t)
+
+    ------------------- :: null_lit_ptr
+    G |- null : Ptr (t)
+
     ---------------- :: literal_true
     G |- true : bool
 
     ----------------- :: literal_false
     G |- false : bool
+
+    G |- e : t
+    ------------ :: parens
+    G |- (e) : t
+
+    G |- e : t
+    G |- e' : t'
+    --------------- :: comma
+    G |- e, e' : t'
 
     G |- e : bool
     G |- e' : bool
@@ -245,6 +301,10 @@ G |- e : t :: :: typing_rval :: '' by
     G |- e' : bool
     ------------------- :: and
     G |- e && e' : bool
+
+    G |- e : bool
+    -------------- :: not
+    G |- !e : bool
 
     G |- e : LVal(t)
     G |- e' : t

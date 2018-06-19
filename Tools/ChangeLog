@@ -1,3 +1,18 @@
+2018-06-19  Robin Morisset  <rmorisset@apple.com>
+
+        [WSL] Improving the typing rules
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        Several changes:
+        - added a "well_formed" judgement, and defined it on function definitions (tying together with the typing rules)
+        - cleaned up the desugaring relation (it now works on normal statements, and deals with for loops correctly)
+        - added the null literal, the comma operator, the not operator, and parens
+        - fixed a bunch of minor typographic issues
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL_type.ott:
+
 2018-06-18  Robin Morisset  <rmorisset@apple.com>
 
         [WSL] Starting to write the spec
