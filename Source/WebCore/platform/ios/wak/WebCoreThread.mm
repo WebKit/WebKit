@@ -866,9 +866,7 @@ WebThreadContext* WebThreadCurrentContext(void)
 void WebThreadEnable(void)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!WebCore::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
-    if (WebCore::IOSApplication::isSplashBoardd())
-        RELEASE_LOG_FAULT(Threading, "splashboardd enabled WebThread.");
-    else if (WebCore::IOSApplication::isSpringBoard())
+    if (WebCore::IOSApplication::isSpringBoard())
         RELEASE_LOG_FAULT(Threading, "SpringBoard enabled WebThread.");
 
     static std::once_flag flag;

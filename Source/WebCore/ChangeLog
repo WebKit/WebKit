@@ -1,3 +1,17 @@
+2018-06-19  David Kilzer  <ddkilzer@apple.com>
+
+        Revert: Add logging when splashboardd enables WebThread
+        <https://webkit.org/b/186793>
+        <rdar://problem/41213255>
+
+        Turns out this isn't needed, so reverting r232959.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isSplashBoardd): Deleted.
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadEnable):
+
 2018-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Vend username text content type when using scribble in login fields

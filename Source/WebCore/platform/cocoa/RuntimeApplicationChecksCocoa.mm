@@ -206,12 +206,6 @@ bool IOSApplication::isMobileStore()
     return isMobileStore;
 }
 
-bool IOSApplication::isSplashBoardd()
-{
-    static bool isSplashBoardd = applicationBundleIsEqualTo(ASCIILiteral("splashboardd"));
-    return isSplashBoardd;
-}
-
 bool IOSApplication::isSpringBoard()
 {
     static bool isSpringBoard = applicationBundleIsEqualTo(ASCIILiteral("com.apple.springboard"));
