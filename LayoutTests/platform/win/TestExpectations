@@ -4117,6 +4117,7 @@ webkit.org/b/186562 storage/indexeddb/modern/leak-1.html [ Failure ]
 webkit.org/b/186562 svg/animations/animation-leak-list-property-instances.html [ Failure ]
 webkit.org/b/186562 workers/bomb.html [ Skip ]
 
+webkit.org/b/186807 imported/mozilla/css-animations/test_animation-playstate.html [ Failure ]
 webkit.org/b/186807 imported/mozilla/css-transitions/test_animation-cancel.html [ Failure ]
 webkit.org/b/186807 imported/mozilla/css-transitions/test_animation-ready.html [ Failure ]
 webkit.org/b/186807 transitions/transition-to-from-auto.html [ Failure ]
