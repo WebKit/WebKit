@@ -773,10 +773,14 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     if (clientIdentifiers.isEmpty()) {
         ASSERT(!iterator->value.terminateServiceWorkersTimer);
         iterator->value.terminateServiceWorkersTimer = std::make_unique<Timer>([clientOrigin, this] {
+            Vector<SWServerWorker*> workersToTerminate;
             for (auto& worker : m_runningOrTerminatingWorkers.values()) {
                 if (worker->isRunning() && worker->origin() == clientOrigin)
-                    terminateWorker(worker);
+                    workersToTerminate.append(worker.ptr());
             }
+            for (auto* worker : workersToTerminate)
+                terminateWorker(*worker);
+
             if (!m_clientsBySecurityOrigin.contains(clientOrigin.clientOrigin)) {
                 if (auto* connection = SWServerToContextConnection::connectionForOrigin(clientOrigin.clientOrigin))
                     connection->connectionMayNoLongerBeNeeded();

@@ -1,3 +1,18 @@
+2018-06-19  Youenn Fablet  <youenn@apple.com>
+
+        Need to properly handle removal of worker in SWServer::unregisterServiceWorkerClient timer lambda
+        https://bugs.webkit.org/show_bug.cgi?id=186674
+        <rdar://problem/40974812>
+
+        Reviewed by Chris Dumez.
+
+        While looping over the running workers map and trying to terminate some of the workers,
+        there is a chance that the map will be modified synchronously which may affect iterating the map.
+        This patch removes that potential threat.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::unregisterServiceWorkerClient):
+
 2018-06-19  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-playstate.html pass reliably
