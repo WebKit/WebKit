@@ -145,7 +145,8 @@ class StatusServer:
 
     def upload_attachment(self, attachment):
         _log.info('Uploading attachment {} to status server'.format(attachment.id()))
-        return NetworkTransaction().run(lambda: self._upload_attachment_to_server(attachment.id(), attachment.to_json(), attachment.contents()))
+        # FIXME: Remove argument convert_404_to_None once we update AppEngine to support uploading attachments.
+        return NetworkTransaction(convert_404_to_None=True).run(lambda: self._upload_attachment_to_server(attachment.id(), attachment.to_json(), attachment.contents()))
 
     def _post_work_item_to_ews(self, attachment_id):
         submit_to_ews_url = '{}/submit-to-ews'.format(self._server_url())

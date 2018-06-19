@@ -1,3 +1,42 @@
+2018-06-19  Daniel Bates  <dabates@apple.com>
+
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
+        Reviewed by Lucas Forschler
+
+        Part 2 of 2.
+
+        Adds a new Bugzilla extension that will automatically CC the EWS feeder queue
+        on each bug that has a patch up for review, including security bugs. This allows
+        the WebKit OpenSource Project to use an unprivileged Bugzilla account for the
+        EWS feeder queue.
+
+        * extensions/EWS/Config.pm: Added.
+        * extensions/EWS/Extension.pm: Added.
+        (new): Initialize some bookkeeping variables we use to track whether we have seen
+        a value change event for the review flag and whether we need to CC the feeder. The latter
+        we need to track because we can only make changes to the CC list in the callback
+        bug_start_of_update().
+        (object_before_set): This callback is called each time a setter is called on a Bugzilla
+        object. Check if the review flag was set to ? and do some bookkeeping. Although tempting
+        to do such work in the callback flag_end_of_update() instead of object_before_set() doing
+        such work would come AFTER we get callback bug_start_of_update() and hence after we have
+        committed the CC list of the bug to the database. Moreover, the "interface to [flag_end_of_update()]
+        is UNSTABLE and it may change in the future" according to <https://github.com/bugzilla/bugzilla/blob/d7cf1c91949248222806f5a32f485b12eab8806f/Bugzilla/Hook.pm#L797>.
+        (bug_start_of_update): Add the EWS feeder queue to the list of CC members of the bug, if needed.
+        (config_add_panels): Adds a new panel to the Administration Parameters screen.
+        (isReviewFlag): Helper function that returns whether the specified Bugzilla::Object represents
+        the review flag.
+        * extensions/EWS/docs/en/rst/index-admin.rst: Added.
+        * extensions/EWS/lib/ParamsPanelUI.pm: Added.
+        (checkUser): Helper function to determine if there exists a Bugzilla user corresponding to
+        the specified login name.
+        (get_param_list): Add configurable field to the Administration Parameters screen to specify
+        the login name of the EWS feeder queue.
+        * extensions/EWS/template/en/default/admin/params/ews.html.tmpl: Added.
+
 2018-05-22  Roy Reapor  <rreapor@apple.com>
 
         Host jquery on webkit.org instead of 3rd party
