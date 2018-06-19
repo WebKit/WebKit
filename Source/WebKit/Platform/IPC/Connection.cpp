@@ -44,11 +44,6 @@
 
 namespace IPC {
 
-#if PLATFORM(COCOA)
-// The IPC connection gets killed if the incoming message queue reaches 50000 messages before the main thread has a chance to dispatch them.
-const size_t maxPendingIncomingMessagesKillingThreshold { 50000 };
-#endif
-
 struct Connection::ReplyHandler {
     RefPtr<FunctionDispatcher> dispatcher;
     Function<void (std::unique_ptr<Decoder>)> handler;
@@ -244,7 +239,6 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
-    , m_incomingMessagesThrottler(*this, &Connection::dispatchIncomingMessages)
     , m_waitingForMessage(nullptr)
     , m_shouldWaitForSyncReplies(true)
 {
@@ -899,28 +893,11 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
 {
     {
         std::lock_guard<Lock> lock(m_incomingMessagesMutex);
-
-#if PLATFORM(COCOA)
-        if (m_wasKilled)
-            return;
-
-        if (m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
-            if (kill()) {
-                RELEASE_LOG_ERROR(IPC, "%p - Connection::enqueueIncomingMessage: Over %lu incoming messages have been queued without the main thread processing them, killing the connection as the remote process seems to be misbehaving", this, maxPendingIncomingMessagesKillingThreshold);
-                m_incomingMessages.clear();
-            }
-            return;
-        }
-#endif
-
         m_incomingMessages.append(WTFMove(incomingMessage));
-
-        if (m_incomingMessages.size() != 1)
-            return;
     }
 
     RunLoop::main().dispatch([protectedThis = makeRef(*this)]() mutable {
-        protectedThis->dispatchIncomingMessages();
+        protectedThis->dispatchOneMessage();
     });
 }
 
@@ -972,90 +949,19 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }
 
-Connection::MessagesThrottler::MessagesThrottler(Connection& connection, DispatchMessagesFunction dispatchMessages)
-    : m_dispatchMessagesTimer(RunLoop::main(), &connection, dispatchMessages)
-    , m_connection(connection)
-    , m_dispatchMessages(dispatchMessages)
+void Connection::dispatchOneMessage()
 {
-    ASSERT(RunLoop::isMain());
-}
-
-void Connection::MessagesThrottler::scheduleMessagesDispatch()
-{
-    ASSERT(RunLoop::isMain());
-
-    if (m_throttlingLevel) {
-        m_dispatchMessagesTimer.startOneShot(0_s);
-        return;
-    }
-    RunLoop::main().dispatch([this, protectedConnection = makeRefPtr(&m_connection)]() mutable {
-        (protectedConnection.get()->*m_dispatchMessages)();
-    });
-}
-
-size_t Connection::MessagesThrottler::numberOfMessagesToProcess(size_t totalMessages)
-{
-    ASSERT(RunLoop::isMain());
-
-    // Never dispatch more than 600 messages without returning to the run loop, we can go as low as 60 with maximum throttling level.
-    static const size_t maxIncomingMessagesDispatchingBatchSize { 600 };
-    static const unsigned maxThrottlingLevel = 9;
-
-    size_t batchSize = maxIncomingMessagesDispatchingBatchSize / (m_throttlingLevel + 1);
-
-    if (totalMessages > maxIncomingMessagesDispatchingBatchSize)
-        m_throttlingLevel = std::min(m_throttlingLevel + 1, maxThrottlingLevel);
-    else if (m_throttlingLevel)
-        --m_throttlingLevel;
-
-    return std::min(totalMessages, batchSize);
-}
-
-void Connection::dispatchIncomingMessages()
-{
-    ASSERT(RunLoop::isMain());
-
     std::unique_ptr<Decoder> message;
 
-    size_t messagesToProcess = 0;
     {
         std::lock_guard<Lock> lock(m_incomingMessagesMutex);
         if (m_incomingMessages.isEmpty())
             return;
 
         message = m_incomingMessages.takeFirst();
-
-        // Incoming messages may get adding to the queue by the IPC thread while we're dispatching the messages below.
-        // To make sure dispatchIncomingMessages() yields, we only ever process messages that were in the queue when
-        // dispatchIncomingMessages() was called. Additionally, the MessageThrottler may further cap the number of
-        // messages to process to make sure we give the main run loop a chance to process other events.
-        messagesToProcess = m_incomingMessagesThrottler.numberOfMessagesToProcess(m_incomingMessages.size());
-        if (messagesToProcess < m_incomingMessages.size()) {
-            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: IPC throttling was triggered (has %lu pending incoming messages, will only process %lu before yielding)", this, m_incomingMessages.size(), messagesToProcess);
-            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %{public}s::%{public}s", this, message->messageReceiverName().toString().data(), message->messageName().toString().data());
-        }
     }
 
     dispatchMessage(WTFMove(message));
-
-    for (size_t i = 1; i < messagesToProcess; ++i) {
-        {
-            std::lock_guard<Lock> lock(m_incomingMessagesMutex);
-            if (m_incomingMessages.isEmpty())
-                return;
-
-            message = m_incomingMessages.takeFirst();
-        }
-        dispatchMessage(WTFMove(message));
-    }
-
-    {
-        std::lock_guard<Lock> lock(m_incomingMessagesMutex);
-        if (m_incomingMessages.isEmpty())
-            return;
-    }
-
-    m_incomingMessagesThrottler.scheduleMessagesDispatch();
 }
 
 void Connection::wakeUpRunLoop()

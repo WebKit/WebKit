@@ -623,7 +623,6 @@ bool Connection::kill()
 {
     if (m_xpcConnection) {
         xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
-        m_wasKilled = true;
         return true;
     }
 

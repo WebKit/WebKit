@@ -1,5 +1,18 @@
 2018-06-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r232947.
+
+        Caused an API test to time out
+
+        Reverted changeset:
+
+        "Implement IPC throttling to keep the main thread responsive
+        when a process misbehaves"
+        https://bugs.webkit.org/show_bug.cgi?id=186607
+        https://trac.webkit.org/changeset/232947
+
+2018-06-19  Chris Dumez  <cdumez@apple.com>
+
         HTTPHeaderMap wastes 226KB of HashTable capacity on cnn.com
         https://bugs.webkit.org/show_bug.cgi?id=186735
         <rdar://problem/41189164>
