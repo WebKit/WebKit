@@ -1,3 +1,13 @@
+2018-06-19  Don Olmstead  <don.olmstead@sony.com>
+
+        WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations does not invoke callback when Service Workers disabled
+        https://bugs.webkit.org/show_bug.cgi?id=186809
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations):
+
 2018-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Vend username text content type when using scribble in login fields

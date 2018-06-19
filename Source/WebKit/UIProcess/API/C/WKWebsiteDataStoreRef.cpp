@@ -468,6 +468,7 @@ void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDataStoreRef
     });
 #else
     UNUSED_PARAM(dataStoreRef);
+    callback(context);
 #endif
 }
 
