@@ -52,7 +52,7 @@ static inline bool isSameOrigin(const URL& url, const SecurityOrigin* origin)
     return url.protocolIsData() || url.protocolIsBlob() || !origin || origin->canRequest(url);
 }
 
-NetworkLoadChecker::NetworkLoadChecker(NetworkConnectionToWebProcess& connection, uint64_t webPageID, uint64_t webFrameID, ResourceLoadIdentifier loadIdentifier, FetchOptions&& options, PAL::SessionID sessionID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy, String&& referrer)
+NetworkLoadChecker::NetworkLoadChecker(NetworkConnectionToWebProcess& connection, uint64_t webPageID, uint64_t webFrameID, ResourceLoadIdentifier loadIdentifier, FetchOptions&& options, PAL::SessionID sessionID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics)
     : m_connection(connection)
     , m_webPageID(webPageID)
     , m_webFrameID(webFrameID)
@@ -64,6 +64,7 @@ NetworkLoadChecker::NetworkLoadChecker(NetworkConnectionToWebProcess& connection
     , m_origin(WTFMove(sourceOrigin))
     , m_preflightPolicy(preflightPolicy)
     , m_referrer(WTFMove(referrer))
+    , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
 {
     m_isSameOriginRequest = isSameOrigin(m_url, m_origin.get());
     switch (options.credentials) {
@@ -84,6 +85,9 @@ NetworkLoadChecker::~NetworkLoadChecker() = default;
 void NetworkLoadChecker::check(ResourceRequest&& request, ValidationHandler&& handler)
 {
     ASSERT(!isChecking());
+
+    if (m_shouldCaptureExtraNetworkLoadMetrics)
+        m_loadInformation.request = request;
 
     m_firstRequestHeaders = request.httpHeaderFields();
     // FIXME: We should not get this information from the request but directly from some NetworkProcess setting.
@@ -333,13 +337,16 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         m_sessionID,
         m_storedCredentialsPolicy
     };
-    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
+    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [this, request = WTFMove(request), handler = WTFMove(handler), isRedirected = isRedirected()](auto&& error) mutable {
         RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success: %d forRedirect? %d", error.isNull(), isRedirected);
 
         if (!error.isNull()) {
             handler(makeUnexpected(WTFMove(error)));
             return;
         }
+
+        if (m_shouldCaptureExtraNetworkLoadMetrics)
+            m_loadInformation.transactions.append(m_corsPreflightChecker->takeInformation());
 
         auto corsPreflightChecker = WTFMove(m_corsPreflightChecker);
         updateRequestForAccessControl(request, *m_origin, m_storedCredentialsPolicy);
@@ -404,10 +411,17 @@ void NetworkLoadChecker::sendCSPViolationReport(URL&& reportURL, Ref<FormData>&&
         m_connection->connection().send(Messages::WebPage::SendCSPViolationReport { m_webFrameID, WTFMove(reportURL), IPC::FormDataReference { WTFMove(report) } }, m_webPageID);
 }
 
-void NetworkLoadChecker::enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEvent::Init&& eventInit)
+void NetworkLoadChecker::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&& eventInit)
 {
     if (m_webPageID && m_webFrameID)
         m_connection->connection().send(Messages::WebPage::EnqueueSecurityPolicyViolationEvent { m_webFrameID, WTFMove(eventInit) }, m_webPageID);
+}
+
+void NetworkLoadChecker::storeRedirectionIfNeeded(const ResourceRequest& request, const ResourceResponse& response)
+{
+    if (!m_shouldCaptureExtraNetworkLoadMetrics)
+        return;
+    m_loadInformation.transactions.append(NetworkTransactionInformation { NetworkTransactionInformation::Type::Redirection, ResourceRequest { request }, ResourceResponse { response }, { } });
 }
 
 } // namespace WebKit

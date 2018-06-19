@@ -26,8 +26,7 @@
 #pragma once
 
 #include "NetworkDataTask.h"
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
+#include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
@@ -52,11 +51,13 @@ public:
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;
 
-    NetworkCORSPreflightChecker(Parameters&&, CompletionCallback&&);
+    NetworkCORSPreflightChecker(Parameters&&, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&&);
     ~NetworkCORSPreflightChecker();
     const WebCore::ResourceRequest& originalRequest() const { return m_parameters.originalRequest; }
 
     void startPreflight();
+
+    WebCore::NetworkTransactionInformation takeInformation();
 
 private:
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
@@ -72,6 +73,8 @@ private:
     WebCore::ResourceResponse m_response;
     CompletionCallback m_completionCallback;
     RefPtr<NetworkDataTask> m_task;
+    bool m_shouldCaptureExtraNetworkLoadMetrics { false };
+    WebCore::NetworkTransactionInformation m_loadInformation;
 };
 
 } // namespace WebKit

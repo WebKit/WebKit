@@ -39,9 +39,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(Parameters&& parameters, CompletionCallback&& completionCallback)
+NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
     : m_parameters(WTFMove(parameters))
     , m_completionCallback(WTFMove(completionCallback))
+    , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
 {
 }
 
@@ -67,6 +68,9 @@ void NetworkCORSPreflightChecker::startPreflight()
     if (!m_parameters.userAgent.isNull())
         loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);
 
+    if (m_shouldCaptureExtraNetworkLoadMetrics)
+        m_loadInformation = NetworkTransactionInformation { NetworkTransactionInformation::Type::Preflight, loadParameters.request, { }, { } };
+
     if (auto* networkSession = SessionTracker::networkSession(loadParameters.sessionID)) {
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task->resume();
@@ -76,6 +80,9 @@ void NetworkCORSPreflightChecker::startPreflight()
 
 void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceResponse&& response, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler)
 {
+    if (m_shouldCaptureExtraNetworkLoadMetrics)
+        m_loadInformation.response = WTFMove(response);
+
     RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection");
     completionHandler({ });
     m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
@@ -97,6 +104,10 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::Authenticat
 void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession");
+
+    if (m_shouldCaptureExtraNetworkLoadMetrics)
+        m_loadInformation.response = response;
+
     m_response = WTFMove(response);
     completionHandler(PolicyAction::Use);
 }
@@ -106,8 +117,11 @@ void NetworkCORSPreflightChecker::didReceiveData(Ref<WebCore::SharedBuffer>&&)
     RELEASE_LOG_IF_ALLOWED("didReceiveData");
 }
 
-void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceError& preflightError, const WebCore::NetworkLoadMetrics&)
+void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceError& preflightError, const WebCore::NetworkLoadMetrics& metrics)
 {
+    if (m_shouldCaptureExtraNetworkLoadMetrics)
+        m_loadInformation.metrics = metrics;
+
     if (!preflightError.isNull()) {
         RELEASE_LOG_IF_ALLOWED("didCompleteWithError");
         auto error = preflightError;
@@ -143,6 +157,12 @@ void NetworkCORSPreflightChecker::cannotShowURL()
 {
     RELEASE_LOG_IF_ALLOWED("cannotShowURL");
     m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response was blocked"), ResourceError::Type::AccessControl });
+}
+
+NetworkTransactionInformation NetworkCORSPreflightChecker::takeInformation()
+{
+    ASSERT(m_shouldCaptureExtraNetworkLoadMetrics);
+    return WTFMove(m_loadInformation);
 }
 
 } // Namespace WebKit

@@ -1,3 +1,54 @@
+2018-06-19  Youenn Fablet  <youenn@apple.com>
+
+        Network Preflights do not show in WebInspector after moving CORS checks to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=186312
+        <rdar://problem/40495434>
+
+        Reviewed by Chris Dumez.
+
+        Add buffering of all request/response of a given load, including redirections and preflights.
+        This buffering is switched on/off by a boolean which is switched on in case Web Inspector is launched.
+
+        Buffering is done in NetworkLoadChecker.
+        We add ways to retrieve preflight information from NetworkCORSPreflightChecker.
+
+        Implement LoaderStrategy new methods through sync IPC.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::NetworkCORSPreflightChecker):
+        (WebKit::NetworkCORSPreflightChecker::startPreflight):
+        (WebKit::NetworkCORSPreflightChecker::willPerformHTTPRedirection):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveResponseNetworkSession):
+        (WebKit::NetworkCORSPreflightChecker::didCompleteWithError):
+        (WebKit::NetworkCORSPreflightChecker::takeInformation):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkLoadInformationRequest):
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkLoadIntermediateInformation):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformation):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationMetrics):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationResponse): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::check):
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::checkResponse):
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        (WebKit::NetworkLoadChecker::storeRedirection):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::takeNetworkLoadInformation):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        * Scripts/webkit/messages.py:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2018-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         MAP_JIT is not present for minimal simulator builds

@@ -42,6 +42,7 @@ class FrameLoader;
 class HTTPHeaderMap;
 class NetscapePlugInStreamLoader;
 class NetscapePlugInStreamLoaderClient;
+struct NetworkTransactionInformation;
 class NetworkLoadMetrics;
 class ResourceError;
 class ResourceLoader;
@@ -85,7 +86,11 @@ public:
     virtual bool havePerformedSecurityChecks(const ResourceResponse&) const { return false; }
 
     virtual ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
+    virtual Vector<NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
     virtual NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
+
+    // Used for testing only.
+    virtual Vector<uint64_t> ongoingLoads() const { return { }; }
 
 protected:
     virtual ~LoaderStrategy();

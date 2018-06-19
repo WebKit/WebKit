@@ -98,6 +98,7 @@
 #include "InternalSettings.h"
 #include "JSImageData.h"
 #include "LibWebRTCProvider.h"
+#include "LoaderStrategy.h"
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
@@ -108,6 +109,7 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
+#include "NetworkLoadInformation.h"
 #if USE(CG)
 #include "PDFDocumentImage.h"
 #endif
@@ -116,6 +118,7 @@
 #include "PageOverlay.h"
 #include "PathUtilities.h"
 #include "PlatformMediaSessionManager.h"
+#include "PlatformStrategies.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -175,6 +178,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringView.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -4560,4 +4564,31 @@ bool Internals::usingAppleInternalSDK() const
 #endif
 }
 
+void Internals::setCaptureExtraNetworkLoadMetricsEnabled(bool value)
+{
+    platformStrategies()->loaderStrategy()->setCaptureExtraNetworkLoadMetricsEnabled(value);
+}
+
+String Internals::ongoingLoadsDescriptions() const
+{
+    StringBuilder builder;
+    builder.append('[');
+    bool isStarting = true;
+    for (auto& identifier : platformStrategies()->loaderStrategy()->ongoingLoads()) {
+        if (isStarting)
+            isStarting = false;
+        else
+            builder.append(',');
+
+        builder.append('[');
+
+        for (auto& info : platformStrategies()->loaderStrategy()->intermediateLoadInformationFromResourceLoadIdentifier(identifier))
+            builder.append(makeString("[", (int)info.type, ",\"", info.request.url().string(), "\",\"", info.request.httpMethod(), "\",", info.response.httpStatusCode(), "]"));
+
+        builder.append(']');
+    }
+    builder.append(']');
+    return builder.toString();
+}
+    
 } // namespace WebCore

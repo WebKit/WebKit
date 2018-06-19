@@ -623,4 +623,7 @@ enum EventThrottlingBehavior {
     [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);
+
+    DOMString ongoingLoadsDescriptions();
+    void setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
 };

@@ -56,10 +56,10 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
-#include <WebCore/ResourceResponse.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -654,8 +654,15 @@ void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 ResourceResponse WebLoaderStrategy::responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)
 {
     ResourceResponse response;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationResponse { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationResponse::Reply { response }, 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse::Reply { response }, 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
     return response;
+}
+
+Vector<NetworkTransactionInformation> WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)
+{
+    Vector<NetworkTransactionInformation> information;
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation::Reply { information }, 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
+    return information;
 }
 
 NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)

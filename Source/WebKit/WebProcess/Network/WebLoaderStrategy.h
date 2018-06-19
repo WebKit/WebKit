@@ -92,10 +92,18 @@ private:
     bool tryLoadingUsingURLSchemeHandler(WebCore::ResourceLoader&);
 
     WebCore::ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
+    Vector<WebCore::NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
     WebCore::NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
 
     bool shouldPerformSecurityChecks() const final;
     bool havePerformedSecurityChecks(const WebCore::ResourceResponse&) const final;
+
+    Vector<uint64_t> ongoingLoads() const final
+    {
+        return WTF::map(m_webResourceLoaders, [](auto&& keyValue) -> uint64_t {
+            return keyValue.key;
+        });
+    }
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;

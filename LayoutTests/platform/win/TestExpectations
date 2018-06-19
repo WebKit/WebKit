@@ -3721,6 +3721,7 @@ fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Skip ]
 
 # Requires WK2 loading support
 http/wpt/fetch/dnt-header-after-redirection.html [ Skip ]
+http/wpt/fetch/inspect-preflight.html [ Skip ]
 
 # html/syntax web platform tests are failing on Windows.
 webkit.org/b/162415 imported/w3c/web-platform-tests/html/syntax [ Skip ]

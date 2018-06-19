@@ -1,3 +1,33 @@
+2018-06-19  Youenn Fablet  <youenn@apple.com>
+
+        Network Preflights do not show in WebInspector after moving CORS checks to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=186312
+        <rdar://problem/40495434>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/wpt/fetch/inspect-preflight.html
+
+        No change of behavior in regular conditions.
+        All intermediate requests/responses are now buffered in NetworkProcess if Web inspector shows up.
+        Add NetworkLoadInformation and NetworkIntermediateLoadInformation for that purpose.
+
+        Add a new LoaderStrategy method to grab this information from NetworkProcess synchronously.
+        Add Internals API for testing the storage by the Network Process and the sending to WebProcess.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/LoaderStrategy.cpp:
+        (WebCore::LoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier):
+        * loader/LoaderStrategy.h:
+        * platform/network/NetworkLoadInformation.h: Added.
+        (WebCore::NetworkTransactionInformation::encode const):
+        (WebCore::NetworkTransactionInformation::decode):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setCaptureExtraNetworkLoadMetricsEnabled):
+        (WebCore::Internals::ongoingLoadDescriptions):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-06-19  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-transitions/test_animation-cancel.html pass reliably

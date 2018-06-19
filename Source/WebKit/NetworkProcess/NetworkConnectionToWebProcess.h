@@ -33,6 +33,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkMDNSRegister.h"
 #include "NetworkRTCProvider.h"
+#include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/ResourceLoadPriority.h>
 #include <wtf/RefCounted.h>
 
@@ -77,15 +78,19 @@ public:
     void cleanupForSuspension(Function<void()>&&);
     void endSuspension();
 
-    // FIXME: We should store all redirected request/responses.
-    struct NetworkLoadInformation {
-        WebCore::ResourceResponse response;
-        WebCore::NetworkLoadMetrics metrics;
-    };
+    void getNetworkLoadInformationRequest(ResourceLoadIdentifier identifier, WebCore::ResourceRequest& request)
+    {
+        request = m_networkLoadInformationByID.get(identifier).request;
+    }
 
-    void takeNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, WebCore::ResourceResponse& response)
+    void getNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, WebCore::ResourceResponse& response)
     {
         response = m_networkLoadInformationByID.get(identifier).response;
+    }
+
+    void getNetworkLoadIntermediateInformation(ResourceLoadIdentifier identifier, Vector<WebCore::NetworkTransactionInformation>& information)
+    {
+        information = m_networkLoadInformationByID.get(identifier).transactions;
     }
 
     void takeNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, WebCore::NetworkLoadMetrics& metrics)
@@ -93,17 +98,17 @@ public:
         metrics = m_networkLoadInformationByID.take(identifier).metrics;
     }
 
-    void addNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, const WebCore::ResourceResponse& response)
+    void addNetworkLoadInformation(ResourceLoadIdentifier identifier, WebCore::NetworkLoadInformation&& information)
     {
         ASSERT(!m_networkLoadInformationByID.contains(identifier));
-        m_networkLoadInformationByID.add(identifier, NetworkLoadInformation { response, { } });
+        m_networkLoadInformationByID.add(identifier, WTFMove(information));
     }
 
     void addNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, const WebCore::NetworkLoadMetrics& metrics)
     {
         ASSERT(m_networkLoadInformationByID.contains(identifier));
         m_networkLoadInformationByID.ensure(identifier, [] {
-            return NetworkLoadInformation { };
+            return WebCore::NetworkLoadInformation { };
         }).iterator->value.metrics = metrics;
     }
 
@@ -221,7 +226,7 @@ private:
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
 
-    HashMap<ResourceLoadIdentifier, NetworkLoadInformation> m_networkLoadInformationByID;
+    HashMap<ResourceLoadIdentifier, WebCore::NetworkLoadInformation> m_networkLoadInformationByID;
 
 
 #if USE(LIBWEBRTC)

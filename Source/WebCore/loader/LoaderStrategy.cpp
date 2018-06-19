@@ -26,8 +26,7 @@
 #include "config.h"
 #include "LoaderStrategy.h"
 
-#include "NetworkLoadMetrics.h"
-#include "ResourceResponse.h"
+#include "NetworkLoadInformation.h"
 
 namespace WebCore {
 
@@ -43,6 +42,9 @@ NetworkLoadMetrics LoaderStrategy::networkMetricsFromResourceLoadIdentifier(uint
     return { };
 }
 
+Vector<NetworkTransactionInformation> LoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier(uint64_t /* resourceLoadIdentifier */)
+{
+    return { };
+}
+
 } // namespace WebCore
-
-

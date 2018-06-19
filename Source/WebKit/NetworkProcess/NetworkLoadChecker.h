@@ -28,8 +28,8 @@
 #include "NetworkContentRuleListManager.h"
 #include "NetworkResourceLoadParameters.h"
 #include <WebCore/ContentSecurityPolicyClient.h>
+#include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
@@ -46,7 +46,7 @@ class NetworkCORSPreflightChecker;
 
 class NetworkLoadChecker : public WebCore::ContentSecurityPolicyClient, public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
-    NetworkLoadChecker(NetworkConnectionToWebProcess&, uint64_t webPageID, uint64_t webFrameID, ResourceLoadIdentifier, WebCore::FetchOptions&&, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer);
+    NetworkLoadChecker(NetworkConnectionToWebProcess&, uint64_t webPageID, uint64_t webFrameID, ResourceLoadIdentifier, WebCore::FetchOptions&&, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics = false);
     ~NetworkLoadChecker();
 
     using RequestOrError = Expected<WebCore::ResourceRequest, WebCore::ResourceError>;
@@ -68,6 +68,9 @@ public:
 
     const WebCore::URL& url() const { return m_url; }
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
+
+    WebCore::NetworkLoadInformation takeNetworkLoadInformation() { return WTFMove(m_loadInformation); }
+    void storeRedirectionIfNeeded(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
 private:
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
@@ -130,6 +133,8 @@ private:
     WebCore::PreflightPolicy m_preflightPolicy;
     String m_dntHeaderValue;
     String m_referrer;
+    bool m_shouldCaptureExtraNetworkLoadMetrics { false };
+    WebCore::NetworkLoadInformation m_loadInformation;
 };
 
 }

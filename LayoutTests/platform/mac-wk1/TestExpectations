@@ -458,6 +458,7 @@ webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/impo
 
 # Requires WK2 loading support
 http/wpt/fetch/dnt-header-after-redirection.html [ Skip ]
+http/wpt/fetch/inspect-preflight.html [ Skip ]
 
 # requires wk2 speculative tiling
 fast/images/low-memory-decode.html [ Skip ]

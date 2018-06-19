@@ -694,6 +694,9 @@ public:
     using PlaybackControlsPurpose = MediaElementSession::PlaybackControlsPurpose;
     HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose);
 
+    void setCaptureExtraNetworkLoadMetricsEnabled(bool);
+    String ongoingLoadsDescriptions() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

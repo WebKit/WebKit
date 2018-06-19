@@ -66,6 +66,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RemoveOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
     ResetOriginAccessWhitelists();
 
-    TakeNetworkLoadInformationResponse(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceResponse response);
+    GetNetworkLoadInformationRequest(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceRequest request);
+    GetNetworkLoadInformationResponse(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceResponse response);
+    GetNetworkLoadIntermediateInformation(uint64_t resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions);
     TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics);
 }
