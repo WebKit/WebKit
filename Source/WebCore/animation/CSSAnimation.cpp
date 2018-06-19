@@ -107,4 +107,17 @@ std::optional<double> CSSAnimation::bindingsCurrentTime() const
     return currentTime;
 }
 
+WebAnimation::PlayState CSSAnimation::bindingsPlayState() const
+{
+    // Since an animation's play state can be set via the animation-play-state property,
+    // we need to account for any pending CSS changes first.
+    if (auto* animationEffect = effect()) {
+        if (is<KeyframeEffectReadOnly>(animationEffect)) {
+            if (auto* target = downcast<KeyframeEffectReadOnly>(animationEffect)->target())
+                target->document().updateStyleIfNeeded();
+        }
+    }
+    return DeclarativeAnimation::bindingsPlayState();
+}
+
 } // namespace WebCore

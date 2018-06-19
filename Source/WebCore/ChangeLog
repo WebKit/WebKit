@@ -1,3 +1,22 @@
+2018-06-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-playstate.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183828
+        <rdar://problem/40997469>
+
+        Reviewed by Dean Jackson.
+
+        We need to ensure pending styles have been resolved prior to returning the play state for a CSS Animation since
+        it can be controlled by the animation-play-state CSS property. To that end we expose a specific bindings-only
+        method which we override for CSSAnimation to force a style update.
+
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::bindingsPlayState const):
+        * animation/CSSAnimation.h:
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::bindingsPlayState const):
+        * animation/WebAnimation.idl:
+
 2018-06-19  David Kilzer  <ddkilzer@apple.com>
 
         Revert: Add logging when splashboardd enables WebThread

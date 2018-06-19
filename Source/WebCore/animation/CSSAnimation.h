@@ -44,6 +44,7 @@ public:
     const RenderStyle& unanimatedStyle() const { return *m_unanimatedStyle; }
 
     std::optional<double> bindingsCurrentTime() const final;
+    WebAnimation::PlayState bindingsPlayState() const final;
 
 protected:
     void syncPropertiesWithBackingAnimation() final;

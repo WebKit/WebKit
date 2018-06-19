@@ -43,7 +43,7 @@ enum AnimationPlayState {
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;
-    readonly attribute AnimationPlayState playState;
+    [ImplementedAs=bindingsPlayState] readonly attribute AnimationPlayState playState;
     readonly attribute boolean pending;
     attribute EventHandler onfinish;
     attribute EventHandler oncancel;

@@ -83,6 +83,7 @@ public:
 
     enum class PlayState { Idle, Running, Paused, Finished };
     PlayState playState() const;
+    virtual PlayState bindingsPlayState() const { return playState(); }
 
     bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }
 

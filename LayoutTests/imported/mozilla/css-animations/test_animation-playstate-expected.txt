@@ -2,6 +2,6 @@
 PASS Animation returns correct playState when running 
 PASS Animation returns correct playState when paused 
 PASS Animation.playState updates when paused by script 
-FAIL Animation.playState updates when resumed by setting style assert_equals: Animation.playState reports running after updating animation-play-state (got: paused) expected "running" but got "paused"
+PASS Animation.playState updates when resumed by setting style 
 PASS Animation returns correct playState when cancelled 
 
