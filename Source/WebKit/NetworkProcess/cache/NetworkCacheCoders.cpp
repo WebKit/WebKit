@@ -52,7 +52,7 @@ bool Coder<WebCore::HTTPHeaderMap>::decode(Decoder& decoder, WebCore::HTTPHeader
         String value;
         if (!decoder.decode(value))
             return false;
-        headers.add(name, value);
+        headers.append(name, value);
     }
     return true;
 }

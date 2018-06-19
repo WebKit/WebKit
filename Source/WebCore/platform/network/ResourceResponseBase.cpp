@@ -136,10 +136,10 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response)
 
     HTTPHeaderSet accessControlExposeHeaderSet;
     parseAccessControlExposeHeadersAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders), accessControlExposeHeaderSet);
-    filteredResponse.m_httpHeaderFields.uncommonHeaders().removeIf([&](auto& entry) {
+    filteredResponse.m_httpHeaderFields.uncommonHeaders().removeAllMatching([&](auto& entry) {
         return !isCrossOriginSafeHeader(entry.key, accessControlExposeHeaderSet);
     });
-    filteredResponse.m_httpHeaderFields.commonHeaders().removeIf([&](auto& entry) {
+    filteredResponse.m_httpHeaderFields.commonHeaders().removeAllMatching([&](auto& entry) {
         return !isCrossOriginSafeHeader(entry.key, accessControlExposeHeaderSet);
     });
 
@@ -430,8 +430,8 @@ void ResourceResponseBase::sanitizeHTTPHeaderFields(SanitizationType type)
 {
     lazyInit(AllFields);
 
-    m_httpHeaderFields.commonHeaders().remove(HTTPHeaderName::SetCookie);
-    m_httpHeaderFields.commonHeaders().remove(HTTPHeaderName::SetCookie2);
+    m_httpHeaderFields.remove(HTTPHeaderName::SetCookie);
+    m_httpHeaderFields.remove(HTTPHeaderName::SetCookie2);
 
     switch (type) {
     case SanitizationType::RemoveCookies:

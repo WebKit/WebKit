@@ -313,9 +313,9 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     for (const auto& header : newHeaders) {
         if (header.keyAsHTTPHeaderName) {
             if (!shouldIgnoreHeaderForCacheReuse(header.keyAsHTTPHeaderName.value())
-                && header.value != oldHeaders.commonHeaders().get(header.keyAsHTTPHeaderName.value()))
+                && header.value != oldHeaders.get(header.keyAsHTTPHeaderName.value()))
                 return false;
-        } else if (header.value != oldHeaders.uncommonHeaders().get(header.key))
+        } else if (header.value != oldHeaders.get(header.key))
             return false;
     }
 
@@ -324,9 +324,9 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     for (const auto& header : oldHeaders) {
         if (header.keyAsHTTPHeaderName) {
             if (!shouldIgnoreHeaderForCacheReuse(header.keyAsHTTPHeaderName.value())
-                && !newHeaders.commonHeaders().contains(header.keyAsHTTPHeaderName.value()))
+                && !newHeaders.contains(header.keyAsHTTPHeaderName.value()))
                 return false;
-        } else if (!newHeaders.uncommonHeaders().contains(header.key))
+        } else if (!newHeaders.contains(header.key))
             return false;
     }
 

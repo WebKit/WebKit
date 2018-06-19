@@ -92,12 +92,10 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
     if (!requestHeaderFields.isEmpty()) {
         Vector<String> unsafeHeaders;
-        for (const auto& headerField : requestHeaderFields.commonHeaders()) {
-            if (!isCrossOriginSafeRequestHeader(headerField.key, headerField.value))
-                unsafeHeaders.append(httpHeaderNameString(headerField.key).toStringWithoutCopying().convertToASCIILowercase());
+        for (auto& headerField : requestHeaderFields) {
+            if (!headerField.keyAsHTTPHeaderName || !isCrossOriginSafeRequestHeader(*headerField.keyAsHTTPHeaderName, headerField.value))
+                unsafeHeaders.append(headerField.key.convertToASCIILowercase());
         }
-        for (const auto& headerField : requestHeaderFields.uncommonHeaders())
-            unsafeHeaders.append(headerField.key.convertToASCIILowercase());
 
         std::sort(unsafeHeaders.begin(), unsafeHeaders.end(), WTF::codePointCompareLessThan);
 

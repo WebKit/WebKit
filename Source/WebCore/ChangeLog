@@ -1,3 +1,55 @@
+2018-06-19  Chris Dumez  <cdumez@apple.com>
+
+        HTTPHeaderMap wastes 226KB of HashTable capacity on cnn.com
+        https://bugs.webkit.org/show_bug.cgi?id=186735
+        <rdar://problem/41189164>
+
+        Reviewed by Geoffrey Garen.
+
+        Resource requests and responses normally do not have a large amount of HTTP headers
+        (local testing shows 6 common headers on average and 0.3 uncommon ones).
+        As a result, move the internal representation of HTTPHeaderMap from HashMaps to
+        Vectors. Given the number of headers, the impact on performance should be negligible.
+        However, the new implementation uses a lot less memory. In a follow-up, we can save
+        even more memory by calling HTTPHeaderMap::shrinkToFit() when possible.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::canReuse const):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::isolatedCopy const):
+        (WebCore::HTTPHeaderMap::get const):
+        (WebCore::HTTPHeaderMap::set):
+        (WebCore::HTTPHeaderMap::add):
+        (WebCore::HTTPHeaderMap::append):
+        (WebCore::HTTPHeaderMap::addIfNotPresent):
+        (WebCore::HTTPHeaderMap::contains const):
+        (WebCore::HTTPHeaderMap::remove):
+        * platform/network/HTTPHeaderMap.h:
+        (WebCore::HTTPHeaderMap::CommonHeader::isolatedCopy const):
+        (WebCore::HTTPHeaderMap::CommonHeader::operator== const):
+        (WebCore::HTTPHeaderMap::UncommonHeader::isolatedCopy const):
+        (WebCore::HTTPHeaderMap::UncommonHeader::operator== const):
+        (WebCore::HTTPHeaderMap::HTTPHeaderMapConstIterator::HTTPHeaderMapConstIterator):
+        (WebCore::HTTPHeaderMap::HTTPHeaderMapConstIterator::updateKeyValue):
+        (WebCore::HTTPHeaderMap::shrinkToFit):
+        (WebCore::HTTPHeaderMap::commonHeaders const):
+        (WebCore::HTTPHeaderMap::uncommonHeaders const):
+        (WebCore::HTTPHeaderMap::commonHeaders):
+        (WebCore::HTTPHeaderMap::uncommonHeaders):
+        (WebCore::HTTPHeaderMap::CommonHeader::encode const):
+        (WebCore::HTTPHeaderMap::CommonHeader::decode):
+        (WebCore::HTTPHeaderMap::UncommonHeader::encode const):
+        (WebCore::HTTPHeaderMap::UncommonHeader::decode):
+        (WebCore::HTTPHeaderMap::encode const):
+        (WebCore::HTTPHeaderMap::decode):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::filter):
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFields):
+
 2018-06-19  Youenn Fablet  <youenn@apple.com>
 
         Network Preflights do not show in WebInspector after moving CORS checks to NetworkProcess

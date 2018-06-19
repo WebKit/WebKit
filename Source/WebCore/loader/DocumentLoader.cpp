@@ -777,12 +777,10 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
             return;
         }
 
-        const auto& commonHeaders = response.httpHeaderFields().commonHeaders();
-        auto it = commonHeaders.find(HTTPHeaderName::XFrameOptions);
-        if (it != commonHeaders.end()) {
-            String content = it->value;
-            if (frameLoader()->shouldInterruptLoadForXFrameOptions(content, url, identifier)) {
-                String message = "Refused to display '" + url.stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
+        String frameOptions = response.httpHeaderFields().get(HTTPHeaderName::XFrameOptions);
+        if (!frameOptions.isNull()) {
+            if (frameLoader()->shouldInterruptLoadForXFrameOptions(frameOptions, url, identifier)) {
+                String message = "Refused to display '" + url.stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + frameOptions + "'.";
                 m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
                 stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
                 return;

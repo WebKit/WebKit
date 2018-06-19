@@ -108,8 +108,8 @@ struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHel
 };
 
 // Default specialization for Vectors of CrossThreadCopyable classes.
-template<typename T> struct CrossThreadCopierBase<false, false, Vector<T>> {
-    typedef Vector<T> Type;
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct CrossThreadCopierBase<false, false, Vector<T, inlineCapacity, OverflowHandler, minCapacity>> {
+    using Type = Vector<T, inlineCapacity, OverflowHandler, minCapacity>;
     static Type copy(const Type& source)
     {
         Type destination;
