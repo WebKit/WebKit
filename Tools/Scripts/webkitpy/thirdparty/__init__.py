@@ -160,7 +160,7 @@ class AutoinstallImportHook(object):
                 files_to_remove = ['test/data/write_protected_file.txt']
             installer.install("https://pypi.python.org/packages/source/l/logilab-common/logilab-common-0.58.1.tar.gz#md5=77298ab2d8bb8b4af9219791e7cee8ce", url_subpath="logilab-common-0.58.1", target_name="logilab/common", files_to_remove=files_to_remove)
             installer.install("https://pypi.python.org/packages/source/l/logilab-astng/logilab-astng-0.24.1.tar.gz#md5=ddaf66e4d85714d9c47a46d4bed406de", url_subpath="logilab-astng-0.24.1", target_name="logilab/astng")
-            installer.install('https://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', url_subpath="pylint-0.25.1", target_name="pylint")
+            installer.install('https://pypi.python.org/packages/source/p/pylint/pylint-0.25.2.tar.gz#md5=d878d7688a4f5290dc5b53a836872400', url_subpath="pylint-0.25.2", target_name="pylint")
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
     # and should ideally match the version of BuildBot used at build.webkit.org.
