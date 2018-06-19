@@ -5,9 +5,6 @@ test/annexB/built-ins/Function/createdynfn-html-close-comment-params.js:
 test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
   default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-test/annexB/built-ins/RegExp/named-groups/non-unicode-malformed.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
 test/annexB/built-ins/RegExp/prototype/Symbol.split/Symbol.match-getter-recompiles-source.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«aÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«aÂ») to be true'
@@ -1046,15 +1043,6 @@ test/built-ins/Map/proto-from-ctor-realm.js:
 test/built-ins/Math/round/S15.8.2.15_A7.js:
   default: "Test262Error: #4: '1 / Math.round(0.49999999999999994) !== 1 / 0'"
   strict mode: "Test262Error: #4: '1 / Math.round(0.49999999999999994) !== 1 / 0'"
-test/built-ins/Number/S9.3.1_A2_U180E.js:
-  default: 'Test262Error: Number("\u180E") === NaN. Actual: 0 Expected SameValue(Â«0Â», Â«NaNÂ») to be true'
-  strict mode: 'Test262Error: Number("\u180E") === NaN. Actual: 0 Expected SameValue(Â«0Â», Â«NaNÂ») to be true'
-test/built-ins/Number/S9.3.1_A3_T1_U180E.js:
-  default: 'Test262Error: Number("\u180E") === NaN Expected SameValue(Â«0Â», Â«NaNÂ») to be true'
-  strict mode: 'Test262Error: Number("\u180E") === NaN Expected SameValue(Â«0Â», Â«NaNÂ») to be true'
-test/built-ins/Number/S9.3.1_A3_T2_U180E.js:
-  default: 'Test262Error: Number(dynaString("", "á ")) === NaN Expected SameValue(Â«0Â», Â«NaNÂ») to be true'
-  strict mode: 'Test262Error: Number(dynaString("", "á ")) === NaN Expected SameValue(Â«0Â», Â«NaNÂ») to be true'
 test/built-ins/Number/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
@@ -1134,57 +1122,6 @@ test/built-ins/Proxy/ownKeys/return-duplicate-symbol-entries-throws.js:
 test/built-ins/RegExp/S15.10.2.12_A2_T1.js:
   default: 'Test262Error: #6: Error matching character class S between character 1800 and 1bff'
   strict mode: 'Test262Error: #6: Error matching character class S between character 1800 and 1bff'
-test/built-ins/RegExp/lookBehind/alternations.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/back-references-to-captures.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/back-references.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/captures-negative.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/captures.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/do-not-backtrack.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/greedy-loop.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/misc.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/mutual-recursive.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/negative.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/nested-lookaround.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/simple-fixed-length.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/sliced-strings.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/start-of-line.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/sticky.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/variable-length.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/lookBehind/word-boundary.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
 test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
   default: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
@@ -1197,9 +1134,6 @@ test/built-ins/RegExp/named-groups/groups-object-undefined.js:
 test/built-ins/RegExp/named-groups/groups-object.js:
   default: 'Test262Error: Expected SameValue(Â«nullÂ», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«nullÂ», Â«[object Object]Â») to be true'
-test/built-ins/RegExp/named-groups/lookbehind.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
 test/built-ins/RegExp/named-groups/non-unicode-malformed.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
@@ -1260,9 +1194,6 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/prototype/test/S15.10.6.3_A1_T22.js:
   default: 'Test262Error: #1: __re = /(?:ab|cd)\d?/g; __re.lastIndex=-1; __executed = __re.test("aacd22 "); __executed === true'
   strict mode: 'Test262Error: #1: __re = /(?:ab|cd)\d?/g; __re.lastIndex=-1; __executed = __re.test("aacd22 "); __executed === true'
-test/built-ins/RegExp/u180e.js:
-  default: 'Test262Error: \s should not match U+180E Expected SameValue(Â«42Â», Â«á Â») to be true'
-  strict mode: 'Test262Error: \s should not match U+180E Expected SameValue(Â«42Â», Â«á Â») to be true'
 test/built-ins/RegExp/unicode_restricted_brackets.js:
   default: 'Test262Error: RegExp("]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: RegExp("]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
@@ -1293,9 +1224,6 @@ test/built-ins/Set/proto-from-ctor-realm.js:
 test/built-ins/String/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
-test/built-ins/String/prototype/trim/u180e.js:
-  default: 'Test262Error: Expected SameValue(Â«_Â», Â«_á Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«_Â», Â«_á Â») to be true'
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -1549,18 +1477,6 @@ test/built-ins/WeakMap/proto-from-ctor-realm.js:
 test/built-ins/WeakSet/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
-test/built-ins/global/global-object.js:
-  default: "ReferenceError: Can't find variable: global"
-  strict mode: "ReferenceError: Can't find variable: global"
-test/built-ins/global/property-descriptor.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name).enumerable')"
-test/built-ins/parseFloat/S15.1.2.3_A2_T10_U180E.js:
-  default: 'Test262Error: Single leading U+180E Expected SameValue(Â«1.1Â», Â«NaNÂ») to be true'
-  strict mode: 'Test262Error: Single leading U+180E Expected SameValue(Â«1.1Â», Â«NaNÂ») to be true'
-test/built-ins/parseInt/S15.1.2.2_A2_T10_U180E.js:
-  default: 'Test262Error: Single leading U+180E Expected SameValue(Â«1Â», Â«NaNÂ») to be true'
-  strict mode: 'Test262Error: Single leading U+180E Expected SameValue(Â«1Â», Â«NaNÂ») to be true'
 test/harness/assert-throws-early-referenceerror.js:
   default: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
@@ -4020,9 +3936,3 @@ test/language/types/reference/put-value-prop-base-primitive-realm.js:
 test/language/types/reference/put-value-prop-base-primitive.js:
   default: 'Test262Error: number Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/language/white-space/mongolian-vowel-separator-eval.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/white-space/mongolian-vowel-separator.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'

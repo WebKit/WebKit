@@ -1,3 +1,13 @@
+2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
+
+        [test262-runner] More updates to the skip list
+        https://bugs.webkit.org/show_bug.cgi?id=186786
+
+        Reviewed by Michael Saboff.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2018-06-19  Saam Barati  <sbarati@apple.com>
 
         Wasm: Any function argument of type Void should be a validation error
