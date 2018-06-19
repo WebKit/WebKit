@@ -1,3 +1,30 @@
+2018-06-19  Youenn Fablet  <youenn@apple.com>
+
+        RTCRtpSender.replaceTrack(null) ends current track
+        https://bugs.webkit.org/show_bug.cgi?id=184911
+        <rdar://problem/40758138>
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, when replacing the sender track by null, the previous track was stopped.
+        Instead of doing that, the track now stays alive and it is the realtime source that is stopped.
+        This ensures that the data is no longer sent while the track can still be used elsewhere.
+
+        Covered by updated and rebased tests.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTransceiver):
+        (WebCore::RTCPeerConnection::enqueueReplaceTrackTask):
+        (WebCore::RTCPeerConnection::replaceTrack):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::updateTrackSource):
+        (WebCore::LibWebRTCPeerConnectionBackend::replaceTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
 2018-06-18  Chris Dumez  <cdumez@apple.com>
 
         Better pack ResourceRequest

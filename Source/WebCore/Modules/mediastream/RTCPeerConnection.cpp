@@ -199,6 +199,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     const String& trackKind = track->kind();
 
     auto sender = RTCRtpSender::create(WTFMove(track), Vector<String>(), *this);
+    m_backend->notifyAddedTrack(sender);
     return completeAddTransceiver(WTFMove(sender), init, trackId, trackKind);
 }
 
@@ -566,13 +567,20 @@ void RTCPeerConnection::fireEvent(Event& event)
     dispatchEvent(event);
 }
 
-void RTCPeerConnection::enqueueReplaceTrackTask(RTCRtpSender& sender, Ref<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
+void RTCPeerConnection::enqueueReplaceTrackTask(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
 {
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), protectedSender = makeRef(sender), promise = WTFMove(promise), withTrack = WTFMove(withTrack)](ScriptExecutionContext&) mutable {
         if (protectedThis->isClosed())
             return;
+
+        if (!withTrack) {
+            protectedSender->setTrackToNull();
+            promise.resolve();
+            return;
+        }
+
         bool hasTrack = protectedSender->track();
-        protectedSender->setTrack(WTFMove(withTrack));
+        protectedSender->setTrack(withTrack.releaseNonNull());
         if (!hasTrack)
             protectedThis->m_backend->notifyAddedTrack(protectedSender.get());
         promise.resolve();
@@ -583,20 +591,12 @@ void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTra
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    if (!withTrack) {
-        scriptExecutionContext()->postTask([protectedSender = makeRef(sender), promise = WTFMove(promise)](ScriptExecutionContext&) mutable {
-            protectedSender->setTrackToNull();
-            promise.resolve();
-        });
-        return;
-    }
-    
-    if (!sender.track()) {
+    if (!sender.track() && withTrack) {
         enqueueReplaceTrackTask(sender, withTrack.releaseNonNull(), WTFMove(promise));
         return;
     }
 
-    m_backend->replaceTrack(sender, withTrack.releaseNonNull(), WTFMove(promise));
+    m_backend->replaceTrack(sender, WTFMove(withTrack), WTFMove(promise));
 }
 
 RTCRtpParameters RTCPeerConnection::getParameters(RTCRtpSender& sender) const

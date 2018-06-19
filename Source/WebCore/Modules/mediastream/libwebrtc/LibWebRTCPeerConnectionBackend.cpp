@@ -372,12 +372,23 @@ void LibWebRTCPeerConnectionBackend::addRemoteStream(Ref<MediaStream>&& mediaStr
     m_remoteStreams.append(WTFMove(mediaStream));
 }
 
-void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
+template<typename Source>
+static inline bool updateTrackSource(Source& source, MediaStreamTrack* track)
+{
+    if (!track) {
+        source->stop();
+        return true;
+    }
+    return source->setSource(track->privateTrack());
+}
+
+void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(sender.track());
+
     auto* currentTrack = sender.track();
 
-    ASSERT(currentTrack->source().type() == track->source().type());
+    ASSERT(!track || currentTrack->source().type() == track->source().type());
     switch (currentTrack->source().type()) {
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
@@ -386,7 +397,7 @@ void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<Medi
     case RealtimeMediaSource::Type::Audio: {
         for (auto& audioSource : m_audioSources) {
             if (&audioSource->source() == &currentTrack->privateTrack()) {
-                if (!audioSource->setSource(track->privateTrack())) {
+                if (!updateTrackSource(audioSource, track.get())) {
                     promise.reject(InvalidModificationError);
                     return;
                 }
@@ -400,7 +411,7 @@ void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<Medi
     case RealtimeMediaSource::Type::Video: {
         for (auto& videoSource : m_videoSources) {
             if (&videoSource->source() == &currentTrack->privateTrack()) {
-                if (!videoSource->setSource(track->privateTrack())) {
+                if (!updateTrackSource(videoSource, track.get())) {
                     promise.reject(InvalidModificationError);
                     return;
                 }

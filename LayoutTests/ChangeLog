@@ -1,3 +1,17 @@
+2018-06-19  Youenn Fablet  <youenn@apple.com>
+
+        RTCRtpSender.replaceTrack(null) ends current track
+        https://bugs.webkit.org/show_bug.cgi?id=184911
+        <rdar://problem/40758138>
+
+        Reviewed by Eric Carlson.
+
+        Added checks for readyState to ensure the track remains live.
+        Split the main test into several tests to ease readability.
+
+        * webrtc/video-replace-track-to-null-expected.txt:
+        * webrtc/video-replace-track-to-null.html:
+
 2018-06-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement "Starting of transitions" section from CSS Transitions

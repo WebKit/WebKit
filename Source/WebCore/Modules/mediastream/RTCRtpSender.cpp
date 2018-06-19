@@ -89,9 +89,6 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, DOMPromise
         return;
     }
 
-    if (!withTrack && m_track)
-        m_track->stopTrack();
-
     m_backend->replaceTrack(*this, WTFMove(withTrack), WTFMove(promise));
 }
 

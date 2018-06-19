@@ -153,7 +153,7 @@ public:
     void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
     void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
 
-    void enqueueReplaceTrackTask(RTCRtpSender&, Ref<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
+    void enqueueReplaceTrackTask(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
 
     void clearController() { m_controller = nullptr; }
 

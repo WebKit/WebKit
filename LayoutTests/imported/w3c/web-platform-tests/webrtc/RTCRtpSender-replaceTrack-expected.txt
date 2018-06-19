@@ -3,9 +3,9 @@ PASS Calling replaceTrack on closed connection should reject with InvalidStateEr
 PASS Calling replaceTrack with track of different kind should reject with TypeError 
 FAIL Calling replaceTrack on stopped sender should reject with InvalidStateError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Calling replaceTrack on sender with null track and not set to session description should resolve with sender.track set to given track 
-FAIL Calling replaceTrack on sender not set to session description should resolve with sender.track set to given track promise_test: Unhandled rejection with value: object "InvalidModificationError:  The object can not be modified in this way."
+PASS Calling replaceTrack on sender not set to session description should resolve with sender.track set to given track 
 PASS Calling replaceTrack(null) on sender not set to session description should resolve with sender.track set to null 
 PASS Calling replaceTrack(null) on sender set to session description should resolve with sender.track set to null 
-FAIL Calling replaceTrack on sender with stopped track and and set to session description should resolve with sender.track set to given track promise_test: Unhandled rejection with value: object "InvalidModificationError:  The object can not be modified in this way."
-FAIL Calling replaceTrack on sender with similar track and and set to session description should resolve with sender.track set to new track promise_test: Unhandled rejection with value: object "InvalidModificationError:  The object can not be modified in this way."
+PASS Calling replaceTrack on sender with stopped track and and set to session description should resolve with sender.track set to given track 
+PASS Calling replaceTrack on sender with similar track and and set to session description should resolve with sender.track set to new track 
 

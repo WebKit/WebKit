@@ -59,41 +59,49 @@ async function testFrameEncodedStopped(connection, count, previousFramesNumber)
     return testFrameEncodedStopped(connection, ++count, framesEncodedNumber);
 }
 
-promise_test((test) => {
+var sender;
+var sendingTrack;
+var connection;
+promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    var sender;
-    var frontStream;
-    var connection;
-    return navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-        frontStream = stream;
-    }).then(() => {
-        return new Promise((resolve, reject) => {
-            createConnections((firstConnection) => {
-                connection = firstConnection;
-                sender = firstConnection.addTrack(frontStream.getVideoTracks()[0], frontStream);
-            }, (secondConnection) => {
-                secondConnection.ontrack = (trackEvent) => {
-                    resolve(trackEvent.streams[0]);
-                };
-            });
-            setTimeout(() => reject("Test timed out"), 5000);
+    const frontStream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            connection = firstConnection;
+            sender = firstConnection.addTrack(frontStream.getVideoTracks()[0], frontStream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
         });
-    }).then((remoteStream) => {
-        video.srcObject = remoteStream;
-        return video.play();
-    }).then(() => {
-        return testFrameEncodedStarted(connection);
-    }).then(() => {
-    }).then(() => {
-        promise = sender.replaceTrack(null);
-        assert_true(!!sender.track);
-        return promise;
-    }).then(() => {
-        return testFrameEncodedStopped(connection);
+        setTimeout(() => reject("Test timed out"), 5000);
     });
-}, "Stopping sending video using replaceTrack");
+
+    video.srcObject = remoteStream;
+    await video.play();
+}, "Set-up test");
+
+promise_test(async (test) => {
+    await testFrameEncodedStarted(connection);
+
+    sendingTrack = sender.track;
+    assert_equals(sendingTrack.readyState, "live");
+}, "Test that frame counter increases");
+
+promise_test(async (test) => {
+    promise = sender.replaceTrack(null);
+    assert_true(!!sender.track);
+    await promise;
+    assert_equals(sender.track, null);
+}, "Test replaceTrack with null track");
+
+promise_test(async (test) => {
+    await testFrameEncodedStopped(connection);
+    assert_equals(sendingTrack.readyState, "live");
+}, "Test that frame counter no longer increases");
         </script>
     </body>
 </html>
