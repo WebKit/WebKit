@@ -1,3 +1,35 @@
+2018-06-19  Keith Rollin  <krollin@apple.com>
+
+        cpp style checker needs to know more about NOLINT
+        https://bugs.webkit.org/show_bug.cgi?id=186796
+
+        Reviewed by Aakash Jain.
+
+        Running check-webkit-style on
+        ThirdParty/gtest/src/gtest-internal-inl.h crashes with a KeyError as
+        it tries to look up information about a particular #include in a
+        dictionary it maintains. The problem has to do with the following
+        lines in gtest-internal-inl.h:
+
+        #include <gtest/gtest.h>  // NOLINT
+        #include <gtest/gtest-spi.h>
+
+        The NOLINT annotation will prevent the cpp-checker from processing or
+        even seeing that line. In skipping that line, information regarding
+        that line is NOT added to some internal tables. However, when the code
+        that checks that #includes are correctly alphabetized gets to the
+        "gtest-spi.h" line, it will not respect the NOLINT annotation and will
+        see the gtest.h line. When doing so, it runs afoul of the fact that it
+        hadn't seen that line before and it crashes when it tries to look up
+        that line in some internal records.
+
+        Fix this by catering to the possibility that a #include line may not
+        have been entered into these internal records.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_include_line):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2018-06-19  Daniel Bates  <dabates@apple.com>
 
         EWS for security bugs
