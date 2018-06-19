@@ -1,3 +1,22 @@
+2018-06-19  Keith Miller  <keith_miller@apple.com>
+
+        constructArray variants should take the slow path for subclasses of Array
+        https://bugs.webkit.org/show_bug.cgi?id=186812
+
+        Reviewed by Saam Barati and Mark Lam.
+
+        This patch fixes a crashing test in ObjectInitializationScope where we would
+        allocate a new structure for an indexing type change while initializing
+        a subclass of Array. Since the new array hasn't been fully initialized
+        if the GC ran it would see garbage and we might crash.
+
+        * runtime/JSArray.cpp:
+        (JSC::constructArray):
+        (JSC::constructArrayNegativeIndexed):
+        * runtime/JSArray.h:
+        (JSC::constructArray): Deleted.
+        (JSC::constructArrayNegativeIndexed): Deleted.
+
 2018-06-19  Saam Barati  <sbarati@apple.com>
 
         Wasm: Any function argument of type Void should be a validation error

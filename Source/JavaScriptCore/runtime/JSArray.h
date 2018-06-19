@@ -303,56 +303,8 @@ inline bool isJSArray(JSCell* cell)
 
 inline bool isJSArray(JSValue v) { return v.isCell() && isJSArray(v.asCell()); }
 
-inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const ArgList& values)
-{
-    VM& vm = exec->vm();
-    unsigned length = values.size();
-    ObjectInitializationScope scope(vm);
-    JSArray* array = JSArray::tryCreateUninitializedRestricted(scope, arrayStructure, length);
-
-    // FIXME: we should probably throw an out of memory error here, but
-    // when making this change we should check that all clients of this
-    // function will correctly handle an exception being thrown from here.
-    // https://bugs.webkit.org/show_bug.cgi?id=169786
-    RELEASE_ASSERT(array);
-
-    for (unsigned i = 0; i < length; ++i)
-        array->initializeIndex(scope, i, values.at(i));
-    return array;
-}
-    
-inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
-{
-    VM& vm = exec->vm();
-    ObjectInitializationScope scope(vm);
-    JSArray* array = JSArray::tryCreateUninitializedRestricted(scope, arrayStructure, length);
-
-    // FIXME: we should probably throw an out of memory error here, but
-    // when making this change we should check that all clients of this
-    // function will correctly handle an exception being thrown from here.
-    // https://bugs.webkit.org/show_bug.cgi?id=169786
-    RELEASE_ASSERT(array);
-
-    for (unsigned i = 0; i < length; ++i)
-        array->initializeIndex(scope, i, values[i]);
-    return array;
-}
-
-inline JSArray* constructArrayNegativeIndexed(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
-{
-    VM& vm = exec->vm();
-    ObjectInitializationScope scope(vm);
-    JSArray* array = JSArray::tryCreateUninitializedRestricted(scope, arrayStructure, length);
-
-    // FIXME: we should probably throw an out of memory error here, but
-    // when making this change we should check that all clients of this
-    // function will correctly handle an exception being thrown from here.
-    // https://bugs.webkit.org/show_bug.cgi?id=169786
-    RELEASE_ASSERT(array);
-
-    for (int i = 0; i < static_cast<int>(length); ++i)
-        array->initializeIndex(scope, i, values[-i]);
-    return array;
-}
+JS_EXPORT_PRIVATE JSArray* constructArray(ExecState*, Structure*, const ArgList& values);
+JS_EXPORT_PRIVATE JSArray* constructArray(ExecState*, Structure*, const JSValue* values, unsigned length);
+JS_EXPORT_PRIVATE JSArray* constructArrayNegativeIndexed(ExecState*, Structure*, const JSValue* values, unsigned length);
 
 } // namespace JSC

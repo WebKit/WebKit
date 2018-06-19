@@ -1336,4 +1336,57 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     return true;
 }
 
+inline JSArray* constructArray(ObjectInitializationScope& scope, Structure* arrayStructure, unsigned length)
+{
+    // FIXME: We only need this for subclasses of Array because we might need to allocate a new structure to change
+    // indexing types while initializing. If this triggered a GC then we might scan our currently uninitialized
+    // array and crash. https://bugs.webkit.org/show_bug.cgi?id=186811
+    JSArray* array;
+    if (arrayStructure->globalObject()->isOriginalArrayStructure(arrayStructure))
+        array = JSArray::tryCreateUninitializedRestricted(scope, arrayStructure, length);
+    else
+        array = JSArray::create(scope.vm(), arrayStructure, length);
+
+    // FIXME: we should probably throw an out of memory error here, but
+    // when making this change we should check that all clients of this
+    // function will correctly handle an exception being thrown from here.
+    // https://bugs.webkit.org/show_bug.cgi?id=169786
+    RELEASE_ASSERT(array);
+    return array;
+}
+
+JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const ArgList& values)
+{
+    VM& vm = exec->vm();
+    unsigned length = values.size();
+    ObjectInitializationScope scope(vm);
+
+    JSArray* array = constructArray(scope, arrayStructure, length);
+    for (unsigned i = 0; i < length; ++i)
+        array->initializeIndex(scope, i, values.at(i));
+    return array;
+}
+
+JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
+{
+    VM& vm = exec->vm();
+    ObjectInitializationScope scope(vm);
+
+    JSArray* array = constructArray(scope, arrayStructure, length);
+    for (unsigned i = 0; i < length; ++i)
+        array->initializeIndex(scope, i, values[i]);
+    return array;
+}
+
+JSArray* constructArrayNegativeIndexed(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
+{
+    VM& vm = exec->vm();
+    ObjectInitializationScope scope(vm);
+
+    JSArray* array = constructArray(scope, arrayStructure, length);
+    for (int i = 0; i < static_cast<int>(length); ++i)
+        array->initializeIndex(scope, i, values[-i]);
+    return array;
+}
+
 } // namespace JSC
