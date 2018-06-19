@@ -63,7 +63,13 @@ class Attachment(object):
         return self._bug
 
     def bug_id(self):
-        return int(self._attachment_dictionary.get("bug_id"))
+        bug_id_string = self._attachment_dictionary.get('bug_id')
+        if bug_id_string:
+            return int(bug_id_string)
+        # We may not know the associated bug ID. This can happen if we do not have
+        # permission to view the attachment or we failed to fetch it from Bugzilla
+        # for some other reason (see AbstractPatchQueue._next_patch()).
+        return None
 
     def is_patch(self):
         return not not self._attachment_dictionary.get("is_patch")

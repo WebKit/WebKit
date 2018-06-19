@@ -224,7 +224,7 @@ class AbstractPatchQueue(AbstractQueue):
                 # mostly we just need to remove this bogus patch from our queue.
                 # If for some reason bugzilla is just down, then it will be re-fed later.
                 fake_patch = Attachment({'id': patch_id}, None)
-                self._release_work_item(fake_patch)
+                self._did_skip(fake_patch)
         return patch
 
     def _release_work_item(self, patch):

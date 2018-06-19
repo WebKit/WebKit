@@ -1,3 +1,35 @@
+2018-06-19  Daniel Bates  <dabates@apple.com>
+
+        QueueStatusServer: "'NoneType' object has no attribute 'message'" in ReleasePatch.get()
+        when attachment is skipped by queue
+        https://bugs.webkit.org/show_bug.cgi?id=186748
+
+        Reviewed by Lucas Forschler.
+
+        Fixes an issue where releasing a patch that was skipped by a queue would cause an AttributeError
+        in ReleasePatch.get().
+
+        When removing a patch from a queue we update queue statistics. As part of this process
+        we record the last message posted to the status server for the patch. Currently if a patch
+        is skipped by the queue when picking the next patch to process (say, we failed to fetch the
+        attachment) then the queue does not post a message to the status server before it asks the
+        status server to remove the patch from the list of patches the queue needs to process. Instead
+        the queue should tell the status server that it chose to skip the patch before asking for the
+        patch to be removed from its list of patches to process.
+
+        * Scripts/webkitpy/common/net/bugzilla/attachment.py:
+        (Attachment.bug_id): Return None if we do not have a bug ID. This can happen if we failed
+        to fetch the attachment from Bugzilla (say, Bugzilla's markup changed) or we do not have
+        have permission to view the Bugzilla bug.
+        * Scripts/webkitpy/common/net/bugzilla/attachment_unittest.py: Added.
+        (AttachmentTest):
+        (AttachmentTest.test_no_bug_id):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractPatchQueue._next_patch): Call AbstractPatchQueue._did_skip() to post a status
+        update to the status server and then release the work item.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (AbstractPatchQueueTest.test_next_patch): Update expected result.
+
 2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
 
         Test262-Runner: Improve files queue to optimize CPU usage/balancing
