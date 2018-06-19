@@ -418,9 +418,10 @@ void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& 
     if (!m_task)
         return;
 
-    [m_task resource:resource receivedRedirect:response request:WTFMove(request) completionHandler: [completionHandler = WTFMove(completionHandler)] (auto&& request) {
-        ASSERT(isMainThread());
-        completionHandler(WTFMove(request));
+    [m_task resource:resource receivedRedirect:response request:WTFMove(request) completionHandler: [completionHandler = WTFMove(completionHandler)] (auto&& request) mutable {
+        callOnMainThread([request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(WTFMove(request));
+        });
     }];
 }
 
