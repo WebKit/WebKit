@@ -186,7 +186,6 @@ sub processCLI {
         }
     }
 
-
     if ($JSC) {
         $JSC = abs_path($JSC);
         # Make sure the path and file jsc exist
@@ -292,8 +291,11 @@ sub main {
 
     print $deffh getHarness(\@defaultHarnessFiles);
 
-    # If not commandline test path supplied, use the root directory of all tests.
-    push(@cliTestDirs, 'test') if not @cliTestDirs;
+    if (!@cliTestDirs) {
+        # If not commandline test path supplied, use the root directory of all tests.
+        push(@cliTestDirs, 'test') if not @cliTestDirs;
+        $runningAllTests = 1;
+    }
 
     if ($latestImport) {
         @files = loadImportFile();
@@ -301,7 +303,6 @@ sub main {
         # If we only want to re-run failure, only run tests in results file
         findAllFailing();
     } else {
-        $runningAllTests = 1;
         # Otherwise, get all files from directory
         foreach my $testsDir (@cliTestDirs) {
             find(
@@ -501,36 +502,38 @@ sub main {
         print "---------------------------------------------------------\n";
     }
 
-    print("\n");
+    my $totalRun = scalar @results - $skipfilecount;
+    print "\n$totalRun tests run\n";
+    print "$skipfilecount test files skipped\n";
+
+    if (!$expect) {
+        print "$failcount tests failed\n";
+        print "$newpasscount tests newly pass\n" if $skippedOnly;
+    } else {
+        print "$failcount tests failed in total\n";
+        print "$newfailcount tests newly fail\n";
+        print "$newpasscount tests newly pass\n";
+    }
 
     if ($saveExpectations) {
         DumpFile($expectationsFile, \%failed);
         print "Saved expectation file in: $expectationsFile\n";
     }
-    if ($runningAllTests) {
-        if (! -e $resultsDir) {
-            mkpath($resultsDir);
-        }
-        $resultsFile = abs_path("$resultsDir/results.yaml");
-
-        DumpFile($resultsFile, \@results);
-        print "Saved all the results in $resultsFile\n";
-        summarizeResults();
+    if (! -e $resultsDir) {
+        mkpath($resultsDir);
     }
 
-    my $total = scalar @results - $skipfilecount;
-    print "\n" . $total . " tests ran\n";
+    $resultsFile = abs_path("$resultsDir/results.yaml");
 
-    if ( !$expect ) {
-        print $failcount . " tests failed\n";
-        print $newpasscount . " tests newly pass\n" if $skippedOnly;
-    } else {
-        print $failcount . " tests failed in total\n";
-        print $newfailcount . " tests newly fail\n";
-        print $newpasscount . " tests newly pass\n";
-    }
+    DumpFile($resultsFile, \@results);
+    print "Saved all the results in $resultsFile\n";
 
-    print $skipfilecount . " test files skipped\n";
+    my $styleCss = abs_path("$Bin/report.css");
+    qx/cp $styleCss $resultsDir/;
+    summarizeResults();
+    printHTMLResults(\%failed, $totalRun, $failcount, $newfailcount, $skipfilecount);
+
+    print "See the summaries and results in the $resultsDir.\n\n";
 
     printf("Done in %.2f seconds!\n", time() - $startTime);
 
@@ -916,6 +919,7 @@ sub summarizeResults {
     }
     $summaryTxtFile = abs_path("$resultsDir/summary.txt");
     $summaryFile = abs_path("$resultsDir/summary.yaml");
+    my $summaryHTMLFile = abs_path("$resultsDir/summary.html");
 
     my %byfeature;
     my %bypath;
@@ -972,56 +976,51 @@ sub summarizeResults {
     }
 
     open(my $sfh, '>', $summaryTxtFile) or die $!;
+    open(my $htmlfh, '>', $summaryHTMLFile) or die $!;
 
-    print $sfh sprintf("%-6s %-6s %-6s %-6s %-6s %-6s %-7s %-6s %s\n", 'TOTAL', 'RAN', 'PASS-%', 'PASS', 'FAIL', 'SKIP', 'TIME', 'AVG', 'FOLDER');
-    foreach my $key (sort keys %bypath) {
-        my $totalFilesRan = $bypath{$key}->[0] + $bypath{$key}->[1];
-        my $totalFiles = $totalFilesRan + $bypath{$key}->[2];
+    print $htmlfh qq{<html><head>
+        <title>Test262 Summaries</title>
+        <link rel="stylesheet" href="report.css">
+        </head>
+        <body>
+        <h1>Test262 Summaries</h1>
+        <div class="visit">Visit <a href="index.html">the index</a> for a report of failures.</div>
+        <h2>By Features</h2>
+        <table class="summary-table">
+            <thead>
+                <th>Feature</th>
+                <th>%</th>
+                <th>Total</th>
+                <th>Run</th>
+                <th>Passed</th>
+                <th>Failed</th>
+                <th>Skipped</th>
+                <th>Exec. time</th>
+                <th>Avg. time</th>
+            </thead>
+            <tbody>};
 
-        my $per = sprintf("%.0f", ($bypath{$key}->[0] / $totalFiles) * 100) . "%";
-
-        my $time = sprintf("%.1f", $bypath{$key}->[3]) . "s";
-        my $avgTime;
-
-        if ($totalFilesRan) {
-            $avgTime = sprintf("%.2f", $bypath{$key}->[3] / $totalFilesRan) . "s";
-        } else {
-            $avgTime = "0s";
-        }
-
-        print $sfh sprintf("%-6s %-6s %-6s %-6d %-6d %-6d %-7s %-6s %s\n",
-                           $totalFiles,
-                           $totalFilesRan,
-                           $per,
-                           $bypath{$key}->[0],
-                           $bypath{$key}->[1],
-                           $bypath{$key}->[2],
-                           $time,
-                           $avgTime,
-                           $key);
-    }
-
-    print $sfh "\n\n";
-    print $sfh sprintf("%-6s %-6s %-6s %-6s %-6s %-6s %-7s %-6s %s\n", 'TOTAL', 'RAN', 'PASS-%', 'PASS', 'FAIL', 'SKIP', 'TIME', 'AVG', 'FEATURE');
+    print $sfh sprintf("%-6s %-6s %-6s %-6s %-6s %-6s %-7s %-6s %s\n", 'TOTAL', 'RUN', 'PASS-%', 'PASS', 'FAIL', 'SKIP', 'TIME', 'AVG', 'FEATURE');
 
     foreach my $key (sort keys %byfeature) {
-        my $totalFilesRan = $byfeature{$key}->[0] + $byfeature{$key}->[1];
-        my $totalFiles = $totalFilesRan + $byfeature{$key}->[2];
+        my $totalFilesRun = $byfeature{$key}->[0] + $byfeature{$key}->[1];
+        my $totalFiles = $totalFilesRun + $byfeature{$key}->[2];
 
-        my $per = sprintf("%.0f", ($byfeature{$key}->[0] / $totalFiles) * 100) . "%";
+        my $iper = ($byfeature{$key}->[0] / $totalFiles) * 100;
+        my $per = sprintf("%.0f", $iper) . "%";
 
         my $time = sprintf("%.1f", $byfeature{$key}->[3]) . "s";
         my $avgTime;
 
-        if ($totalFilesRan) {
-            $avgTime = sprintf("%.2f", $byfeature{$key}->[3] / $totalFilesRan) . "s";
+        if ($totalFilesRun) {
+            $avgTime = sprintf("%.2f", $byfeature{$key}->[3] / $totalFilesRun) . "s";
         } else {
             $avgTime = "0s";
         }
 
         print $sfh sprintf("%-6s %-6s %-6s %-6d %-6d %-6d %-7s %-6s %s\n",
                            $totalFiles,
-                           $totalFilesRan,
+                           $totalFilesRun,
                            $per,
                            $byfeature{$key}->[0],
                            $byfeature{$key}->[1],
@@ -1029,9 +1028,85 @@ sub summarizeResults {
                            $time,
                            $avgTime,
                            $key);
+
+        print $htmlfh qq{
+            <tr class="per-$iper">
+                <td>$key</td>
+                <td>$per</td>
+                <td>$totalFiles</td>
+                <td>$totalFilesRun</td>
+                <td>$byfeature{$key}->[0]</td>
+                <td>$byfeature{$key}->[1]</td>
+                <td>$byfeature{$key}->[2]</td>
+                <td>$time</td>
+                <td>$avgTime</td>
+            </tr>};
     }
 
+    print $htmlfh qq{</tbody></table>
+        <h2>By Path</h2>
+        <table class="summary-table">
+            <thead>
+                <th>Folder</th>
+                <th>%</th>
+                <th>Total</th>
+                <th>Run</th>
+                <th>Passed</th>
+                <th>Failed</th>
+                <th>Skipped</th>
+                <th>Exec. time</th>
+                <th>Avg. time</th>
+            </thead>
+            <tbody>};
+
+    print $sfh sprintf("\n\n%-6s %-6s %-6s %-6s %-6s %-6s %-7s %-6s %s\n", 'TOTAL', 'RUN', 'PASS-%', 'PASS', 'FAIL', 'SKIP', 'TIME', 'AVG', 'FOLDER'); 
+    foreach my $key (sort keys %bypath) {
+        my $totalFilesRun = $bypath{$key}->[0] + $bypath{$key}->[1];
+        my $totalFiles = $totalFilesRun + $bypath{$key}->[2];
+
+        my $iper = ($bypath{$key}->[0] / $totalFiles) * 100;
+        my $per = sprintf("%.0f", $iper) . "%";
+
+        my $time = sprintf("%.1f", $bypath{$key}->[3]) . "s";
+        my $avgTime;
+
+        if ($totalFilesRun) {
+            $avgTime = sprintf("%.2f", $bypath{$key}->[3] / $totalFilesRun) . "s";
+        } else {
+            $avgTime = "0s";
+        }
+
+        print $sfh sprintf("%-6s %-6s %-6s %-6d %-6d %-6d %-7s %-6s %s\n",
+                           $totalFiles,
+                           $totalFilesRun,
+                           $per,
+                           $bypath{$key}->[0],
+                           $bypath{$key}->[1],
+                           $bypath{$key}->[2],
+                           $time,
+                           $avgTime,
+                           $key);
+
+        print $htmlfh qq{
+            <tr class="per-$iper">
+                <td>$key</td>
+                <td>$per</td>
+                <td>$totalFiles</td>
+                <td>$totalFilesRun</td>
+                <td>$bypath{$key}->[0]</td>
+                <td>$bypath{$key}->[1]</td>
+                <td>$bypath{$key}->[2]</td>
+                <td>$time</td>
+                <td>$avgTime</td>
+            </tr>};
+    }
+
+    print $htmlfh qq{</tbody></table>
+        <div class="visit">Visit <a href="index.html">the index</a> for a report of failures.</div>
+        </body></html>};
+
     close($sfh);
+    close($htmlfh);
 
     my %resultsyaml = (
         byFolder => \%bypath,
@@ -1039,8 +1114,6 @@ sub summarizeResults {
     );
 
     DumpFile($summaryFile, \%resultsyaml);
-
-    print "See summarized results in $summaryTxtFile\n";
 }
 
 sub findAllFailing {
@@ -1055,6 +1128,57 @@ sub findAllFailing {
     }
 
     @files = map { qq($test262Dir/$_) } keys %filedictionary;
+}
+
+sub printHTMLResults {
+    my %failed = %{shift()};
+    my ($total, $failcount, $newfailcount, $skipcount) = @_;
+
+    # Create test262-results folder if it does not exits
+    if (! -e $resultsDir) {
+        mkpath($resultsDir);
+    }
+
+    my $indexHTML = abs_path("$resultsDir/index.html");
+    open(my $htmlfh, '>', $indexHTML) or die $!;
+
+    print $htmlfh qq{<html><head>
+        <title>Test262 Results</title>
+        <link rel="stylesheet" href="report.css">
+        </head>
+        <body>
+        <h1>Test262 Results</h1>
+        <div class="visit">Visit <a href="summary.html">the summary</a> for statistics.</div>};
+
+    print $htmlfh qq{<h2>Stats</h2><ul>};
+
+    {
+        my $failedFiles = scalar (keys %failed);
+        my $totalPlus = $total + $skipcount;
+        print $htmlfh qq{
+            <li>$total test files run from $totalPlus files, $skipcount skipped test files</li>
+            <li>$failcount failures from $failedFiles distinct files, $newfailcount new failures</li>
+        };
+    }
+
+    print $htmlfh qq{</ul><h2>Failures</h2><ul>};
+
+    while (my ($path, $scenarios) = each %failed) {
+        print $htmlfh qq{<li class="list-item">
+            <label for="$path" class="expander-control">$path</label>
+            <input type="checkbox" id="$path" class="expander">
+            <ul class="expand">};
+        while (my ($scenario, $value) = each %{$scenarios}) {
+            print $htmlfh qq{<li>$scenario: $value</li>};
+        }
+        print $htmlfh qq{</ul></li>}
+    }
+
+    print $htmlfh qq{</ul>
+    <div class="visit">Visit <a href="summary.html">the summary</a> for statistics.</div>
+    </body></html>};
+
+    close $htmlfh;
 }
 
 __END__

@@ -1,3 +1,16 @@
+2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
+
+        [test262-runner] Print results report to HTML
+        https://bugs.webkit.org/show_bug.cgi?id=186790
+
+        Reviewed by Michael Saboff.
+
+        After runing the tests, 2 html files are created with a list to failing tests and summaries.
+        * Scripts/test262/Runner.pm:
+        (main):
+        (summarizeResults):
+        (printHTML):
+
 2018-06-19  Keith Rollin  <krollin@apple.com>
 
         Crash running check-webkit-style on webrtc/.../exceptions.py
