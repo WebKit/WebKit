@@ -1,5 +1,12 @@
 2018-06-18  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, remove bad assertion.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+
+2018-06-18  Keith Miller  <keith_miller@apple.com>
+
         Properly zero unused property storage offsets
         https://bugs.webkit.org/show_bug.cgi?id=186692
 

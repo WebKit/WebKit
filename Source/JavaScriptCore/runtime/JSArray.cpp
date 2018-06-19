@@ -52,7 +52,6 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
 
     unsigned outOfLineStorage = structure->outOfLineCapacity();
     JSGlobalObject* globalObject = structure->globalObject();
-    ASSERT_UNUSED(globalObject, globalObject->isOriginalArrayStructure(structure) || structure == globalObject->regExpMatchesArrayStructure() || structure == globalObject->regExpMatchesArrayWithGroupsStructure());
 
     Butterfly* butterfly;
     IndexingType indexingType = structure->indexingType();
