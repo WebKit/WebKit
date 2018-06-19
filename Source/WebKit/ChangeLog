@@ -1,3 +1,25 @@
+2018-06-19  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r231850): Cookie file cannot be read or written by network process
+        https://bugs.webkit.org/show_bug.cgi?id=186806
+        <rdar://problem/41113791>
+
+        Reviewed by Geoffrey Garen.
+
+        Default websiteDataStore may be added wrongly to network process before default session was 
+        set, as messages were asynchronous, so the cookie storage could be improperly set.   
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-06-19  Don Olmstead  <don.olmstead@sony.com>
 
         Use getCurrentProcessID over getpid
