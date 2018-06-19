@@ -5915,6 +5915,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return [_contentView selectFormPopoverTitle];
 }
 
+- (NSString *)textContentTypeForTesting
+{
+    return [_contentView textContentTypeForTesting];
+}
+
 - (NSString *)formInputLabel
 {
     return [_contentView formInputLabel];

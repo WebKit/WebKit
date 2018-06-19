@@ -167,6 +167,11 @@ void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
 {
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::textContentType() const
+{
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
 {
     return nullptr;

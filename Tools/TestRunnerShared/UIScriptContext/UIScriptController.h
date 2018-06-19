@@ -98,6 +98,7 @@ public:
     
     void dismissFormAccessoryView();
     void selectFormAccessoryPickerRow(long);
+    JSRetainPtr<JSStringRef> textContentType() const;
     JSRetainPtr<JSStringRef> selectFormPopoverTitle() const;
     JSRetainPtr<JSStringRef> formInputLabel() const;
     void setTimePickerValue(long hour, long minute);

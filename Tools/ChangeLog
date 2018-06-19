@@ -1,3 +1,22 @@
+2018-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Vend username text content type when using scribble in login fields
+        https://bugs.webkit.org/show_bug.cgi?id=186791
+        <rdar://problem/41226935>
+
+        Reviewed by Beth Dakin.
+
+        Add testing support for grabbing the current text content type of the focused element.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::textContentType const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::textContentType const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::textContentType const):
+
 2018-06-19  Robin Morisset  <rmorisset@apple.com>
 
         [WSL] Improving the typing rules

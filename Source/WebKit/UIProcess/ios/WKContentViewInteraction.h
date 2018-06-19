@@ -364,6 +364,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
+@property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
 

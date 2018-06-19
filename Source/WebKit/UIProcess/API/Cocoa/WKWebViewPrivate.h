@@ -374,6 +374,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(10.0));
 - (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(10.3));
 - (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(10.3));
+@property (nonatomic, readonly) NSString *textContentTypeForTesting WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, readonly) NSString *formInputLabel WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute WK_API_AVAILABLE(ios(WK_IOS_TBA));

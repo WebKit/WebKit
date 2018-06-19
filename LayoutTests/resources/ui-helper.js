@@ -211,6 +211,15 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(setValueScript, resolve));
     }
 
+    static textContentType()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.textContentType);
+            })()`, resolve);
+        });
+    }
+
     static formInputLabel()
     {
         return new Promise(resolve => {

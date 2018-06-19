@@ -1,3 +1,21 @@
+2018-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Vend username text content type when using scribble in login fields
+        https://bugs.webkit.org/show_bug.cgi?id=186791
+        <rdar://problem/41226935>
+
+        Reviewed by Beth Dakin.
+
+        Add a new layout test verifying that:
+        1. There is no text content type for a lone plain text input.
+        2. The text content type for a plain text input preceding a password field is "username".
+        3. The text content type for a lone plain text input with `autocomplete="username"` is "username".
+
+        * fast/forms/watchos/username-text-content-type-expected.txt: Added.
+        * fast/forms/watchos/username-text-content-type.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.textContentType):
+
 2018-06-19  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test imported/mozilla/css-transitions/test_animation-cancel.html is failing.

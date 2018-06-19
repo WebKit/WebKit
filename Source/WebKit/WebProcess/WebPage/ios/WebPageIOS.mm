@@ -2390,7 +2390,10 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         HTMLFormElement* form = element.form();
         if (form)
             information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr);
-        information.acceptsAutofilledLoginCredentials = !!WebCore::AutofillElements::computeAutofillElements(element);
+        if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(element)) {
+            information.acceptsAutofilledLoginCredentials = true;
+            information.isAutofillableUsernameField = autofillElements->username() == m_assistedNode;
+        }
         information.representingPageURL = element.document().urlForBindings();
         information.autocapitalizeType = element.autocapitalizeType();
         information.isAutocorrect = element.shouldAutocorrect();

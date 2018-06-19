@@ -32,6 +32,8 @@ class AutofillElements {
 public:
     WEBCORE_EXPORT static std::optional<AutofillElements> computeAutofillElements(Ref<HTMLInputElement>);
     WEBCORE_EXPORT void autofill(String, String);
+
+    const HTMLInputElement* username() const { return m_username.get(); }
 private:
     AutofillElements(RefPtr<HTMLInputElement>&&, RefPtr<HTMLInputElement>&&);
     RefPtr<HTMLInputElement> m_username;

@@ -3412,8 +3412,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return UITextContentTypeEmailAddress;
     case WebCore::AutofillFieldName::URL:
         return UITextContentTypeURL;
-    case WebCore::AutofillFieldName::None:
     case WebCore::AutofillFieldName::Username:
+        return UITextContentTypeUsername;
+    case WebCore::AutofillFieldName::None:
     case WebCore::AutofillFieldName::NewPassword:
     case WebCore::AutofillFieldName::CurrentPassword:
     case WebCore::AutofillFieldName::AddressLine3:
@@ -5616,7 +5617,13 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return UITextContentTypeTelephoneNumber;
     default:
         // The element type alone is insufficient to infer content type; fall back to autofill data.
-        return contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName);
+        if (NSString *contentType = contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName))
+            return contentType;
+
+        if (_assistedNodeInformation.isAutofillableUsernameField)
+            return UITextContentTypeUsername;
+
+        return nil;
     }
 }
 
@@ -5674,6 +5681,15 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if ([_inputPeripheral isKindOfClass:[WKFormSelectControl self]])
         [(WKFormSelectControl *)_inputPeripheral selectRow:rowIndex inComponent:0 extendingSelection:NO];
 #endif
+}
+
+- (NSString *)textContentTypeForTesting
+{
+#if PLATFORM(WATCHOS)
+    if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
+        return [self textContentTypeForListViewController:(WKTextInputListViewController *)_presentedFullScreenInputViewController.get()];
+#endif
+    return self.textInputTraits.textContentType;
 }
 
 - (NSString *)selectFormPopoverTitle

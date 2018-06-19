@@ -431,6 +431,12 @@ JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
     return JSStringCreateWithCFString((CFStringRef)webView.selectFormPopoverTitle);
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::textContentType() const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    return JSStringCreateWithCFString((CFStringRef)(webView.textContentTypeForTesting ?: @""));
+}
+
 JSRetainPtr<JSStringRef> UIScriptController::formInputLabel() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
