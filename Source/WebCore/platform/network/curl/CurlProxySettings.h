@@ -28,6 +28,9 @@
 #include "URL.h"
 #include <wtf/text/WTFString.h>
 
+#define kCURLAUTH_DIGEST_IE    (((unsigned long) 1) << 4)
+#define kCURLAUTH_ANY          (~kCURLAUTH_DIGEST_IE)
+
 namespace WebCore {
 
 class CurlProxySettings {
@@ -55,10 +58,15 @@ public:
     const String user() const { return m_url.user(); }
     const String password() const { return m_url.pass(); }
 
+    void setDefaultAuthMethod() { m_authMethod = kCURLAUTH_ANY; }
+    void setAuthMethod(long);
+    long authMethod() const { return m_authMethod; }
+
 private:
     Mode m_mode { Mode::Default };
     URL m_url;
     String m_ignoreHosts;
+    long m_authMethod { static_cast<long>(kCURLAUTH_ANY) };
 
     // We can't simply use m_url.string() because we need to explicitly indicate the port number
     // to libcurl. URLParser omit the default port while parsing, but libcurl assume 1080 as a
@@ -67,5 +75,7 @@ private:
 
     void rebuildUrl();
 };
+
+bool protocolIsInSocksFamily(const URL&);
 
 } // namespace WebCore

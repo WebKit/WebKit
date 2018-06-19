@@ -1,3 +1,44 @@
+2018-06-19  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Enable Proxy Authentication.
+        https://bugs.webkit.org/show_bug.cgi?id=185266
+
+        Add support for Proxy Authentication to curl network layer.
+
+        Reviewed by Alex Christensen.
+
+        No new tests in public. Tested internally.
+
+        * platform/network/curl/AuthenticationChallenge.h:
+        * platform/network/curl/AuthenticationChallengeCurl.cpp:
+        (WebCore::AuthenticationChallenge::protectionSpaceServerTypeFromURI):
+        (WebCore::AuthenticationChallenge::protectionSpaceFromHandle):
+        (WebCore::AuthenticationChallenge::determineProxyPort):
+        (WebCore::AuthenticationChallenge::authenticationSchemeFromCurlAuth):
+        (WebCore::AuthenticationChallenge::parseRealm):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::enableProxyIfExists):
+        (WebCore::CurlHandle::getProxyUrl):
+        (WebCore::CurlHandle::getProxyAuthAvail):
+        (WebCore::CurlHandle::getPrimaryPort): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlContext::setDefaultProxyAuthMethod):
+        (WebCore::CurlContext::setProxyAuthMethod):
+        * platform/network/curl/CurlProxySettings.cpp:
+        (WebCore::determineAuthMethod):
+        (WebCore::CurlProxySettings::setAuthMethod):
+        (WebCore::protocolIsInSocksFamily):
+        * platform/network/curl/CurlProxySettings.h:
+        (WebCore::CurlProxySettings::setDefaultAuthMethod):
+        (WebCore::CurlProxySettings::authMethod const):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::didReceiveHeader):
+        * platform/network/curl/CurlResponse.h:
+        (WebCore::CurlResponse::isolatedCopy const):
+        * platform/network/curl/ResourceResponse.h:
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::isProxyAuthenticationRequired const):
+
 2018-06-19  Tim Horton  <timothy_horton@apple.com>
 
         Unpainted area while scrolling in Reader is white

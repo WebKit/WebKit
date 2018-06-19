@@ -501,7 +501,7 @@ void CurlHandle::enableProxyIfExists()
             curl_easy_setopt(m_handle, CURLOPT_PROXYUSERNAME, proxy.user().utf8().data());
         if (!proxy.password().isEmpty())
             curl_easy_setopt(m_handle, CURLOPT_PROXYPASSWORD, proxy.password().utf8().data());
-        curl_easy_setopt(m_handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(m_handle, CURLOPT_PROXYAUTH, proxy.authMethod());
         break;
     case CurlProxySettings::Mode::NoProxy :
         // Disable the use of a proxy, even if there is an environment variable set for it.
@@ -510,7 +510,7 @@ void CurlHandle::enableProxyIfExists()
     case CurlProxySettings::Mode::Custom :
         curl_easy_setopt(m_handle, CURLOPT_PROXY, proxy.url().utf8().data());
         curl_easy_setopt(m_handle, CURLOPT_NOPROXY, proxy.ignoreHosts().utf8().data());
-        curl_easy_setopt(m_handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+        curl_easy_setopt(m_handle, CURLOPT_PROXYAUTH, proxy.authMethod());
         break;
     }
 }
@@ -560,21 +560,13 @@ void CurlHandle::setSslCtxCallbackFunction(curl_ssl_ctx_callback callbackFunc, v
     curl_easy_setopt(m_handle, CURLOPT_SSL_CTX_FUNCTION, callbackFunc);
 }
 
-std::optional<uint16_t> CurlHandle::getPrimaryPort()
+std::optional<String> CurlHandle::getProxyUrl()
 {
-    if (!m_handle)
+    auto& proxy = CurlContext::singleton().proxySettings();
+    if (proxy.mode() == CurlProxySettings::Mode::Default)
         return std::nullopt;
 
-    long port;
-    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_PORT, &port);
-    if (errorCode != CURLE_OK)
-        return std::nullopt;
-
-    /*
-     * https://github.com/curl/curl/blob/master/lib/connect.c#L612-L660
-     * confirmed that `port` is originally unsigned short.
-     */
-    return static_cast<uint16_t>(port);
+    return proxy.url();
 }
 
 std::optional<long> CurlHandle::getResponseCode()
@@ -628,6 +620,19 @@ std::optional<long> CurlHandle::getHttpAuthAvail()
         return std::nullopt;
 
     return httpAuthAvailable;
+}
+
+std::optional<long> CurlHandle::getProxyAuthAvail()
+{
+    if (!m_handle)
+        return std::nullopt;
+
+    long proxyAuthAvailable;
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_PROXYAUTH_AVAIL, &proxyAuthAvailable);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    return proxyAuthAvailable;
 }
 
 std::optional<long> CurlHandle::getHttpVersion()

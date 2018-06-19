@@ -58,6 +58,7 @@ public:
     bool isSeeOther() const;
     bool isNotModified() const;
     bool isUnauthorized() const;
+    bool isProxyAuthenticationRequired() const;
 
     // Needed for compatibility.
     CFURLResponseRef cfURLResponse() const { return 0; }

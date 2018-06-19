@@ -106,6 +106,8 @@ public:
     const CurlProxySettings& proxySettings() const { return m_proxySettings; }
     void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
     void setProxyUserPass(const String& user, const String& password) { m_proxySettings.setUserPass(user, password); }
+    void setDefaultProxyAuthMethod() { m_proxySettings.setDefaultAuthMethod(); }
+    void setProxyAuthMethod(long authMethod) { m_proxySettings.setAuthMethod(authMethod); }
 
     // SSL
     CurlSSLHandle& sslHandle() { return m_sslHandle; }
@@ -267,11 +269,12 @@ public:
     void setSslCtxCallbackFunction(curl_ssl_ctx_callback, void*);
 
     // Status
-    std::optional<uint16_t> getPrimaryPort();
+    std::optional<String> getProxyUrl();
     std::optional<long> getResponseCode();
     std::optional<long> getHttpConnectCode();
     std::optional<long long> getContentLength();
     std::optional<long> getHttpAuthAvail();
+    std::optional<long> getProxyAuthAvail();
     std::optional<long> getHttpVersion();
     std::optional<NetworkLoadMetrics> getNetworkLoadMetrics();
 

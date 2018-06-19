@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,8 +48,11 @@ public:
     AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
 
 private:
-    ProtectionSpaceServerType protectionSpaceServerTypeFromURI(const URL&);
+    ProtectionSpaceServerType protectionSpaceServerTypeFromURI(const URL&, bool isForProxy);
     ProtectionSpace protectionSpaceFromHandle(const CurlResponse&, const ResourceResponse&);
+    std::optional<uint16_t> determineProxyPort(const URL&);
+    ProtectionSpaceAuthenticationScheme authenticationSchemeFromCurlAuth(long);
+    String parseRealm(const ResourceResponse&);
     void removeLeadingAndTrailingQuotes(String&);
 
     RefPtr<AuthenticationClient> m_authenticationClient;

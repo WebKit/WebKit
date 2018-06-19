@@ -28,11 +28,16 @@
 
 #if USE(CURL)
 
+#if PLATFORM(WIN)
+#include <winsock2.h>
+#endif
+
+#include <curl/curl.h>
+
 namespace WebCore {
 
 static const uint16_t SocksProxyPort = 1080;
 
-static bool protocolIsInSocksFamily(const URL&);
 static std::optional<uint16_t> getProxyPort(const URL&);
 static std::optional<String> createProxyUrl(const URL&);
 
@@ -61,7 +66,25 @@ void CurlProxySettings::setUserPass(const String& user, const String& password)
     rebuildUrl();
 }
 
-static bool protocolIsInSocksFamily(const URL& url)
+static long determineAuthMethod(long authMethod)
+{
+    if (authMethod & CURLAUTH_NEGOTIATE)
+        return CURLAUTH_NEGOTIATE;
+    if (authMethod & CURLAUTH_DIGEST)
+        return CURLAUTH_DIGEST;
+    if (authMethod & CURLAUTH_NTLM)
+        return CURLAUTH_NTLM;
+    if (authMethod & CURLAUTH_BASIC)
+        return CURLAUTH_BASIC;
+    return CURLAUTH_NONE;
+}
+
+void CurlProxySettings::setAuthMethod(long authMethod)
+{
+    m_authMethod = determineAuthMethod(authMethod);
+}
+
+bool protocolIsInSocksFamily(const URL& url)
 {
     return url.protocolIs("socks4") || url.protocolIs("socks4a") || url.protocolIs("socks5") || url.protocolIs("socks5h");
 }

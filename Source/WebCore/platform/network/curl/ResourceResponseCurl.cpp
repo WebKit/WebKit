@@ -188,6 +188,11 @@ bool ResourceResponse::isUnauthorized() const
     return httpStatusCode() == 401;
 }
 
+bool ResourceResponse::isProxyAuthenticationRequired() const
+{
+    return httpStatusCode() == 407;
+}
+
 }
 
 #endif

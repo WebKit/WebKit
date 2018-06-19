@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,43 +40,75 @@ AuthenticationChallenge::AuthenticationChallenge(const CurlResponse& curlRespons
 {
 }
 
-ProtectionSpaceServerType AuthenticationChallenge::protectionSpaceServerTypeFromURI(const URL& url)
+ProtectionSpaceServerType AuthenticationChallenge::protectionSpaceServerTypeFromURI(const URL& url, bool isForProxy)
 {
     if (url.protocolIs("https"))
-        return ProtectionSpaceServerHTTPS;
+        return isForProxy ? ProtectionSpaceProxyHTTPS : ProtectionSpaceServerHTTPS;
     if (url.protocolIs("http"))
-        return ProtectionSpaceServerHTTP;
+        return isForProxy ? ProtectionSpaceProxyHTTP : ProtectionSpaceServerHTTP;
     if (url.protocolIs("ftp"))
-        return ProtectionSpaceServerFTP;
-    return ProtectionSpaceServerHTTP;
+        return isForProxy ? ProtectionSpaceProxyFTP : ProtectionSpaceServerFTP;
+    return isForProxy ? ProtectionSpaceProxyHTTP : ProtectionSpaceServerHTTP;
 }
 
 ProtectionSpace AuthenticationChallenge::protectionSpaceFromHandle(const CurlResponse& curlResponse, const ResourceResponse& response)
 {
-    auto port = curlResponse.connectPort;
-    auto availableHttpAuth = curlResponse.availableHttpAuth;
+    if (!response.isUnauthorized() && !response.isProxyAuthenticationRequired())
+        return ProtectionSpace();
 
-    ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeUnknown;
-    if (availableHttpAuth & CURLAUTH_BASIC)
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
-    if (availableHttpAuth & CURLAUTH_DIGEST)
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
-    if (availableHttpAuth & CURLAUTH_NEGOTIATE)
-        scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
-    if (availableHttpAuth & CURLAUTH_NTLM)
-        scheme = ProtectionSpaceAuthenticationSchemeNTLM;
+    auto isProxyAuth = response.isProxyAuthenticationRequired();
+    const auto& url = isProxyAuth ? curlResponse.proxyUrl : response.url();
+    auto port = determineProxyPort(url);
+    auto serverType = protectionSpaceServerTypeFromURI(url, isProxyAuth);
+    auto authenticationScheme = authenticationSchemeFromCurlAuth(isProxyAuth ? curlResponse.availableProxyAuth : curlResponse.availableHttpAuth);
+
+    return ProtectionSpace(url.host().toString(), static_cast<int>(port ? *port : 0), serverType, parseRealm(response), authenticationScheme);
+}
+
+std::optional<uint16_t> AuthenticationChallenge::determineProxyPort(const URL& url)
+{
+    static const uint16_t socksPort = 1080;
+
+    if (auto port = url.port())
+        return *port;
+
+    if (auto port = defaultPortForProtocol(url.protocol()))
+        return *port;
+
+    if (protocolIsInSocksFamily(url))
+        return socksPort;
+
+    return std::nullopt;
+}
+
+ProtectionSpaceAuthenticationScheme AuthenticationChallenge::authenticationSchemeFromCurlAuth(long curlAuth)
+{
+    if (curlAuth & CURLAUTH_NTLM)
+        return ProtectionSpaceAuthenticationSchemeNTLM;
+    if (curlAuth & CURLAUTH_NEGOTIATE)
+        return ProtectionSpaceAuthenticationSchemeNegotiate;
+    if (curlAuth & CURLAUTH_DIGEST)
+        return ProtectionSpaceAuthenticationSchemeHTTPDigest;
+    if (curlAuth & CURLAUTH_BASIC)
+        return ProtectionSpaceAuthenticationSchemeHTTPBasic;
+    return ProtectionSpaceAuthenticationSchemeUnknown;
+}
+
+String AuthenticationChallenge::parseRealm(const ResourceResponse& response)
+{
+    static NeverDestroyed<String> wwwAuthenticate(MAKE_STATIC_STRING_IMPL("www-authenticate"));
+    static NeverDestroyed<String> proxyAuthenticate(MAKE_STATIC_STRING_IMPL("proxy-authenticate"));
+    static NeverDestroyed<String> realmString(MAKE_STATIC_STRING_IMPL("realm="));
 
     String realm;
-    const String realmString("realm=");
-    auto authHeader = response.httpHeaderField(String("www-authenticate"));
+    auto authHeader = response.httpHeaderField(response.isUnauthorized() ? wwwAuthenticate : proxyAuthenticate);
     auto realmPos = authHeader.findIgnoringASCIICase(realmString);
     if (realmPos != notFound) {
-        realm = authHeader.substring(realmPos + realmString.length());
+        realm = authHeader.substring(realmPos + realmString.get().length());
         realm = realm.left(realm.find(','));
         removeLeadingAndTrailingQuotes(realm);
     }
-
-    return ProtectionSpace(response.url().host().toString(), static_cast<int>(port), protectionSpaceServerTypeFromURI(response.url()), realm, scheme);
+    return realm;
 }
 
 void AuthenticationChallenge::removeLeadingAndTrailingQuotes(String& value)

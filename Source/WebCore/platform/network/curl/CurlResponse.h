@@ -45,8 +45,9 @@ public:
         for (const auto& header : headers)
             copy.headers.append(header.isolatedCopy());
 
-        copy.connectPort = connectPort;
+        copy.proxyUrl = proxyUrl.isolatedCopy();
         copy.availableHttpAuth = availableHttpAuth;
+        copy.availableProxyAuth = availableProxyAuth;
         copy.httpVersion = httpVersion;
 
         return copy;
@@ -58,8 +59,9 @@ public:
     long long expectedContentLength { 0 };
     Vector<String> headers;
 
-    uint16_t connectPort { 0 };
+    URL proxyUrl;
     long availableHttpAuth { 0 };
+    long availableProxyAuth { 0 };
     long httpVersion { 0 };
 };
 

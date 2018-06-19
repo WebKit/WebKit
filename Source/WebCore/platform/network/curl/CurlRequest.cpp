@@ -333,17 +333,23 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (auto length = m_curlHandle->getContentLength())
         m_response.expectedContentLength = *length;
 
-    if (auto port = m_curlHandle->getPrimaryPort())
-        m_response.connectPort = *port;
+    if (auto proxyUrl = m_curlHandle->getProxyUrl())
+        m_response.proxyUrl = URL(URL(), *proxyUrl);
 
     if (auto auth = m_curlHandle->getHttpAuthAvail())
         m_response.availableHttpAuth = *auth;
+
+    if (auto auth = m_curlHandle->getProxyAuthAvail())
+        m_response.availableProxyAuth = *auth;
 
     if (auto version = m_curlHandle->getHttpVersion())
         m_response.httpVersion = *version;
 
     if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
         m_networkLoadMetrics = *metrics;
+
+    if (m_response.availableProxyAuth)
+        CurlContext::singleton().setProxyAuthMethod(m_response.availableProxyAuth);
 
     if (m_enableMultipart)
         m_multipartHandle = CurlMultipartHandle::createIfNeeded(*this, m_response);
