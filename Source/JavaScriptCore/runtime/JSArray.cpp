@@ -51,8 +51,6 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
         return 0;
 
     unsigned outOfLineStorage = structure->outOfLineCapacity();
-    JSGlobalObject* globalObject = structure->globalObject();
-
     Butterfly* butterfly;
     IndexingType indexingType = structure->indexingType();
     if (LIKELY(!hasAnyArrayStorage(indexingType))) {

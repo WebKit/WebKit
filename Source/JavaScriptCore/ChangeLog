@@ -1,5 +1,12 @@
 2018-06-18  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix the build...
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+
+2018-06-18  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, remove bad assertion.
 
         * runtime/JSArray.cpp:
