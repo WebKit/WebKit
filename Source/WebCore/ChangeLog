@@ -1,5 +1,27 @@
 2018-06-20  Simon Fraser  <simon.fraser@apple.com>
 
+        AnimationList wastes 60KB of vector capacity
+        https://bugs.webkit.org/show_bug.cgi?id=186701
+
+        Reviewed by Chris Dumez.
+
+        AnimationList was the second most wasteful call site for Vector capacity on theverge.com,
+        wasting almost 60KB. Lists had between 1 and 3 entries, so give AnimationList's vector of
+        Animations a min capacity of zero so it doesn't grow in increments of 16.
+        
+        Also shrink Animation from 88 bytes to 72 bytes by optimizing packing.
+
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::Animation):
+        (WebCore::Animation::operator=):
+        (WebCore::Animation::animationsMatch const):
+        * platform/animation/Animation.h:
+        (WebCore::Animation::animationMode const):
+        (WebCore::Animation::setAnimationMode):
+        * platform/animation/AnimationList.h:
+
+2018-06-20  Simon Fraser  <simon.fraser@apple.com>
+
         ContentSecurityPolicySourceList wastes 51KB of Vector capacity on cnn.com
         https://bugs.webkit.org/show_bug.cgi?id=186706
 

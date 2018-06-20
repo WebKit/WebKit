@@ -138,7 +138,7 @@ public:
     CSSPropertyID property() const { return m_property; }
     const String& unknownProperty() const { return m_unknownProperty; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
-    AnimationMode animationMode() const { return m_mode; }
+    AnimationMode animationMode() const { return static_cast<AnimationMode>(m_mode); }
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     AnimationTrigger* trigger() const { return m_trigger.get(); }
 #endif
@@ -158,7 +158,7 @@ public:
     void setProperty(CSSPropertyID t) { m_property = t; m_propertySet = true; }
     void setUnknownProperty(const String& property) { m_unknownProperty = property; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
-    void setAnimationMode(AnimationMode mode) { m_mode = mode; }
+    void setAnimationMode(AnimationMode mode) { m_mode = static_cast<unsigned>(mode); }
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     void setTrigger(RefPtr<AnimationTrigger>&& trigger) { m_trigger = WTFMove(trigger); m_triggerSet = true; }
 #endif
@@ -181,11 +181,11 @@ private:
     WEBCORE_EXPORT Animation();
     Animation(const Animation& o);
     
+    // Packs with m_refCount from the base class.
+    CSSPropertyID m_property { CSSPropertyInvalid };
+
     String m_name;
-    Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };
-    CSSPropertyID m_property;
     String m_unknownProperty;
-    AnimationMode m_mode;
     double m_iterationCount;
     double m_delay;
     double m_duration;
@@ -193,11 +193,13 @@ private:
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     RefPtr<AnimationTrigger> m_trigger;
 #endif
+
+    Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };
+
+    unsigned m_mode : 2; // AnimationMode
     unsigned m_direction : 2; // AnimationDirection
-    unsigned m_fillMode : 2;
-
-
-    unsigned m_playState : 2;
+    unsigned m_fillMode : 2; // AnimationFillMode
+    unsigned m_playState : 2; // AnimationPlayState
 
     bool m_delaySet : 1;
     bool m_directionSet : 1;
