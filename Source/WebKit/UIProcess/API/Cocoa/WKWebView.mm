@@ -2727,13 +2727,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     _hasScheduledVisibleRectUpdate = YES;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     CATransactionPhase transactionPhase = [CATransaction currentPhase];
     if (transactionPhase == kCATransactionPhaseNull || transactionPhase == kCATransactionPhasePreLayout) {
         [self _addUpdateVisibleContentRectPreCommitHandler];
         return;
     }
-#endif
 
     dispatch_async(dispatch_get_main_queue(), [retainedSelf = retainPtr(self)] {
         WKWebView *webView = retainedSelf.get();

@@ -1,3 +1,21 @@
+2018-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Fixed position elements sometimes flicker when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=186860
+        <rdar://problem/39953563>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to exercise a race condition between receiving remote layer tree commits and updating visible
+        content rects which would result in the compositing layer for a fixed position element sometimes appearing in
+        the wrong place. See WebKit ChangeLog for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/fixed-nav-bar.html: Added.
+        * TestWebKitAPI/Tests/ios/WKScrollViewTests.mm: Added.
+        (traverseLayerTree):
+        (TEST):
+
 2018-06-20  Daniel Bates  <dabates@apple.com>
 
         AttributeError: StatusServer instance has no attribute '_api_key' thrown when processing a patch

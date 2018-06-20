@@ -1,3 +1,21 @@
+2018-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WebKit on watchOS] Fixed position elements sometimes flicker when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=186860
+        <rdar://problem/39953563>
+
+        Reviewed by Tim Horton.
+
+        Remove conditional guards that are no longer necessary, now that the oldest iOS version our builders support is
+        iOS 11. Conditionalizing this logic only for iOS 11+ meant that on watchOS, we're always falling down the path
+        where we don't schedule a visible content rect update until the next runloop, which makes it possible for a
+        remote layer tree transaction to arrive and cause us to update the scrolling tree with stale viewport geometry.
+
+        Test: WKScrollViewTests.PositionFixedLayerAfterScrolling
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+
 2018-06-20  Megan Gardner  <megan_gardner@apple.com>
 
         Restrict Selection in contenteditable the extent of that contenteditable
