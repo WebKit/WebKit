@@ -1,3 +1,15 @@
+2018-06-19  Michael Saboff  <msaboff@apple.com>
+
+        Crash in sanitizeStackForVMImpl sometimes when switching threads with same VM
+        https://bugs.webkit.org/show_bug.cgi?id=186827
+
+        Reviewed by Saam Barati.
+
+        Need to set VM::lastStackTop before any possible calls to sanitizeStack().
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+
 2018-06-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         ShadowChicken crashes with stack overflow in the LLInt
