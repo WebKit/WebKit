@@ -204,13 +204,15 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
     if (currentStyle && currentStyle->hasAnimations() && afterChangeStyle.hasAnimations() && *(currentStyle->animations()) == *(afterChangeStyle.animations()))
         return;
 
+    static NeverDestroyed<const String> animationNameNone(MAKE_STATIC_STRING_IMPL("none"));
+
     // First, compile the list of animation names that were applied to this element up to this point.
     HashSet<String> namesOfPreviousAnimations;
     if (currentStyle && currentStyle->hasAnimations()) {
         auto* previousAnimations = currentStyle->animations();
         for (size_t i = 0; i < previousAnimations->size(); ++i) {
             auto& previousAnimation = previousAnimations->animation(i);
-            if (previousAnimation.isValidAnimation())
+            if (previousAnimation.isValidAnimation() && previousAnimation.name() != animationNameNone)
                 namesOfPreviousAnimations.add(previousAnimation.name());
         }
     }
@@ -229,7 +231,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
                 // created a CSSAnimation object for it and need to ensure that this CSSAnimation is backed by the current
                 // animation object for this animation name.
                 cssAnimationsByName.get(name)->setBackingAnimation(currentAnimation);
-            } else if (currentAnimation.isValidAnimation()) {
+            } else if (currentAnimation.isValidAnimation() && name != animationNameNone) {
                 // Otherwise we are dealing with a new animation name and must create a CSSAnimation for it.
                 cssAnimationsByName.set(name, CSSAnimation::create(element, currentAnimation, currentStyle, afterChangeStyle));
             }

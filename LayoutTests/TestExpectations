@@ -1932,7 +1932,6 @@ webkit.org/b/183834 imported/mozilla/css-animations/test_animation-starttime.htm
 webkit.org/b/183836 imported/mozilla/css-animations/test_animations-dynamic-changes.html [ Pass Failure Timeout ]
 webkit.org/b/183837 imported/mozilla/css-transitions/test_document-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183840 imported/mozilla/css-animations/test_document-get-animations.html [ Pass Failure Timeout ]
-webkit.org/b/183841 imported/mozilla/css-transitions/test_element-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183844 imported/mozilla/css-animations/test_element-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183846 imported/mozilla/css-transitions/test_pseudoElement-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183847 imported/mozilla/css-animations/test_event-order.html [ Pass Failure Timeout ]

@@ -1,3 +1,16 @@
+2018-06-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_element-get-animations.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183841
+        <rdar://problem/40998101>
+
+        Reviewed by Dean Jackson.
+
+        We must ignore CSS Animations with "animation-name: none".
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement):
+
 2018-06-20  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][ThreadedRendering][Nicosia] Themed elements cannot be rendered using threaded rendering

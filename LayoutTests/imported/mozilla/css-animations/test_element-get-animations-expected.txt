@@ -6,7 +6,7 @@ PASS getAnimations for multi-property animations
 PASS getAnimations for both CSS Animations and CSS Transitions at once 
 PASS getAnimations for CSS Animations that have finished 
 PASS getAnimations for CSS Animations that have finished but are forwards filling 
-FAIL getAnimations for CSS Animations with animation-name: none assert_equals: getAnimations returns an empty sequence for an element with animation-name: none expected 0 but got 1
+PASS getAnimations for CSS Animations with animation-name: none 
 FAIL getAnimations for CSS Animations with animation-name: missing assert_equals: getAnimations returns an empty sequence for an element with animation-name: missing expected 0 but got 1
 FAIL getAnimations for CSS Animations where the @keyframes rule is added later assert_equals: getAnimations initally only returns Animations for CSS Animations whose animation-name is found expected 1 but got 2
 PASS getAnimations for CSS Animations with duplicated animation-name 
