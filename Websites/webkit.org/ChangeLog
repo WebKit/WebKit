@@ -1,5 +1,15 @@
 2018-06-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [WPE] Some fixups on webkit.org page
+        https://bugs.webkit.org/show_bug.cgi?id=186844
+
+        Unreviewed as the content is not modified, only some minor fixups on the format.
+
+        * wpe.md: Remove title as it's already provided by the website CMS.
+        Avoid breaking lines at 80 chars as it's not rendered as expected.
+
+2018-06-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [WPE] Add page for webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=186844
 
