@@ -206,7 +206,7 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
 
             // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
             // is running at the same time we put without transitioning.
-            ASSERT(!JSValue::encode(getDirect(offset)));
+            ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
             result = offset;
         });
     return result;

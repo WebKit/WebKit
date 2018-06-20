@@ -1,3 +1,18 @@
+2018-06-20  Keith Miller  <keith_miller@apple.com>
+
+        Expand concurrent GC assertion to accept JSValue() or 0
+        https://bugs.webkit.org/show_bug.cgi?id=186855
+
+        Reviewed by Mark Lam.
+
+        We tend to set unused property slots to either JSValue() or 0
+        depending on the context. On 64-bit these are the same but on
+        32-bit JSValue() has a NaN tag. This patch makes it so we
+        the accept either JSValue() or 0.
+
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+
 2018-06-20  Guillaume Emont  <guijemont@igalia.com>
 
         [Armv7] Linkbuffer: executableOffsetFor() fails for location 2
