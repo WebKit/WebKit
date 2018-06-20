@@ -1,3 +1,15 @@
+2018-06-20  David Fenton  <david_fenton@apple.com>
+
+        rebaseline WebCryptoAPI tests for High Sierra.
+        https://bugs.webkit.org/show_bug.cgi?id=186863
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Added.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Added.
+
 2018-06-20  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed GTK+ test gardening.
