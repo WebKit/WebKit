@@ -1,3 +1,14 @@
+2018-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the watchOS build after r233016.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectionExtentRespectingEditingBoundary):
+
+        Move this helper out of the ENABLE(DRAG_SUPPORT) guard.
+
+        * page/EventHandler.h:
+
 2018-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         AnimationList wastes 60KB of vector capacity
