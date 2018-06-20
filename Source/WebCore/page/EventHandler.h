@@ -130,6 +130,7 @@ public:
     void nodeWillBeRemoved(Node&);
 
 #if ENABLE(DRAG_SUPPORT)
+    WEBCORE_EXPORT VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSelection&, const LayoutPoint&, Node*);
     void updateSelectionForMouseDrag();
 #endif
 

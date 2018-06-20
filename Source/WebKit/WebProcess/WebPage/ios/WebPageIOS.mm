@@ -1335,6 +1335,9 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
         break;
 
     case SelectionTouch::Moved:
+        HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
+        if (result.targetNode())
+            position = m_page->mainFrame().eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), result.localPoint(), result.targetNode());
         range = rangeForPosition(&frame, position, baseIsStart);
         break;
     }

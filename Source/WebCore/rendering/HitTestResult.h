@@ -140,7 +140,7 @@ public:
 
     Vector<String> dictationAlternatives() const;
 
-    Node* targetNode() const;
+    WEBCORE_EXPORT Node* targetNode() const;
     WEBCORE_EXPORT Element* targetElement() const;
 
 private:

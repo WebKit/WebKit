@@ -1,3 +1,20 @@
+2018-06-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Restrict Selection in contenteditable the extent of that contenteditable
+        https://bugs.webkit.org/show_bug.cgi?id=186792
+
+        Reviewed by Wenson Hsieh.
+
+        My system currently will not allow me to run tests. I will add one when I can update.
+
+        Expose the already existing funcitonality to restrict a selection to a single contentenditable
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectionExtentRespectingEditingBoundary):
+        (WebCore::selectionExtentRespectingEditingBoundary): Deleted.
+        * page/EventHandler.h:
+        * rendering/HitTestResult.h:
+
 2018-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         CSSFontFace wastes 59KB of Vector capacity on nytimes.com

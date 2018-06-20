@@ -1,3 +1,17 @@
+2018-06-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Restrict Selection in contenteditable the extent of that contenteditable
+        https://bugs.webkit.org/show_bug.cgi?id=186792
+
+        Reviewed by Wenson Hsieh.
+
+        We have not been checking to make sure that when we make a selection that it is restricted to 
+        a single content editable on iOS. There is functionality to ensure this on mac, so it has been
+        exposed and utilized for restricting the extent of a selection.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateSelectionWithTouches):
+
 2018-06-19  Dean Jackson  <dino@apple.com>
 
         Blank viewer comes up and then auto-dismisses when device is not connected to Internet

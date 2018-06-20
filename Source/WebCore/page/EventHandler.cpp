@@ -904,12 +904,12 @@ void EventHandler::updateSelectionForMouseDrag()
     updateSelectionForMouseDrag(result);
 }
 
-static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSelection& selection, const LayoutPoint& localPoint, Node* targetNode)
+VisiblePosition EventHandler::selectionExtentRespectingEditingBoundary(const VisibleSelection& selection, const LayoutPoint& localPoint, Node* targetNode)
 {
     FloatPoint selectionEndPoint = localPoint;
     Element* editableElement = selection.rootEditableElement();
-
-    if (!targetNode->renderer())
+    
+    if (!targetNode || !targetNode->renderer())
         return VisiblePosition();
 
     if (editableElement && !editableElement->contains(targetNode)) {
