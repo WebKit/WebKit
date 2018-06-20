@@ -1,3 +1,15 @@
+2018-06-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_pseudoElement-get-animations.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183818
+        <rdar://problem/40997015>
+
+        Reviewed by Dean Jackson.
+
+        This test now passes reliably.
+
+        * TestExpectations:
+
 2018-06-19  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test imported/mozilla/css-animations/test_animation-playstate.html is failing.

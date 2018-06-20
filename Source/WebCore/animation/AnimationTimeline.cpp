@@ -142,12 +142,26 @@ void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, 
     }
 }
 
-Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element) const
+Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element, Ordering ordering) const
 {
     Vector<RefPtr<WebAnimation>> animations;
     if (m_elementToCSSTransitionsMap.contains(&element)) {
         const auto& cssTransitions = m_elementToCSSTransitionsMap.get(&element);
-        animations.appendRange(cssTransitions.begin(), cssTransitions.end());
+        if (ordering == Ordering::Sorted) {
+            Vector<RefPtr<WebAnimation>> sortedCSSTransitions;
+            sortedCSSTransitions.appendRange(cssTransitions.begin(), cssTransitions.end());
+            std::sort(sortedCSSTransitions.begin(), sortedCSSTransitions.end(), [](auto& lhs, auto& rhs) {
+                // Sort transitions first by their generation time, and then by transition-property.
+                // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
+                auto* lhsTransition = downcast<CSSTransition>(lhs.get());
+                auto* rhsTransition = downcast<CSSTransition>(rhs.get());
+                if (lhsTransition->generationTime() != rhsTransition->generationTime())
+                    return lhsTransition->generationTime() < rhsTransition->generationTime();
+                return lhsTransition->transitionProperty().utf8() < rhsTransition->transitionProperty().utf8();
+            });
+            animations.appendVector(sortedCSSTransitions);
+        } else
+            animations.appendRange(cssTransitions.begin(), cssTransitions.end());
     }
     if (m_elementToCSSAnimationsMap.contains(&element)) {
         const auto& cssAnimations = m_elementToCSSAnimationsMap.get(&element);
@@ -300,6 +314,8 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
         return HashMap<CSSPropertyID, RefPtr<CSSTransition>> { };
     }).iterator->value;
 
+    auto generationTime = MonotonicTime::now();
+
     auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
     for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
         bool isShorthand;
@@ -348,7 +364,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
             auto duration = Seconds(matchingBackingAnimation->duration());
             auto& reversingAdjustedStartStyle = beforeChangeStyle;
             auto reversingShorteningFactor = 1;
-            runningTransitionsByProperty.set(property, CSSTransition::create(element, property, *matchingBackingAnimation, &beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+            runningTransitionsByProperty.set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         } else if (completedTransitionsByProperty.contains(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, completedTransitionsByProperty)) {
             // 2. Otherwise, if the element has a completed transition for the property and the end value of the completed transition is different from
             //    the after-change style for the property, then implementations must remove the completed transition from the set of completed transitions.
@@ -401,7 +417,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
                 auto reversingShorteningFactor = std::max(std::min(((transformedProgress * previouslyRunningTransition->reversingShorteningFactor()) + (1 - previouslyRunningTransition->reversingShorteningFactor())), 1.0), 0.0);
                 auto delay = matchingBackingAnimation->delay() < 0 ? Seconds(matchingBackingAnimation->delay()) * reversingShorteningFactor : Seconds(matchingBackingAnimation->delay());
                 auto duration = Seconds(matchingBackingAnimation->duration()) * reversingShorteningFactor;
-                runningTransitionsByProperty.set(property, CSSTransition::create(element, property, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+                runningTransitionsByProperty.set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
             } else {
                 // 4. Otherwise, implementations must cancel the running transition
                 previouslyRunningTransition->cancel();
@@ -417,7 +433,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
                 auto duration = Seconds(matchingBackingAnimation->duration());
                 auto& reversingAdjustedStartStyle = currentStyle;
                 auto reversingShorteningFactor = 1;
-                runningTransitionsByProperty.set(property, CSSTransition::create(element, property, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+                runningTransitionsByProperty.set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
             }
         }
     }

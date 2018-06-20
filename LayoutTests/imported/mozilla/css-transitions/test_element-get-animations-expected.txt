@@ -4,6 +4,6 @@ PASS getAnimations returns CSSTransition objects for CSS Transitions
 PASS getAnimations for CSS Transitions that have finished 
 FAIL getAnimations for transition on non-animatable property assert_equals: getAnimations returns an empty sequence for a transition of a non-animatable property expected 0 but got 1
 PASS getAnimations for transition on unsupported property 
-FAIL getAnimations sorts simultaneous transitions by name assert_equals: expected "border-bottom-width" but got "border-left-width"
+PASS getAnimations sorts simultaneous transitions by name 
 PASS getAnimations sorts transitions by when they were generated 
 

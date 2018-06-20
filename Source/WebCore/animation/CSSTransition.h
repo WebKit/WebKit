@@ -37,12 +37,13 @@ class RenderStyle;
 
 class CSSTransition final : public DeclarativeAnimation {
 public:
-    static Ref<CSSTransition> create(Element&, CSSPropertyID, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
+    static Ref<CSSTransition> create(Element&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
     ~CSSTransition() = default;
 
     bool isCSSTransition() const override { return true; }
     String transitionProperty() const { return getPropertyNameString(m_property); }
     CSSPropertyID property() const { return m_property; }
+    MonotonicTime generationTime() const { return m_generationTime; }
     const RenderStyle& targetStyle() const { return *m_targetStyle; }
     const RenderStyle& currentStyle() const { return *m_currentStyle; }
     const RenderStyle& reversingAdjustedStartStyle() const { return *m_reversingAdjustedStartStyle; }
@@ -52,10 +53,11 @@ public:
     void resolve(RenderStyle&) final;
 
 private:
-    CSSTransition(Element&, CSSPropertyID, const Animation&, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
+    CSSTransition(Element&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
 
     CSSPropertyID m_property;
+    MonotonicTime m_generationTime;
     std::unique_ptr<RenderStyle> m_targetStyle;
     std::unique_ptr<RenderStyle> m_currentStyle;
     std::unique_ptr<RenderStyle> m_reversingAdjustedStartStyle;

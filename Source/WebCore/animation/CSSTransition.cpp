@@ -32,17 +32,18 @@
 
 namespace WebCore {
 
-Ref<CSSTransition> CSSTransition::create(Element& target, CSSPropertyID property, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+Ref<CSSTransition> CSSTransition::create(Element& target, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {
-    auto result = adoptRef(*new CSSTransition(target, property, backingAnimation, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
+    auto result = adoptRef(*new CSSTransition(target, property, generationTime, backingAnimation, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
     result->initialize(target, oldStyle, newStyle);
     result->setTimingProperties(delay, duration);
     return result;
 }
 
-CSSTransition::CSSTransition(Element& element, CSSPropertyID property, const Animation& backingAnimation, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
+CSSTransition::CSSTransition(Element& element, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
     : DeclarativeAnimation(element, backingAnimation)
     , m_property(property)
+    , m_generationTime(generationTime)
     , m_targetStyle(RenderStyle::clonePtr(targetStyle))
     , m_reversingAdjustedStartStyle(RenderStyle::clonePtr(reversingAdjustedStartStyle))
     , m_reversingShorteningFactor(reversingShorteningFactor)

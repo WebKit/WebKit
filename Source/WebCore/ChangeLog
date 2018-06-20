@@ -1,3 +1,28 @@
+2018-06-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_pseudoElement-get-animations.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183818
+        <rdar://problem/40997015>
+
+        Reviewed by Dean Jackson.
+
+        We add a new opt-in flag to return sorted animations when calling AnimationTimeline::animationsForElement() so that
+        Element::getAnimations() can opt into returning animations sorted by the rules defined by the CSS Transitions spec.
+        The rule is that CSS Transitions must be sorted prior to CSS Animations and regular Web Animations, and then sorted
+        by the time they were generated and, if generated at the same time, sorted alphabetically based on the transitioned
+        property. To be able to accomodate this, we add a new generationTime() method to CSSTransition.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationsForElement const):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        * animation/AnimationTimeline.h:
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::create):
+        (WebCore::CSSTransition::CSSTransition):
+        * animation/CSSTransition.h:
+        * dom/Element.cpp:
+        (WebCore::Element::getAnimations):
+
 2018-06-19  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Allow passing contents of Root CA data directly.
