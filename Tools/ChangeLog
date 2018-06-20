@@ -1,3 +1,16 @@
+2018-06-20  Robin Morisset  <rmorisset@apple.com>
+
+        [WSL] Make the typing rules explicitely translate type syntax into actual types
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        The typing rules must describe how and most importantly when typedefs and the like are resolved.
+        This is important because they can be shadowed (by type variables for example), and we want to make it unambiguous what behaviour is required in that case.
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL.g4:
+        * WebGPUShadingLanguageRI/SpecWork/WSL_type.ott:
+
 2018-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][WPE][Nicosia] Add name for Nicosia Painting Threads

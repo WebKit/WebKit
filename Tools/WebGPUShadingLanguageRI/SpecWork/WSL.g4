@@ -132,7 +132,7 @@ typeParameter
     | Identifier (':' protocolRef ('+' protocolRef)*)? ;
 
 type
-    : addressSpace Identifier typeArguments typeSuffixAbbreviated*
+    : addressSpace Identifier typeArguments typeSuffixAbbreviated+
     | Identifier typeArguments typeSuffixNonAbbreviated* ;
 addressSpace: CONSTANT | DEVICE | THREADGROUP | THREAD ;
 typeSuffixAbbreviated: '*' | '[]' | '[' constexpr ']';
