@@ -1,3 +1,24 @@
+2018-06-19  Dean Jackson  <dino@apple.com>
+
+        Blank viewer comes up and then auto-dismisses when device is not connected to Internet
+        https://bugs.webkit.org/show_bug.cgi?id=186825
+        <rdar://problem/40294170>
+
+        Reviewed by Tim Horton.
+
+        Handle the case where the network load fails, and send that
+        error onto QuickLook.
+
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didReceiveResponse): Check for success.
+        (WebKit::DownloadClient::processDidCrash): Cancel in the case of a crash.
+        (WebKit::DownloadClient::didFail): Propagate the error onto QuickLook.
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource failWithError:]): New method that calls
+        the completion handler with the error data.
+        (WebKit::SystemPreviewController::fail): New API method.
+        * UIProcess/SystemPreviewController.h:
+
 2018-06-19  Chris Dumez  <cdumez@apple.com>
 
         Implement IPC throttling to keep the main thread responsive when a process misbehaves

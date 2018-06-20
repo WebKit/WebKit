@@ -1,3 +1,15 @@
+2018-06-19  Dean Jackson  <dino@apple.com>
+
+        Blank viewer comes up and then auto-dismisses when device is not connected to Internet
+        https://bugs.webkit.org/show_bug.cgi?id=186825
+        <rdar://problem/40294170>
+
+        Reviewed by Tim Horton.
+
+        Export isSuccessful() to WebKit.
+
+        * platform/network/ResourceResponseBase.h:
+
 2018-06-19  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Enable Proxy Authentication.

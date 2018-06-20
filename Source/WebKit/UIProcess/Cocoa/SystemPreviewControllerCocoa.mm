@@ -114,6 +114,12 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
         self.completionHandler((NSURL*)url, nil);
 }
 
+- (void)failWithError:(NSError *)error
+{
+    if (self.completionHandler)
+        self.completionHandler(nil, error);
+}
+
 @end
 
 @interface _WKPreviewControllerDelegate : NSObject <QLPreviewControllerDelegate> {
@@ -232,6 +238,12 @@ void SystemPreviewController::cancel()
     m_qlPreviewControllerDelegate = nullptr;
     m_qlPreviewControllerDataSource = nullptr;
     m_qlPreviewController = nullptr;
+}
+
+void SystemPreviewController::fail(const WebCore::ResourceError& error)
+{
+    if (m_qlPreviewControllerDataSource)
+        [m_qlPreviewControllerDataSource failWithError:error.nsError()];
 }
 
 }

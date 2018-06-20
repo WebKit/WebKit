@@ -92,7 +92,7 @@ void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
 void DownloadClient::didReceiveResponse(WebProcessPool&, DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
 #if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
+    if (downloadProxy.isSystemPreviewDownload() && response.isSuccessful()) {
         downloadProxy.setExpectedContentLength(response.expectedContentLength());
         downloadProxy.setBytesLoaded(0);
         if (auto* webPage = downloadProxy.originatingPage())
@@ -177,6 +177,8 @@ void DownloadClient::processDidCrash(WebProcessPool&, DownloadProxy& downloadPro
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
+        if (auto* webPage = downloadProxy.originatingPage())
+            webPage->systemPreviewController()->cancel();
         releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
@@ -239,7 +241,7 @@ void DownloadClient::didFail(WebProcessPool&, DownloadProxy& downloadProxy, cons
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* webPage = downloadProxy.originatingPage())
-            webPage->systemPreviewController()->cancel();
+            webPage->systemPreviewController()->fail(error);
         releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }

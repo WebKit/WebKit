@@ -28,6 +28,7 @@
 #if USE(SYSTEM_PREVIEW)
 
 #include <WebCore/IntRect.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/URL.h>
 #include <wtf/RetainPtr.h>
 
@@ -51,6 +52,7 @@ public:
     void updateProgress(float);
     void finish(WebCore::URL);
     void cancel();
+    void fail(const WebCore::ResourceError&);
 
     WebPageProxy& page() { return m_webPageProxy; }
 
