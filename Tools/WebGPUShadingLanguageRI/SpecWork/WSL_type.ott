@@ -3,17 +3,18 @@ indexvar i, j, k, n, m ::=
 
 grammar
 td :: top_level_decl_ ::= {{com top-level declaration}}
-    | tsyntax f <( tparam0 , .. , tparamk )> ( tx0 x0 , .. , txm xm ) { s0 .. sn } :: :: func_decl
+    | tx f <( tparam0 , .. , tparamk )> ( tx0 x0 , .. , txm xm ) { s0 .. sn } :: :: func_decl
+    | typedef x <( tparam0 , .. , tparamk )> = tx ; :: :: typedef
 
 tparam :: type_parameter_ ::= {{com type parameter}}
-    | tsyntax x :: :: constexpr
+    | tx x :: :: constexpr
     | x : y0 + .. + yn :: :: type_variable
 
 s :: stmt_ ::= {{com statement}}
     | if ( e ) s :: :: if_then {{com Desugared}}
     | while ( e ) s :: :: while {{com Desugared}}
     | for ( eOrVDecls ; eOrNothing ; eOrNothing' ) s :: :: for {{com Desugared}}
-    | tsyntax vdecl0 , .. , vdecln ; :: :: multi_vdecls {{com partly desugared}}
+    | tx vdecl0 , .. , vdecln ; :: :: multi_vdecls {{com partly desugared}}
     % TODO: instead of a type, we should have the elements of a type here, and explicitely resolve typedefs, since they can be shadowed, and need to be in the typing environment
     | ; :: :: empty {{com Desugared}}
     | if ( e ) s else s' :: :: if
@@ -49,9 +50,6 @@ eOrNothing :: expr_or_nothing_ ::=
     | :: :: nothing
 
 e :: expr_ ::= {{com expression}}
-    | null :: :: lit_null
-    | true :: :: lit_true
-    | false :: :: lit_false
     | ( e ) :: :: parens
     | e , e' :: :: comma
     | e || e' :: :: or {{tex [[e]]\:{||}\:[[e']]}}
@@ -67,21 +65,25 @@ e :: expr_ ::= {{com expression}}
     | @ e :: :: array_reference_making
     | e [ e' ] :: :: array_index
     | x <( targ0 , .. , targm )> ( e0 , .. , en ) :: :: call
+    | rval :: :: rval {{com only during exec, except literals}}
+    | LVal ( sid ) :: :: lval {{com only during exec}}
 
 targ :: type_argument_ ::= {{com type argument}}
     | x :: :: ident {{com either a type or a constexpr}}
-    | t :: :: type {{com a type that is not just an identifier}}
+    | tx :: :: type {{com a type that is not just an identifier}}
     | x . y :: :: enum_value {{com a field of an enum, for a constexpr type parameter}}
 
 G {{tex \Gamma}} , Gglobal {{tex \Gamma_{global} }} :: env_ ::= {{com typing environment}}
     | G [ x -> envMapping ] :: :: update {{com $\Gamma$ with the mapping for x replaced by envMapping}}
+    | { x0 -> envMapping0 , .. , xn -> envMappingn } :: :: set
 
 envMapping :: env_mapping_ ::= 
     | t :: :: var {{com $x$ is of type $\tau$}}
-    | SyntaxTypedef ( <( tparam0 , .. , tparamn )> -> tsyntax ) :: :: typedef_syntax {{com resolved before local typing}}
+    | SyntaxTypedef ( <( tparam0 , .. , tparamn )> -> tx ) :: :: typedef_syntax {{com resolved before local typing}}
     | Typedef ( <( tparam0 , .. , tparamn )> -> tval ) :: :: typedef
-    | TVar namedSigs :: :: tvar {{com $x$ is a type variable with related functions}}
     | Func { sig0 , .. , sign } :: :: func {{com $x$ is a function whose signatures are $sig0$ to $sign$}}
+    | SyntaxFunc { sigx0 , .. , sigxn } :: :: func_syntax
+    | Nothing :: :: nothing {{tex \emptyset}} {{com to remove $x$ from $\Gamma$}}
     | Protocol namedSigs :: :: protocol
     % TODO: I now believe that this is wrong, and that protocols should live in their own namespace.
     % Otherwise it is impossible to refer to a protocol as both a type variable (aka Self) and as a constraint on other type variables, when defining its signatures
@@ -90,8 +92,12 @@ namedSigs :: named_signatures_ ::=
     | { x0 -> sig0 , .. , xn -> sign } :: :: explicit
     | U namedSigs0 .. namedSigsn :: :: union
 
+sigx :: signature_syntax_ ::=
+    | <( tparamAnon0 , .. , tparamAnonm )> ( tx0 , .. , txn ) -> tx :: :: sigx
+
 sig :: signature_ ::=
-    | <( tparamAnon0 , .. , tparamAnonm )> ( t0 , .. , tn ) -> t :: :: sig
+    | <( tparamAnon0 , .. , tparamAnonm )> ( tval0 , .. , tvaln ) -> tval :: :: sig
+    % TODO: fix these tparamAnanon, they are clearly wrong.
 
 tparamAnon :: tparam_anon_ ::=
     | t :: :: constexpr
@@ -121,21 +127,43 @@ tval {{tex {\tau^{val} } }} :: type_value_ ::=
     | bool :: :: bool
     | uint32 :: :: uint32 {{tex \textbf{uint32} }}
     | void :: :: void
-tsyntax {{tex {\tau^{syntax} } }}, tx {{tex {\tau^{syntax} } }} :: type_syntactic_ ::= {{com syntactic type}}
-    % TODO: maybe find some nicer typography than {\tau^{syntax}} (the outer braces are required to avoid a double superscript in tx', but they mess up with the subscript in tx0
+    | TVar tid namedSigs :: :: tvar
+tx {{tex {\tau^{syntax} } }} :: type_syntactic_ ::= {{com syntactic type}}
     | x <( targ0 , .. , targm )> :: :: base
-    | tsyntax * addressSpace :: :: ptr
-    | tsyntax [] addressSpace :: :: array_ref 
-    | tsyntax [ i ] :: :: array_fixed_size
+    | tx * addressSpace :: :: ptr
+    | tx [] addressSpace :: :: array_ref 
+    | tx [ i ] :: :: array_fixed_size
 addressSpace :: address_space_ ::=
     | thread :: :: thread
     | threadgroup :: :: threadgroup
     | device :: :: device
     | constant :: :: constant
+tid :: type_identifier_ ::=
+
+rval, rv :: rval_ ::=
+    | { x0 : rval0 ; .. ; xn : rvaln } :: :: struct
+    | [ rval0 , .. , rvaln ] :: :: array
+    | Ptr ( sid ) :: :: ptr
+    | Ref ( sid , i ) :: :: ref
+    | Void :: :: void {{com Special, the value returned by calls to void functions}}
+    | null :: :: lit_null
+    | true :: :: lit_true
+    | false :: :: lit_false
+
+R {{tex \rho}} :: exec_env_ ::= {{com execution environment}}
+    | R [ x -> rval ] :: :: update_with_rval
+    | R [ x -> LVal ( sid ) ] :: :: update_with_lval
+    | Empty :: :: empty {{tex \emptyset}}
+
+E :: memory_event_ ::= {{com memory event}}
+    | :: :: nothing
+    | sid <- rval :: :: store {{com store}}
+    | sid -> rval :: :: load {{com load}}
 
 terminals :: terminals_ ::=
     | U :: :: big_union {{tex \bigcup}}
     | |- :: :: vdash {{tex \vdash}}
+    | <- :: :: load {{tex \leftarrow}}
     | -> :: :: mapsto {{tex \mapsto}}
     | --> :: :: desugars {{tex \leadsto}}
     | <( :: :: generic_open {{tex {<} }} % For removing extraneous spaces around '<' and '>' when they are used in that position.
@@ -147,12 +175,18 @@ formula :: formula_ ::=
     | formula0 .. formulan :: :: several_formula
     | n > 0 :: :: int_positive
     | x -> envMapping in G :: :: env_mapping_exists
-    | G |- isInteger ( t ) :: :: is_integer
+    | x not in G :: :: env_mapping_missing {{tex [[x]] \not\in [[G]]}}
+    | G |- isIntegerOrEnum ( t ) :: :: is_integer
+    | G |- sc0 .. scn fully covers t :: :: full_switch_coverage % TODO: make it explicit
     | s != s' :: :: stmt_not_eq {{tex [[s]] \neq [[s']]}}
     | b in B :: :: behaviour_in {{tex [[b]] \in [[B]]}}
     | b not in B :: :: behaviour_not_in {{tex [[b]] \not\in [[B]]}}
+    | G = G' :: :: typing_env_eq
     | B = B' :: :: behaviour_eq
     | namedSigs = namedSigs' :: :: named_signature_eq
+    | sig = sig' :: :: sig_eq
+    | exists i . ( formula ) :: :: exists_int
+    | tid = makeFresh()  :: :: make_fresh_tid
 
 defns
 desugaring :: '' ::=
@@ -201,25 +235,50 @@ e --> e' :: :: desugaring_expr :: '' {{com Desugaring expressions}} by
     e != e' --> ! (e == e')
 
 defns
+gather :: '' ::=
+defn
+G = gather ( td0 .. tdn ) :: :: gather :: '' by
+
+    G = gather (td0..tdk)
+    x -> SyntaxFunc{sigx0, .., sigxi} in G
+    G' = G[x -> SyntaxFunc{sigx0, .., sigxi, <( )>(tx0, .., txn) -> tx}]
+    -------------------------------------------------------------------- :: func_overload
+    G' = gather(tx x <( )> (tx0 x0, .., txn xn) {s0 .. sm} td0..tdk)
+
+    G = gather (td0..tdk)
+    x not in G
+    G' = G[x ->SyntaxFunc{<()>(tx0, .., txn) -> tx}]
+    ---------------------------------------------------------------- :: func_no_overload
+    G' = gather(tx x <( )> (tx0 x0, .., txn xn) {s0 .. sm} td0..tdk)
+
+    G = gather (td0..tdk)
+    x not in G
+    G' = G[x -> SyntaxTypedef(<()> -> tx)]
+    ------------------------------------------ :: typedef
+    G' = gather(typedef x <()> = tx; td0..tdk)
+    % TODO: add rules for the other kinds of top-level declaration, as well as the base case for an empty file
+    % the base case needs to add typedefs for bool/uint32 at the very least
+
+defns
 reduce_type :: '' ::=
 defn
-G |- tsyntax : tval :: :: syntax :: '' {{tex [[G]] [[|-]] [[tsyntax]] \Downarrow [[tval]]}} by
+G |- tx : tval :: :: syntax :: '' {{tex [[G]] [[|-]] [[tx]] \Downarrow [[tval]]}} by
 
     x -> Typedef (<( )> -> tval) in G
     ------------------------------- :: basic_typedef
     G |- x <( )> : tval
 
-    G |- tsyntax : tval
+    G |- tx : tval
     ------------------------- :: array
-    G |- tsyntax [i] : [tval]
+    G |- tx [i] : [tval]
 
-    G |- tsyntax : tval
+    G |- tx : tval
     ---------------------------------------- :: ref
-    G |- tsyntax [] addressSpace : Ref(tval)
+    G |- tx [] addressSpace : Ref(tval)
 
-    G |- tsyntax : tval
+    G |- tx : tval
     --------------------------------------- :: ptr
-    G |- tsyntax * addressSpace : Ptr(tval)
+    G |- tx * addressSpace : Ptr(tval)
 
 defns
 well_formed :: '' ::=
@@ -243,8 +302,9 @@ G |- well_formed ( td ) :: :: top_level :: '' by
 
     y0 -> Protocol namedSigs0 in G .. yi -> Protocol namedSigsi in G
     namedSigs = U namedSigs0 .. namedSigsi
-    G[x -> TVar namedSigs] |- well_formed (tx f<(tparam0, .., tparamk)> (tx0 x0, .., txm xm) {s0..sn})
-    -------------------------------------------------------------------------------------------------- :: func_tvar
+    tid = makeFresh()
+    G[x -> TVar tid namedSigs] |- well_formed (tx f<(tparam0, .., tparamk)> (tx0 x0, .., txm xm) {s0..sn})
+    ------------------------------------------------------------------------------------------------------ :: func_tvar
     G |- well_formed (tx f<(x : y0 + .. + yi, tparam0, .., tparamk)> (tx0 x0, .., txm xm) {s0..sn}) 
     % TODO: maybe add some check here that the different protocols are not incompatible.
     % Can we even have incompatible protocols?
@@ -267,8 +327,9 @@ G |- s : B :: :: typing_statement :: '' by
     % Note: we could make this rule a bit more precise in the cases where we know that s always return/trap/break.. but such a piece of code is almost certainly a bug.
 
     G |- e : t
-    G |- isInteger(t)
+    G |- isIntegerOrEnum(t)
     G |- sc0: t .. G |- scn: t
+    G |- sc0 .. scn fully covers t
     G |- sblock0: B0 .. G |- sblockn: Bn
     Nothing not in B0 .. Nothing not in Bn
     B = U B0 .. Bn
@@ -297,11 +358,13 @@ G |- s : B :: :: typing_statement :: '' by
     ------------------- :: empty_block
     G |- {} : {Nothing}
 
-    G |- tx : tval
+    G[x -> Nothing] |- tx : tval
     G[x -> LVal(tval)] |- {s0 .. sn} : B
     s0 != tx' x; .. sn != tx' x;
     --------------------------------- :: variable_decl
     G |- {tx x; s0 .. sn} : B
+    % Note: we remove x from the environment before reducing tx, to avoid a situation where x is required in the definition of tx, which gets rather weird with multiple declarations
+    % (see email from 20/06/2018).
     % Note: there is a minor ambiguity between this rule and the next two, but it is harmless as the next two rules both fail in the next step
     % if they are applied where s is a variable declaration.
     % Note: the second premise prevents redeclaration of a variable in the same scope it was declared in.
@@ -434,3 +497,69 @@ G |- e : t :: :: typing_expr :: '' by
     G |- e' : uint32
     -------------------- :: array_ref_index
     G |- e[e'] : LVal(tval)
+
+    G |- e0 : tval0 .. G |- en : tvaln
+    x -> Func{sig0, .., sigk} in G
+    exists i . (sigi = <( )> (tval0, .., tvaln) -> tval)
+    ---------------------------------------------------- :: call_no_targ
+    G |- x <( )> (e0, .., en) : tval
+
+defns
+exec :: '' ::=
+defn
+R |- e -> e' ; E :: :: exec_expr :: '' {{tex [[R]] \vdash [[e]] \xrightarrow{[[E]]} [[e']]}} by
+
+    --------------------- :: and_true
+    R |- true && e -> e ;
+
+    -------------------------- :: and_false
+    R |- false && e -> false ;
+
+    R |- e0 -> e0' ; E
+    ------------------------------ :: and_reduce
+    R |- e0 && e1 -> e0' && e1 ; E
+
+    ------------------------ :: or_true
+    R |- true || e -> true ;
+
+    ---------------------- :: or_false
+    R |- false && e -> e ;
+
+    R |- e0 -> e0' ; E
+    ------------------------------ :: or_reduce
+    R |- e0 || e1 -> e0' || e1 ; E
+
+    --------------------------- :: ternary_true
+    R |- true ? e1 : e2 -> e1 ;
+
+    ---------------------------- :: ternary_false
+    R |- false ? e1 : e2 -> e2 ;
+
+    R |- e0 -> e0' ; E
+    -------------------------------------- :: ternary_reduce
+    R |- e0 ? e1 : e2 -> e0' ? e1 : e2 ; E
+
+    --------------------- :: comma_next
+    R |- rval, e1 -> e1 ;
+
+    R |- e0 -> e0' ; E
+    -------------------------- :: comma_reduce
+    R |- e0, e1 -> e0', e1 ; E
+
+    ----------------- :: parens_exec
+    R |- ( e ) -> e ;
+
+    ---------------------- :: not_true
+    R |- ! true -> false ;
+
+    ---------------------- :: not_false
+    R |- ! false -> true ;
+
+    ------------------------------ :: deref_ptr
+    R |- * Ptr(sid) -> LVal(sid) ;
+
+    R |- e -> e' ; E
+    -------------------- :: deref_reduce
+    R |- * e -> * e' ; E
+
+
