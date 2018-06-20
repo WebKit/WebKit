@@ -779,6 +779,14 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
             object->putDirect(vm, offsetForPropertyNumber(i, m_inlineCapacity), values[i]);
 
         table->clearDeletedOffsets();
+
+        // We need to zero our unused property space; otherwise the GC might see a
+        // stale pointer when we add properties in the future.
+        Butterfly* butterfly = object->butterfly();
+        memset(
+            butterfly->base(butterfly->indexingHeader()->preCapacity(this), beforeOutOfLineCapacity),
+            0,
+            (beforeOutOfLineCapacity - outOfLineSize()) * sizeof(EncodedJSValue));
         checkOffsetConsistency();
     }
 
@@ -803,9 +811,8 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     WTF::storeStoreFence();
     object->setStructureIDDirectly(id());
 
-    // FIXME: This is probably no longer needed since we have a stronger mechanism
-    // for detecting races and rescanning an object.
-    // https://bugs.webkit.org/show_bug.cgi?id=166989
+    // We need to do a writebarrier here because the GC thread might be scanning the butterfly while
+    // we are shuffling properties around. See: https://bugs.webkit.org/show_bug.cgi?id=166989
     vm.heap.writeBarrier(object);
 
     return this;

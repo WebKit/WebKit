@@ -1,3 +1,15 @@
+2018-06-19  Keith Miller  <keith_miller@apple.com>
+
+        flattenDictionaryStructure needs to zero properties that have been compressed away
+        https://bugs.webkit.org/show_bug.cgi?id=186828
+
+        Reviewed by Mark Lam.
+
+        This patch fixes a bunch of crashing Mozilla tests on the bots.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+
 2018-06-19  Saam Barati  <sbarati@apple.com>
 
         DirectArguments::create needs to initialize to undefined instead of the empty value
