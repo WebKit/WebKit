@@ -184,7 +184,7 @@ private:
     FontFeatureSettings m_featureSettings;
     FontVariantSettings m_variantSettings;
     Timer m_timeoutTimer;
-    Vector<std::unique_ptr<CSSFontFaceSource>> m_sources;
+    Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
     RefPtr<CSSFontSelector> m_fontSelector;
     RefPtr<StyleRuleFontFace> m_cssConnection;
     HashSet<Client*> m_clients;
