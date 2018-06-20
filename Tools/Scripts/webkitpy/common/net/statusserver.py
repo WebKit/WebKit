@@ -47,6 +47,7 @@ class StatusServer:
     def __init__(self, host=statusserver_default_host, use_https=True, browser=None, bot_id=None):
         self.set_host(host)
         self.set_use_https(use_https)
+        self._api_key = ''
         from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self._browser = browser or Browser()
         self._browser.set_handle_robots(False)
