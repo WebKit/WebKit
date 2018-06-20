@@ -61,7 +61,7 @@ DirectArguments* DirectArguments::create(VM& vm, Structure* structure, unsigned 
     DirectArguments* result = createUninitialized(vm, structure, length, capacity);
     
     for (unsigned i = capacity; i--;)
-        result->storage()[i].clear();
+        result->storage()[i].setUndefined();
     
     return result;
 }

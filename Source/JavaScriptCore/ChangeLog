@@ -1,3 +1,24 @@
+2018-06-19  Saam Barati  <sbarati@apple.com>
+
+        DirectArguments::create needs to initialize to undefined instead of the empty value
+        https://bugs.webkit.org/show_bug.cgi?id=186818
+        <rdar://problem/38415177>
+
+        Reviewed by Filip Pizlo.
+
+        The bug here is that we will emit code that just loads from DirectArguments as
+        long as the index is within the known capacity of the arguments object (op_get_from_arguments).
+        The arguments object has at least enough capacity to hold the declared parameters.
+        When we materialized this object in OSR exit, we initialized up to to the capacity
+        with JSValue(). In OSR exit, though, we only filled up to the length of the
+        object with actual values. So we'd end up with a DirectArguments object with
+        capacity minus length slots of JSValue(). To fix this, we need initialize up to
+        capacity with jsUndefined during construction. The invariant of this object is
+        that the capacity minus length slots at the end are filled in with jsUndefined.
+
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::create):
+
 2018-06-19  Michael Saboff  <msaboff@apple.com>
 
         Crash in sanitizeStackForVMImpl sometimes when switching threads with same VM
