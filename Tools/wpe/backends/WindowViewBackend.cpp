@@ -182,6 +182,10 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
             window.dispatchInputAxisEvent(&event);
         }
     },
+    nullptr, // frame
+    nullptr, // axis_source
+    nullptr, // axis_stop
+    nullptr, // axis_discrete
 };
 
 const struct wl_keyboard_listener WindowViewBackend::s_keyboardListener = {

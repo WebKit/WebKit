@@ -1,3 +1,15 @@
+2018-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WPE] Remove warnings by setting nullptr for unused listeners
+        https://bugs.webkit.org/show_bug.cgi?id=186835
+
+        Reviewed by Carlos Garcia Campos.
+
+        frame, axis_source, axis_stop, and axis_discrete are unused.
+        Setting nullptr explicitly to remove warnings in GCC.
+
+        * wpe/backends/WindowViewBackend.cpp:
+
 2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
 
         [test262-runner] Reduce flakiness of unit tests for the runner
