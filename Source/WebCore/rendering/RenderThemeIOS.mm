@@ -1856,6 +1856,8 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     if (graphicsContext.paintingDisabled())
         return;
 
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
     CGContextRef ctx = graphicsContext.platformContext();
     if (!ctx)
         return;
@@ -1863,13 +1865,15 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     CGContextSaveGState(ctx);
 
     // Draw a drop shadow around the circle.
-    CGFloat shadowColorComponents[4] = { 0, 0, 0, 0.1 };
-    RetainPtr<CGColorRef> shadowColor = adoptCF(CGColorCreate(sRGBColorSpaceRef(), shadowColorComponents));
+    // Use the GraphicsContext function, because it calculates the blur radius in context space,
+    // rather than screen space.
+    Color shadowColor = Color { 0.f, 0.f, 0.f, 0.1f };
+    graphicsContext.setShadow(FloatSize { }, 16, shadowColor);
+
     // The circle must have an alpha channel value of 1 for the shadow color to appear.
     CGFloat circleColorComponents[4] = { 0, 0, 0, 1 };
     RetainPtr<CGColorRef> circleColor = adoptCF(CGColorCreate(sRGBColorSpaceRef(), circleColorComponents));
     CGContextSetFillColorWithColor(ctx, circleColor.get());
-    CGContextSetShadowWithColor(ctx, CGSizeZero, 16, shadowColor.get());
 
     // Clip out the circle to only show the shadow.
     CGContextBeginPath(ctx);

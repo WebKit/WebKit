@@ -1,5 +1,20 @@
 2018-06-19  Dean Jackson  <dino@apple.com>
 
+        ARKit badge drop shadow updates its blur radius based on page zoom
+        https://bugs.webkit.org/show_bug.cgi?id=186829
+        <rdar://problem/40738779>
+
+        Reviewed by Tim Horton.
+
+        We need to make sure the shadow blur radius takes into account the
+        current zoom. Thankfully, the GraphicsContext platform code already
+        does this, so just use it.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+
+2018-06-19  Dean Jackson  <dino@apple.com>
+
         Blank viewer comes up and then auto-dismisses when device is not connected to Internet
         https://bugs.webkit.org/show_bug.cgi?id=186825
         <rdar://problem/40294170>
