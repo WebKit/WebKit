@@ -1,5 +1,19 @@
 2018-06-19  Keith Miller  <keith_miller@apple.com>
 
+        Fix broken assertion on 32-bit
+        https://bugs.webkit.org/show_bug.cgi?id=186830
+
+        Reviewed by Mark Lam.
+
+        The assertion was intended to catch concurrent GC issues. We don't
+        run them on 32-bit so we don't need this assertion there. The
+        assertion was broken because zero is not JSValue() on 32-bit.
+
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+
+2018-06-19  Keith Miller  <keith_miller@apple.com>
+
         flattenDictionaryStructure needs to zero properties that have been compressed away
         https://bugs.webkit.org/show_bug.cgi?id=186828
 

@@ -203,7 +203,10 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
                 setStructureIDDirectly(structureID);
             } else
                 structure->setLastOffset(newLastOffset);
-            ASSERT(!getDirect(offset));
+
+            // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
+            // is running at the same time we put without transitioning.
+            ASSERT(!JSValue::encode(getDirect(offset)));
             result = offset;
         });
     return result;
