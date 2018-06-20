@@ -44,11 +44,10 @@
 namespace WebCore {
 
 CurlSSLHandle::CurlSSLHandle()
-    : m_caCertPath(getCACertPathEnv())
 {
-    char* ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
-    if (ignoreSSLErrors)
-        m_ignoreSSLErrors = true;
+    auto caCertPath = getCACertPathEnv();
+    if (!caCertPath.isEmpty())
+        setCACertPath(WTFMove(caCertPath));
 
 #if NEED_OPENSSL_THREAD_SUPPORT
     ThreadSupport::setup();
@@ -67,13 +66,30 @@ String CurlSSLHandle::getCACertPathEnv()
         RetainPtr<CFURLRef> certURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundleRef, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
         if (certURLRef) {
             char path[MAX_PATH];
-            CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);
-            return String(path);
+            if (CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH) && *path)
+                return String(path);
         }
     }
 #endif
 
     return String();
+}
+
+void CurlSSLHandle::setCACertPath(String&& caCertPath)
+{
+    RELEASE_ASSERT(!caCertPath.isEmpty());
+    m_caCertInfo = WTFMove(caCertPath);
+}
+
+void CurlSSLHandle::setCACertData(Vector<char>&& caCertData)
+{
+    RELEASE_ASSERT(!caCertData.isEmpty());
+    m_caCertInfo = WTFMove(caCertData);
+}
+
+void CurlSSLHandle::clearCACertInfo()
+{
+    m_caCertInfo = WTF::Monostate { };
 }
 
 void CurlSSLHandle::setHostAllowsAnyHTTPSCertificate(const String& hostName)

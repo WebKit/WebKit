@@ -233,7 +233,8 @@ CURL* CurlRequest::setupTransfer()
         m_curlHandle->setSslKeyPassword(sslClientCertificate->second.utf8().data());
     }
 
-    m_curlHandle->setCACertPath(sslHandle.getCACertPath().utf8().data());
+    if (auto path = WTF::get_if<String>(sslHandle.getCACertInfo()))
+        m_curlHandle->setCACertPath(path->utf8().data());
 
     if (m_shouldSuspend)
         setRequestPaused(true);

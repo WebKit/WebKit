@@ -44,6 +44,11 @@ CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName,
     SSL_CTX_set_app_data(ctx, this);
     SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), certVerifyCallback);
 
+#if defined(LIBRESSL_VERSION_NUMBER)
+    if (auto data = WTF::get_if<Vector<char>>(sslHandle.getCACertInfo()))
+        SSL_CTX_load_verify_mem(ctx, static_cast<void*>(const_cast<char*>(data->data())), data->size());
+#endif
+
 #if (!defined(LIBRESSL_VERSION_NUMBER))
     auto signatureAlgorithmsList = sslHandle.getSignatureAlgorithmsList();
     if (!signatureAlgorithmsList.isEmpty())

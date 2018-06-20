@@ -31,6 +31,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 
 // all version of LibreSSL and OpenSSL prior to 1.1.0 need thread support
@@ -48,26 +49,31 @@ class CurlSSLHandle {
     using ClientCertificate = std::pair<String, String>;
 
 public:
+    using CACertInfo = Variant<Monostate, String, Vector<char>>;
+
     CurlSSLHandle();
 
-    String getCipherList() const { return m_cipherList; }
-    String getSignatureAlgorithmsList() const { return m_signatureAlgorithmsList; }
-    String getCurvesList() const { return m_curvesList; }
+    const String& getCipherList() const { return m_cipherList; }
+    const String& getSignatureAlgorithmsList() const { return m_signatureAlgorithmsList; }
+    const String& getCurvesList() const { return m_curvesList; }
 
-    void setCipherList(String&& cipherList) { m_cipherList = WTFMove(cipherList); }
-    void setSignatureAlgorithmsList(String&& signatureAlgorithmsList) { m_signatureAlgorithmsList = WTFMove(signatureAlgorithmsList); }
-    void setCurvesList(String&& curvesList) { m_curvesList = WTFMove(curvesList); }
+    WEBCORE_EXPORT void setCipherList(String&& data) { m_cipherList = WTFMove(data); }
+    WEBCORE_EXPORT void setSignatureAlgorithmsList(String&& data) { m_signatureAlgorithmsList = WTFMove(data); }
+    WEBCORE_EXPORT void setCurvesList(String&& data) { m_curvesList = WTFMove(data); }
 
     bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
+    WEBCORE_EXPORT void setIgnoreSSLErrors(bool flag) { m_ignoreSSLErrors = flag; }
 
-    String getCACertPath() const { return m_caCertPath; }
-    void setCACertPath(String&& caCertPath) { m_caCertPath = WTFMove(caCertPath); }
+    const CACertInfo& getCACertInfo() const { return m_caCertInfo; }
+    WEBCORE_EXPORT void setCACertPath(String&&);
+    WEBCORE_EXPORT void setCACertData(Vector<char>&&);
+    WEBCORE_EXPORT void clearCACertInfo();
 
     WEBCORE_EXPORT void setHostAllowsAnyHTTPSCertificate(const String&);
     bool isAllowedHTTPSCertificateHost(const String&);
     bool canIgnoredHTTPSCertificate(const String&, const ListHashSet<String>&);
 
-    void setClientCertificateInfo(const String&, const String&, const String&);
+    WEBCORE_EXPORT void setClientCertificateInfo(const String&, const String&, const String&);
     std::optional<ClientCertificate> getSSLClientCertificate(const String&);
 
 private:
@@ -100,13 +106,12 @@ private:
 
     String getCACertPathEnv();
 
-    bool m_ignoreSSLErrors { false };
-
     String m_cipherList;
     String m_signatureAlgorithmsList;
     String m_curvesList;
+    CACertInfo m_caCertInfo;
 
-    String m_caCertPath;
+    bool m_ignoreSSLErrors { false };
 
     Lock m_mutex;
     HashMap<String, ListHashSet<String>, ASCIICaseInsensitiveHash> m_allowedHosts;

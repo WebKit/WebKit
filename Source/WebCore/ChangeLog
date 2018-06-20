@@ -1,3 +1,37 @@
+2018-06-19  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Allow passing contents of Root CA data directly.
+        https://bugs.webkit.org/show_bug.cgi?id=185782
+
+        Currently the data must be in a file and set by its path. This patch
+        allow application to set root CA data by passing binary data directly.
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests. Tested internally.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        * platform/network/curl/CurlSSLHandle.cpp:
+        (WebCore::CurlSSLHandle::CurlSSLHandle):
+        (WebCore::CurlSSLHandle::getCACertPathEnv):
+        (WebCore::CurlSSLHandle::setCACertPath):
+        (WebCore::CurlSSLHandle::setCACertData):
+        (WebCore::CurlSSLHandle::clearCACertInfo):
+        * platform/network/curl/CurlSSLHandle.h:
+        (WebCore::CurlSSLHandle::getCipherList const):
+        (WebCore::CurlSSLHandle::getSignatureAlgorithmsList const):
+        (WebCore::CurlSSLHandle::getCurvesList const):
+        (WebCore::CurlSSLHandle::setCipherList):
+        (WebCore::CurlSSLHandle::setSignatureAlgorithmsList):
+        (WebCore::CurlSSLHandle::setCurvesList):
+        (WebCore::CurlSSLHandle::setIgnoreSSLErrors):
+        (WebCore::CurlSSLHandle::getCACertInfo const):
+        (WebCore::CurlSSLHandle::getCACertPath const): Deleted.
+        (WebCore::CurlSSLHandle::setCACertPath): Deleted.
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::CurlSSLVerifier):
+
 2018-06-19  Dean Jackson  <dino@apple.com>
 
         ARKit badge drop shadow updates its blur radius based on page zoom
