@@ -1,3 +1,15 @@
+2018-06-20  Guillaume Emont  <guijemont@igalia.com>
+
+        [Armv7] Linkbuffer: executableOffsetFor() fails for location 2
+        https://bugs.webkit.org/show_bug.cgi?id=186765
+
+        Reviewed by Michael Saboff.
+
+        This widens the check for 0 so that we handle that case more correctly.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::executableOffsetFor):
+
 2018-06-19  Keith Miller  <keith_miller@apple.com>
 
         Fix broken assertion on 32-bit

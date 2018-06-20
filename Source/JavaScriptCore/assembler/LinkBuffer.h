@@ -297,7 +297,11 @@ private:
 #if ENABLE(BRANCH_COMPACTION)
     int executableOffsetFor(int location)
     {
-        if (!location)
+        // Returning 0 in this case works because at location <
+        // sizeof(int32_t), no compaction could have happened before this
+        // point as the assembler could not have placed a branch instruction
+        // within this space that required compaction.
+        if (location < static_cast<int>(sizeof(int32_t)))
             return 0;
         return bitwise_cast<int32_t*>(m_assemblerStorage.buffer())[location / sizeof(int32_t) - 1];
     }
