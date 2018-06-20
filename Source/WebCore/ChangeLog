@@ -1,3 +1,15 @@
+2018-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][WPE][Nicosia] Add name for Nicosia Painting Threads
+        https://bugs.webkit.org/show_bug.cgi?id=186836
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use "PaintingThread" name.
+
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp:
+        (Nicosia::PaintingEngineThreaded::PaintingEngineThreaded):
+
 2018-06-19  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_pseudoElement-get-animations.html pass reliably

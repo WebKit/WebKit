@@ -36,7 +36,7 @@ TEST(WTF, WorkerPoolDecrease)
 {
     std::atomic<unsigned> counter { 0 };
     {
-        Ref<WorkerPool> pool = WorkerPool::create();
+        Ref<WorkerPool> pool = WorkerPool::create(ASCIILiteral("Worker Pool"));
         for (int i = 0; i < 10000; ++i) {
             pool->postTask([&] {
                 ++counter;

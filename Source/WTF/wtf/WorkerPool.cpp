@@ -75,7 +75,7 @@ public:
 
     const char* name() const override
     {
-        return "Worker Pool";
+        return m_pool.name();
     }
 
 private:
@@ -83,10 +83,11 @@ private:
     Function<void()> m_task;
 };
 
-WorkerPool::WorkerPool(unsigned numberOfWorkers, Seconds timeout)
+WorkerPool::WorkerPool(ASCIILiteral name, unsigned numberOfWorkers, Seconds timeout)
     : m_lock(Box<Lock>::create())
     , m_condition(AutomaticThreadCondition::create())
     , m_timeout(timeout)
+    , m_name(name)
 {
     LockHolder locker(*m_lock);
     for (unsigned i = 0; i < numberOfWorkers; ++i)

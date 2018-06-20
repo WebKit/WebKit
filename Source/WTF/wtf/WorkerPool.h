@@ -30,6 +30,7 @@
 #include <wtf/Function.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
@@ -40,17 +41,19 @@ public:
     WTF_EXPORT_PRIVATE ~WorkerPool();
 
     // If timeout is infinity, it means AutomaticThread will be never automatically destroyed.
-    static Ref<WorkerPool> create(unsigned numberOfWorkers  = WTF::numberOfProcessorCores(), Seconds timeout = Seconds::infinity())
+    static Ref<WorkerPool> create(ASCIILiteral name, unsigned numberOfWorkers  = WTF::numberOfProcessorCores(), Seconds timeout = Seconds::infinity())
     {
         ASSERT(numberOfWorkers >= 1);
-        return adoptRef(*new WorkerPool(numberOfWorkers, timeout));
+        return adoptRef(*new WorkerPool(name, numberOfWorkers, timeout));
     }
+
+    ASCIILiteral name() const { return m_name; }
 
 private:
     class Worker;
     friend class Worker;
 
-    WTF_EXPORT_PRIVATE WorkerPool(unsigned numberOfWorkers, Seconds timeout);
+    WTF_EXPORT_PRIVATE WorkerPool(ASCIILiteral name, unsigned numberOfWorkers, Seconds timeout);
 
     bool shouldSleep(const AbstractLocker&);
 
@@ -61,6 +64,7 @@ private:
     unsigned m_numberOfActiveWorkers { 0 };
     Vector<Ref<Worker>> m_workers;
     Deque<Function<void()>> m_tasks;
+    ASCIILiteral m_name;
 };
 
 }

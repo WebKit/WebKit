@@ -1,3 +1,19 @@
+2018-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][WPE][Nicosia] Add name for Nicosia Painting Threads
+        https://bugs.webkit.org/show_bug.cgi?id=186836
+
+        Reviewed by Carlos Garcia Campos.
+
+        AutomaticThread can take a name for the generated threads now.
+        This patch adds the above ability to WorkerPool.
+
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        * wtf/WorkerPool.h:
+        (WTF::WorkerPool::create):
+        (WTF::WorkerPool::name const):
+
 2018-06-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a graceful exit for AuthenticationManager::initializeConnection
