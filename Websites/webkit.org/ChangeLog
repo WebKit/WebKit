@@ -1,3 +1,12 @@
+2018-06-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WPE] Add page for webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=186844
+
+        Reviewed by Michael Catanzaro.
+
+        * wpe.md: Added.
+
 2018-06-14  Roy Reapor  <rreapor@apple.com>
 
         Use new jQuery file layout
