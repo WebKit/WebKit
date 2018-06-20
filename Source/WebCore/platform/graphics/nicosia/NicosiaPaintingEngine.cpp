@@ -36,7 +36,7 @@ namespace Nicosia {
 
 std::unique_ptr<PaintingEngine> PaintingEngine::create()
 {
-#if ENABLE(DEVELOPER_MODE)
+#if ENABLE(DEVELOPER_MODE) && PLATFORM(WPE)
     if (const char* numThreadsEnv = getenv("WEBKIT_NICOSIA_PAINTING_THREADS")) {
         unsigned numThreads = 0;
         if (sscanf(numThreadsEnv, "%u", &numThreads) == 1) {
