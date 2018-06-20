@@ -346,8 +346,8 @@ sub main {
             $select->add($child);
             # each child starts with a file;
             my $file = shift @files;
-            chomp $file;
             if ($file) {
+                chomp $file;
                 print $child "$file\n";
                 $activeChildren++;
             }

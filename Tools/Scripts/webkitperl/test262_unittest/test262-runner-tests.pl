@@ -47,7 +47,7 @@ if (isWindows() || isCygwin() || isWinCairo()) {
 }
 
 my $Bin = $FindBin::Bin;
-my $runner = abs_path("$Bin/../../test262-runner");
+my $runner = abs_path("$Bin/../../test262-runner -p 1");
 my $mockTest262 = abs_path("$Bin/fixtures");
 
 
@@ -133,7 +133,7 @@ foreach my $testCase (@testCases) {
     my $exitCode = $? >> 8;
     my $expectedExitCode = $testCase->{EXITSTATUS};
     my $testName =  $testCase->{TESTNAME} . " (exit code: $expectedExitCode)";
-    is($exitCode, $testCase->{EXITSTATUS}, $testName);
+    is($exitCode, $expectedExitCode, $testName);
 
     # Test the number of occurences of string "! NEW FAIL"
     my @newFailCount = $output =~ /! NEW FAIL/g;

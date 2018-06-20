@@ -1,5 +1,16 @@
 2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
 
+        [test262-runner] Reduce flakiness of unit tests for the runner
+        https://bugs.webkit.org/show_bug.cgi?id=186824
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (main):
+        * Scripts/webkitperl/test262_unittest/test262-runner-tests.pl:
+
+2018-06-19  Leo Balter  <leonardo.balter@gmail.com>
+
         [test262-runner] Print results report to HTML
         https://bugs.webkit.org/show_bug.cgi?id=186790
 
