@@ -1,3 +1,13 @@
+2018-06-20  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GTK+ test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=186854
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-06-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-transitions/test_element-get-animations.html pass reliably

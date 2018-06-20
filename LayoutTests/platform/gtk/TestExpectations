@@ -2006,6 +2006,11 @@ webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass ]
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Pass Failure ]
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_long.https.html [ Pass Failure ]
 
+webkit.org/b/186847 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
+
+webkit.org/b/186851 imported/w3c/web-platform-tests/XMLHttpRequest/formdata.htm [ Pass Failure ]
+webkit.org/b/186851 imported/w3c/web-platform-tests/XMLHttpRequest/formdata-blob.htm [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2283,7 +2288,6 @@ webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin-fro
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-same-origin.html [ Timeout Crash ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cookie.html [ Timeout ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-same-origin.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Timeout ]
@@ -2343,6 +2347,8 @@ webkit.org/b/186253 http/tests/security/contentSecurityPolicy/media-src-allowed.
 
 webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Timeout Failure ]
 webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html [ Timeout ]
+webkit.org/b/186662 animations/transition-and-animation-3.html [ Timeout ]
+webkit.org/b/186853 imported/mozilla/css-transitions/test_element-get-animations.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3441,6 +3447,8 @@ webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbo
 webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-001.xht [ ImageOnlyFailure ]
 webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-002.xht [ ImageOnlyFailure ]
 webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-recontruct-loca-001.xht [ ImageOnlyFailure ]
+webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001.xht [ ImageOnlyFailure ]
+webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003.xht [ ImageOnlyFailure ]
 
 # Fails consistently on Release, times out consistently in Debug
 webkit.org/b/185912 fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Failure Timeout ]
@@ -3461,7 +3469,6 @@ webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
 
 webkit.org/b/186142 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
 
-webkit.org/b/186144 transitions/move-after-transition.html [ Timeout ]
 webkit.org/b/186144 transitions/transition-end-event-rendering.html [ Timeout ]
 
 webkit.org/b/186252 legacy-animation-engine/css3/filters/composited-during-transition-layertree.html [ Failure ]
@@ -3472,7 +3479,10 @@ webkit.org/b/186618 imported/w3c/web-platform-tests/fetch/api/headers/header-val
 
 webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
 
-webkit.org/b/186662 animations/transition-and-animation-3.html [ Failure ]
+webkit.org/b/186845 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Failure Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Failure Timeout ]
+
+webkit.org/b/186144 transitions/move-after-transition.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
