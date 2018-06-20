@@ -37,8 +37,8 @@ ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPo
     : m_policy(policy)
     , m_scheme(scheme)
     , m_host(host)
-    , m_port(port)
     , m_path(path)
+    , m_port(port)
     , m_hostHasWildcard(hostHasWildcard)
     , m_portHasWildcard(portHasWildcard)
 {

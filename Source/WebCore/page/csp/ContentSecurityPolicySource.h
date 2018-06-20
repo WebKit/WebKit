@@ -53,8 +53,8 @@ private:
     const ContentSecurityPolicy& m_policy;
     String m_scheme;
     String m_host;
-    std::optional<uint16_t> m_port;
     String m_path;
+    std::optional<uint16_t> m_port;
 
     bool m_hostHasWildcard;
     bool m_portHasWildcard;

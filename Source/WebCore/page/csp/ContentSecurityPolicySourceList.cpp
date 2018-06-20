@@ -130,7 +130,7 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
     return isAllowed;
 }
 
-bool ContentSecurityPolicySourceList::matches(const URL& url, bool didReceiveRedirectResponse)
+bool ContentSecurityPolicySourceList::matches(const URL& url, bool didReceiveRedirectResponse) const
 {
     if (m_allowStar && isProtocolAllowedByStar(url))
         return true;
@@ -196,6 +196,8 @@ void ContentSecurityPolicySourceList::parse(const UChar* begin, const UChar* end
 
         ASSERT(position == end || isASCIISpace(*position));
     }
+    
+    m_list.shrinkToFit();
 }
 
 // source            = scheme ":"

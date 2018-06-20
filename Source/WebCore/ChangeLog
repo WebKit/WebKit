@@ -1,3 +1,24 @@
+2018-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        ContentSecurityPolicySourceList wastes 51KB of Vector capacity on cnn.com
+        https://bugs.webkit.org/show_bug.cgi?id=186706
+
+        Reviewed by Chris Dumez.
+
+        Make ContentSecurityPolicySourceList::parse() call shrinkToFit() on m_list
+        after parsing to eliminate wasted vector capacity.
+        
+        Shrink ContentSecurityPolicySource down to 40 bytes by optimizing packing.
+
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::ContentSecurityPolicySource):
+        * page/csp/ContentSecurityPolicySource.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::matches const):
+        (WebCore::ContentSecurityPolicySourceList::parse):
+        (WebCore::ContentSecurityPolicySourceList::matches): Deleted.
+        * page/csp/ContentSecurityPolicySourceList.h:
+
 2018-06-20  Megan Gardner  <megan_gardner@apple.com>
 
         Restrict Selection in contenteditable the extent of that contenteditable
