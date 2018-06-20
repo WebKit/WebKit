@@ -3,8 +3,7 @@
         "port": "gtk-wk2",
         "watchers": [
             "bugs-noreply@webkitgtk.org"
-        ],
-        "runTests": true
+        ]
     },
     "Win EWS": {
         "port": "win",

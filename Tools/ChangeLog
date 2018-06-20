@@ -1,3 +1,17 @@
+2018-06-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r232844.
+        https://bugs.webkit.org/show_bug.cgi?id=186843
+
+        "Too many flakiness on the tests, so the EWS bots cant process
+        patches correctly" (Requested by clopez on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Enable tests on the GTK EWS queue"
+        https://bugs.webkit.org/show_bug.cgi?id=186559
+        https://trac.webkit.org/changeset/232844
+
 2018-06-20  Rob Buis  <rbuis@igalia.com>
 
         [GTK] ASSERTION FAILED: url == m_string in UserAgentQuirks test
