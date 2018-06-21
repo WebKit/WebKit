@@ -1,3 +1,29 @@
+2018-06-21  Daniel Bates  <dabates@apple.com>
+
+        EWS should not try to post comments or upload result archives to security-sensitive
+        bugs unless it has access
+        https://bugs.webkit.org/show_bug.cgi?id=186831
+
+        Reviewed by Lucas Forschler.
+
+        Following r232979 security-sensitive patches are uploaded to the status server so
+        that they can be retrieved and processed by EWS bots without the need for Bugzilla
+        security bug access. Although the EWS machinery is robust against unexpected exceptions,
+        including exceptions raised when interacting with Bugzilla bugs/attachments with
+        insufficient credentials, we should not depend on such defenses as they cause webkit-
+        patch to log a message for the "unexpected" exception. We should reserve such logging
+        for truly unexpected exceptions that indicate a programming mistake that we need to fix.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem._post_reject_message_on_bug): Bail out early if we cannot
+        access the bug.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue._can_access_bug): Added.
+        (PatchProcessingQueue._upload_results_archive_for_patch): Only add an attachment if we
+        can access the bug.
+        (CommitQueue.process_work_item): Only post a rejection comment (i.e. call CommitterValidatorreject_patch_from_commit_queue())
+        if we can access the bug.
+
 2018-06-21  Lucas Forschler  <lforschler@apple.com>
 
         bisect-builds --list not showing all builds

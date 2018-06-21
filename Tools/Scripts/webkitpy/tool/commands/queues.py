@@ -299,6 +299,13 @@ class PatchProcessingQueue(AbstractPatchQueue):
 
         self._create_port()
 
+    # FIXME: Bugzilla member functions should perform this check as they can do it as part of the same
+    # network request. This would also avoid bugs where the access of the Bugzilla bug changes between
+    # the time-of-check (calling this function) and time-of-use (when we ask Bugzilla to perform the
+    # actual operation).
+    def _can_access_bug(self, bug_id):
+        return bool(self._tool.bugs.fetch_bug(bug_id))
+
     def _upload_results_archive_for_patch(self, patch, results_archive_zip):
         if not self._port:
             self._create_port()
@@ -316,7 +323,8 @@ class PatchProcessingQueue(AbstractPatchQueue):
         # FIXME: We could easily list the test failures from the archive here,
         # currently callers do that separately.
         comment_text += BotInfo(self._tool, self._port.name()).summary_text()
-        self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
+        if self._can_access_bug(patch.bug_id()):
+            self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
 
 
 class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
@@ -350,8 +358,9 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
             self._did_error(patch, "%s did not process patch. Reason: %s" % (self.name, error.failure_message))
             return False
         except ScriptError as e:
-            validator = CommitterValidator(self._tool)
-            validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
+            if self._can_access_bug(patch.bug_id()):
+                validator = CommitterValidator(self._tool)
+                validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
             results_archive = task.results_archive_from_patch_test_run(patch)
             if results_archive:
                 self._upload_results_archive_for_patch(patch, results_archive)
