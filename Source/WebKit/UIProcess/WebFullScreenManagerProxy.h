@@ -30,9 +30,13 @@
 #include "MessageReceiver.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 class IntRect;
+
+template <typename> class RectEdges;
+using FloatBoxExtent = RectEdges<float>;
 }
 
 namespace WebKit {
@@ -69,8 +73,9 @@ public:
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();
-    void setFullscreenInsetTop(double);
-    void setFullscreenAutoHideDelay(double);
+    void setFullscreenInsets(const WebCore::FloatBoxExtent&);
+    void setFullscreenAutoHideTiming(Seconds delay, Seconds duration);
+    void setFullscreenControlsHidden(bool);
 
 private:
     explicit WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);

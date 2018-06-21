@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="full-screen-test.js"></script>
+    <script>
+        window.addEventListener('load', event => {
+            window.target = document.querySelector('#target');
+            run('internals.setFullscreenInsets({top:1, left:2, bottom:3, right:4})');
+            testExpected('window.getComputedStyle(target).top', '1px');
+            testExpected('window.getComputedStyle(target).left', '2px');
+            testExpected('window.getComputedStyle(target).bottom', '3px');
+            testExpected('window.getComputedStyle(target).right', '4px');
+            run('internals.setFullscreenInsets({top:20, left:30, bottom:40, right:50})');
+            testExpected('window.getComputedStyle(target).top', '20px');
+            testExpected('window.getComputedStyle(target).left', '30px');
+            testExpected('window.getComputedStyle(target).bottom', '40px');
+            testExpected('window.getComputedStyle(target).right', '50px');
+            run('internals.setFullscreenInsets({top:0, left:0, bottom:0, right:0})');
+            testExpected('window.getComputedStyle(target).top', '0px');
+            testExpected('window.getComputedStyle(target).left', '0px');
+            testExpected('window.getComputedStyle(target).bottom', '0px');
+            testExpected('window.getComputedStyle(target).right', '0px');
+            run('internals.setFullscreenAutoHideDelay(1)');
+            run('internals.setFullscreenAutoHideDuration(2)');
+            testExpected('window.getComputedStyle(target).transitionDelay', '1s');
+            testExpected('window.getComputedStyle(target).transitionDuration', '2s');
+            run('internals.setFullscreenAutoHideDelay(20)');
+            run('internals.setFullscreenAutoHideDuration(30)');
+            testExpected('window.getComputedStyle(target).transitionDelay', '20s');
+            testExpected('window.getComputedStyle(target).transitionDuration', '30s');
+            run('internals.setFullscreenAutoHideDelay(0)');
+            run('internals.setFullscreenAutoHideDuration(0)');
+            testExpected('window.getComputedStyle(target).transitionDelay', '0s');
+            testExpected('window.getComputedStyle(target).transitionDuration', '0s');
+            runWithKeyDown(() => {target.webkitRequestFullscreen() });
+            waitForEventOnce(document, 'webkitfullscreenchange', event => {
+                run('internals.setFullscreenControlsHidden(true)');
+                testExpected('document.querySelector("#target:-webkit-full-screen-controls-hidden")', target);
+                run('internals.setFullscreenControlsHidden(false)');
+                testExpected('document.querySelector("#target:-webkit-full-screen-controls-hidden")', null);
+                endTest();
+            });
+        });
+    </script>
+    <style>
+        #target {
+            position: absolute;
+            top: env(fullscreen-inset-top);
+            left: env(fullscreen-inset-left);
+            bottom: env(fullscreen-inset-bottom);
+            right: env(fullscreen-inset-right);
+            transition-duration: env(fullscreen-auto-hide-duration);
+            transition-delay: env(fullscreen-auto-hide-delay);
+        }
+    </style>
+</head>
+<body>
+    <div id="target">&nbsp;</div>
+</body>
+</html>

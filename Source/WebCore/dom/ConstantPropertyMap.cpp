@@ -55,7 +55,11 @@ const AtomicString& ConstantPropertyMap::nameForProperty(ConstantProperty proper
     static NeverDestroyed<AtomicString> safeAreaInsetBottomName("safe-area-inset-bottom", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> safeAreaInsetLeftName("safe-area-inset-left", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> fullscreenInsetTopName("fullscreen-inset-top", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> fullscreenInsetLeftName("fullscreen-inset-left", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> fullscreenInsetBottomName("fullscreen-inset-bottom", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> fullscreenInsetRightName("fullscreen-inset-right", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> fullscreenAutoHideDelayName("fullscreen-auto-hide-delay", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> fullscreenAutoHideDurationName("fullscreen-auto-hide-duration", AtomicString::ConstructFromLiteral);
 
     switch (property) {
     case ConstantProperty::SafeAreaInsetTop:
@@ -68,8 +72,16 @@ const AtomicString& ConstantPropertyMap::nameForProperty(ConstantProperty proper
         return safeAreaInsetLeftName;
     case ConstantProperty::FullscreenInsetTop:
         return fullscreenInsetTopName;
+    case ConstantProperty::FullscreenInsetLeft:
+        return fullscreenInsetLeftName;
+    case ConstantProperty::FullscreenInsetBottom:
+        return fullscreenInsetBottomName;
+    case ConstantProperty::FullscreenInsetRight:
+        return fullscreenInsetRightName;
     case ConstantProperty::FullscreenAutoHideDelay:
         return fullscreenAutoHideDelayName;
+    case ConstantProperty::FullscreenAutoHideDuration:
+        return fullscreenAutoHideDurationName;
     }
 
     return nullAtom();
@@ -103,11 +115,11 @@ static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
     return CSSVariableData::create(tokenRange, false);
 }
 
-static Ref<CSSVariableData> variableDataForPositiveDuration(float durationInSeconds)
+static Ref<CSSVariableData> variableDataForPositiveDuration(Seconds durationInSeconds)
 {
-    ASSERT(durationInSeconds >= 0);
+    ASSERT(durationInSeconds >= 0_s);
 
-    CSSParserToken token(NumberToken, durationInSeconds, NumberValueType, NoSign);
+    CSSParserToken token(NumberToken, durationInSeconds.value(), NumberValueType, NoSign);
     token.convertToDimensionWithUnit("s");
 
     Vector<CSSParserToken> tokens { token };
@@ -130,15 +142,30 @@ void ConstantPropertyMap::didChangeSafeAreaInsets()
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
-void ConstantPropertyMap::setFullscreenInsetTop(double inset)
+void ConstantPropertyMap::updateConstantsForFullscreenInsets()
 {
-    setValueForProperty(ConstantProperty::FullscreenInsetTop, variableDataForPositivePixelLength(inset));
+    FloatBoxExtent fullscreenInsets = m_document.page() ? m_document.page()->fullscreenInsets() : FloatBoxExtent();
+    setValueForProperty(ConstantProperty::FullscreenInsetTop, variableDataForPositivePixelLength(fullscreenInsets.top()));
+    setValueForProperty(ConstantProperty::FullscreenInsetRight, variableDataForPositivePixelLength(fullscreenInsets.right()));
+    setValueForProperty(ConstantProperty::FullscreenInsetBottom, variableDataForPositivePixelLength(fullscreenInsets.bottom()));
+    setValueForProperty(ConstantProperty::FullscreenInsetLeft, variableDataForPositivePixelLength(fullscreenInsets.left()));
+}
+
+void ConstantPropertyMap::didChangeFullscreenInsets()
+{
+    updateConstantsForFullscreenInsets();
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
-void ConstantPropertyMap::setFullscreenAutoHideDelay(double delay)
+void ConstantPropertyMap::setFullscreenAutoHideDelay(Seconds delay)
 {
     setValueForProperty(ConstantProperty::FullscreenAutoHideDelay, variableDataForPositiveDuration(delay));
+    m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+}
+
+void ConstantPropertyMap::setFullscreenAutoHideDuration(Seconds duration)
+{
+    setValueForProperty(ConstantProperty::FullscreenAutoHideDuration, variableDataForPositiveDuration(duration));
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 

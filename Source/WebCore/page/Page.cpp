@@ -2377,22 +2377,48 @@ bool Page::defaultAppearance() const
     return m_defaultAppearance;
 }
 
-void Page::setFullscreenInsetTop(double inset)
+void Page::setFullscreenInsets(const FloatBoxExtent& insets)
 {
+    if (insets == m_fullscreenInsets)
+        return;
+    m_fullscreenInsets = insets;
+
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
-        frame->document()->constantProperties().setFullscreenInsetTop(inset);
+        frame->document()->constantProperties().didChangeFullscreenInsets();
     }
 }
 
-void Page::setFullscreenAutoHideDelay(double delay)
+void Page::setFullscreenAutoHideDelay(Seconds delay)
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
         frame->document()->constantProperties().setFullscreenAutoHideDelay(delay);
     }
+}
+
+void Page::setFullscreenAutoHideDuration(Seconds duration)
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->constantProperties().setFullscreenAutoHideDuration(duration);
+    }
+}
+
+void Page::setFullscreenControlsHidden(bool hidden)
+{
+#if ENABLE(FULLSCREEN_API)
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->setFullscreenControlsHidden(hidden);
+    }
+#else
+    UNUSED_PARAM(hidden);
+#endif
 }
 
 #if ENABLE(DATA_INTERACTION)

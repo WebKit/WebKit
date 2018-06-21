@@ -604,6 +604,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassAnimatingFullScreenTransition:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(matchesFullScreenAnimatingFullScreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClassFullScreenControlsHidden:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(matchesFullScreenControlsHiddenPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
 #endif
 #if ENABLE(VIDEO_TRACK)
     case CSSSelector::PseudoClassFuture:

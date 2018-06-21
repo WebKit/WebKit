@@ -1,3 +1,42 @@
+2018-06-15  Jer Noble  <jer.noble@apple.com>
+
+        Address fullscreen api CSS env feedback
+        https://bugs.webkit.org/show_bug.cgi?id=186684
+
+        Reviewed by Simon Fraser.
+
+        + Update the phishing alert text to be more explicit about the specific threats
+          phishing sites represent.
+        + Make the top inset static, rather than dynamic.
+        + Add bottom, left, and right insets for completeness.
+        + Set the fullscreen animation duration as well as delay.
+        + Notify the page when the controls show and hide.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::setFullscreenInsets):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenAutoHideTiming):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenControlsHidden):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenInsetTop): Deleted.
+        (WebKit::WebFullScreenManagerProxy::setFullscreenAutoHideDelay): Deleted.
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController showUI]):
+        (-[WKFullScreenViewController hideUI]):
+        (-[WKFullScreenViewController viewWillAppear:]):
+        (-[WKFullScreenViewController _effectiveFullscreenInsets]):
+        (-[WKFullScreenViewController _updateWebViewFullscreenInsets]):
+        (-[WKFullScreenViewController _showPhishingAlert]):
+        (-[WKFullScreenViewController _effectiveFullscreenInsetTop]): Deleted.
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::didExitFullScreen):
+        (WebKit::WebFullScreenManager::setFullscreenInsets):
+        (WebKit::WebFullScreenManager::setFullscreenAutoHideTiming):
+        (WebKit::WebFullScreenManager::setFullscreenControlsHidden):
+        (WebKit::WebFullScreenManager::setFullscreenInsetTop): Deleted.
+        (WebKit::WebFullScreenManager::setFullscreenAutoHideDelay): Deleted.
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+
 2018-06-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r232884.

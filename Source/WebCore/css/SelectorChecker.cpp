@@ -1033,6 +1033,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesFullScreenAncestorPseudoClass(element);
         case CSSSelector::PseudoClassFullScreenDocument:
             return matchesFullScreenDocumentPseudoClass(element);
+        case CSSSelector::PseudoClassFullScreenControlsHidden:
+            return matchesFullScreenControlsHiddenPseudoClass(element);
 #endif
         case CSSSelector::PseudoClassInRange:
             return isInRange(element);

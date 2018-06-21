@@ -401,8 +401,16 @@ public:
     bool isAnimatingFullScreen() const;
 #endif
 
-    void setFullscreenInsetTop(double);
+    struct FullscreenInsets {
+        float top;
+        float left;
+        float bottom;
+        float right;
+    };
+    void setFullscreenInsets(FullscreenInsets);
     void setFullscreenAutoHideDelay(double);
+    void setFullscreenAutoHideDuration(double);
+    void setFullscreenControlsHidden(bool);
 
     WEBCORE_TESTSUPPORT_EXPORT void setApplicationCacheOriginQuota(unsigned long long);
 

@@ -350,9 +350,13 @@ public:
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
 #endif
 
-    WEBCORE_EXPORT void setFullscreenInsetTop(double);
-    WEBCORE_EXPORT void setFullscreenAutoHideDelay(double);
-    
+    WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);
+    const FloatBoxExtent& fullscreenInsets() const { return m_fullscreenInsets; }
+
+    WEBCORE_EXPORT void setFullscreenAutoHideDelay(Seconds);
+    WEBCORE_EXPORT void setFullscreenAutoHideDuration(Seconds);
+    WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
+
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     WEBCORE_EXPORT void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
@@ -743,6 +747,7 @@ private:
     float m_topContentInset { 0 };
     FloatBoxExtent m_obscuredInsets;
     FloatBoxExtent m_unobscuredSafeAreaInsets;
+    FloatBoxExtent m_fullscreenInsets;
 
 #if PLATFORM(IOS)
     bool m_enclosedInScrollableAncestorView { false };

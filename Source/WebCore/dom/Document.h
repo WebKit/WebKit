@@ -1156,6 +1156,9 @@ public:
     WEBCORE_EXPORT bool isAnimatingFullScreen() const;
     WEBCORE_EXPORT void setAnimatingFullScreen(bool);
 
+    WEBCORE_EXPORT bool areFullscreenControlsHidden() const;
+    WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
+
     WEBCORE_EXPORT bool webkitFullscreenEnabled() const;
     Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.last().get() : nullptr; }
     Element* webkitFullscreenElementForBindings() const { return ancestorElementInThisScope(webkitFullscreenElement()); }
@@ -1711,6 +1714,7 @@ private:
 
     bool m_areKeysEnabledInFullScreen { false };
     bool m_isAnimatingFullScreen { false };
+    bool m_areFullscreenControlsHidden { false };
 #endif
 
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;

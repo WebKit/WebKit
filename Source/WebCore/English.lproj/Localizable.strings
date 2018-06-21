@@ -734,7 +734,7 @@
 "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
 
 /* Fullscreen Deceptive Website Warning Sheet Content Text */
-"The website \"%@\" may be a deceptive website. Would you like to exit fullscreen?" = "The website \"%@\" may be a deceptive website. Would you like to exit fullscreen?";
+"The website “%@” may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards." = "The website “%@” may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards.";
 
 /* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";

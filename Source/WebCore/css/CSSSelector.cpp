@@ -453,6 +453,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassFullScreenDocument:
                 str.appendLiteral(":-webkit-full-screen-document");
                 break;
+            case CSSSelector::PseudoClassFullScreenControlsHidden:
+                str.appendLiteral(":-webkit-full-screen-controls-hidden");
+                break;
 #endif
             case CSSSelector::PseudoClassActive:
                 str.appendLiteral(":active");

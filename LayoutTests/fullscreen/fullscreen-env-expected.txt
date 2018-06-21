@@ -1,0 +1,35 @@
+ 
+RUN(internals.setFullscreenInsets({top:1, left:2, bottom:3, right:4}))
+EXPECTED (window.getComputedStyle(target).top == '1px') OK
+EXPECTED (window.getComputedStyle(target).left == '2px') OK
+EXPECTED (window.getComputedStyle(target).bottom == '3px') OK
+EXPECTED (window.getComputedStyle(target).right == '4px') OK
+RUN(internals.setFullscreenInsets({top:20, left:30, bottom:40, right:50}))
+EXPECTED (window.getComputedStyle(target).top == '20px') OK
+EXPECTED (window.getComputedStyle(target).left == '30px') OK
+EXPECTED (window.getComputedStyle(target).bottom == '40px') OK
+EXPECTED (window.getComputedStyle(target).right == '50px') OK
+RUN(internals.setFullscreenInsets({top:0, left:0, bottom:0, right:0}))
+EXPECTED (window.getComputedStyle(target).top == '0px') OK
+EXPECTED (window.getComputedStyle(target).left == '0px') OK
+EXPECTED (window.getComputedStyle(target).bottom == '0px') OK
+EXPECTED (window.getComputedStyle(target).right == '0px') OK
+RUN(internals.setFullscreenAutoHideDelay(1))
+RUN(internals.setFullscreenAutoHideDuration(2))
+EXPECTED (window.getComputedStyle(target).transitionDelay == '1s') OK
+EXPECTED (window.getComputedStyle(target).transitionDuration == '2s') OK
+RUN(internals.setFullscreenAutoHideDelay(20))
+RUN(internals.setFullscreenAutoHideDuration(30))
+EXPECTED (window.getComputedStyle(target).transitionDelay == '20s') OK
+EXPECTED (window.getComputedStyle(target).transitionDuration == '30s') OK
+RUN(internals.setFullscreenAutoHideDelay(0))
+RUN(internals.setFullscreenAutoHideDuration(0))
+EXPECTED (window.getComputedStyle(target).transitionDelay == '0s') OK
+EXPECTED (window.getComputedStyle(target).transitionDuration == '0s') OK
+EVENT(webkitfullscreenchange)
+RUN(internals.setFullscreenControlsHidden(true))
+EXPECTED (document.querySelector("#target:-webkit-full-screen-controls-hidden") == '[object HTMLDivElement]') OK
+RUN(internals.setFullscreenControlsHidden(false))
+EXPECTED (document.querySelector("#target:-webkit-full-screen-controls-hidden") == 'null') OK
+END OF TEST
+

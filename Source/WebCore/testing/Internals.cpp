@@ -503,8 +503,10 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     page.settings().setStorageAccessAPIEnabled(false);
-    page.setFullscreenAutoHideDelay(0);
-    page.setFullscreenInsetTop(0);
+    page.setFullscreenAutoHideDelay(0_s);
+    page.setFullscreenAutoHideDuration(0_s);
+    page.setFullscreenInsets({ });
+    page.setFullscreenControlsHidden(false);
 }
 
 Internals::Internals(Document& document)
@@ -2840,12 +2842,12 @@ bool Internals::isAnimatingFullScreen() const
 
 #endif
 
-void Internals::setFullscreenInsetTop(double inset)
+void Internals::setFullscreenInsets(FullscreenInsets insets)
 {
     Page* page = contextDocument()->frame()->page();
     ASSERT(page);
 
-    page->setFullscreenInsetTop(inset);
+    page->setFullscreenInsets(FloatBoxExtent(insets.top, insets.right, insets.bottom, insets.left));
 }
 
 void Internals::setFullscreenAutoHideDelay(double delay)
@@ -2853,7 +2855,23 @@ void Internals::setFullscreenAutoHideDelay(double delay)
     Page* page = contextDocument()->frame()->page();
     ASSERT(page);
 
-    page->setFullscreenAutoHideDelay(delay);
+    page->setFullscreenAutoHideDelay(Seconds(delay));
+}
+
+void Internals::setFullscreenAutoHideDuration(double duration)
+{
+    Page* page = contextDocument()->frame()->page();
+    ASSERT(page);
+
+    page->setFullscreenAutoHideDuration(Seconds(duration));
+}
+
+void Internals::setFullscreenControlsHidden(bool hidden)
+{
+    Page* page = contextDocument()->frame()->page();
+    ASSERT(page);
+
+    page->setFullscreenControlsHidden(hidden);
 }
 
 void Internals::setApplicationCacheOriginQuota(unsigned long long quota)

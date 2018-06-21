@@ -6424,6 +6424,23 @@ void Document::setAnimatingFullScreen(bool flag)
     }
 }
 
+bool Document::areFullscreenControlsHidden() const
+{
+    return m_areFullscreenControlsHidden;
+}
+
+void Document::setFullscreenControlsHidden(bool flag)
+{
+    if (m_areFullscreenControlsHidden == flag)
+        return;
+    m_areFullscreenControlsHidden = flag;
+
+    if (m_fullScreenElement && m_fullScreenElement->isDescendantOf(*this)) {
+        m_fullScreenElement->invalidateStyleForSubtree();
+        scheduleForcedStyleRecalc();
+    }
+}
+
 void Document::clearFullscreenElementStack()
 {
     m_fullScreenElementStack.clear();

@@ -181,8 +181,8 @@ void WebFullScreenManager::willExitFullScreen()
 void WebFullScreenManager::didExitFullScreen()
 {
     ASSERT(m_element);
-    setFullscreenInsetTop(0);
-    setFullscreenAutoHideDelay(0);
+    setFullscreenInsets(FloatBoxExtent());
+    setFullscreenAutoHideTiming(0_s, 0_s);
     m_element->document().webkitDidExitFullScreenForElement(m_element.get());
 }
 
@@ -213,14 +213,21 @@ void WebFullScreenManager::restoreScrollPosition()
     m_page->corePage()->mainFrame().view()->setScrollPosition(m_scrollPosition);
 }
 
-void WebFullScreenManager::setFullscreenInsetTop(double inset)
+void WebFullScreenManager::setFullscreenInsets(const WebCore::FloatBoxExtent& insets)
 {
-    m_page->corePage()->setFullscreenInsetTop(inset);
+    m_page->corePage()->setFullscreenInsets(insets);
 }
 
-void WebFullScreenManager::setFullscreenAutoHideDelay(double delay)
+void WebFullScreenManager::setFullscreenAutoHideTiming(Seconds delay, Seconds duration)
 {
-    m_page->corePage()->setFullscreenAutoHideDelay(delay);
+    auto corePage = m_page->corePage();
+    corePage->setFullscreenAutoHideDelay(delay);
+    corePage->setFullscreenAutoHideDuration(duration);
+}
+
+void WebFullScreenManager::setFullscreenControlsHidden(bool hidden)
+{
+    m_page->corePage()->setFullscreenControlsHidden(hidden);
 }
 
 } // namespace WebKit

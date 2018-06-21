@@ -103,7 +103,7 @@ private:
 @interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate>
 @property (weak, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
 @property (readonly, nonatomic) WebFullScreenManagerProxy* _manager;
-@property (readonly, nonatomic) CGFloat _effectiveFullscreenInsetTop;
+@property (readonly, nonatomic) WebCore::FloatBoxExtent _effectiveFullscreenInsets;
 @end
 
 @implementation WKFullScreenViewController {
@@ -167,6 +167,11 @@ private:
         [_stackView setHidden:NO];
         [_stackView setAlpha:1];
         self.prefersStatusBarHidden = NO;
+        [self.view removeConstraints:@[_topConstraint.get()]];
+        _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor];
+        [_topConstraint setActive:YES];
+        if (auto* manager = self._manager)
+            manager->setFullscreenControlsHidden(false);
     }];
 }
 
@@ -175,17 +180,16 @@ private:
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
         [self.view removeConstraints:@[_topConstraint.get()]];
-        _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:self.view.safeAreaInsets.top];
+        _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.topAnchor constant:self.view.safeAreaInsets.top];
         [_topConstraint setActive:YES];
         [_stackView setAlpha:0];
         self.prefersStatusBarHidden = YES;
+        if (auto* manager = self._manager)
+            manager->setFullscreenControlsHidden(true);
     } completion:^(BOOL finished) {
         if (!finished)
             return;
 
-        [self.view removeConstraints:@[_topConstraint.get()]];
-        _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor];
-        [_topConstraint setActive:YES];
         [_stackView setHidden:YES];
     }];
 }
@@ -302,7 +306,7 @@ private:
     [self.view insertSubview:self._webView atIndex:0];
 
     if (auto* manager = self._manager)
-        manager->setFullscreenAutoHideDelay(autoHideDelay);
+        manager->setFullscreenAutoHideTiming(Seconds(autoHideDelay), Seconds(showHideAnimationDuration));
 
     [super viewWillAppear:animated];
 }
@@ -359,15 +363,16 @@ private:
     return nullptr;
 }
 
-@dynamic _effectiveFullscreenInsetTop;
-- (CGFloat)_effectiveFullscreenInsetTop
+@dynamic _effectiveFullscreenInsets;
+- (WebCore::FloatBoxExtent)_effectiveFullscreenInsets
 {
-    if (self.prefersStatusBarHidden)
-        return 0;
+    auto safeAreaInsets = self.view.safeAreaInsets;
+    WebCore::FloatBoxExtent insets { safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left };
 
     CGRect cancelFrame = _cancelButton.get().frame;
     CGPoint maxXY = CGPointMake(CGRectGetMaxX(cancelFrame), CGRectGetMaxY(cancelFrame));
-    return [_cancelButton convertPoint:maxXY toView:self.view].y;
+    insets.setTop([_cancelButton convertPoint:maxXY toView:self.view].y);
+    return insets;
 }
 
 - (void)_cancelAction:(id)sender
@@ -419,13 +424,13 @@ private:
 - (void)_updateWebViewFullscreenInsets
 {
     if (auto* manager = self._manager)
-        manager->setFullscreenInsetTop(self._effectiveFullscreenInsetTop);
+        manager->setFullscreenInsets(self._effectiveFullscreenInsets);
 }
 
 - (void)_showPhishingAlert
 {
     NSString *alertTitle = WEB_UI_STRING("Deceptive Website Warning", "Fullscreen Deceptive Website Warning Sheet Title");
-    NSString *alertMessage = [NSString stringWithFormat:WEB_UI_STRING("The website \"%@\" may be a deceptive website. Would you like to exit fullscreen?", "Fullscreen Deceptive Website Warning Sheet Content Text") , (NSString *)self.location];
+    NSString *alertMessage = [NSString stringWithFormat:WEB_UI_STRING("The website “%@” may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards.", "Fullscreen Deceptive Website Warning Sheet Content Text") , (NSString *)self.location];
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
 
     if (auto* page = [self._webView _page])

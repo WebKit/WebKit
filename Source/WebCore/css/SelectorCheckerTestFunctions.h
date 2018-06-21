@@ -365,6 +365,13 @@ ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
         return false;
     return true;
 }
+
+ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& element)
+{
+    if (&element != element.document().webkitCurrentFullScreenElement())
+        return false;
+    return element.document().areFullscreenControlsHidden();
+}
 #endif
 
 #if ENABLE(VIDEO_TRACK)

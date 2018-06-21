@@ -1,3 +1,57 @@
+2018-06-15  Jer Noble  <jer.noble@apple.com>
+
+        Address fullscreen api CSS env feedback
+        https://bugs.webkit.org/show_bug.cgi?id=186684
+
+        Reviewed by Simon Fraser.
+
+        Test: fullscreen/fullscreen-env.html
+
+        + Update the phishing alert text to be more explicit about the specific threats
+          phishing sites represent.
+        + Make the top inset static, rather than dynamic.
+        + Add bottom, left, and right insets for completeness.
+        + Set the fullscreen animation duration as well as delay.
+        + Notify the page when the controls show and hide.
+
+        * English.lproj/Localizable.strings:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesFullScreenControlsHiddenPseudoClass):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::nameForProperty const):
+        (WebCore::ConstantPropertyMap::updateConstantsForFullscreenInsets):
+        (WebCore::ConstantPropertyMap::didChangeFullscreenInsets):
+        (WebCore::ConstantPropertyMap::setFullscreenAutoHideDuration):
+        (WebCore::ConstantPropertyMap::setFullscreenInsetTop): Deleted.
+        * dom/ConstantPropertyMap.h:
+        * dom/Document.cpp:
+        (WebCore::Document::areFullscreenControlsHidden const):
+        (WebCore::Document::setFullscreenControlsHidden):
+        * dom/Document.h:
+        * page/Page.cpp:
+        (WebCore::Page::setFullscreenInsets):
+        (WebCore::Page::setFullscreenAutoHideDuration):
+        (WebCore::Page::setFullscreenControlsHidden):
+        (WebCore::Page::setFullscreenInsetTop): Deleted.
+        * page/Page.h:
+        (WebCore::Page::fullscreenInsets const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setFullscreenInsets):
+        (WebCore::Internals::setFullscreenAutoHideDuration):
+        (WebCore::Internals::setFullscreenControlsHidden):
+        (WebCore::Internals::setFullscreenInsetTop): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-06-21  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] Page sometimes ends up with an incorrect zoom level after entering fullscreen

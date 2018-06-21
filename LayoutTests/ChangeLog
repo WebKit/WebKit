@@ -1,3 +1,15 @@
+2018-06-15  Jer Noble  <jer.noble@apple.com>
+
+        Address fullscreen api CSS env feedback
+        https://bugs.webkit.org/show_bug.cgi?id=186684
+
+        Reviewed by Simon Fraser.
+
+        * fullscreen/fullscreen-env-expected.txt: Added.
+        * fullscreen/fullscreen-env.html: Added.
+        * fullscreen/fullscreen-inset-top-expected.txt: Removed.
+        * fullscreen/fullscreen-inset-top.html: Removed.
+
 2018-06-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderSVGInline has to be inline always regardless of its css display value
