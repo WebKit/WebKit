@@ -133,9 +133,9 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
     if (!m_displayStream) {
 
         if (size().isEmpty()) {
-            CGDisplayModeRef displayMode = CGDisplayCopyDisplayMode(m_displayID);
-            auto screenWidth = CGDisplayModeGetPixelsWide(displayMode);
-            auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode);
+            RetainPtr<CGDisplayModeRef> displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
+            auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
+            auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
             if (!screenWidth || !screenHeight) {
                 RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream(%p), unable to get screen width/height", this);
                 captureFailed();
@@ -143,7 +143,6 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
             }
             setWidth(screenWidth);
             setHeight(screenHeight);
-            CGDisplayModeRelease(displayMode);
         }
 
         if (!m_captureQueue)

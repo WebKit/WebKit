@@ -777,8 +777,10 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     if (!hostNameRanges)
         return string;
 
-    if (![hostNameRanges count])
+    if (![hostNameRanges count]) {
+        [hostNameRanges release];
         return nil;
+    }
     
     // Do the mapping.
     NSMutableString *mutableCopy = [string mutableCopy];

@@ -1,3 +1,18 @@
+2018-06-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix leaks in WebCore found by clang static analyzer in deep mode
+        <https://webkit.org/b/186865>
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::mapHostNames): Fix leak of an empty NSMutableArray
+        during an early return.  RetainPtr<> is not used here since
+        a pointer to the NSMutableArray * is passed around.
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream):
+        Fix leak of a CGDisplayModeRef during an early return.
+
 2018-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the watchOS build after r233016.
