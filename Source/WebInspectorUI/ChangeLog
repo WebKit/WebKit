@@ -1,3 +1,20 @@
+2018-06-20  Daniel Bates  <dabates@apple.com>
+
+        Web Inspector: All non-Same-Site cookies are marked as Same-Site Strict in Storage tab
+        https://bugs.webkit.org/show_bug.cgi?id=186867
+        <rdar://problem/41175424>
+
+        Reviewed by Matt Baker.
+
+        Fixes an issue where cookies that do not have a Same-Site policy would be marked up as Same-
+        Site Strict in Web Inspector's cookie storage content view (under the storage tab).
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype._rebuildTable): Only compute the display name if
+        we cookie.sameSite is non-null and is not WI.Cookie.SameSiteType.None. Moreover, remove
+        an extraneous call to WI.Cookie.parseSameSiteAttributeValue() as cookie.SameSite represents
+        the already parsed value (one of the WI.Cookie.SameSiteType-scoped values).
+
 2018-06-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: TypeError: Array.prototype.sort passed bad value in NetworkTableContentView _updateSortAndFilteredEntries

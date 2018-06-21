@@ -140,7 +140,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
                 size: Number.bytesToString(cookie.size),
                 http: cookie.httpOnly ? checkmark : "",
                 secure: cookie.secure ? checkmark : "",
-                sameSite: cookie.sameSite ? WI.Cookie.displayNameForSameSiteType(WI.Cookie.parseSameSiteAttributeValue(cookie.sameSite)) : "",
+                sameSite: cookie.sameSite && cookie.sameSite !== WI.Cookie.SameSiteType.None ? WI.Cookie.displayNameForSameSiteType(cookie.sameSite) : "",
             };
 
             if (cookie.type !== WI.CookieType.Request)
