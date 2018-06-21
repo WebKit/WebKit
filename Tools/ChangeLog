@@ -1,3 +1,47 @@
+2018-06-21  Keith Rollin  <krollin@apple.com>
+
+        check-webkit-style should warn about exported inline functions
+        https://bugs.webkit.org/show_bug.cgi?id=186861
+        <rdar://problem/41303668>
+
+        Reviewed by Brent Fulgham.
+
+        When checking binaries compiled with LTO enabled, WebKit's
+        check-for-weak-vtables-and-externals script can complain about
+        exported inline functions. For instance, in
+        Source/WebCore/page/scrolling/ScrollingTree.h, the following:
+
+        WEBCORE_EXPORT virtual void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) { }
+        WEBCORE_EXPORT virtual void reportExposedUnfilledArea(MonotonicTime, unsigned /* unfilledArea */) { }
+
+        Can result in the following error messages:
+
+        ERROR: WebCore has a weak external symbol in it (.../OpenSource/WebKitBuild/Release/WebCore.framework/Versions/A/WebCore)
+        ERROR: A weak external symbol is generated when a symbol is defined in multiple compilation units and is also marked as being exported from the library.
+        ERROR: A common cause of weak external symbols is when an inline function is listed in the linker export file.
+        ERROR: symbol __ZN7WebCore13ScrollingTree25reportExposedUnfilledAreaEN3WTF13MonotonicTimeEj
+        ERROR: symbol __ZN7WebCore13ScrollingTree40reportSynchronousScrollingReasonsChangedEN3WTF13MonotonicTimeEj
+
+        Unfortunately, these errors are only emitted when LTO is enabled,
+        meaning that a developer could check-in a file that will fail an LTO
+        build if they don't build with that option locally. Therefore, try to
+        head this off by updating check-webkit-style to identify and warn
+        about these cases (which includes when an export macro is applied
+        directly to an inline method as well as when an inline method is part
+        of an exported class).
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FunctionState.begin):
+        (_FunctionState.export_macro):
+        (_ClassInfo.__init__):
+        (check_for_non_standard_constructs):
+        (check_function_definition):
+        (process_line):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (FunctionDetectionTest.perform_function_detection):
+        (FunctionDetectionTest.test_webcore_export):
+
 2018-06-21  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] unit-tests fail when run from another directory

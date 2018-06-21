@@ -529,9 +529,6 @@ class _FunctionState(object):
         self.is_declaration = clean_lines.elided[body_start_position.row][body_start_position.column] == ';'
         self.parameter_start_position = parameter_start_position
         self.parameter_end_position = parameter_end_position
-        self.is_final = False
-        self.is_override = False
-        self.is_pure = False
         characters_after_parameters = SingleLineView(clean_lines.elided, parameter_end_position, body_start_position).single_line
         self.is_final = bool(search(r'\bfinal\b', characters_after_parameters))
         self.is_override = bool(search(r'\boverride\b', characters_after_parameters))
@@ -549,6 +546,11 @@ class _FunctionState(object):
 
     def is_virtual(self):
         return bool(search(r'\bvirtual\b', self.modifiers_and_return_type()))
+
+    def export_macro(self):
+        export_match = match(
+            r'\b(WTF_EXPORT|WTF_EXPORT_PRIVATE|PAL_EXPORT|JS_EXPORT_PRIVATE|WEBCORE_EXPORT)\b', self.modifiers_and_return_type())
+        return export_match.group(1) if export_match else None
 
     def parameter_list(self):
         if not self._parameter_list:
@@ -1086,9 +1088,10 @@ def check_invalid_increment(clean_lines, line_number, error):
 class _ClassInfo(object):
     """Stores information about a class."""
 
-    def __init__(self, name, line_number):
+    def __init__(self, name, line_number, export_macro):
         self.name = name
         self.line_number = line_number
+        self.export_macro = export_macro
         self.seen_open_brace = False
         self.is_derived = False
         self.virtual_method_line_number = None
@@ -1357,9 +1360,9 @@ def check_for_non_standard_constructs(clean_lines, line_number,
     classinfo_stack = class_state.classinfo_stack
     # Look for a class declaration
     class_decl_match = match(
-        r'\s*(template\s*<[\w\s<>,:]*>\s*)?(class|struct)\s+(\w+(::\w+)*)', line)
+        r'\s*(template\s*<[\w\s<>,:]*>\s*)?(class|struct)(\s+(WTF_EXPORT|WTF_EXPORT_PRIVATE|PAL_EXPORT|JS_EXPORT_PRIVATE|WEBCORE_EXPORT))?\s+(\w+(::\w+)*)', line)
     if class_decl_match:
-        classinfo_stack.append(_ClassInfo(class_decl_match.group(3), line_number))
+        classinfo_stack.append(_ClassInfo(class_decl_match.group(5), line_number, class_decl_match.group(4)))
 
     # Everything else in this function uses the top of the stack if it's
     # not empty.
@@ -1659,7 +1662,7 @@ def _error_redundant_specifier(line_number, redundant_specifier, good_specifier,
           % (redundant_specifier, good_specifier))
 
 
-def check_function_definition(filename, file_extension, clean_lines, line_number, function_state, error):
+def check_function_definition(filename, file_extension, clean_lines, line_number, class_state, function_state, error):
     """Check that function definitions for style issues.
 
     Specifically, check that parameter names in declarations add information.
@@ -1700,6 +1703,22 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
 
     if function_state.is_override and function_state.is_final:
         _error_redundant_specifier(line_number, 'override', 'final', error)
+
+    if not function_state.is_declaration:
+        if (function_state.export_macro()
+                and not function_state.export_macro() == 'JS_EXPORT_PRIVATE'):
+            error(line_number, 'build/webcore_export', 4,
+                  'Inline functions should not be annotated with %s. Remove the macro, or '
+                  'move the inline function definition out-of-line.' %
+                  function_state.export_macro())
+        elif (class_state.classinfo_stack
+                and class_state.classinfo_stack[-1].export_macro
+                and not class_state.classinfo_stack[-1].export_macro == 'JS_EXPORT_PRIVATE'):
+            error(line_number, 'build/webcore_export', 4,
+                  'Inline functions should not be in classes annotated with %s. Remove the '
+                  'macro from the class and apply it to each appropriate method, or move '
+                  'the inline function definition out-of-line.' %
+                  class_state.classinfo_stack[-1].export_macro)
 
 
 def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
@@ -3822,7 +3841,7 @@ def process_line(filename, file_extension,
     asm_state.process_line(raw_lines[line])
     if asm_state.is_in_asm():  # Ignore further checks because asm blocks formatted differently.
         return
-    check_function_definition(filename, file_extension, clean_lines, line, function_state, error)
+    check_function_definition(filename, file_extension, clean_lines, line, class_state, function_state, error)
     check_for_leaky_patterns(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, enum_state, error)
@@ -3918,6 +3937,7 @@ class CppChecker(object):
         'build/using_std',
         'build/using_namespace',
         'build/cpp_comment',
+        'build/webcore_export',
         'build/wk_api_available',
         'legal/copyright',
         'readability/braces',
