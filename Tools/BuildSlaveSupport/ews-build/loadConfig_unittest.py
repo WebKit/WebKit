@@ -23,6 +23,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import os
 import unittest
 
 import loadConfig
@@ -30,7 +31,8 @@ import loadConfig
 
 class ConfigDotJSONTest(unittest.TestCase):
     def test_configuration(self):
-        loadConfig.loadBuilderConfig({})
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        loadConfig.loadBuilderConfig({}, master_prefix_path=cwd)
 
 
 class TagsForBuilderTeest(unittest.TestCase):

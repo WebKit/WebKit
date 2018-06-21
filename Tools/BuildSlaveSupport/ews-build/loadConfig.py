@@ -22,6 +22,7 @@
 
 
 import json
+import os
 import re
 
 from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
@@ -35,9 +36,9 @@ BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
 
-def loadBuilderConfig(c, use_localhost_worker=False):
-    config = json.load(open('config.json'))
-    passwords = json.load(open('passwords.json'))
+def loadBuilderConfig(c, use_localhost_worker=False, master_prefix_path='./'):
+    config = json.load(open(os.path.join(master_prefix_path, 'config.json')))
+    passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
     checkWorkersAndBuildersForConsistency(config['workers'], config['builders'])
 
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password')) for worker in config['workers']]

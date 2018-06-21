@@ -1,5 +1,17 @@
 2018-06-21  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] unit-tests fail when run from another directory
+        https://bugs.webkit.org/show_bug.cgi?id=186872
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Add support for passing master_prefix_path.
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest.test_configuration): Set master_prefix_path as current directory.
+
+2018-06-21  Aakash Jain  <aakash_jain@apple.com>
+
         Add support for using localhost worker in OpenSource EWS Buildbot
         https://bugs.webkit.org/show_bug.cgi?id=186871
 
