@@ -352,13 +352,10 @@ public:
     IsoSubspace boundFunctionSpace;
     IsoSubspace callbackFunctionSpace;
     IsoSubspace customGetterSetterFunctionSpace;
-    IsoSubspace directEvalExecutableSpace;
     IsoSubspace errorConstructorSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
-    IsoSubspace functionExecutableSpace;
     IsoSubspace functionSpace;
     IsoSubspace generatorFunctionSpace;
-    IsoSubspace indirectEvalExecutableSpace;
     IsoSubspace inferredTypeSpace;
     IsoSubspace inferredValueSpace;
     IsoSubspace internalFunctionSpace;
@@ -368,14 +365,12 @@ public:
     IsoSubspace intlNumberFormatConstructorSpace;
     IsoSubspace intlPluralRulesConstructorSpace;
 #endif
-    IsoSubspace moduleProgramExecutableSpace;
     IsoSubspace nativeErrorConstructorSpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace nativeStdFunctionSpace;
 #if JSC_OBJC_API_ENABLED
     IsoSubspace objCCallbackFunctionSpace;
 #endif
-    IsoSubspace programExecutableSpace;
     IsoSubspace propertyTableSpace;
     IsoSubspace proxyRevokeSpace;
     IsoSubspace regExpConstructorSpace;
@@ -431,7 +426,63 @@ public:
         func(moduleProgramCodeBlockSpace);
         func(programCodeBlockSpace);
     }
-    
+
+    struct ScriptExecutableSpaceAndSet {
+        IsoSubspace space;
+        IsoCellSet clearableCodeSet;
+
+        template<typename... Arguments>
+        ScriptExecutableSpaceAndSet(Arguments&&... arguments)
+            : space(std::forward<Arguments>(arguments)...)
+            , clearableCodeSet(space)
+        { }
+
+        static IsoCellSet& clearableCodeSetFor(Subspace& space)
+        {
+            return *bitwise_cast<IsoCellSet*>(
+                bitwise_cast<char*>(&space) -
+                OBJECT_OFFSETOF(ScriptExecutableSpaceAndSet, space) +
+                OBJECT_OFFSETOF(ScriptExecutableSpaceAndSet, clearableCodeSet));
+        }
+    };
+
+    ScriptExecutableSpaceAndSet directEvalExecutableSpace;
+    ScriptExecutableSpaceAndSet functionExecutableSpace;
+    ScriptExecutableSpaceAndSet indirectEvalExecutableSpace;
+    ScriptExecutableSpaceAndSet moduleProgramExecutableSpace;
+    ScriptExecutableSpaceAndSet programExecutableSpace;
+
+    template<typename Func>
+    void forEachScriptExecutableSpace(const Func& func)
+    {
+        func(directEvalExecutableSpace);
+        func(functionExecutableSpace);
+        func(indirectEvalExecutableSpace);
+        func(moduleProgramExecutableSpace);
+        func(programExecutableSpace);
+    }
+
+    struct UnlinkedFunctionExecutableSpaceAndSet {
+        IsoSubspace space;
+        IsoCellSet clearableCodeSet;
+
+        template<typename... Arguments>
+        UnlinkedFunctionExecutableSpaceAndSet(Arguments&&... arguments)
+            : space(std::forward<Arguments>(arguments)...)
+            , clearableCodeSet(space)
+        { }
+        
+        static IsoCellSet& clearableCodeSetFor(Subspace& space)
+        {
+            return *bitwise_cast<IsoCellSet*>(
+                bitwise_cast<char*>(&space) -
+                OBJECT_OFFSETOF(UnlinkedFunctionExecutableSpaceAndSet, space) +
+                OBJECT_OFFSETOF(UnlinkedFunctionExecutableSpaceAndSet, clearableCodeSet));
+        }
+    };
+
+    UnlinkedFunctionExecutableSpaceAndSet unlinkedFunctionExecutableSpace;
+
     VMType vmType;
     ClientData* clientData;
     EntryFrame* topEntryFrame;

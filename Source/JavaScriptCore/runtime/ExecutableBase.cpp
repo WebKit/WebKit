@@ -49,6 +49,43 @@ void ExecutableBase::destroy(JSCell* cell)
     static_cast<ExecutableBase*>(cell)->ExecutableBase::~ExecutableBase();
 }
 
+bool ExecutableBase::hasClearableCode() const
+{
+    VM& vm = *this->vm();
+
+#if ENABLE(JIT)
+    if (m_jitCodeForCall
+        || m_jitCodeForConstruct
+        || m_jitCodeForCallWithArityCheck
+        || m_jitCodeForConstructWithArityCheck)
+        return true;
+#endif
+
+    if (structure(vm)->classInfo() == FunctionExecutable::info()) {
+        auto* executable = static_cast<const FunctionExecutable*>(this);
+        if (executable->m_codeBlockForCall || executable->m_codeBlockForConstruct)
+            return true;
+
+    } else if (structure(vm)->classInfo() == EvalExecutable::info()) {
+        auto* executable = static_cast<const EvalExecutable*>(this);
+        if (executable->m_evalCodeBlock || executable->m_unlinkedEvalCodeBlock)
+            return true;
+
+    } else if (structure(vm)->classInfo() == ProgramExecutable::info()) {
+        auto* executable = static_cast<const ProgramExecutable*>(this);
+        if (executable->m_programCodeBlock || executable->m_unlinkedProgramCodeBlock)
+            return true;
+
+    } else if (structure(vm)->classInfo() == ModuleProgramExecutable::info()) {
+        auto* executable = static_cast<const ModuleProgramExecutable*>(this);
+        if (executable->m_moduleProgramCodeBlock
+            || executable->m_unlinkedModuleProgramCodeBlock
+            || executable->m_moduleEnvironmentSymbolTable)
+            return true;
+    }
+    return false;
+}
+
 void ExecutableBase::clearCode()
 {
 #if ENABLE(JIT)

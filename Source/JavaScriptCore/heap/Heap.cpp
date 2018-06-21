@@ -884,18 +884,27 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
 {
     if (m_collectionScope && effort == DeleteAllCodeIfNotCollecting)
         return;
-    
+
+    VM& vm = *m_vm;
     PreventCollectionScope preventCollectionScope(*this);
     
     // If JavaScript is running, it's not safe to delete all JavaScript code, since
     // we'll end up returning to deleted code.
-    RELEASE_ASSERT(!m_vm->entryScope);
+    RELEASE_ASSERT(!vm.entryScope);
     RELEASE_ASSERT(!m_collectionScope);
 
     completeAllJITPlans();
 
-    for (ExecutableBase* executable : m_executables)
-        executable->clearCode();
+    vm.forEachScriptExecutableSpace(
+        [&] (auto& spaceAndSet) {
+            HeapIterationScope heapIterationScope(*this);
+            auto& clearableCodeSet = spaceAndSet.clearableCodeSet;
+            clearableCodeSet.forEachLiveCell(
+                [&] (HeapCell* cell, HeapCell::Kind) {
+                    ScriptExecutable* executable = static_cast<ScriptExecutable*>(cell);
+                    executable->clearCode(clearableCodeSet);
+                });
+        });
 
 #if ENABLE(WEBASSEMBLY)
     {
@@ -905,10 +914,10 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
         // points into a CodeBlock that could be dead. The IC will still succeed because
         // it uses a callee check, but then it will call into dead code.
         HeapIterationScope heapIterationScope(*this);
-        m_vm->webAssemblyCodeBlockSpace.forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
+        vm.webAssemblyCodeBlockSpace.forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
             ASSERT_UNUSED(kind, kind == HeapCell::Kind::JSCell);
             JSWebAssemblyCodeBlock* codeBlock = static_cast<JSWebAssemblyCodeBlock*>(cell);
-            codeBlock->clearJSCallICs(*m_vm);
+            codeBlock->clearJSCallICs(vm);
         });
     }
 #endif
@@ -918,38 +927,23 @@ void Heap::deleteAllUnlinkedCodeBlocks(DeleteAllCodeEffort effort)
 {
     if (m_collectionScope && effort == DeleteAllCodeIfNotCollecting)
         return;
-    
+
+    VM& vm = *m_vm;
     PreventCollectionScope preventCollectionScope(*this);
 
     RELEASE_ASSERT(!m_collectionScope);
-    
-    for (ExecutableBase* current : m_executables) {
-        if (!current->isFunctionExecutable())
-            continue;
-        static_cast<FunctionExecutable*>(current)->unlinkedExecutable()->clearCode();
-    }
-}
 
-void Heap::clearUnmarkedExecutables()
-{
-    for (unsigned i = m_executables.size(); i--;) {
-        ExecutableBase* current = m_executables[i];
-        if (isMarked(current))
-            continue;
-
-        // Eagerly dereference the Executable's JITCode in order to run watchpoint
-        // destructors. Otherwise, watchpoints might fire for deleted CodeBlocks.
-        current->clearCode();
-        std::swap(m_executables[i], m_executables.last());
-        m_executables.removeLast();
-    }
-
-    m_executables.shrinkToFit();
+    HeapIterationScope heapIterationScope(*this);
+    vm.unlinkedFunctionExecutableSpace.clearableCodeSet.forEachLiveCell(
+        [&] (HeapCell* cell, HeapCell::Kind) {
+            UnlinkedFunctionExecutable* executable = static_cast<UnlinkedFunctionExecutable*>(cell);
+            executable->clearCode(vm);
+        });
 }
 
 void Heap::deleteUnmarkedCompiledCode()
 {
-    clearUnmarkedExecutables();
+    vm()->forEachScriptExecutableSpace([] (auto& space) { space.space.sweep(); });
     vm()->forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); }); // Sweeping must occur before deleting stubs, otherwise the stubs might still think they're alive as they get deleted.
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
@@ -2378,11 +2372,6 @@ void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
     Finalizer finalizer = reinterpret_cast<Finalizer>(context);
     finalizer(slot->asCell());
     WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
-}
-
-void Heap::addExecutable(ExecutableBase* executable)
-{
-    m_executables.append(executable);
 }
 
 void Heap::collectNowFullIfNotDoneRecently(Synchronousness synchronousness)

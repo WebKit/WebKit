@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ public:
     template<typename CellType>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.moduleProgramExecutableSpace;
+        return &vm.moduleProgramExecutableSpace.space;
     }
 
     static ModuleProgramExecutable* create(ExecState*, const SourceCode&);

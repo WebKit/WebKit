@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 #include "ExecutableBase.h"
 
 namespace JSC {
+
+class IsoCellSet;
 
 class ScriptExecutable : public ExecutableBase {
 public:
@@ -94,6 +96,8 @@ public:
     CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, JSObject*& exception);
     CodeBlock* newReplacementCodeBlockFor(CodeSpecializationKind);
 
+    void clearCode(IsoCellSet&);
+
     // This function has an interesting GC story. Callers of this function are asking us to create a CodeBlock
     // that is not jettisoned before this function returns. Callers are essentially asking for a strong reference
     // to the CodeBlock. Because the Executable may be allocating the CodeBlock, we require callers to pass in
@@ -113,7 +117,6 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        vm.heap.addExecutable(this); // Balanced by Heap::deleteUnmarkedCompiledCode().
 
 #if ENABLE(CODEBLOCK_SAMPLING)
         if (SamplingTool* sampler = vm.interpreter->sampler())

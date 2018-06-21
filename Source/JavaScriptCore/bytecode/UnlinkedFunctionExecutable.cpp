@@ -33,6 +33,7 @@
 #include "Debugger.h"
 #include "ExecutableInfo.h"
 #include "FunctionOverrides.h"
+#include "IsoCellSetInlines.h"
 #include "JSCInlines.h"
 #include "Parser.h"
 #include "SourceProvider.h"
@@ -224,6 +225,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
         m_unlinkedCodeBlockForConstruct.set(vm, this, result);
         break;
     }
+    vm.unlinkedFunctionExecutableSpace.clearableCodeSet.add(this);
     return result;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,8 +59,8 @@ template<typename Functor>
 void CodeBlockSet::iterateViaSubspaces(VM& vm, const Functor& functor)
 {
     vm.forEachCodeBlockSpace(
-        [&] (IsoSubspace& space) {
-            space.forEachLiveCell(
+        [&] (auto& spaceAndSet) {
+            spaceAndSet.space.forEachLiveCell(
                 [&] (HeapCell* cell, HeapCell::Kind) {
                     functor(jsCast<CodeBlock*>(static_cast<JSCell*>(cell)));
                 });
