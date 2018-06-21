@@ -202,7 +202,12 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
 
 void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlock, RenderText& currentTextChild)
 {
-    RenderElement* firstLetterContainer = currentTextChild.parent();
+    RenderElement* textContentParent = currentTextChild.parent();
+    RenderElement* firstLetterContainer = nullptr;
+    if (auto* wrapperInlineForDisplayContents = currentTextChild.inlineWrapperForDisplayContents())
+        firstLetterContainer = wrapperInlineForDisplayContents->parent();
+    else
+        firstLetterContainer = textContentParent;
     auto pseudoStyle = styleForFirstLetter(firstLetterBlock, *firstLetterContainer);
     RenderPtr<RenderBoxModelObject> newFirstLetter;
     if (pseudoStyle.display() == DisplayType::Inline)
@@ -260,7 +265,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
             newRemainingText = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, length, oldText.length() - length);
 
         RenderTextFragment& remainingText = *newRemainingText;
-        m_builder.attach(*firstLetterContainer, WTFMove(newRemainingText), beforeChild);
+        m_builder.attach(*textContentParent, WTFMove(newRemainingText), beforeChild);
         remainingText.setFirstLetter(firstLetter);
         firstLetter.setFirstLetterRemainingText(remainingText);
 

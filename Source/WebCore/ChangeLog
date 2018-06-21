@@ -1,3 +1,29 @@
+2018-06-20  Zalan Bujtas  <zalan@apple.com>
+
+        Do not reuse generated inline renderer for the first letter.
+        https://bugs.webkit.org/show_bug.cgi?id=186657
+        <rdar://problem/41157892>
+
+        Reviewed by Simon Fraser.
+
+        When the first letter pseudo element is present, we construct a dedicated subtree for its content like this:
+
+        <div><span>foobar</span></div> -> with ::first-letter on the <div>
+        DIV RenderBlock
+            SPAN RenderInline
+                RenderInline (generated wrapper for the first letter content)
+                    RenderText (fist letter content)
+                RenderText (remaining text content)
+
+        "display: contents" on the <span> forces us not to construct a RenderInline for the <span> (or just come up with a wrapper at best).
+        FirstLetter::createRenderers logic needs to check for such cases and pick the correct parent for the first letter subtree accordingly.
+
+        Test: fast/text/first-letter-with-display-contents-crash.html
+              imported/w3c/web-platform-tests/css/css-display/display-contents-first-letter-002.html is not crashing anymore either.
+
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+
 2018-06-21  Chris Dumez  <cdumez@apple.com>
 
         JSPerformanceObserverCallback creates a GC strongly-referenced Function that is never cleaned up
