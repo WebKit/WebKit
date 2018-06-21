@@ -1,0 +1,12 @@
+Tests that using PerformanceObserver does not cause the document to get leaked.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Number of document is 2
+PASS Number of document is 1
+PASS Document did not leak
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

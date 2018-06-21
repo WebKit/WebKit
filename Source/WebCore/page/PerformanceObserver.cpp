@@ -51,6 +51,7 @@ PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecution
 void PerformanceObserver::disassociate()
 {
     m_performance = nullptr;
+    m_registered = false;
 }
 
 ExceptionOr<void> PerformanceObserver::observe(Init&& init)

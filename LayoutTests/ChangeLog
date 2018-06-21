@@ -1,3 +1,22 @@
+2018-06-21  Chris Dumez  <cdumez@apple.com>
+
+        JSPerformanceObserverCallback creates a GC strongly-referenced Function that is never cleaned up
+        https://bugs.webkit.org/show_bug.cgi?id=186873
+        <rdar://problem/41271574>
+
+        Reviewed by Simon Fraser.
+
+        * performance-api/performance-observer-callback-after-gc-expected.txt: Added.
+        * performance-api/performance-observer-callback-after-gc.html: Added.
+        Add layout test to make sure that a performance observer's callback still gets called, even if
+        the JS does not keep the performance observer alive.
+
+        * performance-api/performance-observer-no-document-leak-expected.txt: Added.
+        * performance-api/performance-observer-no-document-leak.html: Added.
+        * performance-api/resources/performance-observer-no-document-leak-frame.html: Added.
+        Add layout test coverage to make sure the document does not leak if PerformanceObserver was
+        used.
+
 2018-06-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-ready.html pass reliably

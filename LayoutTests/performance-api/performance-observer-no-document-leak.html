@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe id="testFrame" src="resources/performance-observer-no-document-leak-frame.html"></iframe>
+<script>
+description("Tests that using PerformanceObserver does not cause the document to get leaked.");
+window.jsTestIsAsync = true;
+
+function numberOfDocumentsShouldBecome(count)
+{
+    return new Promise(function(resolve, reject) {
+        gc();
+        handle = setInterval(function() {
+            if (internals.numberOfLiveDocuments() == count) {
+                testPassed("Number of document is " + count);
+                clearInterval(handle);
+                resolve();
+            }
+        }, 10);
+    });
+}
+
+onload = function() {
+    numberOfDocumentsShouldBecome(2).then(function() {
+        testFrame.remove();
+        numberOfDocumentsShouldBecome(1).then(function() {
+            testPassed("Document did not leak");
+            finishJSTest();
+        });
+    });
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

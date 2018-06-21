@@ -23,6 +23,7 @@
 
 #include "BridgeJSC.h"
 #include "CachedScriptFetcher.h"
+#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
 #include "Event.h"

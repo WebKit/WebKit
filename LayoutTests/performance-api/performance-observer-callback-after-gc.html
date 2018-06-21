@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Ensure PerformanceObserver callback fires even if the JS does not keep the PerformanceObserver object alive.");
+window.jsTestIsAsync = true;
+
+let shouldEnd = false;
+
+let observer = new PerformanceObserver((list) => {
+    debug("PerformanceObserver callback fired: " + list.getEntries().length + " entries");
+    for (let mark of list.getEntries())
+        testPassed(mark.name);
+    if (shouldEnd)
+        finishJSTest();
+});
+observer.observe({entryTypes: ["mark"]});
+observer = null;
+gc();
+
+// ---
+
+performance.mark("mark1");
+
+setTimeout(() => {
+    gc();
+    performance.mark("mark2");
+    performance.mark("mark3");
+    shouldEnd = true;
+}, 50);
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

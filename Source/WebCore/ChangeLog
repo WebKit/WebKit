@@ -1,3 +1,43 @@
+2018-06-21  Chris Dumez  <cdumez@apple.com>
+
+        JSPerformanceObserverCallback creates a GC strongly-referenced Function that is never cleaned up
+        https://bugs.webkit.org/show_bug.cgi?id=186873
+        <rdar://problem/41271574>
+
+        Reviewed by Simon Fraser.
+
+        Add [IsWeakCallback] to PerformanceObserverCallback interface so that the generated
+        JSPerformanceObserverCallback uses a JSC::Weak instead of a JSC::Strong to store the
+        js function. To keep the function alive, add [JSCustomMarkFunction] to PerformanceObserver
+        interface and have its visitAdditionalChildren() visit the callback's js function.
+        Finally, because we want the callback to still be called even if the JS does not keep
+        the PerformanceObserver wrapper alive, add [CustomIsReachable] to PerformanceObserver
+        interface and have its isReachableFromOpaqueRoots() return true if the observer is
+        registered (i.e. it may need to call the callback in the future).
+
+        I have confirmed locally, that the Performance / PerformanceObserver / Document
+        objects properly get destroyed if I navigate away from a page that had a performance
+        observer and trigger a memory pressure warning. Also,
+        `notifyutil -p com.apple.WebKit.showAllDocuments` no longer shows the old document.
+
+        Tests: performance-api/performance-observer-callback-after-gc.html
+               performance-api/performance-observer-no-document-leak.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSPerformanceObserverCustom.cpp: Added.
+        (WebCore::JSPerformanceObserver::visitAdditionalChildren):
+        (WebCore::JSPerformanceObserverOwner::isReachableFromOpaqueRoots):
+        * bindings/js/ScriptController.cpp:
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::disassociate):
+        * page/PerformanceObserver.h:
+        (WebCore::PerformanceObserver::isRegistered const):
+        (WebCore::PerformanceObserver::callback):
+        * page/PerformanceObserver.idl:
+        * page/PerformanceObserverCallback.h:
+        * page/PerformanceObserverCallback.idl:
+
 2018-06-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-ready.html pass reliably

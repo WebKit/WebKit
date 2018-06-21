@@ -9818,6 +9818,7 @@
 		833B9E2D1F508D8000E0E428 /* JSFileSystemFileEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemFileEntry.cpp; sourceTree = "<group>"; };
 		833B9E2E1F508D8000E0E428 /* JSFileSystemEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemEntry.cpp; sourceTree = "<group>"; };
 		833B9E2F1F508D8000E0E428 /* JSFileSystemDirectoryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemDirectoryEntry.h; sourceTree = "<group>"; };
+		833CF70F20DB3F5F00141BCC /* JSPerformanceObserverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceObserverCustom.cpp; sourceTree = "<group>"; };
 		83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibilityChangeClient.h; sourceTree = "<group>"; };
 		8348BFA91B85729500912F36 /* ClassCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassCollection.cpp; sourceTree = "<group>"; };
 		8348BFAA1B85729500912F36 /* ClassCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassCollection.h; sourceTree = "<group>"; };
@@ -19824,6 +19825,7 @@
 				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
 				3140C52B1FE06B4900D2A873 /* JSOffscreenCanvasRenderingContext2DCustom.cpp */,
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
+				833CF70F20DB3F5F00141BCC /* JSPerformanceObserverCustom.cpp */,
 				83F572941FA1066F003837BE /* JSServiceWorkerClientCustom.cpp */,
 				460D19441FCE21DD00C3DB85 /* JSServiceWorkerGlobalScopeCustom.cpp */,
 				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,
