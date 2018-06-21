@@ -40,7 +40,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
-#include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
@@ -232,7 +231,7 @@ private:
     void connectionDidClose();
     
     // Called on the listener thread.
-    void dispatchIncomingMessages();
+    void dispatchOneMessage();
     void dispatchMessage(std::unique_ptr<Decoder>);
     void dispatchMessage(Decoder&);
     void dispatchSyncMessage(Decoder&);
@@ -241,7 +240,6 @@ private:
 
     // Can be called on any thread.
     void enqueueIncomingMessage(std::unique_ptr<Decoder>);
-    size_t incomingMessagesDispatchingBatchSize() const;
 
     void willSendSyncMessage(OptionSet<SendSyncOption>);
     void didReceiveSyncReply(OptionSet<SendSyncOption>);
@@ -251,21 +249,6 @@ private:
 #if PLATFORM(COCOA)
     bool sendMessage(std::unique_ptr<MachMessage>);
 #endif
-
-    class MessagesThrottler {
-    public:
-        typedef void (Connection::*DispatchMessagesFunction)();
-        MessagesThrottler(Connection&, DispatchMessagesFunction);
-
-        size_t numberOfMessagesToProcess(size_t totalMessages);
-        void scheduleMessagesDispatch();
-
-    private:
-        RunLoop::Timer<Connection> m_dispatchMessagesTimer;
-        Connection& m_connection;
-        DispatchMessagesFunction m_dispatchMessages;
-        unsigned m_throttlingLevel { 0 };
-    };
 
     Client& m_client;
     bool m_isServer;
@@ -292,7 +275,6 @@ private:
     // Incoming messages.
     Lock m_incomingMessagesMutex;
     Deque<std::unique_ptr<Decoder>> m_incomingMessages;
-    MessagesThrottler m_incomingMessagesThrottler;
 
     // Outgoing messages.
     Lock m_outgoingMessagesMutex;
@@ -357,7 +339,6 @@ private:
     bool m_isInitializingSendSource { false };
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
-    bool m_wasKilled { false };
 #elif OS(WINDOWS)
     // Called on the connection queue.
     void readEventHandler();

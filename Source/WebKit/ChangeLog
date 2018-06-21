@@ -1,3 +1,16 @@
+2018-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r232995.
+
+        Seems to have caused flakiness
+
+        Reverted changeset:
+
+        "Implement IPC throttling to keep the main thread responsive
+        when a process misbehaves"
+        https://bugs.webkit.org/show_bug.cgi?id=186607
+        https://trac.webkit.org/changeset/232995
+
 2018-06-15  Jer Noble  <jer.noble@apple.com>
 
         Address fullscreen api CSS env feedback
