@@ -1,3 +1,15 @@
+2018-06-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-ready.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183830
+        <rdar://problem/40997539>
+
+        Reviewed by Dean Jackson.
+
+        This test now passes reliably.
+
+        * TestExpectations:
+
 2018-06-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for http/wpt/service-workers/third-party-registration.html.

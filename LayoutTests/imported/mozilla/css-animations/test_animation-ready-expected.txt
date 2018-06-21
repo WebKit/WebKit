@@ -1,9 +1,9 @@
 
-FAIL A new ready promise is created when setting animation-play-state: running assert_not_equals: After updating animation-play-state a new ready promise object is created got disallowed value object "[object Promise]"
+PASS A new ready promise is created when setting animation-play-state: running 
 PASS ready promise is rejected when an animation is canceled by resetting the animation property 
 PASS ready promise is rejected when an animation is cancelled by updating the animation property 
-FAIL A new ready promise is created when setting animation-play-state: paused assert_not_equals: A new Promise object is generated when setting animation-play-state: paused got disallowed value object "[object Promise]"
-FAIL Pausing twice re-uses the same Promise assert_equals: Ready promise objects are identical after redundant pause expected object "[object Promise]" but got object "[object Promise]"
-FAIL If a pause operation is interrupted, the ready promise is reused assert_true: Animation is pending expected true got false
+PASS A new ready promise is created when setting animation-play-state: paused 
+PASS Pausing twice re-uses the same Promise 
+PASS If a pause operation is interrupted, the ready promise is reused 
 PASS When a pause is complete the Promise callback gets the correct animation 
 

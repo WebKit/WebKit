@@ -67,13 +67,9 @@ public:
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
-    std::optional<double> bindingsStartTime() const;
-    void setBindingsStartTime(std::optional<double>);
     std::optional<Seconds> startTime() const;
     void setStartTime(std::optional<Seconds>);
 
-    virtual std::optional<double> bindingsCurrentTime() const;
-    ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
     std::optional<Seconds> currentTime() const;
     ExceptionOr<void> setCurrentTime(std::optional<Seconds>);
 
@@ -83,7 +79,6 @@ public:
 
     enum class PlayState { Idle, Running, Paused, Finished };
     PlayState playState() const;
-    virtual PlayState bindingsPlayState() const { return playState(); }
 
     bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }
 
@@ -98,6 +93,17 @@ public:
     ExceptionOr<void> play();
     ExceptionOr<void> pause();
     ExceptionOr<void> reverse();
+
+    virtual std::optional<double> bindingsStartTime() const;
+    virtual void setBindingsStartTime(std::optional<double>);
+    virtual std::optional<double> bindingsCurrentTime() const;
+    virtual ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
+    virtual PlayState bindingsPlayState() const { return playState(); }
+    virtual bool bindingsPending() const { return pending(); }
+    virtual ReadyPromise& bindingsReady() { return ready(); }
+    virtual FinishedPromise& bindingsFinished() { return finished(); }
+    virtual ExceptionOr<void> bindingsPlay() { return play(); }
+    virtual ExceptionOr<void> bindingsPause() { return pause(); }
 
     Seconds timeToNextRequiredTick() const;
     virtual void resolve(RenderStyle&);
