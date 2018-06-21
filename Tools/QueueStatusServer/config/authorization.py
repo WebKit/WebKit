@@ -31,6 +31,7 @@ def _path_to_authorized_api_keys_file():
 
 
 def _parse_authorized_api_keys(file):
+    api_keys = set()
     for line in file:
         line = line.strip()
         if not line or line.startswith("#"):  # Skip empty lines and comments

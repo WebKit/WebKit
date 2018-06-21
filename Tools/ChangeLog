@@ -1,5 +1,17 @@
 2018-06-21  Daniel Bates  <dabates@apple.com>
 
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
+        In r232979, I inadvertently removed a line of code in _parse_authorized_api_keys() to define a local called api_keys.
+        Add this code back.
+
+        * QueueStatusServer/config/authorization.py:
+        (_parse_authorized_api_keys):
+
+2018-06-21  Daniel Bates  <dabates@apple.com>
+
         EWS should not try to post comments or upload result archives to security-sensitive
         bugs unless it has access
         https://bugs.webkit.org/show_bug.cgi?id=186831
