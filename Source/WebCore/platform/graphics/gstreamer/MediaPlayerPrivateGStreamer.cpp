@@ -1112,7 +1112,8 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     // Fallback to the more general maxTimeLoaded() if no range has
     // been found.
     if (!timeRanges->length()) {
-        if (MediaTime loaded = maxTimeLoaded())
+        MediaTime loaded = maxTimeLoaded();
+        if (loaded.isValid() && loaded)
             timeRanges->add(MediaTime::zeroTime(), loaded);
     }
 

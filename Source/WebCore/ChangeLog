@@ -1,3 +1,26 @@
+2018-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GStreamer] ASSERTION FAILED: end.isValid() in PlatformTimeRanges::add
+        https://bugs.webkit.org/show_bug.cgi?id=186880
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Bug 180253 has added assertions the arugments `start` and `end` is
+        valid MediaTime in PlatformTimeRanges::add. Since then, some
+        LayoutTests fail due to the assertion failure.
+
+        The invalid MediaTime is added into the PlatformTimeRanges in
+        MediaPlayerPrivateGStreamer::buffered. Before adding MediaTime,
+        original implementation checks MediaTime::operator bool() returns
+        true. But, this method returns true if the time value is invalid.
+        Then, PlatformTimeRanges::add is called with an invalid MediaTime.
+
+        No new tests (No behavior change).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::buffered const): Check
+        maxTimeLoaded() is valid before adding to `timeRanges`.
+
 2018-06-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix leaks in WebCore found by clang static analyzer in deep mode
