@@ -1,3 +1,14 @@
+2018-06-21  Leo Balter  <leonardo.balter@gmail.com>
+
+        [test262-runner] Improve failures output
+        https://bugs.webkit.org/show_bug.cgi?id=186858
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (main):
+        (processResult):
+
 2018-06-21  Caitlin Potter  <caitp@igalia.com>
 
         [Tools] add a --debug option to test262/Runner.pm for buildbots

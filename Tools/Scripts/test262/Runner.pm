@@ -459,8 +459,11 @@ sub main {
                 if ($verbose) {
                     my $path = $test->{path};
                     my $mode = $test->{mode};
-                    my $err = $test->{error};
-                    $newfailurereport .= "FAIL $path ($mode)\n$err\n\n";
+                    # Print full output from JSC
+                    my $err = $test->{output};
+                    $newfailurereport .= "FAIL $path ($mode)\n"
+                        . "Full Output:\n"
+                        . "$err\n\n";
                 }
             }
 
@@ -820,18 +823,17 @@ sub processResult {
         my $failMsg = '';
         $failMsg = "FAIL $file ($scenario)\n";
 
-        my $suffixMsg = '';
+        my $featuresList = '';
 
-        if ($verbose) {
-            my $featuresList = '';
-            $featuresList = "\nFeatures: " . join(', ', @{ $data->{features} }) if $data->{features};
-            $suffixMsg = "$result$featuresList\n";
+        if ($verbose && $data->{features}) {
+            $featuresList = 'Features: ' . join(', ', @{ $data->{features} }) . "\n";
         }
 
-        print "$newFail$failMsg$suffixMsg" if ($printFailure || $verbose);
+        print "$newFail$failMsg$featuresList$result\n\n" if ($printFailure || $verbose);
 
         $resultdata{result} = 'FAIL';
         $resultdata{error} = $currentfailure;
+        $resultdata{output} = $result;
     } elsif ($scenario ne 'skip' && !$currentfailure) {
         if ($expectedfailure) {
             print "NEW PASS $file ($scenario)\n";
