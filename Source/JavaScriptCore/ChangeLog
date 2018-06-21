@@ -1,3 +1,25 @@
+2018-06-21  Saam Barati  <sbarati@apple.com>
+
+        Do some CoW cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=186896
+
+        Reviewed by Mark Lam.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::decompressArrayAllocationProfile):
+        We don't need to WTFMove() ints
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        remove a TODO.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        We were checking for isCopyOnWrite even after we converted away
+        from CoW in above code.
+        (JSC::JSObject::ensureWritableInt32Slow):
+        Model this in the same way the other ensureWritableXSlow are modeled.
+
 2018-06-20  Keith Miller  <keith_miller@apple.com>
 
         flattenDictionaryStruture needs to zero inline storage.

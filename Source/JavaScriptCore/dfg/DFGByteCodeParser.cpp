@@ -4595,7 +4595,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             JSImmutableButterfly* immutableButterfly = frozen->cast<JSImmutableButterfly*>();
             NewArrayBufferData data { };
             data.indexingMode = immutableButterfly->indexingMode();
-            // TODO: Do I need this?
             data.vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
 
             set(VirtualRegister(bytecode.dst()), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));

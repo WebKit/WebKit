@@ -309,7 +309,7 @@ public:
     {
         unsigned profile = (compressedProfile << 8) >> 8;
         IndexingType recommendedIndexingType = compressedProfile >> 24;
-        return std::make_tuple<unsigned, IndexingType>(WTFMove(profile), WTFMove(recommendedIndexingType));
+        return { profile, recommendedIndexingType };
 
     }
     unsigned numberOfObjectAllocationProfiles() { return m_objectAllocationProfileCount; }
