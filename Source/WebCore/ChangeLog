@@ -1,3 +1,21 @@
+2018-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Bad optional access in WebCore::ContentSecurityPolicySource::portMatches
+        https://bugs.webkit.org/show_bug.cgi?id=186535
+
+        Reviewed by Daniel Bates.
+
+        Make sure the ports have explicit values before dereferencing them.
+
+        This is hard to test. If the layout test script-src-parsing-implicit-and-explicit-port-number
+        continues to pass for WebKitLegacy, then I have at least probably not broken anything. To
+        reproduce the crash in a layout test that I can run, I think I would need to implement
+        internals.registerDefaultPortForProtocol for modern WebKit, which is too much work for this
+        crash. Otherwise, we'd need to run the test server on port 80, which would be unfriendly.
+
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::portMatches const):
+
 2018-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GStreamer] ASSERTION FAILED: end.isValid() in PlatformTimeRanges::add
