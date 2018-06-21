@@ -42,7 +42,7 @@ public:
     template<typename CellType>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.functionExecutableSpace;
+        return &vm.functionExecutableSpace.space;
     }
 
     static FunctionExecutable* create(

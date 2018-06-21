@@ -58,6 +58,12 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.unlinkedFunctionExecutableSpace.space;
+    }
+
     static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType, bool isBuiltinDefaultClassConstructor = false)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
@@ -105,10 +111,11 @@ public:
 
     JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, const SourceCode& parentSource, std::optional<int> overrideLineNumber = std::nullopt, Intrinsic = NoIntrinsic);
 
-    void clearCode()
+    void clearCode(VM& vm)
     {
         m_unlinkedCodeBlockForCall.clear();
         m_unlinkedCodeBlockForConstruct.clear();
+        vm.unlinkedFunctionExecutableSpace.clearableCodeSet.remove(this);
     }
 
     void recordParse(CodeFeatures features, bool hasCapturedVariables)

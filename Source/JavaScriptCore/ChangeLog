@@ -1,3 +1,83 @@
+2018-06-21  Mark Lam  <mark.lam@apple.com>
+
+        Use IsoCellSets to track Executables with clearable code.
+        https://bugs.webkit.org/show_bug.cgi?id=186877
+
+        Reviewed by Filip Pizlo.
+
+        Here’s an example of the results that this fix may yield: 
+        1. The workload: load cnn.com, wait for it to fully load, scroll down and up.
+        2. Statistics on memory touched and memory freed by VM::deleteAllCode():
+
+           Visiting Executables:
+                                                        Old             New
+           Number of objects visited:                   70897           14264
+           Number of objects with deletable code:       14264 (20.1%)   14264 (100%)
+           Number of memory pages visited:              3224            1602
+           Number of memory pages with deletable code:  1602 (49.7%)    1602 (100%)
+
+           Visitng UnlinkedFunctionExecutables:
+                                                        Old             New
+           Number of objects visited:                   105454          17231
+           Number of objects with deletable code:       42319 (20.1%)   17231 (100%) **
+           Number of memory pages visited:              4796            1349
+           Number of memory pages with deletable code:  4013 (83.7%)    1349 (100%)
+
+        ** The number of objects differ because the old code only visit unlinked
+           executables indirectly via linked executables, whereas the new behavior visit
+           all unlinked executables with deletable code directly.  This means:
+
+           a. we used to not visit unlinked executables that have not been linked yet
+              i.e. deleteAllCode() may not delete all code (especially code that is not
+              used).
+           b. we had to visit all linked executables to check if they of type
+              FunctionExecutable, before going on to visit their unlinked executable, and
+              this includes the ones that do not have deletable code.  This means that we
+              would touch more memory in the process.
+
+           Both of these these issues are now fixed with the new code.
+
+        This code was tested with manually inserted instrumentation to track the above
+        statistics.  It is not feasible to write an automated test for this without
+        leaving a lot of invasive instrumentation in the code.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterateViaSubspaces):
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::deleteAllUnlinkedCodeBlocks):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::clearUnmarkedExecutables): Deleted.
+        (JSC::Heap::addExecutable): Deleted.
+        * heap/Heap.h:
+        * runtime/DirectEvalExecutable.h:
+
+        * runtime/ExecutableBase.cpp:
+        (JSC::ExecutableBase::hasClearableCode const):
+        - this is written based on the implementation of ExecutableBase::clearCode().
+
+        * runtime/ExecutableBase.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/IndirectEvalExecutable.h:
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::finishCreation):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::ScriptExecutableSpaceAndSet::ScriptExecutableSpaceAndSet):
+        (JSC::VM::ScriptExecutableSpaceAndSet::clearableCodeSetFor):
+        (JSC::VM::forEachScriptExecutableSpace):
+        (JSC::VM::UnlinkedFunctionExecutableSpaceAndSet::UnlinkedFunctionExecutableSpaceAndSet):
+        (JSC::VM::UnlinkedFunctionExecutableSpaceAndSet::clearableCodeSetFor):
+
 2018-06-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] WebDriver: allow applying host-specific TLS certificates for automated sessions

@@ -114,7 +114,8 @@ public:
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CellType, StructureFlags), info()); }
-        
+
+    bool hasClearableCode() const;
     void clearCode();
 
     DECLARE_EXPORT_INFO;

@@ -55,7 +55,6 @@ class CollectingScope;
 class ConservativeRoots;
 class GCDeferralContext;
 class EdenGCActivityCallback;
-class ExecutableBase;
 class FullGCActivityCallback;
 class GCActivityCallback;
 class GCAwareJITStubRoutine;
@@ -165,7 +164,6 @@ public:
     
     typedef void (*Finalizer)(JSCell*);
     JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
-    void addExecutable(ExecutableBase*);
 
     void notifyIsSafeToCollect();
     bool isSafeToCollect() const { return m_isSafeToCollect; }
@@ -509,8 +507,7 @@ private:
     void finalizeMarkedUnconditionalFinalizers(CellSet&);
 
     void finalizeUnconditionalFinalizers();
-    
-    void clearUnmarkedExecutables();
+
     void deleteUnmarkedCompiledCode();
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
     void updateAllocationLimits();
@@ -627,8 +624,6 @@ private:
     VM* m_vm;
     Seconds m_lastFullGCLength;
     Seconds m_lastEdenGCLength;
-
-    Vector<ExecutableBase*> m_executables;
 
     Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
