@@ -131,6 +131,7 @@ sub processCLI {
         'p|child-processes=i' => \$maxProcesses,
         'h|help' => \$help,
         'release' => \$release,
+        'debug' => sub { $release = 0; },
         'v|verbose' => \$verbose,
         'f|features=s@' => \@features,
         'c|config=s' => \$configFile,
@@ -1228,6 +1229,10 @@ Specify JSC location. If not provided, script will attempt to look up JSC.
 =item B<--release>
 
 Use the Release build of JSC. Can only use if --jsc <path> is not provided. The Debug build of JSC is used by default.
+
+=item B<--debug>
+
+Use the Debug build of JSC. Can only use if --jsc <path> is not provided. Negates the --release option.
 
 =item B<--verbose, -v>
 

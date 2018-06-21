@@ -1,3 +1,16 @@
+2018-06-21  Caitlin Potter  <caitp@igalia.com>
+
+        [Tools] add a --debug option to test262/Runner.pm for buildbots
+        https://bugs.webkit.org/show_bug.cgi?id=186113
+
+        Reviewed by Michael Saboff.
+
+        test262-runner runs Debug builds by default, but this allows us to be
+        explicit about it in buildbots.
+
+        * Scripts/test262/Runner.pm:
+        (processCLI):
+
 2018-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         run-gtk-tests (glib/common.py) cannot determine build directory when webKitBranchBuild=true
