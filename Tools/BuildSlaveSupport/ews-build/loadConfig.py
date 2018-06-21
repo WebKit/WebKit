@@ -25,6 +25,7 @@ import json
 import re
 
 from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
+from buildbot.schedulers.forcesched import ForceScheduler, WorkerChoiceParameter
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
 
@@ -58,6 +59,11 @@ def loadBuilderConfig(c):
         # unicode strings from json.load, so we map all keys to str objects.
         scheduler = dict(map(lambda key_value_pair: (str(key_value_pair[0]), key_value_pair[1]), scheduler.items()))
         c['schedulers'].append(schedulerType(**scheduler))
+
+        force_scheduler = ForceScheduler(name='force-{0}'.format(scheduler['name']),
+                                         builderNames=scheduler['builderNames'],
+                                         properties=[WorkerChoiceParameter()])
+        c['schedulers'].append(force_scheduler)
 
 
 def checkValidWorker(worker):

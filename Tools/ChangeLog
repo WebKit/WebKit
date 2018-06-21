@@ -1,3 +1,13 @@
+2018-06-21  Aakash Jain  <aakash_jain@apple.com>
+
+        Add force schedulers to OpenSource EWS Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=186876
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Added support for ForceScheduler.
+
 2018-06-21  Robin Morisset  <rmorisset@apple.com>
 
         [WSL] Merge WSL_type.ott and WSL_exec.ott
