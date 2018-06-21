@@ -1,3 +1,29 @@
+2018-06-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        RenderSVGInline has to be inline always regardless of its css display value
+        https://bugs.webkit.org/show_bug.cgi?id=186656
+
+        Reviewed by Zalan Bujtas.
+
+        According to https://www.w3.org/TR/SVG2/text.html#TextLayout, the <text>
+        element has to be laid out as if it were a block element and any <tspan>,
+        <textPath>, <a> and <tref> descendants were inline elements.
+
+        If a css rule, which contains the property "display: block;", is applied
+        to any of children of a <text> element, this property has to be ignored.
+
+        We currently ignore this property in RenderSVGInline::updateFromStyle()
+        by forcing setInline(true). But we do not do the same thing in 
+        RenderTreeBuilder::normalizeTreeAfterStyleChange(). In fact we allow
+        making the children of the <text> element to be non-inline. This puts
+        the render tree in weired state and causes many assertions to fire while
+        laying out RenderSVGText. 
+
+        Test: svg/dom/svg-inline-text-display-block-crash.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::normalizeTreeAfterStyleChange):
+
 2018-06-20  Zalan Bujtas  <zalan@apple.com>
 
         Do not reuse generated inline renderer for the first letter.

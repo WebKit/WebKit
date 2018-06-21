@@ -544,7 +544,9 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
         // We have gone from not affecting the inline status of the parent flow to suddenly
         // having an impact. See if there is a mismatch between the parent flow's
         // childrenInline() state and our state.
-        renderer.setInline(renderer.style().isDisplayInlineType());
+        // FIXME(186894): startsAffectingParent has clearly nothing to do with resetting the inline state.
+        if (!is<RenderSVGInline>(renderer))
+            renderer.setInline(renderer.style().isDisplayInlineType());
         if (renderer.isInline() != renderer.parent()->childrenInline())
             childFlowStateChangesAndAffectsParentBlock(renderer);
         return;
