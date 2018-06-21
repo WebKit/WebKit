@@ -1,3 +1,22 @@
+2018-06-21  Lucas Forschler  <lforschler@apple.com>
+
+        bisect-builds --list not showing all builds
+        https://bugs.webkit.org/show_bug.cgi?id=185790
+
+        The AWS Gateway API call into dynamoDB is limited to returning 1MB of query data. Our archive set has overgrown this limit,
+        causing us to retrieve a truncated list of results. Fortunately, when this limit is reached, dynamoDB returns a 
+        "LastEvaluatedKey", which can be used to continue the query in another request. 
+
+        This patch teaches bisect-build to pass along this key when needed. The backend api was updated from v2 to v2_1 to support
+        this new querystring option. Any existing code using v2 will not be affected.
+        
+        Reviewed by Aakash Jain.
+
+        * Scripts/bisect-builds:
+        (get_api_url): added optional LastEvaluatedKey argument, which will append the query string to the base api url.
+        (fetch_revision_list): Added to allow a recursive call which will query until we retrieve every item requested.
+        (main): teach how to use fetch_revision_list.
+
 2018-06-21  Keith Rollin  <krollin@apple.com>
 
         check-webkit-style should warn about exported inline functions

@@ -38,7 +38,7 @@ import tempfile
 import urllib2
 import urlparse
 
-REST_API_URL = 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2/'
+REST_API_URL = 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2_1/'
 REST_API_ENDPOINT = 'archives/'
 REST_API_MINIFIED_ENDPOINT = 'minified-archives/'
 
@@ -93,13 +93,17 @@ def find_ge(a, x):
 # ---- end bisect helpers ----
 
 
-def get_api_url(options):
+def get_api_url(options, LastEvaluatedKey=None):
     if options.full:
         base_url = urlparse.urljoin(REST_API_URL, REST_API_ENDPOINT)
     else:
         base_url = urlparse.urljoin(REST_API_URL, REST_API_MINIFIED_ENDPOINT)
 
     api_url = urlparse.urljoin(base_url, '-'.join([options.platform, options.architecture, options.configuration]))
+    if LastEvaluatedKey:
+        querystring = urllib2.quote(json.dumps(LastEvaluatedKey))
+        api_url += '?ExclusiveStartKey=' + querystring
+        
     return api_url
 
 
@@ -223,15 +227,22 @@ def print_list_and_exit(revision_list, options):
         print(revision_list)
         exit(0)
 
-def main(options):
-    validate_options(options)
-
-    url = get_api_url(options)
+def fetch_revision_list(options, LastEvaluatedKey=None):
+    url = get_api_url(options, LastEvaluatedKey)
     r = urllib2.urlopen(url)
     data = json.load(r)
-    
     revision_list = get_sorted_revisions(data)
 
+    if 'LastEvaluatedKey' in data['revisions']:
+        LastEvaluatedKey = data['revisions']['LastEvaluatedKey']
+        revision_list += fetch_revision_list(options, LastEvaluatedKey)
+        
+    return revision_list
+    
+def main(options):
+    validate_options(options)
+    revision_list = fetch_revision_list(options)
+    
     if options.list:
         print_list_and_exit(revision_list, options)
 
