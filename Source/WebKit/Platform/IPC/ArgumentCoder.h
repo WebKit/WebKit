@@ -31,6 +31,7 @@ namespace WebCore {
 class IntConstraint;
 class DoubleConstraint;
 class ResourceResponse;
+struct ViewportArguments;
 }
 
 namespace IPC {

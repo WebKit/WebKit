@@ -1,3 +1,15 @@
+2018-06-21  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] Page sometimes ends up with an incorrect zoom level after entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=186822
+
+        Reviewed by Simon Fraser.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setOverrideViewportArguments):
+        (WebCore::Document::updateViewportArguments):
+        * dom/Document.h:
+
 2018-06-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderSVGInline has to be inline always regardless of its css display value

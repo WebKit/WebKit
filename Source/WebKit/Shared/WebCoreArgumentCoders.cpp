@@ -659,6 +659,14 @@ bool ArgumentCoder<ViewportArguments>::decode(Decoder& decoder, ViewportArgument
 {
     return SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments);
 }
+
+std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& decoder)
+{
+    ViewportArguments viewportArguments;
+    if (!SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments))
+        return std::nullopt;
+    return WTFMove(viewportArguments);
+}
 #endif // PLATFORM(IOS)
 
 

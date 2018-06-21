@@ -267,6 +267,7 @@ template<> struct ArgumentCoder<WebCore::FloatQuad> {
 template<> struct ArgumentCoder<WebCore::ViewportArguments> {
     static void encode(Encoder&, const WebCore::ViewportArguments&);
     static bool decode(Decoder&, WebCore::ViewportArguments&);
+    static std::optional<WebCore::ViewportArguments> decode(Decoder&);
 };
 #endif // PLATFORM(IOS)
 

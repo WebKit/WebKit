@@ -2484,6 +2484,12 @@ void WebPage::setDeviceOrientation(int32_t deviceOrientation)
     m_page->mainFrame().orientationChanged();
 }
 
+void WebPage::setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>& arguments)
+{
+    if (auto* document = m_page->mainFrame().document())
+        document->setOverrideViewportArguments(arguments);
+}
+
 // WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
 // we need to ignore differences that are within a small rounding error on floats.
 static inline bool areEssentiallyEqualAsFloat(float a, float b)

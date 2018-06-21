@@ -44,6 +44,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/ViewportArguments.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSStringSPI.h>
@@ -95,6 +96,10 @@ struct WKWebViewState {
     UIEdgeInsets _savedObscuredInsets = UIEdgeInsetsZero;
     UIEdgeInsets _savedScrollIndicatorInsets = UIEdgeInsetsZero;
     CGPoint _savedContentOffset = CGPointZero;
+    CGFloat _savedMinimumZoomScale = 1;
+    CGFloat _savedMaximumZoomScale = 1;
+    BOOL _savedBouncesZoom = NO;
+    BOOL _savedForceAlwaysUserScalable = NO;
 
     void applyTo(WKWebView* webView)
     {
@@ -104,8 +109,12 @@ struct WKWebViewState {
         [[webView scrollView] setContentOffset:_savedContentOffset];
         [[webView scrollView] setScrollIndicatorInsets:_savedScrollIndicatorInsets];
         [webView _page]->setTopContentInset(_savedTopContentInset);
+        [webView _page]->setForceAlwaysUserScalable(_savedForceAlwaysUserScalable);
         [webView _setViewScale:_savedViewScale];
         [[webView scrollView] setZoomScale:_savedZoomScale];
+        webView.scrollView.minimumZoomScale = _savedMinimumZoomScale;
+        webView.scrollView.maximumZoomScale = _savedMaximumZoomScale;
+        webView.scrollView.bouncesZoom = _savedBouncesZoom;
     }
     
     void store(WKWebView* webView)
@@ -116,8 +125,12 @@ struct WKWebViewState {
         _savedContentOffset = [[webView scrollView] contentOffset];
         _savedScrollIndicatorInsets = [[webView scrollView] scrollIndicatorInsets];
         _savedTopContentInset = [webView _page]->topContentInset();
+        _savedForceAlwaysUserScalable = [webView _page]->forceAlwaysUserScalable();
         _savedViewScale = [webView _viewScale];
         _savedZoomScale = [[webView scrollView] zoomScale];
+        _savedMinimumZoomScale = webView.scrollView.minimumZoomScale;
+        _savedMaximumZoomScale = webView.scrollView.maximumZoomScale;
+        _savedBouncesZoom = webView.scrollView.bouncesZoom;
     }
 };
 
@@ -494,6 +507,13 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         
         [self _manager]->setAnimatingFullScreen(true);
 
+        ViewportArguments arguments { ViewportArguments::CSSDeviceAdaptation };
+        arguments.zoom = 1;
+        arguments.minZoom = 1;
+        arguments.maxZoom = 1;
+        arguments.userZoom = 1;
+        [webView _page]->setOverrideViewportArguments(arguments);
+
         _repaintCallback = VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
             _repaintCallback = nullptr;
             if (auto* manager = [protectedSelf _manager]) {
@@ -628,6 +648,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [webView becomeFirstResponder];
 
     _viewState.applyTo(webView.get());
+    [webView _page]->setOverrideViewportArguments(std::nullopt);
 
     [webView setNeedsLayout];
     [webView layoutIfNeeded];
