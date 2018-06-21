@@ -1,3 +1,9 @@
+2018-06-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed attempt to fix the build after r233052.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
 2018-06-21  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] Use secondary glyph style for fullscreen controls

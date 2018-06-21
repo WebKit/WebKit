@@ -33,7 +33,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#if !PLATFORM(WATCHOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
 #import <AVKit/AVBackgroundView.h>
+#endif
+
 #import <AVKit/AVPlayerController.h>
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-property-no-attribute"
