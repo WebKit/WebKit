@@ -1,3 +1,20 @@
+2018-06-21  Robin Morisset  <rmorisset@apple.com>
+
+        [WSL] Merge WSL_type.ott and WSL_exec.ott
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        I moved the execution rules into WSL_type.ott, that was renamed WSL.ott.
+        I also changed the execution judgements:
+        - they now emit memory events instead of having an explicit store (so they can be connected later to a memory model)
+        - the environment is now unchangeable (except inside blocks, which are the only place that variable declarations can appear)
+        - various rules were simplified.
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL.ott: Copied from Tools/WebGPUShadingLanguageRI/SpecWork/WSL_type.ott.
+        * WebGPUShadingLanguageRI/SpecWork/WSL_exec.ott: Removed.
+        * WebGPUShadingLanguageRI/SpecWork/WSL_type.ott: Removed.
+
 2018-06-21  Leo Balter  <leonardo.balter@gmail.com>
 
         [test262-runner] Improve failures output
