@@ -2763,7 +2763,8 @@ void WebPage::updateViewportSizeForCSSViewportUnits()
 void WebPage::applicationWillResignActive()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillResignActiveNotification object:nil];
-    m_page->applicationWillResignActive();
+    if (m_page)
+        m_page->applicationWillResignActive();
 }
 
 void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)

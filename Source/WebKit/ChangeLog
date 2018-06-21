@@ -1,3 +1,19 @@
+2018-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r226990) : Crash under WebCore::Page::applicationWillResignActive
+        https://bugs.webkit.org/show_bug.cgi?id=186850
+        <rdar://problem/37394469>
+
+        Reviewed by Eric Carlson.
+
+        Make sure m_page is not null before calling applicationWillResignActive(). m_page
+        gets nulled out when WebPage::close() is called. The crash trace seems to indicate
+        we're calling applicationWillResignActive() on a Page that is dead since we crash
+        accessing Page::mainFrame().
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillResignActive):
+
 2018-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] http/tests/misc/bubble-drag-events.html crashes
