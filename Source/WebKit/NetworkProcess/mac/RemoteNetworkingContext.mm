@@ -46,8 +46,12 @@ namespace WebKit {
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (NetworkStorageSession::storageSession(sessionID))
+    if (auto* session = NetworkStorageSession::storageSession(sessionID)) {
+        ASSERT(parameters.pendingCookies.isEmpty() || sessionID == PAL::SessionID::defaultSessionID());
+        for (const auto& cookie : parameters.pendingCookies)
+            session->setCookie(cookie);
         return;
+    }
 
     String base;
     if (SessionTracker::getIdentifierBase().isNull())

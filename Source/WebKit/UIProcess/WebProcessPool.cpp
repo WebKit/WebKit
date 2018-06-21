@@ -467,11 +467,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         parameters.defaultSessionParameters.sessionID = PAL::SessionID::defaultSessionID();
     }
     
-    if (m_websiteDataStore) {
-        parameters.defaultSessionPendingCookies = m_websiteDataStore->websiteDataStore().pendingCookies();
-        m_websiteDataStore->websiteDataStore().clearPendingCookies();
-    }
-    
     parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
 
     parameters.cacheModel = cacheModel();
@@ -533,6 +528,11 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             m_websiteDataStore->websiteDataStore().networkProcessDidCrash();
     }
 
+    if (m_websiteDataStore) {
+        m_networkProcess->addSession(makeRef(m_websiteDataStore->websiteDataStore()));
+        m_websiteDataStore->websiteDataStore().clearPendingCookies();
+    }
+    
     if (withWebsiteDataStore) {
         m_networkProcess->addSession(makeRef(*withWebsiteDataStore));
         withWebsiteDataStore->clearPendingCookies();
