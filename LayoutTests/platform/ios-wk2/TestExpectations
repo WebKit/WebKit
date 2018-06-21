@@ -1347,7 +1347,7 @@ webkit.org/b/182849 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-
 # This is marked as Pass to see if additional logging can reveal the cause of the flakiness.
 webkit.org/b/183714 [ Debug ] http/tests/storageAccess/grant-storage-access-under-opener.html [ Pass ]
 
-webkit.org/b/183860 [ Release ] http/wpt/service-workers/third-party-registration.html [ Pass Failure ]
+webkit.org/b/183860 http/wpt/service-workers/third-party-registration.html [ Pass Timeout ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 

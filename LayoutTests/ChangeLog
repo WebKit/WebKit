@@ -1,3 +1,12 @@
+2018-06-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for http/wpt/service-workers/third-party-registration.html.
+        https://bugs.webkit.org/show_bug.cgi?id=183860
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Mark as a flaky timeout.
+
 2018-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GStreamer] ASSERTION FAILED: end.isValid() in PlatformTimeRanges::add
