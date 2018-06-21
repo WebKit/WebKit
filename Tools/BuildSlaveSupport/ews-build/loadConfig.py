@@ -35,12 +35,15 @@ BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
 
-def loadBuilderConfig(c):
+def loadBuilderConfig(c, use_localhost_worker=False):
     config = json.load(open('config.json'))
     passwords = json.load(open('passwords.json'))
     checkWorkersAndBuildersForConsistency(config['workers'], config['builders'])
 
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password')) for worker in config['workers']]
+    if use_localhost_worker:
+        c['workers'].append(Worker('local-worker', 'password', max_builds=2))
+
     c['builders'] = []
     for builder in config['builders']:
         builder['tags'] = getTagsForBuilder(builder)
@@ -49,6 +52,10 @@ def loadBuilderConfig(c):
         del builder['platform']
         if 'configuration' in builder:
             del builder['configuration']
+
+        if use_localhost_worker:
+            builder['workernames'].append("local-worker")
+
         c['builders'].append(builder)
 
     c['schedulers'] = []

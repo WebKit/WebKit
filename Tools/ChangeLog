@@ -1,5 +1,16 @@
 2018-06-21  Aakash Jain  <aakash_jain@apple.com>
 
+        Add support for using localhost worker in OpenSource EWS Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=186871
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Added a worker named 'local-worker' if use_localhost_worker option is used.
+        * BuildSlaveSupport/ews-build/master.cfg: Check BUILDBOT_TESTING environment variable and use_localhost_worker if so.
+
+2018-06-21  Aakash Jain  <aakash_jain@apple.com>
+
         Add force schedulers to OpenSource EWS Buildbot
         https://bugs.webkit.org/show_bug.cgi?id=186876
 
