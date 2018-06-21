@@ -1,3 +1,26 @@
+2018-06-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] WebDriver: allow applying host-specific TLS certificates for automated sessions
+        https://bugs.webkit.org/show_bug.cgi?id=186884
+
+        Reviewed by Carlos Garcia Campos.
+
+        Start handling the 'certificates' capability for the GTK+ port. This is
+        a list of host-certificate pairs that should be marked as allowed for a
+        given automation session. This object should be positioned inside the
+        'webkitgtk:browserOptions' dictionary in the capabilities JSON.
+
+        * Capabilities.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::startAutomationSession): Include any
+        host-certificate pairs in the StartAutomationSession DBus message.
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        Properly validate the 'certificates' value, if present.
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+        Properly parse the 'certificates' value, if present, and extract the
+        host-certificate pairs.
+
 2018-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] WebDriver: handle acceptInsecureCertificates capability

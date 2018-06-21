@@ -267,11 +267,19 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTFMove(completionHandler);
     m_sessionID = createCanonicalUUIDString();
+    GVariantBuilder builder;
+    g_variant_builder_init(&builder, G_VARIANT_TYPE("a(ss)"));
+    if (m_capabilities.certificates) {
+        for (auto& certificate : *m_capabilities.certificates) {
+            g_variant_builder_add_value(&builder, g_variant_new("(ss)",
+                certificate.first.utf8().data(), certificate.second.utf8().data()));
+        }
+    }
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH,
         INSPECTOR_DBUS_INTERFACE,
         "StartAutomationSession",
-        g_variant_new("(sb)", m_sessionID.utf8().data(), m_capabilities.acceptInsecureCerts.value_or(false)),
+        g_variant_new("(sba(ss))", m_sessionID.utf8().data(), m_capabilities.acceptInsecureCerts.value_or(false), &builder),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
         -1, m_cancellable.get(), [](GObject* source, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;

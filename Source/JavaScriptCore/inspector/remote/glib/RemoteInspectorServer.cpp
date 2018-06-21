@@ -80,6 +80,7 @@ static const char introspectionXML[] =
     "    <method name='StartAutomationSession'>"
     "      <arg type='s' name='sessionID' direction='in'/>"
     "      <arg type='b' name='acceptInsecureCertificates' direction='in'/>"
+    "      <arg type='a(ss)' name='certificates' direction='in'/>"
     "      <arg type='s' name='browserName' direction='out'/>"
     "      <arg type='s' name='browserVersion' direction='out'/>"
     "    </method>"
@@ -124,9 +125,15 @@ const GDBusInterfaceVTable RemoteInspectorServer::s_interfaceVTable = {
         } else if (!g_strcmp0(methodName, "StartAutomationSession")) {
             const char* sessionID;
             gboolean acceptInsecureCertificates;
-            g_variant_get(parameters, "(&sb)", &sessionID, &acceptInsecureCertificates);
+            GUniqueOutPtr<GVariantIter> certificates;
+            g_variant_get(parameters, "(&sba(ss))", &sessionID, &acceptInsecureCertificates, &certificates.outPtr());
             RemoteInspector::Client::SessionCapabilities capabilities;
             capabilities.acceptInsecureCertificates = acceptInsecureCertificates;
+            capabilities.certificates.reserveCapacity(g_variant_iter_n_children(certificates.get()));
+            const char* host;
+            const char* certificateFile;
+            while (g_variant_iter_loop(certificates.get(), "(&s&s)", &host, &certificateFile))
+                capabilities.certificates.uncheckedAppend({ String::fromUTF8(host), String::fromUTF8(certificateFile) });
             inspectorServer->startAutomationSession(connection, sessionID, capabilities);
             auto clientCapabilities = RemoteInspector::singleton().clientCapabilities();
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(ss)",

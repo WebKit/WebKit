@@ -1,3 +1,17 @@
+2018-06-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] WebDriver: allow applying host-specific TLS certificates for automated sessions
+        https://bugs.webkit.org/show_bug.cgi?id=186884
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionCreate): Handle any host-certificate pair that's
+        been set for this session, creating a GTlsCertificate object through
+        loading from the specified certificate path and marking that certificate
+        as allowed for the specified host through the
+        webkit_web_context_allow_tls_certificate_for_host() API.
+
 2018-06-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r226990) : Crash under WebCore::Page::applicationWillResignActive

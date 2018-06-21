@@ -1,3 +1,20 @@
+2018-06-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] WebDriver: allow applying host-specific TLS certificates for automated sessions
+        https://bugs.webkit.org/show_bug.cgi?id=186884
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a tuple array input parameter to the StartAutomationSession DBus
+        message, representing a list of host-and-certificate pairs that have to
+        be allowed for a given session. This array is then unpacked and used to
+        fill out the certificates Vector object in the SessionCapabilities
+        struct.
+
+        * inspector/remote/RemoteInspector.h: Add a GLib-specific Vector of
+        String pairs representing hosts and the certificate file paths.
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+
 2018-06-20  Keith Miller  <keith_miller@apple.com>
 
         Expand concurrent GC assertion to accept JSValue() or 0

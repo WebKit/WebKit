@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <utility>
 #include <wtf/Forward.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
@@ -64,6 +65,7 @@ struct Capabilities {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<String> browserBinary;
     std::optional<Vector<String>> browserArguments;
+    std::optional<Vector<std::pair<String, String>>> certificates;
 #endif
 #if PLATFORM(GTK)
     std::optional<bool> useOverlayScrollbars;

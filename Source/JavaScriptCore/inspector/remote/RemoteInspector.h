@@ -27,6 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -74,6 +75,9 @@ public:
 
         struct SessionCapabilities {
             bool acceptInsecureCertificates { false };
+#if USE(GLIB)
+            Vector<std::pair<String, String>> certificates;
+#endif
 #if PLATFORM(COCOA)
             std::optional<bool> allowInsecureMediaCapture;
             std::optional<bool> suppressICECandidateFiltering;

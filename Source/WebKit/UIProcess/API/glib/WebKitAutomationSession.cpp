@@ -294,6 +294,11 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
     session->priv->webContext = webContext;
     if (capabilities.acceptInsecureCertificates)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+    for (auto& certificate : capabilities.certificates) {
+        GRefPtr<GTlsCertificate> tlsCertificate = adoptGRef(g_tls_certificate_new_from_file(certificate.second.utf8().data(), nullptr));
+        if (tlsCertificate)
+            webkit_web_context_allow_tls_certificate_for_host(webContext, tlsCertificate.get(), certificate.first.utf8().data());
+    }
     return session;
 }
 
