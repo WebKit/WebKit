@@ -1,3 +1,13 @@
+2018-06-21  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] Use secondary glyph style for fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=186862
+        <rdar://problem/41212210>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
 2018-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         Complex text handling should opt out of bounded text layout (follow-up fix)

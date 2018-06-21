@@ -1,5 +1,37 @@
 2018-06-21  Jer Noble  <jer.noble@apple.com>
 
+        [Fullscreen] Use secondary glyph style for fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=186862
+        <rdar://problem/41212210>
+
+        Reviewed by Tim Horton.
+
+        Adopt AVBackgroundView, and use its predefined enums to set the material and tint styles for
+        the fullscreen controls.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController loadView]):
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.h:
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm:
+        (-[WKFullscreenStackView init]):
+        (-[WKFullscreenStackView dealloc]):
+        (-[WKFullscreenStackView addArrangedSubview:applyingMaterialStyle:tintEffectStyle:]):
+        (-[WKFullscreenStackView layoutSubviews]):
+        (+[WKFullscreenStackView baseEffects]): Deleted.
+        (+[WKFullscreenStackView configureView:forTintEffectWithColor:filterType:]): Deleted.
+        (+[WKFullscreenStackView configureView:withBackgroundFillOfColor:opacity:filter:]): Deleted.
+        (+[WKFullscreenStackView secondaryMaterialOverlayView]): Deleted.
+        (+[WKFullscreenStackView applyPrimaryGlyphTintToView:]): Deleted.
+        (+[WKFullscreenStackView applySecondaryGlyphTintToView:]): Deleted.
+        (-[WKFullscreenStackView initWithArrangedSubviews:axis:]): Deleted.
+        (-[WKFullscreenStackView setTargetViewForSecondaryMaterialOverlay:]): Deleted.
+        (-[WKFullscreenStackView contentView]): Deleted.
+        (-[WKFullscreenStackView _setArrangedSubviews:axis:]): Deleted.
+        (-[WKFullscreenStackView setBounds:]): Deleted.
+        (-[WKFullscreenStackView updateConstraints]): Deleted.
+
+2018-06-21  Jer Noble  <jer.noble@apple.com>
+
         [Fullscreen] Suspend page (and pause video) while phishing warning is presented
         https://bugs.webkit.org/show_bug.cgi?id=186856
         <rdar://problem/41212444>

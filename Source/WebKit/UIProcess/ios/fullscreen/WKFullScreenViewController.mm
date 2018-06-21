@@ -36,6 +36,7 @@
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
@@ -245,7 +246,6 @@ private:
     [_cancelButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_cancelButton setAdjustsImageWhenHighlighted:NO];
     [_cancelButton setExtrinsicContentSize:CGSizeMake(60.0, 47.0)];
-    [WKFullscreenStackView applyPrimaryGlyphTintToView:_cancelButton.get()];
     NSBundle *bundle = [NSBundle bundleForClass:self.class];
     UIImage *doneImage = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
     [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
@@ -257,7 +257,6 @@ private:
     [_pipButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_pipButton setAdjustsImageWhenHighlighted:NO];
     [_pipButton setExtrinsicContentSize:CGSizeMake(60.0, 47.0)];
-    [WKFullscreenStackView applyPrimaryGlyphTintToView:_pipButton.get()];
     UIImage *startPiPImage = [UIImage imageNamed:@"StartPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];
     UIImage *stopPiPImage = [UIImage imageNamed:@"StopPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];
     [_pipButton setImage:[startPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
@@ -266,9 +265,10 @@ private:
     [_pipButton sizeToFit];
     [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
 
-    _stackView = adoptNS([[WKFullscreenStackView alloc] initWithArrangedSubviews:@[_cancelButton.get(), _pipButton.get()] axis:UILayoutConstraintAxisHorizontal]);
+    _stackView = adoptNS([[WKFullscreenStackView alloc] init]);
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [_stackView setTargetViewForSecondaryMaterialOverlay:_cancelButton.get()];
+    [_stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+    [_stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
     [[self view] addSubview:_stackView.get()];
 
     UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;

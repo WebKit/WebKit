@@ -28,17 +28,12 @@
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
 
 #import <UIKit/UIView.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WKFullscreenStackView : UIView
-+ (void)applyPrimaryGlyphTintToView:(UIView *)view;
-+ (void)applySecondaryGlyphTintToView:(UIView *)view;
-
-- (instancetype)initWithArrangedSubviews:(NSArray<UIView *> *)arrangedSubviews axis:(UILayoutConstraintAxis)axis;
-
-@property (nonatomic, retain, nullable) UIView *targetViewForSecondaryMaterialOverlay;
-@property (nonatomic, readonly) UIView *contentView;
+@interface WKFullscreenStackView : UIStackView
+- (void)addArrangedSubview:(UIView *)subview applyingMaterialStyle:(AVBackgroundViewMaterialStyle)materialStyle tintEffectStyle:(AVBackgroundViewTintEffectStyle)tintEffectStyle;
 @end
 
 NS_ASSUME_NONNULL_END
