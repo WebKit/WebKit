@@ -381,6 +381,10 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         Butterfly* newButterfly = allocateMoreOutOfLineStorage(vm, oldCapacity, newCapacity);
         nukeStructureAndSetButterfly(vm, structureID, newButterfly);
     }
+
+    // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
+    // is running at the same time we put without transitioning.
+    ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
     putDirect(vm, offset, value);
     setStructure(vm, newStructure);
     slot.setNewProperty(this, offset);

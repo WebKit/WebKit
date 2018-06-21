@@ -1378,6 +1378,15 @@ static EncodedJSValue JSC_HOST_CALL functionIndexingMode(ExecState* exec)
     return JSValue::encode(jsString(exec, stream.toString()));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionInlineCapacity(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    if (auto* object = jsDynamicCast<JSObject*>(vm, exec->argument(0)))
+        return JSValue::encode(jsNumber(object->structure(vm)->inlineCapacity()));
+
+    return encodedJSUndefined();
+}
+
 // Gets the dataLog dump of a given JS value as a string.
 // Usage: print("value = " + $vm.value(jsValue))
 static EncodedJSValue JSC_HOST_CALL functionValue(ExecState* exec)
@@ -1647,6 +1656,15 @@ static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
     return JSValue::encode(JSONParse(exec, jsonString));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionFlattenDictionaryObject(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSValue value = exec->argument(0);
+    RELEASE_ASSERT(value.isObject() && value.getObject()->structure()->isDictionary());
+    value.getObject()->flattenDictionaryObject(vm);
+    return encodedJSUndefined();
+}
+
 static EncodedJSValue JSC_HOST_CALL functionDumpBasicBlockExecutionRanges(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -1824,6 +1842,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "printStack", functionPrintStack, 0);
 
     addFunction(vm, "indexingMode", functionIndexingMode, 1);
+    addFunction(vm, "inlineCapacity", functionInlineCapacity, 1);
     addFunction(vm, "value", functionValue, 1);
     addFunction(vm, "getpid", functionGetPID, 0);
 
@@ -1854,6 +1873,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "findTypeForExpression", functionFindTypeForExpression, 2);
     addFunction(vm, "returnTypeFor", functionReturnTypeFor, 1);
+
+    addFunction(vm, "flattenDictionaryObject", functionFlattenDictionaryObject, 1);
 
     addFunction(vm, "dumpBasicBlockExecutionRanges", functionDumpBasicBlockExecutionRanges , 0);
     addFunction(vm, "hasBasicBlockExecuted", functionHasBasicBlockExecuted, 2);
