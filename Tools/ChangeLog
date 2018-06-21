@@ -1,3 +1,23 @@
+2018-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        run-gtk-tests (glib/common.py) cannot determine build directory when webKitBranchBuild=true
+        https://bugs.webkit.org/show_bug.cgi?id=185643
+
+        Reviewed by Frédéric Wang.
+
+        Check if webKitBranchBuild is true in git config to add the branch name to the build path.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.read_git_config): Add output_type parameter.
+        (Git.read_config): Call read_git_config with cws and executive.
+        (Git._upstream_branch): Use read_config().
+        (Git._assert_can_squash): Ditto.
+        (Git.remote_branch_ref): Ditto.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitSVNTest.test_read_git_config):
+        * glib/common.py:
+        (get_build_path):
+
 2018-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Fixed position elements sometimes flicker when scrolling
