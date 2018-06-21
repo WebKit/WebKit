@@ -1,3 +1,14 @@
+2018-06-21  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] Suspend page (and pause video) while phishing warning is presented
+        https://bugs.webkit.org/show_bug.cgi?id=186856
+        <rdar://problem/41212444>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]):
+
 2018-06-21  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r232989.

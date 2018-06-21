@@ -1,3 +1,19 @@
+2018-06-21  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] Suspend page (and pause video) while phishing warning is presented
+        https://bugs.webkit.org/show_bug.cgi?id=186856
+        <rdar://problem/41212444>
+
+        Reviewed by Tim Horton.
+
+        Pause the media element when the page is suspended, and unpause when the page resumes.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        * html/HTMLMediaElement.h:
+
 2018-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Bad optional access in WebCore::ContentSecurityPolicySource::portMatches

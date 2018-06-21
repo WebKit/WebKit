@@ -428,11 +428,18 @@ private:
     NSString *alertMessage = [NSString stringWithFormat:WEB_UI_STRING("The website \"%@\" may be a deceptive website. Would you like to exit fullscreen?", "Fullscreen Deceptive Website Warning Sheet Content Text") , (NSString *)self.location];
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
 
+    if (auto* page = [self._webView _page])
+        page->suspendActiveDOMObjectsAndAnimations();
+
     UIAlertAction* exitAction = [UIAlertAction actionWithTitle:WEB_UI_STRING("Exit Fullscreen", "Fullscreen Deceptive Website Exit Action") style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
         [self _cancelAction:action];
+        if (auto* page = [self._webView _page])
+            page->resumeActiveDOMObjectsAndAnimations();
     }];
 
     UIAlertAction* stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING("Stay in Fullscreen", "Fullscreen Deceptive Website Stay Action") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        if (auto* page = [self._webView _page])
+            page->resumeActiveDOMObjectsAndAnimations();
         _secheuristic.reset();
     }];
 
