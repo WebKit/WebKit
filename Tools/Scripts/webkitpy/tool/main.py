@@ -98,7 +98,7 @@ class WebKitPatch(MultiCommandTool, Host):
         try:
             if not Git.in_working_directory(os.getcwd()):
                 return None
-            return Git.read_git_config('webkit.status_api_key')
+            return Git.read_git_config('webkit.status-api-key')
         except OSError as e:
             # Catch and ignore OSError exceptions such as "no such file
             # or directory" (OSError errno 2), which imply that the Git

@@ -4,6 +4,22 @@
         https://bugs.webkit.org/show_bug.cgi?id=186291
         <rdar://problem/40829658>
 
+        Substitute webkit.status-api-key for webkit.status_api_key as Git configuration variables can
+        only consist of alphanumeric characters and underscores (_) per the second paragraph of section
+        Configuration File of <https://git-scm.com/docs/git-config/2.18.0#_configuration_file>:
+
+             The variable names are case-insensitive, allow only alphanumeric characters and -, and must
+             start with an alphabetic character.
+
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch._status_server_api_key_from_git):
+
+2018-06-21  Daniel Bates  <dabates@apple.com>
+
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
         In r232979, I inadvertently removed a line of code in _parse_authorized_api_keys() to define a local called api_keys.
         Add this code back.
 
