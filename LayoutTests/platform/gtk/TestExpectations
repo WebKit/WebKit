@@ -1296,9 +1296,6 @@ webkit.org/b/180253 [ Debug ] http/tests/appcache/video.html [ Crash ]
 # Crashes only when GNOME icon theme is not installed
 webkit.org/b/186767 fast/hidpi/broken-image-icon-very-hidpi.html [ Crash Pass ]
 
-# This one crashes only on EWS.
-webkit.org/b/186778 http/tests/misc/cached-scripts.html [ Crash Pass ]
-
 webkit.org/b/186779 http/tests/security/sandboxed-iframe-DENIED-modals.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2662,7 +2659,7 @@ Bug(GTK) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 Bug(GTK) http/tests/local/drag-over-remote-content.html [ Failure ]
 Bug(GTK) http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 Bug(GTK) fast/events/drag-in-frames.html [ Failure Timeout ]
-webkit.org/b/182352 http/tests/misc/bubble-drag-events.html [ Failure Timeout Crash ]
+webkit.org/b/182352 http/tests/misc/bubble-drag-events.html [ Failure ]
 
 # Dragging images and links results in a DataTransfer object containing a non-empty files array
 webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]

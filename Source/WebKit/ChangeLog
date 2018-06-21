@@ -1,3 +1,31 @@
+2018-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] http/tests/misc/bubble-drag-events.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=182352
+
+        Reviewed by Carlos Garcia Campos.
+
+        PingLoad::didFinish was called twice if it is used with
+        NetworkDataTaskSoup. PingLoad is not a ref-counted object. It is
+        destructed when PingLoad::didFinish is called.
+
+        PingLoad::didReceiveChallenge calls the ChallengeCompletionHandler
+        with AuthenticationChallengeDisposition::Cancel to cancel the
+        challenge and calls PingLoad::didFinish.
+
+        NetworkDataTaskSoup::continueAuthenticate calls
+        didReceiveChallenge with a ChallengeCompletionHandler which calls
+        didCompleteWithError. PingLoad::didCompleteWithError calls
+        PingLoad::didFinish.
+
+        didCompleteWithError callback should not be called in the
+        ChallengeCompletionHandler.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueAuthenticate): Do not call
+        didFail() in the ChallengeCompletionHandler. Call
+        invalidateAndCancel() instead.
+
 2018-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit on watchOS] Fixed position elements sometimes flicker when scrolling
