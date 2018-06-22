@@ -1021,6 +1021,26 @@ class GitTest(SCMTest):
         patch = scm.create_patch()
         self.assertNotRegexpMatches(patch, r'Subversion Revision:')
 
+    def test_create_patch_with_git_index(self):
+        # First change. Committed.
+        write_into_file_at_path('test_file_commit1', 'first cat')
+        run_command(['git', 'add', 'test_file_commit1'])
+        scm = self.tracking_scm
+        scm.commit_locally_with_message('message')
+
+        # Second change. Staged but not committed.
+        write_into_file_at_path('test_file_commit1', 'second dog')
+        run_command(['git', 'add', 'test_file_commit1'])
+
+        # Third change. Not even staged.
+        write_into_file_at_path('test_file_commit1', 'third unicorn')
+
+        patch = scm.create_patch(None, None, True)
+        self.assertRegexpMatches(patch, r'-first cat')
+        self.assertRegexpMatches(patch, r'\+second dog')
+        self.assertNotRegexpMatches(patch, r'third')
+        self.assertNotRegexpMatches(patch, r'unicorn')
+
     def test_orderfile(self):
         os.mkdir("Tools")
         os.mkdir("Source")

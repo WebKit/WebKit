@@ -1,3 +1,17 @@
+2018-06-22  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [style] Fix --git-index option for check-webkit-style command
+        https://bugs.webkit.org/show_bug.cgi?id=186810
+
+        When --git-index is specified, it should be compared with HEAD, not the origin/master.
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.create_patch):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (test_create_patch_with_git_index): Added.
+
 2018-06-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix syntax error introduced by r233088.

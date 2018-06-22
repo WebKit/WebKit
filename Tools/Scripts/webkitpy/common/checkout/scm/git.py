@@ -336,21 +336,24 @@ class Git(SCM, SVNRepository):
 
     def create_patch(self, git_commit=None, changed_files=None, git_index=False):
         """Returns a byte array (str()) representing the patch file.
-        Patch files are effectively binary since they may contain
-        files of multiple different encodings."""
+        Patch files are effectively binary since they may contain files of multiple different encodings.
+        If git_index is True, git_commit is ignored because only indexed files are handled.
+        """
 
         # Put code changes at the top of the patch and layout tests
         # at the bottom, this makes for easier reviewing.
         config_path = self._filesystem.dirname(self._filesystem.path_to_module('webkitpy.common.config'))
         order_file = self._filesystem.join(config_path, 'orderfile')
-        order = ""
+        order = ''
         if self._filesystem.exists(order_file):
-            order = "-O%s" % order_file
+            order = '-O' + order_file
 
-        command = [self.executable_name, 'diff', '--binary', '--no-color', "--no-ext-diff", "--full-index", "--no-renames", order, self.merge_base(git_commit)]
+        command = [self.executable_name, 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames', order]
         if git_index:
             command += ['--cached']
-        command += ["--"]
+        else:
+            command += [self.merge_base(git_commit)]
+        command += ['--']
         if changed_files:
             command += changed_files
         return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))
