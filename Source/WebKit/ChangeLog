@@ -1,3 +1,11 @@
+2018-06-22  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build after r233089
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setColorFilterEnabled:]):
+        (-[WKPreferences _colorFilterEnabled]):
+
 2018-06-22  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebResourceLoadStatisticsStore::mergeStatistics(WTF::Vector<WebCore::ResourceLoadStatistics, 0ul, WTF::CrashOnOverflow, 16ul>&&)

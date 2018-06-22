@@ -751,6 +751,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->isAVFoundationEnabled();
 }
 
+- (void)_setColorFilterEnabled:(BOOL)enabled
+{
+    _preferences->setColorFilterEnabled(enabled);
+}
+
+- (BOOL)_colorFilterEnabled
+{
+    return _preferences->colorFilterEnabled();
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {
@@ -860,16 +870,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_pageCacheSupportsPlugins
 {
     return _preferences->pageCacheSupportsPlugins();
-}
-
-- (void)_setColorFilterEnabled:(BOOL)enabled
-{
-    _preferences->setColorFilterEnabled(enabled);
-}
-
-- (BOOL)_colorFilterEnabled
-{
-    return _preferences->colorFilterEnabled();
 }
 
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
