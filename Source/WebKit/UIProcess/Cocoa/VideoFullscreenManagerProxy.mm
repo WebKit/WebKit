@@ -308,7 +308,10 @@ void VideoFullscreenManagerProxy::invalidate()
     m_page->process().removeMessageReceiver(Messages::VideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
     m_page = nullptr;
 
-    for (auto& tuple : m_contextMap.values()) {
+    auto contextMap = WTFMove(m_contextMap);
+    m_clientCounts.clear();
+
+    for (auto& tuple : contextMap.values()) {
         RefPtr<VideoFullscreenModelContext> model;
         RefPtr<PlatformVideoFullscreenInterface> interface;
         std::tie(model, interface) = tuple;
@@ -317,9 +320,6 @@ void VideoFullscreenManagerProxy::invalidate()
         [model->layerHostView() removeFromSuperview];
         model->setLayerHostView(nullptr);
     }
-
-    m_contextMap.clear();
-    m_clientCounts.clear();
 }
 
 void VideoFullscreenManagerProxy::requestHideAndExitFullscreen()

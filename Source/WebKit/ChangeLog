@@ -1,3 +1,18 @@
+2018-06-21  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in WebCore::VideoFullscreenInterfaceMac::~VideoFullscreenInterfaceMac()
+        https://bugs.webkit.org/show_bug.cgi?id=186892
+
+        Reviewed by Eric Carlson.
+
+        Protect against m_contentMap being mutated while its contents are being invalidated
+        by moving the map into a local variable and iterating over it instead.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionManagerProxy::invalidate):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::invalidate):
+
 2018-06-22  Luming Yin  <luming_yin@apple.com>
 
         Expose colorFilterEnabled SPI in WKPreferencesPrivate.h

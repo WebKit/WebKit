@@ -303,16 +303,16 @@ void PlaybackSessionManagerProxy::invalidate()
     m_page->process().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->pageID());
     m_page = nullptr;
 
-    for (auto& tuple : m_contextMap.values()) {
+    auto contextMap = WTFMove(m_contextMap);
+    m_clientCounts.clear();
+
+    for (auto& tuple : contextMap.values()) {
         RefPtr<PlaybackSessionModelContext> model;
         RefPtr<PlatformPlaybackSessionInterface> interface;
         std::tie(model, interface) = tuple;
 
         interface->invalidate();
     }
-
-    m_contextMap.clear();
-    m_clientCounts.clear();
 }
 
 PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::createModelAndInterface(uint64_t contextId)
