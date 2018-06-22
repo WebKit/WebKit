@@ -37,6 +37,7 @@
 #ifdef _WIN32
 #include <fcntl.h>
 #include <io.h>
+#include <windows.h>
 #endif
 
 using namespace ImageDiff;
@@ -136,3 +137,10 @@ int main(int argc, const char* argv[])
 
     return EXIT_SUCCESS;
 }
+
+#ifdef _WIN32
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
+{
+    return main(argc, argv);
+}
+#endif

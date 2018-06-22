@@ -1,3 +1,17 @@
+2018-06-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] ImageDiff should use DLLLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=186927
+
+        ImageDiff should use DLLLauncher to find DLLs under WEBKIT_LIBRARIES, in the same way as DRT & TestWebKitAPI.
+
+        Reviewed by Per Arne Vollan.
+
+        * ImageDiff/CMakeLists.txt:
+        * ImageDiff/ImageDiff.cpp:
+        (dllLauncherEntryPoint):
+        * ImageDiff/PlatformWin.cmake:
+
 2018-06-22  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [style] Fix --git-index option for check-webkit-style command
