@@ -402,10 +402,10 @@ public:
 #endif
 
     struct FullscreenInsets {
-        float top;
-        float left;
-        float bottom;
-        float right;
+        float top { 0 };
+        float left { 0 };
+        float bottom { 0 };
+        float right { 0 };
     };
     void setFullscreenInsets(FullscreenInsets);
     void setFullscreenAutoHideDelay(double);
