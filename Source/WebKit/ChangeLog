@@ -1,3 +1,50 @@
+2018-06-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS Debug] Multiple resourceLoadStatistics redirect tests are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=183216
+        <rdar://problem/37992317>
+
+        Reviewed by Chris Dumez.
+
+        Improve consistency of test results by make sure that completion handlers written to run
+        on the main thread are only called on the main thread. Add additional assertions to help
+        catch any cases where this invariant is not being honored.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess): Use Completion handler and assert
+        we are on the right thread.
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdate): 
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearPartitioningStateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent): Update to perform callbacks
+        on the main thread (as intended). This function was doing them on a work queue.
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioning): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::clearPartitioningStateForDomains): Ditto.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-06-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r230950): [GTK] WebKit::CoordinatedBackingStoreTile::setBackBuffer(): WebKitWebProcess killed by SIGSEGV (ASSERTION FAILED: it != m_tiles.end())
