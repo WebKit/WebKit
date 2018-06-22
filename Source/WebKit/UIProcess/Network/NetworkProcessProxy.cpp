@@ -82,6 +82,9 @@ NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
 {
     connect();
+
+    if (auto* websiteDataStore = m_processPool.websiteDataStore())
+        m_websiteDataStores.set(websiteDataStore->websiteDataStore().sessionID(), makeRef(websiteDataStore->websiteDataStore()));
 }
 
 NetworkProcessProxy::~NetworkProcessProxy()

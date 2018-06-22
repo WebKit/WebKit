@@ -528,11 +528,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             m_websiteDataStore->websiteDataStore().networkProcessDidCrash();
     }
 
-    if (m_websiteDataStore) {
-        m_networkProcess->addSession(makeRef(m_websiteDataStore->websiteDataStore()));
-        m_websiteDataStore->websiteDataStore().clearPendingCookies();
-    }
-    
     if (withWebsiteDataStore) {
         m_networkProcess->addSession(makeRef(*withWebsiteDataStore));
         withWebsiteDataStore->clearPendingCookies();

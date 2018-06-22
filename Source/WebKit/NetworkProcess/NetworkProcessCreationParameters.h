@@ -28,6 +28,7 @@
 #include "CacheModel.h"
 #include "NetworkSessionCreationParameters.h"
 #include "SandboxExtension.h"
+#include <WebCore/Cookie.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -65,6 +66,7 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(COCOA)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
+    Vector<WebCore::Cookie> defaultSessionPendingCookies;
 #if PLATFORM(IOS)
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;

@@ -269,6 +269,10 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(WTFMove(parameters.defaultSessionParameters)));
 
+    auto* defaultSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID());
+    for (const auto& cookie : parameters.defaultSessionPendingCookies)
+        defaultSession->networkStorageSession().setCookie(cookie);
+
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
 
