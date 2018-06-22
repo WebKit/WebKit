@@ -1,5 +1,19 @@
 2018-06-22  Jer Noble  <jer.noble@apple.com>
 
+        [Fullscreen] Home indicator should show and hide with status bar
+        https://bugs.webkit.org/show_bug.cgi?id=186942
+        <rdar://problem/41302190>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController showUI]):
+        (-[WKFullScreenViewController hideUI]):
+        (-[WKFullScreenViewController setPrefersHomeIndicatorAutoHidden:]):
+
+2018-06-22  Jer Noble  <jer.noble@apple.com>
+
         [Fullscreen] Add a pinch-to-exit gesture
         https://bugs.webkit.org/show_bug.cgi?id=186821
 

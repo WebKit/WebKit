@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) SEL action;
 @property (copy, nonatomic) NSString *location;
 @property (assign, nonatomic) BOOL prefersStatusBarHidden;
+@property (assign, nonatomic) BOOL prefersHomeIndicatorAutoHidden;
 @property (assign, nonatomic, getter=isPlaying) BOOL playing;
 @property (assign, nonatomic, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property (assign, nonatomic, getter=isAnimating) BOOL animating;

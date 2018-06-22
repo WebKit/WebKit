@@ -119,6 +119,9 @@ private:
     CGFloat _nonZeroStatusBarHeight;
 }
 
+@synthesize prefersStatusBarHidden=_prefersStatusBarHidden;
+@synthesize prefersHomeIndicatorAutoHidden=_prefersHomeIndicatorAutoHidden;
+
 #pragma mark - External Interface
 
 - (id)initWithWebView:(WKWebView *)webView
@@ -167,6 +170,7 @@ private:
         [_stackView setHidden:NO];
         [_stackView setAlpha:1];
         self.prefersStatusBarHidden = NO;
+        self.prefersHomeIndicatorAutoHidden = NO;
         [self.view removeConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor];
         [_topConstraint setActive:YES];
@@ -179,11 +183,13 @@ private:
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
+
         [self.view removeConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.topAnchor constant:self.view.safeAreaInsets.top];
         [_topConstraint setActive:YES];
         [_stackView setAlpha:0];
         self.prefersStatusBarHidden = YES;
+        self.prefersHomeIndicatorAutoHidden = YES;
         if (auto* manager = self._manager)
             manager->setFullscreenControlsHidden(true);
     } completion:^(BOOL finished) {
@@ -206,13 +212,17 @@ private:
     [_pipButton setHidden:!playbackSessionModel];
 }
 
-@synthesize prefersStatusBarHidden=_prefersStatusBarHidden;
-
 - (void)setPrefersStatusBarHidden:(BOOL)value
 {
     _prefersStatusBarHidden = value;
     [self setNeedsStatusBarAppearanceUpdate];
     [self _updateWebViewFullscreenInsets];
+}
+
+- (void)setPrefersHomeIndicatorAutoHidden:(BOOL)value
+{
+    _prefersHomeIndicatorAutoHidden = value;
+    [self setNeedsUpdateOfHomeIndicatorAutoHidden];
 }
 
 - (void)setPlaying:(BOOL)isPlaying
