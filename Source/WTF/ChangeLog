@@ -1,3 +1,29 @@
+2018-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] improve get_type() fast path in WEBKIT_DEFINE_TYPE
+        https://bugs.webkit.org/show_bug.cgi?id=186885
+
+        Reviewed by Anders Carlsson.
+
+        This is a backport of glib commit
+        https://gitlab.gnome.org/GNOME/glib/commit/e924f777369710221c3e0a9d7bf40392a27d1fa4
+
+        "The -fstack-protector-strong used in many distributions by default has a
+        rather drastic slowdown of the fast path in generated _get_type()
+        functions using G_DEFINE_* macros. The amount can vary by architecture,
+        GCC version, and compiler flags.
+
+        To work around this, and ensure a higher probability that our fast-path
+        will match what we had previously, we need to break out the slow-path
+        (registering the type) into a secondary function that is not a candidate
+        for inlining.
+
+        This ensures that the common case (type registered, return the GType id)
+        is the hot path and handled in the prologue of the generated assembly even
+        when -fstack-protector-strong is enabled."
+
+        * wtf/glib/WTFGType.h:
+
 2018-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][WPE][Nicosia] Add name for Nicosia Painting Threads
