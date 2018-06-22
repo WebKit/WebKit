@@ -40,6 +40,7 @@ class ScopedArguments final : public GenericArguments<ScopedArguments> {
 private:
     ScopedArguments(VM&, Structure*, WriteBarrier<Unknown>* storage);
     void finishCreation(VM&, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*);
+    using Base = GenericArguments<ScopedArguments>;
 
 public:
     template<typename CellType>

@@ -48,6 +48,8 @@ void ExecutableToCodeBlockEdge::visitChildren(JSCell* cell, SlotVisitor& visitor
 {
     VM& vm = visitor.vm();
     ExecutableToCodeBlockEdge* edge = jsCast<ExecutableToCodeBlockEdge*>(cell);
+    Base::visitChildren(cell, visitor);
+
     CodeBlock* codeBlock = edge->m_codeBlock.get();
     
     // It's possible for someone to hold a pointer to the edge after the edge has cleared its weak

@@ -120,8 +120,6 @@ void ScopedArguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.appendValues(
             thisObject->overflowStorage(), thisObject->storageHeader().totalLength - thisObject->m_table->length());
     }
-
-    GenericArguments<ScopedArguments>::visitChildren(cell, visitor);
 }
 
 Structure* ScopedArguments::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

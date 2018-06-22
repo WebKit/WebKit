@@ -35,6 +35,7 @@ void GenericArguments<Type>::visitChildren(JSCell* thisCell, SlotVisitor& visito
 {
     Type* thisObject = static_cast<Type*>(thisCell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisCell, visitor);
     
     if (thisObject->m_modifiedArgumentsDescriptor)
         visitor.markAuxiliary(thisObject->m_modifiedArgumentsDescriptor.get());

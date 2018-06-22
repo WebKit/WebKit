@@ -86,6 +86,7 @@ Structure* InferredType::createStructure(VM& vm, JSGlobalObject* globalObject, J
 void InferredType::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     InferredType* inferredType = jsCast<InferredType*>(cell);
+    Base::visitChildren(cell, visitor);
     if (inferredType->m_structure)
         visitor.vm().inferredTypesWithFinalizers.add(inferredType);
 }

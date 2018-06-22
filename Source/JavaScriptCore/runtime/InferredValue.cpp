@@ -54,7 +54,8 @@ Structure* InferredValue::createStructure(VM& vm, JSGlobalObject* globalObject, 
 void InferredValue::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     InferredValue* inferredValue = jsCast<InferredValue*>(cell);
-    
+    Base::visitChildren(cell, visitor);
+
     JSValue value = inferredValue->m_value.get();
     if (!value)
         return;

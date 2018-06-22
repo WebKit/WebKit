@@ -1,3 +1,58 @@
+2018-06-22  Keith Miller  <keith_miller@apple.com>
+
+        We should call visitChildren on Base not the exact typename
+        https://bugs.webkit.org/show_bug.cgi?id=186928
+
+        Reviewed by Mark Lam.
+
+        A lot of places were not properly calling visitChildren on their
+        superclass. For most of them it didn't matter because they had
+        immortal structures. If code changed in the future this might
+        break things however.
+
+        Also, block off more of the MethodTable for GetterSetter objects.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        (JSC::ExecutableToCodeBlockEdge::visitChildren):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::visitChildren):
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::visitChildren):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::visitChildren):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::visitChildren):
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildren):
+        * runtime/GetterSetter.h:
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::visitChildren):
+        * runtime/InferredTypeTable.cpp:
+        (JSC::InferredTypeTable::visitChildren):
+        * runtime/InferredValue.cpp:
+        (JSC::InferredValue::visitChildren):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::visitChildren):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::visitChildren):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::visitChildren):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::visitChildren):
+        * runtime/ScopedArguments.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::visitChildren):
+
 2018-06-20  Darin Adler  <darin@apple.com>
 
         [Cocoa] Use the isDirectory: variants of NSURL methods more to eliminate unnecessary file system activity

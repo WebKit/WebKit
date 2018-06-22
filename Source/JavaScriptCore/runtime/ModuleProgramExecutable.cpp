@@ -90,7 +90,7 @@ void ModuleProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ModuleProgramExecutable* thisObject = jsCast<ModuleProgramExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    ScriptExecutable::visitChildren(thisObject, visitor);
+    Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_unlinkedModuleProgramCodeBlock);
     visitor.append(thisObject->m_moduleEnvironmentSymbolTable);
     visitor.append(thisObject->m_moduleProgramCodeBlock);

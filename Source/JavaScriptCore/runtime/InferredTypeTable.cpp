@@ -53,6 +53,7 @@ Structure* InferredTypeTable::createStructure(VM& vm, JSGlobalObject* globalObje
 void InferredTypeTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     InferredTypeTable* inferredTypeTable = jsCast<InferredTypeTable*>(cell);
+    Base::visitChildren(cell, visitor);
 
     ConcurrentJSLocker locker(inferredTypeTable->m_lock);
     
