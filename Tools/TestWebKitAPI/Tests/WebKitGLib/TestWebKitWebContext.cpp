@@ -580,11 +580,11 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
         | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
 }
 
-static void consoleMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, WebKitJavascriptResult** result)
+static void consoleMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, Vector<WebKitJavascriptResult*>* result)
 {
+    g_assert(message);
     g_assert(result);
-    g_assert(!*result);
-    *result = webkit_javascript_result_ref(message);
+    result->append(webkit_javascript_result_ref(message));
 }
 
 static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
@@ -596,30 +596,33 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     GUniquePtr<char> jsonURL(g_strdup_printf("file://%s/simple.json", Test::getResourcesDir().data()));
     GUniquePtr<char> xhr(g_strdup_printf("var xhr = new XMLHttpRequest; xhr.open(\"GET\", \"%s\"); xhr.send();", jsonURL.get()));
 
-    WebKitJavascriptResult* consoleMessage = nullptr;
+    Vector<WebKitJavascriptResult*> consoleMessages;
     webkit_user_content_manager_register_script_message_handler(test->m_userContentManager.get(), "console");
-    g_signal_connect(test->m_userContentManager.get(), "script-message-received::console", G_CALLBACK(consoleMessageReceivedCallback), &consoleMessage);
+    g_signal_connect(test->m_userContentManager.get(), "script-message-received::console", G_CALLBACK(consoleMessageReceivedCallback), &consoleMessages);
 
     // By default file access is not allowed, this will show a console message with a cross-origin error.
     GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error);
-    g_assert(consoleMessage);
-    GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(consoleMessage));
-    GRefPtr<GVariant> variant = g_variant_parse(G_VARIANT_TYPE("(uusus)"), messageString.get(), nullptr, nullptr, nullptr);
-    g_assert(variant.get());
-    unsigned level;
-    const char* messageText;
-    g_variant_get(variant.get(), "(uu&su&s)", nullptr, &level, &messageText, nullptr, nullptr);
-    g_assert_cmpuint(level, ==, 3); // Console error message.
-    GUniquePtr<char> expectedErrorMessage(g_strdup_printf("XMLHttpRequest cannot load %s. Cross origin requests are only supported for HTTP.", jsonURL.get()));
-    g_assert_cmpstr(messageText, ==, expectedErrorMessage.get());
-    webkit_javascript_result_unref(consoleMessage);
-    consoleMessage = nullptr;
-    level = 0;
-    messageText = nullptr;
-    variant = nullptr;
+    g_assert_cmpuint(consoleMessages.size(), ==, 2);
+    Vector<GUniquePtr<char>, 2> expectedMessages;
+    expectedMessages.append(g_strdup("Cross origin requests are only supported for HTTP."));
+    expectedMessages.append(g_strdup_printf("XMLHttpRequest cannot load %s due to access control checks.", jsonURL.get()));
+    unsigned i = 0;
+    for (auto* consoleMessage : consoleMessages) {
+        g_assert(consoleMessage);
+        GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(consoleMessage));
+        GRefPtr<GVariant> variant = g_variant_parse(G_VARIANT_TYPE("(uusus)"), messageString.get(), nullptr, nullptr, nullptr);
+        g_assert(variant.get());
+        unsigned level;
+        const char* messageText;
+        g_variant_get(variant.get(), "(uu&su&s)", nullptr, &level, &messageText, nullptr, nullptr);
+        g_assert_cmpuint(level, ==, 3); // Console error message.
+        g_assert_cmpstr(messageText, ==, expectedMessages[i++].get());
+        webkit_javascript_result_unref(consoleMessage);
+    }
+    consoleMessages.clear();
 
     // Allow file access from file URLs.
     webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), TRUE);
@@ -635,15 +638,22 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error);
-    g_assert(consoleMessage);
-    variant = g_variant_parse(G_VARIANT_TYPE("(uusus)"), messageString.get(), nullptr, nullptr, nullptr);
-    g_assert(variant.get());
-    g_variant_get(variant.get(), "(uu&su&s)", nullptr, &level, &messageText, nullptr, nullptr);
-    g_assert_cmpuint(level, ==, 3); // Console error message.
-    g_assert_cmpstr(messageText, ==, expectedErrorMessage.get());
-    webkit_javascript_result_unref(consoleMessage);
+    i = 0;
+    for (auto* consoleMessage : consoleMessages) {
+        g_assert(consoleMessage);
+        GUniquePtr<char> messageString(WebViewTest::javascriptResultToCString(consoleMessage));
+        GRefPtr<GVariant> variant = g_variant_parse(G_VARIANT_TYPE("(uusus)"), messageString.get(), nullptr, nullptr, nullptr);
+        g_assert(variant.get());
+        unsigned level;
+        const char* messageText;
+        g_variant_get(variant.get(), "(uu&su&s)", nullptr, &level, &messageText, nullptr, nullptr);
+        g_assert_cmpuint(level, ==, 3); // Console error message.
+        g_assert_cmpstr(messageText, ==, expectedMessages[i++].get());
+        webkit_javascript_result_unref(consoleMessage);
+    }
+    consoleMessages.clear();
 
-    g_signal_handlers_disconnect_matched(test->m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, &consoleMessage);
+    g_signal_handlers_disconnect_matched(test->m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, &consoleMessages);
     webkit_user_content_manager_unregister_script_message_handler(test->m_userContentManager.get(), "console");
 
     webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), FALSE);

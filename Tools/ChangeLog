@@ -1,5 +1,15 @@
 2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GLib test /webkit/WebKitSecurityManager/file-xhr after r231000
+
+        We are now receiving two console messages instead of one. Simply update the test to check both messages.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (consoleMessageReceivedCallback):
+        (testWebContextSecurityFileXHR):
+
+2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GLib gardening. Update expectations of TestSSL.
 
         /webkit/WebKitWebView/tls-errors-policy and /webkit/WebKitWebView/load-failed-with-tls-errors are failing only
