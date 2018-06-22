@@ -59,7 +59,7 @@ static NSBundle *passKitBundle()
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
 #if PLATFORM(MAC)
-        passKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/PassKit.framework"]];
+        passKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/PassKit.framework" isDirectory:YES]];
 #else
         dlopen("/System/Library/Frameworks/PassKit.framework/PassKit", RTLD_NOW);
         passKitBundle = [NSBundle bundleForClass:NSClassFromString(@"PKPaymentAuthorizationViewController")];

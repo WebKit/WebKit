@@ -117,7 +117,7 @@ void activateFonts()
 
     NSMutableArray *fontURLs = [NSMutableArray array];
     for (unsigned i = 0; fontFileNames[i]; ++i) {
-        NSURL *fontURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]]];
+        NSURL *fontURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]] isDirectory:NO];
         [fontURLs addObject:[fontURL absoluteURL]];
     }
 
@@ -136,7 +136,7 @@ void activateFonts()
 void installFakeHelvetica(WKStringRef configuration)
 {
     RetainPtr<CFStringRef> configurationString = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, configuration));
-    NSURL *resourceURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithFormat:@"FakeHelvetica-%@.ttf", configurationString.get()]];
+    NSURL *resourceURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithFormat:@"FakeHelvetica-%@.ttf", configurationString.get()] isDirectory:NO];
     CFErrorRef error = nullptr;
     CTFontManagerRegisterFontsForURL(static_cast<CFURLRef>(resourceURL), kCTFontManagerScopeProcess, &error);
 }

@@ -1,3 +1,14 @@
+2018-06-20  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Use the isDirectory: variants of NSURL methods more to eliminate unnecessary file system activity
+        https://bugs.webkit.org/show_bug.cgi?id=186875
+
+        Reviewed by Anders Carlsson.
+
+        * platform/cocoa/ThemeCocoa.mm:
+        (WebCore::passKitBundle): Use isDirectory:YES when creating a URL pointing to a framework,
+        since frameworks are directories.
+
 2018-06-22  Miguel Gomez  <magomez@igalia.com>
 
         [WPE][ThreadedRendering] WPE crashes rendering SVG content when using ThreadedRendering

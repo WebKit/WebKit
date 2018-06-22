@@ -108,7 +108,7 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
     static NSURL *tempURL;
     
     dispatch_once(&onceToken, ^{
-        NSURL *url = [NSURL fileURLWithPath:NSTemporaryDirectory()];
+        NSURL *url = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
         if (!url)
             RELEASE_ASSERT_NOT_REACHED();
         

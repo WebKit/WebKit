@@ -706,7 +706,7 @@ static void testObjectiveCAPIMain()
         context.exceptionHandler = ^(JSContext *, JSValue *exception) {
             exceptionSourceURL = [exception[@"sourceURL"] toString];
         };
-        NSURL *url = [NSURL fileURLWithPath:@"/foo/bar.js"];
+        NSURL *url = [NSURL fileURLWithPath:@"/foo/bar.js" isDirectory:NO];
         [context evaluateScript:@"!@#$%^&*() THIS IS NOT VALID JAVASCRIPT SYNTAX !@#$%^&*()" withSourceURL:url];
         checkResult(@"evaluateScript:withSourceURL: exception has expected sourceURL", [exceptionSourceURL isEqualToString:[url absoluteString]]);
     }

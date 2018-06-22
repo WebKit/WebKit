@@ -656,7 +656,7 @@ String WebInspectorProxy::inspectorPageURL()
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
     ASSERT([path length]);
 
-    return [[NSURL fileURLWithPath:path] absoluteString];
+    return [[NSURL fileURLWithPath:path isDirectory:NO] absoluteString];
 }
 
 String WebInspectorProxy::inspectorTestPageURL()
@@ -670,7 +670,7 @@ String WebInspectorProxy::inspectorTestPageURL()
     if (!path)
         return String();
 
-    return [[NSURL fileURLWithPath:path] absoluteString];
+    return [[NSURL fileURLWithPath:path isDirectory:NO] absoluteString];
 }
 
 String WebInspectorProxy::inspectorBaseURL()
@@ -681,7 +681,7 @@ String WebInspectorProxy::inspectorBaseURL()
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] resourcePath];
     ASSERT([path length]);
 
-    return [[NSURL fileURLWithPath:path] absoluteString];
+    return [[NSURL fileURLWithPath:path isDirectory:YES] absoluteString];
 }
 
 } // namespace WebKit

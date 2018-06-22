@@ -45,7 +45,7 @@ static String webInspectorUILocalizedStringsURL()
 
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"localizedStrings" ofType:@"js"];
     if (path.length)
-        return [[NSURL fileURLWithPath:path] absoluteString];
+        return [[NSURL fileURLWithPath:path isDirectory:NO] absoluteString];
 
     return String();
 }

@@ -1,3 +1,38 @@
+2018-06-20  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Use the isDirectory: variants of NSURL methods more to eliminate unnecessary file system activity
+        https://bugs.webkit.org/show_bug.cgi?id=186875
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::tempDirectoryFileSystemRepresentation): Use isDirectory:YES to create a URL
+        to the temporary directory.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::namesOfPromisedFilesDroppedAtDestination): Use isDirectory:NO to create a URL
+        pointing to the write location.
+        * UIProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm:
+        (WebKit::LocalStorageDatabaseTracker::platformMaybeExcludeFromBackup const): Use isDirectory:YES to
+        create a URL for the local storage directory.
+        * UIProcess/ios/ResourceLoadStatisticsPersistentStorageIOS.mm:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::excludeFromBackup const): Use isDirectory:NO to
+        create a URL for the storage directory.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _prepareToDragPromisedBlob:]): Use isDirectory:NO to create a URL for the temporary
+        file location.
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _uploadItemForImageData:imageName:successBlock:failureBlock:]): Use isDirectory:NO
+        to create a URL for the image file to upload.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectorPageURL): Use isDirectory:NO to create a URL for the HTML file.
+        (WebKit::WebInspectorProxy::inspectorTestPageURL): Ditto.
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Ditto.
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::createIconForFiles): Use isDirectory:NO to create a URL for the image file.
+        * WebProcess/WebPage/mac/WebInspectorUIMac.mm:
+        (WebKit::webInspectorUILocalizedStringsURL): Use isDirectory:NO to create a URL for the localized
+        strings file.
+
 2018-06-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r232995.

@@ -1,3 +1,13 @@
+2018-06-20  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Use the isDirectory: variants of NSURL methods more to eliminate unnecessary file system activity
+        https://bugs.webkit.org/show_bug.cgi?id=186875
+
+        Reviewed by Anders Carlsson.
+
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain): Use isDirectory:NO when creating a URL for a JavaScript file.
+
 2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: use a dictionary for session capabilities in StartAutomationSession message
