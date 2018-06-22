@@ -2142,6 +2142,8 @@ imported/w3c/web-platform-tests/css/css-pseudo/first-letter-property-whitelist.h
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Pass Failure ]
 
+webkit.org/b/186938 performance-api/performance-observer-no-document-leak.html [ Skip ]
+
 webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAll.html [ Pass Failure ]
 
 webkit.org/b/186848 imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.html [ Pass Failure ]
