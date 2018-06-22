@@ -1,3 +1,14 @@
+2018-06-22  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r231850): Cookie file cannot be read or written by network process
+        https://bugs.webkit.org/show_bug.cgi?id=186806
+        <rdar://problem/41113791>
+
+        Unreviewed. Fix failure after r233084 by adding missing initialization.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-06-22  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] Home indicator should show and hide with status bar

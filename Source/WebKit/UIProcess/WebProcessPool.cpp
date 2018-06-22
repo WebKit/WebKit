@@ -466,7 +466,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         // We should separate the concept of the default session from the currently used persistent session.
         parameters.defaultSessionParameters.sessionID = PAL::SessionID::defaultSessionID();
     }
-    
+
+    if (m_websiteDataStore) {
+        parameters.defaultSessionPendingCookies = copyToVector(m_websiteDataStore->websiteDataStore().pendingCookies());
+        m_websiteDataStore->websiteDataStore().clearPendingCookies();
+    }
+
     parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
 
     parameters.cacheModel = cacheModel();
