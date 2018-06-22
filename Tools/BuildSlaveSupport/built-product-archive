@@ -220,6 +220,13 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
 
         removeDirectoryIfExists(thinDirectory)
         copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
+
+        # Save WinCairoRequirements version for test bot use
+        if platform == 'wincairo':
+            shutil.copy(
+                os.path.join(os.getenv('WEBKIT_LIBRARIES'), 'WinCairoRequirements.zip.version'),
+                os.path.join(thinDirectory, 'WinCairoRequirements.zip.config'))
+
         if createZip(thinDirectory, configuration):
             return 1
 
@@ -270,7 +277,12 @@ def extractBuiltProduct(configuration, platform):
         return unzipArchive(_topLevelBuildDirectory, configuration)
     elif platform in ('win', 'gtk', 'wpe', 'wincairo'):
         print 'Extracting', _configurationBuildDirectory
-        return unzipArchive(_configurationBuildDirectory, configuration)
+        if unzipArchive(_configurationBuildDirectory, configuration)
+            return 1
+
+        # Restore WinCairoRequirements version for test bot use
+        if platform == 'wincairo':
+            shutil.move(os.path.join(_configurationBuildDirectory, 'WinCairoRequirements.zip.config'), os.getenv('WEBKIT_LIBRARIES'))
 
 
 if __name__ == '__main__':

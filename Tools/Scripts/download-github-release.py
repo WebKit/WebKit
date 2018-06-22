@@ -31,12 +31,13 @@ import urllib2
 
 PUBLIC_GITHUB_API_ENDPOINT = 'https://api.github.com/'
 
-DESCRIPTION = '''Downloads the latest release binary from a GitHub repository.
+DESCRIPTION = '''Downloads a release binary from a GitHub repository.
+(Requests the latest release unless a specific tag is provided.)
 
 Intended for download of vswhere.exe and WinCairoRequirements.zip,
 but may be used for arbitrary binaries / repositories.
 
-Checks whether the latest version already exists in the output directory
+Checks whether the desired version already exists in the output directory
 (by looking for a .version file saved alongside the release binary) --
 if so, download is skipped; otherwise any existing version is overwritten.
 '''
@@ -56,11 +57,13 @@ def parse_args(argv):
     parser.add_argument('-o', '--output-dir', default='.', help='output directory (defaults to working directory)')
     parser.add_argument('-e', '--endpoint', default=PUBLIC_GITHUB_API_ENDPOINT, help='GitHub API endpoint (defaults to api.github.com)')
     parser.add_argument('-t', '--token', default=None, help='GitHub API OAuth token (for private repos/endpoints)')
+    parser.add_argument('-r', '--release-tag', default=None, help='release tag to download (defaults to latest)')
     return parser.parse_args(argv)
 
 
-def find_latest_release(endpoint, repo, filename, token):
-    url = '{}/repos/{}/releases/latest'.format(endpoint.rstrip('/'), repo)
+def find_release(endpoint, repo, filename, token, tag):
+    release_name = 'tags/{}'.format(tag) if tag else 'latest'
+    url = '{}/repos/{}/releases/{}'.format(endpoint.rstrip('/'), repo, release_name)
 
     request = urllib2.Request(url)
     request.add_header('Accept', 'application/vnd.github.v3+json')
@@ -118,10 +121,11 @@ def main(argv):
     else:
         print('No existing release found.')
 
-    print('Seeking latest release from {}...'.format(args.repo))
-    release_url, latest_version_info = find_latest_release(args.endpoint, args.repo, args.filename, args.token)
+    release_title = 'release "{}"'.format(args.release_tag) if args.release_tag else 'latest release'
+    print('Seeking {} from {}...'.format(release_title, args.repo))
+    release_url, target_version_info = find_release(args.endpoint, args.repo, args.filename, args.token, args.release_tag)
 
-    if not latest_version_info:
+    if not target_version_info:
         if existing_version_info:
             print('Falling back to existing release!')
             return Status.USING_EXISTING
@@ -129,9 +133,9 @@ def main(argv):
         print('No release found!')
         return Status.COULD_NOT_FIND
 
-    print('Found latest release: {}'.format(latest_version_info['tag_name']))
+    print('Found release to download: {}'.format(target_version_info['tag_name']))
 
-    if latest_version_info == existing_version_info:
+    if target_version_info == existing_version_info:
         print('Already up-to-date!')
         return Status.UP_TO_DATE
 
@@ -140,7 +144,7 @@ def main(argv):
 
     print('Downloading to {}...'.format(os.path.abspath(args.output_dir)))
     download_release(release_url, binary_path, args.token)
-    save_version_info(version_info_path, latest_version_info)
+    save_version_info(version_info_path, target_version_info)
     print('Done!')
 
     return Status.DOWNLOADED

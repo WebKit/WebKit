@@ -28,7 +28,7 @@ import sys
 import os
 import stat
 
-download = importlib.import_module('download-latest-github-release')
+download = importlib.import_module('download-github-release')
 
 repo = 'Microsoft/vswhere'
 file = 'vswhere.exe'

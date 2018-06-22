@@ -1,3 +1,24 @@
+2018-06-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo][Buildbot] Test bots should use same WinCairoRequirements version as the triggering build
+        https://bugs.webkit.org/show_bug.cgi?id=186857
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+        (extractBuiltProduct):
+        Save and restore the WinCairoRequirements version using the build archive.
+
+        * Scripts/download-github-release.py: Renamed from Tools/Scripts/download-latest-github-release.py.
+        Generalize download script -- get the latest version by default, but allow an arbitrary version to be specified.
+
+        * Scripts/update-vswhere.py:
+        Consume renamed script.
+
+        * Scripts/update-webkit-wincairo-libs.py:
+        Consume renamed script and specify a version to download when a config file is present.
+
 2018-06-20  Darin Adler  <darin@apple.com>
 
         [Cocoa] Use the isDirectory: variants of NSURL methods more to eliminate unnecessary file system activity

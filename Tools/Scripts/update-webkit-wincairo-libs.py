@@ -24,17 +24,25 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import importlib
+import json
 import os.path
 import sys
 import zipfile
 
-download = importlib.import_module('download-latest-github-release')
+download = importlib.import_module('download-github-release')
 
 repo = 'WebKitForWindows/WinCairoRequirements'
 file = 'WinCairoRequirements.zip'
 output = 'WebKitLibraries/win'
+options = [repo, file, '-o', output]
 
-result = download.main(['-o', output, repo, file])
+# Check if there's a specific version to request
+config_path = os.path.join(output, file) + '.config'
+if os.path.exists(config_path):
+    with open(config_path) as config_file:
+        options += ['-r', json.load(config_file)['tag_name']]
+
+result = download.main(options)
 
 # Only unzip if required
 if result == download.Status.DOWNLOADED:
