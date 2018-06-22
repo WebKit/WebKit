@@ -1474,14 +1474,17 @@ void JSObject::convertDoubleToContiguousWhilePerformingSetIndex(VM& vm, unsigned
     setIndexQuickly(vm, index, value);
 }
 
-ContiguousJSValues JSObject::ensureWritableInt32Slow(VM& vm)
+ContiguousJSValues JSObject::tryMakeWritableInt32Slow(VM& vm)
 {
     ASSERT(inherits(vm, info()));
 
     if (isCopyOnWrite(indexingMode())) {
-        convertFromCopyOnWrite(vm);
-        if (hasInt32(indexingMode()))
+        if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, Int32Shape) == Int32Shape) {
+            ASSERT(hasInt32(indexingMode()));
+            convertFromCopyOnWrite(vm);
             return butterfly()->contiguousInt32();
+        }
+        return ContiguousJSValues();
     }
 
     if (structure(vm)->hijacksIndexingHeader())
@@ -1507,14 +1510,18 @@ ContiguousJSValues JSObject::ensureWritableInt32Slow(VM& vm)
     }
 }
 
-ContiguousDoubles JSObject::ensureWritableDoubleSlow(VM& vm)
+ContiguousDoubles JSObject::tryMakeWritableDoubleSlow(VM& vm)
 {
     ASSERT(inherits(vm, info()));
 
     if (isCopyOnWrite(indexingMode())) {
-        convertFromCopyOnWrite(vm);
-        if (hasDouble(indexingMode()))
-            return butterfly()->contiguousDouble();
+        if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, DoubleShape) == DoubleShape) {
+            convertFromCopyOnWrite(vm);
+            if (hasDouble(indexingMode()))
+                return butterfly()->contiguousDouble();
+            ASSERT(hasInt32(indexingMode()));
+        } else
+            return ContiguousDoubles();
     }
 
     if (structure(vm)->hijacksIndexingHeader())
@@ -1542,14 +1549,18 @@ ContiguousDoubles JSObject::ensureWritableDoubleSlow(VM& vm)
     }
 }
 
-ContiguousJSValues JSObject::ensureWritableContiguousSlow(VM& vm)
+ContiguousJSValues JSObject::tryMakeWritableContiguousSlow(VM& vm)
 {
     ASSERT(inherits(vm, info()));
 
     if (isCopyOnWrite(indexingMode())) {
-        convertFromCopyOnWrite(vm);
-        if (hasContiguous(indexingMode()))
-            return butterfly()->contiguous();
+        if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, ContiguousShape) == ContiguousShape) {
+            convertFromCopyOnWrite(vm);
+            if (hasContiguous(indexingMode()))
+                return butterfly()->contiguous();
+            ASSERT(hasInt32(indexingMode()) || hasDouble(indexingMode()));
+        } else
+            return ContiguousJSValues();
     }
 
     if (structure(vm)->hijacksIndexingHeader())

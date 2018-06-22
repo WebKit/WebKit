@@ -1,3 +1,33 @@
+2018-06-22  Saam Barati  <sbarati@apple.com>
+
+        ensureWritableX should only convert away from CoW when it will succeed
+        https://bugs.webkit.org/show_bug.cgi?id=186898
+
+        Reviewed by Keith Miller.
+
+        Otherwise, when we OSR exit, we'll end up profiling the array after
+        it has been converted away from CoW. It's better for the ArrayProfile
+        to see the array as it's still in CoW mode.
+        
+        This patch also renames ensureWritableX to tryMakeWritableX since these
+        were never really "ensure" operations -- they may fail and return null.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::tryMakeWritableInt32Slow):
+        (JSC::JSObject::tryMakeWritableDoubleSlow):
+        (JSC::JSObject::tryMakeWritableContiguousSlow):
+        (JSC::JSObject::ensureWritableInt32Slow): Deleted.
+        (JSC::JSObject::ensureWritableDoubleSlow): Deleted.
+        (JSC::JSObject::ensureWritableContiguousSlow): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::tryMakeWritableInt32):
+        (JSC::JSObject::tryMakeWritableDouble):
+        (JSC::JSObject::tryMakeWritableContiguous):
+        (JSC::JSObject::ensureWritableInt32): Deleted.
+        (JSC::JSObject::ensureWritableDouble): Deleted.
+        (JSC::JSObject::ensureWritableContiguous): Deleted.
+
 2018-06-22  Keith Miller  <keith_miller@apple.com>
 
         We should call visitChildren on Base not the exact typename

@@ -1888,7 +1888,7 @@ char* JIT_OPERATION operationEnsureInt32(ExecState* exec, JSCell* cell)
     if (!cell->isObject())
         return 0;
 
-    auto* result = reinterpret_cast<char*>(asObject(cell)->ensureWritableInt32(vm).data());
+    auto* result = reinterpret_cast<char*>(asObject(cell)->tryMakeWritableInt32(vm).data());
     ASSERT((!isCopyOnWrite(asObject(cell)->indexingMode()) && hasInt32(cell->indexingMode())) || !result);
     return result;
 }
@@ -1901,7 +1901,7 @@ char* JIT_OPERATION operationEnsureDouble(ExecState* exec, JSCell* cell)
     if (!cell->isObject())
         return 0;
 
-    auto* result = reinterpret_cast<char*>(asObject(cell)->ensureWritableDouble(vm).data());
+    auto* result = reinterpret_cast<char*>(asObject(cell)->tryMakeWritableDouble(vm).data());
     ASSERT((!isCopyOnWrite(asObject(cell)->indexingMode()) && hasDouble(cell->indexingMode())) || !result);
     return result;
 }
@@ -1914,7 +1914,7 @@ char* JIT_OPERATION operationEnsureContiguous(ExecState* exec, JSCell* cell)
     if (!cell->isObject())
         return 0;
     
-    auto* result = reinterpret_cast<char*>(asObject(cell)->ensureWritableContiguous(vm).data());
+    auto* result = reinterpret_cast<char*>(asObject(cell)->tryMakeWritableContiguous(vm).data());
     ASSERT((!isCopyOnWrite(asObject(cell)->indexingMode()) && hasContiguous(cell->indexingMode())) || !result);
     return result;
 }

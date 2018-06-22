@@ -822,34 +822,34 @@ public:
     // indexing should be sparse, we're having a bad time, or because
     // we already have a more general form of storage (double,
     // contiguous, array storage).
-    ContiguousJSValues ensureWritableInt32(VM& vm)
+    ContiguousJSValues tryMakeWritableInt32(VM& vm)
     {
         if (LIKELY(hasInt32(indexingType()) && !isCopyOnWrite(indexingMode())))
             return m_butterfly->contiguousInt32();
             
-        return ensureWritableInt32Slow(vm);
+        return tryMakeWritableInt32Slow(vm);
     }
         
     // Returns 0 if double storage cannot be created - either because
     // indexing should be sparse, we're having a bad time, or because
     // we already have a more general form of storage (contiguous,
     // or array storage).
-    ContiguousDoubles ensureWritableDouble(VM& vm)
+    ContiguousDoubles tryMakeWritableDouble(VM& vm)
     {
         if (LIKELY(hasDouble(indexingType()) && !isCopyOnWrite(indexingMode())))
             return m_butterfly->contiguousDouble();
             
-        return ensureWritableDoubleSlow(vm);
+        return tryMakeWritableDoubleSlow(vm);
     }
         
     // Returns 0 if contiguous storage cannot be created - either because
     // indexing should be sparse or because we're having a bad time.
-    ContiguousJSValues ensureWritableContiguous(VM& vm)
+    ContiguousJSValues tryMakeWritableContiguous(VM& vm)
     {
         if (LIKELY(hasContiguous(indexingType()) && !isCopyOnWrite(indexingMode())))
             return m_butterfly->contiguous();
             
-        return ensureWritableContiguousSlow(vm);
+        return tryMakeWritableContiguousSlow(vm);
     }
 
     // Ensure that the object is in a mode where it has array storage. Use
@@ -1059,9 +1059,9 @@ private:
         
     bool ensureLengthSlow(VM&, unsigned length);
         
-    ContiguousJSValues ensureWritableInt32Slow(VM&);
-    ContiguousDoubles ensureWritableDoubleSlow(VM&);
-    ContiguousJSValues ensureWritableContiguousSlow(VM&);
+    ContiguousJSValues tryMakeWritableInt32Slow(VM&);
+    ContiguousDoubles tryMakeWritableDoubleSlow(VM&);
+    ContiguousJSValues tryMakeWritableContiguousSlow(VM&);
     JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageSlow(VM&);
 
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
