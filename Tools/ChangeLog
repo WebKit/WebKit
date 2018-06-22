@@ -1,5 +1,16 @@
 2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebDriver: use a dictionary for session capabilities in StartAutomationSession message
+        https://bugs.webkit.org/show_bug.cgi?id=186915
+
+        Reviewed by Žan Doberšek.
+
+        Update /webkit/WebKitAutomationSession/request-session to use the new StartAutomationSession message signature.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+
+2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GLib test /webkit/WebKitSecurityManager/file-xhr after r231000
 
         We are now receiving two console messages instead of one. Simply update the test to check both messages.

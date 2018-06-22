@@ -208,7 +208,7 @@ public:
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
         g_dbus_connection_call(m_connection.get(), nullptr, "/org/webkit/Inspector", "org.webkit.Inspector",
-            "StartAutomationSession", g_variant_new("(s)", sessionID), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr,
+            "StartAutomationSession", g_variant_new("(sa{sv})", sessionID, nullptr), nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START, -1, nullptr,
             [](GObject* source, GAsyncResult* result, gpointer userData) {
                 auto* test = static_cast<AutomationTest*>(userData);
                 if (!test->m_session)

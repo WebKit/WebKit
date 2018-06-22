@@ -80,6 +80,7 @@ private:
     void launchBrowser(Function<void (std::optional<String> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
     bool matchCapabilities(GVariant*);
+    GVariant* buildSessionCapabilities() const;
     void setupConnection(GRefPtr<GDBusConnection>&&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);

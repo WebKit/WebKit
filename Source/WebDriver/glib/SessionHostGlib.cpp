@@ -261,25 +261,40 @@ bool SessionHost::matchCapabilities(GVariant* capabilities)
     return didMatch;
 }
 
+GVariant* SessionHost::buildSessionCapabilities() const
+{
+    if (!m_capabilities.acceptInsecureCerts && !m_capabilities.certificates)
+        return nullptr;
+
+    GVariantBuilder builder;
+    g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
+    if (m_capabilities.acceptInsecureCerts)
+        g_variant_builder_add(&builder, "{sv}", "acceptInsecureCerts", g_variant_new_boolean(m_capabilities.acceptInsecureCerts.value()));
+
+    if (m_capabilities.certificates) {
+        GVariantBuilder arrayBuilder;
+        g_variant_builder_init(&arrayBuilder, G_VARIANT_TYPE("a(ss)"));
+        for (auto& certificate : *m_capabilities.certificates) {
+            g_variant_builder_add_value(&arrayBuilder, g_variant_new("(ss)",
+                certificate.first.utf8().data(), certificate.second.utf8().data()));
+        }
+        g_variant_builder_add(&builder, "{sv}", "certificates", g_variant_builder_end(&arrayBuilder));
+    }
+
+    return g_variant_builder_end(&builder);
+}
+
 void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
 {
     ASSERT(m_dbusConnection);
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTFMove(completionHandler);
     m_sessionID = createCanonicalUUIDString();
-    GVariantBuilder builder;
-    g_variant_builder_init(&builder, G_VARIANT_TYPE("a(ss)"));
-    if (m_capabilities.certificates) {
-        for (auto& certificate : *m_capabilities.certificates) {
-            g_variant_builder_add_value(&builder, g_variant_new("(ss)",
-                certificate.first.utf8().data(), certificate.second.utf8().data()));
-        }
-    }
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH,
         INSPECTOR_DBUS_INTERFACE,
         "StartAutomationSession",
-        g_variant_new("(sba(ss))", m_sessionID.utf8().data(), m_capabilities.acceptInsecureCerts.value_or(false), &builder),
+        g_variant_new("(s@a{sv})", m_sessionID.utf8().data(), buildSessionCapabilities()),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
         -1, m_cancellable.get(), [](GObject* source, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;

@@ -1,3 +1,15 @@
+2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: use a dictionary for session capabilities in StartAutomationSession message
+        https://bugs.webkit.org/show_bug.cgi?id=186915
+
+        Reviewed by Žan Doberšek.
+
+        Update StartAutomationSession message handling to receive a dictionary of session capabilities.
+
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::processSessionCapabilities): Helper method to process the session capabilities.
+
 2018-06-21  Mark Lam  <mark.lam@apple.com>
 
         WebKit (JavaScriptCore) compilation error with Clang ≥ 6.
