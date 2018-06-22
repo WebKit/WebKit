@@ -2369,12 +2369,34 @@ void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
     }
 }
 
+void Page::setUseSystemAppearance(bool useSystemAppearance)
+{
+    if (m_useSystemAppearance == useSystemAppearance)
+        return;
+
+    m_useSystemAppearance = useSystemAppearance;
+
+    RenderTheme::singleton().platformColorsDidChange();
+    setNeedsRecalcStyleInAllFrames();
+}
+
 bool Page::defaultAppearance() const
 {
     FrameView* view = mainFrame().view();
     if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"))
         return true;
     return m_defaultAppearance;
+}
+
+void Page::setDefaultAppearance(bool defaultAppearance)
+{
+    // Don't return early, even if m_defaultAppearance == defaultAppearance.
+    // The system appearance might have changed under us, like for accessibility.
+
+    m_defaultAppearance = defaultAppearance;
+
+    RenderTheme::singleton().platformColorsDidChange();
+    setNeedsRecalcStyleInAllFrames();
 }
 
 void Page::setFullscreenInsets(const FloatBoxExtent& insets)

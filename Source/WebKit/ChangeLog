@@ -1,3 +1,16 @@
+2018-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Recalc styles every time defaultAppearance changes.
+        https://bugs.webkit.org/show_bug.cgi?id=186866
+        rdar://problem/41309805
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setDefaultAppearance):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDefaultAppearance):
+
 2018-06-22  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r231850): Cookie file cannot be read or written by network process

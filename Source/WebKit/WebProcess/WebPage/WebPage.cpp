@@ -4193,12 +4193,10 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 {
     corePage()->setUseSystemAppearance(useSystemAppearance);
 }
-    
+
 void WebPage::setDefaultAppearance(bool defaultAppearance)
 {
     corePage()->setDefaultAppearance(defaultAppearance);
-    RenderTheme::singleton().platformColorsDidChange();
-    corePage()->setNeedsRecalcStyleInAllFrames();
 }
 #endif
 

@@ -1,3 +1,18 @@
+2018-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Recalc styles every time defaultAppearance changes.
+        https://bugs.webkit.org/show_bug.cgi?id=186866
+        rdar://problem/41309805
+
+        Reviewed by Tim Horton.
+
+        * page/Page.cpp:
+        (WebCore::Page::setUseSystemAppearance): Added. Recalc styles and update system colors.
+        (WebCore::Page::setDefaultAppearance): Added. Ditto.
+        * page/Page.h:
+        (WebCore::Page::setUseSystemAppearance): Deleted impl.
+        (WebCore::Page::setDefaultAppearance): Deleted impl.
+
 2018-06-22  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Avoid sending SELECT_STREAM events when nothing changed
