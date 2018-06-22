@@ -71,6 +71,12 @@ public:
     template<typename T = void*>
     T dataLocation() const { return Base::template dataLocation<T>(); }
 
+    template<typename T, typename = std::enable_if_t<std::is_base_of<CodeLocationCommon<tag>, T>::value>>
+    operator T()
+    {
+        return T(MacroAssemblerCodePtr<tag>::createFromExecutableAddress(this->executableAddress()));
+    }
+
 protected:
     CodeLocationCommon()
     {

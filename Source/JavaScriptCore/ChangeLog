@@ -1,3 +1,18 @@
+2018-06-21  Mark Lam  <mark.lam@apple.com>
+
+        WebKit (JavaScriptCore) compilation error with Clang ≥ 6.
+        https://bugs.webkit.org/show_bug.cgi?id=185947
+        <rdar://problem/40131933>
+
+        Reviewed by Saam Barati.
+
+        Newer Clang versions (due to C++17 support) is not happy with how I implemented
+        conversions between CodeLocation types.  We'll fix this by adding a conversion
+        operator for converting between CodeLocation types.
+
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationCommon::operator T):
+
 2018-06-21  Saam Barati  <sbarati@apple.com>
 
         Do some CoW cleanup
