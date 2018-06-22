@@ -86,7 +86,7 @@ sub config_add_panels
 sub isReviewFlag($)
 {
     my ($mayBeFlag) = @_;
-    return $mayBeFlag->isa("Bugzilla::Flag") && $mayBeFlag->name() eq "r";
+    return $mayBeFlag->isa("Bugzilla::Flag") && $mayBeFlag->name() eq "review";
 }
 
 __PACKAGE__->NAME;

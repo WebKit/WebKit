@@ -1,3 +1,17 @@
+2018-06-22  Daniel Bates  <dabates@apple.com>
+
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
+        Rubber-stamped by Lucas Forschler.
+
+        Substitute "review" for "r" as the name of the Bugzilla flag to look at to determine
+        if we should CC the feeder EWS on the associated bug.
+
+        * extensions/EWS/Extension.pm:
+        (isReviewFlag):
+
 2018-06-19  Daniel Bates  <dabates@apple.com>
 
         EWS for security bugs
