@@ -1,3 +1,16 @@
+2018-06-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Update xdgmime
+        https://bugs.webkit.org/show_bug.cgi?id=186907
+
+        Reviewed by Carlos Garcia Campos.
+
+        Only one change, fixes https://bugs.freedesktop.org/show_bug.cgi?id=97372.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmimeint.c:
+        (_xdg_binary_or_text_fallback):
+
 2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r232052.

@@ -4,7 +4,7 @@ https://cgit.freedesktop.org/xdg/xdgmime/
 xdgmime is the reference implementation of the Freedesktop.org MIME specification:
 https://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec/
 
-Current version is based on revision f69fd2528ec0ebdbe48983ad3eabd002de7ba2bd
+Current version is based on revision 9c5802b8da56187c5c6abaf70042d14b12d832a9
 cloned from git://anongit.freedesktop.org/xdg/xdgmime.
 
 Changes for the WebKit project:
