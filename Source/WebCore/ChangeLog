@@ -1,3 +1,17 @@
+2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CMake] Generated sources depending on SelectorPseudoClassAndCompatibilityElementMap.in are not regenerated
+        https://bugs.webkit.org/show_bug.cgi?id=186911
+
+        Reviewed by Michael Catanzaro.
+
+        This is causing test fullscreen/fullscreen-env.html to fail since it was added in r233066 in the bots that
+        didn't start a clean build. The problem is that the CMake command to generate
+        SelectorPseudoClassAndCompatibilityElementMap.cpp doesn't depend on
+        SelectorPseudoClassAndCompatibilityElementMap.in.
+
+        * CMakeLists.txt:
+
 2018-06-22  Miguel Gomez  <magomez@igalia.com>
 
         [WPE][ThreadedRendering] WPE crashes rendering some pieces of text when using ThreadedRendering
