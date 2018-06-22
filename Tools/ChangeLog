@@ -1,3 +1,21 @@
+2018-06-22  Daniel Bates  <dabates@apple.com>
+
+        Security EWS: bots fails with exception 'NoneType' object has no attribute 'is_closed'
+        https://bugs.webkit.org/show_bug.cgi?id=186923
+
+        Reviewed by Lucas Forschler.
+
+        Attachments downloaded from the status server (http://webkit-queues.webkit.org) do not
+        have an associated Bug object (i.e. Attachment.bug() is None) and reflect the state they
+        were in, including flags set, at the time they were uploaded to the status server. We
+        will add support for fetching up-to-date status info about the attachment and its bug
+        in <https://bugs.webkit.org/show_bug.cgi?id=186817>. For now, we only check if the
+        bug associated with the patch we are processing is closed if the attachment has a
+        non-None Bug object.
+
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        (EarlyWarningSystemTask.validate):
+
 2018-06-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] ImageDiff should use DLLLauncher

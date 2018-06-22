@@ -41,11 +41,15 @@ class EarlyWarningSystemTask(PatchAnalysisTask):
         self._should_build = should_build
 
     def validate(self):
+        # FIXME: Need a way to ask the status server for latest status of a security bug.
+        # Attachments downloaded from the status server do not have an associated bug and
+        # reflect the Bugzilla state at the time they were uploaded to the status server.
+        # See <https://bugs.webkit.org/show_bug.cgi?id=186817>.
         self._patch = self._delegate.refetch_patch(self._patch)
         if self._patch.is_obsolete():
             self.error = "Patch is obsolete."
             return False
-        if self._patch.bug().is_closed():
+        if self._patch.bug() and self._patch.bug().is_closed():
             self.error = "Bug is already closed."
             return False
         if self._patch.review() == "-":
