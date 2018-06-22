@@ -1,3 +1,11 @@
+2018-06-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed test gardening.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css3/selectors3/html/css3-modsel-175a-expected.png: Added.
+        * platform/wincairo/editing/style/apply-style-iframe-crash-expected.txt: Added.
+
 2018-06-22  Youenn Fablet  <youenn@apple.com>
 
         Incoming G722 doesn't work

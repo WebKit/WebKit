@@ -769,7 +769,7 @@ fast/files/apply-blob-url-to-img-using-open-panel.html [ Timeout ]
 fast/files/apply-blob-url-to-img.html [ Timeout ]
 fast/files/apply-blob-url-to-xhr-using-open-panel.html [ Timeout ]
 fast/files/file-list-test-using-open-panel.html [ Timeout ]
-fast/files/file-reader-abort-using-open-panel.html [ Timeout ]
+fast/files/file-reader-abort-using-open-panel.html [ Skip ]
 fast/files/file-reader-directory-crash-using-open-panel.html [ Timeout ]
 fast/files/filereader-zip-bundle-using-open-panel.html [ Timeout ]
 fast/forms/file/file-input-reset-using-open-panel.html [ Timeout ]
@@ -1164,6 +1164,8 @@ webkit.org/b/185678 animations/keyframes-dynamic.html [ Failure ]
 webkit.org/b/185678 animations/missing-from-to-transforms.html [ Failure ]
 webkit.org/b/185678 animations/missing-from-to.html [ Failure ]
 
+webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
+
 ################################################################################
 ##################       End Animation Issues             ######################
 ################################################################################
@@ -1242,7 +1244,7 @@ ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
-css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
+css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Skip ]
 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]
 css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
 
@@ -1366,6 +1368,8 @@ webkit.org/b/185678 fast/css-generated-content/pseudo-animation.html [ Failure ]
 [ Release ] fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 [ Debug ] fast/dom/HTMLDocument/hasFocus.html [ Skip ]
 
+webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
+
 ################################################################################
 #################            End DOM Issues              #######################
 ################################################################################
@@ -1451,8 +1455,10 @@ editing/spelling/context-menu-suggestions-multiword-selection.html [ Skip ]
 editing/spelling/context-menu-suggestions-subword-selection.html [ Skip ]
 editing/spelling/copy-paste-crash.html [ Skip ]
 editing/spelling/editing-multiple-words-with-markers.html [ Skip ]
+editing/spelling/retro-correction-spelling-markers.html [ Skip ]
 editing/spelling/spelling-double-clicked-word.html [ Skip ]
 editing/spelling/spelling-exactly-selected-word.html [ Skip ]
+editing/spelling/spelling-markers-after-pasting-sentence.html [ Skip ]
 editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
 
@@ -1615,3 +1621,4 @@ workers/bomb.html [ Skip ]
 [ Debug ] js/promises-tests [ Skip ]
 [ Debug ] js/slow-stress [ Skip ]
 [ Debug ] legacy-animation-engine/imported/blink/transitions/unprefixed-transform.html [ Skip ]
+[ Debug ] loader/load-defer-resume-crash.html [ Skip ]
