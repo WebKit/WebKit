@@ -1,3 +1,17 @@
+2018-06-22  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] REGRESSION(W3C): actions for key equivalents are not respected
+        https://bugs.webkit.org/show_bug.cgi?id=186936
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::isSimulatingUserInteraction const):
+        This erroneously reported false unless there was both a mouse and key interaction
+        being dispatched, which is not possible in the current serial event simulation model.
+        As a result, Safari could not tell whether the action came from a simulated event
+        or the user, and thus rejected all key equivalents like Cmd-A,V,C,X.
+
 2018-06-22  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] Exit fullscreen when opening a new tab

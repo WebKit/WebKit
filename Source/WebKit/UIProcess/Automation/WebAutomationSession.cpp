@@ -1411,11 +1411,11 @@ bool WebAutomationSession::shouldAllowGetUserMediaForPage(const WebPageProxy&) c
 bool WebAutomationSession::isSimulatingUserInteraction() const
 {
     if (!m_pendingMouseEventsFlushedCallbacksPerPage.isEmpty())
-        return false;
+        return true;
     if (!m_pendingKeyboardEventsFlushedCallbacksPerPage.isEmpty())
-        return false;
+        return true;
 
-    return true;
+    return false;
 }
 
 SimulatedInputDispatcher& WebAutomationSession::inputDispatcherForPage(WebPageProxy& page)
