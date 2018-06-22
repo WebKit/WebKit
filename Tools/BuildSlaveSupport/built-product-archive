@@ -277,7 +277,7 @@ def extractBuiltProduct(configuration, platform):
         return unzipArchive(_topLevelBuildDirectory, configuration)
     elif platform in ('win', 'gtk', 'wpe', 'wincairo'):
         print 'Extracting', _configurationBuildDirectory
-        if unzipArchive(_configurationBuildDirectory, configuration)
+        if unzipArchive(_configurationBuildDirectory, configuration):
             return 1
 
         # Restore WinCairoRequirements version for test bot use

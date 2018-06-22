@@ -1,3 +1,10 @@
+2018-06-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix syntax error introduced by r233088.
+
+        * BuildSlaveSupport/built-product-archive:
+        (extractBuiltProduct):
+
 2018-06-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo][Buildbot] Test bots should use same WinCairoRequirements version as the triggering build
