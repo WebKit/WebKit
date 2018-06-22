@@ -1,3 +1,21 @@
+2018-06-22  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] Exit fullscreen when opening a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=186826
+        <rdar://problem/40853211>
+
+        Reviewed by Brent Fulgham.
+
+        Make the fullscreen placeholder view a custom UIView, and exit fullscreen when the
+        placeholder is removed from its superview.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenPlaceholderView willMoveToSuperview:]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController placeholderWillMoveToSuperview:]):
+        (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+
 2018-06-22  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build after r233089

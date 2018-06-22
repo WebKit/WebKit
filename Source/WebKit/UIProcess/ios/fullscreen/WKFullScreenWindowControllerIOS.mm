@@ -363,10 +363,27 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 @interface WKFullScreenWindowController () <UIGestureRecognizerDelegate>
 @property (weak, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
+- (void)placeholderWillMoveToSuperview:(UIView *)superview;
 @end
 
+#pragma mark -
+
+@interface WKFullScreenPlaceholderView : UIView
+@property (weak, nonatomic) WKFullScreenWindowController *parent;
+@end
+
+@implementation WKFullScreenPlaceholderView
+- (void)willMoveToSuperview:(UIView *)newSuperview
+{
+    [super viewWillMoveToSuperview:newSuperview];
+    [self.parent placeholderWillMoveToSuperview:newSuperview];
+}
+@end
+
+#pragma mark -
+
 @implementation WKFullScreenWindowController {
-    RetainPtr<UIView> _webViewPlaceholder;
+    RetainPtr<WKFullScreenPlaceholderView> _webViewPlaceholder;
 
     FullScreenState _fullScreenState;
     WKWebViewState _viewState;
@@ -481,7 +498,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _viewState.store(webView.get());
 
-    _webViewPlaceholder = adoptNS([[UIView alloc] init]);
+    _webViewPlaceholder = adoptNS([[WKFullScreenPlaceholderView alloc] init]);
+    [_webViewPlaceholder setParent:self];
     [[_webViewPlaceholder layer] setName:@"Fullscreen Placeholder View"];
 
     WKSnapshotConfiguration* config = nil;
@@ -670,6 +688,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _repaintCallback = VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
         _repaintCallback = nullptr;
+        _webViewPlaceholder.get().parent = nil;
         [_webViewPlaceholder removeFromSuperview];
 
         if (auto* page = [self._webView _page])
@@ -700,6 +719,12 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 {
     if (_fullscreenViewController)
         [_fullscreenViewController videoControlsManagerDidChange];
+}
+
+- (void)placeholderWillMoveToSuperview:(UIView *)superview
+{
+    if (!superview)
+        [self close];
 }
 
 #pragma mark -
@@ -770,6 +795,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     _fullScreenState = ExitingFullScreen;
     [self _completedExitFullScreen];
     RetainPtr<WKWebView> webView = self._webView;
+    _webViewPlaceholder.get().parent = nil;
     replaceViewWithView(_webViewPlaceholder.get(), webView.get());
     if (auto* page = [webView _page])
         page->setSuppressVisibilityUpdates(false);
