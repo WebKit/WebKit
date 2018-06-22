@@ -88,7 +88,6 @@ public:
     void setRepaintCount(int);
     void setContentsLayer(TextureMapperPlatformLayer*);
     void setAnimations(const TextureMapperAnimations&);
-    const TextureMapperAnimations& animations() const { return m_animations; }
     void setBackingStore(TextureMapperBackingStore*);
 
     bool applyAnimationsRecursively(MonotonicTime);

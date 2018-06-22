@@ -1,3 +1,13 @@
+2018-06-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r230950): [GTK] WebKit::CoordinatedBackingStoreTile::setBackBuffer(): WebKitWebProcess killed by SIGSEGV (ASSERTION FAILED: it != m_tiles.end())
+        https://bugs.webkit.org/show_bug.cgi?id=186206
+
+        Unreviewed manual rollout of r230950
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::layerShouldHaveBackingStore):
+
 2018-06-20  Darin Adler  <darin@apple.com>
 
         [Cocoa] Use the isDirectory: variants of NSURL methods more to eliminate unnecessary file system activity

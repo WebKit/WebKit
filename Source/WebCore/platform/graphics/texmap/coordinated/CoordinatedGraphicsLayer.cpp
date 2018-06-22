@@ -1084,8 +1084,7 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 
 bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
 {
-    return drawsContent() && contentsAreVisible() && !m_size.isEmpty()
-        && (!!opacity() || m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity));
+    return drawsContent() && contentsAreVisible() && !m_size.isEmpty();
 }
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const

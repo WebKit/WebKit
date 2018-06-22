@@ -37,8 +37,7 @@ using namespace WebCore;
 
 static bool layerShouldHaveBackingStore(TextureMapperLayer* layer)
 {
-    return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty()
-        && (!!layer->opacity() || layer->animations().hasActiveAnimationsOfType(AnimatedPropertyOpacity));
+    return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty();
 }
 
 CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client)

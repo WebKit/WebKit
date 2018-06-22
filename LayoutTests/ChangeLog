@@ -1,3 +1,12 @@
+2018-06-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r230950): [GTK] WebKit::CoordinatedBackingStoreTile::setBackBuffer(): WebKitWebProcess killed by SIGSEGV (ASSERTION FAILED: it != m_tiles.end())
+        https://bugs.webkit.org/show_bug.cgi?id=186206
+
+        Unreviewed, remove crash expectations for crashes introduced by r230950.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-21  David Fenton  <david_fenton@apple.com>
 
         Skip imported/w3c/web-platform-tests/css/css-display/display-contents-first-letter-002.html.
