@@ -200,6 +200,8 @@ private:
     void setDebugLogggingEnabled(bool enabled) { m_debugLoggingEnabled  = enabled; }
     void setStorageAccessPromptsEnabled(bool enabled) { m_storageAccessPromptsEnabled  = enabled; }
 
+    void flushAndDestroyPersistentStore();
+
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();
 #endif
@@ -225,7 +227,7 @@ private:
     ResourceLoadStatisticsClassifier m_resourceLoadStatisticsClassifier;
 #endif
     Ref<WTF::WorkQueue> m_statisticsQueue;
-    ResourceLoadStatisticsPersistentStorage m_persistentStorage;
+    std::unique_ptr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
     Vector<OperatingDate> m_operatingDates;
 
     UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler;

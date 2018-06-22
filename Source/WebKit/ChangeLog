@@ -1,3 +1,47 @@
+2018-06-22  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebResourceLoadStatisticsStore::mergeStatistics(WTF::Vector<WebCore::ResourceLoadStatistics, 0ul, WTF::CrashOnOverflow, 16ul>&&)
+        https://bugs.webkit.org/show_bug.cgi?id=186905
+        <rdar://problem/41266775>
+
+        Reviewed by Brent Fulgham.
+
+        I believe the crash was caused by the WebResourceLoadStatisticsStore object being dead
+        when mergeStatistics() is called. In particular, the crash was happening when the
+        ResourceLoadStatisticsPersistentStorage's FileMonitor would detect a file change and
+        we would re-sync statistics from the disk. The FileMonitor's lambda function was
+        capturing |this| without ref'ing it, and the FileMonitor monitors the disk and
+        calls the lambda on the background queue, while it gets destroyed on the main thread.
+
+        To make lifetime management less complex, the following changes were made:
+        - The ResourceLoadStatisticsPersistentStorage object is now always constructed / used
+          and destroyed on the background queue. We no longer have to worry about being on
+          the right thread in a given method.
+        - Now that ResourceLoadStatisticsPersistentStorage is always used from the background
+          queue and no longer needs to be thread-safe, drop its ref() / deref() methods and
+          use weak pointers instead to make sure the ResourceLoadStatisticsPersistentStorage
+          is still alive when a lamdba gets called on the background queue.
+        - For write scheduling use WorkQueue::dispatchAfter() and a WeakPtr instead of a
+          RunLoop::Timer. This is more convenient to use as the RunLoop::Timer has to be used
+          on the main thread.
+
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorage):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::startMonitoringDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore):
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-06-21  Jer Noble  <jer.noble@apple.com>
 
         CRASH in WebCore::VideoFullscreenInterfaceMac::~VideoFullscreenInterfaceMac()

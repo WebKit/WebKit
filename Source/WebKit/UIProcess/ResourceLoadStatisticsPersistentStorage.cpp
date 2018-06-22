@@ -34,7 +34,6 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 
@@ -85,21 +84,20 @@ static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)
 ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage(WebResourceLoadStatisticsStore& store, const String& storageDirectoryPath, IsReadOnly isReadOnly)
     : m_memoryStore(store)
     , m_storageDirectoryPath(storageDirectoryPath)
-    , m_asyncWriteTimer(RunLoop::main(), this, &ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired)
     , m_isReadOnly(isReadOnly)
 {
-}
-
-void ResourceLoadStatisticsPersistentStorage::initialize()
-{
     ASSERT(!RunLoop::isMain());
+
     populateMemoryStoreFromDisk();
     startMonitoringDisk();
 }
 
 ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorage()
 {
-    ASSERT(!m_hasPendingWrite);
+    ASSERT(!RunLoop::isMain());
+
+    if (m_hasPendingWrite)
+        writeMemoryStoreToDisk();
 }
 
 String ResourceLoadStatisticsPersistentStorage::storageDirectoryPath() const
@@ -126,8 +124,11 @@ void ResourceLoadStatisticsPersistentStorage::startMonitoringDisk()
     if (resourceLogPath.isEmpty())
         return;
 
-    m_fileMonitor = std::make_unique<FileMonitor>(resourceLogPath, m_memoryStore.statisticsQueue(), [this] (FileMonitor::FileChangeType type) {
+    m_fileMonitor = std::make_unique<FileMonitor>(resourceLogPath, m_memoryStore.statisticsQueue(), [this, weakThis = makeWeakPtr(*this)] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
+        if (!weakThis)
+            return;
+
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
             refreshMemoryStoreFromDisk();
@@ -143,6 +144,8 @@ void ResourceLoadStatisticsPersistentStorage::startMonitoringDisk()
 
 void ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics()
 {
+    ASSERT(!RunLoop::isMain());
+
     String storagePath = storageDirectoryPath();
     ASSERT(!storagePath.isEmpty());
 
@@ -237,15 +240,6 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
     m_memoryStore.logTestingEvent(ASCIILiteral("PopulatedWithoutGrandfathering"));
 }
 
-void ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired()
-{
-    ASSERT(RunLoop::isMain());
-    RELEASE_ASSERT(m_isReadOnly != IsReadOnly::Yes);
-    m_memoryStore.statisticsQueue().dispatch([this] () mutable {
-        writeMemoryStoreToDisk();
-    });
-}
-
 void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
 {
     ASSERT(!RunLoop::isMain());
@@ -292,8 +286,9 @@ void ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore(ForceIm
         if (!m_hasPendingWrite) {
             m_hasPendingWrite = true;
             Seconds delay = minimumWriteInterval - timeSinceLastWrite + 1_s;
-            RunLoop::main().dispatch([this, protectedThis = makeRef(*this), delay] {
-                m_asyncWriteTimer.startOneShot(delay);
+            m_memoryStore.statisticsQueue().dispatchAfter(delay, [weakThis = makeWeakPtr(*this)] {
+                if (weakThis)
+                    weakThis->writeMemoryStoreToDisk();
             });
         }
         return;
@@ -313,36 +308,6 @@ void ResourceLoadStatisticsPersistentStorage::clear()
 
     if (!FileSystem::deleteFile(filePath))
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "ResourceLoadStatisticsPersistentStorage: Unable to delete statistics file: %s", filePath.utf8().data());
-}
-
-void ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously()
-{
-    if (m_isReadOnly == IsReadOnly::Yes) {
-        RELEASE_ASSERT(!m_asyncWriteTimer.isActive());
-        return;
-    }
-
-    m_asyncWriteTimer.stop();
-
-    BinarySemaphore semaphore;
-    // Make sure any pending work in our queue is finished before we terminate.
-    m_memoryStore.statisticsQueue().dispatch([&semaphore, this] {
-        // Write final file state to disk.
-        if (m_hasPendingWrite)
-            writeMemoryStoreToDisk();
-        semaphore.signal();
-    });
-    semaphore.wait(WallTime::infinity());
-}
-
-void ResourceLoadStatisticsPersistentStorage::ref()
-{
-    m_memoryStore.ref();
-}
-
-void ResourceLoadStatisticsPersistentStorage::deref()
-{
-    m_memoryStore.deref();
 }
 
 #if !PLATFORM(IOS)

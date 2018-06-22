@@ -46,6 +46,7 @@
 #if !RELEASE_LOG_DISABLED
 #include <wtf/text/StringBuilder.h>
 #endif
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -165,7 +166,6 @@ static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& ex
 
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessHandler&& grantStorageAccessHandler, RemoveAllStorageAccessHandler&& removeAllStorageAccessHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
     : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
-    , m_persistentStorage(*this, resourceLoadStatisticsDirectory, isEphemeral ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes : ResourceLoadStatisticsPersistentStorage::IsReadOnly::No)
     , m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler))
     , m_hasStorageAccessForFrameHandler(WTFMove(hasStorageAccessForFrameHandler))
     , m_grantStorageAccessHandler(WTFMove(grantStorageAccessHandler))
@@ -180,8 +180,8 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
     registerUserDefaultsIfNeeded();
 #endif
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        m_persistentStorage.initialize();
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), isEphemeral, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy()] {
+        m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*this, resourceLoadStatisticsDirectory, isEphemeral ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes : ResourceLoadStatisticsPersistentStorage::IsReadOnly::No);
         includeTodayAsOperatingDateIfNecessary();
     });
 
@@ -195,7 +195,22 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
 
 WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
-    m_persistentStorage.finishAllPendingWorkSynchronously();
+    flushAndDestroyPersistentStore();
+}
+
+void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
+{
+    if (!m_persistentStorage)
+        return;
+
+    // Make sure we destroy the persistent store on the background queue and wait for it to die
+    // synchronously since it has a C++ reference to us.
+    BinarySemaphore semaphore;
+    m_statisticsQueue->dispatch([&semaphore, this] {
+        m_persistentStorage = nullptr;
+        semaphore.signal();
+    });
+    semaphore.wait(WallTime::infinity());
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -341,7 +356,8 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
             ASSERT(!RunLoop::isMain());
 
             pruneStatisticsIfNeeded();
-            m_persistentStorage.scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
+            if (m_persistentStorage)
+                m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
 
             RunLoop::main().dispatch([] {
                 WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
@@ -352,7 +368,8 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
             ASSERT(!RunLoop::isMain());
 
             pruneStatisticsIfNeeded();
-            m_persistentStorage.scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
+            if (m_persistentStorage)
+                m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
         });
     }
 }
@@ -534,7 +551,8 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHa
                     statistic.grandfathered = true;
                 }
                 m_endOfGrandfatheringTimestamp = WallTime::now() + m_parameters.grandfatheringTime;
-                m_persistentStorage.scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
+                if (m_persistentStorage)
+                    m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
                 callback();
                 logTestingEvent(ASCIILiteral("Grandfathered"));
             });
@@ -554,7 +572,7 @@ void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy&,
 
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
-    m_persistentStorage.finishAllPendingWorkSynchronously();
+    flushAndDestroyPersistentStore();
 }
 
 void WebResourceLoadStatisticsStore::performDailyTasks()
@@ -1050,7 +1068,8 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
     ASSERT(RunLoop::isMain());
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), shouldGrandfather, completionHandler = WTFMove(completionHandler)] () mutable {
         clearInMemory();
-        m_persistentStorage.clear();
+        if (m_persistentStorage)
+            m_persistentStorage->clear();
         
         if (shouldGrandfather == ShouldGrandfather::Yes)
             grandfatherExistingWebsiteData(WTFMove(completionHandler));
