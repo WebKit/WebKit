@@ -1,3 +1,12 @@
+2018-06-22  David Fenton  <david_fenton@apple.com>
+
+         LayoutTests imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any.html and imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.html are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=186940
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2018-06-22  Chris Dumez  <cdumez@apple.com>
 
         performance-api/performance-observer-no-document-leak.html is flaky
