@@ -1,3 +1,29 @@
+2018-06-22  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE][ThreadedRendering] WPE crashes rendering some pieces of text when using ThreadedRendering
+        https://bugs.webkit.org/show_bug.cgi?id=186886
+
+        Reviewed by Žan Doberšek.
+
+        Modify DisplayList DrawGlyphs element to use a GraphicsContext for replaying. To do so, modify
+        GraphicsContext::drawGlyphs() API so it doesn't require a FontCascade, and update all the calls
+        to it.
+
+        Covered by existent tests.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::drawGlyphBuffer const):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawGlyphs):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawGlyphs::apply const):
+        * rendering/mathml/MathOperator.cpp:
+        (WebCore::MathOperator::paintGlyph):
+        (WebCore::MathOperator::paint):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::paint):
+
 2018-06-15  Jer Noble  <jer.noble@apple.com>
 
         Address fullscreen api CSS env feedback

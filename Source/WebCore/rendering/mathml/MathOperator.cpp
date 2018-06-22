@@ -539,7 +539,7 @@ LayoutRect MathOperator::paintGlyph(const RenderStyle& style, PaintInfo& info, c
 
     GlyphBuffer buffer;
     buffer.add(data.glyph, data.font, advanceWidthForGlyph(data));
-    info.context().drawGlyphs(style.fontCascade(), *data.font, buffer, 0, 1, origin);
+    info.context().drawGlyphs(*data.font, buffer, 0, 1, origin, style.fontCascade().fontDescription().fontSmoothing());
 
     return glyphPaintRect;
 }
@@ -746,7 +746,7 @@ void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const Layout
     LayoutPoint operatorTopLeft = paintOffset;
     FloatRect glyphBounds = boundsForGlyph(glyphData);
     LayoutPoint operatorOrigin(operatorTopLeft.x(), operatorTopLeft.y() - glyphBounds.y());
-    paintInfo.context().drawGlyphs(style.fontCascade(), *glyphData.font, buffer, 0, 1, operatorOrigin);
+    paintInfo.context().drawGlyphs(*glyphData.font, buffer, 0, 1, operatorOrigin, style.fontCascade().fontDescription().fontSmoothing());
 }
 
 }

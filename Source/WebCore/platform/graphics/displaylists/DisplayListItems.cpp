@@ -371,7 +371,7 @@ inline GlyphBuffer DrawGlyphs::generateGlyphBuffer() const
 
 void DrawGlyphs::apply(GraphicsContext& context) const
 {
-    FontCascade::drawGlyphs(context, m_font, generateGlyphBuffer(), 0, m_glyphs.size(), anchorPoint(), m_smoothingMode);
+    context.drawGlyphs(m_font, generateGlyphBuffer(), 0, m_glyphs.size(), anchorPoint(), m_smoothingMode);
 }
 
 void DrawGlyphs::computeBounds()
