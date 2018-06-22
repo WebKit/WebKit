@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) BOOL prefersStatusBarHidden;
 @property (assign, nonatomic, getter=isPlaying) BOOL playing;
 @property (assign, nonatomic, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+@property (assign, nonatomic, getter=isAnimating) BOOL animating;
 
 - (id)initWithWebView:(WKWebView *)webView;
 - (void)showUI;

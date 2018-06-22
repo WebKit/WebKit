@@ -145,6 +145,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 @property (nonatomic) CGRect initialFrame;
 @property (nonatomic) CGRect finalFrame;
 @property (nonatomic, getter=isAnimatingIn) BOOL animatingIn;
+@property (readonly, nonatomic) id<UIViewControllerContextTransitioning> context;
 @end
 
 @implementation WKFullscreenAnimationController {
@@ -165,6 +166,11 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 {
     [_viewController release];
     [super dealloc];
+}
+
+- (id<UIViewControllerContextTransitioning>)context
+{
+    return _context.get();
 }
 
 - (void)_createViewsForTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -274,6 +280,17 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     window.backgroundColor = [UIColor colorWithWhite:0 alpha:_initialBackgroundAlpha + progress * (_finalBackgroundAlpha - _initialBackgroundAlpha)];
 }
 
+- (void)updateWithProgress:(CGFloat)progress scale:(CGFloat)scale translation:(CGSize)translation anchor:(CGPoint)anchor
+{
+    CGAffineTransform progressTransform = _initialAnimatingViewTransform;
+    progressTransform = CGAffineTransformScale(progressTransform, scale, scale);
+    progressTransform = CGAffineTransformTranslate(progressTransform, translation.width, translation.height);
+    [_animatingView setTransform:progressTransform];
+
+    UIWindow *window = [_animatingView window];
+    window.backgroundColor = [UIColor colorWithWhite:0 alpha:_initialBackgroundAlpha + progress * (_finalBackgroundAlpha - _initialBackgroundAlpha)];
+}
+
 - (void)updateWithProgress:(CGFloat)progress translation:(CGSize)translation anchor:(CGPoint)anchor
 {
     CGAffineTransform progressTransform = _initialAnimatingViewTransform;
@@ -313,6 +330,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 @interface WKFullScreenInteractiveTransition : NSObject<UIViewControllerInteractiveTransitioning>
 - (id)initWithAnimator:(WKFullscreenAnimationController *)animator anchor:(CGPoint)point;
+@property (nonatomic, readonly) WKFullscreenAnimationController *animator;
 @end
 
 @implementation WKFullScreenInteractiveTransition {
@@ -331,6 +349,11 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     return self;
 }
 
+- (WKFullscreenAnimationController *)animator
+{
+    return _animator.get();
+}
+
 - (BOOL)wantsInteractiveStart
 {
     return YES;
@@ -345,6 +368,12 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 - (void)updateInteractiveTransition:(CGFloat)progress withTranslation:(CGSize)translation
 {
     [_animator updateWithProgress:progress translation:translation anchor:_anchor];
+    [_context updateInteractiveTransition:progress];
+}
+
+- (void)updateInteractiveTransition:(CGFloat)progress withScale:(CGFloat)scale andTranslation:(CGSize)translation
+{
+    [_animator updateWithProgress:progress scale:scale translation:translation anchor:_anchor];
     [_context updateInteractiveTransition:progress];
 }
 
@@ -395,7 +424,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     RetainPtr<UIViewController> _viewControllerForPresentation;
     RetainPtr<WKFullScreenViewController> _fullscreenViewController;
     RetainPtr<UISwipeGestureRecognizer> _startDismissGestureRecognizer;
-    RetainPtr<UIPanGestureRecognizer> _interactiveDismissGestureRecognizer;
+    RetainPtr<UIPanGestureRecognizer> _interactivePanDismissGestureRecognizer;
+    RetainPtr<UIPinchGestureRecognizer> _interactivePinchDismissGestureRecognizer;
     RetainPtr<WKFullScreenInteractiveTransition> _interactiveDismissTransitionCoordinator;
 
     CGRect _initialFrame;
@@ -480,17 +510,22 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
     [self _updateLocationInfo];
 
-    _startDismissGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc]  initWithTarget:self action:@selector(_startToDismissFullscreenChanged:)]);
+    _startDismissGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_startToDismissFullscreenChanged:)]);
     [_startDismissGestureRecognizer setDelegate:self];
     [_startDismissGestureRecognizer setCancelsTouchesInView:YES];
     [_startDismissGestureRecognizer setNumberOfTouchesRequired:1];
     [_startDismissGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
     [_fullscreenViewController.get().view addGestureRecognizer:_startDismissGestureRecognizer.get()];
 
-    _interactiveDismissGestureRecognizer = adoptNS([[UIPanGestureRecognizer alloc]  initWithTarget:self action:@selector(_interactiveDismissChanged:)]);
-    [_interactiveDismissGestureRecognizer setDelegate:self];
-    [_interactiveDismissGestureRecognizer setCancelsTouchesInView:NO];
-    [_fullscreenViewController.get().view addGestureRecognizer:_interactiveDismissGestureRecognizer.get()];
+    _interactivePanDismissGestureRecognizer = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_interactiveDismissChanged:)]);
+    [_interactivePanDismissGestureRecognizer setDelegate:self];
+    [_interactivePanDismissGestureRecognizer setCancelsTouchesInView:NO];
+    [_fullscreenViewController.get().view addGestureRecognizer:_interactivePanDismissGestureRecognizer.get()];
+
+    _interactivePinchDismissGestureRecognizer = adoptNS([[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(_interactivePinchDismissChanged:)]);
+    [_interactivePinchDismissGestureRecognizer setDelegate:self];
+    [_interactivePinchDismissGestureRecognizer setCancelsTouchesInView:NO];
+    [_fullscreenViewController.get().view addGestureRecognizer:_interactivePinchDismissGestureRecognizer.get()];
 
     [self _manager]->saveScrollPosition();
 
@@ -640,12 +675,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         return;
     }
 
-    [_fullscreenViewController dismissViewControllerAnimated:YES completion:^{
-        if (![self._webView _page])
-            return;
-
-        [self _completedExitFullScreen];
-    }];
+    [self _dismissFullscreenViewController];
 }
 
 - (void)_completedExitFullScreen
@@ -774,8 +804,14 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     if (![animator isKindOfClass:[WKFullscreenAnimationController class]])
         return nil;
 
-    if (!_interactiveDismissTransitionCoordinator)
-        _interactiveDismissTransitionCoordinator = adoptNS([[WKFullScreenInteractiveTransition alloc] initWithAnimator:(WKFullscreenAnimationController *)animator anchor:CGPointZero]);
+    if (!_interactiveDismissTransitionCoordinator) {
+        CGPoint anchor = CGPointZero;
+        if (_interactivePanDismissGestureRecognizer.get().state == UIGestureRecognizerStateBegan)
+            anchor = [_interactivePanDismissGestureRecognizer locationInView:_fullscreenViewController.get().view];
+        else if (_interactivePinchDismissGestureRecognizer.get().state == UIGestureRecognizerStateBegan)
+            anchor = [_interactivePinchDismissGestureRecognizer locationInView:_fullscreenViewController.get().view];
+        _interactiveDismissTransitionCoordinator = adoptNS([[WKFullScreenInteractiveTransition alloc] initWithAnimator:(WKFullscreenAnimationController *)animator anchor:anchor]);
+    }
 
     return _interactiveDismissTransitionCoordinator.get();
 }
@@ -901,13 +937,28 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 - (void)_startToDismissFullscreenChanged:(id)sender
 {
+    if (_inInteractiveDismiss)
+        return;
     _inInteractiveDismiss = true;
+    [self _dismissFullscreenViewController];
+}
+
+- (void)_dismissFullscreenViewController
+{
+    [_fullscreenViewController setAnimating:YES];
     [_fullscreenViewController dismissViewControllerAnimated:YES completion:^{
         if (![self._webView _page])
             return;
 
+
+        if (_interactiveDismissTransitionCoordinator.get().animator.context.transitionWasCancelled) {
+            [_fullscreenViewController setAnimating:NO];
+            return;
+        }
+
+        _interactiveDismissTransitionCoordinator = nil;
+
         [self _completedExitFullScreen];
-        [_fullscreenViewController setPrefersStatusBarHidden:YES];
     }];
 }
 
@@ -916,24 +967,54 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     if (!_inInteractiveDismiss)
         return;
 
-    CGPoint translation = [_interactiveDismissGestureRecognizer translationInView:_fullscreenViewController.get().view];
-    CGPoint velocity = [_interactiveDismissGestureRecognizer velocityInView:_fullscreenViewController.get().view];
+    auto pinchState = [_interactivePinchDismissGestureRecognizer state];
+    if (pinchState > UIGestureRecognizerStatePossible && pinchState <= UIGestureRecognizerStateEnded)
+        return;
+
+    CGPoint translation = [_interactivePanDismissGestureRecognizer translationInView:_fullscreenViewController.get().view];
+    CGPoint velocity = [_interactivePanDismissGestureRecognizer velocityInView:_fullscreenViewController.get().view];
     CGFloat progress = translation.y / (_fullscreenViewController.get().view.bounds.size.height / 2);
     progress = std::min(1., std::max(0., progress));
 
-    if (_interactiveDismissGestureRecognizer.get().state == UIGestureRecognizerStateEnded) {
+    if (_interactivePanDismissGestureRecognizer.get().state == UIGestureRecognizerStateEnded) {
         _inInteractiveDismiss = false;
 
         if (progress > 0.25 || (progress > 0 && velocity.y > 5))
             [self requestExitFullScreen];
-        else {
+        else
             [_interactiveDismissTransitionCoordinator cancelInteractiveTransition];
-            _interactiveDismissTransitionCoordinator = nil;
-        }
         return;
     }
 
     [_interactiveDismissTransitionCoordinator updateInteractiveTransition:progress withTranslation:CGSizeMake(translation.x, translation.y)];
+}
+
+- (void)_interactivePinchDismissChanged:(id)sender
+{
+    if (!_inInteractiveDismiss && _interactivePinchDismissGestureRecognizer.get().state == UIGestureRecognizerStateBegan) {
+        [self _startToDismissFullscreenChanged:sender];
+        return;
+    }
+
+    CGFloat scale = [_interactivePinchDismissGestureRecognizer scale];
+    CGFloat velocity = [_interactivePinchDismissGestureRecognizer velocity];
+    CGFloat progress = std::min(1., std::max(0., 1 - scale));
+
+    CGPoint translation = CGPointZero;
+    auto panState = [_interactivePanDismissGestureRecognizer state];
+    if (panState > UIGestureRecognizerStatePossible && panState <= UIGestureRecognizerStateEnded)
+        translation = [_interactivePanDismissGestureRecognizer translationInView:_fullscreenViewController.get().view];
+
+    if (_interactivePinchDismissGestureRecognizer.get().state == UIGestureRecognizerStateEnded) {
+        _inInteractiveDismiss = false;
+        if ((progress > 0.05 && velocity < 0.) || velocity < -2.5)
+            [self requestExitFullScreen];
+        else
+            [_interactiveDismissTransitionCoordinator cancelInteractiveTransition];
+        return;
+    }
+
+    [_interactiveDismissTransitionCoordinator updateInteractiveTransition:progress withScale:scale andTranslation:CGSizeMake(translation.x, translation.y)];
 }
 
 @end

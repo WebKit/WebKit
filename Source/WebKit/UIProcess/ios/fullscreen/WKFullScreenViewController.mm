@@ -239,6 +239,19 @@ private:
     [_pipButton setSelected:active];
 }
 
+- (void)setAnimating:(BOOL)animating
+{
+    if (_animating == animating)
+        return;
+    _animating = animating;
+    [self setNeedsStatusBarAppearanceUpdate];
+
+    if (_animating)
+        [self hideUI];
+    else
+        [self showUI];
+}
+
 #pragma mark - UIViewController Overrides
 
 - (void)loadView
@@ -337,7 +350,7 @@ private:
 
 - (BOOL)prefersStatusBarHidden
 {
-    return _prefersStatusBarHidden;
+    return _animating || _prefersStatusBarHidden;
 }
 
 #pragma mark - UIGestureRecognizerDelegate
@@ -349,7 +362,8 @@ private:
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    [self showUI];
+    if (!self.animating)
+        [self showUI];
     return YES;
 }
 
@@ -408,7 +422,8 @@ private:
         if (score > requiredScore)
             [self _showPhishingAlert];
     }
-    [self showUI];
+    if (!self.animating)
+        [self showUI];
 }
 
 - (void)_statusBarFrameDidChange:(NSNotificationCenter *)notification

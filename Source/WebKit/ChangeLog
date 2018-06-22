@@ -1,3 +1,32 @@
+2018-06-22  Jer Noble  <jer.noble@apple.com>
+
+        [Fullscreen] Add a pinch-to-exit gesture
+        https://bugs.webkit.org/show_bug.cgi?id=186821
+
+        Reviewed by Tim Horton.
+
+        Add a pinch gesture recognizer that overrides the pan gesture recognizer when active. Hide the
+        WKFullscreenViewController's controls while a dismiss gesture is active.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController setAnimating:]):
+        (-[WKFullScreenViewController prefersStatusBarHidden]):
+        (-[WKFullScreenViewController gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKFullScreenViewController _touchDetected:]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullscreenAnimationController context]):
+        (-[WKFullscreenAnimationController updateWithProgress:scale:translation:anchor:]):
+        (-[WKFullScreenInteractiveTransition animator]):
+        (-[WKFullScreenInteractiveTransition updateInteractiveTransition:withScale:andTranslation:]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController interactionControllerForDismissal:]):
+        (-[WKFullScreenWindowController _startToDismissFullscreenChanged:]):
+        (-[WKFullScreenWindowController _dismissFullscreenViewController]):
+        (-[WKFullScreenWindowController _interactiveDismissChanged:]):
+        (-[WKFullScreenWindowController _interactivePinchDismissChanged:]):
+
 2018-06-22  Brian Burg  <bburg@apple.com>
 
         [Cocoa] REGRESSION(W3C): actions for key equivalents are not respected
