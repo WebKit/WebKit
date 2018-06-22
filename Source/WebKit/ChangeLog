@@ -1,3 +1,16 @@
+2018-06-22  Luming Yin  <luming_yin@apple.com>
+
+        Expose colorFilterEnabled SPI in WKPreferencesPrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=186935
+        <rdar://problem/41109387>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setColorFilterEnabled:]):
+        (-[WKPreferences _colorFilterEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2018-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Recalc styles every time defaultAppearance changes.

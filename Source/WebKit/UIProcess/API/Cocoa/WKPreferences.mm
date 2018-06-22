@@ -862,6 +862,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->pageCacheSupportsPlugins();
 }
 
+- (void)_setColorFilterEnabled:(BOOL)enabled
+{
+    _preferences->setColorFilterEnabled(enabled);
+}
+
+- (BOOL)_colorFilterEnabled
+{
+    return _preferences->colorFilterEnabled();
+}
+
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
 {
     _preferences->setShouldPrintBackgrounds(enabled);
