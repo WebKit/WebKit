@@ -1,3 +1,12 @@
+2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GLib gardening. Update expectations of TestSSL.
+
+        /webkit/WebKitWebView/tls-errors-policy and /webkit/WebKitWebView/load-failed-with-tls-errors are failing only
+        in the bots.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2018-06-21  Daniel Bates  <dabates@apple.com>
 
         EWS for security bugs

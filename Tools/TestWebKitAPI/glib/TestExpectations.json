@@ -190,13 +190,10 @@
     "TestSSL": {
         "subtests": {
             "/webkit/WebKitWebView/tls-errors-policy": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/186913"}}
             },
             "/webkit/WebKitWebView/load-failed-with-tls-errors": {
-                "expected": {"all": {"status": ["FAIL"]}}
-            },
-            "/webkit/WebKitWebView/insecure-content": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/186913"}}
             }
         }
     },
