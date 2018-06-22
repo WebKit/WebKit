@@ -741,32 +741,62 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
 {
     const char* propertyName;
     const char* trackTypeAsString;
-    GList* selectedStreams = nullptr;
+    Vector<String> selectedStreams;
+    String selectedStreamId;
+
+#if GST_CHECK_VERSION(1, 10, 0)
+    GstStream* stream = nullptr;
+
+    if (!m_isLegacyPlaybin) {
+        gst_stream_collection_get_stream(m_streamCollection.get(), index);
+        if (!stream) {
+            GST_WARNING_OBJECT(pipeline(), "No stream to select at index %u", index);
+            return;
+        }
+        selectedStreamId = String::fromUTF8(gst_stream_get_stream_id(stream));
+        selectedStreams.append(selectedStreamId);
+    }
+#endif // GST_CHECK_VERSION(1,0,0)
 
     switch (trackType) {
     case TrackPrivateBaseGStreamer::TrackType::Audio:
         propertyName = "current-audio";
         trackTypeAsString = "audio";
+        if (!selectedStreamId.isEmpty() && selectedStreamId == m_currentAudioStreamId) {
+            GST_INFO_OBJECT(pipeline(), "%s stream: %s already selected, not doing anything.", trackTypeAsString, selectedStreamId.utf8().data());
+            return;
+        }
+
         if (!m_currentTextStreamId.isEmpty())
-            selectedStreams = g_list_append(selectedStreams, g_strdup(m_currentTextStreamId.utf8().data()));
+            selectedStreams.append(m_currentTextStreamId);
         if (!m_currentVideoStreamId.isEmpty())
-            selectedStreams = g_list_append(selectedStreams, g_strdup(m_currentVideoStreamId.utf8().data()));
+            selectedStreams.append(m_currentVideoStreamId);
         break;
     case TrackPrivateBaseGStreamer::TrackType::Video:
         propertyName = "current-video";
         trackTypeAsString = "video";
+        if (!selectedStreamId.isEmpty() && selectedStreamId == m_currentVideoStreamId) {
+            GST_INFO_OBJECT(pipeline(), "%s stream: %s already selected, not doing anything.", trackTypeAsString, selectedStreamId.utf8().data());
+            return;
+        }
+
         if (!m_currentAudioStreamId.isEmpty())
-            selectedStreams = g_list_append(selectedStreams, g_strdup(m_currentAudioStreamId.utf8().data()));
+            selectedStreams.append(m_currentAudioStreamId);
         if (!m_currentTextStreamId.isEmpty())
-            selectedStreams = g_list_append(selectedStreams, g_strdup(m_currentTextStreamId.utf8().data()));
+            selectedStreams.append(m_currentTextStreamId);
         break;
     case TrackPrivateBaseGStreamer::TrackType::Text:
+        if (!selectedStreamId.isEmpty() && selectedStreamId == m_currentTextStreamId) {
+            GST_INFO_OBJECT(pipeline(), "%s stream: %s already selected, not doing anything.", trackTypeAsString, selectedStreamId.utf8().data());
+            return;
+        }
+
         propertyName = "current-text";
         trackTypeAsString = "text";
         if (!m_currentAudioStreamId.isEmpty())
-            selectedStreams = g_list_append(selectedStreams, g_strdup(m_currentAudioStreamId.utf8().data()));
+            selectedStreams.append(m_currentAudioStreamId);
         if (!m_currentVideoStreamId.isEmpty())
-            selectedStreams = g_list_append(selectedStreams, g_strdup(m_currentVideoStreamId.utf8().data()));
+            selectedStreams.append(m_currentVideoStreamId);
         break;
     case TrackPrivateBaseGStreamer::TrackType::Unknown:
     default:
@@ -781,20 +811,16 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
     }
 #if GST_CHECK_VERSION(1, 10, 0)
     else {
-        GstStream* stream = gst_stream_collection_get_stream(m_streamCollection.get(), index);
-        if (stream) {
-            String streamId = gst_stream_get_stream_id(stream);
-            selectedStreams = g_list_append(selectedStreams, g_strdup(streamId.utf8().data()));
-        } else
-            GST_WARNING("%s stream %u not found", trackTypeAsString, index);
+        GList* selectedStreamsList = nullptr;
+
+        for (const auto& streamId : selectedStreams)
+            selectedStreamsList = g_list_append(selectedStreamsList, g_strdup(streamId.utf8().data()));
 
         // TODO: MSE GstStream API support: https://bugs.webkit.org/show_bug.cgi?id=182531
-        gst_element_send_event(m_pipeline.get(), gst_event_new_select_streams(selectedStreams));
+        gst_element_send_event(m_pipeline.get(), gst_event_new_select_streams(selectedStreamsList));
+        g_list_free_full(selectedStreamsList, reinterpret_cast<GDestroyNotify>(g_free));
     }
 #endif
-
-    if (selectedStreams)
-        g_list_free_full(selectedStreams, reinterpret_cast<GDestroyNotify>(g_free));
 }
 
 void MediaPlayerPrivateGStreamer::videoChangedCallback(MediaPlayerPrivateGStreamer* player)

@@ -1,3 +1,25 @@
+2018-06-22  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Avoid sending SELECT_STREAM events when nothing changed
+        https://bugs.webkit.org/show_bug.cgi?id=186678
+
+        Reviewed by Philippe Normand.
+
+        This avoid extra work in decodebin3 and should work around a crash
+        in decodebin3 when we send spurious SELECT_STREAM in the mediastream
+        layout tests.
+
+        GStreamer was also missing safe guards in the GstStream APIs which have been
+        added in gstreamer core in 8833ca942ea21c58c0f63822f0e2b61695b39447
+        "stream: Add some missing API safe guards".
+
+        Should fix following flakes:
+          - fast/mediastream/MediaStream-video-element-track-stop.html
+          - fast/mediastream/change-tracks-media-stream-being-played.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+
 2018-06-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r230950): [GTK] WebKit::CoordinatedBackingStoreTile::setBackBuffer(): WebKitWebProcess killed by SIGSEGV (ASSERTION FAILED: it != m_tiles.end())

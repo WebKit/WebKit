@@ -57,7 +57,8 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     }
 
     m_id = gst_stream_get_stream_id(stream.get());
-    setActive(gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT);
+    if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT)
+        markAsActive();
     notifyTrackOfActiveChanged();
 }
 
