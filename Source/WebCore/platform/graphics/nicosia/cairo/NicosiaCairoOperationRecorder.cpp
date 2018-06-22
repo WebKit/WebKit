@@ -31,6 +31,7 @@
 
 #include "CairoOperations.h"
 #include "FloatRoundedRect.h"
+#include "ImageBuffer.h"
 #include "NicosiaPaintingOperationReplayCairo.h"
 #include <type_traits>
 #include <wtf/text/TextStream.h>
@@ -1050,6 +1051,30 @@ IntRect CairoOperationRecorder::clipBounds()
 {
     auto& state = m_stateStack.last();
     return enclosingIntRect(state.ctmInverse.mapRect(state.clipBounds));
+}
+
+void CairoOperationRecorder::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+{
+    struct ClipToImageBuffer final: PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect> {
+        virtual ~ClipToImageBuffer() = default;
+
+        void execute(PaintingOperationReplay& replayer) override
+        {
+            Cairo::clipToImageBuffer(contextForReplay(replayer), arg<0>().get(), arg<1>());
+        }
+
+        void dump(TextStream& ts) override
+        {
+            ts << indent << "ClipToImageBuffer<>\n";
+        }
+    };
+
+    RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
+    if (!image)
+        return;
+
+    if (auto surface = image->nativeImageForCurrentFrame())
+        append(createCommand<ClipToImageBuffer>(RefPtr<cairo_surface_t>(surface.get()), destRect));
 }
 
 void CairoOperationRecorder::applyDeviceScaleFactor(float)

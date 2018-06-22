@@ -105,6 +105,7 @@ public:
     void clipOut(const Path&) override;
     void clipPath(const Path&, WindRule) override;
     IntRect clipBounds() override;
+    void clipToImageBuffer(ImageBuffer&, const FloatRect&) override;
     
     void applyDeviceScaleFactor(float) override;
 

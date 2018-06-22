@@ -261,6 +261,11 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& de
     if (paintingDisabled())
         return;
 
+    if (m_impl) {
+        m_impl->clipToImageBuffer(buffer, destRect);
+        return;
+    }
+
     RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
     if (!image)
         return;

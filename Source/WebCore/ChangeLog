@@ -1,3 +1,29 @@
+2018-06-22  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE][ThreadedRendering] WPE crashes rendering SVG content when using ThreadedRendering
+        https://bugs.webkit.org/show_bug.cgi?id=186914
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add GraphicsContextImpl::clipToImageBuffer() to the interface and the implementors. Forward
+        the call to GraphicsContext::clipToImageBuffer() to the implementation if possible in the
+        cairo case.
+
+        Covered by existent tests.
+
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::clipToImageBuffer):
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::clipToImageBuffer):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::clipToImageBuffer):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+
 2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CMake] Generated sources depending on SelectorPseudoClassAndCompatibilityElementMap.in are not regenerated

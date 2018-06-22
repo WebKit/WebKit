@@ -104,6 +104,7 @@ public:
     virtual void clipOut(const Path&) = 0;
     virtual void clipPath(const Path&, WindRule) = 0;
     virtual IntRect clipBounds() = 0;
+    virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&) = 0;
     
     virtual void applyDeviceScaleFactor(float) = 0;
 

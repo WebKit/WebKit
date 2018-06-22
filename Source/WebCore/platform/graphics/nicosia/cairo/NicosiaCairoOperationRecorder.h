@@ -98,6 +98,7 @@ private:
     void clipOut(const WebCore::Path&) override;
     void clipPath(const WebCore::Path&, WebCore::WindRule) override;
     WebCore::IntRect clipBounds() override;
+    void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect&) override;
 
     void applyDeviceScaleFactor(float) override;
 
