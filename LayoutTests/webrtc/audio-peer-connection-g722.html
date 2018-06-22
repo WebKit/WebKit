@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src ="routines.js"></script>
+    <script>
+var context = new webkitAudioContext();
+var remoteStream;
+
+async function checkForHumBipBop(stream, previousResults, counter)
+{
+    if (!previousResults)
+        previousResults = {
+            heardHum : false,
+            heardBip : false,
+            heardBop : false
+    };
+    if (!counter)
+        counter = 1;
+    else if (++counter > 4)
+        return Promise.resolve(false);
+    results = await analyseAudio(stream, 1000, context);
+    previousResults.heardHum |= results.heardHum;
+    previousResults.heardBip |= results.heardBip;
+    previousResults.heardBop |= results.heardBop;
+    if (previousResults.heardHum && previousResults.heardBip && previousResults.heardBop)
+        return Promise.resolve(true);
+    var results = await checkForHumBipBop(stream, previousResults, counter);
+    return results;
+}
+
+function setCodec(sdp, codec)
+{
+    return sdp.split('\r\n').filter(line => {
+        return line.indexOf('a=fmtp') === -1 && line.indexOf('a=rtcp-fb') === -1 && (line.indexOf('a=rtpmap') === -1 || line.indexOf(codec) !== -1);
+    }).join('\r\n');
+}
+
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    const remoteStream = new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(stream.getAudioTracks()[0], stream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (event) => { resolve(event.streams[0]); };
+        }, { observeOffer : (offer) => {
+            offer.sdp = setCodec(offer.sdp, "722");
+            return offer;
+        }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    const results = await checkForHumBipBop(stream);
+    assert_true(results, "heard hum bip bop");
+    context.close();
+}, "Basic G722 audio playback through a peer connection");
+    </script>
+</head>
+<body>
+</body>
+</html>

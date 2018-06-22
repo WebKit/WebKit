@@ -31,8 +31,11 @@ function onCreateSessionDescriptionError(error)
 
 function gotDescription1(desc, options)
 {
-    if (options.observeOffer)
-        options.observeOffer(desc);
+    if (options.observeOffer) {
+        const result = options.observeOffer(desc);
+        if (result)
+            desc = result;
+    }
 
     localConnection.setLocalDescription(desc);
     remoteConnection.setRemoteDescription(desc).then(() => {

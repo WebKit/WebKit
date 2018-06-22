@@ -1,3 +1,25 @@
+2018-06-22  Youenn Fablet  <youenn@apple.com>
+
+        Incoming G722 doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=186307
+        <rdar://problem/40809745>
+
+        Reviewed by Eric Carlson.
+
+        WebRTC backends usually does the following:
+        - Initially call RealtimeIncomingAudioSource with 16KHz data
+        - Switch to 48KHz when actual data is decoded.
+        We added a check that was discarding any 16KHz data, but in case of G722, the data remains as 16KHz and is then never read.
+        The solution is to remove the check that discards 16KHz information.
+        We then need to fix a bug in AudioTrackPrivateMediaStreamCocoa that was preventing proper handling of change of audio data configuration.
+
+        Test: webrtc/audio-peer-connection-g722.html
+
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+
 2018-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Recalc styles every time defaultAppearance changes.

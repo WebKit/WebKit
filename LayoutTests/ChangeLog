@@ -1,3 +1,15 @@
+2018-06-22  Youenn Fablet  <youenn@apple.com>
+
+        Incoming G722 doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=186307
+        <rdar://problem/40809745>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-peer-connection-g722-expected.txt: Added.
+        * webrtc/audio-peer-connection-g722.html: Added.
+        * webrtc/routines.js:
+
 2018-06-22  David Fenton  <david_fenton@apple.com>
 
          LayoutTests imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any.html and imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.html are flaky.
