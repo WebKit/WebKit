@@ -27,7 +27,9 @@
 
 #include "WebResourceLoader.h"
 #include <WebCore/LoaderStrategy.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
 
@@ -90,6 +92,13 @@ private:
     void internallyFailedLoadTimerFired();
     void startLocalLoad(WebCore::ResourceLoader&);
     bool tryLoadingUsingURLSchemeHandler(WebCore::ResourceLoader&);
+    
+    struct SyncLoadResult {
+        WebCore::ResourceResponse response;
+        WebCore::ResourceError error;
+        Vector<char> data;
+    };
+    std::optional<SyncLoadResult> tryLoadingSynchronouslyUsingURLSchemeHandler(WebCore::FrameLoader&, ResourceLoadIdentifier, const WebCore::ResourceRequest&);
 
     WebCore::ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
     Vector<WebCore::NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;

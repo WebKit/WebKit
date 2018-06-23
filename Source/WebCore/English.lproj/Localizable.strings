@@ -265,6 +265,9 @@
 /* Validation message for input form controls of type 'email' that have an invalid value */
 "Enter an email address" = "Enter an email address";
 
+/* Custom protocol synchronous load failure description */
+"Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
+
 /* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
 

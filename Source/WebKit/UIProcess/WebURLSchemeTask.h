@@ -26,9 +26,16 @@
 #pragma once
 
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/InstanceCounted.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+
+namespace IPC {
+class DataReference;
+}
 
 namespace WebCore {
 class ResourceError;
@@ -41,10 +48,12 @@ namespace WebKit {
 class WebURLSchemeHandler;
 class WebPageProxy;
 
+using SyncLoadCompletionHandler = CompletionHandler<void(const WebCore::ResourceResponse&, const WebCore::ResourceError&, const IPC::DataReference&)>;
+
 class WebURLSchemeTask : public RefCounted<WebURLSchemeTask>, public InstanceCounted<WebURLSchemeTask> {
     WTF_MAKE_NONCOPYABLE(WebURLSchemeTask);
 public:
-    static Ref<WebURLSchemeTask> create(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, WebCore::ResourceRequest&&);
+    static Ref<WebURLSchemeTask> create(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, WebCore::ResourceRequest&&, SyncLoadCompletionHandler&&);
 
     uint64_t identifier() const { return m_identifier; }
     uint64_t pageID() const { return m_pageIdentifier; }
@@ -68,7 +77,9 @@ public:
     void pageDestroyed();
 
 private:
-    WebURLSchemeTask(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, WebCore::ResourceRequest&&);
+    WebURLSchemeTask(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, WebCore::ResourceRequest&&, SyncLoadCompletionHandler&&);
+
+    bool isSync() const { return !!m_syncCompletionHandler; }
 
     Ref<WebURLSchemeHandler> m_urlSchemeHandler;
     WebPageProxy* m_page;
@@ -79,6 +90,10 @@ private:
     bool m_responseSent { false };
     bool m_dataSent { false };
     bool m_completed { false };
+    
+    SyncLoadCompletionHandler m_syncCompletionHandler;
+    WebCore::ResourceResponse m_syncResponse;
+    RefPtr<WebCore::SharedBuffer> m_syncData;
 };
 
 } // namespace WebKit

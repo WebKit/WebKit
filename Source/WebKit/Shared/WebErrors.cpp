@@ -57,6 +57,11 @@ ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
     return ResourceError(API::Error::webKitPolicyErrorDomain(), API::Error::Policy::FrameLoadInterruptedByPolicyChange, request.url(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
 }
 
+ResourceError failedCustomProtocolSyncLoad(const ResourceRequest& request)
+{
+    return ResourceError(errorDomainWebKitInternal, 0, request.url(), WEB_UI_STRING("Error handling synchronous load with custom protocol", "Custom protocol synchronous load failure description"));
+}
+
 #if ENABLE(CONTENT_FILTERING)
 ResourceError blockedByContentFilterError(const ResourceRequest& request)
 {

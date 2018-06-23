@@ -991,7 +991,7 @@ static void logBlockedCookieInformation(const String& label, const void* loggedO
     LOCAL_LOG(R"(  "isSameSite": "%{public}s",)", sameSiteInfo.isSameSite ? "true" : "false");
     LOCAL_LOG(R"(  "isTopSite": "%{public}s",)", sameSiteInfo.isTopSite ? "true" : "false");
     LOCAL_LOG(R"(  "cookies": [])");
-    LOCAL_LOG(R"(  "})");
+    LOCAL_LOG(R"(  })");
 #undef LOCAL_LOG
 #undef LOCAL_LOG_IF_ALLOWED
 }

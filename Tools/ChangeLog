@@ -1,3 +1,16 @@
+2018-06-22  Brady Eidson  <beidson@apple.com>
+
+        WKURLSchemeHandler doesn't handle sync XHR.
+        <rdar://problem/40955884> and https://bugs.webkit.org/show_bug.cgi?id=186902
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[SyncScheme webView:startURLSchemeTask:]):
+        (-[SyncScheme webView:stopURLSchemeTask:]):
+        (-[SyncMessageHandler userContentController:didReceiveScriptMessage:]):
+        (catch):
+
 2018-06-22  Daniel Bates  <dabates@apple.com>
 
         Security EWS: bots fails with exception 'NoneType' object has no attribute 'is_closed'

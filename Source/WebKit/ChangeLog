@@ -1,3 +1,49 @@
+2018-06-22  Brady Eidson  <beidson@apple.com>
+
+        WKURLSchemeHandler doesn't handle sync XHR.
+        <rdar://problem/40955884> and https://bugs.webkit.org/show_bug.cgi?id=186902
+
+        Reviewed by Chris Dumez.
+
+        This patch allows WebProcesses to block on sync loads to a custom scheme,
+        and teaches WebURLSchemeTasks how to buffer up data and the response if 
+        operating synchronously.
+
+        * Shared/WebErrors.cpp:
+        (WebKit::failedCustomProtocolSyncLoad):
+        * Shared/WebErrors.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startURLSchemeTask):
+        (WebKit::WebPageProxy::loadSynchronousURLSchemeTask):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::startTask):
+        * UIProcess/WebURLSchemeHandler.h:
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::create):
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        (WebKit::WebURLSchemeTask::didPerformRedirection):
+        (WebKit::WebURLSchemeTask::didReceiveResponse):
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        (WebKit::WebURLSchemeTask::pageDestroyed):
+        (WebKit::WebURLSchemeTask::stop):
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::isSync const):
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+        (WebKit::WebURLSchemeHandlerProxy::loadSynchronously):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+
 2018-06-22  Chris Dumez  <cdumez@apple.com>
 
         Implement IPC throttling to keep the main thread responsive when a process misbehaves

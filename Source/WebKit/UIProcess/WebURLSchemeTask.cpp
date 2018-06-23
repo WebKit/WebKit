@@ -27,6 +27,7 @@
 #include "WebURLSchemeTask.h"
 
 #include "DataReference.h"
+#include "WebErrors.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebURLSchemeHandler.h"
@@ -35,17 +36,18 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebURLSchemeTask> WebURLSchemeTask::create(WebURLSchemeHandler& handler, WebPageProxy& page, uint64_t resourceIdentifier, ResourceRequest&& request)
+Ref<WebURLSchemeTask> WebURLSchemeTask::create(WebURLSchemeHandler& handler, WebPageProxy& page, uint64_t resourceIdentifier, ResourceRequest&& request, SyncLoadCompletionHandler&& syncCompletionHandler)
 {
-    return adoptRef(*new WebURLSchemeTask(handler, page, resourceIdentifier, WTFMove(request)));
+    return adoptRef(*new WebURLSchemeTask(handler, page, resourceIdentifier, WTFMove(request), WTFMove(syncCompletionHandler)));
 }
 
-WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& page, uint64_t resourceIdentifier, ResourceRequest&& request)
+WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& page, uint64_t resourceIdentifier, ResourceRequest&& request, SyncLoadCompletionHandler&& syncCompletionHandler)
     : m_urlSchemeHandler(handler)
     , m_page(&page)
     , m_identifier(resourceIdentifier)
     , m_pageIdentifier(page.pageID())
     , m_request(WTFMove(request))
+    , m_syncCompletionHandler(WTFMove(syncCompletionHandler))
 {
 }
 
@@ -63,6 +65,9 @@ auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& respons
     if (m_responseSent)
         return ExceptionType::RedirectAfterResponse;
     
+    if (isSync())
+        m_syncResponse = response;
+
     m_request = request;
     m_page->send(Messages::WebPage::URLSchemeTaskDidPerformRedirection(m_urlSchemeHandler->identifier(), m_identifier, response, request));
 
@@ -83,6 +88,10 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
     m_responseSent = true;
 
     response.includeCertificateInfo();
+
+    if (isSync())
+        m_syncResponse = response;
+
     m_page->send(Messages::WebPage::URLSchemeTaskDidReceiveResponse(m_urlSchemeHandler->identifier(), m_identifier, response));
     return ExceptionType::None;
 }
@@ -99,6 +108,13 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer> buffer) -> ExceptionType
         return ExceptionType::NoResponseSent;
 
     m_dataSent = true;
+
+    if (isSync()) {
+        if (!m_syncData)
+            m_syncData = SharedBuffer::create();
+        m_syncData->append(buffer);
+    }
+
     m_page->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_identifier, IPC::SharedBufferDataReference(buffer.ptr())));
     return ExceptionType::None;
 }
@@ -115,6 +131,12 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
         return ExceptionType::NoResponseSent;
 
     m_completed = true;
+    
+    if (isSync()) {
+        m_syncCompletionHandler(m_syncResponse, error, IPC::DataReference { (const uint8_t*)m_syncData->data(), m_syncData->size() });
+        m_syncData = nullptr;
+    }
+
     m_page->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_identifier, error));
     m_urlSchemeHandler->taskCompleted(*this);
 
@@ -126,12 +148,18 @@ void WebURLSchemeTask::pageDestroyed()
     ASSERT(m_page);
     m_page = nullptr;
     m_stopped = true;
+    
+    if (isSync())
+        m_syncCompletionHandler({ }, failedCustomProtocolSyncLoad(m_request), { });
 }
 
 void WebURLSchemeTask::stop()
 {
     ASSERT(!m_stopped);
     m_stopped = true;
+
+    if (isSync())
+        m_syncCompletionHandler({ }, failedCustomProtocolSyncLoad(m_request), { });
 }
 
 } // namespace WebKit

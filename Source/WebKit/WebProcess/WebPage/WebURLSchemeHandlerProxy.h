@@ -39,6 +39,7 @@ class ResourceRequest;
 namespace WebKit {
 
 class WebPage;
+typedef uint64_t ResourceLoadIdentifier;
 
 class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy> {
 public:
@@ -50,6 +51,8 @@ public:
 
     void startNewTask(WebCore::ResourceLoader&);
     void stopAllTasks();
+
+    void loadSynchronously(ResourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::ResourceResponse&, WebCore::ResourceError&, Vector<char>&);
 
     uint64_t identifier() const { return m_identifier; }
     WebPage& page() { return m_webPage; }

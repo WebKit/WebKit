@@ -31,8 +31,11 @@
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
+#import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/text/StringHash.h>
+#import <wtf/text/WTFString.h>
 
 #if WK_API_ENABLED
 
@@ -409,4 +412,131 @@ TEST(URLSchemeHandler, Exceptions)
     checkCallSequence({Command::Response, Command::Finish, Command::Error}, ShouldRaiseException::Yes);
 }
 
-#endif
+struct SchemeResourceInfo {
+    RetainPtr<NSString> mimeType;
+    const char* data;
+    bool shouldRespond;
+};
+
+static bool startedXHR;
+static bool receivedStop;
+
+@interface SyncScheme : NSObject <WKURLSchemeHandler> {
+@public
+    HashMap<String, SchemeResourceInfo> resources;
+}
+@end
+
+@implementation SyncScheme
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    auto entry = resources.find([task.request.URL absoluteString]);
+    if (entry == resources.end()) {
+        NSLog(@"Did not find resource entry for URL %@", task.request.URL);
+        return;
+    }
+
+    if (entry->key == "syncxhr://host/test.dat")
+        startedXHR = true;
+
+    if (!entry->value.shouldRespond)
+        return;
+    
+    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:entry->value.mimeType.get() expectedContentLength:1 textEncodingName:nil]);
+    [task didReceiveResponse:response.get()];
+
+    [task didReceiveData:[NSData dataWithBytesNoCopy:(void*)entry->value.data length:strlen(entry->value.data) freeWhenDone:NO]];
+    [task didFinish];
+
+    if (entry->key == "syncxhr://host/test.dat")
+        startedXHR = false;
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    EXPECT_TRUE([[task.request.URL absoluteString] isEqualToString:@"syncxhr://host/test.dat"]);
+    receivedStop = true;
+}
+
+@end
+
+static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
+static bool receivedMessage;
+
+@interface SyncMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation SyncMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    if ([message body])
+        [receivedMessages addObject:[message body]];
+    else
+        [receivedMessages addObject:@""];
+
+    receivedMessage = true;
+}
+@end
+
+static const char* syncMainBytes = R"SYNCRESOURCE(
+<script>
+
+var req = new XMLHttpRequest();
+req.open("GET", "test.dat", false);
+try
+{
+    req.send(null);
+    window.webkit.messageHandlers.sync.postMessage(req.responseText);
+}
+catch (e)
+{
+    window.webkit.messageHandlers.sync.postMessage("Failed sync XHR load");
+}
+
+</script>
+)SYNCRESOURCE";
+
+static const char* syncXHRBytes = "My XHR text!";
+
+TEST(URLSchemeHandler, SyncXHR)
+{
+    auto *pool = [[NSAutoreleasePool alloc] init];
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[SyncScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"syncxhr"];
+    
+    handler.get()->resources.set("syncxhr://host/main.html", SchemeResourceInfo { @"text/html", syncMainBytes, true });
+    handler.get()->resources.set("syncxhr://host/test.dat", SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
+
+    auto messageHandler = adoptNS([[SyncMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sync"];
+    
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"syncxhr://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+
+    EXPECT_EQ((unsigned)receivedMessages.get().count, (unsigned)1);
+    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"My XHR text!"]);
+
+    // Now try again, but hang the WebProcess in the reply to the XHR by telling the scheme handler to never
+    // respond to it.
+    handler.get()->resources.find("syncxhr://host/test.dat")->value.shouldRespond = false;
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&startedXHR);
+    receivedMessage = false;
+
+    webView = nil;
+    [pool drain];
+    
+    TestWebKitAPI::Util::run(&receivedStop);
+}
+
+#endif // WK_API_ENABLED
+

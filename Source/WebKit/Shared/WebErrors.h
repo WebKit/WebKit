@@ -41,6 +41,7 @@ WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
 WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&);
 WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
 WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&);
+WebCore::ResourceError failedCustomProtocolSyncLoad(const WebCore::ResourceRequest&);
 #if ENABLE(CONTENT_FILTERING)
 WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&);
 #endif

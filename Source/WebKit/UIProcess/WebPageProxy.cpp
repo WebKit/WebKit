@@ -7586,7 +7586,7 @@ void WebPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& parameters)
     auto iterator = m_urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
     MESSAGE_CHECK(iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->startTask(*this, parameters.taskIdentifier, WTFMove(parameters.request));
+    iterator->value->startTask(*this, parameters.taskIdentifier, WTFMove(parameters.request), nullptr);
 }
 
 void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
@@ -7595,6 +7595,14 @@ void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskId
     MESSAGE_CHECK(iterator != m_urlSchemeHandlersByIdentifier.end());
 
     iterator->value->stopTask(*this, taskIdentifier);
+}
+
+void WebPageProxy::loadSynchronousURLSchemeTask(URLSchemeTaskParameters&& parameters, Messages::WebPageProxy::LoadSynchronousURLSchemeTask::DelayedReply&& reply)
+{
+    auto iterator = m_urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
+    MESSAGE_CHECK(iterator != m_urlSchemeHandlersByIdentifier.end());
+
+    iterator->value->startTask(*this, parameters.taskIdentifier, WTFMove(parameters.request), WTFMove(reply));
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)

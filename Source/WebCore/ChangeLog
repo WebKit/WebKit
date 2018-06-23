@@ -1,3 +1,12 @@
+2018-06-22  Brady Eidson  <beidson@apple.com>
+
+        WKURLSchemeHandler doesn't handle sync XHR.
+        <rdar://problem/40955884> and https://bugs.webkit.org/show_bug.cgi?id=186902
+
+        Reviewed by Chris Dumez.
+
+        * English.lproj/Localizable.strings:
+
 2018-06-22  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] Restore ASSERT_NOT_REACHED() checks in exit fullscreen handler after r231924
