@@ -347,7 +347,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
     // Step 2:
     // We're either going to choose to allocate a new ArrayStorage, or we're going to reuse the existing one.
 
-    void* newAllocBase = 0;
+    void* newAllocBase = nullptr;
     unsigned newStorageCapacity;
     bool allocatedNewStorage;
     // If the current storage array is sufficiently large (but not too large!) then just keep using it.
@@ -356,11 +356,11 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
         newStorageCapacity = currentCapacity;
         allocatedNewStorage = false;
     } else {
-        size_t newSize = Butterfly::totalSize(0, propertyCapacity, true, ArrayStorage::sizeFor(desiredCapacity));
-        newAllocBase = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
-            vm, newSize, nullptr, AllocationFailureMode::ReturnNull);
-        if (!newAllocBase)
+        const unsigned preCapacity = 0;
+        Butterfly* newButterfly = Butterfly::tryCreateUninitialized(vm, this, preCapacity, propertyCapacity, true, ArrayStorage::sizeFor(desiredCapacity));
+        if (!newButterfly)
             return false;
+        newAllocBase = newButterfly->base(preCapacity, propertyCapacity);
         newStorageCapacity = desiredCapacity;
         allocatedNewStorage = true;
     }
@@ -385,23 +385,25 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
 
     unsigned newVectorLength = requiredVectorLength + postCapacity;
     RELEASE_ASSERT(newVectorLength <= MAX_STORAGE_VECTOR_LENGTH);
-    unsigned newIndexBias = newStorageCapacity - newVectorLength;
+    unsigned preCapacity = newStorageCapacity - newVectorLength;
 
-    Butterfly* newButterfly = Butterfly::fromBase(newAllocBase, newIndexBias, propertyCapacity);
+    Butterfly* newButterfly = Butterfly::fromBase(newAllocBase, preCapacity, propertyCapacity);
 
     if (addToFront) {
         ASSERT(count + usedVectorLength <= newVectorLength);
         memmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
         memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
-        
+
         if (allocatedNewStorage) {
             // We will set the vectorLength to newVectorLength. We populated requiredVectorLength
             // (usedVectorLength + count), which is less. Clear the difference.
             for (unsigned i = requiredVectorLength; i < newVectorLength; ++i)
                 newButterfly->arrayStorage()->m_vector[i].clear();
+            // We don't need to zero the pre-capacity because it is not available to use as property storage.
+            memset(newButterfly->base(0, propertyCapacity), 0, (propertyCapacity - propertySize) * sizeof(JSValue));
         }
-    } else if ((newAllocBase != butterfly->base(structure)) || (newIndexBias != storage->m_indexBias)) {
-        memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
+    } else if ((newAllocBase != butterfly->base(structure)) || (preCapacity != storage->m_indexBias)) {
+        memmove(newButterfly->propertyStorage() - propertyCapacity, butterfly->propertyStorage() - propertyCapacity, sizeof(JSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
         memmove(newButterfly->arrayStorage()->m_vector, storage->m_vector, sizeof(JSValue) * usedVectorLength);
         
         for (unsigned i = requiredVectorLength; i < newVectorLength; i++)
@@ -409,7 +411,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
     }
 
     newButterfly->arrayStorage()->setVectorLength(newVectorLength);
-    newButterfly->arrayStorage()->m_indexBias = newIndexBias;
+    newButterfly->arrayStorage()->m_indexBias = preCapacity;
     
     setButterfly(vm, newButterfly);
 

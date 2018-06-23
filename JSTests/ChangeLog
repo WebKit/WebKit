@@ -1,3 +1,14 @@
+2018-06-22  Keith Miller  <keith_miller@apple.com>
+
+        unshift should zero unused property storage
+        https://bugs.webkit.org/show_bug.cgi?id=186960
+
+        Reviewed by Saam Barati.
+
+        * stress/array-unshift-zero-property-storage.js: Added.
+        (run):
+        (test):
+
 2018-06-22  Mark Lam  <mark.lam@apple.com>
 
         PropertyCondition::isValidValueForAttributes() should also consider deleted values.

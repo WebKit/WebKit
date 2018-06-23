@@ -1,3 +1,18 @@
+2018-06-22  Keith Miller  <keith_miller@apple.com>
+
+        unshift should zero unused property storage
+        https://bugs.webkit.org/show_bug.cgi?id=186960
+
+        Reviewed by Saam Barati.
+
+        Also, this patch adds the zeroed unused property storage assertion
+        to one more place it was missing.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+
 2018-06-22  Mark Lam  <mark.lam@apple.com>
 
         PropertyCondition::isValidValueForAttributes() should also consider deleted values.
