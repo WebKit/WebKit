@@ -1,3 +1,15 @@
+2018-06-22  Youenn Fablet  <youenn@apple.com>
+
+        Disable WebSocket in WatchOS
+        https://bugs.webkit.org/show_bug.cgi?id=186931
+        <rdar://problem/39584458>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestExpectations:
+        * fast/dom/Window/watchos/no-websocket-in-watchos-expected.txt: Added.
+        * fast/dom/Window/watchos/no-websocket-in-watchos.html: Added.
+
 2018-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to add a border around loading or failed-to-load images

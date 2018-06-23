@@ -1,0 +1,3 @@
+
+PASS Ensure that WebSocket is disabled in WatchOS 
+

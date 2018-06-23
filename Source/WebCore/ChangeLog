@@ -1,3 +1,23 @@
+2018-06-22  Youenn Fablet  <youenn@apple.com>
+
+        Disable WebSocket in WatchOS
+        https://bugs.webkit.org/show_bug.cgi?id=186931
+        <rdar://problem/39584458>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a runtime flag to enable/disable WebSocket.
+        By default, flag is on for all platforms except for WatchOS.
+
+        Test: fast/dom/Window/watchos/websocket/watchos/no-websocket-in-watchos.html
+
+        * Modules/websockets/WebSocket.idl:
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebSocketEnabled):
+        (WebCore::RuntimeEnabledFeatures::webSocketEnabled const):
+
 2018-06-22  Woodrow Wang  <woodrow_wang@apple.com>
 
         SubresourceLoader::didFail() should only log message if state is Initialized

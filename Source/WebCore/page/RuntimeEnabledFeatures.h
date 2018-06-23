@@ -194,7 +194,10 @@ public:
 
     void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
     bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
-    
+
+    void setWebSocketEnabled(bool isEnabled) { m_isWebSocketEnabled = isEnabled; }
+    bool webSocketEnabled() const { return m_isWebSocketEnabled; }
+
 #if ENABLE(STREAMS_API)
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
@@ -369,6 +372,8 @@ private:
     bool m_isImageBitmapOffscreenCanvasEnabled { true };
     bool m_isCacheAPIEnabled { false };
     bool m_isFetchAPIEnabled { true };
+
+    bool m_isWebSocketEnabled { true };
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     bool m_isDownloadAttributeEnabled { false };
