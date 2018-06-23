@@ -43,7 +43,7 @@ public:
 
     bool supportsControlTints() const override { return true; }
 
-    void paintScrollCorner(ScrollView*, GraphicsContext&, const IntRect& cornerRect) override;
+    void paintScrollCorner(GraphicsContext&, const IntRect& cornerRect) override;
 
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar& scrollbar, const PlatformMouseEvent& event, ScrollbarPart pressedPart) override { return ScrollbarTheme::theme().handleMousePressEvent(scrollbar, event, pressedPart); }
 

@@ -73,6 +73,10 @@
 #include "RuntimeApplicationChecks.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "LocalDefaultSystemAppearance.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2578,6 +2582,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
+#endif
+
+#if PLATFORM(MAC)
+    LocalDefaultSystemAppearance localAppearance(renderer().page().useSystemAppearance(), renderer().page().defaultAppearance());
 #endif
 
     // The dirtyRect is in the coords of the painting root.

@@ -38,6 +38,8 @@
 #import "ScrollView.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashMap.h>
@@ -554,7 +556,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
         return true;
 
     SetForScope<bool> isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());
-    
+
     GraphicsContextStateSaver stateSaver(context);
     context.clip(damageRect);
     context.translate(scrollbar.frameRect().location());
@@ -562,6 +564,15 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
     scrollerImpPaint(scrollbarMap()->get(&scrollbar).get(), scrollbar.enabled());
 
     return true;
+}
+
+void ScrollbarThemeMac::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
+{
+    LocalCurrentGraphicsContext localContext(context);
+
+    auto cornerDrawingOptions = @{ (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetScrollBarTrackCorner,
+        (__bridge NSString *)kCUIIsFlippedKey: (__bridge NSNumber *)kCFBooleanTrue };
+    [[NSAppearance currentAppearance] _drawInRect:cornerRect context:localContext.cgContext() options:cornerDrawingOptions];
 }
 
 #if ENABLE(RUBBER_BANDING)

@@ -86,6 +86,10 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/UUID.h>
 
+#if PLATFORM(MAC)
+#include <WebCore/LocalDefaultSystemAppearance.h>
+#endif
+
 using namespace WebCore;
 
 // Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
@@ -1209,20 +1213,25 @@ void PDFPlugin::updateControlTints(GraphicsContext& graphicsContext)
 
 void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef context)
 {
+#if PLATFORM(MAC)
+    auto* page = webFrame()->coreFrame()->page();
+    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->defaultAppearance());
+#endif
+
     GraphicsContext graphicsContext(context);
     GraphicsContextStateSaver stateSaver(graphicsContext);
-    
+
     graphicsContext.setIsCALayerContext(true);
-    
+
     if (layer == m_scrollCornerLayer) {
         IntRect scrollCornerRect = this->scrollCornerRect();
         graphicsContext.translate(-scrollCornerRect.x(), -scrollCornerRect.y());
-        ScrollbarTheme::theme().paintScrollCorner(nullptr, graphicsContext, scrollCornerRect);
+        ScrollbarTheme::theme().paintScrollCorner(graphicsContext, scrollCornerRect);
         return;
     }
-    
+
     Scrollbar* scrollbar = nullptr;
-    
+
     if (layer == m_verticalScrollbarLayer)
         scrollbar = verticalScrollbar();
     else if (layer == m_horizontalScrollbarLayer)
@@ -1230,7 +1239,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
 
     if (!scrollbar)
         return;
-    
+
     graphicsContext.translate(-scrollbar->x(), -scrollbar->y());
     scrollbar->paint(graphicsContext, scrollbar->frameRect());
 }

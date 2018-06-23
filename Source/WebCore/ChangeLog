@@ -1,3 +1,42 @@
+2018-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Corner of two scroll bars is white with dark mode enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=186819
+        rdar://problem/40434350
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::paint): Added LocalDefaultSystemAppearance.
+        * page/Page.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paintScrollCorner): Dropped ScrollView argument.
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::paintScrollCorner): Ditto.
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paintScrollCorner): Deleted. Default is the same.
+        * platform/ScrollbarThemeComposite.h:
+        * platform/mac/LocalDefaultSystemAppearance.h:
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance): Added recursion early return.
+        (WebCore::LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance): Ditto.
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paintScrollCorner): Added.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintScrollCorner): Call ScrollbarTheme::paintScrollCorner.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents): Added LocalDefaultSystemAppearance.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents): Added LocalDefaultSystemAppearance.
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::paintScrollCorner): Call ScrollbarTheme::paintScrollCorner.
+        * rendering/RenderScrollbarTheme.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw): Added LocalDefaultSystemAppearance.
+
 2018-06-22  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to add a border around loading or failed-to-load images

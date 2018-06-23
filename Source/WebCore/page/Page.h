@@ -342,7 +342,7 @@ public:
     bool useSystemAppearance() const { return m_useSystemAppearance; }
     WEBCORE_EXPORT void setUseSystemAppearance(bool);
     
-    bool defaultAppearance() const;
+    WEBCORE_EXPORT bool defaultAppearance() const;
     WEBCORE_EXPORT void setDefaultAppearance(bool);
 
 #if ENABLE(TEXT_AUTOSIZING)

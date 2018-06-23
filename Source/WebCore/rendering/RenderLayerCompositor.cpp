@@ -70,6 +70,10 @@
 #include "RenderScrollbar.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "LocalDefaultSystemAppearance.h"
+#endif
+
 #if ENABLE(TREE_DEBUGGING)
 #include "RenderTreeAsText.h"
 #endif
@@ -2769,6 +2773,10 @@ void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRec
 
 void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior)
 {
+#if PLATFORM(MAC)
+    LocalDefaultSystemAppearance localAppearance(page().useSystemAppearance(), page().defaultAppearance());
+#endif
+
     IntRect pixelSnappedRectForIntegralPositionedItems = snappedIntRect(LayoutRect(clip));
     if (graphicsLayer == layerForHorizontalScrollbar())
         paintScrollbar(m_renderView.frameView().horizontalScrollbar(), context, pixelSnappedRectForIntegralPositionedItems);

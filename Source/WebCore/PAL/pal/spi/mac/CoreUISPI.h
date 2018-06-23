@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,34 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-#if USE(APPKIT)
+#include <CoreUI/CoreUI.h>
 
-OBJC_CLASS NSAppearance;
+#else
 
-namespace WebCore {
-    
-// This class automatically saves and restores the current NSAppearance for
-// functions which call out into AppKit and rely on the current NSAppearance being set
-class LocalDefaultSystemAppearance {
-    WTF_MAKE_NONCOPYABLE(LocalDefaultSystemAppearance);
-public:
-    WEBCORE_EXPORT LocalDefaultSystemAppearance(bool useSystemAppearance, bool useDefaultAppearance);
-    WEBCORE_EXPORT ~LocalDefaultSystemAppearance();
-private:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    RetainPtr<NSAppearance> m_savedSystemAppearance;
+extern const CFStringRef kCUIWidgetKey;
+extern const CFStringRef kCUIIsFlippedKey;
+
+extern const CFStringRef kCUIWidgetScrollBarTrackCorner;
+
 #endif
-};
-    
-}
-
-#endif // USE(APPKIT)
-

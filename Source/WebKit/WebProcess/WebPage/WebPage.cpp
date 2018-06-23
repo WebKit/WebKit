@@ -258,6 +258,10 @@
 #include <pal/spi/cocoa/CoreTextSPI.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <WebCore/LocalDefaultSystemAppearance.h>
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -1517,6 +1521,10 @@ void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffse
 
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
+#if PLATFORM(MAC)
+    LocalDefaultSystemAppearance localAppearance(m_page->useSystemAppearance(), m_page->defaultAppearance());
+#endif
+
     GraphicsContextStateSaver stateSaver(graphicsContext);
     graphicsContext.clip(rect);
 

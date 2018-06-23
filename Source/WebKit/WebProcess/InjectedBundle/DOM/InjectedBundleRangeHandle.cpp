@@ -45,6 +45,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(MAC)
+#include <WebCore/LocalDefaultSystemAppearance.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -119,6 +123,10 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     FrameView* frameView = frame->view();
     if (!frameView)
         return nullptr;
+
+#if PLATFORM(MAC)
+    LocalDefaultSystemAppearance localAppearance(frame->page()->useSystemAppearance(), frame->page()->defaultAppearance());
+#endif
 
     Ref<Frame> protector(*frame);
 

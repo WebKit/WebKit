@@ -59,6 +59,9 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/JSONValues.h>
 
+#if PLATFORM(MAC)
+#include "LocalDefaultSystemAppearance.h"
+#endif
 
 namespace WebCore {
 
@@ -176,6 +179,10 @@ void InspectorOverlay::paint(GraphicsContext& context)
 {
     if (!shouldShowOverlay())
         return;
+
+#if PLATFORM(MAC)
+    LocalDefaultSystemAppearance localAppearance(m_page.useSystemAppearance(), m_page.defaultAppearance());
+#endif
 
     GraphicsContextStateSaver stateSaver(context);
     FrameView* view = overlayPage()->mainFrame().view();

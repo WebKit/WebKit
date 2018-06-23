@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
-
 #if USE(APPKIT)
 
-OBJC_CLASS NSAppearance;
+@interface NSAppearance ()
 
-namespace WebCore {
-    
-// This class automatically saves and restores the current NSAppearance for
-// functions which call out into AppKit and rely on the current NSAppearance being set
-class LocalDefaultSystemAppearance {
-    WTF_MAKE_NONCOPYABLE(LocalDefaultSystemAppearance);
-public:
-    WEBCORE_EXPORT LocalDefaultSystemAppearance(bool useSystemAppearance, bool useDefaultAppearance);
-    WEBCORE_EXPORT ~LocalDefaultSystemAppearance();
-private:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    RetainPtr<NSAppearance> m_savedSystemAppearance;
-#endif
-};
-    
-}
+- (void)_drawInRect:(NSRect)rect context:(CGContextRef)context options:(NSDictionary *)options;
+
+@end
 
 #endif // USE(APPKIT)
-

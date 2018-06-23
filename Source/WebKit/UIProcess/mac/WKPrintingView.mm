@@ -36,6 +36,7 @@
 #import "WebPageProxy.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RunLoop.h>
 
@@ -563,8 +564,11 @@ static CFStringRef linkDestinationName(PDFDocument *document, PDFDestination *de
 
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
-    if (!_webFrame->page())
+    auto* page = _webFrame->page();
+    if (!page)
         return;
+
+    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->defaultAppearance());
 
     if ([self _isPrintingPreview]) {
         [self _drawPreview:nsRect];

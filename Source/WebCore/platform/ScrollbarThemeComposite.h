@@ -44,7 +44,6 @@ public:
     int thumbLength(Scrollbar&) override;
     int trackPosition(Scrollbar&) override;
     int trackLength(Scrollbar&) override;
-    void paintScrollCorner(ScrollView*, GraphicsContext&, const IntRect& cornerRect) override;
     void paintOverhangAreas(ScrollView&, GraphicsContext&, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) override;
 
     virtual bool hasButtons(Scrollbar&) = 0;
