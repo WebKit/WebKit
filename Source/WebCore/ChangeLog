@@ -1,3 +1,24 @@
+2018-06-22  Woodrow Wang  <woodrow_wang@apple.com>
+
+        SubresourceLoader::didFail() should only log message if state is Initialized
+        https://bugs.webkit.org/show_bug.cgi?id=185124
+
+        Reviewed by Daniel Bates.
+
+        Functionality does not change. Moved console logging to be 
+        after checking state of subresource loader. We only need to 
+        log if the state is initialized. This is consistent with other
+        functions in the file. We can also remove a null check for the 
+        frame pointer (m_frame). The superclass ResourceLoader constructor
+        takes an lvalue reference and initializes m_frame, ensuring
+        m_frame cannot be null. It is only set to null by 
+        ResourceLoader::releaseResources(), which is only called after the 
+        resource finishes loading or fails to load. Thus, in didFail(), 
+        m_frame must be non-null when we're logging and up until the end of the function.  
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFail):
+
 2018-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Corner of two scroll bars is white with dark mode enabled.
