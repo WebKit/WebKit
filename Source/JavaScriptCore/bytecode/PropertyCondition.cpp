@@ -377,6 +377,8 @@ void PropertyCondition::validateReferences(const TrackedReferences& tracked) con
 
 bool PropertyCondition::isValidValueForAttributes(VM& vm, JSValue value, unsigned attributes)
 {
+    if (!value)
+        return false;
     bool attributesClaimAccessor = !!(attributes & PropertyAttribute::Accessor);
     bool valueClaimsAccessor = !!jsDynamicCast<GetterSetter*>(vm, value);
     return attributesClaimAccessor == valueClaimsAccessor;
