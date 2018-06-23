@@ -1,3 +1,16 @@
+2018-06-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r230211): Crash under WebInspectorClient::~WebInspectorClient()
+        https://bugs.webkit.org/show_bug.cgi?id=186950
+        <rdar://problem/40602069>
+
+        Reviewed by Darin Adler.
+
+        Re-introduce null-check that was accidentally dropped in r230211.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::~WebInspectorClient):
+
 2018-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Corner of two scroll bars is white with dark mode enabled.
