@@ -61,12 +61,12 @@ static ArchiveMIMETypesMap createArchiveMIMETypesMap()
     ArchiveMIMETypesMap map;
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-    map.add(ASCIILiteral { "application/x-webarchive" }, archiveFactoryCreate<LegacyWebArchive>);
+    map.add("application/x-webarchive"_s, archiveFactoryCreate<LegacyWebArchive>);
 #endif
 
 #if ENABLE(MHTML)
-    map.add(ASCIILiteral { "multipart/related" }, archiveFactoryCreate<MHTMLArchive>);
-    map.add(ASCIILiteral { "application/x-mimearchive" }, archiveFactoryCreate<MHTMLArchive>);
+    map.add("multipart/related"_s, archiveFactoryCreate<MHTMLArchive>);
+    map.add("application/x-mimearchive"_s, archiveFactoryCreate<MHTMLArchive>);
 #endif
 
     return map;

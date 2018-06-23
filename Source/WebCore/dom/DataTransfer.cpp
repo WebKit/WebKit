@@ -72,8 +72,8 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
     , m_pasteboard(WTFMove(pasteboard))
 #if ENABLE(DRAG_SUPPORT)
     , m_type(type)
-    , m_dropEffect(ASCIILiteral("uninitialized"))
-    , m_effectAllowed(ASCIILiteral("uninitialized"))
+    , m_dropEffect("uninitialized"_s)
+    , m_effectAllowed("uninitialized"_s)
     , m_shouldUpdateDragImage(false)
 #endif
 {
@@ -305,7 +305,7 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
     if (hasFileBackedItem || fileContentState != Pasteboard::FileContentState::NoFileOrImageData) {
         Vector<String> types;
         if (addFilesType == AddFilesType::Yes)
-            types.append(ASCIILiteral("Files"));
+            types.append("Files"_s);
 
         if (fileContentState != Pasteboard::FileContentState::MayContainFilePaths) {
             types.appendVector(WTFMove(safeTypes));
@@ -313,9 +313,9 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
         }
 
         if (safeTypes.contains("text/uri-list"))
-            types.append(ASCIILiteral("text/uri-list"));
+            types.append("text/uri-list"_s);
         if (safeTypes.contains("text/html") && RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
-            types.append(ASCIILiteral("text/html"));
+            types.append("text/html"_s);
         return types;
     }
 
@@ -396,8 +396,8 @@ bool DataTransfer::hasStringOfType(const String& type)
 Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, const String& htmlText)
 {
     auto pasteboard = std::make_unique<StaticPasteboard>();
-    pasteboard->writeString(ASCIILiteral("text/plain"), plainText);
-    pasteboard->writeString(ASCIILiteral("text/html"), htmlText);
+    pasteboard->writeString("text/plain"_s, plainText);
+    pasteboard->writeString("text/html"_s, htmlText);
     return adoptRef(*new DataTransfer(StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
 }
 
@@ -421,7 +421,7 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
 
 String DataTransfer::dropEffect() const
 {
-    return ASCIILiteral("none");
+    return "none"_s;
 }
 
 void DataTransfer::setDropEffect(const String&)
@@ -430,7 +430,7 @@ void DataTransfer::setDropEffect(const String&)
 
 String DataTransfer::effectAllowed() const
 {
-    return ASCIILiteral("uninitialized");
+    return "uninitialized"_s;
 }
 
 void DataTransfer::setEffectAllowed(const String&)
@@ -641,7 +641,7 @@ void DataTransfer::setDestinationOperation(DragOperation operation)
 
 String DataTransfer::dropEffect() const
 {
-    return m_dropEffect == "uninitialized" ? ASCIILiteral("none") : m_dropEffect;
+    return m_dropEffect == "uninitialized" ? "none"_s : m_dropEffect;
 }
 
 void DataTransfer::setDropEffect(const String& effect)

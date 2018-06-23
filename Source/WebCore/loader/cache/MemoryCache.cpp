@@ -562,7 +562,7 @@ void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
             auto& resource = *keyValue.value;
             auto& partitionName = keyValue.key.second;
             if (!partitionName.isEmpty())
-                origins.add(SecurityOrigin::create(ASCIILiteral("http"), partitionName, 0));
+                origins.add(SecurityOrigin::create("http"_s, partitionName, 0));
             else
                 origins.add(SecurityOrigin::create(resource.url()));
         }

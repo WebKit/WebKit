@@ -312,11 +312,11 @@ String CallFrame::friendlyFunctionName()
 
     switch (codeBlock->codeType()) {
     case EvalCode:
-        return ASCIILiteral("eval code");
+        return "eval code"_s;
     case ModuleCode:
-        return ASCIILiteral("module code");
+        return "module code"_s;
     case GlobalCode:
-        return ASCIILiteral("global code");
+        return "global code"_s;
     case FunctionCode:
         if (jsCallee())
             return getCalculatedDisplayName(vm(), jsCallee());

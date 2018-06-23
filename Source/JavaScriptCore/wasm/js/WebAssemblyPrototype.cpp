@@ -147,8 +147,8 @@ static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAs
         promise->resolve(exec, moduleRecord);
     } else {
         JSObject* result = constructEmptyObject(exec);
-        result->putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("module")), module);
-        result->putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("instance")), instance);
+        result->putDirect(vm, Identifier::fromString(&vm, "module"_s), module);
+        result->putDirect(vm, Identifier::fromString(&vm, "instance"_s), instance);
         promise->resolve(exec, result);
     }
     CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());
@@ -271,7 +271,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState* exec)
         JSObject* importObject = importArgument.getObject();
         if (UNLIKELY(!importArgument.isUndefined() && !importObject)) {
             promise->reject(exec, createTypeError(exec,
-                ASCIILiteral("second argument to WebAssembly.instantiate must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
+                "second argument to WebAssembly.instantiate must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
             CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, JSValue::encode(promise->promise()));
         } else {
             JSValue firstArgument = exec->argument(0);
@@ -340,7 +340,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(ExecState* 
         JSObject* importObject = importArgument.getObject();
         if (UNLIKELY(!importArgument.isUndefined() && !importObject)) {
             promise->reject(exec, createTypeError(exec,
-                ASCIILiteral("second argument to WebAssembly.instantiateStreaming must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
+                "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
             CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, JSValue::encode(promise->promise()));
         } else {
             if (globalObject->globalObjectMethodTable()->instantiateStreaming) {

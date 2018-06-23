@@ -56,7 +56,7 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
         return defaultConstructor();
     }
     if (!constructor.isObject()) {
-        throwTypeError(exec, scope, ASCIILiteral("constructor Property should not be null"));
+        throwTypeError(exec, scope, "constructor Property should not be null"_s);
         return nullptr;
     }
 
@@ -75,11 +75,11 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
         if (!view->isNeutered())
             return view;
 
-        throwTypeError(exec, scope, ASCIILiteral(typedArrayBufferHasBeenDetachedErrorMessage));
+        throwTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
         return nullptr;
     }
 
-    throwTypeError(exec, scope, ASCIILiteral("species constructor did not return a TypedArray View"));
+    throwTypeError(exec, scope, "species constructor did not return a TypedArray View"_s);
     return nullptr;
 }
 
@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(VM& vm, ExecState
     ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
 
     if (UNLIKELY(!exec->argumentCount()))
-        return throwVMTypeError(exec, scope, ASCIILiteral("Expected at least one argument"));
+        return throwVMTypeError(exec, scope, "Expected at least one argument"_s);
 
     unsigned offset;
     if (exec->argumentCount() >= 2) {
@@ -123,7 +123,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(VM& vm, ExecState
 
     JSObject* sourceArray = jsDynamicCast<JSObject*>(vm, exec->uncheckedArgument(0));
     if (UNLIKELY(!sourceArray))
-        return throwVMTypeError(exec, scope, ASCIILiteral("First argument should be an object"));
+        return throwVMTypeError(exec, scope, "First argument should be an object"_s);
 
     unsigned length;
     if (isTypedView(sourceArray->classInfo(vm)->typedArrayStorageType)) {
@@ -233,7 +233,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncIndexOf(VM& vm, ExecS
         return throwVMTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (!exec->argumentCount())
-        return throwVMTypeError(exec, scope, ASCIILiteral("Expected at least one argument"));
+        return throwVMTypeError(exec, scope, "Expected at least one argument"_s);
 
     unsigned length = thisObject->length();
 
@@ -310,7 +310,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, E
         return throwVMTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (!exec->argumentCount())
-        return throwVMTypeError(exec, scope, ASCIILiteral("Expected at least one argument"));
+        return throwVMTypeError(exec, scope, "Expected at least one argument"_s);
 
     unsigned length = thisObject->length();
 
@@ -572,7 +572,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     if (jsDynamicCast<JSArrayBufferView*>(vm, result))
         return JSValue::encode(result);
 
-    throwTypeError(exec, scope, ASCIILiteral("species constructor did not return a TypedArray View"));
+    throwTypeError(exec, scope, "species constructor did not return a TypedArray View"_s);
     return JSValue::encode(JSValue());
 }
 

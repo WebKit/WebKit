@@ -185,7 +185,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
     if (creationMode == Wasm::CreationMode::FromJS) {
         // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
         if (moduleInformation.imports.size() && !importObject)
-            return exception(createTypeError(exec, ASCIILiteral("can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports")));
+            return exception(createTypeError(exec, "can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports"_s));
     }
 
     // For each import i in module.imports:

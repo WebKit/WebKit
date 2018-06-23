@@ -276,6 +276,7 @@ set(WTF_PUBLIC_HEADERS
     persistence/PersistentEncoder.h
 
     text/ASCIIFastPath.h
+    text/ASCIILiteral.h
     text/AtomicString.h
     text/AtomicStringHash.h
     text/AtomicStringImpl.h
@@ -407,6 +408,7 @@ set(WTF_SOURCES
     persistence/PersistentDecoder.cpp
     persistence/PersistentEncoder.cpp
 
+    text/ASCIILiteral.cpp
     text/AtomicString.cpp
     text/AtomicStringImpl.cpp
     text/AtomicStringTable.cpp

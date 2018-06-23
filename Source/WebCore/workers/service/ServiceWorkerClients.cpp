@@ -104,7 +104,7 @@ void ServiceWorkerClients::matchAll(ScriptExecutionContext& context, const Clien
 void ServiceWorkerClients::openWindow(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&& promise)
 {
     UNUSED_PARAM(url);
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("clients.openWindow() is not yet supported") });
+    promise->reject(Exception { NotSupportedError, "clients.openWindow() is not yet supported"_s });
 }
 
 void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
@@ -114,7 +114,7 @@ void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPr
     auto serviceWorkerIdentifier = serviceWorkerGlobalScope.thread().identifier();
 
     if (!serviceWorkerGlobalScope.registration().active() || serviceWorkerGlobalScope.registration().active()->identifier() != serviceWorkerIdentifier) {
-        promise->reject(Exception { InvalidStateError, ASCIILiteral("Service worker is not active") });
+        promise->reject(Exception { InvalidStateError, "Service worker is not active"_s });
         return;
     }
 

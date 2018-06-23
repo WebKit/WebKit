@@ -68,7 +68,7 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *
     double timestamp = event.timestamp;
 
     if (windowsVirtualKeyCode == '\r') {
-        text = ASCIILiteral("\r");
+        text = "\r"_s;
         unmodifiedText = text;
     }
 
@@ -76,12 +76,12 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *
 
     // Turn 0x7F into 8, because backspace needs to always be 8.
     if (text == "\x7F")
-        text = ASCIILiteral("\x8");
+        text = "\x8"_s;
     if (unmodifiedText == "\x7F")
-        unmodifiedText = ASCIILiteral("\x8");
+        unmodifiedText = "\x8"_s;
     // Always use 9 for tab.
     if (windowsVirtualKeyCode == 9) {
-        text = ASCIILiteral("\x9");
+        text = "\x9"_s;
         unmodifiedText = text;
     }
 

@@ -311,7 +311,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
 {
     const GregorianDateTime* gregorianDateTime = dateObject->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return jsNontrivialString(exec, ASCIILiteral("Invalid Date"));
+        return jsNontrivialString(exec, "Invalid Date"_s);
     return formatLocaleDate(exec, *gregorianDateTime, format);
 }
 
@@ -330,7 +330,7 @@ static EncodedJSValue formateDateInstance(ExecState* exec, DateTimeFormat format
         ? thisDateObj->gregorianDateTimeUTC(exec)
         : thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, String(ASCIILiteral("Invalid Date"))));
+        return JSValue::encode(jsNontrivialString(exec, String("Invalid Date"_s)));
 
     return JSValue::encode(jsNontrivialString(exec, formatDateTime(*gregorianDateTime, format, asUTCVariant)));
 }
@@ -502,10 +502,10 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
-    Identifier toUTCStringName = Identifier::fromString(&vm, ASCIILiteral("toUTCString"));
+    Identifier toUTCStringName = Identifier::fromString(&vm, "toUTCString"_s);
     JSFunction* toUTCStringFunction = JSFunction::create(vm, globalObject, 0, toUTCStringName.string(), dateProtoFuncToUTCString);
     putDirectWithoutTransition(vm, toUTCStringName, toUTCStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, ASCIILiteral("toGMTString")), toUTCStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "toGMTString"_s), toUTCStringFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
 #if ENABLE(INTL)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", datePrototypeToLocaleStringCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -513,7 +513,7 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleTimeString", datePrototypeToLocaleTimeStringCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 #endif
 
-    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, ASCIILiteral("[Symbol.toPrimitive]"), dateProtoFuncToPrimitiveSymbol, NoIntrinsic);
+    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, dateProtoFuncToPrimitiveSymbol, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 
     // The constructor will be added later, after DateConstructor has been built.
@@ -543,11 +543,11 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec)
         return throwVMTypeError(exec, scope);
     
     if (!std::isfinite(thisDateObj->internalNumber()))
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("Invalid Date")));
+        return throwVMError(exec, scope, createRangeError(exec, "Invalid Date"_s));
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, String(ASCIILiteral("Invalid Date"))));
+        return JSValue::encode(jsNontrivialString(exec, String("Invalid Date"_s)));
     // Maximum amount of space we need in buffer: 7 (max. digits in year) + 2 * 5 (2 characters each for month, day, hour, minute, second) + 4 (. + 3 digits for milliseconds)
     // 6 for formatting and one for null termination = 28. We add one extra character to allow us to force null termination.
     char buffer[28];
@@ -1167,12 +1167,12 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(vm, toISOValue, callData);
     if (callType == CallType::None)
-        return throwVMTypeError(exec, scope, ASCIILiteral("toISOString is not a function"));
+        return throwVMTypeError(exec, scope, "toISOString is not a function"_s);
 
     JSValue result = call(exec, asObject(toISOValue), callType, callData, object, *vm.emptyList);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (result.isObject())
-        return throwVMTypeError(exec, scope, ASCIILiteral("toISOString did not return a primitive value"));
+        return throwVMTypeError(exec, scope, "toISOString did not return a primitive value"_s);
     return JSValue::encode(result);
 }
 

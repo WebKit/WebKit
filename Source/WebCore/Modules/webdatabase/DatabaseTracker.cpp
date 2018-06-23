@@ -649,7 +649,7 @@ unsigned long long DatabaseTracker::usage(const SecurityOriginData& origin)
 {
     String originPath = this->originPath(origin);
     unsigned long long diskUsage = 0;
-    for (auto& fileName : FileSystem::listDirectory(originPath, ASCIILiteral("*.db"))) {
+    for (auto& fileName : FileSystem::listDirectory(originPath, "*.db"_s)) {
         long long size;
         FileSystem::getFileSize(fileName, size);
         diskUsage += size;

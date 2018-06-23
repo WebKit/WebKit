@@ -34,7 +34,7 @@ const ClassInfo JSWeakMap::s_info = { "WeakMap", &Base::s_info, nullptr, nullptr
 
 String JSWeakMap::toStringName(const JSObject*, ExecState*)
 {
-    return ASCIILiteral("Object");
+    return "Object"_s;
 }
 
 }

@@ -1,3 +1,17 @@
+2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add user-defined literal for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=186839
+
+        Reviewed by Darin Adler.
+
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMErrorException):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invokeMethod):
+        * Storage/WebDatabaseProvider.mm:
+        (WebDatabaseProvider::indexedDatabaseDirectoryPath):
+
 2018-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Recalc styles every time defaultAppearance changes.

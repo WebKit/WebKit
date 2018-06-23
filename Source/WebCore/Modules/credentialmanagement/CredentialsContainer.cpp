@@ -68,7 +68,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
     if (options.signal && options.signal->aborted()) {
-        promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+        promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
         return;
     }
     // Step 1-2.
@@ -78,7 +78,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
     // Step 4-6. Shortcut as we only support PublicKeyCredential which can only
     // be requested from [[discoverFromExternalSource]].
     if (!options.publicKey) {
-        promise.reject(Exception { NotSupportedError, ASCIILiteral("Only PublicKeyCredential is supported.") });
+        promise.reject(Exception { NotSupportedError, "Only PublicKeyCredential is supported."_s });
         return;
     }
 
@@ -88,7 +88,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented.") });
+    promise.reject(Exception { NotSupportedError, "Not implemented."_s });
 }
 
 void CredentialsContainer::isCreate(CredentialCreationOptions&& options, CredentialPromise&& promise)
@@ -100,7 +100,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         return;
     }
     if (options.signal && options.signal->aborted()) {
-        promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+        promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
         return;
     }
     // Step 1-2.
@@ -108,7 +108,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 
     // Step 3-7. Shortcut as we only support one kind of credentials.
     if (!options.publicKey) {
-        promise.reject(Exception { NotSupportedError, ASCIILiteral("Only PublicKeyCredential is supported.") });
+        promise.reject(Exception { NotSupportedError, "Only PublicKeyCredential is supported."_s });
         return;
     }
 
@@ -118,7 +118,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented.") });
+    promise.reject(Exception { NotSupportedError, "Not implemented."_s });
 }
 
 } // namespace WebCore

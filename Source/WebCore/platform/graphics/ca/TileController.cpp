@@ -53,12 +53,12 @@ static const Seconds tileSizeUpdateDelay { 500_ms };
 
 String TileController::tileGridContainerLayerName()
 {
-    return ASCIILiteral("TileGrid container");
+    return "TileGrid container"_s;
 }
 
 String TileController::zoomedOutTileGridContainerLayerName()
 {
-    return ASCIILiteral("Zoomed-out TileGrid container");
+    return "Zoomed-out TileGrid container"_s;
 }
 
 TileController::TileController(PlatformCALayer* rootPlatformLayer)

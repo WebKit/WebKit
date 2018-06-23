@@ -104,7 +104,7 @@ static const char* throttlingReasonToString(ScriptedAnimationController::Throttl
 static String throttlingReasonsToString(OptionSet<ScriptedAnimationController::ThrottlingReason> reasons)
 {
     if (reasons.isEmpty())
-        return ASCIILiteral("[Unthrottled]");
+        return "[Unthrottled]"_s;
 
     StringBuilder builder;
     for (auto reason : reasons) {

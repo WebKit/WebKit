@@ -55,7 +55,7 @@ namespace WebCore {
 using namespace Inspector;
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)
-    : InspectorAgentBase(ASCIILiteral("DOMStorage"), context)
+    : InspectorAgentBase("DOMStorage"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMStorageBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
@@ -93,7 +93,7 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, cons
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        errorString = ASCIILiteral("No StorageArea for given storageId");
+        errorString = "No StorageArea for given storageId"_s;
         return;
     }
 
@@ -117,7 +117,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        errorString = ASCIILiteral("Storage not found");
+        errorString = "Storage not found"_s;
         return;
     }
 
@@ -132,7 +132,7 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, co
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
-        errorString = ASCIILiteral("Storage not found");
+        errorString = "Storage not found"_s;
         return;
     }
 
@@ -179,18 +179,18 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& error
 {
     String securityOrigin;
     bool isLocalStorage = false;
-    bool success = storageId.getString(ASCIILiteral("securityOrigin"), securityOrigin);
+    bool success = storageId.getString("securityOrigin"_s, securityOrigin);
     if (success)
-        success = storageId.getBoolean(ASCIILiteral("isLocalStorage"), isLocalStorage);
+        success = storageId.getBoolean("isLocalStorage"_s, isLocalStorage);
     if (!success) {
-        errorString = ASCIILiteral("Invalid storageId format");
+        errorString = "Invalid storageId format"_s;
         targetFrame = nullptr;
         return nullptr;
     }
 
     targetFrame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     if (!targetFrame) {
-        errorString = ASCIILiteral("Frame not found for the given security origin");
+        errorString = "Frame not found for the given security origin"_s;
         return nullptr;
     }
 

@@ -61,10 +61,10 @@ intptr_t StackFrame::sourceID() const
 String StackFrame::sourceURL() const
 {
     if (m_isWasmFrame)
-        return ASCIILiteral("[wasm code]");
+        return "[wasm code]"_s;
 
     if (!m_codeBlock) {
-        return ASCIILiteral("[native code]");
+        return "[native code]"_s;
     }
 
     String sourceURL = m_codeBlock->ownerScriptExecutable()->sourceURL();
@@ -81,13 +81,13 @@ String StackFrame::functionName(VM& vm) const
     if (m_codeBlock) {
         switch (m_codeBlock->codeType()) {
         case EvalCode:
-            return ASCIILiteral("eval code");
+            return "eval code"_s;
         case ModuleCode:
-            return ASCIILiteral("module code");
+            return "module code"_s;
         case FunctionCode:
             break;
         case GlobalCode:
-            return ASCIILiteral("global code");
+            return "global code"_s;
         default:
             ASSERT_NOT_REACHED();
         }

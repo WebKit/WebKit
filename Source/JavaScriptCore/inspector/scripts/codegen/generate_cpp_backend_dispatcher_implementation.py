@@ -164,14 +164,14 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             if parameter.is_optional:
                 if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
                     out_parameter_assignments.append('    if (%(parameterName)s.has_value())' % param_args)
-                    out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), *%(parameterName)s);' % param_args)
+                    out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, *%(parameterName)s);' % param_args)
                 else:
                     out_parameter_assignments.append('    if (%(parameterName)s)' % param_args)
-                    out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), %(parameterName)s);' % param_args)
+                    out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterName)s);' % param_args)
             elif parameter.type.is_enum():
-                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(%(parameterName)s));' % param_args)
+                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(%(parameterName)s));' % param_args)
             else:
-                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), %(parameterName)s);' % param_args)
+                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s("%(parameterKey)s"_s, %(parameterName)s);' % param_args)
 
         async_args = {
             'domainName': domain.domain_name,
@@ -224,7 +224,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 'successOutParam': out_success_argument
             }
 
-            in_parameter_declarations.append('    %(parameterType)s %(parameterName)s = m_backendDispatcher->%(keyedGetMethod)s(parameters.get(), ASCIILiteral("%(parameterKey)s"), %(successOutParam)s);' % param_args)
+            in_parameter_declarations.append('    %(parameterType)s %(parameterName)s = m_backendDispatcher->%(keyedGetMethod)s(parameters.get(), "%(parameterKey)s"_s, %(successOutParam)s);' % param_args)
 
             if parameter.is_optional:
                 optional_in_parameter_string = '%(parameterName)s_valueFound ? %(parameterExpression)s : nullptr' % param_args
@@ -259,14 +259,14 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 if parameter.is_optional:
                     if CppGenerator.should_use_wrapper_for_return_type(parameter.type):
                         out_parameter_assignments.append('        if (out_%(parameterName)s.has_value())' % param_args)
-                        out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), *out_%(parameterName)s);' % param_args)
+                        out_parameter_assignments.append('            result->%(keyedSetMethod)s("%(parameterKey)s"_s, *out_%(parameterName)s);' % param_args)
                     else:
                         out_parameter_assignments.append('        if (out_%(parameterName)s)' % param_args)
-                        out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), out_%(parameterName)s);' % param_args)
+                        out_parameter_assignments.append('            result->%(keyedSetMethod)s("%(parameterKey)s"_s, out_%(parameterName)s);' % param_args)
                 elif parameter.type.is_enum():
-                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(out_%(parameterName)s));' % param_args)
+                    out_parameter_assignments.append('        result->%(keyedSetMethod)s("%(parameterKey)s"_s, Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(out_%(parameterName)s));' % param_args)
                 else:
-                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterKey)s"), out_%(parameterName)s);' % param_args)
+                    out_parameter_assignments.append('        result->%(keyedSetMethod)s("%(parameterKey)s"_s, out_%(parameterName)s);' % param_args)
 
                 if CppGenerator.should_pass_by_copy_for_return_type(parameter.type) or parameter.is_optional and CppGenerator.should_use_wrapper_for_return_type(parameter.type):
                     method_parameters.append('out_' + parameter.parameter_name)

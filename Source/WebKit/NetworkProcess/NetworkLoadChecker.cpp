@@ -125,7 +125,7 @@ void NetworkLoadChecker::checkRedirection(ResourceResponse& redirectResponse, Re
     // See https://github.com/whatwg/fetch/issues/393
 
     if (++m_redirectCount > 20) {
-        handler(accessControlErrorForValidationHandler(ASCIILiteral("Load cannot follow more than 20 redirections")));
+        handler(accessControlErrorForValidationHandler("Load cannot follow more than 20 redirections"_s));
         return;
     }
 
@@ -181,7 +181,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandl
             contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
         }
         if (!isAllowedByContentSecurityPolicy(request)) {
-            handler(accessControlErrorForValidationHandler(ASCIILiteral { "Blocked by Content Security Policy." }));
+            handler(accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
             return;
         }
     }
@@ -194,7 +194,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandl
             return;
         }
         if (result.value().status.blockedLoad) {
-            handler(this->accessControlErrorForValidationHandler(ASCIILiteral("Blocked by content extension")));
+            handler(this->accessControlErrorForValidationHandler("Blocked by content extension"_s));
             return;
         }
         this->continueCheckingRequest(WTFMove(result.value().request), WTFMove(handler));

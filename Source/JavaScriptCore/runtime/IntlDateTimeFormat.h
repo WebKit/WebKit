@@ -79,15 +79,15 @@ private:
     };
 
     void setFormatsFromPattern(const StringView&);
-    static const char* weekdayString(Weekday);
-    static const char* eraString(Era);
-    static const char* yearString(Year);
-    static const char* monthString(Month);
-    static const char* dayString(Day);
-    static const char* hourString(Hour);
-    static const char* minuteString(Minute);
-    static const char* secondString(Second);
-    static const char* timeZoneNameString(TimeZoneName);
+    static ASCIILiteral weekdayString(Weekday);
+    static ASCIILiteral eraString(Era);
+    static ASCIILiteral yearString(Year);
+    static ASCIILiteral monthString(Month);
+    static ASCIILiteral dayString(Day);
+    static ASCIILiteral hourString(Hour);
+    static ASCIILiteral minuteString(Minute);
+    static ASCIILiteral secondString(Second);
+    static ASCIILiteral timeZoneNameString(TimeZoneName);
 
     bool m_initializedDateTimeFormat { false };
     WriteBarrier<JSBoundFunction> m_boundFormat;
@@ -113,7 +113,7 @@ private:
         void operator()(UFieldPositionIterator*) const;
     };
 
-    static const char* partTypeString(UDateFormatField);
+    static ASCIILiteral partTypeString(UDateFormatField);
 #endif
 };
 

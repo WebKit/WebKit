@@ -372,22 +372,22 @@ TEST_F(URLTest, HostIsMatchingDomain)
 
     EXPECT_TRUE(url.isMatchingDomain(String { }));
     EXPECT_TRUE(url.isMatchingDomain(emptyString()));
-    EXPECT_TRUE(url.isMatchingDomain(ASCIILiteral("org")));
-    EXPECT_TRUE(url.isMatchingDomain(ASCIILiteral("webkit.org")));
-    EXPECT_TRUE(url.isMatchingDomain(ASCIILiteral("www.webkit.org")));
+    EXPECT_TRUE(url.isMatchingDomain("org"_s));
+    EXPECT_TRUE(url.isMatchingDomain("webkit.org"_s));
+    EXPECT_TRUE(url.isMatchingDomain("www.webkit.org"_s));
 
-    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("rg")));
-    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral(".org")));
-    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("ww.webkit.org")));
-    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("http://www.webkit.org")));
+    EXPECT_FALSE(url.isMatchingDomain("rg"_s));
+    EXPECT_FALSE(url.isMatchingDomain(".org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("ww.webkit.org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("http://www.webkit.org"_s));
 
     url = createURL("file:///www.webkit.org");
 
     EXPECT_TRUE(url.isMatchingDomain(String { }));
     EXPECT_TRUE(url.isMatchingDomain(emptyString()));
-    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("org")));
-    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("webkit.org")));
-    EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("www.webkit.org")));
+    EXPECT_FALSE(url.isMatchingDomain("org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("webkit.org"_s));
+    EXPECT_FALSE(url.isMatchingDomain("www.webkit.org"_s));
 
     URL emptyURL;
     EXPECT_FALSE(emptyURL.isMatchingDomain(String { }));

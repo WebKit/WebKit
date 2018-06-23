@@ -554,7 +554,7 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHa
                 if (m_persistentStorage)
                     m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
                 callback();
-                logTestingEvent(ASCIILiteral("Grandfathered"));
+                logTestingEvent("Grandfathered"_s);
             });
         });
     });

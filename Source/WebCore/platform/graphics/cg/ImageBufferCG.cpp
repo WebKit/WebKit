@@ -514,7 +514,7 @@ String ImageBuffer::toDataURL(const String& mimeType, std::optional<double> qual
 {
     if (auto data = toCFData(mimeType, quality, preserveResolution))
         return dataURL(data.get(), mimeType);
-    return ASCIILiteral("data:,");
+    return "data:,"_s;
 }
 
 Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
@@ -622,7 +622,7 @@ String dataURL(const ImageData& source, const String& mimeType, std::optional<do
 {
     if (auto data = cfData(source, mimeType, quality))
         return dataURL(data.get(), mimeType);
-    return ASCIILiteral("data:,");
+    return "data:,"_s;
 }
 
 Vector<uint8_t> data(const ImageData& source, const String& mimeType, std::optional<double> quality)

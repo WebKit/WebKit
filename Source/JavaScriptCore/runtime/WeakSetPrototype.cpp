@@ -56,7 +56,7 @@ ALWAYS_INLINE static JSWeakSet* getWeakSet(CallFrame* callFrame, JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(!value.isObject())) {
-        throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on non-object"));
+        throwTypeError(callFrame, scope, "Called WeakSet function on non-object"_s);
         return nullptr;
     }
 
@@ -64,7 +64,7 @@ ALWAYS_INLINE static JSWeakSet* getWeakSet(CallFrame* callFrame, JSValue value)
     if (LIKELY(set))
         return set;
 
-    throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on a non-WeakSet object"));
+    throwTypeError(callFrame, scope, "Called WeakSet function on a non-WeakSet object"_s);
     return nullptr;
 }
 
@@ -97,7 +97,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
-        return JSValue::encode(throwTypeError(callFrame, scope, WTF::ASCIILiteral("Attempted to add a non-object key to a WeakSet")));
+        return JSValue::encode(throwTypeError(callFrame, scope, "Attempted to add a non-object key to a WeakSet"_s));
     set->add(vm, asObject(key));
     return JSValue::encode(callFrame->thisValue());
 }

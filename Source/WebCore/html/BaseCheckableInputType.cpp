@@ -46,7 +46,7 @@ using namespace HTMLNames;
 FormControlState BaseCheckableInputType::saveFormControlState() const
 {
     ASSERT(element());
-    return { element()->checked() ? ASCIILiteral("on") : ASCIILiteral("off") };
+    return { element()->checked() ? "on"_s : "off"_s };
 }
 
 void BaseCheckableInputType::restoreFormControlState(const FormControlState& state)

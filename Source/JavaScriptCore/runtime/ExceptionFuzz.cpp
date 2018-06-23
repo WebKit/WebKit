@@ -58,7 +58,7 @@ void doExceptionFuzzing(ExecState* exec, ThrowScope& scope, const char* where, v
         // to placate the exception check verifier here.
         EXCEPTION_ASSERT(scope.exception() || !scope.exception());
 
-        throwException(exec, scope, createError(exec, ASCIILiteral("Exception Fuzz")));
+        throwException(exec, scope, createError(exec, "Exception Fuzz"_s));
     }
 }
 

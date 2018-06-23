@@ -97,18 +97,18 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
 
     WallTime now = WallTime::now();
 
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Timestamp"), now.secondsSinceEpoch().seconds());
+    appendKeyValuePair(webKitMemoryStats, "Timestamp"_s, now.secondsSinceEpoch().seconds());
 
     ProcessMemoryStatus processMemoryStatus;
     currentProcessMemoryStatus(processMemoryStatus);
 
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Total Program Bytes"), processMemoryStatus.size);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Resident Set Bytes"), processMemoryStatus.resident);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Resident Shared Bytes"), processMemoryStatus.shared);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Text Bytes"), processMemoryStatus.text);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Library Bytes"), processMemoryStatus.lib);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Data + Stack Bytes"), processMemoryStatus.data);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Dirty Bytes"), processMemoryStatus.dt);
+    appendKeyValuePair(webKitMemoryStats, "Total Program Bytes"_s, processMemoryStatus.size);
+    appendKeyValuePair(webKitMemoryStats, "Resident Set Bytes"_s, processMemoryStatus.resident);
+    appendKeyValuePair(webKitMemoryStats, "Resident Shared Bytes"_s, processMemoryStatus.shared);
+    appendKeyValuePair(webKitMemoryStats, "Text Bytes"_s, processMemoryStatus.text);
+    appendKeyValuePair(webKitMemoryStats, "Library Bytes"_s, processMemoryStatus.lib);
+    appendKeyValuePair(webKitMemoryStats, "Data + Stack Bytes"_s, processMemoryStatus.data);
+    appendKeyValuePair(webKitMemoryStats, "Dirty Bytes"_s, processMemoryStatus.dt);
 
     size_t totalBytesInUse = 0;
     size_t totalBytesCommitted = 0;
@@ -119,8 +119,8 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesInUse += fastMallocBytesInUse;
     totalBytesCommitted += fastMallocBytesCommitted;
 
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Fast Malloc In Use"), fastMallocBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Fast Malloc Committed Memory"), fastMallocBytesCommitted);
+    appendKeyValuePair(webKitMemoryStats, "Fast Malloc In Use"_s, fastMallocBytesInUse);
+    appendKeyValuePair(webKitMemoryStats, "Fast Malloc Committed Memory"_s, fastMallocBytesCommitted);
 
     size_t jscHeapBytesInUse = commonVM().heap.size();
     size_t jscHeapBytesCommitted = commonVM().heap.capacity();
@@ -131,23 +131,23 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesInUse += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
     totalBytesCommitted += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
 
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript Heap In Use"), jscHeapBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript Heap Committed Memory"), jscHeapBytesCommitted);
+    appendKeyValuePair(webKitMemoryStats, "JavaScript Heap In Use"_s, jscHeapBytesInUse);
+    appendKeyValuePair(webKitMemoryStats, "JavaScript Heap Committed Memory"_s, jscHeapBytesCommitted);
     
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript Stack Bytes"), globalMemoryStats.stackBytes);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("JavaScript JIT Bytes"), globalMemoryStats.JITBytes);
+    appendKeyValuePair(webKitMemoryStats, "JavaScript Stack Bytes"_s, globalMemoryStats.stackBytes);
+    appendKeyValuePair(webKitMemoryStats, "JavaScript JIT Bytes"_s, globalMemoryStats.JITBytes);
 
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Total Memory In Use"), totalBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Total Committed Memory"), totalBytesCommitted);
+    appendKeyValuePair(webKitMemoryStats, "Total Memory In Use"_s, totalBytesInUse);
+    appendKeyValuePair(webKitMemoryStats, "Total Committed Memory"_s, totalBytesCommitted);
 
     struct sysinfo systemInfo;
     if (!sysinfo(&systemInfo)) {
-        appendKeyValuePair(webKitMemoryStats, ASCIILiteral("System Total Bytes"), systemInfo.totalram);
-        appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Available Bytes"), systemInfo.freeram);
-        appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Shared Bytes"), systemInfo.sharedram);
-        appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Buffer Bytes"), systemInfo.bufferram);
-        appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Total Swap Bytes"), systemInfo.totalswap);
-        appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Available Swap Bytes"), systemInfo.freeswap);
+        appendKeyValuePair(webKitMemoryStats, "System Total Bytes"_s, systemInfo.totalram);
+        appendKeyValuePair(webKitMemoryStats, "Available Bytes"_s, systemInfo.freeram);
+        appendKeyValuePair(webKitMemoryStats, "Shared Bytes"_s, systemInfo.sharedram);
+        appendKeyValuePair(webKitMemoryStats, "Buffer Bytes"_s, systemInfo.bufferram);
+        appendKeyValuePair(webKitMemoryStats, "Total Swap Bytes"_s, systemInfo.totalswap);
+        appendKeyValuePair(webKitMemoryStats, "Available Swap Bytes"_s, systemInfo.freeswap);
     }   
 
     return webKitMemoryStats;

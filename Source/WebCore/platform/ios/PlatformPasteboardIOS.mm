@@ -394,14 +394,14 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
 {
     auto cfType = platformType.createCFString();
     if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
-        return ASCIILiteral("text/plain");
+        return "text/plain"_s;
 
     if (UTTypeConformsTo(cfType.get(), kUTTypeHTML) || UTTypeConformsTo(cfType.get(), (CFStringRef)WebArchivePboardType)
         || UTTypeConformsTo(cfType.get(), kUTTypeRTF) || UTTypeConformsTo(cfType.get(), kUTTypeFlatRTFD))
-        return ASCIILiteral("text/html");
+        return "text/html"_s;
 
     if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
-        return ASCIILiteral("text/uri-list");
+        return "text/uri-list"_s;
 
     return nullptr;
 }

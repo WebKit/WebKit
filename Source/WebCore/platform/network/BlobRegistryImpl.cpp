@@ -312,7 +312,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
         Vector<String> filePaths;
         for (auto& blob : blobsForWriting) {
             FileSystem::PlatformFileHandle file;
-            String tempFilePath = FileSystem::openTemporaryFile(ASCIILiteral("Blob"), file);
+            String tempFilePath = FileSystem::openTemporaryFile("Blob"_s, file);
             if (!writeFilePathsOrDataBuffersToFile(blob.filePathsOrDataBuffers, file, tempFilePath)) {
                 filePaths.clear();
                 break;

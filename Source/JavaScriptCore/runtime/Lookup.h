@@ -279,11 +279,11 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
                 thisObject->putDirect(vm, propertyName, value);
             return true;
         }
-        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     }
 
     if (entry->attributes() & PropertyAttribute::Accessor)
-        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 
     if (!(entry->attributes() & PropertyAttribute::ReadOnly)) {
         ASSERT_WITH_MESSAGE(!(entry->attributes() & PropertyAttribute::DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
@@ -300,7 +300,7 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
         return result;
     }
 
-    return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+    return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 }
 
 /**

@@ -458,7 +458,7 @@ String NetworkDataTaskBlob::suggestedFilename() const
     if (!m_suggestedFilename.isEmpty())
         return m_suggestedFilename;
 
-    return ASCIILiteral("unknown");
+    return "unknown"_s;
 }
 
 void NetworkDataTaskBlob::download()

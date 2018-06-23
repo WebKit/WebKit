@@ -85,7 +85,7 @@ void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceRe
 
     RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection");
     completionHandler({ });
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response is not successful"_s, ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
@@ -98,7 +98,7 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::Authenticat
     }
 
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response is not successful"_s, ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
@@ -150,13 +150,13 @@ void NetworkCORSPreflightChecker::didSendData(uint64_t totalBytesSent, uint64_t 
 void NetworkCORSPreflightChecker::wasBlocked()
 {
     RELEASE_LOG_IF_ALLOWED("wasBlocked");
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("CORS-preflight request was blocked"), ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "CORS-preflight request was blocked"_s, ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::cannotShowURL()
 {
     RELEASE_LOG_IF_ALLOWED("cannotShowURL");
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response was blocked"), ResourceError::Type::AccessControl });
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response was blocked"_s, ResourceError::Type::AccessControl });
 }
 
 NetworkTransactionInformation NetworkCORSPreflightChecker::takeInformation()

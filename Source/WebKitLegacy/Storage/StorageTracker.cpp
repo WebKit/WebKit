@@ -250,7 +250,7 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
     
     // Add missing StorageTracker records.
     OriginSet foundOrigins;
-    String fileExtension = ASCIILiteral(".localstorage");
+    String fileExtension = ".localstorage"_s;
 
     for (Vector<String>::const_iterator it = paths.begin(), end = paths.end(); it != end; ++it) {
         const String& path = *it;

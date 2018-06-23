@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace Inspector;
 
 ServiceWorkerAgent::ServiceWorkerAgent(WorkerAgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("ServiceWorker"), context)
+    : InspectorAgentBase("ServiceWorker"_s, context)
     , m_serviceWorkerGlobalScope(downcast<ServiceWorkerGlobalScope>(context.workerGlobalScope))
     , m_backendDispatcher(Inspector::ServiceWorkerBackendDispatcher::create(context.backendDispatcher, this))
 {

@@ -239,10 +239,10 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                     }
                     argumentsObject->addItem(WTFMove(inspectorValue));
                     if (m_arguments->argumentCount() > 1)
-                        argumentsObject->addItem(injectedScript.wrapObject(columns, ASCIILiteral("console"), true));
+                        argumentsObject->addItem(injectedScript.wrapObject(columns, "console"_s, true));
                 } else {
                     for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                        auto inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), ASCIILiteral("console"), generatePreview);
+                        auto inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console"_s, generatePreview);
                         if (!inspectorValue) {
                             ASSERT_NOT_REACHED();
                             return;
@@ -256,7 +256,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                 for (auto& message : m_jsonLogValues) {
                     if (message.value.isEmpty())
                         continue;
-                    auto inspectorValue = injectedScript.wrapJSONString(message.value, ASCIILiteral("console"), generatePreview);
+                    auto inspectorValue = injectedScript.wrapJSONString(message.value, "console"_s, generatePreview);
                     if (!inspectorValue)
                         continue;
 
@@ -316,7 +316,7 @@ bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
 void ConsoleMessage::clear()
 {
     if (!m_message)
-        m_message = ASCIILiteral("<message collected>");
+        m_message = "<message collected>"_s;
 
     if (m_arguments)
         m_arguments = nullptr;

@@ -98,7 +98,7 @@ bool ColorInputType::supportsRequired() const
 
 String ColorInputType::fallbackValue() const
 {
-    return ASCIILiteral("#000000");
+    return "#000000"_s;
 }
 
 String ColorInputType::sanitizeValue(const String& proposedValue) const

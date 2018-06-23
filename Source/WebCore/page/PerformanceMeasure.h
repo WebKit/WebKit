@@ -36,7 +36,7 @@ public:
 
 private:
     PerformanceMeasure(const String& name, double startTime, double duration)
-        : PerformanceEntry(PerformanceEntry::Type::Measure, name, ASCIILiteral("measure"), startTime, duration)
+        : PerformanceEntry(PerformanceEntry::Type::Measure, name, "measure"_s, startTime, duration)
     {
     }
 

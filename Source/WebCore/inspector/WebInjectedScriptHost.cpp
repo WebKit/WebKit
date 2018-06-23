@@ -48,13 +48,13 @@ JSValue WebInjectedScriptHost::subtype(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
     if (value.inherits<JSNode>(vm))
-        return jsNontrivialString(exec, ASCIILiteral("node"));
+        return jsNontrivialString(exec, "node"_s);
     if (value.inherits<JSNodeList>(vm))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
+        return jsNontrivialString(exec, "array"_s);
     if (value.inherits<JSHTMLCollection>(vm))
-        return jsNontrivialString(exec, ASCIILiteral("array"));
+        return jsNontrivialString(exec, "array"_s);
     if (value.inherits<JSDOMException>(vm))
-        return jsNontrivialString(exec, ASCIILiteral("error"));
+        return jsNontrivialString(exec, "error"_s);
 
     return jsUndefined();
 }
@@ -147,11 +147,11 @@ static JSString* jsStringForPaymentRequestState(VM& vm, ExecState* exec, Payment
 {
     switch (state) {
     case PaymentRequest::State::Created:
-        return jsNontrivialString(exec, ASCIILiteral("created"));
+        return jsNontrivialString(exec, "created"_s);
     case PaymentRequest::State::Interactive:
-        return jsNontrivialString(exec, ASCIILiteral("interactive"));
+        return jsNontrivialString(exec, "interactive"_s);
     case PaymentRequest::State::Closed:
-        return jsNontrivialString(exec, ASCIILiteral("closed"));
+        return jsNontrivialString(exec, "closed"_s);
     }
 
     ASSERT_NOT_REACHED();
@@ -167,9 +167,9 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, ExecState* exec, JS
     if (PaymentRequest* paymentRequest = JSPaymentRequest::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, ASCIILiteral("options"), objectForPaymentOptions(vm, exec, paymentRequest->paymentOptions())));
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, ASCIILiteral("details"), objectForPaymentDetails(vm, exec, paymentRequest->paymentDetails())));
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, ASCIILiteral("state"), jsStringForPaymentRequestState(vm, exec, paymentRequest->state())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "options"_s, objectForPaymentOptions(vm, exec, paymentRequest->paymentOptions())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "details"_s, objectForPaymentDetails(vm, exec, paymentRequest->paymentDetails())));
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "state"_s, jsStringForPaymentRequestState(vm, exec, paymentRequest->state())));
         RETURN_IF_EXCEPTION(scope, { });
         return array;
     }

@@ -362,7 +362,7 @@ ALWAYS_INLINE JSValue jsSub(ExecState* exec, JSValue v1, JSValue v2)
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
             return JSBigInt::sub(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
 
-        return throwTypeError(exec, scope, ASCIILiteral("Invalid mix of BigInt and other type in subtraction."));
+        return throwTypeError(exec, scope, "Invalid mix of BigInt and other type in subtraction."_s);
     }
 
     return jsNumber(WTF::get<double>(leftNumeric) - WTF::get<double>(rightNumeric));
@@ -382,7 +382,7 @@ ALWAYS_INLINE JSValue jsMul(ExecState* state, JSValue v1, JSValue v2)
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
             return JSBigInt::multiply(state, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
 
-        throwTypeError(state, scope, ASCIILiteral("Invalid mix of BigInt and other type in multiplication."));
+        throwTypeError(state, scope, "Invalid mix of BigInt and other type in multiplication."_s);
         return { };
     }
 

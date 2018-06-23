@@ -535,13 +535,13 @@ void ResourceHandle::handleDataURL()
         mediaType = mediaType.left(mediaType.length() - 7);
 
     if (mediaType.isEmpty())
-        mediaType = ASCIILiteral("text/plain");
+        mediaType = "text/plain"_s;
 
     String mimeType = extractMIMETypeFromMediaType(mediaType);
     String charset = extractCharsetFromMediaType(mediaType);
 
     if (charset.isEmpty())
-        charset = ASCIILiteral("US-ASCII");
+        charset = "US-ASCII"_s;
 
     ResourceResponse response;
     response.setMimeType(mimeType);

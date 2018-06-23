@@ -53,7 +53,7 @@ InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& er
     JSC::ExecState* scriptState = m_globalObject.globalExec();
     InjectedScript injectedScript = injectedScriptManager().injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue())
-        errorString = ASCIILiteral("Internal error: main world execution context not found.");
+        errorString = "Internal error: main world execution context not found."_s;
 
     return injectedScript;
 }

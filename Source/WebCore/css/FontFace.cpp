@@ -87,25 +87,25 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
         return sourceConversionResult.releaseException();
 
     // These ternaries match the default strings inside the FontFaceDescriptors dictionary inside FontFace.idl.
-    auto setStyleResult = result->setStyle(descriptors.style.isEmpty() ? ASCIILiteral("normal") : descriptors.style);
+    auto setStyleResult = result->setStyle(descriptors.style.isEmpty() ? "normal"_s : descriptors.style);
     if (setStyleResult.hasException())
         return setStyleResult.releaseException();
-    auto setWeightResult = result->setWeight(descriptors.weight.isEmpty() ? ASCIILiteral("normal") : descriptors.weight);
+    auto setWeightResult = result->setWeight(descriptors.weight.isEmpty() ? "normal"_s : descriptors.weight);
     if (setWeightResult.hasException())
         return setWeightResult.releaseException();
-    auto setStretchResult = result->setStretch(descriptors.stretch.isEmpty() ? ASCIILiteral("normal") : descriptors.stretch);
+    auto setStretchResult = result->setStretch(descriptors.stretch.isEmpty() ? "normal"_s : descriptors.stretch);
     if (setStretchResult.hasException())
         return setStretchResult.releaseException();
-    auto setUnicodeRangeResult = result->setUnicodeRange(descriptors.unicodeRange.isEmpty() ? ASCIILiteral("U+0-10FFFF") : descriptors.unicodeRange);
+    auto setUnicodeRangeResult = result->setUnicodeRange(descriptors.unicodeRange.isEmpty() ? "U+0-10FFFF"_s : descriptors.unicodeRange);
     if (setUnicodeRangeResult.hasException())
         return setUnicodeRangeResult.releaseException();
-    auto setVariantResult = result->setVariant(descriptors.variant.isEmpty() ? ASCIILiteral("normal") : descriptors.variant);
+    auto setVariantResult = result->setVariant(descriptors.variant.isEmpty() ? "normal"_s : descriptors.variant);
     if (setVariantResult.hasException())
         return setVariantResult.releaseException();
-    auto setFeatureSettingsResult = result->setFeatureSettings(descriptors.featureSettings.isEmpty() ? ASCIILiteral("normal") : descriptors.featureSettings);
+    auto setFeatureSettingsResult = result->setFeatureSettings(descriptors.featureSettings.isEmpty() ? "normal"_s : descriptors.featureSettings);
     if (setFeatureSettingsResult.hasException())
         return setFeatureSettingsResult.releaseException();
-    auto setDisplayResult = result->setDisplay(descriptors.display.isEmpty() ? ASCIILiteral("auto") : descriptors.display);
+    auto setDisplayResult = result->setDisplay(descriptors.display.isEmpty() ? "auto"_s : descriptors.display);
     if (setDisplayResult.hasException())
         return setDisplayResult.releaseException();
 
@@ -372,7 +372,7 @@ String FontFace::unicodeRange() const
 {
     m_backing->updateStyleIfNeeded();
     if (!m_backing->ranges().size())
-        return ASCIILiteral("U+0-10FFFF");
+        return "U+0-10FFFF"_s;
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
     for (auto& range : m_backing->ranges())
         values->append(CSSUnicodeRangeValue::create(range.from, range.to));
@@ -389,7 +389,7 @@ String FontFace::featureSettings() const
 {
     m_backing->updateStyleIfNeeded();
     if (!m_backing->featureSettings().size())
-        return ASCIILiteral("normal");
+        return "normal"_s;
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (auto& feature : m_backing->featureSettings())
         list->append(CSSFontFeatureValue::create(FontTag(feature.tag()), feature.value()));

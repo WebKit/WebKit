@@ -221,7 +221,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        auto %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
+        auto %(memberName)sPos = object->find("%(memberName)s"_s);
         ASSERT(%(memberName)sPos != object->end());
         %(assertMethod)s(%(memberName)sPos->value.get());
     }""" % args)
@@ -237,7 +237,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        auto %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
+        auto %(memberName)sPos = object->find("%(memberName)s"_s);
         if (%(memberName)sPos != object->end()) {
             %(assertMethod)s(%(memberName)sPos->value.get());""" % args)
 

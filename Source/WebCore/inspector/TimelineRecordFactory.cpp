@@ -47,12 +47,12 @@ using namespace Inspector;
 Ref<JSON::Object> TimelineRecordFactory::createGenericRecord(double startTime, int maxCallStackDepth)
 {
     Ref<JSON::Object> record = JSON::Object::create();
-    record->setDouble(ASCIILiteral("startTime"), startTime);
+    record->setDouble("startTime"_s, startTime);
 
     if (maxCallStackDepth) {
         Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), maxCallStackDepth);
         if (stackTrace->size())
-            record->setValue(ASCIILiteral("stackTrace"), stackTrace->buildInspectorArray());
+            record->setValue("stackTrace"_s, stackTrace->buildInspectorArray());
     }
     return record;
 }
@@ -60,68 +60,68 @@ Ref<JSON::Object> TimelineRecordFactory::createGenericRecord(double startTime, i
 Ref<JSON::Object> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setString(ASCIILiteral("scriptName"), scriptName);
-    data->setInteger(ASCIILiteral("scriptLine"), scriptLine);
+    data->setString("scriptName"_s, scriptName);
+    data->setInteger("scriptLine"_s, scriptLine);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createConsoleProfileData(const String& title)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setString(ASCIILiteral("title"), title);
+    data->setString("title"_s, title);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, unsigned sampleId)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger(ASCIILiteral("probeId"), action.identifier);
-    data->setInteger(ASCIILiteral("sampleId"), sampleId);
+    data->setInteger("probeId"_s, action.identifier);
+    data->setInteger("sampleId"_s, sampleId);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createEventDispatchData(const Event& event)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setString(ASCIILiteral("type"), event.type().string());
+    data->setString("type"_s, event.type().string());
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createGenericTimerData(int timerId)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger(ASCIILiteral("timerId"), timerId);
+    data->setInteger("timerId"_s, timerId);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createTimerInstallData(int timerId, Seconds timeout, bool singleShot)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger(ASCIILiteral("timerId"), timerId);
-    data->setInteger(ASCIILiteral("timeout"), (int)timeout.milliseconds());
-    data->setBoolean(ASCIILiteral("singleShot"), singleShot);
+    data->setInteger("timerId"_s, timerId);
+    data->setInteger("timeout"_s, (int)timeout.milliseconds());
+    data->setBoolean("singleShot"_s, singleShot);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createEvaluateScriptData(const String& url, double lineNumber)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setString(ASCIILiteral("url"), url);
-    data->setInteger(ASCIILiteral("lineNumber"), lineNumber);
+    data->setString("url"_s, url);
+    data->setInteger("lineNumber"_s, lineNumber);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createTimeStampData(const String& message)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setString(ASCIILiteral("message"), message);
+    data->setString("message"_s, message);
     return data;
 }
 
 Ref<JSON::Object> TimelineRecordFactory::createAnimationFrameData(int callbackId)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger(ASCIILiteral("id"), callbackId);
+    data->setInteger("id"_s, callbackId);
     return data;
 }
 
@@ -142,13 +142,13 @@ static Ref<JSON::Array> createQuad(const FloatQuad& quad)
 Ref<JSON::Object> TimelineRecordFactory::createPaintData(const FloatQuad& quad)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setArray(ASCIILiteral("clip"), createQuad(quad));
+    data->setArray("clip"_s, createQuad(quad));
     return data;
 }
 
 void TimelineRecordFactory::appendLayoutRoot(JSON::Object* data, const FloatQuad& quad)
 {
-    data->setArray(ASCIILiteral("root"), createQuad(quad));
+    data->setArray("root"_s, createQuad(quad));
 }
 
 } // namespace WebCore

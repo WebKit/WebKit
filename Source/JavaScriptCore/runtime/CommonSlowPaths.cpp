@@ -289,7 +289,7 @@ SLOW_PATH_DECL(slow_path_check_tdz)
 SLOW_PATH_DECL(slow_path_throw_strict_mode_readonly_property_write_error)
 {
     BEGIN();
-    THROW(createTypeError(exec, ASCIILiteral(ReadonlyPropertyWriteError)));
+    THROW(createTypeError(exec, ReadonlyPropertyWriteError));
 }
 
 SLOW_PATH_DECL(slow_path_not)
@@ -863,7 +863,7 @@ SLOW_PATH_DECL(slow_path_to_index_string)
 SLOW_PATH_DECL(slow_path_profile_type_clear_log)
 {
     BEGIN();
-    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("LLInt log full."));
+    vm.typeProfilerLog()->processLogEntries("LLInt log full."_s);
     END();
 }
 

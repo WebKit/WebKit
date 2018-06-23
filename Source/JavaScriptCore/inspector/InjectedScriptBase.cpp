@@ -97,7 +97,7 @@ void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::Scri
 {
     RefPtr<JSON::Value> result = makeCall(function);
     if (!result) {
-        errorString = ASCIILiteral("Internal error: result value is empty");
+        errorString = "Internal error: result value is empty"_s;
         return;
     }
 
@@ -109,19 +109,19 @@ void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::Scri
 
     RefPtr<JSON::Object> resultTuple;
     if (!result->asObject(resultTuple)) {
-        errorString = ASCIILiteral("Internal error: result is not an Object");
+        errorString = "Internal error: result is not an Object"_s;
         return;
     }
 
     RefPtr<JSON::Object> resultObject;
-    if (!resultTuple->getObject(ASCIILiteral("result"), resultObject)) {
-        errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
+    if (!resultTuple->getObject("result"_s, resultObject)) {
+        errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
         return;
     }
 
     bool wasThrown = false;
-    if (!resultTuple->getBoolean(ASCIILiteral("wasThrown"), wasThrown)) {
-        errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
+    if (!resultTuple->getBoolean("wasThrown"_s, wasThrown)) {
+        errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
         return;
     }
 
@@ -129,7 +129,7 @@ void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::Scri
     out_wasThrown = wasThrown;
 
     int savedResultIndex;
-    if (resultTuple->getInteger(ASCIILiteral("savedResultIndex"), savedResultIndex))
+    if (resultTuple->getInteger("savedResultIndex"_s, savedResultIndex))
         out_savedResultIndex = savedResultIndex;
 }
 

@@ -39,7 +39,7 @@ public:
 
     static IDBError userDeleteError()
     {
-        return IDBError { UnknownError, ASCIILiteral("Database deleted by request of the user") };
+        return IDBError { UnknownError, "Database deleted by request of the user"_s };
     }
 
     WEBCORE_EXPORT IDBError& operator=(const IDBError&);

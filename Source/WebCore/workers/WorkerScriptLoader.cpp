@@ -98,7 +98,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
 #if ENABLE(SERVICE_WORKER)
     if (isServiceWorkerGlobalScope) {
         if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(responseMIMEType()))
-            return Exception { NetworkError, ASCIILiteral("mime type is not a supported JavaScript mime type") };
+            return Exception { NetworkError, "mime type is not a supported JavaScript mime type"_s };
 
         downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
     }
@@ -147,7 +147,7 @@ const URL& WorkerScriptLoader::responseURL() const
 std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest(const String& initiatorIdentifier)
 {
     auto request = std::make_unique<ResourceRequest>(m_url);
-    request->setHTTPMethod(ASCIILiteral("GET"));
+    request->setHTTPMethod("GET"_s);
     request->setInitiatorIdentifier(initiatorIdentifier);
     return request;
 }
@@ -188,9 +188,9 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
 
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())
-            m_decoder = TextResourceDecoder::create(ASCIILiteral("text/javascript"), m_responseEncoding);
+            m_decoder = TextResourceDecoder::create("text/javascript"_s, m_responseEncoding);
         else
-            m_decoder = TextResourceDecoder::create(ASCIILiteral("text/javascript"), "UTF-8");
+            m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
     }
 
     if (!len)

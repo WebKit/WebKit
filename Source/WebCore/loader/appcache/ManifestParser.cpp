@@ -58,7 +58,7 @@ bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const
 
     Mode mode = Explicit;
 
-    String manifestString = TextResourceDecoder::create(ASCIILiteral(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
+    String manifestString = TextResourceDecoder::create(ASCIILiteral::fromLiteralUnsafe(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
     
     // Look for the magic signature: "^\xFEFF?CACHE MANIFEST[ \t]?" (the BOM is removed by TextResourceDecoder).
     // Example: "CACHE MANIFEST #comment" is a valid signature.

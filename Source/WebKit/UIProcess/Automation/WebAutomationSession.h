@@ -250,7 +250,7 @@ private:
     WebProcessPool* m_processPool { nullptr };
 
     std::unique_ptr<API::AutomationSessionClient> m_client;
-    String m_sessionIdentifier { ASCIILiteral("Untitled Session") };
+    String m_sessionIdentifier { "Untitled Session"_s };
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;

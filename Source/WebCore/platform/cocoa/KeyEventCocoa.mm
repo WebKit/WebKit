@@ -44,133 +44,133 @@ String keyForCharCode(unichar charCode)
 {
     switch (charCode) {
     case NSUpArrowFunctionKey:
-        return ASCIILiteral("ArrowUp");
+        return "ArrowUp"_s;
     case NSDownArrowFunctionKey:
-        return ASCIILiteral("ArrowDown");
+        return "ArrowDown"_s;
     case NSLeftArrowFunctionKey:
-        return ASCIILiteral("ArrowLeft");
+        return "ArrowLeft"_s;
     case NSRightArrowFunctionKey:
-        return ASCIILiteral("ArrowRight");
+        return "ArrowRight"_s;
     case NSF1FunctionKey:
-        return ASCIILiteral("F1");
+        return "F1"_s;
     case NSF2FunctionKey:
-        return ASCIILiteral("F2");
+        return "F2"_s;
     case NSF3FunctionKey:
-        return ASCIILiteral("F3");
+        return "F3"_s;
     case NSF4FunctionKey:
-        return ASCIILiteral("F4");
+        return "F4"_s;
     case NSF5FunctionKey:
-        return ASCIILiteral("F5");
+        return "F5"_s;
     case NSF6FunctionKey:
-        return ASCIILiteral("F6");
+        return "F6"_s;
     case NSF7FunctionKey:
-        return ASCIILiteral("F7");
+        return "F7"_s;
     case NSF8FunctionKey:
-        return ASCIILiteral("F8");
+        return "F8"_s;
     case NSF9FunctionKey:
-        return ASCIILiteral("F9");
+        return "F9"_s;
     case NSF10FunctionKey:
-        return ASCIILiteral("F10");
+        return "F10"_s;
     case NSF11FunctionKey:
-        return ASCIILiteral("F11");
+        return "F11"_s;
     case NSF12FunctionKey:
-        return ASCIILiteral("F12");
+        return "F12"_s;
     case NSF13FunctionKey:
-        return ASCIILiteral("F13");
+        return "F13"_s;
     case NSF14FunctionKey:
-        return ASCIILiteral("F14");
+        return "F14"_s;
     case NSF15FunctionKey:
-        return ASCIILiteral("F15");
+        return "F15"_s;
     case NSF16FunctionKey:
-        return ASCIILiteral("F16");
+        return "F16"_s;
     case NSF17FunctionKey:
-        return ASCIILiteral("F17");
+        return "F17"_s;
     case NSF18FunctionKey:
-        return ASCIILiteral("F18");
+        return "F18"_s;
     case NSF19FunctionKey:
-        return ASCIILiteral("F19");
+        return "F19"_s;
     case NSF20FunctionKey:
-        return ASCIILiteral("F20");
+        return "F20"_s;
     case NSF21FunctionKey:
-        return ASCIILiteral("F21");
+        return "F21"_s;
     case NSF22FunctionKey:
-        return ASCIILiteral("F22");
+        return "F22"_s;
     case NSF23FunctionKey:
-        return ASCIILiteral("F23");
+        return "F23"_s;
     case NSF24FunctionKey:
-        return ASCIILiteral("F24");
+        return "F24"_s;
     case NSF25FunctionKey:
-        return ASCIILiteral("F25");
+        return "F25"_s;
     case NSF26FunctionKey:
-        return ASCIILiteral("F26");
+        return "F26"_s;
     case NSF27FunctionKey:
-        return ASCIILiteral("F27");
+        return "F27"_s;
     case NSF28FunctionKey:
-        return ASCIILiteral("F28");
+        return "F28"_s;
     case NSF29FunctionKey:
-        return ASCIILiteral("F29");
+        return "F29"_s;
     case NSF30FunctionKey:
-        return ASCIILiteral("F30");
+        return "F30"_s;
     case NSF31FunctionKey:
-        return ASCIILiteral("F31");
+        return "F31"_s;
     case NSF32FunctionKey:
-        return ASCIILiteral("F32");
+        return "F32"_s;
     case NSF33FunctionKey:
-        return ASCIILiteral("F33");
+        return "F33"_s;
     case NSF34FunctionKey:
-        return ASCIILiteral("F34");
+        return "F34"_s;
     case NSF35FunctionKey:
-        return ASCIILiteral("F35");
+        return "F35"_s;
     case NSInsertFunctionKey:
-        return ASCIILiteral("Insert");
+        return "Insert"_s;
     case NSDeleteFunctionKey:
-        return ASCIILiteral("Delete");
+        return "Delete"_s;
     case NSHomeFunctionKey:
-        return ASCIILiteral("Home");
+        return "Home"_s;
     case NSEndFunctionKey:
-        return ASCIILiteral("End");
+        return "End"_s;
     case NSPageUpFunctionKey:
-        return ASCIILiteral("PageUp");
+        return "PageUp"_s;
     case NSPageDownFunctionKey:
-        return ASCIILiteral("PageDown");
+        return "PageDown"_s;
     case NSPrintScreenFunctionKey:
-        return ASCIILiteral("PrintScreen");
+        return "PrintScreen"_s;
     case NSScrollLockFunctionKey:
-        return ASCIILiteral("ScrollLock");
+        return "ScrollLock"_s;
     case NSPauseFunctionKey:
-        return ASCIILiteral("Pause");
+        return "Pause"_s;
     case NSMenuFunctionKey:
-        return ASCIILiteral("ContextMenu");
+        return "ContextMenu"_s;
     case NSPrintFunctionKey:
-        return ASCIILiteral("Print");
+        return "Print"_s;
     case NSClearLineFunctionKey:
-        return ASCIILiteral("Clear");
+        return "Clear"_s;
     case NSSelectFunctionKey:
-        return ASCIILiteral("Select");
+        return "Select"_s;
     case NSExecuteFunctionKey:
-        return ASCIILiteral("Execute");
+        return "Execute"_s;
     case NSUndoFunctionKey:
-        return ASCIILiteral("Undo");
+        return "Undo"_s;
     case NSRedoFunctionKey:
-        return ASCIILiteral("Redo");
+        return "Redo"_s;
     case NSFindFunctionKey:
-        return ASCIILiteral("Find");
+        return "Find"_s;
     case NSHelpFunctionKey:
-        return ASCIILiteral("Help");
+        return "Help"_s;
     case NSModeSwitchFunctionKey:
-        return ASCIILiteral("ModeChange");
+        return "ModeChange"_s;
     case NSEnterCharacter:
     case NSNewlineCharacter:
     case NSCarriageReturnCharacter:
-        return ASCIILiteral("Enter");
+        return "Enter"_s;
     case NSDeleteCharacter:
     case NSBackspaceCharacter:
-        return ASCIILiteral("Backspace");
+        return "Backspace"_s;
     case NSBackTabCharacter:
     case NSTabCharacter:
-        return ASCIILiteral("Tab");
+        return "Tab"_s;
     case 0x1B:
-        return ASCIILiteral("Escape");
+        return "Escape"_s;
     case NSFormFeedCharacter:
     case NSParagraphSeparatorCharacter:
     case NSLineSeparatorCharacter:
@@ -188,7 +188,7 @@ String keyForCharCode(unichar charCode)
     case NSDeleteCharFunctionKey:
     case NSPrevFunctionKey:
     case NSNextFunctionKey:
-        return ASCIILiteral("Unidentified");
+        return "Unidentified"_s;
     default:
         return String(&charCode, 1);
     }

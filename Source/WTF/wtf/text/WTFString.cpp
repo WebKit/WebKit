@@ -1205,7 +1205,7 @@ String* string(const char* s)
 Vector<char> asciiDebug(StringImpl* impl)
 {
     if (!impl)
-        return asciiDebug(String(ASCIILiteral("[null]")).impl());
+        return asciiDebug(String("[null]"_s).impl());
 
     Vector<char> buffer;
     for (unsigned i = 0; i < impl->length(); ++i) {

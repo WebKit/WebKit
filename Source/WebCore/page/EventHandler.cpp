@@ -2180,7 +2180,7 @@ bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& platform
     Frame& focusFrame = m_frame.page()->focusController().focusedOrMainFrame();
     // Do not paste here if the focus was moved somewhere else.
     if (&m_frame == &focusFrame && m_frame.editor().client()->supportsGlobalSelection())
-        return m_frame.editor().command(ASCIILiteral("PasteGlobalSelection")).execute();
+        return m_frame.editor().command("PasteGlobalSelection"_s).execute();
 
     return false;
 }
@@ -2234,13 +2234,13 @@ static String convertDragOperationToDropZoneOperation(DragOperation operation)
 {
     switch (operation) {
     case DragOperationCopy:
-        return ASCIILiteral("copy");
+        return "copy"_s;
     case DragOperationMove:
-        return ASCIILiteral("move");
+        return "move"_s;
     case DragOperationLink:
-        return ASCIILiteral("link");
+        return "link"_s;
     default:
-        return ASCIILiteral("copy");
+        return "copy"_s;
     }
 }
 

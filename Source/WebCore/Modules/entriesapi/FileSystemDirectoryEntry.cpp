@@ -60,7 +60,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         auto entry = result.releaseReturnValue();
         if (!matches(entry)) {
             if (errorCallback)
-                errorCallback->handleEvent(DOMException::create(Exception { TypeMismatchError, ASCIILiteral("Entry at given path does not match expected type") }));
+                errorCallback->handleEvent(DOMException::create(Exception { TypeMismatchError, "Entry at given path does not match expected type"_s }));
             return;
         }
         if (successCallback)

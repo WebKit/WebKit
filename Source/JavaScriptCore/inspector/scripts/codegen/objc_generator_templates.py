@@ -137,7 +137,7 @@ ${invocation}
     _${variableNamePrefix}Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspector${domainName}BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<${domainName}BackendDispatcher, Alternate${domainName}BackendDispatcher>>(ASCIILiteral("${domainName}"), *_controller, WTFMove(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<${domainName}BackendDispatcher, Alternate${domainName}BackendDispatcher>>("${domainName}"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 

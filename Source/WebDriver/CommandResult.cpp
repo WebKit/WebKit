@@ -169,51 +169,51 @@ String CommandResult::errorString() const
 
     switch (m_errorCode.value()) {
     case ErrorCode::ElementClickIntercepted:
-        return ASCIILiteral("element click intercepted");
+        return "element click intercepted"_s;
     case ErrorCode::ElementNotSelectable:
-        return ASCIILiteral("element not selectable");
+        return "element not selectable"_s;
     case ErrorCode::ElementNotInteractable:
-        return ASCIILiteral("element not interactable");
+        return "element not interactable"_s;
     case ErrorCode::InvalidArgument:
-        return ASCIILiteral("invalid argument");
+        return "invalid argument"_s;
     case ErrorCode::InvalidElementState:
-        return ASCIILiteral("invalid element state");
+        return "invalid element state"_s;
     case ErrorCode::InvalidSelector:
-        return ASCIILiteral("invalid selector");
+        return "invalid selector"_s;
     case ErrorCode::InvalidSessionID:
-        return ASCIILiteral("invalid session id");
+        return "invalid session id"_s;
     case ErrorCode::JavascriptError:
-        return ASCIILiteral("javascript error");
+        return "javascript error"_s;
     case ErrorCode::NoSuchAlert:
-        return ASCIILiteral("no such alert");
+        return "no such alert"_s;
     case ErrorCode::NoSuchCookie:
-        return ASCIILiteral("no such cookie");
+        return "no such cookie"_s;
     case ErrorCode::NoSuchElement:
-        return ASCIILiteral("no such element");
+        return "no such element"_s;
     case ErrorCode::NoSuchFrame:
-        return ASCIILiteral("no such frame");
+        return "no such frame"_s;
     case ErrorCode::NoSuchWindow:
-        return ASCIILiteral("no such window");
+        return "no such window"_s;
     case ErrorCode::ScriptTimeout:
-        return ASCIILiteral("script timeout");
+        return "script timeout"_s;
     case ErrorCode::SessionNotCreated:
-        return ASCIILiteral("session not created");
+        return "session not created"_s;
     case ErrorCode::StaleElementReference:
-        return ASCIILiteral("stale element reference");
+        return "stale element reference"_s;
     case ErrorCode::Timeout:
-        return ASCIILiteral("timeout");
+        return "timeout"_s;
     case ErrorCode::UnableToCaptureScreen:
-        return ASCIILiteral("unable to capture screen");
+        return "unable to capture screen"_s;
     case ErrorCode::MoveTargetOutOfBounds:
-        return ASCIILiteral("move target out of bounds");
+        return "move target out of bounds"_s;
     case ErrorCode::UnexpectedAlertOpen:
-        return ASCIILiteral("unexpected alert open");
+        return "unexpected alert open"_s;
     case ErrorCode::UnknownCommand:
-        return ASCIILiteral("unknown command");
+        return "unknown command"_s;
     case ErrorCode::UnknownError:
-        return ASCIILiteral("unknown error");
+        return "unknown error"_s;
     case ErrorCode::UnsupportedOperation:
-        return ASCIILiteral("unsupported operation");
+        return "unsupported operation"_s;
     }
 
     ASSERT_NOT_REACHED();

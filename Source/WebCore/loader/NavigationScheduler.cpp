@@ -318,7 +318,7 @@ public:
     {
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
-        ResourceResponse replacementResponse { m_originDocument.url(), ASCIILiteral("text/plain"), 0, ASCIILiteral("UTF-8") };
+        ResourceResponse replacementResponse { m_originDocument.url(), "text/plain"_s, 0, "UTF-8"_s };
         SubstituteData replacementData { SharedBuffer::create(), m_originDocument.url(), replacementResponse, SubstituteData::SessionHistoryVisibility::Hidden };
 
         ResourceRequest resourceRequest { m_originDocument.url(), emptyString(), ReloadIgnoringCacheData };
@@ -422,7 +422,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
         auto* frame = lexicalFrameFromCommonVM();
         auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
         
-        FrameLoadRequest frameLoadRequest { initiatingDocument, securityOrigin, resourceRequest, ASCIILiteral("_self"), lockHistory, lockBackForwardList, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, initiatingDocument.shouldOpenExternalURLsPolicyToPropagate(), initiatedByMainFrame };
+        FrameLoadRequest frameLoadRequest { initiatingDocument, securityOrigin, resourceRequest, "_self"_s, lockHistory, lockBackForwardList, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, initiatingDocument.shouldOpenExternalURLsPolicyToPropagate(), initiatedByMainFrame };
         loader.changeLocation(WTFMove(frameLoadRequest));
         return;
     }

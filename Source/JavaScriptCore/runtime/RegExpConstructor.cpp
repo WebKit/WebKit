@@ -89,7 +89,7 @@ RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure, RegExpPrototy
 
 void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype, GetterSetter* speciesSymbol)
 {
-    Base::finishCreation(vm, ASCIILiteral("RegExp"));
+    Base::finishCreation(vm, "RegExp"_s);
     ASSERT(inherits(vm, info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, regExpPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
@@ -224,7 +224,7 @@ inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
     RegExpFlags result = regExpFlags(flagsString->value(exec));
     RETURN_IF_EXCEPTION(scope, InvalidFlags);
     if (result == InvalidFlags)
-        throwSyntaxError(exec, scope, ASCIILiteral("Invalid flags supplied to RegExp constructor."));
+        throwSyntaxError(exec, scope, "Invalid flags supplied to RegExp constructor."_s);
     return result;
 }
 

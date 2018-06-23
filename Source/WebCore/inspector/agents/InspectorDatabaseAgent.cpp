@@ -217,7 +217,7 @@ void InspectorDatabaseAgent::clearResources()
 }
 
 InspectorDatabaseAgent::InspectorDatabaseAgent(WebAgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("Database"), context)
+    : InspectorAgentBase("Database"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::DatabaseFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DatabaseBackendDispatcher::create(context.backendDispatcher, this))
 {
@@ -259,7 +259,7 @@ void InspectorDatabaseAgent::disable(ErrorString&)
 void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& error, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names)
 {
     if (!m_enabled) {
-        error = ASCIILiteral("Database agent is not enabled");
+        error = "Database agent is not enabled"_s;
         return;
     }
 

@@ -248,7 +248,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
         if (hasError())
             parseError = m_errorMessage;
         else
-            parseError = ASCIILiteral("Parser error");
+            parseError = "Parser error"_s;
     }
 
     IdentifierSet capturedVariables;

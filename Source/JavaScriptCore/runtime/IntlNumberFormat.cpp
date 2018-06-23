@@ -182,18 +182,18 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
 
     String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     RETURN_IF_EXCEPTION(scope, void());
-    opt.add(ASCIILiteral("localeMatcher"), matcher);
+    opt.add("localeMatcher"_s, matcher);
 
     auto& availableLocales = state.jsCallee()->globalObject(vm)->intlNumberFormatAvailableLocales();
     auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantNumberExtensionKeys, WTF_ARRAY_LENGTH(relevantNumberExtensionKeys), IntlNFInternal::localeData);
 
-    m_locale = result.get(ASCIILiteral("locale"));
+    m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {
-        throwTypeError(&state, scope, ASCIILiteral("failed to initialize NumberFormat due to invalid locale"));
+        throwTypeError(&state, scope, "failed to initialize NumberFormat due to invalid locale"_s);
         return;
     }
 
-    m_numberingSystem = result.get(ASCIILiteral("nu"));
+    m_numberingSystem = result.get("nu"_s);
 
     String styleString = intlStringOption(state, options, Identifier::fromString(&vm, "style"), { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
     RETURN_IF_EXCEPTION(scope, void());
@@ -210,7 +210,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     RETURN_IF_EXCEPTION(scope, void());
     if (!currency.isNull()) {
         if (currency.length() != 3 || !currency.isAllSpecialCharacters<isASCIIAlpha>()) {
-            throwException(&state, scope, createRangeError(&state, ASCIILiteral("currency is not a well-formed currency code")));
+            throwException(&state, scope, createRangeError(&state, "currency is not a well-formed currency code"_s));
             return;
         }
     }
@@ -218,7 +218,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     unsigned currencyDigits = 0;
     if (m_style == Style::Currency) {
         if (currency.isNull()) {
-            throwTypeError(&state, scope, ASCIILiteral("currency must be a string"));
+            throwTypeError(&state, scope, "currency must be a string"_s);
             return;
         }
 
@@ -359,7 +359,7 @@ JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
     if (!m_numberFormat) {
         createNumberFormat(state);
         if (!m_numberFormat)
-            return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to format a number.")));
+            return throwException(&state, scope, createError(&state, "Failed to format a number."_s));
     }
 
     // Map negative zero to positive zero.
@@ -375,37 +375,37 @@ JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
         unum_formatDouble(m_numberFormat.get(), number, buffer.data(), length, nullptr, &status);
     }
     if (U_FAILURE(status))
-        return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to format a number.")));
+        return throwException(&state, scope, createError(&state, "Failed to format a number."_s));
 
     return jsString(&state, String(buffer.data(), length));
 }
 
-const char* IntlNumberFormat::styleString(Style style)
+ASCIILiteral IntlNumberFormat::styleString(Style style)
 {
     switch (style) {
     case Style::Decimal:
-        return "decimal";
+        return "decimal"_s;
     case Style::Percent:
-        return "percent";
+        return "percent"_s;
     case Style::Currency:
-        return "currency";
+        return "currency"_s;
     }
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return ASCIILiteral::null();
 }
 
-const char* IntlNumberFormat::currencyDisplayString(CurrencyDisplay currencyDisplay)
+ASCIILiteral IntlNumberFormat::currencyDisplayString(CurrencyDisplay currencyDisplay)
 {
     switch (currencyDisplay) {
     case CurrencyDisplay::Code:
-        return "code";
+        return "code"_s;
     case CurrencyDisplay::Symbol:
-        return "symbol";
+        return "symbol"_s;
     case CurrencyDisplay::Name:
-        return "name";
+        return "name"_s;
     }
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return ASCIILiteral::null();
 }
 
 JSObject* IntlNumberFormat::resolvedOptions(ExecState& state)
@@ -430,10 +430,10 @@ JSObject* IntlNumberFormat::resolvedOptions(ExecState& state)
     JSObject* options = constructEmptyObject(&state);
     options->putDirect(vm, vm.propertyNames->locale, jsString(&state, m_locale));
     options->putDirect(vm, Identifier::fromString(&vm, "numberingSystem"), jsString(&state, m_numberingSystem));
-    options->putDirect(vm, Identifier::fromString(&vm, "style"), jsNontrivialString(&state, ASCIILiteral(styleString(m_style))));
+    options->putDirect(vm, Identifier::fromString(&vm, "style"), jsNontrivialString(&state, styleString(m_style)));
     if (m_style == Style::Currency) {
         options->putDirect(vm, Identifier::fromString(&vm, "currency"), jsNontrivialString(&state, m_currency));
-        options->putDirect(vm, Identifier::fromString(&vm, "currencyDisplay"), jsNontrivialString(&state, ASCIILiteral(currencyDisplayString(m_currencyDisplay))));
+        options->putDirect(vm, Identifier::fromString(&vm, "currencyDisplay"), jsNontrivialString(&state, currencyDisplayString(m_currencyDisplay)));
     }
     options->putDirect(vm, Identifier::fromString(&vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
     options->putDirect(vm, Identifier::fromString(&vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
@@ -459,27 +459,27 @@ void IntlNumberFormat::UFieldPositionIteratorDeleter::operator()(UFieldPositionI
         ufieldpositer_close(iterator);
 }
 
-const char* IntlNumberFormat::partTypeString(UNumberFormatFields field, double value)
+ASCIILiteral IntlNumberFormat::partTypeString(UNumberFormatFields field, double value)
 {
     switch (field) {
     case UNUM_INTEGER_FIELD:
         if (std::isnan(value))
-            return "nan";
+            return "nan"_s;
         if (!std::isfinite(value))
-            return "infinity";
-        return "integer";
+            return "infinity"_s;
+        return "integer"_s;
     case UNUM_FRACTION_FIELD:
-        return "fraction";
+        return "fraction"_s;
     case UNUM_DECIMAL_SEPARATOR_FIELD:
-        return "decimal";
+        return "decimal"_s;
     case UNUM_GROUPING_SEPARATOR_FIELD:
-        return "group";
+        return "group"_s;
     case UNUM_CURRENCY_FIELD:
-        return "currency";
+        return "currency"_s;
     case UNUM_PERCENT_FIELD:
-        return "percentSign";
+        return "percentSign"_s;
     case UNUM_SIGN_FIELD:
-        return value < 0 ? "minusSign" : "plusSign";
+        return value < 0 ? "minusSign"_s : "plusSign"_s;
     // These should not show up because there is no way to specify them in NumberFormat options.
     // If they do, they don't fit well into any of known part types, so consider it a "literal".
     case UNUM_PERMILL_FIELD:
@@ -489,10 +489,10 @@ const char* IntlNumberFormat::partTypeString(UNumberFormatFields field, double v
 #if !defined(U_HIDE_DEPRECATED_API)
     case UNUM_FIELD_COUNT:
 #endif
-        return "literal";
+        return "literal"_s;
     }
     // Any newer additions to the UNumberFormatFields enum should just be considered a "literal" part.
-    return "literal";
+    return "literal"_s;
 }
 
 JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
@@ -507,12 +507,12 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
     if (!m_numberFormat)
         createNumberFormat(exec);
     if (!m_initializedNumberFormat || !m_numberFormat)
-        return throwTypeError(&exec, scope, ASCIILiteral("Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"));
+        return throwTypeError(&exec, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s);
 
     UErrorCode status = U_ZERO_ERROR;
     auto fieldItr = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, ASCIILiteral("failed to open field position iterator"));
+        return throwTypeError(&exec, scope, "failed to open field position iterator"_s);
 
     status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
@@ -523,7 +523,7 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
         unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), resultLength, fieldItr.get(), &status);
     }
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, ASCIILiteral("failed to format a number."));
+        return throwTypeError(&exec, scope, "failed to format a number."_s);
 
     Vector<IntlNumberFormatField> fields;
     int32_t beginIndex = 0;
@@ -546,7 +546,7 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
 
     auto resultString = String(result.data(), resultLength);
     auto typePropertyName = Identifier::fromString(&vm, "type");
-    auto literalString = jsString(&exec, ASCIILiteral("literal"));
+    auto literalString = jsString(&exec, "literal"_s);
 
     // FIXME: <http://webkit.org/b/185557> This is O(N^2) and could be done in O(N log N).
     int32_t currentIndex = 0;

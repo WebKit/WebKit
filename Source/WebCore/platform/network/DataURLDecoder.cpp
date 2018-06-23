@@ -121,9 +121,9 @@ static Result parseMediaType(const String& mediaType)
     // If <mediatype> is omitted, it defaults to text/plain;charset=US-ASCII. As a shorthand,
     // "text/plain" can be omitted but the charset parameter supplied.
     if (mimeType.isEmpty()) {
-        mimeType = ASCIILiteral("text/plain");
+        mimeType = "text/plain"_s;
         if (charset.isEmpty())
-            charset = ASCIILiteral("US-ASCII");
+            charset = "US-ASCII"_s;
     }
     return { mimeType, charset, !mediaType.isEmpty() ? mediaType : "text/plain;charset=US-ASCII", nullptr };
 }

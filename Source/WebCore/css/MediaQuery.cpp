@@ -39,7 +39,7 @@ String MediaQuery::serialize() const
 {
     if (m_ignored) {
         // If query is invalid, serialized text should turn into "not all".
-        return ASCIILiteral("not all");
+        return "not all"_s;
     }
 
     bool shouldOmitMediaType = false;

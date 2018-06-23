@@ -1964,7 +1964,7 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
             if (currentPosition.isNotNull() && currentPosition != startPosition) {
                 contextBefore = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), currentPosition, startPosition).ptr());
                 if (atBoundaryOfGranularity(currentPosition, ParagraphGranularity, DirectionBackward))
-                    contextBefore = ASCIILiteral("\n ") + contextBefore;
+                    contextBefore = makeString("\n "_s, contextBefore);
             }
         }
 

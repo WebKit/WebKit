@@ -144,21 +144,21 @@ static const HashMap<String, Color>& touchEventRegionColors()
 {
     static const auto regionColors = makeNeverDestroyed([] {
         struct MapEntry {
-            const char* name;
+            ASCIILiteral name;
             int r;
             int g;
             int b;
         };
         static const MapEntry entries[] = {
-            { "touchstart", 191, 191, 63 },
-            { "touchmove", 63, 191, 191 },
-            { "touchend", 191, 63, 127 },
-            { "touchforcechange", 63, 63, 191 },
-            { "wheel", 255, 128, 0 },
+            { "touchstart"_s, 191, 191, 63 },
+            { "touchmove"_s, 63, 191, 191 },
+            { "touchend"_s, 191, 63, 127 },
+            { "touchforcechange"_s, 63, 63, 191 },
+            { "wheel"_s, 255, 128, 0 },
         };
         HashMap<String, Color> map;
         for (auto& entry : entries)
-            map.add(ASCIILiteral { entry.name }, Color { entry.r, entry.g, entry.b, 80 });
+            map.add(entry.name, Color { entry.r, entry.g, entry.b, 80 });
         return map;
     }());
     return regionColors;

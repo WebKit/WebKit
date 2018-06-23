@@ -54,17 +54,17 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
 
     RefPtr<JSON::Value> binaryValue;
     String binary;
-    if (browserOptions->getValue(ASCIILiteral("binary"), binaryValue) && !binaryValue->asString(binary))
+    if (browserOptions->getValue("binary"_s, binaryValue) && !binaryValue->asString(binary))
         return false;
 
     RefPtr<JSON::Value> useOverlayScrollbarsValue;
     bool useOverlayScrollbars;
-    if (browserOptions->getValue(ASCIILiteral("useOverlayScrollbars"), useOverlayScrollbarsValue) && !useOverlayScrollbarsValue->asBoolean(useOverlayScrollbars))
+    if (browserOptions->getValue("useOverlayScrollbars"_s, useOverlayScrollbarsValue) && !useOverlayScrollbarsValue->asBoolean(useOverlayScrollbars))
         return false;
 
     RefPtr<JSON::Value> browserArgumentsValue;
     RefPtr<JSON::Array> browserArguments;
-    if (browserOptions->getValue(ASCIILiteral("args"), browserArgumentsValue)) {
+    if (browserOptions->getValue("args"_s, browserArgumentsValue)) {
         if (!browserArgumentsValue->asArray(browserArguments))
             return false;
 
@@ -78,7 +78,7 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
     }
 
     RefPtr<JSON::Value> certificatesValue;
-    if (browserOptions->getValue(ASCIILiteral("certificates"), certificatesValue)) {
+    if (browserOptions->getValue("certificates"_s, certificatesValue)) {
         RefPtr<JSON::Array> certificates;
         if (!certificatesValue->asArray(certificates))
             return false;
@@ -92,12 +92,12 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
 
             RefPtr<JSON::Value> hostValue;
             String host;
-            if (!certificate->getValue(ASCIILiteral("host"), hostValue) || !hostValue->asString(host))
+            if (!certificate->getValue("host"_s, hostValue) || !hostValue->asString(host))
                 return false;
 
             RefPtr<JSON::Value> certificateFileValue;
             String certificateFile;
-            if (!certificate->getValue(ASCIILiteral("certificateFile"), certificateFileValue) || !certificateFileValue->asString(certificateFile))
+            if (!certificate->getValue("certificateFile"_s, certificateFileValue) || !certificateFileValue->asString(certificateFile))
                 return false;
         }
     }
@@ -113,19 +113,19 @@ bool WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON:
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
     capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser");
-    capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
+    capabilities.browserArguments = Vector<String> { "--automation"_s };
     capabilities.useOverlayScrollbars = true;
 
     RefPtr<JSON::Object> browserOptions;
-    if (!matchedCapabilities.getObject(ASCIILiteral("webkitgtk:browserOptions"), browserOptions))
+    if (!matchedCapabilities.getObject("webkitgtk:browserOptions"_s, browserOptions))
         return;
 
     String browserBinary;
-    if (browserOptions->getString(ASCIILiteral("binary"), browserBinary))
+    if (browserOptions->getString("binary"_s, browserBinary))
         capabilities.browserBinary = browserBinary;
 
     RefPtr<JSON::Array> browserArguments;
-    if (browserOptions->getArray(ASCIILiteral("args"), browserArguments) && browserArguments->length()) {
+    if (browserOptions->getArray("args"_s, browserArguments) && browserArguments->length()) {
         unsigned browserArgumentsLength = browserArguments->length();
         capabilities.browserArguments = Vector<String>();
         capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);
@@ -139,13 +139,13 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
     }
 
     bool useOverlayScrollbars;
-    if (browserOptions->getBoolean(ASCIILiteral("useOverlayScrollbars"), useOverlayScrollbars))
+    if (browserOptions->getBoolean("useOverlayScrollbars"_s, useOverlayScrollbars))
         capabilities.useOverlayScrollbars = useOverlayScrollbars;
     else
         capabilities.useOverlayScrollbars = true;
 
     RefPtr<JSON::Array> certificates;
-    if (browserOptions->getArray(ASCIILiteral("certificates"), certificates) && certificates->length()) {
+    if (browserOptions->getArray("certificates"_s, certificates) && certificates->length()) {
         unsigned certificatesLength = certificates->length();
         capabilities.certificates = Vector<std::pair<String, String>>();
         capabilities.certificates->reserveInitialCapacity(certificatesLength);
@@ -156,11 +156,11 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
             ASSERT(certificate);
 
             String host;
-            certificate->getString(ASCIILiteral("host"), host);
+            certificate->getString("host"_s, host);
             ASSERT(!host.isNull());
 
             String certificateFile;
-            certificate->getString(ASCIILiteral("certificateFile"), certificateFile);
+            certificate->getString("certificateFile"_s, certificateFile);
             ASSERT(!certificateFile.isNull());
 
             capabilities.certificates->uncheckedAppend({ WTFMove(host), WTFMove(certificateFile) });

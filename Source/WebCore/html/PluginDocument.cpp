@@ -77,7 +77,7 @@ void PluginDocumentParser::createDocumentStructure()
 
 #if PLATFORM(IOS)
     // Should not be able to zoom into standalone plug-in documents.
-    document.processViewport(ASCIILiteral("user-scalable=no"), ViewportArguments::PluginDocument);
+    document.processViewport("user-scalable=no"_s, ViewportArguments::PluginDocument);
 #endif
 
     auto body = HTMLBodyElement::create(document);

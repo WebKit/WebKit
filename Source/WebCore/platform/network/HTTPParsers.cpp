@@ -614,20 +614,20 @@ size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReas
 
     // Haven't finished header line.
     if (consumedLength == length) {
-        failureReason = ASCIILiteral("Incomplete Request Line");
+        failureReason = "Incomplete Request Line"_s;
         return 0;
     }
 
     // RequestLine does not contain 3 parts.
     if (!space1 || !space2) {
-        failureReason = ASCIILiteral("Request Line does not appear to contain: <Method> <Url> <HTTPVersion>.");
+        failureReason = "Request Line does not appear to contain: <Method> <Url> <HTTPVersion>."_s;
         return 0;
     }
 
     // The line must end with "\r\n".
     const char* end = p + 1;
     if (*(end - 2) != '\r') {
-        failureReason = ASCIILiteral("Request line does not end with CRLF");
+        failureReason = "Request line does not end with CRLF"_s;
         return 0;
     }
 
@@ -761,7 +761,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
     }
     valueStr = String::fromUTF8(value.data(), value.size());
     if (valueStr.isNull()) {
-        failureReason = ASCIILiteral("Invalid UTF-8 sequence in header value");
+        failureReason = "Invalid UTF-8 sequence in header value"_s;
         return 0;
     }
     return p - start;
@@ -892,13 +892,13 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
 // Implements <https://fetch.spec.whatwg.org/#concept-method-normalize>.
 String normalizeHTTPMethod(const String& method)
 {
-    const char* const methods[] = { "DELETE", "GET", "HEAD", "OPTIONS", "POST", "PUT" };
-    for (auto* value : methods) {
-        if (equalIgnoringASCIICase(method, value)) {
+    const ASCIILiteral methods[] = { "DELETE"_s, "GET"_s, "HEAD"_s, "OPTIONS"_s, "POST"_s, "PUT"_s };
+    for (auto value : methods) {
+        if (equalIgnoringASCIICase(method, value.characters())) {
             // Don't bother allocating a new string if it's already all uppercase.
             if (method == value)
                 break;
-            return ASCIILiteral { value };
+            return value;
         }
     }
     return method;

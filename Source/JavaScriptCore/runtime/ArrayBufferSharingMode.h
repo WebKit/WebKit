@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/PrintStream.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
@@ -34,16 +35,16 @@ enum class ArrayBufferSharingMode {
     Shared
 };
 
-inline const char* arrayBufferSharingModeName(ArrayBufferSharingMode sharingMode)
+inline ASCIILiteral arrayBufferSharingModeName(ArrayBufferSharingMode sharingMode)
 {
     switch (sharingMode) {
     case ArrayBufferSharingMode::Default:
-        return "ArrayBuffer";
+        return "ArrayBuffer"_s;
     case ArrayBufferSharingMode::Shared:
-        return "SharedArrayBuffer";
+        return "SharedArrayBuffer"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return ASCIILiteral::null();
 }
 
 } // namespace JSC

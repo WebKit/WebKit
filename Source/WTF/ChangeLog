@@ -1,3 +1,43 @@
+2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add user-defined literal for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=186839
+
+        Reviewed by Darin Adler.
+
+        This patch adds user-defined literal for ASCIILiteral. We can create ASCIILiteral in the form of `"Hello World"_s`.
+        And we remove public ASCIILiteral constructor. This change ensures that ASCIILiteral is created from literal.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Indenter.h:
+        (WTF::Indenter::Indenter):
+        * wtf/Logger.h:
+        (WTF::LogArgument::toString):
+        * wtf/MediaTime.cpp:
+        (WTF::toJSONStringInternal):
+        (WTF::MediaTimeRange::toJSONString const):
+        * wtf/linux/MemoryFootprintLinux.cpp:
+        (WTF::memoryFootprint):
+        * wtf/text/ASCIILiteral.cpp: Copied from Source/WebCore/css/CSSUnsetValue.cpp.
+        (WTF::ASCIILiteral::dump const):
+        * wtf/text/ASCIILiteral.h: Copied from Source/WTF/wtf/Indenter.h.
+        (WTF::ASCIILiteral::operator const char* const):
+        (WTF::ASCIILiteral::fromLiteralUnsafe):
+        (WTF::ASCIILiteral::null):
+        (WTF::ASCIILiteral::characters const):
+        (WTF::ASCIILiteral::ASCIILiteral):
+        (WTF::StringLiterals::operator _s):
+        * wtf/text/WTFString.cpp:
+        (asciiDebug):
+        * wtf/text/WTFString.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::ASCIILiteral::ASCIILiteral): Deleted.
+        (WTF::ASCIILiteral::operator const char*): Deleted.
+        * wtf/unix/LanguageUnix.cpp:
+        (WTF::platformLanguage):
+
 2018-06-22  Darin Adler  <darin@apple.com>
 
         [Cocoa] reduce unnecessary use of .mm source files in WTF, spruce up some implementation details

@@ -1,3 +1,13 @@
+2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add user-defined literal for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=186839
+
+        Reviewed by Darin Adler.
+
+        * pal/unix/LoggingUnix.cpp:
+        (PAL::logLevelString):
+
 2018-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Corner of two scroll bars is white with dark mode enabled.

@@ -41,7 +41,7 @@ namespace WebCore {
 String SecurityOriginData::toString() const
 {
     if (protocol == "file")
-        return ASCIILiteral("file://");
+        return "file://"_s;
 
     if (!port)
         return makeString(protocol, "://", host);
@@ -75,7 +75,7 @@ String SecurityOriginData::databaseIdentifier() const
     // Now that we've fixed that bug, we still need to produce this string
     // to avoid breaking existing persistent state.
     if (equalIgnoringASCIICase(protocol, "file"))
-        return ASCIILiteral("file__0");
+        return "file__0"_s;
     
     StringBuilder stringBuilder;
     stringBuilder.append(protocol);

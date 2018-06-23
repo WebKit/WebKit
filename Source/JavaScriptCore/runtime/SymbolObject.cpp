@@ -49,7 +49,7 @@ void SymbolObject::finishCreation(VM& vm, Symbol* symbol)
 
 String SymbolObject::toStringName(const JSObject*, ExecState*)
 {
-    return ASCIILiteral("Object");
+    return "Object"_s;
 }
 
 JSValue SymbolObject::defaultValue(const JSObject* object, ExecState*, PreferredPrimitiveType)

@@ -166,7 +166,7 @@ bool ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue aValue) 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (![_array.get() respondsToSelector:@selector(insertObject:atIndex:)]) {
-        throwTypeError(exec, scope, ASCIILiteral("Array is not mutable."));
+        throwTypeError(exec, scope, "Array is not mutable."_s);
         return false;
     }
 

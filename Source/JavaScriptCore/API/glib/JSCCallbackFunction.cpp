@@ -83,7 +83,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     auto* jsContext = jscContextGetJSContext(context.get());
 
     if (m_type == Type::Constructor) {
-        *exception = toRef(JSC::createTypeError(toJS(jsContext), ASCIILiteral("cannot call a class constructor without |new|")));
+        *exception = toRef(JSC::createTypeError(toJS(jsContext), "cannot call a class constructor without |new|"_s));
         return JSValueMakeUndefined(jsContext);
     }
 
@@ -91,7 +91,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     if (m_type == Type::Method) {
         instance = jscContextWrappedObject(context.get(), thisObject);
         if (!instance) {
-            *exception = toRef(JSC::createTypeError(toJS(jsContext), ASCIILiteral("invalid instance type in method")));
+            *exception = toRef(JSC::createTypeError(toJS(jsContext), "invalid instance type in method"_s));
             return JSValueMakeUndefined(jsContext);
         }
     }
@@ -146,7 +146,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     auto* jsContext = jscContextGetJSContext(context.get());
 
     if (m_returnType == G_TYPE_NONE) {
-        *exception = toRef(JSC::createTypeError(toJS(jsContext), ASCIILiteral("constructors cannot be void")));
+        *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructors cannot be void"_s));
         return nullptr;
     }
 
@@ -194,7 +194,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
             g_value_unset(&returnValue);
             return toRef(retval);
         }
-        *exception = toRef(JSC::createTypeError(toJS(jsContext), ASCIILiteral("constructor returned null")));
+        *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructor returned null"_s));
         break;
     default:
         *exception = toRef(JSC::createTypeError(toJS(jsContext), makeString("invalid type ", g_type_name(G_VALUE_TYPE(&returnValue)), " returned by constructor")));

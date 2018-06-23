@@ -148,7 +148,7 @@ static bool extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     }
     
     if (sourceURL->isEmpty())
-        *sourceURL = ASCIILiteral("undefined");
+        *sourceURL = "undefined"_s;
     
     scope.clearException();
     return result;

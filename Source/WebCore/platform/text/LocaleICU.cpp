@@ -251,14 +251,14 @@ String LocaleICU::dateFormat()
     if (!m_dateFormat.isNull())
         return m_dateFormat;
     if (!initializeShortDateFormat())
-        return ASCIILiteral("yyyy-MM-dd");
+        return "yyyy-MM-dd"_s;
     m_dateFormat = getDateFormatPattern(m_shortDateFormat);
     return m_dateFormat;
 }
 
 static String getFormatForSkeleton(const char* locale, const UChar* skeleton, int32_t skeletonLength)
 {
-    String format = ASCIILiteral("yyyy-MM");
+    String format = "yyyy-MM"_s;
     UErrorCode status = U_ZERO_ERROR;
     UDateTimePatternGenerator* patternGenerator = udatpg_open(locale, &status);
     if (!patternGenerator)

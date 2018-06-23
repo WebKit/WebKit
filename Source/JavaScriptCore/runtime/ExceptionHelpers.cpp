@@ -51,7 +51,7 @@ const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError",
 JSValue TerminatedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
 {
     if (hint == PreferString)
-        return jsNontrivialString(exec, String(ASCIILiteral("JavaScript execution terminated.")));
+        return jsNontrivialString(exec, String("JavaScript execution terminated."_s));
     return JSValue(PNaN);
 }
 
@@ -75,7 +75,7 @@ JSObject* createStackOverflowError(ExecState* exec)
 
 JSObject* createStackOverflowError(ExecState* exec, JSGlobalObject* globalObject)
 {
-    auto* error = createRangeError(exec, globalObject, ASCIILiteral("Maximum call stack size exceeded."));
+    auto* error = createRangeError(exec, globalObject, "Maximum call stack size exceeded."_s);
     jsCast<ErrorInstance*>(error)->setStackOverflowError();
     return error;
 }
@@ -301,17 +301,17 @@ JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(ExecS
 
 JSObject* createNotAConstructorError(ExecState* exec, JSValue value)
 {
-    return createError(exec, value, ASCIILiteral("is not a constructor"), defaultSourceAppender);
+    return createError(exec, value, "is not a constructor"_s, defaultSourceAppender);
 }
 
 JSObject* createNotAFunctionError(ExecState* exec, JSValue value)
 {
-    return createError(exec, value, ASCIILiteral("is not a function"), notAFunctionSourceAppender);
+    return createError(exec, value, "is not a function"_s, notAFunctionSourceAppender);
 }
 
 JSObject* createNotAnObjectError(ExecState* exec, JSValue value)
 {
-    return createError(exec, value, ASCIILiteral("is not an object"), defaultSourceAppender);
+    return createError(exec, value, "is not an object"_s, defaultSourceAppender);
 }
 
 JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const String& propertyName)

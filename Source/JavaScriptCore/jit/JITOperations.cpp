@@ -125,7 +125,7 @@ void JIT_OPERATION operationThrowDivideError(ExecState* exec)
 
     NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
     ErrorHandlingScope errorScope(*vm);
-    throwException(callerFrame, scope, createError(callerFrame, ASCIILiteral("Division by zero or division overflow.")));
+    throwException(callerFrame, scope, createError(callerFrame, "Division by zero or division overflow."_s));
 }
 
 void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState* exec)
@@ -138,7 +138,7 @@ void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState* exec)
 
     NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
     ErrorHandlingScope errorScope(*vm);
-    throwException(callerFrame, scope, createError(callerFrame, ASCIILiteral("Out-of-bounds access.")));
+    throwException(callerFrame, scope, createError(callerFrame, "Out-of-bounds access."_s));
 }
 #endif
 
@@ -2130,7 +2130,7 @@ size_t JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue encoded
     bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, exec, Identifier::fromUid(&vm, uid));
     RETURN_IF_EXCEPTION(scope, false);
     if (!couldDelete && exec->codeBlock()->isStrictMode())
-        throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+        throwTypeError(exec, scope, UnableToDeletePropertyError);
     return couldDelete;
 }
 
@@ -2162,7 +2162,7 @@ size_t JIT_OPERATION operationDeleteByVal(ExecState* exec, EncodedJSValue encode
     }
     RETURN_IF_EXCEPTION(scope, false);
     if (!couldDelete && exec->codeBlock()->isStrictMode())
-        throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+        throwTypeError(exec, scope, UnableToDeletePropertyError);
     return couldDelete;
 }
 
@@ -2914,7 +2914,7 @@ void JIT_OPERATION operationProcessTypeProfilerLog(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside baseline JIT"));
+    vm.typeProfilerLog()->processLogEntries("Log Full, called from inside baseline JIT"_s);
 }
 
 void JIT_OPERATION operationProcessShadowChickenLog(ExecState* exec)

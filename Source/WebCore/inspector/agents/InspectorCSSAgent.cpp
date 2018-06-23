@@ -291,7 +291,7 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule& rule)
 }
 
 InspectorCSSAgent::InspectorCSSAgent(WebAgentContext& context, InspectorDOMAgent* domAgent)
-    : InspectorAgentBase(ASCIILiteral("CSS"), context)
+    : InspectorAgentBase("CSS"_s, context)
     , m_frontendDispatcher(std::make_unique<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(context.backendDispatcher, this))
     , m_domAgent(domAgent)
@@ -441,7 +441,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
     if (elementPseudoId != PseudoId::None) {
         element = downcast<PseudoElement>(*element).hostElement();
         if (!element) {
-            errorString = ASCIILiteral("Pseudo element has no parent");
+            errorString = "Pseudo element has no parent"_s;
             return;
         }
     }
@@ -630,19 +630,19 @@ void InspectorCSSAgent::createStyleSheet(ErrorString& errorString, const String&
 {
     Frame* frame = m_domAgent->pageAgent()->frameForId(frameId);
     if (!frame) {
-        errorString = ASCIILiteral("No frame for given id found");
+        errorString = "No frame for given id found"_s;
         return;
     }
 
     Document* document = frame->document();
     if (!document) {
-        errorString = ASCIILiteral("No document for frame");
+        errorString = "No document for frame"_s;
         return;
     }
 
     InspectorStyleSheet* inspectorStyleSheet = createInspectorStyleSheetForDocument(*document);
     if (!inspectorStyleSheet) {
-        errorString = ASCIILiteral("Could not create stylesheet for the frame.");
+        errorString = "Could not create stylesheet for the frame."_s;
         return;
     }
 
@@ -694,7 +694,7 @@ void InspectorCSSAgent::addRule(ErrorString& errorString, const String& styleShe
 {
     InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet) {
-        errorString = ASCIILiteral("No target stylesheet found");
+        errorString = "No target stylesheet found"_s;
         return;
     }
 
@@ -788,11 +788,11 @@ Element* InspectorCSSAgent::elementForId(ErrorString& errorString, int nodeId)
 {
     Node* node = m_domAgent->nodeForId(nodeId);
     if (!node) {
-        errorString = ASCIILiteral("No node with given id found");
+        errorString = "No node with given id found"_s;
         return nullptr;
     }
     if (!is<Element>(*node)) {
-        errorString = ASCIILiteral("Not an element node");
+        errorString = "Not an element node"_s;
         return nullptr;
     }
     return downcast<Element>(node);
@@ -828,7 +828,7 @@ InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(ErrorString& error
 {
     IdToInspectorStyleSheet::iterator it = m_idToInspectorStyleSheet.find(styleSheetId);
     if (it == m_idToInspectorStyleSheet.end()) {
-        errorString = ASCIILiteral("No stylesheet with given id found");
+        errorString = "No stylesheet with given id found"_s;
         return nullptr;
     }
     return it->value.get();

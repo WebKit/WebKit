@@ -300,7 +300,7 @@ void Engine::initialize(CompletionCallback&& callback)
     if (!shouldComputeSalt)
         return;
 
-    String saltPath = WebCore::FileSystem::pathByAppendingComponent(m_rootPath, ASCIILiteral("salt"));
+    String saltPath = WebCore::FileSystem::pathByAppendingComponent(m_rootPath, "salt"_s);
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), saltPath = WTFMove(saltPath)] () mutable {
         WebCore::FileSystem::makeAllDirectories(m_rootPath);
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = readOrMakeSalt(saltPath)]() mutable {

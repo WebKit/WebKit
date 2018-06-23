@@ -105,7 +105,7 @@ public:
             return String::format("JSON Parse error: %s", m_lexer.getErrorMessage().ascii().data());
         if (!m_parseErrorMessage.isEmpty())
             return String::format("JSON Parse error: %s", m_parseErrorMessage.ascii().data());
-        return ASCIILiteral("JSON Parse error: Unable to parse JSON string");
+        return "JSON Parse error: Unable to parse JSON string"_s;
     }
     
     JSValue tryLiteralParse()

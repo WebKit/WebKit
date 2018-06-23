@@ -40,7 +40,7 @@ const ClassInfo JSArrayBufferView::s_info = {
 
 String JSArrayBufferView::toStringName(const JSObject*, ExecState*)
 {
-    return ASCIILiteral("Object");
+    return "Object"_s;
 }
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(

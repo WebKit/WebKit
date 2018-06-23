@@ -103,7 +103,7 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
         m_networkLoadChecker->prepareRedirectedRequest(request);
 
         if (!result.value().url().protocolIsInHTTPFamily()) {
-            this->didFinish(ResourceError { String { }, 0, result.value().url(), ASCIILiteral("Redirection to URL with a scheme that is not HTTP(S)"), ResourceError::Type::AccessControl });
+            this->didFinish(ResourceError { String { }, 0, result.value().url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
             return;
         }
 
@@ -115,7 +115,7 @@ void PingLoad::didReceiveChallenge(const AuthenticationChallenge&, ChallengeComp
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-    didFinish(ResourceError { String(), 0, currentURL(), ASCIILiteral("Failed HTTP authentication"), ResourceError::Type::AccessControl });
+    didFinish(ResourceError { String(), 0, currentURL(), "Failed HTTP authentication"_s, ResourceError::Type::AccessControl });
 }
 
 void PingLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
@@ -160,7 +160,7 @@ void PingLoad::cannotShowURL()
 void PingLoad::timeoutTimerFired()
 {
     RELEASE_LOG_IF_ALLOWED("timeoutTimerFired");
-    didFinish(ResourceError { String(), 0, currentURL(), ASCIILiteral("Load timed out"), ResourceError::Type::Timeout });
+    didFinish(ResourceError { String(), 0, currentURL(), "Load timed out"_s, ResourceError::Type::Timeout });
 }
 
 const URL& PingLoad::currentURL() const

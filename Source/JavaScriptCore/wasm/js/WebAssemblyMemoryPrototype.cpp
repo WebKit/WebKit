@@ -60,7 +60,7 @@ ALWAYS_INLINE JSWebAssemblyMemory* getMemory(ExecState* exec, VM& vm, JSValue va
     JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, value); 
     if (!memory) {
         throwException(exec, throwScope, 
-            createTypeError(exec, ASCIILiteral("WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value")));
+            createTypeError(exec, "WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value"_s));
         return nullptr;
     }
     return memory;

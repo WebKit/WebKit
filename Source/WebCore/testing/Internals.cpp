@@ -586,10 +586,10 @@ ExceptionOr<bool> Internals::areSVGAnimationsPaused() const
 {
     auto* document = contextDocument();
     if (!document)
-        return Exception { InvalidAccessError, ASCIILiteral("No context document") };
+        return Exception { InvalidAccessError, "No context document"_s };
 
     if (!document->svgExtensions())
-        return Exception { NotFoundError, ASCIILiteral("No SVG animations") };
+        return Exception { NotFoundError, "No SVG animations"_s };
 
     return document->accessSVGExtensions().areAnimationsPaused();
 }
@@ -4232,19 +4232,19 @@ Vector<String> Internals::accessKeyModifiers() const
     for (auto modifier : EventHandler::accessKeyModifiers()) {
         switch (modifier) {
         case PlatformEvent::Modifier::AltKey:
-            accessKeyModifierStrings.append(ASCIILiteral("altKey"));
+            accessKeyModifierStrings.append("altKey"_s);
             break;
         case PlatformEvent::Modifier::CtrlKey:
-            accessKeyModifierStrings.append(ASCIILiteral("ctrlKey"));
+            accessKeyModifierStrings.append("ctrlKey"_s);
             break;
         case PlatformEvent::Modifier::MetaKey:
-            accessKeyModifierStrings.append(ASCIILiteral("metaKey"));
+            accessKeyModifierStrings.append("metaKey"_s);
             break;
         case PlatformEvent::Modifier::ShiftKey:
-            accessKeyModifierStrings.append(ASCIILiteral("shiftKey"));
+            accessKeyModifierStrings.append("shiftKey"_s);
             break;
         case PlatformEvent::Modifier::CapsLockKey:
-            accessKeyModifierStrings.append(ASCIILiteral("capsLockKey"));
+            accessKeyModifierStrings.append("capsLockKey"_s);
             break;
         }
     }
@@ -4355,7 +4355,7 @@ ExceptionOr<void> Internals::setMediaDeviceState(const String& id, const String&
 {
     auto* document = contextDocument();
     if (!document)
-        return Exception { InvalidAccessError, ASCIILiteral("No context document") };
+        return Exception { InvalidAccessError, "No context document"_s };
 
     if (!equalLettersIgnoringASCIICase(property, "enabled"))
         return Exception { InvalidAccessError, makeString("\"" + property, "\" is not a valid property for this method.") };
@@ -4403,19 +4403,19 @@ String Internals::audioSessionCategory() const
 #if USE(AUDIO_SESSION)
     switch (AudioSession::sharedSession().category()) {
     case AudioSession::AmbientSound:
-        return ASCIILiteral("AmbientSound");
+        return "AmbientSound"_s;
     case AudioSession::SoloAmbientSound:
-        return ASCIILiteral("SoloAmbientSound");
+        return "SoloAmbientSound"_s;
     case AudioSession::MediaPlayback:
-        return ASCIILiteral("MediaPlayback");
+        return "MediaPlayback"_s;
     case AudioSession::RecordAudio:
-        return ASCIILiteral("RecordAudio");
+        return "RecordAudio"_s;
     case AudioSession::PlayAndRecord:
-        return ASCIILiteral("PlayAndRecord");
+        return "PlayAndRecord"_s;
     case AudioSession::AudioProcessing:
-        return ASCIILiteral("AudioProcessing");
+        return "AudioProcessing"_s;
     case AudioSession::None:
-        return ASCIILiteral("None");
+        return "None"_s;
     }
 #endif
     return emptyString();
@@ -4545,7 +4545,7 @@ String Internals::systemPreviewRelType()
 #if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
     return getSystemPreviewRelValue();
 #else
-    return ASCIILiteral("system-preview");
+    return "system-preview"_s;
 #endif
 }
 

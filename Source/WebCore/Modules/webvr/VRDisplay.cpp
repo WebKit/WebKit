@@ -139,17 +139,17 @@ void VRDisplay::requestPresent(const Vector<VRLayerInit>& layers, Ref<DeferredPr
     };
 
     if (!m_capabilities->canPresent()) {
-        rejectRequestAndStopPresenting(NotSupportedError, ASCIILiteral("VRDisplay cannot present"));
+        rejectRequestAndStopPresenting(NotSupportedError, "VRDisplay cannot present"_s);
         return;
     }
 
     if (!layers.size() || layers.size() > m_capabilities->maxLayers()) {
-        rejectRequestAndStopPresenting(InvalidStateError, ASCIILiteral(layers.size() ? "Too many layers" : "Not enough layers"));
+        rejectRequestAndStopPresenting(InvalidStateError, layers.size() ? "Too many layers"_s : "Not enough layers"_s);
         return;
     }
 
     if (!m_presentingLayer && !UserGestureIndicator::processingUserGesture()) {
-        rejectRequestAndStopPresenting(InvalidAccessError, ASCIILiteral("Must request presentation from a user gesture handler."));
+        rejectRequestAndStopPresenting(InvalidAccessError, "Must request presentation from a user gesture handler."_s);
         return;
     }
 
@@ -157,19 +157,19 @@ void VRDisplay::requestPresent(const Vector<VRLayerInit>& layers, Ref<DeferredPr
     auto layer = layers[0];
 
     if (!layer.source) {
-        rejectRequestAndStopPresenting(InvalidStateError, ASCIILiteral("Layer does not contain any source"));
+        rejectRequestAndStopPresenting(InvalidStateError, "Layer does not contain any source"_s);
         return;
     }
 
     auto* canvasContext = layer.source->getContext("webgl");
     if (!canvasContext || !canvasContext->isWebGL()) {
-        rejectRequestAndStopPresenting(NotSupportedError, ASCIILiteral("WebVR requires VRLayerInit with WebGL context."));
+        rejectRequestAndStopPresenting(NotSupportedError, "WebVR requires VRLayerInit with WebGL context."_s);
         return;
     }
 
     if ((layer.leftBounds.size() && layer.leftBounds.size() != 4)
         || (layer.rightBounds.size() && layer.rightBounds.size() != 4)) {
-        rejectRequestAndStopPresenting(InvalidStateError, ASCIILiteral("Layer bounds must be either 0 or 4"));
+        rejectRequestAndStopPresenting(InvalidStateError, "Layer bounds must be either 0 or 4"_s);
         return;
     }
 
@@ -185,7 +185,7 @@ void VRDisplay::stopPresenting()
 void VRDisplay::exitPresent(Ref<DeferredPromise>&& promise)
 {
     if (!m_presentingLayer) {
-        promise->reject(Exception { InvalidStateError, ASCIILiteral("VRDisplay is not presenting") });
+        promise->reject(Exception { InvalidStateError, "VRDisplay is not presenting"_s });
         return;
     }
 

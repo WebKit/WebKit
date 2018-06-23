@@ -49,7 +49,7 @@ public:
         Method method() const { return m_method; }
         static Method parseMethodType(const String&);
         void updateMethodType(const String&);
-        static ASCIILiteral methodString(Method method) { return ASCIILiteral { method == Method::Post ? "post" : "get" }; }
+        static ASCIILiteral methodString(Method method) { return method == Method::Post ? "post"_s : "get"_s; }
 
         const String& action() const { return m_action; }
         void parseAction(const String&);
@@ -70,7 +70,7 @@ public:
         bool m_isMultiPartForm { false };
         String m_action;
         String m_target;
-        String m_encodingType { ASCIILiteral { "application/x-www-form-urlencoded" } };
+        String m_encodingType { "application/x-www-form-urlencoded"_s };
         String m_acceptCharset;
     };
 

@@ -92,14 +92,14 @@ std::optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const Re
 
     auto& options = m_loader->options();
     if (options.mode != FetchOptions::Mode::NoCors && response.tainting() == ResourceResponse::Tainting::Opaque)
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker is opaque"), ResourceError::Type::AccessControl };
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is opaque"_s, ResourceError::Type::AccessControl };
 
     // Navigate mode induces manual redirect.
     if (options.redirect != FetchOptions::Redirect::Manual && options.mode != FetchOptions::Mode::Navigate && response.tainting() == ResourceResponse::Tainting::Opaqueredirect)
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker is opaque redirect"), ResourceError::Type::AccessControl };
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is opaque redirect"_s, ResourceError::Type::AccessControl };
 
     if ((options.redirect != FetchOptions::Redirect::Follow || options.mode == FetchOptions::Mode::Navigate) && response.isRedirected())
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker has redirections"), ResourceError::Type::AccessControl };
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker has redirections"_s, ResourceError::Type::AccessControl };
 
     return std::nullopt;
 }
@@ -145,8 +145,8 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
         // FIXME: We should refine our MIME type sniffing strategy for synthetic responses.
         if (m_loader->originalRequest().requester() == ResourceRequest::Requester::Main) {
             if (response.mimeType() == defaultMIMEType()) {
-                response.setMimeType(ASCIILiteral("text/html"));
-                response.setTextEncodingName(ASCIILiteral("UTF-8"));
+                response.setMimeType("text/html"_s);
+                response.setTextEncodingName("UTF-8"_s);
             }
         }
 

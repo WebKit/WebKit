@@ -364,10 +364,10 @@ EncodedJSValue JSFunction::callerGetter(ExecState* exec, EncodedJSValue thisValu
     switch (parseMode) {
     case SourceParseMode::GeneratorBodyMode:
     case SourceParseMode::AsyncGeneratorBodyMode:
-        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve generator body")));
+        return JSValue::encode(throwTypeError(exec, scope, "Function.caller used to retrieve generator body"_s));
     case SourceParseMode::AsyncFunctionBodyMode:
     case SourceParseMode::AsyncArrowFunctionBodyMode:
-        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve async function body")));
+        return JSValue::encode(throwTypeError(exec, scope, "Function.caller used to retrieve async function body"_s));
     case SourceParseMode::NormalFunctionMode:
     case SourceParseMode::GeneratorWrapperFunctionMode:
     case SourceParseMode::GetterMode:
@@ -385,7 +385,7 @@ EncodedJSValue JSFunction::callerGetter(ExecState* exec, EncodedJSValue thisValu
     case SourceParseMode::GeneratorWrapperMethodMode:
         if (!function->jsExecutable()->isStrictMode())
             return JSValue::encode(caller);
-        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve strict caller")));
+        return JSValue::encode(throwTypeError(exec, scope, "Function.caller used to retrieve strict caller"_s));
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -517,7 +517,7 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
             return Base::put(thisObject, exec, propertyName, value, slot);
         }
         slot.disableCaching();
-        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     }
     PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
     if (isLazy(propertyType))
@@ -591,15 +591,15 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     }
      
     if (descriptor.configurablePresent() && descriptor.configurable())
-        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+        return typeError(exec, scope, throwException, UnconfigurablePropertyChangeConfigurabilityError);
     if (descriptor.enumerablePresent() && descriptor.enumerable())
-        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+        return typeError(exec, scope, throwException, UnconfigurablePropertyChangeEnumerabilityError);
     if (descriptor.isAccessorDescriptor())
-        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+        return typeError(exec, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
     if (descriptor.writablePresent() && descriptor.writable())
-        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+        return typeError(exec, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
     if (!valueCheck)
-        return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
+        return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
     return true;
 }
 

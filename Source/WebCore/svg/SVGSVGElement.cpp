@@ -76,8 +76,8 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
     : SVGGraphicsElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth, ASCIILiteral("100%"))
-    , m_height(LengthModeHeight, ASCIILiteral("100%"))
+    , m_width(LengthModeWidth, "100%"_s)
+    , m_height(LengthModeHeight, "100%"_s)
     , m_timeContainer(SMILTimeContainer::create(*this))
 {
     ASSERT(hasTagName(SVGNames::svgTag));
@@ -260,7 +260,7 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
         if (parseError != NoError || value.isEmpty()) {
             // FIXME: This is definitely the correct behavior for a missing/removed attribute.
             // Not sure it's correct for the empty string or for something that can't be parsed.
-            length = SVGLengthValue(LengthModeWidth, ASCIILiteral("100%"));
+            length = SVGLengthValue(LengthModeWidth, "100%"_s);
         }
         setWidthBaseValue(length);
     } else if (name == SVGNames::heightAttr) {
@@ -268,7 +268,7 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
         if (parseError != NoError || value.isEmpty()) {
             // FIXME: This is definitely the correct behavior for a removed attribute.
             // Not sure it's correct for the empty string or for something that can't be parsed.
-            length = SVGLengthValue(LengthModeHeight, ASCIILiteral("100%"));
+            length = SVGLengthValue(LengthModeHeight, "100%"_s);
         }
         setHeightBaseValue(length);
     }

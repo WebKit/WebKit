@@ -77,7 +77,7 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::open(ScriptExecutionContext& cont
     LOG(IndexedDB, "IDBFactory::open");
     
     if (version && !version.value())
-        return Exception { TypeError, ASCIILiteral("IDBFactory.open() called with a version of 0") };
+        return Exception { TypeError, "IDBFactory.open() called with a version of 0"_s };
 
     return openInternal(context, name, version.value_or(0));
 }
@@ -85,15 +85,15 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::open(ScriptExecutionContext& cont
 ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, uint64_t version)
 {
     if (name.isNull())
-        return Exception { TypeError, ASCIILiteral("IDBFactory.open() called without a database name") };
+        return Exception { TypeError, "IDBFactory.open() called without a database name"_s };
 
     if (shouldThrowSecurityException(context))
-        return Exception { SecurityError, ASCIILiteral("IDBFactory.open() called in an invalid security context") };
+        return Exception { SecurityError, "IDBFactory.open() called in an invalid security context"_s };
 
     ASSERT(context.securityOrigin());
     IDBDatabaseIdentifier databaseIdentifier(name, SecurityOriginData { context.securityOrigin()->data() }, SecurityOriginData { context.topOrigin().data() });
     if (!databaseIdentifier.isValid())
-        return Exception { TypeError, ASCIILiteral("IDBFactory.open() called with an invalid security origin") };
+        return Exception { TypeError, "IDBFactory.open() called with an invalid security origin"_s };
 
     LOG(IndexedDBOperations, "IDB opening database: %s %" PRIu64, name.utf8().data(), version);
 
@@ -105,15 +105,15 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionCon
     LOG(IndexedDB, "IDBFactory::deleteDatabase - %s", name.utf8().data());
 
     if (name.isNull())
-        return Exception { TypeError, ASCIILiteral("IDBFactory.deleteDatabase() called without a database name") };
+        return Exception { TypeError, "IDBFactory.deleteDatabase() called without a database name"_s };
 
     if (shouldThrowSecurityException(context))
-        return Exception { SecurityError, ASCIILiteral("IDBFactory.deleteDatabase() called in an invalid security context") };
+        return Exception { SecurityError, "IDBFactory.deleteDatabase() called in an invalid security context"_s };
 
     ASSERT(context.securityOrigin());
     IDBDatabaseIdentifier databaseIdentifier(name, SecurityOriginData { context.securityOrigin()->data() }, SecurityOriginData { context.topOrigin().data() });
     if (!databaseIdentifier.isValid())
-        return Exception { TypeError, ASCIILiteral("IDBFactory.deleteDatabase() called with an invalid security origin") };
+        return Exception { TypeError, "IDBFactory.deleteDatabase() called with an invalid security origin"_s };
 
     LOG(IndexedDBOperations, "IDB deleting database: %s", name.utf8().data());
 
@@ -126,7 +126,7 @@ ExceptionOr<short> IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSV
     auto second = scriptValueToIDBKey(execState, secondValue);
 
     if (!first->isValid() || !second->isValid())
-        return Exception { DataError, ASCIILiteral("Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.") };
+        return Exception { DataError, "Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key."_s };
 
     return first->compare(second.get());
 }

@@ -103,7 +103,7 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
             {
                 auto throwScope = DECLARE_THROW_SCOPE(*vm);
                 JSGlobalObject* globalObject = instance->globalObject(*vm);
-                auto* error = ErrorInstance::create(exec, *vm, globalObject->typeErrorConstructor()->errorStructure(), ASCIILiteral("i64 not allowed as return type or argument to an imported function"));
+                auto* error = ErrorInstance::create(exec, *vm, globalObject->typeErrorConstructor()->errorStructure(), "i64 not allowed as return type or argument to an imported function"_s);
                 throwException(exec, throwScope, error);
             }
 

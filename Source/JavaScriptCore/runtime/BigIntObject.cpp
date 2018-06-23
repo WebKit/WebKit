@@ -58,7 +58,7 @@ void BigIntObject::finishCreation(VM& vm, JSBigInt* bigInt)
 
 String BigIntObject::toStringName(const JSObject*, ExecState*)
 {
-    return ASCIILiteral("Object");
+    return "Object"_s;
 }
 
 JSValue BigIntObject::defaultValue(const JSObject* object, ExecState*, PreferredPrimitiveType)

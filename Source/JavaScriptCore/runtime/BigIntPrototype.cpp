@@ -96,7 +96,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(ExecState* state)
 
     JSBigInt* value = toThisBigIntValue(vm, state->thisValue());
     if (!value)
-        return throwVMTypeError(state, scope, ASCIILiteral("'this' value must be a BigInt or BigIntObject"));
+        return throwVMTypeError(state, scope, "'this' value must be a BigInt or BigIntObject"_s);
     
     ASSERT(value);
 
@@ -124,7 +124,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(ExecState* state)
         return JSValue::encode(value);
     
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(state, scope, ASCIILiteral("'this' value must be a BigInt or BigIntObject"));
+    return throwVMTypeError(state, scope, "'this' value must be a BigInt or BigIntObject"_s);
 }
 
 } // namespace JSC

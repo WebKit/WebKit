@@ -57,7 +57,7 @@ void ErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("Error"))), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String("Error"_s)), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->message, jsEmptyString(&vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
@@ -90,7 +90,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
     // 4. If name is undefined, then let name be "Error"; else let name be ToString(name).
     String nameString;
     if (name.isUndefined())
-        nameString = ASCIILiteral("Error");
+        nameString = "Error"_s;
     else {
         nameString = name.toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());

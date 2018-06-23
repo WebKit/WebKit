@@ -161,7 +161,7 @@ void MouseEvent::initMouseEventQuirk(ExecState& state, ScriptExecutionContext& s
         // jsEventTargetCast() does not throw and will silently convert bad input to nullptr.
         auto jsRelatedTarget = jsEventTargetCast(state.vm(), relatedTargetValue);
         if (!jsRelatedTarget && !relatedTargetValue.isUndefinedOrNull())
-            scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Calling initMouseEvent() with a relatedTarget that is not an EventTarget is deprecated."));
+            scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Calling initMouseEvent() with a relatedTarget that is not an EventTarget is deprecated."_s);
         relatedTarget = jsRelatedTarget ? &jsRelatedTarget->wrapped() : nullptr;
     } else {
 #else

@@ -166,9 +166,9 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
     String securityOriginString = securityOrigin.toString();
     if (accessControlOriginString != securityOriginString) {
         if (accessControlOriginString == "*")
-            errorDescription = ASCIILiteral("Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.");
+            errorDescription = "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."_s;
         else if (accessControlOriginString.find(',') != notFound)
-            errorDescription = ASCIILiteral("Access-Control-Allow-Origin cannot contain more than one origin.");
+            errorDescription = "Access-Control-Allow-Origin cannot contain more than one origin."_s;
         else
             errorDescription = makeString("Origin ", securityOriginString, " is not allowed by Access-Control-Allow-Origin.");
         return false;
@@ -188,7 +188,7 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
 bool validatePreflightResponse(const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin& securityOrigin, String& errorDescription)
 {
     if (!response.isSuccessful()) {
-        errorDescription = ASCIILiteral("Preflight response is not successful");
+        errorDescription = "Preflight response is not successful"_s;
         return false;
     }
 

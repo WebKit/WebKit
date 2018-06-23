@@ -44,13 +44,13 @@ ContentType::ContentType(const String& contentType)
 
 const String& ContentType::codecsParameter()
 {
-    static NeverDestroyed<String> codecs { ASCIILiteral("codecs") };
+    static NeverDestroyed<String> codecs { "codecs"_s };
     return codecs;
 }
 
 const String& ContentType::profilesParameter()
 {
-    static NeverDestroyed<String> profiles { ASCIILiteral("profiles") };
+    static NeverDestroyed<String> profiles { "profiles"_s };
     return profiles;
 }
 

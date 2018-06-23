@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-static const char* const P256 = "P-256";
-static const char* const P384 = "P-384";
-static const char* const P521 = "P-521";
+static const ASCIILiteral P256 { "P-256"_s };
+static const ASCIILiteral P384 { "P-384"_s };
+static const ASCIILiteral P521 { "P-521"_s };
 
 static std::optional<CryptoKeyEC::NamedCurve> toNamedCurve(const String& curve)
 {
@@ -216,13 +216,13 @@ auto CryptoKeyEC::algorithm() const -> KeyAlgorithm
 
     switch (m_curve) {
     case NamedCurve::P256:
-        result.namedCurve = ASCIILiteral(P256);
+        result.namedCurve = P256;
         break;
     case NamedCurve::P384:
-        result.namedCurve = ASCIILiteral(P384);
+        result.namedCurve = P384;
         break;
     case NamedCurve::P521:
-        result.namedCurve = ASCIILiteral(P521);
+        result.namedCurve = P521;
         break;
     }
 

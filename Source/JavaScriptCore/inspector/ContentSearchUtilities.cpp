@@ -186,7 +186,7 @@ static String findMagicComment(const String& content, const String& patternStrin
 String findStylesheetSourceMapURL(const String& content)
 {
     // "/*# <name>=<value> */" and deprecated "/*@"
-    return findMagicComment(content, ASCIILiteral { "/\\*[#@][\040\t]sourceMappingURL=[\040\t]*([^\\s\'\"]*)[\040\t]*\\*/" });
+    return findMagicComment(content, "/\\*[#@][\040\t]sourceMappingURL=[\040\t]*([^\\s\'\"]*)[\040\t]*\\*/"_s);
 }
 
 } // namespace ContentSearchUtilities

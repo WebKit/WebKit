@@ -45,7 +45,7 @@ TEST(WTF, StringOperators)
 {
     String string("String");
     AtomicString atomicString("AtomicString");
-    ASCIILiteral literal("ASCIILiteral");
+    ASCIILiteral literal { "ASCIILiteral"_s };
 
     EXPECT_EQ(0, wtfStringCopyCount);
 

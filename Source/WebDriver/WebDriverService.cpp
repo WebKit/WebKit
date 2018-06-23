@@ -261,12 +261,12 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
         // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-an-error
         // Let body be a new JSON Object initialised with the following properties: "error", "message", "stacktrace".
         auto errorObject = JSON::Object::create();
-        errorObject->setString(ASCIILiteral("error"), result.errorString());
-        errorObject->setString(ASCIILiteral("message"), result.errorMessage().value_or(emptyString()));
-        errorObject->setString(ASCIILiteral("stacktrace"), emptyString());
+        errorObject->setString("error"_s, result.errorString());
+        errorObject->setString("message"_s, result.errorMessage().value_or(emptyString()));
+        errorObject->setString("stacktrace"_s, emptyString());
         // If the error data dictionary contains any entries, set the "data" field on body to a new JSON Object populated with the dictionary.
         if (auto& additionalData = result.additionalErrorData())
-            errorObject->setObject(ASCIILiteral("data"), RefPtr<JSON::Object> { additionalData });
+            errorObject->setObject("data"_s, RefPtr<JSON::Object> { additionalData });
         // Send a response with status and body as arguments.
         resultValue = WTFMove(errorObject);
     } else if (auto value = result.result())
@@ -277,8 +277,8 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
     // When required to send a response.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
     RefPtr<JSON::Object> responseObject = JSON::Object::create();
-    responseObject->setValue(ASCIILiteral("value"), WTFMove(resultValue));
-    replyHandler({ result.httpStatusCode(), responseObject->toJSONString().utf8(), ASCIILiteral("application/json; charset=utf-8") });
+    responseObject->setValue("value"_s, WTFMove(resultValue));
+    replyHandler({ result.httpStatusCode(), responseObject->toJSONString().utf8(), "application/json; charset=utf-8"_s });
 }
 
 static std::optional<double> valueAsNumberInRange(const JSON::Value& value, double minAllowed = 0, double maxAllowed = std::numeric_limits<int>::max())
@@ -369,28 +369,28 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
 {
     // Matched capabilities have already been validated.
     bool acceptInsecureCerts;
-    if (matchedCapabilities.getBoolean(ASCIILiteral("acceptInsecureCerts"), acceptInsecureCerts))
+    if (matchedCapabilities.getBoolean("acceptInsecureCerts"_s, acceptInsecureCerts))
         capabilities.acceptInsecureCerts = acceptInsecureCerts;
     bool setWindowRect;
-    if (matchedCapabilities.getBoolean(ASCIILiteral("setWindowRect"), setWindowRect))
+    if (matchedCapabilities.getBoolean("setWindowRect"_s, setWindowRect))
         capabilities.setWindowRect = setWindowRect;
     String browserName;
-    if (matchedCapabilities.getString(ASCIILiteral("browserName"), browserName))
+    if (matchedCapabilities.getString("browserName"_s, browserName))
         capabilities.browserName = browserName;
     String browserVersion;
-    if (matchedCapabilities.getString(ASCIILiteral("browserVersion"), browserVersion))
+    if (matchedCapabilities.getString("browserVersion"_s, browserVersion))
         capabilities.browserVersion = browserVersion;
     String platformName;
-    if (matchedCapabilities.getString(ASCIILiteral("platformName"), platformName))
+    if (matchedCapabilities.getString("platformName"_s, platformName))
         capabilities.platformName = platformName;
     RefPtr<JSON::Object> timeouts;
-    if (matchedCapabilities.getObject(ASCIILiteral("timeouts"), timeouts))
+    if (matchedCapabilities.getObject("timeouts"_s, timeouts))
         capabilities.timeouts = deserializeTimeouts(*timeouts);
     String pageLoadStrategy;
-    if (matchedCapabilities.getString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy))
+    if (matchedCapabilities.getString("pageLoadStrategy"_s, pageLoadStrategy))
         capabilities.pageLoadStrategy = deserializePageLoadStrategy(pageLoadStrategy);
     String unhandledPromptBehavior;
-    if (matchedCapabilities.getString(ASCIILiteral("unhandledPromptBehavior"), unhandledPromptBehavior))
+    if (matchedCapabilities.getString("unhandledPromptBehavior"_s, unhandledPromptBehavior))
         capabilities.unhandledPromptBehavior = deserializeUnhandledPromptBehavior(unhandledPromptBehavior);
     platformParseCapabilities(matchedCapabilities, capabilities);
 }
@@ -398,7 +398,7 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
 bool WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
 {
     String sessionID;
-    if (!parameters.getString(ASCIILiteral("sessionId"), sessionID)) {
+    if (!parameters.getString("sessionId"_s, sessionID)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }
@@ -483,15 +483,15 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
     // so we only reject the known capabilities that don't match.
     RefPtr<JSON::Object> matchedCapabilities = JSON::Object::create();
     if (platformCapabilities.browserName)
-        matchedCapabilities->setString(ASCIILiteral("browserName"), platformCapabilities.browserName.value());
+        matchedCapabilities->setString("browserName"_s, platformCapabilities.browserName.value());
     if (platformCapabilities.browserVersion)
-        matchedCapabilities->setString(ASCIILiteral("browserVersion"), platformCapabilities.browserVersion.value());
+        matchedCapabilities->setString("browserVersion"_s, platformCapabilities.browserVersion.value());
     if (platformCapabilities.platformName)
-        matchedCapabilities->setString(ASCIILiteral("platformName"), platformCapabilities.platformName.value());
+        matchedCapabilities->setString("platformName"_s, platformCapabilities.platformName.value());
     if (platformCapabilities.acceptInsecureCerts)
-        matchedCapabilities->setBoolean(ASCIILiteral("acceptInsecureCerts"), platformCapabilities.acceptInsecureCerts.value());
+        matchedCapabilities->setBoolean("acceptInsecureCerts"_s, platformCapabilities.acceptInsecureCerts.value());
     if (platformCapabilities.setWindowRect)
-        matchedCapabilities->setBoolean(ASCIILiteral("setWindowRect"), platformCapabilities.setWindowRect.value());
+        matchedCapabilities->setBoolean("setWindowRect"_s, platformCapabilities.setWindowRect.value());
 
     auto end = mergedCapabilities.end();
     for (auto it = mergedCapabilities.begin(); it != end; ++it) {
@@ -532,7 +532,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
 
     // 1. Let capabilities request be the result of getting the property "capabilities" from parameters.
     RefPtr<JSON::Object> capabilitiesObject;
-    if (!parameters.getObject(ASCIILiteral("capabilities"), capabilitiesObject)) {
+    if (!parameters.getObject("capabilities"_s, capabilitiesObject)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return { };
     }
@@ -540,7 +540,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     // 2. Let required capabilities be the result of getting the property "alwaysMatch" from capabilities request.
     RefPtr<JSON::Value> requiredCapabilitiesValue;
     RefPtr<JSON::Object> requiredCapabilities;
-    if (!capabilitiesObject->getValue(ASCIILiteral("alwaysMatch"), requiredCapabilitiesValue))
+    if (!capabilitiesObject->getValue("alwaysMatch"_s, requiredCapabilitiesValue))
         // 2.1. If required capabilities is undefined, set the value to an empty JSON Object.
         requiredCapabilities = JSON::Object::create();
     else if (!requiredCapabilitiesValue->asObject(requiredCapabilities)) {
@@ -558,7 +558,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     // 3. Let all first match capabilities be the result of getting the property "firstMatch" from capabilities request.
     RefPtr<JSON::Value> firstMatchCapabilitiesValue;
     RefPtr<JSON::Array> firstMatchCapabilitiesList;
-    if (!capabilitiesObject->getValue(ASCIILiteral("firstMatch"), firstMatchCapabilitiesValue)) {
+    if (!capabilitiesObject->getValue("firstMatch"_s, firstMatchCapabilitiesValue)) {
         // 3.1. If all first match capabilities is undefined, set the value to a JSON List with a single entry of an empty JSON Object.
         firstMatchCapabilitiesList = JSON::Array::create();
         firstMatchCapabilitiesList->pushObject(JSON::Object::create());
@@ -686,58 +686,58 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
             m_session = WTFMove(session);
 
             RefPtr<JSON::Object> resultObject = JSON::Object::create();
-            resultObject->setString(ASCIILiteral("sessionId"), m_session->id());
+            resultObject->setString("sessionId"_s, m_session->id());
             RefPtr<JSON::Object> capabilitiesObject = JSON::Object::create();
             const auto& capabilities = m_session->capabilities();
             if (capabilities.browserName)
-                capabilitiesObject->setString(ASCIILiteral("browserName"), capabilities.browserName.value());
+                capabilitiesObject->setString("browserName"_s, capabilities.browserName.value());
             if (capabilities.browserVersion)
-                capabilitiesObject->setString(ASCIILiteral("browserVersion"), capabilities.browserVersion.value());
+                capabilitiesObject->setString("browserVersion"_s, capabilities.browserVersion.value());
             if (capabilities.platformName)
-                capabilitiesObject->setString(ASCIILiteral("platformName"), capabilities.platformName.value());
+                capabilitiesObject->setString("platformName"_s, capabilities.platformName.value());
             if (capabilities.acceptInsecureCerts)
-                capabilitiesObject->setBoolean(ASCIILiteral("acceptInsecureCerts"), capabilities.acceptInsecureCerts.value());
+                capabilitiesObject->setBoolean("acceptInsecureCerts"_s, capabilities.acceptInsecureCerts.value());
             if (capabilities.setWindowRect)
-                capabilitiesObject->setBoolean(ASCIILiteral("setWindowRect"), capabilities.setWindowRect.value());
+                capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.value());
             if (capabilities.unhandledPromptBehavior) {
                 switch (capabilities.unhandledPromptBehavior.value()) {
                 case UnhandledPromptBehavior::Dismiss:
-                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "dismiss");
+                    capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss");
                     break;
                 case UnhandledPromptBehavior::Accept:
-                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "accept");
+                    capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept");
                     break;
                 case UnhandledPromptBehavior::DismissAndNotify:
-                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "dismiss and notify");
+                    capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss and notify");
                     break;
                 case UnhandledPromptBehavior::AcceptAndNotify:
-                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "accept and notify");
+                    capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept and notify");
                     break;
                 case UnhandledPromptBehavior::Ignore:
-                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "ignore");
+                    capabilitiesObject->setString("unhandledPromptBehavior"_s, "ignore");
                     break;
                 }
             }
             switch (capabilities.pageLoadStrategy.value_or(PageLoadStrategy::Normal)) {
             case PageLoadStrategy::None:
-                capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "none");
+                capabilitiesObject->setString("pageLoadStrategy"_s, "none");
                 break;
             case PageLoadStrategy::Normal:
-                capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "normal");
+                capabilitiesObject->setString("pageLoadStrategy"_s, "normal");
                 break;
             case PageLoadStrategy::Eager:
-                capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "eager");
+                capabilitiesObject->setString("pageLoadStrategy"_s, "eager");
                 break;
             }
             // FIXME: implement proxy support.
-            capabilitiesObject->setObject(ASCIILiteral("proxy"), JSON::Object::create());
+            capabilitiesObject->setObject("proxy"_s, JSON::Object::create());
             RefPtr<JSON::Object> timeoutsObject = JSON::Object::create();
-            timeoutsObject->setInteger(ASCIILiteral("script"), m_session->scriptTimeout().millisecondsAs<int>());
-            timeoutsObject->setInteger(ASCIILiteral("pageLoad"), m_session->pageLoadTimeout().millisecondsAs<int>());
-            timeoutsObject->setInteger(ASCIILiteral("implicit"), m_session->implicitWaitTimeout().millisecondsAs<int>());
-            capabilitiesObject->setObject(ASCIILiteral("timeouts"), WTFMove(timeoutsObject));
+            timeoutsObject->setInteger("script"_s, m_session->scriptTimeout().millisecondsAs<int>());
+            timeoutsObject->setInteger("pageLoad"_s, m_session->pageLoadTimeout().millisecondsAs<int>());
+            timeoutsObject->setInteger("implicit"_s, m_session->implicitWaitTimeout().millisecondsAs<int>());
+            capabilitiesObject->setObject("timeouts"_s, WTFMove(timeoutsObject));
 
-            resultObject->setObject(ASCIILiteral("capabilities"), WTFMove(capabilitiesObject));
+            resultObject->setObject("capabilities"_s, WTFMove(capabilitiesObject));
             completionHandler(CommandResult::success(WTFMove(resultObject)));
         });
     });
@@ -748,7 +748,7 @@ void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function
     // §8.2 Delete Session.
     // https://www.w3.org/TR/webdriver/#delete-session
     String sessionID;
-    if (!parameters->getString(ASCIILiteral("sessionId"), sessionID)) {
+    if (!parameters->getString("sessionId"_s, sessionID)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -773,8 +773,8 @@ void WebDriverService::status(RefPtr<JSON::Object>&&, Function<void (CommandResu
     // §8.3 Status
     // https://w3c.github.io/webdriver/webdriver-spec.html#status
     auto body = JSON::Object::create();
-    body->setBoolean(ASCIILiteral("ready"), !m_session);
-    body->setString(ASCIILiteral("message"), m_session ? ASCIILiteral("A session already exists") : ASCIILiteral("No sessions"));
+    body->setBoolean("ready"_s, !m_session);
+    body->setString("message"_s, m_session ? "A session already exists"_s : "No sessions"_s);
     completionHandler(CommandResult::success(WTFMove(body)));
 }
 
@@ -812,7 +812,7 @@ void WebDriverService::go(RefPtr<JSON::Object>&& parameters, Function<void (Comm
         return;
 
     String url;
-    if (!parameters->getString(ASCIILiteral("url"), url)) {
+    if (!parameters->getString("url"_s, url)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -928,7 +928,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
     // https://w3c.github.io/webdriver/webdriver-spec.html#set-window-rect
     RefPtr<JSON::Value> value;
     std::optional<double> width;
-    if (parameters->getValue(ASCIILiteral("width"), value)) {
+    if (parameters->getValue("width"_s, value)) {
         if (auto number = valueAsNumberInRange(*value))
             width = number;
         else if (!value->isNull()) {
@@ -937,7 +937,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         }
     }
     std::optional<double> height;
-    if (parameters->getValue(ASCIILiteral("height"), value)) {
+    if (parameters->getValue("height"_s, value)) {
         if (auto number = valueAsNumberInRange(*value))
             height = number;
         else if (!value->isNull()) {
@@ -946,7 +946,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         }
     }
     std::optional<double> x;
-    if (parameters->getValue(ASCIILiteral("x"), value)) {
+    if (parameters->getValue("x"_s, value)) {
         if (auto number = valueAsNumberInRange(*value, INT_MIN))
             x = number;
         else if (!value->isNull()) {
@@ -955,7 +955,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         }
     }
     std::optional<double> y;
-    if (parameters->getValue(ASCIILiteral("y"), value)) {
+    if (parameters->getValue("y"_s, value)) {
         if (auto number = valueAsNumberInRange(*value, INT_MIN))
             y = number;
         else if (!value->isNull()) {
@@ -1024,7 +1024,7 @@ void WebDriverService::switchToWindow(RefPtr<JSON::Object>&& parameters, Functio
         return;
 
     String handle;
-    if (!parameters->getString(ASCIILiteral("handle"), handle)) {
+    if (!parameters->getString("handle"_s, handle)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1048,7 +1048,7 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
         return;
 
     RefPtr<JSON::Value> frameID;
-    if (!parameters->getValue(ASCIILiteral("id"), frameID)) {
+    if (!parameters->getValue("id"_s, frameID)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1081,7 +1081,7 @@ void WebDriverService::switchToParentFrame(RefPtr<JSON::Object>&& parameters, Fu
 static std::optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
 {
     String elementID;
-    if (!parameters.getString(ASCIILiteral("elementId"), elementID) || elementID.isEmpty()) {
+    if (!parameters.getString("elementId"_s, elementID) || elementID.isEmpty()) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return std::nullopt;
     }
@@ -1101,11 +1101,11 @@ static inline bool isValidStrategy(const String& strategy)
 
 static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& strategy, String& selector)
 {
-    if (!parameters.getString(ASCIILiteral("using"), strategy) || !isValidStrategy(strategy)) {
+    if (!parameters.getString("using"_s, strategy) || !isValidStrategy(strategy)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }
-    if (!parameters.getString(ASCIILiteral("value"), selector)) {
+    if (!parameters.getString("value"_s, selector)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }
@@ -1230,7 +1230,7 @@ void WebDriverService::getElementAttribute(RefPtr<JSON::Object>&& parameters, Fu
         return;
 
     String attribute;
-    if (!parameters->getString(ASCIILiteral("name"), attribute)) {
+    if (!parameters->getString("name"_s, attribute)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1250,7 +1250,7 @@ void WebDriverService::getElementProperty(RefPtr<JSON::Object>&& parameters, Fun
         return;
 
     String attribute;
-    if (!parameters->getString(ASCIILiteral("name"), attribute)) {
+    if (!parameters->getString("name"_s, attribute)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1270,7 +1270,7 @@ void WebDriverService::getElementCSSValue(RefPtr<JSON::Object>&& parameters, Fun
         return;
 
     String cssProperty;
-    if (!parameters->getString(ASCIILiteral("name"), cssProperty)) {
+    if (!parameters->getString("name"_s, cssProperty)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1388,7 +1388,7 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
         return;
 
     RefPtr<JSON::Array> valueArray;
-    if (!parameters->getArray(ASCIILiteral("value"), valueArray)) {
+    if (!parameters->getArray("value"_s, valueArray)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1417,11 +1417,11 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
 
 static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& script, RefPtr<JSON::Array>& arguments)
 {
-    if (!parameters.getString(ASCIILiteral("script"), script)) {
+    if (!parameters.getString("script"_s, script)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }
-    if (!parameters.getArray(ASCIILiteral("args"), arguments)) {
+    if (!parameters.getArray("args"_s, arguments)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }
@@ -1494,7 +1494,7 @@ void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Functio
         return;
 
     String name;
-    if (!parameters->getString(ASCIILiteral("name"), name)) {
+    if (!parameters->getString("name"_s, name)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1511,37 +1511,37 @@ void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Functio
 static std::optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObject)
 {
     Session::Cookie cookie;
-    if (!cookieObject.getString(ASCIILiteral("name"), cookie.name) || cookie.name.isEmpty())
+    if (!cookieObject.getString("name"_s, cookie.name) || cookie.name.isEmpty())
         return std::nullopt;
-    if (!cookieObject.getString(ASCIILiteral("value"), cookie.value) || cookie.value.isEmpty())
+    if (!cookieObject.getString("value"_s, cookie.value) || cookie.value.isEmpty())
         return std::nullopt;
 
     RefPtr<JSON::Value> value;
-    if (cookieObject.getValue(ASCIILiteral("path"), value)) {
+    if (cookieObject.getValue("path"_s, value)) {
         String path;
         if (!value->asString(path))
             return std::nullopt;
         cookie.path = path;
     }
-    if (cookieObject.getValue(ASCIILiteral("domain"), value)) {
+    if (cookieObject.getValue("domain"_s, value)) {
         String domain;
         if (!value->asString(domain))
             return std::nullopt;
         cookie.domain = domain;
     }
-    if (cookieObject.getValue(ASCIILiteral("secure"), value)) {
+    if (cookieObject.getValue("secure"_s, value)) {
         bool secure;
         if (!value->asBoolean(secure))
             return std::nullopt;
         cookie.secure = secure;
     }
-    if (cookieObject.getValue(ASCIILiteral("httpOnly"), value)) {
+    if (cookieObject.getValue("httpOnly"_s, value)) {
         bool httpOnly;
         if (!value->asBoolean(httpOnly))
             return std::nullopt;
         cookie.httpOnly = httpOnly;
     }
-    if (cookieObject.getValue(ASCIILiteral("expiry"), value)) {
+    if (cookieObject.getValue("expiry"_s, value)) {
         auto expiry = unsignedValue(*value);
         if (!expiry)
             return std::nullopt;
@@ -1559,7 +1559,7 @@ void WebDriverService::addCookie(RefPtr<JSON::Object>&& parameters, Function<voi
         return;
 
     RefPtr<JSON::Object> cookieObject;
-    if (!parameters->getObject(ASCIILiteral("cookie"), cookieObject)) {
+    if (!parameters->getObject("cookie"_s, cookieObject)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1587,7 +1587,7 @@ void WebDriverService::deleteCookie(RefPtr<JSON::Object>&& parameters, Function<
         return;
 
     String name;
-    if (!parameters->getString(ASCIILiteral("name"), name)) {
+    if (!parameters->getString("name"_s, name)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -1620,7 +1620,7 @@ void WebDriverService::deleteAllCookies(RefPtr<JSON::Object>&& parameters, Funct
 static bool processPauseAction(JSON::Object& actionItem, Action& action, std::optional<String>& errorMessage)
 {
     RefPtr<JSON::Value> durationValue;
-    if (!actionItem.getValue(ASCIILiteral("duration"), durationValue)) {
+    if (!actionItem.getValue("duration"_s, durationValue)) {
         errorMessage = String("The parameter 'duration' is missing in pause action");
         return false;
     }
@@ -1638,7 +1638,7 @@ static bool processPauseAction(JSON::Object& actionItem, Action& action, std::op
 static std::optional<Action> processNullAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     String subtype;
-    actionItem.getString(ASCIILiteral("type"), subtype);
+    actionItem.getString("type"_s, subtype);
     if (subtype != "pause") {
         errorMessage = String("The parameter 'type' in null action is invalid or missing");
         return std::nullopt;
@@ -1655,7 +1655,7 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
 {
     Action::Subtype actionSubtype;
     String subtype;
-    actionItem.getString(ASCIILiteral("type"), subtype);
+    actionItem.getString("type"_s, subtype);
     if (subtype == "pause")
         actionSubtype = Action::Subtype::Pause;
     else if (subtype == "keyUp")
@@ -1677,7 +1677,7 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
     case Action::Subtype::KeyUp:
     case Action::Subtype::KeyDown: {
         RefPtr<JSON::Value> keyValue;
-        if (!actionItem.getValue(ASCIILiteral("value"), keyValue)) {
+        if (!actionItem.getValue("value"_s, keyValue)) {
             errorMessage = String("The paramater 'value' is missing for key up/down action");
             return std::nullopt;
         }
@@ -1720,7 +1720,7 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
 {
     Action::Subtype actionSubtype;
     String subtype;
-    actionItem.getString(ASCIILiteral("type"), subtype);
+    actionItem.getString("type"_s, subtype);
     if (subtype == "pause")
         actionSubtype = Action::Subtype::Pause;
     else if (subtype == "pointerUp")
@@ -1747,7 +1747,7 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
     case Action::Subtype::PointerUp:
     case Action::Subtype::PointerDown: {
         RefPtr<JSON::Value> buttonValue;
-        if (!actionItem.getValue(ASCIILiteral("button"), buttonValue)) {
+        if (!actionItem.getValue("button"_s, buttonValue)) {
             errorMessage = String("The paramater 'button' is missing for pointer up/down action");
             return std::nullopt;
         }
@@ -1761,7 +1761,7 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
     }
     case Action::Subtype::PointerMove: {
         RefPtr<JSON::Value> durationValue;
-        if (actionItem.getValue(ASCIILiteral("duration"), durationValue)) {
+        if (actionItem.getValue("duration"_s, durationValue)) {
             auto duration = unsignedValue(*durationValue);
             if (!duration) {
                 errorMessage = String("The parameter 'duration' is invalid in pointer move action");
@@ -1771,7 +1771,7 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
         }
 
         RefPtr<JSON::Value> originValue;
-        if (actionItem.getValue(ASCIILiteral("origin"), originValue)) {
+        if (actionItem.getValue("origin"_s, originValue)) {
             if (originValue->type() == JSON::Value::Type::Object) {
                 RefPtr<JSON::Object> originObject;
                 originValue->asObject(originObject);
@@ -1797,7 +1797,7 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
             action.origin = PointerOrigin { PointerOrigin::Type::Viewport, std::nullopt };
 
         RefPtr<JSON::Value> xValue;
-        if (actionItem.getValue(ASCIILiteral("x"), xValue)) {
+        if (actionItem.getValue("x"_s, xValue)) {
             auto x = valueAsNumberInRange(*xValue, INT_MIN);
             if (!x) {
                 errorMessage = String("The paramater 'x' is invalid for pointer move action");
@@ -1807,7 +1807,7 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
         }
 
         RefPtr<JSON::Value> yValue;
-        if (actionItem.getValue(ASCIILiteral("y"), yValue)) {
+        if (actionItem.getValue("y"_s, yValue)) {
             auto y = valueAsNumberInRange(*yValue, INT_MIN);
             if (!y) {
                 errorMessage = String("The paramater 'y' is invalid for pointer move action");
@@ -1831,7 +1831,7 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
 {
     PointerParameters parameters;
     RefPtr<JSON::Value> parametersDataValue;
-    if (!actionSequence.getValue(ASCIILiteral("parameters"), parametersDataValue))
+    if (!actionSequence.getValue("parameters"_s, parametersDataValue))
         return parameters;
 
     RefPtr<JSON::Object> parametersData;
@@ -1841,7 +1841,7 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
     }
 
     String pointerType;
-    if (!parametersData->getString(ASCIILiteral("pointerType"), pointerType))
+    if (!parametersData->getString("pointerType"_s, pointerType))
         return parameters;
 
     if (pointerType == "mouse")
@@ -1867,7 +1867,7 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
     }
 
     String type;
-    actionSequence->getString(ASCIILiteral("type"), type);
+    actionSequence->getString("type"_s, type);
     InputSource::Type inputSourceType;
     if (type == "key")
         inputSourceType = InputSource::Type::Key;
@@ -1881,7 +1881,7 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
     }
 
     String id;
-    if (!actionSequence->getString(ASCIILiteral("id"), id)) {
+    if (!actionSequence->getString("id"_s, id)) {
         errorMessage = String("The parameter 'id' is invalid or missing in action sequence");
         return std::nullopt;
     }
@@ -1908,7 +1908,7 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
     }
 
     RefPtr<JSON::Array> actionItems;
-    if (!actionSequence->getArray(ASCIILiteral("actions"), actionItems)) {
+    if (!actionSequence->getArray("actions"_s, actionItems)) {
         errorMessage = String("The parameter 'actions' is invalid or not present in action sequence");
         return std::nullopt;
     }
@@ -1947,7 +1947,7 @@ void WebDriverService::performActions(RefPtr<JSON::Object>&& parameters, Functio
         return;
 
     RefPtr<JSON::Array> actionsArray;
-    if (!parameters->getArray(ASCIILiteral("actions"), actionsArray)) {
+    if (!parameters->getArray("actions"_s, actionsArray)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("The paramater 'actions' is invalid or not present")));
         return;
     }
@@ -2038,7 +2038,7 @@ void WebDriverService::sendAlertText(RefPtr<JSON::Object>&& parameters, Function
         return;
 
     String text;
-    if (!parameters->getString(ASCIILiteral("text"), text)) {
+    if (!parameters->getString("text"_s, text)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
@@ -2080,7 +2080,7 @@ void WebDriverService::takeElementScreenshot(RefPtr<JSON::Object>&& parameters, 
         return;
 
     bool scrollIntoView = true;
-    parameters->getBoolean(ASCIILiteral("scroll"), scrollIntoView);
+    parameters->getBoolean("scroll"_s, scrollIntoView);
 
     m_session->waitForNavigationToComplete([this, elementID, scrollIntoView, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {

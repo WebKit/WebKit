@@ -161,14 +161,14 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("normalize", stringProtoFuncNormalize, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().charCodeAtPrivateName(), stringProtoFuncCharCodeAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, CharCodeAtIntrinsic);
 
-    JSFunction* trimStartFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("trimStart"), stringProtoFuncTrimStart, NoIntrinsic);
-    JSFunction* trimEndFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("trimEnd"), stringProtoFuncTrimEnd, NoIntrinsic);
+    JSFunction* trimStartFunction = JSFunction::create(vm, globalObject, 0, "trimStart"_s, stringProtoFuncTrimStart, NoIntrinsic);
+    JSFunction* trimEndFunction = JSFunction::create(vm, globalObject, 0, "trimEnd"_s, stringProtoFuncTrimEnd, NoIntrinsic);
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimStart"), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimLeft"), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimEnd"), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimRight"), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("[Symbol.iterator]"), stringProtoFuncIterator, NoIntrinsic);
+    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, stringProtoFuncIterator, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     // The constructor will be added later, after StringConstructor has been built
@@ -1550,14 +1550,14 @@ static EncodedJSValue toLocaleCase(ExecState* state, int32_t (*convertCase)(UCha
 
     // 10. Let availableLocales be a List with the language tags of the languages for which the Unicode character database contains language sensitive case mappings.
     // Note 1: As of Unicode 5.1, the availableLocales list contains the elements "az", "lt", and "tr".
-    const HashSet<String> availableLocales({ ASCIILiteral("az"), ASCIILiteral("lt"), ASCIILiteral("tr") });
+    const HashSet<String> availableLocales({ "az"_s, "lt"_s, "tr"_s });
 
     // 11. Let locale be BestAvailableLocale(availableLocales, noExtensionsLocale).
     String locale = bestAvailableLocale(availableLocales, noExtensionsLocale);
 
     // 12. If locale is undefined, let locale be "und".
     if (locale.isNull())
-        locale = ASCIILiteral("und");
+        locale = "und"_s;
 
     CString utf8LocaleBuffer = locale.utf8();
     const StringView view(s);
@@ -1897,7 +1897,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
         else if (formString == "NFKD")
             form = NormalizationForm::CompatibilityDecomposition;
         else
-            return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("argument does not match any normalization form")));
+            return throwVMError(exec, scope, createRangeError(exec, "argument does not match any normalization form"_s));
     }
 
     scope.release();

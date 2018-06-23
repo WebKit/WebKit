@@ -59,7 +59,7 @@ const String& deviceName()
 #if TARGET_OS_IOS
     static const NeverDestroyed<String> deviceName = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr))).get();
 #else
-    static const NeverDestroyed<String> deviceName = ASCIILiteral { "iPhone" };
+    static const NeverDestroyed<String> deviceName { "iPhone"_s };
 #endif
     return deviceName;
 }

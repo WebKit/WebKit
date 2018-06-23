@@ -96,13 +96,13 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delt
     if (!grown) {
         switch (grown.error()) {
         case Wasm::Memory::GrowFailReason::InvalidDelta:
-            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow expects the delta to be a valid page count")));
+            throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory.grow expects the delta to be a valid page count"_s));
             break;
         case Wasm::Memory::GrowFailReason::InvalidGrowSize:
-            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow expects the grown size to be a valid page count")));
+            throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory.grow expects the grown size to be a valid page count"_s));
             break;
         case Wasm::Memory::GrowFailReason::WouldExceedMaximum:
-            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow would exceed the memory's declared maximum size")));
+            throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory.grow would exceed the memory's declared maximum size"_s));
             break;
         case Wasm::Memory::GrowFailReason::OutOfMemory:
             throwException(exec, throwScope, createOutOfMemoryError(exec));

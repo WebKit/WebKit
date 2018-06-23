@@ -50,15 +50,15 @@ public:
     String message() const { return m_message; }
 
     struct Description {
-        const char* const name;
-        const char* const message;
+        const ASCIILiteral name;
+        const ASCIILiteral message;
         LegacyCode legacyCode;
     };
 
     WEBCORE_EXPORT static const Description& description(ExceptionCode);
 
-    static ASCIILiteral name(ExceptionCode ec) { return ASCIILiteral(description(ec).name); }
-    static ASCIILiteral message(ExceptionCode ec) { return ASCIILiteral(description(ec).message); }
+    static ASCIILiteral name(ExceptionCode ec) { return description(ec).name; }
+    static ASCIILiteral message(ExceptionCode ec) { return description(ec).message; }
 
 private:
     DOMException(LegacyCode, const String& name, const String& message);

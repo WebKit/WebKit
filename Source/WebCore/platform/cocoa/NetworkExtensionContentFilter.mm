@@ -180,7 +180,7 @@ ContentFilterUnblockHandler NetworkExtensionContentFilter::unblockHandler() cons
 
     RetainPtr<NEFilterSource> neFilterSource { m_neFilterSource };
     return ContentFilterUnblockHandler {
-        ASCIILiteral("nefilter-unblock"), [neFilterSource](DecisionHandlerFunction decisionHandler) {
+        "nefilter-unblock"_s, [neFilterSource](DecisionHandlerFunction decisionHandler) {
             [neFilterSource remediateWithDecisionHandler:[decisionHandler](NEFilterSourceStatus status, NSDictionary *) {
                 LOG(ContentFiltering, "NEFilterSource %s the unblock request.\n", status == NEFilterSourceStatusPass ? "allowed" : "did not allow");
                 decisionHandler(status == NEFilterSourceStatusPass);

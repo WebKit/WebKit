@@ -79,7 +79,7 @@ IntlNumberFormatConstructor::IntlNumberFormatConstructor(VM& vm, Structure* stru
 
 void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototype* numberFormatPrototype, Structure* numberFormatStructure)
 {
-    Base::finishCreation(vm, ASCIILiteral("NumberFormat"));
+    Base::finishCreation(vm, "NumberFormat"_s);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
     numberFormatPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));

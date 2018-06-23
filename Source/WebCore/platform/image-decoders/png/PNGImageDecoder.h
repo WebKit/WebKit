@@ -45,7 +45,7 @@ namespace WebCore {
         virtual ~PNGImageDecoder();
 
         // ScalableImageDecoder
-        String filenameExtension() const override { return ASCIILiteral("png"); }
+        String filenameExtension() const override { return "png"_s; }
 #if ENABLE(APNG)
         size_t frameCount() const override { return m_frameCount; }
         RepetitionCount repetitionCount() const override;

@@ -62,7 +62,7 @@ using namespace Unicode;
 
 namespace JSC {
 
-const char* const ObjectProtoCalledOnNullOrUndefinedError = "Object.prototype.__proto__ called on null or undefined";
+const ASCIILiteral ObjectProtoCalledOnNullOrUndefinedError { "Object.prototype.__proto__ called on null or undefined"_s };
 
 template<unsigned charactersCount>
 static Bitmap<256> makeCharacterBitmap(const char (&characters)[charactersCount])
@@ -84,7 +84,7 @@ static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape, const Cha
     // https://tc39.github.io/ecma262/#sec-encode
 
     auto throwException = [&scope, exec] {
-        return JSC::throwException(exec, scope, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
+        return JSC::throwException(exec, scope, createURIError(exec, "String contained an illegal UTF-16 sequence."_s));
     };
 
     StringBuilder builder;
@@ -210,7 +210,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
             }
             if (charLen == 0) {
                 if (strict)
-                    return throwException(exec, scope, createURIError(exec, ASCIILiteral("URI error")));
+                    return throwException(exec, scope, createURIError(exec, "URI error"_s));
                 // The only case where we don't use "strict" mode is the "unescape" function.
                 // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
                 if (k <= length - 6 && p[1] == 'u'
@@ -725,7 +725,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     if (thisValue.isUndefinedOrNull())
-        return throwVMTypeError(exec, scope, ASCIILiteral(ObjectProtoCalledOnNullOrUndefinedError));
+        return throwVMTypeError(exec, scope, ObjectProtoCalledOnNullOrUndefinedError);
 
     JSValue value = exec->argument(0);
 

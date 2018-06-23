@@ -130,7 +130,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, co
     if (is<WebGLRenderingContextBase>(canvas.renderingContext())) {
         auto& context = downcast<WebGLRenderingContextBase>(*canvas.renderingContext());
         if (!context.isPreservingDrawingBuffer()) {
-            canvas.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Turning drawing buffer preservation for the WebGL canvas being captured"));
+            canvas.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Turning drawing buffer preservation for the WebGL canvas being captured"_s);
             context.setPreserveDrawingBuffer(true);
         }
     }

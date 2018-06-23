@@ -44,10 +44,10 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     
     JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, exec->thisValue());
     if (!thisObject)
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of slice must be an array buffer."));
+        return throwVMTypeError(exec, scope, "Receiver of slice must be an array buffer."_s);
     
     if (!exec->argumentCount())
-        return throwVMTypeError(exec, scope, ASCIILiteral("Slice requires at least one argument."));
+        return throwVMTypeError(exec, scope, "Slice requires at least one argument."_s);
     
     int32_t begin = exec->argument(0).toInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -77,13 +77,13 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoGetterFuncByteLength(ExecSta
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be an array buffer but was not an object"));
+        return throwVMTypeError(exec, scope, "Receiver should be an array buffer but was not an object"_s);
 
     auto* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, thisValue);
     if (!thisObject)
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be an array buffer"));
+        return throwVMTypeError(exec, scope, "Receiver should be an array buffer"_s);
     if (thisObject->isShared())
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should not be a shared array buffer"));
+        return throwVMTypeError(exec, scope, "Receiver should not be a shared array buffer"_s);
 
     scope.release();
 
@@ -97,13 +97,13 @@ static EncodedJSValue JSC_HOST_CALL sharedArrayBufferProtoGetterFuncByteLength(E
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be an array buffer but was not an object"));
+        return throwVMTypeError(exec, scope, "Receiver should be an array buffer but was not an object"_s);
 
     auto* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, thisValue);
     if (!thisObject)
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be an array buffer"));
+        return throwVMTypeError(exec, scope, "Receiver should be an array buffer"_s);
     if (!thisObject->isShared())
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a shared array buffer"));
+        return throwVMTypeError(exec, scope, "Receiver should be a shared array buffer"_s);
 
     scope.release();
 

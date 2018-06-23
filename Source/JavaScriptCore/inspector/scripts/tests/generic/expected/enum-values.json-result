@@ -240,7 +240,7 @@ CommandDomainBackendDispatcher::CommandDomainBackendDispatcher(BackendDispatcher
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("CommandDomain"), this);
+    m_backendDispatcher->registerDispatcherForDomain("CommandDomain"_s, this);
 }
 
 void CommandDomainBackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
@@ -248,7 +248,7 @@ void CommandDomainBackendDispatcher::dispatch(long requestId, const String& meth
     Ref<CommandDomainBackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
     if (method == "commandWithEnumReturnValue")
         commandWithEnumReturnValue(requestId, WTFMove(parameters));
@@ -271,7 +271,7 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, 
     m_agent->commandWithEnumReturnValue(error, &out_returnValue);
 
     if (!error.length())
-        result->setString(ASCIILiteral("returnValue"), Inspector::Protocol::TestHelpers::getEnumConstantValue(out_returnValue));
+        result->setString("returnValue"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(out_returnValue));
 
     if (!error.length())
         m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
@@ -383,10 +383,10 @@ namespace Inspector {
 void EventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
 {
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
-    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
+    jsonMessage->setString("method"_s, "EventDomain.eventWithEnumParameter"_s);
     Ref<JSON::Object> paramsObject = JSON::Object::create();
-    paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::TestHelpers::getEnumConstantValue(parameter));
-    jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
+    paramsObject->setString("parameter"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(parameter));
+    jsonMessage->setObject("params"_s, WTFMove(paramsObject));
 
     m_frontendRouter.sendEvent(jsonMessage->toJSONString());
 }
@@ -672,7 +672,7 @@ void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(lon
 
     id successCallback = ^(TestProtocolCommandDomainCommandWithEnumReturnValueReturnValue returnValue) {
         Ref<JSON::Object> resultObject = JSON::Object::create();
-        resultObject->setString(ASCIILiteral("returnValue"), toProtocolString(returnValue));
+        resultObject->setString("returnValue"_s, toProtocolString(returnValue));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
     };
 
@@ -801,7 +801,7 @@ using namespace Inspector;
     _commandDomainHandler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>(ASCIILiteral("CommandDomain"), *_controller, WTFMove(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>("CommandDomain"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
@@ -880,10 +880,10 @@ using namespace Inspector;
     const FrontendRouter& router = _controller->frontendRouter();
 
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
-    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
+    jsonMessage->setString("method"_s, "EventDomain.eventWithEnumParameter"_s);
     Ref<JSON::Object> paramsObject = JSON::Object::create();
-    paramsObject->setString(ASCIILiteral("parameter"), toProtocolString(parameter));
-    jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
+    paramsObject->setString("parameter"_s, toProtocolString(parameter));
+    jsonMessage->setObject("params"_s, WTFMove(paramsObject));
     router.sendEvent(jsonMessage->toJSONString());
 }
 
@@ -1046,13 +1046,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 
@@ -1075,13 +1075,13 @@ inline String toProtocolString(TestProtocolTypeDomainEnum value)
 {
     switch(value) {
     case TestProtocolTypeDomainEnumShared:
-        return ASCIILiteral("shared");
+        return "shared"_s;
     case TestProtocolTypeDomainEnumRed:
-        return ASCIILiteral("red");
+        return "red"_s;
     case TestProtocolTypeDomainEnumGreen:
-        return ASCIILiteral("green");
+        return "green"_s;
     case TestProtocolTypeDomainEnumBlue:
-        return ASCIILiteral("blue");
+        return "blue"_s;
     }
 }
 

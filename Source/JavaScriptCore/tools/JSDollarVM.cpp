@@ -622,7 +622,7 @@ public:
             auto* domjitGetterComplex = jsDynamicCast<DOMJITGetterComplex*>(vm, object);
             if (domjitGetterComplex) {
                 if (domjitGetterComplex->m_enableException)
-                    return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("DOMJITGetterComplex slow call exception"))));
+                    return JSValue::encode(throwException(exec, scope, createError(exec, "DOMJITGetterComplex slow call exception"_s)));
             }
             return JSValue::encode(jsNumber(object->value()));
         }
@@ -668,7 +668,7 @@ private:
         auto* thisObject = jsDynamicCast<DOMJITGetterComplex*>(vm, JSValue::decode(thisValue));
         ASSERT(thisObject);
         if (thisObject->m_enableException)
-            return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("DOMJITGetterComplex slow call exception"))));
+            return JSValue::encode(throwException(exec, scope, createError(exec, "DOMJITGetterComplex slow call exception"_s)));
         return JSValue::encode(jsNumber(thisObject->value()));
     }
 
@@ -1518,7 +1518,7 @@ static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState* e
         return JSValue::encode(jsUndefined());
     ImpureGetter* impureGetter = jsDynamicCast<ImpureGetter*>(vm, asObject(base.asCell()));
     if (UNLIKELY(!impureGetter)) {
-        throwTypeError(exec, scope, ASCIILiteral("argument is not an ImpureGetter"));
+        throwTypeError(exec, scope, "argument is not an ImpureGetter"_s);
         return encodedJSValue();
     }
     impureGetter->setDelegate(vm, asObject(delegate.asCell()));
@@ -1557,7 +1557,7 @@ static EncodedJSValue JSC_HOST_CALL functionCreateElement(ExecState* exec)
 
     Root* root = jsDynamicCast<Root*>(vm, exec->argument(0));
     if (!root)
-        return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Cannot create Element without a Root."))));
+        return JSValue::encode(throwException(exec, scope, createError(exec, "Cannot create Element without a Root."_s)));
     return JSValue::encode(Element::create(vm, exec->lexicalGlobalObject(), root));
 }
 
@@ -1587,7 +1587,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetHiddenValue(ExecState* exec)
 
     SimpleObject* simpleObject = jsDynamicCast<SimpleObject*>(vm, exec->argument(0));
     if (UNLIKELY(!simpleObject)) {
-        throwTypeError(exec, scope, ASCIILiteral("Invalid use of getHiddenValue test function"));
+        throwTypeError(exec, scope, "Invalid use of getHiddenValue test function"_s);
         return encodedJSValue();
     }
     return JSValue::encode(simpleObject->hiddenValue());
@@ -1601,7 +1601,7 @@ static EncodedJSValue JSC_HOST_CALL functionSetHiddenValue(ExecState* exec)
 
     SimpleObject* simpleObject = jsDynamicCast<SimpleObject*>(vm, exec->argument(0));
     if (UNLIKELY(!simpleObject)) {
-        throwTypeError(exec, scope, ASCIILiteral("Invalid use of setHiddenValue test function"));
+        throwTypeError(exec, scope, "Invalid use of setHiddenValue test function"_s);
         return encodedJSValue();
     }
     JSValue value = exec->argument(1);
@@ -1626,7 +1626,7 @@ static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState* exe
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.typeProfiler());
-    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("jsc Testing API: functionFindTypeForExpression"));
+    vm.typeProfilerLog()->processLogEntries("jsc Testing API: functionFindTypeForExpression"_s);
 
     JSValue functionValue = exec->argument(0);
     RELEASE_ASSERT(functionValue.isFunction(vm));
@@ -1645,7 +1645,7 @@ static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.typeProfiler());
-    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("jsc Testing API: functionReturnTypeFor"));
+    vm.typeProfilerLog()->processLogEntries("jsc Testing API: functionReturnTypeFor"_s);
 
     JSValue functionValue = exec->argument(0);
     RELEASE_ASSERT(functionValue.isFunction(vm));
@@ -1760,7 +1760,7 @@ static EncodedJSValue JSC_HOST_CALL functionLoadGetterFromGetterSetter(ExecState
 
     GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(vm, exec->argument(0));
     if (UNLIKELY(!getterSetter)) {
-        throwTypeError(exec, scope, ASCIILiteral("Invalid use of loadGetterFromGetterSetter test function: argument is not a GetterSetter"));
+        throwTypeError(exec, scope, "Invalid use of loadGetterFromGetterSetter test function: argument is not a GetterSetter"_s);
         return encodedJSValue();
     }
 

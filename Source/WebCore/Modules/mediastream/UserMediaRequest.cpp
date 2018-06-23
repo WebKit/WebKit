@@ -278,7 +278,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
         break;
     case MediaAccessDenialReason::InvalidConstraint:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %s", message.utf8().data());
-        m_promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(message, ASCIILiteral("Invalid constraint")).get());
+        m_promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(message, "Invalid constraint"_s).get());
         return;
     case MediaAccessDenialReason::HardwareError:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - hardware error");

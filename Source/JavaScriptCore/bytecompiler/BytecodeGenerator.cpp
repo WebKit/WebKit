@@ -4370,7 +4370,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
                 emitAwait(value.get());
 
             emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), finallyDone.get());
-            emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
+            emitThrowTypeError("Iterator result interface is not an object."_s);
 
             emitLabel(finallyDone.get());
             emitFinallyCompletion(*finallyContext, completionTypeRegister(), endCatchLabel.get());
@@ -4588,7 +4588,7 @@ RegisterID* BytecodeGenerator::emitIteratorNext(RegisterID* dst, RegisterID* nex
     {
         Ref<Label> typeIsObject = newLabel();
         emitJumpIfTrue(emitIsObject(newTemporary(), dst), typeIsObject.get());
-        emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
+        emitThrowTypeError("Iterator result interface is not an object."_s);
         emitLabel(typeIsObject.get());
     }
     return dst;
@@ -4621,7 +4621,7 @@ void BytecodeGenerator::emitIteratorClose(RegisterID* iterator, const ThrowableE
         emitAwait(value.get());
 
     emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), done.get());
-    emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
+    emitThrowTypeError("Iterator result interface is not an object."_s);
     emitLabel(done.get());
 }
 
@@ -4973,7 +4973,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
                     EmitAwait emitAwaitInIteratorClose = parseMode() == SourceParseMode::AsyncGeneratorBodyMode ? EmitAwait::Yes : EmitAwait::No;
                     emitIteratorClose(iterator.get(), node, emitAwaitInIteratorClose);
 
-                    emitThrowTypeError(ASCIILiteral("Delegated generator does not have a 'throw' method."));
+                    emitThrowTypeError("Delegated generator does not have a 'throw' method."_s);
 
                     emitLabel(throwMethodFound.get());
                     CallArguments throwArguments(*this, nullptr, 1);
@@ -5007,7 +5007,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 
                     Ref<Label> returnIteratorResultIsObject = newLabel();
                     emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), returnIteratorResultIsObject.get());
-                    emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
+                    emitThrowTypeError("Iterator result interface is not an object."_s);
 
                     emitLabel(returnIteratorResultIsObject.get());
 
@@ -5041,7 +5041,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 
             Ref<Label> iteratorValueIsObject = newLabel();
             emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), iteratorValueIsObject.get());
-            emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
+            emitThrowTypeError("Iterator result interface is not an object."_s);
             emitLabel(iteratorValueIsObject.get());
 
             emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), loopDone.get());

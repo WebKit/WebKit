@@ -50,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultController(ExecStat
 {
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(&exec, scope, ASCIILiteral("ReadableStreamDefaultController constructor should not be called directly"));
+    return throwVMTypeError(&exec, scope, "ReadableStreamDefaultController constructor should not be called directly"_s);
 }
 
 // Public JS ReadableStreamDefaultReader and ReadableStreamBYOBReader callbacks.
@@ -92,14 +92,14 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableByteStreamController(ExecState& 
 {
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(&exec, scope, ASCIILiteral("ReadableByteStreamController constructor should not be called directly"));
+    return throwVMTypeError(&exec, scope, "ReadableByteStreamController constructor should not be called directly"_s);
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSReadableStreamBYOBRequest(ExecState& exec)
 {
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(&exec, scope, ASCIILiteral("ReadableStreamBYOBRequest constructor should not be called directly"));
+    return throwVMTypeError(&exec, scope, "ReadableStreamBYOBRequest constructor should not be called directly"_s);
 }
 
 // Private JS ReadableStreamDefaultReader and ReadableStreamDefaultController constructors.

@@ -58,7 +58,7 @@ ALWAYS_INLINE static JSWeakMap* getWeakMap(CallFrame* callFrame, JSValue value)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(!value.isObject())) {
-        throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on non-object"));
+        throwTypeError(callFrame, scope, "Called WeakMap function on non-object"_s);
         return nullptr;
     }
 
@@ -66,7 +66,7 @@ ALWAYS_INLINE static JSWeakMap* getWeakMap(CallFrame* callFrame, JSValue value)
     if (LIKELY(map))
         return map;
 
-    throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
+    throwTypeError(callFrame, scope, "Called WeakMap function on a non-WeakMap object"_s);
     return nullptr;
 }
 
@@ -110,7 +110,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(CallFrame* callFrame)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
-        return JSValue::encode(throwTypeError(callFrame, scope, WTF::ASCIILiteral("Attempted to set a non-object key in a WeakMap")));
+        return JSValue::encode(throwTypeError(callFrame, scope, "Attempted to set a non-object key in a WeakMap"_s));
     map->set(vm, asObject(key), callFrame->argument(1));
     return JSValue::encode(callFrame->thisValue());
 }

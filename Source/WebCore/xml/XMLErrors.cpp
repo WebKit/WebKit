@@ -97,7 +97,7 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, cons
 
     auto h3 = HTMLHeadingElement::create(h3Tag, document);
     reportElement->parserAppendChild(h3);
-    h3->parserAppendChild(Text::create(document, ASCIILiteral("This page contains the following errors:")));
+    h3->parserAppendChild(Text::create(document, "This page contains the following errors:"_s));
 
     auto fixed = HTMLDivElement::create(document);
     Vector<Attribute> fixedAttributes;
@@ -109,7 +109,7 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, cons
 
     h3 = HTMLHeadingElement::create(h3Tag, document);
     reportElement->parserAppendChild(h3);
-    h3->parserAppendChild(Text::create(document, ASCIILiteral("Below is a rendering of the page up to the first error.")));
+    h3->parserAppendChild(Text::create(document, "Below is a rendering of the page up to the first error."_s));
 
     return reportElement;
 }
@@ -133,7 +133,7 @@ void XMLErrors::insertErrorMessageBlock()
         auto head = HTMLHeadElement::create(m_document);
         auto style = HTMLStyleElement::create(m_document);
         head->parserAppendChild(style);
-        style->parserAppendChild(m_document.createTextNode(ASCIILiteral("html, body { height: 100% } parsererror + svg { width: 100%; height: 100% }")));
+        style->parserAppendChild(m_document.createTextNode("html, body { height: 100% } parsererror + svg { width: 100%; height: 100% }"_s));
         style->finishParsingChildren();
         rootElement->parserAppendChild(head);
         auto body = HTMLBodyElement::create(m_document);
@@ -157,7 +157,7 @@ void XMLErrors::insertErrorMessageBlock()
         attributes.append(Attribute(styleAttr, "white-space: normal"));
         auto paragraph = HTMLParagraphElement::create(m_document);
         paragraph->parserSetAttributes(attributes);
-        paragraph->parserAppendChild(m_document.createTextNode(ASCIILiteral("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result.")));
+        paragraph->parserAppendChild(m_document.createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."_s));
         reportElement->parserAppendChild(paragraph);
     }
 #endif

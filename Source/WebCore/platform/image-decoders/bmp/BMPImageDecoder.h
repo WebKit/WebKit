@@ -43,7 +43,7 @@ public:
     }
 
     // ScalableImageDecoder
-    String filenameExtension() const final { return ASCIILiteral("bmp"); }
+    String filenameExtension() const final { return "bmp"_s; }
     void setData(SharedBuffer&, bool allDataReceived) final;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final;
     // CAUTION: setFailed() deletes |m_reader|. Be careful to avoid

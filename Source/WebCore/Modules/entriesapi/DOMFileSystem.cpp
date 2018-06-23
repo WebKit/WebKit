@@ -153,7 +153,7 @@ DOMFileSystem::~DOMFileSystem() = default;
 
 Ref<FileSystemDirectoryEntry> DOMFileSystem::root(ScriptExecutionContext& context)
 {
-    return FileSystemDirectoryEntry::create(context, *this, ASCIILiteral("/"));
+    return FileSystemDirectoryEntry::create(context, *this, "/"_s);
 }
 
 Ref<FileSystemEntry> DOMFileSystem::fileAsEntry(ScriptExecutionContext& context)
@@ -169,7 +169,7 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
 
     auto metadata = FileSystem::fileMetadata(fullPath);
     if (!metadata || metadata.value().isHidden)
-        return Exception { NotFoundError, ASCIILiteral("Path does not exist") };
+        return Exception { NotFoundError, "Path does not exist"_s };
 
     if (metadata.value().type != expectedType)
         return Exception { TypeMismatchError, "Entry at path does not have expected type" };
@@ -209,7 +209,7 @@ static String resolveRelativeVirtualPath(StringView baseVirtualPath, StringView 
     }
 
     if (virtualPathSegments.isEmpty())
-        return ASCIILiteral("/");
+        return "/"_s;
 
     StringBuilder builder;
     for (auto& segment : virtualPathSegments) {
@@ -286,14 +286,14 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
 
     if (!isValidVirtualPath(virtualPath)) {
         callOnMainThread([completionCallback = WTFMove(completionCallback)] {
-            completionCallback(Exception { TypeMismatchError, ASCIILiteral("Path is invalid") });
+            completionCallback(Exception { TypeMismatchError, "Path is invalid"_s });
         });
         return;
     }
 
     if (flags.create) {
         callOnMainThread([completionCallback = WTFMove(completionCallback)] {
-            completionCallback(Exception { SecurityError, ASCIILiteral("create flag cannot be true") });
+            completionCallback(Exception { SecurityError, "create flag cannot be true"_s });
         });
         return;
     }
@@ -312,7 +312,7 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
         auto entryType = fileType(fullPath);
         callOnMainThread([this, context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
             if (!entryType) {
-                completionCallback(Exception { NotFoundError, ASCIILiteral("Cannot find entry at given path") });
+                completionCallback(Exception { NotFoundError, "Cannot find entry at given path"_s });
                 return;
             }
             switch (entryType.value()) {
@@ -323,7 +323,7 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
                 completionCallback(Ref<FileSystemEntry> { FileSystemFileEntry::create(context, *this, resolvedVirtualPath) });
                 break;
             default:
-                completionCallback(Exception { NotFoundError, ASCIILiteral("Cannot find entry at given path") });
+                completionCallback(Exception { NotFoundError, "Cannot find entry at given path"_s });
                 break;
             }
         });

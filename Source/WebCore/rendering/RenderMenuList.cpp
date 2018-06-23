@@ -270,7 +270,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
 
 void RenderMenuList::setText(const String& s)
 {
-    String textToUse = s.isEmpty() ? String(ASCIILiteral("\n")) : s;
+    String textToUse = s.isEmpty() ? String("\n"_s) : s;
 
     if (m_buttonText)
         m_buttonText->setText(textToUse.impl(), true);

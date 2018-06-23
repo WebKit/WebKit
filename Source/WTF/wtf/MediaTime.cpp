@@ -582,20 +582,20 @@ static Ref<JSON::Object> toJSONStringInternal(const MediaTime& time)
     auto object = JSON::Object::create();
 
     if (time.hasDoubleValue())
-        object->setDouble(ASCIILiteral("value"), time.toDouble());
+        object->setDouble("value"_s, time.toDouble());
     else {
         if (time.isInvalid() || time.isIndefinite())
-            object->setString(ASCIILiteral("value"), ASCIILiteral("NaN"));
+            object->setString("value"_s, "NaN"_s);
         else if (time.isPositiveInfinite())
-            object->setString(ASCIILiteral("value"), ASCIILiteral("POSITIVE_INFINITY"));
+            object->setString("value"_s, "POSITIVE_INFINITY"_s);
         else if (time.isNegativeInfinite())
-            object->setString(ASCIILiteral("value"), ASCIILiteral("NEGATIVE_INFINITY"));
+            object->setString("value"_s, "NEGATIVE_INFINITY"_s);
         else
-            object->setDouble(ASCIILiteral("value"), time.toDouble());
+            object->setDouble("value"_s, time.toDouble());
 
-        object->setInteger(ASCIILiteral("numerator"), static_cast<int>(time.timeValue()));
-        object->setInteger(ASCIILiteral("denominator"), time.timeScale());
-        object->setInteger(ASCIILiteral("flags"), time.timeFlags());
+        object->setInteger("numerator"_s, static_cast<int>(time.timeValue()));
+        object->setInteger("denominator"_s, time.timeScale());
+        object->setInteger("flags"_s, time.timeFlags());
     }
 
     return object;
@@ -624,8 +624,8 @@ String MediaTimeRange::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setObject(ASCIILiteral("start"), toJSONStringInternal(start));
-    object->setObject(ASCIILiteral("end"), toJSONStringInternal(end));
+    object->setObject("start"_s, toJSONStringInternal(start));
+    object->setObject("end"_s, toJSONStringInternal(end));
 
     return object->toJSONString();
 }

@@ -27,7 +27,7 @@ namespace WebCore {
 
 String CSSInheritedValue::customCSSText() const
 {
-    return ASCIILiteral("inherit");
+    return "inherit"_s;
 }
 
 } // namespace WebCore

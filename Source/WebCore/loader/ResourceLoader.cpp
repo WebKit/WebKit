@@ -271,7 +271,7 @@ void ResourceLoader::loadDataURL()
 
         ResourceResponse dataResponse { url, result.mimeType, static_cast<long long>(dataSize), result.charset };
         dataResponse.setHTTPStatusCode(200);
-        dataResponse.setHTTPStatusText(ASCIILiteral("OK"));
+        dataResponse.setHTTPStatusText("OK"_s);
         dataResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, result.contentType);
         dataResponse.setSource(ResourceResponse::Source::Network);
         this->didReceiveResponse(dataResponse, [this, protectedThis = WTFMove(protectedThis), dataSize, data = result.data.releaseNonNull()]() mutable {
@@ -463,7 +463,7 @@ void ResourceLoader::didBlockAuthenticationChallenge()
     if (m_options.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials)
         return;
     ASSERT(!shouldAllowResourceToAskForCredentials());
-    FrameLoader::reportAuthenticationChallengeBlocked(m_frame.get(), m_request.url(), ASCIILiteral("it is a cross-origin request"));
+    FrameLoader::reportAuthenticationChallengeBlocked(m_frame.get(), m_request.url(), "it is a cross-origin request"_s);
 }
 
 void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHandler<void()>&& policyCompletionHandler)

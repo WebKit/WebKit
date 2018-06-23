@@ -342,7 +342,7 @@ String ResourceLoadStatistics::primaryDomain(const URL& url)
 String ResourceLoadStatistics::primaryDomain(StringView host)
 {
     if (host.isNull() || host.isEmpty())
-        return ASCIILiteral("nullOrigin");
+        return "nullOrigin"_s;
 
     String hostString = host.toString();
 #if ENABLE(PUBLIC_SUFFIX_LIST)
@@ -365,11 +365,11 @@ bool ResourceLoadStatistics::areDomainsAssociated(bool needsSiteSpecificQuirks, 
 
         // Domains owned by Dow Jones & Company, Inc.
         const unsigned dowJonesIdentifier = 1;
-        map.add(ASCIILiteral("dowjones.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("wsj.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("barrons.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("marketwatch.com"), dowJonesIdentifier);
-        map.add(ASCIILiteral("wsjplus.com"), dowJonesIdentifier);
+        map.add("dowjones.com"_s, dowJonesIdentifier);
+        map.add("wsj.com"_s, dowJonesIdentifier);
+        map.add("barrons.com"_s, dowJonesIdentifier);
+        map.add("marketwatch.com"_s, dowJonesIdentifier);
+        map.add("wsjplus.com"_s, dowJonesIdentifier);
 
         return map;
     }();

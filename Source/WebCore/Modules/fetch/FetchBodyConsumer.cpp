@@ -220,7 +220,7 @@ void FetchBodyConsumer::loadingFailed()
         m_consumePromise = nullptr;
     }
     if (m_source) {
-        m_source->error(ASCIILiteral("Loading failed"));
+        m_source->error("Loading failed"_s);
         m_source = nullptr;
     }
 }

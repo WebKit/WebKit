@@ -502,7 +502,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 
 String SVGImage::filenameExtension() const
 {
-    return ASCIILiteral("svg");
+    return "svg"_s;
 }
 
 bool isInSVGImage(const Element* element)

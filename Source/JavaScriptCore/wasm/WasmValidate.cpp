@@ -89,7 +89,7 @@ public:
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in WasmParser.h.
-        return UnexpectedResult(makeString(ASCIILiteral("WebAssembly.Module doesn't validate: "), makeString(args)...));
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't validate: "_s, makeString(args)...));
     }
 #define WASM_VALIDATOR_FAIL_IF(condition, ...) do { \
         if (UNLIKELY(condition))                    \

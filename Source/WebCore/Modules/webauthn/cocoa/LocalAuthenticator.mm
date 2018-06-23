@@ -124,7 +124,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
     ASSERT_UNUSED(hash, hash == hash);
     ASSERT_UNUSED(options, !options.rp.id.isEmpty());
     ASSERT_UNUSED(callback, callback);
-    exceptionCallback({ NotAllowedError, ASCIILiteral("No avaliable authenticators.") });
+    exceptionCallback({ NotAllowedError, "No avaliable authenticators."_s });
 #else
     // The following implements https://www.w3.org/TR/webauthn/#op-make-cred as of 5 December 2017.
     // Skip Step 4-5 as requireResidentKey and requireUserVerification are enforced.
@@ -139,7 +139,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
         }
     }
     if (!canFullfillPubKeyCredParams) {
-        exceptionCallback({ NotSupportedError, ASCIILiteral("The platform attached authenticator doesn't support any provided PublicKeyCredentialParameters.") });
+        exceptionCallback({ NotSupportedError, "The platform attached authenticator doesn't support any provided PublicKeyCredentialParameters."_s });
         return;
     }
 
@@ -158,7 +158,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
         if (status && status != errSecItemNotFound) {
             LOG_ERROR("Couldn't query Keychain: %d", status);
-            exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+            exceptionCallback({ UnknownError, "Unknown internal error."_s });
             return;
         }
         auto retainAttributesArray = adoptCF(attributesArrayRef);
@@ -166,7 +166,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
         for (NSDictionary *nsAttributes in (NSArray *)attributesArrayRef) {
             NSData *nsCredentialId = nsAttributes[(id)kSecAttrApplicationLabel];
             if (excludeCredentialIds.contains(String(reinterpret_cast<const char*>(nsCredentialId.bytes), nsCredentialId.length))) {
-                exceptionCallback({ NotAllowedError, ASCIILiteral("At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator.") });
+                exceptionCallback({ NotAllowedError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s });
                 return;
             }
         }
@@ -180,7 +180,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
     if (![context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
         LOG_ERROR("Couldn't evaluate authentication with biometrics policy: %@", error);
         // FIXME(182767)
-        exceptionCallback({ NotAllowedError, ASCIILiteral("No avaliable authenticators.") });
+        exceptionCallback({ NotAllowedError, "No avaliable authenticators."_s });
         return;
     }
 
@@ -190,7 +190,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
         ASSERT(!isMainThread());
         if (!success || error) {
             LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
-            exceptionCallback({ NotAllowedError, ASCIILiteral("Couldn't get user consent.") });
+            exceptionCallback({ NotAllowedError, "Couldn't get user consent."_s });
             return;
         }
 
@@ -205,7 +205,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
         OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
         if (status && status != errSecItemNotFound) {
             LOG_ERROR("Couldn't detele older credential: %d", status);
-            exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+            exceptionCallback({ UnknownError, "Unknown internal error."_s });
             return;
         }
 
@@ -217,7 +217,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
             ASSERT(!isMainThread());
             if (error) {
                 LOG_ERROR("Couldn't attest: %@", error);
-                exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                exceptionCallback({ UnknownError, "Unknown internal error."_s });
                 return;
             }
             // Attestation Certificate and Attestation Issuing CA
@@ -250,7 +250,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
                 OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)credentialIdQuery, &attributesRef);
                 if (status) {
                     LOG_ERROR("Couldn't get Credential ID: %d", status);
-                    exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                    exceptionCallback({ UnknownError, "Unknown internal error."_s });
                     return;
                 }
                 auto retainAttributes = adoptCF(attributesRef);
@@ -271,7 +271,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
                 status = SecItemUpdate((__bridge CFDictionaryRef)updateQuery, (__bridge CFDictionaryRef)updateParams);
                 if (status) {
                     LOG_ERROR("Couldn't update the Keychain item: %d", status);
-                    exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                    exceptionCallback({ UnknownError, "Unknown internal error."_s });
                     return;
                 }
             }
@@ -304,7 +304,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
                     auto retainError = adoptCF(errorRef);
                     if (errorRef) {
                         LOG_ERROR("Couldn't export the public key: %@", (NSError*)errorRef);
-                        exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                        exceptionCallback({ UnknownError, "Unknown internal error."_s });
                         return;
                     }
                     ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256KeySizeInBytes)); // 04 | X | Y
@@ -325,7 +325,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
                 auto cosePublicKey = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(publicKeyMap)));
                 if (!cosePublicKey) {
                     LOG_ERROR("Couldn't encode the public key into COSE binaries.");
-                    exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                    exceptionCallback({ UnknownError, "Unknown internal error."_s });
                     return;
                 }
                 attestedCredentialData.appendVector(cosePublicKey.value());
@@ -347,7 +347,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
                     auto retainError = adoptCF(errorRef);
                     if (errorRef) {
                         LOG_ERROR("Couldn't generate the signature: %@", (NSError*)errorRef);
-                        exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                        exceptionCallback({ UnknownError, "Unknown internal error."_s });
                         return;
                     }
                     auto nsSignature = (NSData *)signatureRef.get();
@@ -374,7 +374,7 @@ void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const Publi
             auto attestationObject = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(attestationObjectMap)));
             if (!attestationObject) {
                 LOG_ERROR("Couldn't encode the attestation object.");
-                exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                exceptionCallback({ UnknownError, "Unknown internal error."_s });
                 return;
             }
 
@@ -393,7 +393,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
     ASSERT_UNUSED(hash, hash == hash);
     ASSERT_UNUSED(options, !options.rpId.isEmpty());
     ASSERT_UNUSED(callback, callback);
-    exceptionCallback({ NotAllowedError, ASCIILiteral("No avaliable authenticators.") });
+    exceptionCallback({ NotAllowedError, "No avaliable authenticators."_s });
 #else
     // The following implements https://www.w3.org/TR/webauthn/#op-get-assertion as of 5 December 2017.
     // Skip Step 2 as requireUserVerification is enforced.
@@ -402,7 +402,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
     // Step 3-5. Unlike the spec, if an allow list is provided and there is no intersection between existing ones and the allow list, we always return NotAllowedError.
     HashSet<String> allowCredentialIds = produceHashSet(options.allowCredentials);
     if (!options.allowCredentials.isEmpty() && allowCredentialIds.isEmpty()) {
-        exceptionCallback({ NotAllowedError, ASCIILiteral("No matched credentials are found in the platform attached authenticator.") });
+        exceptionCallback({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s });
         return;
     }
 
@@ -418,7 +418,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
     if (status && status != errSecItemNotFound) {
         LOG_ERROR("Couldn't query Keychain: %d", status);
-        exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+        exceptionCallback({ UnknownError, "Unknown internal error."_s });
         return;
     }
     auto retainAttributesArray = adoptCF(attributesArrayRef);
@@ -436,7 +436,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
         intersectedCredentialsAttributes = result;
     }
     if (!intersectedCredentialsAttributes.count) {
-        exceptionCallback({ NotAllowedError, ASCIILiteral("No matched credentials are found in the platform attached authenticator.") });
+        exceptionCallback({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s });
         return;
     }
 
@@ -452,7 +452,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
         auto retainContext = adoptNS(context);
         LOG_ERROR("Couldn't evaluate authentication with biometrics policy: %@", error);
         // FIXME(182767)
-        exceptionCallback({ NotAllowedError, ASCIILiteral("No avaliable authenticators.") });
+        exceptionCallback({ NotAllowedError, "No avaliable authenticators."_s });
         return;
     }
 
@@ -466,7 +466,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
         ASSERT(!isMainThread());
         if (!success || error) {
             LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
-            exceptionCallback({ NotAllowedError, ASCIILiteral("Couldn't get user consent.") });
+            exceptionCallback({ NotAllowedError, "Couldn't get user consent."_s });
             return;
         }
 
@@ -490,7 +490,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
             OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &privateKeyRef);
             if (status) {
                 LOG_ERROR("Couldn't get the private key reference: %d", status);
-                exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                exceptionCallback({ UnknownError, "Unknown internal error."_s });
                 return;
             }
             auto privateKey = adoptCF(privateKeyRef);
@@ -504,7 +504,7 @@ void LocalAuthenticator::getAssertion(const Vector<uint8_t>& hash, const PublicK
             auto retainError = adoptCF(errorRef);
             if (errorRef) {
                 LOG_ERROR("Couldn't generate the signature: %@", (NSError*)errorRef);
-                exceptionCallback({ UnknownError, ASCIILiteral("Unknown internal error.") });
+                exceptionCallback({ UnknownError, "Unknown internal error."_s });
                 return;
             }
             auto nsSignature = (NSData *)signatureRef.get();

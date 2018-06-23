@@ -972,7 +972,7 @@ void JIT::doMainThreadPreparationBeforeCompile()
 {
     // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
     if (m_vm->typeProfiler())
-        m_vm->typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for JIT compilation."));
+        m_vm->typeProfilerLog()->processLogEntries("Preparing for JIT compilation."_s);
 }
 
 unsigned JIT::frameRegisterCountFor(CodeBlock* codeBlock)

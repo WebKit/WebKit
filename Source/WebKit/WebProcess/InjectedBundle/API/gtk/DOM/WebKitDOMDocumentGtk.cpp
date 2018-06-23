@@ -1767,11 +1767,11 @@ gchar* webkit_dom_document_get_ready_state(WebKitDOMDocument* self)
     auto readyState = WebKit::core(self)->readyState();
     switch (readyState) {
     case WebCore::Document::Loading:
-        return convertToUTF8String(ASCIILiteral("loading"));
+        return convertToUTF8String("loading"_s);
     case WebCore::Document::Interactive:
-        return convertToUTF8String(ASCIILiteral("interactive"));
+        return convertToUTF8String("interactive"_s);
     case WebCore::Document::Complete:
-        return convertToUTF8String(ASCIILiteral("complete"));
+        return convertToUTF8String("complete"_s);
     }
     return 0;
 }

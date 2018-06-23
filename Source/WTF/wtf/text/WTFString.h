@@ -27,6 +27,7 @@
 
 #include <stdarg.h>
 #include <wtf/Function.h>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
 
@@ -35,8 +36,6 @@
 #endif
 
 namespace WTF {
-
-class ASCIILiteral;
 
 // Declarations of string operations
 
@@ -379,16 +378,20 @@ static_assert(sizeof(String) == sizeof(void*), "String should effectively be a p
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(), b); }
 inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
+inline bool operator==(const String& a, ASCIILiteral b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b.characters())); }
 inline bool operator==(const LChar* a, const String& b) { return equal(a, b.impl()); }
 inline bool operator==(const char* a, const String& b) { return equal(reinterpret_cast<const LChar*>(a), b.impl()); }
+inline bool operator==(ASCIILiteral a, const String& b) { return equal(reinterpret_cast<const LChar*>(a.characters()), b.impl()); }
 template<size_t inlineCapacity> inline bool operator==(const Vector<char, inlineCapacity>& a, const String& b) { return equal(b.impl(), a.data(), a.size()); }
 template<size_t inlineCapacity> inline bool operator==(const String& a, const Vector<char, inlineCapacity>& b) { return b == a; }
 
 inline bool operator!=(const String& a, const String& b) { return !equal(a.impl(), b.impl()); }
 inline bool operator!=(const String& a, const LChar* b) { return !equal(a.impl(), b); }
 inline bool operator!=(const String& a, const char* b) { return !equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
+inline bool operator!=(const String& a, ASCIILiteral b) { return !equal(a.impl(), reinterpret_cast<const LChar*>(b.characters())); }
 inline bool operator!=(const LChar* a, const String& b) { return !equal(a, b.impl()); }
 inline bool operator!=(const char* a, const String& b) { return !equal(reinterpret_cast<const LChar*>(a), b.impl()); }
+inline bool operator!=(ASCIILiteral a, const String& b) { return !equal(reinterpret_cast<const LChar*>(a.characters()), b.impl()); }
 template<size_t inlineCapacity> inline bool operator!=(const Vector<char, inlineCapacity>& a, const String& b) { return !(a == b); }
 template<size_t inlineCapacity> inline bool operator!=(const String& a, const Vector<char, inlineCapacity>& b) { return b != a; }
 
@@ -423,15 +426,6 @@ WTF_EXPORT_PRIVATE const String& emptyString();
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String> { using Hash = StringHash; };
 template<> struct VectorTraits<String> : SimpleClassVectorTraits { };
-
-class ASCIILiteral {
-public:
-    explicit ASCIILiteral(const char* characters) : m_characters(characters) { }
-    operator const char*() { return m_characters; }
-
-private:
-    const char* m_characters;
-};
 
 template<> struct IntegerToStringConversionTrait<String> {
     using ReturnType = String;
@@ -652,7 +646,6 @@ template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const S
 
 } // namespace WTF
 
-using WTF::ASCIILiteral;
 using WTF::KeepTrailingZeros;
 using WTF::String;
 using WTF::appendNumber;

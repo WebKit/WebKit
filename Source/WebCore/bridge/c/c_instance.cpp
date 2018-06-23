@@ -160,7 +160,7 @@ JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!asObject(runtimeMethod)->inherits<CRuntimeMethod>(vm))
-        return throwTypeError(exec, scope, ASCIILiteral("Attempt to invoke non-plug-in method on plug-in object."));
+        return throwTypeError(exec, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
 
     CMethod* method = static_cast<CMethod*>(runtimeMethod->method());
     ASSERT(method);
@@ -189,7 +189,7 @@ JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, ASCIILiteral("Error calling method on NPObject.")));
+        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
@@ -227,7 +227,7 @@ JSValue CInstance::invokeDefaultMethod(ExecState* exec)
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, ASCIILiteral("Error calling method on NPObject.")));
+        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
@@ -269,7 +269,7 @@ JSValue CInstance::invokeConstruct(ExecState* exec, const ArgList& args)
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, ASCIILiteral("Error calling method on NPObject.")));
+        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
@@ -295,7 +295,7 @@ JSValue CInstance::stringValue(ExecState* exec) const
         return value;
 
     // Fallback to default implementation.
-    return jsNontrivialString(exec, ASCIILiteral("NPObject"));
+    return jsNontrivialString(exec, "NPObject"_s);
 }
 
 JSValue CInstance::numberValue(ExecState*) const
@@ -342,7 +342,7 @@ bool CInstance::toJSPrimitive(ExecState* exec, const char* name, JSValue& result
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, ASCIILiteral("Error calling method on NPObject.")));
+        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
 
     resultValue = convertNPVariantToValue(exec, &resultVariant, m_rootObject.get());
     _NPN_ReleaseVariantValue(&resultVariant);

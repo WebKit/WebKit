@@ -157,7 +157,7 @@ static ExceptionOr<void> checkAndCanonicalizeTotal(PaymentCurrencyAmount& total)
         return exception;
 
     if (total.value[0] == '-')
-        return Exception { TypeError, ASCIILiteral("Total currency values cannot be negative.") };
+        return Exception { TypeError, "Total currency values cannot be negative."_s };
 
     return { };
 }
@@ -316,7 +316,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
         details.id = createCanonicalUUIDString();
 
     if (methodData.isEmpty())
-        return Exception { TypeError, ASCIILiteral("At least one payment method is required.") };
+        return Exception { TypeError, "At least one payment method is required."_s };
 
     Vector<Method> serializedMethodData;
     serializedMethodData.reserveInitialCapacity(methodData.size());

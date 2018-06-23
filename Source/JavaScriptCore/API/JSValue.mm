@@ -826,7 +826,7 @@ id valueToArray(JSGlobalContextRef context, JSValueRef value, JSValueRef* except
 
     JSC::JSLockHolder locker(toJS(context));
     if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value))) {
-        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSArray"));
+        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), "Cannot convert primitive to NSArray"_s);
         *exception = toRef(exceptionObject);
 #if ENABLE(REMOTE_INSPECTOR)
         reportExceptionToInspector(context, exceptionObject);
@@ -848,7 +848,7 @@ id valueToDictionary(JSGlobalContextRef context, JSValueRef value, JSValueRef* e
 
     JSC::JSLockHolder locker(toJS(context));
     if (!(JSValueIsNull(context, value) || JSValueIsUndefined(context, value))) {
-        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), ASCIILiteral("Cannot convert primitive to NSDictionary"));
+        JSC::JSObject* exceptionObject = JSC::createTypeError(toJS(context), "Cannot convert primitive to NSDictionary"_s);
         *exception = toRef(exceptionObject);
 #if ENABLE(REMOTE_INSPECTOR)
         reportExceptionToInspector(context, exceptionObject);

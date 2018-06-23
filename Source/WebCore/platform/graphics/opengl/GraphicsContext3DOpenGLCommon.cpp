@@ -1665,7 +1665,7 @@ String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Ds
     // causes a warning in some compilers. There is no point showing
     // this warning to the user since they didn't write the code that
     // is causing it.
-    static const NeverDestroyed<String> angleWarning = ASCIILiteral { "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n" };
+    static const NeverDestroyed<String> angleWarning { "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n"_s };
     int startFrom = log.startsWith(angleWarning) ? angleWarning.get().length() : 0;
     int matchedLength = 0;
 

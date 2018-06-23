@@ -258,7 +258,7 @@ DomainABackendDispatcher::DomainABackendDispatcher(BackendDispatcher& backendDis
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("DomainA"), this);
+    m_backendDispatcher->registerDispatcherForDomain("DomainA"_s, this);
 }
 
 void DomainABackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
@@ -266,7 +266,7 @@ void DomainABackendDispatcher::dispatch(long requestId, const String& method, Re
     Ref<DomainABackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
     if (method == "enable")
         enable(requestId, WTFMove(parameters));
@@ -302,7 +302,7 @@ DomainBBackendDispatcher::DomainBBackendDispatcher(BackendDispatcher& backendDis
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("DomainB"), this);
+    m_backendDispatcher->registerDispatcherForDomain("DomainB"_s, this);
 }
 
 void DomainBBackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
@@ -310,7 +310,7 @@ void DomainBBackendDispatcher::dispatch(long requestId, const String& method, Re
     Ref<DomainBBackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
     if (method == "enable")
         enable(requestId, WTFMove(parameters));
@@ -781,7 +781,7 @@ using namespace Inspector;
     _domainAHandler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorDomainABackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DomainABackendDispatcher, AlternateDomainABackendDispatcher>>(ASCIILiteral("DomainA"), *_controller, WTFMove(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DomainABackendDispatcher, AlternateDomainABackendDispatcher>>("DomainA"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
@@ -799,7 +799,7 @@ using namespace Inspector;
     _domainBHandler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorDomainBBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DomainBBackendDispatcher, AlternateDomainBBackendDispatcher>>(ASCIILiteral("DomainB"), *_controller, WTFMove(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DomainBBackendDispatcher, AlternateDomainBBackendDispatcher>>("DomainB"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
@@ -1002,13 +1002,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 

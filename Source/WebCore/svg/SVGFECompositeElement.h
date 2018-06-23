@@ -40,19 +40,19 @@ struct SVGPropertyTraits<CompositeOperationType> {
         case FECOMPOSITE_OPERATOR_UNKNOWN:
             return emptyString();
         case FECOMPOSITE_OPERATOR_OVER:
-            return ASCIILiteral("over");
+            return "over"_s;
         case FECOMPOSITE_OPERATOR_IN:
-            return ASCIILiteral("in");
+            return "in"_s;
         case FECOMPOSITE_OPERATOR_OUT:
-            return ASCIILiteral("out");
+            return "out"_s;
         case FECOMPOSITE_OPERATOR_ATOP:
-            return ASCIILiteral("atop");
+            return "atop"_s;
         case FECOMPOSITE_OPERATOR_XOR:
-            return ASCIILiteral("xor");
+            return "xor"_s;
         case FECOMPOSITE_OPERATOR_ARITHMETIC:
-            return ASCIILiteral("arithmetic");
+            return "arithmetic"_s;
         case FECOMPOSITE_OPERATOR_LIGHTER:
-            return ASCIILiteral("lighter");
+            return "lighter"_s;
         }
 
         ASSERT_NOT_REACHED();

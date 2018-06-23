@@ -73,7 +73,7 @@ StorageInfo* DOMWindowQuota::webkitStorageInfo(DOMWindow* window)
 StorageInfo* DOMWindowQuota::webkitStorageInfo() const
 {
     if (!m_storageInfo && frame()) {
-        frame()->document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("window.webkitStorageInfo is deprecated. Use navigator.webkitTemporaryStorage or navigator.webkitPersistentStorage instead."));
+        frame()->document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "window.webkitStorageInfo is deprecated. Use navigator.webkitTemporaryStorage or navigator.webkitPersistentStorage instead."_s);
         m_storageInfo = StorageInfo::create();
     }
     return m_storageInfo.get();

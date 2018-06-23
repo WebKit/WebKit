@@ -391,8 +391,8 @@ void SessionHost::sendMessageToBackend(long messageID, const String& message)
                 auto responseHandler = messageContext->host->m_commandRequests.take(messageContext->messageID);
                 if (responseHandler) {
                     auto errorObject = JSON::Object::create();
-                    errorObject->setInteger(ASCIILiteral("code"), -32603);
-                    errorObject->setString(ASCIILiteral("message"), String::fromUTF8(error->message));
+                    errorObject->setInteger("code"_s, -32603);
+                    errorObject->setString("message"_s, String::fromUTF8(error->message));
                     responseHandler({ WTFMove(errorObject), true });
                 }
             }

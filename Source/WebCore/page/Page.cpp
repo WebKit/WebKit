@@ -2073,28 +2073,28 @@ void Page::logNavigation(const Navigation& navigation)
     String navigationDescription;
     switch (navigation.type) {
     case FrameLoadType::Standard:
-        navigationDescription = ASCIILiteral("standard");
+        navigationDescription = "standard"_s;
         break;
     case FrameLoadType::Back:
-        navigationDescription = ASCIILiteral("back");
+        navigationDescription = "back"_s;
         break;
     case FrameLoadType::Forward:
-        navigationDescription = ASCIILiteral("forward");
+        navigationDescription = "forward"_s;
         break;
     case FrameLoadType::IndexedBackForward:
-        navigationDescription = ASCIILiteral("indexedBackForward");
+        navigationDescription = "indexedBackForward"_s;
         break;
     case FrameLoadType::Reload:
-        navigationDescription = ASCIILiteral("reload");
+        navigationDescription = "reload"_s;
         break;
     case FrameLoadType::Same:
-        navigationDescription = ASCIILiteral("same");
+        navigationDescription = "same"_s;
         break;
     case FrameLoadType::ReloadFromOrigin:
-        navigationDescription = ASCIILiteral("reloadFromOrigin");
+        navigationDescription = "reloadFromOrigin"_s;
         break;
     case FrameLoadType::ReloadExpiredOnly:
-        navigationDescription = ASCIILiteral("reloadRevalidatingExpired");
+        navigationDescription = "reloadRevalidatingExpired"_s;
         break;
     case FrameLoadType::Replace:
     case FrameLoadType::RedirectWithLockedBackForwardList:

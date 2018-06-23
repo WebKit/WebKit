@@ -620,7 +620,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     
     // Reflect when a content author has explicitly marked a line break.
     if (m_renderer->isBR())
-        return ASCIILiteral("\n");
+        return "\n"_s;
 
     if (shouldGetTextFromNode(mode))
         return AccessibilityNodeObject::textUnderElement(mode);

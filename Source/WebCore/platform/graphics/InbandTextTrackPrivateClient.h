@@ -121,10 +121,10 @@ inline String GenericCueData::toJSONString() const
     auto object = JSON::Object::create();
 
 #if !LOG_DISABLED
-    object->setString(ASCIILiteral("text"), m_content);
+    object->setString("text"_s, m_content);
 #endif
-    object->setDouble(ASCIILiteral("start"), m_startTime.toDouble());
-    object->setDouble(ASCIILiteral("end"), m_endTime.toDouble());
+    object->setDouble("start"_s, m_startTime.toDouble());
+    object->setDouble("end"_s, m_endTime.toDouble());
 
     const char* status;
     switch (m_status) {
@@ -144,13 +144,13 @@ inline String GenericCueData::toJSONString() const
         object->setString("id", m_id);
 
     if (m_line > 0)
-        object->setDouble(ASCIILiteral("line"), m_line);
+        object->setDouble("line"_s, m_line);
 
     if (m_size > 0)
-        object->setDouble(ASCIILiteral("size"), m_size);
+        object->setDouble("size"_s, m_size);
 
     if (m_position > 0)
-        object->setDouble(ASCIILiteral("position"), m_position);
+        object->setDouble("position"_s, m_position);
 
     if (m_align != None) {
         const char* align;
@@ -168,26 +168,26 @@ inline String GenericCueData::toJSONString() const
             align = "None";
             break;
         }
-        object->setString(ASCIILiteral("align"), align);
+        object->setString("align"_s, align);
     }
 
     if (m_foregroundColor.isValid())
-        object->setString(ASCIILiteral("foregroundColor"), m_foregroundColor.serialized());
+        object->setString("foregroundColor"_s, m_foregroundColor.serialized());
 
     if (m_backgroundColor.isValid())
-        object->setString(ASCIILiteral("backgroundColor"), m_backgroundColor.serialized());
+        object->setString("backgroundColor"_s, m_backgroundColor.serialized());
 
     if (m_highlightColor.isValid())
-        object->setString(ASCIILiteral("highlightColor"), m_highlightColor.serialized());
+        object->setString("highlightColor"_s, m_highlightColor.serialized());
 
     if (m_baseFontSize)
-        object->setDouble(ASCIILiteral("baseFontSize"), m_baseFontSize);
+        object->setDouble("baseFontSize"_s, m_baseFontSize);
 
     if (m_relativeFontSize)
-        object->setDouble(ASCIILiteral("relativeFontSize"), m_relativeFontSize);
+        object->setDouble("relativeFontSize"_s, m_relativeFontSize);
 
     if (!m_fontName.isEmpty())
-        object->setString(ASCIILiteral("font"), m_fontName);
+        object->setString("font"_s, m_fontName);
 
     return object->toJSONString();
 }

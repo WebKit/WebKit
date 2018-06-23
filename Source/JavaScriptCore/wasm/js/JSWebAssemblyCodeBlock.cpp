@@ -59,7 +59,7 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {
             case Wasm::BindingFailure::OutOfMemory:
-                m_errorMessage = ASCIILiteral("Out of executable memory");
+                m_errorMessage = "Out of executable memory"_s;
                 return;
             }
             RELEASE_ASSERT_NOT_REACHED();

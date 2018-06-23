@@ -44,7 +44,7 @@ static ResourceUsageData gData;
 static String cpuUsageString(float cpuUsage)
 {
     if (cpuUsage < 0)
-        return ASCIILiteral("<unknown>");
+        return "<unknown>"_s;
     return String::format("%.1f%%", cpuUsage);
 }
 
@@ -62,7 +62,7 @@ static String formatByteNumber(size_t number)
 static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
     if (std::isnan(timerFireDate))
-        return ASCIILiteral("[not scheduled]");
+        return "[not scheduled]"_s;
     return String::format("%g", (timerFireDate - now).seconds());
 }
 

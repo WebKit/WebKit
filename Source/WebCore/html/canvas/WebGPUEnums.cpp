@@ -58,21 +58,21 @@ std::optional<WebGPUCompareFunction> toWebGPUCompareFunction(const String& name)
 String web3DCompareFunctionName(const WebGPUCompareFunction value)
 {
     if (value == WebGPUCompareFunction::Never)
-        return ASCIILiteral("never");
+        return "never"_s;
     if (value == WebGPUCompareFunction::Less)
-        return ASCIILiteral("less");
+        return "less"_s;
     if (value == WebGPUCompareFunction::Equal)
-        return ASCIILiteral("equal");
+        return "equal"_s;
     if (value == WebGPUCompareFunction::Lessequal)
-        return ASCIILiteral("lessequal");
+        return "lessequal"_s;
     if (value == WebGPUCompareFunction::Greater)
-        return ASCIILiteral("greater");
+        return "greater"_s;
     if (value == WebGPUCompareFunction::Notequal)
-        return ASCIILiteral("notequal");
+        return "notequal"_s;
     if (value == WebGPUCompareFunction::Greaterequal)
-        return ASCIILiteral("greaterequal");
+        return "greaterequal"_s;
     if (value == WebGPUCompareFunction::Always)
-        return ASCIILiteral("always");
+        return "always"_s;
     
     ASSERT_NOT_REACHED();
     return emptyString();

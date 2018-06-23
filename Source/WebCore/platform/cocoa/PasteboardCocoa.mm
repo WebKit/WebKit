@@ -150,7 +150,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
 #endif
             return cocoaType == String(kUTTypeURL);
         });
-        mayContainFilePaths = containsURL && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString(ASCIILiteral("text/uri-list")));
+        mayContainFilePaths = containsURL && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString("text/uri-list"_s));
     }
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be

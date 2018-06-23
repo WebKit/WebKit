@@ -1,3 +1,32 @@
+2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add user-defined literal for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=186839
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WorkerPool.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/ios/PreviewLoader.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/mac/GPUCommandQueue.mm:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/mac/GPUTest.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFilteringPlugIn.mm:
+        (-[MockContentFilterEnabler initWithCoder:]):
+        * TestWebKitAPI/Tests/mac/ContentFiltering.mm:
+        (TestWebKitAPI::loadAlternateTest):
+
 2018-06-22  Brady Eidson  <beidson@apple.com>
 
         WKURLSchemeHandler doesn't handle sync XHR.

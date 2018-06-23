@@ -120,7 +120,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             lines.append('')
 
         lines.append('    Ref<JSON::Object> jsonMessage = JSON::Object::create();')
-        lines.append('    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("%s.%s"));' % (domain.domain_name, event.event_name))
+        lines.append('    jsonMessage->setString("method"_s, "%s.%s"_s);' % (domain.domain_name, event.event_name))
         if event.event_parameters:
             lines.extend(self._generate_event_out_parameters(domain, event))
         lines.append('    router.sendEvent(jsonMessage->toJSONString());')
@@ -146,9 +146,9 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             safe_var_name = '(*%s)' % var_name if parameter.is_optional else var_name
             export_expression = self.objc_protocol_export_expression_for_variable(parameter.type, safe_var_name)
             if not parameter.is_optional:
-                lines.append('    paramsObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+                lines.append('    paramsObject->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
             else:
                 lines.append('    if (%s)' % (parameter.parameter_name))
-                lines.append('        paramsObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-        lines.append('    jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));')
+                lines.append('        paramsObject->%s("%s"_s, %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
+        lines.append('    jsonMessage->setObject("params"_s, WTFMove(paramsObject));')
         return lines

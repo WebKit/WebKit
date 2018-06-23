@@ -45,7 +45,7 @@ namespace JSC { namespace Wasm {
 
 namespace FailureHelper {
 // FIXME We should move this to makeString. It's in its own namespace to enable C++ Argument Dependent Lookup à la std::swap: user code can deblare its own "boxFailure" and the fail() helper will find it.
-static inline auto makeString(const char *failure) { return ASCIILiteral(failure); }
+static inline auto makeString(const char *failure) { return failure; }
 template <typename Int, typename = typename std::enable_if<std::is_integral<Int>::value>::type>
 static inline auto makeString(Int failure) { return String::number(failure); }
 }
@@ -90,7 +90,7 @@ protected:
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in namespace above.
-        return UnexpectedResult(makeString(ASCIILiteral("WebAssembly.Module doesn't parse at byte "), String::number(m_offset), ASCIILiteral(" / "), String::number(m_sourceLength), ASCIILiteral(": "), makeString(args)...));
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset), " / "_s, String::number(m_sourceLength), ": "_s, makeString(args)...));
     }
 #define WASM_PARSER_FAIL_IF(condition, ...) do { \
     if (UNLIKELY(condition))                     \

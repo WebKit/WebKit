@@ -110,7 +110,7 @@ InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& ob
         return InjectedScript();
 
     long injectedScriptId = 0;
-    if (!resultObject->getInteger(ASCIILiteral("injectedScriptId"), injectedScriptId))
+    if (!resultObject->getInteger("injectedScriptId"_s, injectedScriptId))
         return InjectedScript();
 
     return m_idToInjectedScript.get(injectedScriptId);

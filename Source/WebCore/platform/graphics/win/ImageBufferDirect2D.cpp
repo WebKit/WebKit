@@ -261,7 +261,7 @@ void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultipli
 String ImageBuffer::toDataURL(const String&, std::optional<double>, PreserveResolution) const
 {
     notImplemented();
-    return ASCIILiteral("data:,");
+    return "data:,"_s;
 }
 
 Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality) const
@@ -273,7 +273,7 @@ Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double
 String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
 {
     notImplemented();
-    return ASCIILiteral("data:,");
+    return "data:,"_s;
 }
 
 void ImageBuffer::transformColorSpace(ColorSpace, ColorSpace)

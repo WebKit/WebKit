@@ -244,7 +244,7 @@ void ImageDocument::createDocumentStructure()
     if (m_shouldShrinkImage) {
 #if PLATFORM(IOS)
         // Set the viewport to be in device pixels (rather than the default of 980).
-        processViewport(ASCIILiteral("width=device-width"), ViewportArguments::ImageDocument);
+        processViewport("width=device-width"_s, ViewportArguments::ImageDocument);
 #else
         auto listener = ImageEventListener::create(*this);
         if (RefPtr<DOMWindow> window = this->domWindow())

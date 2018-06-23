@@ -111,7 +111,7 @@ JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name,
     ExecState* exec = toJS(ctx);
     VM& vm = exec->vm();
     JSLockHolder locker(vm);
-    return toRef(JSCallbackFunction::create(vm, exec->lexicalGlobalObject(), callAsFunction, name ? name->string() : ASCIILiteral("anonymous")));
+    return toRef(JSCallbackFunction::create(vm, exec->lexicalGlobalObject(), callAsFunction, name ? name->string() : "anonymous"_s));
 }
 
 JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObjectCallAsConstructorCallback callAsConstructor)

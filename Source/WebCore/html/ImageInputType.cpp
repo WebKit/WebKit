@@ -62,8 +62,8 @@ bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
 
     auto& name = element()->name();
     if (name.isEmpty()) {
-        formData.append(ASCIILiteral("x"), String::number(m_clickLocation.x()));
-        formData.append(ASCIILiteral("y"), String::number(m_clickLocation.y()));
+        formData.append("x"_s, String::number(m_clickLocation.x()));
+        formData.append("y"_s, String::number(m_clickLocation.y()));
         return true;
     }
 

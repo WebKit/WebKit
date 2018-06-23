@@ -449,10 +449,10 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
             // The caller isn't prepared to deal with null bytes in status
             // line. WebSockets specification doesn't prohibit this, but HTTP
             // does, so we'll just treat this as an error.
-            m_failureReason = ASCIILiteral("Status line contains embedded null");
+            m_failureReason = "Status line contains embedded null"_s;
             return p + 1 - header;
         } else if (!isASCII(*p)) {
-            m_failureReason = ASCIILiteral("Status line contains non-ASCII character");
+            m_failureReason = "Status line contains non-ASCII character"_s;
             return p + 1 - header;
         } else if (*p == '\n')
             break;
@@ -463,13 +463,13 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
     const char* end = p + 1;
     int lineLength = end - header;
     if (lineLength > maximumLength) {
-        m_failureReason = ASCIILiteral("Status line is too long");
+        m_failureReason = "Status line is too long"_s;
         return maximumLength;
     }
 
     // The line must end with "\r\n".
     if (lineLength < 2 || *(end - 2) != '\r') {
-        m_failureReason = ASCIILiteral("Status line does not end with CRLF");
+        m_failureReason = "Status line does not end with CRLF"_s;
         return lineLength;
     }
 
@@ -538,7 +538,7 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
         
         if (headerName == HTTPHeaderName::SecWebSocketExtensions) {
             if (sawSecWebSocketExtensionsHeaderField) {
-                m_failureReason = ASCIILiteral("The Sec-WebSocket-Extensions header must not appear more than once in an HTTP response");
+                m_failureReason = "The Sec-WebSocket-Extensions header must not appear more than once in an HTTP response"_s;
                 return nullptr;
             }
             if (!m_extensionDispatcher.processHeaderValue(value)) {
@@ -549,13 +549,13 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
         } else {
             if (headerName == HTTPHeaderName::SecWebSocketAccept) {
                 if (sawSecWebSocketAcceptHeaderField) {
-                    m_failureReason = ASCIILiteral("The Sec-WebSocket-Accept header must not appear more than once in an HTTP response");
+                    m_failureReason = "The Sec-WebSocket-Accept header must not appear more than once in an HTTP response"_s;
                     return nullptr;
                 }
                 sawSecWebSocketAcceptHeaderField = true;
             } else if (headerName == HTTPHeaderName::SecWebSocketProtocol) {
                 if (sawSecWebSocketProtocolHeaderField) {
-                    m_failureReason = ASCIILiteral("The Sec-WebSocket-Protocol header must not appear more than once in an HTTP response");
+                    m_failureReason = "The Sec-WebSocket-Protocol header must not appear more than once in an HTTP response"_s;
                     return nullptr;
                 }
                 sawSecWebSocketProtocolHeaderField = true;
@@ -575,40 +575,40 @@ bool WebSocketHandshake::checkResponseHeaders()
     const String& serverWebSocketAccept = this->serverWebSocketAccept();
 
     if (serverUpgrade.isNull()) {
-        m_failureReason = ASCIILiteral("Error during WebSocket handshake: 'Upgrade' header is missing");
+        m_failureReason = "Error during WebSocket handshake: 'Upgrade' header is missing"_s;
         return false;
     }
     if (serverConnection.isNull()) {
-        m_failureReason = ASCIILiteral("Error during WebSocket handshake: 'Connection' header is missing");
+        m_failureReason = "Error during WebSocket handshake: 'Connection' header is missing"_s;
         return false;
     }
     if (serverWebSocketAccept.isNull()) {
-        m_failureReason = ASCIILiteral("Error during WebSocket handshake: 'Sec-WebSocket-Accept' header is missing");
+        m_failureReason = "Error during WebSocket handshake: 'Sec-WebSocket-Accept' header is missing"_s;
         return false;
     }
 
     if (!equalLettersIgnoringASCIICase(serverUpgrade, "websocket")) {
-        m_failureReason = ASCIILiteral("Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'");
+        m_failureReason = "Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'"_s;
         return false;
     }
     if (!equalLettersIgnoringASCIICase(serverConnection, "upgrade")) {
-        m_failureReason = ASCIILiteral("Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'");
+        m_failureReason = "Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'"_s;
         return false;
     }
 
     if (serverWebSocketAccept != m_expectedAccept) {
-        m_failureReason = ASCIILiteral("Error during WebSocket handshake: Sec-WebSocket-Accept mismatch");
+        m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Accept mismatch"_s;
         return false;
     }
     if (!serverWebSocketProtocol.isNull()) {
         if (m_clientProtocol.isEmpty()) {
-            m_failureReason = ASCIILiteral("Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch");
+            m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
             return false;
         }
         Vector<String> result;
         m_clientProtocol.split(WebSocket::subprotocolSeparator(), result);
         if (!result.contains(serverWebSocketProtocol)) {
-            m_failureReason = ASCIILiteral("Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch");
+            m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
             return false;
         }
     }

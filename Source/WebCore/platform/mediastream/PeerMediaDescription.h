@@ -47,8 +47,8 @@ struct PeerMediaDescription {
 
     String type;
     unsigned short port { 9 };
-    String address { "0.0.0.0" };
-    String mode { ASCIILiteral { "sendrecv" } };
+    String address { "0.0.0.0"_s };
+    String mode { "sendrecv"_s };
     String mid;
 
     Vector<MediaPayload> payloads;
@@ -60,7 +60,7 @@ struct PeerMediaDescription {
     String mediaStreamId;
     String mediaStreamTrackId;
 
-    String dtlsSetup { "actpass" };
+    String dtlsSetup { "actpass"_s };
     String dtlsFingerprintHashFunction;
     String dtlsFingerprint;
 

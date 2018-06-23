@@ -33,7 +33,7 @@ namespace WebCore {
 
 String TextEncoder::encoding() const
 {
-    return ASCIILiteral("utf-8");
+    return "utf-8"_s;
 }
 
 RefPtr<Uint8Array> TextEncoder::encode(String&& input) const

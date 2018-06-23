@@ -399,11 +399,11 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     unsigned frameMod = m_frameNumber % 60;
     if (frameMod <= 15) {
         context.setFillColor(Color::cyan);
-        String bip(ASCIILiteral("Bip"));
+        String bip("Bip"_s);
         context.drawText(bipBopFont, TextRun(StringView(bip)), bipBopLocation);
     } else if (frameMod > 30 && frameMod <= 45) {
         context.setFillColor(Color::yellow);
-        String bop(ASCIILiteral("Bop"));
+        String bop("Bop"_s);
         context.drawText(bipBopFont, TextRun(StringView(bop)), bipBopLocation);
     }
 }

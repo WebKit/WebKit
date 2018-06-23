@@ -459,7 +459,7 @@ void IDBServer::performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, 
 {
     String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, m_databaseDirectoryPath);
 
-    Vector<String> entries = FileSystem::listDirectory(directory, ASCIILiteral("*"));
+    Vector<String> entries = FileSystem::listDirectory(directory, "*"_s);
     Vector<String> databases;
     databases.reserveInitialCapacity(entries.size());
     for (auto& entry : entries) {

@@ -463,7 +463,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
                     return;
                 }
 
-                *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), ASCIILiteral("invalid pointer type")));
+                *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), "invalid pointer type"_s));
                 return;
             }
         }
@@ -474,7 +474,7 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
         else if (G_IS_OBJECT(wrappedObject))
             g_value_set_object(value, wrappedObject);
         else
-            *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), ASCIILiteral("wrapped object is not a GObject")));
+            *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), "wrapped object is not a GObject"_s));
         break;
     }
     case G_TYPE_LONG:

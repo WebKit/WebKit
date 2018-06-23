@@ -1211,7 +1211,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             if (!hasProperty) {
                 PutPropertySlot slot(variableObject);
                 if (!variableObject->isExtensible(callFrame))
-                    return checkedReturn(throwTypeError(callFrame, throwScope, ASCIILiteral(NonExtensibleObjectPropertyDefineError)));
+                    return checkedReturn(throwTypeError(callFrame, throwScope, NonExtensibleObjectPropertyDefineError));
                 variableObject->methodTable(vm)->put(variableObject, callFrame, ident, jsUndefined(), slot);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }

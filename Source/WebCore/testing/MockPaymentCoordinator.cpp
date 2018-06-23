@@ -112,7 +112,7 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     ASSERT(showCount == hideCount);
     ++showCount;
     dispatchIfShowing([page = &m_page]() {
-        page->paymentCoordinator().validateMerchant({ URL(), ASCIILiteral("https://webkit.org/") });
+        page->paymentCoordinator().validateMerchant({ URL(), "https://webkit.org/"_s });
     });
     return true;
 }

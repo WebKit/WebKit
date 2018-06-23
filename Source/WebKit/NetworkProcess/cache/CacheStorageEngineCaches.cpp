@@ -42,12 +42,12 @@ namespace CacheStorage {
 
 static inline String cachesListFilename(const String& cachesRootPath)
 {
-    return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, ASCIILiteral("cacheslist"));
+    return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, "cacheslist"_s);
 }
 
 static inline String cachesOriginFilename(const String& cachesRootPath)
 {
-    return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, ASCIILiteral("origin"));
+    return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
 }
 
 Caches::~Caches()

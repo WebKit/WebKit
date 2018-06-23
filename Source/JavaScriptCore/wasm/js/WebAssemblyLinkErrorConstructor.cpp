@@ -75,7 +75,7 @@ Structure* WebAssemblyLinkErrorConstructor::createStructure(VM& vm, JSGlobalObje
 
 void WebAssemblyLinkErrorConstructor::finishCreation(VM& vm, WebAssemblyLinkErrorPrototype* prototype)
 {
-    Base::finishCreation(vm, ASCIILiteral("LinkError"));
+    Base::finishCreation(vm, "LinkError"_s);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }

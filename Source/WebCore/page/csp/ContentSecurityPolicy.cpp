@@ -728,21 +728,21 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // harmless information.
 
     auto cspReport = JSON::Object::create();
-    cspReport->setString(ASCIILiteral("document-uri"), info.documentURI);
-    cspReport->setString(ASCIILiteral("referrer"), m_referrer);
-    cspReport->setString(ASCIILiteral("violated-directive"), violatedDirective);
-    cspReport->setString(ASCIILiteral("effective-directive"), effectiveViolatedDirective);
-    cspReport->setString(ASCIILiteral("original-policy"), violatedDirectiveList.header());
-    cspReport->setString(ASCIILiteral("blocked-uri"), blockedURI);
-    cspReport->setInteger(ASCIILiteral("status-code"), httpStatusCode);
+    cspReport->setString("document-uri"_s, info.documentURI);
+    cspReport->setString("referrer"_s, m_referrer);
+    cspReport->setString("violated-directive"_s, violatedDirective);
+    cspReport->setString("effective-directive"_s, effectiveViolatedDirective);
+    cspReport->setString("original-policy"_s, violatedDirectiveList.header());
+    cspReport->setString("blocked-uri"_s, blockedURI);
+    cspReport->setInteger("status-code"_s, httpStatusCode);
     if (!info.sourceFile.isNull()) {
-        cspReport->setString(ASCIILiteral("source-file"), info.sourceFile);
-        cspReport->setInteger(ASCIILiteral("line-number"), info.lineNumber);
-        cspReport->setInteger(ASCIILiteral("column-number"), info.columnNumber);
+        cspReport->setString("source-file"_s, info.sourceFile);
+        cspReport->setInteger("line-number"_s, info.lineNumber);
+        cspReport->setInteger("column-number"_s, info.columnNumber);
     }
 
     auto reportObject = JSON::Object::create();
-    reportObject->setObject(ASCIILiteral("csp-report"), WTFMove(cspReport));
+    reportObject->setObject("csp-report"_s, WTFMove(cspReport));
 
     auto report = FormData::create(reportObject->toJSONString().utf8());
 
@@ -760,11 +760,11 @@ void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
 {
     String message;
     if (equalLettersIgnoringASCIICase(name, "allow"))
-        message = ASCIILiteral("The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.");
+        message = "The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect."_s;
     else if (equalLettersIgnoringASCIICase(name, "options"))
-        message = ASCIILiteral("The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.");
+        message = "The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect."_s;
     else if (equalLettersIgnoringASCIICase(name, "policy-uri"))
-        message = ASCIILiteral("The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header.");
+        message = "The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header."_s;
     else
         message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n"); // FIXME: Why does this include a newline?
 

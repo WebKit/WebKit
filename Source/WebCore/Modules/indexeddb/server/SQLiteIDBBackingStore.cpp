@@ -580,7 +580,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
     }
 
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('MetadataVersion', ?);"));
+        SQLiteStatement sql(*m_sqliteDB, "INSERT INTO IDBDatabaseInfo VALUES ('MetadataVersion', ?);"_s);
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt(1, currentMetadataVersion) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
@@ -590,7 +590,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
         }
     }
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('DatabaseName', ?);"));
+        SQLiteStatement sql(*m_sqliteDB, "INSERT INTO IDBDatabaseInfo VALUES ('DatabaseName', ?);"_s);
         if (sql.prepare() != SQLITE_OK
             || sql.bindText(1, m_identifier.databaseName()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
@@ -602,7 +602,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
     {
         // Database versions are defined to be a uin64_t in the spec but sqlite3 doesn't support native binding of unsigned integers.
         // Therefore we'll store the version as a String.
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('DatabaseVersion', ?);"));
+        SQLiteStatement sql(*m_sqliteDB, "INSERT INTO IDBDatabaseInfo VALUES ('DatabaseVersion', ?);"_s);
         if (sql.prepare() != SQLITE_OK
             || sql.bindText(1, String::number(0)) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
@@ -612,7 +612,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
         }
     }
 
-    if (!m_sqliteDB->executeCommand(ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('MaxObjectStoreID', 1);"))) {
+    if (!m_sqliteDB->executeCommand("INSERT INTO IDBDatabaseInfo VALUES ('MaxObjectStoreID', 1);"_s)) {
         LOG_ERROR("Could not insert default version into IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         closeSQLiteDB();
         return nullptr;
@@ -626,7 +626,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 {
     ASSERT(m_sqliteDB);
 
-    if (!m_sqliteDB->tableExists(ASCIILiteral("IDBDatabaseInfo")))
+    if (!m_sqliteDB->tableExists("IDBDatabaseInfo"_s))
         return nullptr;
 
     String databaseName;
@@ -642,7 +642,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     }
     uint64_t databaseVersion;
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"));
+        SQLiteStatement sql(*m_sqliteDB, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
         if (sql.isColumnNull(0))
             return nullptr;
         String stringVersion = sql.getColumnText(0);
@@ -657,7 +657,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     auto databaseInfo = std::make_unique<IDBDatabaseInfo>(databaseName, databaseVersion);
 
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT id, name, keyPath, autoInc, maxIndexID FROM ObjectStoreInfo;"));
+        SQLiteStatement sql(*m_sqliteDB, "SELECT id, name, keyPath, autoInc, maxIndexID FROM ObjectStoreInfo;"_s);
         if (sql.prepare() != SQLITE_OK)
             return nullptr;
 
@@ -689,7 +689,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     }
 
     {
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT id, name, objectStoreID, keyPath, isUnique, multiEntry FROM IndexInfo;"));
+        SQLiteStatement sql(*m_sqliteDB, "SELECT id, name, objectStoreID, keyPath, isUnique, multiEntry FROM IndexInfo;"_s);
         if (sql.prepare() != SQLITE_OK)
             return nullptr;
 
@@ -737,11 +737,11 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
 String SQLiteIDBBackingStore::databaseNameFromEncodedFilename(const String& encodedName)
 {
-    if (equal(encodedName, ASCIILiteral("%00")))
+    if (equal(encodedName, "%00"_s))
         return { };
 
     String partiallyDecoded = encodedName;
-    partiallyDecoded.replace(ASCIILiteral("%2E"), ASCIILiteral("."));
+    partiallyDecoded.replace("%2E"_s, "."_s);
 
     return FileSystem::decodeFromFilename(partiallyDecoded);
 }
@@ -792,7 +792,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     }
 
     if (!m_sqliteDB)
-        return IDBError { UnknownError, ASCIILiteral("Unable to open database file on disk") };
+        return IDBError { UnknownError, "Unable to open database file on disk"_s };
 
     m_sqliteDB->setCollationFunction("IDBKEY", [](int aLength, const void* a, int bLength, const void* b) {
         return idbKeyCollate(aLength, a, bLength, b);
@@ -801,25 +801,25 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     if (!ensureValidRecordsTable()) {
         LOG_ERROR("Error creating or migrating Records table in database");
         closeSQLiteDB();
-        return IDBError { UnknownError, ASCIILiteral("Error creating or migrating Records table in database") };
+        return IDBError { UnknownError, "Error creating or migrating Records table in database"_s };
     }
 
     if (!ensureValidIndexRecordsTable()) {
         LOG_ERROR("Error creating or migrating Index Records table in database");
         closeSQLiteDB();
-        return IDBError { UnknownError, ASCIILiteral("Error creating or migrating Index Records table in database") };
+        return IDBError { UnknownError, "Error creating or migrating Index Records table in database"_s };
     }
 
     if (!ensureValidIndexRecordsIndex()) {
         LOG_ERROR("Error creating or migrating Index Records index in database");
         closeSQLiteDB();
-        return IDBError { UnknownError, ASCIILiteral("Error creating or migrating Index Records index in database") };
+        return IDBError { UnknownError, "Error creating or migrating Index Records index in database"_s };
     }
 
     if (!ensureValidBlobTables()) {
         LOG_ERROR("Error creating or confirming Blob Records tables in database");
         closeSQLiteDB();
-        return IDBError { UnknownError, ASCIILiteral("Error creating or confirming Blob Records tables in database") };
+        return IDBError { UnknownError, "Error creating or confirming Blob Records tables in database"_s };
     }
 
     auto databaseInfo = extractExistingDatabaseInfo();
@@ -829,7 +829,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     if (!databaseInfo) {
         LOG_ERROR("Unable to establish IDB database at path '%s'", dbFilename.utf8().data());
         closeSQLiteDB();
-        return IDBError { UnknownError, ASCIILiteral("Unable to establish IDB database file") };
+        return IDBError { UnknownError, "Unable to establish IDB database file"_s };
     }
 
     m_databaseInfo = WTFMove(databaseInfo);
@@ -848,7 +848,7 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     auto addResult = m_transactions.add(info.identifier(), nullptr);
     if (!addResult.isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to establish transaction identifier that already exists") };
+        return IDBError { UnknownError, "Attempt to establish transaction identifier that already exists"_s };
     }
 
     addResult.iterator->value = std::make_unique<SQLiteIDBTransaction>(*this, info);
@@ -857,11 +857,11 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     if (error.isNull() && info.mode() == IDBTransactionMode::Versionchange) {
         m_originalDatabaseInfoBeforeVersionChange = std::make_unique<IDBDatabaseInfo>(*m_databaseInfo);
 
-        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("UPDATE IDBDatabaseInfo SET value = ? where key = 'DatabaseVersion';"));
+        SQLiteStatement sql(*m_sqliteDB, "UPDATE IDBDatabaseInfo SET value = ? where key = 'DatabaseVersion';"_s);
         if (sql.prepare() != SQLITE_OK
             || sql.bindText(1, String::number(info.newVersion())) != SQLITE_OK
             || sql.step() != SQLITE_DONE)
-            error = IDBError { UnknownError, ASCIILiteral("Failed to store new database version in database") };
+            error = IDBError { UnknownError, "Failed to store new database version in database"_s };
     }
 
     return error;
@@ -877,7 +877,7 @@ IDBError SQLiteIDBBackingStore::abortTransaction(const IDBResourceIdentifier& id
     auto transaction = m_transactions.take(identifier);
     if (!transaction) {
         LOG_ERROR("Attempt to commit a transaction that hasn't been established");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to abort a transaction that hasn't been established") };
+        return IDBError { UnknownError, "Attempt to abort a transaction that hasn't been established"_s };
     }
 
     if (transaction->mode() == IDBTransactionMode::Versionchange && m_originalDatabaseInfoBeforeVersionChange)
@@ -896,7 +896,7 @@ IDBError SQLiteIDBBackingStore::commitTransaction(const IDBResourceIdentifier& i
     auto transaction = m_transactions.take(identifier);
     if (!transaction) {
         LOG_ERROR("Attempt to commit a transaction that hasn't been established");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to commit a transaction that hasn't been established") };
+        return IDBError { UnknownError, "Attempt to commit a transaction that hasn't been established"_s };
     }
 
     auto error = transaction->commit();
@@ -921,21 +921,21 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to create an object store without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to create an object store without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to create an object store without an in-progress transaction"_s };
     }
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to create an object store in a non-version-change transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to create an object store in a non-version-change transaction") };
+        return IDBError { UnknownError, "Attempt to create an object store in a non-version-change transaction"_s };
     }
 
     RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database for new object store");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize IDBKeyPath to save in database for new object store") };
+        return IDBError { UnknownError, "Unable to serialize IDBKeyPath to save in database for new object store"_s };
     }
 
     {
-        auto* sql = cachedStatement(SQL::CreateObjectStoreInfo, ASCIILiteral("INSERT INTO ObjectStoreInfo VALUES (?, ?, ?, ?, ?);"));
+        auto* sql = cachedStatement(SQL::CreateObjectStoreInfo, "INSERT INTO ObjectStoreInfo VALUES (?, ?, ?, ?, ?);"_s);
         if (!sql
             || sql->bindInt64(1, info.identifier()) != SQLITE_OK
             || sql->bindText(2, info.name()) != SQLITE_OK
@@ -944,17 +944,17 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
             || sql->bindInt64(5, info.maxIndexID()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not create object store") };
+            return IDBError { UnknownError, "Could not create object store"_s };
         }
     }
 
     {
-        auto* sql = cachedStatement(SQL::CreateObjectStoreKeyGenerator, ASCIILiteral("INSERT INTO KeyGenerators VALUES (?, 0);"));
+        auto* sql = cachedStatement(SQL::CreateObjectStoreKeyGenerator, "INSERT INTO KeyGenerators VALUES (?, 0);"_s);
         if (!sql
             || sql->bindInt64(1, info.identifier()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not seed initial key generator value for ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not seed initial key generator value for object store") };
+            return IDBError { UnknownError, "Could not seed initial key generator value for object store"_s };
         }
     }
 
@@ -973,75 +973,75 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to delete an object store without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to delete an object store without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to delete an object store without an in-progress transaction"_s };
     }
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to delete an object store in a non-version-change transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to delete an object store in a non-version-change transaction") };
+        return IDBError { UnknownError, "Attempt to delete an object store in a non-version-change transaction"_s };
     }
 
     // Delete the ObjectStore record
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreInfo, ASCIILiteral("DELETE FROM ObjectStoreInfo WHERE id = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreInfo, "DELETE FROM ObjectStoreInfo WHERE id = ?;"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete object store id %" PRIi64 " from ObjectStoreInfo table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not delete object store") };
+            return IDBError { UnknownError, "Could not delete object store"_s };
         }
     }
 
     // Delete the ObjectStore's key generator record if there is one.
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreKeyGenerator, ASCIILiteral("DELETE FROM KeyGenerators WHERE objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreKeyGenerator, "DELETE FROM KeyGenerators WHERE objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete object store from KeyGenerators table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not delete key generator for deleted object store") };
+            return IDBError { UnknownError, "Could not delete key generator for deleted object store"_s };
         }
     }
 
     // Delete all associated records
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreRecords, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreRecords, "DELETE FROM Records WHERE objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete records for object store %" PRIi64 " (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not delete records for deleted object store") };
+            return IDBError { UnknownError, "Could not delete records for deleted object store"_s };
         }
     }
 
     // Delete all associated Indexes
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexInfo, ASCIILiteral("DELETE FROM IndexInfo WHERE objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexInfo, "DELETE FROM IndexInfo WHERE objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete index from IndexInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not delete IDBIndex for deleted object store") };
+            return IDBError { UnknownError, "Could not delete IDBIndex for deleted object store"_s };
         }
     }
 
     // Delete all associated Index records
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecords, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecords, "DELETE FROM IndexRecords WHERE objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete index records(%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not delete IDBIndex records for deleted object store") };
+            return IDBError { UnknownError, "Could not delete IDBIndex records for deleted object store"_s };
         }
     }
 
     // Delete all unused Blob URL records.
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreBlobRecords, ASCIILiteral("DELETE FROM BlobRecords WHERE objectStoreRow NOT IN (SELECT recordID FROM Records)"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreBlobRecords, "DELETE FROM BlobRecords WHERE objectStoreRow NOT IN (SELECT recordID FROM Records)"_s);
         if (!sql
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete Blob URL records(%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not delete stored blob records for deleted object store") };
+            return IDBError { UnknownError, "Could not delete stored blob records for deleted object store"_s };
         }
     }
 
@@ -1065,21 +1065,21 @@ IDBError SQLiteIDBBackingStore::renameObjectStore(const IDBResourceIdentifier& t
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to rename an object store without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to rename an object store without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to rename an object store without an in-progress transaction"_s };
     }
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to rename an object store in a non-version-change transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to rename an object store in a non-version-change transaction") };
+        return IDBError { UnknownError, "Attempt to rename an object store in a non-version-change transaction"_s };
     }
 
     {
-        auto* sql = cachedStatement(SQL::RenameObjectStore, ASCIILiteral("UPDATE ObjectStoreInfo SET name = ? WHERE id = ?;"));
+        auto* sql = cachedStatement(SQL::RenameObjectStore, "UPDATE ObjectStoreInfo SET name = ? WHERE id = ?;"_s);
         if (!sql
             || sql->bindText(1, newName) != SQLITE_OK
             || sql->bindInt64(2, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not update name for object store id %" PRIi64 " in ObjectStoreInfo table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not rename object store") };
+            return IDBError { UnknownError, "Could not rename object store"_s };
         }
     }
 
@@ -1098,30 +1098,30 @@ IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to clear an object store without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to clear an object store without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to clear an object store without an in-progress transaction"_s };
     }
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to clear an object store in a read-only transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to clear an object store in a read-only transaction") };
+        return IDBError { UnknownError, "Attempt to clear an object store in a read-only transaction"_s };
     }
 
     {
-        auto* sql = cachedStatement(SQL::ClearObjectStoreRecords, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::ClearObjectStoreRecords, "DELETE FROM Records WHERE objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not clear records from object store id %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Unable to clear object store") };
+            return IDBError { UnknownError, "Unable to clear object store"_s };
         }
     }
 
     {
-        auto* sql = cachedStatement(SQL::ClearObjectStoreIndexRecords, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::ClearObjectStoreIndexRecords, "DELETE FROM IndexRecords WHERE objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete records from index record store id %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Unable to delete index records while clearing object store") };
+            return IDBError { UnknownError, "Unable to delete index records while clearing object store"_s };
         }
     }
 
@@ -1139,20 +1139,20 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to create an index without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to create an index without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to create an index without an in-progress transaction"_s };
     }
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to create an index in a non-version-change transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to create an index in a non-version-change transaction") };
+        return IDBError { UnknownError, "Attempt to create an index in a non-version-change transaction"_s };
     }
 
     RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize IDBKeyPath to create index in database") };
+        return IDBError { UnknownError, "Unable to serialize IDBKeyPath to create index in database"_s };
     }
 
-    auto* sql = cachedStatement(SQL::CreateIndexInfo, ASCIILiteral("INSERT INTO IndexInfo VALUES (?, ?, ?, ?, ?, ?);"));
+    auto* sql = cachedStatement(SQL::CreateIndexInfo, "INSERT INTO IndexInfo VALUES (?, ?, ?, ?, ?, ?);"_s);
     if (!sql
         || sql->bindInt64(1, info.identifier()) != SQLITE_OK
         || sql->bindText(2, info.name()) != SQLITE_OK
@@ -1162,7 +1162,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         || sql->bindInt(6, info.multiEntry()) != SQLITE_OK
         || sql->step() != SQLITE_DONE) {
         LOG_ERROR("Could not add index '%s' to IndexInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { UnknownError, ASCIILiteral("Unable to create index in database") };
+        return IDBError { UnknownError, "Unable to create index in database"_s };
     }
 
     // Write index records for any records that already exist in this object store.
@@ -1171,7 +1171,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 
     if (!cursor) {
         LOG_ERROR("Cannot open cursor to populate indexes in database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to populate indexes in database") };
+        return IDBError { UnknownError, "Unable to populate indexes in database"_s };
     }
 
     while (!cursor->currentKey().isNull()) {
@@ -1183,13 +1183,13 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 
         IDBError error = updateOneIndexForAddRecord(info, key, valueBuffer, cursor->currentRecordRowID());
         if (!error.isNull()) {
-            auto* sql = cachedStatement(SQL::DeleteIndexInfo, ASCIILiteral("DELETE FROM IndexInfo WHERE id = ? AND objectStoreID = ?;"));
+            auto* sql = cachedStatement(SQL::DeleteIndexInfo, "DELETE FROM IndexInfo WHERE id = ? AND objectStoreID = ?;"_s);
             if (!sql
                 || sql->bindInt64(1, info.identifier()) != SQLITE_OK
                 || sql->bindInt64(2, info.objectStoreIdentifier()) != SQLITE_OK
                 || sql->step() != SQLITE_DONE) {
                 LOG_ERROR("Index creation failed due to uniqueness constraint failure, but there was an error deleting the Index record from the database");
-                return IDBError { UnknownError, ASCIILiteral("Index creation failed due to uniqueness constraint failure, but there was an error deleting the Index record from the database") };
+                return IDBError { UnknownError, "Index creation failed due to uniqueness constraint failure, but there was an error deleting the Index record from the database"_s };
             }
 
             return error;
@@ -1197,7 +1197,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 
         if (!cursor->advance(1)) {
             LOG_ERROR("Error advancing cursor while indexing existing records for new index.");
-            return IDBError { UnknownError, ASCIILiteral("Error advancing cursor while indexing existing records for new index") };
+            return IDBError { UnknownError, "Error advancing cursor while indexing existing records for new index"_s };
         }
     }
 
@@ -1215,16 +1215,16 @@ IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(const IDBIndexInfo& info
     RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize IDBKey to check for index record in database") };
+        return IDBError { UnknownError, "Unable to serialize IDBKey to check for index record in database"_s };
     }
 
-    auto* sql = cachedStatement(SQL::HasIndexRecord, ASCIILiteral("SELECT rowid FROM IndexRecords WHERE indexID = ? AND objectStoreID = ? AND key = CAST(? AS TEXT);"));
+    auto* sql = cachedStatement(SQL::HasIndexRecord, "SELECT rowid FROM IndexRecords WHERE indexID = ? AND objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
     if (!sql
         || sql->bindInt64(1, info.identifier()) != SQLITE_OK
         || sql->bindInt64(2, info.objectStoreIdentifier()) != SQLITE_OK
         || sql->bindBlob(3, indexKeyBuffer->data(), indexKeyBuffer->size()) != SQLITE_OK) {
         LOG_ERROR("Error checking for index record in database");
-        return IDBError { UnknownError, ASCIILiteral("Error checking for index record in database") };
+        return IDBError { UnknownError, "Error checking for index record in database"_s };
     }
 
     int sqlResult = sql->step();
@@ -1234,7 +1234,7 @@ IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(const IDBIndexInfo& info
     if (sqlResult != SQLITE_ROW) {
         // There was an error fetching the record from the database.
         LOG_ERROR("Could not check if key exists in index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { UnknownError, ASCIILiteral("Error checking for existence of IDBKey in index") };
+        return IDBError { UnknownError, "Error checking for existence of IDBKey in index"_s };
     }
 
     hasRecord = true;
@@ -1285,17 +1285,17 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, i
     RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize index key to be stored in the database") };
+        return IDBError { UnknownError, "Unable to serialize index key to be stored in the database"_s };
     }
 
     RefPtr<SharedBuffer> valueBuffer = serializeIDBKeyData(keyValue);
     if (!valueBuffer) {
         LOG_ERROR("Unable to serialize the value to be stored in the database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize value to be stored in the database") };
+        return IDBError { UnknownError, "Unable to serialize value to be stored in the database"_s };
     }
 
     {
-        auto* sql = cachedStatement(SQL::PutIndexRecord, ASCIILiteral("INSERT INTO IndexRecords VALUES (?, ?, CAST(? AS TEXT), CAST(? AS TEXT), ?);"));
+        auto* sql = cachedStatement(SQL::PutIndexRecord, "INSERT INTO IndexRecords VALUES (?, ?, CAST(? AS TEXT), CAST(? AS TEXT), ?);"_s);
         if (!sql
             || sql->bindInt64(1, indexID) != SQLITE_OK
             || sql->bindInt64(2, objectStoreID) != SQLITE_OK
@@ -1304,7 +1304,7 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, i
             || sql->bindInt64(5, recordID) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not put index record for index %" PRIi64 " in object store %" PRIi64 " in Records table (%i) - %s", indexID, objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Error putting index record into database") };
+            return IDBError { UnknownError, "Error putting index record into database"_s };
         }
     }
 
@@ -1322,33 +1322,33 @@ IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to delete index without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to delete index without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to delete index without an in-progress transaction"_s };
     }
 
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to delete index during a non-version-change transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to delete index during a non-version-change transaction") };
+        return IDBError { UnknownError, "Attempt to delete index during a non-version-change transaction"_s };
     }
 
     {
-        auto* sql = cachedStatement(SQL::DeleteIndexInfo, ASCIILiteral("DELETE FROM IndexInfo WHERE id = ? AND objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteIndexInfo, "DELETE FROM IndexInfo WHERE id = ? AND objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, indexIdentifier) != SQLITE_OK
             || sql->bindInt64(2, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete index id %" PRIi64 " from IndexInfo table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Error deleting index from database") };
+            return IDBError { UnknownError, "Error deleting index from database"_s };
         }
     }
 
     {
-        auto* sql = cachedStatement(SQL::DeleteIndexRecords, ASCIILiteral("DELETE FROM IndexRecords WHERE indexID = ? AND objectStoreID = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteIndexRecords, "DELETE FROM IndexRecords WHERE indexID = ? AND objectStoreID = ?;"_s);
         if (!sql
             || sql->bindInt64(1, indexIdentifier) != SQLITE_OK
             || sql->bindInt64(2, objectStoreIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete index records for index id %" PRIi64 " from IndexRecords table (%i) - %s", indexIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Error deleting index records from database") };
+            return IDBError { UnknownError, "Error deleting index records from database"_s };
         }
     }
 
@@ -1368,32 +1368,32 @@ IDBError SQLiteIDBBackingStore::renameIndex(const IDBResourceIdentifier& transac
 
     auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo)
-        return IDBError { UnknownError, ASCIILiteral("Could not rename index") };
+        return IDBError { UnknownError, "Could not rename index"_s };
 
     auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexIdentifier);
     if (!indexInfo)
-        return IDBError { UnknownError, ASCIILiteral("Could not rename index") };
+        return IDBError { UnknownError, "Could not rename index"_s };
 
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to rename an index without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to rename an index without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to rename an index without an in-progress transaction"_s };
     }
 
     if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to rename an index in a non-version-change transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to rename an index in a non-version-change transaction") };
+        return IDBError { UnknownError, "Attempt to rename an index in a non-version-change transaction"_s };
     }
 
     {
-        auto* sql = cachedStatement(SQL::RenameIndex, ASCIILiteral("UPDATE IndexInfo SET name = ? WHERE objectStoreID = ? AND id = ?;"));
+        auto* sql = cachedStatement(SQL::RenameIndex, "UPDATE IndexInfo SET name = ? WHERE objectStoreID = ? AND id = ?;"_s);
         if (!sql
             || sql->bindText(1, newName) != SQLITE_OK
             || sql->bindInt64(2, objectStoreIdentifier) != SQLITE_OK
             || sql->bindInt64(3, indexIdentifier) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not update name for index id (%" PRIi64 ", %" PRIi64 ") in IndexInfo table (%i) - %s", objectStoreIdentifier, indexIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Could not rename index") };
+            return IDBError { UnknownError, "Could not rename index"_s };
         }
     }
 
@@ -1414,20 +1414,20 @@ IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to see if key exists in objectstore without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to see if key exists in objectstore without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to see if key exists in objectstore without an in-progress transaction"_s };
     }
 
     RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to check for existence in object store");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize IDBKey to check for existence in object store") };
+        return IDBError { UnknownError, "Unable to serialize IDBKey to check for existence in object store"_s };
     }
-    auto* sql = cachedStatement(SQL::KeyExistsInObjectStore, ASCIILiteral("SELECT key FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT) LIMIT 1;"));
+    auto* sql = cachedStatement(SQL::KeyExistsInObjectStore, "SELECT key FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT) LIMIT 1;"_s);
     if (!sql
         || sql->bindInt64(1, objectStoreID) != SQLITE_OK
         || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK) {
         LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { UnknownError, ASCIILiteral("Unable to check for existence of IDBKey in object store") };
+        return IDBError { UnknownError, "Unable to check for existence of IDBKey in object store"_s };
     }
 
     int sqlResult = sql->step();
@@ -1437,7 +1437,7 @@ IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     if (sqlResult != SQLITE_ROW) {
         // There was an error fetching the record from the database.
         LOG_ERROR("Could not check if key exists in object store (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { UnknownError, ASCIILiteral("Error checking for existence of IDBKey in object store") };
+        return IDBError { UnknownError, "Error checking for existence of IDBKey in object store"_s };
     }
 
     keyExists = true;
@@ -1451,11 +1451,11 @@ IDBError SQLiteIDBBackingStore::deleteUnusedBlobFileRecords(SQLiteIDBTransaction
     // Gather the set of blob URLs and filenames that are no longer in use.
     HashSet<String> removedBlobFilenames;
     {
-        auto* sql = cachedStatement(SQL::GetUnusedBlobFilenames, ASCIILiteral("SELECT fileName FROM BlobFiles WHERE blobURL NOT IN (SELECT blobURL FROM BlobRecords)"));
+        auto* sql = cachedStatement(SQL::GetUnusedBlobFilenames, "SELECT fileName FROM BlobFiles WHERE blobURL NOT IN (SELECT blobURL FROM BlobRecords)"_s);
 
         if (!sql) {
             LOG_ERROR("Error deleting stored blobs (%i) (Could not gather unused blobURLs) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Error deleting stored blobs") };
+            return IDBError { UnknownError, "Error deleting stored blobs"_s };
         }
 
         int result = sql->step();
@@ -1466,18 +1466,18 @@ IDBError SQLiteIDBBackingStore::deleteUnusedBlobFileRecords(SQLiteIDBTransaction
 
         if (result != SQLITE_DONE) {
             LOG_ERROR("Error deleting stored blobs (%i) (Could not gather unused blobURLs) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Error deleting stored blobs") };
+            return IDBError { UnknownError, "Error deleting stored blobs"_s };
         }
     }
 
     // Remove the blob records that are no longer in use.
     if (!removedBlobFilenames.isEmpty()) {
-        auto* sql = cachedStatement(SQL::DeleteUnusedBlobs, ASCIILiteral("DELETE FROM BlobFiles WHERE blobURL NOT IN (SELECT blobURL FROM BlobRecords)"));
+        auto* sql = cachedStatement(SQL::DeleteUnusedBlobs, "DELETE FROM BlobFiles WHERE blobURL NOT IN (SELECT blobURL FROM BlobRecords)"_s);
 
         if (!sql
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Error deleting stored blobs (%i) (Could not delete blobFile records) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Error deleting stored blobs") };
+            return IDBError { UnknownError, "Error deleting stored blobs"_s };
         }
     }
 
@@ -1500,19 +1500,19 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
     RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKeyData to be removed from the database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize IDBKeyData to be removed from the database") };
+        return IDBError { UnknownError, "Unable to serialize IDBKeyData to be removed from the database"_s };
     }
 
     // Get the record ID
     int64_t recordID;
     {
-        auto* sql = cachedStatement(SQL::GetObjectStoreRecordID, ASCIILiteral("SELECT recordID FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
+        auto* sql = cachedStatement(SQL::GetObjectStoreRecordID, "SELECT recordID FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
 
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
             || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK) {
             LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to delete record from object store") };
+            return IDBError { UnknownError, "Failed to delete record from object store"_s };
         }
 
         int result = sql->step();
@@ -1523,7 +1523,7 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
 
         if (result != SQLITE_ROW) {
             LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) (unable to fetch record ID) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to delete record from object store") };
+            return IDBError { UnknownError, "Failed to delete record from object store"_s };
         }
 
         recordID = sql->getColumnInt64(0);
@@ -1531,18 +1531,18 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
 
     if (recordID < 1) {
         LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) (record ID is invalid) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { UnknownError, ASCIILiteral("Failed to delete record from object store") };
+        return IDBError { UnknownError, "Failed to delete record from object store"_s };
     }
 
     // Delete the blob records for this object store record.
     {
-        auto* sql = cachedStatement(SQL::DeleteBlobRecord, ASCIILiteral("DELETE FROM BlobRecords WHERE objectStoreRow = ?;"));
+        auto* sql = cachedStatement(SQL::DeleteBlobRecord, "DELETE FROM BlobRecords WHERE objectStoreRow = ?;"_s);
 
         if (!sql
             || sql->bindInt64(1, recordID) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) (Could not delete BlobRecords records) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to delete record from object store") };
+            return IDBError { UnknownError, "Failed to delete record from object store"_s };
         }
     }
 
@@ -1552,27 +1552,27 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
 
     // Delete record from object store
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreRecord, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreRecord, "DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
 
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
             || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to delete record from object store") };
+            return IDBError { UnknownError, "Failed to delete record from object store"_s };
         }
     }
 
     // Delete record from indexes store
     {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecord, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ? AND value = CAST(? AS TEXT);"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecord, "DELETE FROM IndexRecords WHERE objectStoreID = ? AND value = CAST(? AS TEXT);"_s);
 
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
             || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete record from indexes for object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to delete index entries for object store record") };
+            return IDBError { UnknownError, "Failed to delete index entries for object store record"_s };
         }
     }
 
@@ -1589,11 +1589,11 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to delete range from database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to delete range from database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to delete range from database without an in-progress transaction"_s };
     }
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to delete records from an object store in a read-only transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to delete records from an object store in a read-only transaction") };
+        return IDBError { UnknownError, "Attempt to delete records from an object store in a read-only transaction"_s };
     }
 
     // If the range to delete is exactly one key we can delete it right now.
@@ -1612,7 +1612,7 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreID, 0, keyRange);
     if (!cursor) {
         LOG_ERROR("Cannot open cursor to delete range of records from the database");
-        return IDBError { UnknownError, ASCIILiteral("Cannot open cursor to delete range of records from the database") };
+        return IDBError { UnknownError, "Cannot open cursor to delete range of records from the database"_s };
     }
 
     Vector<IDBKeyData> keys;
@@ -1623,7 +1623,7 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
 
     if (cursor->didError()) {
         LOG_ERROR("Cursor failed while accumulating range of records from the database");
-        return IDBError { UnknownError, ASCIILiteral("Cursor failed while accumulating range of records from the database") };
+        return IDBError { UnknownError, "Cursor failed while accumulating range of records from the database"_s };
     }
 
     IDBError error;
@@ -1684,14 +1684,14 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     if (!error.isNull() && anyRecordsSucceeded) {
         RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(key);
 
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecord, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ? AND value = CAST(? AS TEXT);"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreIndexRecord, "DELETE FROM IndexRecords WHERE objectStoreID = ? AND value = CAST(? AS TEXT);"_s);
 
         if (!sql
             || sql->bindInt64(1, info.identifier()) != SQLITE_OK
             || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Adding one Index record failed, but failed to remove all others that previously succeeded");
-            return IDBError { UnknownError, ASCIILiteral("Adding one Index record failed, but failed to remove all others that previously succeeded") };
+            return IDBError { UnknownError, "Adding one Index record failed, but failed to remove all others that previously succeeded"_s };
         }
     }
 
@@ -1710,29 +1710,29 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to store a record in an object store without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to store a record in an object store without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to store a record in an object store without an in-progress transaction"_s };
     }
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to store a record in an object store in a read-only transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to store a record in an object store in a read-only transaction") };
+        return IDBError { UnknownError, "Attempt to store a record in an object store in a read-only transaction"_s };
     }
 
     RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in an object store");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize IDBKey to be stored in an object store") };
+        return IDBError { UnknownError, "Unable to serialize IDBKey to be stored in an object store"_s };
     }
 
     int64_t recordID = 0;
     {
-        auto* sql = cachedStatement(SQL::AddObjectStoreRecord, ASCIILiteral("INSERT INTO Records VALUES (?, CAST(? AS TEXT), ?, NULL);"));
+        auto* sql = cachedStatement(SQL::AddObjectStoreRecord, "INSERT INTO Records VALUES (?, CAST(? AS TEXT), ?, NULL);"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
             || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql->bindBlob(3, value.data().data()->data(), value.data().data()->size()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not put record for object store %" PRIi64 " in Records table (%i) - %s", objectStoreInfo.identifier(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Unable to store record in object store") };
+            return IDBError { UnknownError, "Unable to store record in object store"_s };
         }
 
         recordID = m_sqliteDB->lastInsertRowID();
@@ -1741,13 +1741,13 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     auto error = updateAllIndexesForAddRecord(objectStoreInfo, keyData, value.data(), recordID);
 
     if (!error.isNull()) {
-        auto* sql = cachedStatement(SQL::DeleteObjectStoreRecord, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
+        auto* sql = cachedStatement(SQL::DeleteObjectStoreRecord, "DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
             || sql->bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Indexing new object store record failed, but unable to remove the object store record itself");
-            return IDBError { UnknownError, ASCIILiteral("Indexing new object store record failed, but unable to remove the object store record itself") };
+            return IDBError { UnknownError, "Indexing new object store record failed, but unable to remove the object store record itself"_s };
         }
 
         return error;
@@ -1758,30 +1758,30 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     for (size_t i = 0; i < blobURLs.size(); ++i) {
         auto& url = blobURLs[i];
         {
-            auto* sql = cachedStatement(SQL::AddBlobRecord, ASCIILiteral("INSERT INTO BlobRecords VALUES (?, ?);"));
+            auto* sql = cachedStatement(SQL::AddBlobRecord, "INSERT INTO BlobRecords VALUES (?, ?);"_s);
             if (!sql
                 || sql->bindInt64(1, recordID) != SQLITE_OK
                 || sql->bindText(2, url) != SQLITE_OK
                 || sql->step() != SQLITE_DONE) {
                 LOG_ERROR("Unable to record Blob record in database");
-                return IDBError { UnknownError, ASCIILiteral("Unable to record Blob record in database") };
+                return IDBError { UnknownError, "Unable to record Blob record in database"_s };
             }
         }
         int64_t potentialFileNameInteger = m_sqliteDB->lastInsertRowID();
 
         // If we already have a file for this blobURL, nothing left to do.
         {
-            auto* sql = cachedStatement(SQL::BlobFilenameForBlobURL, ASCIILiteral("SELECT fileName FROM BlobFiles WHERE blobURL = ?;"));
+            auto* sql = cachedStatement(SQL::BlobFilenameForBlobURL, "SELECT fileName FROM BlobFiles WHERE blobURL = ?;"_s);
             if (!sql
                 || sql->bindText(1, url) != SQLITE_OK) {
                 LOG_ERROR("Unable to examine Blob filenames in database");
-                return IDBError { UnknownError, ASCIILiteral("Unable to examine Blob filenames in database") };
+                return IDBError { UnknownError, "Unable to examine Blob filenames in database"_s };
             }
 
             int result = sql->step();
             if (result != SQLITE_ROW && result != SQLITE_DONE) {
                 LOG_ERROR("Unable to examine Blob filenames in database");
-                return IDBError { UnknownError, ASCIILiteral("Unable to examine Blob filenames in database") };
+                return IDBError { UnknownError, "Unable to examine Blob filenames in database"_s };
             }
 
             if (result == SQLITE_ROW)
@@ -1791,13 +1791,13 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         // We don't already have a file for this blobURL, so commit our file as a unique filename
         String storedFilename = String::format("%" PRId64 ".blob", potentialFileNameInteger);
         {
-            auto* sql = cachedStatement(SQL::AddBlobFilename, ASCIILiteral("INSERT INTO BlobFiles VALUES (?, ?);"));
+            auto* sql = cachedStatement(SQL::AddBlobFilename, "INSERT INTO BlobFiles VALUES (?, ?);"_s);
             if (!sql
                 || sql->bindText(1, url) != SQLITE_OK
                 || sql->bindText(2, storedFilename) != SQLITE_OK
                 || sql->step() != SQLITE_DONE) {
                 LOG_ERROR("Unable to record Blob file record in database");
-                return IDBError { UnknownError, ASCIILiteral("Unable to record Blob file record in database") };
+                return IDBError { UnknownError, "Unable to record Blob file record in database"_s };
             }
         }
 
@@ -1815,11 +1815,11 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
 
     HashSet<String> blobURLSet;
     {
-        auto* sql = cachedStatement(SQL::GetBlobURL, ASCIILiteral("SELECT blobURL FROM BlobRecords WHERE objectStoreRow = ?"));
+        auto* sql = cachedStatement(SQL::GetBlobURL, "SELECT blobURL FROM BlobRecords WHERE objectStoreRow = ?"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreRecord) != SQLITE_OK) {
             LOG_ERROR("Could not prepare statement to fetch blob URLs for object store record (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+            return IDBError { UnknownError, "Failed to look up blobURL records in object store by key range"_s };
         }
 
         int sqlResult = sql->step();
@@ -1835,23 +1835,23 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
 
         if (sqlResult != SQLITE_DONE) {
             LOG_ERROR("Could not fetch blob URLs for object store record (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+            return IDBError { UnknownError, "Failed to look up blobURL records in object store by key range"_s };
         }
     }
 
     ASSERT(!blobURLSet.isEmpty());
     String databaseDirectory = fullDatabaseDirectory();
     for (auto& blobURL : blobURLSet) {
-        auto* sql = cachedStatement(SQL::BlobFilenameForBlobURL, ASCIILiteral("SELECT fileName FROM BlobFiles WHERE blobURL = ?;"));
+        auto* sql = cachedStatement(SQL::BlobFilenameForBlobURL, "SELECT fileName FROM BlobFiles WHERE blobURL = ?;"_s);
         if (!sql
             || sql->bindText(1, blobURL) != SQLITE_OK) {
             LOG_ERROR("Could not prepare statement to fetch blob filename for object store record (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+            return IDBError { UnknownError, "Failed to look up blobURL records in object store by key range"_s };
         }
 
         if (sql->step() != SQLITE_ROW) {
             LOG_ERROR("Entry for blob filename for blob url %s does not exist (%i) - %s", blobURL.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to look up blobURL records in object store by key range") };
+            return IDBError { UnknownError, "Failed to look up blobURL records in object store by key range"_s };
         }
 
         blobURLs.append(blobURL);
@@ -1873,7 +1873,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to get a record from database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to get a record from database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to get a record from database without an in-progress transaction"_s };
     }
 
     auto key = keyRange.lowerKey;
@@ -1882,7 +1882,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(key);
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize lower IDBKey in lookup range") };
+        return IDBError { UnknownError, "Unable to serialize lower IDBKey in lookup range"_s };
     }
 
     key = keyRange.upperKey;
@@ -1891,7 +1891,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(key);
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize upper IDBKey in lookup range") };
+        return IDBError { UnknownError, "Unable to serialize upper IDBKey in lookup range"_s };
     }
 
     int64_t recordID = 0;
@@ -1942,7 +1942,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
             || sql->bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLITE_OK
             || sql->bindBlob(3, upperBuffer->data(), upperBuffer->size()) != SQLITE_OK) {
             LOG_ERROR("Could not get key range record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Failed to look up record in object store by key range") };
+            return IDBError { UnknownError, "Failed to look up record in object store by key range"_s };
         }
 
         int sqlResult = sql->step();
@@ -1954,7 +1954,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         if (sqlResult != SQLITE_ROW) {
             // There was an error fetching the record from the database.
             LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return IDBError { UnknownError, ASCIILiteral("Error looking up record in object store by key range") };
+            return IDBError { UnknownError, "Error looking up record in object store by key range"_s };
         }
 
         Vector<uint8_t> buffer;
@@ -1969,13 +1969,13 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         auto* vector = resultBuffer.data();
         if (!vector) {
             LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore.getKey()");
-            return IDBError { UnknownError, ASCIILiteral("Error extracting key data from database executing IDBObjectStore.getKey()") };
+            return IDBError { UnknownError, "Error extracting key data from database executing IDBObjectStore.getKey()"_s };
         }
 
         IDBKeyData keyData;
         if (!deserializeIDBKeyData(vector->data(), vector->size(), keyData)) {
             LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore.getKey()");
-            return IDBError { UnknownError, ASCIILiteral("Error extracting key data from database executing IDBObjectStore.getKey()") };
+            return IDBError { UnknownError, "Error extracting key data from database executing IDBObjectStore.getKey()"_s };
         }
 
         resultValue = { keyData };
@@ -2043,7 +2043,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to get records from database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to get records from database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to get records from database without an in-progress transaction"_s };
     }
 
     auto key = getAllRecordsData.keyRangeData.lowerKey;
@@ -2052,7 +2052,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     auto lowerBuffer = serializeIDBKeyData(key);
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize lower IDBKey in lookup range") };
+        return IDBError { UnknownError, "Unable to serialize lower IDBKey in lookup range"_s };
     }
 
     key = getAllRecordsData.keyRangeData.upperKey;
@@ -2061,7 +2061,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     auto upperBuffer = serializeIDBKeyData(key);
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize upper IDBKey in lookup range") };
+        return IDBError { UnknownError, "Unable to serialize upper IDBKey in lookup range"_s };
     }
 
     auto* sql = cachedStatementForGetAllObjectStoreRecords(getAllRecordsData);
@@ -2070,7 +2070,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
         || sql->bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLITE_OK
         || sql->bindBlob(3, upperBuffer->data(), upperBuffer->size()) != SQLITE_OK) {
         LOG_ERROR("Could not get key range record from object store %" PRIi64 " from Records table (%i) - %s", getAllRecordsData.objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { UnknownError, ASCIILiteral("Failed to look up record in object store by key range") };
+        return IDBError { UnknownError, "Failed to look up record in object store by key range"_s };
     }
 
     result = { getAllRecordsData.getAllType };
@@ -2108,7 +2108,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
 
             if (!deserializeIDBKeyData(keyData.data(), keyData.size(), key)) {
                 LOG_ERROR("Unable to deserialize key data from database while getting all key records");
-                return IDBError { UnknownError, ASCIILiteral("Unable to deserialize key data while getting all key records") };
+                return IDBError { UnknownError, "Unable to deserialize key data while getting all key records"_s };
             }
 
             result.addKey(WTFMove(key));
@@ -2125,7 +2125,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
 
     // There was an error fetching records from the database.
     LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", getAllRecordsData.objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-    return IDBError { UnknownError, ASCIILiteral("Error looking up record in object store by key range") };
+    return IDBError { UnknownError, "Error looking up record in object store by key range"_s };
 }
 
 IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData& getAllRecordsData, IDBGetAllResult& result)
@@ -2138,18 +2138,18 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to get all index records from database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to get all index records from database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to get all index records from database without an in-progress transaction"_s };
     }
 
     auto cursor = transaction->maybeOpenBackingStoreCursor(getAllRecordsData.objectStoreIdentifier, getAllRecordsData.indexIdentifier, getAllRecordsData.keyRangeData);
     if (!cursor) {
         LOG_ERROR("Cannot open cursor to perform index gets in database");
-        return IDBError { UnknownError, ASCIILiteral("Cannot open cursor to perform index gets in database") };
+        return IDBError { UnknownError, "Cannot open cursor to perform index gets in database"_s };
     }
 
     if (cursor->didError()) {
         LOG_ERROR("Cursor failed while looking up index records in database");
-        return IDBError { UnknownError, ASCIILiteral("Cursor failed while looking up index records in database") };
+        return IDBError { UnknownError, "Cursor failed while looking up index records in database"_s };
     }
 
     result = { getAllRecordsData.getAllType };
@@ -2170,7 +2170,7 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
 
     if (cursor->didError()) {
         LOG_ERROR("Cursor failed while looking up index records in database");
-        return IDBError { UnknownError, ASCIILiteral("Cursor failed while looking up index records in database") };
+        return IDBError { UnknownError, "Cursor failed while looking up index records in database"_s };
     }
 
     return IDBError { };
@@ -2186,7 +2186,7 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to get an index record from database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to get an index record from database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to get an index record from database without an in-progress transaction"_s };
     }
 
     if (range.isExactlyOneKey())
@@ -2195,12 +2195,12 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
     auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreID, indexID, range);
     if (!cursor) {
         LOG_ERROR("Cannot open cursor to perform index get in database");
-        return IDBError { UnknownError, ASCIILiteral("Cannot open cursor to perform index get in database") };
+        return IDBError { UnknownError, "Cannot open cursor to perform index get in database"_s };
     }
 
     if (cursor->didError()) {
         LOG_ERROR("Cursor failed while looking up index record in database");
-        return IDBError { UnknownError, ASCIILiteral("Cursor failed while looking up index record in database") };
+        return IDBError { UnknownError, "Cursor failed while looking up index record in database"_s };
     }
 
     if (cursor->didComplete())
@@ -2224,23 +2224,23 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
     RefPtr<SharedBuffer> buffer = serializeIDBKeyData(key);
     if (!buffer) {
         LOG_ERROR("Unable to serialize IDBKey to look up one index record");
-        return IDBError { UnknownError, ASCIILiteral("Unable to serialize IDBKey to look up one index record") };
+        return IDBError { UnknownError, "Unable to serialize IDBKey to look up one index record"_s };
     }
 
-    auto* sql = cachedStatement(SQL::GetIndexRecordForOneKey, ASCIILiteral("SELECT IndexRecords.value, Records.value, Records.recordID FROM Records INNER JOIN IndexRecords ON Records.recordID = IndexRecords.objectStoreRecordID WHERE IndexRecords.indexID = ? AND IndexRecords.objectStoreID = ? AND IndexRecords.key = CAST(? AS TEXT) ORDER BY IndexRecords.key, IndexRecords.value"));
+    auto* sql = cachedStatement(SQL::GetIndexRecordForOneKey, "SELECT IndexRecords.value, Records.value, Records.recordID FROM Records INNER JOIN IndexRecords ON Records.recordID = IndexRecords.objectStoreRecordID WHERE IndexRecords.indexID = ? AND IndexRecords.objectStoreID = ? AND IndexRecords.key = CAST(? AS TEXT) ORDER BY IndexRecords.key, IndexRecords.value"_s);
 
     if (!sql
         || sql->bindInt64(1, indexID) != SQLITE_OK
         || sql->bindInt64(2, objectStoreID) != SQLITE_OK
         || sql->bindBlob(3, buffer->data(), buffer->size()) != SQLITE_OK) {
         LOG_ERROR("Unable to lookup index record in database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to lookup index record in database") };
+        return IDBError { UnknownError, "Unable to lookup index record in database"_s };
     }
 
     int result = sql->step();
     if (result != SQLITE_ROW && result != SQLITE_DONE) {
         LOG_ERROR("Unable to lookup index record in database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to lookup index record in database") };
+        return IDBError { UnknownError, "Unable to lookup index record in database"_s };
     }
 
     if (result == SQLITE_DONE)
@@ -2252,7 +2252,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
 
     if (!deserializeIDBKeyData(keyVector.data(), keyVector.size(), objectStoreKey)) {
         LOG_ERROR("Unable to deserialize key looking up index record in database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to deserialize key looking up index record in database") };
+        return IDBError { UnknownError, "Unable to deserialize key looking up index record in database"_s };
     }
 
     if (type == IndexedDB::IndexRecordType::Key) {
@@ -2285,13 +2285,13 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to get count from database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to get count from database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to get count from database without an in-progress transaction"_s };
     }
 
     auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreIdentifier, indexIdentifier, range);
     if (!cursor) {
         LOG_ERROR("Cannot open cursor to populate indexes in database");
-        return IDBError { UnknownError, ASCIILiteral("Unable to populate indexes in database") };
+        return IDBError { UnknownError, "Unable to populate indexes in database"_s };
     }
 
     while (cursor->advance(1))
@@ -2302,16 +2302,16 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
 
 IDBError SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue(int64_t objectStoreID, uint64_t& outValue)
 {
-    auto* sql = cachedStatement(SQL::GetKeyGeneratorValue, ASCIILiteral("SELECT currentKey FROM KeyGenerators WHERE objectStoreID = ?;"));
+    auto* sql = cachedStatement(SQL::GetKeyGeneratorValue, "SELECT currentKey FROM KeyGenerators WHERE objectStoreID = ?;"_s);
     if (!sql
         || sql->bindInt64(1, objectStoreID) != SQLITE_OK) {
         LOG_ERROR("Could not retrieve currentKey from KeyGenerators table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { UnknownError, ASCIILiteral("Error getting current key generator value from database") };
+        return IDBError { UnknownError, "Error getting current key generator value from database"_s };
     }
     int result = sql->step();
     if (result != SQLITE_ROW) {
         LOG_ERROR("Could not retreive key generator value for object store, but it should be there.");
-        return IDBError { UnknownError, ASCIILiteral("Error finding current key generator value in database") };
+        return IDBError { UnknownError, "Error finding current key generator value in database"_s };
     }
 
     int64_t value = sql->getColumnInt64(0);
@@ -2324,7 +2324,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue(int64_t objectStor
 
 IDBError SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue(int64_t objectStoreID, uint64_t value)
 {
-    auto* sql = cachedStatement(SQL::SetKeyGeneratorValue, ASCIILiteral("INSERT INTO KeyGenerators VALUES (?, ?);"));
+    auto* sql = cachedStatement(SQL::SetKeyGeneratorValue, "INSERT INTO KeyGenerators VALUES (?, ?);"_s);
     if (!sql
         || sql->bindInt64(1, objectStoreID) != SQLITE_OK
         || sql->bindInt64(2, value) != SQLITE_OK
@@ -2349,11 +2349,11 @@ IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to generate key in database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to generate key in database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to generate key in database without an in-progress transaction"_s };
     }
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to generate key in a read-only transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to generate key in a read-only transaction") };
+        return IDBError { UnknownError, "Attempt to generate key in a read-only transaction"_s };
     }
 
     uint64_t currentValue;
@@ -2378,11 +2378,11 @@ IDBError SQLiteIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdenti
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to revert key generator value in database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to revert key generator value in database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to revert key generator value in database without an in-progress transaction"_s };
     }
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to revert key generator value in a read-only transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to revert key generator value in a read-only transaction") };
+        return IDBError { UnknownError, "Attempt to revert key generator value in a read-only transaction"_s };
     }
 
     ASSERT(newKeyNumber);
@@ -2399,11 +2399,11 @@ IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to update key generator value in database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to update key generator value in database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to update key generator value in database without an in-progress transaction"_s };
     }
     if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to update key generator value in a read-only transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to update key generator value in a read-only transaction") };
+        return IDBError { UnknownError, "Attempt to update key generator value in a read-only transaction"_s };
     }
 
     uint64_t currentValue;
@@ -2431,13 +2431,13 @@ IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
     auto* transaction = m_transactions.get(transactionIdentifier);
     if (!transaction || !transaction->inProgress()) {
         LOG_ERROR("Attempt to open a cursor in database without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to open a cursor in database without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to open a cursor in database without an in-progress transaction"_s };
     }
 
     auto* cursor = transaction->maybeOpenCursor(info);
     if (!cursor) {
         LOG_ERROR("Unable to open cursor");
-        return IDBError { UnknownError, ASCIILiteral("Unable to open cursor") };
+        return IDBError { UnknownError, "Unable to open cursor"_s };
     }
 
     m_cursors.set(cursor->identifier(), cursor);
@@ -2456,14 +2456,14 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
     auto* cursor = m_cursors.get(cursorIdentifier);
     if (!cursor) {
         LOG_ERROR("Attempt to iterate a cursor that doesn't exist");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to iterate a cursor that doesn't exist") };
+        return IDBError { UnknownError, "Attempt to iterate a cursor that doesn't exist"_s };
     }
 
     ASSERT_UNUSED(transactionIdentifier, cursor->transaction()->transactionIdentifier() == transactionIdentifier);
 
     if (!cursor->transaction() || !cursor->transaction()->inProgress()) {
         LOG_ERROR("Attempt to iterate a cursor without an in-progress transaction");
-        return IDBError { UnknownError, ASCIILiteral("Attempt to iterate a cursor without an in-progress transaction") };
+        return IDBError { UnknownError, "Attempt to iterate a cursor without an in-progress transaction"_s };
     }
 
     auto key = data.keyData;
@@ -2473,7 +2473,7 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
     if (key.isValid()) {
         if (!cursor->iterate(key, primaryKey)) {
             LOG_ERROR("Attempt to iterate cursor failed");
-            return IDBError { UnknownError, ASCIILiteral("Attempt to iterate cursor failed") };
+            return IDBError { UnknownError, "Attempt to iterate cursor failed"_s };
         }
     } else {
         ASSERT(!primaryKey.isValid());
@@ -2481,7 +2481,7 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
             count = 1;
         if (!cursor->advance(count)) {
             LOG_ERROR("Attempt to advance cursor failed");
-            return IDBError { UnknownError, ASCIILiteral("Attempt to advance cursor failed") };
+            return IDBError { UnknownError, "Attempt to advance cursor failed"_s };
         }
     }
 
@@ -2522,7 +2522,7 @@ void SQLiteIDBBackingStore::deleteBackingStore()
         bool errored = true;
 
         if (m_sqliteDB) {
-            SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT fileName FROM BlobFiles;"));
+            SQLiteStatement sql(*m_sqliteDB, "SELECT fileName FROM BlobFiles;"_s);
             if (sql.prepare() == SQLITE_OK) {
                 int result = sql.step();
                 while (result == SQLITE_ROW) {

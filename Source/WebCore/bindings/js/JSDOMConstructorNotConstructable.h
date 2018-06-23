@@ -50,7 +50,7 @@ private:
     {
         JSC::VM& vm = exec->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        JSC::throwTypeError(exec, scope, ASCIILiteral("Illegal constructor"));
+        JSC::throwTypeError(exec, scope, "Illegal constructor"_s);
         return JSC::JSValue::encode(JSC::jsNull());
     }
 

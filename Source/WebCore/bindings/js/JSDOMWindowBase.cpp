@@ -395,18 +395,18 @@ static bool isResponseCorrect(JSC::ExecState* exec, FetchResponse* inputResponse
     bool isResponseCorsSameOrigin = inputResponse->type() == ResourceResponse::Type::Basic || inputResponse->type() == ResourceResponse::Type::Cors || inputResponse->type() == ResourceResponse::Type::Default;
 
     if (!isResponseCorsSameOrigin) {
-        promise->reject(exec, createTypeError(exec, ASCIILiteral("Response is not CORS-same-origin")));
+        promise->reject(exec, createTypeError(exec, "Response is not CORS-same-origin"_s));
         return false;
     }
 
     if (!inputResponse->ok()) {
-        promise->reject(exec, createTypeError(exec, ASCIILiteral("Response has not returned OK status")));
+        promise->reject(exec, createTypeError(exec, "Response has not returned OK status"_s));
         return false;
     }
 
     auto contentType = inputResponse->headers().fastGet(HTTPHeaderName::ContentType);
     if (!equalLettersIgnoringASCIICase(contentType, "application/wasm")) {
-        promise->reject(exec, createTypeError(exec, ASCIILiteral("Unexpected response MIME type. Expected 'application/wasm'")));
+        promise->reject(exec, createTypeError(exec, "Unexpected response MIME type. Expected 'application/wasm'"_s));
         return false;
     }
 
@@ -448,14 +448,14 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
             return;
         }
         // FIXME: http://webkit.org/b/184886> Implement loading for the Blob type
-        promise->reject(exec, createTypeError(exec, ASCIILiteral("Unexpected Response's Content-type")));
+        promise->reject(exec, createTypeError(exec, "Unexpected Response's Content-type"_s));
     }, [&] (Ref<SharedBuffer>& buffer) {
         VM& vm = exec->vm();
         JSLockHolder lock(vm);
 
         actionCallback(exec, buffer->data(), buffer->size());
     }, [&] (std::nullptr_t&) {
-        promise->reject(exec, createTypeError(exec, ASCIILiteral("Unexpected Response's Content-type")));
+        promise->reject(exec, createTypeError(exec, "Unexpected Response's Content-type"_s));
     });
 }
 
@@ -474,7 +474,7 @@ void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::E
                 JSC::WebAssemblyPrototype::webAssemblyModuleValidateAsync(exec, promise, WTFMove(*arrayBuffer));
         });
     } else
-        promise->reject(exec, createTypeError(exec, ASCIILiteral("first argument must be an Response or Promise for Response")));
+        promise->reject(exec, createTypeError(exec, "first argument must be an Response or Promise for Response"_s));
 }
 
 void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, JSC::JSValue source, JSC::JSObject* importedObject)
@@ -493,7 +493,7 @@ void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JS
                 JSC::WebAssemblyPrototype::webAssemblyModuleInstantinateAsync(exec, promise, WTFMove(*arrayBuffer), importedObject);
         });
     } else
-        promise->reject(exec, createTypeError(exec, ASCIILiteral("first argument must be an Response or Promise for Response")));
+        promise->reject(exec, createTypeError(exec, "first argument must be an Response or Promise for Response"_s));
 }
 #endif
 

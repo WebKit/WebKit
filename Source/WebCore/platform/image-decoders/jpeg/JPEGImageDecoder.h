@@ -51,7 +51,7 @@ namespace WebCore {
         virtual ~JPEGImageDecoder();
 
         // ScalableImageDecoder
-        String filenameExtension() const override { return ASCIILiteral("jpg"); }
+        String filenameExtension() const override { return "jpg"_s; }
         bool setSize(const IntSize&) override;
         ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid

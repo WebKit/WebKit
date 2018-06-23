@@ -370,7 +370,7 @@ public:
         Builder<STATE | TypeSet>& setType(Type value)
         {
             COMPILE_ASSERT(!(STATE & TypeSet), property_type_already_set);
-            m_result->setString(ASCIILiteral("type"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+            m_result->setString("type"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
             return castState<TypeSet>();
         }
 
@@ -397,12 +397,12 @@ public:
 
     void setString(const String& value)
     {
-        JSON::ObjectBase::setString(ASCIILiteral("string"), value);
+        JSON::ObjectBase::setString("string"_s, value);
     }
 
     void setArray(RefPtr<JSON::ArrayOf<String>> value)
     {
-        JSON::ObjectBase::setArray(ASCIILiteral("array"), WTFMove(value));
+        JSON::ObjectBase::setArray("array"_s, WTFMove(value));
     }
 };
 
@@ -895,13 +895,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 
@@ -924,11 +924,11 @@ inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
 {
     switch(value) {
     case TestProtocolRuntimeKeyPathTypeNull:
-        return ASCIILiteral("null");
+        return "null"_s;
     case TestProtocolRuntimeKeyPathTypeString:
-        return ASCIILiteral("string");
+        return "string"_s;
     case TestProtocolRuntimeKeyPathTypeArray:
-        return ASCIILiteral("array");
+        return "array"_s;
     }
 }
 

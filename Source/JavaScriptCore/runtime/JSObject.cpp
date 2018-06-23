@@ -61,14 +61,14 @@ static unsigned lastArraySize = 0;
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSObject);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSFinalObject);
 
-const char* const NonExtensibleObjectPropertyDefineError = "Attempting to define property on object that is not extensible.";
-const char* const ReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
-const char* const ReadonlyPropertyChangeError = "Attempting to change value of a readonly property.";
-const char* const UnableToDeletePropertyError = "Unable to delete property.";
-const char* const UnconfigurablePropertyChangeAccessMechanismError = "Attempting to change access mechanism for an unconfigurable property.";
-const char* const UnconfigurablePropertyChangeConfigurabilityError = "Attempting to change configurable attribute of unconfigurable property.";
-const char* const UnconfigurablePropertyChangeEnumerabilityError = "Attempting to change enumerable attribute of unconfigurable property.";
-const char* const UnconfigurablePropertyChangeWritabilityError = "Attempting to change writable attribute of unconfigurable property.";
+const ASCIILiteral NonExtensibleObjectPropertyDefineError { "Attempting to define property on object that is not extensible."_s };
+const ASCIILiteral ReadonlyPropertyWriteError { "Attempted to assign to readonly property."_s };
+const ASCIILiteral ReadonlyPropertyChangeError { "Attempting to change value of a readonly property."_s };
+const ASCIILiteral UnableToDeletePropertyError { "Unable to delete property."_s };
+const ASCIILiteral UnconfigurablePropertyChangeAccessMechanismError { "Attempting to change access mechanism for an unconfigurable property."_s };
+const ASCIILiteral UnconfigurablePropertyChangeConfigurabilityError { "Attempting to change configurable attribute of unconfigurable property."_s };
+const ASCIILiteral UnconfigurablePropertyChangeEnumerabilityError { "Attempting to change enumerable attribute of unconfigurable property."_s };
+const ASCIILiteral UnconfigurablePropertyChangeWritabilityError { "Attempting to change writable attribute of unconfigurable property."_s };
 
 const ClassInfo JSObject::s_info = { "Object", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSObject) };
 
@@ -561,7 +561,7 @@ String JSObject::calculatedClassName(JSObject* object)
             return classInfoName;
 
         if (prototypeFunctionName.isNull())
-            return ASCIILiteral("Object");
+            return "Object"_s;
     }
 
     return prototypeFunctionName;
@@ -685,11 +685,11 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
     if (ownDescriptor.isDataDescriptor()) {
         // 9.1.9.1-4-a If ownDesc.[[Writable]] is false, return false.
         if (!ownDescriptor.writable())
-            return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 
         // 9.1.9.1-4-b If Type(Receiver) is not Object, return false.
         if (!receiver.isObject())
-            return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 
         // In OrdinarySet, the receiver may not be the same to the object.
         // So, we perform [[GetOwnProperty]] onto the receiver while we already perform [[GetOwnProperty]] onto the object.
@@ -704,11 +704,11 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
         if (existingDescriptorFound) {
             // 9.1.9.1-4-d-i If IsAccessorDescriptor(existingDescriptor) is true, return false.
             if (existingDescriptor.isAccessorDescriptor())
-                return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 
             // 9.1.9.1-4-d-ii If existingDescriptor.[[Writable]] is false, return false.
             if (!existingDescriptor.writable())
-                return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 
             // 9.1.9.1-4-d-iii Let valueDesc be the PropertyDescriptor{[[Value]]: V}.
             PropertyDescriptor valueDescriptor;
@@ -732,7 +732,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
     // 9.1.9.1-7 If setter is undefined, return false.
     JSValue setter = ownDescriptor.setter();
     if (!setter.isObject())
-        return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 
     // 9.1.9.1-8 Perform ? Call(setter, Receiver, << V >>).
     JSObject* setterObject = asObject(setter);
@@ -769,7 +769,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
         if (isValidOffset(offset)) {
             if (attributes & PropertyAttribute::ReadOnly) {
                 ASSERT(this->prototypeChainMayInterceptStoreTo(vm, propertyName) || obj == this);
-                return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
             }
 
             JSValue gs = obj->getDirect(offset);
@@ -823,7 +823,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
     }
 
     if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
-        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     return true;
 }
 
@@ -1748,7 +1748,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
         if (this->getPrototype(vm, exec) == prototype)
             return true;
 
-        return typeError(exec, scope, shouldThrowIfCantSet, ASCIILiteral("Cannot set prototype of immutable prototype object"));
+        return typeError(exec, scope, shouldThrowIfCantSet, "Cannot set prototype of immutable prototype object"_s);
     }
 
     ASSERT(methodTable(vm)->toThis(this, exec, NotStrictMode) == this);
@@ -1760,12 +1760,12 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
     RETURN_IF_EXCEPTION(scope, false);
 
     if (!isExtensible)
-        return typeError(exec, scope, shouldThrowIfCantSet, ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, shouldThrowIfCantSet, ReadonlyPropertyWriteError);
 
     JSValue nextPrototype = prototype;
     while (nextPrototype && nextPrototype.isObject()) {
         if (nextPrototype == this)
-            return typeError(exec, scope, shouldThrowIfCantSet, ASCIILiteral("cyclic __proto__ value"));
+            return typeError(exec, scope, shouldThrowIfCantSet, "cyclic __proto__ value"_s);
         // FIXME: The specification currently says we should check if the [[GetPrototypeOf]] internal method of nextPrototype
         // is not the ordinary object internal method. However, we currently restrict this to Proxy objects as it would allow
         // for cycles with certain HTML objects (WindowProxy, Location) otherwise.
@@ -2018,7 +2018,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
     CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None) {
         if (mode == TypeHintMode::TakesHint)
-            throwTypeError(exec, scope, ASCIILiteral("Symbol.toPrimitive is not a function, undefined, or null"));
+            throwTypeError(exec, scope, "Symbol.toPrimitive is not a function, undefined, or null"_s);
         return scope.exception();
     }
 
@@ -2044,7 +2044,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
     RETURN_IF_EXCEPTION(scope, scope.exception());
     ASSERT(!result.isGetterSetter());
     if (result.isObject())
-        return mode == TypeHintMode::DoesNotTakeHint ? JSValue() : throwTypeError(exec, scope, ASCIILiteral("Symbol.toPrimitive returned an object"));
+        return mode == TypeHintMode::DoesNotTakeHint ? JSValue() : throwTypeError(exec, scope, "Symbol.toPrimitive returned an object"_s);
     return result;
 }
 
@@ -2082,7 +2082,7 @@ JSValue JSObject::ordinaryToPrimitive(ExecState* exec, PreferredPrimitiveType hi
 
     scope.assertNoException();
 
-    return throwTypeError(exec, scope, ASCIILiteral("No default value"));
+    return throwTypeError(exec, scope, "No default value"_s);
 }
 
 JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
@@ -2194,7 +2194,7 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
         return false;
 
     if (!proto.isObject()) {
-        throwTypeError(exec, scope, ASCIILiteral("instanceof called on an object with an invalid prototype property."));
+        throwTypeError(exec, scope, "instanceof called on an object with an invalid prototype property."_s);
         return false;
     }
 
@@ -2533,7 +2533,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
     if (result.isNewEntry) {
         if (!isStructureExtensible(vm)) {
             map->remove(result.iterator);
-            return typeError(exec, scope, throwException, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
+            return typeError(exec, scope, throwException, NonExtensibleObjectPropertyDefineError);
         }
 
         // 4.a. If IsGenericDescriptor(Desc) or IsDataDescriptor(Desc) is true, then create an own data property
@@ -2571,10 +2571,10 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
     if (!current.configurable()) {
         // 7.a. Reject, if the [[Configurable]] field of Desc is true.
         if (descriptor.configurablePresent() && descriptor.configurable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeConfigurabilityError);
         // 7.b. Reject, if the [[Enumerable]] field of Desc is present and the [[Enumerable]] fields of current and Desc are the Boolean negation of each other.
         if (descriptor.enumerablePresent() && current.enumerable() != descriptor.enumerable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeEnumerabilityError);
     }
 
     // 8. If IsGenericDescriptor(Desc) is true, then no further validation is required.
@@ -2583,7 +2583,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
         if (current.isDataDescriptor() != descriptor.isDataDescriptor()) {
             // 9.a. Reject, if the [[Configurable]] field of current is false.
             if (!current.configurable())
-                return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+                return typeError(exec, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
             // 9.b. If IsDataDescriptor(current) is true, then convert the property named P of object O from a
             // data property to an accessor property. Preserve the existing values of the converted property's
             // [[Configurable]] and [[Enumerable]] attributes and set the rest of the property's attributes to
@@ -2597,11 +2597,11 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
             if (!current.configurable() && !current.writable()) {
                 // 10.a.i. Reject, if the [[Writable]] field of current is false and the [[Writable]] field of Desc is true.
                 if (descriptor.writable())
-                    return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+                    return typeError(exec, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
                 // 10.a.ii. If the [[Writable]] field of current is false, then
                 // 10.a.ii.1. Reject, if the [[Value]] field of Desc is present and SameValue(Desc.[[Value]], current.[[Value]]) is false.
                 if (descriptor.value() && !sameValue(exec, descriptor.value(), current.value()))
-                    return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
+                    return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
             }
             // 10.b. else, the [[Configurable]] field of current is true, so any change is acceptable.
         } else {
@@ -2610,10 +2610,10 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
             if (!current.configurable()) {
                 // 11.i. Reject, if the [[Set]] field of Desc is present and SameValue(Desc.[[Set]], current.[[Set]]) is false.
                 if (descriptor.setterPresent() && descriptor.setter() != current.setter())
-                    return typeError(exec, scope, throwException, ASCIILiteral("Attempting to change the setter of an unconfigurable property."));
+                    return typeError(exec, scope, throwException, "Attempting to change the setter of an unconfigurable property."_s);
                 // 11.ii. Reject, if the [[Get]] field of Desc is present and SameValue(Desc.[[Get]], current.[[Get]]) is false.
                 if (descriptor.getterPresent() && descriptor.getter() != current.getter())
-                    return typeError(exec, scope, throwException, ASCIILiteral("Attempting to change the getter of an unconfigurable property."));
+                    return typeError(exec, scope, throwException, "Attempting to change the getter of an unconfigurable property."_s);
             }
         }
     }
@@ -2785,7 +2785,7 @@ bool JSObject::putByIndexBeyondVectorLengthWithArrayStorage(ExecState* exec, uns
     if (i >= length) {
         // Prohibit growing the array if length is not writable.
         if (map->lengthIsReadOnly() || !isStructureExtensible(vm))
-            return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
         length = i + 1;
         storage->setLength(length);
     }
@@ -2927,9 +2927,9 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
         if (mode != PutDirectIndexLikePutDirect) {
             // Prohibit growing the array if length is not writable.
             if (map->lengthIsReadOnly())
-                return typeError(exec, scope, mode == PutDirectIndexShouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, mode == PutDirectIndexShouldThrow, ReadonlyPropertyWriteError);
             if (!isStructureExtensible(vm))
-                return typeError(exec, scope, mode == PutDirectIndexShouldThrow, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
+                return typeError(exec, scope, mode == PutDirectIndexShouldThrow, NonExtensibleObjectPropertyDefineError);
         }
         length = i + 1;
         storage->setLength(length);
@@ -3466,7 +3466,7 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
         // unless extensions are prevented!
         // Step 2.a
         if (!isExtensible)
-            return typeError(exec, scope, throwException, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
+            return typeError(exec, scope, throwException, NonExtensibleObjectPropertyDefineError);
         if (!object)
             return true;
         // Step 2.c/d
@@ -3488,9 +3488,9 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     // Filter out invalid changes
     if (!current.configurable()) {
         if (descriptor.configurable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeConfigurabilityError);
         if (descriptor.enumerablePresent() && descriptor.enumerable() != current.enumerable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeEnumerabilityError);
     }
     
     // Step 6.
@@ -3508,7 +3508,7 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     // Changing between a normal property or an accessor property
     if (descriptor.isDataDescriptor() != current.isDataDescriptor()) {
         if (!current.configurable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
 
         if (!object)
             return true;
@@ -3523,10 +3523,10 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     if (descriptor.isDataDescriptor()) {
         if (!current.configurable()) {
             if (!current.writable() && descriptor.writable())
-                return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+                return typeError(exec, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
             if (!current.writable()) {
                 if (descriptor.value() && !sameValue(exec, current.value(), descriptor.value()))
-                    return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
+                    return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
             }
         }
         if (current.attributesEqual(descriptor) && !descriptor.value())
@@ -3543,11 +3543,11 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     ASSERT(descriptor.isAccessorDescriptor());
     if (!current.configurable()) {
         if (descriptor.setterPresent() && !(current.setterPresent() && JSValue::strictEqual(exec, current.setter(), descriptor.setter())))
-            return typeError(exec, scope, throwException, ASCIILiteral("Attempting to change the setter of an unconfigurable property."));
+            return typeError(exec, scope, throwException, "Attempting to change the setter of an unconfigurable property."_s);
         if (descriptor.getterPresent() && !(current.getterPresent() && JSValue::strictEqual(exec, current.getter(), descriptor.getter())))
-            return typeError(exec, scope, throwException, ASCIILiteral("Attempting to change the getter of an unconfigurable property."));
+            return typeError(exec, scope, throwException, "Attempting to change the getter of an unconfigurable property."_s);
         if (current.attributes() & PropertyAttribute::CustomAccessor)
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
     }
 
     // Step 10/11.

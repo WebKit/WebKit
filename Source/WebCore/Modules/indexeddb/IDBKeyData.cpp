@@ -371,7 +371,7 @@ String IDBKeyData::loggingString() const
 
     if (result.length() > 150) {
         result.truncate(147);
-        result.append(WTF::ASCIILiteral("..."));
+        result.append("..."_s);
     }
 
     return result;

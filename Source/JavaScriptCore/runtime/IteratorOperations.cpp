@@ -57,7 +57,7 @@ JSValue iteratorNext(ExecState* exec, IterationRecord iterationRecord, JSValue a
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (!result.isObject())
-        return throwTypeError(exec, scope, ASCIILiteral("Iterator result interface is not an object."));
+        return throwTypeError(exec, scope, "Iterator result interface is not an object."_s);
 
     return result;
 }
@@ -129,7 +129,7 @@ void iteratorClose(ExecState* exec, IterationRecord iterationRecord)
     RETURN_IF_EXCEPTION(throwScope, void());
 
     if (!innerResult.isObject()) {
-        throwTypeError(exec, throwScope, ASCIILiteral("Iterator result interface is not an object."));
+        throwTypeError(exec, throwScope, "Iterator result interface is not an object."_s);
         return;
     }
 }
@@ -168,7 +168,7 @@ bool hasIteratorMethod(ExecState& state, JSValue value)
     JSObject* object = asObject(value);
     CallData callData;
     CallType callType;
-    JSValue applyMethod = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, ASCIILiteral("Symbol.iterator property should be callable"));
+    JSValue applyMethod = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
 
     return !applyMethod.isUndefined();
@@ -181,7 +181,7 @@ JSValue iteratorMethod(ExecState& state, JSObject* object)
 
     CallData callData;
     CallType callType;
-    JSValue method = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, ASCIILiteral("Symbol.iterator property should be callable"));
+    JSValue method = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
     return method;

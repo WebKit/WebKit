@@ -865,13 +865,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 
@@ -894,13 +894,13 @@ inline String toProtocolString(TestProtocolRuntimeFarmAnimals value)
 {
     switch(value) {
     case TestProtocolRuntimeFarmAnimalsPigs:
-        return ASCIILiteral("Pigs");
+        return "Pigs"_s;
     case TestProtocolRuntimeFarmAnimalsCows:
-        return ASCIILiteral("Cows");
+        return "Cows"_s;
     case TestProtocolRuntimeFarmAnimalsCats:
-        return ASCIILiteral("Cats");
+        return "Cats"_s;
     case TestProtocolRuntimeFarmAnimalsHens:
-        return ASCIILiteral("Hens");
+        return "Hens"_s;
     }
 }
 
@@ -922,13 +922,13 @@ inline String toProtocolString(TestProtocolRuntimeTwoLeggedAnimals value)
 {
     switch(value) {
     case TestProtocolRuntimeTwoLeggedAnimalsDucks:
-        return ASCIILiteral("Ducks");
+        return "Ducks"_s;
     case TestProtocolRuntimeTwoLeggedAnimalsHens:
-        return ASCIILiteral("Hens");
+        return "Hens"_s;
     case TestProtocolRuntimeTwoLeggedAnimalsCrows:
-        return ASCIILiteral("Crows");
+        return "Crows"_s;
     case TestProtocolRuntimeTwoLeggedAnimalsFlamingos:
-        return ASCIILiteral("Flamingos");
+        return "Flamingos"_s;
     }
 }
 

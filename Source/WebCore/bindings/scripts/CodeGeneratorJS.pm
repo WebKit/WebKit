@@ -2181,7 +2181,7 @@ sub GenerateDefaultValue
         } elsif ($defaultValue eq "\"\"") {
             return $useAtomicString ? "emptyAtom()" : "emptyString()";
         } else {
-            return $useAtomicString ? "AtomicString(${defaultValue}, AtomicString::ConstructFromLiteral)" : "ASCIILiteral(${defaultValue})";
+            return $useAtomicString ? "AtomicString(${defaultValue}, AtomicString::ConstructFromLiteral)" : "${defaultValue}_s";
         }
     }
 
@@ -7191,7 +7191,7 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral(\"$visibleInterfaceName\"))), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(\"$visibleInterfaceName\"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n") if defined $leastConstructorLength;
 
     my $classForThis = "${className}::info()";
@@ -7400,7 +7400,7 @@ sub GenerateCallTracer()
         push(@$outputArray, join("\n", @$arguments));
     }
     push(@$outputArray, "\n");
-    push(@$outputArray, $indent . "    CallTracer::" . $callTracingCallback . "(impl, ASCIILiteral(\"" . $name . "\")");
+    push(@$outputArray, $indent . "    CallTracer::" . $callTracingCallback . "(impl, \"" . $name . "\"_s");
     if ($count) {
         push(@$outputArray, ", WTFMove(callTracerParameters)");
     }

@@ -421,7 +421,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
         return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
 
     if (!inRange)
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toExponential() argument must be between 0 and 20")));
+        return throwVMError(exec, scope, createRangeError(exec, "toExponential() argument must be between 0 and 20"_s));
 
     // Round if the argument is not undefined, always format as exponential.
     char buffer[WTF::NumberToStringBufferLength];
@@ -453,7 +453,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     bool inRange = getIntegerArgumentInRange(exec, 0, 20, decimalPlaces, isUndefined);
     RETURN_IF_EXCEPTION(scope, { });
     if (!inRange)
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toFixed() argument must be between 0 and 20")));
+        return throwVMError(exec, scope, createRangeError(exec, "toFixed() argument must be between 0 and 20"_s));
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
     // This also covers Ininity, and structure the check so that NaN
@@ -500,7 +500,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
         return JSValue::encode(jsNontrivialString(exec, String::numberToStringECMAScript(x)));
 
     if (!inRange)
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toPrecision() argument must be between 1 and 21")));
+        return throwVMError(exec, scope, createRangeError(exec, "toPrecision() argument must be between 1 and 21"_s));
 
     NumberToStringBuffer buffer;
     return JSValue::encode(jsString(exec, String(numberToFixedPrecisionString(x, significantFigures, buffer))));
@@ -629,7 +629,7 @@ int32_t extractToStringRadixArgument(ExecState* state, JSValue radixValue, Throw
             return static_cast<int32_t>(radixDouble);   
     }
 
-    throwRangeError(state, throwScope, ASCIILiteral("toString() radix argument must be between 2 and 36"));
+    throwRangeError(state, throwScope, "toString() radix argument must be between 2 and 36"_s);
     return 0;
 }
 

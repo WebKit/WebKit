@@ -144,7 +144,7 @@ void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceE
     else
         messageStart = "Cannot load ";
 
-    String messageEnd = error.isAccessControl() ? ASCIILiteral(" due to access control checks.") : ASCIILiteral(".");
+    String messageEnd = error.isAccessControl() ? " due to access control checks."_s : "."_s;
     context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString(messageStart, error.failingURL().string(), messageEnd));
 }
 

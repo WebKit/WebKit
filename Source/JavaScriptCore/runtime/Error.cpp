@@ -91,7 +91,7 @@ JSObject* createTypeError(ExecState* exec, const String& message, ErrorInstance:
 
 JSObject* createNotEnoughArgumentsError(ExecState* exec, ErrorInstance::SourceAppender appender)
 {
-    return createTypeError(exec, ASCIILiteral("Not enough arguments"), appender, TypeNothing);
+    return createTypeError(exec, "Not enough arguments"_s, appender, TypeNothing);
 }
 
 JSObject* createURIError(ExecState* exec, const String& message, ErrorInstance::SourceAppender appender)
@@ -283,7 +283,7 @@ JSObject* throwTypeError(ExecState* exec, ThrowScope& scope, const String& messa
 
 JSObject* throwSyntaxError(ExecState* exec, ThrowScope& scope)
 {
-    return throwException(exec, scope, createSyntaxError(exec, ASCIILiteral("Syntax error")));
+    return throwException(exec, scope, createSyntaxError(exec, "Syntax error"_s));
 }
 
 JSObject* throwSyntaxError(ExecState* exec, ThrowScope& scope, const String& message)
@@ -328,7 +328,7 @@ JSObject* createSyntaxError(ExecState* exec, const String& message)
 
 JSObject* createTypeError(ExecState* exec)
 {
-    return createTypeError(exec, ASCIILiteral("Type error"));
+    return createTypeError(exec, "Type error"_s);
 }
 
 JSObject* createTypeError(ExecState* exec, const String& message)
@@ -348,7 +348,7 @@ JSObject* createURIError(ExecState* exec, const String& message)
 
 JSObject* createOutOfMemoryError(ExecState* exec)
 {
-    auto* error = createError(exec, ASCIILiteral("Out of memory"), nullptr);
+    auto* error = createError(exec, "Out of memory"_s, nullptr);
     jsCast<ErrorInstance*>(error)->setOutOfMemoryError();
     return error;
 }

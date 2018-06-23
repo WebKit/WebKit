@@ -119,7 +119,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
     auto document = HTMLDocument::create(nullptr, URL());
     document->open();
-    document->write(nullptr, { ASCIILiteral("<!doctype html><html><head></head><body></body></html>") });
+    document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
         auto titleElement = HTMLTitleElement::create(titleTag, document);
         titleElement->appendChild(document->createTextNode(title));

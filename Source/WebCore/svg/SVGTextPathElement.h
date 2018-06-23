@@ -47,9 +47,9 @@ struct SVGPropertyTraits<SVGTextPathMethodType> {
         case SVGTextPathMethodUnknown:
             return emptyString();
         case SVGTextPathMethodAlign:
-            return ASCIILiteral("align");
+            return "align"_s;
         case SVGTextPathMethodStretch:
-            return ASCIILiteral("stretch");
+            return "stretch"_s;
         }
     
         ASSERT_NOT_REACHED();
@@ -76,9 +76,9 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
         case SVGTextPathSpacingUnknown:
             return emptyString();
         case SVGTextPathSpacingAuto:
-            return ASCIILiteral("auto");
+            return "auto"_s;
         case SVGTextPathSpacingExact:
-            return ASCIILiteral("exact");
+            return "exact"_s;
         }
 
         ASSERT_NOT_REACHED();

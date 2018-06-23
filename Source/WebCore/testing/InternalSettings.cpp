@@ -792,9 +792,9 @@ ExceptionOr<String> InternalSettings::userInterfaceDirectionPolicy()
         return Exception { InvalidAccessError };
     switch (settings().userInterfaceDirectionPolicy()) {
     case UserInterfaceDirectionPolicy::Content:
-        return String { ASCIILiteral { "Content" } };
+        return String { "Content"_s };
     case UserInterfaceDirectionPolicy::System:
-        return String { ASCIILiteral { "View" } };
+        return String { "View"_s };
     }
     ASSERT_NOT_REACHED();
     return Exception { InvalidAccessError };
@@ -821,9 +821,9 @@ ExceptionOr<String> InternalSettings::systemLayoutDirection()
         return Exception { InvalidAccessError };
     switch (settings().systemLayoutDirection()) {
     case LTR:
-        return String { ASCIILiteral { "LTR" } };
+        return String { "LTR"_s };
     case RTL:
-        return String { ASCIILiteral { "RTL" } };
+        return String { "RTL"_s };
     }
     ASSERT_NOT_REACHED();
     return Exception { InvalidAccessError };

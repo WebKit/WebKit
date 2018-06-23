@@ -1031,7 +1031,7 @@ String mimeTypeFromDataURL(const String& url)
         return emptyString();
     }
     if (index == 5)
-        return ASCIILiteral("text/plain");
+        return "text/plain"_s;
     ASSERT(index >= 5);
     return url.substring(5, index - 5).convertToASCIILowercase();
 }

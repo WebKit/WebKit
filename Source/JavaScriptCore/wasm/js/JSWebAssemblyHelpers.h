@@ -43,7 +43,7 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(ExecState* exec, JSValue value)
     RETURN_IF_EXCEPTION(throwScope, { });
     if (doubleValue < 0 || doubleValue > UINT_MAX) {
         throwException(exec, throwScope,
-            createRangeError(exec, ASCIILiteral("Expect an integer argument in the range: [0, 2^32 - 1]")));
+            createRangeError(exec, "Expect an integer argument in the range: [0, 2^32 - 1]"_s));
         return { };
     }
 
@@ -65,13 +65,13 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(ExecState
     JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicCast<JSArrayBufferView*>(vm, value.getObject()) : nullptr;
     if (!(arrayBuffer || arrayBufferView)) {
         throwException(exec, throwScope, createTypeError(exec,
-            ASCIILiteral("first argument must be an ArrayBufferView or an ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(vm, value)));
+            "first argument must be an ArrayBufferView or an ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(vm, value)));
         return { nullptr, 0 };
     }
 
     if (arrayBufferView ? arrayBufferView->isNeutered() : arrayBuffer->impl()->isNeutered()) {
         throwException(exec, throwScope, createTypeError(exec,
-            ASCIILiteral("underlying TypedArray has been detatched from the ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(vm, value)));
+            "underlying TypedArray has been detatched from the ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(vm, value)));
         return { nullptr, 0 };
     }
 

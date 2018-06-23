@@ -236,7 +236,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         if (m_url.port())
             message = makeString("WebSocket port ", String::number(m_url.port().value()), " blocked");
         else
-            message = ASCIILiteral("WebSocket without port blocked");
+            message = "WebSocket without port blocked"_s;
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
         m_state = CLOSED;
         return Exception { SecurityError };
@@ -397,7 +397,7 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
             return Exception { InvalidAccessError };
         CString utf8 = reason.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
         if (utf8.length() > maxReasonSizeInBytes) {
-            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("WebSocket close message is too long."));
+            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket close message is too long."_s);
             return Exception { SyntaxError };
         }
     }
@@ -449,9 +449,9 @@ String WebSocket::binaryType() const
 {
     switch (m_binaryType) {
     case BinaryType::Blob:
-        return ASCIILiteral("blob");
+        return "blob"_s;
     case BinaryType::ArrayBuffer:
-        return ASCIILiteral("arraybuffer");
+        return "arraybuffer"_s;
     }
     ASSERT_NOT_REACHED();
     return String();

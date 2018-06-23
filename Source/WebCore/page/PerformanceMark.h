@@ -36,7 +36,7 @@ public:
 
 private:
     PerformanceMark(const String& name, double startTime)
-        : PerformanceEntry(PerformanceEntry::Type::Mark, name, ASCIILiteral("mark"), startTime, startTime)
+        : PerformanceEntry(PerformanceEntry::Type::Mark, name, "mark"_s, startTime, startTime)
     {
     }
 

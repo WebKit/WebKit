@@ -229,7 +229,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             didFinishLoading(emptyMetrics);
             return completionHandler(WTFMove(newRequest));
         } else if (m_redirectCount++ >= options().maxRedirectCount) {
-            cancel(ResourceError(String(), 0, request().url(), ASCIILiteral("Too many redirections"), ResourceError::Type::General));
+            cancel(ResourceError(String(), 0, request().url(), "Too many redirections"_s, ResourceError::Type::General));
             return completionHandler(WTFMove(newRequest));
         }
 
@@ -554,7 +554,7 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
 
     // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 8 & 9.
     if (m_resource->isCrossOrigin() && !isValidCrossOriginRedirectionURL(newRequest.url())) {
-        errorMessage = ASCIILiteral("URL is either a non-HTTP URL or contains credentials.");
+        errorMessage = "URL is either a non-HTTP URL or contains credentials."_s;
         return false;
     }
 

@@ -799,7 +799,7 @@ std::optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(c
     FlattenedConstraint candidates;
     String failedConstraint;
     if (!selectSettings(constraints, candidates, failedConstraint, SelectType::ForApplyConstraints))
-        return { { failedConstraint, ASCIILiteral("Constraint not supported") } };
+        return { { failedConstraint, "Constraint not supported"_s } };
 
     applyConstraints(candidates);
     return std::nullopt;

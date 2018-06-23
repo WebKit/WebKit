@@ -338,10 +338,10 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const String& handle,
     std::optional<float> x;
     std::optional<float> y;
     if (optionalOriginObject) {
-        if (!(x = optionalOriginObject->getNumber<float>(WTF::ASCIILiteral("x"))))
+        if (!(x = optionalOriginObject->getNumber<float>("x"_s)))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'x' parameter was not found or invalid.");
 
-        if (!(y = optionalOriginObject->getNumber<float>(WTF::ASCIILiteral("y"))))
+        if (!(y = optionalOriginObject->getNumber<float>("y"_s)))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'y' parameter was not found or invalid.");
 
         if (x.value() < 0)
@@ -354,10 +354,10 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const String& handle,
     std::optional<float> width;
     std::optional<float> height;
     if (optionalSizeObject) {
-        if (!(width = optionalSizeObject->getNumber<float>(WTF::ASCIILiteral("width"))))
+        if (!(width = optionalSizeObject->getNumber<float>("width"_s)))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'width' parameter was not found or invalid.");
 
-        if (!(height = optionalSizeObject->getNumber<float>(WTF::ASCIILiteral("height"))))
+        if (!(height = optionalSizeObject->getNumber<float>("height"_s)))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'height' parameter was not found or invalid.");
 
         if (width.value() < 0)
@@ -1305,14 +1305,14 @@ void WebAutomationSession::addSingleCookie(const String& browsingContextHandle, 
 
     WebCore::Cookie cookie;
 
-    if (!cookieObject.getString(WTF::ASCIILiteral("name"), cookie.name))
+    if (!cookieObject.getString("name"_s, cookie.name))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'name' was not found.");
 
-    if (!cookieObject.getString(WTF::ASCIILiteral("value"), cookie.value))
+    if (!cookieObject.getString("value"_s, cookie.value))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'value' was not found.");
 
     String domain;
-    if (!cookieObject.getString(WTF::ASCIILiteral("domain"), domain))
+    if (!cookieObject.getString("domain"_s, domain))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'domain' was not found.");
 
     // Inherit the domain/host from the main frame's URL if it is not explicitly set.
@@ -1321,22 +1321,22 @@ void WebAutomationSession::addSingleCookie(const String& browsingContextHandle, 
 
     cookie.domain = domainByAddingDotPrefixIfNeeded(domain);
 
-    if (!cookieObject.getString(WTF::ASCIILiteral("path"), cookie.path))
+    if (!cookieObject.getString("path"_s, cookie.path))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'path' was not found.");
 
     double expires;
-    if (!cookieObject.getDouble(WTF::ASCIILiteral("expires"), expires))
+    if (!cookieObject.getDouble("expires"_s, expires))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'expires' was not found.");
 
     cookie.expires = expires * 1000.0;
 
-    if (!cookieObject.getBoolean(WTF::ASCIILiteral("secure"), cookie.secure))
+    if (!cookieObject.getBoolean("secure"_s, cookie.secure))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'secure' was not found.");
 
-    if (!cookieObject.getBoolean(WTF::ASCIILiteral("session"), cookie.session))
+    if (!cookieObject.getBoolean("session"_s, cookie.session))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'session' was not found.");
 
-    if (!cookieObject.getBoolean(WTF::ASCIILiteral("httpOnly"), cookie.httpOnly))
+    if (!cookieObject.getBoolean("httpOnly"_s, cookie.httpOnly))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'httpOnly' was not found.");
 
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
@@ -1384,7 +1384,7 @@ void WebAutomationSession::setSessionPermissions(ErrorString& errorString, const
             SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permissions' is invalid.");
 
         String permissionName;
-        if (!permission->getString(WTF::ASCIILiteral("permission"), permissionName))
+        if (!permission->getString("permission"_s, permissionName))
             SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' is missing or invalid.");
 
         auto parsedPermissionName = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::SessionPermission>(permissionName);
@@ -1392,7 +1392,7 @@ void WebAutomationSession::setSessionPermissions(ErrorString& errorString, const
             SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' has an unknown value.");
 
         bool permissionValue;
-        if (!permission->getBoolean(WTF::ASCIILiteral("value"), permissionValue))
+        if (!permission->getBoolean("value"_s, permissionValue))
             SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'value' is missing or invalid.");
 
         switch (parsedPermissionName.value()) {
@@ -1542,11 +1542,11 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
     float x;
-    if (!requestedPositionObject.getDouble(WTF::ASCIILiteral("x"), x))
+    if (!requestedPositionObject.getDouble("x"_s, x))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'x' was not found.");
 
     float y;
-    if (!requestedPositionObject.getDouble(WTF::ASCIILiteral("y"), y))
+    if (!requestedPositionObject.getDouble("y"_s, y))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'y' was not found.");
 
     WebEvent::Modifiers keyModifiers = (WebEvent::Modifiers)0;
@@ -1628,14 +1628,14 @@ void WebAutomationSession::performKeyboardInteractions(const String& handle, con
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter was invalid.");
 
         String interactionTypeString;
-        if (!interactionObject->getString(ASCIILiteral("type"), interactionTypeString))
+        if (!interactionObject->getString("type"_s, interactionTypeString))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter is missing the 'type' key.");
         auto interactionType = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::KeyboardInteractionType>(interactionTypeString);
         if (!interactionType)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'type' key.");
 
         String virtualKeyString;
-        bool foundVirtualKey = interactionObject->getString(ASCIILiteral("key"), virtualKeyString);
+        bool foundVirtualKey = interactionObject->getString("key"_s, virtualKeyString);
         if (foundVirtualKey) {
             auto virtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(virtualKeyString);
             if (!virtualKey)
@@ -1647,7 +1647,7 @@ void WebAutomationSession::performKeyboardInteractions(const String& handle, con
         }
 
         String keySequence;
-        bool foundKeySequence = interactionObject->getString(ASCIILiteral("text"), keySequence);
+        bool foundKeySequence = interactionObject->getString("text"_s, keySequence);
         if (foundKeySequence) {
             switch (interactionType.value()) {
             case Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress:
@@ -1735,11 +1735,11 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter was invalid.");
         
         String sourceId;
-        if (!inputSourceObject->getString(ASCIILiteral("sourceId"), sourceId))
+        if (!inputSourceObject->getString("sourceId"_s, sourceId))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter is missing a 'sourceId'.");
 
         String sourceType;
-        if (!inputSourceObject->getString(ASCIILiteral("sourceType"), sourceType))
+        if (!inputSourceObject->getString("sourceType"_s, sourceType))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter is missing a 'sourceType'.");
 
         auto parsedInputSourceType = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::InputSourceType>(sourceType);
@@ -1770,7 +1770,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A step in the 'steps' parameter was not an object.");
 
         RefPtr<JSON::Array> stepStates;
-        if (!stepObject->getArray(ASCIILiteral("states"), stepStates))
+        if (!stepObject->getArray("states"_s, stepStates))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A step is missing the 'states' property.");
 
         Vector<SimulatedInputKeyFrame::StateEntry> entries;
@@ -1782,7 +1782,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered a non-object step state.");
 
             String sourceId;
-            if (!stateObject->getString(ASCIILiteral("sourceId"), sourceId))
+            if (!stateObject->getString("sourceId"_s, sourceId))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Step state lacks required 'sourceId' property.");
 
             if (!sourceIdToInputSourceMap.contains(sourceId))
@@ -1792,39 +1792,39 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
             SimulatedInputSourceState sourceState { };
 
             String pressedCharKeyString;
-            if (stateObject->getString(ASCIILiteral("pressedCharKey"), pressedCharKeyString))
+            if (stateObject->getString("pressedCharKey"_s, pressedCharKeyString))
                 sourceState.pressedCharKey = pressedCharKeyString.characterAt(0);
 
             String pressedVirtualKeyString;
-            if (stateObject->getString(ASCIILiteral("pressedVirtualKey"), pressedVirtualKeyString))
+            if (stateObject->getString("pressedVirtualKey"_s, pressedVirtualKeyString))
                 sourceState.pressedVirtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(pressedVirtualKeyString);
 
             String pressedButtonString;
-            if (stateObject->getString(ASCIILiteral("pressedButton"), pressedButtonString)) {
+            if (stateObject->getString("pressedButton"_s, pressedButtonString)) {
                 auto protocolButton = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseButton>(pressedButtonString);
                 sourceState.pressedMouseButton = protocolMouseButtonToWebMouseEventButton(protocolButton.value_or(Inspector::Protocol::Automation::MouseButton::None));
             }
 
             String originString;
-            if (stateObject->getString(ASCIILiteral("origin"), originString))
+            if (stateObject->getString("origin"_s, originString))
                 sourceState.origin = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseMoveOrigin>(originString);
 
             if (sourceState.origin && sourceState.origin.value() == Inspector::Protocol::Automation::MouseMoveOrigin::Element) {
                 String nodeHandleString;
-                if (!stateObject->getString(ASCIILiteral("nodeHandle"), nodeHandleString))
+                if (!stateObject->getString("nodeHandle"_s, nodeHandleString))
                     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Node handle not provided for 'Element' origin");
                 sourceState.nodeHandle = nodeHandleString;
             }
 
             RefPtr<JSON::Object> locationObject;
-            if (stateObject->getObject(ASCIILiteral("location"), locationObject)) {
+            if (stateObject->getObject("location"_s, locationObject)) {
                 int x, y;
-                if (locationObject->getInteger(ASCIILiteral("x"), x) && locationObject->getInteger(ASCIILiteral("y"), y))
+                if (locationObject->getInteger("x"_s, x) && locationObject->getInteger("y"_s, y))
                     sourceState.location = WebCore::IntPoint(x, y);
             }
 
             int parsedDuration;
-            if (stateObject->getInteger(ASCIILiteral("duration"), parsedDuration))
+            if (stateObject->getInteger("duration"_s, parsedDuration))
                 sourceState.duration = Seconds::fromMilliseconds(parsedDuration);
 
             entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource, sourceState });

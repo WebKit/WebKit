@@ -282,10 +282,10 @@ String StackVisitor::Frame::functionName() const
         traceLine = makeString(m_wasmFunctionIndexOrName);
         break;
     case CodeType::Eval:
-        traceLine = ASCIILiteral("eval code");
+        traceLine = "eval code"_s;
         break;
     case CodeType::Module:
-        traceLine = ASCIILiteral("module code");
+        traceLine = "module code"_s;
         break;
     case CodeType::Native: {
         JSCell* callee = this->callee().asCell();
@@ -297,7 +297,7 @@ String StackVisitor::Frame::functionName() const
         traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(this->callee().asCell())).impl();
         break;
     case CodeType::Global:
-        traceLine = ASCIILiteral("global code");
+        traceLine = "global code"_s;
         break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;
@@ -318,10 +318,10 @@ String StackVisitor::Frame::sourceURL() const
         break;
     }
     case CodeType::Native:
-        traceLine = ASCIILiteral("[native code]");
+        traceLine = "[native code]"_s;
         break;
     case CodeType::Wasm:
-        traceLine = ASCIILiteral("[wasm code]");
+        traceLine = "[wasm code]"_s;
         break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;

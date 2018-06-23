@@ -141,7 +141,7 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     request.setURL(location.isEmpty() ? URL { } : URL { redirectResponse.url(), location });
 
     if (shouldUseGet(*this, redirectResponse)) {
-        request.setHTTPMethod(ASCIILiteral("GET"));
+        request.setHTTPMethod("GET"_s);
         request.setHTTPBody(nullptr);
         request.clearHTTPContentType();
         request.m_httpHeaderFields.remove(HTTPHeaderName::ContentLength);

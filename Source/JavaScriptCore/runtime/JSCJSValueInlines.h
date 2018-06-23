@@ -671,7 +671,7 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!value.isString()) {
-        throwTypeError(exec, scope, ASCIILiteral("Primitive hint is not a string."));
+        throwTypeError(exec, scope, "Primitive hint is not a string."_s);
         return NoPreference;
     }
 
@@ -685,7 +685,7 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue 
     if (WTF::equal(hintString, "string"))
         return PreferString;
 
-    throwTypeError(exec, scope, ASCIILiteral("Expected primitive hint to match one of 'default', 'number', 'string'."));
+    throwTypeError(exec, scope, "Expected primitive hint to match one of 'default', 'number', 'string'."_s);
     return NoPreference;
 }
 

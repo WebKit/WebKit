@@ -54,12 +54,12 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
 
     // If browser options are provided, binary is required.
     String binary;
-    if (!browserOptions->getString(ASCIILiteral("binary"), binary))
+    if (!browserOptions->getString("binary"_s, binary))
         return false;
 
     RefPtr<JSON::Value> browserArgumentsValue;
     RefPtr<JSON::Array> browserArguments;
-    if (browserOptions->getValue(ASCIILiteral("args"), browserArgumentsValue) && !browserArgumentsValue->asArray(browserArguments))
+    if (browserOptions->getValue("args"_s, browserArgumentsValue) && !browserArgumentsValue->asArray(browserArguments))
         return false;
 
     unsigned browserArgumentsLength = browserArguments->length();
@@ -81,18 +81,18 @@ bool WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON:
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
     capabilities.browserBinary = String("MiniBrowser");
-    capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
+    capabilities.browserArguments = Vector<String> { "--automation"_s };
 
     RefPtr<JSON::Object> browserOptions;
-    if (!matchedCapabilities.getObject(ASCIILiteral("wpe:browserOptions"), browserOptions))
+    if (!matchedCapabilities.getObject("wpe:browserOptions"_s, browserOptions))
         return;
 
     String browserBinary;
-    if (browserOptions->getString(ASCIILiteral("binary"), browserBinary))
+    if (browserOptions->getString("binary"_s, browserBinary))
         capabilities.browserBinary = browserBinary;
 
     RefPtr<JSON::Array> browserArguments;
-    if (browserOptions->getArray(ASCIILiteral("args"), browserArguments) && browserArguments->length()) {
+    if (browserOptions->getArray("args"_s, browserArguments) && browserArguments->length()) {
         unsigned browserArgumentsLength = browserArguments->length();
         capabilities.browserArguments = Vector<String>();
         capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);

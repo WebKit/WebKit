@@ -297,7 +297,7 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     // Implement formatters for properties we care about.
     if (!strcmp(propertyName, "margin-left")) {
         if (style->marginLeft().isAuto())
-            return ASCIILiteral { "auto" };
+            return "auto"_s;
         return String::number(style->marginLeft().value());
     }
     if (!strcmp(propertyName, "line-height"))

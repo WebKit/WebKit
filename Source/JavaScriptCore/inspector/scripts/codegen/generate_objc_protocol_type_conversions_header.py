@@ -147,7 +147,7 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         lines.append('    switch(value) {')
         for enum_value in enum_values:
             lines.append('    case %s%s:' % (objc_enum_name, Generator.stylized_name_for_enum_value(enum_value)))
-            lines.append('        return ASCIILiteral("%s");' % enum_value)
+            lines.append('        return "%s"_s;' % enum_value)
         lines.append('    }')
         lines.append('}')
         return '\n'.join(lines)

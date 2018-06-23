@@ -61,7 +61,7 @@ static ALWAYS_INLINE JSWebAssemblyTable* getTable(ExecState* exec, VM& vm, JSVal
     JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(vm, v);
     if (!result) {
         throwException(exec, throwScope, 
-            createTypeError(exec, ASCIILiteral("expected |this| value to be an instance of WebAssembly.Table")));
+            createTypeError(exec, "expected |this| value to be an instance of WebAssembly.Table"_s));
         return nullptr;
     }
     return result;
@@ -91,7 +91,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(ExecState* exe
     uint32_t oldLength = table->length();
 
     if (!table->grow(delta))
-        return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Table.prototype.grow could not grow the table"))));
+        return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Table.prototype.grow could not grow the table"_s)));
 
     return JSValue::encode(jsNumber(oldLength));
 }
@@ -107,7 +107,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(ExecState* exec
     uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (index >= table->length())
-        return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Table.prototype.get expects an integer less than the length of the table"))));
+        return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s)));
 
     if (JSObject* result = table->getFunction(index))
         return JSValue::encode(result);
@@ -126,13 +126,13 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState* exec
     WebAssemblyFunction* wasmFunction;
     WebAssemblyWrapperFunction* wasmWrapperFunction;
     if (!value.isNull() && !isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction))
-        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"))));
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"_s)));
 
     uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (index >= table->length())
-        return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Table.prototype.set expects an integer less than the length of the table"))));
+        return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s)));
 
     if (value.isNull())
         table->clearFunction(index);

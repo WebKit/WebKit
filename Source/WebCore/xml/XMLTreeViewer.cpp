@@ -61,7 +61,7 @@ void XMLTreeViewer::transformDocumentToTreeView()
 
     String cssString = StringImpl::createWithoutCopying(XMLViewer_css, sizeof(XMLViewer_css));
     auto text = m_document.createTextNode(cssString);
-    m_document.getElementById(String(ASCIILiteral("xml-viewer-style")))->appendChild(text);
+    m_document.getElementById(String("xml-viewer-style"_s))->appendChild(text);
     m_document.styleScope().didChangeActiveStyleSheetCandidates();
 }
 

@@ -354,14 +354,14 @@ public:
         Builder<STATE | OneSet>& setOne(double value)
         {
             COMPILE_ASSERT(!(STATE & OneSet), property_one_already_set);
-            m_result->setDouble(ASCIILiteral("one"), value);
+            m_result->setDouble("one"_s, value);
             return castState<OneSet>();
         }
 
         Builder<STATE | TwoSet>& setTwo(double value)
         {
             COMPILE_ASSERT(!(STATE & TwoSet), property_two_already_set);
-            m_result->setDouble(ASCIILiteral("two"), value);
+            m_result->setDouble("two"_s, value);
             return castState<TwoSet>();
         }
 
@@ -418,14 +418,14 @@ public:
         Builder<STATE | AlphaSet>& setAlpha(double value)
         {
             COMPILE_ASSERT(!(STATE & AlphaSet), property_alpha_already_set);
-            m_result->setDouble(ASCIILiteral("alpha"), value);
+            m_result->setDouble("alpha"_s, value);
             return castState<AlphaSet>();
         }
 
         Builder<STATE | BetaSet>& setBeta(double value)
         {
             COMPILE_ASSERT(!(STATE & BetaSet), property_beta_already_set);
-            m_result->setDouble(ASCIILiteral("beta"), value);
+            m_result->setDouble("beta"_s, value);
             return castState<BetaSet>();
         }
 
@@ -906,13 +906,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 

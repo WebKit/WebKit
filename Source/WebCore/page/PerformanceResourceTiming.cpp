@@ -73,7 +73,7 @@ Ref<PerformanceResourceTiming> PerformanceResourceTiming::create(MonotonicTime t
 }
 
 PerformanceResourceTiming::PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&& resourceTiming)
-    : PerformanceEntry(PerformanceEntry::Type::Resource, resourceTiming.url().string(), ASCIILiteral("resource"), entryStartTime(timeOrigin, resourceTiming), entryEndTime(timeOrigin, resourceTiming))
+    : PerformanceEntry(PerformanceEntry::Type::Resource, resourceTiming.url().string(), "resource"_s, entryStartTime(timeOrigin, resourceTiming), entryEndTime(timeOrigin, resourceTiming))
     , m_initiatorType(resourceTiming.initiator())
     , m_timeOrigin(timeOrigin)
     , m_loadTiming(resourceTiming.loadTiming())

@@ -40,7 +40,7 @@ String systemMarketingVersionForUserAgentString()
 
 String userAgentBundleVersion()
 {
-    return ASCIILiteral("605.1.15");
+    return "605.1.15"_s;
 }
 
 } // namespace WebCore

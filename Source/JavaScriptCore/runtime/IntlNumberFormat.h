@@ -72,8 +72,8 @@ private:
     };
 
     void createNumberFormat(ExecState&);
-    static const char* styleString(Style);
-    static const char* currencyDisplayString(CurrencyDisplay);
+    static ASCIILiteral styleString(Style);
+    static ASCIILiteral currencyDisplayString(CurrencyDisplay);
 
     String m_locale;
     String m_numberingSystem;
@@ -105,7 +105,7 @@ private:
         };
     };
 
-    static const char* partTypeString(UNumberFormatFields, double);
+    static ASCIILiteral partTypeString(UNumberFormatFields, double);
 #endif
 };
 

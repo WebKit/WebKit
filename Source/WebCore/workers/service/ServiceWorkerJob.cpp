@@ -96,7 +96,7 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
 
     ResourceRequest request { m_jobData.scriptURL };
     request.setInitiatorIdentifier("serviceWorkerScriptLoad:");
-    request.addHTTPHeaderField(ASCIILiteral("Service-Worker"), ASCIILiteral("script"));
+    request.addHTTPHeaderField("Service-Worker"_s, "script"_s);
 
     FetchOptions options;
     options.mode = FetchOptions::Mode::SameOrigin;
@@ -115,9 +115,9 @@ void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse&
     // Extract a MIME type from the response's header list. If this MIME type (ignoring parameters) is not a JavaScript MIME type, then:
     if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(response.mimeType())) {
         // Invoke Reject Job Promise with job and "SecurityError" DOMException.
-        Exception exception { SecurityError, ASCIILiteral("MIME Type is not a JavaScript MIME type") };
+        Exception exception { SecurityError, "MIME Type is not a JavaScript MIME type"_s };
         // Asynchronously complete these steps with a network error.
-        ResourceError error { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Unexpected MIME type") };
+        ResourceError error { errorDomainWebKitInternal, 0, response.url(), "Unexpected MIME type"_s };
         m_client->jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
         m_scriptLoader = nullptr;
     }
@@ -133,8 +133,8 @@ void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse&
     }
     String scopeString = m_jobData.scopeURL.path();
     if (!scopeString.startsWith(maxScopeString)) {
-        Exception exception { SecurityError, ASCIILiteral("Scope URL should start with the given script URL") };
-        ResourceError error { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Scope URL should start with the given script URL") };
+        Exception exception { SecurityError, "Scope URL should start with the given script URL"_s };
+        ResourceError error { errorDomainWebKitInternal, 0, response.url(), "Scope URL should start with the given script URL"_s };
         m_client->jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
         m_scriptLoader = nullptr;
     }

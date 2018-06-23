@@ -27,7 +27,7 @@ namespace WebCore {
 
 String CSSInitialValue::customCSSText() const
 {
-    return ASCIILiteral("initial");
+    return "initial"_s;
 }
 
 } // namespace WebCore

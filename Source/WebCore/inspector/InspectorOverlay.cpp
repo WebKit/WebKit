@@ -266,9 +266,9 @@ void InspectorOverlay::setIndicating(bool indicating)
     m_indicating = indicating;
 
     if (m_indicating)
-        evaluateInOverlay(ASCIILiteral("showPageIndication"));
+        evaluateInOverlay("showPageIndication"_s);
     else
-        evaluateInOverlay(ASCIILiteral("hidePageIndication"));
+        evaluateInOverlay("hidePageIndication"_s);
 
     update();
 }
@@ -436,12 +436,12 @@ void InspectorOverlay::drawPaintRects()
     for (const auto& pair : m_paintRects)
         arrayOfRects->addItem(buildObjectForRect(pair.second));
 
-    evaluateInOverlay(ASCIILiteral("updatePaintRects"), WTFMove(arrayOfRects));
+    evaluateInOverlay("updatePaintRects"_s, WTFMove(arrayOfRects));
 }
 
 void InspectorOverlay::drawRulers()
 {
-    evaluateInOverlay(ASCIILiteral("drawRulers"));
+    evaluateInOverlay("drawRulers"_s);
 }
 
 static RefPtr<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::FragmentHighlightData>> buildArrayForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
@@ -489,23 +489,23 @@ static void appendPathSegment(PathApplyInfo& pathApplyInfo, const PathElement& p
     switch (pathElement.type) {
     // The points member will contain 1 value.
     case PathElementMoveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("M"), pathElement.points, 1);
+        appendPathCommandAndPoints(pathApplyInfo, "M"_s, pathElement.points, 1);
         break;
     // The points member will contain 1 value.
     case PathElementAddLineToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("L"), pathElement.points, 1);
+        appendPathCommandAndPoints(pathApplyInfo, "L"_s, pathElement.points, 1);
         break;
     // The points member will contain 3 values.
     case PathElementAddCurveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("C"), pathElement.points, 3);
+        appendPathCommandAndPoints(pathApplyInfo, "C"_s, pathElement.points, 3);
         break;
     // The points member will contain 2 values.
     case PathElementAddQuadCurveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("Q"), pathElement.points, 2);
+        appendPathCommandAndPoints(pathApplyInfo, "Q"_s, pathElement.points, 2);
         break;
     // The points member will contain no values.
     case PathElementCloseSubpath:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("Z"), nullptr, 0);
+        appendPathCommandAndPoints(pathApplyInfo, "Z"_s, nullptr, 0);
         break;
     }
 }

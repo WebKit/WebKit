@@ -384,14 +384,14 @@ public:
         Builder<STATE | MessageSet>& setMessage(const String& value)
         {
             COMPILE_ASSERT(!(STATE & MessageSet), property_message_already_set);
-            m_result->setString(ASCIILiteral("message"), value);
+            m_result->setString("message"_s, value);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int value)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setInteger(ASCIILiteral("code"), value);
+            m_result->setInteger("code"_s, value);
             return castState<CodeSet>();
         }
 
@@ -477,47 +477,47 @@ public:
 
     void setColumnNames(RefPtr<JSON::ArrayOf<String>> value)
     {
-        JSON::ObjectBase::setArray(ASCIILiteral("columnNames"), WTFMove(value));
+        JSON::ObjectBase::setArray("columnNames"_s, WTFMove(value));
     }
 
     void setButtons(RefPtr<JSON::ArrayOf<Inspector::Protocol::Database::MouseButton>> value)
     {
-        JSON::ObjectBase::setArray(ASCIILiteral("buttons"), WTFMove(value));
+        JSON::ObjectBase::setArray("buttons"_s, WTFMove(value));
     }
 
     void setDirectionality(Directionality value)
     {
-        JSON::ObjectBase::setString(ASCIILiteral("directionality"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+        JSON::ObjectBase::setString("directionality"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
     }
 
     void setNotes(const String& value)
     {
-        JSON::ObjectBase::setString(ASCIILiteral("notes"), value);
+        JSON::ObjectBase::setString("notes"_s, value);
     }
 
     void setTimestamp(double value)
     {
-        JSON::ObjectBase::setDouble(ASCIILiteral("timestamp"), value);
+        JSON::ObjectBase::setDouble("timestamp"_s, value);
     }
 
     void setValues(RefPtr<JSON::Object> value)
     {
-        JSON::ObjectBase::setObject(ASCIILiteral("values"), WTFMove(value));
+        JSON::ObjectBase::setObject("values"_s, WTFMove(value));
     }
 
     void setPayload(RefPtr<JSON::Value> value)
     {
-        JSON::ObjectBase::setValue(ASCIILiteral("payload"), WTFMove(value));
+        JSON::ObjectBase::setValue("payload"_s, WTFMove(value));
     }
 
     void setError(RefPtr<Inspector::Protocol::Database::Error> value)
     {
-        JSON::ObjectBase::setObject(ASCIILiteral("error"), WTFMove(value));
+        JSON::ObjectBase::setObject("error"_s, WTFMove(value));
     }
 
     void setErrorList(RefPtr<Inspector::Protocol::Database::ErrorList> value)
     {
-        JSON::ObjectBase::setArray(ASCIILiteral("errorList"), WTFMove(value));
+        JSON::ObjectBase::setArray("errorList"_s, WTFMove(value));
     }
 };
 
@@ -563,63 +563,63 @@ public:
         Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<JSON::ArrayOf<String>> value)
         {
             COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
-            m_result->setArray(ASCIILiteral("columnNames"), value);
+            m_result->setArray("columnNames"_s, value);
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(RefPtr<JSON::ArrayOf<Inspector::Protocol::Database::MouseButton>> value)
         {
             COMPILE_ASSERT(!(STATE & ButtonsSet), property_buttons_already_set);
-            m_result->setArray(ASCIILiteral("buttons"), value);
+            m_result->setArray("buttons"_s, value);
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality value)
         {
             COMPILE_ASSERT(!(STATE & DirectionalitySet), property_directionality_already_set);
-            m_result->setString(ASCIILiteral("directionality"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+            m_result->setString("directionality"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
             return castState<DirectionalitySet>();
         }
 
         Builder<STATE | NotesSet>& setNotes(const String& value)
         {
             COMPILE_ASSERT(!(STATE & NotesSet), property_notes_already_set);
-            m_result->setString(ASCIILiteral("notes"), value);
+            m_result->setString("notes"_s, value);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double value)
         {
             COMPILE_ASSERT(!(STATE & TimestampSet), property_timestamp_already_set);
-            m_result->setDouble(ASCIILiteral("timestamp"), value);
+            m_result->setDouble("timestamp"_s, value);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(RefPtr<JSON::Object> value)
         {
             COMPILE_ASSERT(!(STATE & ValuesSet), property_values_already_set);
-            m_result->setObject(ASCIILiteral("values"), value);
+            m_result->setObject("values"_s, value);
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(RefPtr<JSON::Value> value)
         {
             COMPILE_ASSERT(!(STATE & PayloadSet), property_payload_already_set);
-            m_result->setValue(ASCIILiteral("payload"), value);
+            m_result->setValue("payload"_s, value);
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(RefPtr<Inspector::Protocol::Database::Error> value)
         {
             COMPILE_ASSERT(!(STATE & ErrorSet), property_error_already_set);
-            m_result->setObject(ASCIILiteral("error"), value);
+            m_result->setObject("error"_s, value);
             return castState<ErrorSet>();
         }
 
         Builder<STATE | ErrorListSet>& setErrorList(RefPtr<Inspector::Protocol::Database::ErrorList> value)
         {
             COMPILE_ASSERT(!(STATE & ErrorListSet), property_errorList_already_set);
-            m_result->setArray(ASCIILiteral("errorList"), value);
+            m_result->setArray("errorList"_s, value);
             return castState<ErrorListSet>();
         }
 
@@ -687,35 +687,35 @@ public:
         Builder<STATE | IntegerSet>& setInteger(const String& value)
         {
             COMPILE_ASSERT(!(STATE & IntegerSet), property_integer_already_set);
-            m_result->setString(ASCIILiteral("integer"), value);
+            m_result->setString("integer"_s, value);
             return castState<IntegerSet>();
         }
 
         Builder<STATE | ArraySet>& setArray(const String& value)
         {
             COMPILE_ASSERT(!(STATE & ArraySet), property_array_already_set);
-            m_result->setString(ASCIILiteral("array"), value);
+            m_result->setString("array"_s, value);
             return castState<ArraySet>();
         }
 
         Builder<STATE | StringSet>& setString(const String& value)
         {
             COMPILE_ASSERT(!(STATE & StringSet), property_string_already_set);
-            m_result->setString(ASCIILiteral("string"), value);
+            m_result->setString("string"_s, value);
             return castState<StringSet>();
         }
 
         Builder<STATE | ValueSet>& setValue(const String& value)
         {
             COMPILE_ASSERT(!(STATE & ValueSet), property_value_already_set);
-            m_result->setString(ASCIILiteral("value"), value);
+            m_result->setString("value"_s, value);
             return castState<ValueSet>();
         }
 
         Builder<STATE | ObjectSet>& setObject(const String& value)
         {
             COMPILE_ASSERT(!(STATE & ObjectSet), property_object_already_set);
-            m_result->setString(ASCIILiteral("object"), value);
+            m_result->setString("object"_s, value);
             return castState<ObjectSet>();
         }
 
@@ -789,56 +789,56 @@ public:
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality value)
         {
             COMPILE_ASSERT(!(STATE & DirectionalitySet), property_directionality_already_set);
-            m_result->setString(ASCIILiteral("directionality"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+            m_result->setString("directionality"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
             return castState<DirectionalitySet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(RefPtr<JSON::ArrayOf<Inspector::Protocol::Database::MouseButton>> value)
         {
             COMPILE_ASSERT(!(STATE & ButtonsSet), property_buttons_already_set);
-            m_result->setArray(ASCIILiteral("buttons"), value);
+            m_result->setArray("buttons"_s, value);
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<JSON::ArrayOf<String>> value)
         {
             COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
-            m_result->setArray(ASCIILiteral("columnNames"), value);
+            m_result->setArray("columnNames"_s, value);
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | NotesSet>& setNotes(const String& value)
         {
             COMPILE_ASSERT(!(STATE & NotesSet), property_notes_already_set);
-            m_result->setString(ASCIILiteral("notes"), value);
+            m_result->setString("notes"_s, value);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double value)
         {
             COMPILE_ASSERT(!(STATE & TimestampSet), property_timestamp_already_set);
-            m_result->setDouble(ASCIILiteral("timestamp"), value);
+            m_result->setDouble("timestamp"_s, value);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(RefPtr<JSON::Object> value)
         {
             COMPILE_ASSERT(!(STATE & ValuesSet), property_values_already_set);
-            m_result->setObject(ASCIILiteral("values"), value);
+            m_result->setObject("values"_s, value);
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(RefPtr<JSON::Value> value)
         {
             COMPILE_ASSERT(!(STATE & PayloadSet), property_payload_already_set);
-            m_result->setValue(ASCIILiteral("payload"), value);
+            m_result->setValue("payload"_s, value);
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(RefPtr<Inspector::Protocol::Database::Error> value)
         {
             COMPILE_ASSERT(!(STATE & ErrorSet), property_error_already_set);
-            m_result->setObject(ASCIILiteral("error"), value);
+            m_result->setObject("error"_s, value);
             return castState<ErrorSet>();
         }
 
@@ -1500,13 +1500,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 
@@ -1529,13 +1529,13 @@ inline String toProtocolString(TestProtocolDatabaseMouseButton value)
 {
     switch(value) {
     case TestProtocolDatabaseMouseButtonNone:
-        return ASCIILiteral("None");
+        return "None"_s;
     case TestProtocolDatabaseMouseButtonLeft:
-        return ASCIILiteral("Left");
+        return "Left"_s;
     case TestProtocolDatabaseMouseButtonMiddle:
-        return ASCIILiteral("Middle");
+        return "Middle"_s;
     case TestProtocolDatabaseMouseButtonRight:
-        return ASCIILiteral("Right");
+        return "Right"_s;
     }
 }
 
@@ -1557,9 +1557,9 @@ inline String toProtocolString(TestProtocolDatabaseOptionalParameterBundleDirect
 {
     switch(value) {
     case TestProtocolDatabaseOptionalParameterBundleDirectionalityLTR:
-        return ASCIILiteral("LTR");
+        return "LTR"_s;
     case TestProtocolDatabaseOptionalParameterBundleDirectionalityRTL:
-        return ASCIILiteral("RTL");
+        return "RTL"_s;
     }
 }
 
@@ -1577,9 +1577,9 @@ inline String toProtocolString(TestProtocolDatabaseParameterBundleDirectionality
 {
     switch(value) {
     case TestProtocolDatabaseParameterBundleDirectionalityLTR:
-        return ASCIILiteral("LTR");
+        return "LTR"_s;
     case TestProtocolDatabaseParameterBundleDirectionalityRTL:
-        return ASCIILiteral("RTL");
+        return "RTL"_s;
     }
 }
 
@@ -1598,9 +1598,9 @@ inline String toProtocolString(TestProtocolTestParameterBundleDirectionality val
 {
     switch(value) {
     case TestProtocolTestParameterBundleDirectionalityLTR:
-        return ASCIILiteral("LTR");
+        return "LTR"_s;
     case TestProtocolTestParameterBundleDirectionalityRTL:
-        return ASCIILiteral("RTL");
+        return "RTL"_s;
     }
 }
 

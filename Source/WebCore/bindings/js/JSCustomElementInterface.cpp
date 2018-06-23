@@ -134,29 +134,29 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
     ASSERT(!newElement.isEmpty());
     HTMLElement* wrappedElement = JSHTMLElement::toWrapped(vm, newElement);
     if (!wrappedElement) {
-        throwTypeError(&state, scope, ASCIILiteral("The result of constructing a custom element must be a HTMLElement"));
+        throwTypeError(&state, scope, "The result of constructing a custom element must be a HTMLElement"_s);
         return nullptr;
     }
 
     if (wrappedElement->hasAttributes()) {
-        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element must not have attributes"));
+        throwNotSupportedError(state, scope, "A newly constructed custom element must not have attributes"_s);
         return nullptr;
     }
     if (wrappedElement->hasChildNodes()) {
-        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element must not have child nodes"));
+        throwNotSupportedError(state, scope, "A newly constructed custom element must not have child nodes"_s);
         return nullptr;
     }
     if (wrappedElement->parentNode()) {
-        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element must not have a parent node"));
+        throwNotSupportedError(state, scope, "A newly constructed custom element must not have a parent node"_s);
         return nullptr;
     }
     if (&wrappedElement->document() != &document) {
-        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element belongs to a wrong docuemnt"));
+        throwNotSupportedError(state, scope, "A newly constructed custom element belongs to a wrong docuemnt"_s);
         return nullptr;
     }
     ASSERT(wrappedElement->namespaceURI() == HTMLNames::xhtmlNamespaceURI);
     if (wrappedElement->localName() != localName) {
-        throwNotSupportedError(state, scope, ASCIILiteral("A newly constructed custom element belongs to a wrong docuemnt"));
+        throwNotSupportedError(state, scope, "A newly constructed custom element belongs to a wrong docuemnt"_s);
         return nullptr;
     }
 

@@ -89,7 +89,7 @@ double Symbol::toNumber(ExecState* exec) const
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwTypeError(exec, scope, ASCIILiteral("Cannot convert a symbol to a number"));
+    throwTypeError(exec, scope, "Cannot convert a symbol to a number"_s);
     return 0.0;
 }
 

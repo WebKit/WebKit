@@ -370,7 +370,7 @@ static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoC
     }
     if (addFacingModeConstraint) {
         StringConstraint facingModeConstraint({ }, MediaConstraintType::FacingMode);
-        facingModeConstraint.setIdeal(ASCIILiteral("user"));
+        facingModeConstraint.setIdeal("user"_s);
         videoConstraints.set(MediaConstraintType::FacingMode, WTFMove(facingModeConstraint));
     }
 }

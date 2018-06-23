@@ -307,7 +307,7 @@ Path SVGUseElement::toClipPath()
 
     if (!isDirectReference(*targetClone)) {
         // Spec: Indirect references are an error (14.3.5)
-        document().accessSVGExtensions().reportError(ASCIILiteral("Not allowed to use indirect reference in <clip-path>"));
+        document().accessSVGExtensions().reportError("Not allowed to use indirect reference in <clip-path>"_s);
         return { };
     }
 

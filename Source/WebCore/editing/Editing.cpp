@@ -927,7 +927,7 @@ Ref<Element> createTabSpanElement(Document& document, const String& tabText)
 
 Ref<Element> createTabSpanElement(Document& document)
 {
-    return createTabSpanElement(document, document.createEditingTextNode(ASCIILiteral("\t")));
+    return createTabSpanElement(document, document.createEditingTextNode("\t"_s));
 }
 
 bool isNodeRendered(const Node& node)

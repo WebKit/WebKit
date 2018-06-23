@@ -432,7 +432,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
 
             GST_DEBUG_OBJECT(weakThis->pipeline(), "scheduling initializationDataEncountered event for %s with concatenated init datas size of %" G_GSIZE_FORMAT, eventKeySystemIdString.utf8().data(), initData.size());
             GST_MEMDUMP("init datas", initData.data(), initData.size());
-            weakThis->m_player->initializationDataEncountered(ASCIILiteral("cenc"), ArrayBuffer::create(initData.data(), initData.size()));
+            weakThis->m_player->initializationDataEncountered("cenc"_s, ArrayBuffer::create(initData.data(), initData.size()));
         });
 
         GST_INFO_OBJECT(pipeline(), "waiting for a CDM instance");
@@ -1248,7 +1248,7 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(GstEvent* ev
 
         GST_DEBUG("scheduling initializationDataEncountered event for %s with init data size of %" G_GSIZE_FORMAT, eventKeySystemUUID.utf8().data(), initData.sizeInBytes());
         GST_MEMDUMP("init datas", reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes());
-        weakThis->m_player->initializationDataEncountered(ASCIILiteral("cenc"), ArrayBuffer::create(reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes()));
+        weakThis->m_player->initializationDataEncountered("cenc"_s, ArrayBuffer::create(reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes()));
     });
 }
 

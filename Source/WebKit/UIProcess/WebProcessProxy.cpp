@@ -160,7 +160,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     ChildProcessProxy::getLaunchOptions(launchOptions);
 
     if (WebKit::isInspectorProcessPool(m_processPool))
-        launchOptions.extraInitializationData.add(ASCIILiteral("inspector-process"), ASCIILiteral("1"));
+        launchOptions.extraInitializationData.add("inspector-process"_s, "1"_s);
 
     auto overrideLanguages = m_processPool->configuration().overrideLanguages();
     if (overrideLanguages.size()) {
@@ -170,7 +170,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
                 languageString.append(',');
             languageString.append(overrideLanguages[i]);
         }
-        launchOptions.extraInitializationData.add(ASCIILiteral("OverrideLanguages"), languageString.toString());
+        launchOptions.extraInitializationData.add("OverrideLanguages"_s, languageString.toString());
     }
 
     launchOptions.nonValidInjectedCodeAllowed = shouldAllowNonValidInjectedCode();

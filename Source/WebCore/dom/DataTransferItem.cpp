@@ -76,7 +76,7 @@ void DataTransferItem::clearListAndPutIntoDisabledMode()
 
 String DataTransferItem::kind() const
 {
-    return m_file ? ASCIILiteral("file") : ASCIILiteral("string");
+    return m_file ? "file"_s : "string"_s;
 }
 
 String DataTransferItem::type() const

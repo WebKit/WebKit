@@ -177,7 +177,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
             const ScriptCallFrame& callFrame = callStack->at(i);
             String functionName = String(callFrame.functionName());
             if (functionName.isEmpty())
-                functionName = ASCIILiteral("(unknown)");
+                functionName = "(unknown)"_s;
 
             StringBuilder callFrameBuilder;
             callFrameBuilder.appendNumber(i);

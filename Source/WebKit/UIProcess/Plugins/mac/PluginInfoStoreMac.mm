@@ -46,7 +46,7 @@ Vector<String> PluginInfoStore::pluginsDirectories()
     Vector<String> pluginsDirectories;
     pluginsDirectories.reserveInitialCapacity(2);
 
-    ASCIILiteral pluginPath { "/Library/Internet Plug-Ins" };
+    ASCIILiteral pluginPath { "/Library/Internet Plug-Ins"_s };
 
     if (auto* pw = getpwuid(getuid()))
         pluginsDirectories.uncheckedAppend(makeString(pw->pw_dir, pluginPath));

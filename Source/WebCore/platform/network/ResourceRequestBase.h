@@ -202,7 +202,7 @@ protected:
     ResourceRequestBase(const URL& url, ResourceRequestCachePolicy policy)
         : m_url(url)
         , m_timeoutInterval(s_defaultTimeoutInterval)
-        , m_httpMethod(ASCIILiteral("GET"))
+        , m_httpMethod("GET"_s)
         , m_cachePolicy(policy)
         , m_allowCookies(true)
         , m_resourceRequestUpdated(true)

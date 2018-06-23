@@ -2349,17 +2349,17 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)copyForWebView:(id)sender
 {
-    _page->executeEditCommand(ASCIILiteral("copy"));
+    _page->executeEditCommand("copy"_s);
 }
 
 - (void)cutForWebView:(id)sender
 {
-    _page->executeEditCommand(ASCIILiteral("cut"));
+    _page->executeEditCommand("cut"_s);
 }
 
 - (void)pasteForWebView:(id)sender
 {
-    _page->executeEditCommand(ASCIILiteral("paste"));
+    _page->executeEditCommand("paste"_s);
 }
 
 - (void)selectForWebView:(id)sender
@@ -2372,7 +2372,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 - (void)selectAllForWebView:(id)sender
 {
     [_textSelectionAssistant selectAll:sender];
-    _page->executeEditCommand(ASCIILiteral("selectAll"));
+    _page->executeEditCommand("selectAll"_s);
 }
 
 - (void)toggleBoldfaceForWebView:(id)sender
@@ -3334,7 +3334,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)deleteBackward
 {
-    _page->executeEditCommand(ASCIILiteral("deleteBackward"));
+    _page->executeEditCommand("deleteBackward"_s);
 }
 
 // Inserts the given string, replacing any selected or marked text.
@@ -3749,7 +3749,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         break;
 
     case kWebDeleteForwardKey:
-        _page->executeEditCommand(ASCIILiteral("deleteForward"));
+        _page->executeEditCommand("deleteForward"_s);
         return YES;
 
     default:

@@ -121,7 +121,7 @@ void GeoNotifier::timerFired()
     }
     
     if (m_errorCallback) {
-        auto error = PositionError::create(PositionError::TIMEOUT, ASCIILiteral("Timeout expired"));
+        auto error = PositionError::create(PositionError::TIMEOUT, "Timeout expired"_s);
         m_errorCallback->handleEvent(error);
     }
     m_geolocation->requestTimedOut(this);

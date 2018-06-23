@@ -191,7 +191,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
 
     if (targetIndex < m_currentIndex) {
         unsigned delta = m_entries.size() - targetIndex - 1;
-        String deltaValue = delta > 10 ? ASCIILiteral("over10") : String::number(delta);
+        String deltaValue = delta > 10 ? "over10"_s : String::number(delta);
         m_page->logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::backNavigationDeltaKey(), deltaValue, ShouldSample::No);
     }
 

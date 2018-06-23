@@ -107,11 +107,11 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric& cue, Gene
         cue.setHighlightColor(cueData.highlightColor().rgb());
 
     if (cueData.align() == GenericCueData::Start)
-        cue.setAlign(ASCIILiteral("start"));
+        cue.setAlign("start"_s);
     else if (cueData.align() == GenericCueData::Middle)
-        cue.setAlign(ASCIILiteral("middle"));
+        cue.setAlign("middle"_s);
     else if (cueData.align() == GenericCueData::End)
-        cue.setAlign(ASCIILiteral("end"));
+        cue.setAlign("end"_s);
     cue.setSnapToLines(false);
 
     cue.didChange();

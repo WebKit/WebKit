@@ -113,27 +113,27 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 
     String inspectorProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "inspector-process");
     if (!inspectorProcess.isEmpty())
-        extraInitializationData.add(ASCIILiteral("inspector-process"), inspectorProcess);
+        extraInitializationData.add("inspector-process"_s, inspectorProcess);
 
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process");
     if (!serviceWorkerProcess.isEmpty())
-        extraInitializationData.add(ASCIILiteral("service-worker-process"), serviceWorkerProcess);
+        extraInitializationData.add("service-worker-process"_s, serviceWorkerProcess);
 #endif
 
     String securityOrigin = xpc_dictionary_get_string(extraDataInitializationDataObject, "security-origin");
     if (!securityOrigin.isEmpty())
-        extraInitializationData.add(ASCIILiteral("security-origin"), securityOrigin);
+        extraInitializationData.add("security-origin"_s, securityOrigin);
 
     if (!isClientSandboxed()) {
         String userDirectorySuffix = xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix");
         if (!userDirectorySuffix.isEmpty())
-            extraInitializationData.add(ASCIILiteral("user-directory-suffix"), userDirectorySuffix);
+            extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
     }
 
     String alwaysRunsAtBackgroundPriority = xpc_dictionary_get_string(extraDataInitializationDataObject, "always-runs-at-background-priority");
     if (!alwaysRunsAtBackgroundPriority.isEmpty())
-        extraInitializationData.add(ASCIILiteral("always-runs-at-background-priority"), alwaysRunsAtBackgroundPriority);
+        extraInitializationData.add("always-runs-at-background-priority"_s, alwaysRunsAtBackgroundPriority);
 
     return true;
 }

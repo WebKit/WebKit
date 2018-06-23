@@ -219,7 +219,7 @@ bool JSLocation::preventExtensions(JSObject*, ExecState* exec)
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
 
-    throwTypeError(exec, scope, ASCIILiteral("Cannot prevent extensions on this object"));
+    throwTypeError(exec, scope, "Cannot prevent extensions on this object"_s);
     return false;
 }
 
@@ -227,8 +227,8 @@ String JSLocation::toStringName(const JSObject* object, ExecState* exec)
 {
     auto* thisObject = jsCast<const JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError))
-        return ASCIILiteral("Object");
-    return ASCIILiteral("Location");
+        return "Object"_s;
+    return "Location"_s;
 }
 
 bool JSLocationPrototype::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

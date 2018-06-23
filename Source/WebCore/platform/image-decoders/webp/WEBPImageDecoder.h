@@ -46,7 +46,7 @@ public:
 
     virtual ~WEBPImageDecoder();
 
-    String filenameExtension() const override { return ASCIILiteral("webp"); }
+    String filenameExtension() const override { return "webp"_s; }
     void setData(SharedBuffer&, bool) final;
     ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
     RepetitionCount repetitionCount() const override;

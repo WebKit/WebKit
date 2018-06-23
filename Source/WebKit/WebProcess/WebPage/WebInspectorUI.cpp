@@ -167,43 +167,43 @@ void WebInspectorUI::requestSetDockSide(DockSide side)
 
 void WebInspectorUI::setDockSide(DockSide side)
 {
-    const char* sideString;
+    ASCIILiteral sideString { ASCIILiteral::null() };
 
     switch (side) {
     case DockSide::Undocked:
-        sideString = "undocked";
+        sideString = "undocked"_s;
         break;
 
     case DockSide::Right:
-        sideString = "right";
+        sideString = "right"_s;
         break;
 
     case DockSide::Left:
-        sideString = "left";
+        sideString = "left"_s;
         break;
 
     case DockSide::Bottom:
-        sideString = "bottom";
+        sideString = "bottom"_s;
         break;
     }
 
     m_dockSide = side;
 
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setDockSide"), String(ASCIILiteral(sideString)));
+    m_frontendAPIDispatcher.dispatchCommand("setDockSide"_s, String(sideString));
 }
 
 void WebInspectorUI::setDockingUnavailable(bool unavailable)
 {
     m_dockingUnavailable = unavailable;
 
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setDockingUnavailable"), unavailable);
+    m_frontendAPIDispatcher.dispatchCommand("setDockingUnavailable"_s, unavailable);
 }
 
 void WebInspectorUI::setIsVisible(bool visible)
 {
     m_isVisible = visible;
 
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setIsVisible"), visible);
+    m_frontendAPIDispatcher.dispatchCommand("setIsVisible"_s, visible);
 }
 
 void WebInspectorUI::changeAttachedWindowHeight(unsigned height)
@@ -239,52 +239,52 @@ void WebInspectorUI::inspectedURLChanged(const String& urlString)
 
 void WebInspectorUI::showConsole()
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("showConsole"));
+    m_frontendAPIDispatcher.dispatchCommand("showConsole"_s);
 }
 
 void WebInspectorUI::showResources()
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("showResources"));
+    m_frontendAPIDispatcher.dispatchCommand("showResources"_s);
 }
 
 void WebInspectorUI::showTimelines()
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("showTimelines"));
+    m_frontendAPIDispatcher.dispatchCommand("showTimelines"_s);
 }
 
 void WebInspectorUI::showMainResourceForFrame(const String& frameIdentifier)
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("showMainResourceForFrame"), frameIdentifier);
+    m_frontendAPIDispatcher.dispatchCommand("showMainResourceForFrame"_s, frameIdentifier);
 }
 
 void WebInspectorUI::startPageProfiling()
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setTimelineProfilingEnabled"), true);
+    m_frontendAPIDispatcher.dispatchCommand("setTimelineProfilingEnabled"_s, true);
 }
 
 void WebInspectorUI::stopPageProfiling()
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setTimelineProfilingEnabled"), false);
+    m_frontendAPIDispatcher.dispatchCommand("setTimelineProfilingEnabled"_s, false);
 }
 
 void WebInspectorUI::startElementSelection()
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setElementSelectionEnabled"), true);
+    m_frontendAPIDispatcher.dispatchCommand("setElementSelectionEnabled"_s, true);
 }
 
 void WebInspectorUI::stopElementSelection()
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setElementSelectionEnabled"), false);
+    m_frontendAPIDispatcher.dispatchCommand("setElementSelectionEnabled"_s, false);
 }
 
 void WebInspectorUI::didSave(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("savedURL"), url);
+    m_frontendAPIDispatcher.dispatchCommand("savedURL"_s, url);
 }
 
 void WebInspectorUI::didAppend(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("appendedToURL"), url);
+    m_frontendAPIDispatcher.dispatchCommand("appendedToURL"_s, url);
 }
 
 void WebInspectorUI::sendMessageToFrontend(const String& message)

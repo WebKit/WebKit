@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 TEST(WTF, StringCreationFromLiteral)
 {
-    String stringFromLiteral(ASCIILiteral("Explicit construction syntax"));
+    String stringFromLiteral("Explicit construction syntax"_s);
     EXPECT_EQ(strlen("Explicit construction syntax"), stringFromLiteral.length());
     EXPECT_EQ("Explicit construction syntax", stringFromLiteral);
     EXPECT_TRUE(stringFromLiteral.is8Bit());
@@ -61,7 +61,7 @@ TEST(WTF, StringASCII)
     EXPECT_STREQ("", output.data());
 
     // Regular String.
-    output = String(ASCIILiteral("foobar")).ascii();
+    output = String("foobar"_s).ascii();
     EXPECT_STREQ("foobar", output.data());
 }
 

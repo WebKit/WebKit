@@ -42,7 +42,7 @@ String logLevelString()
 #endif
 
         // To disable logging notImplemented set the DISABLE_NI_WARNING environment variable to 1.
-        return ASCIILiteral("NotYetImplemented,") + String(logEnv);
+        return makeString("NotYetImplemented,"_s, logEnv);
     }
 #endif
     return String();

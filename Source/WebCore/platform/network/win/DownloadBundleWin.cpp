@@ -44,7 +44,7 @@ static uint32_t magicNumber()
 
 const String& fileExtension()
 {
-    static const NeverDestroyed<String> extension { ASCIILiteral { ".download" } };
+    static const NeverDestroyed<String> extension { ".download"_s };
     return extension;
 }
 

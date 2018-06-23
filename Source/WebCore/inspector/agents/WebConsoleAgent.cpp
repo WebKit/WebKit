@@ -114,13 +114,13 @@ void WebConsoleAgent::setLoggingChannelLevel(ErrorString& errorString, const Str
 {
     auto* channel = getLogChannel(channelName.utf8().data());
     if (!channel) {
-        errorString = ASCIILiteral("Logging channel not found");
+        errorString = "Logging channel not found"_s;
         return;
     }
 
     auto configuration = channelConfigurationForString(channelLevel);
     if (!configuration) {
-        errorString = ASCIILiteral("Invalid logging level");
+        errorString = "Invalid logging level"_s;
         return;
     }
 

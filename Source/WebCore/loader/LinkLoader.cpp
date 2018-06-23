@@ -220,9 +220,9 @@ void LinkLoader::preconnectIfNeeded(const LinkRelAttribute& relAttribute, const 
             return;
 
         if (!error.isNull())
-            weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString(ASCIILiteral("Failed to preconnect to "), href.string(), ASCIILiteral(". Error: "), error.localizedDescription()));
+            weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString("Failed to preconnect to "_s, href.string(), ". Error: "_s, error.localizedDescription()));
         else
-            weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString(ASCIILiteral("Successfuly preconnected to "), href.string()));
+            weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString("Successfuly preconnected to "_s, href.string()));
     });
 }
 

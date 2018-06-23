@@ -40,7 +40,7 @@ static GdkAtom uriListAtom;
 static GdkAtom smartPasteAtom;
 static GdkAtom unknownAtom;
 
-static const String gMarkupPrefix = ASCIILiteral("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">");
+static const String gMarkupPrefix = "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"_s;
 
 static void removeMarkupPrefix(String& markup)
 {

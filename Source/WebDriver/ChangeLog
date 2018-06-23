@@ -1,3 +1,115 @@
+2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add user-defined literal for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=186839
+
+        Reviewed by Darin Adler.
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::errorString const):
+        * Session.cpp:
+        (WebDriver::Session::webElementIdentifier):
+        (WebDriver::Session::getTimeouts):
+        (WebDriver::Session::createTopLevelBrowsingContext):
+        (WebDriver::Session::handleUserPrompts):
+        (WebDriver::Session::reportUnexpectedAlertOpen):
+        (WebDriver::Session::go):
+        (WebDriver::Session::getCurrentURL):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::getTitle):
+        (WebDriver::Session::getWindowHandle):
+        (WebDriver::Session::closeTopLevelBrowsingContext):
+        (WebDriver::Session::switchToWindow):
+        (WebDriver::Session::getWindowHandles):
+        (WebDriver::Session::switchToFrame):
+        (WebDriver::Session::switchToParentFrame):
+        (WebDriver::Session::getToplevelBrowsingContextRect):
+        (WebDriver::Session::setWindowRect):
+        (WebDriver::Session::maximizeWindow):
+        (WebDriver::Session::minimizeWindow):
+        (WebDriver::Session::fullscreenWindow):
+        (WebDriver::Session::computeElementLayout):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::getActiveElement):
+        (WebDriver::Session::isElementSelected):
+        (WebDriver::Session::getElementText):
+        (WebDriver::Session::getElementTagName):
+        (WebDriver::Session::getElementRect):
+        (WebDriver::Session::isElementEnabled):
+        (WebDriver::Session::isElementDisplayed):
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::getElementProperty):
+        (WebDriver::Session::getElementCSSValue):
+        (WebDriver::Session::waitForNavigationToComplete):
+        (WebDriver::Session::selectOptionElement):
+        (WebDriver::Session::elementClear):
+        (WebDriver::Session::virtualKeyForKeySequence):
+        (WebDriver::Session::elementSendKeys):
+        (WebDriver::Session::executeScript):
+        (WebDriver::mouseButtonForAutomation):
+        (WebDriver::Session::performMouseInteraction):
+        (WebDriver::Session::performKeyboardInteractions):
+        (WebDriver::parseAutomationCookie):
+        (WebDriver::builtAutomationCookie):
+        (WebDriver::serializeCookie):
+        (WebDriver::Session::getAllCookies):
+        (WebDriver::Session::getNamedCookie):
+        (WebDriver::Session::addCookie):
+        (WebDriver::Session::deleteCookie):
+        (WebDriver::Session::deleteAllCookies):
+        (WebDriver::Session::performActions):
+        (WebDriver::Session::releaseActions):
+        (WebDriver::Session::dismissAlert):
+        (WebDriver::Session::acceptAlert):
+        (WebDriver::Session::getAlertText):
+        (WebDriver::Session::sendAlertText):
+        (WebDriver::Session::takeScreenshot):
+        * SessionHost.cpp:
+        (WebDriver::SessionHost::dispatchMessage):
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::sendResponse const):
+        (WebDriver::WebDriverService::parseCapabilities const):
+        (WebDriver::WebDriverService::findSessionOrCompleteWithError):
+        (WebDriver::WebDriverService::matchCapabilities const):
+        (WebDriver::WebDriverService::processCapabilities const):
+        (WebDriver::WebDriverService::createSession):
+        (WebDriver::WebDriverService::deleteSession):
+        (WebDriver::WebDriverService::status):
+        (WebDriver::WebDriverService::go):
+        (WebDriver::WebDriverService::setWindowRect):
+        (WebDriver::WebDriverService::switchToWindow):
+        (WebDriver::WebDriverService::switchToFrame):
+        (WebDriver::findElementOrCompleteWithError):
+        (WebDriver::findStrategyAndSelectorOrCompleteWithError):
+        (WebDriver::WebDriverService::getElementAttribute):
+        (WebDriver::WebDriverService::getElementProperty):
+        (WebDriver::WebDriverService::getElementCSSValue):
+        (WebDriver::WebDriverService::elementSendKeys):
+        (WebDriver::findScriptAndArgumentsOrCompleteWithError):
+        (WebDriver::WebDriverService::getNamedCookie):
+        (WebDriver::deserializeCookie):
+        (WebDriver::WebDriverService::addCookie):
+        (WebDriver::WebDriverService::deleteCookie):
+        (WebDriver::processPauseAction):
+        (WebDriver::processNullAction):
+        (WebDriver::processKeyAction):
+        (WebDriver::processPointerAction):
+        (WebDriver::processPointerParameters):
+        (WebDriver::processInputActionSequence):
+        (WebDriver::WebDriverService::performActions):
+        (WebDriver::WebDriverService::sendAlertText):
+        (WebDriver::WebDriverService::takeElementScreenshot):
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::sendMessageToBackend):
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+
 2018-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: use a dictionary for session capabilities in StartAutomationSession message

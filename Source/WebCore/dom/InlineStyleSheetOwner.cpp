@@ -174,8 +174,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::create(m_media, MediaQueryParserContext(document));
 
-    MediaQueryEvaluator screenEval(ASCIILiteral("screen"), true);
-    MediaQueryEvaluator printEval(ASCIILiteral("print"), true);
+    MediaQueryEvaluator screenEval("screen"_s, true);
+    MediaQueryEvaluator printEval("print"_s, true);
     LOG(MediaQueries, "InlineStyleSheetOwner::createSheet evaluating queries");
     if (!screenEval.evaluate(*mediaQueries) && !printEval.evaluate(*mediaQueries))
         return;

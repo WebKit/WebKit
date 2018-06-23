@@ -131,14 +131,14 @@ static Vector<String> sortLocaleData(const String& locale, size_t keyIndex)
     }
     case indexOfExtensionKeyKn:
         keyLocaleData.reserveInitialCapacity(2);
-        keyLocaleData.uncheckedAppend(ASCIILiteral("false"));
-        keyLocaleData.uncheckedAppend(ASCIILiteral("true"));
+        keyLocaleData.uncheckedAppend("false"_s);
+        keyLocaleData.uncheckedAppend("true"_s);
         break;
     case indexOfExtensionKeyKf:
         keyLocaleData.reserveInitialCapacity(3);
-        keyLocaleData.uncheckedAppend(ASCIILiteral("false"));
-        keyLocaleData.uncheckedAppend(ASCIILiteral("lower"));
-        keyLocaleData.uncheckedAppend(ASCIILiteral("upper"));
+        keyLocaleData.uncheckedAppend("false"_s);
+        keyLocaleData.uncheckedAppend("lower"_s);
+        keyLocaleData.uncheckedAppend("upper"_s);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -158,14 +158,14 @@ static Vector<String> searchLocaleData(const String&, size_t keyIndex)
         break;
     case indexOfExtensionKeyKn:
         keyLocaleData.reserveInitialCapacity(2);
-        keyLocaleData.uncheckedAppend(ASCIILiteral("false"));
-        keyLocaleData.uncheckedAppend(ASCIILiteral("true"));
+        keyLocaleData.uncheckedAppend("false"_s);
+        keyLocaleData.uncheckedAppend("true"_s);
         break;
     case indexOfExtensionKeyKf:
         keyLocaleData.reserveInitialCapacity(3);
-        keyLocaleData.uncheckedAppend(ASCIILiteral("false"));
-        keyLocaleData.uncheckedAppend(ASCIILiteral("lower"));
-        keyLocaleData.uncheckedAppend(ASCIILiteral("upper"));
+        keyLocaleData.uncheckedAppend("false"_s);
+        keyLocaleData.uncheckedAppend("lower"_s);
+        keyLocaleData.uncheckedAppend("upper"_s);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -207,7 +207,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
 
     String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     RETURN_IF_EXCEPTION(scope, void());
-    opt.add(ASCIILiteral("localeMatcher"), matcher);
+    opt.add("localeMatcher"_s, matcher);
 
     {
         String numericString;
@@ -215,29 +215,29 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
         bool numeric = intlBooleanOption(state, options, vm.propertyNames->numeric, usesFallback);
         RETURN_IF_EXCEPTION(scope, void());
         if (!usesFallback)
-            numericString = ASCIILiteral(numeric ? "true" : "false");
-        opt.add(ASCIILiteral("kn"), numericString);
+            numericString = numeric ? "true"_s : "false"_s;
+        opt.add("kn"_s, numericString);
     }
     {
         String caseFirst = intlStringOption(state, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
         RETURN_IF_EXCEPTION(scope, void());
-        opt.add(ASCIILiteral("kf"), caseFirst);
+        opt.add("kf"_s, caseFirst);
     }
 
     auto& availableLocales = state.jsCallee()->globalObject(vm)->intlCollatorAvailableLocales();
     auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
 
-    m_locale = result.get(ASCIILiteral("locale"));
+    m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {
-        throwTypeError(&state, scope, ASCIILiteral("failed to initialize Collator due to invalid locale"));
+        throwTypeError(&state, scope, "failed to initialize Collator due to invalid locale"_s);
         return;
     }
 
-    const String& collation = result.get(ASCIILiteral("co"));
-    m_collation = collation.isNull() ? ASCIILiteral("default") : collation;
-    m_numeric = result.get(ASCIILiteral("kn")) == "true";
+    const String& collation = result.get("co"_s);
+    m_collation = collation.isNull() ? "default"_s : collation;
+    m_numeric = result.get("kn"_s) == "true";
 
-    const String& caseFirst = result.get(ASCIILiteral("kf"));
+    const String& caseFirst = result.get("kf"_s);
     if (caseFirst == "lower")
         m_caseFirst = CaseFirst::Lower;
     else if (caseFirst == "upper")
@@ -336,7 +336,7 @@ JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView 
     if (!m_collator) {
         createCollator(state);
         if (!m_collator)
-            return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to compare strings.")));
+            return throwException(&state, scope, createError(&state, "Failed to compare strings."_s));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -344,50 +344,50 @@ JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView 
     UCharIterator iteratorY = createIterator(y);
     auto result = ucol_strcollIter(m_collator.get(), &iteratorX, &iteratorY, &status);
     if (U_FAILURE(status))
-        return throwException(&state, scope, createError(&state, ASCIILiteral("Failed to compare strings.")));
+        return throwException(&state, scope, createError(&state, "Failed to compare strings."_s));
     return jsNumber(result);
 }
 
-const char* IntlCollator::usageString(Usage usage)
+ASCIILiteral IntlCollator::usageString(Usage usage)
 {
     switch (usage) {
     case Usage::Sort:
-        return "sort";
+        return "sort"_s;
     case Usage::Search:
-        return "search";
+        return "search"_s;
     }
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return ASCIILiteral::null();
 }
 
-const char* IntlCollator::sensitivityString(Sensitivity sensitivity)
+ASCIILiteral IntlCollator::sensitivityString(Sensitivity sensitivity)
 {
     switch (sensitivity) {
     case Sensitivity::Base:
-        return "base";
+        return "base"_s;
     case Sensitivity::Accent:
-        return "accent";
+        return "accent"_s;
     case Sensitivity::Case:
-        return "case";
+        return "case"_s;
     case Sensitivity::Variant:
-        return "variant";
+        return "variant"_s;
     }
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return ASCIILiteral::null();
 }
 
-const char* IntlCollator::caseFirstString(CaseFirst caseFirst)
+ASCIILiteral IntlCollator::caseFirstString(CaseFirst caseFirst)
 {
     switch (caseFirst) {
     case CaseFirst::False:
-        return "false";
+        return "false"_s;
     case CaseFirst::Lower:
-        return "lower";
+        return "lower"_s;
     case CaseFirst::Upper:
-        return "upper";
+        return "upper"_s;
     }
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return ASCIILiteral::null();
 }
 
 JSObject* IntlCollator::resolvedOptions(ExecState& state)
@@ -411,12 +411,12 @@ JSObject* IntlCollator::resolvedOptions(ExecState& state)
 
     JSObject* options = constructEmptyObject(&state);
     options->putDirect(vm, vm.propertyNames->locale, jsString(&state, m_locale));
-    options->putDirect(vm, vm.propertyNames->usage, jsNontrivialString(&state, ASCIILiteral(usageString(m_usage))));
-    options->putDirect(vm, vm.propertyNames->sensitivity, jsNontrivialString(&state, ASCIILiteral(sensitivityString(m_sensitivity))));
+    options->putDirect(vm, vm.propertyNames->usage, jsNontrivialString(&state, usageString(m_usage)));
+    options->putDirect(vm, vm.propertyNames->sensitivity, jsNontrivialString(&state, sensitivityString(m_sensitivity)));
     options->putDirect(vm, vm.propertyNames->ignorePunctuation, jsBoolean(m_ignorePunctuation));
     options->putDirect(vm, vm.propertyNames->collation, jsString(&state, m_collation));
     options->putDirect(vm, vm.propertyNames->numeric, jsBoolean(m_numeric));
-    options->putDirect(vm, vm.propertyNames->caseFirst, jsNontrivialString(&state, ASCIILiteral(caseFirstString(m_caseFirst))));
+    options->putDirect(vm, vm.propertyNames->caseFirst, jsNontrivialString(&state, caseFirstString(m_caseFirst)));
     return options;
 }
 

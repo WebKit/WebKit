@@ -1,3 +1,173 @@
+2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add user-defined literal for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=186839
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::willPerformHTTPRedirection):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        (WebKit::NetworkCORSPreflightChecker::wasBlocked):
+        (WebKit::NetworkCORSPreflightChecker::cannotShowURL):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::suggestedFilename const):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::didReceiveChallenge):
+        (WebKit::PingLoad::timeoutTimerFired):
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::PreconnectTask):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::initialize):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::toRecordInformation):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::cachesListFilename):
+        (WebKit::CacheStorage::cachesOriginFilename):
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::initialize):
+        (WebKit::NetworkCache::Statistics::bootstrapFromNetworkCache):
+        (WebKit::NetworkCache::Statistics::queryWasEverRequested):
+        (WebKit::NetworkCache::Statistics::clear):
+        (WebKit::NetworkCache::Statistics::addHashesToDatabase):
+        (WebKit::NetworkCache::Statistics::addStoreDecisionsToDatabase):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        (WebKit::pluginInformationBundleIdentifierKey):
+        (WebKit::pluginInformationBundleVersionKey):
+        (WebKit::pluginInformationBundleShortVersionKey):
+        (WebKit::pluginInformationPathKey):
+        (WebKit::pluginInformationDisplayNameKey):
+        (WebKit::pluginInformationDefaultLoadPolicyKey):
+        (WebKit::pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey):
+        (WebKit::pluginInformationHasSandboxProfileKey):
+        (WebKit::pluginInformationFrameURLKey):
+        (WebKit::pluginInformationMIMETypeKey):
+        (WebKit::pluginInformationPageURLKey):
+        (WebKit::pluginInformationPluginspageAttributeURLKey):
+        (WebKit::pluginInformationPluginURLKey):
+        (WebKit::plugInInformationReplacementObscuredKey):
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebKeyboardEvent):
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        (WebKit::WebMemorySampler::sampleWebKit const):
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (debuggableTypeString):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_set_preferred_languages):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setWindowFrameOfBrowsingContext):
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::setSessionPermissions):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didStart):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::selectorExceptionMap):
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.cpp:
+        (WebKit::WebCredentialsMessengerProxy::makeCredential):
+        (WebKit::WebCredentialsMessengerProxy::getAssertion):
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::pluginsDirectories):
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::getLaunchOptions):
+        (WebKit::ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        (WebKit::UserMediaProcessManager::endedCaptureSession):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::goToItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadHTMLString):
+        (WebKit::WebPageProxy::loadPlainTextString):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::savePDFToFileInDownloadsFolder):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::notifyPages):
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView copyForWebView:]):
+        (-[WKContentView cutForWebView:]):
+        (-[WKContentView pasteForWebView:]):
+        (-[WKContentView selectAllForWebView:]):
+        (-[WKContentView deleteBackward]):
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+        * UIProcess/ios/WKLegacyPDFView.mm:
+        (-[WKLegacyPDFView _URLForLinkAnnotation:]):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::elementForNodeHandle):
+        (WebKit::WebAutomationSessionProxy::didClearWindowObjectForFrame):
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::connectionToServerLost):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp:
+        (webkit_dom_document_get_ready_state):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::uniqueWorldName):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::WebMediaKeyStorageManager::getMediaKeyOrigins):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pluginInfo):
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::validateResponse):
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::showPaintRect):
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::initialize):
+        (WebKit::RemoteWebInspectorUI::didSave):
+        (WebKit::RemoteWebInspectorUI::didAppend):
+        (WebKit::RemoteWebInspectorUI::frontendLoaded):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::setDockSide):
+        (WebKit::WebInspectorUI::setDockingUnavailable):
+        (WebKit::WebInspectorUI::setIsVisible):
+        (WebKit::WebInspectorUI::showConsole):
+        (WebKit::WebInspectorUI::showResources):
+        (WebKit::WebInspectorUI::showTimelines):
+        (WebKit::WebInspectorUI::showMainResourceForFrame):
+        (WebKit::WebInspectorUI::startPageProfiling):
+        (WebKit::WebInspectorUI::stopPageProfiling):
+        (WebKit::WebInspectorUI::startElementSelection):
+        (WebKit::WebInspectorUI::stopElementSelection):
+        (WebKit::WebInspectorUI::didSave):
+        (WebKit::WebInspectorUI::didAppend):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadStringImpl):
+        (WebKit::WebPage::loadAlternateHTMLString):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::computeAutocorrectionContext):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getWebCoreMemoryCacheStatistics):
+        (WebKit::WebProcess::getWebCoreStatistics):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeProcessName):
+
 2018-06-22  Chris Dumez  <cdumez@apple.com>
 
         Regression(r230211): Crash under WebInspectorClient::~WebInspectorClient()

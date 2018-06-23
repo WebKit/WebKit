@@ -144,16 +144,16 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
     switch (quirk) {
     case NeedsChromeBrowser:
         // Get versions from https://chromium.googlesource.com/chromium/src.git
-        return ASCIILiteral("Chrome/58.0.3029.81");
+        return "Chrome/58.0.3029.81"_s;
     case NeedsMacintoshPlatform:
-        return ASCIILiteral("Macintosh; Intel Mac OS X 10_13_4");
+        return "Macintosh; Intel Mac OS X 10_13_4"_s;
     case NeedsLinuxDesktopPlatform:
-        return ASCIILiteral("X11; Linux x86_64");
+        return "X11; Linux x86_64"_s;
     case NumUserAgentQuirks:
     default:
         ASSERT_NOT_REACHED();
     }
-    return ASCIILiteral("");
+    return ""_s;
 }
 
 }

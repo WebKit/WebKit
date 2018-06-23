@@ -66,7 +66,7 @@ void ResourceLoader::loadGResource()
         GUniquePtr<char> contentType(g_content_type_guess(fileName.get(), data, dataSize, nullptr));
         ResourceResponse response { url, extractMIMETypeFromMediaType(contentType.get()), static_cast<long long>(dataSize), extractCharsetFromMediaType(contentType.get()) };
         response.setHTTPStatusCode(200);
-        response.setHTTPStatusText(ASCIILiteral("OK"));
+        response.setHTTPStatusText("OK"_s);
         response.setHTTPHeaderField(HTTPHeaderName::ContentType, contentType.get());
         response.setSource(ResourceResponse::Source::Network);
         loader->deliverResponseAndData(response, SharedBuffer::create(bytes.get()));

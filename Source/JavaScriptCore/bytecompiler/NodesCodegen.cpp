@@ -884,7 +884,7 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
         
         Ref<Label> thisIsEmptyLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitIsEmpty(generator.newTemporary(), generator.thisRegister()), thisIsEmptyLabel.get());
-        generator.emitThrowReferenceError(ASCIILiteral("'super()' can't be called more than once in a constructor."));
+        generator.emitThrowReferenceError("'super()' can't be called more than once in a constructor."_s);
         generator.emitLabel(thisIsEmptyLabel.get());
 
         generator.move(generator.thisRegister(), ret);
@@ -1653,8 +1653,8 @@ RegisterID* PostfixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
         return emitDot(generator, dst);
 
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
-        ? ASCIILiteral("Postfix ++ operator applied to value that is not a reference.")
-        : ASCIILiteral("Postfix -- operator applied to value that is not a reference."));
+        ? "Postfix ++ operator applied to value that is not a reference."_s
+        : "Postfix -- operator applied to value that is not a reference."_s);
 }
 
 // ------------------------------ DeleteResolveNode -----------------------------------
@@ -1868,8 +1868,8 @@ RegisterID* PrefixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
         return emitDot(generator, dst);
 
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
-        ? ASCIILiteral("Prefix ++ operator applied to value that is not a reference.")
-        : ASCIILiteral("Prefix -- operator applied to value that is not a reference."));
+        ? "Prefix ++ operator applied to value that is not a reference."_s
+        : "Prefix -- operator applied to value that is not a reference."_s);
 }
 
 // ------------------------------ Unary Operation Nodes -----------------------------------
@@ -2592,7 +2592,7 @@ RegisterID* ReadModifyDotNode::emitBytecode(BytecodeGenerator& generator, Regist
 
 RegisterID* AssignErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    return emitThrowReferenceError(generator, ASCIILiteral("Left side of assignment is not a reference."));
+    return emitThrowReferenceError(generator, "Left side of assignment is not a reference."_s);
 }
 
 // ------------------------------ AssignBracketNode -----------------------------------
@@ -3044,7 +3044,7 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
 void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (!m_lexpr->isAssignResolveNode() && !m_lexpr->isAssignmentLocation()) {
-        emitThrowReferenceError(generator, ASCIILiteral("Left side of for-in statement is not a reference."));
+        emitThrowReferenceError(generator, "Left side of for-in statement is not a reference."_s);
         return;
     }
 
@@ -3206,7 +3206,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (!m_lexpr->isAssignmentLocation()) {
-        emitThrowReferenceError(generator, ASCIILiteral("Left side of for-of statement is not a reference."));
+        emitThrowReferenceError(generator, "Left side of for-of statement is not a reference."_s);
         return;
     }
 
@@ -4023,14 +4023,14 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         Ref<Label> superclassIsObjectLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitIsObject(tempRegister.get(), superclass.get()), superclassIsObjectLabel.get());
         generator.emitLabel(superclassIsUndefinedLabel.get());
-        generator.emitThrowTypeError(ASCIILiteral("The superclass is not an object."));
+        generator.emitThrowTypeError("The superclass is not an object."_s);
         generator.emitLabel(superclassIsObjectLabel.get());
         generator.emitGetById(protoParent.get(), superclass.get(), generator.propertyNames().prototype);
 
         Ref<Label> protoParentIsObjectOrNullLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitUnaryOp(op_is_object_or_null, tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
         generator.emitJumpIfTrue(generator.emitUnaryOp(op_is_function, tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
-        generator.emitThrowTypeError(ASCIILiteral("The value of the superclass's prototype property is not an object."));
+        generator.emitThrowTypeError("The value of the superclass's prototype property is not an object."_s);
         generator.emitLabel(protoParentIsObjectOrNullLabel.get());
 
         generator.emitDirectPutById(constructor.get(), generator.propertyNames().underscoreProto, superclass.get(), PropertyNode::Unknown);
@@ -4298,7 +4298,7 @@ void ObjectPatternNode::toString(StringBuilder& builder) const
     
 void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
-    generator.emitRequireObjectCoercible(rhs, ASCIILiteral("Right side of assignment cannot be destructured"));
+    generator.emitRequireObjectCoercible(rhs, "Right side of assignment cannot be destructured"_s);
 
     RefPtr<RegisterID> excludedList;
     IdentifierSet excludedSet;

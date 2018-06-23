@@ -412,7 +412,7 @@ bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilit
         return false;
 
     if (reason == RenderEmbeddedObject::UnsupportedPlugin)
-        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Tried to use an unsupported plug-in."));
+        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Tried to use an unsupported plug-in."_s);
 
     Ref<HTMLPlugInElement> protectedThis(*this);
     downcast<RenderEmbeddedObject>(*renderer()).setPluginUnavailabilityReasonWithDescription(reason, unavailabilityDescription);

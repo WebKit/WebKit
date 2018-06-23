@@ -97,7 +97,7 @@ static CompilationResult compileImpl(
     vm.getCTIStub(linkPolymorphicCallThunkGenerator);
     
     if (vm.typeProfiler())
-        vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for DFG compilation."));
+        vm.typeProfilerLog()->processLogEntries("Preparing for DFG compilation."_s);
     
     Ref<Plan> plan = adoptRef(
         *new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));

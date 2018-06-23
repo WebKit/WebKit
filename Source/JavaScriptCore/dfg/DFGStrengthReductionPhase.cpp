@@ -343,11 +343,11 @@ private:
                     if (value.isNumber())
                         return String::numberToStringECMAScript(value.asNumber());
                     if (value.isBoolean())
-                        return value.asBoolean() ? ASCIILiteral("true") : ASCIILiteral("false");
+                        return value.asBoolean() ? "true"_s : "false"_s;
                     if (value.isNull())
-                        return ASCIILiteral("null");
+                        return "null"_s;
                     if (value.isUndefined())
-                        return ASCIILiteral("undefined");
+                        return "undefined"_s;
                     return String();
                 };
 

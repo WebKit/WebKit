@@ -100,9 +100,9 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
 
             if parameter.is_optional:
                 parameter_assignments.append('    if (%(parameterName)s)' % parameter_args)
-                parameter_assignments.append('        paramsObject->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterValue)s);' % parameter_args)
+                parameter_assignments.append('        paramsObject->%(keyedSetMethod)s("%(parameterName)s"_s, %(parameterValue)s);' % parameter_args)
             else:
-                parameter_assignments.append('    paramsObject->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterValue)s);' % parameter_args)
+                parameter_assignments.append('    paramsObject->%(keyedSetMethod)s("%(parameterName)s"_s, %(parameterValue)s);' % parameter_args)
 
             formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_checked_formal_event_parameter(parameter), parameter.parameter_name))
 
@@ -115,12 +115,12 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
         lines.append('void %(domainName)sFrontendDispatcher::%(eventName)s(%(formalParameters)s)' % event_args)
         lines.append('{')
         lines.append('    Ref<JSON::Object> jsonMessage = JSON::Object::create();')
-        lines.append('    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("%(domainName)s.%(eventName)s"));' % event_args)
+        lines.append('    jsonMessage->setString("method"_s, "%(domainName)s.%(eventName)s"_s);' % event_args)
 
         if len(parameter_assignments) > 0:
             lines.append('    Ref<JSON::Object> paramsObject = JSON::Object::create();')
             lines.extend(parameter_assignments)
-            lines.append('    jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));')
+            lines.append('    jsonMessage->setObject("params"_s, WTFMove(paramsObject));')
 
         lines.append('')
         lines.append('    m_frontendRouter.sendEvent(jsonMessage->toJSONString());')

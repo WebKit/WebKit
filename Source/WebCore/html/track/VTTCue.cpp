@@ -1192,15 +1192,15 @@ void VTTCue::toJSON(JSON::Object& object) const
     TextTrackCue::toJSON(object);
 
 #if !LOG_DISABLED
-    object.setString(ASCIILiteral("text"), text());
+    object.setString("text"_s, text());
 #endif
-    object.setString(ASCIILiteral("vertical"), vertical());
-    object.setBoolean(ASCIILiteral("snapToLines"), snapToLines());
-    object.setDouble(ASCIILiteral("line"), m_linePosition);
-    object.setDouble(ASCIILiteral("position"), position());
-    object.setInteger(ASCIILiteral("size"), m_cueSize);
-    object.setString(ASCIILiteral("align"), align());
-    object.setString(ASCIILiteral("regionId"), regionId());
+    object.setString("vertical"_s, vertical());
+    object.setBoolean("snapToLines"_s, snapToLines());
+    object.setDouble("line"_s, m_linePosition);
+    object.setDouble("position"_s, position());
+    object.setInteger("size"_s, m_cueSize);
+    object.setString("align"_s, align());
+    object.setString("regionId"_s, regionId());
 }
 
 } // namespace WebCore

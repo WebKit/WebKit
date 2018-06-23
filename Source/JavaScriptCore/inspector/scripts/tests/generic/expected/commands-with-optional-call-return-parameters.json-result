@@ -235,7 +235,7 @@ DatabaseBackendDispatcher::DatabaseBackendDispatcher(BackendDispatcher& backendD
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Database"), this);
+    m_backendDispatcher->registerDispatcherForDomain("Database"_s, this);
 }
 
 void DatabaseBackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
@@ -243,7 +243,7 @@ void DatabaseBackendDispatcher::dispatch(long requestId, const String& method, R
     Ref<DatabaseBackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
     if (method == "executeAllOptionalParameters")
         executeAllOptionalParameters(requestId, WTFMove(parameters));
@@ -256,27 +256,27 @@ void DatabaseBackendDispatcher::dispatch(long requestId, const String& method, R
 void DatabaseBackendDispatcher::executeAllOptionalParameters(long requestId, RefPtr<JSON::Object>&& parameters)
 {
     bool opt_in_columnNames_valueFound = false;
-    RefPtr<JSON::Array> opt_in_columnNames = m_backendDispatcher->getArray(parameters.get(), ASCIILiteral("columnNames"), &opt_in_columnNames_valueFound);
+    RefPtr<JSON::Array> opt_in_columnNames = m_backendDispatcher->getArray(parameters.get(), "columnNames"_s, &opt_in_columnNames_valueFound);
     bool opt_in_notes_valueFound = false;
-    String opt_in_notes = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("notes"), &opt_in_notes_valueFound);
+    String opt_in_notes = m_backendDispatcher->getString(parameters.get(), "notes"_s, &opt_in_notes_valueFound);
     bool opt_in_timestamp_valueFound = false;
-    std::optional<double> opt_in_timestamp = m_backendDispatcher->getDouble(parameters.get(), ASCIILiteral("timestamp"), &opt_in_timestamp_valueFound);
+    std::optional<double> opt_in_timestamp = m_backendDispatcher->getDouble(parameters.get(), "timestamp"_s, &opt_in_timestamp_valueFound);
     bool opt_in_values_valueFound = false;
-    RefPtr<JSON::Object> opt_in_values = m_backendDispatcher->getObject(parameters.get(), ASCIILiteral("values"), &opt_in_values_valueFound);
+    RefPtr<JSON::Object> opt_in_values = m_backendDispatcher->getObject(parameters.get(), "values"_s, &opt_in_values_valueFound);
     bool opt_in_payload_valueFound = false;
-    RefPtr<JSON::Value> opt_in_payload = m_backendDispatcher->getValue(parameters.get(), ASCIILiteral("payload"), &opt_in_payload_valueFound);
+    RefPtr<JSON::Value> opt_in_payload = m_backendDispatcher->getValue(parameters.get(), "payload"_s, &opt_in_payload_valueFound);
     bool opt_in_databaseId_valueFound = false;
-    int opt_in_databaseId = m_backendDispatcher->getInteger(parameters.get(), ASCIILiteral("databaseId"), &opt_in_databaseId_valueFound);
+    int opt_in_databaseId = m_backendDispatcher->getInteger(parameters.get(), "databaseId"_s, &opt_in_databaseId_valueFound);
     bool opt_in_sqlError_valueFound = false;
-    RefPtr<JSON::Object> opt_in_sqlError = m_backendDispatcher->getObject(parameters.get(), ASCIILiteral("sqlError"), &opt_in_sqlError_valueFound);
+    RefPtr<JSON::Object> opt_in_sqlError = m_backendDispatcher->getObject(parameters.get(), "sqlError"_s, &opt_in_sqlError_valueFound);
     bool opt_in_screenColor_valueFound = false;
-    String opt_in_screenColor = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("screenColor"), &opt_in_screenColor_valueFound);
+    String opt_in_screenColor = m_backendDispatcher->getString(parameters.get(), "screenColor"_s, &opt_in_screenColor_valueFound);
     bool opt_in_alternateColors_valueFound = false;
-    RefPtr<JSON::Array> opt_in_alternateColors = m_backendDispatcher->getArray(parameters.get(), ASCIILiteral("alternateColors"), &opt_in_alternateColors_valueFound);
+    RefPtr<JSON::Array> opt_in_alternateColors = m_backendDispatcher->getArray(parameters.get(), "alternateColors"_s, &opt_in_alternateColors_valueFound);
     bool opt_in_printColor_valueFound = false;
-    String opt_in_printColor = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("printColor"), &opt_in_printColor_valueFound);
+    String opt_in_printColor = m_backendDispatcher->getString(parameters.get(), "printColor"_s, &opt_in_printColor_valueFound);
     if (m_backendDispatcher->hasProtocolErrors()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, ASCIILiteral { "Some arguments of method 'Database.executeAllOptionalParameters' can't be processed" });
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'Database.executeAllOptionalParameters' can't be processed"_s);
         return;
     }
 
@@ -303,25 +303,25 @@ void DatabaseBackendDispatcher::executeAllOptionalParameters(long requestId, Ref
 
     if (!error.length()) {
         if (out_columnNames)
-            result->setArray(ASCIILiteral("columnNames"), out_columnNames);
+            result->setArray("columnNames"_s, out_columnNames);
         if (out_notes.has_value())
-            result->setString(ASCIILiteral("notes"), *out_notes);
+            result->setString("notes"_s, *out_notes);
         if (out_timestamp.has_value())
-            result->setDouble(ASCIILiteral("timestamp"), *out_timestamp);
+            result->setDouble("timestamp"_s, *out_timestamp);
         if (out_values.has_value())
-            result->setObject(ASCIILiteral("values"), *out_values);
+            result->setObject("values"_s, *out_values);
         if (out_payload.has_value())
-            result->setValue(ASCIILiteral("payload"), *out_payload);
+            result->setValue("payload"_s, *out_payload);
         if (out_databaseId.has_value())
-            result->setInteger(ASCIILiteral("databaseId"), *out_databaseId);
+            result->setInteger("databaseId"_s, *out_databaseId);
         if (out_sqlError)
-            result->setObject(ASCIILiteral("sqlError"), out_sqlError);
+            result->setObject("sqlError"_s, out_sqlError);
         if (out_screenColor.has_value())
-            result->setString(ASCIILiteral("screenColor"), *out_screenColor);
+            result->setString("screenColor"_s, *out_screenColor);
         if (out_alternateColors)
-            result->setArray(ASCIILiteral("alternateColors"), out_alternateColors);
+            result->setArray("alternateColors"_s, out_alternateColors);
         if (out_printColor.has_value())
-            result->setString(ASCIILiteral("printColor"), *out_printColor);
+            result->setString("printColor"_s, *out_printColor);
     }
     if (!error.length())
         m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
@@ -331,18 +331,18 @@ void DatabaseBackendDispatcher::executeAllOptionalParameters(long requestId, Ref
 
 void DatabaseBackendDispatcher::executeNoOptionalParameters(long requestId, RefPtr<JSON::Object>&& parameters)
 {
-    RefPtr<JSON::Array> in_columnNames = m_backendDispatcher->getArray(parameters.get(), ASCIILiteral("columnNames"), nullptr);
-    String in_notes = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("notes"), nullptr);
-    double in_timestamp = m_backendDispatcher->getDouble(parameters.get(), ASCIILiteral("timestamp"), nullptr);
-    RefPtr<JSON::Object> in_values = m_backendDispatcher->getObject(parameters.get(), ASCIILiteral("values"), nullptr);
-    RefPtr<JSON::Value> in_payload = m_backendDispatcher->getValue(parameters.get(), ASCIILiteral("payload"), nullptr);
-    int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), ASCIILiteral("databaseId"), nullptr);
-    RefPtr<JSON::Object> in_sqlError = m_backendDispatcher->getObject(parameters.get(), ASCIILiteral("sqlError"), nullptr);
-    String in_screenColor = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("screenColor"), nullptr);
-    RefPtr<JSON::Array> in_alternateColors = m_backendDispatcher->getArray(parameters.get(), ASCIILiteral("alternateColors"), nullptr);
-    String in_printColor = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("printColor"), nullptr);
+    RefPtr<JSON::Array> in_columnNames = m_backendDispatcher->getArray(parameters.get(), "columnNames"_s, nullptr);
+    String in_notes = m_backendDispatcher->getString(parameters.get(), "notes"_s, nullptr);
+    double in_timestamp = m_backendDispatcher->getDouble(parameters.get(), "timestamp"_s, nullptr);
+    RefPtr<JSON::Object> in_values = m_backendDispatcher->getObject(parameters.get(), "values"_s, nullptr);
+    RefPtr<JSON::Value> in_payload = m_backendDispatcher->getValue(parameters.get(), "payload"_s, nullptr);
+    int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), "databaseId"_s, nullptr);
+    RefPtr<JSON::Object> in_sqlError = m_backendDispatcher->getObject(parameters.get(), "sqlError"_s, nullptr);
+    String in_screenColor = m_backendDispatcher->getString(parameters.get(), "screenColor"_s, nullptr);
+    RefPtr<JSON::Array> in_alternateColors = m_backendDispatcher->getArray(parameters.get(), "alternateColors"_s, nullptr);
+    String in_printColor = m_backendDispatcher->getString(parameters.get(), "printColor"_s, nullptr);
     if (m_backendDispatcher->hasProtocolErrors()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, ASCIILiteral { "Some arguments of method 'Database.executeNoOptionalParameters' can't be processed" });
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method 'Database.executeNoOptionalParameters' can't be processed"_s);
         return;
     }
 
@@ -368,16 +368,16 @@ void DatabaseBackendDispatcher::executeNoOptionalParameters(long requestId, RefP
     m_agent->executeNoOptionalParameters(error, *in_columnNames, in_notes, in_timestamp, *in_values, *in_payload, in_databaseId, *in_sqlError, in_screenColor, *in_alternateColors, in_printColor, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, &out_screenColor, out_alternateColors, &out_printColor);
 
     if (!error.length()) {
-        result->setArray(ASCIILiteral("columnNames"), out_columnNames);
-        result->setString(ASCIILiteral("notes"), out_notes);
-        result->setDouble(ASCIILiteral("timestamp"), out_timestamp);
-        result->setObject(ASCIILiteral("values"), out_values);
-        result->setValue(ASCIILiteral("payload"), out_payload);
-        result->setInteger(ASCIILiteral("databaseId"), out_databaseId);
-        result->setObject(ASCIILiteral("sqlError"), out_sqlError);
-        result->setString(ASCIILiteral("screenColor"), Inspector::Protocol::TestHelpers::getEnumConstantValue(out_screenColor));
-        result->setArray(ASCIILiteral("alternateColors"), out_alternateColors);
-        result->setString(ASCIILiteral("printColor"), Inspector::Protocol::TestHelpers::getEnumConstantValue(out_printColor));
+        result->setArray("columnNames"_s, out_columnNames);
+        result->setString("notes"_s, out_notes);
+        result->setDouble("timestamp"_s, out_timestamp);
+        result->setObject("values"_s, out_values);
+        result->setValue("payload"_s, out_payload);
+        result->setInteger("databaseId"_s, out_databaseId);
+        result->setObject("sqlError"_s, out_sqlError);
+        result->setString("screenColor"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(out_screenColor));
+        result->setArray("alternateColors"_s, out_alternateColors);
+        result->setString("printColor"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(out_printColor));
     }
     if (!error.length())
         m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
@@ -583,14 +583,14 @@ public:
         Builder<STATE | MessageSet>& setMessage(const String& value)
         {
             COMPILE_ASSERT(!(STATE & MessageSet), property_message_already_set);
-            m_result->setString(ASCIILiteral("message"), value);
+            m_result->setString("message"_s, value);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int value)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setInteger(ASCIILiteral("code"), value);
+            m_result->setInteger("code"_s, value);
             return castState<CodeSet>();
         }
 
@@ -829,25 +829,25 @@ void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long r
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
         if (columnNames)
-            resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(*columnNames));
+            resultObject->setArray("columnNames"_s, toJSONStringArray(*columnNames));
         if (notes)
-            resultObject->setString(ASCIILiteral("notes"), *notes);
+            resultObject->setString("notes"_s, *notes);
         if (timestamp)
-            resultObject->setDouble(ASCIILiteral("timestamp"), *timestamp);
+            resultObject->setDouble("timestamp"_s, *timestamp);
         if (values)
-            resultObject->setObject(ASCIILiteral("values"), [*values toJSONObject]);
+            resultObject->setObject("values"_s, [*values toJSONObject]);
         if (payload)
-            resultObject->setValue(ASCIILiteral("payload"), [*payload toJSONObject]);
+            resultObject->setValue("payload"_s, [*payload toJSONObject]);
         if (databaseId)
-            resultObject->setInteger(ASCIILiteral("databaseId"), *databaseId);
+            resultObject->setInteger("databaseId"_s, *databaseId);
         if (sqlError)
-            resultObject->setObject(ASCIILiteral("sqlError"), [*sqlError toJSONObject]);
+            resultObject->setObject("sqlError"_s, [*sqlError toJSONObject]);
         if (screenColor)
-            resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(*screenColor));
+            resultObject->setString("screenColor"_s, toProtocolString(*screenColor));
         if (alternateColors)
-            resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(*alternateColors));
+            resultObject->setArray("alternateColors"_s, toJSONStringArray(*alternateColors));
         if (printColor)
-            resultObject->setString(ASCIILiteral("printColor"), toProtocolString(*printColor));
+            resultObject->setString("printColor"_s, toProtocolString(*printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
     };
 
@@ -900,16 +900,16 @@ void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long re
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
-        resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(columnNames));
-        resultObject->setString(ASCIILiteral("notes"), notes);
-        resultObject->setDouble(ASCIILiteral("timestamp"), timestamp);
-        resultObject->setObject(ASCIILiteral("values"), [values toJSONObject]);
-        resultObject->setValue(ASCIILiteral("payload"), [payload toJSONObject]);
-        resultObject->setInteger(ASCIILiteral("databaseId"), databaseId);
-        resultObject->setObject(ASCIILiteral("sqlError"), [sqlError toJSONObject]);
-        resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(screenColor));
-        resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(alternateColors));
-        resultObject->setString(ASCIILiteral("printColor"), toProtocolString(printColor));
+        resultObject->setArray("columnNames"_s, toJSONStringArray(columnNames));
+        resultObject->setString("notes"_s, notes);
+        resultObject->setDouble("timestamp"_s, timestamp);
+        resultObject->setObject("values"_s, [values toJSONObject]);
+        resultObject->setValue("payload"_s, [payload toJSONObject]);
+        resultObject->setInteger("databaseId"_s, databaseId);
+        resultObject->setObject("sqlError"_s, [sqlError toJSONObject]);
+        resultObject->setString("screenColor"_s, toProtocolString(screenColor));
+        resultObject->setArray("alternateColors"_s, toJSONStringArray(alternateColors));
+        resultObject->setString("printColor"_s, toProtocolString(printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
     };
 
@@ -922,13 +922,13 @@ void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long re
     TestProtocolDatabaseError *o_in_sqlError = [[[TestProtocolDatabaseError alloc] initWithJSONObject:&in_sqlError] autorelease];
     std::optional<TestProtocolDatabasePrimaryColors> o_in_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(in_screenColor);
     if (!o_in_screenColor) {
-        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, ASCIILiteral { "Parameter 'screenColor' of method 'Database.executeNoOptionalParameters' cannot be processed" });
+        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'screenColor' of method 'Database.executeNoOptionalParameters' cannot be processed"_s);
         return;
     }
     NSArray/*<NSString>*/ *o_in_alternateColors = toObjCStringArray(&in_alternateColors);
     std::optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> o_in_printColor = fromProtocolString<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor>(in_printColor);
     if (!o_in_printColor) {
-        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, ASCIILiteral { "Parameter 'printColor' of method 'Database.executeNoOptionalParameters' cannot be processed" });
+        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, "Parameter 'printColor' of method 'Database.executeNoOptionalParameters' cannot be processed"_s);
         return;
     }
 
@@ -1054,7 +1054,7 @@ using namespace Inspector;
     _databaseHandler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorDatabaseBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>(ASCIILiteral("Database"), *_controller, WTFMove(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>("Database"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
@@ -1294,13 +1294,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 
@@ -1323,11 +1323,11 @@ inline String toProtocolString(TestProtocolDatabasePrimaryColors value)
 {
     switch(value) {
     case TestProtocolDatabasePrimaryColorsRed:
-        return ASCIILiteral("red");
+        return "red"_s;
     case TestProtocolDatabasePrimaryColorsGreen:
-        return ASCIILiteral("green");
+        return "green"_s;
     case TestProtocolDatabasePrimaryColorsBlue:
-        return ASCIILiteral("blue");
+        return "blue"_s;
     }
 }
 
@@ -1347,13 +1347,13 @@ inline String toProtocolString(TestProtocolDatabaseExecuteAllOptionalParametersP
 {
     switch(value) {
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorCyan:
-        return ASCIILiteral("cyan");
+        return "cyan"_s;
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorMagenta:
-        return ASCIILiteral("magenta");
+        return "magenta"_s;
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorYellow:
-        return ASCIILiteral("yellow");
+        return "yellow"_s;
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorBlack:
-        return ASCIILiteral("black");
+        return "black"_s;
     }
 }
 
@@ -1375,13 +1375,13 @@ inline String toProtocolString(TestProtocolDatabaseExecuteAllOptionalParametersP
 {
     switch(value) {
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorCyan:
-        return ASCIILiteral("cyan");
+        return "cyan"_s;
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorMagenta:
-        return ASCIILiteral("magenta");
+        return "magenta"_s;
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorYellow:
-        return ASCIILiteral("yellow");
+        return "yellow"_s;
     case TestProtocolDatabaseExecuteAllOptionalParametersPrintColorBlack:
-        return ASCIILiteral("black");
+        return "black"_s;
     }
 }
 
@@ -1403,13 +1403,13 @@ inline String toProtocolString(TestProtocolDatabaseExecuteNoOptionalParametersPr
 {
     switch(value) {
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorCyan:
-        return ASCIILiteral("cyan");
+        return "cyan"_s;
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorMagenta:
-        return ASCIILiteral("magenta");
+        return "magenta"_s;
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorYellow:
-        return ASCIILiteral("yellow");
+        return "yellow"_s;
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorBlack:
-        return ASCIILiteral("black");
+        return "black"_s;
     }
 }
 
@@ -1431,13 +1431,13 @@ inline String toProtocolString(TestProtocolDatabaseExecuteNoOptionalParametersPr
 {
     switch(value) {
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorCyan:
-        return ASCIILiteral("cyan");
+        return "cyan"_s;
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorMagenta:
-        return ASCIILiteral("magenta");
+        return "magenta"_s;
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorYellow:
-        return ASCIILiteral("yellow");
+        return "yellow"_s;
     case TestProtocolDatabaseExecuteNoOptionalParametersPrintColorBlack:
-        return ASCIILiteral("black");
+        return "black"_s;
     }
 }
 

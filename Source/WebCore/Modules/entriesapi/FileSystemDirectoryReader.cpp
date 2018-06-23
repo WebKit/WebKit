@@ -60,7 +60,7 @@ void FileSystemDirectoryReader::readEntries(ScriptExecutionContext& context, Ref
 {
     if (m_isReading) {
         if (errorCallback)
-            errorCallback->scheduleCallback(context, DOMException::create(Exception { InvalidStateError, ASCIILiteral("Directory reader is already reading") }));
+            errorCallback->scheduleCallback(context, DOMException::create(Exception { InvalidStateError, "Directory reader is already reading"_s }));
         return;
     }
 

@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const char* const LengthExceededTheMaximumArrayLengthError = "Length exceeded the maximum array length";
+const ASCIILiteral LengthExceededTheMaximumArrayLengthError { "Length exceeded the maximum array length"_s };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSArray);
 
@@ -129,18 +129,18 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // All paths through length definition call the default [[DefineOwnProperty]], hence:
         // from ES5.1 8.12.9 7.a.
         if (descriptor.configurablePresent() && descriptor.configurable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeConfigurabilityError);
         // from ES5.1 8.12.9 7.b.
         if (descriptor.enumerablePresent() && descriptor.enumerable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeEnumerabilityError);
 
         // a. If the [[Value]] field of Desc is absent, then
         // a.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", Desc, and Throw as arguments.
         if (descriptor.isAccessorDescriptor())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeAccessMechanismError);
         // from ES5.1 8.12.9 10.a.
         if (!array->isLengthWritable() && descriptor.writablePresent() && descriptor.writable())
-            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+            return typeError(exec, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
         // This descriptor is either just making length read-only, or changing nothing!
         if (!descriptor.value()) {
             if (descriptor.writablePresent())
@@ -156,7 +156,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         double valueAsNumber = descriptor.value().toNumber(exec);
         RETURN_IF_EXCEPTION(scope, false);
         if (newLen != valueAsNumber) {
-            JSC::throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
+            JSC::throwException(exec, scope, createRangeError(exec, "Invalid array length"_s));
             return false;
         }
 
@@ -173,7 +173,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // f.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and Throw as arguments.
         // g. Reject if oldLenDesc.[[Writable]] is false.
         if (!array->isLengthWritable())
-            return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
+            return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
         
         // h. If newLenDesc.[[Writable]] is absent or has the value true, let newWritable be true.
         // i. Else,
@@ -215,7 +215,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         uint32_t index = optionalIndex.value();
         // FIXME: Nothing prevents this from being called on a RuntimeArray, and the length function will always return 0 in that case.
         if (index >= array->length() && !array->isLengthWritable())
-            return typeError(exec, scope, throwException, ASCIILiteral("Attempting to define numeric property on array with non-writable length property."));
+            return typeError(exec, scope, throwException, "Attempting to define numeric property on array with non-writable length property."_s);
         // c. Let succeeded be the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing P, Desc, and false as arguments.
         // d. Reject if succeeded is false.
         // e. If index >= oldLen
@@ -267,7 +267,7 @@ bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
         double valueAsNumber = value.toNumber(exec);
         RETURN_IF_EXCEPTION(scope, false);
         if (valueAsNumber != static_cast<double>(newLength)) {
-            throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
+            throwException(exec, scope, createRangeError(exec, "Invalid array length"_s));
             return false;
         }
         scope.release();
@@ -431,7 +431,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
     if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
         // Fail if the length is not writable.
         if (map->lengthIsReadOnly())
-            return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, throwException, ReadonlyPropertyWriteError);
 
         if (newLength < length) {
             // Copy any keys we might be interested in into a vector.
@@ -456,7 +456,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
                     ASSERT(it != map->notFound());
                     if (it->value.attributes & PropertyAttribute::DontDelete) {
                         storage->setLength(index + 1);
-                        return typeError(exec, scope, throwException, ASCIILiteral(UnableToDeletePropertyError));
+                        return typeError(exec, scope, throwException, UnableToDeletePropertyError);
                     }
                     map->remove(it);
                 }
@@ -515,7 +515,7 @@ bool JSArray::appendMemcpy(ExecState* exec, VM& vm, unsigned startIndex, JSC::JS
 
     unsigned newLength;
     if (checkedNewLength.safeGet(newLength) == CheckedState::DidOverflow) {
-        throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+        throwException(exec, scope, createRangeError(exec, LengthExceededTheMaximumArrayLengthError));
         return false;
     }
 
@@ -685,7 +685,7 @@ JSValue JSArray::pop(ExecState* exec)
         unsigned length = storage->length();
         if (!length) {
             if (!isLengthWritable())
-                throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
+                throwTypeError(exec, scope, ReadonlyPropertyWriteError);
             return jsUndefined();
         }
 
@@ -718,7 +718,7 @@ JSValue JSArray::pop(ExecState* exec)
     bool success = deletePropertyByIndex(this, exec, index);
     RETURN_IF_EXCEPTION(scope, JSValue());
     if (!success) {
-        throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+        throwTypeError(exec, scope, UnableToDeletePropertyError);
         return jsUndefined();
     }
     // Call the [[Put]] internal method of O with arguments "length", indx, and true.

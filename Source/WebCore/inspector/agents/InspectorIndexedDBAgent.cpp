@@ -323,7 +323,7 @@ static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const JSON::Object* keyRange)
 {
     RefPtr<IDBKey> idbLower;
     RefPtr<JSON::Object> lower;
-    if (keyRange->getObject(ASCIILiteral("lower"), lower)) {
+    if (keyRange->getObject("lower"_s, lower)) {
         idbLower = idbKeyFromInspectorObject(lower.get());
         if (!idbLower)
             return nullptr;
@@ -331,18 +331,18 @@ static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const JSON::Object* keyRange)
 
     RefPtr<IDBKey> idbUpper;
     RefPtr<JSON::Object> upper;
-    if (keyRange->getObject(ASCIILiteral("upper"), upper)) {
+    if (keyRange->getObject("upper"_s, upper)) {
         idbUpper = idbKeyFromInspectorObject(upper.get());
         if (!idbUpper)
             return nullptr;
     }
 
     bool lowerOpen;
-    if (!keyRange->getBoolean(ASCIILiteral("lowerOpen"), lowerOpen))
+    if (!keyRange->getBoolean("lowerOpen"_s, lowerOpen))
         return nullptr;
 
     bool upperOpen;
-    if (!keyRange->getBoolean(ASCIILiteral("upperOpen"), upperOpen))
+    if (!keyRange->getBoolean("upperOpen"_s, upperOpen))
         return nullptr;
 
     return IDBKeyRange::create(WTFMove(idbLower), WTFMove(idbUpper), lowerOpen, upperOpen);
@@ -515,7 +515,7 @@ public:
 } // namespace
 
 InspectorIndexedDBAgent::InspectorIndexedDBAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)
-    : InspectorAgentBase(ASCIILiteral("IndexedDB"), context)
+    : InspectorAgentBase("IndexedDB"_s, context)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_backendDispatcher(Inspector::IndexedDBBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
@@ -546,7 +546,7 @@ static ErrorStringOr<Document*> documentFromFrame(Frame* frame)
 {
     Document* document = frame ? frame->document() : nullptr;
     if (!document)
-        return makeUnexpected(ASCIILiteral("No document for given frame found"));
+        return makeUnexpected("No document for given frame found"_s);
     
     return document;
 }
@@ -555,11 +555,11 @@ static ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
 {
     DOMWindow* domWindow = document->domWindow();
     if (!domWindow)
-        return makeUnexpected(ASCIILiteral("No IndexedDB factory for given frame found"));
+        return makeUnexpected("No IndexedDB factory for given frame found"_s);
 
     IDBFactory* idbFactory = DOMWindowIndexedDatabase::indexedDB(*domWindow);
     if (!idbFactory)
-        makeUnexpected(ASCIILiteral("No IndexedDB factory for given frame found"));
+        makeUnexpected("No IndexedDB factory for given frame found"_s);
     
     return idbFactory;
 }
@@ -628,7 +628,7 @@ void InspectorIndexedDBAgent::requestData(const String& securityOrigin, const St
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(mainWorldExecState(frame));
     RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange) : nullptr;
     if (keyRange && !idbKeyRange) {
-        callback->sendFailure(ASCIILiteral("Can not parse key range."));
+        callback->sendFailure("Can not parse key range."_s);
         return;
     }
 

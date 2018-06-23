@@ -35,7 +35,7 @@ namespace WebCore {
 using namespace Inspector;
 
 InspectorWorkerAgent::InspectorWorkerAgent(PageAgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("Worker"), context)
+    : InspectorAgentBase("Worker"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::WorkerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::WorkerBackendDispatcher::create(context.backendDispatcher, this))
     , m_page(context.inspectedPage)
@@ -79,7 +79,7 @@ void InspectorWorkerAgent::initialized(ErrorString& errorString, const String& w
 {
     WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
     if (!proxy) {
-        errorString = ASCIILiteral("Worker not found.");
+        errorString = "Worker not found."_s;
         return;
     }
 
@@ -89,13 +89,13 @@ void InspectorWorkerAgent::initialized(ErrorString& errorString, const String& w
 void InspectorWorkerAgent::sendMessageToWorker(ErrorString& errorString, const String& workerId, const String& message)
 {
     if (!m_enabled) {
-        errorString = ASCIILiteral("Worker inspection must be enabled.");
+        errorString = "Worker inspection must be enabled."_s;
         return;
     }
 
     WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
     if (!proxy) {
-        errorString = ASCIILiteral("Worker not found.");
+        errorString = "Worker not found."_s;
         return;
     }
 

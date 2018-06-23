@@ -61,7 +61,7 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (exec->argumentCount() < 2)
-        return throwVMTypeError(exec, scope, ASCIILiteral("Proxy.revocable needs to be called with two arguments: the target and the handler"));
+        return throwVMTypeError(exec, scope, "Proxy.revocable needs to be called with two arguments: the target and the handler"_s);
 
     ArgList args(exec);
     JSValue target = args.at(0);
@@ -82,7 +82,7 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL proxyRevocableConstructorThrowError(ExecState* exec)
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
-    return throwVMTypeError(exec, scope, ASCIILiteral("Proxy.revocable cannot be constructed. It can only be called"));
+    return throwVMTypeError(exec, scope, "Proxy.revocable cannot be constructed. It can only be called"_s);
 }
 
 void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* globalObject)
@@ -90,14 +90,14 @@ void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* 
     Base::finishCreation(vm, name);
 
     putDirect(vm, vm.propertyNames->length, jsNumber(2), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, ASCIILiteral("revocable"), makeRevocableProxy, NoIntrinsic, proxyRevocableConstructorThrowError));
+    putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, "revocable"_s, makeRevocableProxy, NoIntrinsic, proxyRevocableConstructorThrowError));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
     if (exec->newTarget().isUndefined())
-        return throwVMTypeError(exec, scope, ASCIILiteral("new.target of Proxy construct should not be undefined"));
+        return throwVMTypeError(exec, scope, "new.target of Proxy construct should not be undefined"_s);
 
     ArgList args(exec);
     JSValue target = args.at(0);

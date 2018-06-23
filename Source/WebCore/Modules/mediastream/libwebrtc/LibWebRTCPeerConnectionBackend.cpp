@@ -221,7 +221,7 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
         m_pendingCandidates.append(WTFMove(rtcCandidate));
     else if (!m_endpoint->addIceCandidate(*rtcCandidate.get())) {
         ASSERT_NOT_REACHED();
-        addIceCandidateFailed(Exception { OperationError, ASCIILiteral("Failed to apply the received candidate") });
+        addIceCandidateFailed(Exception { OperationError, "Failed to apply the received candidate"_s });
         return;
     }
     addIceCandidateSucceeded();

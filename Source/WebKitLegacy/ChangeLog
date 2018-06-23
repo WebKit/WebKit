@@ -1,3 +1,14 @@
+2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add user-defined literal for ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=186839
+
+        Reviewed by Darin Adler.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::syncFileSystemAndTrackerDatabase):
+        * WebCoreSupport/PingHandle.h:
+
 2018-06-09  Dan Bernstein  <mitz@apple.com>
 
         Added missing file references to the Configuration group.

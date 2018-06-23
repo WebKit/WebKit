@@ -928,10 +928,10 @@ static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, ui
 
 static void getWebCoreMemoryCacheStatistics(Vector<HashMap<String, uint64_t>>& result)
 {
-    String imagesString(ASCIILiteral("Images"));
-    String cssString(ASCIILiteral("CSS"));
-    String xslString(ASCIILiteral("XSL"));
-    String javaScriptString(ASCIILiteral("JavaScript"));
+    String imagesString("Images"_s);
+    String cssString("CSS"_s);
+    String xslString("XSL"_s);
+    String javaScriptString("JavaScript"_s);
     
     MemoryCache::Statistics memoryCacheStatistics = MemoryCache::singleton().getStatistics();
     
@@ -971,10 +971,10 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     // Gather JavaScript statistics.
     {
         JSLockHolder lock(commonVM());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptObjectsCount"), commonVM().heap.objectCount());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptGlobalObjectsCount"), commonVM().heap.globalObjectCount());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedObjectsCount"), commonVM().heap.protectedObjectCount());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedGlobalObjectsCount"), commonVM().heap.protectedGlobalObjectCount());
+        data.statisticsNumbers.set("JavaScriptObjectsCount"_s, commonVM().heap.objectCount());
+        data.statisticsNumbers.set("JavaScriptGlobalObjectsCount"_s, commonVM().heap.globalObjectCount());
+        data.statisticsNumbers.set("JavaScriptProtectedObjectsCount"_s, commonVM().heap.protectedObjectCount());
+        data.statisticsNumbers.set("JavaScriptProtectedGlobalObjectsCount"_s, commonVM().heap.protectedGlobalObjectCount());
         
         std::unique_ptr<TypeCountSet> protectedObjectTypeCounts(commonVM().heap.protectedObjectTypeCounts());
         fromCountedSetToHashMap(protectedObjectTypeCounts.get(), data.javaScriptProtectedObjectTypeCounts);
@@ -983,22 +983,22 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
         fromCountedSetToHashMap(objectTypeCounts.get(), data.javaScriptObjectTypeCounts);
         
         uint64_t javaScriptHeapSize = commonVM().heap.size();
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptHeapSize"), javaScriptHeapSize);
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptFreeSize"), commonVM().heap.capacity() - javaScriptHeapSize);
+        data.statisticsNumbers.set("JavaScriptHeapSize"_s, javaScriptHeapSize);
+        data.statisticsNumbers.set("JavaScriptFreeSize"_s, commonVM().heap.capacity() - javaScriptHeapSize);
     }
 
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
-    data.statisticsNumbers.set(ASCIILiteral("FastMallocReservedVMBytes"), fastMallocStatistics.reservedVMBytes);
-    data.statisticsNumbers.set(ASCIILiteral("FastMallocCommittedVMBytes"), fastMallocStatistics.committedVMBytes);
-    data.statisticsNumbers.set(ASCIILiteral("FastMallocFreeListBytes"), fastMallocStatistics.freeListBytes);
+    data.statisticsNumbers.set("FastMallocReservedVMBytes"_s, fastMallocStatistics.reservedVMBytes);
+    data.statisticsNumbers.set("FastMallocCommittedVMBytes"_s, fastMallocStatistics.committedVMBytes);
+    data.statisticsNumbers.set("FastMallocFreeListBytes"_s, fastMallocStatistics.freeListBytes);
     
     // Gather font statistics.
     auto& fontCache = FontCache::singleton();
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache.fontCount());
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache.inactiveFontCount());
+    data.statisticsNumbers.set("CachedFontDataCount"_s, fontCache.fontCount());
+    data.statisticsNumbers.set("CachedFontDataInactiveCount"_s, fontCache.inactiveFontCount());
     
     // Gather glyph page statistics.
-    data.statisticsNumbers.set(ASCIILiteral("GlyphPageCount"), GlyphPage::count());
+    data.statisticsNumbers.set("GlyphPageCount"_s, GlyphPage::count());
     
     // Get WebCore memory cache statistics
     getWebCoreMemoryCacheStatistics(data.webCoreCacheStatistics);

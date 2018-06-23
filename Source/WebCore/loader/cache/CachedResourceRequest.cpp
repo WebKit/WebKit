@@ -144,22 +144,22 @@ static inline String acceptHeaderValueFromType(CachedResource::Type type)
 {
     switch (type) {
     case CachedResource::Type::MainResource:
-        return ASCIILiteral("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        return "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"_s;
     case CachedResource::Type::ImageResource:
         if (ImageDecoder::supportsMediaType(ImageDecoder::MediaType::Video))
-            return ASCIILiteral("image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5");
-        return ASCIILiteral("image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5");
+            return "image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5"_s;
+        return "image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"_s;
     case CachedResource::Type::CSSStyleSheet:
-        return ASCIILiteral("text/css,*/*;q=0.1");
+        return "text/css,*/*;q=0.1"_s;
     case CachedResource::Type::SVGDocumentResource:
-        return ASCIILiteral("image/svg+xml");
+        return "image/svg+xml"_s;
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:
         // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
-        return ASCIILiteral("text/xml,application/xml,application/xhtml+xml,text/xsl,application/rss+xml,application/atom+xml");
+        return "text/xml,application/xml,application/xhtml+xml,text/xsl,application/rss+xml,application/atom+xml"_s;
 #endif
     default:
-        return ASCIILiteral("*/*");
+        return "*/*"_s;
     }
 }
 
@@ -214,7 +214,7 @@ void CachedResourceRequest::updateAcceptEncodingHeader()
     // FIXME: rdar://problem/40879225. Media engines triggering the load should not set this Accept-Encoding header.
     ASSERT(!m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::AcceptEncoding) || m_options.destination == FetchOptions::Destination::Audio || m_options.destination == FetchOptions::Destination::Video);
 
-    m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, ASCIILiteral("identity"));
+    m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, "identity"_s);
 }
 
 void CachedResourceRequest::removeFragmentIdentifierIfNeeded()

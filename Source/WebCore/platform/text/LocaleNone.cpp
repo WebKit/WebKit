@@ -79,37 +79,37 @@ const Vector<String>& LocaleNone::monthLabels()
 
 String LocaleNone::dateFormat()
 {
-    return ASCIILiteral("yyyy-MM-dd");
+    return "yyyy-MM-dd"_s;
 }
 
 String LocaleNone::monthFormat()
 {
-    return ASCIILiteral("yyyy-MM");
+    return "yyyy-MM"_s;
 }
 
 String LocaleNone::shortMonthFormat()
 {
-    return ASCIILiteral("yyyy-MM");
+    return "yyyy-MM"_s;
 }
 
 String LocaleNone::timeFormat()
 {
-    return ASCIILiteral("HH:mm:ss");
+    return "HH:mm:ss"_s;
 }
 
 String LocaleNone::shortTimeFormat()
 {
-    return ASCIILiteral("HH:mm");
+    return "HH:mm"_s;
 }
 
 String LocaleNone::dateTimeFormatWithSeconds()
 {
-    return ASCIILiteral("yyyy-MM-dd'T'HH:mm:ss");
+    return "yyyy-MM-dd'T'HH:mm:ss"_s;
 }
 
 String LocaleNone::dateTimeFormatWithoutSeconds()
 {
-    return ASCIILiteral("yyyy-MM-dd'T'HH:mm");
+    return "yyyy-MM-dd'T'HH:mm"_s;
 }
 
 const Vector<String>& LocaleNone::shortMonthLabels()

@@ -435,7 +435,7 @@ protected:
 
     WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;
 
-    bool enableSupportedExtension(const char* extensionNameLiteral);
+    bool enableSupportedExtension(ASCIILiteral extensionNameLiteral);
 
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;

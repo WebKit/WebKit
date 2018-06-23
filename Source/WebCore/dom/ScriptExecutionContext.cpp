@@ -457,7 +457,7 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     if (canIncludeErrorDetails(cachedScript, sourceURL))
         errorEvent = ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { vm(), exception ? exception->value() : JSC::jsNull() });
     else
-        errorEvent = ErrorEvent::create(ASCIILiteral { "Script error." }, { }, 0, 0, { });
+        errorEvent = ErrorEvent::create("Script error."_s, { }, 0, 0, { });
 
     ASSERT(!m_inDispatchErrorEvent);
     m_inDispatchErrorEvent = true;

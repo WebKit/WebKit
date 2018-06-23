@@ -43,7 +43,7 @@ String BasicCredential::type() const
 {
     switch (m_type) {
     case Type::PublicKey:
-        return ASCIILiteral("public-key");
+        return "public-key"_s;
     }
 
     ASSERT_NOT_REACHED();

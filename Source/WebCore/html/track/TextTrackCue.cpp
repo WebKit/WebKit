@@ -218,22 +218,22 @@ bool TextTrackCue::doesExtendCue(const TextTrackCue& cue) const
 
 void TextTrackCue::toJSON(JSON::Object& value) const
 {
-    const char* type = "Generic";
+    ASCIILiteral type = "Generic"_s;
     switch (cueType()) {
     case TextTrackCue::Generic:
-        type = "Generic";
+        type = "Generic"_s;
         break;
     case TextTrackCue::WebVTT:
-        type = "WebVTT";
+        type = "WebVTT"_s;
         break;
     case TextTrackCue::Data:
-        type = "Data";
+        type = "Data"_s;
         break;
     }
 
-    value.setString(ASCIILiteral("type"), ASCIILiteral(type));
-    value.setDouble(ASCIILiteral("startTime"), startTime());
-    value.setDouble(ASCIILiteral("endTime"), endTime());
+    value.setString("type"_s, type);
+    value.setDouble("startTime"_s, startTime());
+    value.setDouble("endTime"_s, endTime());
 }
 
 String TextTrackCue::toJSONString() const

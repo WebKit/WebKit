@@ -382,35 +382,35 @@ public:
         Builder<STATE | StringSet>& setString(const String& value)
         {
             COMPILE_ASSERT(!(STATE & StringSet), property_string_already_set);
-            m_result->setString(ASCIILiteral("string"), value);
+            m_result->setString("string"_s, value);
             return castState<StringSet>();
         }
 
         Builder<STATE | NumberSet>& setNumber(int value)
         {
             COMPILE_ASSERT(!(STATE & NumberSet), property_number_already_set);
-            m_result->setInteger(ASCIILiteral("number"), value);
+            m_result->setInteger("number"_s, value);
             return castState<NumberSet>();
         }
 
         Builder<STATE | AnimalsSet>& setAnimals(Inspector::Protocol::Test::CastedAnimals value)
         {
             COMPILE_ASSERT(!(STATE & AnimalsSet), property_animals_already_set);
-            m_result->setString(ASCIILiteral("animals"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+            m_result->setString("animals"_s, Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
             return castState<AnimalsSet>();
         }
 
         Builder<STATE | IdSet>& setId(int value)
         {
             COMPILE_ASSERT(!(STATE & IdSet), property_id_already_set);
-            m_result->setInteger(ASCIILiteral("id"), value);
+            m_result->setInteger("id"_s, value);
             return castState<IdSet>();
         }
 
         Builder<STATE | TreeSet>& setTree(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
         {
             COMPILE_ASSERT(!(STATE & TreeSet), property_tree_already_set);
-            m_result->setObject(ASCIILiteral("tree"), value);
+            m_result->setObject("tree"_s, value);
             return castState<TreeSet>();
         }
 
@@ -501,7 +501,7 @@ public:
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject2> value)
     {
-        JSON::ObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
+        JSON::ObjectBase::setObject("obj"_s, WTFMove(value));
     }
 };
 
@@ -552,7 +552,7 @@ public:
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
     {
-        JSON::ObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
+        JSON::ObjectBase::setObject("obj"_s, WTFMove(value));
     }
 };
 
@@ -708,27 +708,27 @@ void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasEx
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
     {
-        auto stringPos = object->find(ASCIILiteral("string"));
+        auto stringPos = object->find("string"_s);
         ASSERT(stringPos != object->end());
         BindingTraits<String>::assertValueHasExpectedType(stringPos->value.get());
     }
     {
-        auto numberPos = object->find(ASCIILiteral("number"));
+        auto numberPos = object->find("number"_s);
         ASSERT(numberPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(numberPos->value.get());
     }
     {
-        auto animalsPos = object->find(ASCIILiteral("animals"));
+        auto animalsPos = object->find("animals"_s);
         ASSERT(animalsPos != object->end());
         BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(animalsPos->value.get());
     }
     {
-        auto idPos = object->find(ASCIILiteral("id"));
+        auto idPos = object->find("id"_s);
         ASSERT(idPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(idPos->value.get());
     }
     {
-        auto treePos = object->find(ASCIILiteral("tree"));
+        auto treePos = object->find("tree"_s);
         ASSERT(treePos != object->end());
         BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(treePos->value.get());
     }
@@ -762,7 +762,7 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasE
 
     int foundPropertiesCount = 0;
     {
-        auto objPos = object->find(ASCIILiteral("obj"));
+        auto objPos = object->find("obj"_s);
         if (objPos != object->end()) {
             BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(objPos->value.get());
             ++foundPropertiesCount;
@@ -785,7 +785,7 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasE
 
     int foundPropertiesCount = 0;
     {
-        auto objPos = object->find(ASCIILiteral("obj"));
+        auto objPos = object->find("obj"_s);
         if (objPos != object->end()) {
             BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(objPos->value.get());
             ++foundPropertiesCount;
@@ -1217,13 +1217,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 
@@ -1246,13 +1246,13 @@ inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 {
     switch(value) {
     case TestProtocolTestUncastedAnimalsPigs:
-        return ASCIILiteral("Pigs");
+        return "Pigs"_s;
     case TestProtocolTestUncastedAnimalsCows:
-        return ASCIILiteral("Cows");
+        return "Cows"_s;
     case TestProtocolTestUncastedAnimalsCats:
-        return ASCIILiteral("Cats");
+        return "Cats"_s;
     case TestProtocolTestUncastedAnimalsHens:
-        return ASCIILiteral("Hens");
+        return "Hens"_s;
     }
 }
 
@@ -1274,13 +1274,13 @@ inline String toProtocolString(TestProtocolTestCastedAnimals value)
 {
     switch(value) {
     case TestProtocolTestCastedAnimalsDucks:
-        return ASCIILiteral("Ducks");
+        return "Ducks"_s;
     case TestProtocolTestCastedAnimalsHens:
-        return ASCIILiteral("Hens");
+        return "Hens"_s;
     case TestProtocolTestCastedAnimalsCrows:
-        return ASCIILiteral("Crows");
+        return "Crows"_s;
     case TestProtocolTestCastedAnimalsFlamingos:
-        return ASCIILiteral("Flamingos");
+        return "Flamingos"_s;
     }
 }
 

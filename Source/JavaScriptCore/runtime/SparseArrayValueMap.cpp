@@ -119,7 +119,7 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
     // extensible, this is not the right thing to have done - so remove again.
     if (result.isNewEntry && !array->isStructureExtensible(vm)) {
         remove(result.iterator);
-        return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
     }
     
     scope.release();
@@ -142,11 +142,11 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
     // extensible, this is not the right thing to have done - so remove again.
     if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isStructureExtensible(vm)) {
         remove(result.iterator);
-        return typeError(exec, scope, shouldThrow, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
+        return typeError(exec, scope, shouldThrow, NonExtensibleObjectPropertyDefineError);
     }
 
     if (entry.attributes & PropertyAttribute::ReadOnly)
-        return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 
     entry.attributes = attributes;
     entry.set(vm, this, value);
@@ -178,7 +178,7 @@ bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
 
     if (!(attributes & PropertyAttribute::Accessor)) {
         if (attributes & PropertyAttribute::ReadOnly)
-            return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 
         set(vm, map, value);
         return true;

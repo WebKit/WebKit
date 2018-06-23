@@ -40,72 +40,72 @@ namespace WebKit {
 
 String pluginInformationBundleIdentifierKey()
 {
-    return ASCIILiteral("PluginInformationBundleIdentifier");
+    return "PluginInformationBundleIdentifier"_s;
 }
 
 String pluginInformationBundleVersionKey()
 {
-    return ASCIILiteral("PluginInformationBundleVersion");
+    return "PluginInformationBundleVersion"_s;
 }
 
 String pluginInformationBundleShortVersionKey()
 {
-    return ASCIILiteral("PluginInformationBundleShortVersion");
+    return "PluginInformationBundleShortVersion"_s;
 }
 
 String pluginInformationPathKey()
 {
-    return ASCIILiteral("PluginInformationPath");
+    return "PluginInformationPath"_s;
 }
 
 String pluginInformationDisplayNameKey()
 {
-    return ASCIILiteral("PluginInformationDisplayName");
+    return "PluginInformationDisplayName"_s;
 }
 
 String pluginInformationDefaultLoadPolicyKey()
 {
-    return ASCIILiteral("PluginInformationDefaultLoadPolicy");
+    return "PluginInformationDefaultLoadPolicy"_s;
 }
 
 String pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey()
 {
-    return ASCIILiteral("PluginInformationUpdatePastLastBlockedVersionIsKnownAvailable");
+    return "PluginInformationUpdatePastLastBlockedVersionIsKnownAvailable"_s;
 }
 
 String pluginInformationHasSandboxProfileKey()
 {
-    return ASCIILiteral("PluginInformationHasSandboxProfile");
+    return "PluginInformationHasSandboxProfile"_s;
 }
 
 String pluginInformationFrameURLKey()
 {
-    return ASCIILiteral("PluginInformationFrameURL");
+    return "PluginInformationFrameURL"_s;
 }
 
 String pluginInformationMIMETypeKey()
 {
-    return ASCIILiteral("PluginInformationMIMEType");
+    return "PluginInformationMIMEType"_s;
 }
 
 String pluginInformationPageURLKey()
 {
-    return ASCIILiteral("PluginInformationPageURL");
+    return "PluginInformationPageURL"_s;
 }
 
 String pluginInformationPluginspageAttributeURLKey()
 {
-    return ASCIILiteral("PluginInformationPluginspageAttributeURL");
+    return "PluginInformationPluginspageAttributeURL"_s;
 }
 
 String pluginInformationPluginURLKey()
 {
-    return ASCIILiteral("PluginInformationPluginURL");
+    return "PluginInformationPluginURL"_s;
 }
 
 String plugInInformationReplacementObscuredKey()
 {
-    return ASCIILiteral("PlugInInformationReplacementObscured");
+    return "PlugInInformationReplacementObscured"_s;
 }
 
 void getPluginModuleInformation(const PluginModuleInfo& plugin, API::Dictionary::MapType& map)

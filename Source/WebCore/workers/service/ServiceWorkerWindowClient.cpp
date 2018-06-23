@@ -49,13 +49,13 @@ bool ServiceWorkerWindowClient::isFocused() const
 
 void ServiceWorkerWindowClient::focus(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("windowClient.focus() is not yet supported") });
+    promise->reject(Exception { NotSupportedError, "windowClient.focus() is not yet supported"_s });
 }
 
 void ServiceWorkerWindowClient::navigate(const String& url, Ref<DeferredPromise>&& promise)
 {
     UNUSED_PARAM(url);
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("windowClient.navigate() is not yet supported") });
+    promise->reject(Exception { NotSupportedError, "windowClient.navigate() is not yet supported"_s });
 }
 
 } // namespace WebCore

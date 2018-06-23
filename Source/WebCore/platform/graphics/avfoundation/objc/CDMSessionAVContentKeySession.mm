@@ -164,7 +164,7 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const Strin
     }
 
     if (!m_certificate) {
-        String certificateString(ASCIILiteral("certificate"));
+        String certificateString("certificate"_s);
         RefPtr<Uint8Array> array = Uint8Array::create(certificateString.length());
         for (unsigned i = 0, length = certificateString.length(); i < length; ++i)
             array->set(i, certificateString[i]);

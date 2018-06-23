@@ -224,7 +224,7 @@ JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtime
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!asObject(runtimeMethod)->inherits<ProxyRuntimeMethod>(vm))
-        return throwTypeError(exec, scope, ASCIILiteral("Attempt to invoke non-plug-in method on plug-in object."));
+        return throwTypeError(exec, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
 
     ProxyMethod* method = static_cast<ProxyMethod*>(runtimeMethod->method());
     ASSERT(method);

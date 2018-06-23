@@ -142,7 +142,7 @@ static void mapDataParamToSrc(Vector<String>& paramNames, Vector<String>& paramV
             dataParamValue = paramValues[i];
     }
     if (!foundSrcParam && !dataParamValue.isNull()) {
-        paramNames.append(ASCIILiteral("src"));
+        paramNames.append("src"_s);
         paramValues.append(WTFMove(dataParamValue));
     }
 }

@@ -33,7 +33,7 @@ namespace WTF {
 
 class Indenter {
 public:
-    Indenter(unsigned count = 0, String string = ASCIILiteral("  "))
+    Indenter(unsigned count = 0, String string = "  "_s)
         : m_count(count)
         , m_string(string)
     { }

@@ -244,22 +244,22 @@ static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
 {
     switch (property) {
     case AnimatedPropertyTransform:
-        return ASCIILiteral("transform");
+        return "transform"_s;
     case AnimatedPropertyOpacity:
-        return ASCIILiteral("opacity");
+        return "opacity"_s;
     case AnimatedPropertyBackgroundColor:
-        return ASCIILiteral("backgroundColor");
+        return "backgroundColor"_s;
     case AnimatedPropertyFilter:
-        return ASCIILiteral("filters");
+        return "filters"_s;
 #if ENABLE(FILTERS_LEVEL_2)
     case AnimatedPropertyWebkitBackdropFilter:
-        return ASCIILiteral("backdropFilters");
+        return "backdropFilters"_s;
 #endif
     case AnimatedPropertyInvalid:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral("");
+    return ASCIILiteral::null();
 }
 
 static String animationIdentifier(const String& animationName, AnimatedPropertyID property, int index, int subIndex)

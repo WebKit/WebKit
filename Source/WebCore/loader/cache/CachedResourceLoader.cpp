@@ -504,7 +504,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 
     if (options.mode == FetchOptions::Mode::NoCors && options.redirect != FetchOptions::Redirect::Follow) {
         ASSERT(type != CachedResource::Type::MainResource);
-        frame()->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, ASCIILiteral("No-Cors mode requires follow redirect mode"));
+        frame()->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "No-Cors mode requires follow redirect mode"_s);
         return false;
     }
 
@@ -793,7 +793,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     if (!url.isValid()) {
         RELEASE_LOG_IF_ALLOWED("requestResource: URL is invalid (frame = %p)", frame());
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, ASCIILiteral("URL is invalid") });
+        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
     }
 
     prepareFetch(type, request);
@@ -801,7 +801,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     // We are passing url as well as request, as request url may contain a fragment identifier.
     if (!canRequest(type, url, request, forPreload)) {
         RELEASE_LOG_IF_ALLOWED("requestResource: Not allowed to request resource (frame = %p)", frame());
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, ASCIILiteral("Not allowed to request resource"), ResourceError::Type::AccessControl });
+        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -819,7 +819,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
                 return WTFMove(resource);
             }
-            return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, ASCIILiteral("Resource blocked by content blocker"), ResourceError::Type::AccessControl });
+            return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
         }
         if (blockedStatus.madeHTTPS
             && type == CachedResource::Type::MainResource

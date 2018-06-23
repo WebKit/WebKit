@@ -199,9 +199,9 @@ RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) con
         return nullptr;
 
     Vector<String> responseArray;
-    String(response.data(), response.size()).split(ASCIILiteral(" "), responseArray);
+    String(response.data(), response.size()).split(" "_s, responseArray);
 
-    if (!responseArray.contains(String(ASCIILiteral("valid-response"))))
+    if (!responseArray.contains(String("valid-response"_s)))
         return nullptr;
 
     return response.copy();
@@ -305,15 +305,15 @@ void MockCDMInstance::updateLicense(const String& sessionID, LicenseType, const 
     }
 
     Vector<String> responseVector;
-    String(response.data(), response.size()).split(ASCIILiteral(" "), responseVector);
+    String(response.data(), response.size()).split(" "_s, responseVector);
 
-    if (responseVector.contains(String(ASCIILiteral("invalid-format")))) {
+    if (responseVector.contains(String("invalid-format"_s))) {
         callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
         return;
     }
 
     std::optional<KeyStatusVector> changedKeys;
-    if (responseVector.contains(String(ASCIILiteral("keys-changed")))) {
+    if (responseVector.contains(String("keys-changed"_s))) {
         const auto* keys = factory->keysForSessionWithID(sessionID);
         if (keys) {
             KeyStatusVector keyStatusVector;

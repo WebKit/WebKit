@@ -369,10 +369,10 @@ ASCIILiteral errorMesasgeForTransfer(ArrayBuffer* buffer)
 {
     ASSERT(buffer->isLocked());
     if (buffer->isShared())
-        return ASCIILiteral("Cannot transfer a SharedArrayBuffer");
+        return "Cannot transfer a SharedArrayBuffer"_s;
     if (buffer->isWasmMemory())
-        return ASCIILiteral("Cannot transfer a WebAssembly.Memory");
-    return ASCIILiteral("Cannot transfer an ArrayBuffer whose backing store has been accessed by the JavaScriptCore C API");
+        return "Cannot transfer a WebAssembly.Memory"_s;
+    return "Cannot transfer an ArrayBuffer whose backing store has been accessed by the JavaScriptCore C API"_s;
 }
 
 } // namespace JSC

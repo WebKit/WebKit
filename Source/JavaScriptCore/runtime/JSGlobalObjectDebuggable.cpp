@@ -47,7 +47,7 @@ JSGlobalObjectDebuggable::JSGlobalObjectDebuggable(JSGlobalObject& globalObject)
 String JSGlobalObjectDebuggable::name() const
 {
     String name = m_globalObject.name();
-    return name.isEmpty() ? ASCIILiteral("JSContext") : name;
+    return name.isEmpty() ? "JSContext"_s : name;
 }
 
 void JSGlobalObjectDebuggable::connect(FrontendChannel* frontendChannel, bool automaticInspection, bool immediatelyPause)

@@ -71,7 +71,7 @@ void SessionHost::dispatchMessage(const String& message)
         return;
 
     long sequenceID;
-    if (!messageObject->getInteger(ASCIILiteral("id"), sequenceID))
+    if (!messageObject->getInteger("id"_s, sequenceID))
         return;
 
     auto responseHandler = m_commandRequests.take(sequenceID);
@@ -79,12 +79,12 @@ void SessionHost::dispatchMessage(const String& message)
 
     CommandResponse response;
     RefPtr<JSON::Object> errorObject;
-    if (messageObject->getObject(ASCIILiteral("error"), errorObject)) {
+    if (messageObject->getObject("error"_s, errorObject)) {
         response.responseObject = WTFMove(errorObject);
         response.isError = true;
     } else {
         RefPtr<JSON::Object> resultObject;
-        if (messageObject->getObject(ASCIILiteral("result"), resultObject) && resultObject->size())
+        if (messageObject->getObject("result"_s, resultObject) && resultObject->size())
             response.responseObject = WTFMove(resultObject);
     }
 

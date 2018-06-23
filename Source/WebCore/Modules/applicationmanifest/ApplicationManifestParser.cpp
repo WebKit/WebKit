@@ -56,13 +56,13 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
 
     RefPtr<JSON::Value> jsonValue;
     if (!JSON::Value::parseJSON(text, jsonValue)) {
-        logDeveloperWarning(ASCIILiteral("The manifest is not valid JSON data."));
+        logDeveloperWarning("The manifest is not valid JSON data."_s);
         jsonValue = JSON::Object::create();
     }
 
     RefPtr<JSON::Object> manifest;
     if (!jsonValue->asObject(manifest)) {
-        logDeveloperWarning(ASCIILiteral("The manifest is not a JSON value of type \"object\"."));
+        logDeveloperWarning("The manifest is not a JSON value of type \"object\"."_s);
         manifest = JSON::Object::create();
     }
 
@@ -80,18 +80,18 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
 
 void ApplicationManifestParser::logManifestPropertyNotAString(const String& propertyName)
 {
-    logDeveloperWarning("The value of \"" + propertyName + "\" is not a string.");
+    logDeveloperWarning(makeString("The value of \""_s, propertyName, "\" is not a string."_s));
 }
 
 void ApplicationManifestParser::logManifestPropertyInvalidURL(const String& propertyName)
 {
-    logDeveloperWarning("The value of \"" + propertyName + "\" is not a valid URL.");
+    logDeveloperWarning(makeString("The value of \""_s, propertyName, "\" is not a valid URL."_s));
 }
 
 void ApplicationManifestParser::logDeveloperWarning(const String& message)
 {
     if (m_consoleContext)
-        m_consoleContext->addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(JSC::MessageSource::Other, JSC::MessageType::Log, JSC::MessageLevel::Warning, ASCIILiteral("Parsing application manifest ") + m_manifestURL.string() + ASCIILiteral(": ") + message));
+        m_consoleContext->addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(JSC::MessageSource::Other, JSC::MessageType::Log, JSC::MessageLevel::Warning, makeString("Parsing application manifest "_s, m_manifestURL.string(), ": "_s, message)));
 }
 
 URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const URL& documentURL)
@@ -102,7 +102,7 @@ URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const
 
     String stringValue;
     if (!value->asString(stringValue)) {
-        logManifestPropertyNotAString(ASCIILiteral("start_url"));
+        logManifestPropertyNotAString("start_url"_s);
         return documentURL;
     }
 
@@ -111,14 +111,14 @@ URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const
 
     URL startURL(m_manifestURL, stringValue);
     if (!startURL.isValid()) {
-        logManifestPropertyInvalidURL(ASCIILiteral("start_url"));
+        logManifestPropertyInvalidURL("start_url"_s);
         return documentURL;
     }
 
     if (!protocolHostAndPortAreEqual(startURL, documentURL)) {
         auto startURLOrigin = SecurityOrigin::create(startURL);
         auto documentOrigin = SecurityOrigin::create(documentURL);
-        logDeveloperWarning(ASCIILiteral("The start_url's origin of \"") + startURLOrigin->toString() + ASCIILiteral("\" is different from the document's origin of \"") + documentOrigin->toString() + ASCIILiteral("\"."));
+        logDeveloperWarning(makeString("The start_url's origin of \""_s, startURLOrigin->toString(), "\" is different from the document's origin of \""_s, documentOrigin->toString(), "\"."_s));
         return documentURL;
     }
 
@@ -128,12 +128,12 @@ URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const
 ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON::Object& manifest)
 {
     RefPtr<JSON::Value> value;
-    if (!manifest.getValue(ASCIILiteral("display"), value))
+    if (!manifest.getValue("display"_s, value))
         return ApplicationManifest::Display::Browser;
 
     String stringValue;
     if (!value->asString(stringValue)) {
-        logManifestPropertyNotAString(ASCIILiteral("display"));
+        logManifestPropertyNotAString("display"_s);
         return ApplicationManifest::Display::Browser;
     }
 
@@ -148,23 +148,23 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
     if (stringValue == "browser")
         return ApplicationManifest::Display::Browser;
 
-    logDeveloperWarning(ASCIILiteral("\"") + stringValue + ASCIILiteral("\" is not a valid display mode."));
+    logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid display mode."_s));
     return ApplicationManifest::Display::Browser;
 }
 
 String ApplicationManifestParser::parseName(const JSON::Object& manifest)
 {
-    return parseGenericString(manifest, ASCIILiteral("name"));
+    return parseGenericString(manifest, "name"_s);
 }
 
 String ApplicationManifestParser::parseDescription(const JSON::Object& manifest)
 {
-    return parseGenericString(manifest, ASCIILiteral("description"));
+    return parseGenericString(manifest, "description"_s);
 }
 
 String ApplicationManifestParser::parseShortName(const JSON::Object& manifest)
 {
-    return parseGenericString(manifest, ASCIILiteral("short_name"));
+    return parseGenericString(manifest, "short_name"_s);
 }
 
 static bool isInScope(const URL& scopeURL, const URL& targetURL)
@@ -201,7 +201,7 @@ URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const UR
 
     String stringValue;
     if (!value->asString(stringValue)) {
-        logManifestPropertyNotAString(ASCIILiteral("scope"));
+        logManifestPropertyNotAString("scope"_s);
         return defaultScope;
     }
 
@@ -210,19 +210,19 @@ URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const UR
 
     URL scopeURL(m_manifestURL, stringValue);
     if (!scopeURL.isValid()) {
-        logManifestPropertyInvalidURL(ASCIILiteral("scope"));
+        logManifestPropertyInvalidURL("scope"_s);
         return defaultScope;
     }
 
     if (!protocolHostAndPortAreEqual(scopeURL, documentURL)) {
         auto scopeURLOrigin = SecurityOrigin::create(scopeURL);
         auto documentOrigin = SecurityOrigin::create(documentURL);
-        logDeveloperWarning(ASCIILiteral("The scope's origin of \"") + scopeURLOrigin->toString() + ASCIILiteral("\" is different from the document's origin of \"") + documentOrigin->toString() + ASCIILiteral("\"."));
+        logDeveloperWarning(makeString("The scope's origin of \""_s, scopeURLOrigin->toString(), "\" is different from the document's origin of \""_s, documentOrigin->toString(), "\"."_s));
         return defaultScope;
     }
 
     if (!isInScope(scopeURL, startURL)) {
-        logDeveloperWarning(ASCIILiteral("The start URL is not within scope of the provided scope URL."));
+        logDeveloperWarning("The start URL is not within scope of the provided scope URL."_s);
         return defaultScope;
     }
 

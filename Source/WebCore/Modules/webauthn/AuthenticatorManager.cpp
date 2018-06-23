@@ -58,16 +58,16 @@ static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferS
     auto object = JSON::Object::create();
     switch (type) {
     case ClientDataType::Create:
-        object->setString(ASCIILiteral("type"), ASCIILiteral("webauthn.create"));
+        object->setString("type"_s, "webauthn.create"_s);
         break;
     case ClientDataType::Get:
-        object->setString(ASCIILiteral("type"), ASCIILiteral("webauthn.get"));
+        object->setString("type"_s, "webauthn.get"_s);
         break;
     }
-    object->setString(ASCIILiteral("challenge"), WTF::base64URLEncode(challenge.data(), challenge.length()));
-    object->setString(ASCIILiteral("origin"), origin.toRawString());
+    object->setString("challenge"_s, WTF::base64URLEncode(challenge.data(), challenge.length()));
+    object->setString("origin"_s, origin.toRawString());
     // FIXME: This might be platform dependent.
-    object->setString(ASCIILiteral("hashAlgorithm"), ASCIILiteral("SHA-256"));
+    object->setString("hashAlgorithm"_s, "SHA-256"_s);
 
     auto utf8JSONString = object->toJSONString().utf8();
     return ArrayBuffer::create(utf8JSONString.data(), utf8JSONString.length());
@@ -88,7 +88,7 @@ static std::unique_ptr<Timer> initTimeoutTimer(std::optional<unsigned long> time
         return nullptr;
 
     auto timer = std::make_unique<Timer>([promise = promise] () mutable {
-        promise.reject(Exception { NotAllowedError, ASCIILiteral("Operation timed out.") });
+        promise.reject(Exception { NotAllowedError, "Operation timed out."_s });
     });
     timer->startOneShot(Seconds::fromMilliseconds(*timeOutInMs));
     return timer;
@@ -127,7 +127,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Step 1, 3, 16 are handled by the caller.
     // Step 2.
     if (!sameOriginWithAncestors) {
-        promise.reject(Exception { NotAllowedError, ASCIILiteral("The origin of the document is not the same as its ancestors.") });
+        promise.reject(Exception { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }
 
@@ -139,7 +139,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
     // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
     if (!options.rp.id.isEmpty() && callerOrigin.host() != options.rp.id) {
-        promise.reject(Exception { SecurityError, ASCIILiteral("The origin of the document is not a registrable domain suffix of the provided RP ID.") });
+        promise.reject(Exception { SecurityError, "The origin of the document is not a registrable domain suffix of the provided RP ID."_s });
         return;
     }
     if (options.rp.id.isEmpty())
@@ -149,7 +149,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Most of the jobs are done by bindings. However, we can't know if the JSValue of options.pubKeyCredParams
     // is empty or not. Return NotSupportedError as long as it is empty.
     if (options.pubKeyCredParams.isEmpty()) {
-        promise.reject(Exception { NotSupportedError, ASCIILiteral("No desired properties of the to be created credential are provided.") });
+        promise.reject(Exception { NotSupportedError, "No desired properties of the to be created credential are provided."_s });
         return;
     }
 
@@ -162,7 +162,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, transports of options.excludeCredentials are checked in LocalAuthenticator.
     if (!m_messenger)  {
-        promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
+        promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }
 
@@ -170,7 +170,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
         if (didTimeoutTimerFire(timeoutTimer.get()))
             return;
         if (abortSignal && abortSignal->aborted()) {
-            promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+            promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
         if (result.hasException()) {
@@ -194,7 +194,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Step 1, 3, 13 are handled by the caller.
     // Step 2.
     if (!sameOriginWithAncestors) {
-        promise.reject(Exception { NotAllowedError, ASCIILiteral("The origin of the document is not the same as its ancestors.") });
+        promise.reject(Exception { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }
 
@@ -206,7 +206,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
     // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
     if (!options.rpId.isEmpty() && callerOrigin.host() != options.rpId) {
-        promise.reject(Exception { SecurityError, ASCIILiteral("The origin of the document is not a registrable domain suffix of the provided RP ID.") });
+        promise.reject(Exception { SecurityError, "The origin of the document is not a registrable domain suffix of the provided RP ID."_s });
         return;
     }
     if (options.rpId.isEmpty())
@@ -221,7 +221,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, filtering of options.allowCredentials is done in LocalAuthenticator.
     if (!m_messenger)  {
-        promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
+        promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }
 
@@ -229,7 +229,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
         if (didTimeoutTimerFire(timeoutTimer.get()))
             return;
         if (abortSignal && abortSignal->aborted()) {
-            promise.reject(Exception { AbortError, ASCIILiteral("Aborted by AbortSignal.") });
+            promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
         if (result.hasException()) {
@@ -249,7 +249,7 @@ void AuthenticatorManager::isUserVerifyingPlatformAuthenticatorAvailable(DOMProm
     // The following implements https://www.w3.org/TR/webauthn/#isUserVerifyingPlatformAuthenticatorAvailable
     // as of 5 December 2017.
     if (!m_messenger)  {
-        promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
+        promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }
 

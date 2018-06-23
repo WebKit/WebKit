@@ -34,7 +34,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
         if (value.attributes() & PropertyAttribute::Builtin)
             getter = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm), globalObject);
         else {
-            String getterName = tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
+            String getterName = tryMakeString("get "_s, String(*propertyName.publicName()));
             if (!getterName)
                 return;
             getter = JSFunction::create(vm, globalObject, 0, getterName, value.accessorGetter());

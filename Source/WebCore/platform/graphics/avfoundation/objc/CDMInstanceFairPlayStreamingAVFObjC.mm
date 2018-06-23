@@ -280,7 +280,7 @@ static bool isEqual(const SharedBuffer& data, const String& value)
     if (!arrayBuffer)
         return false;
 
-    auto exceptionOrDecoder = TextDecoder::create(ASCIILiteral("utf8"), TextDecoder::Options());
+    auto exceptionOrDecoder = TextDecoder::create("utf8"_s, TextDecoder::Options());
     if (exceptionOrDecoder.hasException())
         return false;
 
@@ -294,7 +294,7 @@ static bool isEqual(const SharedBuffer& data, const String& value)
 
 void CDMInstanceFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, const SharedBuffer& responseData, LicenseUpdateCallback callback)
 {
-    if (!m_expiredSessions.isEmpty() && isEqual(responseData, ASCIILiteral("acknowledged"))) {
+    if (!m_expiredSessions.isEmpty() && isEqual(responseData, "acknowledged"_s)) {
         auto expiredSessions = adoptNS([[NSMutableArray alloc] init]);
         for (auto& session : m_expiredSessions)
             [expiredSessions addObject:session.get()]; 
@@ -435,7 +435,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::clearClient()
 
 const String& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
 {
-    static NeverDestroyed<String> s_keySystem { ASCIILiteral("com.apple.fps") };
+    static NeverDestroyed<String> s_keySystem { "com.apple.fps"_s };
     return s_keySystem;
 }
 

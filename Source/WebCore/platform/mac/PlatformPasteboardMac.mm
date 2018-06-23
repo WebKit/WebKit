@@ -119,14 +119,14 @@ String PlatformPasteboard::stringForType(const String& pasteboardType) const
 static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
 {
     if (platformType == String(legacyStringPasteboardType()) || platformType == String(NSPasteboardTypeString))
-        return ASCIILiteral("text/plain");
+        return "text/plain"_s;
 
     if (platformType == String(legacyURLPasteboardType()))
-        return ASCIILiteral("text/uri-list");
+        return "text/uri-list"_s;
 
     if (platformType == String(legacyHTMLPasteboardType()) || platformType == String(WebArchivePboardType)
         || platformType == String(legacyRTFDPasteboardType()) || platformType == String(legacyRTFPasteboardType()))
-        return ASCIILiteral("text/html");
+        return "text/html"_s;
 
     return nullptr;
 }

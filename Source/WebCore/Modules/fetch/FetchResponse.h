@@ -51,7 +51,7 @@ public:
 
     struct Init {
         unsigned short status { 200 };
-        String statusText { ASCIILiteral("OK") };
+        String statusText { "OK"_s };
         std::optional<FetchHeaders::Init> headers;
     };
 

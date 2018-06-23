@@ -63,7 +63,7 @@ using DecisionPoint = MockContentFilterSettings::DecisionPoint;
     settings.setEnabled(true);
     settings.setDecision(static_cast<Decision>([decoder decodeIntForKey:@"Decision"]));
     settings.setDecisionPoint(static_cast<DecisionPoint>([decoder decodeIntForKey:@"DecisionPoint"]));
-    settings.setBlockedString(ASCIILiteral("blocked"));
+    settings.setBlockedString("blocked"_s);
     return self;
 }
 

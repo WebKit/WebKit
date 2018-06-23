@@ -255,7 +255,7 @@ void SWClientConnection::clearPendingJobs()
         ScriptExecutionContext::postTaskTo(keyValue.value, [identifier = keyValue.key] (auto& context) {
             if (auto* container = context.serviceWorkerContainer()) {
                 if (auto* job = container->job(identifier))
-                    job->failedWithException(Exception { TypeError, ASCIILiteral("Internal error") });
+                    job->failedWithException(Exception { TypeError, "Internal error"_s });
             }
         });
     }

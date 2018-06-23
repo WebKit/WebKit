@@ -264,7 +264,7 @@ JSBigInt* JSBigInt::divide(ExecState* exec, JSBigInt* x, JSBigInt* y)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (y->isZero()) {
-        throwRangeError(exec, scope, ASCIILiteral("0 is an invalid divisor value."));
+        throwRangeError(exec, scope, "0 is an invalid divisor value."_s);
         return nullptr;
     }
 
@@ -317,7 +317,7 @@ JSBigInt* JSBigInt::remainder(ExecState* exec, JSBigInt* x, JSBigInt* y)
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     if (y->isZero()) {
-        throwRangeError(exec, scope, ASCIILiteral("0 is an invalid divisor value."));
+        throwRangeError(exec, scope, "0 is an invalid divisor value."_s);
         return nullptr;
     }
 
@@ -1192,7 +1192,7 @@ double JSBigInt::toNumber(ExecState* exec) const
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwTypeError(exec, scope, ASCIILiteral("Conversion from 'BigInt' to 'number' is not allowed."));
+    throwTypeError(exec, scope, "Conversion from 'BigInt' to 'number' is not allowed."_s);
     return 0.0;
 }
 

@@ -308,7 +308,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     String nonce = m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr);
     String crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     if (crossOriginMode.isNull())
-        crossOriginMode = ASCIILiteral("omit");
+        crossOriginMode = "omit"_s;
 
     if (hasSourceAttribute()) {
         String sourceURL = sourceAttributeValue();

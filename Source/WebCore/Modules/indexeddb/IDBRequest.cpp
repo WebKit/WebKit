@@ -156,7 +156,7 @@ IDBRequest::~IDBRequest()
 ExceptionOr<std::optional<IDBRequest::Result>> IDBRequest::result() const
 {
     if (!isDone())
-        return Exception { InvalidStateError, ASCIILiteral("Failed to read the 'result' property from 'IDBRequest': The request has not finished.") };
+        return Exception { InvalidStateError, "Failed to read the 'result' property from 'IDBRequest': The request has not finished."_s };
 
     return std::optional<IDBRequest::Result> { m_result };
 }
@@ -166,7 +166,7 @@ ExceptionOr<DOMException*> IDBRequest::error() const
     ASSERT(&originThread() == &Thread::current());
 
     if (!isDone())
-        return Exception { InvalidStateError, ASCIILiteral("Failed to read the 'error' property from 'IDBRequest': The request has not finished.") };
+        return Exception { InvalidStateError, "Failed to read the 'error' property from 'IDBRequest': The request has not finished."_s };
 
     return m_domError.get();
 }
@@ -350,7 +350,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
     ASSERT(&originThread() == &Thread::current());
 
     if (m_transaction && m_idbError.code() != AbortError)
-        m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, ASCIILiteral("IDBTransaction will abort due to uncaught exception in an event handler")));
+        m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
 }
 
 void IDBRequest::setResult(const IDBKeyData& keyData)

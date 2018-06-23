@@ -525,7 +525,7 @@ bool SchemeRegistry::canServiceWorkersHandleURLScheme(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    if (scheme.startsWithIgnoringASCIICase(ASCIILiteral("http"))) {
+    if (scheme.startsWithIgnoringASCIICase("http"_s)) {
         if (scheme.length() == 4)
             return true;
         if (scheme.length() == 5 && isASCIIAlphaCaselessEqual(scheme[4], 's'))

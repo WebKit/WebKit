@@ -60,7 +60,7 @@ static void paintLayer(GraphicsContext& context, GraphicsLayer& layer, const Int
 }
 
 PaintingEngineThreaded::PaintingEngineThreaded(unsigned numThreads)
-    : m_workerPool(WorkerPool::create(ASCIILiteral("PaintingThread"), numThreads))
+    : m_workerPool(WorkerPool::create("PaintingThread"_s, numThreads))
 {
 }
 

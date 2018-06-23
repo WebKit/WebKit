@@ -459,9 +459,9 @@ void SecurityOrigin::setEnforcesFilePathSeparation()
 String SecurityOrigin::toString() const
 {
     if (isUnique())
-        return ASCIILiteral("null");
+        return "null"_s;
     if (m_data.protocol == "file" && m_enforcesFilePathSeparation)
-        return ASCIILiteral("null");
+        return "null"_s;
     return toRawString();
 }
 

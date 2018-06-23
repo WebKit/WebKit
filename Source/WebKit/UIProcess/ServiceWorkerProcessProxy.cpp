@@ -70,8 +70,8 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
 {
     WebProcessProxy::getLaunchOptions(launchOptions);
 
-    launchOptions.extraInitializationData.add(ASCIILiteral("service-worker-process"), ASCIILiteral("1"));
-    launchOptions.extraInitializationData.add(ASCIILiteral("security-origin"), securityOrigin().toString());
+    launchOptions.extraInitializationData.add("service-worker-process"_s, "1"_s);
+    launchOptions.extraInitializationData.add("security-origin"_s, securityOrigin().toString());
 }
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store, std::optional<PAL::SessionID> initialSessionID)
@@ -97,7 +97,7 @@ void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageI
     // FIXME: Expose an API to delegate the actual decision to the application layer.
     auto& protectionSpace = challenge->core().protectionSpace();
     if (protectionSpace.authenticationScheme() == WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested && processPool().allowsAnySSLCertificateForServiceWorker()) {
-        auto credential = WebCore::Credential(ASCIILiteral("accept server trust"), emptyString(), WebCore::CredentialPersistenceNone);
+        auto credential = WebCore::Credential("accept server trust"_s, emptyString(), WebCore::CredentialPersistenceNone);
         challenge->useCredential(WebCredential::create(credential).ptr());
         return;
     }

@@ -77,7 +77,7 @@ void HTMLHtmlElement::insertedByParser()
     if (manifest.isEmpty())
         documentLoader->applicationCacheHost().selectCacheWithoutManifest();
     else {
-        document().addConsoleMessage(MessageSource::AppCache, MessageLevel::Warning, ASCIILiteral("ApplicationCache is deprecated. Please use ServiceWorkers instead."));
+        document().addConsoleMessage(MessageSource::AppCache, MessageLevel::Warning, "ApplicationCache is deprecated. Please use ServiceWorkers instead."_s);
         documentLoader->applicationCacheHost().selectCacheWithManifest(document().completeURL(manifest));
     }
 }

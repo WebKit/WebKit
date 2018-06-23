@@ -66,7 +66,7 @@ private:
             return;
         }
         completionHandler({ });
-        pingLoadComplete(WebCore::ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Not allowed to follow redirects"), WebCore::ResourceError::Type::AccessControl });
+        pingLoadComplete(WebCore::ResourceError { String(), 0, m_currentRequest.url(), "Not allowed to follow redirects"_s, WebCore::ResourceError::Type::AccessControl });
     }
     void didReceiveResponseAsync(WebCore::ResourceHandle*, WebCore::ResourceResponse&& response, CompletionHandler<void()>&& completionHandler) final
     {
@@ -77,12 +77,12 @@ private:
     void didFinishLoading(WebCore::ResourceHandle*) final { pingLoadComplete(); }
     void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError& error) final { pingLoadComplete(error); }
     bool shouldUseCredentialStorage(WebCore::ResourceHandle*) final { return m_shouldUseCredentialStorage; }
-    void timeoutTimerFired() { pingLoadComplete(WebCore::ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Load timed out"), WebCore::ResourceError::Type::Timeout }); }
+    void timeoutTimerFired() { pingLoadComplete(WebCore::ResourceError { String(), 0, m_currentRequest.url(), "Load timed out"_s, WebCore::ResourceError::Type::Timeout }); }
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&, CompletionHandler<void(bool)>&& completionHandler)
     {
         completionHandler(false);
-        pingLoadComplete(WebCore::ResourceError { String { }, 0, m_currentRequest.url(), ASCIILiteral("Not allowed to authenticate"), WebCore::ResourceError::Type::AccessControl });
+        pingLoadComplete(WebCore::ResourceError { String { }, 0, m_currentRequest.url(), "Not allowed to authenticate"_s, WebCore::ResourceError::Type::AccessControl });
     }
 #endif
 

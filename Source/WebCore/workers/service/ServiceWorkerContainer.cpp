@@ -125,7 +125,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     }
 
     if (relativeScriptURL.isEmpty()) {
-        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() cannot be called with an empty script URL") });
+        promise->reject(Exception { TypeError, "serviceWorker.register() cannot be called with an empty script URL"_s });
         return;
     }
 
@@ -134,20 +134,20 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     jobData.scriptURL = context->completeURL(relativeScriptURL);
     if (!jobData.scriptURL.isValid()) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: Invalid scriptURL");
-        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a valid relative script URL") });
+        promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a valid relative script URL"_s });
         return;
     }
 
     if (!SchemeRegistry::canServiceWorkersHandleURLScheme(jobData.scriptURL.protocol().toStringWithoutCopying())) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: Invalid scriptURL scheme is not HTTP or HTTPS");
-        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS") });
+        promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS"_s });
         return;
     }
 
     String path = jobData.scriptURL.path();
     if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scriptURL contains invalid character");
-        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'") });
+        promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_s });
         return;
     }
 
@@ -158,14 +158,14 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     if (!jobData.scopeURL.isNull() && !SchemeRegistry::canServiceWorkersHandleURLScheme(jobData.scopeURL.protocol().toStringWithoutCopying())) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scopeURL scheme is not HTTP or HTTPS");
-        promise->reject(Exception { TypeError, ASCIILiteral("Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS") });
+        promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS"_s });
         return;
     }
 
     path = jobData.scopeURL.path();
     if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scopeURL contains invalid character");
-        promise->reject(Exception { TypeError, ASCIILiteral("Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'") });
+        promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'"_s });
         return;
     }
 
@@ -260,7 +260,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
 
     URL parsedURL = context->completeURL(clientURL);
     if (!protocolHostAndPortAreEqual(parsedURL, context->url())) {
-        promise->reject(Exception { SecurityError, ASCIILiteral("Origin of clientURL is not client's origin") });
+        promise->reject(Exception { SecurityError, "Origin of clientURL is not client's origin"_s });
         return;
     }
 
@@ -498,7 +498,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     if (!context) {
         LOG_ERROR("ServiceWorkerContainer::jobResolvedWithRegistration called but the container's ScriptExecutionContext is gone");
         callOnMainThread([connection = m_swConnection, jobIdentifier = job.identifier(), registrationKey = job.data().registrationKey().isolatedCopy(), scriptURL = job.data().scriptURL.isolatedCopy()] {
-            connection->failedFetchingScript(jobIdentifier, registrationKey, { errorDomainWebKitInternal, 0, scriptURL, ASCIILiteral("Attempt to fetch service worker script with no ScriptExecutionContext") });
+            connection->failedFetchingScript(jobIdentifier, registrationKey, { errorDomainWebKitInternal, 0, scriptURL, "Attempt to fetch service worker script with no ScriptExecutionContext"_s });
         });
         jobDidFinish(job);
         return;

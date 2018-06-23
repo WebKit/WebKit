@@ -83,7 +83,7 @@ static CFRunLoopRef currentRunLoop()
 #endif
 
 InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, InspectorScriptProfilerAgent* scriptProfileAgent, InspectorHeapAgent* heapAgent, InspectorPageAgent* pageAgent)
-    : InspectorAgentBase(ASCIILiteral("Timeline"), context)
+    : InspectorAgentBase("Timeline"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(context.backendDispatcher, this))
     , m_scriptProfilerAgent(scriptProfileAgent)
@@ -137,7 +137,7 @@ void InspectorTimelineAgent::setInstruments(ErrorString& errorString, const JSON
     for (auto instrumentValue : instruments) {
         String enumValueString;
         if (!instrumentValue->asString(enumValueString)) {
-            errorString = ASCIILiteral("Unexpected type in instruments list, should be string");
+            errorString = "Unexpected type in instruments list, should be string"_s;
             return;
         }
 
@@ -248,11 +248,11 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
     if (!title.isEmpty()) {
         for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
             String recordTitle;
-            record.data->getString(ASCIILiteral("title"), recordTitle);
+            record.data->getString("title"_s, recordTitle);
             if (recordTitle == title) {
                 if (WebConsoleAgent* consoleAgent = m_instrumentingAgents.webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
-                    String warning = title.isEmpty() ? ASCIILiteral("Unnamed Profile already exists") : makeString("Profile \"", title, "\" already exists");
+                    String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \"", title, "\" already exists");
                     consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
                 }
                 return;
@@ -274,7 +274,7 @@ void InspectorTimelineAgent::stopFromConsole(JSC::ExecState*, const String& titl
         const TimelineRecordEntry& record = m_pendingConsoleProfileRecords[i];
 
         String recordTitle;
-        record.data->getString(ASCIILiteral("title"), recordTitle);
+        record.data->getString("title"_s, recordTitle);
         if (title.isEmpty() || recordTitle == title) {
             didCompleteRecordEntry(record);
             m_pendingConsoleProfileRecords.remove(i);
@@ -288,7 +288,7 @@ void InspectorTimelineAgent::stopFromConsole(JSC::ExecState*, const String& titl
 
     if (WebConsoleAgent* consoleAgent = m_instrumentingAgents.webConsoleAgent()) {
         // FIXME: Send an enum to the frontend for localization?
-        String warning = title.isEmpty() ? ASCIILiteral("No profiles exist") : makeString("Profile \"", title, "\" does not exist");
+        String warning = title.isEmpty() ? "No profiles exist"_s : makeString("Profile \"", title, "\" does not exist");
         consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
     }
 }
@@ -689,9 +689,9 @@ void InspectorTimelineAgent::setFrameIdentifier(JSON::Object* record, Frame* fra
 
 void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& entry)
 {
-    entry.record->setObject(ASCIILiteral("data"), entry.data);
-    entry.record->setArray(ASCIILiteral("children"), entry.children);
-    entry.record->setDouble(ASCIILiteral("endTime"), timestamp());
+    entry.record->setObject("data"_s, entry.data);
+    entry.record->setArray("children"_s, entry.children);
+    entry.record->setDouble("endTime"_s, timestamp());
     addRecordToTimeline(entry.record.copyRef(), entry.type);
 }
 

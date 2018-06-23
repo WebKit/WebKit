@@ -77,7 +77,7 @@ IntlPluralRulesConstructor::IntlPluralRulesConstructor(VM& vm, Structure* struct
 
 void IntlPluralRulesConstructor::finishCreation(VM& vm, IntlPluralRulesPrototype* pluralRulesPrototype, Structure* pluralRulesStructure)
 {
-    Base::finishCreation(vm, ASCIILiteral("PluralRules"));
+    Base::finishCreation(vm, "PluralRules"_s);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, pluralRulesPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
     pluralRulesPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));

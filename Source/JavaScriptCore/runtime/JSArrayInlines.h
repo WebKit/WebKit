@@ -123,7 +123,7 @@ reloop:
         if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
             methodTable(vm)->putByIndex(this, exec, length, value, true);
             if (!scope.exception())
-                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+                throwException(exec, scope, createRangeError(exec, LengthExceededTheMaximumArrayLengthError));
             return;
         }
 
@@ -144,7 +144,7 @@ reloop:
         if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
             methodTable(vm)->putByIndex(this, exec, length, value, true);
             if (!scope.exception())
-                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+                throwException(exec, scope, createRangeError(exec, LengthExceededTheMaximumArrayLengthError));
             return;
         }
 
@@ -179,7 +179,7 @@ reloop:
         if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
             methodTable(vm)->putByIndex(this, exec, length, value, true);
             if (!scope.exception())
-                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+                throwException(exec, scope, createRangeError(exec, LengthExceededTheMaximumArrayLengthError));
             return;
         }
 
@@ -218,7 +218,7 @@ reloop:
             methodTable(vm)->putByIndex(this, exec, storage->length(), value, true);
             // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
             if (!scope.exception())
-                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+                throwException(exec, scope, createRangeError(exec, LengthExceededTheMaximumArrayLengthError));
             return;
         }
 

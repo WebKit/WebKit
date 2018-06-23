@@ -56,7 +56,7 @@ TEST_F(GPU, CommandQueueCreate)
     // If you haven't set a label, we just use the prefix.
     EXPECT_STREQ("com.apple.WebKit", [mtlCommandQueue.label UTF8String]);
 
-    String testLabel(ASCIILiteral("this.is.a.test"));
+    String testLabel("this.is.a.test"_s);
     commandQueue->setLabel(testLabel);
 
     // The WebKit API doesn't prefix.

@@ -47,7 +47,7 @@ namespace WebCore {
 using namespace Inspector;
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("LayerTree"), context)
+    : InspectorAgentBase("LayerTree"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::LayerTreeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::LayerTreeBackendDispatcher::create(context.backendDispatcher, this))
 {
@@ -107,13 +107,13 @@ void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId
 
     auto* node = m_instrumentingAgents.inspectorDOMAgent()->nodeForId(nodeId);
     if (!node) {
-        errorString = ASCIILiteral("Provided node id doesn't match any known node");
+        errorString = "Provided node id doesn't match any known node"_s;
         return;
     }
 
     auto* renderer = node->renderer();
     if (!renderer) {
-        errorString = ASCIILiteral("Node for provided node id doesn't have a renderer");
+        errorString = "Node for provided node id doesn't have a renderer"_s;
         return;
     }
 
@@ -229,7 +229,7 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorStrin
     const RenderLayer* renderLayer = m_idToLayer.get(layerId);
 
     if (!renderLayer) {
-        errorString = ASCIILiteral("Could not find a bound layer for the provided id");
+        errorString = "Could not find a bound layer for the provided id"_s;
         return;
     }
 

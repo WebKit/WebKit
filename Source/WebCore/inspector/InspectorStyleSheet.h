@@ -53,10 +53,10 @@ public:
 
     explicit InspectorCSSId(const JSON::Object& value)
     {
-        if (!value.getString(ASCIILiteral("styleSheetId"), m_styleSheetId))
+        if (!value.getString("styleSheetId"_s, m_styleSheetId))
             return;
 
-        if (!value.getInteger(ASCIILiteral("ordinal"), m_ordinal))
+        if (!value.getInteger("ordinal"_s, m_ordinal))
             m_styleSheetId = String();
     }
 

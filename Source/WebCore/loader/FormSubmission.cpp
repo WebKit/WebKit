@@ -93,10 +93,10 @@ void FormSubmission::Attributes::parseAction(const String& action)
 String FormSubmission::Attributes::parseEncodingType(const String& type)
 {
     if (equalLettersIgnoringASCIICase(type, "multipart/form-data"))
-        return ASCIILiteral("multipart/form-data");
+        return "multipart/form-data"_s;
     if (equalLettersIgnoringASCIICase(type, "text/plain"))
-        return ASCIILiteral("text/plain");
-    return ASCIILiteral("application/x-www-form-urlencoded");
+        return "text/plain"_s;
+    return "application/x-www-form-urlencoded"_s;
 }
 
 void FormSubmission::Attributes::updateEncodingType(const String& type)

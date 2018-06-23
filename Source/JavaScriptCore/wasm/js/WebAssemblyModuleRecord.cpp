@@ -384,7 +384,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
                 break;
 
             case Wasm::I64:
-                throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("exported global cannot be an i64")));
+                throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, "exported global cannot be an i64"_s));
                 return;
 
             case Wasm::F32:
@@ -434,7 +434,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
 template <typename Scope, typename M, typename N, typename ...Args>
 NEVER_INLINE static JSValue dataSegmentFail(ExecState* exec, VM& vm, Scope& scope, M memorySize, N segmentSize, N offset, Args... args)
 {
-    return throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, makeString(ASCIILiteral("Invalid data segment initialization: segment of "), String::number(segmentSize), ASCIILiteral(" bytes memory of "), String::number(memorySize), ASCIILiteral(" bytes, at offset "), String::number(offset), args...)));
+    return throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, makeString("Invalid data segment initialization: segment of "_s, String::number(segmentSize), " bytes memory of "_s, String::number(memorySize), " bytes, at offset "_s, String::number(offset), args...)));
 }
 
 JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
@@ -493,7 +493,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     forEachElement([&] (const Wasm::Element& element, uint32_t tableIndex) {
         uint64_t lastWrittenIndex = static_cast<uint64_t>(tableIndex) + static_cast<uint64_t>(element.functionIndices.size()) - 1;
         if (UNLIKELY(lastWrittenIndex >= table->length()))
-            exception = JSValue(throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Element is trying to set an out of bounds table index"))));
+            exception = JSValue(throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, "Element is trying to set an out of bounds table index"_s)));
     });
 
     if (UNLIKELY(exception))
@@ -502,9 +502,9 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     // Validation of all segment ranges comes before all Table and Memory initialization.
     forEachSegment([&] (uint8_t*, uint64_t sizeInBytes, const Wasm::Segment::Ptr& segment, uint32_t offset) {
         if (UNLIKELY(sizeInBytes < segment->sizeInBytes))
-            exception = dataSegmentFail(exec, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment is too big"));
+            exception = dataSegmentFail(exec, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ", segment is too big"_s);
         else if (UNLIKELY(offset > sizeInBytes - segment->sizeInBytes))
-            exception = dataSegmentFail(exec, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment writes outside of memory"));
+            exception = dataSegmentFail(exec, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ", segment writes outside of memory"_s);
     });
 
     if (UNLIKELY(exception))

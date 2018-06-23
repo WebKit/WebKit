@@ -37,7 +37,7 @@ public:
     {
         WTF::initializeMainThread();
 
-        m_librarySourceCode = ASCIILiteral("using namespace metal;\n\
+        m_librarySourceCode = "using namespace metal;\n\
             struct Vertex\n\
             {\n\
             float4 position [[position]];\n\
@@ -51,7 +51,7 @@ public:
             fragment float4 fragment_main(Vertex inVertex [[stage_in]])\n\
             {\n\
             return inVertex.color;\n\
-            }");
+            }"_s;
     }
 
     const String& librarySourceCode() { return m_librarySourceCode; }

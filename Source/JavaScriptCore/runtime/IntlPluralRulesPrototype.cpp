@@ -87,7 +87,7 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(ExecState* state
     IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, state->thisValue());
 
     if (!pluralRules)
-        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules")));
+        return JSValue::encode(throwTypeError(state, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s));
 
     double value = state->argument(0).toNumber(state);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(ExecSta
     IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, state->thisValue());
 
     if (!pluralRules)
-        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules")));
+        return JSValue::encode(throwTypeError(state, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s));
 
     scope.release();
     return JSValue::encode(pluralRules->resolvedOptions(*state));

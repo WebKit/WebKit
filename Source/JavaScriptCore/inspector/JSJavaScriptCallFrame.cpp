@@ -80,7 +80,7 @@ JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(ExecState* exec)
 
     JSValue scriptValue = exec->argument(0);
     if (!scriptValue.isString())
-        return throwTypeError(exec, scope, ASCIILiteral("JSJavaScriptCallFrame.evaluateWithScopeExtension first argument must be a string."));
+        return throwTypeError(exec, scope, "JSJavaScriptCallFrame.evaluateWithScopeExtension first argument must be a string."_s);
 
     String script = asString(scriptValue)->value(exec);
     RETURN_IF_EXCEPTION(scope, JSValue());
@@ -220,9 +220,9 @@ JSValue JSJavaScriptCallFrame::type(ExecState* exec) const
 {
     switch (impl().type()) {
     case DebuggerCallFrame::FunctionType:
-        return jsNontrivialString(exec, ASCIILiteral("function"));
+        return jsNontrivialString(exec, "function"_s);
     case DebuggerCallFrame::ProgramType:
-        return jsNontrivialString(exec, ASCIILiteral("program"));
+        return jsNontrivialString(exec, "program"_s);
     }
 
     ASSERT_NOT_REACHED();

@@ -79,7 +79,7 @@ void BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue()
     String displayValue = visibleValue();
     if (displayValue.isEmpty()) {
         // Need to put something to keep text baseline.
-        displayValue = ASCIILiteral(" ");
+        displayValue = " "_s;
     }
     downcast<HTMLElement>(*node).setInnerText(displayValue);
 }

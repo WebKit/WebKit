@@ -106,7 +106,7 @@ public:
         if (auto inverse = AffineTransform::inverse())
             return SVGMatrixValue { inverse.value() };
         
-        return Exception { InvalidStateError, ASCIILiteral("Matrix is not invertible") };
+        return Exception { InvalidStateError, "Matrix is not invertible"_s };
     }
 
     ExceptionOr<SVGMatrixValue> rotateFromVector(double x, double y)

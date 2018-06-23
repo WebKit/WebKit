@@ -130,7 +130,7 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString
 
     InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
-        errorString = ASCIILiteral("Execution context with given id not found.");
+        errorString = "Execution context with given id not found."_s;
 
     return injectedScript;
 }

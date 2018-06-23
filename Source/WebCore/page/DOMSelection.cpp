@@ -150,13 +150,13 @@ bool DOMSelection::isCollapsed() const
 String DOMSelection::type() const
 {
     if (!m_frame)
-        return ASCIILiteral("None");
+        return "None"_s;
     auto& selection = m_frame->selection();
     if (selection.isNone())
-        return ASCIILiteral("None");
+        return "None"_s;
     if (selection.isCaret())
-        return ASCIILiteral("Caret");
-    return ASCIILiteral("Range");
+        return "Caret"_s;
+    return "Range"_s;
 }
 
 unsigned DOMSelection::rangeCount() const

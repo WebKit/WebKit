@@ -142,7 +142,7 @@ std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWith
     if (!actualDisplayID)
         return std::nullopt;
 
-    auto device = CaptureDevice(String::number(actualDisplayID.value()), CaptureDevice::DeviceType::Screen, ASCIILiteral("ScreenCaptureDevice"));
+    auto device = CaptureDevice(String::number(actualDisplayID.value()), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s);
     device.setEnabled(true);
 
     return device;

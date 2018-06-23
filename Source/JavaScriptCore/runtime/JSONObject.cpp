@@ -391,7 +391,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     // Handle cycle detection, and put the holder on the stack.
     for (unsigned i = 0; i < m_holderStack.size(); i++) {
         if (m_holderStack[i].object() == object) {
-            throwTypeError(m_exec, scope, ASCIILiteral("JSON.stringify cannot serialize cyclic structures."));
+            throwTypeError(m_exec, scope, "JSON.stringify cannot serialize cyclic structures."_s);
             return StringifyFailed;
         }
     }
@@ -790,7 +790,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!exec->argumentCount())
-        return throwVMError(exec, scope, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
+        return throwVMError(exec, scope, createError(exec, "JSON.parse requires at least one parameter"_s));
     auto viewWithString = exec->uncheckedArgument(0).toString(exec)->viewWithUnderlyingString(exec);
     RETURN_IF_EXCEPTION(scope, { });
     StringView view = viewWithString.view;
@@ -834,7 +834,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!exec->argumentCount())
-        return throwVMError(exec, scope, createError(exec, ASCIILiteral("No input to stringify")));
+        return throwVMError(exec, scope, createError(exec, "No input to stringify"_s));
     Stringifier stringifier(exec, exec->argument(1), exec->argument(2));
     RETURN_IF_EXCEPTION(scope, { });
     scope.release();

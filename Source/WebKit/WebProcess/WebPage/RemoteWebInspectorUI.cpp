@@ -57,17 +57,17 @@ void RemoteWebInspectorUI::initialize(const String& debuggableType, const String
     m_page.corePage()->inspectorController().setInspectorFrontendClient(this);
 
     m_frontendAPIDispatcher.reset();
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setDockingUnavailable"), true);
+    m_frontendAPIDispatcher.dispatchCommand("setDockingUnavailable"_s, true);
 }
 
 void RemoteWebInspectorUI::didSave(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("savedURL"), url);
+    m_frontendAPIDispatcher.dispatchCommand("savedURL"_s, url);
 }
 
 void RemoteWebInspectorUI::didAppend(const String& url)
 {
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("appendedToURL"), url);
+    m_frontendAPIDispatcher.dispatchCommand("appendedToURL"_s, url);
 }
 
 void RemoteWebInspectorUI::sendMessageToFrontend(const String& message)
@@ -93,7 +93,7 @@ void RemoteWebInspectorUI::frontendLoaded()
 {
     m_frontendAPIDispatcher.frontendLoaded();
 
-    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setIsVisible"), true);
+    m_frontendAPIDispatcher.dispatchCommand("setIsVisible"_s, true);
 
     bringToFront();
 }

@@ -36,13 +36,13 @@ String DeprecatedCSSOMValueList::cssText() const
     String separator;
     switch (m_valueListSeparator) {
     case CSSValue::SpaceSeparator:
-        separator = ASCIILiteral(" ");
+        separator = " "_s;
         break;
     case CSSValue::CommaSeparator:
-        separator = ASCIILiteral(", ");
+        separator = ", "_s;
         break;
     case CSSValue::SlashSeparator:
-        separator = ASCIILiteral(" / ");
+        separator = " / "_s;
         break;
     default:
         ASSERT_NOT_REACHED();

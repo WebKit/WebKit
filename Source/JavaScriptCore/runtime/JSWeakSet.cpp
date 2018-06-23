@@ -34,7 +34,7 @@ const ClassInfo JSWeakSet::s_info = { "WeakSet", &Base::s_info, nullptr, nullptr
 
 String JSWeakSet::toStringName(const JSC::JSObject*, ExecState*)
 {
-    return ASCIILiteral("Object");
+    return "Object"_s;
 }
 
 }

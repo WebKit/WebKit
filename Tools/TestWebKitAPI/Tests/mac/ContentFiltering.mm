@@ -65,7 +65,7 @@ static void loadAlternateTest(Decision decision, DecisionPoint decisionPoint)
         settings.setEnabled(true);
         settings.setDecision(decision);
         settings.setDecisionPoint(decisionPoint);
-        settings.setBlockedString(ASCIILiteral("blocked"));
+        settings.setBlockedString("blocked"_s);
         [TestProtocol registerWithScheme:@"http"];
 
         auto webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect]);

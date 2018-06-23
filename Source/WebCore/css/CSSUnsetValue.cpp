@@ -32,7 +32,7 @@ namespace WebCore {
 
 String CSSUnsetValue::customCSSText() const
 {
-    return ASCIILiteral("unset");
+    return "unset"_s;
 }
 
 } // namespace WebCore

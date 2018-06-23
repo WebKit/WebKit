@@ -237,7 +237,7 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, ExecState* exec,
     if (thisObject->canPerformFastPutInline(vm, propertyName)) {
         ASSERT(!thisObject->prototypeChainMayInterceptStoreTo(vm, propertyName));
         if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
-            return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
         return true;
     }
 

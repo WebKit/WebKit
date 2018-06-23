@@ -56,7 +56,7 @@ static bool asBool(const bool* b)
 }
 
 InspectorRuntimeAgent::InspectorRuntimeAgent(AgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("Runtime"))
+    : InspectorAgentBase("Runtime"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_scriptDebugServer(context.environment.scriptDebugServer())
     , m_vm(context.environment.vm())
@@ -137,7 +137,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
+        errorString = "Could not find InjectedScript for objectId"_s;
         return;
     }
 
@@ -167,7 +167,7 @@ void InspectorRuntimeAgent::getPreview(ErrorString& errorString, const String& o
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
+        errorString = "Could not find InjectedScript for objectId"_s;
         return;
     }
 
@@ -184,7 +184,7 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
+        errorString = "Could not find InjectedScript for objectId"_s;
         return;
     }
 
@@ -202,7 +202,7 @@ void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, c
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
+        errorString = "Could not find InjectedScript for objectId"_s;
         return;
     }
 
@@ -220,7 +220,7 @@ void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
-        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
+        errorString = "Could not find InjectedScript for objectId"_s;
         return;
     }
 
@@ -235,10 +235,10 @@ void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const JSON::Obj
     InjectedScript injectedScript;
 
     String objectId;
-    if (callArgument.getString(ASCIILiteral("objectId"), objectId)) {
+    if (callArgument.getString("objectId"_s, objectId)) {
         injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
         if (injectedScript.hasNoValue()) {
-            errorString = ASCIILiteral("Could not find InjectedScript for objectId");
+            errorString = "Could not find InjectedScript for objectId"_s;
             return;
         }
     } else {
@@ -268,27 +268,27 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
 
     typeDescriptions = JSON::ArrayOf<Protocol::Runtime::TypeDescription>::create();
     if (!m_vm.typeProfiler()) {
-        errorString = ASCIILiteral("The VM does not currently have Type Information.");
+        errorString = "The VM does not currently have Type Information."_s;
         return;
     }
 
     MonotonicTime start = MonotonicTime::now();
-    m_vm.typeProfilerLog()->processLogEntries(ASCIILiteral("User Query"));
+    m_vm.typeProfilerLog()->processLogEntries("User Query"_s);
 
     for (size_t i = 0; i < locations.length(); i++) {
         RefPtr<JSON::Value> value = locations.get(i);
         RefPtr<JSON::Object> location;
         if (!value->asObject(location)) {
-            errorString = ASCIILiteral("Array of TypeLocation objects has an object that does not have type of TypeLocation.");
+            errorString = "Array of TypeLocation objects has an object that does not have type of TypeLocation."_s;
             return;
         }
 
         int descriptor;
         String sourceIDAsString;
         int divot;
-        location->getInteger(ASCIILiteral("typeInformationDescriptor"), descriptor);
-        location->getString(ASCIILiteral("sourceID"), sourceIDAsString);
-        location->getInteger(ASCIILiteral("divot"), divot);
+        location->getInteger("typeInformationDescriptor"_s, descriptor);
+        location->getString("sourceID"_s, sourceIDAsString);
+        location->getInteger("divot"_s, divot);
 
         bool okay;
         TypeLocation* typeLocation = m_vm.typeProfiler()->findLocation(divot, sourceIDAsString.toIntPtrStrict(&okay), static_cast<TypeProfilerSearchDescriptor>(descriptor), m_vm);
@@ -380,7 +380,7 @@ void InspectorRuntimeAgent::setControlFlowProfilerEnabledState(bool isControlFlo
 void InspectorRuntimeAgent::getBasicBlocks(ErrorString& errorString, const String& sourceIDAsString, RefPtr<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>& basicBlocks)
 {
     if (!m_vm.controlFlowProfiler()) {
-        errorString = ASCIILiteral("The VM does not currently have a Control Flow Profiler.");
+        errorString = "The VM does not currently have a Control Flow Profiler."_s;
         return;
     }
 

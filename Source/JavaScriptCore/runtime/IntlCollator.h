@@ -68,9 +68,9 @@ private:
     };
 
     void createCollator(ExecState&);
-    static const char* usageString(Usage);
-    static const char* sensitivityString(Sensitivity);
-    static const char* caseFirstString(CaseFirst);
+    static ASCIILiteral usageString(Usage);
+    static ASCIILiteral sensitivityString(Sensitivity);
+    static ASCIILiteral caseFirstString(CaseFirst);
 
     Usage m_usage;
     String m_locale;

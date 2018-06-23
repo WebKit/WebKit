@@ -437,7 +437,7 @@ bool JSDOMWindow::preventExtensions(JSObject*, ExecState* exec)
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
 
-    throwTypeError(exec, scope, ASCIILiteral("Cannot prevent extensions on this object"));
+    throwTypeError(exec, scope, "Cannot prevent extensions on this object"_s);
     return false;
 }
 
@@ -445,8 +445,8 @@ String JSDOMWindow::toStringName(const JSObject* object, ExecState* exec)
 {
     auto* thisObject = jsCast<const JSDOMWindow*>(object);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError))
-        return ASCIILiteral("Object");
-    return ASCIILiteral("Window");
+        return "Object"_s;
+    return "Window"_s;
 }
 
 // Custom Attributes

@@ -46,7 +46,7 @@ Ref<DocumentFragment> DocumentFragment::create(Document& document)
 
 String DocumentFragment::nodeName() const
 {
-    return ASCIILiteral("#document-fragment");
+    return "#document-fragment"_s;
 }
 
 Node::NodeType DocumentFragment::nodeType() const

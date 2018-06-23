@@ -89,13 +89,13 @@ String CSSValueList::customCSSText() const
     String separator;
     switch (m_valueListSeparator) {
     case SpaceSeparator:
-        separator = ASCIILiteral(" ");
+        separator = " "_s;
         break;
     case CommaSeparator:
-        separator = ASCIILiteral(", ");
+        separator = ", "_s;
         break;
     case SlashSeparator:
-        separator = ASCIILiteral(" / ");
+        separator = " / "_s;
         break;
     default:
         ASSERT_NOT_REACHED();

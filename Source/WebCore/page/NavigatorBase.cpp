@@ -47,26 +47,26 @@
 #if PLATFORM(IOS)
 #define WEBCORE_NAVIGATOR_PLATFORM deviceName()
 #elif OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
-#define WEBCORE_NAVIGATOR_PLATFORM ASCIILiteral("MacPPC")
+#define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"_s
 #elif OS(MAC_OS_X) && (CPU(X86) || CPU(X86_64))
-#define WEBCORE_NAVIGATOR_PLATFORM ASCIILiteral("MacIntel")
+#define WEBCORE_NAVIGATOR_PLATFORM "MacIntel"_s
 #elif OS(WINDOWS)
-#define WEBCORE_NAVIGATOR_PLATFORM ASCIILiteral("Win32")
+#define WEBCORE_NAVIGATOR_PLATFORM "Win32"_s
 #else
 #define WEBCORE_NAVIGATOR_PLATFORM emptyString()
 #endif
 #endif // ifndef WEBCORE_NAVIGATOR_PLATFORM
 
 #ifndef WEBCORE_NAVIGATOR_PRODUCT
-#define WEBCORE_NAVIGATOR_PRODUCT ASCIILiteral("Gecko")
+#define WEBCORE_NAVIGATOR_PRODUCT "Gecko"_s
 #endif // ifndef WEBCORE_NAVIGATOR_PRODUCT
 
 #ifndef WEBCORE_NAVIGATOR_PRODUCT_SUB
-#define WEBCORE_NAVIGATOR_PRODUCT_SUB ASCIILiteral("20030107")
+#define WEBCORE_NAVIGATOR_PRODUCT_SUB "20030107"_s
 #endif // ifndef WEBCORE_NAVIGATOR_PRODUCT_SUB
 
 #ifndef WEBCORE_NAVIGATOR_VENDOR
-#define WEBCORE_NAVIGATOR_VENDOR ASCIILiteral("Apple Computer, Inc.")
+#define WEBCORE_NAVIGATOR_VENDOR "Apple Computer, Inc."_s
 #endif // ifndef WEBCORE_NAVIGATOR_VENDOR
 
 #ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
@@ -89,7 +89,7 @@ NavigatorBase::~NavigatorBase() = default;
 
 String NavigatorBase::appName()
 {
-    return ASCIILiteral("Netscape");
+    return "Netscape"_s;
 }
 
 String NavigatorBase::appVersion() const
@@ -114,7 +114,7 @@ String NavigatorBase::platform()
 
 String NavigatorBase::appCodeName()
 {
-    return ASCIILiteral("Mozilla");
+    return "Mozilla"_s;
 }
 
 String NavigatorBase::product()

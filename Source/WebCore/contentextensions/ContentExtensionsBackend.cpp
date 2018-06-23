@@ -215,7 +215,7 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
     if (currentDocument) {
         if (willMakeHTTPS) {
             ASSERT(url.protocolIs("http") || url.protocolIs("ws"));
-            String newProtocol = url.protocolIs("http") ? ASCIILiteral("https") : ASCIILiteral("wss");
+            String newProtocol = url.protocolIs("http") ? "https"_s : "wss"_s;
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker promoted URL from ", url.string(), " to ", newProtocol));
         }
         if (willBlockLoad)

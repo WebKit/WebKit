@@ -101,7 +101,7 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
 
     JSValue scriptValue = exec->argument(0);
     if (!scriptValue.isString())
-        return throwTypeError(exec, scope, ASCIILiteral("InjectedScriptHost.evaluateWithScopeExtension first argument must be a string."));
+        return throwTypeError(exec, scope, "InjectedScriptHost.evaluateWithScopeExtension first argument must be a string."_s);
 
     String program = asString(scriptValue)->value(exec);
     RETURN_IF_EXCEPTION(scope, JSValue());
@@ -152,41 +152,41 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
 
     if (auto* object = jsDynamicCast<JSObject*>(vm, value)) {
         if (object->isErrorInstance())
-            return jsNontrivialString(exec, ASCIILiteral("error"));
+            return jsNontrivialString(exec, "error"_s);
 
         // Consider class constructor functions class objects.
         JSFunction* function = jsDynamicCast<JSFunction*>(vm, value);
         if (function && function->isClassConstructorFunction())
-            return jsNontrivialString(exec, ASCIILiteral("class"));
+            return jsNontrivialString(exec, "class"_s);
 
         if (object->inherits<JSArray>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("array"));
+            return jsNontrivialString(exec, "array"_s);
         if (object->inherits<DirectArguments>(vm) || object->inherits<ScopedArguments>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("array"));
+            return jsNontrivialString(exec, "array"_s);
 
         if (object->inherits<DateInstance>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("date"));
+            return jsNontrivialString(exec, "date"_s);
         if (object->inherits<RegExpObject>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("regexp"));
+            return jsNontrivialString(exec, "regexp"_s);
         if (object->inherits<ProxyObject>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("proxy"));
+            return jsNontrivialString(exec, "proxy"_s);
 
         if (object->inherits<JSMap>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("map"));
+            return jsNontrivialString(exec, "map"_s);
         if (object->inherits<JSSet>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("set"));
+            return jsNontrivialString(exec, "set"_s);
         if (object->inherits<JSWeakMap>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("weakmap"));
+            return jsNontrivialString(exec, "weakmap"_s);
         if (object->inherits<JSWeakSet>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("weakset"));
+            return jsNontrivialString(exec, "weakset"_s);
 
         if (object->inherits<JSStringIterator>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("iterator"));
+            return jsNontrivialString(exec, "iterator"_s);
 
         if (object->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextIndexPrivateName())
             || object->getDirect(vm, vm.propertyNames->builtinNames().mapBucketPrivateName())
             || object->getDirect(vm, vm.propertyNames->builtinNames().setBucketPrivateName()))
-            return jsNontrivialString(exec, ASCIILiteral("iterator"));
+            return jsNontrivialString(exec, "iterator"_s);
 
         if (object->inherits<JSInt8Array>(vm)
             || object->inherits<JSInt16Array>(vm)
@@ -197,7 +197,7 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
             || object->inherits<JSUint32Array>(vm)
             || object->inherits<JSFloat32Array>(vm)
             || object->inherits<JSFloat64Array>(vm))
-            return jsNontrivialString(exec, ASCIILiteral("array"));
+            return jsNontrivialString(exec, "array"_s);
     }
 
     return impl().subtype(exec, value);
@@ -279,19 +279,19 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         switch (promise->status(vm)) {
         case JSPromise::Status::Pending:
             scope.release();
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("pending"))));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "status"_s, jsNontrivialString(exec, "pending"_s)));
             return array;
         case JSPromise::Status::Fulfilled:
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("resolved"))));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "status"_s, jsNontrivialString(exec, "resolved"_s)));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(vm)));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "result"_s, promise->result(vm)));
             return array;
         case JSPromise::Status::Rejected:
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("rejected"))));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "status"_s, jsNontrivialString(exec, "rejected"_s)));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(vm)));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, "result"_s, promise->result(vm)));
             return array;
         }
         // FIXME: <https://webkit.org/b/141664> Web Inspector: ES6: Improved Support for Promises - Promise Reactions
@@ -318,10 +318,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         unsigned index = 0;
         JSArray* array = constructEmptyArray(exec, nullptr, 2);
         RETURN_IF_EXCEPTION(scope, JSValue());
-        array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("target"), proxy->target()));
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "target"_s, proxy->target()));
         RETURN_IF_EXCEPTION(scope, JSValue());
         scope.release();
-        array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("handler"), proxy->handler()));
+        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "handler"_s, proxy->handler()));
         return array;
     }
 
@@ -345,13 +345,13 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             String kind;
             switch (static_cast<IterationKind>(iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().mapIteratorKindPrivateName()).asInt32())) {
             case IterateKey:
-                kind = ASCIILiteral("key");
+                kind = "key"_s;
                 break;
             case IterateValue:
-                kind = ASCIILiteral("value");
+                kind = "value"_s;
                 break;
             case IterateKeyValue:
-                kind = ASCIILiteral("key+value");
+                kind = "key+value"_s;
                 break;
             }
             unsigned index = 0;
@@ -369,13 +369,13 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             String kind;
             switch (static_cast<IterationKind>(iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().setIteratorKindPrivateName()).asInt32())) {
             case IterateKey:
-                kind = ASCIILiteral("key");
+                kind = "key"_s;
                 break;
             case IterateValue:
-                kind = ASCIILiteral("value");
+                kind = "value"_s;
                 break;
             case IterateKeyValue:
-                kind = ASCIILiteral("key+value");
+                kind = "key+value"_s;
                 break;
             }
             unsigned index = 0;

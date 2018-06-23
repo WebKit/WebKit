@@ -52,7 +52,7 @@ FetchEvent::FetchEvent(const AtomicString& type, Init&& initializer, IsTrusted i
 FetchEvent::~FetchEvent()
 {
     if (auto callback = WTFMove(m_onResponse))
-        callback(makeUnexpected(ResourceError { errorDomainWebKitServiceWorker, 0, m_request->url(), ASCIILiteral("Fetch event is destroyed."), ResourceError::Type::Cancellation }));
+        callback(makeUnexpected(ResourceError { errorDomainWebKitServiceWorker, 0, m_request->url(), "Fetch event is destroyed."_s, ResourceError::Type::Cancellation }));
 }
 
 ResourceError FetchEvent::createResponseError(const URL& url, const String& errorMessage)
@@ -64,10 +64,10 @@ ResourceError FetchEvent::createResponseError(const URL& url, const String& erro
 ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
 {
     if (!isBeingDispatched())
-        return Exception { InvalidStateError, ASCIILiteral("Event is not being dispatched") };
+        return Exception { InvalidStateError, "Event is not being dispatched"_s };
 
     if (m_respondWithEntered)
-        return Exception { InvalidStateError, ASCIILiteral("Event respondWith flag is set") };
+        return Exception { InvalidStateError, "Event respondWith flag is set"_s };
 
     m_respondPromise = WTFMove(promise);
     addExtendLifetimePromise(*m_respondPromise);
@@ -118,12 +118,12 @@ void FetchEvent::promiseIsSettled()
     ASSERT(m_respondPromise->status() == DOMPromise::Status::Fulfilled);
     auto response = JSFetchResponse::toWrapped(m_respondPromise->globalObject()->globalExec()->vm(), m_respondPromise->result());
     if (!response) {
-        respondWithError(createResponseError(m_request->url(), ASCIILiteral("Returned response is null.")));
+        respondWithError(createResponseError(m_request->url(), "Returned response is null."_s));
         return;
     }
 
     if (response->isDisturbedOrLocked()) {
-        respondWithError(createResponseError(m_request->url(), ASCIILiteral("Response is disturbed or locked.")));
+        respondWithError(createResponseError(m_request->url(), "Response is disturbed or locked."_s));
         return;
     }
 

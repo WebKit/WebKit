@@ -69,7 +69,7 @@ static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(exec, scope, ASCIILiteral("%TypedArray% should not be called directly"));
+    return throwVMTypeError(exec, scope, "%TypedArray% should not be called directly"_s);
 }
 
 } // namespace JSC

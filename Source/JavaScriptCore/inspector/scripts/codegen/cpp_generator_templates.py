@@ -124,7 +124,7 @@ private:
     Ref<${domainName}BackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
 ${dispatchCases}
     else
@@ -137,7 +137,7 @@ ${dispatchCases}
     Ref<${domainName}BackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
     typedef void (${domainName}BackendDispatcher::*CallHandler)(long requestId, RefPtr<JSON::Object>&& message);
     typedef HashMap<String, CallHandler> DispatchMap;
@@ -173,13 +173,13 @@ ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("${domainName}"), this);
+    m_backendDispatcher->registerDispatcherForDomain("${domainName}"_s, this);
 }""")
 
     BackendDispatcherImplementationPrepareCommandArguments = (
 """${inParameterDeclarations}
     if (m_backendDispatcher->hasProtocolErrors()) {
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, ASCIILiteral { "Some arguments of method \'${domainName}.${commandName}\' can't be processed" });
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::InvalidParams, "Some arguments of method \'${domainName}.${commandName}\' can't be processed"_s);
         return;
     }
 """)

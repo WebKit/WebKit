@@ -85,21 +85,21 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 state = Decimal;
                 goto Decimal;
             }
-            source.pushBack(ASCIILiteral("#"));
+            source.pushBack("#"_s);
             return false;
         case MaybeHexLowerCaseX:
             if (isASCIIHexDigit(character)) {
                 state = Hex;
                 goto Hex;
             }
-            source.pushBack(ASCIILiteral("#x"));
+            source.pushBack("#x"_s);
             return false;
         case MaybeHexUpperCaseX:
             if (isASCIIHexDigit(character)) {
                 state = Hex;
                 goto Hex;
             }
-            source.pushBack(ASCIILiteral("#X"));
+            source.pushBack("#X"_s);
             return false;
         case Hex:
         Hex:

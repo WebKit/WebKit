@@ -255,15 +255,15 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
     ASSERT(job.type == ServiceWorkerJobType::Register);
 
     if (!shouldTreatAsPotentiallyTrustworthy(job.scriptURL) && !SchemeRegistry::isServiceWorkerContainerCustomScheme(job.scriptURL.protocol().toStringWithoutCopying()))
-        return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Script URL is not potentially trustworthy") });
+        return rejectCurrentJob(ExceptionData { SecurityError, "Script URL is not potentially trustworthy"_s });
 
     // If the origin of job's script url is not job's referrer's origin, then:
     if (!protocolHostAndPortAreEqual(job.scriptURL, job.clientCreationURL))
-        return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Script origin does not match the registering client's origin") });
+        return rejectCurrentJob(ExceptionData { SecurityError, "Script origin does not match the registering client's origin"_s });
 
     // If the origin of job's scope url is not job's referrer's origin, then:
     if (!protocolHostAndPortAreEqual(job.scopeURL, job.clientCreationURL))
-        return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Scope origin does not match the registering client's origin") });
+        return rejectCurrentJob(ExceptionData { SecurityError, "Scope origin does not match the registering client's origin"_s });
 
     // If registration is not null (in our parlance "empty"), then:
     if (auto* registration = m_server.getRegistration(m_registrationKey)) {
@@ -294,7 +294,7 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
 {
     // If the origin of job's scope url is not job's client's origin, then:
     if (!protocolHostAndPortAreEqual(job.scopeURL, job.clientCreationURL))
-        return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Origin of scope URL does not match the client's origin") });
+        return rejectCurrentJob(ExceptionData { SecurityError, "Origin of scope URL does not match the client's origin"_s });
 
     // Let registration be the result of running "Get Registration" algorithm passing job's scope url as the argument.
     auto* registration = m_server.getRegistration(m_registrationKey);
@@ -326,16 +326,16 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
 
     // If registration is null (in our parlance "empty") or registration's uninstalling flag is set, then:
     if (!registration)
-        return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a null/nonexistent service worker registration") });
+        return rejectCurrentJob(ExceptionData { TypeError, "Cannot update a null/nonexistent service worker registration"_s });
     if (registration->isUninstalling())
-        return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker registration that is uninstalling") });
+        return rejectCurrentJob(ExceptionData { TypeError, "Cannot update a service worker registration that is uninstalling"_s });
 
     // Let newestWorker be the result of running Get Newest Worker algorithm passing registration as the argument.
     auto* newestWorker = registration->getNewestWorker();
 
     // If job's type is update, and newestWorker's script url does not equal job's script url with the exclude fragments flag set, then:
     if (job.type == ServiceWorkerJobType::Update && newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
-        return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker with a requested script URL whose newest worker has a different script URL") });
+        return rejectCurrentJob(ExceptionData { TypeError, "Cannot update a service worker with a requested script URL whose newest worker has a different script URL"_s });
 
     FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;
     // Set request's cache mode to "no-cache" if any of the following are true:

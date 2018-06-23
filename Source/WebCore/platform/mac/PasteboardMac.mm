@@ -402,28 +402,28 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
     if (types.contains(String(legacyTIFFPasteboardType()))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(legacyTIFFPasteboardType(), m_pasteboardName)) {
-            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), ASCIILiteral("image/tiff")))
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/tiff"_s))
                 return;
         }
     }
 
     if (types.contains(String(legacyPDFPasteboardType()))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(legacyPDFPasteboardType(), m_pasteboardName)) {
-            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), ASCIILiteral("application/pdf")))
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "application/pdf"_s))
                 return;
         }
     }
 
     if (types.contains(String(kUTTypePNG))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(kUTTypePNG, m_pasteboardName)) {
-            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), ASCIILiteral("image/png")))
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/png"_s))
                 return;
         }
     }
 
     if (types.contains(String(kUTTypeJPEG))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(kUTTypeJPEG, m_pasteboardName)) {
-            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), ASCIILiteral("image/jpeg")))
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/jpeg"_s))
                 return;
         }
     }
@@ -518,11 +518,11 @@ void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTy
 
     // UTI may not do these right, so make sure we get the right, predictable result
     if (cocoaType == String(legacyStringPasteboardType()) || cocoaType == String(NSPasteboardTypeString)) {
-        resultTypes.add(ASCIILiteral("text/plain"));
+        resultTypes.add("text/plain"_s);
         return;
     }
     if (cocoaType == String(legacyURLPasteboardType())) {
-        resultTypes.add(ASCIILiteral("text/uri-list"));
+        resultTypes.add("text/uri-list"_s);
         return;
     }
     if (cocoaType == String(legacyFilenamesPasteboardType()) || Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType))

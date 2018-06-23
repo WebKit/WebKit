@@ -65,15 +65,15 @@ void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Symbol"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     ASSERT(inherits(vm, info()));
 
-    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, ASCIILiteral("[Symbol.toPrimitive]"), symbolProtoFuncValueOf, NoIntrinsic);
+    JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, symbolProtoFuncValueOf, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 // ------------------------------ Functions ---------------------------
 
-static const char* SymbolDescriptionTypeError = "Symbol.prototype.description requires that |this| be a symbol or a symbol object";
-static const char* SymbolToStringTypeError = "Symbol.prototype.toString requires that |this| be a symbol or a symbol object";
-static const char* SymbolValueOfTypeError = "Symbol.prototype.valueOf requires that |this| be a symbol or a symbol object";
+static const ASCIILiteral SymbolDescriptionTypeError { "Symbol.prototype.description requires that |this| be a symbol or a symbol object"_s };
+static const ASCIILiteral SymbolToStringTypeError { "Symbol.prototype.toString requires that |this| be a symbol or a symbol object"_s };
+static const ASCIILiteral SymbolValueOfTypeError { "Symbol.prototype.valueOf requires that |this| be a symbol or a symbol object"_s };
 
 inline Symbol* tryExtractSymbol(VM& vm, JSValue thisValue)
 {

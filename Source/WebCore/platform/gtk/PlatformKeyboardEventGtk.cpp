@@ -51,7 +51,7 @@ String PlatformKeyboardEvent::keyValueForGdkKeyCode(unsigned keyCode)
     // Modifier keys.
     case GDK_KEY_Alt_L:
     case GDK_KEY_Alt_R:
-        return ASCIILiteral("Alt");
+        return "Alt"_s;
     // Firefox uses GDK_KEY_Mode_switch for AltGraph as well.
     case GDK_KEY_ISO_Level3_Shift:
     case GDK_KEY_ISO_Level3_Latch:
@@ -59,30 +59,30 @@ String PlatformKeyboardEvent::keyValueForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_ISO_Level5_Shift:
     case GDK_KEY_ISO_Level5_Latch:
     case GDK_KEY_ISO_Level5_Lock:
-        return ASCIILiteral("AltGraph");
+        return "AltGraph"_s;
     case GDK_KEY_Caps_Lock:
-        return ASCIILiteral("CapsLock");
+        return "CapsLock"_s;
     case GDK_KEY_Control_L:
     case GDK_KEY_Control_R:
-        return ASCIILiteral("Control");
+        return "Control"_s;
     // Fn: This is typically a hardware key that does not generate a separate code.
     // FnLock.
     case GDK_KEY_Hyper_L:
     case GDK_KEY_Hyper_R:
-        return ASCIILiteral("Hyper");
+        return "Hyper"_s;
     case GDK_KEY_Meta_L:
     case GDK_KEY_Meta_R:
-        return ASCIILiteral("Meta");
+        return "Meta"_s;
     case GDK_KEY_Num_Lock:
-        return ASCIILiteral("NumLock");
+        return "NumLock"_s;
     case GDK_KEY_Scroll_Lock:
-        return ASCIILiteral("ScrollLock");
+        return "ScrollLock"_s;
     case GDK_KEY_Shift_L:
     case GDK_KEY_Shift_R:
-        return ASCIILiteral("Shift");
+        return "Shift"_s;
     case GDK_KEY_Super_L:
     case GDK_KEY_Super_R:
-        return ASCIILiteral("Super");
+        return "Super"_s;
     // Symbol.
     // SymbolLock.
 
@@ -91,133 +91,133 @@ String PlatformKeyboardEvent::keyValueForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_KP_Enter:
     case GDK_KEY_ISO_Enter:
     case GDK_KEY_3270_Enter:
-        return ASCIILiteral("Enter");
+        return "Enter"_s;
     case GDK_KEY_Tab:
     case GDK_KEY_KP_Tab:
-        return ASCIILiteral("Tab");
+        return "Tab"_s;
 
     // Navigation keys.
     case GDK_KEY_Down:
     case GDK_KEY_KP_Down:
-        return ASCIILiteral("ArrowDown");
+        return "ArrowDown"_s;
     case GDK_KEY_Left:
     case GDK_KEY_KP_Left:
-        return ASCIILiteral("ArrowLeft");
+        return "ArrowLeft"_s;
     case GDK_KEY_Right:
     case GDK_KEY_KP_Right:
-        return ASCIILiteral("ArrowRight");
+        return "ArrowRight"_s;
     case GDK_KEY_Up:
     case GDK_KEY_KP_Up:
-        return ASCIILiteral("ArrowUp");
+        return "ArrowUp"_s;
     case GDK_KEY_End:
     case GDK_KEY_KP_End:
-        return ASCIILiteral("End");
+        return "End"_s;
     case GDK_KEY_Home:
     case GDK_KEY_KP_Home:
-        return ASCIILiteral("Home");
+        return "Home"_s;
     case GDK_KEY_Page_Down:
     case GDK_KEY_KP_Page_Down:
-        return ASCIILiteral("PageDown");
+        return "PageDown"_s;
     case GDK_KEY_Page_Up:
     case GDK_KEY_KP_Page_Up:
-        return ASCIILiteral("PageUp");
+        return "PageUp"_s;
 
     // Editing keys.
     case GDK_KEY_BackSpace:
-        return ASCIILiteral("Backspace");
+        return "Backspace"_s;
     case GDK_KEY_Clear:
-        return ASCIILiteral("Clear");
+        return "Clear"_s;
     case GDK_KEY_Copy:
-        return ASCIILiteral("Copy");
+        return "Copy"_s;
     case GDK_KEY_3270_CursorSelect:
-        return ASCIILiteral("CrSel");
+        return "CrSel"_s;
     case GDK_KEY_Cut:
-        return ASCIILiteral("Cut");
+        return "Cut"_s;
     case GDK_KEY_Delete:
     case GDK_KEY_KP_Delete:
-        return ASCIILiteral("Delete");
+        return "Delete"_s;
     case GDK_KEY_3270_EraseEOF:
-        return ASCIILiteral("EraseEof");
+        return "EraseEof"_s;
     case GDK_KEY_3270_ExSelect:
-        return ASCIILiteral("ExSel");
+        return "ExSel"_s;
     case GDK_KEY_Insert:
     case GDK_KEY_KP_Insert:
-        return ASCIILiteral("Insert");
+        return "Insert"_s;
     case GDK_KEY_Paste:
-        return ASCIILiteral("Paste");
+        return "Paste"_s;
     case GDK_KEY_Redo:
-        return ASCIILiteral("Redo");
+        return "Redo"_s;
     case GDK_KEY_Undo:
-        return ASCIILiteral("Undo");
+        return "Undo"_s;
 
     // UI keys.
     // Accept.
     // Again.
     case GDK_KEY_3270_Attn:
-        return ASCIILiteral("Attn");
+        return "Attn"_s;
     case GDK_KEY_Cancel:
-        return ASCIILiteral("Cancel");
+        return "Cancel"_s;
     case GDK_KEY_Menu:
-        return ASCIILiteral("ContextMenu");
+        return "ContextMenu"_s;
     case GDK_KEY_Escape:
-        return ASCIILiteral("Escape");
+        return "Escape"_s;
     case GDK_KEY_Execute:
-        return ASCIILiteral("Execute");
+        return "Execute"_s;
     case GDK_KEY_Find:
-        return ASCIILiteral("Find");
+        return "Find"_s;
     case GDK_KEY_Help:
-        return ASCIILiteral("Help");
+        return "Help"_s;
     case GDK_KEY_Pause:
     case GDK_KEY_Break:
-        return ASCIILiteral("Pause");
+        return "Pause"_s;
     case GDK_KEY_3270_Play:
-        return ASCIILiteral("Play");
+        return "Play"_s;
     // Props.
     case GDK_KEY_Select:
-        return ASCIILiteral("Select");
+        return "Select"_s;
     case GDK_KEY_ZoomIn:
-        return ASCIILiteral("ZoomIn");
+        return "ZoomIn"_s;
     case GDK_KEY_ZoomOut:
-        return ASCIILiteral("ZoomOut");
+        return "ZoomOut"_s;
 
     // Device keys.
     case GDK_KEY_MonBrightnessDown:
-        return ASCIILiteral("BrightnessDown");
+        return "BrightnessDown"_s;
     case GDK_KEY_MonBrightnessUp:
-        return ASCIILiteral("BrightnessUp");
+        return "BrightnessUp"_s;
     case GDK_KEY_Eject:
-        return ASCIILiteral("Eject");
+        return "Eject"_s;
     case GDK_KEY_LogOff:
-        return ASCIILiteral("LogOff");
+        return "LogOff"_s;
     // Power.
     case GDK_KEY_PowerDown:
     case GDK_KEY_PowerOff:
-        return ASCIILiteral("PowerOff");
+        return "PowerOff"_s;
     case GDK_KEY_3270_PrintScreen:
     case GDK_KEY_Print:
     case GDK_KEY_Sys_Req:
-        return ASCIILiteral("PrintScreen");
+        return "PrintScreen"_s;
     case GDK_KEY_Hibernate:
-        return ASCIILiteral("Hibernate");
+        return "Hibernate"_s;
     case GDK_KEY_Standby:
     case GDK_KEY_Suspend:
     case GDK_KEY_Sleep:
-        return ASCIILiteral("Standby");
+        return "Standby"_s;
     case GDK_KEY_WakeUp:
-        return ASCIILiteral("WakeUp");
+        return "WakeUp"_s;
 
     // IME keys.
     case GDK_KEY_MultipleCandidate:
-        return ASCIILiteral("AllCandidates");
+        return "AllCandidates"_s;
     case GDK_KEY_Eisu_Shift:
     case GDK_KEY_Eisu_toggle:
-        return ASCIILiteral("Alphanumeric");
+        return "Alphanumeric"_s;
     case GDK_KEY_Codeinput:
-        return ASCIILiteral("CodeInput");
+        return "CodeInput"_s;
     case GDK_KEY_Multi_key:
-        return ASCIILiteral("Compose");
+        return "Compose"_s;
     case GDK_KEY_Henkan:
-        return ASCIILiteral("Convert");
+        return "Convert"_s;
     case GDK_KEY_dead_grave:
     case GDK_KEY_dead_acute:
     case GDK_KEY_dead_circumflex:
@@ -262,133 +262,133 @@ String PlatformKeyboardEvent::keyValueForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_dead_U:
     case GDK_KEY_dead_small_schwa:
     case GDK_KEY_dead_capital_schwa:
-        return ASCIILiteral("Dead");
+        return "Dead"_s;
     // FinalMode
     case GDK_KEY_ISO_First_Group:
-        return ASCIILiteral("GroupFirst");
+        return "GroupFirst"_s;
     case GDK_KEY_ISO_Last_Group:
-        return ASCIILiteral("GroupLast");
+        return "GroupLast"_s;
     case GDK_KEY_ISO_Next_Group:
-        return ASCIILiteral("GroupNext");
+        return "GroupNext"_s;
     case GDK_KEY_ISO_Prev_Group:
-        return ASCIILiteral("GroupPrevious");
+        return "GroupPrevious"_s;
     case GDK_KEY_Mode_switch:
-        return ASCIILiteral("ModeChange");
+        return "ModeChange"_s;
     // NextCandidate.
     case GDK_KEY_Muhenkan:
-        return ASCIILiteral("NonConvert");
+        return "NonConvert"_s;
     case GDK_KEY_PreviousCandidate:
-        return ASCIILiteral("PreviousCandidate");
+        return "PreviousCandidate"_s;
     // Process.
     case GDK_KEY_SingleCandidate:
-        return ASCIILiteral("SingleCandidate");
+        return "SingleCandidate"_s;
 
     // Korean and Japanese keys.
     case GDK_KEY_Hangul:
-        return ASCIILiteral("HangulMode");
+        return "HangulMode"_s;
     case GDK_KEY_Hangul_Hanja:
-        return ASCIILiteral("HanjaMode");
+        return "HanjaMode"_s;
     case GDK_KEY_Hangul_Jeonja:
-        return ASCIILiteral("JunjaMode");
+        return "JunjaMode"_s;
     case GDK_KEY_Hankaku:
-        return ASCIILiteral("Hankaku");
+        return "Hankaku"_s;
     case GDK_KEY_Hiragana:
-        return ASCIILiteral("Hiragana");
+        return "Hiragana"_s;
     case GDK_KEY_Hiragana_Katakana:
-        return ASCIILiteral("HiraganaKatakana");
+        return "HiraganaKatakana"_s;
     case GDK_KEY_Kana_Lock:
     case GDK_KEY_Kana_Shift:
-        return ASCIILiteral("KanaMode");
+        return "KanaMode"_s;
     case GDK_KEY_Kanji:
-        return ASCIILiteral("KanjiMode");
+        return "KanjiMode"_s;
     case GDK_KEY_Katakana:
-        return ASCIILiteral("Katakana");
+        return "Katakana"_s;
     case GDK_KEY_Romaji:
-        return ASCIILiteral("Romaji");
+        return "Romaji"_s;
     case GDK_KEY_Zenkaku:
-        return ASCIILiteral("Zenkaku");
+        return "Zenkaku"_s;
     case GDK_KEY_Zenkaku_Hankaku:
-        return ASCIILiteral("ZenkakuHanaku");
+        return "ZenkakuHanaku"_s;
 
     // Multimedia keys.
     // ChannelDown.
     // ChannelUp.
     case GDK_KEY_Close:
-        return ASCIILiteral("Close");
+        return "Close"_s;
     case GDK_KEY_MailForward:
-        return ASCIILiteral("MailForward");
+        return "MailForward"_s;
     case GDK_KEY_Reply:
-        return ASCIILiteral("MailReply");
+        return "MailReply"_s;
     case GDK_KEY_Send:
-        return ASCIILiteral("MailSend");
+        return "MailSend"_s;
     case GDK_KEY_AudioForward:
-        return ASCIILiteral("MediaFastForward");
+        return "MediaFastForward"_s;
     case GDK_KEY_AudioPause:
-        return ASCIILiteral("MediaPause");
+        return "MediaPause"_s;
     case GDK_KEY_AudioPlay:
-        return ASCIILiteral("MediaPlay");
+        return "MediaPlay"_s;
     // MediaPlayPause
     case GDK_KEY_AudioRecord:
-        return ASCIILiteral("MediaRecord");
+        return "MediaRecord"_s;
     case GDK_KEY_AudioRewind:
-        return ASCIILiteral("MediaRewind");
+        return "MediaRewind"_s;
     case GDK_KEY_AudioStop:
-        return ASCIILiteral("MediaStop");
+        return "MediaStop"_s;
     case GDK_KEY_AudioNext:
-        return ASCIILiteral("MediaTrackNext");
+        return "MediaTrackNext"_s;
     case GDK_KEY_AudioPrev:
-        return ASCIILiteral("MediaTrackPrevious");
+        return "MediaTrackPrevious"_s;
     case GDK_KEY_New:
-        return ASCIILiteral("New");
+        return "New"_s;
     case GDK_KEY_Open:
-        return ASCIILiteral("Open");
+        return "Open"_s;
     // Print.
     case GDK_KEY_Save:
-        return ASCIILiteral("Save");
+        return "Save"_s;
     case GDK_KEY_Spell:
-        return ASCIILiteral("SpellCheck");
+        return "SpellCheck"_s;
 
     // Function keys.
     case GDK_KEY_F1:
-        return ASCIILiteral("F1");
+        return "F1"_s;
     case GDK_KEY_F2:
-        return ASCIILiteral("F2");
+        return "F2"_s;
     case GDK_KEY_F3:
-        return ASCIILiteral("F3");
+        return "F3"_s;
     case GDK_KEY_F4:
-        return ASCIILiteral("F4");
+        return "F4"_s;
     case GDK_KEY_F5:
-        return ASCIILiteral("F5");
+        return "F5"_s;
     case GDK_KEY_F6:
-        return ASCIILiteral("F6");
+        return "F6"_s;
     case GDK_KEY_F7:
-        return ASCIILiteral("F7");
+        return "F7"_s;
     case GDK_KEY_F8:
-        return ASCIILiteral("F8");
+        return "F8"_s;
     case GDK_KEY_F9:
-        return ASCIILiteral("F9");
+        return "F9"_s;
     case GDK_KEY_F10:
-        return ASCIILiteral("F10");
+        return "F10"_s;
     case GDK_KEY_F11:
-        return ASCIILiteral("F11");
+        return "F11"_s;
     case GDK_KEY_F12:
-        return ASCIILiteral("F12");
+        return "F12"_s;
     case GDK_KEY_F13:
-        return ASCIILiteral("F13");
+        return "F13"_s;
     case GDK_KEY_F14:
-        return ASCIILiteral("F14");
+        return "F14"_s;
     case GDK_KEY_F15:
-        return ASCIILiteral("F15");
+        return "F15"_s;
     case GDK_KEY_F16:
-        return ASCIILiteral("F16");
+        return "F16"_s;
     case GDK_KEY_F17:
-        return ASCIILiteral("F17");
+        return "F17"_s;
     case GDK_KEY_F18:
-        return ASCIILiteral("F18");
+        return "F18"_s;
     case GDK_KEY_F19:
-        return ASCIILiteral("F19");
+        return "F19"_s;
     case GDK_KEY_F20:
-        return ASCIILiteral("F20");
+        return "F20"_s;
 
     default: {
         guint32 unicodeCharacter = gdk_keyval_to_unicode(keyCode);
@@ -398,7 +398,7 @@ String PlatformKeyboardEvent::keyValueForGdkKeyCode(unsigned keyCode)
             g_unichar_to_utf8(unicodeCharacter, utf8);
             return String::fromUTF8(utf8);
         }
-        return ASCIILiteral("Unidentified");
+        return "Unidentified"_s;
     }
     }
 }
@@ -411,319 +411,319 @@ String PlatformKeyboardEvent::keyCodeForHardwareKeyCode(unsigned keyCode)
 {
     switch (keyCode) {
     case 0x0009:
-        return ASCIILiteral("Escape");
+        return "Escape"_s;
     case 0x000A:
-        return ASCIILiteral("Digit1");
+        return "Digit1"_s;
     case 0x000B:
-        return ASCIILiteral("Digit2");
+        return "Digit2"_s;
     case 0x000C:
-        return ASCIILiteral("Digit3");
+        return "Digit3"_s;
     case 0x000D:
-        return ASCIILiteral("Digit4");
+        return "Digit4"_s;
     case 0x000E:
-        return ASCIILiteral("Digit5");
+        return "Digit5"_s;
     case 0x000F:
-        return ASCIILiteral("Digit6");
+        return "Digit6"_s;
     case 0x0010:
-        return ASCIILiteral("Digit7");
+        return "Digit7"_s;
     case 0x0011:
-        return ASCIILiteral("Digit8");
+        return "Digit8"_s;
     case 0x0012:
-        return ASCIILiteral("Digit9");
+        return "Digit9"_s;
     case 0x0013:
-        return ASCIILiteral("Digit0");
+        return "Digit0"_s;
     case 0x0014:
-        return ASCIILiteral("Minus");
+        return "Minus"_s;
     case 0x0015:
-        return ASCIILiteral("Equal");
+        return "Equal"_s;
     case 0x0016:
-        return ASCIILiteral("Backspace");
+        return "Backspace"_s;
     case 0x0017:
-        return ASCIILiteral("Tab");
+        return "Tab"_s;
     case 0x0018:
-        return ASCIILiteral("KeyQ");
+        return "KeyQ"_s;
     case 0x0019:
-        return ASCIILiteral("KeyW");
+        return "KeyW"_s;
     case 0x001A:
-        return ASCIILiteral("KeyE");
+        return "KeyE"_s;
     case 0x001B:
-        return ASCIILiteral("KeyR");
+        return "KeyR"_s;
     case 0x001C:
-        return ASCIILiteral("KeyT");
+        return "KeyT"_s;
     case 0x001D:
-        return ASCIILiteral("KeyY");
+        return "KeyY"_s;
     case 0x001E:
-        return ASCIILiteral("KeyU");
+        return "KeyU"_s;
     case 0x001F:
-        return ASCIILiteral("KeyI");
+        return "KeyI"_s;
     case 0x0020:
-        return ASCIILiteral("KeyO");
+        return "KeyO"_s;
     case 0x0021:
-        return ASCIILiteral("KeyP");
+        return "KeyP"_s;
     case 0x0022:
-        return ASCIILiteral("BracketLeft");
+        return "BracketLeft"_s;
     case 0x0023:
-        return ASCIILiteral("BracketRight");
+        return "BracketRight"_s;
     case 0x0024:
-        return ASCIILiteral("Enter");
+        return "Enter"_s;
     case 0x0025:
-        return ASCIILiteral("ControlLeft");
+        return "ControlLeft"_s;
     case 0x0026:
-        return ASCIILiteral("KeyA");
+        return "KeyA"_s;
     case 0x0027:
-        return ASCIILiteral("KeyS");
+        return "KeyS"_s;
     case 0x0028:
-        return ASCIILiteral("KeyD");
+        return "KeyD"_s;
     case 0x0029:
-        return ASCIILiteral("KeyF");
+        return "KeyF"_s;
     case 0x002A:
-        return ASCIILiteral("KeyG");
+        return "KeyG"_s;
     case 0x002B:
-        return ASCIILiteral("KeyH");
+        return "KeyH"_s;
     case 0x002C:
-        return ASCIILiteral("KeyJ");
+        return "KeyJ"_s;
     case 0x002D:
-        return ASCIILiteral("KeyK");
+        return "KeyK"_s;
     case 0x002E:
-        return ASCIILiteral("KeyL");
+        return "KeyL"_s;
     case 0x002F:
-        return ASCIILiteral("Semicolon");
+        return "Semicolon"_s;
     case 0x0030:
-        return ASCIILiteral("Quote");
+        return "Quote"_s;
     case 0x0031:
-        return ASCIILiteral("Backquote");
+        return "Backquote"_s;
     case 0x0032:
-        return ASCIILiteral("ShiftLeft");
+        return "ShiftLeft"_s;
     case 0x0033:
-        return ASCIILiteral("Backslash");
+        return "Backslash"_s;
     case 0x0034:
-        return ASCIILiteral("KeyZ");
+        return "KeyZ"_s;
     case 0x0035:
-        return ASCIILiteral("KeyX");
+        return "KeyX"_s;
     case 0x0036:
-        return ASCIILiteral("KeyC");
+        return "KeyC"_s;
     case 0x0037:
-        return ASCIILiteral("KeyV");
+        return "KeyV"_s;
     case 0x0038:
-        return ASCIILiteral("KeyB");
+        return "KeyB"_s;
     case 0x0039:
-        return ASCIILiteral("KeyN");
+        return "KeyN"_s;
     case 0x003A:
-        return ASCIILiteral("KeyM");
+        return "KeyM"_s;
     case 0x003B:
-        return ASCIILiteral("Comma");
+        return "Comma"_s;
     case 0x003C:
-        return ASCIILiteral("Period");
+        return "Period"_s;
     case 0x003D:
-        return ASCIILiteral("Slash");
+        return "Slash"_s;
     case 0x003E:
-        return ASCIILiteral("ShiftRight");
+        return "ShiftRight"_s;
     case 0x003F:
-        return ASCIILiteral("NumpadMultiply");
+        return "NumpadMultiply"_s;
     case 0x0040:
-        return ASCIILiteral("AltLeft");
+        return "AltLeft"_s;
     case 0x0041:
-        return ASCIILiteral("Space");
+        return "Space"_s;
     case 0x0042:
-        return ASCIILiteral("CapsLock");
+        return "CapsLock"_s;
     case 0x0043:
-        return ASCIILiteral("F1");
+        return "F1"_s;
     case 0x0044:
-        return ASCIILiteral("F2");
+        return "F2"_s;
     case 0x0045:
-        return ASCIILiteral("F3");
+        return "F3"_s;
     case 0x0046:
-        return ASCIILiteral("F4");
+        return "F4"_s;
     case 0x0047:
-        return ASCIILiteral("F5");
+        return "F5"_s;
     case 0x0048:
-        return ASCIILiteral("F6");
+        return "F6"_s;
     case 0x0049:
-        return ASCIILiteral("F7");
+        return "F7"_s;
     case 0x004A:
-        return ASCIILiteral("F8");
+        return "F8"_s;
     case 0x004B:
-        return ASCIILiteral("F9");
+        return "F9"_s;
     case 0x004C:
-        return ASCIILiteral("F10");
+        return "F10"_s;
     case 0x004D:
-        return ASCIILiteral("NumLock");
+        return "NumLock"_s;
     case 0x004E:
-        return ASCIILiteral("ScrollLock");
+        return "ScrollLock"_s;
     case 0x004F:
-        return ASCIILiteral("Numpad7");
+        return "Numpad7"_s;
     case 0x0050:
-        return ASCIILiteral("Numpad8");
+        return "Numpad8"_s;
     case 0x0051:
-        return ASCIILiteral("Numpad9");
+        return "Numpad9"_s;
     case 0x0052:
-        return ASCIILiteral("NumpadSubtract");
+        return "NumpadSubtract"_s;
     case 0x0053:
-        return ASCIILiteral("Numpad4");
+        return "Numpad4"_s;
     case 0x0054:
-        return ASCIILiteral("Numpad5");
+        return "Numpad5"_s;
     case 0x0055:
-        return ASCIILiteral("Numpad6");
+        return "Numpad6"_s;
     case 0x0056:
-        return ASCIILiteral("NumpadAdd");
+        return "NumpadAdd"_s;
     case 0x0057:
-        return ASCIILiteral("Numpad1");
+        return "Numpad1"_s;
     case 0x0058:
-        return ASCIILiteral("Numpad2");
+        return "Numpad2"_s;
     case 0x0059:
-        return ASCIILiteral("Numpad3");
+        return "Numpad3"_s;
     case 0x005A:
-        return ASCIILiteral("Numpad0");
+        return "Numpad0"_s;
     case 0x005B:
-        return ASCIILiteral("NumpadDecimal");
+        return "NumpadDecimal"_s;
     case 0x005E:
-        return ASCIILiteral("IntlBackslash");
+        return "IntlBackslash"_s;
     case 0x005F:
-        return ASCIILiteral("F11");
+        return "F11"_s;
     case 0x0060:
-        return ASCIILiteral("F12");
+        return "F12"_s;
     case 0x0061:
-        return ASCIILiteral("IntlRo");
+        return "IntlRo"_s;
     case 0x0064:
-        return ASCIILiteral("Convert");
+        return "Convert"_s;
     case 0x0065:
-        return ASCIILiteral("KanaMode");
+        return "KanaMode"_s;
     case 0x0066:
-        return ASCIILiteral("NonConvert");
+        return "NonConvert"_s;
     case 0x0068:
-        return ASCIILiteral("NumpadEnter");
+        return "NumpadEnter"_s;
     case 0x0069:
-        return ASCIILiteral("ControlRight");
+        return "ControlRight"_s;
     case 0x006A:
-        return ASCIILiteral("NumpadDivide");
+        return "NumpadDivide"_s;
     case 0x006B:
-        return ASCIILiteral("PrintScreen");
+        return "PrintScreen"_s;
     case 0x006C:
-        return ASCIILiteral("AltRight");
+        return "AltRight"_s;
     case 0x006E:
-        return ASCIILiteral("Home");
+        return "Home"_s;
     case 0x006F:
-        return ASCIILiteral("ArrowUp");
+        return "ArrowUp"_s;
     case 0x0070:
-        return ASCIILiteral("PageUp");
+        return "PageUp"_s;
     case 0x0071:
-        return ASCIILiteral("ArrowLeft");
+        return "ArrowLeft"_s;
     case 0x0072:
-        return ASCIILiteral("ArrowRight");
+        return "ArrowRight"_s;
     case 0x0073:
-        return ASCIILiteral("End");
+        return "End"_s;
     case 0x0074:
-        return ASCIILiteral("ArrowDown");
+        return "ArrowDown"_s;
     case 0x0075:
-        return ASCIILiteral("PageDown");
+        return "PageDown"_s;
     case 0x0076:
-        return ASCIILiteral("Insert");
+        return "Insert"_s;
     case 0x0077:
-        return ASCIILiteral("Delete");
+        return "Delete"_s;
     case 0x0079:
-        return ASCIILiteral("AudioVolumeMute");
+        return "AudioVolumeMute"_s;
     case 0x007A:
-        return ASCIILiteral("AudioVolumeDown");
+        return "AudioVolumeDown"_s;
     case 0x007B:
-        return ASCIILiteral("AudioVolumeUp");
+        return "AudioVolumeUp"_s;
     case 0x007D:
-        return ASCIILiteral("NumpadEqual");
+        return "NumpadEqual"_s;
     case 0x007F:
-        return ASCIILiteral("Pause");
+        return "Pause"_s;
     case 0x0081:
-        return ASCIILiteral("NumpadComma");
+        return "NumpadComma"_s;
     case 0x0082:
-        return ASCIILiteral("Lang1");
+        return "Lang1"_s;
     case 0x0083:
-        return ASCIILiteral("Lang2");
+        return "Lang2"_s;
     case 0x0084:
-        return ASCIILiteral("IntlYen");
+        return "IntlYen"_s;
     case 0x0085:
-        return ASCIILiteral("OSLeft");
+        return "OSLeft"_s;
     case 0x0086:
-        return ASCIILiteral("OSRight");
+        return "OSRight"_s;
     case 0x0087:
-        return ASCIILiteral("ContextMenu");
+        return "ContextMenu"_s;
     case 0x0088:
-        return ASCIILiteral("BrowserStop");
+        return "BrowserStop"_s;
     case 0x0089:
-        return ASCIILiteral("Again");
+        return "Again"_s;
     case 0x008A:
-        return ASCIILiteral("Props");
+        return "Props"_s;
     case 0x008B:
-        return ASCIILiteral("Undo");
+        return "Undo"_s;
     case 0x008C:
-        return ASCIILiteral("Select");
+        return "Select"_s;
     case 0x008D:
-        return ASCIILiteral("Copy");
+        return "Copy"_s;
     case 0x008E:
-        return ASCIILiteral("Open");
+        return "Open"_s;
     case 0x008F:
-        return ASCIILiteral("Paste");
+        return "Paste"_s;
     case 0x0090:
-        return ASCIILiteral("Find");
+        return "Find"_s;
     case 0x0091:
-        return ASCIILiteral("Cut");
+        return "Cut"_s;
     case 0x0092:
-        return ASCIILiteral("Help");
+        return "Help"_s;
     case 0x0094:
-        return ASCIILiteral("LaunchApp2");
+        return "LaunchApp2"_s;
     case 0x0097:
-        return ASCIILiteral("WakeUp");
+        return "WakeUp"_s;
     case 0x0098:
-        return ASCIILiteral("LaunchApp1");
+        return "LaunchApp1"_s;
     case 0x00A3:
-        return ASCIILiteral("LaunchMail");
+        return "LaunchMail"_s;
     case 0x00A4:
-        return ASCIILiteral("BrowserFavorites");
+        return "BrowserFavorites"_s;
     case 0x00A6:
-        return ASCIILiteral("BrowserBack");
+        return "BrowserBack"_s;
     case 0x00A7:
-        return ASCIILiteral("BrowserForward");
+        return "BrowserForward"_s;
     case 0x00A9:
-        return ASCIILiteral("Eject");
+        return "Eject"_s;
     case 0x00AB:
-        return ASCIILiteral("MediaTrackNext");
+        return "MediaTrackNext"_s;
     case 0x00AC:
-        return ASCIILiteral("MediaPlayPause");
+        return "MediaPlayPause"_s;
     case 0x00AD:
-        return ASCIILiteral("MediaTrackPrevious");
+        return "MediaTrackPrevious"_s;
     case 0x00AE:
-        return ASCIILiteral("MediaStop");
+        return "MediaStop"_s;
     case 0x00B3:
-        return ASCIILiteral("LaunchMediaPlayer");
+        return "LaunchMediaPlayer"_s;
     case 0x00B4:
-        return ASCIILiteral("BrowserHome");
+        return "BrowserHome"_s;
     case 0x00B5:
-        return ASCIILiteral("BrowserRefresh");
+        return "BrowserRefresh"_s;
     case 0x00BF:
-        return ASCIILiteral("F13");
+        return "F13"_s;
     case 0x00C0:
-        return ASCIILiteral("F14");
+        return "F14"_s;
     case 0x00C1:
-        return ASCIILiteral("F15");
+        return "F15"_s;
     case 0x00C2:
-        return ASCIILiteral("F16");
+        return "F16"_s;
     case 0x00C3:
-        return ASCIILiteral("F17");
+        return "F17"_s;
     case 0x00C4:
-        return ASCIILiteral("F18");
+        return "F18"_s;
     case 0x00C5:
-        return ASCIILiteral("F19");
+        return "F19"_s;
     case 0x00C6:
-        return ASCIILiteral("F20");
+        return "F20"_s;
     case 0x00C7:
-        return ASCIILiteral("F21");
+        return "F21"_s;
     case 0x00C8:
-        return ASCIILiteral("F22");
+        return "F22"_s;
     case 0x00C9:
-        return ASCIILiteral("F23");
+        return "F23"_s;
     case 0x00CA:
-        return ASCIILiteral("F24");
+        return "F24"_s;
     case 0x00E1:
-        return ASCIILiteral("BrowserSearch");
+        return "BrowserSearch"_s;
     default:
-        return ASCIILiteral("Unidentified");
+        return "Unidentified"_s;
     }
 }
 

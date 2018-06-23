@@ -198,7 +198,7 @@ Ref<WebKitCSSMatrix> WebKitCSSMatrix::skewY(double angle) const
 ExceptionOr<String> WebKitCSSMatrix::toString() const
 {
     if (!m_matrix.containsOnlyFiniteValues())
-        return Exception { InvalidStateError, ASCIILiteral("Matrix contains non-finite values") };
+        return Exception { InvalidStateError, "Matrix contains non-finite values"_s };
 
     StringBuilder builder;
     if (m_matrix.isAffine()) {

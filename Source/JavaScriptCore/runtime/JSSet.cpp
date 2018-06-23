@@ -35,7 +35,7 @@ const ClassInfo JSSet::s_info = { "Set", &Base::s_info, nullptr, nullptr, CREATE
 
 String JSSet::toStringName(const JSObject*, ExecState*)
 {
-    return ASCIILiteral("Object");
+    return "Object"_s;
 }
 
 JSSet* JSSet::clone(ExecState* exec, VM& vm, Structure* structure)

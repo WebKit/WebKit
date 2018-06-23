@@ -31,7 +31,7 @@ namespace JSC {
 class JSArray;
 class LLIntOffsetsExtractor;
 
-extern const char* const LengthExceededTheMaximumArrayLengthError;
+extern const ASCIILiteral LengthExceededTheMaximumArrayLengthError;
 
 class JSArray : public JSNonFinalObject {
     friend class LLIntOffsetsExtractor;

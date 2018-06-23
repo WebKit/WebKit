@@ -3238,7 +3238,7 @@ static void maybeThrowExceptionIfSerializationFailed(ExecState& state, Serializa
         throwException(&state, scope, createStackOverflowError(&state));
         break;
     case SerializationReturnCode::ValidationError:
-        throwTypeError(&state, scope, ASCIILiteral("Unable to deserialize data."));
+        throwTypeError(&state, scope, "Unable to deserialize data."_s);
         break;
     case SerializationReturnCode::DataCloneError:
         throwDataCloneError(state, scope);

@@ -346,7 +346,7 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
 
     if (vm.getAndClearFailNextNewCodeBlock()) {
         auto& state = *scope->globalObject(vm)->globalExec();
-        return throwException(&state, throwScope, createError(&state, ASCIILiteral("Forced Failure")));
+        return throwException(&state, throwScope, createError(&state, "Forced Failure"_s));
     }
 
     JSObject* exception = nullptr;

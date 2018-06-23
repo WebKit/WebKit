@@ -121,7 +121,7 @@ private:
             return;
         }
 
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Argument does not match Objective-C Class")));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Argument does not match Objective-C Class"_s));
     }
 
     RetainPtr<Class> m_class;
@@ -458,7 +458,7 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
 
     if (impl->type() == CallbackInitMethod) {
         JSGlobalContextRef contextRef = [context JSGlobalContextRef];
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Cannot call a class constructor without |new|")));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Cannot call a class constructor without |new|"_s));
         return JSValueMakeUndefined(contextRef);
     }
 
@@ -497,7 +497,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
         return nullptr;
 
     if (!JSValueIsObject(contextRef, result)) {
-        *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Objective-C blocks called as constructors must return an object.")));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Objective-C blocks called as constructors must return an object."_s));
         return nullptr;
     }
     return const_cast<JSObjectRef>(result);
@@ -548,7 +548,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
         RELEASE_ASSERT(!thisObject);
         target = [m_instanceClass alloc];
         if (!target || ![target isKindOfClass:m_instanceClass.get()]) {
-            *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("self type check failed for Objective-C instance method")));
+            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"_s));
             return JSValueMakeUndefined(contextRef);
         }
         [m_invocation setTarget:target];
@@ -558,7 +558,7 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
     case CallbackInstanceMethod: {
         target = tryUnwrapObjcObject(contextRef, thisObject);
         if (!target || ![target isKindOfClass:m_instanceClass.get()]) {
-            *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("self type check failed for Objective-C instance method")));
+            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"_s));
             return JSValueMakeUndefined(contextRef);
         }
         [m_invocation setTarget:target];

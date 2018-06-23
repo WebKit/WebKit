@@ -55,7 +55,7 @@ static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(ExecState* exec, VM& vm,
     JSWebAssemblyInstance* result = jsDynamicCast<JSWebAssemblyInstance*>(vm, v);
     if (!result) {
         throwException(exec, throwScope, 
-            createTypeError(exec, ASCIILiteral("expected |this| value to be an instance of WebAssembly.Instance")));
+            createTypeError(exec, "expected |this| value to be an instance of WebAssembly.Instance"_s));
         return nullptr;
     }
     return result;

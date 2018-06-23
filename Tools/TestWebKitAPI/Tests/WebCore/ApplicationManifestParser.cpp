@@ -292,7 +292,7 @@ TEST_F(ApplicationManifestParserTest, Scope)
 
 TEST_F(ApplicationManifestParserTest, Whitespace)
 {
-    auto manifest = parseString(ASCIILiteral("  { \"name\": \"PASS\" }\n"));
+    auto manifest = parseString("  { \"name\": \"PASS\" }\n"_s);
 
     EXPECT_STREQ("PASS", manifest.name.utf8().data());
 }

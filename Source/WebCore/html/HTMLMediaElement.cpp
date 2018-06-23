@@ -1221,10 +1221,10 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
             canPlay = emptyString();
             break;
         case MediaPlayer::MayBeSupported:
-            canPlay = ASCIILiteral("maybe");
+            canPlay = "maybe"_s;
             break;
         case MediaPlayer::IsSupported:
-            canPlay = ASCIILiteral("probably");
+            canPlay = "probably"_s;
             break;
     }
 
@@ -2295,13 +2295,13 @@ static void logMediaLoadRequest(Page* page, const String& mediaEngine, const Str
 static String stringForNetworkState(MediaPlayer::NetworkState state)
 {
     switch (state) {
-    case MediaPlayer::Empty: return ASCIILiteral("Empty");
-    case MediaPlayer::Idle: return ASCIILiteral("Idle");
-    case MediaPlayer::Loading: return ASCIILiteral("Loading");
-    case MediaPlayer::Loaded: return ASCIILiteral("Loaded");
-    case MediaPlayer::FormatError: return ASCIILiteral("FormatError");
-    case MediaPlayer::NetworkError: return ASCIILiteral("NetworkError");
-    case MediaPlayer::DecodeError: return ASCIILiteral("DecodeError");
+    case MediaPlayer::Empty: return "Empty"_s;
+    case MediaPlayer::Idle: return "Idle"_s;
+    case MediaPlayer::Loading: return "Loading"_s;
+    case MediaPlayer::Loaded: return "Loaded"_s;
+    case MediaPlayer::FormatError: return "FormatError"_s;
+    case MediaPlayer::NetworkError: return "NetworkError"_s;
+    case MediaPlayer::DecodeError: return "DecodeError"_s;
     default: return emptyString();
     }
 }
@@ -3394,16 +3394,16 @@ String HTMLMediaElement::preload() const
     // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
     // "preload" - On getting: none. On setting: ignored.
     if (m_mediaStreamSrcObject)
-        return ASCIILiteral("none");
+        return "none"_s;
 #endif
 
     switch (m_preload) {
     case MediaPlayer::None:
-        return ASCIILiteral("none");
+        return "none"_s;
     case MediaPlayer::MetaData:
-        return ASCIILiteral("metadata");
+        return "metadata"_s;
     case MediaPlayer::Auto:
-        return ASCIILiteral("auto");
+        return "auto"_s;
     }
 
     ASSERT_NOT_REACHED();
@@ -7108,7 +7108,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
 
 #ifndef NDEBUG
     // Setting a scriptURL allows the source to be debuggable in the inspector.
-    URL scriptURL = URL(ParsedURLString, ASCIILiteral("mediaControlsScript"));
+    URL scriptURL = URL(ParsedURLString, "mediaControlsScript"_s);
 #else
     URL scriptURL;
 #endif

@@ -58,7 +58,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     String crossOriginMode = m_crossOriginMode;
     if (m_moduleScript == ModuleScript::Yes) {
         if (crossOriginMode.isNull())
-            crossOriginMode = ASCIILiteral("omit");
+            crossOriginMode = "omit"_s;
     }
     request.setAsPotentiallyCrossOrigin(crossOriginMode, document);
     return request;

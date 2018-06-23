@@ -169,7 +169,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
 
     String nameString;
     if (!nameValue)
-        nameString = ASCIILiteral("Error");
+        nameString = "Error"_s;
     else {
         nameString = nameValue.toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, String());

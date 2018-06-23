@@ -428,33 +428,33 @@ static String grandfatheredLangTag(const String& locale)
     // FIXME: convert to a compile time hash table if this is causing performance issues.
     HashMap<String, String> tagMap = {
         // Irregular.
-        { ASCIILiteral("en-gb-oed"), ASCIILiteral("en-GB-oed") },
-        { ASCIILiteral("i-ami"), ASCIILiteral("ami") },
-        { ASCIILiteral("i-bnn"), ASCIILiteral("bnn") },
-        { ASCIILiteral("i-default"), ASCIILiteral("i-default") },
-        { ASCIILiteral("i-enochian"), ASCIILiteral("i-enochian") },
-        { ASCIILiteral("i-hak"), ASCIILiteral("hak") },
-        { ASCIILiteral("i-klingon"), ASCIILiteral("tlh") },
-        { ASCIILiteral("i-lux"), ASCIILiteral("lb") },
-        { ASCIILiteral("i-mingo"), ASCIILiteral("i-mingo") },
-        { ASCIILiteral("i-navajo"), ASCIILiteral("nv") },
-        { ASCIILiteral("i-pwn"), ASCIILiteral("pwn") },
-        { ASCIILiteral("i-tao"), ASCIILiteral("tao") },
-        { ASCIILiteral("i-tay"), ASCIILiteral("tay") },
-        { ASCIILiteral("i-tsu"), ASCIILiteral("tsu") },
-        { ASCIILiteral("sgn-be-fr"), ASCIILiteral("sfb") },
-        { ASCIILiteral("sgn-be-nl"), ASCIILiteral("vgt") },
-        { ASCIILiteral("sgn-ch-de"), ASCIILiteral("sgg") },
+        { "en-gb-oed"_s, "en-GB-oed"_s },
+        { "i-ami"_s, "ami"_s },
+        { "i-bnn"_s, "bnn"_s },
+        { "i-default"_s, "i-default"_s },
+        { "i-enochian"_s, "i-enochian"_s },
+        { "i-hak"_s, "hak"_s },
+        { "i-klingon"_s, "tlh"_s },
+        { "i-lux"_s, "lb"_s },
+        { "i-mingo"_s, "i-mingo"_s },
+        { "i-navajo"_s, "nv"_s },
+        { "i-pwn"_s, "pwn"_s },
+        { "i-tao"_s, "tao"_s },
+        { "i-tay"_s, "tay"_s },
+        { "i-tsu"_s, "tsu"_s },
+        { "sgn-be-fr"_s, "sfb"_s },
+        { "sgn-be-nl"_s, "vgt"_s },
+        { "sgn-ch-de"_s, "sgg"_s },
         // Regular.
-        { ASCIILiteral("art-lojban"), ASCIILiteral("jbo") },
-        { ASCIILiteral("cel-gaulish"), ASCIILiteral("cel-gaulish") },
-        { ASCIILiteral("no-bok"), ASCIILiteral("nb") },
-        { ASCIILiteral("no-nyn"), ASCIILiteral("nn") },
-        { ASCIILiteral("zh-guoyu"), ASCIILiteral("cmn") },
-        { ASCIILiteral("zh-hakka"), ASCIILiteral("hak") },
-        { ASCIILiteral("zh-min"), ASCIILiteral("zh-min") },
-        { ASCIILiteral("zh-min-nan"), ASCIILiteral("nan") },
-        { ASCIILiteral("zh-xiang"), ASCIILiteral("hsn") }
+        { "art-lojban"_s, "jbo"_s },
+        { "cel-gaulish"_s, "cel-gaulish"_s },
+        { "no-bok"_s, "nb"_s },
+        { "no-nyn"_s, "nn"_s },
+        { "zh-guoyu"_s, "cmn"_s },
+        { "zh-hakka"_s, "hak"_s },
+        { "zh-min"_s, "zh-min"_s },
+        { "zh-min-nan"_s, "nan"_s },
+        { "zh-xiang"_s, "hsn"_s }
     };
 
     return tagMap.get(locale.convertToASCIILowercase());
@@ -536,7 +536,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
             RETURN_IF_EXCEPTION(scope, Vector<String>());
 
             if (!kValue.isString() && !kValue.isObject()) {
-                throwTypeError(&state, scope, ASCIILiteral("locale value must be a string or object"));
+                throwTypeError(&state, scope, "locale value must be a string or object"_s);
                 return Vector<String>();
             }
 
@@ -722,7 +722,7 @@ HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& a
     // ResolveLocale (availableLocales, requestedLocales, options, relevantExtensionKeys, localeData)
     // https://tc39.github.io/ecma402/#sec-resolvelocale
 
-    const String& matcher = options.get(ASCIILiteral("localeMatcher"));
+    const String& matcher = options.get("localeMatcher"_s);
     MatcherResult matcherResult = (matcher == "lookup")
         ? lookupMatcher(state, availableLocales, requestedLocales)
         : bestFitMatcher(state, availableLocales, requestedLocales);
@@ -734,9 +734,9 @@ HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& a
         unicodeExtensionSubTags(matcherResult.extension, extensionSubtags);
 
     HashMap<String, String> result;
-    result.add(ASCIILiteral("dataLocale"), foundLocale);
+    result.add("dataLocale"_s, foundLocale);
 
-    String supportedExtension = ASCIILiteral("-u");
+    String supportedExtension = "-u"_s;
     for (size_t keyIndex = 0; keyIndex < relevantExtensionKeyCount; ++keyIndex) {
         const char* key = relevantExtensionKeys[keyIndex];
         Vector<String> keyLocaleData = localeData(foundLocale, keyIndex);
@@ -754,8 +754,8 @@ HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& a
                         value = requestedValue;
                         supportedExtensionAddition = makeString('-', key, '-', value);
                     }
-                } else if (keyLocaleData.contains(static_cast<String>(ASCIILiteral("true")))) {
-                    value = ASCIILiteral("true");
+                } else if (keyLocaleData.contains(static_cast<String>("true"_s))) {
+                    value = "true"_s;
                 }
             }
         }
@@ -780,7 +780,7 @@ HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& a
         foundLocale = preExtension + supportedExtension + postExtension;
     }
 
-    result.add(ASCIILiteral("locale"), foundLocale);
+    result.add("locale"_s, foundLocale);
     return result;
 }
 
@@ -836,7 +836,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
         RETURN_IF_EXCEPTION(scope, JSValue());
     } else
-        matcher = ASCIILiteral("best fit");
+        matcher = "best fit"_s;
 
     JSArray* supportedLocales = (matcher == "best fit")
         ? bestFitSupportedLocales(state, availableLocales, requestedLocales)

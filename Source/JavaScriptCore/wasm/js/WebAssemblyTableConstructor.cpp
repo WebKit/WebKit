@@ -54,7 +54,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
     {
         JSValue argument = exec->argument(0);
         if (!argument.isObject())
-            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Table expects its first argument to be an object"))));
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table expects its first argument to be an object"_s)));
         memoryDescriptor = jsCast<JSObject*>(argument);
     }
 
@@ -65,7 +65,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
         String elementString = elementValue.toWTFString(exec);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (elementString != "anyfunc")
-            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Table expects its 'element' field to be the string 'anyfunc'"))));
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Table expects its 'element' field to be the string 'anyfunc'"_s)));
     }
 
     Identifier initialIdent = Identifier::fromString(&vm, "initial");
@@ -86,14 +86,14 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
 
         if (initial > *maximum) {
             return JSValue::encode(throwException(exec, throwScope,
-                createRangeError(exec, ASCIILiteral("'maximum' property must be greater than or equal to the 'initial' property"))));
+                createRangeError(exec, "'maximum' property must be greater than or equal to the 'initial' property"_s)));
         }
     }
 
     RefPtr<Wasm::Table> wasmTable = Wasm::Table::create(initial, maximum);
     if (!wasmTable) {
         return JSValue::encode(throwException(exec, throwScope,
-            createRangeError(exec, ASCIILiteral("couldn't create Table"))));
+            createRangeError(exec, "couldn't create Table"_s)));
     }
 
     throwScope.release();
@@ -122,7 +122,7 @@ Structure* WebAssemblyTableConstructor::createStructure(VM& vm, JSGlobalObject* 
 
 void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototype* prototype)
 {
-    Base::finishCreation(vm, ASCIILiteral("Table"));
+    Base::finishCreation(vm, "Table"_s);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }

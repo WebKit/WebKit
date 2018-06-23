@@ -159,7 +159,7 @@ Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filen
 static String processFilesizeString(const String& size, bool isDirectory)
 {
     if (isDirectory)
-        return ASCIILiteral("--");
+        return "--"_s;
 
     bool valid;
     int64_t bytes = size.toUInt64(&valid);
@@ -302,7 +302,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 
     auto& document = *this->document();
 
-    auto foundElement = makeRefPtr(document.getElementById(String(ASCIILiteral("ftpDirectoryTable"))));
+    auto foundElement = makeRefPtr(document.getElementById(String("ftpDirectoryTable"_s)));
     if (!foundElement)
         LOG_ERROR("Unable to find element by id \"ftpDirectoryTable\" in the template document.");
     else if (!is<HTMLTableElement>(foundElement))

@@ -1010,7 +1010,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
     URL resourceDirectoryURL;
     if (resourceDirectoryURLString.isNull())
-        resourceDirectoryURL = URL(ParsedURLString, ASCIILiteral("file:///"));
+        resourceDirectoryURL = URL(ParsedURLString, "file:///"_s);
     else {
         resourceDirectoryURL = URL(URL(), resourceDirectoryURLString);
         if (!resourceDirectoryURL.isLocalFile())
@@ -1088,7 +1088,7 @@ RefPtr<API::Navigation> WebPageProxy::loadHTMLString(const String& htmlString, c
     LoadParameters loadParameters;
     loadParameters.navigationID = navigation->navigationID();
     loadParameters.string = htmlString;
-    loadParameters.MIMEType = ASCIILiteral("text/html");
+    loadParameters.MIMEType = "text/html"_s;
     loadParameters.baseURLString = baseURL;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(loadParameters);
@@ -1151,7 +1151,7 @@ void WebPageProxy::loadPlainTextString(const String& string, API::Object* userDa
     LoadParameters loadParameters;
     loadParameters.navigationID = 0;
     loadParameters.string = string;
-    loadParameters.MIMEType = ASCIILiteral("text/plain");
+    loadParameters.MIMEType = "text/plain"_s;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(loadParameters);
 
@@ -1173,8 +1173,8 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     LoadParameters loadParameters;
     loadParameters.navigationID = 0;
     loadParameters.data = webArchiveData->dataReference();
-    loadParameters.MIMEType = ASCIILiteral("application/x-webarchive");
-    loadParameters.encodingName = ASCIILiteral("utf-16");
+    loadParameters.MIMEType = "application/x-webarchive"_s;
+    loadParameters.encodingName = "utf-16"_s;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(loadParameters);
 
@@ -6674,7 +6674,7 @@ void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, UR
     if (!suggestedFilename.endsWithIgnoringASCIICase(".pdf"))
         return;
 
-    saveDataToFileInDownloadsFolder(WTFMove(suggestedFilename), ASCIILiteral("application/pdf"), WTFMove(originatingURL),
+    saveDataToFileInDownloadsFolder(WTFMove(suggestedFilename), "application/pdf"_s, WTFMove(originatingURL),
         API::Data::create(dataReference.data(), dataReference.size()).get());
 }
 

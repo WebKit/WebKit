@@ -89,7 +89,7 @@ void TypeSet::invalidateCache()
 String TypeSet::dumpTypes() const
 {
     if (m_seenTypes == TypeNothing)
-        return ASCIILiteral("(Unreached Statement)");
+        return "(Unreached Statement)"_s;
 
     StringBuilder seen;
 
@@ -172,44 +172,44 @@ String TypeSet::displayName() const
     // Therefore, more specific types must be checked first.
 
     if (doesTypeConformTo(TypeFunction))
-        return ASCIILiteral("Function");
+        return "Function"_s;
     if (doesTypeConformTo(TypeUndefined))
-        return ASCIILiteral("Undefined");
+        return "Undefined"_s;
     if (doesTypeConformTo(TypeNull))
-        return ASCIILiteral("Null");
+        return "Null"_s;
     if (doesTypeConformTo(TypeBoolean))
-        return ASCIILiteral("Boolean");
+        return "Boolean"_s;
     if (doesTypeConformTo(TypeAnyInt))
-        return ASCIILiteral("Integer");
+        return "Integer"_s;
     if (doesTypeConformTo(TypeNumber | TypeAnyInt))
-        return ASCIILiteral("Number");
+        return "Number"_s;
     if (doesTypeConformTo(TypeString))
-        return ASCIILiteral("String");
+        return "String"_s;
     if (doesTypeConformTo(TypeSymbol))
-        return ASCIILiteral("Symbol");
+        return "Symbol"_s;
 
     if (doesTypeConformTo(TypeNull | TypeUndefined))
-        return ASCIILiteral("(?)");
+        return "(?)"_s;
 
     if (doesTypeConformTo(TypeFunction | TypeNull | TypeUndefined))
-        return ASCIILiteral("Function?");
+        return "Function?"_s;
     if (doesTypeConformTo(TypeBoolean | TypeNull | TypeUndefined))
-        return ASCIILiteral("Boolean?");
+        return "Boolean?"_s;
     if (doesTypeConformTo(TypeAnyInt | TypeNull | TypeUndefined))
-        return ASCIILiteral("Integer?");
+        return "Integer?"_s;
     if (doesTypeConformTo(TypeNumber | TypeAnyInt | TypeNull | TypeUndefined))
-        return ASCIILiteral("Number?");
+        return "Number?"_s;
     if (doesTypeConformTo(TypeString | TypeNull | TypeUndefined))
-        return ASCIILiteral("String?");
+        return "String?"_s;
     if (doesTypeConformTo(TypeSymbol | TypeNull | TypeUndefined))
-        return ASCIILiteral("Symbol?");
+        return "Symbol?"_s;
    
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString))
-        return ASCIILiteral("Object");
+        return "Object"_s;
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString | TypeNull | TypeUndefined))
-        return ASCIILiteral("Object?");
+        return "Object?"_s;
 
-    return ASCIILiteral("(many)");
+    return "(many)"_s;
 }
 
 String TypeSet::leastCommonAncestor() const
@@ -388,7 +388,7 @@ String StructureShape::leastCommonAncestor(const Vector<Ref<StructureShape>>& sh
                 // This is unlikely to happen, because we usually bottom out at "Object", but there are some sets of Objects
                 // that may cause this behavior. We fall back to "Object" because it's our version of Top.
                 if (!origin->m_proto)
-                    return ASCIILiteral("Object");
+                    return "Object"_s;
                 origin = origin->m_proto.get();
             }
         }

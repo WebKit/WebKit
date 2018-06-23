@@ -190,7 +190,7 @@ static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsi
     bool success = putLength(exec, vm, obj, jsNumber(value));
     RETURN_IF_EXCEPTION(scope, void());
     if (UNLIKELY(!success))
-        throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
+        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
 }
 
 ALWAYS_INLINE bool speciesWatchpointIsValid(ExecState* exec, JSObject* thisObject)
@@ -324,7 +324,7 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
             bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to);
             RETURN_IF_EXCEPTION(scope, void());
             if (!success) {
-                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+                throwTypeError(exec, scope, UnableToDeletePropertyError);
                 return;
             }
         }
@@ -333,7 +333,7 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
         bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, k - 1);
         RETURN_IF_EXCEPTION(scope, void());
         if (!success) {
-            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+            throwTypeError(exec, scope, UnableToDeletePropertyError);
             return;
         }
     }
@@ -379,7 +379,7 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
             bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to);
             RETURN_IF_EXCEPTION(scope, void());
             if (UNLIKELY(!success)) {
-                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+                throwTypeError(exec, scope, UnableToDeletePropertyError);
                 return;
             }
         }
@@ -796,7 +796,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
     bool success = thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, length - 1);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (UNLIKELY(!success)) {
-        throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+        throwTypeError(exec, scope, UnableToDeletePropertyError);
         return encodedJSValue();
     }
     scope.release();
@@ -918,7 +918,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             bool success = thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, lower);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (UNLIKELY(!success)) {
-                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+                throwTypeError(exec, scope, UnableToDeletePropertyError);
                 return encodedJSValue();
             }
         }
@@ -930,7 +930,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             bool success = thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, upper);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (UNLIKELY(!success)) {
-                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
+                throwTypeError(exec, scope, UnableToDeletePropertyError);
                 return encodedJSValue();
             }
         }
@@ -1134,7 +1134,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
     unsigned nrArgs = exec->argumentCount();
     if (nrArgs) {
         if (UNLIKELY(doubleLength + static_cast<double>(nrArgs) > maxSafeInteger()))
-            return throwVMTypeError(exec, scope, ASCIILiteral("Cannot shift to offset greater than (2 ** 53) - 1"));
+            return throwVMTypeError(exec, scope, "Cannot shift to offset greater than (2 ** 53) - 1"_s);
         unshift<JSArray::ShiftCountForShift>(exec, thisObj, 0, 0, nrArgs, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }

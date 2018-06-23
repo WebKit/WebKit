@@ -36,38 +36,38 @@ namespace WebCore {
 // This array needs to be kept in sync with the ExceptionCode enumeration.
 // http://heycam.github.io/webidl/#idl-DOMException-error-names
 static const DOMException::Description descriptions[] = {
-    { "IndexSizeError", "The index is not in the allowed range.", 1 },
-    { "HierarchyRequestError", "The operation would yield an incorrect node tree.", 3 },
-    { "WrongDocumentError", "The object is in the wrong document.", 4 },
-    { "InvalidCharacterError", "The string contains invalid characters.", 5 },
-    { "NoModificationAllowedError", "The object can not be modified.", 7 },
-    { "NotFoundError", "The object can not be found here.", 8 },
-    { "NotSupportedError", "The operation is not supported.", 9 },
-    { "InUseAttributeError", "The attribute is in use.", 10 },
-    { "InvalidStateError", "The object is in an invalid state.", 11 },
-    { "SyntaxError", "The string did not match the expected pattern.", 12 },
-    { "InvalidModificationError", " The object can not be modified in this way.", 13 },
-    { "NamespaceError", "The operation is not allowed by Namespaces in XML.", 14 },
-    { "InvalidAccessError", "The object does not support the operation or argument.", 15 },
-    { "TypeMismatchError", "The type of an object was incompatible with the expected type of the parameter associated to the object.", 17 },
-    { "SecurityError", "The operation is insecure.", 18 },
-    { "NetworkError", " A network error occurred.", 19 },
-    { "AbortError", "The operation was aborted.", 20 },
-    { "URLMismatchError", "The given URL does not match another URL.", 21 },
-    { "QuotaExceededError", "The quota has been exceeded.", 22 },
-    { "TimeoutError", "The operation timed out.", 23 },
-    { "InvalidNodeTypeError", "The supplied node is incorrect or has an incorrect ancestor for this operation.", 24 },
-    { "DataCloneError", "The object can not be cloned.", 25 },
-    { "EncodingError", "The encoding operation (either encoded or decoding) failed.", 0 },
-    { "NotReadableError", "The I/O read operation failed.", 0 },
-    { "UnknownError", "The operation failed for an unknown transient reason (e.g. out of memory).", 0 },
-    { "ConstraintError", "A mutation operation in a transaction failed because a constraint was not satisfied.", 0 },
-    { "DataError", "Provided data is inadequate.", 0 },
-    { "TransactionInactiveError", "A request was placed against a transaction which is currently not active, or which is finished.", 0 },
-    { "ReadOnlyError", "The mutating operation was attempted in a \"readonly\" transaction.", 0 },
-    { "VersionError", "An attempt was made to open a database using a lower version than the existing version.", 0 },
-    { "OperationError", "The operation failed for an operation-specific reason.", 0 },
-    { "NotAllowedError", "The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.", 0 }
+    { "IndexSizeError"_s, "The index is not in the allowed range."_s, 1 },
+    { "HierarchyRequestError"_s, "The operation would yield an incorrect node tree."_s, 3 },
+    { "WrongDocumentError"_s, "The object is in the wrong document."_s, 4 },
+    { "InvalidCharacterError"_s, "The string contains invalid characters."_s, 5 },
+    { "NoModificationAllowedError"_s, "The object can not be modified."_s, 7 },
+    { "NotFoundError"_s, "The object can not be found here."_s, 8 },
+    { "NotSupportedError"_s, "The operation is not supported."_s, 9 },
+    { "InUseAttributeError"_s, "The attribute is in use."_s, 10 },
+    { "InvalidStateError"_s, "The object is in an invalid state."_s, 11 },
+    { "SyntaxError"_s, "The string did not match the expected pattern."_s, 12 },
+    { "InvalidModificationError"_s, " The object can not be modified in this way."_s, 13 },
+    { "NamespaceError"_s, "The operation is not allowed by Namespaces in XML."_s, 14 },
+    { "InvalidAccessError"_s, "The object does not support the operation or argument."_s, 15 },
+    { "TypeMismatchError"_s, "The type of an object was incompatible with the expected type of the parameter associated to the object."_s, 17 },
+    { "SecurityError"_s, "The operation is insecure."_s, 18 },
+    { "NetworkError"_s, " A network error occurred."_s, 19 },
+    { "AbortError"_s, "The operation was aborted."_s, 20 },
+    { "URLMismatchError"_s, "The given URL does not match another URL."_s, 21 },
+    { "QuotaExceededError"_s, "The quota has been exceeded."_s, 22 },
+    { "TimeoutError"_s, "The operation timed out."_s, 23 },
+    { "InvalidNodeTypeError"_s, "The supplied node is incorrect or has an incorrect ancestor for this operation."_s, 24 },
+    { "DataCloneError"_s, "The object can not be cloned."_s, 25 },
+    { "EncodingError"_s, "The encoding operation (either encoded or decoding) failed."_s, 0 },
+    { "NotReadableError"_s, "The I/O read operation failed."_s, 0 },
+    { "UnknownError"_s, "The operation failed for an unknown transient reason (e.g. out of memory)."_s, 0 },
+    { "ConstraintError"_s, "A mutation operation in a transaction failed because a constraint was not satisfied."_s, 0 },
+    { "DataError"_s, "Provided data is inadequate."_s, 0 },
+    { "TransactionInactiveError"_s, "A request was placed against a transaction which is currently not active, or which is finished."_s, 0 },
+    { "ReadOnlyError"_s, "The mutating operation was attempted in a \"readonly\" transaction."_s, 0 },
+    { "VersionError"_s, "An attempt was made to open a database using a lower version than the existing version."_s, 0 },
+    { "OperationError"_s, "The operation failed for an operation-specific reason."_s, 0 },
+    { "NotAllowedError"_s, "The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."_s, 0 }
 };
 static_assert(!IndexSizeError, "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
 static_assert(NotAllowedError == WTF_ARRAY_LENGTH(descriptions) - 1, "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
@@ -77,7 +77,7 @@ auto DOMException::description(ExceptionCode ec) -> const Description&
     if (ec < WTF_ARRAY_LENGTH(descriptions))
         return descriptions[ec];
 
-    static const Description emptyDescription { nullptr, nullptr, 0 };
+    static const Description emptyDescription { ASCIILiteral::null(), ASCIILiteral::null(), 0 };
     return emptyDescription;
 }
 
@@ -93,7 +93,7 @@ static DOMException::LegacyCode legacyCodeFromName(const String& name)
 Ref<DOMException> DOMException::create(ExceptionCode ec, const String& message)
 {
     auto& description = DOMException::description(ec);
-    return adoptRef(*new DOMException(description.legacyCode, description.name, !message.isEmpty() ? message : ASCIILiteral(description.message)));
+    return adoptRef(*new DOMException(description.legacyCode, description.name, !message.isEmpty() ? message : description.message));
 }
 
 Ref<DOMException> DOMException::create(const String& message, const String& name)

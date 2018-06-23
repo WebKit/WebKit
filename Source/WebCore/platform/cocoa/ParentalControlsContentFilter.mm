@@ -100,7 +100,7 @@ Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const
 {
 #if PLATFORM(IOS)
-    return ContentFilterUnblockHandler { ASCIILiteral("unblock"), m_webFilterEvaluator };
+    return ContentFilterUnblockHandler { "unblock"_s, m_webFilterEvaluator };
 #else
     return { };
 #endif

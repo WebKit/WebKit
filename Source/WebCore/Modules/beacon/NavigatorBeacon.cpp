@@ -86,16 +86,16 @@ void NavigatorBeacon::logError(const ResourceError& error)
     if (!document)
         return;
 
-    const char* messageMiddle = ". ";
+    ASCIILiteral messageMiddle { ". "_s };
     String description = error.localizedDescription();
     if (description.isEmpty()) {
         if (error.isAccessControl())
-            messageMiddle = " due to access control checks.";
+            messageMiddle = " due to access control checks."_s;
         else
-            messageMiddle = ".";
+            messageMiddle = "."_s;
     }
 
-    document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString(ASCIILiteral("Beacon API cannot load "), error.failingURL().string(), ASCIILiteral(messageMiddle), description));
+    document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString("Beacon API cannot load "_s, error.failingURL().string(), messageMiddle, description));
 }
 
 ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& url, std::optional<FetchBody::Init>&& body)
@@ -105,9 +105,9 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     // Set parsedUrl to the result of the URL parser steps with url and base. If the algorithm returns an error, or if
     // parsedUrl's scheme is not "http" or "https", throw a "TypeError" exception and terminate these steps.
     if (!parsedUrl.isValid())
-        return Exception { TypeError, ASCIILiteral("This URL is invalid") };
+        return Exception { TypeError, "This URL is invalid"_s };
     if (!parsedUrl.protocolIsInHTTPFamily())
-        return Exception { TypeError, ASCIILiteral("Beacons can only be sent over HTTP(S)") };
+        return Exception { TypeError, "Beacons can only be sent over HTTP(S)"_s };
 
     if (!document.frame())
         return false;
@@ -119,7 +119,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     }
 
     ResourceRequest request(parsedUrl);
-    request.setHTTPMethod(ASCIILiteral("POST"));
+    request.setHTTPMethod("POST"_s);
 
     FetchOptions options;
     options.credentials = FetchOptions::Credentials::Include;
@@ -131,7 +131,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
         auto fetchBody = FetchBody::extract(document, WTFMove(body.value()), mimeType);
 
         if (fetchBody.hasReadableStream())
-            return Exception { TypeError, ASCIILiteral("Beacons cannot send ReadableStream body") };
+            return Exception { TypeError, "Beacons cannot send ReadableStream body"_s };
 
         request.setHTTPBody(fetchBody.bodyAsFormData(document));
         if (!mimeType.isEmpty()) {

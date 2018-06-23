@@ -109,10 +109,10 @@ void Statistics::initialize(const String& databasePath)
             return;
         }
 
-        executeSQLCommand(m_database, ASCIILiteral("CREATE TABLE IF NOT EXISTS AlreadyRequested (hash TEXT PRIMARY KEY)"));
-        executeSQLCommand(m_database, ASCIILiteral("CREATE TABLE IF NOT EXISTS UncachedReason (hash TEXT PRIMARY KEY, reason INTEGER)"));
+        executeSQLCommand(m_database, "CREATE TABLE IF NOT EXISTS AlreadyRequested (hash TEXT PRIMARY KEY)"_s);
+        executeSQLCommand(m_database, "CREATE TABLE IF NOT EXISTS UncachedReason (hash TEXT PRIMARY KEY, reason INTEGER)"_s);
 
-        WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT count(*) FROM AlreadyRequested"));
+        WebCore::SQLiteStatement statement(m_database, "SELECT count(*) FROM AlreadyRequested"_s);
         if (statement.prepareAndStep() != SQLITE_ROW) {
             LOG_ERROR("Network cache statistics: Failed to count the number of rows in AlreadyRequested table");
             return;
@@ -146,7 +146,7 @@ void Statistics::bootstrapFromNetworkCache(const String& networkCachePath)
     LOG(NetworkCache, "(NetworkProcess) Bootstrapping the network cache statistics database from the network cache...");
 
     HashSet<String> hashes;
-    traverseRecordsFiles(networkCachePath, ASCIILiteral("Resource"), [&hashes](const String& fileName, const String& hashString, const String& type, bool isBodyBlob, const String& recordDirectoryPath) {
+    traverseRecordsFiles(networkCachePath, "Resource"_s, [&hashes](const String& fileName, const String& hashString, const String& type, bool isBodyBlob, const String& recordDirectoryPath) {
         if (isBodyBlob)
             return;
 
@@ -373,14 +373,14 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
         std::optional<StoreDecision> storeDecision;
         if (m_database.isOpen()) {
             if (!wasAlreadyRequested) {
-                WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT hash FROM AlreadyRequested WHERE hash=?"));
+                WebCore::SQLiteStatement statement(m_database, "SELECT hash FROM AlreadyRequested WHERE hash=?"_s);
                 if (statement.prepare() == SQLITE_OK) {
                     statement.bindText(1, query.hash);
                     wasAlreadyRequested = (statement.step() == SQLITE_ROW);
                 }
             }
             if (wasAlreadyRequested && query.needUncachedReason) {
-                WebCore::SQLiteStatement statement(m_database, ASCIILiteral("SELECT reason FROM UncachedReason WHERE hash=?"));
+                WebCore::SQLiteStatement statement(m_database, "SELECT reason FROM UncachedReason WHERE hash=?"_s);
                 storeDecision = StoreDecision::Yes;
                 if (statement.prepare() == SQLITE_OK) {
                     statement.bindText(1, query.hash);
@@ -405,8 +405,8 @@ void Statistics::clear()
             WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
             WebCore::SQLiteTransaction deleteTransaction(m_database);
             deleteTransaction.begin();
-            executeSQLCommand(m_database, ASCIILiteral("DELETE FROM AlreadyRequested"));
-            executeSQLCommand(m_database, ASCIILiteral("DELETE FROM UncachedReason"));
+            executeSQLCommand(m_database, "DELETE FROM AlreadyRequested"_s);
+            executeSQLCommand(m_database, "DELETE FROM UncachedReason"_s);
             deleteTransaction.commit();
             m_approximateEntryCount = 0;
         }
@@ -419,7 +419,7 @@ void Statistics::addHashesToDatabase(const HashSet<String>& hashes)
     ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
     ASSERT(m_database.isOpen());
 
-    WebCore::SQLiteStatement statement(m_database, ASCIILiteral("INSERT OR IGNORE INTO AlreadyRequested (hash) VALUES (?)"));
+    WebCore::SQLiteStatement statement(m_database, "INSERT OR IGNORE INTO AlreadyRequested (hash) VALUES (?)"_s);
     if (statement.prepare() != SQLITE_OK)
         return;
 
@@ -437,7 +437,7 @@ void Statistics::addStoreDecisionsToDatabase(const HashMap<String, NetworkCache:
     ASSERT(WebCore::SQLiteDatabaseTracker::hasTransactionInProgress());
     ASSERT(m_database.isOpen());
 
-    WebCore::SQLiteStatement statement(m_database, ASCIILiteral("INSERT OR REPLACE INTO UncachedReason (hash, reason) VALUES (?, ?)"));
+    WebCore::SQLiteStatement statement(m_database, "INSERT OR REPLACE INTO UncachedReason (hash, reason) VALUES (?, ?)"_s);
     if (statement.prepare() != SQLITE_OK)
         return;
 

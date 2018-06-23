@@ -498,7 +498,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
 #if ENABLE(XSLT)
     , m_applyPendingXSLTransformsTimer(*this, &Document::applyPendingXSLTransformsTimerFired)
 #endif
-    , m_xmlVersion(ASCIILiteral("1.0"))
+    , m_xmlVersion("1.0"_s)
     , m_constantPropertyMap(std::make_unique<ConstantPropertyMap>(*this))
     , m_documentClasses(documentClasses)
     , m_eventQueue(*this)
@@ -1373,13 +1373,13 @@ void Document::setContent(const String& content)
 String Document::suggestedMIMEType() const
 {
     if (isXHTMLDocument())
-        return ASCIILiteral("application/xhtml+xml");
+        return "application/xhtml+xml"_s;
     if (isSVGDocument())
-        return ASCIILiteral("image/svg+xml");
+        return "image/svg+xml"_s;
     if (xmlStandalone())
-        return ASCIILiteral("text/xml");
+        return "text/xml"_s;
     if (isHTMLDocument())
-        return ASCIILiteral("text/html");
+        return "text/html"_s;
     if (DocumentLoader* loader = this->loader())
         return loader->responseMIMEType();
     return String();
@@ -1402,7 +1402,7 @@ String Document::contentType() const
     if (!mimeType.isNull())
         return mimeType;
 
-    return ASCIILiteral("application/xml");
+    return "application/xml"_s;
 }
 
 RefPtr<Range> Document::caretRangeFromPoint(int x, int y)
@@ -1674,7 +1674,7 @@ void Document::allowsMediaDocumentInlinePlaybackChanged()
 
 String Document::nodeName() const
 {
-    return ASCIILiteral("#document");
+    return "#document"_s;
 }
 
 Node::NodeType Document::nodeType() const
@@ -2995,7 +2995,7 @@ ExceptionOr<void> Document::writeln(Document* responsibleDocument, Vector<String
     for (auto& string : strings)
         text.append(WTFMove(string));
 
-    text.append(ASCIILiteral { "\n" });
+    text.append("\n"_s);
     write(responsibleDocument, WTFMove(text));
 
     return { };
@@ -3189,7 +3189,7 @@ bool Document::canNavigate(Frame* targetFrame)
         auto destinationCrossOriginWindowPolicy = targetFrame->window() ? targetFrame->window()->crossOriginWindowPolicy() : CrossOriginWindowPolicy::Allow;
         if (sourceCrossOriginWindowPolicy != CrossOriginWindowPolicy::Allow || destinationCrossOriginWindowPolicy != CrossOriginWindowPolicy::Allow) {
             if (m_frame->document() && targetFrame->document() && !m_frame->document()->securityOrigin().canAccess(targetFrame->document()->securityOrigin())) {
-                printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("Navigation was not allowed due to Cross-Origin-Window-Policy header."));
+                printNavigationErrorMessage(targetFrame, url(), "Navigation was not allowed due to Cross-Origin-Window-Policy header."_s);
                 return false;
             }
         }
@@ -3213,7 +3213,7 @@ bool Document::canNavigate(Frame* targetFrame)
     // 1. If A is not the same browsing context as B, and A is not one of the ancestor browsing contexts of B, and B is not a top-level browsing context, and A's active document's active sandboxing
     // flag set has its sandboxed navigation browsing context flag set, then abort these steps negatively.
     if (m_frame != targetFrame && isSandboxed(SandboxNavigation) && targetFrame->tree().parent() && !targetFrame->tree().isDescendantOf(m_frame)) {
-        printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors."));
+        printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors."_s);
         return false;
     }
 
@@ -3222,12 +3222,12 @@ bool Document::canNavigate(Frame* targetFrame)
         bool triggeredByUserActivation = UserGestureIndicator::processingUserGesture();
         // 1. If this algorithm is triggered by user activation and A's active document's active sandboxing flag set has its sandboxed top-level navigation with user activation browsing context flag set, then abort these steps negatively.
         if (triggeredByUserActivation && isSandboxed(SandboxTopNavigationByUserActivation)) {
-            printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation-by-user-activation' flag is not set and navigation is not triggered by user activation."));
+            printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation-by-user-activation' flag is not set and navigation is not triggered by user activation."_s);
             return false;
         }
         // 2. Otherwise, If this algorithm is not triggered by user activation and A's active document's active sandboxing flag set has its sandboxed top-level navigation without user activation browsing context flag set, then abort these steps negatively.
         if (!triggeredByUserActivation && isSandboxed(SandboxTopNavigation)) {
-            printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set."));
+            printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set."_s);
             return false;
         }
     }
@@ -3235,7 +3235,7 @@ bool Document::canNavigate(Frame* targetFrame)
     // 3. Otherwise, if B is a top-level browsing context, and is neither A nor one of the ancestor browsing contexts of A, and A's Document's active sandboxing flag set has its
     // sandboxed navigation browsing context flag set, and A is not the one permitted sandboxed navigator of B, then abort these steps negatively.
     if (!targetFrame->tree().parent() && m_frame != targetFrame && targetFrame != &m_frame->tree().top() && isSandboxed(SandboxNavigation) && targetFrame->loader().opener() != m_frame) {
-        printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation is sandboxed, and is not allowed to navigate this popup."));
+        printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is sandboxed, and is not allowed to navigate this popup."_s);
         return false;
     }
 
@@ -5236,7 +5236,7 @@ void Document::setDesignMode(InheritedBool value)
 
 String Document::designMode() const
 {
-    return inDesignMode() ? ASCIILiteral("on") : ASCIILiteral("off");
+    return inDesignMode() ? "on"_s : "off"_s;
 }
 
 void Document::setDesignMode(const String& value)
@@ -6043,7 +6043,7 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
         // We do not allow pressing the Escape key as a user gesture to enter fullscreen since this is the key
         // to exit fullscreen.
         if (UserGestureIndicator::currentUserGesture()->gestureType() == UserGestureType::EscapeKey) {
-            addConsoleMessage(MessageSource::Security, MessageLevel::Error, ASCIILiteral("The Escape key may not be used as a user gesture to enter fullscreen"));
+            addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Escape key may not be used as a user gesture to enter fullscreen"_s);
             break;
         }
 

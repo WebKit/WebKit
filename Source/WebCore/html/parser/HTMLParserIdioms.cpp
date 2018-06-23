@@ -349,8 +349,8 @@ String parseCORSSettingsAttribute(const AtomicString& value)
     if (value.isNull())
         return String();
     if (equalIgnoringASCIICase(value, "use-credentials"))
-        return ASCIILiteral("use-credentials");
-    return ASCIILiteral("anonymous");
+        return "use-credentials"_s;
+    return "anonymous"_s;
 }
 
 // https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-refresh

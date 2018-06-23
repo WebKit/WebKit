@@ -45,9 +45,9 @@ template<> struct SVGPropertyTraits<SVGLengthAdjustType> {
         case SVGLengthAdjustUnknown:
             return emptyString();
         case SVGLengthAdjustSpacing:
-            return ASCIILiteral("spacing");
+            return "spacing"_s;
         case SVGLengthAdjustSpacingAndGlyphs:
-            return ASCIILiteral("spacingAndGlyphs");
+            return "spacingAndGlyphs"_s;
         }
 
         ASSERT_NOT_REACHED();

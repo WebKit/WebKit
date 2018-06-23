@@ -160,14 +160,14 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     auto& document = *frame.document();
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    request.setHTTPMethod(ASCIILiteral("POST"));
+    request.setHTTPMethod("POST"_s);
     request.setHTTPBody(WTFMove(report));
     switch (reportType) {
     case ViolationReportType::ContentSecurityPolicy:
-        request.setHTTPContentType(ASCIILiteral("application/csp-report"));
+        request.setHTTPContentType("application/csp-report"_s);
         break;
     case ViolationReportType::XSSAuditor:
-        request.setHTTPContentType(ASCIILiteral("application/json"));
+        request.setHTTPContentType("application/json"_s);
         break;
     }
 

@@ -39,7 +39,7 @@ TEST(QuickLook, ShouldCreateForMIMEType)
     // FIXME: Expand this to cover all the MIME types we expect to support.
     EXPECT_FALSE(PreviewLoader::shouldCreateForMIMEType(String()));
     EXPECT_FALSE(PreviewLoader::shouldCreateForMIMEType(emptyString()));
-    EXPECT_TRUE(PreviewLoader::shouldCreateForMIMEType(ASCIILiteral("application/vnd.ms-excel.sheet.macroEnabled.12")));
+    EXPECT_TRUE(PreviewLoader::shouldCreateForMIMEType("application/vnd.ms-excel.sheet.macroEnabled.12"_s));
 }
 
 } // namespace TestWebKitAPI

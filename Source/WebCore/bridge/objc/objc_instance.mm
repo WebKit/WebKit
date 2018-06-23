@@ -210,7 +210,7 @@ JSC::JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeM
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!asObject(runtimeMethod)->inherits<ObjCRuntimeMethod>(vm))
-        return throwTypeError(exec, scope, ASCIILiteral("Attempt to invoke non-plug-in method on plug-in object."));
+        return throwTypeError(exec, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
 
     ObjcMethod *method = static_cast<ObjcMethod*>(runtimeMethod->method());
     ASSERT(method);

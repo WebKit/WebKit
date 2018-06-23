@@ -208,7 +208,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::ExecState& state
     JSC::CallData callData;
     JSC::CallType callType = JSC::getCallData(state.vm(), callback, callData);
     if (callType == JSC::CallType::None)
-        return throwTypeError(&state, scope, ASCIILiteral("Cannot call callback"));
+        return throwTypeError(&state, scope, "Cannot call callback"_s);
 
     auto iterator = thisObject.wrapped().createIterator();
     while (auto value = iterator.next()) {
@@ -253,7 +253,7 @@ JSC::EncodedJSValue JSC_HOST_CALL JSDOMIteratorPrototype<JSWrapper, IteratorTrai
 
     auto iterator = JSC::jsDynamicCast<JSDOMIterator<JSWrapper, IteratorTraits>*>(vm, state->thisValue());
     if (!iterator)
-        return JSC::JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Cannot call next() on a non-Iterator object")));
+        return JSC::JSValue::encode(throwTypeError(state, scope, "Cannot call next() on a non-Iterator object"_s));
 
     return JSC::JSValue::encode(iterator->next(*state));
 }

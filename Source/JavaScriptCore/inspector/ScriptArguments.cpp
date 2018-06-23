@@ -78,7 +78,7 @@ bool ScriptArguments::getFirstArgumentAsString(String& result)
 
     auto value = argumentAt(0);
     if (JSC::jsDynamicCast<JSC::ProxyObject*>(state->vm(), value)) {
-        result = ASCIILiteral("[object Proxy]");
+        result = "[object Proxy]"_s;
         return true;
     }
 

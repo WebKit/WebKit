@@ -134,7 +134,7 @@ ContentFilterUnblockHandler MockContentFilter::unblockHandler() const
 
 String MockContentFilter::unblockRequestDeniedScript() const
 {
-    return ASCIILiteral("unblockRequestDenied()");
+    return "unblockRequestDenied()"_s;
 }
 
 void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)

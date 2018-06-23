@@ -120,30 +120,30 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         return variable.get(); \
     }
 
-    ENABLE_IF_REQUESTED(EXTBlendMinMax, m_extBlendMinMax, "EXT_blend_minmax", enableSupportedExtension("GL_EXT_blend_minmax"));
-    ENABLE_IF_REQUESTED(EXTsRGB, m_extsRGB, "EXT_sRGB", enableSupportedExtension("GL_EXT_sRGB"));
-    ENABLE_IF_REQUESTED(EXTFragDepth, m_extFragDepth, "EXT_frag_depth", enableSupportedExtension("GL_EXT_frag_depth"));
+    ENABLE_IF_REQUESTED(EXTBlendMinMax, m_extBlendMinMax, "EXT_blend_minmax", enableSupportedExtension("GL_EXT_blend_minmax"_s));
+    ENABLE_IF_REQUESTED(EXTsRGB, m_extsRGB, "EXT_sRGB", enableSupportedExtension("GL_EXT_sRGB"_s));
+    ENABLE_IF_REQUESTED(EXTFragDepth, m_extFragDepth, "EXT_frag_depth", enableSupportedExtension("GL_EXT_frag_depth"_s));
     if (equalIgnoringASCIICase(name, "EXT_shader_texture_lod")) {
         if (!m_extShaderTextureLOD) {
-            if (!(m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_shader_texture_lod" }) || m_context->getExtensions().supports(ASCIILiteral { "GL_ARB_shader_texture_lod" })))
+            if (!(m_context->getExtensions().supports("GL_EXT_shader_texture_lod"_s) || m_context->getExtensions().supports("GL_ARB_shader_texture_lod"_s)))
                 m_extShaderTextureLOD = nullptr;
             else {
-                m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_EXT_shader_texture_lod" });
+                m_context->getExtensions().ensureEnabled("GL_EXT_shader_texture_lod"_s);
                 m_extShaderTextureLOD = std::make_unique<EXTShaderTextureLOD>(*this);
                 InspectorInstrumentation::didEnableExtension(*this, name);
             }
         }
         return m_extShaderTextureLOD.get();
     }
-    ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"));
-    ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"));
-    ENABLE_IF_REQUESTED(OESStandardDerivatives, m_oesStandardDerivatives, "OES_standard_derivatives", enableSupportedExtension("GL_OES_standard_derivatives"));
-    ENABLE_IF_REQUESTED(OESTextureFloat, m_oesTextureFloat, "OES_texture_float", enableSupportedExtension("GL_OES_texture_float"));
-    ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear", enableSupportedExtension("GL_OES_texture_float_linear"));
-    ENABLE_IF_REQUESTED(OESTextureHalfFloat, m_oesTextureHalfFloat, "OES_texture_half_float", enableSupportedExtension("GL_OES_texture_half_float"));
-    ENABLE_IF_REQUESTED(OESTextureHalfFloatLinear, m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear", enableSupportedExtension("GL_OES_texture_half_float_linear"));
-    ENABLE_IF_REQUESTED(OESVertexArrayObject, m_oesVertexArrayObject, "OES_vertex_array_object", enableSupportedExtension("GL_OES_vertex_array_object"));
-    ENABLE_IF_REQUESTED(OESElementIndexUint, m_oesElementIndexUint, "OES_element_index_uint", enableSupportedExtension("GL_OES_element_index_uint"));
+    ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
+    ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"_s));
+    ENABLE_IF_REQUESTED(OESStandardDerivatives, m_oesStandardDerivatives, "OES_standard_derivatives", enableSupportedExtension("GL_OES_standard_derivatives"_s));
+    ENABLE_IF_REQUESTED(OESTextureFloat, m_oesTextureFloat, "OES_texture_float", enableSupportedExtension("GL_OES_texture_float"_s));
+    ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear", enableSupportedExtension("GL_OES_texture_float_linear"_s));
+    ENABLE_IF_REQUESTED(OESTextureHalfFloat, m_oesTextureHalfFloat, "OES_texture_half_float", enableSupportedExtension("GL_OES_texture_half_float"_s));
+    ENABLE_IF_REQUESTED(OESTextureHalfFloatLinear, m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear", enableSupportedExtension("GL_OES_texture_half_float_linear"_s));
+    ENABLE_IF_REQUESTED(OESVertexArrayObject, m_oesVertexArrayObject, "OES_vertex_array_object", enableSupportedExtension("GL_OES_vertex_array_object"_s));
+    ENABLE_IF_REQUESTED(OESElementIndexUint, m_oesElementIndexUint, "OES_element_index_uint", enableSupportedExtension("GL_OES_element_index_uint"_s));
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context", true);
     ENABLE_IF_REQUESTED(WebGLCompressedTextureATC, m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*this));
     ENABLE_IF_REQUESTED(WebGLCompressedTexturePVRTC, m_webglCompressedTexturePVRTC, "WEBKIT_WEBGL_compressed_texture_pvrtc", WebGLCompressedTexturePVRTC::supported(*this));
@@ -155,7 +155,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             if (!supportsDrawBuffers())
                 m_webglDrawBuffers = nullptr;
             else {
-                m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_EXT_draw_buffers" });
+                m_context->getExtensions().ensureEnabled("GL_EXT_draw_buffers"_s);
                 m_webglDrawBuffers = std::make_unique<WebGLDrawBuffers>(*this);
                 InspectorInstrumentation::didEnableExtension(*this, name);
             }
@@ -167,7 +167,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             if (!ANGLEInstancedArrays::supported(*this))
                 m_angleInstancedArrays = nullptr;
             else {
-                m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_ANGLE_instanced_arrays" });
+                m_context->getExtensions().ensureEnabled("GL_ANGLE_instanced_arrays"_s);
                 m_angleInstancedArrays = std::make_unique<ANGLEInstancedArrays>(*this);
                 InspectorInstrumentation::didEnableExtension(*this, name);
             }
@@ -175,7 +175,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         return m_angleInstancedArrays.get();
     }
     ENABLE_IF_REQUESTED(WebGLDebugRendererInfo, m_webglDebugRendererInfo, "WEBGL_debug_renderer_info", true);
-    ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders", m_context->getExtensions().supports(ASCIILiteral { "GL_ANGLE_translated_shader_source" }));
+    ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders", m_context->getExtensions().supports("GL_ANGLE_translated_shader_source"_s));
     return nullptr;
 }
 
@@ -189,48 +189,48 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     if (m_isPendingPolicyResolution)
         return result;
     
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_blend_minmax" }))
-        result.append(ASCIILiteral { "EXT_blend_minmax" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_sRGB" }))
-        result.append(ASCIILiteral { "EXT_sRGB" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_frag_depth" }))
-        result.append(ASCIILiteral { "EXT_frag_depth" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_float" }))
-        result.append(ASCIILiteral { "OES_texture_float" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_float_linear" }))
-        result.append(ASCIILiteral { "OES_texture_float_linear" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_half_float" }))
-        result.append(ASCIILiteral { "OES_texture_half_float" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_half_float_linear" }))
-        result.append(ASCIILiteral { "OES_texture_half_float_linear" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_standard_derivatives" }))
-        result.append(ASCIILiteral { "OES_standard_derivatives" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_shader_texture_lod" }) || m_context->getExtensions().supports(ASCIILiteral { "GL_ARB_shader_texture_lod" }))
-        result.append(ASCIILiteral { "EXT_shader_texture_lod" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_texture_filter_anisotropic" }))
-        result.append(ASCIILiteral { "EXT_texture_filter_anisotropic" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_vertex_array_object" }))
-        result.append(ASCIILiteral { "OES_vertex_array_object" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_element_index_uint" }))
-        result.append(ASCIILiteral { "OES_element_index_uint" });
-    result.append(ASCIILiteral { "WEBGL_lose_context" });
+    if (m_context->getExtensions().supports("GL_EXT_blend_minmax"_s))
+        result.append("EXT_blend_minmax"_s);
+    if (m_context->getExtensions().supports("GL_EXT_sRGB"_s))
+        result.append("EXT_sRGB"_s);
+    if (m_context->getExtensions().supports("GL_EXT_frag_depth"_s))
+        result.append("EXT_frag_depth"_s);
+    if (m_context->getExtensions().supports("GL_OES_texture_float"_s))
+        result.append("OES_texture_float"_s);
+    if (m_context->getExtensions().supports("GL_OES_texture_float_linear"_s))
+        result.append("OES_texture_float_linear"_s);
+    if (m_context->getExtensions().supports("GL_OES_texture_half_float"_s))
+        result.append("OES_texture_half_float"_s);
+    if (m_context->getExtensions().supports("GL_OES_texture_half_float_linear"_s))
+        result.append("OES_texture_half_float_linear"_s);
+    if (m_context->getExtensions().supports("GL_OES_standard_derivatives"_s))
+        result.append("OES_standard_derivatives"_s);
+    if (m_context->getExtensions().supports("GL_EXT_shader_texture_lod"_s) || m_context->getExtensions().supports("GL_ARB_shader_texture_lod"_s))
+        result.append("EXT_shader_texture_lod"_s);
+    if (m_context->getExtensions().supports("GL_EXT_texture_filter_anisotropic"_s))
+        result.append("EXT_texture_filter_anisotropic"_s);
+    if (m_context->getExtensions().supports("GL_OES_vertex_array_object"_s))
+        result.append("OES_vertex_array_object"_s);
+    if (m_context->getExtensions().supports("GL_OES_element_index_uint"_s))
+        result.append("OES_element_index_uint"_s);
+    result.append("WEBGL_lose_context"_s);
     if (WebGLCompressedTextureATC::supported(*this))
-        result.append(ASCIILiteral { "WEBKIT_WEBGL_compressed_texture_atc" });
+        result.append("WEBKIT_WEBGL_compressed_texture_atc"_s);
     if (WebGLCompressedTexturePVRTC::supported(*this))
-        result.append(ASCIILiteral { "WEBKIT_WEBGL_compressed_texture_pvrtc" });
+        result.append("WEBKIT_WEBGL_compressed_texture_pvrtc"_s);
     if (WebGLCompressedTextureS3TC::supported(*this))
-        result.append(ASCIILiteral { "WEBGL_compressed_texture_s3tc" });
+        result.append("WEBGL_compressed_texture_s3tc"_s);
     if (WebGLCompressedTextureASTC::supported(*this))
-        result.append(ASCIILiteral { "WEBGL_compressed_texture_astc" });
+        result.append("WEBGL_compressed_texture_astc"_s);
     if (WebGLDepthTexture::supported(*m_context))
-        result.append(ASCIILiteral { "WEBGL_depth_texture" });
+        result.append("WEBGL_depth_texture"_s);
     if (supportsDrawBuffers())
-        result.append(ASCIILiteral { "WEBGL_draw_buffers" });
+        result.append("WEBGL_draw_buffers"_s);
     if (ANGLEInstancedArrays::supported(*this))
-        result.append(ASCIILiteral { "ANGLE_instanced_arrays" });
-    if (m_context->getExtensions().supports(ASCIILiteral { "GL_ANGLE_translated_shader_source" }))
-        result.append(ASCIILiteral { "WEBGL_debug_shaders" });
-    result.append(ASCIILiteral { "WEBGL_debug_renderer_info" });
+        result.append("ANGLE_instanced_arrays"_s);
+    if (m_context->getExtensions().supports("GL_ANGLE_translated_shader_source"_s))
+        result.append("WEBGL_debug_shaders"_s);
+    result.append("WEBGL_debug_renderer_info"_s);
 
     return result;
 }
@@ -520,7 +520,7 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::RENDERBUFFER_BINDING:
         return m_renderbufferBinding;
     case GraphicsContext3D::RENDERER:
-        return String { ASCIILiteral { "WebKit WebGL" } };
+        return String { "WebKit WebGL"_s };
     case GraphicsContext3D::SAMPLE_BUFFERS:
         return getIntParameter(pname);
     case GraphicsContext3D::SAMPLE_COVERAGE_INVERT:
@@ -586,7 +586,7 @@ WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
         return m_unpackColorspaceConversion;
     case GraphicsContext3D::VENDOR:
-        return String { ASCIILiteral { "WebKit" } };
+        return String { "WebKit"_s };
     case GraphicsContext3D::VERSION:
         return "WebGL 1.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")";
     case GraphicsContext3D::VIEWPORT:

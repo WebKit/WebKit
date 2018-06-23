@@ -48,7 +48,7 @@ inline JSC::Structure* JSDOMConstructorBase::createStructure(JSC::VM& vm, JSC::J
 
 inline String JSDOMConstructorBase::className(const JSObject*)
 {
-    return ASCIILiteral("Function");
+    return "Function"_s;
 }
 
 } // namespace WebCore

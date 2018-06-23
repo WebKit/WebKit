@@ -275,17 +275,17 @@ String TextTrackCueGeneric::toJSONString() const
     toJSON(object.get());
 
     if (m_foregroundColor.isValid())
-        object->setString(ASCIILiteral("foregroundColor"), m_foregroundColor.serialized());
+        object->setString("foregroundColor"_s, m_foregroundColor.serialized());
     if (m_backgroundColor.isValid())
-        object->setString(ASCIILiteral("backgroundColor"), m_backgroundColor.serialized());
+        object->setString("backgroundColor"_s, m_backgroundColor.serialized());
     if (m_highlightColor.isValid())
-        object->setString(ASCIILiteral("highlightColor"), m_highlightColor.serialized());
+        object->setString("highlightColor"_s, m_highlightColor.serialized());
     if (m_baseFontSizeRelativeToVideoHeight)
-        object->setDouble(ASCIILiteral("relativeFontSize"), m_baseFontSizeRelativeToVideoHeight);
+        object->setDouble("relativeFontSize"_s, m_baseFontSizeRelativeToVideoHeight);
     if (m_fontSizeMultiplier)
-        object->setDouble(ASCIILiteral("fontSizeMultiplier"), m_fontSizeMultiplier);
+        object->setDouble("fontSizeMultiplier"_s, m_fontSizeMultiplier);
     if (!m_fontName.isEmpty())
-        object->setString(ASCIILiteral("font"), m_fontName);
+        object->setString("font"_s, m_fontName);
 
     return object->toJSONString();
 }

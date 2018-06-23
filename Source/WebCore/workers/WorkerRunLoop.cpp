@@ -104,7 +104,7 @@ String WorkerRunLoop::defaultMode()
 
 String WorkerRunLoop::debuggerMode()
 {
-    return ASCIILiteral("debugger");
+    return "debugger"_s;
 }
 
 class RunLoopSetup {

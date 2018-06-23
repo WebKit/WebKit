@@ -238,7 +238,7 @@ URL ApplicationCacheHost::createFileURL(const String& path)
     URL url(adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false)).get());
 #else
     URL url;
-    url.setProtocol(ASCIILiteral("file"));
+    url.setProtocol("file"_s);
     url.setPath(path);
 #endif
     return url;

@@ -107,17 +107,17 @@ static bool sameValueZero(double a, double b)
 ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrix2DInit& init)
 {
     if (init.a && init.m11 && !sameValueZero(init.a.value(), init.m11.value()))
-        return Exception { TypeError, ASCIILiteral("init.a and init.m11 do not match") };
+        return Exception { TypeError, "init.a and init.m11 do not match"_s };
     if (init.b && init.m12 && !sameValueZero(init.b.value(), init.m12.value()))
-        return Exception { TypeError, ASCIILiteral("init.b and init.m12 do not match") };
+        return Exception { TypeError, "init.b and init.m12 do not match"_s };
     if (init.c && init.m21 && !sameValueZero(init.c.value(), init.m21.value()))
-        return Exception { TypeError, ASCIILiteral("init.c and init.m21 do not match") };
+        return Exception { TypeError, "init.c and init.m21 do not match"_s };
     if (init.d && init.m22 && !sameValueZero(init.d.value(), init.m22.value()))
-        return Exception { TypeError, ASCIILiteral("init.d and init.m22 do not match") };
+        return Exception { TypeError, "init.d and init.m22 do not match"_s };
     if (init.e && init.m41 && !sameValueZero(init.e.value(), init.m41.value()))
-        return Exception { TypeError, ASCIILiteral("init.e and init.m41 do not match") };
+        return Exception { TypeError, "init.e and init.m41 do not match"_s };
     if (init.f && init.m42 && !sameValueZero(init.f.value(), init.m42.value()))
-        return Exception { TypeError, ASCIILiteral("init.f and init.m42 do not match") };
+        return Exception { TypeError, "init.f and init.m42 do not match"_s };
 
     if (!init.m11)
         init.m11 = init.a.value_or(1);
@@ -143,25 +143,25 @@ ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)
 
     if (init.is2D && init.is2D.value()) {
         if (init.m13)
-            return Exception { TypeError, ASCIILiteral("m13 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m13 should be 0 for a 2D matrix"_s };
         if (init.m14)
-            return Exception { TypeError, ASCIILiteral("m14 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m14 should be 0 for a 2D matrix"_s };
         if (init.m23)
-            return Exception { TypeError, ASCIILiteral("m23 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m23 should be 0 for a 2D matrix"_s };
         if (init.m24)
-            return Exception { TypeError, ASCIILiteral("m24 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m24 should be 0 for a 2D matrix"_s };
         if (init.m31)
-            return Exception { TypeError, ASCIILiteral("m31 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m31 should be 0 for a 2D matrix"_s };
         if (init.m32)
-            return Exception { TypeError, ASCIILiteral("m32 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m32 should be 0 for a 2D matrix"_s };
         if (init.m34)
-            return Exception { TypeError, ASCIILiteral("m34 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m34 should be 0 for a 2D matrix"_s };
         if (init.m43)
-            return Exception { TypeError, ASCIILiteral("m43 should be 0 for a 2D matrix") };
+            return Exception { TypeError, "m43 should be 0 for a 2D matrix"_s };
         if (init.m33 != 1)
-            return Exception { TypeError, ASCIILiteral("m33 should be 1 for a 2D matrix") };
+            return Exception { TypeError, "m33 should be 1 for a 2D matrix"_s };
         if (init.m44 != 1)
-            return Exception { TypeError, ASCIILiteral("m44 should be 1 for a 2D matrix") };
+            return Exception { TypeError, "m44 should be 1 for a 2D matrix"_s };
     }
 
     if (!init.is2D) {
@@ -347,7 +347,7 @@ ExceptionOr<Ref<Float32Array>> DOMMatrixReadOnly::toFloat32Array() const
 {
     auto array32 = Float32Array::createUninitialized(16);
     if (!array32)
-        return Exception { UnknownError, ASCIILiteral("Out of memory") };
+        return Exception { UnknownError, "Out of memory"_s };
 
     unsigned index = 0;
     array32->set(index++, m_matrix.m11());
@@ -373,7 +373,7 @@ ExceptionOr<Ref<Float64Array>> DOMMatrixReadOnly::toFloat64Array() const
 {
     auto array64 = Float64Array::createUninitialized(16);
     if (!array64)
-        return Exception { UnknownError, ASCIILiteral("Out of memory") };
+        return Exception { UnknownError, "Out of memory"_s };
 
     unsigned index = 0;
     array64->set(index++, m_matrix.m11());
@@ -399,7 +399,7 @@ ExceptionOr<Ref<Float64Array>> DOMMatrixReadOnly::toFloat64Array() const
 ExceptionOr<String> DOMMatrixReadOnly::toString() const
 {
     if (!m_matrix.containsOnlyFiniteValues())
-        return Exception { InvalidStateError, ASCIILiteral("Matrix contains non-finite values") };
+        return Exception { InvalidStateError, "Matrix contains non-finite values"_s };
 
     StringBuilder builder;
     if (is2D()) {

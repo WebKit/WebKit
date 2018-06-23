@@ -109,16 +109,16 @@ String ISOWebVTTCue::toJSONString() const
     auto object = JSON::Object::create();
 
 #if !LOG_DISABLED
-    object->setString(ASCIILiteral("text"), m_cueText);
+    object->setString("text"_s, m_cueText);
 #endif
-    object->setString(ASCIILiteral("sourceId"), encodeWithURLEscapeSequences(m_sourceID));
-    object->setString(ASCIILiteral("id"), encodeWithURLEscapeSequences(m_identifier));
+    object->setString("sourceId"_s, encodeWithURLEscapeSequences(m_sourceID));
+    object->setString("id"_s, encodeWithURLEscapeSequences(m_identifier));
 
-    object->setString(ASCIILiteral("originalStartTime"), encodeWithURLEscapeSequences(m_originalStartTime));
-    object->setString(ASCIILiteral("settings"), encodeWithURLEscapeSequences(m_settings));
+    object->setString("originalStartTime"_s, encodeWithURLEscapeSequences(m_originalStartTime));
+    object->setString("settings"_s, encodeWithURLEscapeSequences(m_settings));
 
-    object->setDouble(ASCIILiteral("presentationTime"), m_presentationTime.toDouble());
-    object->setDouble(ASCIILiteral("duration"), m_duration.toDouble());
+    object->setDouble("presentationTime"_s, m_presentationTime.toDouble());
+    object->setDouble("duration"_s, m_duration.toDouble());
 
     return object->toJSONString();
 }

@@ -40,7 +40,7 @@ static ExceptionOr<bool> canWriteHeader(const String& name, const String& value,
     if (!isValidHTTPHeaderValue(value))
         return Exception { TypeError, makeString("Header '", name, "' has invalid value: '", value, "'") };
     if (guard == FetchHeaders::Guard::Immutable)
-        return Exception { TypeError, ASCIILiteral("Headers object's guard is 'immutable'") };
+        return Exception { TypeError, "Headers object's guard is 'immutable'"_s };
     if (guard == FetchHeaders::Guard::Request && isForbiddenHeaderName(name))
         return false;
     if (guard == FetchHeaders::Guard::RequestNoCors && !isSimpleHeader(name, value))

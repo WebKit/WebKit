@@ -265,17 +265,17 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 
     Vector<String> types;
     if (m_selectionData->hasText()) {
-        types.append(ASCIILiteral("text/plain"));
-        types.append(ASCIILiteral("Text"));
-        types.append(ASCIILiteral("text"));
+        types.append("text/plain"_s);
+        types.append("Text"_s);
+        types.append("text"_s);
     }
 
     if (m_selectionData->hasMarkup())
-        types.append(ASCIILiteral("text/html"));
+        types.append("text/html"_s);
 
     if (m_selectionData->hasURIList()) {
-        types.append(ASCIILiteral("text/uri-list"));
-        types.append(ASCIILiteral("URL"));
+        types.append("text/uri-list"_s);
+        types.append("URL"_s);
     }
 
     for (auto& key : m_selectionData->unknownTypes().keys())

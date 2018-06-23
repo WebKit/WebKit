@@ -240,8 +240,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     if (newTotalUsage > totalStateObjectPayloadLimit) {
         if (stateObjectType == StateObjectType::Replace)
-            return Exception { QuotaExceededError, ASCIILiteral("Attempt to store more data than allowed using history.replaceState()") };
-        return Exception { QuotaExceededError, ASCIILiteral("Attempt to store more data than allowed using history.pushState()") };
+            return Exception { QuotaExceededError, "Attempt to store more data than allowed using history.replaceState()"_s };
+        return Exception { QuotaExceededError, "Attempt to store more data than allowed using history.pushState()"_s };
     }
 
     m_mostRecentStateObjectUsage = payloadSize.unsafeGet();

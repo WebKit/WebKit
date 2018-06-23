@@ -35,7 +35,7 @@ const ClassInfo JSMap::s_info = { "Map", &Base::s_info, nullptr, nullptr, CREATE
 
 String JSMap::toStringName(const JSObject*, ExecState*)
 {
-    return ASCIILiteral("Object");
+    return "Object"_s;
 }
 
 JSMap* JSMap::clone(ExecState* exec, VM& vm, Structure* structure)

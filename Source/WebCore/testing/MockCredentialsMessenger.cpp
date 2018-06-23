@@ -42,7 +42,7 @@ MockCredentialsMessenger::~MockCredentialsMessenger()
 {
     // Have no effects to original promises. Just to call handlers to avoid any assertion failures.
     for (auto messageId : m_timeOutMessageIds)
-        exceptionReply(messageId, ExceptionData { NotAllowedError, ASCIILiteral("Operation timed out.") });
+        exceptionReply(messageId, ExceptionData { NotAllowedError, "Operation timed out."_s });
 }
 
 void MockCredentialsMessenger::setCreationReturnBundle(const BufferSource& credentialId, const BufferSource& attestationObject)
@@ -81,7 +81,7 @@ void MockCredentialsMessenger::makeCredential(const Vector<uint8_t>&, const Publ
     }
     if (m_didUserCancel) {
         m_didUserCancel = false;
-        exceptionReply(messageId, ExceptionData { NotAllowedError, ASCIILiteral("User cancelled.") });
+        exceptionReply(messageId, ExceptionData { NotAllowedError, "User cancelled."_s });
         return;
     }
     if (!m_credentialId.isEmpty()) {
@@ -104,7 +104,7 @@ void MockCredentialsMessenger::getAssertion(const Vector<uint8_t>&, const Public
     }
     if (m_didUserCancel) {
         m_didUserCancel = false;
-        exceptionReply(messageId, ExceptionData { NotAllowedError, ASCIILiteral("User cancelled.") });
+        exceptionReply(messageId, ExceptionData { NotAllowedError, "User cancelled."_s });
         return;
     }
     if (!m_credentialId.isEmpty()) {

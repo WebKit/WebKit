@@ -309,7 +309,7 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
     SQLiteTransaction transaction(*m_database);
     transaction.begin();
 
-    SQLiteStatement sql(*m_database, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+    SQLiteStatement sql(*m_database, "INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s);
     if (sql.prepare() != SQLITE_OK) {
         RELEASE_LOG_ERROR(ServiceWorker, "Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return;
@@ -360,7 +360,7 @@ String RegistrationDatabase::importRecords()
 {
     ASSERT(!isMainThread());
 
-    SQLiteStatement sql(*m_database, ASCIILiteral("SELECT * FROM Records;"));
+    SQLiteStatement sql(*m_database, "SELECT * FROM Records;"_s);
     if (sql.prepare() != SQLITE_OK)
         return String::format("Failed to prepare statement to retrieve registrations from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
 

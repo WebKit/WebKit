@@ -130,7 +130,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     if (!event->respondWithEntered()) {
         if (event->defaultPrevented()) {
-            client->didFail(ResourceError { errorDomainWebKitInternal, 0, requestURL, ASCIILiteral("Fetch event was canceled") });
+            client->didFail(ResourceError { errorDomainWebKitInternal, 0, requestURL, "Fetch event was canceled"_s });
             return;
         }
         client->didNotHandle();

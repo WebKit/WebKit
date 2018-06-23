@@ -115,7 +115,7 @@ public:
             useDetector = true;
         }
 
-        m_decoder = TextResourceDecoder::create(ASCIILiteral("text/plain"), textEncoding, useDetector);
+        m_decoder = TextResourceDecoder::create("text/plain"_s, textEncoding, useDetector);
     }
 
     void didReceiveData(const char* data, int dataLength) override
@@ -140,7 +140,7 @@ public:
 
     void didFail(const ResourceError& error) override
     {
-        m_callback->sendFailure(error.isAccessControl() ? ASCIILiteral("Loading resource for inspector failed access control check") : ASCIILiteral("Loading resource for inspector failed"));
+        m_callback->sendFailure(error.isAccessControl() ? "Loading resource for inspector failed access control check"_s : "Loading resource for inspector failed"_s);
         dispose();
     }
 
@@ -167,7 +167,7 @@ private:
 } // namespace
 
 InspectorNetworkAgent::InspectorNetworkAgent(WebAgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("Network"), context)
+    : InspectorAgentBase("Network"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::NetworkFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::NetworkBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
@@ -773,7 +773,7 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {
-        errorString = ASCIILiteral("No resource with given identifier found");
+        errorString = "No resource with given identifier found"_s;
         return;
     }
 
@@ -784,7 +784,7 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
     }
 
     if (resourceData->isContentEvicted()) {
-        errorString = ASCIILiteral("Request content was evicted from inspector cache");
+        errorString = "Request content was evicted from inspector cache"_s;
         return;
     }
 
@@ -799,7 +799,7 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
             return;
     }
 
-    errorString = ASCIILiteral("No data found for resource with given identifier");
+    errorString = "No data found for resource with given identifier"_s;
 }
 
 void InspectorNetworkAgent::setResourceCachingDisabled(ErrorString&, bool disabled)
@@ -818,7 +818,7 @@ void InspectorNetworkAgent::loadResource(const String& frameId, const String& ur
 
     URL url = context->completeURL(urlString);
     ResourceRequest request(url);
-    request.setHTTPMethod(ASCIILiteral("GET"));
+    request.setHTTPMethod("GET"_s);
     request.setHiddenFromInspector(true);
 
     ThreadableLoaderOptions options;
@@ -832,7 +832,7 @@ void InspectorNetworkAgent::loadResource(const String& frameId, const String& ur
     InspectorThreadableLoaderClient* inspectorThreadableLoaderClient = new InspectorThreadableLoaderClient(callback.copyRef());
     auto loader = ThreadableLoader::create(*context, *inspectorThreadableLoaderClient, WTFMove(request), options);
     if (!loader) {
-        callback->sendFailure(ASCIILiteral("Could not load requested resource."));
+        callback->sendFailure("Could not load requested resource."_s);
         return;
     }
 
@@ -867,7 +867,7 @@ void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const Str
 {
     WebSocket* webSocket = webSocketForRequestId(requestId);
     if (!webSocket) {
-        errorString = ASCIILiteral("WebSocket not found");
+        errorString = "WebSocket not found"_s;
         return;
     }
 
@@ -878,7 +878,7 @@ void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const Str
     auto* document = downcast<Document>(webSocket->scriptExecutionContext());
     auto* frame = document->frame();
     if (!frame) {
-        errorString = ASCIILiteral("WebSocket belongs to document without a frame");
+        errorString = "WebSocket belongs to document without a frame"_s;
         return;
     }
 
@@ -901,17 +901,17 @@ bool InspectorNetworkAgent::shouldTreatAsText(const String& mimeType)
 Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& mimeType, const String& textEncodingName)
 {
     if (!textEncodingName.isEmpty())
-        return TextResourceDecoder::create(ASCIILiteral("text/plain"), textEncodingName);
+        return TextResourceDecoder::create("text/plain"_s, textEncodingName);
 
     if (MIMETypeRegistry::isTextMIMEType(mimeType))
         return TextResourceDecoder::create(mimeType, "UTF-8");
     if (MIMETypeRegistry::isXMLMIMEType(mimeType)) {
-        auto decoder = TextResourceDecoder::create(ASCIILiteral("application/xml"));
+        auto decoder = TextResourceDecoder::create("application/xml"_s);
         decoder->useLenientXMLDecoding();
         return decoder;
     }
 
-    return TextResourceDecoder::create(ASCIILiteral("text/plain"), "UTF-8");
+    return TextResourceDecoder::create("text/plain"_s, "UTF-8");
 }
 
 std::optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
@@ -1006,12 +1006,12 @@ void InspectorNetworkAgent::searchInRequest(ErrorString& errorString, const Stri
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {
-        errorString = ASCIILiteral("No resource with given identifier found");
+        errorString = "No resource with given identifier found"_s;
         return;
     }
 
     if (!resourceData->hasContent()) {
-        errorString = ASCIILiteral("No resource content");
+        errorString = "No resource content"_s;
         return;
     }
 

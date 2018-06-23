@@ -282,7 +282,7 @@ Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendD
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
+    m_backendDispatcher->registerDispatcherForDomain("Network1"_s, this);
 }
 
 void Network1BackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
@@ -290,7 +290,7 @@ void Network1BackendDispatcher::dispatch(long requestId, const String& method, R
     Ref<Network1BackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
     if (method == "loadResource1")
         loadResource1(requestId, WTFMove(parameters));
@@ -326,7 +326,7 @@ Network3BackendDispatcher::Network3BackendDispatcher(BackendDispatcher& backendD
     : SupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 {
-    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network3"), this);
+    m_backendDispatcher->registerDispatcherForDomain("Network3"_s, this);
 }
 
 void Network3BackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
@@ -334,7 +334,7 @@ void Network3BackendDispatcher::dispatch(long requestId, const String& method, R
     Ref<Network3BackendDispatcher> protect(*this);
 
     RefPtr<JSON::Object> parameters;
-    message->getObject(ASCIILiteral("params"), parameters);
+    message->getObject("params"_s, parameters);
 
     typedef void (Network3BackendDispatcher::*CallHandler)(long requestId, RefPtr<JSON::Object>&& message);
     typedef HashMap<String, CallHandler> DispatchMap;
@@ -1038,7 +1038,7 @@ using namespace Inspector;
     _network1Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork1BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), *_controller, WTFMove(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>("Network1"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
@@ -1056,7 +1056,7 @@ using namespace Inspector;
     _network3Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork3BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>(ASCIILiteral("Network3"), *_controller, WTFMove(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>("Network3"_s, *_controller, WTFMove(alternateDispatcher));
     _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
@@ -1265,13 +1265,13 @@ inline String toProtocolString(TestProtocolPlatform value)
 {
     switch(value) {
     case TestProtocolPlatformAll:
-        return ASCIILiteral("all");
+        return "all"_s;
     case TestProtocolPlatformGeneric:
-        return ASCIILiteral("generic");
+        return "generic"_s;
     case TestProtocolPlatformIOS:
-        return ASCIILiteral("ios");
+        return "ios"_s;
     case TestProtocolPlatformMacOS:
-        return ASCIILiteral("macos");
+        return "macos"_s;
     }
 }
 

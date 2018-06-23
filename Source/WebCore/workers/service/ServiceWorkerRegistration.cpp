@@ -141,7 +141,7 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 
     auto* newestWorker = getNewestWorker();
     if (!newestWorker) {
-        promise->reject(Exception(InvalidStateError, ASCIILiteral("newestWorker is null")));
+        promise->reject(Exception(InvalidStateError, "newestWorker is null"_s));
         return;
     }
 

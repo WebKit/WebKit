@@ -2518,15 +2518,15 @@ static const SelectorNameMap& selectorExceptionMap()
     };
 
     static const SelectorAndCommandName names[] = {
-        { @selector(insertNewlineIgnoringFieldEditor:), ASCIILiteral("InsertNewline") },
-        { @selector(insertParagraphSeparator:), ASCIILiteral("InsertNewline") },
-        { @selector(insertTabIgnoringFieldEditor:), ASCIILiteral("InsertTab") },
-        { @selector(pageDown:), ASCIILiteral("MovePageDown") },
-        { @selector(pageDownAndModifySelection:), ASCIILiteral("MovePageDownAndModifySelection") },
-        { @selector(pageUp:), ASCIILiteral("MovePageUp") },
-        { @selector(pageUpAndModifySelection:), ASCIILiteral("MovePageUpAndModifySelection") },
-        { @selector(scrollPageDown:), ASCIILiteral("ScrollPageForward") },
-        { @selector(scrollPageUp:), ASCIILiteral("ScrollPageBackward") }
+        { @selector(insertNewlineIgnoringFieldEditor:), "InsertNewline"_s },
+        { @selector(insertParagraphSeparator:), "InsertNewline"_s },
+        { @selector(insertTabIgnoringFieldEditor:), "InsertTab"_s },
+        { @selector(pageDown:), "MovePageDown"_s },
+        { @selector(pageDownAndModifySelection:), "MovePageDownAndModifySelection"_s },
+        { @selector(pageUp:), "MovePageUp"_s },
+        { @selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection"_s },
+        { @selector(scrollPageDown:), "ScrollPageForward"_s },
+        { @selector(scrollPageUp:), "ScrollPageBackward"_s }
     };
 
     for (auto& name : names)

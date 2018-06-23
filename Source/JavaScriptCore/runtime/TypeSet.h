@@ -61,7 +61,7 @@ public:
     String stringRepresentation();
     String toJSONString() const;
     Ref<Inspector::Protocol::Runtime::StructureDescription> inspectorRepresentation();
-    void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? ASCIILiteral("Object") : name); }
+    void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object"_s : name); }
     String constructorName() { return m_constructorName; }
     void setProto(Ref<StructureShape>&& shape) { m_proto = WTFMove(shape); }
     void enterDictionaryMode();

@@ -199,12 +199,12 @@ ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, boo
     if (WTF::holds_alternative<RefPtr<FetchRequest>>(info)) {
         request = WTF::get<RefPtr<FetchRequest>>(info).releaseNonNull();
         if (request->method() != "GET" && !ignoreMethod)
-            return Exception { TypeError, ASCIILiteral("Request method is not GET") };
+            return Exception { TypeError, "Request method is not GET"_s };
     } else
         request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
 
     if (!protocolIsInHTTPFamily(request->url()))
-        return Exception { TypeError, ASCIILiteral("Request url is not HTTP/HTTPS") };
+        return Exception { TypeError, "Request url is not HTTP/HTTPS"_s };
 
     return request.releaseNonNull();
 }
@@ -251,24 +251,24 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             auto& response = result.releaseReturnValue();
 
             if (!response.ok()) {
-                taskHandler->error(Exception { TypeError, ASCIILiteral("Response is not OK") });
+                taskHandler->error(Exception { TypeError, "Response is not OK"_s });
                 return;
             }
 
             if (hasResponseVaryStarHeaderValue(response)) {
-                taskHandler->error(Exception { TypeError, ASCIILiteral("Response has a '*' Vary header value") });
+                taskHandler->error(Exception { TypeError, "Response has a '*' Vary header value"_s });
                 return;
             }
 
             if (response.status() == 206) {
-                taskHandler->error(Exception { TypeError, ASCIILiteral("Response is a 206 partial") });
+                taskHandler->error(Exception { TypeError, "Response is a 206 partial"_s });
                 return;
             }
 
             CacheQueryOptions options;
             for (const auto& record : taskHandler->records()) {
                 if (DOMCacheEngine::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
-                    taskHandler->error(Exception { InvalidStateError, ASCIILiteral("addAll cannot store several matching requests")});
+                    taskHandler->error(Exception { InvalidStateError, "addAll cannot store several matching requests"_s});
                     return;
                 }
             }
@@ -326,22 +326,22 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
     }
 
     if (hasResponseVaryStarHeaderValue(response.get())) {
-        promise.reject(Exception { TypeError, ASCIILiteral("Response has a '*' Vary header value") });
+        promise.reject(Exception { TypeError, "Response has a '*' Vary header value"_s });
         return;
     }
 
     if (response->status() == 206) {
-        promise.reject(Exception { TypeError, ASCIILiteral("Response is a 206 partial") });
+        promise.reject(Exception { TypeError, "Response is a 206 partial"_s });
         return;
     }
 
     if (response->isDisturbedOrLocked()) {
-        promise.reject(Exception { TypeError, ASCIILiteral("Response is disturbed or locked") });
+        promise.reject(Exception { TypeError, "Response is disturbed or locked"_s });
         return;
     }
 
     if (response->isBlobFormData()) {
-        promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented") });
+        promise.reject(Exception { NotSupportedError, "Not implemented"_s });
         return;
     }
 

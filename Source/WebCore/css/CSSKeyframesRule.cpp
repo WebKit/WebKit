@@ -156,7 +156,7 @@ void CSSKeyframesRule::insertRule(const String& ruleText)
 {
     if (CSSStyleSheet* parent = parentStyleSheet()) {
         if (Document* ownerDocument = parent->ownerDocument())
-            ownerDocument->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("CSSKeyframesRule 'insertRule' function is deprecated.  Use 'appendRule' instead."));
+            ownerDocument->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "CSSKeyframesRule 'insertRule' function is deprecated.  Use 'appendRule' instead."_s);
     }
     appendRule(ruleText);
 }

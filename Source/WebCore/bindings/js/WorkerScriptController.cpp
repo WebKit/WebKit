@@ -158,7 +158,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
                 *returnedExceptionMessage = returnedException->value().toWTFString(&state);
         } else {
             // Overwrite the detailed error with a generic error.
-            String genericErrorMessage { ASCIILiteral { "Script error." } };
+            String genericErrorMessage { "Script error."_s };
             if (returnedExceptionMessage)
                 *returnedExceptionMessage = genericErrorMessage;
             returnedException = JSC::Exception::create(vm, createError(&state, genericErrorMessage));

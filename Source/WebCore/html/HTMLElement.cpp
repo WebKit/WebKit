@@ -639,15 +639,15 @@ String HTMLElement::contentEditable() const
 {
     switch (contentEditableType(*this)) {
     case ContentEditableType::Inherit:
-        return ASCIILiteral("inherit");
+        return "inherit"_s;
     case ContentEditableType::True:
-        return ASCIILiteral("true");
+        return "true"_s;
     case ContentEditableType::False:
-        return ASCIILiteral("false");
+        return "false"_s;
     case ContentEditableType::PlaintextOnly:
-        return ASCIILiteral("plaintext-only");
+        return "plaintext-only"_s;
     }
-    return ASCIILiteral("inherit");
+    return "inherit"_s;
 }
 
 ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)

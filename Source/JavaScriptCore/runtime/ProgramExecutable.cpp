@@ -108,7 +108,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     while (nextPrototype && nextPrototype.isObject()) {
         if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType)) {
             ExecState* exec = globalObject->globalExec();
-            return createTypeError(exec, ASCIILiteral("Proxy is not allowed in the global prototype chain."));
+            return createTypeError(exec, "Proxy is not allowed in the global prototype chain."_s);
         }
         nextPrototype = asObject(nextPrototype)->getPrototypeDirect(vm);
     }

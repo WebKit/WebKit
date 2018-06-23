@@ -287,7 +287,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTakeHeapSnapshot(ExecState* 
 static String valueOrDefaultLabelString(ExecState* exec, JSValue value)
 {
     if (value.isUndefined())
-        return ASCIILiteral("default");
+        return "default"_s;
     return value.toWTFString(exec);
 }
 
@@ -301,7 +301,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState* exec)
 
     String title;
     if (exec->argumentCount() < 1)
-        title = ASCIILiteral("default");
+        title = "default"_s;
     else {
         title = valueOrDefaultLabelString(exec, exec->argument(0));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -321,7 +321,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeEnd(ExecState* exec)
 
     String title;
     if (exec->argumentCount() < 1)
-        title =  ASCIILiteral("default");
+        title =  "default"_s;
     else {
         title = valueOrDefaultLabelString(exec, exec->argument(0));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());

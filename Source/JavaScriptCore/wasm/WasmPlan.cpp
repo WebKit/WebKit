@@ -126,7 +126,7 @@ bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
 
     // FIXME: Make 0 index not so magical: https://bugs.webkit.org/show_bug.cgi?id=171395
     if (m_completionTasks.isEmpty() || (m_completionTasks.size() == 1 && !m_completionTasks[0].first)) {
-        fail(locker, ASCIILiteral("WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"));
+        fail(locker, "WebAssembly Plan was cancelled. If you see this error message please file a bug at bugs.webkit.org!"_s);
         return true;
     }
 

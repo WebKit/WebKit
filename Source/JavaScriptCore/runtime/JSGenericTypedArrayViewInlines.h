@@ -431,7 +431,7 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
     if (thisObject->isNeutered())
-        return typeError(exec, scope, true, ASCIILiteral(typedArrayBufferHasBeenDetachedErrorMessage));
+        return typeError(exec, scope, true, typedArrayBufferHasBeenDetachedErrorMessage);
 
     if (parseIndex(propertyName))
         return false;

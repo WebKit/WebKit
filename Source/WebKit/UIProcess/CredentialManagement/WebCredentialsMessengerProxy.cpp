@@ -53,7 +53,7 @@ void WebCredentialsMessengerProxy::makeCredential(uint64_t messageId, const Vect
 {
     // FIXME(182767)
     if (!m_authenticator) {
-        exceptionReply(messageId, { WebCore::NotAllowedError, ASCIILiteral("No avaliable authenticators.") });
+        exceptionReply(messageId, { WebCore::NotAllowedError, "No avaliable authenticators."_s });
         return;
     }
     // FIXME(183534): Weak pointers doesn't work in another thread because of race condition.
@@ -76,7 +76,7 @@ void WebCredentialsMessengerProxy::getAssertion(uint64_t messageId, const Vector
 {
     // FIXME(182767)
     if (!m_authenticator)
-        exceptionReply(messageId, { WebCore::NotAllowedError, ASCIILiteral("No avaliable authenticators.") });
+        exceptionReply(messageId, { WebCore::NotAllowedError, "No avaliable authenticators."_s });
     // FIXME(183534): Weak pointers doesn't work in another thread because of race condition.
     // FIXME(183534): Unify callbacks.
     auto weakThis = makeWeakPtr(*this);

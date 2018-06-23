@@ -89,7 +89,7 @@ ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
     auto* set = jsDynamicCast<JSSet*>(vm, thisValue.asCell());
     if (LIKELY(set))
         return set;
-    throwTypeError(callFrame, scope, ASCIILiteral("Set operation called on non-Set object"));
+    throwTypeError(callFrame, scope, "Set operation called on non-Set object"_s);
     return nullptr;
 }
 

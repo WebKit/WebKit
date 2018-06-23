@@ -52,10 +52,10 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
     launchOptions.processIdentifier = m_processIdentifier;
 
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
-        launchOptions.extraInitializationData.add(ASCIILiteral("user-directory-suffix"), userDirectorySuffix);
+        launchOptions.extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
 
     if (m_alwaysRunsAtBackgroundPriority)
-        launchOptions.extraInitializationData.add(ASCIILiteral("always-runs-at-background-priority"), "true");
+        launchOptions.extraInitializationData.add("always-runs-at-background-priority"_s, "true");
 
 #if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))
     const char* varname;

@@ -128,7 +128,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
     }
 
     if (!nf)
-        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat")));
+        return JSValue::encode(throwTypeError(state, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s));
     
     JSBoundFunction* boundFormat = nf->boundFormat();
     // 2. If nf.[[boundFormat]] is undefined,
@@ -136,9 +136,9 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(ExecState* st
         JSGlobalObject* globalObject = nf->globalObject(vm);
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 1.
-        JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, ASCIILiteral("format"), IntlNumberFormatFuncFormatNumber, NoIntrinsic);
+        JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, IntlNumberFormatFuncFormatNumber, NoIntrinsic);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, nf, nullptr, 1, ASCIILiteral("format"));
+        boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, nf, nullptr, 1, "format"_s);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set nf.[[boundFormat]] to bf.
         nf->setBoundFormat(vm, boundFormat);
@@ -158,7 +158,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(ExecStat
 
     IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, state->thisValue());
     if (!numberFormat)
-        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat")));
+        return JSValue::encode(throwTypeError(state, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s));
 
     double value = state->argument(0).toNumber(state);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -185,7 +185,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(ExecSt
     }
 
     if (!numberFormat)
-        return JSValue::encode(throwTypeError(state, scope, ASCIILiteral("Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat")));
+        return JSValue::encode(throwTypeError(state, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat"_s));
 
     scope.release();
     return JSValue::encode(numberFormat->resolvedOptions(*state));

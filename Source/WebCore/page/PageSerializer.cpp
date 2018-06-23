@@ -263,7 +263,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         // FIXME: We should check whether a charset has been specified and if none was found add one.
         TextEncoding textEncoding(styleSheet->contents().charset());
         ASSERT(textEncoding.isValid());
-        m_resources.append({ url, ASCIILiteral { "text/css" }, SharedBuffer::create(textEncoding.encode(cssText.toString(), UnencodableHandling::Entities)) });
+        m_resources.append({ url, "text/css"_s, SharedBuffer::create(textEncoding.encode(cssText.toString(), UnencodableHandling::Entities)) });
         m_resourceURLs.add(url);
     }
 }

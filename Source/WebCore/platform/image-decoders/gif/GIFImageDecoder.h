@@ -45,7 +45,7 @@ public:
     enum GIFQuery { GIFFullQuery, GIFSizeQuery, GIFFrameCountQuery };
 
     // ScalableImageDecoder
-    String filenameExtension() const final { return ASCIILiteral("gif"); }
+    String filenameExtension() const final { return "gif"_s; }
     void setData(SharedBuffer& data, bool allDataReceived) final;
     bool setSize(const IntSize&) final;
     size_t frameCount() const final;

@@ -360,7 +360,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
         return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::ReadWrite, std::make_unique<StaticPasteboard>());
     case ClipboardEventKind::PasteAsPlainText:
         if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
-            auto plainTextType = ASCIILiteral("text/plain");
+            auto plainTextType = "text/plain"_s;
             auto plainText = Pasteboard::createForCopyAndPaste()->readString(plainTextType);
             auto pasteboard = std::make_unique<StaticPasteboard>();
             pasteboard->writeString(plainTextType, plainText);

@@ -127,7 +127,7 @@ EncodedJSValue getData(ExecState* exec)
 
     JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
     if (!dataView)
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of DataView method must be a DataView"));
+        return throwVMTypeError(exec, scope, "Receiver of DataView method must be a DataView"_s);
     
     unsigned byteOffset = exec->argument(0).toIndex(exec, "byteOffset");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -141,7 +141,7 @@ EncodedJSValue getData(ExecState* exec)
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("Out of bounds access")));
+        return throwVMError(exec, scope, createRangeError(exec, "Out of bounds access"_s));
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
     union {
@@ -170,7 +170,7 @@ EncodedJSValue setData(ExecState* exec)
 
     JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
     if (!dataView)
-        return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of DataView method must be a DataView"));
+        return throwVMTypeError(exec, scope, "Receiver of DataView method must be a DataView"_s);
     
     unsigned byteOffset = exec->argument(0).toIndex(exec, "byteOffset");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -193,7 +193,7 @@ EncodedJSValue setData(ExecState* exec)
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("Out of bounds access")));
+        return throwVMError(exec, scope, createRangeError(exec, "Out of bounds access"_s));
 
     uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
 

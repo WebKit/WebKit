@@ -657,22 +657,22 @@ const ContentSecurityPolicy& DocumentThreadableLoader::contentSecurityPolicy() c
 
 void DocumentThreadableLoader::reportRedirectionWithBadScheme(const URL& url)
 {
-    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Redirection to URL with a scheme that is not HTTP(S).", ResourceError::Type::AccessControl));
+    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Redirection to URL with a scheme that is not HTTP(S)."_s, ResourceError::Type::AccessControl));
 }
 
 void DocumentThreadableLoader::reportContentSecurityPolicyError(const URL& url)
 {
-    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, ASCIILiteral { "Blocked by Content Security Policy." }, ResourceError::Type::AccessControl));
+    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Blocked by Content Security Policy."_s, ResourceError::Type::AccessControl));
 }
 
 void DocumentThreadableLoader::reportCrossOriginResourceSharingError(const URL& url)
 {
-    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Cross-origin redirection denied by Cross-Origin Resource Sharing policy.", ResourceError::Type::AccessControl));
+    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Cross-origin redirection denied by Cross-Origin Resource Sharing policy."_s, ResourceError::Type::AccessControl));
 }
 
 void DocumentThreadableLoader::reportIntegrityMetadataError(const URL& url)
 {
-    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Failed integrity metadata check.", ResourceError::Type::General));
+    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Failed integrity metadata check."_s, ResourceError::Type::General));
 }
 
 void DocumentThreadableLoader::logErrorAndFail(const ResourceError& error)

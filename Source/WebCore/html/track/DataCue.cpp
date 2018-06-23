@@ -194,7 +194,7 @@ String DataCue::toJSONString() const
     TextTrackCue::toJSON(object.get());
 
     if (!m_type.isEmpty())
-        object->setString(ASCIILiteral("type"), m_type);
+        object->setString("type"_s, m_type);
 
     return object->toJSONString();
 }

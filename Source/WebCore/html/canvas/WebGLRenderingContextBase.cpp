@@ -607,8 +607,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     }
 
     auto& extensions = context->getExtensions();
-    if (extensions.supports(ASCIILiteral { "GL_EXT_debug_marker" }))
-        extensions.pushGroupMarkerEXT(ASCIILiteral { "WebGLRenderingContext" });
+    if (extensions.supports("GL_EXT_debug_marker"_s))
+        extensions.pushGroupMarkerEXT("WebGLRenderingContext"_s);
 
 #if ENABLE(WEBGL2) && PLATFORM(MAC)
     // glTexStorage() was only added to Core in OpenGL 4.2.
@@ -6172,17 +6172,17 @@ namespace {
     {
         switch (error) {
         case GraphicsContext3D::INVALID_ENUM:
-            return ASCIILiteral("INVALID_ENUM");
+            return "INVALID_ENUM"_s;
         case GraphicsContext3D::INVALID_VALUE:
-            return ASCIILiteral("INVALID_VALUE");
+            return "INVALID_VALUE"_s;
         case GraphicsContext3D::INVALID_OPERATION:
-            return ASCIILiteral("INVALID_OPERATION");
+            return "INVALID_OPERATION"_s;
         case GraphicsContext3D::OUT_OF_MEMORY:
-            return ASCIILiteral("OUT_OF_MEMORY");
+            return "OUT_OF_MEMORY"_s;
         case GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION:
-            return ASCIILiteral("INVALID_FRAMEBUFFER_OPERATION");
+            return "INVALID_FRAMEBUFFER_OPERATION"_s;
         case GraphicsContext3D::CONTEXT_LOST_WEBGL:
-            return ASCIILiteral("CONTEXT_LOST_WEBGL");
+            return "CONTEXT_LOST_WEBGL"_s;
         default:
             return String::format("WebGL ERROR(%04x)", error);
         }
@@ -6360,11 +6360,11 @@ void WebGLRenderingContextBase::vertexAttribDivisor(GC3Duint index, GC3Duint div
     m_context->vertexAttribDivisor(index, divisor);
 }
 
-bool WebGLRenderingContextBase::enableSupportedExtension(const char* extensionNameLiteral)
+bool WebGLRenderingContextBase::enableSupportedExtension(ASCIILiteral extensionNameLiteral)
 {
     ASSERT(m_context);
     auto& extensions = m_context->getExtensions();
-    String extensionName { ASCIILiteral { extensionNameLiteral } };
+    String extensionName { extensionNameLiteral };
     if (!extensions.supports(extensionName))
         return false;
     extensions.ensureEnabled(extensionName);

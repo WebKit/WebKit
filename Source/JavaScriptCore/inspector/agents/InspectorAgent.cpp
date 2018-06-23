@@ -38,7 +38,7 @@
 namespace Inspector {
 
 InspectorAgent::InspectorAgent(AgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("Inspector"))
+    : InspectorAgentBase("Inspector"_s)
     , m_environment(context.environment)
     , m_frontendDispatcher(std::make_unique<InspectorFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(InspectorBackendDispatcher::create(context.backendDispatcher, this))

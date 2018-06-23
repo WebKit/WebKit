@@ -237,7 +237,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
 
     m_lastStatisticsFileSyncTime = readTime;
 
-    m_memoryStore.logTestingEvent(ASCIILiteral("PopulatedWithoutGrandfathering"));
+    m_memoryStore.logTestingEvent("PopulatedWithoutGrandfathering"_s);
 }
 
 void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()

@@ -129,7 +129,7 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
     HashMap<String, String> resolved = resolveLocale(exec, availableLocales, requestedLocales, localeOpt, nullptr, 0, IntlPRInternal::localeData);
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {
-        throwTypeError(&exec, scope, ASCIILiteral("failed to initialize PluralRules due to invalid locale"));
+        throwTypeError(&exec, scope, "failed to initialize PluralRules due to invalid locale"_s);
         return;
     }
 
@@ -169,7 +169,7 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
     UErrorCode status = U_ZERO_ERROR;
     m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(UNUM_DECIMAL, nullptr, 0, m_locale.utf8().data(), nullptr, &status));
     if (U_FAILURE(status)) {
-        throwTypeError(&exec, scope, ASCIILiteral("failed to initialize PluralRules"));
+        throwTypeError(&exec, scope, "failed to initialize PluralRules"_s);
         return;
     }
 
@@ -186,7 +186,7 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
     status = U_ZERO_ERROR;
     m_pluralRules = std::unique_ptr<UPluralRules, UPluralRulesDeleter>(uplrules_openForType(m_locale.utf8().data(), m_type, &status));
     if (U_FAILURE(status)) {
-        throwTypeError(&exec, scope, ASCIILiteral("failed to initialize PluralRules"));
+        throwTypeError(&exec, scope, "failed to initialize PluralRules"_s);
         return;
     }
 
@@ -201,11 +201,11 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     // 13.4.4 Intl.PluralRules.prototype.resolvedOptions ()
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
     if (!m_initializedPluralRules)
-        return throwTypeError(&exec, scope, ASCIILiteral("Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"));
+        return throwTypeError(&exec, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s);
 
     JSObject* options = constructEmptyObject(&exec);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(&exec, m_locale));
-    options->putDirect(vm, Identifier::fromString(&vm, "type"), jsNontrivialString(&exec, ASCIILiteral(m_type == UPLURAL_TYPE_ORDINAL ? "ordinal" : "cardinal")));
+    options->putDirect(vm, Identifier::fromString(&vm, "type"), jsNontrivialString(&exec, m_type == UPLURAL_TYPE_ORDINAL ? "ordinal"_s : "cardinal"_s));
     options->putDirect(vm, Identifier::fromString(&vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
     options->putDirect(vm, Identifier::fromString(&vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
     options->putDirect(vm, Identifier::fromString(&vm, "maximumFractionDigits"), jsNumber(m_maximumFractionDigits));
@@ -247,17 +247,17 @@ JSValue IntlPluralRules::select(ExecState& exec, double value)
     // 13.1.4 ResolvePlural (pluralRules, n)
     // https://tc39.github.io/ecma402/#sec-resolveplural
     if (!m_initializedPluralRules)
-        return throwTypeError(&exec, scope, ASCIILiteral("Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"));
+        return throwTypeError(&exec, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s);
 
     if (!std::isfinite(value))
-        return jsNontrivialString(&exec, ASCIILiteral("other"));
+        return jsNontrivialString(&exec, "other"_s);
 
 #if JSC_ICU_HAS_PLURALRULES_WITH_FORMAT
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 8> result(8);
     auto length = uplrules_selectWithFormat(m_pluralRules.get(), value, m_numberFormat.get(), result.data(), result.size(), &status);
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, ASCIILiteral("failed to select plural value"));
+        return throwTypeError(&exec, scope, "failed to select plural value"_s);
 #else
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
@@ -268,18 +268,18 @@ JSValue IntlPluralRules::select(ExecState& exec, double value)
         unum_formatDouble(m_numberFormat.get(), value, buffer.data(), length, nullptr, &status);
     }
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, ASCIILiteral("failed to select plural value"));
+        return throwTypeError(&exec, scope, "failed to select plural value"_s);
 
     double formatted = unum_parseDouble(m_numberFormat.get(), buffer.data(), length, nullptr, &status);
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, ASCIILiteral("failed to select plural value"));
+        return throwTypeError(&exec, scope, "failed to select plural value"_s);
 
     // Can only be 'zero', 'one', 'two', 'few', 'many' or 'other'
     status = U_ZERO_ERROR;
     Vector<UChar, 8> result(8);
     length = uplrules_select(m_pluralRules.get(), formatted, result.data(), result.size(), &status);
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, ASCIILiteral("failed to select plural value"));
+        return throwTypeError(&exec, scope, "failed to select plural value"_s);
 #endif
 
     return jsString(&exec, String(result.data(), length));

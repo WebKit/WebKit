@@ -48,7 +48,7 @@ JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context
 InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& error, const int* executionContextId)
 {
     if (executionContextId) {
-        error = ASCIILiteral("Execution context id is not supported for JSContext inspection as there is only one execution context.");
+        error = "Execution context id is not supported for JSContext inspection as there is only one execution context."_s;
         return InjectedScript();
     }
 

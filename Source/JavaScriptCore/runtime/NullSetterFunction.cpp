@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL callReturnUndefined(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (callerIsStrict(exec))
-        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Setting a property that has only a getter")));
+        return JSValue::encode(throwTypeError(exec, scope, "Setting a property that has only a getter"_s));
     return JSValue::encode(jsUndefined());
 }
 }

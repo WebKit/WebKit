@@ -846,11 +846,11 @@ static bool isRemoteWebArchive(const DocumentLoader& documentLoader)
     using MIMETypeHashSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static NeverDestroyed<MIMETypeHashSet> webArchiveMIMETypes {
         MIMETypeHashSet {
-            ASCIILiteral("application/x-webarchive"),
-            ASCIILiteral("application/x-mimearchive"),
-            ASCIILiteral("multipart/related"),
+            "application/x-webarchive"_s,
+            "application/x-mimearchive"_s,
+            "multipart/related"_s,
 #if PLATFORM(GTK)
-            ASCIILiteral("message/rfc822"),
+            "message/rfc822"_s,
 #endif
         }
     };
@@ -1904,7 +1904,7 @@ void DocumentLoader::startIconLoading()
 
     auto findResult = m_linkIcons.findMatching([](auto& icon) { return icon.type == LinkIconType::Favicon; });
     if (findResult == notFound)
-        m_linkIcons.append({ document->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt, { } });
+        m_linkIcons.append({ document->completeURL("/favicon.ico"_s), LinkIconType::Favicon, String(), std::nullopt, { } });
 
     if (!m_linkIcons.size())
         return;

@@ -169,7 +169,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             RETURN_IF_EXCEPTION(scope, false);
 
             if (prototype.isNull())
-                return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
         }
     }
 
@@ -178,7 +178,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         PropertyOffset offset = obj->structure(vm)->get(vm, propertyName, attributes);
         if (offset != invalidOffset) {
             if (attributes & PropertyAttribute::ReadOnly)
-                return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
@@ -200,7 +200,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             break;
     }
     
-    return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+    return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 }
 
 bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
@@ -223,7 +223,7 @@ bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
     if (success)
         return putResult;
     
-    return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+    return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
 }
 
 void JSValue::dump(PrintStream& out) const
@@ -375,7 +375,7 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
     if (isUndefined())
         return vm.smallStrings.undefinedString();
     if (isSymbol()) {
-        throwTypeError(exec, scope, ASCIILiteral("Cannot convert a symbol to a string"));
+        throwTypeError(exec, scope, "Cannot convert a symbol to a string"_s);
         return errorValue();
     }
     if (isBigInt()) {

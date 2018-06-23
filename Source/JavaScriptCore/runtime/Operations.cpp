@@ -74,7 +74,7 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
             return JSBigInt::add(vm, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
 
-        return throwTypeError(callFrame, scope, ASCIILiteral("Invalid mix of BigInt and other type in addition."));
+        return throwTypeError(callFrame, scope, "Invalid mix of BigInt and other type in addition."_s);
     }
 
     return jsNumber(WTF::get<double>(leftNumeric) + WTF::get<double>(rightNumeric));

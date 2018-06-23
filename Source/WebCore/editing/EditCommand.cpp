@@ -43,75 +43,75 @@ String inputTypeNameForEditingAction(EditAction action)
 {
     switch (action) {
     case EditActionJustify:
-        return ASCIILiteral("formatJustifyFull");
+        return "formatJustifyFull"_s;
     case EditActionAlignLeft:
-        return ASCIILiteral("formatJustifyLeft");
+        return "formatJustifyLeft"_s;
     case EditActionAlignRight:
-        return ASCIILiteral("formatJustifyRight");
+        return "formatJustifyRight"_s;
     case EditActionCenter:
-        return ASCIILiteral("formatJustifyCenter");
+        return "formatJustifyCenter"_s;
     case EditActionSubscript:
-        return ASCIILiteral("formatSubscript");
+        return "formatSubscript"_s;
     case EditActionSuperscript:
-        return ASCIILiteral("formatSuperscript");
+        return "formatSuperscript"_s;
     case EditActionUnderline:
-        return ASCIILiteral("formatUnderline");
+        return "formatUnderline"_s;
     case EditActionSetColor:
-        return ASCIILiteral("formatFontColor");
+        return "formatFontColor"_s;
     case EditActionDeleteByDrag:
-        return ASCIILiteral("deleteByDrag");
+        return "deleteByDrag"_s;
     case EditActionCut:
-        return ASCIILiteral("deleteByCut");
+        return "deleteByCut"_s;
     case EditActionBold:
-        return ASCIILiteral("formatBold");
+        return "formatBold"_s;
     case EditActionItalics:
-        return ASCIILiteral("formatItalic");
+        return "formatItalic"_s;
     case EditActionPaste:
-        return ASCIILiteral("insertFromPaste");
+        return "insertFromPaste"_s;
     case EditActionDelete:
     case EditActionTypingDeleteSelection:
-        return ASCIILiteral("deleteContent");
+        return "deleteContent"_s;
     case EditActionTypingDeleteBackward:
-        return ASCIILiteral("deleteContentBackward");
+        return "deleteContentBackward"_s;
     case EditActionTypingDeleteForward:
-        return ASCIILiteral("deleteContentForward");
+        return "deleteContentForward"_s;
     case EditActionTypingDeleteWordBackward:
-        return ASCIILiteral("deleteWordBackward");
+        return "deleteWordBackward"_s;
     case EditActionTypingDeleteWordForward:
-        return ASCIILiteral("deleteWordForward");
+        return "deleteWordForward"_s;
     case EditActionTypingDeleteLineBackward:
-        return ASCIILiteral("deleteHardLineBackward");
+        return "deleteHardLineBackward"_s;
     case EditActionTypingDeleteLineForward:
-        return ASCIILiteral("deleteHardLineForward");
+        return "deleteHardLineForward"_s;
     case EditActionTypingDeletePendingComposition:
-        return ASCIILiteral("deleteCompositionText");
+        return "deleteCompositionText"_s;
     case EditActionTypingDeleteFinalComposition:
-        return ASCIILiteral("deleteByComposition");
+        return "deleteByComposition"_s;
     case EditActionInsert:
     case EditActionTypingInsertText:
-        return ASCIILiteral("insertText");
+        return "insertText"_s;
     case EditActionInsertReplacement:
-        return ASCIILiteral("insertReplacementText");
+        return "insertReplacementText"_s;
     case EditActionInsertFromDrop:
-        return ASCIILiteral("insertFromDrop");
+        return "insertFromDrop"_s;
     case EditActionTypingInsertLineBreak:
-        return ASCIILiteral("insertLineBreak");
+        return "insertLineBreak"_s;
     case EditActionTypingInsertParagraph:
-        return ASCIILiteral("insertParagraph");
+        return "insertParagraph"_s;
     case EditActionInsertOrderedList:
-        return ASCIILiteral("insertOrderedList");
+        return "insertOrderedList"_s;
     case EditActionInsertUnorderedList:
-        return ASCIILiteral("insertUnorderedList");
+        return "insertUnorderedList"_s;
     case EditActionTypingInsertPendingComposition:
-        return ASCIILiteral("insertCompositionText");
+        return "insertCompositionText"_s;
     case EditActionTypingInsertFinalComposition:
-        return ASCIILiteral("insertFromComposition");
+        return "insertFromComposition"_s;
     case EditActionIndent:
-        return ASCIILiteral("formatIndent");
+        return "formatIndent"_s;
     case EditActionOutdent:
-        return ASCIILiteral("formatOutdent");
+        return "formatOutdent"_s;
     case EditActionSetWritingDirection:
-        return ASCIILiteral("formatSetInlineTextDirection");
+        return "formatSetInlineTextDirection"_s;
     default:
         return emptyString();
     }

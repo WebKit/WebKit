@@ -53,13 +53,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     if (exec->argumentCount() != 1)
-        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Memory expects exactly one argument"))));
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Memory expects exactly one argument"_s)));
 
     JSObject* memoryDescriptor;
     {
         JSValue argument = exec->argument(0);
         if (!argument.isObject())
-            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Memory expects its first argument to be an object"))));
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, "WebAssembly.Memory expects its first argument to be an object"_s)));
         memoryDescriptor = jsCast<JSObject*>(argument);
     }
 
@@ -71,7 +71,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
         uint32_t size = toNonWrappingUint32(exec, minSizeValue);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!Wasm::PageCount::isValid(size))
-            return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory 'initial' page count is too large"))));
+            return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory 'initial' page count is too large"_s)));
         initialPageCount = Wasm::PageCount(size);
     }
 
@@ -86,12 +86,12 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
             uint32_t size = toNonWrappingUint32(exec, maxSizeValue);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             if (!Wasm::PageCount::isValid(size))
-                return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory 'maximum' page count is too large"))));
+                return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory 'maximum' page count is too large"_s)));
             maximumPageCount = Wasm::PageCount(size);
 
             if (initialPageCount > maximumPageCount) {
                 return JSValue::encode(throwException(exec, throwScope,
-                    createRangeError(exec, ASCIILiteral("'maximum' page count must be than greater than or equal to the 'initial' page count"))));
+                    createRangeError(exec, "'maximum' page count must be than greater than or equal to the 'initial' page count"_s)));
             }
         }
     }
@@ -132,7 +132,7 @@ Structure* WebAssemblyMemoryConstructor::createStructure(VM& vm, JSGlobalObject*
 
 void WebAssemblyMemoryConstructor::finishCreation(VM& vm, WebAssemblyMemoryPrototype* prototype)
 {
-    Base::finishCreation(vm, ASCIILiteral("Memory"));
+    Base::finishCreation(vm, "Memory"_s);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 }

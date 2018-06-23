@@ -183,7 +183,7 @@ inline bool symbolTablePut(SymbolTableObjectType* object, ExecState* exec, Prope
         ASSERT(!fastEntry.isNull());
         if (fastEntry.isReadOnly() && !ignoreReadOnlyErrors) {
             if (shouldThrowReadOnlyError)
-                throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
+                throwTypeError(exec, scope, ReadonlyPropertyWriteError);
             putResult = false;
             return true;
         }

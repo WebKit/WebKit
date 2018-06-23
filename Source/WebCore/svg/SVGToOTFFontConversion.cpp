@@ -675,7 +675,7 @@ void SVGToOTFFontConverter::appendCFFTable()
     ASSERT(m_result.size() == topDictStart + sizeOfTopIndex);
 
     // String INDEX
-    String unknownCharacter = ASCIILiteral("UnknownChar");
+    String unknownCharacter = "UnknownChar"_s;
     append16(2 + (hasWeight ? 1 : 0)); // Number of elements in INDEX
     m_result.append(4); // Offsets in this INDEX are 4 bytes long
     uint32_t offset = 1;

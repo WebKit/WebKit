@@ -49,11 +49,11 @@ struct SVGPropertyTraits<SVGSpreadMethodType> {
         case SVGSpreadMethodUnknown:
             return emptyString();
         case SVGSpreadMethodPad:
-            return ASCIILiteral("pad");
+            return "pad"_s;
         case SVGSpreadMethodReflect:
-            return ASCIILiteral("reflect");
+            return "reflect"_s;
         case SVGSpreadMethodRepeat:
-            return ASCIILiteral("repeat");
+            return "repeat"_s;
         }
 
         ASSERT_NOT_REACHED();

@@ -31,8 +31,8 @@
 namespace WebKit {
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-static const char* const audioExtensionPath = "com.apple.webkit.microphone";
-static const char* const videoExtensionPath = "com.apple.webkit.camera";
+static const ASCIILiteral audioExtensionPath { "com.apple.webkit.microphone"_s };
+static const ASCIILiteral videoExtensionPath { "com.apple.webkit.camera"_s };
 #endif
 
 class ProcessState {
@@ -165,14 +165,14 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 
         if (withAudio && requiredExtensions & ProcessState::SandboxExtensionsGranted::Audio) {
             if (SandboxExtension::createHandleForGenericExtension(audioExtensionPath, handles[--extensionCount])) {
-                ids.append(ASCIILiteral(audioExtensionPath));
+                ids.append(audioExtensionPath);
                 currentExtensions |= ProcessState::SandboxExtensionsGranted::Audio;
             }
         }
 
         if (withVideo && requiredExtensions & ProcessState::SandboxExtensionsGranted::Video) {
             if (SandboxExtension::createHandleForGenericExtension(videoExtensionPath, handles[--extensionCount])) {
-                ids.append(ASCIILiteral(videoExtensionPath));
+                ids.append(videoExtensionPath);
                 currentExtensions |= ProcessState::SandboxExtensionsGranted::Video;
             }
         }
@@ -222,11 +222,11 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
     Vector<String> params;
     unsigned currentExtensions = state.sandboxExtensionsGranted();
     if (!hasAudioCapture && currentExtensions & ProcessState::SandboxExtensionsGranted::Audio) {
-        params.append(ASCIILiteral(audioExtensionPath));
+        params.append(audioExtensionPath);
         currentExtensions &= ~ProcessState::SandboxExtensionsGranted::Audio;
     }
     if (!hasVideoCapture && currentExtensions & ProcessState::SandboxExtensionsGranted::Video) {
-        params.append(ASCIILiteral(videoExtensionPath));
+        params.append(videoExtensionPath);
         currentExtensions &= ~ProcessState::SandboxExtensionsGranted::Video;
     }
 

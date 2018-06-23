@@ -32,7 +32,7 @@ namespace WebCore {
 
 String watchAdaptationName()
 {
-    return ASCIILiteral("watch");
+    return "watch"_s;
 }
 
 } // namespace WebCore

@@ -153,7 +153,7 @@ RefPtr<Text> Text::replaceWholeText(const String& newText)
 
 String Text::nodeName() const
 {
-    return ASCIILiteral("#text");
+    return "#text"_s;
 }
 
 Node::NodeType Text::nodeType() const

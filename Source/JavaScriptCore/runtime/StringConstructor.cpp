@@ -114,7 +114,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
         uint32_t codePoint = static_cast<uint32_t>(codePointAsDouble);
 
         if (codePoint != codePointAsDouble || codePoint > UCHAR_MAX_VALUE)
-            return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("Arguments contain a value that is out of range of code points")));
+            return throwVMError(exec, scope, createRangeError(exec, "Arguments contain a value that is out of range of code points"_s));
 
         if (U_IS_BMP(codePoint))
             builder.append(static_cast<UChar>(codePoint));

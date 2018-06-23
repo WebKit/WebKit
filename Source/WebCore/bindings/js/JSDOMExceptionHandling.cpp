@@ -134,7 +134,7 @@ JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String& mess
 
     if (ec == RangeError) {
         if (message.isEmpty())
-            return createRangeError(exec, ASCIILiteral("Bad value"));
+            return createRangeError(exec, "Bad value"_s);
         return createRangeError(exec, message);
     }
 
@@ -255,12 +255,12 @@ JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::
 
 void throwSequenceTypeError(JSC::ExecState& state, JSC::ThrowScope& scope)
 {
-    throwTypeError(state, scope, ASCIILiteral("Value is not a sequence"));
+    throwTypeError(state, scope, "Value is not a sequence"_s);
 }
 
 void throwNonFiniteTypeError(ExecState& state, JSC::ThrowScope& scope)
 {
-    throwTypeError(&state, scope, ASCIILiteral("The provided value is non-finite"));
+    throwTypeError(&state, scope, "The provided value is non-finite"_s);
 }
 
 String makeGetterTypeErrorMessage(const char* interfaceName, const char* attributeName)

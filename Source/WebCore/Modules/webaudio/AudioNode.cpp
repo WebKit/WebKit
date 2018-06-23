@@ -205,11 +205,11 @@ String AudioNode::channelCountMode()
 {
     switch (m_channelCountMode) {
     case Max:
-        return ASCIILiteral("max");
+        return "max"_s;
     case ClampedMax:
-        return ASCIILiteral("clamped-max");
+        return "clamped-max"_s;
     case Explicit:
-        return ASCIILiteral("explicit");
+        return "explicit"_s;
     }
     ASSERT_NOT_REACHED();
     return emptyString();
@@ -241,9 +241,9 @@ String AudioNode::channelInterpretation()
 {
     switch (m_channelInterpretation) {
     case AudioBus::Speakers:
-        return ASCIILiteral("speakers");
+        return "speakers"_s;
     case AudioBus::Discrete:
-        return ASCIILiteral("discrete");
+        return "discrete"_s;
     }
     ASSERT_NOT_REACHED();
     return emptyString();
