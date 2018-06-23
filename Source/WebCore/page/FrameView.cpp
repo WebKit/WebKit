@@ -190,7 +190,6 @@ FrameView::FrameView(Frame& frame)
     , m_useCustomFixedPositionLayoutRect(false)
     , m_useCustomSizeForResizeEvent(false)
 #endif
-    , m_hasOverrideViewportSize(false)
     , m_shouldAutoSize(false)
     , m_inAutoSize(false)
     , m_didRunAutosize(false)
@@ -4368,9 +4367,12 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& minSize, const In
 
     setNeedsLayout();
     layoutContext().scheduleLayout();
-    if (m_shouldAutoSize)
+    if (m_shouldAutoSize) {
+        overrideViewportSizeForCSSViewportUnits({ minSize.width(), m_overrideViewportSize ? m_overrideViewportSize->height : std::nullopt });
         return;
+    }
 
+    clearViewportSizeOverrideForCSSViewportUnits();
     // Since autosize mode forces the scrollbar mode, change them to being auto.
     setVerticalScrollbarLock(false);
     setHorizontalScrollbarLock(false);
@@ -5081,30 +5083,57 @@ void FrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect)
     if (auto* page = frame().page())
         page->pageOverlayController().didChangeViewExposedRect();
 }
-    
-void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
+
+void FrameView::clearViewportSizeOverrideForCSSViewportUnits()
 {
-    if (m_hasOverrideViewportSize && m_overrideViewportSize == size)
+    if (!m_overrideViewportSize)
         return;
-    
-    m_overrideViewportSize = size;
-    m_hasOverrideViewportSize = true;
-    
-    if (Document* document = frame().document())
+
+    m_overrideViewportSize = std::nullopt;
+    if (auto* document = frame().document())
         document->styleScope().didChangeStyleSheetEnvironment();
 }
-    
+
+void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
+{
+    overrideViewportSizeForCSSViewportUnits({ size.width(), size.height() });
+}
+
+void FrameView::overrideViewportSizeForCSSViewportUnits(OverrideViewportSize size)
+{
+    if (m_overrideViewportSize && *m_overrideViewportSize == size)
+        return;
+
+    m_overrideViewportSize = size;
+
+    if (auto* document = frame().document())
+        document->styleScope().didChangeStyleSheetEnvironment();
+}
+
 IntSize FrameView::viewportSizeForCSSViewportUnits() const
 {
-    if (m_hasOverrideViewportSize)
-        return m_overrideViewportSize;
+    OverrideViewportSize viewportSize;
 
-    if (useFixedLayout())
-        return fixedLayoutSize();
+    if (m_overrideViewportSize) {
+        viewportSize = *m_overrideViewportSize;
+        // auto-size overrides the width only, so we can't always bail out early here.
+        if (viewportSize.width && viewportSize.height)
+            return { *viewportSize.width, *viewportSize.height };
+    }
+
+    if (useFixedLayout()) {
+        auto fixedLayoutSize = this->fixedLayoutSize();
+        viewportSize.width = viewportSize.width.value_or(fixedLayoutSize.width());
+        viewportSize.height = viewportSize.height.value_or(fixedLayoutSize.height());
+        return { *viewportSize.width, *viewportSize.height };
+    }
     
     // FIXME: the value returned should take into account the value of the overflow
     // property on the root element.
-    return visibleContentRectIncludingScrollbars().size();
+    auto visibleContentSizeIncludingScrollbars = visibleContentRectIncludingScrollbars().size();
+    viewportSize.width = viewportSize.width.value_or(visibleContentSizeIncludingScrollbars.width());
+    viewportSize.height = viewportSize.height.value_or(visibleContentSizeIncludingScrollbars.height());
+    return { *viewportSize.width, *viewportSize.height };
 }
 
 bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const

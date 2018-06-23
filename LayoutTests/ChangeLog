@@ -1,3 +1,14 @@
+2018-06-23  Zalan Bujtas  <zalan@apple.com>
+
+        [Mail] Use the Mail Viewer width as the base for resolving horizontal viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=186585
+        <rdar://problem/30685325>
+
+        Reviewed by Tim Horton.
+
+        * fast/dynamic/mail-autosize-viewport-unit-expected.txt: Added.
+        * fast/dynamic/mail-autosize-viewport-unit.html: Added.
+
 2018-06-23  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test imported/mozilla/css-animations/test_animation-ready.html is failing on Windows.
