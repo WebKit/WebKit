@@ -222,7 +222,9 @@ ObjectPropertyCondition generateCondition(
         PropertyOffset offset = structure->getConcurrently(uid, attributes);
         if (offset == invalidOffset)
             return ObjectPropertyCondition();
-        JSValue value = object->getDirect(offset);
+        JSValue value = object->getDirectConcurrently(structure, offset);
+        if (!value)
+            return ObjectPropertyCondition();
         result = ObjectPropertyCondition::equivalence(vm, owner, object, uid, value);
         break;
     }

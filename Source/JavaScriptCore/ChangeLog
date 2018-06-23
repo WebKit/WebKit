@@ -1,3 +1,27 @@
+2018-06-22  Keith Miller  <keith_miller@apple.com>
+
+        We need to have a getDirectConcurrently for use in the compilers
+        https://bugs.webkit.org/show_bug.cgi?id=186954
+
+        Reviewed by Mark Lam.
+
+        It used to be that the propertyStorage of an object never shrunk
+        so if you called getDirect with some offset it would never be an
+        OOB read. However, this property storage can shrink when calling
+        flattenDictionaryStructure. Fortunately, flattenDictionaryStructure
+        holds the Structure's ConcurrentJSLock while shrinking. This patch,
+        adds a getDirectConcurrently that will safely try to load from the
+        butterfly.
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::attemptToMakeEquivalenceWithoutBarrier const):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetConstantProperty):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirectConcurrently const):
+
 2018-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Use Ref<> for the result type of non-failing factory functions

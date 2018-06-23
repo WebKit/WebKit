@@ -1244,7 +1244,7 @@ JSValue Graph::tryGetConstantProperty(
     
     for (unsigned i = structureSet.size(); i--;) {
         RegisteredStructure structure = structureSet[i];
-        
+
         WatchpointSet* set = structure->propertyReplacementWatchpointSet(offset);
         if (!set || !set->isStillValid())
             return JSValue();
@@ -1263,22 +1263,24 @@ JSValue Graph::tryGetConstantProperty(
     //
     // One argument in favor of this code is that it should definitely work because the butterfly
     // is always set before the structure. However, we don't currently have a fence between those
-    // stores. It's not clear if this matters, however. We don't ever shrink the property storage.
-    // So, for this to fail, you'd need an access on a constant object pointer such that the inline
-    // caches told us that the object had a structure that it did not *yet* have, and then later,
-    // the object transitioned to that structure that the inline caches had alraedy seen. And then
-    // the processor reordered the stores. Seems unlikely and difficult to test. I believe that
-    // this is worth revisiting but it isn't worth losing sleep over. Filed:
+    // stores. It's not clear if this matters, however. We only shrink the propertyStorage while
+    // holding the Structure's lock. So, for this to fail, you'd need an access on a constant
+    // object pointer such that the inline caches told us that the object had a structure that it
+    // did not *yet* have, and then later,the object transitioned to that structure that the inline
+    // caches had already seen. And then the processor reordered the stores. Seems unlikely and
+    // difficult to test. I believe that this is worth revisiting but it isn't worth losing sleep
+    // over. Filed:
     // https://bugs.webkit.org/show_bug.cgi?id=134641
     //
     // For now, we just do the minimal thing: defend against the structure right now being
     // incompatible with the getDirect we're trying to do. The easiest way to do that is to
     // determine if the structure belongs to the proven set.
-    
-    if (!structureSet.toStructureSet().contains(object->structure(m_vm)))
+
+    Structure* structure = object->structure(m_vm);
+    if (!structureSet.toStructureSet().contains(structure))
         return JSValue();
-    
-    return object->getDirect(offset);
+
+    return object->getDirectConcurrently(structure, offset);
 }
 
 JSValue Graph::tryGetConstantProperty(JSValue base, Structure* structure, PropertyOffset offset)
