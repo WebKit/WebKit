@@ -4118,6 +4118,7 @@ webkit.org/b/186562 svg/animations/animation-leak-list-property-instances.html [
 webkit.org/b/186562 workers/bomb.html [ Skip ]
 
 webkit.org/b/186807 imported/mozilla/css-animations/test_animation-playstate.html [ Failure ]
+webkit.org/b/186807 imported/mozilla/css-animations/test_animation-ready.html [ Failure ]
 webkit.org/b/186807 imported/mozilla/css-transitions/test_animation-cancel.html [ Failure ]
 webkit.org/b/186807 imported/mozilla/css-transitions/test_animation-ready.html [ Failure ]
 webkit.org/b/186807 transitions/transition-to-from-auto.html [ Failure ]
@@ -4125,3 +4126,4 @@ webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
 
 webkit.org/b/186868 imported/mozilla/css-animations/test_pseudoElement-get-animations.html [ Failure ]
 webkit.org/b/186868 imported/mozilla/css-transitions/test_element-get-animations.html [ Failure ]
+imported/mozilla/css-animations/test_animation-ready.html [ Failure ]
