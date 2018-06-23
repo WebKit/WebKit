@@ -43,8 +43,7 @@
 #include <wtf/ios/WebCoreThread.h>
 #endif
 
-@interface JSWTFMainThreadCaller : NSObject {
-}
+@interface JSWTFMainThreadCaller : NSObject
 - (void)call;
 @end
 
@@ -55,12 +54,12 @@
     WTF::dispatchFunctionsFromMainThread();
 }
 
-@end // implementation JSWTFMainThreadCaller
+@end
 
 namespace WTF {
 
 static JSWTFMainThreadCaller* staticMainThreadCaller;
-static bool isTimerPosted; // This is only accessed on the 'main' thread.
+static bool isTimerPosted; // This is only accessed on the main thread.
 static bool mainThreadEstablishedAsPthreadMain;
 static pthread_t mainThreadPthread;
 static NSThread* mainThreadNSThread;
@@ -78,7 +77,7 @@ void initializeMainThreadPlatform()
 #if !USE(WEB_THREAD)
     mainThreadEstablishedAsPthreadMain = false;
     mainThreadPthread = pthread_self();
-    mainThreadNSThread = [[NSThread currentThread] retain];
+    mainThreadNSThread = [NSThread currentThread];
 #else
     mainThreadEstablishedAsPthreadMain = true;
     ASSERT(!mainThreadPthread);
@@ -186,7 +185,7 @@ void initializeWebThreadPlatform()
 
     mainThreadEstablishedAsPthreadMain = false;
     mainThreadPthread = pthread_self();
-    mainThreadNSThread = [[NSThread currentThread] retain];
+    mainThreadNSThread = [NSThread currentThread];
 
     sWebThread = &Thread::current();
 }
