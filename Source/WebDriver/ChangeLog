@@ -1,3 +1,16 @@
+2018-06-21  Brian Burg  <bburg@apple.com>
+
+        Web Automation: key actions should support multiple pressed virtual keys
+        https://bugs.webkit.org/show_bug.cgi?id=186899
+        <rdar://problem/38222248>
+
+        Reviewed by Timothy Hatcher.
+
+        Adopt new protocol command argument types.
+
+        * Session.cpp:
+        (WebDriver::Session::performActions):
+
 2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add user-defined literal for ASCIILiteral

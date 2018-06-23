@@ -52,6 +52,7 @@ class WebPageProxy;
 
 using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteractionType;
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
+using VirtualKeySet = HashSet<VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
 using CharKey = char; // For WebDriver, this only needs to support ASCII characters on 102-key keyboard.
 using MouseButton = WebMouseEvent::Button;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
@@ -66,7 +67,7 @@ enum class SimulatedInputSourceType {
 
 struct SimulatedInputSourceState {
     std::optional<CharKey> pressedCharKey;
-    std::optional<VirtualKey> pressedVirtualKey;
+    VirtualKeySet pressedVirtualKeys;
     std::optional<MouseButton> pressedMouseButton;
     std::optional<MouseMoveOrigin> origin;
     std::optional<String> nodeHandle;
@@ -115,7 +116,7 @@ public:
     public:
         virtual ~Client() { }
         virtual void simulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&) = 0;
-        virtual void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, std::optional<VirtualKey>, std::optional<CharKey>, AutomationCompletionHandler&&) = 0;
+        virtual void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&, AutomationCompletionHandler&&) = 0;
         virtual void viewportInViewCenterPointOfElement(WebPageProxy&, uint64_t frameID, const String& nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&) = 0;
     };
 

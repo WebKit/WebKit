@@ -267,11 +267,21 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     }
     case SimulatedInputSourceType::Keyboard:
         // The "dispatch a key{Down,Up} action" algorithms (§17.4 Dispatching Actions).
-        if ((!a.pressedCharKey && b.pressedCharKey) || (!a.pressedVirtualKey && b.pressedVirtualKey))
-            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, b.pressedVirtualKey, b.pressedCharKey, WTFMove(eventDispatchFinished));
-        else if ((a.pressedCharKey && !b.pressedCharKey) || (a.pressedVirtualKey && !b.pressedVirtualKey))
-            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, a.pressedVirtualKey, a.pressedCharKey, WTFMove(eventDispatchFinished));
-        else
+        if (!a.pressedCharKey && b.pressedCharKey)
+            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, b.pressedCharKey.value(), WTFMove(eventDispatchFinished));
+        else if (a.pressedCharKey && !b.pressedCharKey)
+            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, b.pressedCharKey.value(), WTFMove(eventDispatchFinished));
+        else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
+            for (VirtualKey key : b.pressedVirtualKeys) {
+                if (!a.pressedVirtualKeys.contains(key))
+                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, key, WTFMove(eventDispatchFinished));
+            }
+
+            for (VirtualKey key : a.pressedVirtualKeys) {
+                if (!b.pressedVirtualKeys.contains(key))
+                    m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, key, WTFMove(eventDispatchFinished));
+            }
+        } else
             eventDispatchFinished(std::nullopt);
         break;
     case SimulatedInputSourceType::Touch:

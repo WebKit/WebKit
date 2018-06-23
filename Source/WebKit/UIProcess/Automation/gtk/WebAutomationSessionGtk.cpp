@@ -294,15 +294,19 @@ static unsigned modifiersForKeyCode(unsigned keyCode)
     return 0;
 }
 
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::optional<VirtualKey> virtualKey, std::optional<CharKey> charKey)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key)
 {
     ASSERT(virtualKey.has_value() || charKey.has_value());
 
     unsigned keyCode;
-    if (virtualKey.has_value())
-        keyCode = keyCodeForVirtualKey(virtualKey.value());
-    else
-        keyCode = gdk_unicode_to_keyval(g_utf8_get_char(&charKey.value()));
+    WTF::switchOn(key,
+        [&] (VirtualKey virtualKey) {
+            keyCode = keyCodeForVirtualKey(virtualKey);
+        },
+        [&] (CharKey charKey) {
+            keyCode = gdk_unicode_to_keyval(g_utf8_get_char(&charKey));
+        }
+    );
     unsigned modifiers = modifiersForKeyCode(keyCode);
 
     switch (interaction) {

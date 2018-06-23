@@ -425,12 +425,10 @@ static NSEventModifierFlags eventModifierFlagsForVirtualKey(VirtualKey key)
     }
 }
 
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::optional<VirtualKey> virtualKey, std::optional<CharKey> charKey)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key)
 {
     // FIXME: this function and the Automation protocol enum should probably adopt key names
     // from W3C UIEvents standard. For more details: https://w3c.github.io/uievents-code/
-
-    ASSERT(virtualKey.has_value() || charKey.has_value());
 
     bool isStickyModifier = false;
     NSEventModifierFlags changedModifiers = 0;
@@ -438,18 +436,19 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     std::optional<unichar> charCode;
     std::optional<unichar> charCodeIgnoringModifiers;
 
-    if (virtualKey.has_value()) {
-        isStickyModifier = virtualKeyHasStickyModifier(virtualKey.value());
-        changedModifiers = eventModifierFlagsForVirtualKey(virtualKey.value());
-        keyCode = keyCodeForVirtualKey(virtualKey.value());
-        charCode = charCodeForVirtualKey(virtualKey.value());
-        charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(virtualKey.value());
-    }
-
-    if (charKey.has_value()) {
-        charCode = (unichar)charKey.value();
-        charCodeIgnoringModifiers = (unichar)charKey.value();
-    }
+    WTF::switchOn(key,
+        [&] (VirtualKey virtualKey) {
+            isStickyModifier = virtualKeyHasStickyModifier(virtualKey);
+            changedModifiers = eventModifierFlagsForVirtualKey(virtualKey);
+            keyCode = keyCodeForVirtualKey(virtualKey);
+            charCode = charCodeForVirtualKey(virtualKey);
+            charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(virtualKey);
+        },
+        [&] (CharKey charKey) {
+            charCode = (unichar)charKey;
+            charCodeIgnoringModifiers = (unichar)charKey;
+        }
+    );
 
     // FIXME: consider using AppKit SPI to normalize 'characters', i.e., changing * to Shift-8,
     // and passing that in to charactersIgnoringModifiers. We could hardcode this for ASCII if needed.

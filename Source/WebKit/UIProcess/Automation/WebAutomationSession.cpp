@@ -1479,7 +1479,7 @@ void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInt
     });
 }
 
-void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::optional<VirtualKey> virtualKey, std::optional<CharKey> charKey, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
+void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
 {
     // Bridge the flushed callback to our command's completion handler.
     auto keyboardEventsFlushedCallback = [completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) {
@@ -1491,7 +1491,7 @@ void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, Keybo
         callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
     callbackInMap = WTFMove(keyboardEventsFlushedCallback);
 
-    platformSimulateKeyboardInteraction(page, interaction, virtualKey, charKey);
+    platformSimulateKeyboardInteraction(page, interaction, WTFMove(key));
 
     // Wait for keyboardEventsFlushedCallback to run when all events are handled.
 }
@@ -1637,12 +1637,12 @@ void WebAutomationSession::performKeyboardInteractions(const String& handle, con
         String virtualKeyString;
         bool foundVirtualKey = interactionObject->getString("key"_s, virtualKeyString);
         if (foundVirtualKey) {
-            auto virtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(virtualKeyString);
+            std::optional<VirtualKey> virtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(virtualKeyString);
             if (!virtualKey)
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value.");
 
             actionsToPerform.uncheckedAppend([this, page, interactionType, virtualKey] {
-                platformSimulateKeyboardInteraction(*page, interactionType.value(), virtualKey, std::nullopt);
+                platformSimulateKeyboardInteraction(*page, interactionType.value(), virtualKey.value());
             });
         }
 
@@ -1795,9 +1795,24 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
             if (stateObject->getString("pressedCharKey"_s, pressedCharKeyString))
                 sourceState.pressedCharKey = pressedCharKeyString.characterAt(0);
 
-            String pressedVirtualKeyString;
-            if (stateObject->getString("pressedVirtualKey"_s, pressedVirtualKeyString))
-                sourceState.pressedVirtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(pressedVirtualKeyString);
+            RefPtr<JSON::Array> pressedVirtualKeysArray;
+            if (stateObject->getArray("pressedVirtualKeys"_s, pressedVirtualKeysArray)) {
+                VirtualKeySet pressedVirtualKeys { };
+
+                for (auto it = pressedVirtualKeysArray->begin(); it != pressedVirtualKeysArray->end(); ++it) {
+                    String pressedVirtualKeyString;
+                    if (!(*it)->asString(pressedVirtualKeyString))
+                        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered a non-string virtual key value.");
+
+                    std::optional<VirtualKey> parsedVirtualKey = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::VirtualKey>(pressedVirtualKeyString);
+                    if (!parsedVirtualKey)
+                        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered an unknown virtual key value.");
+                    else
+                        pressedVirtualKeys.add(parsedVirtualKey.value());
+                }
+
+                sourceState.pressedVirtualKeys = pressedVirtualKeys;
+            }
 
             String pressedButtonString;
             if (stateObject->getString("pressedButton"_s, pressedButtonString)) {
@@ -1926,7 +1941,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy&, Mouse
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
 
 
-void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, std::optional<VirtualKey>, std::optional<CharKey>)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, WTF::Variant<VirtualKey, CharKey>&&)
 {
 }
 #endif // !PLATFORM(COCOA) && !PLATFORM(GTK)
