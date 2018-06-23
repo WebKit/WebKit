@@ -549,7 +549,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(exec->thisValue());
+    arguments.append(exec->thisValue().toThis(exec, ECMAMode::StrictMode));
     arguments.append(argArray);
     ASSERT(!arguments.hasOverflowed());
     scope.release();

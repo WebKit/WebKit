@@ -1,3 +1,13 @@
+2018-06-22  Keith Miller  <keith_miller@apple.com>
+
+        performProxyCall should toThis the value passed to its handler
+        https://bugs.webkit.org/show_bug.cgi?id=186951
+
+        Reviewed by Mark Lam.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyCall):
+
 2018-06-22  Saam Barati  <sbarati@apple.com>
 
         ensureWritableX should only convert away from CoW when it will succeed
