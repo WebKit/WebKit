@@ -188,7 +188,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     ASSERT(marginBottom);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow non-replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << *height << "px) margin(" << *marginTop << "px, "  << *marginBottom << "px) layoutBox(" << &layoutBox << ")");
-    return { *top, *bottom, { *height, { *marginTop, *marginBottom} } };
+    return { *top, *bottom, { *height, { *marginTop, *marginBottom } } };
 }
 
 FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)

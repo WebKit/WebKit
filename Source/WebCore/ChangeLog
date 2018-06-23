@@ -1,5 +1,17 @@
 2018-06-23  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Relatively positioned renderer needs offsetting for validation
+        https://bugs.webkit.org/show_bug.cgi?id=186959
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBoxInformationIfNeeded):
+
+2018-06-23  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Miscellaneous fixes to fix simple absolute positioning.
         https://bugs.webkit.org/show_bug.cgi?id=186962
 

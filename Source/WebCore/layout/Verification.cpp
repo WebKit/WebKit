@@ -57,7 +57,12 @@ static bool outputMismatchingBoxInformationIfNeeded(TextStream& stream, const La
     auto* displayBox = context.displayBoxForLayoutBox(layoutBox);
     ASSERT(displayBox);
 
-    if (renderer.frameRect() != displayBox->rect())  {
+    auto frameRect = renderer.frameRect();
+    // rendering does not offset for relative positioned boxes.
+    if (renderer.isInFlowPositioned())
+        frameRect.move(renderer.offsetForInFlowPosition());
+
+    if (frameRect != displayBox->rect()) {
         outputRect("frameBox", renderer.frameRect(), displayBox->rect());
         return true;
     }
