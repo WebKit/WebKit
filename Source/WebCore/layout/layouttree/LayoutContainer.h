@@ -61,7 +61,7 @@ protected:
 private:
     void setFirstChild(Box&);
     void setLastChild(Box&);
-    void setOutOfFlowDescendants(Vector<WeakPtr<Box>>&&);
+    void addOutOfFlowDescendant(const Box&);
 
     Box* m_firstChild { nullptr };
     Box* m_lastChild { nullptr };

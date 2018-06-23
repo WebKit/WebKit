@@ -85,13 +85,11 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
     for (auto& child : childrenOfType<RenderElement>(rootRenderer)) {
         Box* box = nullptr;
 
-        if (is<RenderBlock>(child)) {
+        if (is<RenderBlock>(child))
             box = new BlockContainer(elementAttributes(child), RenderStyle::clone(child.style()));
-            createSubTree(child, downcast<Container>(*box));
-        } else if (is<RenderInline>(child)) {
+        else if (is<RenderInline>(child))
             box = new InlineContainer(elementAttributes(child), RenderStyle::clone(child.style()));
-            createSubTree(child, downcast<Container>(*box));
-        } else
+        else
             ASSERT_NOT_IMPLEMENTED_YET();
 
         if (!rootContainer.hasChild()) {
@@ -104,6 +102,13 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
             rootContainer.setLastChild(*box);
         }
         box->setParent(rootContainer);
+
+        if (box->isOutOfFlowPositioned()) {
+            // Not efficient, but this is temporary anyway.
+            // Collect the out-of-flow descendants at the formatting root lever (as opposed to at the containing block level, though they might be the same).
+            const_cast<Container&>(box->formattingContextRoot()).addOutOfFlowDescendant(*box);
+        }
+        createSubTree(child, downcast<Container>(*box));
     }
 }
 

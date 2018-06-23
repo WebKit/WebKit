@@ -72,7 +72,6 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layout
     auto horizontalGeometry = Geometry::outOfFlowHorizontalGeometry(layoutContext, layoutBox);
     displayBox.setLeft(horizontalGeometry.left);
     displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
-    ASSERT(horizontalGeometry.left + horizontalGeometry.widthAndMargin.width == horizontalGeometry.right);
     displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.margin);
 }
 
@@ -81,7 +80,6 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutCo
     auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
     displayBox.setTop(verticalGeometry.top);
     displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
-    ASSERT(verticalGeometry.top + verticalGeometry.heightAndMargin.height == verticalGeometry.bottom);
     displayBox.setVerticalMargin(verticalGeometry.heightAndMargin.margin);
 }
 
@@ -123,6 +121,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         // of a hypothetical box that would have been the first box of the element if its specified 'position' value had been 'static' and
         // its specified 'float' had been 'none' and its specified 'clear' had been 'none'.
         computeStaticPosition(layoutContext, layoutBox, displayBox);
+        computeBorderAndPadding(layoutContext, layoutBox, displayBox);
         computeOutOfFlowHorizontalGeometry(layoutContext, layoutBox, displayBox);
 
         ASSERT(layoutBox.establishesFormattingContext());
