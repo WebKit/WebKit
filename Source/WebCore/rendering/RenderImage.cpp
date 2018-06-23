@@ -379,12 +379,32 @@ bool RenderImage::hasNonBitmapImage() const
     return image && !is<BitmapImage>(image);
 }
 
+void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint paintOffset, LayoutUnit borderWidth) const
+{
+    auto contentSize = this->contentSize();
+    if (contentSize.width() <= 2 || contentSize.height() <= 2)
+        return;
+
+    auto leftBorder = borderLeft();
+    auto topBorder = borderTop();
+    auto leftPadding = paddingLeft();
+    auto topPadding = paddingTop();
+
+    // Draw an outline rect where the image should be.
+    GraphicsContext& context = paintInfo.context();
+    context.setStrokeStyle(SolidStroke);
+    context.setStrokeColor(Color::lightGray);
+    context.setFillColor(Color::transparent);
+    context.drawRect(snapRectToDevicePixels(LayoutRect({ paintOffset.x() + leftBorder + leftPadding, paintOffset.y() + topBorder + topPadding }, contentSize), document().deviceScaleFactor()), borderWidth);
+}
+
 void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    LayoutSize contentSize = this->contentSize();
+    auto contentSize = this->contentSize();
 
     GraphicsContext& context = paintInfo.context();
     float deviceScaleFactor = document().deviceScaleFactor();
+    LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
     if (!imageResource().cachedImage() || imageResource().errorOccurred()) {
         if (paintInfo.phase == PaintPhaseSelection)
@@ -393,31 +413,25 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (paintInfo.phase == PaintPhaseForeground)
             page().addRelevantUnpaintedObject(this, visualOverflowRect());
 
-        if (contentSize.width() > 2 && contentSize.height() > 2) {
-            LayoutUnit borderWidth = LayoutUnit(1 / deviceScaleFactor);
+        paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
+        if (contentSize.width() > 2 && contentSize.height() > 2) {
             LayoutUnit leftBorder = borderLeft();
             LayoutUnit topBorder = borderTop();
             LayoutUnit leftPad = paddingLeft();
             LayoutUnit topPad = paddingTop();
 
-            // Draw an outline rect where the image should be.
-            context.setStrokeStyle(SolidStroke);
-            context.setStrokeColor(Color::lightGray);
-            context.setFillColor(Color::transparent);
-            context.drawRect(snapRectToDevicePixels(LayoutRect({ paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad }, contentSize), deviceScaleFactor), borderWidth);
-
             bool errorPictureDrawn = false;
             LayoutSize imageOffset;
             // When calculating the usable dimensions, exclude the pixels of
             // the ouline rect so the error image/alt text doesn't draw on it.
-            LayoutSize usableSize = contentSize - LayoutSize(2 * borderWidth, 2 * borderWidth);
+            LayoutSize usableSize = contentSize - LayoutSize(2 * missingImageBorderWidth, 2 * missingImageBorderWidth);
 
             RefPtr<Image> image = imageResource().image();
 
             if (imageResource().errorOccurred() && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
                 // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
-                std::pair<Image*, float> brokenImageAndImageScaleFactor = cachedImage()->brokenImage(document().deviceScaleFactor());
+                std::pair<Image*, float> brokenImageAndImageScaleFactor = cachedImage()->brokenImage(deviceScaleFactor);
                 image = brokenImageAndImageScaleFactor.first;
                 FloatSize imageSize = image->size();
                 imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
@@ -428,7 +442,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 LayoutUnit centerY = (usableSize.height() - imageSize.height()) / 2;
                 if (centerY < 0)
                     centerY = 0;
-                imageOffset = LayoutSize(leftBorder + leftPad + centerX + borderWidth, topBorder + topPad + centerY + borderWidth);
+                imageOffset = LayoutSize(leftBorder + leftPad + centerX + missingImageBorderWidth, topBorder + topPad + centerY + missingImageBorderWidth);
 
                 ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
 #if ENABLE(CSS_IMAGE_ORIENTATION)
@@ -445,7 +459,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 const FontMetrics& fontMetrics = font.fontMetrics();
                 LayoutUnit ascent = fontMetrics.ascent();
                 LayoutPoint altTextOffset = paintOffset;
-                altTextOffset.move(leftBorder + leftPad + (paddingWidth / 2) - borderWidth, topBorder + topPad + ascent + (paddingHeight / 2) - borderWidth);
+                altTextOffset.move(leftBorder + leftPad + (paddingWidth / 2) - missingImageBorderWidth, topBorder + topPad + ascent + (paddingHeight / 2) - missingImageBorderWidth);
 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
@@ -464,8 +478,13 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (contentSize.isEmpty())
         return;
 
+    bool showBorderForIncompleteImage = settings().incompleteImageBorderEnabled();
+
     RefPtr<Image> img = imageResource().image(flooredIntSize(contentSize));
     if (!img || img->isNull()) {
+        if (showBorderForIncompleteImage)
+            paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
+
         if (paintInfo.phase == PaintPhaseForeground)
             page().addRelevantUnpaintedObject(this, visualOverflowRect());
         return;
@@ -481,6 +500,9 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         context.clip(contentBoxRect);
 
     ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(replacedContentRect, deviceScaleFactor));
+
+    if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (cachedImage() && cachedImage()->isLoading())))
+        paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
     
     if (cachedImage() && paintInfo.phase == PaintPhaseForeground) {
         // For now, count images as unpainted if they are still progressively loading. We may want 

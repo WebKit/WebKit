@@ -750,3 +750,6 @@ crossOriginWindowPolicySupportEnabled:
 accessibilityEventsEnabled:
   initial: true
   conditional: ACCESSIBILITY_EVENTS
+
+incompleteImageBorderEnabled:
+  initial: false

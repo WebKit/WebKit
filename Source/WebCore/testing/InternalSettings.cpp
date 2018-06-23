@@ -93,6 +93,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_inlineMediaPlaybackRequiresPlaysInlineAttribute(settings.inlineMediaPlaybackRequiresPlaysInlineAttribute())
     , m_deferredCSSParserEnabled(settings.deferredCSSParserEnabled())
     , m_inputEventsEnabled(settings.inputEventsEnabled())
+    , m_incompleteImageBorderEnabled(settings.incompleteImageBorderEnabled())
 #if ENABLE(ACCESSIBILITY_EVENTS)
     , m_accessibilityEventsEnabled(settings.accessibilityEventsEnabled())
 #endif
@@ -204,6 +205,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
     FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
     settings.setFrameFlattening(m_frameFlattening);
+    settings.setIncompleteImageBorderEnabled(m_incompleteImageBorderEnabled);
 #if ENABLE(ACCESSIBILITY_EVENTS)
     settings.setAccessibilityEventsEnabled(m_accessibilityEventsEnabled);
 #endif
@@ -899,6 +901,14 @@ ExceptionOr<void> InternalSettings::setAccessibilityEventsEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setIncompleteImageBorderEnabled(bool enabled)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    settings().setIncompleteImageBorderEnabled(enabled);
     return { };
 }
 

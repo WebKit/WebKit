@@ -162,11 +162,11 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _needsStorageAccessFromFileURLsQuirk;
     BOOL _legacyEncryptedMediaAPIEnabled;
     BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback;
+    BOOL _colorFilterEnabled;
+    BOOL _incompleteImageBorderEnabled;
 
     RetainPtr<NSString> _overrideContentSecurityPolicy;
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
-
-    BOOL _colorFilterEnabled;
 }
 
 - (instancetype)init
@@ -248,6 +248,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
 
     _colorFilterEnabled = NO;
+    _incompleteImageBorderEnabled = NO;
 
     return self;
 }
@@ -407,6 +408,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     configuration->_groupIdentifier = adoptNS([self->_groupIdentifier copyWithZone:zone]);
     configuration->_colorFilterEnabled = self->_colorFilterEnabled;
+    configuration->_incompleteImageBorderEnabled = self->_incompleteImageBorderEnabled;
 
     return configuration;
 }
@@ -764,6 +766,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setColorFilterEnabled:(BOOL)colorFilterEnabled
 {
     _colorFilterEnabled = colorFilterEnabled;
+}
+
+- (BOOL)_incompleteImageBorderEnabled
+{
+    return _incompleteImageBorderEnabled;
+}
+
+- (void)_setIncompleteImageBorderEnabled:(BOOL)incompleteImageBorderEnabled
+{
+    _incompleteImageBorderEnabled = incompleteImageBorderEnabled;
 }
 
 - (BOOL)_requiresUserActionForVideoPlayback

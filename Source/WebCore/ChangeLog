@@ -1,3 +1,31 @@
+2018-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to add a border around loading or failed-to-load images
+        https://bugs.webkit.org/show_bug.cgi?id=186614
+        <rdar://problem/39050152>
+
+        Reviewed by Zalan Bujtas.
+
+        Tests: http/tests/images/loading-image-border.html
+               http/tests/images/loading-image-no-border.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIncompleteImageOutline):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderImage.h:
+        Factor the missing-image outline out, and - if desired - paint it in
+        cases where the image is still loading or otherwise pending, not just
+        when the image fails to load.
+
+        * page/Settings.yaml:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setIncompleteImageBorderEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        Add and expose a setting to enable the feature.
+
 2018-06-22  Brady Eidson  <beidson@apple.com>
 
         WKURLSchemeHandler doesn't handle sync XHR.

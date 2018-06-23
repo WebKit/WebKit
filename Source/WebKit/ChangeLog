@@ -1,3 +1,23 @@
+2018-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to add a border around loading or failed-to-load images
+        https://bugs.webkit.org/show_bug.cgi?id=186614
+        <rdar://problem/39050152>
+
+        Reviewed by Zalan Bujtas.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setColorFilterEnabled:]):
+        (-[WKWebViewConfiguration _incompleteImageBorderEnabled]):
+        (-[WKWebViewConfiguration _setIncompleteImageBorderEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        Plumb the setting to WebKit2.
+
 2018-06-22  Brady Eidson  <beidson@apple.com>
 
         WKURLSchemeHandler doesn't handle sync XHR.

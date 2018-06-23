@@ -85,6 +85,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [MayThrowException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
     [MayThrowException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
     [MayThrowException] void setFrameFlattening(FrameFlatteningValue frameFlattening);
+    [MayThrowException] void setIncompleteImageBorderEnabled(boolean enabled);
 
     // RuntimeEnabledFeatures.
     void setIndexedDBWorkersEnabled(boolean enabled);

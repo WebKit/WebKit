@@ -1,3 +1,19 @@
+2018-06-22  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to add a border around loading or failed-to-load images
+        https://bugs.webkit.org/show_bug.cgi?id=186614
+        <rdar://problem/39050152>
+
+        Reviewed by Zalan Bujtas.
+
+        * http/tests/images/loading-image-border-expected.html: Added.
+        * http/tests/images/loading-image-border.html: Added.
+        * http/tests/images/loading-image-no-border-expected.html: Added.
+        * http/tests/images/loading-image-no-border.html: Added.
+        * platform/wk2/TestExpectations:
+        Add a test ensuring that the setting works correctly.
+        These and similar tests do not currently work in WebKitTestRunner, so they are skipped there.
+
 2018-06-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed test gardening.
