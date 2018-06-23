@@ -36,39 +36,31 @@
 
 namespace WTF {
 
-static const int64_t microsecondsPerSecond = 1000000;
-
-static int64_t timeValueToMicroseconds(const time_value_t& value)
+static Seconds seconds(const time_value_t& value)
 {
-    int64_t result = value.seconds;
-    result *= microsecondsPerSecond;
-    result += value.microseconds;
-    return result;
+    return Seconds { static_cast<double>(value.seconds) } + Seconds::fromMicroseconds(value.microseconds);
 }
 
 std::optional<CPUTime> CPUTime::get()
 {
-    // Account for current threads.
-    task_thread_times_info threadInfoData;
+    // Current threads.
+    task_thread_times_info threadTimes;
     mach_msg_type_number_t threadInfoCount = TASK_THREAD_TIMES_INFO_COUNT;
-    kern_return_t result = task_info(mach_task_self(), TASK_THREAD_TIMES_INFO, reinterpret_cast<task_info_t>(&threadInfoData), &threadInfoCount);
+    auto result = task_info(mach_task_self(), TASK_THREAD_TIMES_INFO, reinterpret_cast<task_info_t>(&threadTimes), &threadInfoCount);
     if (result != KERN_SUCCESS)
         return std::nullopt;
 
-    int64_t userTime = timeValueToMicroseconds(threadInfoData.user_time);
-    int64_t systemTime = timeValueToMicroseconds(threadInfoData.system_time);
-
-    // Account for termined threads.
-    task_basic_info taskInfoData;
+    // Terminated threads.
+    task_basic_info taskInfo;
     mach_msg_type_number_t taskInfoCount = TASK_BASIC_INFO_COUNT;
-    result = task_info(mach_task_self(), TASK_BASIC_INFO, reinterpret_cast<task_info_t>(&taskInfoData), &taskInfoCount);
+    result = task_info(mach_task_self(), TASK_BASIC_INFO, reinterpret_cast<task_info_t>(&taskInfo), &taskInfoCount);
     if (result != KERN_SUCCESS)
         return std::nullopt;
 
-    userTime += timeValueToMicroseconds(taskInfoData.user_time);
-    systemTime += timeValueToMicroseconds(taskInfoData.system_time);
+    auto userTime = seconds(threadTimes.user_time) + seconds(taskInfo.user_time);
+    auto systemTime = seconds(threadTimes.system_time) + seconds(taskInfo.system_time);
 
-    return CPUTime { MonotonicTime::now(), Seconds::fromMicroseconds(userTime), Seconds::fromMicroseconds(systemTime) };
+    return CPUTime { MonotonicTime::now(), userTime, systemTime };
 }
 
 Seconds CPUTime::forCurrentThread()
@@ -77,10 +69,10 @@ Seconds CPUTime::forCurrentThread()
     thread_basic_info_data_t info;
 
     auto threadPort = MachSendRight::adopt(mach_thread_self());
-    auto ret = thread_info(threadPort.sendRight(), THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
-    RELEASE_ASSERT(ret == KERN_SUCCESS);
+    auto result = thread_info(threadPort.sendRight(), THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
+    RELEASE_ASSERT(result == KERN_SUCCESS);
 
-    return Seconds(info.user_time.seconds + info.system_time.seconds) + Seconds::fromMicroseconds(info.user_time.microseconds + info.system_time.microseconds);
+    return seconds(info.user_time) + seconds(info.system_time);
 }
 
 }

@@ -319,7 +319,7 @@ public:
 #endif
 
 #ifdef __OBJC__
-    WTF_EXPORT_PRIVATE String(NSString *);
+    String(NSString *);
 
     // This conversion converts the null string to an empty NSString rather than to nil.
     // Given Cocoa idioms, this is a more useful default. Clients that need to preserve the
@@ -573,6 +573,11 @@ inline void String::clearImplIfNotShared()
 }
 
 #ifdef __OBJC__
+
+inline String::String(NSString *string)
+    : String((__bridge CFStringRef)string)
+{
+}
 
 inline String::operator NSString *() const
 {

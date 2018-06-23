@@ -1,3 +1,35 @@
+2018-06-22  Darin Adler  <darin@apple.com>
+
+        [Cocoa] reduce unnecessary use of .mm source files in WTF, spruce up some implementation details
+        https://bugs.webkit.org/show_bug.cgi?id=186924
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.xcodeproj/project.pbxproj: Update for file and directory renames, file type changes,
+        and deletions.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::holdOff): Deleted empty placeholder; this one is not needed.
+
+        * wtf/PlatformMac.cmake: Update for file and directory renames, file type changes,
+        and deletions.
+
+        * wtf/cocoa/CPUTimeCocoa.cpp: Renamed from Source/WTF/wtf/cocoa/CPUTimeCocoa.mm.
+        Reworked math to make better use of the Seconds class.
+
+        * wtf/text/WTFString.h: Added a new inline version of the constructor that takes an NSString.
+        This is identical to the one that takes a CFStringRef, so no need to keep both.
+
+        * wtf/text/cocoa/StringImplCocoa.mm: Renamed from Source/WTF/wtf/text/mac/StringImplMac.mm.
+        Also removed an unneeded include.
+
+        * wtf/text/cocoa/StringViewCocoa.mm: Renamed from Source/WTF/wtf/text/mac/StringViewObjC.mm.
+
+        * wtf/text/cocoa/TextBreakIteratorInternalICUCocoa.cpp: Renamed from
+        Source/WTF/wtf/text/mac/TextBreakIteratorInternalICUMac.mm.
+
+        * wtf/text/mac/StringMac.mm: Removed.
+
 2018-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] improve get_type() fast path in WEBKIT_DEFINE_TYPE
