@@ -82,7 +82,7 @@ private:
     }
 
     Box<Lock> m_lock;
-    RefPtr<AutomaticThreadCondition> m_planEnqueued;
+    Ref<AutomaticThreadCondition> m_planEnqueued;
     // Technically, this could overflow but that's unlikely. Even if it did, we will just compile things of the same
     // Priority it the wrong order, which isn't wrong, just suboptimal.
     Ticket m_lastGrantedTicket { 0 };

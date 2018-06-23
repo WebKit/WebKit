@@ -33,9 +33,9 @@ namespace WTF {
 
 static const bool verbose = false;
 
-RefPtr<AutomaticThreadCondition> AutomaticThreadCondition::create()
+Ref<AutomaticThreadCondition> AutomaticThreadCondition::create()
 {
-    return adoptRef(new AutomaticThreadCondition());
+    return adoptRef(*new AutomaticThreadCondition);
 }
 
 AutomaticThreadCondition::AutomaticThreadCondition()
@@ -104,9 +104,9 @@ bool AutomaticThreadCondition::contains(const AbstractLocker&, AutomaticThread* 
     return m_threads.contains(thread);
 }
 
-AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, RefPtr<AutomaticThreadCondition> condition, Seconds timeout)
+AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, Seconds timeout)
     : m_lock(lock)
-    , m_condition(condition)
+    , m_condition(WTFMove(condition))
     , m_timeout(timeout)
 {
     if (verbose)

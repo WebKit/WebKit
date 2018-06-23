@@ -116,7 +116,7 @@ void WorkQueue::dispatch(Function<void()>&& function)
 }
 
 struct TimerContext : public ThreadSafeRefCounted<TimerContext> {
-    static RefPtr<TimerContext> create() { return adoptRef(new TimerContext); }
+    static Ref<TimerContext> create() { return adoptRef(*new TimerContext); }
 
     Lock timerLock;
     WorkQueue* queue { nullptr };
@@ -151,7 +151,7 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
     ASSERT(m_timerQueue);
     ref();
 
-    RefPtr<TimerContext> context = TimerContext::create();
+    Ref<TimerContext> context = TimerContext::create();
     context->queue = this;
     context->function = WTFMove(function);
 
@@ -177,7 +177,7 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
 
         // Since our timer callback is quick, we can execute in the timer thread itself and avoid
         // an extra thread switch over to a worker thread.
-        if (!::CreateTimerQueueTimer(&context->timer, m_timerQueue, timerCallback, context.get(), clampTo<DWORD>(milliseconds), 0, WT_EXECUTEINTIMERTHREAD)) {
+        if (!::CreateTimerQueueTimer(&context->timer, m_timerQueue, timerCallback, context.ptr(), clampTo<DWORD>(milliseconds), 0, WT_EXECUTEINTIMERTHREAD)) {
             ASSERT_WITH_MESSAGE(false, "::CreateTimerQueueTimer failed with error %lu", ::GetLastError());
             return;
         }

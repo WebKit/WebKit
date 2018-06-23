@@ -100,7 +100,7 @@ private:
 class JITWorklist::Thread : public AutomaticThread {
 public:
     Thread(const AbstractLocker& locker, JITWorklist& worklist)
-        : AutomaticThread(locker, worklist.m_lock, worklist.m_condition)
+        : AutomaticThread(locker, worklist.m_lock, worklist.m_condition.copyRef())
         , m_worklist(worklist)
     {
         m_worklist.m_numAvailableThreads++;

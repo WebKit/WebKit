@@ -200,7 +200,7 @@ private:
     ParallelHelperClient* waitForClientWithTask(const AbstractLocker&);
     
     Box<Lock> m_lock; // AutomaticThread wants this in a box for safety.
-    RefPtr<AutomaticThreadCondition> m_workAvailableCondition;
+    Ref<AutomaticThreadCondition> m_workAvailableCondition;
     Condition m_workCompleteCondition;
 
     WeakRandom m_random;

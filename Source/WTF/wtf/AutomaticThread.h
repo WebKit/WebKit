@@ -69,7 +69,7 @@ class AutomaticThread;
 
 class AutomaticThreadCondition : public ThreadSafeRefCounted<AutomaticThreadCondition> {
 public:
-    static WTF_EXPORT_PRIVATE RefPtr<AutomaticThreadCondition> create();
+    static WTF_EXPORT_PRIVATE Ref<AutomaticThreadCondition> create();
     
     WTF_EXPORT_PRIVATE ~AutomaticThreadCondition();
     
@@ -131,7 +131,7 @@ public:
 protected:
     // This logically creates the thread, but in reality the thread won't be created until someone
     // calls AutomaticThreadCondition::notifyOne() or notifyAll().
-    AutomaticThread(const AbstractLocker&, Box<Lock>, RefPtr<AutomaticThreadCondition>, Seconds timeout = 10_s);
+    AutomaticThread(const AbstractLocker&, Box<Lock>, Ref<AutomaticThreadCondition>&&, Seconds timeout = 10_s);
     
     // To understand PollResult and WorkResult, imagine that poll() and work() are being called like
     // so:
@@ -182,7 +182,7 @@ private:
     void start(const AbstractLocker&);
     
     Box<Lock> m_lock;
-    RefPtr<AutomaticThreadCondition> m_condition;
+    Ref<AutomaticThreadCondition> m_condition;
     Seconds m_timeout;
     bool m_isRunning { true };
     bool m_isWaiting { false };

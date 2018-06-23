@@ -39,8 +39,8 @@ namespace JSC { namespace DFG {
 
 class Worklist::ThreadBody : public AutomaticThread {
 public:
-    ThreadBody(const AbstractLocker& locker, Worklist& worklist, ThreadData& data, Box<Lock> lock, RefPtr<AutomaticThreadCondition> condition, int relativePriority)
-        : AutomaticThread(locker, lock, condition)
+    ThreadBody(const AbstractLocker& locker, Worklist& worklist, ThreadData& data, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, int relativePriority)
+        : AutomaticThread(locker, lock, WTFMove(condition))
         , m_worklist(worklist)
         , m_data(data)
         , m_relativePriority(relativePriority)
@@ -201,7 +201,7 @@ void Worklist::finishCreation(unsigned numberOfThreads, int relativePriority)
     LockHolder locker(*m_lock);
     for (unsigned i = numberOfThreads; i--;) {
         std::unique_ptr<ThreadData> data = std::make_unique<ThreadData>(this);
-        data->m_thread = adoptRef(new ThreadBody(locker, *this, *data, m_lock, m_planEnqueued, relativePriority));
+        data->m_thread = adoptRef(new ThreadBody(locker, *this, *data, m_lock, m_planEnqueued.copyRef(), relativePriority));
         m_threads.append(WTFMove(data));
     }
 }

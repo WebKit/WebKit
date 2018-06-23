@@ -1,3 +1,26 @@
+2018-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use Ref<> for the result type of non-failing factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=186920
+
+        Reviewed by Darin Adler.
+
+        Use Ref<> instead of RefPtr<> if the `create` function do not return nullptr.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::create):
+        (WTF::AutomaticThread::AutomaticThread):
+        * wtf/AutomaticThread.h:
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperPool::Thread::Thread):
+        * wtf/ParallelHelperPool.h:
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        * wtf/WorkerPool.h:
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::TimerContext::create):
+        (WTF::WorkQueue::dispatchAfter):
+
 2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add user-defined literal for ASCIILiteral

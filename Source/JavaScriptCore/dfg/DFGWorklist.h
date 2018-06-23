@@ -113,7 +113,7 @@ private:
     Lock m_suspensionLock;
     
     Box<Lock> m_lock;
-    RefPtr<AutomaticThreadCondition> m_planEnqueued;
+    Ref<AutomaticThreadCondition> m_planEnqueued;
     Condition m_planCompiled;
     
     Vector<std::unique_ptr<ThreadData>> m_threads;

@@ -1,3 +1,25 @@
+2018-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use Ref<> for the result type of non-failing factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=186920
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::ThreadBody::ThreadBody):
+        (JSC::DFG::Worklist::finishCreation):
+        * dfg/DFGWorklist.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Thread::Thread):
+        * heap/Heap.h:
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Thread::Thread):
+        * jit/JITWorklist.h:
+        * runtime/VMTraps.cpp:
+        * runtime/VMTraps.h:
+        * wasm/WasmWorklist.cpp:
+        * wasm/WasmWorklist.h:
+
 2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add user-defined literal for ASCIILiteral

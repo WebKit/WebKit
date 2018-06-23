@@ -180,7 +180,7 @@ class VMTraps::SignalSender final : public AutomaticThread {
 public:
     using Base = AutomaticThread;
     SignalSender(const AbstractLocker& locker, VM& vm)
-        : Base(locker, vm.traps().m_lock, vm.traps().m_trapSet)
+        : Base(locker, vm.traps().m_lock, vm.traps().m_trapSet.copyRef())
         , m_vm(vm)
     {
         static std::once_flag once;

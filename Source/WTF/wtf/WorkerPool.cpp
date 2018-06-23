@@ -34,8 +34,8 @@ class WorkerPool::Worker final : public AutomaticThread {
 public:
     friend class WorkerPool;
 
-    Worker(const AbstractLocker& locker, WorkerPool& pool, Box<Lock> lock, RefPtr<AutomaticThreadCondition> condition, Seconds timeout)
-        : AutomaticThread(locker, lock, condition, timeout)
+    Worker(const AbstractLocker& locker, WorkerPool& pool, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, Seconds timeout)
+        : AutomaticThread(locker, lock, WTFMove(condition), timeout)
         , m_pool(pool)
     {
     }
@@ -91,7 +91,7 @@ WorkerPool::WorkerPool(ASCIILiteral name, unsigned numberOfWorkers, Seconds time
 {
     LockHolder locker(*m_lock);
     for (unsigned i = 0; i < numberOfWorkers; ++i)
-        m_workers.append(adoptRef(*new Worker(locker, *this, m_lock, m_condition, timeout)));
+        m_workers.append(adoptRef(*new Worker(locker, *this, m_lock, m_condition.copyRef(), timeout)));
 }
 
 WorkerPool::~WorkerPool()

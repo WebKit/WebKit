@@ -701,7 +701,7 @@ private:
     uint64_t m_mutatorExecutionVersion { 0 };
     uint64_t m_phaseVersion { 0 };
     Box<Lock> m_threadLock;
-    RefPtr<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
+    Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
 
 #if PLATFORM(IOS)

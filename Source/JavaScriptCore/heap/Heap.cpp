@@ -234,7 +234,7 @@ private:
 class Heap::Thread : public AutomaticThread {
 public:
     Thread(const AbstractLocker& locker, Heap& heap)
-        : AutomaticThread(locker, heap.m_threadLock, heap.m_threadCondition)
+        : AutomaticThread(locker, heap.m_threadLock, heap.m_threadCondition.copyRef())
         , m_heap(heap)
     {
     }

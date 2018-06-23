@@ -58,7 +58,7 @@ class Worklist::Thread final : public AutomaticThread {
 public:
     using Base = AutomaticThread;
     Thread(const AbstractLocker& locker, Worklist& work)
-        : Base(locker, work.m_lock, work.m_planEnqueued)
+        : Base(locker, work.m_lock, work.m_planEnqueued.copyRef())
         , worklist(work)
     {
 

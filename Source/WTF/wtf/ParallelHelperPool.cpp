@@ -171,7 +171,7 @@ void ParallelHelperPool::doSomeHelping()
 class ParallelHelperPool::Thread : public AutomaticThread {
 public:
     Thread(const AbstractLocker& locker, ParallelHelperPool& pool)
-        : AutomaticThread(locker, pool.m_lock, pool.m_workAvailableCondition)
+        : AutomaticThread(locker, pool.m_lock, pool.m_workAvailableCondition.copyRef())
         , m_pool(pool)
     {
     }
