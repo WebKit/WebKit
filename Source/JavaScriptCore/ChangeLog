@@ -1,3 +1,59 @@
+2018-06-23  Mark Lam  <mark.lam@apple.com>
+
+        Add more debugging features to $vm.
+        https://bugs.webkit.org/show_bug.cgi?id=186947
+
+        Reviewed by Keith Miller.
+
+        Adding the following features:
+
+            // We now have println in addition to print.
+            // println automatically adds a '\n' at the end.
+            $vm.println("Hello");
+
+            // We can now capture some info about a stack frame.
+            var currentFrame = $vm.callFrame(); // Same as $vm.callFrame(0);
+            var callerCallerFrame = $vm.callFrame(2);
+
+            // We can inspect the following values associated with the frame:
+            if (currentFrame.valid) {
+                $vm.println("name is ", currentFrame.name));
+
+                // Note: For a WASM frame, all of these will be undefined.
+                $vm.println("callee is ", $vm.value(currentFrame.callee));
+                $vm.println("codeBlock is ", currentFrame.codeBlock);
+                $vm.println("unlinkedCodeBlock is ", currentFrame.unlinkedCodeBlock);
+                $vm.println("executable is ", currentFrame.executable);
+            }
+
+            // Note that callee is a JSObject.  I printed its $vm.value() because I wanted
+            // to dataLog its JSValue instead of its toString() result.
+
+            // Note that $vm.println() (and $vm.print()) can now print internal JSCells
+            // (and Symbols) as JSValue dumps. It won't just fail on trying to do a
+            // toString on a non-object.
+
+            // Does what it says about enabling/disabling debugger mode.
+            $vm.enableDebuggerModeWhenIdle();
+            $vm.disableDebuggerModeWhenIdle();
+
+        * tools/JSDollarVM.cpp:
+        (WTF::JSDollarVMCallFrame::JSDollarVMCallFrame):
+        (WTF::JSDollarVMCallFrame::createStructure):
+        (WTF::JSDollarVMCallFrame::create):
+        (WTF::JSDollarVMCallFrame::finishCreation):
+        (WTF::JSDollarVMCallFrame::addProperty):
+        (JSC::functionCallFrame):
+        (JSC::functionCodeBlockForFrame):
+        (JSC::codeBlockFromArg):
+        (JSC::doPrintln):
+        (JSC::functionPrint):
+        (JSC::functionPrintln):
+        (JSC::changeDebuggerModeWhenIdle):
+        (JSC::functionEnableDebuggerModeWhenIdle):
+        (JSC::functionDisableDebuggerModeWhenIdle):
+        (JSC::JSDollarVM::finishCreation):
+
 2018-06-22  Keith Miller  <keith_miller@apple.com>
 
         We need to have a getDirectConcurrently for use in the compilers
