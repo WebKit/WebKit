@@ -296,8 +296,6 @@ static unsigned modifiersForKeyCode(unsigned keyCode)
 
 void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key)
 {
-    ASSERT(virtualKey.has_value() || charKey.has_value());
-
     unsigned keyCode;
     WTF::switchOn(key,
         [&] (VirtualKey virtualKey) {
