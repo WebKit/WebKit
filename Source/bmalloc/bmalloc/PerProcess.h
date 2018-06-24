@@ -123,9 +123,9 @@ private:
 };
 
 template<typename T>
-std::atomic<T*> PerProcess<T>::s_object;
+std::atomic<T*> PerProcess<T>::s_object { nullptr };
 
 template<typename T>
-PerProcessData* PerProcess<T>::s_data;
+PerProcessData* PerProcess<T>::s_data { nullptr };
 
 } // namespace bmalloc

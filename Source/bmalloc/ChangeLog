@@ -1,3 +1,29 @@
+2018-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [bmalloc][Linux] Remove static initializers for PerProcess<>::s_object
+        https://bugs.webkit.org/show_bug.cgi?id=186966
+
+        Reviewed by Anders Carlsson.
+
+        chrome/tools/linux/dump-static-initializers.py can dump static initializers
+        in the binary and we found that PerProcess<>::s_object initialization is done
+        by static initializers in GCC + Linux environments. The example is the following.
+
+        Scavenger.cpp (initializer offset 0x38c210 size 0x3e)
+            _GLOBAL__sub_I_Scavenger.cpp+0x1e
+            _GLOBAL__sub_I_Scavenger.cpp+0x2d
+            _GLOBAL__sub_I_Scavenger.cpp+0x3c
+            _GLOBAL__sub_I_Scavenger.cpp+0xf
+            guard variable for bmalloc::PerProcess<bmalloc::AllIsoHeaps>::s_object@@Base-0x3f0d8
+            guard variable for bmalloc::PerProcess<bmalloc::Environment>::s_object@@Base-0x3f0e8
+            guard variable for bmalloc::PerProcess<bmalloc::PerHeapKind<bmalloc::Heap> >::s_object@@Base-0x3c600
+            guard variable for bmalloc::PerProcess<bmalloc::Scavenger>::s_object@@Base-0x38ce8
+
+        We can remove this by initializing `nullptr`, which leads to constexpr initialization.
+        After this change, Linux JSCOnly libJavaScriptCore.so has no static initializers.
+
+        * bmalloc/PerProcess.h:
+
 2018-06-09  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up and modernize some build setting definitions
