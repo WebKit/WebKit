@@ -59,8 +59,8 @@ private:
         bool emptyCellsOnly { true };
     };
 
-    Vector<Layout, 4> m_layoutStruct;
-    Vector<RenderTableCell*, 4> m_spanCells;
+    Vector<Layout> m_layoutStruct;
+    Vector<RenderTableCell*> m_spanCells;
     bool m_hasPercent : 1;
     mutable bool m_effectiveLogicalWidthDirty : 1;
     LayoutUnit m_scaledWidthFromPercentColumns;

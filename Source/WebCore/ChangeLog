@@ -1,3 +1,17 @@
+2018-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        AutoTableLayout wastes 52KB of Vector capacity on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=186710
+
+        Reviewed by Zalan Bujtas.
+        
+        Call resizeToFit() to only allocate enough capacity for the number of columns.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::fullRecalc):
+        (WebCore::AutoTableLayout::insertSpanCell): Whitespace fix.
+        * rendering/AutoTableLayout.h:
+
 2018-06-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Adjust static position with containing block's content box top/left
