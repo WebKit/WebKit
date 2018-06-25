@@ -1,3 +1,13 @@
+2018-06-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow access to APTDevice in iOS WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=187021
+        <rdar://problem/41339769>
+
+        Reviewed by Youenn Fablet.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2018-06-25  Keith Rollin  <krollin@apple.com>
         Unreviewed, rolling out r233087.
 

@@ -324,6 +324,7 @@
 (deny iokit-get-properties (with partial-symbolication))
 (allow iokit-get-properties
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
+    (iokit-property "APTDevice")
     (iokit-property-regex #"^AppleJPEG(NumCores|Supports(AppleInterchangeFormats|MissingEOI|RSTLogging))")
     (iokit-property "BaseAddressAlignmentRequirement")
     (iokit-property-regex #"^DisplayPipe(PlaneBaseAlignment|StrideRequirements)")
