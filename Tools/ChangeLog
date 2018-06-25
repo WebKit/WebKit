@@ -1,3 +1,13 @@
+2018-06-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add support for try Buildbot try schedulers
+        https://bugs.webkit.org/show_bug.cgi?id=186948
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/config.json: Use Try_Userpass scheduler.
+        * BuildSlaveSupport/ews-build/loadConfig.py: Updated to use try scheduler.
+
 2018-06-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed build fix for r233088.
