@@ -7303,10 +7303,10 @@ void WebPageProxy::setDefaultAppearance(bool defaultAppearance)
 {
     if (!isValid())
         return;
-
-    // Don't return early, even if m_defaultAppearance == defaultAppearance.
-    // The system appearance might have changed under us, like for accessibility.
-
+    
+    if (defaultAppearance == m_defaultAppearance)
+        return;
+    
     m_defaultAppearance = defaultAppearance;
     m_process->send(Messages::WebPage::SetDefaultAppearance(defaultAppearance), m_pageID);
 }

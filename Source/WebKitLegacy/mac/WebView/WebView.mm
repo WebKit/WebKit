@@ -5288,19 +5288,23 @@ static Vector<String> toStringVector(NSArray* patterns)
 - (void)_updateDefaultAppearance
 {
     _private->page->setDefaultAppearance([self _defaultAppearance]);
+    RenderTheme::singleton().platformColorsDidChange();
+    _private->page->setNeedsRecalcStyleInAllFrames();
 }
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
-    if (_private && _private->page)
-        _private->page->setUseSystemAppearance(useSystemAppearance);
+    if (auto page = _private->page) {
+        page->setUseSystemAppearance(useSystemAppearance);
+        [self _updateDefaultAppearance];
+    }
 }
 
 - (BOOL)_useSystemAppearance
 {
     if (!_private->page)
         return NO;
-
+    
     return _private->page->useSystemAppearance();
 }
 

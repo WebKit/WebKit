@@ -338,12 +338,12 @@ public:
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
     void setEnclosedInScrollableAncestorView(bool f) { m_enclosedInScrollableAncestorView = f; }
 #endif
-
+    
     bool useSystemAppearance() const { return m_useSystemAppearance; }
-    WEBCORE_EXPORT void setUseSystemAppearance(bool);
+    void setUseSystemAppearance(bool a) { m_useSystemAppearance = a; }
     
     WEBCORE_EXPORT bool defaultAppearance() const;
-    WEBCORE_EXPORT void setDefaultAppearance(bool);
+    void setDefaultAppearance(bool a) { m_defaultAppearance = a; }
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
