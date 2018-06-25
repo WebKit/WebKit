@@ -1,3 +1,16 @@
+2018-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebDriver tests after r233077.
+
+        WebDriver process is crashing because GVariant doesn't allow to pass a nullptr array when using @ modifier.
+
+        * SessionHost.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::buildSessionCapabilities const): Receive a GVariantBuilder and return true if there are
+        session capabilities.
+        (WebDriver::SessionHost::startAutomationSession): Remove the @ modifier and use a GVariantBuilder instead, or
+        nullptr if there aren't session capabilities.
+
 2018-06-21  Brian Burg  <bburg@apple.com>
 
         Web Automation: key actions should support multiple pressed virtual keys
