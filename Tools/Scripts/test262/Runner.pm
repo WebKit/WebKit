@@ -1166,7 +1166,8 @@ sub printHTMLResults {
 
     print $htmlfh qq{</ul><h2>Failures</h2><ul>};
 
-    while (my ($path, $scenarios) = each %failed) {
+    foreach my $path (sort keys %failed) {
+        my $scenarios = $failed{$path};
         print $htmlfh qq{<li class="list-item">
             <label for="$path" class="expander-control">$path</label>
             <input type="checkbox" id="$path" class="expander">

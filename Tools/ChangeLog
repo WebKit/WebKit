@@ -1,3 +1,14 @@
+2018-06-25  Leo Balter  <leonardo.balter@gmail.com>
+
+        [test262-runner] Sort the list of failing files in the HTML report
+        https://bugs.webkit.org/show_bug.cgi?id=186998
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (printHTMLResults): The current list of failing files it not ordered and it's hard to read.
+        This small patch will sort the list.
+
 2018-06-25  Robin Morisset  <rmorisset@apple.com>
 
         [WSL] Start writing the Sphinx document
