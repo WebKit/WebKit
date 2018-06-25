@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "JSExportMacros.h"
 #include <JavaScriptCore/JavaScript.h>
 
 #if JSC_OBJC_API_ENABLED
@@ -43,6 +44,36 @@
 */
 
 - (void)shrinkFootprintWhenIdle NS_AVAILABLE(10_14, 12_0);
+
+#if ENABLE(DFG_JIT)
+
+/*!
+@method
+@abstract Set the number of threads to be used by the DFG JIT compiler.
+@discussion If called after the VM has been initialized, it will terminate
+ threads until it meets the new limit or create new threads accordingly if the
+ new limit is higher than the previous limit. If called before initialization,
+ the Options value for the number of DFG threads will be updated to ensure the
+ DFG compiler already starts with the up-to-date limit.
+@param numberOfThreads The number of threads the DFG compiler should use going forward
+@result The previous number of threads being used by the DFG compiler
+*/
++ (NSUInteger)setNumberOfDFGCompilerThreads:(NSUInteger)numberOfThreads NS_AVAILABLE(10_14, 12_0);
+
+/*!
+@method
+@abstract Set the number of threads to be used by the FTL JIT compiler.
+@discussion If called after the VM has been initialized, it will terminate
+ threads until it meets the new limit or create new threads accordingly if the
+ new limit is higher than the previous limit. If called before initialization,
+ the Options value for the number of FTL threads will be updated to ensure the
+ FTL compiler already starts with the up-to-date limit.
+@param numberOfThreads The number of threads the FTL compiler should use going forward
+@result The previous number of threads being used by the FTL compiler
+*/
++ (NSUInteger)setNumberOfFTLCompilerThreads:(NSUInteger)numberOfThreads NS_AVAILABLE(10_14, 12_0);
+
+#endif // ENABLE(DFG_JIT)
 
 @end
 

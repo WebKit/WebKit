@@ -1,3 +1,34 @@
+2018-06-25  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add API for configuring the number of threads used by DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=186859
+        <rdar://problem/41093519>
+
+        Reviewed by Filip Pizlo.
+
+        Add new private APIs for limiting the number of threads to be used by
+        the DFG and FTL compilers. It was already possible to configure the
+        limit through JSC Options, but now it can be changed at runtime, even
+        in the case when the VM is already running.
+
+        Add a test for both cases: when trying to configure the limit before
+        and after the Worklist has been created, but in order to simulate the
+        first scenario, we must guarantee that the test runs at the very
+        beginning, so I also added a check for that.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVirtualMachine setNumberOfDFGCompilerThreads:]):
+        (+[JSVirtualMachine setNumberOfFTLCompilerThreads:]):
+        * API/JSVirtualMachinePrivate.h:
+        * API/tests/testapi.mm:
+        (runJITThreadLimitTests):
+        (testObjectiveCAPIMain):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::createNewThread):
+        (JSC::DFG::Worklist::setNumberOfThreads):
+        * dfg/DFGWorklist.h:
+
 2018-06-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove unnecessary PLATFORM guards

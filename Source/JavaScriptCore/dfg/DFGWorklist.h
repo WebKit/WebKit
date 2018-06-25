@@ -79,10 +79,12 @@ public:
     void removeNonCompilingPlansForVM(VM&);
     
     void dump(PrintStream&) const;
+    unsigned setNumberOfThreads(unsigned, int);
     
 private:
     Worklist(CString worklistName);
     void finishCreation(unsigned numberOfThreads, int);
+    void createNewThread(const AbstractLocker&, int);
     
     class ThreadBody;
     friend class ThreadBody;
@@ -121,12 +123,12 @@ private:
 };
 
 // For DFGMode compilations.
-Worklist& ensureGlobalDFGWorklist();
-Worklist* existingGlobalDFGWorklistOrNull();
+JS_EXPORT_PRIVATE Worklist& ensureGlobalDFGWorklist();
+JS_EXPORT_PRIVATE Worklist* existingGlobalDFGWorklistOrNull();
 
 // For FTLMode and FTLForOSREntryMode compilations.
-Worklist& ensureGlobalFTLWorklist();
-Worklist* existingGlobalFTLWorklistOrNull();
+JS_EXPORT_PRIVATE Worklist& ensureGlobalFTLWorklist();
+JS_EXPORT_PRIVATE Worklist* existingGlobalFTLWorklistOrNull();
 
 Worklist& ensureGlobalWorklistFor(CompilationMode);
 

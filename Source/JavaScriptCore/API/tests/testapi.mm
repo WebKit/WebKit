@@ -23,9 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "JSExportMacros.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 
+#undef NS_AVAILABLE
+#define NS_AVAILABLE(_mac, _ios)
+
 #import "CurrentThisInsideBlockGetterTest.h"
+#import "DFGWorklist.h"
 #import "DateTests.h"
 #import "JSExportTests.h"
 #import "JSVirtualMachinePrivate.h"
@@ -514,8 +519,41 @@ static void* multiVMThreadMain(void* okPtr)
     return nullptr;
 }
 
+static void runJITThreadLimitTests()
+{
+    auto testDFG = [] {
+        unsigned defaultNumberOfThreads = JSC::Options::numberOfDFGCompilerThreads();
+        unsigned targetNumberOfThreads = 1;
+        unsigned initialNumberOfThreads = [JSVirtualMachine setNumberOfDFGCompilerThreads:1];
+        checkResult(@"Initial number of DFG threads should be the value provided through Options", initialNumberOfThreads == defaultNumberOfThreads);
+        unsigned updatedNumberOfThreads = [JSVirtualMachine setNumberOfDFGCompilerThreads:initialNumberOfThreads];
+        checkResult(@"Number of DFG threads should have been updated", updatedNumberOfThreads == targetNumberOfThreads);
+    };
+
+    auto testFTL = [] {
+        unsigned defaultNumberOfThreads = JSC::Options::numberOfFTLCompilerThreads();
+        unsigned targetNumberOfThreads = 3;
+        unsigned initialNumberOfThreads = [JSVirtualMachine setNumberOfFTLCompilerThreads:1];
+        checkResult(@"Initial number of FTL threads should be the value provided through Options", initialNumberOfThreads == defaultNumberOfThreads);
+        unsigned updatedNumberOfThreads = [JSVirtualMachine setNumberOfFTLCompilerThreads:initialNumberOfThreads];
+        checkResult(@"Number of FTL threads should have been updated", updatedNumberOfThreads == targetNumberOfThreads);
+    };
+
+    checkResult(@"runJITThreadLimitTests() must run at the very beginning to test the case where the global JIT worklist was not initialized yet", !JSC::DFG::existingGlobalDFGWorklistOrNull() && !JSC::DFG::existingGlobalFTLWorklistOrNull());
+
+    testDFG();
+    JSC::DFG::ensureGlobalDFGWorklist();
+    testDFG();
+
+    testFTL();
+    JSC::DFG::ensureGlobalFTLWorklist();
+    testFTL();
+}
+
 static void testObjectiveCAPIMain()
 {
+    runJITThreadLimitTests();
+
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];

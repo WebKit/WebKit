@@ -200,10 +200,15 @@ void Worklist::finishCreation(unsigned numberOfThreads, int relativePriority)
     RELEASE_ASSERT(numberOfThreads);
     LockHolder locker(*m_lock);
     for (unsigned i = numberOfThreads; i--;) {
-        std::unique_ptr<ThreadData> data = std::make_unique<ThreadData>(this);
-        data->m_thread = adoptRef(new ThreadBody(locker, *this, *data, m_lock, m_planEnqueued.copyRef(), relativePriority));
-        m_threads.append(WTFMove(data));
+        createNewThread(locker, relativePriority);
     }
+}
+
+void Worklist::createNewThread(const AbstractLocker& locker, int relativePriority)
+{
+    std::unique_ptr<ThreadData> data = std::make_unique<ThreadData>(this);
+    data->m_thread = adoptRef(new ThreadBody(locker, *this, *data, m_lock, m_planEnqueued.copyRef(), relativePriority));
+    m_threads.append(WTFMove(data));
 }
 
 Ref<Worklist> Worklist::create(CString worklistName, unsigned numberOfThreads, int relativePriority)
@@ -486,6 +491,40 @@ void Worklist::dump(const AbstractLocker&, PrintStream& out) const
         "Worklist(", RawPointer(this), ")[Queue Length = ", m_queue.size(),
         ", Map Size = ", m_plans.size(), ", Num Ready = ", m_readyPlans.size(),
         ", Num Active Threads = ", m_numberOfActiveThreads, "/", m_threads.size(), "]");
+}
+
+unsigned Worklist::setNumberOfThreads(unsigned numberOfThreads, int relativePriority)
+{
+    LockHolder locker(m_suspensionLock);
+    auto currentNumberOfThreads = m_threads.size();
+    if (numberOfThreads < currentNumberOfThreads) {
+        {
+            LockHolder locker(*m_lock);
+            for (unsigned i = currentNumberOfThreads; i-- > numberOfThreads;) {
+                if (m_threads[i]->m_thread->hasUnderlyingThread(locker)) {
+                    m_queue.append(nullptr);
+                    m_threads[i]->m_thread->notify(locker);
+                }
+            }
+        }
+        for (unsigned i = currentNumberOfThreads; i-- > numberOfThreads;) {
+            bool isStopped = false;
+            {
+                LockHolder locker(*m_lock);
+                isStopped = m_threads[i]->m_thread->tryStop(locker);
+            }
+            if (!isStopped)
+                m_threads[i]->m_thread->join();
+            m_threads.remove(i);
+        }
+        m_threads.shrinkToFit();
+        ASSERT(m_numberOfActiveThreads <= numberOfThreads);
+    } else if (numberOfThreads > currentNumberOfThreads) {
+        LockHolder locker(*m_lock);
+        for (unsigned i = currentNumberOfThreads; i < numberOfThreads; i++)
+            createNewThread(locker, relativePriority);
+    }
+    return currentNumberOfThreads;
 }
 
 static Worklist* theGlobalDFGWorklist;

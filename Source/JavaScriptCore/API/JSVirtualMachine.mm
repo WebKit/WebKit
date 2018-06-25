@@ -30,6 +30,7 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
+#import "DFGWorklist.h"
 #import "JSManagedValueInternal.h"
 #import "JSVirtualMachine.h"
 #import "JSVirtualMachineInternal.h"
@@ -274,6 +275,32 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
     JSC::JSLockHolder locker(vm);
     vm->shrinkFootprintWhenIdle();
 }
+
+#if ENABLE(DFG_JIT)
+
++ (NSUInteger)setNumberOfDFGCompilerThreads:(NSUInteger)numberOfThreads
+{
+    JSC::DFG::Worklist* worklist = JSC::DFG::existingGlobalDFGWorklistOrNull();
+    if (worklist)
+        return worklist->setNumberOfThreads(numberOfThreads, JSC::Options::priorityDeltaOfDFGCompilerThreads());
+
+    auto currentNumberOfThreads = JSC::Options::numberOfDFGCompilerThreads();
+    JSC::Options::numberOfDFGCompilerThreads() = numberOfThreads;
+    return currentNumberOfThreads;
+}
+
++ (NSUInteger)setNumberOfFTLCompilerThreads:(NSUInteger)numberOfThreads
+{
+    JSC::DFG::Worklist* worklist = JSC::DFG::existingGlobalFTLWorklistOrNull();
+    if (worklist)
+        return worklist->setNumberOfThreads(numberOfThreads, JSC::Options::priorityDeltaOfFTLCompilerThreads());
+
+    auto currentNumberOfThreads = JSC::Options::numberOfFTLCompilerThreads();
+    JSC::Options::numberOfFTLCompilerThreads() = numberOfThreads;
+    return currentNumberOfThreads;
+}
+
+#endif // ENABLE(DFG_JIT)
 
 @end
 
