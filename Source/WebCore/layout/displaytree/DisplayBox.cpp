@@ -84,13 +84,11 @@ Box::Rect Box::paddingBox() const
 
 Box::Rect Box::contentBox() const
 {
-    auto paddingBox = this->paddingBox();
-
     Rect contentBox;
-    contentBox.setTop(paddingBox.top() + paddingTop());
-    contentBox.setLeft(paddingBox.left() + paddingLeft());
-    contentBox.setWidth(m_contentWidth);
-    contentBox.setHeight(m_contentHeight);
+    contentBox.setTop(contentBoxTop());
+    contentBox.setLeft(contentBoxLeft());
+    contentBox.setWidth(contentBoxWidth());
+    contentBox.setHeight(contentBoxHeight());
     return contentBox;
 }
 

@@ -141,6 +141,8 @@ public:
     LayoutUnit paddingBottom() const;
     LayoutUnit paddingRight() const;
 
+    LayoutUnit contentBoxTop() const { return borderTop() + paddingTop(); }
+    LayoutUnit contentBoxLeft() const { return borderLeft() + paddingLeft(); }
     LayoutUnit contentBoxHeight() const;
     LayoutUnit contentBoxWidth() const;
 

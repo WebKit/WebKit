@@ -270,13 +270,14 @@ FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPo
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
 
-    // Start from the top of the container's content box.
-    LayoutUnit top = { };
-    LayoutUnit left = { };
+    auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
+    LayoutUnit top;
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
         top = previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
-    }
+    } else
+        top = containingBlockDisplayBox.contentBoxTop();
+    auto left = containingBlockDisplayBox.contentBoxLeft();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> static -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
     return { left, top };
 }
