@@ -1,3 +1,31 @@
+2018-06-25  Keith Rollin  <krollin@apple.com>
+
+        Adjust UNEXPORTED_SYMBOL_LDFLAGS for LTO
+        https://bugs.webkit.org/show_bug.cgi?id=186949
+        <rdar://problem/41386438>
+
+        Reviewed by David Kilzer.
+
+        When building with LTO, WebKit's
+        'check-for-weak-vtables-and-externals' script reports weak external
+        symbols:
+
+        ERROR: WebKit has a weak external symbol in it (.../OpenSource/WebKitBuild/Release/WebKit.framework/Versions/A/WebKit)
+        ERROR: A weak external symbol is generated when a symbol is defined in multiple compilation units and is also marked as being exported from the library.
+        ERROR: A common cause of weak external symbols is when an inline function is listed in the linker export file.
+        ERROR: symbol __ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE
+        ERROR: symbol __ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE
+        ERROR: symbol __ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE
+        ERROR: symbol __ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+        ERROR: symbol __ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+        ERROR: symbol __ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+        Command /bin/sh failed with exit code 1
+
+        Address these by adding those symbols to UNEXPORTED_SYMBOL_LDFLAGS in
+        WebKit.xcconfig.
+
+        * Configurations/WebKit.xcconfig:
+
 2018-06-25  Chris Dumez  <cdumez@apple.com>
 
         Make sure API::IconLoadingClient::getLoadDecisionForIcon()'s completion handler gets called
