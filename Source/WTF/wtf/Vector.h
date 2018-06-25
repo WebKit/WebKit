@@ -528,7 +528,15 @@ public:
     void* endOfBuffer()
     {
         ASSERT(buffer());
+
+#if COMPILER(GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+#endif
         static_assert((offsetof(VectorBuffer, m_inlineBuffer) + sizeof(m_inlineBuffer)) % 8 == 0, "Inline buffer end needs to be on 8 byte boundary for ASan annotations to work.");
+#if COMPILER(GCC)
+#pragma GCC diagnostic pop
+#endif
 
         if (buffer() == inlineBuffer())
             return reinterpret_cast<char*>(m_inlineBuffer) + sizeof(m_inlineBuffer);

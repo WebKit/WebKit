@@ -145,7 +145,11 @@
 
 /* ASAN_ENABLED and SUPPRESS_ASAN */
 
+#ifdef __SANITIZE_ADDRESS__
+#define ASAN_ENABLED 1
+#else
 #define ASAN_ENABLED COMPILER_HAS_CLANG_FEATURE(address_sanitizer)
+#endif
 
 #if ASAN_ENABLED
 #define SUPPRESS_ASAN __attribute__((no_sanitize_address))
@@ -157,7 +161,9 @@
 
 /* ALWAYS_INLINE */
 
-#if !defined(ALWAYS_INLINE) && COMPILER(GCC_OR_CLANG) && defined(NDEBUG) && !COMPILER(MINGW)
+/* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
+ * Therefore we need to give up on the enforcement of ALWAYS_INLINE when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
+#if !defined(ALWAYS_INLINE) && COMPILER(GCC_OR_CLANG) && defined(NDEBUG) && !COMPILER(MINGW) && !(COMPILER(GCC) && ASAN_ENABLED)
 #define ALWAYS_INLINE inline __attribute__((__always_inline__))
 #endif
 

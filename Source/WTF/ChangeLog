@@ -1,3 +1,20 @@
+2018-06-25  Alicia Boya García  <aboya@igalia.com>
+
+        Fix ASAN_ENABLED in GCC
+        https://bugs.webkit.org/show_bug.cgi?id=186957
+
+        Reviewed by Michael Catanzaro.
+
+        ASAN_ENABLED used to rely on Clang-specific features for detection.
+        This patch enables ASAN_ENABLED to work on GCC too.
+
+        It also fixes compilation errors and warnings that were triggered when
+        compiling code guarded by ASAN_ENABLED in gcc.
+
+        * wtf/Compiler.h:
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::endOfBuffer):
+
 2018-06-22  Darin Adler  <darin@apple.com>
 
         [Cocoa] Convert the small bit of Objective-C++ code in WTF to ARC
