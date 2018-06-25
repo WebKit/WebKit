@@ -1,3 +1,22 @@
+2018-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPad apps on macOS] Web process crashes when attempting to play embedded YouTube video in News
+        https://bugs.webkit.org/show_bug.cgi?id=187011
+        <rdar://problem/40906808>
+
+        Reviewed by Tim Horton.
+
+        Disable remote media commands when running iOS WebKit on macOS. The iOS flavor of RemoteCommandListener
+        currently throws an exception when attempting to soft-link the MediaPlayer framework, which prevents video from
+        being played altogether. For a followup tracking touch bar integration in iOS WebKit on macOS, see:
+        <rdar://problem/39164732>.
+
+        Manually tested by playing a YouTube video in News.
+
+        * platform/RemoteCommandListener.cpp:
+        * platform/ios/RemoteCommandListenerIOS.h:
+        * platform/ios/RemoteCommandListenerIOS.mm:
+
 2018-06-25  Keith Rollin  <krollin@apple.com>
         Unreviewed, rolling out r233087.
 

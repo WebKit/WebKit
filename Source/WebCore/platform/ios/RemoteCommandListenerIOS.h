@@ -27,7 +27,7 @@
 
 #include "RemoteCommandListener.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && HAVE(MEDIA_PLAYER)
 
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -56,4 +56,4 @@ protected:
 
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && HAVE(MEDIA_PLAYER)
