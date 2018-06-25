@@ -1,3 +1,44 @@
+2018-06-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Zero-prefix (if necessary) output of RSA-based encryption and signing operations
+        https://bugs.webkit.org/show_bug.cgi?id=186967
+
+        Reviewed by Michael Catanzaro.
+
+        Output for RSA-based encryption and signing operations should match the
+        length of the RSA key. The way we retrieve the MPI data means libgcrypt
+        can ignore the high-bit zero values and leave us with a valid result
+        that's shorter in length compared to the RSA key. For instance, if the
+        output MPI fits into 2040 bits while a 2048-bit key was used we'll end
+        up with MPI data that will be fitted into a 255-byte Vector, one byte
+        short of the expected output length.
+
+        To avoid this, mpiZeroPrefixedData() is now used when retrieving output
+        of these RSA operations, and the value of the key size in bytes is
+        passed to it. This efficiently prepares the output Vector and then
+        copies the MPI data into it, respecting the MPI data length as well as
+        the desired length of the output.
+
+        No new tests -- relevant tests are now stable (i.e. not sporadically
+        failing anymore), associated expectations are removed.
+
+        * crypto/gcrypt/CryptoAlgorithmECDHGCrypt.cpp:
+        (WebCore::gcryptDerive): Also use mpiZeroPrefixedData().
+        * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::gcryptEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        * crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::gcryptSign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        * crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp:
+        (WebCore::gcryptEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        * crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp:
+        (WebCore::gcryptSign):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign):
+        * crypto/gcrypt/GCryptUtilities.h:
+        (WebCore::mpiZeroPrefixedData):
+
 2018-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the DUMP_NODE_STATISTICS code so that it compiles

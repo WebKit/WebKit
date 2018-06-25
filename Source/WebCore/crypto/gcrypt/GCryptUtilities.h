@@ -180,6 +180,26 @@ static inline std::optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
     return output;
 }
 
+static inline std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t targetLength)
+{
+    // Retrieve the MPI length. Bail if the retrieved length is longer than target length.
+    auto length = mpiLength(paramMPI);
+    if (!length || *length > targetLength)
+        return std::nullopt;
+
+    // Fill out the output buffer with zeros. Properly determine the zero prefix length,
+    // and copy the MPI data into memory area following the prefix (if any).
+    Vector<uint8_t> output(targetLength, 0);
+    size_t prefixLength = targetLength - *length;
+    gcry_error_t error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data() + prefixLength, targetLength, nullptr, paramMPI);
+    if (error != GPG_ERR_NO_ERROR) {
+        PAL::GCrypt::logError(error);
+        return std::nullopt;
+    }
+
+    return output;
+}
+
 static inline std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
 {
     // Retrieve the MPI value stored in the s-expression: (name mpi-data)
@@ -188,6 +208,16 @@ static inline std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
         return std::nullopt;
 
     return mpiData(paramMPI);
+}
+
+static inline std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t paramSexp, size_t targetLength)
+{
+    // Retrieve the MPI value stored in the s-expression: (name mpi-data)
+    PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
+    if (!paramMPI)
+        return std::nullopt;
+
+    return mpiZeroPrefixedData(paramMPI, targetLength);
 }
 
 static inline std::optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)

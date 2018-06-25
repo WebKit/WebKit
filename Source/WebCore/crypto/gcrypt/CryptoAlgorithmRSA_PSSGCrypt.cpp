@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, size_t keyLength, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t saltLength)
+static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t saltLength, size_t keySizeInBytes)
 {
     // Perform digest operation with the specified algorithm on the given data.
     Vector<uint8_t> dataHash;
@@ -84,12 +84,7 @@ static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, size_t key
     if (!sSexp)
         return std::nullopt;
 
-    // Validate the MPI data size -- it should match the key length in bytes.
-    auto signature = mpiData(sSexp);
-    if (!signature || signature->size() != keyLength / 8)
-        return std::nullopt;
-
-    return signature;
+    return mpiZeroPrefixedData(sSexp, keySizeInBytes);
 }
 
 static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, CryptoAlgorithmIdentifier hashAlgorithmIdentifier, size_t saltLength)
@@ -142,7 +137,8 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& data)
 {
-    auto output = gcryptSign(key.platformKey(), key.keySizeInBits(), data, key.hashAlgorithmIdentifier(), parameters.saltLength);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!(key.keySizeInBits() % 8));
+    auto output = gcryptSign(key.platformKey(), data, key.hashAlgorithmIdentifier(), parameters.saltLength, key.keySizeInBits() / 8);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

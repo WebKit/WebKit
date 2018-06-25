@@ -1847,10 +1847,6 @@ webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html [ Pass Failure ]
-webkit.org/b/176759 crypto/workers/subtle/rsa-oaep-import-key-encrypt.html [ Pass Failure ]
-webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-encrypt-label.html [ Pass Failure ]
-
 webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
@@ -1866,8 +1862,6 @@ webkit.org/b/179444 http/tests/security/contentSecurityPolicy/upgrade-insecure-r
 
 webkit.org/b/179755 media/video-empty-source.html [ Pass Crash ]
 
-webkit.org/b/180095 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html [ Pass Failure ]
-
 webkit.org/b/180369 http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Pass Crash ]
 
 webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure Crash ]
@@ -1875,8 +1869,6 @@ webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure Crash ]
 webkit.org/b/181030 wasm/iframe-postmessage.html [ Pass Failure ]
 webkit.org/b/179948 [ Release ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
 webkit.org/b/181031 fast/frames/crash-when-iframe-is-remove-in-eventhandler.html [ Pass Crash ]
-
-webkit.org/b/181139 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html [ Pass Failure ]
 
 webkit.org/b/181528 http/tests/cache/memory-cache-pruning.html [ Pass Crash ]
 
@@ -1954,7 +1946,6 @@ webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 fast/selectors/hover-invalidation-descendant-dynamic.html [ Failure Pass ]
 webkit.org/b/186638 fast/selectors/hover-quirks.html [ Failure Pass ]
@@ -1962,7 +1953,6 @@ webkit.org/b/186638 fast/selectors/hover-strict.html [ Failure Pass ]
 webkit.org/b/186638 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
 webkit.org/b/186638 compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/relations/html5-tree/color-attributes-1.html [ Timeout Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.https.worker.html [ Failure Pass ]
 
 webkit.org/b/186664 media/video-playsinline.html [ Failure Pass ]
 

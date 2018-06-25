@@ -97,17 +97,7 @@ static std::optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry
         gcry_mpi_point_snatch_get(xMPI, nullptr, nullptr, point.release());
     }
 
-    auto data = mpiData(xMPI);
-    if (!data)
-        return std::nullopt;
-
-    if (data->size() < keySizeInBytes) {
-        Vector<uint8_t> paddedData(keySizeInBytes - data->size(), 0);
-        paddedData.appendVector(*data);
-        *data = WTFMove(paddedData);
-    }
-
-    return data;
+    return mpiZeroPrefixedData(xMPI, keySizeInBytes);
 }
 
 std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)

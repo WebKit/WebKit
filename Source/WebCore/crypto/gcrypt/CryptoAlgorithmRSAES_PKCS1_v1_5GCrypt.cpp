@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& plainText)
+static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& plainText, size_t keySizeInBytes)
 {
     // Embed the plain-text data in a `data` s-expression using PKCS#1 padding.
     PAL::GCrypt::Handle<gcry_sexp_t> dataSexp;
@@ -60,7 +60,7 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const V
     if (!aSexp)
         return std::nullopt;
 
-    return mpiData(aSexp);
+    return mpiZeroPrefixedData(aSexp, keySizeInBytes);
 }
 
 static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& cipherText)
@@ -95,7 +95,8 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const V
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA& key, const Vector<uint8_t>& plainText)
 {
-    auto output = gcryptEncrypt(key.platformKey(), plainText);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!(key.keySizeInBits() % 8));
+    auto output = gcryptEncrypt(key.platformKey(), plainText, key.keySizeInBits() / 8);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

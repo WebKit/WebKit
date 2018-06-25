@@ -1026,8 +1026,6 @@ webkit.org/b/185594 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
-
-webkit.org/b/176358 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.https.worker.html [ Failure Pass ]
 webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
 
 # Apparently fails on Mac, but I don't know for what reasons. It passes on GTK/WPE.
@@ -1185,8 +1183,6 @@ webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 webkit.org/b/182317 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
 
 webkit.org/b/182240 svg/animations/svgenum-animation-7.html [ Pass Crash ]
-
-webkit.org/b/181139 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html [ Pass Failure ]
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]

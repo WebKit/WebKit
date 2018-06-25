@@ -1,3 +1,13 @@
+2018-06-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Zero-prefix (if necessary) RSA-OAEP encryption, RSA-PSS signing output
+        https://bugs.webkit.org/show_bug.cgi?id=186967
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations: Remove flaky failures for RSA-OAEP and RSA-PSS tests.
+        * platform/wpe/TestExpectations: Ditto.
+
 2018-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the composition underline to be transformed by -apple-color-filter
