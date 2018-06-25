@@ -916,6 +916,39 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "AddMockMediaDevice")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> persistentIDKey(AdoptWK, WKStringCreateWithUTF8CString("PersistentID"));
+        WKRetainPtr<WKStringRef> labelKey(AdoptWK, WKStringCreateWithUTF8CString("Label"));
+        WKRetainPtr<WKStringRef> typeKey(AdoptWK, WKStringCreateWithUTF8CString("Type"));
+
+        auto persistentID = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, persistentIDKey.get()));
+        auto label = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, labelKey.get()));
+        auto type = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, typeKey.get()));
+
+        TestController::singleton().addMockMediaDevice(persistentID, label, type);
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearMockMediaDevices")) {
+        TestController::singleton().clearMockMediaDevices();
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "RemoveMockMediaDevice")) {
+        WKStringRef persistentId = static_cast<WKStringRef>(messageBody);
+
+        TestController::singleton().removeMockMediaDevice(persistentId);
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ResetMockMediaDevices")) {
+        TestController::singleton().resetMockMediaDevices();
+        return nullptr;
+    }
+
 #if PLATFORM(MAC)
     if (WKStringIsEqualToUTF8CString(messageName, "ConnectMockGamepad")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());

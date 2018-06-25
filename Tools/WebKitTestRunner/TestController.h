@@ -213,6 +213,11 @@ public:
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }
 
+    void addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(WKStringRef persistentID);
+    void resetMockMediaDevices();
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;

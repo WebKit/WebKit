@@ -446,6 +446,13 @@ public:
     void dumpAllHTTPRedirectedResponseHeaders() { m_dumpAllHTTPRedirectedResponseHeaders = true; }
     bool shouldDumpAllHTTPRedirectedResponseHeaders() const { return m_dumpAllHTTPRedirectedResponseHeaders; }
 
+    void addMockCameraDevice(JSStringRef persistentId, JSStringRef label);
+    void addMockMicrophoneDevice(JSStringRef persistentId, JSStringRef label);
+    void addMockScreenDevice(JSStringRef persistentId, JSStringRef label);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(JSStringRef persistentId);
+    void resetMockMediaDevices();
+
 private:
     TestRunner();
 
@@ -454,6 +461,8 @@ private:
 
     void setDumpPixels(bool);
     void setWaitUntilDone(bool);
+
+    void addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type);
 
     WKRetainPtr<WKURLRef> m_testURL; // Set by InjectedBundlePage once provisional load starts.
 

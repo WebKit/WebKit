@@ -37,14 +37,37 @@
 
 namespace WebCore {
 
-void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool enabled)
+MockRealtimeMediaSourceCenter& MockRealtimeMediaSourceCenter::singleton()
 {
     static NeverDestroyed<MockRealtimeMediaSourceCenter> center;
+    return center;
+}
+
+void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool enabled)
+{
     static bool active = false;
     if (active != enabled) {
         active = enabled;
-        RealtimeMediaSourceCenter::setSharedStreamCenterOverride(enabled ? &center.get() : nullptr);
+        RealtimeMediaSourceCenter::setSharedStreamCenterOverride(enabled ? &singleton() : nullptr);
     }
+}
+
+void MockRealtimeMediaSourceCenter::setDevices(Vector<MockMediaDevice>&& newMockDevices)
+{
+    MockRealtimeMediaSource::setDevices(WTFMove(newMockDevices));
+    singleton().captureDevicesChanged();
+}
+
+void MockRealtimeMediaSourceCenter::addDevice(const MockMediaDevice& device)
+{
+    MockRealtimeMediaSource::addDevice(device);
+    singleton().captureDevicesChanged();
+}
+
+void MockRealtimeMediaSourceCenter::removeDevice(const String& persistentId)
+{
+    MockRealtimeMediaSource::removeDevice(persistentId);
+    singleton().captureDevicesChanged();
 }
 
 } // namespace WebCore

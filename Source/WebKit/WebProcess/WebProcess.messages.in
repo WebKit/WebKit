@@ -139,4 +139,11 @@ messages -> WebProcess LegacyReceiver {
 #if PLATFORM(COCOA)
     SetMediaMIMETypes(Vector<String> types)
 #endif
+
+#if ENABLE(MEDIA_STREAM)
+    AddMockMediaDevice(struct WebCore::MockMediaDevice device);
+    ClearMockMediaDevices();
+    RemoveMockMediaDevice(String persistentId);
+    ResetMockMediaDevices();
+#endif
 }

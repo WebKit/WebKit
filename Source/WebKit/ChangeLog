@@ -1,3 +1,36 @@
+2018-06-25  Youenn Fablet  <youenn@apple.com>
+
+        Add API to control mock media devices
+        https://bugs.webkit.org/show_bug.cgi?id=186958
+
+        Reviewed by Eric Carlson.
+
+        Add API to clear, set, remove and reset mock media devices.
+        The mock media center of UIProcess and all WebProcesses are updated.
+
+        * CMakeLists.txt:
+        * UIProcess/API/C/WKMockMediaDevice.cpp: Added.
+        (typeFromString):
+        (WKAddMockMediaDevice):
+        (WKClearMockMediaDevices):
+        (WKRemoveMockMediaDevice):
+        (WKResetMockMediaDevices):
+        * UIProcess/API/C/WKMockMediaDevice.h: Added.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::addMockMediaDevice):
+        (WebKit::WebProcessPool::clearMockMediaDevices):
+        (WebKit::WebProcessPool::removeMockMediaDevice):
+        (WebKit::WebProcessPool::resetMockMediaDevices):
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addMockMediaDevice):
+        (WebKit::WebProcess::clearMockMediaDevices):
+        (WebKit::WebProcess::removeMockMediaDevice):
+        (WebKit::WebProcess::resetMockMediaDevices):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPad apps on macOS] Click events are broken in WKWebView

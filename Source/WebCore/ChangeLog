@@ -1,3 +1,82 @@
+2018-06-25  Youenn Fablet  <youenn@apple.com>
+
+        Add API to control mock media devices
+        https://bugs.webkit.org/show_bug.cgi?id=186958
+
+        Reviewed by Eric Carlson.
+
+        Refactor code to introduce a MockDevice structure that can be used in multiple processes.
+        Update mock sources and center to use MockDevice.
+        Add API to update mock media devices.
+
+        Make MediaDevices an ActiveDOMObject so that it does not get collected when ondevicechange is set.
+
+         Test: fast/mediastream/device-change-event-2.html
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices):
+        (WebCore::MediaDevices::stop):
+        (WebCore::MediaDevices::scheduledEventTimerFired):
+        (WebCore::MediaDevices::hasPendingActivity const):
+        (WebCore::MediaDevices::activeDOMObjectName const):
+        (WebCore::MediaDevices::canSuspendForDocumentSuspension const):
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaDevices.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mock/MockMediaDevice.h: Added.
+        (WebCore::MockMicrophoneProperties::encode const):
+        (WebCore::MockMicrophoneProperties::decode):
+        (WebCore::MockCameraProperties::encode const):
+        (WebCore::MockCameraProperties::decode):
+        (WebCore::MockDisplayProperties::encode const):
+        (WebCore::MockDisplayProperties::decode):
+        (WebCore::MockMediaDevice::isMicrophone const):
+        (WebCore::MockMediaDevice::isCamera const):
+        (WebCore::MockMediaDevice::isDisplay const):
+        (WebCore::MockMediaDevice::type const):
+        (WebCore::MockMediaDevice::encode const):
+        (WebCore::MockMediaDevice::decodeMockMediaDevice):
+        (WebCore::MockMediaDevice::decode):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::defaultDevices):
+        (WebCore::devices):
+        (WebCore::deviceMap):
+        (WebCore::deviceListForDevice):
+        (WebCore::MockRealtimeMediaSource::createCaptureDevice):
+        (WebCore::MockRealtimeMediaSource::resetDevices):
+        (WebCore::MockRealtimeMediaSource::setDevices):
+        (WebCore::MockRealtimeMediaSource::addDevice):
+        (WebCore::MockRealtimeMediaSource::removeDevice):
+        (WebCore::MockRealtimeMediaSource::captureDeviceWithPersistentID):
+        (WebCore::MockRealtimeMediaSource::audioDevices):
+        (WebCore::MockRealtimeMediaSource::videoDevices):
+        (WebCore::MockRealtimeMediaSource::displayDevices):
+        (WebCore::MockRealtimeMediaSource::MockRealtimeMediaSource):
+        (WebCore::MockRealtimeMediaSource::initializeCapabilities):
+        (WebCore::MockRealtimeMediaSource::initializeSettings):
+        (WebCore::MockRealtimeMediaSource::settings const):
+        (WebCore::MockRealtimeMediaSource::supportedConstraints):
+        * platform/mock/MockRealtimeMediaSource.h:
+        (WebCore::MockRealtimeMediaSource::device const):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::singleton):
+        (WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled):
+        (WebCore::MockRealtimeMediaSourceCenter::setDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::addDevice):
+        (WebCore::MockRealtimeMediaSourceCenter::removeDevice):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+        (WebCore::MockRealtimeVideoSource::initializeCapabilities):
+        (WebCore::MockRealtimeVideoSource::drawText):
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+        * platform/mock/MockRealtimeVideoSource.h:
+        (WebCore::MockRealtimeVideoSource::mockCamera const):
+        (WebCore::MockRealtimeVideoSource::mockScreen const):
+
 2018-06-25  Simon Fraser  <simon.fraser@apple.com>
 
         AutoTableLayout wastes 52KB of Vector capacity on nytimes.com

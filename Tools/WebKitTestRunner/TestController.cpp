@@ -43,6 +43,7 @@
 #include <WebKit/WKFrameHandleRef.h>
 #include <WebKit/WKFrameInfoRef.h>
 #include <WebKit/WKIconDatabase.h>
+#include <WebKit/WKMockMediaDevice.h>
 #include <WebKit/WKNavigationResponseRef.h>
 #include <WebKit/WKNotification.h>
 #include <WebKit/WKNotificationManager.h>
@@ -2864,6 +2865,26 @@ void TestController::statisticsResetToConsistentState()
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
     WKWebsiteDataStoreStatisticsResetToConsistentState(dataStore);
+}
+
+void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type)
+{
+    WKAddMockMediaDevice(platformContext(), persistentID, label, type);
+}
+
+void TestController::clearMockMediaDevices()
+{
+    WKClearMockMediaDevices(platformContext());
+}
+
+void TestController::removeMockMediaDevice(WKStringRef persistentID)
+{
+    WKRemoveMockMediaDevice(platformContext(), persistentID);
+}
+
+void TestController::resetMockMediaDevices()
+{
+    WKResetMockMediaDevices(platformContext());
 }
 
 #if !PLATFORM(COCOA)

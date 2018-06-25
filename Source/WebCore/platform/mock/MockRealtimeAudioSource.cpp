@@ -118,7 +118,7 @@ void MockRealtimeAudioSource::startProducingData()
 #endif
 
     if (!sampleRate())
-        setSampleRate(device() == MockRealtimeMediaSource::MockDevice::Microphone1 ? 44100 : 48000);
+        setSampleRate(WTF::get<MockMicrophoneProperties>(device().properties).defaultSampleRate);
 
     m_startTime = MonotonicTime::now();
     m_timer.startRepeating(renderInterval());

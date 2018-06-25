@@ -82,6 +82,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/LogInitialization.h>
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/Process.h>
@@ -2210,6 +2211,38 @@ void WebProcessPool::unregisterSuspendedPageProxy(SuspendedPageProxy& page)
 
     if (iterator->value.isEmpty())
         m_suspendedPages.remove(iterator);
+}
+
+void WebProcessPool::addMockMediaDevice(const MockMediaDevice& device)
+{
+#if ENABLE(MEDIA_STREAM)
+    MockRealtimeMediaSourceCenter::addDevice(device);
+    sendToAllProcesses(Messages::WebProcess::AddMockMediaDevice { device });
+#endif
+}
+
+void WebProcessPool::clearMockMediaDevices()
+{
+#if ENABLE(MEDIA_STREAM)
+    MockRealtimeMediaSourceCenter::setDevices({ });
+    sendToAllProcesses(Messages::WebProcess::ClearMockMediaDevices { });
+#endif
+}
+
+void WebProcessPool::removeMockMediaDevice(const String& persistentId)
+{
+#if ENABLE(MEDIA_STREAM)
+    MockRealtimeMediaSourceCenter::removeDevice(persistentId);
+    sendToAllProcesses(Messages::WebProcess::RemoveMockMediaDevice { persistentId });
+#endif
+}
+
+void WebProcessPool::resetMockMediaDevices()
+{
+#if ENABLE(MEDIA_STREAM)
+    MockRealtimeMediaSource::resetDevices();
+    sendToAllProcesses(Messages::WebProcess::ResetMockMediaDevices { });
+#endif
 }
 
 } // namespace WebKit

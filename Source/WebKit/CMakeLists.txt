@@ -402,6 +402,7 @@ set(WebKit_SOURCES
     UIProcess/API/C/WKInspector.cpp
     UIProcess/API/C/WKKeyValueStorageManager.cpp
     UIProcess/API/C/WKMediaSessionMetadata.cpp
+    UIProcess/API/C/WKMockMediaDevice.cpp
     UIProcess/API/C/WKNavigationActionRef.cpp
     UIProcess/API/C/WKNavigationDataRef.cpp
     UIProcess/API/C/WKNavigationRef.cpp

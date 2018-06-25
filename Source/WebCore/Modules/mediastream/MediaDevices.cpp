@@ -47,8 +47,9 @@
 namespace WebCore {
 
 inline MediaDevices::MediaDevices(Document& document)
-    : ContextDestructionObserver(&document)
+    : ActiveDOMObject(&document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
+    , m_eventNames(eventNames())
 {
     m_deviceChangedToken = RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver([weakThis = makeWeakPtr(*this), this]() {
 
@@ -61,16 +62,20 @@ inline MediaDevices::MediaDevices(Document& document)
             m_scheduledEventTimer.startOneShot(Seconds(randomNumber() / 2));
     });
 
+    suspendIfNeeded();
+
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Monitor) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor), "MediaDevices::DisplayCaptureSurfaceType::Monitor is not equal to RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Window) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Window), "MediaDevices::DisplayCaptureSurfaceType::Window is not RealtimeMediaSourceSettings::DisplaySurfaceType::Window as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Application) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Application), "MediaDevices::DisplayCaptureSurfaceType::Application is not RealtimeMediaSourceSettings::DisplaySurfaceType::Application as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Browser) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Browser), "MediaDevices::DisplayCaptureSurfaceType::Browser is not RealtimeMediaSourceSettings::DisplaySurfaceType::Browser as expected");
 }
 
-MediaDevices::~MediaDevices()
+MediaDevices::~MediaDevices() = default;
+
+void MediaDevices::stop()
 {
     if (m_deviceChangedToken)
-        RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(m_deviceChangedToken.value());
+        RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(m_deviceChangedToken);
 }
 
 Ref<MediaDevices> MediaDevices::create(Document& document)
@@ -157,7 +162,23 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
 
 void MediaDevices::scheduledEventTimerFired()
 {
-    dispatchEvent(Event::create(eventNames().devicechangeEvent, false, false));
+    if (scriptExecutionContext())
+        dispatchEvent(Event::create(eventNames().devicechangeEvent, false, false));
+}
+
+bool MediaDevices::hasPendingActivity() const
+{
+    return scriptExecutionContext() && hasEventListeners(m_eventNames.devicechangeEvent);
+}
+
+const char* MediaDevices::activeDOMObjectName() const
+{
+    return "MediaDevices";
+}
+
+bool MediaDevices::canSuspendForDocumentSuspension() const
+{
+    return true;
 }
 
 } // namespace WebCore

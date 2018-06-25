@@ -69,6 +69,7 @@ class ResourceRequest;
 class UserGestureToken;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
+struct MockMediaDevice;
 struct PluginInfo;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
@@ -357,6 +358,13 @@ private:
 
 #if USE(APPKIT)
     void stopRunLoop() override;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    void addMockMediaDevice(const WebCore::MockMediaDevice&);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(const String& persistentId);
+    void resetMockMediaDevices();
 #endif
 
     void platformInitializeProcess(const ChildProcessInitializationParameters&);

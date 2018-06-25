@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    let deviceIds = [];
+    promise_test(async (test) => {
+        if (!window.testRunner)
+            return Promise.reject("test requires internal API");
+
+        test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
+
+        testRunner.setUserMediaPermission(true);
+
+        await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+
+        let devices = await navigator.mediaDevices.enumerateDevices();
+
+        assert_true(!!devices.length, "check there are some devices");
+
+        testRunner.clearMockMediaDevices();
+
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_false(!!devices.length, "check there are no more devices");
+
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = resolve;
+            setTimeout(() => {
+                console.log("event 1 taking a long time");
+                resolve();
+            }, 5000);
+            testRunner.addMockCameraDevice("id1", "my camera");
+        });
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_equals(devices[0].kind, "videoinput");
+        assert_equals(devices[0].label, "my camera");
+
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = resolve;
+            setTimeout(() => {
+                console.log("event 2 taking a long time");
+                resolve();
+            }, 5000);
+            testRunner.addMockMicrophoneDevice("id2", "my mic");
+        });
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_equals(devices[0].kind, "audioinput");
+        assert_equals(devices[0].label, "my mic");
+
+    }, "'devicechange' event fired when device list changes");
+    </script>
+</head>
+<body>
+</body>
+</html>

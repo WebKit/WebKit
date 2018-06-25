@@ -88,12 +88,13 @@ public:
     using DevicesChangedObserverToken = unsigned;
     DevicesChangedObserverToken addDevicesChangedObserver(std::function<void()>&&);
     void removeDevicesChangedObserver(DevicesChangedObserverToken);
-    void captureDevicesChanged();
 
     void setVideoCapturePageState(bool, bool);
 
 protected:
     RealtimeMediaSourceCenter();
+
+    void captureDevicesChanged();
 
     static RealtimeMediaSourceCenter& platformCenter();
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;

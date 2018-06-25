@@ -1064,6 +1064,7 @@
 		4138D3351244054800323D33 /* EventContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4138D3331244054800323D33 /* EventContext.h */; };
 		4138F8581D253F0E001CB61E /* JSDOMIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4138F8561D253EEE001CB61E /* JSDOMIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 413C2C331BC29A7B0075204C /* JSDOMConstructor.h */; };
+		413CCD4A20DE034F0065A21A /* MockMediaDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 413CCD4820DE013C0065A21A /* MockMediaDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */ = {isa = PBXBuildFile; fileRef = 413E00781DB0E4DE002341D2 /* MemoryRelease.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B82031D6DF0D90077EBE3 /* StructuredClone.h */; };
 		414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7202,6 +7203,7 @@
 		4138F8551D253EEE001CB61E /* JSDOMIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMIterator.cpp; sourceTree = "<group>"; };
 		4138F8561D253EEE001CB61E /* JSDOMIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMIterator.h; sourceTree = "<group>"; };
 		413C2C331BC29A7B0075204C /* JSDOMConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructor.h; sourceTree = "<group>"; };
+		413CCD4820DE013C0065A21A /* MockMediaDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockMediaDevice.h; sourceTree = "<group>"; };
 		413E00771DB0E4DE002341D2 /* MemoryRelease.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryRelease.cpp; sourceTree = "<group>"; };
 		413E00781DB0E4DE002341D2 /* MemoryRelease.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryRelease.h; sourceTree = "<group>"; };
 		413E007B1DB0E707002341D2 /* MemoryReleaseCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryReleaseCocoa.mm; sourceTree = "<group>"; };
@@ -18774,6 +18776,7 @@
 				077B64151B95F703003E9AD5 /* MediaPlaybackTargetMock.h */,
 				077B64101B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.cpp */,
 				077B64111B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h */,
+				413CCD4820DE013C0065A21A /* MockMediaDevice.h */,
 				07D6A4F11BED5F8800174146 /* MockRealtimeAudioSource.cpp */,
 				07D6A4F21BED5F8800174146 /* MockRealtimeAudioSource.h */,
 				07D6A4ED1BECF2D200174146 /* MockRealtimeMediaSource.cpp */,
@@ -29423,6 +29426,7 @@
 				CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */,
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
+				413CCD4A20DE034F0065A21A /* MockMediaDevice.h in Headers */,
 				CDF2B0131820540600F2B424 /* MockMediaPlayerMediaSource.h in Headers */,
 				CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */,
 				07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */,

@@ -108,31 +108,18 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const S
     : MockRealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Video, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
-    switch (device()) {
-    case MockDevice::Camera1:
-        setFrameRate(30);
-        setFacingMode(RealtimeMediaSourceSettings::User);
-        break;
-    case MockDevice::Camera2:
-        setFrameRate(15);
-        setFacingMode(RealtimeMediaSourceSettings::Environment);
-        break;
-    case MockDevice::Screen1:
-        setFrameRate(30);
-        break;
-    case MockDevice::Screen2:
-        setFrameRate(10);
-        break;
-    case MockDevice::Microphone1:
-    case MockDevice::Microphone2:
-    case MockDevice::Invalid:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
     m_dashWidths.reserveInitialCapacity(2);
     m_dashWidths.uncheckedAppend(6);
     m_dashWidths.uncheckedAppend(6);
+
+    if (mockScreen()) {
+        setFrameRate(WTF::get<MockDisplayProperties>(device().properties).defaultFrameRate);
+        return;
+    }
+
+    auto& properties = WTF::get<MockCameraProperties>(device().properties);
+    setFrameRate(properties.defaultFrameRate);
+    setFacingMode(properties.facingModeCapability);
 }
 
 MockRealtimeVideoSource::~MockRealtimeVideoSource()
@@ -191,10 +178,7 @@ void MockRealtimeVideoSource::updateSettings(RealtimeMediaSourceSettings& settin
 void MockRealtimeVideoSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
     if (mockCamera()) {
-        if (device() == MockDevice::Camera1)
-            capabilities.addFacingMode(RealtimeMediaSourceSettings::User);
-        else
-            capabilities.addFacingMode(RealtimeMediaSourceSettings::Environment);
+        capabilities.addFacingMode(WTF::get<MockCameraProperties>(device().properties).facingModeCapability);
 
         capabilities.setWidth(CapabilityValueOrRange(320, 1920));
         capabilities.setHeight(CapabilityValueOrRange(240, 1080));
@@ -392,7 +376,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
     } else {
         statsLocation.move(0, m_statsFontSize);
-        context.drawText(statsFont, TextRun((StringView(device() == MockDevice::Screen1 ? "Screen 1" : "Screen 2"))), statsLocation);
+        context.drawText(statsFont, TextRun { id() }, statsLocation);
     }
 
     FloatPoint bipBopLocation(size.width() * .6, size.height() * .6);
@@ -431,27 +415,7 @@ void MockRealtimeVideoSource::generateFrame()
     auto& size = this->size();
     FloatRect frameRect(FloatPoint(), size);
 
-    Color fillColor;
-    switch (device()) {
-    case MockDevice::Camera1:
-        fillColor = Color::black;
-        break;
-    case MockDevice::Camera2:
-        fillColor = Color::darkGray;
-        break;
-    case MockDevice::Screen1:
-        fillColor = Color::lightGray;
-        break;
-    case MockDevice::Screen2:
-        fillColor = Color::yellow;
-        break;
-    case MockDevice::Microphone1:
-    case MockDevice::Microphone2:
-    case MockDevice::Invalid:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
+    auto fillColor = mockCamera() ? WTF::get<MockCameraProperties>(device().properties).fillColor : WTF::get<MockDisplayProperties>(device().properties).fillColor;
     context.fillRect(FloatRect(FloatPoint(), size), fillColor);
 
     if (!muted()) {

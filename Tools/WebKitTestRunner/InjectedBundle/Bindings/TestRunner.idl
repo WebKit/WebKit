@@ -336,4 +336,11 @@ interface TestRunner {
     void getApplicationManifestThen(object callback);
 
     void installFakeHelvetica(DOMString configuration);
+
+    void addMockCameraDevice(DOMString persistentId, DOMString label);
+    void addMockMicrophoneDevice(DOMString persistentId, DOMString label);
+    void addMockScreenDevice(DOMString persistentId, DOMString label);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(DOMString persistentId);
+    void resetMockMediaDevices();
 };

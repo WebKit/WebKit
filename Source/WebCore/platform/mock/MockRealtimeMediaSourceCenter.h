@@ -39,12 +39,18 @@ class MockRealtimeMediaSourceCenter final : public RealtimeMediaSourceCenter {
 public:
     WEBCORE_EXPORT static void setMockRealtimeMediaSourceCenterEnabled(bool);
 
+    WEBCORE_EXPORT static void setDevices(Vector<MockMediaDevice>&&);
+    WEBCORE_EXPORT static void addDevice(const MockMediaDevice&);
+    WEBCORE_EXPORT static void removeDevice(const String& persistentId);
+
     static RealtimeMediaSource::VideoCaptureFactory& videoCaptureSourceFactory() { return MockRealtimeVideoSource::factory(); }
     static RealtimeMediaSource::AudioCaptureFactory& audioCaptureSourceFactory() { return MockRealtimeAudioSource::factory(); }
 
 private:
     MockRealtimeMediaSourceCenter() = default;
     friend NeverDestroyed<MockRealtimeMediaSourceCenter>;
+
+    static MockRealtimeMediaSourceCenter& singleton();
 
     RealtimeMediaSource::AudioCaptureFactory& audioFactory() final { return MockRealtimeAudioSource::factory(); }
     RealtimeMediaSource::VideoCaptureFactory& videoFactory() final { return MockRealtimeVideoSource::factory(); }

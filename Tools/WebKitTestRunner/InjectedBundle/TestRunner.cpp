@@ -1971,6 +1971,71 @@ void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& d
     callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
 }
 
+void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("PersistentID") });
+    values.append(toWK(persistentId));
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("Label") });
+    values.append(toWK(label));
+
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("Type") });
+    values.append({ AdoptWK, WKStringCreateWithUTF8CString(type) });
+
+    Vector<WKStringRef> rawKeys;
+    Vector<WKTypeRef> rawValues;
+    rawKeys.resize(keys.size());
+    rawValues.resize(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("AddMockMediaDevice"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::addMockCameraDevice(JSStringRef persistentId, JSStringRef label)
+{
+    addMockMediaDevice(persistentId, label, "camera");
+}
+
+void TestRunner::addMockMicrophoneDevice(JSStringRef persistentId, JSStringRef label)
+{
+    addMockMediaDevice(persistentId, label, "microphone");
+}
+
+void TestRunner::addMockScreenDevice(JSStringRef persistentId, JSStringRef label)
+{
+    addMockMediaDevice(persistentId, label, "screen");
+}
+
+void TestRunner::clearMockMediaDevices()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ClearMockMediaDevices"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
+void TestRunner::removeMockMediaDevice(JSStringRef persistentId)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("RemoveMockMediaDevice"));
+    WKRetainPtr<WKTypeRef> messageBody(toWK(persistentId));
+
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::resetMockMediaDevices()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ResetMockMediaDevices"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
 #if PLATFORM(MAC)
 void TestRunner::connectMockGamepad(unsigned index)
 {

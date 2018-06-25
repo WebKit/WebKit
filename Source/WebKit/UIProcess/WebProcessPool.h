@@ -82,6 +82,10 @@ class Navigation;
 class PageConfiguration;
 }
 
+namespace WebCore {
+struct MockMediaDevice;
+}
+
 namespace WebKit {
 
 class DownloadProxy;
@@ -453,6 +457,11 @@ public:
     void didReachGoodTimeToPrewarm();
 
     void screenPropertiesStateChanged();
+
+    void addMockMediaDevice(const WebCore::MockMediaDevice&);
+    void clearMockMediaDevices();
+    void removeMockMediaDevice(const String& persistentId);
+    void resetMockMediaDevices();
 
 private:
     void platformInitialize();

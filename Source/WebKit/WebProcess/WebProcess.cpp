@@ -101,6 +101,7 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/MessagePort.h>
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
@@ -1687,6 +1688,28 @@ void WebProcess::registerServiceWorkerClients()
 void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
     WebCore::setScreenProperties(properties);
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+void WebProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)
+{
+    MockRealtimeMediaSourceCenter::addDevice(device);
+}
+
+void WebProcess::clearMockMediaDevices()
+{
+    MockRealtimeMediaSourceCenter::setDevices({ });
+}
+
+void WebProcess::removeMockMediaDevice(const String& persistentId)
+{
+    MockRealtimeMediaSourceCenter::removeDevice(persistentId);
+}
+
+void WebProcess::resetMockMediaDevices()
+{
+    MockRealtimeMediaSource::resetDevices();
 }
 #endif
 

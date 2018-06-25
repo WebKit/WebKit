@@ -32,15 +32,20 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDevice.h"
+#include "MockMediaDevice.h"
 #include "RealtimeMediaSource.h"
 
 namespace WebCore {
 
-class CaptureDevice;
-
 class MockRealtimeMediaSource : public RealtimeMediaSource {
 public:
     virtual ~MockRealtimeMediaSource() = default;
+
+    static void setDevices(Vector<MockMediaDevice>&&);
+    static void addDevice(const MockMediaDevice&);
+    static void removeDevice(const String& persistentId);
+    WEBCORE_EXPORT static void resetDevices();
 
     static Vector<CaptureDevice>& audioDevices();
     static Vector<CaptureDevice>& videoDevices();
@@ -48,10 +53,10 @@ public:
 
     static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    enum class MockDevice { Invalid, Microphone1, Microphone2, Camera1, Camera2, Screen1, Screen2 };
-
 protected:
     MockRealtimeMediaSource(const String& id, Type, const String& name);
+
+    static void createCaptureDevice(const MockMediaDevice&);
 
     virtual void updateSettings(RealtimeMediaSourceSettings&) = 0;
     virtual void initializeCapabilities(RealtimeMediaSourceCapabilities&) = 0;
@@ -62,8 +67,8 @@ protected:
 
     RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
-    MockDevice device() const { return m_device; }
-    MockDevice m_device { MockDevice::Invalid };
+    const MockMediaDevice& device() const { return m_device; }
+    MockMediaDevice m_device;
 
 private:
     void initializeCapabilities();

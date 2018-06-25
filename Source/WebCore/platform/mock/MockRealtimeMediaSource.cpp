@@ -44,116 +44,163 @@
 
 namespace WebCore {
 
-struct MockDeviceInfo {
-    ASCIILiteral id { ASCIILiteral::null() };
-    CaptureDevice::DeviceType type;
-    ASCIILiteral name { ASCIILiteral::null() };
-    MockRealtimeMediaSource::MockDevice device;
-};
-
-static const HashMap<String, MockDeviceInfo>& deviceMap()
+static inline Vector<MockMediaDevice> defaultDevices()
 {
-    static const auto infoMap = makeNeverDestroyed([] {
-        static const MockDeviceInfo devices[] = {
-            { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, CaptureDevice::DeviceType::Microphone, "Mock audio device 1"_s, MockRealtimeMediaSource::MockDevice::Microphone1 },
-            { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, CaptureDevice::DeviceType::Microphone, "Mock audio device 2"_s, MockRealtimeMediaSource::MockDevice::Microphone2 },
+    return Vector<MockMediaDevice> {
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, MockMicrophoneProperties { 44100 } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, MockMicrophoneProperties { 48000 } },
 
-            { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, CaptureDevice::DeviceType::Camera, "Mock video device 1"_s, MockRealtimeMediaSource::MockDevice::Camera1 },
-            { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, CaptureDevice::DeviceType::Camera, "Mock video device 2"_s, MockRealtimeMediaSource::MockDevice::Camera2 },
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, MockCameraProperties { 30, RealtimeMediaSourceSettings::VideoFacingMode::User, Color::black } },
+        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, MockCameraProperties { 15, RealtimeMediaSourceSettings::VideoFacingMode::Environment, Color::darkGray } },
 
-            { "SCREEN-1"_s, CaptureDevice::DeviceType::Screen, "Mock screen device 1"_s, MockRealtimeMediaSource::MockDevice::Screen1 },
-            { "SCREEN-2"_s, CaptureDevice::DeviceType::Screen, "Mock screen device 2"_s, MockRealtimeMediaSource::MockDevice::Screen2 },
-        };
+        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { 30, Color::lightGray } },
+        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { 10, Color::yellow } }
+    };
+}
 
-        HashMap<String, MockDeviceInfo> map;
-        for (auto& info : devices)
-            map.add(info.id, info);
+static Vector<MockMediaDevice>& devices()
+{
+    static auto devices = makeNeverDestroyed([] {
+        return defaultDevices();
+    }());
+    return devices;
+}
+
+static HashMap<String, MockMediaDevice>& deviceMap()
+{
+    static auto map = makeNeverDestroyed([] {
+        HashMap<String, MockMediaDevice> map;
+        for (auto& device : devices())
+            map.add(device.persistentId, device);
+
         return map;
     }());
+    return map;
+}
 
-    return infoMap;
+static inline Vector<CaptureDevice>& deviceListForDevice(const MockMediaDevice& device)
+{
+    if (device.isMicrophone())
+        return MockRealtimeAudioSource::audioDevices();
+    if (device.isCamera())
+        return MockRealtimeAudioSource::videoDevices();
+
+    ASSERT(device.isDisplay());
+    return MockRealtimeAudioSource::displayDevices();
+}
+
+void MockRealtimeMediaSource::createCaptureDevice(const MockMediaDevice& device)
+{
+    deviceListForDevice(device).append(captureDeviceWithPersistentID(device.type(), device.persistentId).value());
+}
+
+void MockRealtimeMediaSource::resetDevices()
+{
+    setDevices(defaultDevices());
+}
+
+void MockRealtimeMediaSource::setDevices(Vector<MockMediaDevice>&& newMockDevices)
+{
+    audioDevices().clear();
+    videoDevices().clear();
+    displayDevices().clear();
+
+    auto& mockDevices = devices();
+    mockDevices = WTFMove(newMockDevices);
+
+    auto& map = deviceMap();
+    map.clear();
+
+    for (const auto& device : mockDevices) {
+        map.add(device.persistentId, device);
+        createCaptureDevice(device);
+    }
+}
+
+void MockRealtimeMediaSource::addDevice(const MockMediaDevice& device)
+{
+    devices().append(device);
+    deviceMap().set(device.persistentId, device);
+    createCaptureDevice(device);
+}
+
+void MockRealtimeMediaSource::removeDevice(const String& persistentId)
+{
+    auto& map = deviceMap();
+    auto iterator = map.find(persistentId);
+    if (iterator == map.end())
+        return;
+
+    devices().removeFirstMatching([&persistentId](const auto& device) {
+        return device.persistentId == persistentId;
+    });
+
+    deviceListForDevice(iterator->value).removeFirstMatching([&persistentId](const auto& device) {
+        return device.persistentId() == persistentId;
+    });
+
+    map.remove(iterator);
 }
 
 std::optional<CaptureDevice> MockRealtimeMediaSource::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
 {
     ASSERT(!id.isEmpty());
 
-    auto map = deviceMap();
-    auto it = map.find(id);
-    if (it != map.end() && it->value.type == type) {
-        auto device = CaptureDevice(it->value.id, it->value.type, it->value.name);
-        device.setEnabled(true);
-        return WTFMove(device);
-    }
+    auto& map = deviceMap();
+    auto iterator = map.find(id);
+    if (iterator == map.end() || iterator->value.type() != type)
+        return std::nullopt;
 
-    return std::nullopt;
+    CaptureDevice device { iterator->value.persistentId, type, iterator->value.label };
+    device.setEnabled(true);
+    return WTFMove(device);
 }
 
 Vector<CaptureDevice>& MockRealtimeMediaSource::audioDevices()
 {
-    static auto info = makeNeverDestroyed([] {
-        Vector<CaptureDevice> vector;
-
-        auto captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, "239c24b0-2b15-11e3-8224-0800200c9a66"_s);
-        ASSERT(captureDevice);
-        vector.append(WTFMove(captureDevice.value()));
-
-        captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, "239c24b1-2b15-11e3-8224-0800200c9a66"_s);
-        ASSERT(captureDevice);
-        vector.append(WTFMove(captureDevice.value()));
-
-        return vector;
+    static auto audioDevices = makeNeverDestroyed([] {
+        Vector<CaptureDevice> audioDevices;
+        for (const auto& device : devices()) {
+            if (device.type() == CaptureDevice::DeviceType::Microphone)
+                audioDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId).value());
+        }
+        return audioDevices;
     }());
-    return info;
+    return audioDevices;
 }
 
 Vector<CaptureDevice>& MockRealtimeMediaSource::videoDevices()
 {
-    static auto info = makeNeverDestroyed([] {
-        Vector<CaptureDevice> vector;
-
-        auto captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, "239c24b2-2b15-11e3-8224-0800200c9a66"_s);
-        ASSERT(captureDevice);
-        vector.append(WTFMove(captureDevice.value()));
-
-        captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, "239c24b3-2b15-11e3-8224-0800200c9a66"_s);
-        ASSERT(captureDevice);
-        vector.append(WTFMove(captureDevice.value()));
-
-        return vector;
+    static auto videoDevices = makeNeverDestroyed([] {
+        Vector<CaptureDevice> videoDevices;
+        for (const auto& device : devices()) {
+            if (device.type() == CaptureDevice::DeviceType::Camera)
+                videoDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId).value());
+        }
+        return videoDevices;
     }());
-    return info;
+    return videoDevices;
 }
 
 Vector<CaptureDevice>& MockRealtimeMediaSource::displayDevices()
 {
-    static auto devices = makeNeverDestroyed([] {
-        Vector<CaptureDevice> vector;
-
-        auto captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, "SCREEN-1"_s);
-        ASSERT(captureDevice);
-        vector.append(WTFMove(captureDevice.value()));
-
-        captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, "SCREEN-2"_s);
-        ASSERT(captureDevice);
-        vector.append(WTFMove(captureDevice.value()));
-
-        return vector;
+    static auto displayDevices = makeNeverDestroyed([] {
+        Vector<CaptureDevice> displayDevices;
+        for (const auto& device : devices()) {
+            if (device.type() == CaptureDevice::DeviceType::Screen)
+                displayDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, device.persistentId).value());
+        }
+        return displayDevices;
     }());
 
-    return devices;
+    return displayDevices;
 }
 
 MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMediaSource::Type type, const String& name)
     : RealtimeMediaSource(id, type, name)
+    , m_device(deviceMap().get(id))
 {
     ASSERT(type != RealtimeMediaSource::Type::None);
-
-    auto map = deviceMap();
-    auto it = map.find(id);
-    ASSERT(it != map.end());
-
-    m_device = it->value.device;
     setPersistentID(String(id));
 }
 

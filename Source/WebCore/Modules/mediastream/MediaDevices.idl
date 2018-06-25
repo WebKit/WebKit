@@ -30,6 +30,7 @@
 
 // FIXME 169871: should be subclass of EventTarget
 [
+    ActiveDOMObject,
     Conditional=MEDIA_STREAM,
     NoInterfaceObject,
 ] interface MediaDevices {
