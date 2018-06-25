@@ -1,3 +1,13 @@
+2018-06-25  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r233140): Windows build failure due to incomplete DocumentAnimationScheduler type
+        <https://webkit.org/b/186997>
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        - Attempt to fix Windows build failure by moving include of
+          DocumentAnimationScheduler.h from Document.cpp to Document.h.
+
 2018-06-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Remove useless workaround
