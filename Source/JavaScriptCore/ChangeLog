@@ -1,5 +1,20 @@
 2018-06-25  Mark Lam  <mark.lam@apple.com>
 
+        constructArray() should set m_numValuesInVector to the specified length.
+        https://bugs.webkit.org/show_bug.cgi?id=187010
+        <rdar://problem/41392167>
+
+        Reviewed by Filip Pizlo.
+
+        Its client will fill in the storage vector with some values using initializeIndex()
+        and expects m_numValuesInVector to be set to the length i.e. the number of values
+        to be initialized.
+
+        * runtime/JSArray.cpp:
+        (JSC::constructArray):
+
+2018-06-25  Mark Lam  <mark.lam@apple.com>
+
         Add missing exception check in RegExpObjectInlines.h's collectMatches.
         https://bugs.webkit.org/show_bug.cgi?id=187006
         <rdar://problem/41418412>

@@ -1346,8 +1346,16 @@ inline JSArray* constructArray(ObjectInitializationScope& scope, Structure* arra
     JSArray* array;
     if (arrayStructure->globalObject()->isOriginalArrayStructure(arrayStructure))
         array = JSArray::tryCreateUninitializedRestricted(scope, arrayStructure, length);
-    else
+    else {
         array = JSArray::create(scope.vm(), arrayStructure, length);
+
+        // Our client will initialize the storage using initializeIndex() up to
+        // length values, and expects that we've already set m_numValuesInVector
+        // to length. This matches the behavior of tryCreateUninitializedRestricted().
+        IndexingType indexingType = arrayStructure->indexingType();
+        if (UNLIKELY(hasAnyArrayStorage(indexingType)))
+            array->butterfly()->arrayStorage()->m_numValuesInVector = length;
+    }
 
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
