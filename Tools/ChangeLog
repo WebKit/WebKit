@@ -1,5 +1,18 @@
 2018-06-25  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add support for Bindings-tests-EWS
+        https://bugs.webkit.org/show_bug.cgi?id=187014
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (BindingsFactory): Added RunBindingsTests build step to BindingsFactory.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunBindingsTests): Added build-step for running Bindings tests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
+2018-06-25  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add support for Style-EWS
         https://bugs.webkit.org/show_bug.cgi?id=186955
 

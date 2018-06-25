@@ -228,5 +228,37 @@ Total errors found: 8 in 48 files''')
         return self.runStep()
 
 
+class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunBindingsTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/run-bindings-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='bindings-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunBindingsTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/run-bindings-tests'],
+                        )
+            + ExpectShell.log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='bindings-tests (failure)')
+        return self.runStep()
+
+
 if __name__ == '__main__':
     unittest.main()

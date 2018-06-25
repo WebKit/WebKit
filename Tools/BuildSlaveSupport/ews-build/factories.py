@@ -39,6 +39,12 @@ class StyleFactory(Factory):
         self.addStep(CheckStyle())
 
 
+class BindingsFactory(Factory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(RunBindingsTests())
+
+
 class GTKFactory(Factory):
     pass
 
@@ -72,10 +78,6 @@ class WPEFactory(Factory):
 
 
 class JSCTestsFactory(Factory):
-    pass
-
-
-class BindingsFactory(Factory):
     pass
 
 

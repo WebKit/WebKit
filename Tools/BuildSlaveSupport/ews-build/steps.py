@@ -71,3 +71,11 @@ class CheckStyle(shell.ShellCommand):
     descriptionDone = ['check-webkit-style']
     flunkOnFailure = True
     command = ['Tools/Scripts/check-webkit-style']
+
+
+class RunBindingsTests(shell.ShellCommand):
+    name = 'bindings-tests'
+    description = ['bindings-tests running']
+    descriptionDone = ['bindings-tests']
+    flunkOnFailure = True
+    command = ['Tools/Scripts/run-bindings-tests']
