@@ -1,5 +1,19 @@
 2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: Media query names are unreadable
+        https://bugs.webkit.org/show_bug.cgi?id=186974
+
+        Reviewed by Brian Burg.
+
+        Change media query names from dark blue to light blue.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket):
+        (.cm-s-default .cm-attribute):
+
+2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Dark Mode: Network headers colors are too dim
         https://bugs.webkit.org/show_bug.cgi?id=186985
 

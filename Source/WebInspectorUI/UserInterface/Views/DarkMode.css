@@ -662,8 +662,17 @@
         color: var(--syntax-highlight-link-color);
     }
 
+    .CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket {
+        background-color: hsla(232, 100%, 72%, 0.4);
+        border-bottom-color: hsl(206, 100%, 65%);
+    }
+
 
     /* SyntaxHighlightingDefaultTheme.css */
+    .cm-s-default .cm-attribute {
+        color: hsl(222, 100%, 72%);
+    }
+
     .cm-s-default .cm-m-xml.cm-attribute,
     .syntax-highlighted .html-attribute-name {
         color: hsl(27, 100%, 80%);
