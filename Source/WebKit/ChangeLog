@@ -1,3 +1,18 @@
+2018-06-25  Tim Horton  <timothy_horton@apple.com>
+
+        WKThumbnailView fallback background is blindingly bright in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=187017
+        <rdar://problem/41036209>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView initWithFrame:]):
+        (-[_WKThumbnailView wantsUpdateLayer]):
+        (-[_WKThumbnailView updateLayer]):
+        Use a semantic color for the WKThumbnailView background color
+        instead of flat white.
+
 2018-06-25  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains() wait for the network process before calling its callback

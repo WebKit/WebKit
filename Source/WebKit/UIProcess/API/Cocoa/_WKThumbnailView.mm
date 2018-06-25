@@ -70,7 +70,6 @@ using namespace WebKit;
         return nil;
 
     self.wantsLayer = YES;
-    self.layer.backgroundColor = [NSColor whiteColor].CGColor;
     _scale = 1;
     _lastSnapshotScale = NAN;
     
@@ -101,6 +100,18 @@ using namespace WebKit;
     _originalSourceViewIsInWindow = !![_wkWebView window];
     
     return self;
+}
+
+- (BOOL)wantsUpdateLayer
+{
+    return YES;
+}
+
+- (void)updateLayer
+{
+    [super updateLayer];
+
+    self.layer.backgroundColor = [NSColor quaternaryLabelColor].CGColor;
 }
 
 - (void)requestSnapshot
