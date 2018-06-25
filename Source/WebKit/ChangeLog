@@ -1,3 +1,26 @@
+2018-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPad apps on macOS] Click events are broken in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=186964
+        <rdar://problem/41369145>
+
+        Reviewed by Tim Horton.
+
+        Tapping in WKWebView currently does not dispatch click events to the page. This is because the long press loupe
+        gesture (in the text interaction assistant) has a delay of 0 when running iOS apps on macOS, but on iOS, it's
+        0.5. The zero delay on macOS means that the loupe gesture will be recognized before the synthetic click gesture;
+        this, in turn, causes the synthetic click gesture to be excluded by the loupe gesture. To address this, we
+        simply allow the click and loupe gesture to recognize simultaneously.
+
+        Additionally, a new hover gesture was added recently to handle macOS cursor types when hovering over selectable
+        text. This patch also allows other gestures to recognize alongside hover gestures, which matches macOS behavior.
+
+        We don't have the capacity to write automated tests for this yet; I manually tested text selection, editing in
+        some text form controls, as well as clicking on links, buttons, and other elements with click event handlers.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+
 2018-06-23  Brian Burg  <bburg@apple.com>
 
         [Mac] Web Automation: include correct key code with synthesized NSEvents used for keystrokes
