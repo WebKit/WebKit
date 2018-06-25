@@ -1,5 +1,17 @@
 2018-06-25  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-pausing.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183826
+        <rdar://problem/40997412>
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions in the Mozilla CSS Animations tests.
+
+        * css-animations/test_animation-pausing-expected.txt:
+
+2018-06-25  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Ensure animations are updated prior to requestAnimationFrame callbacks
         https://bugs.webkit.org/show_bug.cgi?id=186997
         <rdar://problem/41419414>

@@ -91,9 +91,10 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     timing->setIterationDuration(Seconds(animation.duration()));
 
     // Synchronize the play state
-    if (animation.playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused)
-        play();
-    else if (animation.playState() == AnimationPlayState::Paused && playState() == WebAnimation::PlayState::Running)
+    if (animation.playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused) {
+        if (!m_stickyPaused)
+            play();
+    } else if (animation.playState() == AnimationPlayState::Paused && playState() == WebAnimation::PlayState::Running)
         pause();
 
     unsuspendEffectInvalidation();
@@ -153,12 +154,14 @@ WebAnimation::FinishedPromise& CSSAnimation::bindingsFinished()
 ExceptionOr<void> CSSAnimation::bindingsPlay()
 {
     flushPendingStyleChanges();
+    m_stickyPaused = false;
     return DeclarativeAnimation::bindingsPlay();
 }
 
 ExceptionOr<void> CSSAnimation::bindingsPause()
 {
     flushPendingStyleChanges();
+    m_stickyPaused = true;
     return DeclarativeAnimation::bindingsPause();
 }
 

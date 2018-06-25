@@ -1,5 +1,25 @@
 2018-06-25  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-pausing.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183826
+        <rdar://problem/40997412>
+
+        Reviewed by Dean Jackson.
+
+        The CSS Animations Level 2 specification defines that calling pause() on a CSSAnimation object is "sticky"
+        until a call to play() is made, meaning that any changes to the running state via the CSS animation-play-state
+        property is overridden by the stickiness of the pause() call. In this patch we add an m_stickyPaused flag which
+        is set in API calls to pause() and play(). While this flag is true, changes to the animation-play-state property
+        to the "running" value are ignored.
+
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation):
+        (WebCore::CSSAnimation::bindingsPlay):
+        (WebCore::CSSAnimation::bindingsPause):
+        * animation/CSSAnimation.h:
+
+2018-06-25  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Ensure animations are updated prior to requestAnimationFrame callbacks
         https://bugs.webkit.org/show_bug.cgi?id=186997
         <rdar://problem/41419414>

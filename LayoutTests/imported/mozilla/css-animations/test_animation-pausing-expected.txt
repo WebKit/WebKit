@@ -1,6 +1,6 @@
 
 PASS play() overrides animation-play-state 
-FAIL pause() overrides animation-play-state assert_equals: Paused value of margin-left is zero expected 0 but got 0.03600386157631874
+PASS pause() overrides animation-play-state 
 PASS play() is overridden by later setting "animation-play-state: paused" 
 PASS play() flushes pending changes to animation-play-state first 
 PASS pause() applies pending changes to animation-play-state first 

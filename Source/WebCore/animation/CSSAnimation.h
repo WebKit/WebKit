@@ -64,6 +64,7 @@ private:
 
     String m_animationName;
     std::unique_ptr<RenderStyle> m_unanimatedStyle;
+    bool m_stickyPaused { false };
 };
 
 } // namespace WebCore
