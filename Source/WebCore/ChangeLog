@@ -1,3 +1,21 @@
+2018-06-25  Chris Dumez  <cdumez@apple.com>
+
+        Null dereference crash un ApplicationCacheGroup::startLoadingEntry()
+        https://bugs.webkit.org/show_bug.cgi?id=187012
+        <rdar://problem/40793716>
+
+        Reviewed by Youenn Fablet.
+
+        m_entryLoader can be null because ApplicationCacheResourceLoader::create() return null when
+        CachedResourceLoader::requestRawResource() fails synchronously. In such case, the completion
+        handler gets called with a ApplicationCacheResourceLoader::Error::CannotRequestResource error.
+
+        To address the issue, we capture the request's URL in the lambda and use it instead of trying
+        to get the URL from the loader's resource.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+
 2018-06-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION (r233140): Windows build failure due to incomplete FrameView and RenderBox types

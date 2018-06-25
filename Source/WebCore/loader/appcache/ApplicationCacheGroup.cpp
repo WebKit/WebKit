@@ -903,17 +903,18 @@ void ApplicationCacheGroup::startLoadingEntry()
     InspectorInstrumentation::willSendRequest(m_frame, m_currentResourceIdentifier, m_frame->loader().documentLoader(), request, ResourceResponse { });
 
     auto& documentLoader = *m_frame->loader().documentLoader();
-    m_entryLoader = ApplicationCacheResourceLoader::create(m_pendingEntries.begin()->value, documentLoader.cachedResourceLoader(), WTFMove(request), [this] (auto&& resourceOrError) {
+    auto requestURL = request.url();
+    m_entryLoader = ApplicationCacheResourceLoader::create(m_pendingEntries.begin()->value, documentLoader.cachedResourceLoader(), WTFMove(request), [this, requestURL = WTFMove(requestURL)] (auto&& resourceOrError) {
         if (!resourceOrError.has_value()) {
             auto error = resourceOrError.error();
             if (error == ApplicationCacheResourceLoader::Error::Abort)
                 return;
-            this->didFailLoadingEntry(error, m_entryLoader->resource()->url());
+            this->didFailLoadingEntry(error, requestURL);
             return;
         }
 
         m_currentResource = WTFMove(resourceOrError.value());
-        this->didFinishLoadingEntry(m_entryLoader->resource()->url());
+        this->didFinishLoadingEntry(requestURL);
     });
 }
 
