@@ -180,7 +180,6 @@ void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String
 
 void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& callStack)
 {
-#if OS(DARWIN) || (OS(LINUX) && !PLATFORM(GTK))
     static const int framesToShow = 31;
     static const int framesToSkip = 3; // WTFGetBacktrace, appendAPIBacktrace, reportAPIException.
 
@@ -197,9 +196,6 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
         else
             callStack.append(ScriptCallFrame("?"_s, "[native code]"_s, noSourceID, 0, 0));
     }
-#else
-    UNUSED_PARAM(callStack);
-#endif
 }
 
 void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, Exception* exception)
