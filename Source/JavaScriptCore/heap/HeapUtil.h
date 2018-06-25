@@ -87,8 +87,7 @@ public:
             char* previousPointer = pointer - sizeof(IndexingHeader) - 1;
             MarkedBlock* previousCandidate = MarkedBlock::blockFor(previousPointer);
             if (!filter.ruleOut(bitwise_cast<Bits>(previousCandidate))
-                && set.contains(previousCandidate)
-                && previousCandidate->handle().cellKind() == HeapCell::Auxiliary) {
+                && set.contains(previousCandidate)) {
                 previousPointer = static_cast<char*>(previousCandidate->handle().cellAlign(previousPointer));
                 if (previousCandidate->handle().isLiveCell(markingVersion, newlyAllocatedVersion, isMarking, previousPointer))
                     func(previousPointer, previousCandidate->handle().cellKind());
@@ -103,23 +102,16 @@ public:
         if (!set.contains(candidate))
             return;
 
-        HeapCell::Kind cellKind = candidate->handle().cellKind();
+        MarkedBlock::Handle& handle = candidate->handle();
+        HeapCell::Kind cellKind = handle.cellKind();
         
         auto tryPointer = [&] (void* pointer) {
-            if (candidate->handle().isLiveCell(markingVersion, newlyAllocatedVersion, isMarking, pointer))
+            if (handle.isLiveCell(markingVersion, newlyAllocatedVersion, isMarking, pointer))
                 func(pointer, cellKind);
         };
     
-        if (candidate->handle().cellKind() == HeapCell::JSCell) {
-            if (!MarkedBlock::isAtomAligned(pointer))
-                return;
-        
-            tryPointer(pointer);
-            return;
-        }
-    
         // A butterfly could point into the middle of an object.
-        char* alignedPointer = static_cast<char*>(candidate->handle().cellAlign(pointer));
+        char* alignedPointer = static_cast<char*>(handle.cellAlign(pointer));
         tryPointer(alignedPointer);
     
         // Also, a butterfly could point at the end of an object plus sizeof(IndexingHeader). In that

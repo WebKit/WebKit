@@ -35,21 +35,36 @@ async function runTest()
 {
     initialDocumentCount = internals.numberOfLiveDocuments();
 
-    evalAndLog('iframe = appendIframe()');
+    let frames = [];
+    const count = 200;
+    for (let i = 0; i < count; ++i)
+        frames.push(appendIframe());
 
     await wait(0); // Make sure the transient document created by inserting an iframe is removed.
     GCController.collect();
 
-    shouldBe('internals.numberOfLiveDocuments()', 'initialDocumentCount + 1');
-    setEditorStates(iframe);
+    for (let frame of frames)
+        setEditorStates(frame);
 
     await wait(0); // Wait for UI update timer to fire.
 
-    evalAndLog('iframe.src = "resources/select-iframe-focusin-document-crash-frame.html"');
-    iframe.onload = () => {
-        GCController.collect();
-        shouldBe('internals.numberOfLiveDocuments()', 'initialDocumentCount + 1');
-        finishJSTest();                
+    let resolved = 0;
+    for (let frame of frames) {
+        frame.src = "resources/select-iframe-focusin-document-crash-frame.html";
+        frame.onload = () => {
+            ++resolved;
+            if (resolved !== count)
+                return;
+            let before = internals.numberOfLiveDocuments();
+            GCController.collect();
+            let after = internals.numberOfLiveDocuments();
+            let delta = before - after;
+            if (delta > 0.3 * count)
+                debug("PASS freed more than 60 documents");
+            else
+                debug("FAIL freed fewer than 60 documents");
+            finishJSTest();                
+        };
     }
 }
 
@@ -57,7 +72,7 @@ if (!window.GCController || !window.internals) {
     debug('This test requires GCController and internals');
 } else {
     if (window.testRunner)
-        setTimeout(() => testRunner.notifyDone(), 3000);
+        setTimeout(() => testRunner.notifyDone(), 5000);
     // Clear out any lingering documents from the previous tests.
     GCController.collect();
     GCController.collect();

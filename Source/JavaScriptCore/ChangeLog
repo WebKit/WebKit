@@ -1,3 +1,28 @@
+2018-06-25  Saam Barati  <sbarati@apple.com>
+
+        JSImmutableButterfly can't be allocated from a subspace with HeapCell::Kind::Auxiliary
+        https://bugs.webkit.org/show_bug.cgi?id=186878
+        <rdar://problem/40568659>
+
+        Reviewed by Mark Lam.
+
+        This patch fixes a bug in our JSImmutableButterfly implementation uncovered by
+        our stress GC bots. Before this patch, JSImmutableButterfly was allocated
+        with HeapCell::Kind::Auxiliary. This is wrong. Things that are JSCells must be
+        allocated from HeapCell::Kind::JSCell. The way this broke on the stress GC
+        bots is that our conservative marking won't do cell marking for things that
+        are Auxiliary. This means that if the stack is the only thing pointing to a
+        JSImmutableButterfly when a GC took place, that JSImmutableButterfly would
+        not be visited. This patch fixes this bug. This patch also extends our conservative
+        marking to understand that there may be interior pointers to things that are HeapCell::Kind::JSCell.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::subspaceFor):
+
 2018-06-25  Mark Lam  <mark.lam@apple.com>
 
         constructArray() should set m_numValuesInVector to the specified length.
