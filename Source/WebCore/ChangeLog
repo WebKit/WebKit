@@ -1,3 +1,19 @@
+2018-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        MatchedPropertiesCacheItem wastes 388KB of vector capacity on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=186990
+
+        Reviewed by Antti Koivisto.
+
+        MatchedPropertiesCacheItem.matchedProperties was appended to, so it allocated capacity
+        in 16-size chunks. Instead, assign to it so it only allocates as much capacity as is needed.
+        Copy-constructing is more wasteful, since it copies the 64-chunk size from the right-hand side.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::addToMatchedPropertiesCache):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::MatchedPropertiesCacheItem::MatchedPropertiesCacheItem):
+
 2018-06-25  Chris Dumez  <cdumez@apple.com>
 
         Null dereference crash un ApplicationCacheGroup::startLoadingEntry()

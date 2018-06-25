@@ -468,6 +468,16 @@ private:
         MatchRanges ranges;
         std::unique_ptr<RenderStyle> renderStyle;
         std::unique_ptr<RenderStyle> parentRenderStyle;
+        
+        MatchedPropertiesCacheItem(const MatchResult& matchResult, const RenderStyle* style, const RenderStyle* parentStyle)
+            : ranges(matchResult.ranges)
+            , renderStyle(RenderStyle::clonePtr(*style))
+            , parentRenderStyle(RenderStyle::clonePtr(*parentStyle))
+        {
+            // Assign rather than copy-construct so we only allocate as much vector capacity as needed.
+            matchedProperties = matchResult.matchedProperties();
+        }
+        MatchedPropertiesCacheItem() = default;
     };
     const MatchedPropertiesCacheItem* findFromMatchedPropertiesCache(unsigned hash, const MatchResult&);
     void addToMatchedPropertiesCache(const RenderStyle*, const RenderStyle* parentStyle, unsigned hash, const MatchResult&);

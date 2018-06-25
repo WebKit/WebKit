@@ -1251,13 +1251,9 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
     }
 
     ASSERT(hash);
-    MatchedPropertiesCacheItem cacheItem;
-    cacheItem.matchedProperties.appendVector(matchResult.matchedProperties());
-    cacheItem.ranges = matchResult.ranges;
     // Note that we don't cache the original RenderStyle instance. It may be further modified.
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
-    cacheItem.renderStyle = RenderStyle::clonePtr(*style);
-    cacheItem.parentRenderStyle = RenderStyle::clonePtr(*parentStyle);
+    MatchedPropertiesCacheItem cacheItem(matchResult, style, parentStyle);
     m_matchedPropertiesCache.add(hash, WTFMove(cacheItem));
 }
 
