@@ -1,3 +1,10 @@
+2018-06-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION (r233140): Windows build failure due to incomplete FrameView and RenderBox types
+        https://bugs.webkit.org/show_bug.cgi?id=186997
+
+        * animation/KeyframeEffectReadOnly.cpp:
+
 2018-06-25  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: hardware-accelerated animation fails on inline element
