@@ -61,7 +61,7 @@ static float cpuPeriod()
     int retVal = sscanf(buffer, "cpu  %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu %16llu",
         &userTime, &niceTime, &systemTime, &idleTime, &ioWait, &irq, &softIrq, &steal, &guest, &guestnice);
     // We expect 10 values to be matched by sscanf
-    if (retVal < 10 || retVal == EOF) {
+    if (retVal != 10) {
         fclose(file);
         return 0;
     }

@@ -1,3 +1,11 @@
+2018-06-24  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed, address Darin's comment
+        https://bugs.webkit.org/show_bug.cgi?id=186757
+
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::cpuPeriod):
+
 2018-06-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-pausing.html pass reliably
