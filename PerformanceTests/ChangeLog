@@ -1,3 +1,59 @@
+2018-06-25  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] Add support for version numbers
+        https://bugs.webkit.org/show_bug.cgi?id=186479
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add support for displaying the version number as well as including it in the JSON results.
+
+        When loading the front page, script replaces any element with classname version with the
+        version number of the benchmark, which is stored in Strings.version.
+
+        The JSON structure for the results includes a new version property:
+            {
+              "version": "1.0",
+              "options": { ... },
+              "data": [ ... ]
+            }
+
+        When dragging a results file, the version listed will come from the JSON file. Older
+        results will not have had the version property, in which case it will default to "1.0".
+
+        * MotionMark/index.html: Update title to some other default. Script will update it.
+        Include the version number in the logo title.
+        * MotionMark/developer.html: Ditto.
+        * MotionMark/about.html: Ditto.
+
+        * MotionMark/resources/runner/motionmark.js:
+        (ResultsDashboard): Update constructor to include version. This is used when serializing
+        results out to JSON, and displaying the results panel in developer mode.
+        (ResultsDashboard._processData): When running the benchmark, include benchmark version string
+        in the results object.
+        (ResultsDashboard.version):
+        (window.benchmarkRunnerClient.willStartFirstIteration): When running the benchmark, pass the
+        benchmark version string to the dashboard, which holds the results.
+        (window.sectionsManager.setSectionVersion): Helper function to update the element in the
+        section with the class name version.
+        (window.benchmarkController.initialize): Populate all DOM elements with class name "version"
+        with the version string. Update the page title.
+        (window.benchmarkController.showResults): When showing results, update the version string
+        based on what is included in the JSON results, which would be the same as the benchmark version.
+        * MotionMark/resources/runner/motionmark.css: Include missing copyright. Wrap the SVG logo
+        in a div and include the version string.
+        * MotionMark/resources/strings.js: Add strings for the page title template, and the version.
+
+        * MotionMark/resources/debug-runner/motionmark.css:
+        * MotionMark/resources/debug-runner/motionmark.js:
+        (window.benchmarkRunnerClient.willStartFirstIteration): When running the benchmark, pass the
+        benchmark version string to the dashboard, which holds the results.
+        (window.benchmarkController.initialize): Populate all DOM elements with class name "version"
+        with the version string. Update the page title. When dragging in JSON results, look for
+        version to pass to the dashboard. If it doesn't exist, default to "1.0".
+        (window.benchmarkController.showResults): When showing results, update the version string
+        based on what is included in the JSON results, instead of the current benchmark version.
+        * MotionMark/resources/debug-runner/tests.js: Update page title template.
+
 2018-06-08  Jon Lee  <jonlee@apple.com>
 
         [MotionMark] Rename Suits test files

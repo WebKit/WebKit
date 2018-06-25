@@ -23,11 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 var Strings = {
+    version: "1.0",
     text: {
         testName: "Test Name",
-        score: "Score"
+        score: "Score",
+        title: "MotionMark %s",
     },
     json: {
+        version: "version",
+
         marks: "marks",
         samplingStartTimeOffset: "Start sampling",
         samplingEndTimeOffset: "End sampling",

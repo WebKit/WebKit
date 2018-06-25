@@ -1,5 +1,28 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
 /* Outer harness */
-
 html,
 body {
     min-height: 100%;
@@ -72,13 +95,15 @@ section.selected {
     display: block;
 }
 
-svg.logo {
+.logo {
+    position: relative;
+}
+
+.logo svg {
     width: 350px;
     height: 88px;
 
     max-width: 100%;
-
-    padding-bottom: 1em;
 
     color: hsl(35, 100%, 50%);
 
@@ -88,19 +113,32 @@ svg.logo {
     will-change: color;
 }
 
-body.images-loaded svg.logo {
+.logo div {
+    transform: skewX(-10deg);
+    margin-left: 1em;
+}
+
+body.images-loaded .logo svg {
     animation-play-state: running;
 }
 
 @media screen and (min-width: 667px) {
-    svg.logo {
+    .logo svg {
         width: 525px;
         height: 130px;
+        padding-left: .4em;
+    }
+
+    .logo div {
+        position: absolute;
+        left: 360px;
+        bottom: 0.2em;
+        font-size: 75%;
     }
 }
 
 section .body {
-    margin: 0 1em;
+    margin: 2em 1em 0;
     max-width: 350px;
 }
 

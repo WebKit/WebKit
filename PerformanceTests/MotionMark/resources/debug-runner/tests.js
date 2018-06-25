@@ -28,7 +28,8 @@ Utilities.extendObject(Strings.text, {
     frameRate: "FPS",
     confidenceInterval: "80% Confidence Interval",
     mergedRawComplexity: "Raw Complexity",
-    graph: "Graph"
+    graph: "Graph",
+    title: "MotionMark %s developer",
 });
 
 

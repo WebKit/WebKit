@@ -45,10 +45,14 @@ section .body {
     transform: none;
 }
 
-h1 {
-    font-size: 3em;
-    margin: 1.5em 0 .5em;
+header {
+    margin: 3em 0 1em;
     text-align: center;
+}
+
+header h1, header h2 {
+    font-size: 3em;
+    margin: 0;
 }
 
 button {
@@ -84,8 +88,8 @@ button:disabled {
 
 @media screen and (max-device-width: 414px),
     screen and (max-device-height: 414px) and (orientation: landscape) {
-    h1 {
-        font-size: 2.5em;
+    header h1 {
+        font-size: 2em;
     }
 
     section {

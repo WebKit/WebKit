@@ -134,7 +134,7 @@ Utilities.extendObject(window.benchmarkRunnerClient, {
 
     willStartFirstIteration: function()
     {
-        this.results = new ResultsDashboard(this.options);
+        this.results = new ResultsDashboard(Strings.version, this.options);
         this.progressBar = new ProgressBar(document.getElementById("progress-completed"), this.testsCount);
     },
 
@@ -532,6 +532,11 @@ window.suitesManager =
 Utilities.extendObject(window.benchmarkController, {
     initialize: function()
     {
+        document.title = Strings.text.title.replace("%s", Strings.version);
+        document.querySelectorAll(".version").forEach(function(e) {
+            e.textContent = Strings.version;
+        });
+
         document.forms["benchmark-options"].addEventListener("change", benchmarkController.onBenchmarkOptionsChanged, true);
         document.forms["graph-type"].addEventListener("change", benchmarkController.onGraphTypeChanged, true);
         document.forms["time-graph-options"].addEventListener("change", benchmarkController.onTimeGraphOptionsChanged, true);
@@ -571,7 +576,9 @@ Utilities.extendObject(window.benchmarkController, {
                 var run = JSON.parse(e.target.result);
                 if (run.debugOutput instanceof Array)
                     run = run.debugOutput[0];
-                benchmarkRunnerClient.results = new ResultsDashboard(run.options, run.data);
+                if (!("version" in run))
+                    run.version = "1.0";
+                benchmarkRunnerClient.results = new ResultsDashboard(run.version, run.options, run.data);
                 benchmarkController.showResults();
             };
 
@@ -657,6 +664,7 @@ Utilities.extendObject(window.benchmarkController, {
         var score = dashboard.score;
         var confidence = ((dashboard.scoreLowerBound / score - 1) * 100).toFixed(2) +
             "% / +" + ((dashboard.scoreUpperBound / score - 1) * 100).toFixed(2) + "%";
+        sectionsManager.setSectionVersion("results", dashboard.version);
         sectionsManager.setSectionScore("results", score.toFixed(2), confidence);
         sectionsManager.populateTable("results-header", Headers.testName, dashboard);
         sectionsManager.populateTable("results-score", Headers.score, dashboard);

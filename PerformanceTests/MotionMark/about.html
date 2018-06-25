@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+  Copyright (C) 2015-2018 Apple Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -31,14 +31,16 @@
     <title>About MotionMark</title>
 
     <link rel="stylesheet" href="resources/runner/motionmark.css">
+
+    <script src="resources/strings.js"></script>
 </head>
 <body class="images-loaded">
     <main>
     <section id="about" class="selected">
-        <svg class="logo"><use xlink:href="resources/runner/logo.svg#root"></svg>
+        <div class="logo"><svg><use xlink:href="resources/runner/logo.svg#root" /></svg></div>
 
         <div class="body">
-            <h1>About MotionMark</h1>
+            <h1>About MotionMark <span class="version"></span></h1>
 
             <p>MotionMark is a web benchmark that focuses on graphics performance. It draws multiple rendering elements, each of which uses the same set of graphics primitives. An element could be an SVG node, an HTML element with CSS style, or a series of canvas operations. Slight variations among the elements avoid trivial caching optimizations by the browser. Although fairly simple, the effects were chosen to reflect techniques commonly used on the web. Tests are visually rich, being designed to stress the graphics system rather than JavaScript.</p>
 
@@ -72,5 +74,10 @@
         </div>
         </section>
     </main>
+
+    <script>
+        document.title = "About MotionMark " + Strings.version;
+        document.querySelector(".version").textContent = Strings.version;
+    </script>
 </body>
 </html>

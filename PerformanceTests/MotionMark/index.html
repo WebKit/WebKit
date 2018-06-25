@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+  Copyright (C) 2015-2018 Apple Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no">
 
-    <title>MotionMark 1.0</title>
+    <title>MotionMark</title>
 
     <link rel="stylesheet" href="resources/runner/motionmark.css">
 
@@ -51,7 +51,10 @@
 <body class="showing-intro">
     <main>
         <section id="intro" class="selected">
-            <svg class="logo"><use xlink:href="resources/runner/logo.svg#root"></svg>
+            <div class="logo">
+              <svg><use xlink:href="resources/runner/logo.svg#root" /></svg>
+              <div>version <span class="version"></span></div>
+            </div>
             <div class="body">
                 <p>MotionMark is a graphics benchmark that measures a browser’s capability to animate complex scenes at a target frame rate.</p>
 
@@ -65,7 +68,10 @@
         <section id="test-container" class="frame-container"></section>
 
         <section id="results">
-            <svg class="logo"><use xlink:href="resources/runner/logo.svg#root"></svg>
+            <div class="logo">
+              <svg><use xlink:href="resources/runner/logo.svg#root" /></svg>
+              <div>version <span class="version"></span></div>
+            </div>
             <div class="body">
                 <div class="score-container">
                     <div class="score"></div>

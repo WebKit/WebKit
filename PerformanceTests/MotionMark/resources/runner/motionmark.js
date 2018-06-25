@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  ResultsDashboard = Utilities.createClass(
-    function(options, testData)
+    function(version, options, testData)
     {
         this._iterationsSamplers = [];
         this._options = options;
         this._results = null;
+        this._version = version;
         if (testData) {
             this._iterationsSamplers = testData;
             this._processData();
@@ -81,6 +82,7 @@
             iterationsScores.push(result[Strings.json.score]);
         }, this);
 
+        this._results[Strings.json.version] = this._version;
         this._results[Strings.json.score] = Statistics.sampleMean(iterationsScores.length, iterationsScores.reduce(function(a, b) { return a + b; }));
         this._results[Strings.json.scoreLowerBound] = this._results[Strings.json.results.iterations][0][Strings.json.scoreLowerBound];
         this._results[Strings.json.scoreUpperBound] = this._results[Strings.json.results.iterations][0][Strings.json.scoreUpperBound];
@@ -250,6 +252,11 @@
         return this._options;
     },
 
+    get version()
+    {
+        return this._version;
+    },
+
     _getResultsProperty: function(property)
     {
         if (this._results)
@@ -388,7 +395,7 @@ window.benchmarkRunnerClient = {
 
     willStartFirstIteration: function()
     {
-        this.results = new ResultsDashboard(this.options);
+        this.results = new ResultsDashboard(Strings.version, this.options);
     },
 
     didRunSuites: function(suitesSamplers)
@@ -430,6 +437,11 @@ window.sectionsManager =
             history.pushState({section: sectionIdentifier}, document.title);
     },
 
+    setSectionVersion: function(sectionIdentifier, version)
+    {
+        document.querySelector("#" + sectionIdentifier + " .version").textContent = version;
+    },
+
     setSectionScore: function(sectionIdentifier, score, confidence)
     {
         document.querySelector("#" + sectionIdentifier + " .score").textContent = score;
@@ -447,6 +459,10 @@ window.sectionsManager =
 window.benchmarkController = {
     initialize: function()
     {
+        document.title = Strings.text.title.replace("%s", Strings.version);
+        document.querySelectorAll(".version").forEach(function(e) {
+            e.textContent = Strings.version;
+        });
         benchmarkController.addOrientationListenerIfNecessary();
     },
 
@@ -536,6 +552,7 @@ window.benchmarkController = {
         var dashboard = benchmarkRunnerClient.results;
         var score = dashboard.score;
         var confidence = "±" + (Statistics.largestDeviationPercentage(dashboard.scoreLowerBound, score, dashboard.scoreUpperBound) * 100).toFixed(2) + "%";
+        sectionsManager.setSectionVersion("results", dashboard.version);
         sectionsManager.setSectionScore("results", score.toFixed(2), confidence);
         sectionsManager.populateTable("results-header", Headers.testName, dashboard);
         sectionsManager.populateTable("results-score", Headers.score, dashboard);
@@ -584,6 +601,7 @@ window.benchmarkController = {
         data.textContent = "Please wait...";
         setTimeout(function() {
             var output = {
+                version: benchmarkRunnerClient.results.version,
                 options: benchmarkRunnerClient.results.options,
                 data: benchmarkRunnerClient.results.data
             };

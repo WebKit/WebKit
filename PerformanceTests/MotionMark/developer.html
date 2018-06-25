@@ -28,7 +28,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no">
 
-    <title>MotionMark 1.0 - developer</title>
+    <title>MotionMark developer</title>
 
     <link rel="stylesheet" href="resources/runner/motionmark.css">
     <link rel="stylesheet" href="resources/debug-runner/motionmark.css">
@@ -49,7 +49,10 @@
 <body class="showing-intro">
     <main>
         <section id="intro" class="selected">
-            <h1>MotionMark</h1>
+            <header>
+                <h1>MotionMark</h1>
+                <h2>version <span class="version"></span></h2>
+            </header>
             <div class="body">
                 <div>
                     <div id="suites">
@@ -131,6 +134,7 @@
                     <span class="medium">on a medium screen (laptop, tablet)</span>
                     <span class="large">on a large screen (desktop)</span>
                 </div>
+                <div>version <span class="version"></span></div>
                 <p class="score" onclick="benchmarkController.showDebugInfo()"></p>
                 <p class="confidence"></p>
                 <div id="results-tables" class="table-container">
