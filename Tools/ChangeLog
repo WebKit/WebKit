@@ -1,3 +1,11 @@
+2018-06-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed build fix for r233088.
+
+        * BuildSlaveSupport/built-product-archive:
+        (extractBuiltProduct):
+        "move" throws instead of overwriting, so just use "copy" instead.
+
 2018-06-25  Leo Balter  <leonardo.balter@gmail.com>
 
         [test262-runner] Sort the list of failing files in the HTML report

@@ -282,7 +282,7 @@ def extractBuiltProduct(configuration, platform):
 
         # Restore WinCairoRequirements version for test bot use
         if platform == 'wincairo':
-            shutil.move(os.path.join(_configurationBuildDirectory, 'WinCairoRequirements.zip.config'), os.getenv('WEBKIT_LIBRARIES'))
+            shutil.copy(os.path.join(_configurationBuildDirectory, 'WinCairoRequirements.zip.config'), os.getenv('WEBKIT_LIBRARIES'))
 
 
 if __name__ == '__main__':
