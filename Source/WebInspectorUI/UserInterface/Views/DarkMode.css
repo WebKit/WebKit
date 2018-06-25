@@ -108,10 +108,15 @@
         --syntax-highlight-comment-color: hsl(119, 40%, 72%);
         --syntax-highlight-regex-group-color: var(--text-color-gray-medium);
 
-        --console-secondary-text-color: hsla(0, 0%, 100%, 0.33);
+        --console-secondary-text-color: hsla(0, 0%, 100%, 0.45);
 
         --warning-background-color: hsla(21, 100%, 51%, 0.12);
         --error-background-color: hsla(0, 100%, 50%, 0.15);
+
+        --network-header-color: hsl(204, 52%, 55%);
+        --network-system-color: hsl(79, 95%, 50%);
+        --network-pseudo-header-color: hsl(312, 55%, 61%);
+        --network-error-color: hsl(0, 54%, 55%);
 
         --even-zebra-stripe-row-background-color: var(--background-color);
         --odd-zebra-stripe-row-background-color: var(--background-color-secondary);
