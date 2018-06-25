@@ -1,3 +1,66 @@
+2018-06-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure animations are updated prior to requestAnimationFrame callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=186997
+        <rdar://problem/41419414>
+
+        Reviewed by Dean Jackson.
+
+        Some sub-tests of imported/mozilla/css-animations/test_animation-pausing.html clearly expect that animations
+        would be resolved prior to firing a requestAnimationFrame() callback, as the HTML5 event loop mandates. But until
+        now, both DocumentTimeline and ScriptedAnimationController would make calls to DisplayRefreshMonitorManager::scheduleAnimation()
+        that were not coordinated and so the order in which the DocumentTimeline and ScriptedAnimationController callbacks
+        were performed was not guaranteed.
+
+        In this patch we add a new DocumentAnimationScheduler class which is created by a Document to manage this specific
+        situation. Now DocumentTimeline and ScriptedAnimationController use this supporting object instead of being their
+        own DisplayRefreshMonitorClient and call scheduleWebAnimationsResolution() and scheduleScriptedAnimationResolution()
+        respectively to indicate the need to schedule an animation through the DisplayRefreshMonitorManager to serve the specific
+        needs of either, or both, classes. Then DocumentAnimationScheduler ensures that Web Animations resolution happens
+        prior to requestAnimationFrame callbacks when both are scheduled.
+
+        In the future we should be able to move more code from DocumentTimeline and ScriptedAnimationController over to
+        DocumentAnimationScheduler, such as support for throttling and using a timer-based fallback, but this patch provides
+        the minimal functionality required to provide a sounder foundation.
+
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::requestAnimationFrame):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/DocumentAnimationScheduler.cpp: Added.
+        (WebCore::DocumentAnimationScheduler::create):
+        (WebCore::DocumentAnimationScheduler::DocumentAnimationScheduler):
+        (WebCore::DocumentAnimationScheduler::detachFromDocument):
+        (WebCore::DocumentAnimationScheduler::scheduleWebAnimationsResolution):
+        (WebCore::DocumentAnimationScheduler::scheduleScriptedAnimationResolution):
+        (WebCore::DocumentAnimationScheduler::displayRefreshFired):
+        (WebCore::DocumentAnimationScheduler::windowScreenDidChange):
+        (WebCore::DocumentAnimationScheduler::createDisplayRefreshMonitor const):
+        * animation/DocumentAnimationScheduler.h: Copied from Source/WebCore/animation/CSSAnimation.h.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::create):
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        (WebCore::DocumentTimeline::windowScreenDidChange): Deleted.
+        (WebCore::DocumentTimeline::createDisplayRefreshMonitor const): Deleted.
+        * animation/DocumentTimeline.h:
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::windowScreenDidChange):
+        (WebCore::Document::requestAnimationFrame):
+        (WebCore::Document::animationScheduler):
+        (WebCore::Document::timeline):
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        (WebCore::ScriptedAnimationController::documentAnimationSchedulerDidFire):
+        (WebCore::ScriptedAnimationController::windowScreenDidChange): Deleted.
+        (WebCore::ScriptedAnimationController::displayRefreshFired): Deleted.
+        (WebCore::ScriptedAnimationController::createDisplayRefreshMonitor const): Deleted.
+        * dom/ScriptedAnimationController.h:
+        (WebCore::ScriptedAnimationController::create):
+
 2018-06-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Zero-prefix (if necessary) output of RSA-based encryption and signing operations

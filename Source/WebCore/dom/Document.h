@@ -80,6 +80,7 @@ class InputCursor;
 
 namespace WebCore {
 
+class DocumentAnimationScheduler;
 class ApplicationStateChangeListener;
 class AXObjectCache;
 class Attr;
@@ -1406,6 +1407,8 @@ public:
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
+    DocumentAnimationScheduler& animationScheduler();
+
     WEBCORE_EXPORT DocumentTimeline& timeline();
     DocumentTimeline* existingTimeline() const { return m_timeline.get(); }
     Vector<RefPtr<WebAnimation>> getAnimations();
@@ -1920,6 +1923,7 @@ private:
     bool m_hasFrameSpecificStorageAccess { false };
     bool m_grantStorageAccessOverride { false };
 
+    RefPtr<DocumentAnimationScheduler> m_animationScheduler;
     RefPtr<DocumentTimeline> m_timeline;
     DocumentIdentifier m_identifier;
 

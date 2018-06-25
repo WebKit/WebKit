@@ -2025,6 +2025,7 @@
 		71556CBE1F9F0A4900E78D08 /* JSKeyframeEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 71556CB71F9F09FC00E78D08 /* JSKeyframeEffect.h */; };
 		715AD7202050513200D592DC /* DeclarativeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 715AD71D2050512400D592DC /* DeclarativeAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		715AD7212050513F00D592DC /* CSSTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 7123C186204739BA00789392 /* CSSTransition.h */; };
+		716E55B020DBABF100F0CF29 /* DocumentAnimationScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 716E55AD20DBABDC00F0CF29 /* DocumentAnimationScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71A1B6081DEE5AD70073BCFB /* modern-media-controls-localized-strings.js in Resources */ = {isa = PBXBuildFile; fileRef = 71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */; };
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
 		71B28427203CEC4C0036AA5D /* JSCSSAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9058,6 +9059,8 @@
 		716C8DF61E48B2B5005BD0DA /* volume-down-fullscreen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-down-fullscreen@2x.png"; sourceTree = "<group>"; };
 		716C8DF71E48B2B5005BD0DA /* volume-up-fullscreen@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-up-fullscreen@1x.png"; sourceTree = "<group>"; };
 		716C8DF81E48B2B5005BD0DA /* volume-up-fullscreen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-up-fullscreen@2x.png"; sourceTree = "<group>"; };
+		716E55AD20DBABDC00F0CF29 /* DocumentAnimationScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentAnimationScheduler.h; sourceTree = "<group>"; };
+		716E55AF20DBABDD00F0CF29 /* DocumentAnimationScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentAnimationScheduler.cpp; sourceTree = "<group>"; };
 		716FA0D81DB26591007323CC /* airplay-button.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "airplay-button.css"; sourceTree = "<group>"; };
 		716FA0D91DB26591007323CC /* airplay-button.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "airplay-button.js"; sourceTree = "<group>"; };
 		716FA0DA1DB26591007323CC /* airplay-placard.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "airplay-placard.js"; sourceTree = "<group>"; };
@@ -19507,6 +19510,8 @@
 				7123C185204739B900789392 /* CSSTransition.idl */,
 				715AD71F2050512400D592DC /* DeclarativeAnimation.cpp */,
 				715AD71D2050512400D592DC /* DeclarativeAnimation.h */,
+				716E55AF20DBABDD00F0CF29 /* DocumentAnimationScheduler.cpp */,
+				716E55AD20DBABDC00F0CF29 /* DocumentAnimationScheduler.h */,
 				71025EC41F99F096004A250C /* DocumentTimeline.cpp */,
 				71025EC51F99F096004A250C /* DocumentTimeline.h */,
 				71025ECA1F99F096004A250C /* DocumentTimeline.idl */,
@@ -27680,6 +27685,7 @@
 				B2F34FE60E82F81400F627CD /* DNS.h in Headers */,
 				7EE6846F12D26E3800E73215 /* DNSResolveQueueCFNet.h in Headers */,
 				A8185F4009765766005826D9 /* Document.h in Headers */,
+				716E55B020DBABF100F0CF29 /* DocumentAnimationScheduler.h in Headers */,
 				A3BB59F41457A40D00AC56FE /* DocumentEventQueue.h in Headers */,
 				A8185F3D09765766005826D9 /* DocumentFragment.h in Headers */,
 				46E1666E1FCC86A200C9710B /* DocumentIdentifier.h in Headers */,

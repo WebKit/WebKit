@@ -1,8 +1,8 @@
 
 PASS play() overrides animation-play-state 
-FAIL pause() overrides animation-play-state undefined is not an object (evaluating 'animation.pause')
-FAIL play() is overridden by later setting "animation-play-state: paused" undefined is not an object (evaluating 'animation.play')
-FAIL play() flushes pending changes to animation-play-state first assert_greater_than: Playing value of margin-left is increasing expected a number greater than 0 but got 0
-FAIL pause() applies pending changes to animation-play-state first undefined is not an object (evaluating 'animation.pause')
-FAIL Setting the current time completes a pending pause assert_true: Animation is pause-pending expected true got false
+FAIL pause() overrides animation-play-state assert_equals: Paused value of margin-left is zero expected 0 but got 0.03600386157631874
+PASS play() is overridden by later setting "animation-play-state: paused" 
+PASS play() flushes pending changes to animation-play-state first 
+PASS pause() applies pending changes to animation-play-state first 
+PASS Setting the current time completes a pending pause 
 

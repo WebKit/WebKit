@@ -29,9 +29,8 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
-#include "DisplayRefreshMonitor.h"
-#include "DisplayRefreshMonitorManager.h"
 #include "Document.h"
+#include "DocumentAnimationScheduler.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -55,11 +54,10 @@ static const Seconds aggressiveThrottlingAnimationInterval { 10_s };
 
 namespace WebCore {
 
-ScriptedAnimationController::ScriptedAnimationController(Document& document, PlatformDisplayID displayID)
+ScriptedAnimationController::ScriptedAnimationController(Document& document)
     : m_document(&document)
     , m_animationTimer(*this, &ScriptedAnimationController::animationTimerFired)
 {
-    windowScreenDidChange(displayID);
 }
 
 ScriptedAnimationController::~ScriptedAnimationController() = default;
@@ -234,17 +232,6 @@ void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
         scheduleAnimation();
 }
 
-void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displayID)
-{
-    if (!requestAnimationFrameEnabled())
-        return;
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
-#else
-    UNUSED_PARAM(displayID);
-#endif
-}
-
 Seconds ScriptedAnimationController::interval() const
 {
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
@@ -274,7 +261,7 @@ void ScriptedAnimationController::scheduleAnimation()
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     if (!m_isUsingTimer && !isThrottled()) {
-        if (DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this))
+        if (m_document->animationScheduler().scheduleScriptedAnimationResolution())
             return;
 
         m_isUsingTimer = true;
@@ -308,20 +295,9 @@ void ScriptedAnimationController::animationTimerFired()
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-void ScriptedAnimationController::displayRefreshFired()
+void ScriptedAnimationController::documentAnimationSchedulerDidFire()
 {
     serviceScriptedAnimations(m_document->domWindow()->nowTimestamp());
-}
-
-RefPtr<DisplayRefreshMonitor> ScriptedAnimationController::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
-{
-    if (!m_document->page())
-        return nullptr;
-
-    if (auto monitor = m_document->page()->chrome().client().createDisplayRefreshMonitor(displayID))
-        return monitor;
-
-    return DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(displayID);
 }
 #endif
 

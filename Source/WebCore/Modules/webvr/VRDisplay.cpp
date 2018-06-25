@@ -110,13 +110,7 @@ uint32_t VRDisplay::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& c
 {
     if (!m_scriptedAnimationController) {
         auto* document = downcast<Document>(scriptExecutionContext());
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-        // FIXME: Get the display id of the HMD as it should use the HMD native refresh rate.
-        PlatformDisplayID displayID = document->page() ? document->page()->chrome().displayID() : 0;
-        m_scriptedAnimationController = ScriptedAnimationController::create(*document, displayID);
-#else
-        m_scriptedAnimationController = ScriptedAnimationController::create(*document, 0);
-#endif
+        m_scriptedAnimationController = ScriptedAnimationController::create(*document);
     }
 
     return m_scriptedAnimationController->registerCallback(WTFMove(callback));

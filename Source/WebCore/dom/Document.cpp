@@ -56,6 +56,7 @@
 #include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
+#include "DocumentAnimationScheduler.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
@@ -2441,6 +2442,11 @@ void Document::prepareForDestruction()
     if (m_timeline) {
         m_timeline->detachFromDocument();
         m_timeline = nullptr;
+    }
+
+    if (m_animationScheduler) {
+        m_animationScheduler->detachFromDocument();
+        m_animationScheduler = nullptr;
     }
 
     m_hasPreparedForDestruction = true;
@@ -5919,11 +5925,8 @@ void Document::resumeScriptedAnimationControllerCallbacks()
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
-    if (m_scriptedAnimationController)
-        m_scriptedAnimationController->windowScreenDidChange(displayID);
-
-    if (m_timeline)
-        m_timeline->windowScreenDidChange(displayID);
+    if (m_animationScheduler)
+        m_animationScheduler->windowScreenDidChange(displayID);
 
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
@@ -6526,11 +6529,8 @@ double Document::monotonicTimestamp() const
 int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
     if (!m_scriptedAnimationController) {
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-        m_scriptedAnimationController = ScriptedAnimationController::create(*this, page() ? page()->chrome().displayID() : 0);
-#else
-        m_scriptedAnimationController = ScriptedAnimationController::create(*this, 0);
-#endif
+        m_scriptedAnimationController = ScriptedAnimationController::create(*this);
+
         // It's possible that the Page may have suspended scripted animations before
         // we were created. We need to make sure that we don't start up the animation
         // controller on a background tab, for example.
@@ -7717,10 +7717,18 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
     m_consoleMessageListener = listener;
 }
 
+DocumentAnimationScheduler& Document::animationScheduler()
+{
+    if (!m_animationScheduler)
+        m_animationScheduler = DocumentAnimationScheduler::create(*this, page() ? page()->chrome().displayID() : 0);
+
+    return *m_animationScheduler;
+}
+
 DocumentTimeline& Document::timeline()
 {
     if (!m_timeline)
-        m_timeline = DocumentTimeline::create(*this, page() ? page()->chrome().displayID() : 0);
+        m_timeline = DocumentTimeline::create(*this);
 
     return *m_timeline;
 }

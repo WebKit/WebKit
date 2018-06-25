@@ -27,12 +27,8 @@
 #include "DocumentTimeline.h"
 
 #include "AnimationPlaybackEvent.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
-#include "DisplayRefreshMonitor.h"
-#include "DisplayRefreshMonitorManager.h"
 #include "Document.h"
 #include "KeyframeEffect.h"
 #include "Page.h"
@@ -43,12 +39,12 @@ static const Seconds throttledAnimationInterval { 30_ms };
 
 namespace WebCore {
 
-Ref<DocumentTimeline> DocumentTimeline::create(Document& document, PlatformDisplayID displayID)
+Ref<DocumentTimeline> DocumentTimeline::create(Document& document)
 {
-    return adoptRef(*new DocumentTimeline(document, displayID));
+    return adoptRef(*new DocumentTimeline(document));
 }
 
-DocumentTimeline::DocumentTimeline(Document& document, PlatformDisplayID displayID)
+DocumentTimeline::DocumentTimeline(Document& document)
     : AnimationTimeline(DocumentTimelineClass)
     , m_document(&document)
     , m_animationScheduleTimer(*this, &DocumentTimeline::animationScheduleTimerFired)
@@ -56,7 +52,6 @@ DocumentTimeline::DocumentTimeline(Document& document, PlatformDisplayID display
     , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
 #endif
 {
-    windowScreenDidChange(displayID);
 }
 
 DocumentTimeline::~DocumentTimeline()
@@ -218,7 +213,7 @@ void DocumentTimeline::animationScheduleTimerFired()
 void DocumentTimeline::scheduleAnimationResolution()
 {
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
+    m_document->animationScheduler().scheduleWebAnimationsResolution();
 #else
     // FIXME: We need to use the same logic as ScriptedAnimationController here,
     // which will be addressed by the refactor tracked by webkit.org/b/179293.
@@ -227,7 +222,7 @@ void DocumentTimeline::scheduleAnimationResolution()
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-void DocumentTimeline::displayRefreshFired()
+void DocumentTimeline::documentAnimationSchedulerDidFire()
 #else
 void DocumentTimeline::animationResolutionTimerFired()
 #endif
@@ -391,27 +386,5 @@ void DocumentTimeline::performEventDispatchTask()
     for (auto& pendingEvent : pendingAnimationEvents)
         pendingEvent->target()->dispatchEvent(pendingEvent);
 }
-
-void DocumentTimeline::windowScreenDidChange(PlatformDisplayID displayID)
-{
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
-#else
-    UNUSED_PARAM(displayID);
-#endif
-}
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-RefPtr<DisplayRefreshMonitor> DocumentTimeline::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
-{
-    if (!m_document || !m_document->page())
-        return nullptr;
-
-    if (auto monitor = m_document->page()->chrome().client().createDisplayRefreshMonitor(displayID))
-        return monitor;
-
-    return DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(displayID);
-}
-#endif
 
 } // namespace WebCore

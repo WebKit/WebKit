@@ -25,16 +25,11 @@
 
 #pragma once
 
-#include "PlatformScreen.h"
 #include "Timer.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-#include "DisplayRefreshMonitorClient.h"
-#endif
 
 namespace WebCore {
 
@@ -43,14 +38,11 @@ class Page;
 class RequestAnimationFrameCallback;
 
 class ScriptedAnimationController : public RefCounted<ScriptedAnimationController>
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    , public DisplayRefreshMonitorClient
-#endif
 {
 public:
-    static Ref<ScriptedAnimationController> create(Document& document, PlatformDisplayID displayID)
+    static Ref<ScriptedAnimationController> create(Document& document)
     {
-        return adoptRef(*new ScriptedAnimationController(document, displayID));
+        return adoptRef(*new ScriptedAnimationController(document));
     }
     ~ScriptedAnimationController();
     void clearDocumentPointer() { m_document = nullptr; }
@@ -77,18 +69,15 @@ public:
     WEBCORE_EXPORT bool isThrottled() const;
     WEBCORE_EXPORT Seconds interval() const;
 
-    void windowScreenDidChange(PlatformDisplayID);
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    void documentAnimationSchedulerDidFire();
+#endif
 
 private:
-    ScriptedAnimationController(Document&, PlatformDisplayID);
+    ScriptedAnimationController(Document&);
 
     void scheduleAnimation();
     void animationTimerFired();
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    // Override for DisplayRefreshMonitorClient
-    void displayRefreshFired() override;
-#endif
 
     Page* page() const;
 
@@ -103,7 +92,6 @@ private:
     double m_lastAnimationFrameTimestamp { 0 };
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
     OptionSet<ThrottlingReason> m_throttlingReasons;
     bool m_isUsingTimer { false };
 #endif
