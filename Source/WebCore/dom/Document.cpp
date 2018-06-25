@@ -56,6 +56,7 @@
 #include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
+#include "DocumentAnimationScheduler.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
@@ -2443,10 +2444,12 @@ void Document::prepareForDestruction()
         m_timeline = nullptr;
     }
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     if (m_animationScheduler) {
         m_animationScheduler->detachFromDocument();
         m_animationScheduler = nullptr;
     }
+#endif
 
     m_hasPreparedForDestruction = true;
 
@@ -5924,8 +5927,10 @@ void Document::resumeScriptedAnimationControllerCallbacks()
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     if (m_animationScheduler)
         m_animationScheduler->windowScreenDidChange(displayID);
+#endif
 
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
@@ -7716,6 +7721,7 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
     m_consoleMessageListener = listener;
 }
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 DocumentAnimationScheduler& Document::animationScheduler()
 {
     if (!m_animationScheduler)
@@ -7723,6 +7729,7 @@ DocumentAnimationScheduler& Document::animationScheduler()
 
     return *m_animationScheduler;
 }
+#endif
 
 DocumentTimeline& Document::timeline()
 {

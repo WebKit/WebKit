@@ -30,7 +30,6 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DisabledAdaptations.h"
-#include "DocumentAnimationScheduler.h"
 #include "DocumentEventQueue.h"
 #include "DocumentIdentifier.h"
 #include "DocumentTiming.h"
@@ -81,7 +80,6 @@ class InputCursor;
 
 namespace WebCore {
 
-class DocumentAnimationScheduler;
 class ApplicationStateChangeListener;
 class AXObjectCache;
 class Attr;
@@ -105,6 +103,7 @@ class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
 class DeferredPromise;
+class DocumentAnimationScheduler;
 class DocumentFragment;
 class DocumentLoader;
 class DocumentMarkerController;
@@ -1408,7 +1407,9 @@ public:
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     DocumentAnimationScheduler& animationScheduler();
+#endif
 
     WEBCORE_EXPORT DocumentTimeline& timeline();
     DocumentTimeline* existingTimeline() const { return m_timeline.get(); }
@@ -1924,7 +1925,9 @@ private:
     bool m_hasFrameSpecificStorageAccess { false };
     bool m_grantStorageAccessOverride { false };
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<DocumentAnimationScheduler> m_animationScheduler;
+#endif
     RefPtr<DocumentTimeline> m_timeline;
     DocumentIdentifier m_identifier;
 
