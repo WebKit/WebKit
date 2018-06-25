@@ -1,5 +1,20 @@
 2018-06-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the DUMP_NODE_STATISTICS code so that it compiles
+        https://bugs.webkit.org/show_bug.cgi?id=186982
+
+        Reviewed by Anders Carlsson.
+
+        The DUMP_NODE_STATISTICS code had bitrotted. ENTITY_NODE no longer exists.
+        liveNodeSet needs to be a static function with a NeverDestroyed<>.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+        (WebCore::Node::trackForDebugging):
+        (WebCore::Node::~Node):
+
+2018-06-24  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the composition underline to be transformed by -apple-color-filter
         https://bugs.webkit.org/show_bug.cgi?id=186983
         rdar://problem/40515558
