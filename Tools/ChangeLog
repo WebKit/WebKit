@@ -1,3 +1,17 @@
+2018-06-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add support for Style-EWS
+        https://bugs.webkit.org/show_bug.cgi?id=186955
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory): Base class for all the factory.
+        * BuildSlaveSupport/ews-build/loadConfig.py: Initialize factory with required parameters.
+        * BuildSlaveSupport/ews-build/runUnittests.py: Added, script to run all the unit tests.
+        * BuildSlaveSupport/ews-build/steps.py: Added.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2018-06-25  Youenn Fablet  <youenn@apple.com>
 
         Add API to control mock media devices

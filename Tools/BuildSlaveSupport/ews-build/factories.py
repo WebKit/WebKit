@@ -23,50 +23,61 @@
 
 from buildbot.process import factory
 
+from steps import *
 
-class StyleFactory(factory.BuildFactory):
+
+class Factory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, additionalArguments=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform, configuration, architectures, buildOnly, additionalArguments))
+        self.addStep(CheckOutSource())
+
+
+class StyleFactory(Factory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(CheckStyle())
+
+
+class GTKFactory(Factory):
     pass
 
 
-class GTKFactory(factory.BuildFactory):
+class iOSFactory(Factory):
     pass
 
 
-class iOSFactory(factory.BuildFactory):
+class iOSSimulatorFactory(Factory):
     pass
 
 
-class iOSSimulatorFactory(factory.BuildFactory):
+class MacWK1Factory(Factory):
     pass
 
 
-class MacWK1Factory(factory.BuildFactory):
+class MacWK2Factory(Factory):
     pass
 
 
-class MacWK2Factory(factory.BuildFactory):
+class WindowsFactory(Factory):
     pass
 
 
-class WindowsFactory(factory.BuildFactory):
+class WinCairoFactory(Factory):
     pass
 
 
-class WinCairoFactory(factory.BuildFactory):
+class WPEFactory(Factory):
     pass
 
 
-class WPEFactory(factory.BuildFactory):
+class JSCTestsFactory(Factory):
     pass
 
 
-class JSCTestsFactory(factory.BuildFactory):
+class BindingsFactory(Factory):
     pass
 
 
-class BindingsFactory(factory.BuildFactory):
-    pass
-
-
-class WebkitpyFactory(factory.BuildFactory):
+class WebkitpyFactory(Factory):
     pass

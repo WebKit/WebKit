@@ -50,10 +50,13 @@ def loadBuilderConfig(c, use_localhost_worker=False, master_prefix_path='./'):
     for builder in config['builders']:
         builder['tags'] = getTagsForBuilder(builder)
         factory = globals()[builder['factory']]
-        builder['factory'] = factory()
-        del builder['platform']
-        if 'configuration' in builder:
-            del builder['configuration']
+        factorykwargs = {}
+        for key in ["platform", "configuration", "architectures", "triggers", "additionalArguments"]:
+            value = builder.pop(key, None)
+            if value:
+                factorykwargs[key] = value
+
+        builder["factory"] = factory(**factorykwargs)
 
         if use_localhost_worker:
             builder['workernames'].append("local-worker")
