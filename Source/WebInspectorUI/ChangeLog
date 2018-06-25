@@ -1,5 +1,18 @@
 2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: color outline is too dark
+        https://bugs.webkit.org/show_bug.cgi?id=186975
+
+        Reviewed by Brian Burg.
+
+        Make the outline lighter than the background.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.hover-menu > svg > :matches(path, rect)):
+
+2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Dark Mode: Media query names are unreadable
         https://bugs.webkit.org/show_bug.cgi?id=186974
 
