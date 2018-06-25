@@ -403,10 +403,11 @@ void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& 
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool shouldClearFirst)
+void NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool shouldClearFirst, uint64_t callbackId)
 {
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
         networkStorageSession->setPrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidUpdatePartitionOrBlockCookies(callbackId), 0);
 }
 
 void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)

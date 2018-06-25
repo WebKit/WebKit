@@ -81,7 +81,7 @@ messages -> NetworkProcess LegacyReceiver {
     PreconnectTo(WebCore::URL url, enum WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    UpdatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, Vector<String> domainsToPartition, Vector<String> domainsToBlock, Vector<String> domainsToNeitherPartitionNorBlock, bool shouldClearFirst)
+    UpdatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, Vector<String> domainsToPartition, Vector<String> domainsToBlock, Vector<String> domainsToNeitherPartitionNorBlock, bool shouldClearFirst, uint64_t callbackId)
     HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
     GetAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
     GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)

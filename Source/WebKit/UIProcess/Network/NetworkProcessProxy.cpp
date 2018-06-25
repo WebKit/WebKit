@@ -234,6 +234,12 @@ void NetworkProcessProxy::clearCallbackStates()
 
     while (!m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty())
         m_pendingDeleteWebsiteDataForOriginsCallbacks.take(m_pendingDeleteWebsiteDataForOriginsCallbacks.begin()->key)();
+
+    while (!m_updatePartitionOrBlockCookiesCallbackMap.isEmpty())
+        m_updatePartitionOrBlockCookiesCallbackMap.take(m_updatePartitionOrBlockCookiesCallbackMap.begin()->key)();
+    
+    while (!m_storageAccessResponseCallbackMap.isEmpty())
+        m_storageAccessResponseCallbackMap.take(m_storageAccessResponseCallbackMap.begin()->key)(false);
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -431,6 +437,24 @@ void NetworkProcessProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderI
 #endif
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+void NetworkProcessProxy::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& callback)
+{
+    if (!canSendMessage()) {
+        callback();
+        return;
+    }
+    
+    auto callbackId = generateCallbackID();
+    auto addResult = m_updatePartitionOrBlockCookiesCallbackMap.add(callbackId, WTFMove(callback));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::UpdatePrevalentDomainsToPartitionOrBlockCookies(sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst == ShouldClearFirst::Yes, callbackId), 0);
+}
+
+void NetworkProcessProxy::didUpdatePartitionOrBlockCookies(uint64_t callbackId)
+{
+    m_updatePartitionOrBlockCookiesCallbackMap.take(callbackId)();
+}
+
 static uint64_t nextRequestStorageAccessContextId()
 {
     static uint64_t nextContextId = 0;

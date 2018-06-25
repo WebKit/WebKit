@@ -47,6 +47,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     CanAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t pageID, uint64_t frameID, WebCore::ProtectionSpace protectionSpace)
 #endif
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    DidUpdatePartitionOrBlockCookies(uint64_t callbackId)
     StorageAccessRequestResult(bool wasGranted, uint64_t contextId)
     AllStorageAccessEntriesResult(Vector<String> domains, uint64_t contextId)
 #endif

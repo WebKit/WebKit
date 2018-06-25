@@ -1321,9 +1321,10 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioning(CompletionHandler<
 #endif
 
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, ShouldClearFirst::No);
-        m_statisticsQueue->dispatch([completionHandler = WTFMove(completionHandler)] () {
-            completionHandler();
+        m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, ShouldClearFirst::No, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+            m_statisticsQueue->dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler();
+            });
         });
 #if !RELEASE_LOG_DISABLED
         RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done updating cookie partitioning and blocking.");
@@ -1339,10 +1340,6 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Ve
         return;
     }
     
-    RunLoop::main().dispatch([this, shouldClearFirst, protectedThis = makeRef(*this), domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock)] () {
-        m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
-    });
-
     if (shouldClearFirst == ShouldClearFirst::Yes)
         resetCookiePartitioningState();
     else {
@@ -1359,7 +1356,13 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Ve
     for (auto& domain : domainsToBlock)
         ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookieBlocking = true;
 
-    completionHandler();
+    RunLoop::main().dispatch([this, shouldClearFirst, protectedThis = makeRef(*this), domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+        m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+            m_statisticsQueue->dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler();
+            });
+        });
+    });
 }
 
 void WebResourceLoadStatisticsStore::clearPartitioningStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&& completionHandler)

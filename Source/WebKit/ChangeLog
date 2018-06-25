@@ -1,3 +1,38 @@
+2018-06-25  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains() wait for the network process before calling its callback
+        https://bugs.webkit.org/show_bug.cgi?id=186903
+        <rdar://problem/41350182>
+
+        Reviewed by Chris Dumez.
+
+        This patch stores the callback sent to
+        WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(),
+        sets up a context ID, and sends that ID to the network process when
+        asking it to update cookie partitioning and blocking. The network
+        process then tells the UI process when it's done, at which point the
+        callback is called.
+
+        This change is meant to address layout test flakiness.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToPartitionOrBlockCookies):
+        (WebKit::NetworkProcessProxy::didUpdatePartitionOrBlockCookies):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioning):
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-06-25  Brent Fulgham  <bfulgham@apple.com>
 
         Allow access to APTDevice in iOS WebContent process
