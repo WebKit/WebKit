@@ -1,3 +1,25 @@
+2018-06-25  Chris Dumez  <cdumez@apple.com>
+
+        Make sure API::IconLoadingClient::getLoadDecisionForIcon()'s completion handler gets called
+        https://bugs.webkit.org/show_bug.cgi?id=187007
+        <rdar://problem/41293989>
+
+        Reviewed by Brady Eidson.
+
+        Make sure API::IconLoadingClient::getLoadDecisionForIcon()'s completion handler gets called by
+        switching its type to WTF::CompletionHandler instead of WTF::Function. This also has the benefit
+        of destroying our captured objects when the completion handler gets called by the client on the
+        main thread instead of whatever thread the ObjC block gets released on.
+
+        * UIProcess/API/APIIconLoadingClient.h:
+        (API::IconLoadingClient::getLoadDecisionForIcon):
+        * UIProcess/API/glib/WebKitIconLoadingClient.cpp:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView maybeInstallIconLoadingClient]):
+        * UIProcess/Cocoa/IconLoadingDelegate.h:
+        * UIProcess/Cocoa/IconLoadingDelegate.mm:
+        (WebKit::IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon):
+
 2018-06-25  Youenn Fablet  <youenn@apple.com>
 
         Add API to control mock media devices

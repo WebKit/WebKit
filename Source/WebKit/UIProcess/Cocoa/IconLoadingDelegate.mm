@@ -72,7 +72,7 @@ IconLoadingDelegate::IconLoadingClient::~IconLoadingClient()
 
 typedef void (^IconLoadCompletionHandler)(NSData*);
 
-void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, WTF::Function<void (WTF::Function<void (API::Data*, WebKit::CallbackBase::Error)>&&)>&& completionHandler)
+void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, WTF::CompletionHandler<void(WTF::Function<void(API::Data*, WebKit::CallbackBase::Error)>&&)>&& completionHandler)
 {
     if (!m_iconLoadingDelegate.m_delegateMethods.webViewShouldLoadIconWithParametersCompletionHandler) {
         completionHandler(nullptr);
@@ -88,6 +88,7 @@ void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCor
     RetainPtr<_WKLinkIconParameters> parameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIcon]);
 
     [delegate webView:m_iconLoadingDelegate.m_webView shouldLoadIconWithParameters:parameters.get() completionHandler:BlockPtr<void (IconLoadCompletionHandler loadCompletionHandler)>::fromCallable([completionHandler = WTFMove(completionHandler)] (IconLoadCompletionHandler loadCompletionHandler) {
+        ASSERT(RunLoop::isMain());
         if (loadCompletionHandler) {
             completionHandler([loadCompletionHandler = Block_copy(loadCompletionHandler)](API::Data* data, WebKit::CallbackBase::Error error) {
                 if (error != CallbackBase::Error::None || !data)

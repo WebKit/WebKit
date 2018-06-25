@@ -33,7 +33,7 @@ public:
     }
 
 private:
-    void getLoadDecisionForIcon(const WebCore::LinkIcon& icon, Function<void (Function<void (API::Data*, CallbackBase::Error)>&&)>&& completionHandler) override
+    void getLoadDecisionForIcon(const WebCore::LinkIcon& icon, CompletionHandler<void(Function<void(API::Data*, CallbackBase::Error)>&&)>&& completionHandler) override
     {
         // WebCore can send non HTTP icons.
         if (!icon.url.protocolIsInHTTPFamily()) {
