@@ -1,3 +1,21 @@
+2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: Font guideline colors are too bright
+        https://bugs.webkit.org/show_bug.cgi?id=186986
+
+        Reviewed by Brian Burg.
+
+        Make the guidelines less distractive from the font glyphs.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.content-view.resource.font .preview > .line):
+        (.content-view.resource.font .metric.top):
+        (.content-view.resource.font .metric.baseline):
+        (.content-view.resource.font .metric.middle):
+        (.content-view.resource.font .metric.xheight):
+        (.content-view.resource.font .metric.bottom):
+
 2018-06-20  Daniel Bates  <dabates@apple.com>
 
         Web Inspector: All non-Same-Site cookies are marked as Same-Site Strict in Storage tab
