@@ -225,6 +225,145 @@ static bool virtualKeyHasStickyModifier(VirtualKey key)
     }
 }
 
+static int keyCodeForCharKey(CharKey key)
+{
+    switch (key) {
+    case 'q':
+    case 'Q':
+        return kVK_ANSI_Q;
+    case 'w':
+    case 'W':
+        return kVK_ANSI_W;
+    case 'e':
+    case 'E':
+        return kVK_ANSI_E;
+    case 'r':
+    case 'R':
+        return kVK_ANSI_R;
+    case 't':
+    case 'T':
+        return kVK_ANSI_T;
+    case 'y':
+    case 'Y':
+        return kVK_ANSI_Y;
+    case 'u':
+    case 'U':
+        return kVK_ANSI_U;
+    case 'i':
+    case 'I':
+        return kVK_ANSI_I;
+    case 'o':
+    case 'O':
+        return kVK_ANSI_O;
+    case 'p':
+    case 'P':
+        return kVK_ANSI_P;
+    case 'a':
+    case 'A':
+        return kVK_ANSI_A;
+    case 's':
+    case 'S':
+        return kVK_ANSI_S;
+    case 'd':
+    case 'D':
+        return kVK_ANSI_D;
+    case 'f':
+    case 'F':
+        return kVK_ANSI_F;
+    case 'g':
+    case 'G':
+        return kVK_ANSI_G;
+    case 'h':
+    case 'H':
+        return kVK_ANSI_H;
+    case 'j':
+    case 'J':
+        return kVK_ANSI_J;
+    case 'k':
+    case 'K':
+        return kVK_ANSI_K;
+    case 'l':
+    case 'L':
+        return kVK_ANSI_L;
+    case 'z':
+    case 'Z':
+        return kVK_ANSI_Z;
+    case 'x':
+    case 'X':
+        return kVK_ANSI_X;
+    case 'c':
+    case 'C':
+        return kVK_ANSI_C;
+    case 'v':
+    case 'V':
+        return kVK_ANSI_V;
+    case 'b':
+    case 'B':
+        return kVK_ANSI_B;
+    case 'n':
+    case 'N':
+        return kVK_ANSI_N;
+    case 'm':
+    case 'M':
+        return kVK_ANSI_M;
+    case '1':
+        return kVK_ANSI_1;
+    case '2':
+        return kVK_ANSI_2;
+    case '3':
+        return kVK_ANSI_3;
+    case '4':
+        return kVK_ANSI_4;
+    case '5':
+        return kVK_ANSI_5;
+    case '6':
+        return kVK_ANSI_6;
+    case '7':
+        return kVK_ANSI_7;
+    case '8':
+        return kVK_ANSI_8;
+    case '9':
+        return kVK_ANSI_9;
+    case '0':
+        return kVK_ANSI_0;
+    case '=':
+    case '+':
+        return kVK_ANSI_Equal;
+    case '-':
+    case '_':
+        return kVK_ANSI_Minus;
+    case '[':
+    case '{':
+        return kVK_ANSI_LeftBracket;
+    case ']':
+    case '}':
+        return kVK_ANSI_RightBracket;
+    case '\'':
+    case '"':
+        return kVK_ANSI_Quote;
+    case ';':
+    case ':':
+        return kVK_ANSI_Semicolon;
+    case '\\':
+    case '|':
+        return kVK_ANSI_Backslash;
+    case ',':
+    case '<':
+        return kVK_ANSI_Comma;
+    case '.':
+    case '>':
+        return kVK_ANSI_Period;
+    case '/':
+    case '?':
+        return kVK_ANSI_Slash;
+    case '`':
+    case '~':
+        return kVK_ANSI_Grave;
+    }
+
+    return 0;
+}
+
 static int keyCodeForVirtualKey(VirtualKey key)
 {
     // The likely keyCode for the virtual key as defined in <HIToolbox/Events.h>.
@@ -432,7 +571,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 
     bool isStickyModifier = false;
     NSEventModifierFlags changedModifiers = 0;
-    int keyCode;
+    int keyCode = 0;
     std::optional<unichar> charCode;
     std::optional<unichar> charCodeIgnoringModifiers;
 
@@ -445,6 +584,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
             charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(virtualKey);
         },
         [&] (CharKey charKey) {
+            keyCode = keyCodeForCharKey(charKey);
             charCode = (unichar)charKey;
             charCodeIgnoringModifiers = (unichar)charKey;
         }

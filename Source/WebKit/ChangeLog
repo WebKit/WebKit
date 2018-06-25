@@ -1,3 +1,21 @@
+2018-06-23  Brian Burg  <bburg@apple.com>
+
+        [Mac] Web Automation: include correct key code with synthesized NSEvents used for keystrokes
+        https://bugs.webkit.org/show_bug.cgi?id=186937
+
+        Reviewed by Timothy Hatcher.
+
+        In some cases, a missing keyCode for an ASCII letter/number can cause synthesized
+        NSEvents to not be converted into a key equivalent action like copy: or paste:.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        Drive by, always initialize keyCode.
+
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        (WebKit::keyCodeForCharKey): Compute the keyCode as defined by HLTB headers.
+        This only needs to be computed for characters with physical keys, excluding the
+        number pad and some traditional virtual keys that do not usually have glyphs.
+
 2018-06-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix GTK debug build after r233131
