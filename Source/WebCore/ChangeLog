@@ -1,3 +1,23 @@
+2018-06-25  Brady Eidson  <beidson@apple.com>
+
+        Remove RELEASE_ASSERT added in r230875.
+        <rdar://problem/40860061> and https://bugs.webkit.org/show_bug.cgi?id=187022
+
+        Reviewed by Brent Fulgham.
+
+        There's actually more than one way for a network session to be destroyed, and that can happen
+        asynchronously and unpredictably.
+
+        And the request to start up a WebSocket and do its handshake is also asynchronous and unpredictable
+ 
+        It's an expected race.
+
+        If the NetworkStorageSession cannot be found then the WebSocket handshake should just fail.
+
+        * platform/network/SocketStreamHandleImpl.cpp:
+        (WebCore::cookieDataForHandshake): If the NetworkStorageSession cannot be found, return std::nullopt.
+        (WebCore::SocketStreamHandleImpl::platformSendHandshake): If the cookieData is null, fail the handshake.
+
 2018-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPad apps on macOS] Web process crashes when attempting to play embedded YouTube video in News
