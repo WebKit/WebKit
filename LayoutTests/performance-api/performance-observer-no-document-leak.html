@@ -12,8 +12,8 @@ window.jsTestIsAsync = true;
 function numberOfDocumentsShouldBecome(count)
 {
     return new Promise(function(resolve, reject) {
-        gc();
         handle = setInterval(function() {
+            gc();
             if (internals.numberOfLiveDocuments() == count) {
                 testPassed("Number of document is " + count);
                 clearInterval(handle);

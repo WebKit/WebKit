@@ -1,3 +1,16 @@
+2018-06-25  Chris Dumez  <cdumez@apple.com>
+
+        performance-api/performance-observer-no-document-leak.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=186938
+        <rdar://problem/41379336>
+
+        Unreviewed, move the call to gc() inside the setInterval() so we keep
+        trying to gc() until the frame / document are destroyed (instead of
+        only doing a single garbage collection).
+
+        * TestExpectations:
+        * performance-api/performance-observer-no-document-leak.html:
+
 2018-06-25  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: hardware-accelerated animation fails on inline element
