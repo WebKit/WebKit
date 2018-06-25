@@ -1164,6 +1164,9 @@ void KeyframeEffectReadOnly::updateAcceleratedAnimationState()
     if (!m_shouldRunAccelerated)
         return;
 
+    if (!renderer())
+        return;
+
     auto localTime = animation()->currentTime();
 
     // If we don't have a localTime or localTime < 0, we either don't have a start time or we're before the startTime

@@ -1,3 +1,18 @@
+2018-06-25  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: hardware-accelerated animation fails on inline element
+        https://bugs.webkit.org/show_bug.cgi?id=186981
+        <rdar://problem/41418697>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * webanimations/opacity-animation-yields-compositing-expected.txt:
+        * webanimations/opacity-animation-yields-compositing-span-expected.txt:
+        * webanimations/opacity-animation-yields-compositing-span.html: Added.
+        * webanimations/opacity-animation-yields-compositing.html:
+
 2018-06-25  Youenn Fablet  <youenn@apple.com>
 
         Add API to control mock media devices

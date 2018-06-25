@@ -8,12 +8,12 @@
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 100.00 100.00)
+          (bounds 25.00 18.00)
           (opacity 0.50)
-          (contentsOpaque 1)
+          (drawsContent 1)
         )
       )
     )
   )
 )
-
+Foo
