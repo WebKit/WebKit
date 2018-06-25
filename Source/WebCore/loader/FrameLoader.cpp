@@ -362,6 +362,12 @@ void FrameLoader::setDefersLoading(bool defers)
 
 void FrameLoader::checkContentPolicy(const ResourceResponse& response, ContentPolicyDecisionFunction&& function)
 {
+    if (!activeDocumentLoader()) {
+        // Load was cancelled
+        function(PolicyAction::Ignore);
+        return;
+    }
+
     client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), WTFMove(function));
 }
 

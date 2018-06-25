@@ -1,3 +1,30 @@
+2018-06-25  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r229722): WebKitLegacy clients can crash when loading alternate page
+        https://bugs.webkit.org/show_bug.cgi?id=187008
+        
+        Reviewed by Chris Dumez.
+
+        The new call to 'clearProvisionalLoadForPolicyCheck' added in r229722 broke loading
+        behavior in WebKitLegacy.
+
+        1. We can now enter 'cancelPolicyCheckIfNeeded' without a Frame loader, in what appears
+           to be a recursive call during the load cancellation (the 'm_waitingForContentPolicy'
+           and 'm_waitingForNavigationPolicy' have already been nulled). It seems like we should
+           return early here, or perhaps just move the RELEASE_ASSERT inside the case where we
+           have an active policy check happening.
+
+        2. We also enter FrameLoader::checkContentPolicy without an active document loader. We
+           should recognize this case and handle it, rather than trying to dereference a nullptr
+           document loader.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::cancelPolicyCheckIfNeeded): Move the RELEASE_ASSERT inside the
+        conditional where the frameLoader is actually used.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkContentPolicy): Recognize that the activeDocumentLoader may
+        be nullptr at this point, and take appropriate action (rather than crashing).
+
 2018-06-25  Simon Fraser  <simon.fraser@apple.com>
 
         MatchedPropertiesCacheItem wastes 388KB of vector capacity on nytimes.com

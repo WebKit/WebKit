@@ -1813,9 +1813,8 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
 void DocumentLoader::cancelPolicyCheckIfNeeded()
 {
-    RELEASE_ASSERT(frameLoader());
-
     if (m_waitingForContentPolicy || m_waitingForNavigationPolicy) {
+        RELEASE_ASSERT(frameLoader());
         frameLoader()->policyChecker().stopCheck();
         m_waitingForContentPolicy = false;
         m_waitingForNavigationPolicy = false;
