@@ -1,3 +1,26 @@
+2018-06-25  Keith Rollin  <krollin@apple.com>
+
+        Adjust webrtc library for LTO
+        https://bugs.webkit.org/show_bug.cgi?id=186952
+        <rdar://problem/41387815>
+
+        Reviewed by Youenn Fablet.
+
+        There are a number of files in webrtc that have main() functions (in
+        particular, rtpcat.cc and click_annotate.cc). When compiling with LTO,
+        these symbols are exposed to each other, leading to the following
+        build failure:
+
+            Ld libwebrtc.dylib
+            duplicate symbol _main in:
+            ld: 1 duplicate symbol for architecture x86_64
+            clang: error: linker command failed with exit code 1 (use -v to see invocation)
+            ** BUILD FAILED **
+
+        Address this by removing the indicated files from the build.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-06-14  Youenn Fablet  <youenn@apple.com>
 
         Activate -Wexit-time-destructors -and Wglobal-constructors in libwebrtc

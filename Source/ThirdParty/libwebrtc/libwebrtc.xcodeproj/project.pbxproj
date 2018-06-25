@@ -2248,7 +2248,6 @@
 		5CDD8AB71E43C00F00621E92 /* rtp_file_source.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8A8A1E43C00F00621E92 /* rtp_file_source.h */; };
 		5CDD8AB81E43C00F00621E92 /* rtp_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8A8B1E43C00F00621E92 /* rtp_generator.cc */; };
 		5CDD8AB91E43C00F00621E92 /* rtp_generator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8A8C1E43C00F00621E92 /* rtp_generator.h */; };
-		5CDD8ABA1E43C00F00621E92 /* rtpcat.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8A8D1E43C00F00621E92 /* rtpcat.cc */; };
 		5CDD8ACC1E43C23900621E92 /* audio_receive_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8ABD1E43C23900621E92 /* audio_receive_stream.cc */; };
 		5CDD8ACD1E43C23900621E92 /* audio_receive_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8ABE1E43C23900621E92 /* audio_receive_stream.h */; };
 		5CDD8ACF1E43C23900621E92 /* audio_send_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8AC01E43C23900621E92 /* audio_send_stream.cc */; };
@@ -2415,7 +2414,6 @@
 		5CDD8C661E43C60900621E92 /* opus_inst.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8C591E43C60900621E92 /* opus_inst.h */; };
 		5CDD8C671E43C60900621E92 /* opus_interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8C5A1E43C60900621E92 /* opus_interface.c */; };
 		5CDD8C681E43C60900621E92 /* opus_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8C5B1E43C60900621E92 /* opus_interface.h */; };
-		5CDD8C851E43C66000621E92 /* click_annotate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8C6C1E43C66000621E92 /* click_annotate.cc */; };
 		5CDD8C861E43C66000621E92 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8C6D1E43C66000621E92 /* common.h */; };
 		5CDD8C871E43C66000621E92 /* daubechies_8_wavelet_coeffs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8C6E1E43C66000621E92 /* daubechies_8_wavelet_coeffs.h */; };
 		5CDD8C891E43C66000621E92 /* dyadic_decimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8C701E43C66000621E92 /* dyadic_decimator.h */; };
