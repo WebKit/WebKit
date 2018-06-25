@@ -1168,7 +1168,8 @@ void InlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatP
     width -= 2;
 
     GraphicsContext& context = paintInfo.context();
-    context.setStrokeColor(underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? renderer().style().visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : underline.color);
+    Color underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? renderer().style().visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : renderer().style().colorByApplyingColorFilter(underline.color);
+    context.setStrokeColor(underlineColor);
     context.setStrokeThickness(lineThickness);
     context.drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());
 }

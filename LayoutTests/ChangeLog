@@ -1,3 +1,14 @@
+2018-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the composition underline to be transformed by -apple-color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=186983
+        rdar://problem/40515558
+
+        Reviewed by Zalan Bujtas.
+        
+        * css3/color-filters/color-filter-composition-underline-color-expected.html: Added.
+        * css3/color-filters/color-filter-composition-underline-color.html: Added.
+
 2018-06-23  Zalan Bujtas  <zalan@apple.com>
 
         [Mail] Use the Mail Viewer width as the base for resolving horizontal viewport units
