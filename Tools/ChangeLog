@@ -1,3 +1,18 @@
+2018-06-25  Robin Morisset  <rmorisset@apple.com>
+
+        [WSL] Start writing the Sphinx document
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        Very early work, just has the lexer and a few fragments of the parser so far.
+        Also fixing some minor mistake in the formal rules.
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL.g4:
+        * WebGPUShadingLanguageRI/SpecWork/WSL.ott:
+        * WebGPUShadingLanguageRI/SpecWork/source/conf.py:
+        * WebGPUShadingLanguageRI/SpecWork/source/index.rst:
+
 2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add user-defined literal for ASCIILiteral

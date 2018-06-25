@@ -27,7 +27,7 @@ s :: stmt_ ::= {{com statement}}
     | trap ; :: :: trap
     | { blockAnnot s0 .. sn } :: :: block
     | e ; :: :: effectful_expr
-    | x : sid ; :: :: resolved_vdecl {{com post-monomorphisation variable declaration}}
+    | tval x : sid ; :: :: resolved_vdecl {{com post-monomorphisation variable declaration}}
     | Loop ( s , s' ) :: :: loop_construct {{com Special, only during execution}}
     | Cases ( s0 , .. , sn ) :: :: cases_construct {{com Special, only during execution}}
 
@@ -226,8 +226,9 @@ formula :: formula_ ::=
     | E = E' :: :: event_eq
     | R = R' :: :: exec_env_eq
     | s = s' :: :: stmt_eq
-    | rv not in sc0 .. scn :: :: rval_not_in_cases
+    | rv not in sc0 .. scn :: :: rval_not_in_cases % TODO: fix typesetting
     | s = { sblock } :: :: block_from_switch_block
+    | rv = Default ( tval ) :: :: default_value
 
 defns
 desugaring :: '' ::=
@@ -705,8 +706,9 @@ R |- s -> s' ; E :: :: exec_stmt :: '' {{com Small-step reduction on statements}
     Rout |- {R s s1..sn} -> s;
 
     R' = R[x -> LVal(sid)]
-    ------------------------------------------- :: block_vdecl
-    Rout |- {R x : sid; s1..sn} -> {R' s1..sn};
+    rv = Default(tval)
+    ----------------------------------------------------------- :: block_vdecl
+    Rout |- {R tval x : sid; s1..sn} -> {R' s1..sn} ; sid <- rv
 
     R |- e -> e' ; E
     ------------------ :: effectful_expr_reduce

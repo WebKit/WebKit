@@ -12,17 +12,192 @@ Grammar
 Lexical analysis
 ----------------
 
+Before parsing, the text of a WSL program is first turned into a list of tokens, removing comments and whitespace along the way.
+Tokens are built greedily, in other words each token is as long as possible.
+If the program cannot be transformed into a list of tokens by following these rules, the program is invalid and must be rejected.
+
+A token can be either of:
+
+- An integer literal
+- A float literal
+- Punctuation
+- A keyword
+- A normal identifier
+- An operator name
+
+Literals
+""""""""
+
+An integer literal can either be decimal or hexadecimal, and either signed or unsigned, giving 4 possibilities.
+
+- A signed decimal integer literal starts with an optional ``-``, then a number without leading 0.
+- An unsigned decimal integer literal starts with a number without leading 0, then ``u``.
+- A signed hexadecimal integer literal starts with an optional ``-``, then the string ``0x``, then a non-empty sequence of elements of [0-9a-fA-F] (non-case sensitive, leading 0s are allowed).
+- An unsigned hexadecimal inter literal starts with the string ``0x``, then a non-empty sequence of elements of [0-9a-fA-F] (non-case sensitive, leading 0s are allowed), and finally the character ``u``.
+
+.. todo:: I chose rather arbitrarily to allow leading 0s in hexadecimal, but not in decimal integer literals. This can obviously be changed either way.
+
+A float literal is made of the following elements in sequence:
+
+- an optional ``-`` character
+- a sequence of 0 or more digits (in [0-9])
+- a ``.`` character
+- a sequence of 0 or more digits (in [0-9]). This sequence must instead have 1 or more elements, if the last sequence was empty.
+- optionally a ``f`` or ``d`` character
+
+In regexp form: '-'? ([0-9]+ '.' [0-9]* | [0-9]* '.' [0-9]+) [fd]?
+
+Keywords and punctuation
+""""""""""""""""""""""""
+
+The following strings are reserved keywords of the language:
+
++-------------------------------+---------------------------------------------------------------------------------+
+| Top level                     | struct typedef enum operator vertex fragment native restricted                  |
++-------------------------------+---------------------------------------------------------------------------------+
+| Control flow                  | if else switch case default while do for break continue fallthrough return trap |
++-------------------------------+---------------------------------------------------------------------------------+
+| Literals                      | null true false                                                                 |
++-------------------------------+---------------------------------------------------------------------------------+
+| Address space                 | constant device threadgroup thread                                              |
++-------------------------------+---------------------------------------------------------------------------------+
+| Reserved for future extension | protocol auto                                                                   |
++-------------------------------+---------------------------------------------------------------------------------+
+
+Similarily, the following elements of punctuation are valid tokens:
+
++----------------------+-----------------------------------------------------------------------------------------+
+| Relational operators | ``==`` ``!=`` ``<=`` ``=>`` ``<`` ``>``                                                 |
++----------------------+-----------------------------------------------------------------------------------------+
+| Assignment operators | ``++`` ``--`` ``+=`` ``-=`` ``*=`` ``/=`` ``%=`` ``^=`` ``&=``  ``|=`` ``>>=``  ``<<=`` |
++----------------------+-----------------------------------------------------------------------------------------+
+| Arithmetic operators | ``+``  ``-`` ``*`` ``/`` ``%``                                                          |
++----------------------+-----------------------------------------------------------------------------------------+
+| Logic operators      | ``&&`` ``||`` ``&``  ``|``  ``^`` ``>>`` ``<<`` ``!`` ``~``                             |
++----------------------+-----------------------------------------------------------------------------------------+
+| Memory operators     | ``->`` ``.`` ``&`` ``@``                                                                |
++----------------------+-----------------------------------------------------------------------------------------+
+| Other                | ``?`` ``:`` ``;`` ``,`` ``[`` ``]`` ``{`` ``}`` ``(`` ``)``                             |
++----------------------+-----------------------------------------------------------------------------------------+
+
+Identifiers and operator names
+""""""""""""""""""""""""""""""
+
+An identifier is any sequence of alphanumeric characters or underscores, that does not start by a digit, that is not a single underscore (the single underscore is reserved for future extension), and that is not a reserved keyword.
+TODO: decide if we only accept [_a-zA-Z][_a-zA-Z0-9], or whether we also accept unicode characters.
+
+Operator names can be either of the 4 following possibilities:
+
+- the string ``operator``, followed immediately with one of the following strings: ``>>``, ``<<``, ``+``, ``-``, ``*``, ``/``, ``%``, ``&&``, ``||``, ``&``, ``|``, ``^``, ``>=``, ``<=``, ``>``, ``<``, ``++``, ``--``, ``!``, ``~``, ``[]``, ``[]=``, ``&[]``.
+- the string ``operator.`` followed immediately with what would be a valid identifier x. We call this token a 'getter for x'.
+- the string ``operator.`` followed immediately with what would be a valid identifier x, followed immediately with the character ``=``. We call this token 'a setter for x'.
+- the string ``operator&.`` followed immediately with what would be a valid identifier x. We call this token an 'address taker for x'.
+
+.. note:: Thanks to the rule that token are read greedily, the string "operator.foo" is a single token (a getter for foo), and not the keyword "operator" followed by the punctuation "." followed by the identifier "foo".
+
+Whitespace and comments
+"""""""""""""""""""""""
+
+Any of the following characters are considered whitespace, and ignored after this phase: space, tabulation (``\t``), carriage return (``\r``), new line(``\n``).
+
+.. todo:: do we want to also allow other unicode whitespace characters?
+
+We also allow two kinds of comments, that are treated like whitespace (i.e. ignored during parsing).
+The first kind is a line comment, that starts with the string ``//`` and continues until the next end of line character.
+The second kind is a multi-line comment, that starts with the string ``/*`` and ends as soon as the string ``*/`` is read.
+
+.. note:: Multi-line comments cannot be nested, as the first ``*/`` closes the outermost ``/*``
+
 Parsing
 -------
 
-Notations
-"""""""""
+.. todo:: add here a quick explanation of BNF syntax and our conventions.
 
 Top-level declarations
 """"""""""""""""""""""
 
+A valid file is made of a sequence of 0 or more top-level declarations, followed by the special End-Of-File token.
+
+.. productionlist::
+    topLevelDecl: ";" | typedef | structDef | enumDef | funcDef
+
+.. todo:: We may want to also allow variable declarations at the top-level if it can easily be supported by all of our targets.
+.. todo:: Decide whether we put native/restricted in the spec or not.
+
+.. productionlist::
+    typedef: "typedef" `Identifier` "=" `type` ";"
+
+.. productionlist::
+    structDef: "struct" `Identifier` "{" `structElement`* "}"
+    structElement: `type` `Identifier` ";"
+
+.. productionlist::
+    enumDef: "enum" `Identifier` (":" `type`)? "{" `enumElement` ("," `enumElement`)* "}"
+    enumElement: `Identifier` ("=" `constexpr`)?
+
+.. productionlist::
+    funcDef: `funcDecl` "{" `stmt`* "}"
+    funcDecl: `entryPointDecl` | `normalFuncDecl` | `castOperatorDecl`
+    entryPointDecl: ("vertex" | "fragment") `type` `Identifier` `parameters`
+    normalFuncDecl: `type` (`Identifier` | `OperatorName`) `parameters`
+    castOperatorDecl: "operator" `type` `parameters`
+    parameters: "(" ")" | "(" `parameter` ("," `parameter`)* ")"
+    parameter: `type` `Identifier`
+
+.. note:: the return type is put after the "operator" keyword when declaring a cast operator, mostly because it is also the name of the created function. 
+
 Statements
 """"""""""
+
+.. productionlist::
+    stmt: "{" `stmt`* "}"
+        : | `compoundStmt` 
+        : | `terminatorStmt` ";" 
+        : | `variableDecls` ";" 
+        : | `maybeEffectfulExpr` ";"
+    compoundStmt: `ifStmt` | `ifElseStmt` | `whileStmt` | `doWhileStmt` | `forStmt` | `switchStmt`
+    terminatorStmt: "break" | "continue" | "fallthrough" | "return" `expr`? | "trap"
+
+.. productionlist::
+    ifStmt: "if" "(" expr ")" stmt
+    ifElseStmt: "if" "(" expr ")" stmt "else" stmt
+
+The first of these two productions is merely syntactic sugar for the second:
+
+.. todo:: should I forbid assignments (without parentheses) inside the conditions of if/while to avoid the common mistaking of "=" for "==" ? 
+
+.. math:: \textbf{if}(e) \,s \leadsto \textbf{if}(e) \,s\, \textbf{else} \,\{\}
+
+.. productionlist::
+    whileStmt: "while" "(" `expr` ")" stmt
+    forStmt: "for" "(" (maybeEffectfulExpr | variableDecls) ";" `expr`? ";" `expr`? ")" `stmt`
+    doWhileStmt: "do" s "while" "(" `expr` ")" ";"
+
+Similarily, we desugar first for loops into while loops, and then all while loops into do while loops.
+First, if the second element of the for is empty we replace it by "true".
+Then, if the third element of the for is empty, we replace it by "null" (any expression without side effect would do)
+Finally, we apply the following two rules:
+
+.. math::
+    \textbf{for} (X_{pre} ; e_{cond} ; e_{iter}) \, s \leadsto \{ X_{pre} ; \textbf{while} (e_{cond}) \{ s \, e_{iter} ; \} \}
+
+.. math::
+    \textbf{while} (e)\, s \leadsto \textbf{if} (e) \textbf{do}\, s\, \textbf{while}(e)
+
+.. productionlist::
+    switchStmt: "switch" "(" `expr` ")" "{" `switchCase`* "}"
+    switchCase: ("case" `constexpr` | "default") ":" stmt*
+
+.. productionlist::
+    variableDecls: `type` `variableDecl` ("," variableDecl)*
+    variableDecl: `Identifier` ("=" `expr`)?
+
+Complex variable declarations are also mere syntactic sugar.
+Several variable declarations separated by commas are the same as separating them with semicolons and repeating the type for each one.
+And a variable declaration with an initializer is the same as an uninitialized declaration, followed by an assignment of the corresponding value to this variable.
+These two transformations can always be done because variable declarations are only allowed inside blocks (and for loops, but these get desugared into a block, see above).
+
+.. todo:: should I make the requirement that variableDecls only appear in blocks be part of the syntax, or should it just be part of the validation rules?
 
 Types
 """""
@@ -35,6 +210,8 @@ Static rules
 
 Phase 1: Desugaring
 -------------------
+
+TODO: move everything from this phase straight into the parser.
 
 desugaring top level:
 
@@ -113,7 +290,7 @@ Typing statements
 Typing expressions
 """"""""""""""""""
 
- typing rules (this and everything that follows can be managed by just a pair of judgements that type stmts/exprs)
+- typing rules (this and everything that follows can be managed by just a pair of judgements that type stmts/exprs)
 - checking returns
 - check that every variable declaration is in a block or at the top-level
 - check that no variable declaration shadows another one at the same scope

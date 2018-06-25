@@ -4,6 +4,8 @@ grammar WSL;
  * Lexer
  */
 Whitespace: [ \t\r\n]+ -> skip ;
+LineComment: '//'[^\r\n] -> skip ;
+LongComment: '/*'.*?'*/' -> skip ;
 
 // Note: we forbid leading 0s in decimal integers. to bikeshed.
 fragment CoreDecimalIntLiteral: [1-9] [0-9]* ;
@@ -44,9 +46,9 @@ DO: 'do';
 RETURN: 'return';
 TRAP: 'trap';
 
-fragment NULL: 'null';
-fragment TRUE: 'true';
-fragment FALSE: 'false';
+NULL: 'null';
+TRUE: 'true';
+FALSE: 'false';
 // Note: We could make these three fully case sensitive or insensitive. to bikeshed.
 
 CONSTANT: 'constant';
