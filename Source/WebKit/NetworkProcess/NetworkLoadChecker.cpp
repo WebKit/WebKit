@@ -160,6 +160,10 @@ ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
 
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
+    // If we have a 304, the cached response is in WebProcess so we let WebProcess do the CORS check on the cached response.
+    if (response.httpStatusCode() == 304)
+        return { };
+
     String errorMessage;
     if (!passesAccessControlCheck(response, m_storedCredentialsPolicy, *m_origin, errorMessage))
         return ResourceError { String { }, 0, m_url, WTFMove(errorMessage), ResourceError::Type::AccessControl };

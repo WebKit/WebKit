@@ -1,3 +1,14 @@
+2018-06-25  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should not check CORS for 304 responses triggered by WebProcess revalidation
+        https://bugs.webkit.org/show_bug.cgi?id=186939
+        <rdar://problem/40941725>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::validateResponse):
+
 2018-06-25  Keith Rollin  <krollin@apple.com>
 
         Adjust UNEXPORTED_SYMBOL_LDFLAGS for LTO
