@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT CacheStorageProvider : public RefCounted<CacheStorageProvider> {
+class CacheStorageProvider : public RefCounted<CacheStorageProvider> {
 public:
     static Ref<CacheStorageProvider> create() { return adoptRef(*new CacheStorageProvider); }
     virtual Ref<CacheStorageConnection> createCacheStorageConnection(PAL::SessionID) { return CacheStorageConnection::create(); }

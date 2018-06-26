@@ -53,7 +53,7 @@ public:
     virtual std::optional<Seconds> currentTime() { return m_currentTime; }
     WEBCORE_EXPORT void setCurrentTime(Seconds);
     WEBCORE_EXPORT String description();
-    WEBCORE_EXPORT virtual void pause() { };
+    virtual void pause() { };
 
     virtual void timingModelDidChange() { };
 

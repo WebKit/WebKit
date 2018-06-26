@@ -69,7 +69,7 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
         friend class SWServer;
     public:
-        WEBCORE_EXPORT virtual ~Connection() { }
+        virtual ~Connection() = default;
 
         using Identifier = SWServerConnectionIdentifier;
         Identifier identifier() const { return m_identifier; }

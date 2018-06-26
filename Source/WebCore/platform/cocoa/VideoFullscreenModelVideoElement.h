@@ -69,8 +69,8 @@ public:
     WEBCORE_EXPORT void setVideoLayerGravity(VideoGravity) override;
     WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
     WEBCORE_EXPORT bool isVisible() const override;
-    WEBCORE_EXPORT FloatSize videoDimensions() const override { return m_videoDimensions; }
-    WEBCORE_EXPORT bool hasVideo() const override { return m_hasVideo; }
+    FloatSize videoDimensions() const override { return m_videoDimensions; }
+    bool hasVideo() const override { return m_hasVideo; }
 
 
 protected:

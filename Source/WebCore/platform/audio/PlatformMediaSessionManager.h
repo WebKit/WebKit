@@ -55,12 +55,12 @@ public:
     bool activeAudioSessionRequired() const;
     bool canProduceAudio() const;
 
-    WEBCORE_EXPORT virtual bool hasActiveNowPlayingSession() const { return false; }
-    WEBCORE_EXPORT virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
-    WEBCORE_EXPORT virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
-    WEBCORE_EXPORT virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
-    WEBCORE_EXPORT virtual uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const { return 0; }
-    WEBCORE_EXPORT virtual bool registeredAsNowPlayingApplication() const { return false; }
+    virtual bool hasActiveNowPlayingSession() const { return false; }
+    virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
+    virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
+    virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
+    virtual uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const { return 0; }
+    virtual bool registeredAsNowPlayingApplication() const { return false; }
 
     bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
     void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }

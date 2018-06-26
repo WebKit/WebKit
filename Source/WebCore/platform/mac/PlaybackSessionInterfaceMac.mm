@@ -61,6 +61,15 @@ PlaybackSessionInterfaceMac::~PlaybackSessionInterfaceMac()
     invalidate();
 }
 
+PlaybackSessionModel* PlaybackSessionInterfaceMac::playbackSessionModel() const
+{
+    return m_playbackSessionModel;
+}
+
+void PlaybackSessionInterfaceMac::resetMediaState()
+{
+}
+
 void PlaybackSessionInterfaceMac::durationChanged(double duration)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

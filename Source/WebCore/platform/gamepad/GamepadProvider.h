@@ -35,7 +35,7 @@ namespace WebCore {
 class GamepadProviderClient;
 class PlatformGamepad;
 
-class WEBCORE_EXPORT GamepadProvider {
+class GamepadProvider {
 public:
     virtual ~GamepadProvider() = default;
 
@@ -48,7 +48,7 @@ public:
     virtual bool isMockGamepadProvider() const { return false; }
 
 protected:
-    void dispatchPlatformGamepadInputActivity();
+    WEBCORE_EXPORT void dispatchPlatformGamepadInputActivity();
     void setShouldMakeGamepadsVisibile() { m_shouldMakeGamepadsVisible = true; }
     HashSet<GamepadProviderClient*> m_clients;
 

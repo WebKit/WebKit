@@ -47,30 +47,30 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
 public:
     static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);
     virtual ~PlaybackSessionInterfaceMac();
-    PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionModel; }
+    PlaybackSessionModel* playbackSessionModel() const;
 
     // PlaybackSessionInterface
-    WEBCORE_EXPORT void resetMediaState() final { }
+    void resetMediaState() final;
 
     // PlaybackSessionModelClient
-    WEBCORE_EXPORT void durationChanged(double) final;
-    WEBCORE_EXPORT void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;
-    WEBCORE_EXPORT void rateChanged(bool /*isPlaying*/, float /*playbackRate*/) final;
-    WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&, double /*lastModifiedTime*/, double /*liveUpdateInterval*/) final;
-    WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
-    WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
-    WEBCORE_EXPORT void audioMediaSelectionIndexChanged(uint64_t) final;
-    WEBCORE_EXPORT void legibleMediaSelectionIndexChanged(uint64_t) final;
-    WEBCORE_EXPORT void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) final;
+    void durationChanged(double) final;
+    void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;
+    void rateChanged(bool /*isPlaying*/, float /*playbackRate*/) final;
+    void seekableRangesChanged(const TimeRanges&, double /*lastModifiedTime*/, double /*liveUpdateInterval*/) final;
+    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
+    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
+    void audioMediaSelectionIndexChanged(uint64_t) final;
+    void legibleMediaSelectionIndexChanged(uint64_t) final;
+    void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) final;
 
-    WEBCORE_EXPORT void invalidate();
-    WEBCORE_EXPORT void ensureControlsManager();
+    void invalidate();
+    void ensureControlsManager();
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    WEBCORE_EXPORT void setPlayBackControlsManager(WebPlaybackControlsManager *);
-    WEBCORE_EXPORT WebPlaybackControlsManager *playBackControlsManager();
+    void setPlayBackControlsManager(WebPlaybackControlsManager *);
+    WebPlaybackControlsManager *playBackControlsManager();
 #endif
-    WEBCORE_EXPORT void beginScrubbing();
-    WEBCORE_EXPORT void endScrubbing();
+    void beginScrubbing();
+    void endScrubbing();
 
 private:
     PlaybackSessionInterfaceMac(PlaybackSessionModel&);

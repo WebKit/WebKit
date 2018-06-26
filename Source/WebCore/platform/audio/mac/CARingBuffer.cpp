@@ -44,6 +44,11 @@ CARingBuffer::CARingBuffer()
 {
 }
 
+CARingBuffer::~CARingBuffer()
+{
+    deallocate();
+}
+
 CARingBuffer::CARingBuffer(UniqueRef<CARingBufferStorage>&& storage)
     : m_buffers(WTFMove(storage))
     , m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)

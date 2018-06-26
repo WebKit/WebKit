@@ -51,6 +51,10 @@ UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
 }
 #endif
 
+void LibWebRTCProvider::setActive(bool)
+{
+}
+
 #if USE(LIBWEBRTC)
 static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& address, bool disableNonLocalhostConnections)
 {
@@ -195,9 +199,29 @@ rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::cr
     return webrtc::CreatePeerConnectionFactory(networkThread, networkThread, signalingThread, audioModule, webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr);
 }
 
+std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFactory()
+{
+    return nullptr;
+}
+
+std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProvider::createEncoderFactory()
+{
+    return nullptr;
+}
+
 void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)
 {
     m_factory = webrtc::PeerConnectionFactoryProxy::Create(getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer).signalingThread.get(), WTFMove(factory));
+}
+
+void LibWebRTCProvider::disableEnumeratingAllNetworkInterfaces()
+{
+    m_enableEnumeratingAllNetworkInterfaces = false;
+}
+
+void LibWebRTCProvider::enableEnumeratingAllNetworkInterfaces()
+{
+    m_enableEnumeratingAllNetworkInterfaces = true;
 }
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)

@@ -71,8 +71,8 @@ public:
     
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
-    WEBCORE_EXPORT virtual void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
-    WEBCORE_EXPORT virtual void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
+    virtual void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
+    virtual void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
     WEBCORE_EXPORT virtual RealtimeMediaSource::AudioCaptureFactory& audioFactory() = 0;
 
     virtual RealtimeMediaSource::VideoCaptureFactory& videoFactory() = 0;

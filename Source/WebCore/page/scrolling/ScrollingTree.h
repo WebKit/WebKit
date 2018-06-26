@@ -91,8 +91,8 @@ public:
     // and call scrollingTreeNodeDidScroll().
     WEBCORE_EXPORT virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteraction);
 
-    WEBCORE_EXPORT virtual void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) { }
-    WEBCORE_EXPORT virtual void reportExposedUnfilledArea(MonotonicTime, unsigned /* unfilledArea */) { }
+    virtual void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) { }
+    virtual void reportExposedUnfilledArea(MonotonicTime, unsigned /* unfilledArea */) { }
 
     FloatPoint mainFrameScrollPosition();
     

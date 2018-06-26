@@ -67,7 +67,7 @@ public:
 
     static bool webRTCAvailable();
 
-    virtual void setActive(bool) { };
+    virtual void setActive(bool);
 
     virtual void setH264HardwareEncoderAllowed(bool) { }
 
@@ -104,8 +104,8 @@ public:
     // Used for mock testing
     void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
 
-    void disableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = false; }
-    void enableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = true; }
+    void disableEnumeratingAllNetworkInterfaces();
+    void enableEnumeratingAllNetworkInterfaces();
 
     virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
@@ -115,8 +115,8 @@ protected:
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread, LibWebRTCAudioModule*);
-    virtual std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() { return nullptr; }
-    virtual std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() { return nullptr; }
+    virtual std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory();
+    virtual std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory();
 
     bool m_enableEnumeratingAllNetworkInterfaces { false };
     // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
