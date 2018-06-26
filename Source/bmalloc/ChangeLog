@@ -1,3 +1,26 @@
+2018-06-26  Saam Barati  <sbarati@apple.com>
+
+        Wasm: Any function argument of type Void should be a validation error
+        https://bugs.webkit.org/show_bug.cgi?id=186794
+        <rdar://problem/41140257>
+
+        Reviewed by Keith Miller.
+
+        We have evidence showing that processes with small heaps using the
+        JS API are more space efficient when using system malloc. Our main
+        hypothesis as to why this is, is that when dealing with small heaps,
+        one malloc can be more efficient at optimizing memory usage than
+        two mallocs.
+
+        * bmalloc/BPlatform.h:
+        * bmalloc/Environment.cpp:
+        (bmalloc::isNanoMallocEnabled):
+        (bmalloc::Environment::computeIsDebugHeapEnabled):
+        * bmalloc/ProcessCheck.h:
+        (bmalloc::shouldProcessUnconditionallyUseBmalloc):
+        * bmalloc/ProcessCheck.mm:
+        (bmalloc::shouldProcessUnconditionallyUseBmalloc):
+
 2018-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [bmalloc][Linux] Remove static initializers for PerProcess<>::s_object

@@ -28,6 +28,7 @@
 #if !BPLATFORM(WATCHOS)
 
 #import <Foundation/Foundation.h>
+#import <mutex>
 
 namespace bmalloc {
 
@@ -51,6 +52,27 @@ bool gigacageEnabledForProcess()
 
     return isOptInBinary;
 }
+
+#if BUSE(CHECK_NANO_MALLOC)
+bool shouldProcessUnconditionallyUseBmalloc()
+{
+    static bool result;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] () {
+        if (NSString *appName = [[NSBundle mainBundle] bundleIdentifier]) {
+            auto contains = [&] (NSString *string) {
+                return [appName rangeOfString:string options:NSCaseInsensitiveSearch].location != NSNotFound;
+            };
+            result = contains(@"com.apple.WebKit") || contains(@"safari");
+        } else {
+            NSString *processName = [[NSProcessInfo processInfo] processName];
+            result = [processName isEqualToString:@"jsc"] || [processName isEqualToString:@"wasm"];
+        }
+    });
+
+    return result;
+}
+#endif
 
 }
 

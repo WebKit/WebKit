@@ -71,6 +71,10 @@
 #define BPLATFORM_WATCHOS 1
 #endif
 
+#if defined(TARGET_OS_TV) && TARGET_OS_TV
+#define BPLATFORM_APPLETV 1
+#endif
+
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */
 
 /* BUSE() - use a particular third-party library or optional OS service */
@@ -233,3 +237,11 @@
 
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
+
+#if ((BPLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (BPLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 50000) || (BPLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 120000)) \
+    && (BCPU(ARM64) || BCPU(ARM))
+#define BUSE_CHECK_NANO_MALLOC 1
+#else
+#define BUSE_CHECK_NANO_MALLOC 0
+#endif
+
