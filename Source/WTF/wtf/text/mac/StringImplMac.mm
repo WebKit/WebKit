@@ -21,6 +21,7 @@
 #import "config.h"
 #import "StringImpl.h"
 
+#import "ObjcRuntimeExtras.h"
 #import "RetainPtr.h"
 
 namespace WTF {

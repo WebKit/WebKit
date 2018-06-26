@@ -286,6 +286,7 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 #if !PLATFORM(COCOA) && !OS(LINUX) && !OS(WINDOWS)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
+void MemoryPressureHandler::holdOff(Seconds) { }
 void MemoryPressureHandler::respondToMemoryPressure(Critical, Synchronous) { }
 void MemoryPressureHandler::platformReleaseMemory(Critical) { }
 std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return std::nullopt; }

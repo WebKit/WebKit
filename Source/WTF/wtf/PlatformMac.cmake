@@ -41,8 +41,8 @@ list(APPEND WTF_SOURCES
     cf/LanguageCF.cpp
     cf/RunLoopCF.cpp
 
-    cocoa/AutodrainedPool.cpp
-    cocoa/CPUTimeCocoa.cpp
+    cocoa/AutodrainedPool.mm
+    cocoa/CPUTimeCocoa.mm
     cocoa/Entitlements.cpp
     cocoa/MachSendRight.cpp
     cocoa/MemoryFootprintCocoa.cpp
@@ -57,9 +57,10 @@ list(APPEND WTF_SOURCES
     text/cf/StringImplCF.cpp
     text/cf/StringViewCF.cpp
 
-    text/cocoa/StringImplCocoa.mm
-    text/cocoa/StringViewCocoa.mm
-    text/cocoa/TextBreakIteratorInternalICUMac.mm
+    text/mac/StringImplMac.mm
+    text/mac/StringMac.mm
+    text/mac/StringViewObjC.mm
+    text/mac/TextBreakIteratorInternalICUMac.mm
 )
 
 list(APPEND WTF_PRIVATE_INCLUDE_DIRECTORIES
