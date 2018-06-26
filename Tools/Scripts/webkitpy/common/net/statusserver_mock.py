@@ -78,6 +78,7 @@ class MockStatusServer(object):
         return "http://dummy_url"
 
     def fetch_attachment(self, attachment_id):
+        _log.info('MOCK: fetch_attachment: {}'.format(attachment_id))
         attachment = Attachment({'id': 10008}, None)
         attachment.content = lambda: 'Patch'
         return attachment

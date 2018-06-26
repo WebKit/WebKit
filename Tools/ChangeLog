@@ -1,5 +1,32 @@
 2018-06-26  Daniel Bates  <dabates@apple.com>
 
+        webkit-patch: Make attachment commands work with status-server hosted attachments
+        https://bugs.webkit.org/show_bug.cgi?id=187056
+
+        Reviewed by Per Arne Vollan.
+
+        Allow the EWS bots to apply, build, test, check-style, and (in the future) land
+        attachments hosted on the status server. We only download an attachment from the
+        status server if we do not have sufficient permission to download it from Bugzilla
+        (e.g. security-sensitive patches).
+
+        A valid status server API key is required to run these commands by hand. Otherwise,
+        the status server will not provide attachment data.
+
+        * Scripts/webkitpy/common/net/statusserver_mock.py:
+        (MockStatusServer.fetch_attachment): Log a message for testing purposes.
+        * Scripts/webkitpy/tool/commands/download.py:
+        (ProcessAttachmentsMixin._fetch_list_of_patches_to_process): Fetch the attachment
+        from the status server if we do not have permission to fetch it from Bugzilla.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSystemTest._default_expected_logs): Update expected result when
+        using a custom work item and when fetching an attachment from the status server.
+        (_test_ews): Modified to take use_security_sensitive_patch (defaults to False) as
+        to whether to use a security-sensitive patch when testing.
+        (test_ewses_with_security_sensitive_patch): Added.
+
+2018-06-26  Daniel Bates  <dabates@apple.com>
+
         contributors.json fails to parse after r233209
 
         Removing trailing ',' that caused this file to be malformed. Also ran

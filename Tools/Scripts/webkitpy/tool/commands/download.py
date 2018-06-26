@@ -1,5 +1,5 @@
 # Copyright (c) 2009, 2011 Google Inc. All rights reserved.
-# Copyright (c) 2009, 2017 Apple Inc. All rights reserved.
+# Copyright (c) 2009, 2017-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -33,6 +33,7 @@ from webkitpy.tool import steps
 
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config import urls
+from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.commands.stepsequence import StepSequence
@@ -217,7 +218,16 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
 
 class ProcessAttachmentsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
-        return filter(None, map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args))
+        patches = []
+        for patch_id in args:
+            try:
+                patch = tool.bugs.fetch_attachment(patch_id, throw_on_access_error=True)
+            except Bugzilla.AccessError as e:
+                if e.error_code == Bugzilla.AccessError.NOT_PERMITTED:
+                    patch = tool.status_server.fetch_attachment(patch_id)
+            if patch:
+                patches.append(patch)
+        return patches
 
 
 class ProcessBugsMixin(object):
