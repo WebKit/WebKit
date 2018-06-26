@@ -321,6 +321,10 @@
 		7A909A831D877480007E10F8 /* IntSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A751D877475007E10F8 /* IntSize.cpp */; };
 		7A95BDE11E9BEC5F00865498 /* InjectedBundleAppleEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A95BDE01E9BEC4000865498 /* InjectedBundleAppleEvent.cpp */; };
 		7A95BDE21E9BEC7400865498 /* InjectedBundleAppleEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A95BDDF1E9BEC4000865498 /* InjectedBundleAppleEvent_Bundle.cpp */; };
+		7AC7B56D20D9769F002C09A0 /* CustomBundleParameter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7B56C20D9768F002C09A0 /* CustomBundleParameter.mm */; };
+		7AC7B56E20D976A7002C09A0 /* CustomBundleParameter_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7B56B20D9768E002C09A0 /* CustomBundleParameter_Bundle.mm */; };
+		7AC7B57020D9BA5B002C09A0 /* CustomBundleObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */; };
+		7AC7B57120D9BA5B002C09A0 /* CustomBundleObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */; };
 		7AD3FE8E1D76131200B169A4 /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */; };
 		7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7AE9E5081AE5AE8B00CF874B /* test.pdf */; };
 		7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */; };
@@ -1565,6 +1569,10 @@
 		7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuTypesForMouseEvents.mm; sourceTree = "<group>"; };
 		7AA021BA1AB09EA70052953F /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
+		7AC7B56B20D9768E002C09A0 /* CustomBundleParameter_Bundle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomBundleParameter_Bundle.mm; sourceTree = "<group>"; };
+		7AC7B56C20D9768F002C09A0 /* CustomBundleParameter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomBundleParameter.mm; sourceTree = "<group>"; };
+		7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomBundleObject.mm; sourceTree = "<group>"; };
+		7AC7B57220D9BAF0002C09A0 /* CustomBundleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBundleObject.h; sourceTree = "<group>"; };
 		7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformationMatrix.cpp; sourceTree = "<group>"; };
 		7AE9E5081AE5AE8B00CF874B /* test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = test.pdf; sourceTree = "<group>"; };
 		7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CrossPartitionFileSchemeAccess.mm; sourceTree = "<group>"; };
@@ -3182,6 +3190,10 @@
 				8349D3C11DB96DDA004A9F65 /* ContextMenuDownload.mm */,
 				CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */,
 				CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */,
+				7AC7B57220D9BAF0002C09A0 /* CustomBundleObject.h */,
+				7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */,
+				7AC7B56C20D9768F002C09A0 /* CustomBundleParameter.mm */,
+				7AC7B56B20D9768E002C09A0 /* CustomBundleParameter_Bundle.mm */,
 				BCAA485714A044D40088FAC4 /* EditorCommands.mm */,
 				C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */,
 				C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */,
@@ -3563,6 +3575,8 @@
 				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
 				7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */,
 				7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */,
+				7AC7B57020D9BA5B002C09A0 /* CustomBundleObject.mm in Sources */,
+				7AC7B56D20D9769F002C09A0 /* CustomBundleParameter.mm in Sources */,
 				7CCE7F291A411B1000447C4C /* CustomProtocolsInvalidScheme.mm in Sources */,
 				7CCE7F2A1A411B1000447C4C /* CustomProtocolsSyncXHRTest.mm in Sources */,
 				7CCE7F2B1A411B1000447C4C /* CustomProtocolsTest.mm in Sources */,
@@ -3946,6 +3960,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC246D9C132F1FF000B56D7C /* CanHandleRequest_Bundle.cpp in Sources */,
+				7AC7B57120D9BA5B002C09A0 /* CustomBundleObject.mm in Sources */,
+				7AC7B56E20D976A7002C09A0 /* CustomBundleParameter_Bundle.mm in Sources */,
 				297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */,
 				F6B7BE9517469212008A3445 /* DidAssociateFormControls_Bundle.cpp in Sources */,
 				AD57AC201DA7465000FF1BDE /* DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp in Sources */,

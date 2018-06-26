@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "config.h"
+#import "CustomBundleObject.h"
 
-#if WK_API_ENABLED
+#if WK_HAVE_C_SPI
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKBase.h>
 
-@class WKConnection;
-@class WKWebProcessPlugInController;
-@class WKWebProcessPlugInBrowserContextController;
+@implementation CustomBundleObject
 
-@protocol WKWebProcessPlugIn <NSObject>
-@optional
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
+@synthesize somePayload=_somePayload;
+
+- (id)initWithValue:(long)value
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    self.somePayload = value;
+    return self;
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    self.somePayload = [decoder decodeIntForKey:@"Payload"];
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeInt:static_cast<long>(_somePayload) forKey:@"Payload"];
+}
 @end
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface WKWebProcessPlugInController : NSObject
-- (void)extendClassesForParameterCoder:(NSArray *)classes;
-
-@property (readonly) WKConnection *connection;
-
-@property (readonly) id parameters;
-
-@end
-
-#endif // WK_API_ENABLED
+#endif

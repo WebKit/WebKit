@@ -293,3 +293,15 @@ void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
 {
     ResourceLoadObserver::shared().notifyObserver();
 }
+
+
+void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes)
+{
+#if WK_API_ENABLED
+    auto classList = WebKit::toImpl(classes);
+    if (!classList)
+        return;
+
+    toImpl(bundle)->extendClassesForParameterCoder(*classList);
+#endif
+}

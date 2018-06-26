@@ -1,3 +1,35 @@
+2018-06-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide a way for Injected Bundles to indicate classes approved for NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=186788
+        <rdar://problem/41094167>
+
+        Reviewed by Chris Dumez.
+
+        InjectedBundles support a mechanism to serialize data between the UIProcess and the
+        WebContent process hosting the bundle. In some cases, we want to be able to serialize
+        a custom data object that is not part of WebKit's native data types.
+
+        After switching to strict NSSecureCoding, WebKit clients attempting to serialize these
+        custom objects trigger a failure.
+
+        This patch makes it possible for the InjectedBundle author to specify one (or more) data
+        classes that are allowed to be serialized between the two processes.
+        
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleExtendClassesForParameterCoder): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (createWKArray): Added.
+        (-[WKWebProcessPlugInController extendClassesForParameterCoder:]): Added.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::extendClassesForParameterCoder): Added.
+        (WebKit::InjectedBundle::classesForCoder): New helper function.
+        (WebKit::InjectedBundle::setBundleParameter): Modified to use the new set of valid
+        classes for NSSecureCoding.
+
 2018-06-26  Eric Carlson  <eric.carlson@apple.com>
 
         Enable mock capture devices on the iOS simulator

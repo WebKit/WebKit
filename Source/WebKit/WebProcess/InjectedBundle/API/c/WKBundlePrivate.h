@@ -94,6 +94,8 @@ WK_EXPORT void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundle, WKBund
 WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef);
 WK_EXPORT void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef);
 
+WK_EXPORT void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ typedef struct _GModule GModule;
 #endif
 
 #if USE(FOUNDATION)
+OBJC_CLASS NSSet;
 OBJC_CLASS NSBundle;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS WKWebProcessBundleParameters;
@@ -156,6 +157,9 @@ public:
 
 #if PLATFORM(COCOA) && WK_API_ENABLED
     WKWebProcessBundleParameters *bundleParameters();
+
+    void extendClassesForParameterCoder(API::Array& classes);
+    NSSet* classesForCoder();
 #endif
 
 private:
@@ -170,6 +174,7 @@ private:
 
 #if PLATFORM(COCOA) && WK_API_ENABLED
     RetainPtr<WKWebProcessBundleParameters> m_bundleParameters;
+    RetainPtr<NSSet> m_classesForCoder;
 #endif
 };
 

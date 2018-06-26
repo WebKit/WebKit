@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#include "config.h"
 
-#if WK_API_ENABLED
+#if WK_HAVE_C_SPI
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKBase.h>
+#import "CustomBundleObject.h"
+#import "InjectedBundleTest.h"
+#import "PlatformUtilities.h"
+#import <WebKit/WKBundlePrivate.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKStringCF.h>
 
-@class WKConnection;
-@class WKWebProcessPlugInController;
-@class WKWebProcessPlugInBrowserContextController;
+namespace TestWebKitAPI {
+    
+class CustomBundleParameterTest : public InjectedBundleTest {
+public:
+    CustomBundleParameterTest(const std::string& identifier)
+        : InjectedBundleTest(identifier)
+    {
+    }
+    
+    virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
+    {
+        WKTypeRef typeName = WKStringCreateWithCFString((__bridge CFStringRef)[CustomBundleObject className]);
+        auto array = adoptWK(WKArrayCreateAdoptingValues(&typeName, 1));
 
-@protocol WKWebProcessPlugIn <NSObject>
-@optional
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-@end
+        WKBundleExtendClassesForParameterCoder(bundle, array.get());
+        
+        WKRetainPtr<WKDoubleRef> returnCode = adoptWK(WKDoubleCreate(1234));
+        WKBundlePostMessage(bundle, Util::toWK("DidRegisterCustomClass").get(), returnCode.get());
+    }
+};
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface WKWebProcessPlugInController : NSObject
-- (void)extendClassesForParameterCoder:(NSArray *)classes;
+static InjectedBundleTest::Register<CustomBundleParameterTest> registrar("CustomBundleParameterTest");
+    
+} // namespace TestWebKitAPI
 
-@property (readonly) WKConnection *connection;
-
-@property (readonly) id parameters;
-
-@end
-
-#endif // WK_API_ENABLED
+#endif

@@ -1,3 +1,28 @@
+2018-06-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide a way for Injected Bundles to indicate classes approved for NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=186788
+        <rdar://problem/41094167>
+
+        Reviewed by Chris Dumez.
+
+        Add a new test case to exercise the class check during NSSecureCoding.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleObject.h: Added.
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleObject.mm: Added.
+        (-[CustomBundleObject initWithValue:]):
+        (+[CustomBundleObject supportsSecureCoding]):
+        (-[CustomBundleObject copyWithZone:]):
+        (-[CustomBundleObject initWithCoder:]):
+        (-[CustomBundleObject encodeWithCoder:]):
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleParameter.mm: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleParameter_Bundle.mm: Added.
+        (TestWebKitAPI::CustomBundleParameterTest::CustomBundleParameterTest):
+        (TestWebKitAPI::CustomBundleParameterTest::didCreatePage):
+
 2018-06-25  Daniel Bates  <dabates@apple.com>
 
         Log a message when fetching attachment data from the status server

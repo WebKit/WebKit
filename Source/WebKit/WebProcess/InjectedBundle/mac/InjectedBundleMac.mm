@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "InjectedBundle.h"
 
+#import "APIArray.h"
 #import "APIData.h"
 #import "ObjCObjectGraph.h"
 #import "WKBundleAPICast.h"
@@ -36,6 +37,7 @@
 #import <CoreFoundation/CFURL.h>
 #import <Foundation/NSBundle.h>
 #import <dlfcn.h>
+#import <objc/runtime.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
@@ -170,6 +172,40 @@ WKWebProcessBundleParameters *InjectedBundle::bundleParameters()
 
     return m_bundleParameters.get();
 }
+
+void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
+{
+    size_t size = classes.size();
+
+    auto mutableSet = adoptNS([classesForCoder() mutableCopy]);
+
+    for (size_t i = 0; i < size; ++i) {
+        API::String* classNameString = classes.at<API::String>(i);
+        if (!classNameString) {
+            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - No class provided as argument %d.\n", i);
+            break;
+        }
+    
+        CString className = classNameString->string().utf8();
+        Class objectClass = objc_lookUpClass(className.data());
+        if (!objectClass) {
+            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - Class %s is not a valid Objective C class.\n", className.data());
+            break;
+        }
+
+        [mutableSet.get() addObject:objectClass];
+    }
+
+    m_classesForCoder = mutableSet;
+}
+
+NSSet* InjectedBundle::classesForCoder()
+{
+    if (!m_classesForCoder)
+        m_classesForCoder = retainPtr([NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil]);
+
+    return m_classesForCoder.get();
+}
 #endif
 
 void InjectedBundle::setBundleParameter(const String& key, const IPC::DataReference& value)
@@ -181,7 +217,7 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
 
     id parameter = nil;
     @try {
-        parameter = [unarchiver decodeObjectOfClasses:[NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil] forKey:@"parameter"];
+        parameter = [unarchiver decodeObjectOfClasses:classesForCoder() forKey:@"parameter"];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode bundle parameter: %@", exception);
         return;

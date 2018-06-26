@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#pragma once
 
-#if WK_API_ENABLED
+@interface CustomBundleObject : NSObject <NSCopying, NSSecureCoding> {
+    long _somePayload;
+}
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKBase.h>
+@property (nonatomic) long somePayload;
 
-@class WKConnection;
-@class WKWebProcessPlugInController;
-@class WKWebProcessPlugInBrowserContextController;
-
-@protocol WKWebProcessPlugIn <NSObject>
-@optional
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
+- (id)initWithValue:(long)value;
 @end
-
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface WKWebProcessPlugInController : NSObject
-- (void)extendClassesForParameterCoder:(NSArray *)classes;
-
-@property (readonly) WKConnection *connection;
-
-@property (readonly) id parameters;
-
-@end
-
-#endif // WK_API_ENABLED
