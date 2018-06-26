@@ -1,5 +1,22 @@
 2018-06-26  Daniel Bates  <dabates@apple.com>
 
+        EWS should pass --status-host-uses-http when invoking webkit-patch, if needed
+        https://bugs.webkit.org/show_bug.cgi?id=187061
+
+        Reviewed by Per Arne Vollan.
+
+        When EWS invokes webkit-patch to perform an operation (e.g. apply an attachment)
+        it should pass the command line option --status-host-uses-http, if EWS was
+        started with this command line option, so that we query the status server over
+        HTTP in child "webkit-patch" processes as we do in the main EWS process.
+
+        * Scripts/webkitpy/common/net/statusserver_mock.py:
+        (MockStatusServer.__init__):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue.run_webkit_patch):
+
+2018-06-26  Daniel Bates  <dabates@apple.com>
+
         webkit-patch: Make attachment commands work with status-server hosted attachments
         https://bugs.webkit.org/show_bug.cgi?id=187056
 

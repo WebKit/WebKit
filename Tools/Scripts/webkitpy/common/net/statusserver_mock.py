@@ -39,6 +39,7 @@ class MockStatusServer(object):
         self.host = "example.com"
         self.bot_id = bot_id
         self._work_items = work_items or []
+        self.use_https = True
 
     def patch_status(self, queue_name, patch_id):
         return None
