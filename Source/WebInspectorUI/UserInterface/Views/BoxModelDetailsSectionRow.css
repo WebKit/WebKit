@@ -108,3 +108,32 @@ body[dir=rtl] .details-section .row.box-model .label {
 .details-section .row.box-model :matches(.right, .left) {
     vertical-align: middle;
 }
+
+@media (prefers-dark-interface) {
+    .details-section .row.box-model {
+        color: var(--text-color);
+    }
+
+    .details-section .row.box-model .label {
+        color: inherit;
+    }
+
+    .details-section .row.box-model :matches(.position, .margin, .border, .padding, .content) {
+        border-color: var(--text-color-quaternary);
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .details-section .row.box-model:not(.hovered) :matches(.margin, .border, .padding, .content),
+    .details-section .row.box-model .active:matches(.margin, .border, .padding, .content) {
+        color: black;
+    }
+
+    .details-section .row.box-model .margin {
+        border-color: var(--text-color-quaternary);
+    }
+
+    .details-section .row.box-model .border {
+        border-color: var(--text-color-quaternary);
+    }
+}

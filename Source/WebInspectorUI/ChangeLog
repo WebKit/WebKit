@@ -1,5 +1,23 @@
 2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: Box Model section should have dark background
+        https://bugs.webkit.org/show_bug.cgi?id=186976
+
+        Reviewed by Brian Burg.
+
+        Replace all instances of black text on white background with the default text and background colors.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        (@media (prefers-dark-interface)):
+        (.details-section .row.box-model):
+        (.details-section .row.box-model .label):
+        (.details-section .row.box-model :matches(.position, .margin, .border, .padding, .content)):
+        (.details-section .row.box-model:not(.hovered) :matches(.margin, .border, .padding, .content),):
+        (.details-section .row.box-model .margin):
+        (.details-section .row.box-model .border):
+
+2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Dark Mode: color outline is too dark
         https://bugs.webkit.org/show_bug.cgi?id=186975
 
