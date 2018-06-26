@@ -25,13 +25,12 @@
 
 #import "ProcessCheck.h"
 
-#if !BPLATFORM(WATCHOS)
-
 #import <Foundation/Foundation.h>
 #import <mutex>
 
 namespace bmalloc {
 
+#if !BPLATFORM(WATCHOS)
 bool gigacageEnabledForProcess()
 {
     // Note that this function is only called once.
@@ -52,6 +51,7 @@ bool gigacageEnabledForProcess()
 
     return isOptInBinary;
 }
+#endif // !BPLATFORM(WATCHOS)
 
 #if BUSE(CHECK_NANO_MALLOC)
 bool shouldProcessUnconditionallyUseBmalloc()
@@ -72,8 +72,6 @@ bool shouldProcessUnconditionallyUseBmalloc()
 
     return result;
 }
-#endif
+#endif // BUSE(CHECK_NANO_MALLOC)
 
 }
-
-#endif

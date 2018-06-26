@@ -1,7 +1,16 @@
 2018-06-26  Saam Barati  <sbarati@apple.com>
 
-        Wasm: Any function argument of type Void should be a validation error
-        https://bugs.webkit.org/show_bug.cgi?id=186794
+        Unreviewed followup. Fix the watchos build after r233192.
+
+        This patch also correct the changelog entry below to have the correct
+        bug and title info.
+
+        * bmalloc/ProcessCheck.mm:
+
+2018-06-26  Saam Barati  <sbarati@apple.com>
+
+        Switch to system malloc on iOS when nano malloc is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=186322
         <rdar://problem/41140257>
 
         Reviewed by Keith Miller.
