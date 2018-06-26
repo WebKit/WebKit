@@ -635,6 +635,8 @@ webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Fa
 # tee.html is flaky with unhandled promise rejections
 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ DumpJSConsoleLogInStdErr ]
 
+webkit.org/b/186161 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Pass Failure ]
+
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html [ Pass Failure ]
