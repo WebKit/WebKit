@@ -1,3 +1,16 @@
+2018-06-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r233065): Build broken with clang-3.8 and libstdc++-5
+        https://bugs.webkit.org/show_bug.cgi?id=187051
+
+        Reviewed by Mark Lam.
+
+        Revert r233065 changes over UnlinkedCodeBlock.h to allow
+        clang-3.8 to be able to compile this back (with libstdc++5)
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::decompressArrayAllocationProfile):
+
 2018-06-26  Tadeu Zagallo  <tzagallo@apple.com>
 
         Fix testapi build when DFG_JIT is disabled
