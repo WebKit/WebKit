@@ -337,6 +337,10 @@ webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Skip ]
 
+# These tests time out
+imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-no-load-event.https.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html [ Skip ]
+
 # Not supported
 imported/w3c/web-platform-tests/background-fetch [ Skip ]
 

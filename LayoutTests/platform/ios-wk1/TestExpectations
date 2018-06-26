@@ -13,6 +13,7 @@ imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 http/wpt/service-workers [ Skip ]
 http/wpt/cache-storage [ Skip ]
 http/tests/cache-storage [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]

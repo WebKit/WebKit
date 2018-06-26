@@ -3808,6 +3808,7 @@ imported/w3c/web-platform-tests/service-workers [ Skip ]
 http/tests/cache-storage [ Skip ]
 http/wpt/cache-storage [ Skip ]
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 
 # No header filtering for WK1
 http/wpt/loading/redirect-headers.html [ Skip ]
