@@ -203,6 +203,7 @@ class StatusServer:
 
     def _fetch_attachment_page(self, action, attachment_id):
         attachment_url = '{}/attachment/{}/{}'.format(self._server_url(), action, attachment_id)
+        _log.info('Fetching: {}'.format(attachment_url))
         return self._fetch_url(attachment_url)
 
     def fetch_attachment(self, attachment_id):

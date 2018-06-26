@@ -1,3 +1,19 @@
+2018-06-25  Daniel Bates  <dabates@apple.com>
+
+        Log a message when fetching attachment data from the status server
+        https://bugs.webkit.org/show_bug.cgi?id=187032
+
+        Reviewed by Zalan Bujtas.
+
+        Currently we silently fetch from the status server an attachment when fetching
+        the attachment from Bugzilla fails due to an access denied error. Instead we
+        should emit a message when fetching data from the status server to indicate
+        that webkit-patch/EWS is still processing the command/trying to obtain the
+        patch.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer._fetch_attachment_page):
+
 2018-06-25  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add support for Bindings-tests-EWS
