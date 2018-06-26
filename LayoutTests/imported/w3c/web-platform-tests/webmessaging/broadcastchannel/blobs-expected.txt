@@ -1,0 +1,4 @@
+
+FAIL Blobs work on BroadcastChannel Can't find variable: BroadcastChannel
+FAIL Blobs work with workers on BroadcastChannel Can't find variable: BroadcastChannel
+

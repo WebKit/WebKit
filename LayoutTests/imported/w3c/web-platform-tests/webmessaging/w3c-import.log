@@ -1,0 +1,54 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_Blob.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_DataCloneErr.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_clone_port.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_clone_port_error.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_event_properties.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_ports_readonly_array.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_target_source.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessageEvent-trusted-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessageEvent-trusted.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessageEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessageEvent_onmessage_postMessage_infinite_loop.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessageEvent_properties.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessagePort_initial_disabled.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/MessagePort_onmessage_start.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/README.md
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/Transferred_objects_unusable.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.data.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.origin.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.ports.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.source.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/event.source.xorigin.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/messageerror.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_ArrayBuffer.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_Date.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_Document.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_Function.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_MessagePorts_sorigin.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_MessagePorts_xorigin.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_arrays.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_asterisk_xorigin.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_dup_transfer_objects.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_invalid_targetOrigin.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_objects.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_origin_mismatch.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_origin_mismatch_xorigin.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_solidus_sorigin.htm
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/postMessage_solidus_xorigin.sub.htm

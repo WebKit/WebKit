@@ -1,0 +1,15 @@
+
+FAIL Should throw if no name is provided assert_throws: function "() => new BroadcastChannel()" threw object "ReferenceError: Can't find variable: BroadcastChannel" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL Null name should not throw Can't find variable: BroadcastChannel
+FAIL Undefined name should not throw Can't find variable: BroadcastChannel
+FAIL Non-empty name should not throw Can't find variable: BroadcastChannel
+FAIL Non-string name should not throw Can't find variable: BroadcastChannel
+FAIL postMessage without parameters should throw Can't find variable: BroadcastChannel
+FAIL postMessage with null should not throw Can't find variable: BroadcastChannel
+FAIL close should not throw Can't find variable: BroadcastChannel
+FAIL close should not throw when called multiple times Can't find variable: BroadcastChannel
+FAIL postMessage after close should throw Can't find variable: BroadcastChannel
+FAIL BroadcastChannel should have an onmessage event Can't find variable: BroadcastChannel
+FAIL postMessage should throw with uncloneable data Can't find variable: BroadcastChannel
+FAIL postMessage should throw InvalidStateError after close, even with uncloneable data Can't find variable: BroadcastChannel
+

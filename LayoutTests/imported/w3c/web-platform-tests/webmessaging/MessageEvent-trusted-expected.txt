@@ -1,0 +1,5 @@
+
+PASS With a MessageChannel and its MessagePorts 
+FAIL With a BroadcastChannel assert_true: The browser must support BroadcastChannel expected true got false
+PASS With window 
+

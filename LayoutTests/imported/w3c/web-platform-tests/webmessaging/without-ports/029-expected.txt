@@ -1,0 +1,3 @@
+
+PASS Check that getters don't linger after deletion wrt cloning 
+
