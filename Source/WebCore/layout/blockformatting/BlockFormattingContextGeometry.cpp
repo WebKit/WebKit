@@ -82,6 +82,9 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
             return 0;
 
+        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+        auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop();
+
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
         if (layoutBox.establishesInlineFormattingContext()) {
             // height = lastLineBox().bottom();
@@ -94,7 +97,7 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         if (!MarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
             auto* lastInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*lastInFlowChild);
             ASSERT(lastInFlowDisplayBox);
-            return lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom();
+            return lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom() - borderAndPaddingTop;
         }
 
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
@@ -104,7 +107,7 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         if (inFlowChild) {
             auto* inFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*inFlowChild);
             ASSERT(inFlowDisplayBox);
-            return inFlowDisplayBox->top() + inFlowDisplayBox->borderBox().height();
+            return inFlowDisplayBox->top() + inFlowDisplayBox->borderBox().height() - borderAndPaddingTop;
         }
 
         // 4. zero, otherwise
@@ -286,7 +289,6 @@ FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPo
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> out-of-flow -> static -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
     return { left, top };
 }
-
 
 FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
 {

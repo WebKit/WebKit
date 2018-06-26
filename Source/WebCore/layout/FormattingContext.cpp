@@ -144,8 +144,6 @@ void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutConte
         if (&layoutBox.formattingContextRoot() != &formattingContextRoot)
             continue;
         auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
-        auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
-        auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
         auto* displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
         ASSERT(displayBox);
 
@@ -153,6 +151,7 @@ void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutConte
         // 10.3.7 Absolutely positioned, non-replaced elements
         if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
             // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
+            auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
             ASSERT(displayBox->marginLeft() + displayBox->borderLeft() + displayBox->paddingLeft() + displayBox->contentBoxWidth()
                 + displayBox->paddingRight() + displayBox->borderRight() + displayBox->marginRight() == containingBlockWidth);
         }
@@ -160,6 +159,7 @@ void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutConte
         // 10.6.4 Absolutely positioned, non-replaced elements
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
+            auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
             ASSERT(displayBox->top() + displayBox->marginTop() + displayBox->borderTop() + displayBox->paddingTop() + displayBox->contentBoxHeight()
                 + displayBox->paddingBottom() + displayBox->borderBottom() + displayBox->marginBottom() == containingBlockHeight);
         }

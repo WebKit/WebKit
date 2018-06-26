@@ -1,3 +1,17 @@
+2018-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Computed height for in-flow non-replaced should not include padding and border.
+        https://bugs.webkit.org/show_bug.cgi?id=187031
+
+        Reviewed by Antti Koivisto.
+
+        In certain cases the height of a non-replaced in-flow box is computed using the bottom position of its last in-flow child.
+        The in-flow child's bottom position is in the coordinate system of the containing block's border box (border box's top left is 0, 0) ->
+        it includes both the (top) border and the padding of the containing block.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+
 2018-06-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Crash in WebAnimation::runPendingPlayTask
