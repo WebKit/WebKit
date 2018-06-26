@@ -1,3 +1,12 @@
+2018-06-26  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=187048
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2018-06-26  Truitt Savell  <tsavell@apple.com>
 
         Layout Test http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html is flaky

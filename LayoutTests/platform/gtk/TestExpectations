@@ -1177,6 +1177,11 @@ webkit.org/b/186219 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFai
 # This seems to be testing Apple-specific behavior?
 css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
+webkit.org/b/187044 animations/transition-and-animation-1.html [ Failure ]
+webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
+
+webkit.org/b/187041 imported/mozilla/css-animations/test_animation-pausing.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -3157,7 +3162,6 @@ webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
 webkit.org/b/168426 imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure ]
 webkit.org/b/168426 legacy-animation-engine/imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
-webkit.org/b/168426 fast/forms/button-set-display-flex-justifyContent-center.html [ ImageOnlyFailure ]
 
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html [ ImageOnlyFailure ]
 
