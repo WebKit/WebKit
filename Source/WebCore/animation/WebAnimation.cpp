@@ -835,7 +835,11 @@ void WebAnimation::runPendingPlayTask()
     if (!m_startTime) {
         // 1. Let new start time be the result of evaluating ready time - hold time / animation playback rate for animation.
         // If the animation playback rate is zero, let new start time be simply ready time.
-        auto newStartTime = readyTime.value();
+        // FIXME: Implementation cannot guarantee an active timeline at the point of this async dispatch.
+        // Subsequently, the resulting readyTime value can be null. Unify behavior between C++17 and
+        // C++14 builds (the latter using WTF's std::optional) and avoid null std::optional dereferencing
+        // by defaulting to a Seconds(0) value. See https://bugs.webkit.org/show_bug.cgi?id=186189.
+        auto newStartTime = readyTime.value_or(0_s);
         if (m_playbackRate)
             newStartTime -= m_holdTime.value() / m_playbackRate;
         // 2. If animation's playback rate is not 0, make animation's hold time unresolved.
@@ -962,8 +966,13 @@ void WebAnimation::runPendingPauseTask()
     //    evaluating (ready time - start time) × playback rate.
     //    Note: The hold time might be already set if the animation is finished, or if the animation is pending, waiting to begin
     //    playback. In either case we want to preserve the hold time as we enter the paused state.
-    if (animationStartTime && !m_holdTime)
-        setHoldTime((readyTime.value() - animationStartTime.value()) * m_playbackRate);
+    if (animationStartTime && !m_holdTime) {
+        // FIXME: Implementation cannot guarantee an active timeline at the point of this async dispatch.
+        // Subsequently, the resulting readyTime value can be null. Unify behavior between C++17 and
+        // C++14 builds (the latter using WTF's std::optional) and avoid null std::optional dereferencing
+        // by defaulting to a Seconds(0) value. See https://bugs.webkit.org/show_bug.cgi?id=186189.
+        setHoldTime((readyTime.value_or(0_s) - animationStartTime.value()) * m_playbackRate);
+    }
 
     // 3. Make animation's start time unresolved.
     setStartTime(std::nullopt);

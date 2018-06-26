@@ -1,3 +1,44 @@
+2018-06-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Crash in WebAnimation::runPendingPlayTask
+        https://bugs.webkit.org/show_bug.cgi?id=186189
+
+        Reviewed by Carlos Garcia Campos.
+
+        Avoid crashes on nullopt std::optional dereference in the
+        runPendingPlayTask() and runPendingPauseTask() methods of the
+        WebAnimation class by defaulting to a Seconds(0) value.
+
+        In both cases the std::optional value is the current time retrieved from
+        the associated DocumentTimeline object. But there's no guarantee that
+        the timeline is active and the resulting time value is resolved (i.e.
+        not nullopt). Dereferencing the nullopt Seconds value doesn't cause a
+        problem on configurations still building as C++14 and the fallback
+        std::optional implementation provided by WTF -- no signal is raised, and
+        a 0 value is returned. Configurations building as C++17 on the other
+        hand use the stdlib-provided std::optional that does raise a signal on
+        invalid access, leading to crashes.
+
+        The default-to-Seconds(0) solution avoids crashes on configurations
+        that build with C++17 support enabled, and thus match configurations
+        that are still using WTF's std::optional. This still doesn't address the
+        underlying problem of retrieving current time from an inactive document
+        timeline and using it as ready time for the pending play/pause task
+        execution.
+
+        runPendingPlayTask() change addresses crashes in the following tests:
+        - fast/animation/css-animation-resuming-when-visible.html
+        - fast/animation/css-animation-resuming-when-visible-with-style-change.html
+        - imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html
+        - imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/getAnimations.html
+
+        runPendingPauseTask() change addresses crashes in the following tests:
+        - animations/multiple-animations-timing-function.html
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::runPendingPlayTask):
+        (WebCore::WebAnimation::runPendingPauseTask):
+
 2018-06-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Show the feature as "Supported in Preview"

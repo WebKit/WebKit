@@ -1,3 +1,12 @@
+2018-06-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Crash in WebAnimation::runPendingPlayTask
+        https://bugs.webkit.org/show_bug.cgi?id=186189
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/wpe/TestExpectations: Remove crashing expectations for fixed tests.
+
 2018-06-25  Youenn Fablet  <youenn@apple.com>
 
         Import WPT fetch destination tests
