@@ -1,3 +1,13 @@
+2018-06-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rollout macOS sandbox change in r232276
+        https://bugs.webkit.org/show_bug.cgi?id=186904
+        <rdar://problem/41350969>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2018-06-26  Aditya Keerthi  <akeerthi@apple.com>
 
         Tap highlight displayed when tapping a field that is already focussed
