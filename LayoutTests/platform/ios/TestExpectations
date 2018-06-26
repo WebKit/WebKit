@@ -87,10 +87,13 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Skip ]
 compositing/video/video-background-color.html [ WontFix ]
 
 # Not supported on iOS
-fast/mediastream
 fast/speechsynthesis
 gamepad
 mhtml
+
+# Some media stream tests crash because of OS issues, so skip all but one while we investigate.
+fast/mediastream [ Skip ]
+fast/mediastream/getUserMedia-default.html [ Pass ]
 
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html

@@ -1,3 +1,15 @@
+2018-06-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Enable mock capture devices on the iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=186846
+        <rdar://problem/41289134>
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/WebPreferences.yaml: Use DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED.
+        * Shared/WebPreferencesDefaultValues.h: Define DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED, set to
+        true in the iOS simulator only.
+
 2018-06-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] 'deref': is not a member of 'WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains::<lambda_9d761a6dc12d95db7fa2d6f3f5aa26fa>'

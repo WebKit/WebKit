@@ -570,7 +570,7 @@ HTTPEquivEnabled:
 
 MockCaptureDevicesEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_MOCK_CAPTURE_DEVICES_ENABLED
   webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(MEDIA_STREAM)
 

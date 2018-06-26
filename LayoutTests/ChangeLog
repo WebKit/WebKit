@@ -1,3 +1,13 @@
+2018-06-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Enable mock capture devices on the iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=186846
+        <rdar://problem/41289134>
+
+        Reviewed by Youenn Fablet.
+
+        * platform/ios/TestExpectations: Unskip fast/mediastream/getUserMedia-default.html.
+
 2018-06-26  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test imported/mozilla/css-animations/test_animation-pausing.html is failing.
