@@ -1,3 +1,16 @@
+2018-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Simplify NetworkStorageSession::getAllStorageAccessEntries()
+        https://bugs.webkit.org/show_bug.cgi?id=187016
+
+        Reviewed by Youenn Fablet.
+
+        Iterate over the HashMaps' values instead of iterating over their keys and then looking them
+        up in the HashMap.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::getAllStorageAccessEntries const):
+
 2018-06-26  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay picker uses incorrect theme in Dark mode

@@ -331,10 +331,9 @@ bool NetworkStorageSession::hasStorageAccess(const String& resourceDomain, const
 Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
 {
     Vector<String> entries;
-    for (auto& pageID : m_framesGrantedStorageAccess.keys()) {
-        auto it1 = m_framesGrantedStorageAccess.find(pageID);
-        for (auto& frameID : it1->value.keys())
-            entries.append(it1->value.find(frameID)->value);
+    for (auto& innerMap : m_framesGrantedStorageAccess.values()) {
+        for (auto& value : innerMap.values())
+            entries.append(value);
     }
     return entries;
 }
