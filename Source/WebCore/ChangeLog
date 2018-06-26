@@ -1,3 +1,14 @@
+2018-06-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Show the feature as "Supported in Preview"
+        https://bugs.webkit.org/show_bug.cgi?id=187037
+
+        Reviewed by Dean Jackson.
+
+        Web Animations are enabled by default in STP.
+
+        * features.json:
+
 2018-06-26  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Many webpages can crash the browser in WebCore::CoordinatedGraphicsLayer::transformedVisibleRect

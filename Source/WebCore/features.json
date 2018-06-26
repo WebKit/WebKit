@@ -549,7 +549,7 @@
     {
         "name": "Web Animations",
         "status": {
-            "status": "Under Consideration"
+            "status": "Supported In Preview"
         },
         "url": "https://www.w3.org/TR/web-animations-1/",
         "keywords": ["web animations"],
