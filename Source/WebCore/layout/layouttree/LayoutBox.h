@@ -53,7 +53,7 @@ public:
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
     bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
     bool isInFlowPositioned() const { return isRelativelyPositioned() || isStickyPositioned(); }
-    bool isOutOfFlowPositioned() const { return isAbsolutelyPositioned() || isFixedPositioned(); }
+    bool isOutOfFlowPositioned() const { return isAbsolutelyPositioned(); }
     bool isRelativelyPositioned() const;
     bool isStickyPositioned() const;
     bool isAbsolutelyPositioned() const;

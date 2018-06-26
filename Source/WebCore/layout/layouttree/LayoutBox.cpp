@@ -82,7 +82,7 @@ bool Box::isStickyPositioned() const
 
 bool Box::isAbsolutelyPositioned() const
 {
-    return m_style.position() == PositionType::Absolute;
+    return m_style.position() == PositionType::Absolute || isFixedPositioned(); 
 }
 
 bool Box::isFixedPositioned() const

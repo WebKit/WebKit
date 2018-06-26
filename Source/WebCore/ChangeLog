@@ -1,3 +1,19 @@
+2018-06-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Fixed positioning is a subcategory of absolute positioning.
+        https://bugs.webkit.org/show_bug.cgi?id=187043
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/CSS22/visuren.html#absolute-positioning
+        References in this specification to an absolutely positioned element (or its box) imply that the element's 'position'
+        property has the value 'absolute' or 'fixed'.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isAbsolutelyPositioned const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isOutOfFlowPositioned const):
+
 2018-06-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233143.
