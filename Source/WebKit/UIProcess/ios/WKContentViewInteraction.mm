@@ -1175,7 +1175,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_isTapHighlightIDValid || _latestTapID != requestID)
         return;
 
-    if (_potentialTapInProgress && hasAssistedNode(_assistedNodeInformation) && _positionInformation.nodeAtPositionIsAssistedNode)
+    if (hasAssistedNode(_assistedNodeInformation) && _positionInformation.nodeAtPositionIsAssistedNode)
         return;
 
     _isTapHighlightIDValid = NO;

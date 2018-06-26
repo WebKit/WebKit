@@ -1,3 +1,20 @@
+2018-06-26  Aditya Keerthi  <akeerthi@apple.com>
+
+        Tap highlight displayed when tapping a field that is already focussed
+        https://bugs.webkit.org/show_bug.cgi?id=187004
+        <rdar://problem/41428008>
+        Reviewed by Tim Horton.
+
+        In the case where fast-clicking is enabled, _singleTapCommited: could be invoked
+        before the tap highlight request, causing _potentialTapInProgress to be set to NO.
+        This results in the early return for preventing multiple tap highlights on an
+        assisted node to be skipped. Since a tap highlight should never be shown for an
+        input field that is already focussed, _potentialTapInProgress can be removed from
+        the early return condition.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:]):
+
 2018-06-26  Timothy Horton  <timothy_horton@apple.com>
 
         Rearrange some WebPreferences; move two non-experimental prefs out of the experimental section
