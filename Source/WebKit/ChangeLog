@@ -1,3 +1,23 @@
+2018-06-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] 'deref': is not a member of 'WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains::<lambda_9d761a6dc12d95db7fa2d6f3f5aa26fa>'
+        https://bugs.webkit.org/show_bug.cgi?id=187035
+
+        Unreviewed build fix.
+
+        MSVC can't compile the code using `this` in a generalized lambda
+        capture in another lambda.
+
+        In this case, there is no need to copy `protectedThis` for the
+        inner lambda. Move `protectedThis` of the outer lambda to the
+        inner as well as `completionHandler`.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioning):
+        Moved `protectedThis` from the outer lambda to the inner.
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains):
+        Ditto.
+
 2018-06-26  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Many webpages can crash the browser in WebCore::CoordinatedGraphicsLayer::transformedVisibleRect
