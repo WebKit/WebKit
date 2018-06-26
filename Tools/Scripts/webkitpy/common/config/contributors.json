@@ -162,7 +162,7 @@
       ],
       "nicks" : [
          "akeerthi"
-      ],
+      ]
    },
    "Adobe Bug Tracker" : {
       "class" : "bot",
@@ -1516,15 +1516,15 @@
       ],
       "status" : "committer"
    },
-    "David Fenton" : {
-        "emails" : [
-          "david_fenton@apple.com"
-    ],
-        "nicks" : [
-          "realdawei"
-        ],
-        "status" : "committer"
-    },
+   "David Fenton" : {
+      "emails" : [
+         "david_fenton@apple.com"
+      ],
+      "nicks" : [
+         "realdawei"
+      ],
+      "status" : "committer"
+   },
    "David Grogan" : {
       "emails" : [
          "dgrogan@chromium.org",
@@ -6062,5 +6062,4 @@
       ],
       "status" : "reviewer"
    }
-
 }

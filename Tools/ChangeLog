@@ -1,3 +1,12 @@
+2018-06-26  Daniel Bates  <dabates@apple.com>
+
+        contributors.json fails to parse after r233209
+
+        Removing trailing ',' that caused this file to be malformed. Also ran
+        "validate-committer-lists -c" to canonicalize the style of this file.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-06-26  Timothy Horton  <timothy_horton@apple.com>
 
         Add Aditya to contributors.json as a contributor
