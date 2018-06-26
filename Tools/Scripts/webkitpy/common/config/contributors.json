@@ -156,6 +156,14 @@
       ],
       "status" : "committer"
    },
+   "Aditya Keerthi" : {
+      "emails" : [
+         "akeerthi@apple.com"
+      ],
+      "nicks" : [
+         "akeerthi"
+      ],
+   },
    "Adobe Bug Tracker" : {
       "class" : "bot",
       "emails" : [

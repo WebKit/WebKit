@@ -1,3 +1,9 @@
+2018-06-26  Timothy Horton  <timothy_horton@apple.com>
+
+        Add Aditya to contributors.json as a contributor
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-06-26  Brent Fulgham  <bfulgham@apple.com>
 
         Provide a way for Injected Bundles to indicate classes approved for NSSecureCoding
