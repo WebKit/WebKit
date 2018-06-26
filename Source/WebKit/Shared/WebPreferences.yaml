@@ -1098,6 +1098,14 @@ DisabledAdaptationsMetaTagEnabled:
   defaultValue: DISABLED_ADAPTATIONS_META_TAG_ENABLED
   webcoreBinding: RuntimeEnabledFeatures
 
+ColorFilterEnabled:
+  type: bool
+  defaultValue: false
+
+IncompleteImageBorderEnabled:
+  type: bool
+  defaultValue: false
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableName for all experimental features. They
@@ -1278,11 +1286,3 @@ ServerTimingEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: serverTimingEnabled
-
-ColorFilterEnabled:
-  type: bool
-  defaultValue: false
-
-IncompleteImageBorderEnabled:
-  type: bool
-  defaultValue: false

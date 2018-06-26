@@ -1,3 +1,9 @@
+2018-06-26  Timothy Horton  <timothy_horton@apple.com>
+
+        Rearrange some WebPreferences; move two non-experimental prefs out of the experimental section
+
+        * Shared/WebPreferences.yaml:
+
 2018-06-26  Tim Horton  <timothy_horton@apple.com>
 
         Promote some experimental features to traditional features
