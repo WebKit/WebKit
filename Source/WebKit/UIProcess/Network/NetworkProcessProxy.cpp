@@ -445,7 +445,9 @@ void NetworkProcessProxy::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::S
     }
     
     auto callbackId = generateCallbackID();
-    auto addResult = m_updatePartitionOrBlockCookiesCallbackMap.add(callbackId, WTFMove(callback));
+    auto addResult = m_updatePartitionOrBlockCookiesCallbackMap.add(callbackId, [protectedThis = makeRef(*this), token = throttler().backgroundActivityToken(), callback = WTFMove(callback)] {
+        callback();
+    });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
     send(Messages::NetworkProcess::UpdatePrevalentDomainsToPartitionOrBlockCookies(sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst == ShouldClearFirst::Yes, callbackId), 0);
 }

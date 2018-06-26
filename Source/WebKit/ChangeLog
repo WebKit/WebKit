@@ -1,3 +1,18 @@
+2018-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Resource Load Statistics: Make WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains() wait for the network process before calling its callback
+        https://bugs.webkit.org/show_bug.cgi?id=186903
+        <rdar://problem/41350182>
+
+        Reviewed by Brady Eidson.
+
+        Follow-up fix after r233180 to address an API test crash. We need to keep the
+        NetworkProcessProxy alive during the async updatePrevalentDomainsToPartitionOrBlockCookies
+        request to make sure it completes.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToPartitionOrBlockCookies):
+
 2018-06-26  Brent Fulgham  <bfulgham@apple.com>
 
         Provide a way for Injected Bundles to indicate classes approved for NSSecureCoding
