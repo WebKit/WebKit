@@ -1106,6 +1106,15 @@ IncompleteImageBorderEnabled:
   type: bool
   defaultValue: false
 
+StorageAccessAPIEnabled:
+  type: bool
+  defaultValue: true
+
+StorageAccessPromptsEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableName for all experimental features. They
@@ -1189,13 +1198,6 @@ ServiceWorkersEnabled:
   webcoreName: serviceWorkerEnabled
   condition: ENABLE(SERVICE_WORKER)
 
-StorageAccessAPIEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "Storage Access API"
-  humanReadableDescription: "Enable Storage Access API"
-  category: experimental
-
 VisualViewportAPIEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
@@ -1267,14 +1269,6 @@ WebGLCompressedTextureASTCSupportEnabled:
   defaultValue: false
   humanReadableName: "ASTC Texture Support"
   humanReadableDescription: "Support for ASTC compressed texture formats in WebGL"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-
-StorageAccessPromptsEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "Prompt for Storage Access API Requests"
-  humanReadableDescription: "Prompt the user when Storage Access API calls are made"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 

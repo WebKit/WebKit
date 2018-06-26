@@ -1,3 +1,13 @@
+2018-06-26  Tim Horton  <timothy_horton@apple.com>
+
+        Promote two more experimental features to traditional features
+        https://bugs.webkit.org/show_bug.cgi?id=187063
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferences.yaml:
+        Promote some shipped/default-on features to non-experimental.
+
 2018-06-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         Rollout macOS sandbox change in r232276
