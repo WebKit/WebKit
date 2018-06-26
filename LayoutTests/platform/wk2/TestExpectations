@@ -698,7 +698,7 @@ imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.h
 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html [ Pass ]
-http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Pass ]
+webkit.org/b/187053 http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Pass Timeout ]
 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Pass ]
 http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics.html [ Pass ]
 http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins.html [ Pass ]

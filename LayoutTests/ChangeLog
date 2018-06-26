@@ -1,3 +1,12 @@
+2018-06-26  Truitt Savell  <tsavell@apple.com>
+
+        Layout Test http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187053
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations:
+
 2018-06-26  Eric Carlson  <eric.carlson@apple.com>
 
         Enable mock capture devices on the iOS simulator
