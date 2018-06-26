@@ -487,6 +487,14 @@ MediaTime MediaPlayerPrivateGStreamer::currentMediaTime() const
     if (m_seeking)
         return m_seekTime;
 
+    // Workaround for
+    // https://bugzilla.gnome.org/show_bug.cgi?id=639941 In GStreamer
+    // 0.10.35 basesink reports wrong duration in case of EOS and
+    // negative playback rate. There's no upstream accepted patch for
+    // this bug yet, hence this temporary workaround.
+    if (m_isEndReached && m_playbackRate < 0)
+        return MediaTime::invalidTime();
+
     return playbackPosition();
 }
 
