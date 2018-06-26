@@ -1,8 +1,12 @@
-PASS countAfterCreate === countOrig + 50 is true
-FAIL countAfterGC < countAfterCreate should be true. Was false.
-PASS refAfterGet === refOrig + 50 is true
-FAIL refAfterGetGC < refAfterGet should be true. Was false.
-PASS refAfterPass === refBeforePass + 50 is true
-FAIL refAfterPassAndGC < refAfterPass should be true. Was false.
 Test that we can get an NPObject returned through a method on an NPAPI Object.
+Prints "SUCCESS" on success, "FAILURE" on failure.  
 
+--- num test objects:
+countAfterCreate == countOrig + 3? PASS
+countOrig == countAfterGC? FAIL
+
+--- refcount on plug.testObject:
+originally: 2
+after GC: 5
+after passing: 8
+FAILURE
