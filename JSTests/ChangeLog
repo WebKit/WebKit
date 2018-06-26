@@ -1,3 +1,13 @@
+2018-06-26  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: length > butterfly->vectorLength() in JSObject::ensureLengthSlow().
+        https://bugs.webkit.org/show_bug.cgi?id=187060
+        <rdar://problem/41452767>
+
+        Reviewed by Keith Miller.
+
+        * stress/regress-187060.js: Added.
+
 2018-06-25  Mark Lam  <mark.lam@apple.com>
 
         constructArray() should set m_numValuesInVector to the specified length.

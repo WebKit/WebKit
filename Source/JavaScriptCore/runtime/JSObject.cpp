@@ -3262,8 +3262,11 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
 
 bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
 {
-    if (isCopyOnWrite(indexingMode()))
+    if (isCopyOnWrite(indexingMode())) {
         convertFromCopyOnWrite(vm);
+        if (m_butterfly->vectorLength() >= length)
+            return true;
+    }
 
     Butterfly* butterfly = this->butterfly();
     

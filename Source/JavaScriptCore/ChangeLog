@@ -1,3 +1,18 @@
+2018-06-26  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: length > butterfly->vectorLength() in JSObject::ensureLengthSlow().
+        https://bugs.webkit.org/show_bug.cgi?id=187060
+        <rdar://problem/41452767>
+
+        Reviewed by Keith Miller.
+
+        JSObject::ensureLengthSlow() may be called only because it needs to do a copy on
+        write conversion.  Hence, we can return early after the conversion if the vector
+        length is already sufficient to cover the requested length.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ensureLengthSlow):
+
 2018-06-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233184.
