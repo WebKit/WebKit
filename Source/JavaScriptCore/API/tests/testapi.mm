@@ -521,6 +521,7 @@ static void* multiVMThreadMain(void* okPtr)
 
 static void runJITThreadLimitTests()
 {
+#if ENABLE(DFG_JIT)
     auto testDFG = [] {
         unsigned defaultNumberOfThreads = JSC::Options::numberOfDFGCompilerThreads();
         unsigned targetNumberOfThreads = 1;
@@ -548,6 +549,7 @@ static void runJITThreadLimitTests()
     testFTL();
     JSC::DFG::ensureGlobalFTLWorklist();
     testFTL();
+#endif // ENABLE(DFG_JIT)
 }
 
 static void testObjectiveCAPIMain()

@@ -1,3 +1,16 @@
+2018-06-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Fix testapi build when DFG_JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=187038
+
+        Reviewed by Mark Lam.
+
+        r233158 added a new API and tests for configuring the number of JIT threads, but
+        the API is only available when DFG_JIT is enabled and so should the tests.
+
+        * API/tests/testapi.mm:
+        (runJITThreadLimitTests):
+
 2018-06-25  Saam Barati  <sbarati@apple.com>
 
         JSImmutableButterfly can't be allocated from a subspace with HeapCell::Kind::Auxiliary
