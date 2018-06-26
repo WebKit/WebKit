@@ -1,3 +1,16 @@
+2018-06-26  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Many webpages can crash the browser in WebCore::CoordinatedGraphicsLayer::transformedVisibleRect
+        https://bugs.webkit.org/show_bug.cgi?id=179304
+
+        Reviewed by Michael Catanzaro.
+
+        Add a way to attach to the CompositingCoordinator layers that were not created by it.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::attachLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+
 2018-06-25  Tim Horton  <timothy_horton@apple.com>
 
         WKThumbnailView fallback background is blindingly bright in Dark Mode

@@ -313,6 +313,15 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
     notifyFlushRequired(layer);
 }
 
+void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
+{
+    layer->setCoordinator(this);
+    m_registeredLayers.add(layer->id(), layer);
+    m_state.layersToCreate.append(layer->id());
+    layer->setNeedsVisibleRectAdjustment();
+    notifyFlushRequired(layer);
+}
+
 void CompositingCoordinator::renderNextFrame()
 {
 }

@@ -168,24 +168,28 @@ bool CoordinatedGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& childre
 void CoordinatedGraphicsLayer::addChild(GraphicsLayer* layer)
 {
     GraphicsLayer::addChild(layer);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 {
     GraphicsLayer::addChildAtIndex(layer, index);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildAbove(layer, sibling);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(layer, sibling);
+    downcast<CoordinatedGraphicsLayer>(*layer).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
 }
 
@@ -194,6 +198,7 @@ bool CoordinatedGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLay
     bool ok = GraphicsLayer::replaceChild(oldChild, newChild);
     if (!ok)
         return false;
+    downcast<CoordinatedGraphicsLayer>(*newChild).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
     didChangeChildren();
     return true;
 }
@@ -991,6 +996,33 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
 void CoordinatedGraphicsLayer::setCoordinator(CoordinatedGraphicsLayerClient* coordinator)
 {
     m_coordinator = coordinator;
+}
+
+void CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded(CoordinatedGraphicsLayerClient* coordinator)
+{
+    if (m_coordinator == coordinator)
+        return;
+
+    // If the coordinators are different it means that we are attaching a layer that was created by a different
+    // CompositingCoordinator than the current one. This happens because the layer was taken out of the tree
+    // and then added back after AC was disabled and enabled again. We need to set the new coordinator to the
+    // layer and its children.
+    //
+    // During each layer flush, the state stores the values that have changed since the previous one, and these
+    // are updated once in the scene. When adding CoordinatedGraphicsLayers back to the tree, the fields that
+    // are not updated during the next flush won't be sent to the scene, so they won't be updated there and the
+    // rendering will fail.
+    //
+    // For example the drawsContent flag. This is set when the layer is created and is not updated anymore (unless
+    // the content changes). When the layer is added back to the tree, the state won't reflect any change in the
+    // flag value, so the scene won't update it and the layer won't be rendered.
+    //
+    // We need to update here the layer changeMask so the scene gets all the current values.
+    m_layerState.changeMask = UINT_MAX;
+
+    coordinator->attachLayer(this);
+    for (auto& child : children())
+        downcast<CoordinatedGraphicsLayer>(*child).setCoordinatorIncludingSubLayersIfNeeded(coordinator);
 }
 
 void CoordinatedGraphicsLayer::setNeedsVisibleRectAdjustment()
