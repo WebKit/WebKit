@@ -748,7 +748,7 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
     GstStream* stream = nullptr;
 
     if (!m_isLegacyPlaybin) {
-        gst_stream_collection_get_stream(m_streamCollection.get(), index);
+        stream = gst_stream_collection_get_stream(m_streamCollection.get(), index);
         if (!stream) {
             GST_WARNING_OBJECT(pipeline(), "No stream to select at index %u", index);
             return;

@@ -1,3 +1,17 @@
+2018-06-26  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Do not forget to set stream on track switching
+        https://bugs.webkit.org/show_bug.cgi?id=187049
+
+        Reviewed by Philippe Normand.
+
+        This was an overlooked issue introduced in Bug #186678
+
+        This is already tested, but we currently run only tests against playbin2
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+
 2018-06-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Fixed positioning is a subcategory of absolute positioning.
