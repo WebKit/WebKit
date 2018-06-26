@@ -53,7 +53,7 @@ void WebMediaPlaybackTargetPicker::removePlaybackTargetPickerClient(uint64_t con
 
 void WebMediaPlaybackTargetPicker::showPlaybackTargetPicker(uint64_t contextId, const WebCore::FloatRect& rect, bool hasVideo)
 {
-    WebCore::WebMediaSessionManager::shared().showPlaybackTargetPicker(*this, contextId, WebCore::IntRect(rect), hasVideo);
+    WebCore::WebMediaSessionManager::shared().showPlaybackTargetPicker(*this, contextId, WebCore::IntRect(rect), hasVideo, m_page ? m_page->defaultAppearance() : true);
 }
 
 void WebMediaPlaybackTargetPicker::playbackTargetPickerClientStateDidChange(uint64_t contextId, WebCore::MediaProducer::MediaStateFlags state)

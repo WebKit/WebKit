@@ -178,7 +178,7 @@ void WebMediaSessionManager::removeAllPlaybackTargetPickerClients(WebMediaSessio
     scheduleDelayedTask(TargetMonitoringConfigurationTask | TargetClientsConfigurationTask);
 }
 
-void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClient& client, uint64_t contextId, const IntRect& rect, bool)
+void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClient& client, uint64_t contextId, const IntRect& rect, bool, bool useDefaultAppearance)
 {
     size_t index = find(&client, contextId);
     ASSERT(index != notFound);
@@ -193,7 +193,7 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
 
     bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducer::IsPlayingToExternalDevice);
     LOG(Media, "WebMediaSessionManager::showPlaybackTargetPicker(%p + %llu) - hasActiveRoute = %i", &client, contextId, (int)hasActiveRoute);
-    targetPicker().showPlaybackTargetPicker(FloatRect(rect), hasActiveRoute);
+    targetPicker().showPlaybackTargetPicker(FloatRect(rect), hasActiveRoute, useDefaultAppearance);
 }
 
 void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& client, uint64_t contextId, MediaProducer::MediaStateFlags newFlags)

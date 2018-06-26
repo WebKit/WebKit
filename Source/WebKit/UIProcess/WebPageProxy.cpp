@@ -7356,7 +7356,7 @@ void WebPageProxy::removePlaybackTargetPickerClient(uint64_t contextId)
 
 void WebPageProxy::showPlaybackTargetPicker(uint64_t contextId, const WebCore::FloatRect& rect, bool hasVideo)
 {
-    m_pageClient.mediaSessionManager().showPlaybackTargetPicker(*this, contextId, m_pageClient.rootViewToScreen(IntRect(rect)), hasVideo);
+    m_pageClient.mediaSessionManager().showPlaybackTargetPicker(*this, contextId, m_pageClient.rootViewToScreen(IntRect(rect)), hasVideo, m_defaultAppearance);
 }
 
 void WebPageProxy::playbackTargetPickerClientStateDidChange(uint64_t contextId, WebCore::MediaProducer::MediaStateFlags state)

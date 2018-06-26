@@ -1,3 +1,28 @@
+2018-06-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] AirPlay picker uses incorrect theme in Dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=187054
+        <rdar://problem/41291093>
+
+        Reviewed by Timothy Hatcher.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker): Add useDefaultAppearance parameter.
+        * Modules/mediasession/WebMediaSessionManager.h:
+
+        * platform/graphics/MediaPlaybackTargetPicker.cpp:
+        (WebCore::MediaPlaybackTargetPicker::showPlaybackTargetPicker): Ditto.
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker): Choose theme based on
+        useDefaultAppearance parameter.
+
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::showPlaybackTargetPicker): Log parameter.
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+
 2018-06-26  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Do not forget to set stream on track switching

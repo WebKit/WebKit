@@ -70,15 +70,16 @@ void MediaPlaybackTargetPickerMock::timerFired()
     currentDeviceDidChange();
 }
 
-void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute)
+void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, bool useDefaultAppearance)
 {
     if (!client() || m_showingMenu)
         return;
 
 #if LOG_DISABLED
     UNUSED_PARAM(checkActiveRoute);
+    UNUSED_PARAM(useDefaultAppearance);
 #endif
-    LOG(Media, "MediaPlaybackTargetPickerMock::showPlaybackTargetPicker - checkActiveRoute = %i", (int)checkActiveRoute);
+    LOG(Media, "MediaPlaybackTargetPickerMock::showPlaybackTargetPicker - checkActiveRoute = %i, useDefaultAppearance = %i", (int)checkActiveRoute, (int)useDefaultAppearance);
 
     m_showingMenu = true;
     m_timer.startOneShot(timerInterval);

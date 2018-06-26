@@ -110,7 +110,7 @@ AVOutputDeviceMenuControllerWKType *MediaPlaybackTargetPickerMac::devicePicker()
     return m_outputDeviceMenuController.get();
 }
 
-void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool checkActiveRoute)
+void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool checkActiveRoute, bool useDefaultAppearance)
 {
     if (!client() || m_showingMenu)
         return;
@@ -119,7 +119,7 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
 
     m_showingMenu = true;
 
-    if ([devicePicker() showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
+    if ([devicePicker() showMenuForRect:location appearanceName:useDefaultAppearance ? NSAppearanceNameVibrantLight : NSAppearanceNameVibrantDark allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
         if (!checkActiveRoute)
             currentDeviceDidChange();
     }

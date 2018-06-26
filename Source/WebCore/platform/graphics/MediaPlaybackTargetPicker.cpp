@@ -70,7 +70,7 @@ void MediaPlaybackTargetPicker::addPendingAction(PendingActionFlags action)
     m_pendingActionTimer.startOneShot(pendingActionInterval);
 }
 
-void MediaPlaybackTargetPicker::showPlaybackTargetPicker(const FloatRect&, bool)
+void MediaPlaybackTargetPicker::showPlaybackTargetPicker(const FloatRect&, bool, bool)
 {
     ASSERT_NOT_REACHED();
 }

@@ -1,3 +1,14 @@
+2018-06-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] AirPlay picker uses incorrect theme in Dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=187054
+        <rdar://problem/41291093>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPlaybackTargetPicker): Pass m_defaultAppearance.
+
 2018-06-26  Chris Dumez  <cdumez@apple.com>
 
         Resource Load Statistics: Make WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains() wait for the network process before calling its callback
