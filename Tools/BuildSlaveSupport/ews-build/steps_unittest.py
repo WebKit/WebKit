@@ -260,5 +260,40 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunWebKitPerlTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/test-webkitperl'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='webkitperl-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunWebKitPerlTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/test-webkitperl'],
+                        )
+            + ExpectShell.log('stdio', stdout='''Failed tests:  1-3, 5-7, 9, 11-13
+Files=40, Tests=630,  4 wallclock secs ( 0.16 usr  0.09 sys +  2.78 cusr  0.64 csys =  3.67 CPU)
+Result: FAIL
+Failed 1/40 test programs. 10/630 subtests failed.''')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='webkitperl-tests (failure)')
+        return self.runStep()
+
+
 if __name__ == '__main__':
     unittest.main()

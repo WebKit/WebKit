@@ -79,3 +79,11 @@ class RunBindingsTests(shell.ShellCommand):
     descriptionDone = ['bindings-tests']
     flunkOnFailure = True
     command = ['Tools/Scripts/run-bindings-tests']
+
+
+class RunWebKitPerlTests(shell.ShellCommand):
+    name = 'webkitperl-tests'
+    description = ['webkitperl-tests running']
+    descriptionDone = ['webkitperl-tests']
+    flunkOnFailure = True
+    command = ['Tools/Scripts/test-webkitperl']

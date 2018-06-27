@@ -45,6 +45,12 @@ class BindingsFactory(Factory):
         self.addStep(RunBindingsTests())
 
 
+class WebKitPerlFactory(Factory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(RunWebKitPerlTests())
+
+
 class GTKFactory(Factory):
     pass
 
