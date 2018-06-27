@@ -1,3 +1,16 @@
+2018-06-26  Mark Lam  <mark.lam@apple.com>
+
+        eval() is wrong about the LiteralParser never throwing any exceptions.
+        https://bugs.webkit.org/show_bug.cgi?id=187074
+        <rdar://problem/41461099>
+
+        Reviewed by Saam Barati.
+
+        Added the missing exception check, and removed an erroneous assertion.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+
 2018-06-26  Saam Barati  <sbarati@apple.com>
 
         JSImmutableButterfly can't be allocated from a subspace with HeapCell::Kind::Auxiliary

@@ -154,11 +154,9 @@ JSValue eval(CallFrame* callFrame)
                     return parsedObject;
                 }
             }
+            RETURN_IF_EXCEPTION(scope, JSValue());
         }
         
-        // If the literal parser bailed, it should not have thrown exceptions.
-        scope.assertNoException();
-
         VariableEnvironment variablesUnderTDZ;
         JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ);
         eval = DirectEvalExecutable::create(callFrame, makeSource(programSource, callerCodeBlock->source()->sourceOrigin()), callerCodeBlock->isStrictMode(), derivedContextType, isArrowFunctionContext, evalContextType, &variablesUnderTDZ);
