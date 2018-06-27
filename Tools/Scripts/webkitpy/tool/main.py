@@ -111,6 +111,11 @@ class WebKitPatch(MultiCommandTool, Host):
         api_key = os.environ.get('WEBKIT_STATUS_API_KEY')
         if not api_key:
             api_key = WebKitPatch._status_server_api_key_from_git()
+        try:
+            api_key = str(api_key)
+        except UnicodeEncodeError:
+            _log.warning('Ignoring non-ASCII characters in API key.')
+            api_key = api_key.encode('ascii', 'ignore')
         return api_key
 
     # FIXME: This may be unnecessary since we pass global options to all commands during execute() as well.

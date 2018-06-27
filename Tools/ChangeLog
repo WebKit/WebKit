@@ -1,3 +1,19 @@
+2018-06-27  Daniel Bates  <dabates@apple.com>
+
+        webkit-patch should ignore non-ASCII characters in the status server API key
+        https://bugs.webkit.org/show_bug.cgi?id=187107
+
+        Reviewed by Lucas Forschler.
+
+        The API key should only consists of ASCII characters. If it contains any
+        non-ASCII characters then log a warning and ignore them.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer.set_api_key): Force conversion to ASCII.
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch._status_server_api_key): Convert to ASCII, ignoring non-ASCII
+        characters and logging a warning.
+
 2018-06-27  Jonathan Bedard  <jbedard@apple.com>
 
         Enable WebKit iOS 12 build
