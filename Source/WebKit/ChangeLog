@@ -1,5 +1,13 @@
 2018-06-27  Timothy Horton  <timothy_horton@apple.com>
 
+        CSS Animation Triggers is not an experimental feature, should be globally off by default
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferences.yaml:
+
+2018-06-27  Timothy Horton  <timothy_horton@apple.com>
+
         Promote the Secure Context API feature from experimental-yet-on-by-default to always-on
 
         Reviewed by Dan Bates.

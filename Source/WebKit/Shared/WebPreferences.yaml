@@ -94,7 +94,7 @@ Accelerated2dCanvasEnabled:
 
 CSSAnimationTriggersEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: false
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: animationTriggersEnabled
   condition: ENABLE(CSS_ANIMATIONS_LEVEL_2)
