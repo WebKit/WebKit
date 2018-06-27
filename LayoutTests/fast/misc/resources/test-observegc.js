@@ -1,9 +1,19 @@
 description("Ensures that window.internals.observegc works as expected");
 
-var testObject = { testProperty : "testValue" };
+var observers = [];
+for (let i = 0; i < 1000; ++i) {
+    let testObject = { testProperty : "testValue" };
+    let observer = internals.observeGC(testObject);
+    observers.push(observer);
+    testObject = null;
+}
 
-var observer = internals.observeGC(testObject);
-testObject = null;
 gc();
 
-shouldBe('observer.wasCollected', 'true');
+var anyCollected = false;
+for (let observer of observers) {
+    if (observer.wasCollected)
+        anyCollected = true;
+}
+
+shouldBe('anyCollected', 'true');

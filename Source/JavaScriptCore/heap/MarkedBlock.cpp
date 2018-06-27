@@ -351,7 +351,7 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t in
     
     m_attributes = directory->attributes();
 
-    if (m_attributes.cellKind != HeapCell::JSCell)
+    if (!isJSCellKind(m_attributes.cellKind))
         RELEASE_ASSERT(m_attributes.destruction == DoesNotNeedDestruction);
     
     double markCountBias = -(Options::minMarkedBlockUtilization() * cellsPerBlock());

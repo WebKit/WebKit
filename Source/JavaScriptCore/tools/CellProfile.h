@@ -45,7 +45,7 @@ struct CellProfile {
         , m_liveness(liveness)
         , m_timestamp(MonotonicTime::now())
     {
-        if (m_kind == HeapCell::JSCell && m_liveness != Dead)
+        if (isJSCellKind(m_kind) && m_liveness != Dead)
             m_className = jsCell()->structure()->classInfo()->className;
     }
 
@@ -65,7 +65,7 @@ struct CellProfile {
         return static_cast<JSCell*>(m_cell);
     }
 
-    bool isJSCell() const { return m_kind == HeapCell::JSCell; }
+    bool isJSCell() const { return isJSCellKind(m_kind); }
     
     HeapCell::Kind kind() const { return m_kind; }
 

@@ -1,3 +1,59 @@
+2018-06-26  Saam Barati  <sbarati@apple.com>
+
+        JSImmutableButterfly can't be allocated from a subspace with HeapCell::Kind::Auxiliary
+        https://bugs.webkit.org/show_bug.cgi?id=186878
+        <rdar://problem/40568659>
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes a bug in our JSImmutableButterfly implementation uncovered by
+        our stress GC bots. Before this patch, JSImmutableButterfly was allocated
+        with HeapCell::Kind::Auxiliary. This is wrong. Things that are JSCells can't
+        be allocated from HeapCell::Kind::Auxiliary. This patch adds a new HeapCell::Kind
+        called JSCellWithInteriorPointers. It behaves like JSCell in all ways, except
+        conservative scan knows to treat it like a butterfly in when we we may be
+        pointing into the middle of it.
+        
+        The way we were crashing on the stress GC bots is that our conservative marking
+        won't do cell visiting for things that are Auxiliary. This meant that if the
+        stack were the only thing pointing to a JSImmutableButterfly when a GC took place,
+        that JSImmutableButterfly would not be visited. This is now fixed.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        * debugger/Debugger.cpp:
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+        * heap/Heap.cpp:
+        (JSC::GatherHeapSnapshotData::operator() const):
+        (JSC::RemoveDeadHeapSnapshotNodes::operator() const):
+        (JSC::Heap::globalObjectCount):
+        (JSC::Heap::objectTypeCounts):
+        (JSC::Heap::deleteAllCodeBlocks):
+        * heap/HeapCell.cpp:
+        (WTF::printInternal):
+        * heap/HeapCell.h:
+        (JSC::isJSCellKind):
+        (JSC::hasInteriorPointers):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        (JSC::HeapUtil::isPointerGCObjectJSCell):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::didAddToDirectory):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::subspaceFor):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tools/CellProfile.h:
+        (JSC::CellProfile::CellProfile):
+        (JSC::CellProfile::isJSCell const):
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::validateCell):
+
 2018-06-26  Mark Lam  <mark.lam@apple.com>
 
         Skip some unnecessary work in Interpreter::getStackTrace().

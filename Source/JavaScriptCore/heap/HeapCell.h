@@ -43,6 +43,7 @@ class HeapCell {
 public:
     enum Kind : int8_t {
         JSCell,
+        JSCellWithInteriorPointers,
         Auxiliary
     };
     
@@ -85,6 +86,16 @@ public:
     void use() const;
 #endif
 };
+
+inline bool isJSCellKind(HeapCell::Kind kind)
+{
+    return kind == HeapCell::JSCell || kind == HeapCell::JSCellWithInteriorPointers;
+}
+
+inline bool hasInteriorPointers(HeapCell::Kind kind)
+{
+    return kind == HeapCell::Auxiliary || kind == HeapCell::JSCellWithInteriorPointers;
+}
 
 } // namespace JSC
 

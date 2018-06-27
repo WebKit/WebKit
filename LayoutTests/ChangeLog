@@ -1,3 +1,24 @@
+2018-06-26  Saam Barati  <sbarati@apple.com>
+
+        JSImmutableButterfly can't be allocated from a subspace with HeapCell::Kind::Auxiliary
+        https://bugs.webkit.org/show_bug.cgi?id=186878
+        <rdar://problem/40568659>
+
+        Reviewed by Filip Pizlo.
+
+        Make these test not susceptible to conservative scan leaks by ensuring at least
+        one object gets collected when we allocate many of them. Before, these were just
+        testing that a fixed number of objects were collected.
+
+        * editing/selection/navigation-clears-editor-state-expected.txt:
+        * editing/selection/navigation-clears-editor-state.html:
+        * fast/dom/reference-cycle-leaks.html:
+        * fast/misc/resources/test-observegc.js:
+        * fast/misc/test-observegc-expected.txt:
+        * platform/mac-wk2/plugins/refcount-leaks-expected.txt:
+        * plugins/refcount-leaks-expected.txt:
+        * plugins/refcount-leaks.html:
+
 2018-06-26  Truitt Savell  <tsavell@apple.com>
 
         [iOS] Rebaseline two webanimations tests after r233164
