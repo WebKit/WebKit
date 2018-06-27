@@ -84,7 +84,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
                 // Since this box is a formatting context root, it takes care of its entire subtree.
                 break;
             }
-            
+
             LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Position][Border][Padding][Width][Margin] -> for layoutBox(" << &layoutBox << ")");
             computeStaticPosition(layoutContext, layoutBox, displayBox);
             computeBorderAndPadding(layoutContext, layoutBox, displayBox);

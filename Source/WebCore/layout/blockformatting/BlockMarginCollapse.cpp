@@ -78,7 +78,7 @@ static bool isMarginBottomCollapsedWithSibling(const Box& layoutBox)
     return layoutBox.style().bottom().isAuto();
 }
 
-static bool isMarginTopCollapsedWithParent(const Box& layoutBox)
+static bool isMarginTopCollapsedWithParent(const Box& layoutBox, const Display::Box& displayBox)
 {
     // The first inflow child could propagate its top margin to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -99,13 +99,13 @@ static bool isMarginTopCollapsedWithParent(const Box& layoutBox)
         return false;
 
     // Margins of the root element's box do not collapse.
-    if (parent.isInitialContainingBlock())
+    if (layoutBox.isInitialContainingBlock())
         return false;
 
-    if (!parent.style().borderTop().nonZero())
+    if (displayBox.borderTop())
         return false;
 
-    if (!parent.style().paddingTop().isZero())
+    if (!displayBox.paddingTop())
         return false;
 
     return true;
@@ -118,7 +118,8 @@ LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstCh
         return 0;
 
     auto& firstInFlowChild = *downcast<Container>(layoutBox).firstInFlowChild();
-    if (!isMarginTopCollapsedWithParent(firstInFlowChild))
+    auto& fistInflowDisplayBox = *layoutContext.displayBoxForLayoutBox(firstInFlowChild);
+    if (!isMarginTopCollapsedWithParent(firstInFlowChild, fistInflowDisplayBox))
         return 0;
 
     // Collect collapsed margin top recursively.
@@ -161,7 +162,8 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginTop(const LayoutContext
         return 0;
 
     // TODO: take _hasAdjoiningMarginTopAndBottom() into account.
-    if (isMarginTopCollapsedWithParent(layoutBox))
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    if (isMarginTopCollapsedWithParent(layoutBox, displayBox))
         return 0;
 
     // Floats and out of flow positioned boxes do not collapse their margins.
