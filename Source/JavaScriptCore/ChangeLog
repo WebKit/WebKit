@@ -1,3 +1,21 @@
+2018-06-27  Mark Lam  <mark.lam@apple.com>
+
+        DFG's compileReallocatePropertyStorage() and compileAllocatePropertyStorage() slow paths should also clear unused properties.
+        https://bugs.webkit.org/show_bug.cgi?id=187091
+        <rdar://problem/41395624>
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, when compileReallocatePropertyStorage() and compileAllocatePropertyStorage()
+        take their slow paths, the slow path would jump back to the fast path right after
+        the emitted code which clears the unused property values.  As a result, the
+        unused properties are not initialized.  We've fixed this by adding the slow path
+        generators before we emit the code to clear the unused properties.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+
 2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] ArrayPatternNode::emitDirectBinding does not return assignment target value if dst is nullptr

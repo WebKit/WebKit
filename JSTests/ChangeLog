@@ -1,3 +1,13 @@
+2018-06-27  Mark Lam  <mark.lam@apple.com>
+
+        DFG's compileReallocatePropertyStorage() and compileAllocatePropertyStorage() slow paths should also clear unused properties.
+        https://bugs.webkit.org/show_bug.cgi?id=187091
+        <rdar://problem/41395624>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/regress-187091.js: Added.
+
 2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] ArrayPatternNode::emitDirectBinding does not return assignment target value if dst is nullptr
