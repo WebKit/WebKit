@@ -1,3 +1,23 @@
+2018-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Compute static position for out-of-flow elements only when required.
+        https://bugs.webkit.org/show_bug.cgi?id=187096
+
+        Reviewed by Antti Koivisto.
+
+        Computing static position for out-of-flow elements could be somewhat expensive, so let's not do it unless we actually need it.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::staticVerticalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::staticHorizontalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPositionForOutOfFlowPositioned): Deleted.
+
 2018-06-27  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] Remove the ability to set keyboard focus when VoiceOver takes focus

@@ -265,31 +265,6 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     return { width, margin };
 }
 
-FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPositionForOutOfFlowPositioned(const LayoutContext& layoutContext, const Box& layoutBox)
-{
-    // FIXME: This is certainly only really needed when top/bottom left/right are auto.
-    ASSERT(layoutBox.isOutOfFlowPositioned());
-    LayoutUnit top;
-    LayoutUnit left;
-    // Resolve top/left all the way up to the containing block.
-    auto* containingBlock = layoutBox.containingBlock();
-    for (auto* parent = layoutBox.parent(); parent; parent = parent->parent()) {
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(*parent);
-        top += (displayBox.top() + displayBox.contentBoxTop());
-        left += (displayBox.left() + displayBox.contentBoxLeft());
-        if (parent == containingBlock)
-            break;
-    }
-    // Add sibling offset
-    if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-        auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
-        top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
-    }
-
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> out-of-flow -> static -> top(" << top << "px) left(" << left << "px) layoutBox(" << &layoutBox << ")");
-    return { left, top };
-}
-
 FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
@@ -297,9 +272,6 @@ FormattingContext::Geometry::Position BlockFormattingContext::Geometry::staticPo
     // The vertical distance between two sibling boxes is determined by the 'margin' properties.
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
-
-    if (layoutBox.isOutOfFlowPositioned())
-        return staticPositionForOutOfFlowPositioned(layoutContext, layoutBox);
 
     LayoutUnit top;
     auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());

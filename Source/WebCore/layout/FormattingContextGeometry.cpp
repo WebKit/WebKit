@@ -75,6 +75,45 @@ std::optional<LayoutUnit> FormattingContext::Geometry::computedValueIfNotAuto(co
     return valueForLength(geometryProperty, containingBlockWidth);
 }
 
+static LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isOutOfFlowPositioned());
+
+    LayoutUnit top;
+    // Resolve top all the way up to the containing block.
+    auto* containingBlock = layoutBox.containingBlock();
+    for (auto* parent = layoutBox.parent(); parent; parent = parent->parent()) {
+        auto& displayBox = *layoutContext.displayBoxForLayoutBox(*parent);
+        top += (displayBox.top() + displayBox.contentBoxTop());
+        if (parent == containingBlock)
+            break;
+    }
+    // Add sibling offset
+    if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
+        auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
+        top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
+    }
+    // FIXME: floatings need to be taken into account.
+    return top;
+}
+
+static LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isOutOfFlowPositioned());
+
+    LayoutUnit left;
+    // Resolve left all the way up to the containing block.
+    auto* containingBlock = layoutBox.containingBlock();
+    for (auto* parent = layoutBox.parent(); parent; parent = parent->parent()) {
+        auto& displayBox = *layoutContext.displayBoxForLayoutBox(*parent);
+        left += (displayBox.left() + displayBox.contentBoxLeft());
+        if (parent == containingBlock)
+            break;
+    }
+    // FIXME: floatings need to be taken into account.
+    return left;
+}
+
 FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
@@ -120,7 +159,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     auto borderBottom = displayBox.borderBottom();
 
     if (!top && !height && !bottom)
-        top = displayBox.top();
+        top = staticVerticalPositionForOutOfFlowPositioned(layoutContext, layoutBox);
 
     if (top && height && bottom) {
         if (!marginTop && !marginBottom) {
@@ -146,7 +185,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
 
     if (!top && !bottom && height) {
         // #2
-        top = displayBox.top();
+        top = staticVerticalPositionForOutOfFlowPositioned(layoutContext, layoutBox);
         marginTop = marginTop.value_or(0);
         marginBottom = marginBottom.value_or(0);
         bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + *height + paddingBottom + borderBottom + *marginBottom); 
@@ -244,10 +283,11 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
         marginLeft = marginLeft.value_or(0);
         marginRight = marginRight.value_or(0);
 
+        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutContext, layoutBox);
         if (isLeftToRightDirection)
-            left = displayBox.left();
+            left = staticHorizontalPosition;
         else
-            right = displayBox.right();
+            right = staticHorizontalPosition;
     } else if (left && width && right) {
         // If none of the three is 'auto': If both 'margin-left' and 'margin-right' are 'auto', solve the equation under the extra constraint that the two margins get equal values,
         // unless this would make them negative, in which case when direction of the containing block is 'ltr' ('rtl'), set 'margin-left' ('margin-right') to zero and
@@ -301,11 +341,12 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
         left = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + *width + paddingRight  + borderRight + *marginRight + *right);
     } else if (!left && !right && width) {
         // #2
+        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutContext, layoutBox);
         if (isLeftToRightDirection) {
-            left = displayBox.left();
+            left = staticHorizontalPosition;
             right = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight);
         } else {
-            right = displayBox.right();
+            right = staticHorizontalPosition;
             left = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight + *right);
         }
     } else if (!width && !right && left) {
@@ -365,7 +406,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
 
     if (!top && !bottom) {
         // #1
-        top = displayBox.top();
+        top = staticVerticalPositionForOutOfFlowPositioned(layoutContext, layoutBox);
     }
 
     if (!bottom) {
@@ -438,10 +479,11 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
 
     if (!left && !right) {
         // #1
+        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutContext, layoutBox);
         if (isLeftToRightDirection)
-            left = displayBox.left();
+            left = staticHorizontalPosition;
         else
-            right = displayBox.right();
+            right = staticHorizontalPosition;
     }
 
     if (!left || !right) {
