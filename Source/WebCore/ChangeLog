@@ -1,3 +1,20 @@
+2018-06-27  Youenn Fablet  <youenn@apple.com>
+
+        Disable content blockers in NetworkLoadChecker except for ping loads
+        https://bugs.webkit.org/show_bug.cgi?id=187083
+        <rdar://problem/41440083>
+
+        Reviewed by Chris Dumez.
+
+        Add internals API to reload a frame without content extensions.
+
+        Test: http/tests/contentextensions/reload-without-contentextensions.html
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::reloadWithoutContentExtensions):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         https://hackernoon.com/ uses lots of layer backing store

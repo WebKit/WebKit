@@ -384,7 +384,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, ContentExtensionCallback&& callback)
 {
     // FIXME: Enable content blockers for navigation loads.
-    if (!m_userContentControllerIdentifier || m_options.mode == FetchOptions::Mode::Navigate) {
+    if (!m_checkContentExtensions || !m_userContentControllerIdentifier || m_options.mode == FetchOptions::Mode::Navigate) {
         ContentExtensions::BlockedStatus status;
         callback(ContentExtensionResult { WTFMove(request), status });
         return;

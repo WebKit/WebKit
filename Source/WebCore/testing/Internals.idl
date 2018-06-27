@@ -638,4 +638,6 @@ enum EventThrottlingBehavior {
 
     DOMString ongoingLoadsDescriptions();
     void setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
+
+    void reloadWithoutContentExtensions();
 };

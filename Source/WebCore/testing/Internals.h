@@ -705,6 +705,8 @@ public:
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
     String ongoingLoadsDescriptions() const;
 
+    void reloadWithoutContentExtensions();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

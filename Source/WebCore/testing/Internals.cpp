@@ -4608,5 +4608,11 @@ String Internals::ongoingLoadsDescriptions() const
     builder.append(']');
     return builder.toString();
 }
+
+void Internals::reloadWithoutContentExtensions()
+{
+    if (auto* frame = this->frame())
+        frame->loader().reload(ReloadOption::DisableContentBlockers);
+}
     
 } // namespace WebCore

@@ -72,6 +72,8 @@ public:
     WebCore::NetworkLoadInformation takeNetworkLoadInformation() { return WTFMove(m_loadInformation); }
     void storeRedirectionIfNeeded(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
+    void enableContentExtensionsCheck() { m_checkContentExtensions = true; }
+
 private:
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     bool isChecking() const { return !!m_corsPreflightChecker; }
@@ -133,6 +135,7 @@ private:
     WebCore::PreflightPolicy m_preflightPolicy;
     String m_dntHeaderValue;
     String m_referrer;
+    bool m_checkContentExtensions { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     WebCore::NetworkLoadInformation m_loadInformation;
 };
