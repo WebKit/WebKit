@@ -77,16 +77,18 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& layoutPair = *layoutQueue.last();
             auto& layoutBox = layoutPair.layoutBox;
             auto& displayBox = layoutPair.displayBox;
+
+            if (layoutBox.establishesFormattingContext()) {
+                layoutFormattingContextRoot(layoutContext, formattingState, layoutBox, displayBox);
+                layoutQueue.removeLast();
+                // Since this box is a formatting context root, it takes care of its entire subtree.
+                break;
+            }
             
             LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Position][Border][Padding][Width][Margin] -> for layoutBox(" << &layoutBox << ")");
             computeStaticPosition(layoutContext, layoutBox, displayBox);
             computeBorderAndPadding(layoutContext, layoutBox, displayBox);
             computeWidthAndMargin(layoutContext, layoutBox, displayBox);
-            if (layoutBox.establishesFormattingContext()) {
-                auto formattingContext = layoutContext.formattingContext(layoutBox);
-                formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
-                break;
-            }
             if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
                 break;
             auto& firstChild = *downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
@@ -99,7 +101,10 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto layoutPair = layoutQueue.takeLast();
             auto& layoutBox = layoutPair->layoutBox;
             auto& displayBox = layoutPair->displayBox;
+
             LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
+            // Formatting root boxes are special-cased and they don't come here.
+            ASSERT(!layoutBox.establishesFormattingContext());
 
             computeHeightAndMargin(layoutContext, layoutBox, displayBox);
             // Adjust position now that we have all the previous floats placed in this context -if needed.
@@ -123,6 +128,25 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     validateGeometryConstraintsAfterLayout(layoutContext);
 #endif
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> block formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
+}
+
+void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutContext, FormattingState& formattingState, const Box& layoutBox, Display::Box& displayBox) const
+{
+    // Start laying out this formatting root in the formatting contenxt it lives in.
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Position][Border][Padding][Width][Margin] -> for layoutBox(" << &layoutBox << ")");
+    computeStaticPosition(layoutContext, layoutBox, displayBox);
+    computeBorderAndPadding(layoutContext, layoutBox, displayBox);
+    computeWidthAndMargin(layoutContext, layoutBox, displayBox);
+
+    // Swich over to the new formatting context (the one that the root creates).
+    auto formattingContext = layoutContext.formattingContext(layoutBox);
+    auto& establishedFormattingState = layoutContext.establishedFormattingState(layoutBox, *formattingContext);
+    formattingContext->layout(layoutContext, establishedFormattingState);
+
+    // Come back and finalize the root's geometry.
+    FloatingContext(formattingState.floatingState()).computePosition(layoutBox, displayBox);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
+    computeHeightAndMargin(layoutContext, layoutBox, displayBox);
 }
 
 std::unique_ptr<FormattingState> BlockFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState) const

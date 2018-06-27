@@ -51,6 +51,8 @@ public:
     Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 private:
+    void layoutFormattingContextRoot(LayoutContext&, FormattingState&, const Box&, Display::Box&) const;
+
     void computeWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
 
