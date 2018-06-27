@@ -1158,6 +1158,9 @@ void RenderTheme::platformColorsDidChange()
     m_activeListBoxSelectionBackgroundColor = Color();
     m_inactiveListBoxSelectionForegroundColor = Color();
 
+    m_activeTextSearchHighlightColor = Color();
+    m_inactiveTextSearchHighlightColor = Color();
+
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
@@ -1283,12 +1286,26 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     return Color();
 }
 
-Color RenderTheme::platformActiveTextSearchHighlightColor() const
+Color RenderTheme::activeTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
+{
+    if (!m_activeTextSearchHighlightColor.isValid())
+        m_activeTextSearchHighlightColor = platformActiveTextSearchHighlightColor(options);
+    return m_activeTextSearchHighlightColor;
+}
+
+Color RenderTheme::inactiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
+{
+    if (!m_inactiveTextSearchHighlightColor.isValid())
+        m_inactiveTextSearchHighlightColor = platformInactiveTextSearchHighlightColor(options);
+    return m_inactiveTextSearchHighlightColor;
+}
+
+Color RenderTheme::platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const
 {
     return Color(255, 150, 50); // Orange.
 }
 
-Color RenderTheme::platformInactiveTextSearchHighlightColor() const
+Color RenderTheme::platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const
 {
     return Color(255, 255, 0); // Yellow.
 }

@@ -34,6 +34,7 @@
 #import "TextIndicator.h"
 #import "WebActionDisablingCALayerDelegate.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/NSColorSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 const CFTimeInterval bounceAnimationDuration = 0.12;
@@ -168,7 +169,11 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
 
     RetainPtr<NSMutableArray> bounceLayers = adoptNS([[NSMutableArray alloc] init]);
 
-    RetainPtr<CGColorRef> highlightColor = [NSColor colorWithDeviceRed:1 green:1 blue:0 alpha:1].CGColor;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    RetainPtr<CGColorRef> highlightColor = [NSColor findHighlightColor].CGColor;
+#else
+    RetainPtr<CGColorRef> highlightColor = [NSColor colorWithDeviceRed:1 green:0.8 blue:0 alpha:1].CGColor;
+#endif
     RetainPtr<CGColorRef> rimShadowColor = [NSColor colorWithDeviceWhite:0 alpha:0.35].CGColor;
     RetainPtr<CGColorRef> dropShadowColor = [NSColor colorWithDeviceWhite:0 alpha:0.2].CGColor;
 

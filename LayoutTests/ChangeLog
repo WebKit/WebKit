@@ -1,3 +1,15 @@
+2018-06-27  Timothy Hatcher  <timothy@apple.com>
+
+        Find on page selection color isn't adapted for dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=187072
+        rdar://problem/40354841
+
+        Reviewed by Tim Horton.
+
+        * fast/css/apple-system-control-colors-expected.txt: Updated.
+        * fast/text/mark-matches-broken-line-rendering-expected.html: Ditto.
+        * fast/text/mark-matches-rendering-expected.html: Ditto.
+
 2018-06-27  Youenn Fablet  <youenn@apple.com>
 
         Disable content blockers in NetworkLoadChecker except for ping loads

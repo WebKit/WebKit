@@ -653,7 +653,7 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
 
 void InlineTextBox::paintPlatformDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin)
 {
-    for (auto& markedText : subdivide(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Foreground), OverlapStrategy::Frontmost))
+    for (auto& markedText : subdivide(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration), OverlapStrategy::Frontmost))
         paintPlatformDocumentMarker(context, boxOrigin, markedText);
 }
 
@@ -763,9 +763,15 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
             style.backgroundColor = { 0xff - selectionBackgroundColor.red(), 0xff - selectionBackgroundColor.green(), 0xff - selectionBackgroundColor.blue() };
         break;
     }
-    case MarkedText::TextMatch:
-        style.backgroundColor = markedText.marker->isActiveMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
+    case MarkedText::TextMatch: {
+        // Text matches always use the light system appearance.
+        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance, StyleColor::Options::UseDefaultAppearance };
+#if PLATFORM(MAC)
+        style.textStyles.fillColor = renderer().theme().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
+#endif
+        style.backgroundColor = markedText.marker->isActiveMatch() ? renderer().theme().activeTextSearchHighlightColor(styleColorOptions) : renderer().theme().inactiveTextSearchHighlightColor(styleColorOptions);
         break;
+    }
     }
     StyledMarkedText styledMarkedText = markedText;
     styledMarkedText.style = WTFMove(style);
@@ -832,7 +838,8 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDraggedContent()
 
 Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaintPhase phase)
 {
-    ASSERT(phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground);
+    ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
+
     if (!renderer().textNode())
         return { };
 
@@ -876,19 +883,23 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
         // FIXME: Remove the PLATFORM(IOS)-guard.
         case DocumentMarker::DictationPhraseWithAlternatives:
 #endif
-            if (phase == TextPaintPhase::Background)
+            if (phase != TextPaintPhase::Decoration)
                 continue;
             break;
         case DocumentMarker::TextMatch:
             if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
                 continue;
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-            FALLTHROUGH;
-        case DocumentMarker::TelephoneNumber:
-#endif
-            if (phase == TextPaintPhase::Foreground)
+            if (phase == TextPaintPhase::Decoration)
                 continue;
             break;
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+        case DocumentMarker::TelephoneNumber:
+            if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
+                continue;
+            if (phase != TextPaintPhase::Background)
+                continue;
+            break;
+#endif
         default:
             continue;
         }

@@ -1,3 +1,40 @@
+2018-06-27  Timothy Hatcher  <timothy@apple.com>
+
+        Find on page selection color isn't adapted for dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=187072
+        rdar://problem/40354841
+
+        Reviewed by Tim Horton.
+
+        * page/mac/TextIndicatorWindow.mm:
+        (-[WebTextIndicatorView initWithFrame:textIndicator:margin:offset:]): Use [NSColor findHighlightColor].
+        * platform/mac/LocalDefaultSystemAppearance.h:
+        (WebCore::LocalDefaultSystemAppearance::usingDarkAppearance const): Added.
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance): Set m_usingDarkAppearance.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintPlatformDocumentMarkers): Use TextPaintPhase::Decoration since this
+        matches step three of InlineTextBox::paint ("Paint fancy decorations"). This allows TextMatch to
+        paint a forground and not end up painting during this "fancy decorations" phase.
+        (WebCore::InlineTextBox::resolveStyleForMarkedText): Set the fillColor for TextMarker to force a
+        dark text color which will draw over the yellow highlight.
+        (WebCore::InlineTextBox::collectMarkedTextsForDocumentMarkers): Added support for TextPaintPhase::Decoration.
+        Seperate DocumentMarker::TelephoneNumber and DocumentMarker::TextMatch. Have DocumentMarker::TextMatch
+        support Forground and Background phases.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformColorsDidChange):
+        (WebCore::RenderTheme::activeTextSearchHighlightColor const): Added. Call the platfrom version.
+        (WebCore::RenderTheme::inactiveTextSearchHighlightColor const): Added. Ditto.
+        (WebCore::RenderTheme::platformActiveTextSearchHighlightColor const): Added StyleColor::Options.
+        (WebCore::RenderTheme::platformInactiveTextSearchHighlightColor const): Ditto.
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveTextSearchHighlightColor const): Added.
+        (WebCore::RenderThemeMac::platformInactiveTextSearchHighlightColor const): Added.
+        (WebCore::RenderThemeMac::platformColorsDidChange): Clear new color caches.
+        (WebCore::RenderThemeMac::systemColor const): Cache system colors by light and dark mode.
+
 2018-06-27  Chris Dumez  <cdumez@apple.com>
 
         Crash under SWServer::unregisterServiceWorkerClient()

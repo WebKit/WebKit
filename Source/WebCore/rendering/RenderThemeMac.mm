@@ -391,6 +391,24 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> opti
     return systemColor(CSSValueWebkitFocusRingColor, options);
 }
 
+Color RenderThemeMac::platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return colorFromNSColor([NSColor findHighlightColor]);
+#else
+    UNUSED_PARAM(options);
+    return Color(255, 204, 0); // Yellow.
+#endif
+}
+
+Color RenderThemeMac::platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
+{
+    // The inactive color is normally used, since no legacy WebKit client marks a text match as active.
+    // So just return the same color for both states.
+    return platformActiveTextSearchHighlightColor(options);
+}
+
 static FontSelectionValue toFontWeight(NSInteger appKitFontWeight)
 {
     ASSERT(appKitFontWeight > 0 && appKitFontWeight < 15);
@@ -486,8 +504,12 @@ static RGBA32 menuBackgroundColor()
 
 void RenderThemeMac::platformColorsDidChange()
 {
-    m_systemColorCache.clear();
-    m_systemVisitedLinkColor = Color();
+    m_lightSystemColorCache.clear();
+    m_darkSystemColorCache.clear();
+
+    m_lightSystemVisitedLinkColor = Color();
+    m_darkSystemVisitedLinkColor = Color();
+
     RenderTheme::platformColorsDidChange();
 }
 
@@ -504,9 +526,15 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
     if (forVisitedLink && cssValueID == CSSValueWebkitLink) {
         // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
         if (useSystemAppearance) {
-            if (!m_systemVisitedLinkColor.isValid())
-                m_systemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
-            return m_systemVisitedLinkColor;
+            if (localAppearance.usingDarkAppearance()) {
+                if (!m_darkSystemVisitedLinkColor.isValid())
+                    m_darkSystemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
+                return m_darkSystemVisitedLinkColor;
+            }
+
+            if (!m_lightSystemVisitedLinkColor.isValid())
+                m_lightSystemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
+            return m_lightSystemVisitedLinkColor;
         }
 
         return RenderTheme::systemColor(cssValueID, options);
@@ -514,7 +542,8 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     ASSERT(!forVisitedLink);
 
-    return m_systemColorCache.ensure(cssValueID, [this, cssValueID, useSystemAppearance, options] () -> Color {
+    auto& systemColorCache = localAppearance.usingDarkAppearance() ? m_darkSystemColorCache : m_lightSystemColorCache;
+    return systemColorCache.ensure(cssValueID, [this, cssValueID, useSystemAppearance, options] () -> Color {
         auto selectCocoaColor = [cssValueID, useSystemAppearance] () -> SEL {
             switch (cssValueID) {
             case CSSValueWebkitLink:
@@ -622,7 +651,8 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
                 return @selector(findHighlightColor);
 #else
-                return @selector(systemYellowColor);
+                // Handled below.
+                return nullptr;
 #endif
             case CSSValueAppleSystemLabel:
                 return @selector(labelColor);
@@ -687,6 +717,11 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
         case CSSValueMenu:
             return menuBackgroundColor();
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+        case CSSValueAppleSystemFindHighlightBackground:
+            return platformActiveTextSearchHighlightColor(options);
+#endif
 
         case CSSValueAppleSystemEvenAlternatingContentBackground: {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400

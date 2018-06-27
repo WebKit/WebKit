@@ -62,6 +62,8 @@ public:
     Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
+    Color platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const final;
+    Color platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const final;
 
     ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return SmallScrollbar; }
 
@@ -242,8 +244,10 @@ private:
     bool m_isSliderThumbHorizontalPressed { false };
     bool m_isSliderThumbVerticalPressed { false };
 
-    mutable HashMap<int, Color> m_systemColorCache;
-    mutable Color m_systemVisitedLinkColor;
+    mutable HashMap<int, Color> m_lightSystemColorCache;
+    mutable HashMap<int, Color> m_darkSystemColorCache;
+    mutable Color m_lightSystemVisitedLinkColor;
+    mutable Color m_darkSystemVisitedLinkColor;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 

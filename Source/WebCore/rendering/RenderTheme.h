@@ -144,9 +144,9 @@ public:
     Color inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
     Color inactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
 
-    // Highlighting colors for TextMatches.
-    virtual Color platformActiveTextSearchHighlightColor() const;
-    virtual Color platformInactiveTextSearchHighlightColor() const;
+    // Highlighting colors for search matches.
+    Color activeTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
+    Color inactiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
 
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
 
@@ -264,6 +264,10 @@ protected:
     virtual Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
     virtual Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
     virtual Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+
+    // The platform highlighting colors for search matches.
+    virtual Color platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
 
     virtual bool supportsSelectionForegroundColors() const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors() const { return true; }
@@ -404,6 +408,9 @@ private:
     mutable Color m_inactiveListBoxSelectionBackgroundColor;
     mutable Color m_activeListBoxSelectionForegroundColor;
     mutable Color m_inactiveListBoxSelectionForegroundColor;
+
+    mutable Color m_activeTextSearchHighlightColor;
+    mutable Color m_inactiveTextSearchHighlightColor;
 };
 
 } // namespace WebCore

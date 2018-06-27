@@ -42,7 +42,9 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppeara
         return;
 
     m_savedSystemAppearance = [NSAppearance currentAppearance];
-    [NSAppearance setCurrentAppearance:[NSAppearance appearanceNamed:(!useSystemAppearance || useDefaultAppearance ? NSAppearanceNameAqua : NSAppearanceNameDarkAqua)]];
+    m_usingDarkAppearance = useSystemAppearance && !useDefaultAppearance;
+
+    [NSAppearance setCurrentAppearance:[NSAppearance appearanceNamed:m_usingDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua]];
 #else
     UNUSED_PARAM(useSystemAppearance);
     UNUSED_PARAM(useDefaultAppearance);
