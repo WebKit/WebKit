@@ -1,3 +1,14 @@
+2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] ArrayPatternNode::emitDirectBinding does not return assignment target value if dst is nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=185943
+
+        Reviewed by Mark Lam.
+
+        * stress/direct-binding-return-result.js: Added.
+        (shouldBe):
+        (test):
+
 2018-06-26  Mark Lam  <mark.lam@apple.com>
 
         eval() is wrong about the LiteralParser never throwing any exceptions.

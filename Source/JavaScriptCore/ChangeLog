@@ -1,3 +1,21 @@
+2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] ArrayPatternNode::emitDirectBinding does not return assignment target value if dst is nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=185943
+
+        Reviewed by Mark Lam.
+
+        ArrayPatternNode::emitDirectBinding should return a register with an assignment target instead of filling
+        the result with undefined if `dst` is nullptr. While `dst == ignoredResult()` means we do not require
+        the result, `dst == nullptr` just means "dst is required, but a register for dst is not allocated.".
+        This patch fixes emitDirectBinding to return an appropriate value with an allocated register for dst.
+
+        ArrayPatternNode::emitDirectBinding() should be removed later since it does not follow array spreading protocol,
+        but it should be done in a separate patch since it would be performance sensitive.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::emitDirectBinding):
+
 2018-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Pass VM& to functions more

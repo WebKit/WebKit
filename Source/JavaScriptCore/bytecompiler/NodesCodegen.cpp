@@ -4221,7 +4221,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     }
 
     RefPtr<RegisterID> resultRegister;
-    if (dst && dst != generator.ignoredResult())
+    if (dst != generator.ignoredResult())
         resultRegister = generator.emitNewArray(generator.newTemporary(), nullptr, 0, ArrayWithUndecided);
     if (m_targetPatterns.size() != elements.size())
         return nullptr;
@@ -4243,7 +4243,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
             m_targetPatterns[i].pattern->bindValue(generator, registers[i].get());
     }
     if (resultRegister)
-        return generator.move(dst, resultRegister.get());
+        return generator.move(generator.finalDestination(dst, resultRegister.get()), resultRegister.get());
     return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
 
