@@ -1,3 +1,23 @@
+2018-06-27  Daniel Bates  <dabates@apple.com>
+
+        style-queue "AttributeError: 'NoneType' object has no attribute 'is_obsolete'" when processing security patch
+        https://bugs.webkit.org/show_bug.cgi?id=187120
+
+        Reviewed by David Kilzer.
+
+        Teach the style queue how to refetch a patch from the status server as we did for non-Style
+        EWS queues.
+
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        (StyleQueueTask.validate): Similar to change made to EarlyWarningSystemTask.validate() in r233107,
+        only check if the bug associated with the patch we are processing is closed if the attachment has a
+        non-None Bug object.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.refetch_patch): Extract logic to refetch a patch from here...
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue._refetch_patch): ... to here.
+        (StyleQueue.refetch_patch): Turn around and call PatchProcessingQueue._refetch_patch().
+
 2018-06-27  Tadeu Zagallo  <tzagallo@apple.com>
 
         Unreviewed, add myself as a WebKit committer.

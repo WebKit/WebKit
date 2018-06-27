@@ -328,6 +328,18 @@ class PatchProcessingQueue(AbstractPatchQueue):
         if self._can_access_bug(patch.bug_id()):
             self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
 
+    def _refetch_patch(self, patch):
+        patch_id = patch.id()
+        try:
+            patch = self._tool.bugs.fetch_attachment(patch_id, throw_on_access_error=True)
+        except Bugzilla.AccessError as e:
+            # FIXME: Need a way to ask the status server to fetch the patch again. For now
+            # we return the attachment as it was when it was originally uploaded to the
+            # status server. See <https://bugs.webkit.org/show_bug.cgi?id=186817>.
+            if e.error_code == Bugzilla.AccessError.NOT_PERMITTED:
+                patch = self._tool.status_server.fetch_attachment(patch_id)
+        return patch
+
 
 class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
     def __init__(self, commit_queue_task_class=CommitQueueTask):
@@ -523,4 +535,4 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
         return None
 
     def refetch_patch(self, patch):
-        return self._tool.bugs.fetch_attachment(patch.id())
+        return super(StyleQueue, self)._refetch_patch(patch)
