@@ -1028,7 +1028,7 @@ uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(uint64_t frameID, con
     uint32_t pageCount = 0;
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
     using Message = Messages::WebPage::ComputePagesForPrintingAndDrawToPDF;
-    process().sendSync(Message(frameID, printInfo, callbackID), Message::Reply(pageCount), m_pageID);
+    process().sendSync(Message(frameID, printInfo, callbackID), Message::Reply(pageCount), m_pageID, Seconds::infinity());
     return pageCount;
 }
 

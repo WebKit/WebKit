@@ -1,3 +1,21 @@
+2018-06-27  Tim Horton  <timothy_horton@apple.com>
+
+        When trying to print a very long email on iOS, the print preview is blank
+        https://bugs.webkit.org/show_bug.cgi?id=187077
+        <rdar://problem/41107013>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+        ChildProcessProxy::sendSync has a (surprising) default timeout of 1 second,
+        (as opposed to Connection::sendSync's default timeout of ∞ seconds).
+        The printing path already waits ∞ seconds for the final PDF, but currently
+        uses the default 1 second timeout for page count computation. If page
+        count computation takes more than 1 second, the preview will be blank.
+        Since the print preview is generated asynchronously, we really want
+        to wait until it's done, and not give up after 1 second.
+
 2018-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPad apps on macOS] Unable to interact with video elements that have started playing
