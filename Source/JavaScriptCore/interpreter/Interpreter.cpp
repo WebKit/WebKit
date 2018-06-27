@@ -556,13 +556,15 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
     DisallowGC disallowGC;
     VM& vm = m_vm;
     CallFrame* callFrame = vm.topCallFrame;
-    if (!callFrame)
+    if (!callFrame || !maxStackSize)
         return;
 
     size_t framesCount = 0;
+    size_t maxFramesCountNeeded = maxStackSize + framesToSkip;
     StackVisitor::visit(callFrame, &vm, [&] (StackVisitor&) -> StackVisitor::Status {
-        framesCount++;
-        return StackVisitor::Continue;
+        if (++framesCount < maxFramesCountNeeded)
+            return StackVisitor::Continue;
+        return StackVisitor::Done;
     });
     if (framesCount <= framesToSkip)
         return;

@@ -1,5 +1,15 @@
 2018-06-26  Mark Lam  <mark.lam@apple.com>
 
+        Skip some unnecessary work in Interpreter::getStackTrace().
+        https://bugs.webkit.org/show_bug.cgi?id=187070
+
+        Reviewed by Michael Saboff.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::getStackTrace):
+
+2018-06-26  Mark Lam  <mark.lam@apple.com>
+
         ASSERTION FAILED: length > butterfly->vectorLength() in JSObject::ensureLengthSlow().
         https://bugs.webkit.org/show_bug.cgi?id=187060
         <rdar://problem/41452767>
