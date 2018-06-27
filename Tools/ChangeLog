@@ -1,5 +1,23 @@
 2018-06-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add support for compiling WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=187019
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit): Added, class to compile WebKit.
+        (CleanBuild): Added, class to clean up the build.
+        (KillOldProcesses): Added, class to kill old processes.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/config.json: Renamed ios-11-simulator to ios-simulator-11, to match with build.webkit.org code.
+        Added configuration, architecture which is required for compiling. Renamed Release to release as the tools expect lower-case release.
+        * BuildSlaveSupport/ews-build/factories.py: Added BuildFactory.
+        * BuildSlaveSupport/ews-build/loadConfig.py: Renamed configuraton value to lower-case as tools expect lower-case values.
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py: Ditto.
+
+2018-06-26  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add support for WebKitPerl-Tests-EWS
         https://bugs.webkit.org/show_bug.cgi?id=187023
 

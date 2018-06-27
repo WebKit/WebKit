@@ -20,12 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from buildbot.process import buildstep
+from buildbot.process import buildstep, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import shell
 from buildbot.steps.source import svn
 from twisted.internet import defer
 
+WithProperties = properties.WithProperties
 
 class ConfigureBuild(buildstep.BuildStep):
     name = "configure-build"
@@ -87,3 +88,63 @@ class RunWebKitPerlTests(shell.ShellCommand):
     descriptionDone = ['webkitperl-tests']
     flunkOnFailure = True
     command = ['Tools/Scripts/test-webkitperl']
+
+
+def appendCustomBuildFlags(step, platform, fullPlatform):
+    # FIXME: Make a common 'supported platforms' list.
+    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
+        return
+    if fullPlatform.startswith('ios-simulator'):
+        platform = 'ios-simulator'
+    elif platform == 'ios':
+        platform = 'device'
+    step.setCommand(step.command + ['--' + platform])
+
+
+class CompileWebKit(shell.Compile):
+    name = "compile-webkit"
+    description = ["compiling webkit"]
+    descriptionDone = ["compiled webkit"]
+    env = {'MFLAGS': ''}
+    warningPattern = ".*arning: .*"
+    command = ["perl", "Tools/Scripts/build-webkit", WithProperties("--%(configuration)s")]
+
+    def start(self):
+        platform = self.getProperty('platform')
+        buildOnly = self.getProperty('buildOnly')
+        architecture = self.getProperty('architecture')
+        additionalArguments = self.getProperty('additionalArguments')
+
+        if additionalArguments:
+            self.setCommand(self.command + additionalArguments)
+        if platform in ('mac', 'ios') and architecture:
+            self.setCommand(self.command + ['ARCHS=' + architecture])
+            if platform == 'ios':
+                self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
+        if platform in ('mac', 'ios') and buildOnly:
+            # For build-only bots, the expectation is that tests will be run on separate machines,
+            # so we need to package debug info as dSYMs. Only generating line tables makes
+            # this much faster than full debug info, and crash logs still have line numbers.
+            self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
+            self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=line-tables-only'])
+
+        appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
+
+        return shell.Compile.start(self)
+
+
+class CleanBuild(shell.Compile):
+    name = "delete-WebKitBuild-directory"
+    description = ["deleting WebKitBuild directory"]
+    descriptionDone = ["deleted WebKitBuild directory"]
+    command = ["python", "Tools/BuildSlaveSupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+
+
+class KillOldProcesses(shell.Compile):
+    name = "kill-old-processes"
+    description = ["killing old processes"]
+    descriptionDone = ["killed old processes"]
+    command = ["python", "Tools/BuildSlaveSupport/kill-old-processes", "buildbot"]
+
+    def __init__(self, **kwargs):
+        super(KillOldProcesses, self).__init__(timeout=60, **kwargs)

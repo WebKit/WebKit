@@ -114,16 +114,16 @@ class TestcheckValidBuilder(unittest.TestCase):
 
     def test_builder_with_missing_factory(self):
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({'name': 'mac-wk2', 'configuration': 'Release'})
+            loadConfig.checkValidBuilder({'name': 'mac-wk2', 'configuration': 'release'})
         self.assertEqual(context.exception.args, ('Builder mac-wk2 does not have factory defined.',))
 
     def test_builder_with_missing_platform(self):
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({'name': 'mac-wk2', 'configuration': 'Release', 'factory': 'WK2Factory'})
+            loadConfig.checkValidBuilder({'name': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory'})
         self.assertEqual(context.exception.args, ('Builder mac-wk2 does not have platform defined.',))
 
     def test_valid_builder(self):
-        loadConfig.checkValidBuilder({'name': 'mac-wk2', 'configuration': 'Release', 'factory': 'WK2Factory', 'platform': 'mac-sierra'})
+        loadConfig.checkValidBuilder({'name': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra'})
 
 
 class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):

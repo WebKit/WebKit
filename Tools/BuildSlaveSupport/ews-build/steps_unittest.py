@@ -295,5 +295,111 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
         return self.runStep()
 
 
+class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(KillOldProcesses())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/kill-old-processes', 'buildbot'],
+                        timeout=60,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='killed old processes')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(KillOldProcesses())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/kill-old-processes', 'buildbot'],
+                        timeout=60,
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='killed old processes (failure)')
+        return self.runStep()
+
+
+class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CleanBuild())
+        self.setProperty('fullPlatform', 'ios-11')
+        self.setProperty('configuration', 'Release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/clean-build', '--platform=ios-11', '--Release'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='deleted WebKitBuild directory')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CleanBuild())
+        self.setProperty('fullPlatform', 'ios-simulator-11')
+        self.setProperty('configuration', 'Debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/clean-build', '--platform=ios-simulator-11', '--Debug'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='deleted WebKitBuild directory (failure)')
+        return self.runStep()
+
+
+class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('fullPlatform', 'ios-simulator-11')
+        self.setProperty('configuration', 'Release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=["perl", "Tools/Scripts/build-webkit", '--Release'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='compiled webkit')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('configuration', 'Debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=["perl", "Tools/Scripts/build-webkit", '--Debug'],
+                        )
+            + ExpectShell.log('stdio', stdout='1 error generated.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='compiled webkit (failure)')
+        return self.runStep()
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -106,7 +106,7 @@ def checkValidBuilder(builder):
     if len(builder['name']) > BUILDER_NAME_LENGTH_LIMIT:
         raise Exception('Builder name {} is longer than maximum allowed by Buildbot ({} characters).'.format(builder['name'], BUILDER_NAME_LENGTH_LIMIT))
 
-    if 'configuration' in builder and builder['configuration'] not in ['Debug', 'Production', 'Release']:
+    if 'configuration' in builder and builder['configuration'] not in ['debug', 'production', 'release']:
         raise Exception('Invalid configuration: {} for builder: {}'.format(builder.get('configuration'), builder.get('name')))
 
     if not builder.get('factory'):

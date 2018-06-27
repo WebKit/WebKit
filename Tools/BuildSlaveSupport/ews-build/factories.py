@@ -51,23 +51,31 @@ class WebKitPerlFactory(Factory):
         self.addStep(RunWebKitPerlTests())
 
 
+class BuildFactory(Factory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(KillOldProcesses())
+        self.addStep(CleanBuild())
+        self.addStep(CompileWebKit())
+
+
 class GTKFactory(Factory):
     pass
 
 
-class iOSFactory(Factory):
+class iOSFactory(BuildFactory):
     pass
 
 
-class iOSSimulatorFactory(Factory):
+class iOSSimulatorFactory(BuildFactory):
     pass
 
 
-class MacWK1Factory(Factory):
+class MacWK1Factory(BuildFactory):
     pass
 
 
-class MacWK2Factory(Factory):
+class MacWK2Factory(BuildFactory):
     pass
 
 
