@@ -1,3 +1,12 @@
+2018-06-27  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Update expectations for WebDriver tests.
+        https://bugs.webkit.org/show_bug.cgi?id=187098
+
+        Unreviewed gardening.
+
+        * TestExpectations.json:
+
 2018-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement maximize, minimize and fullscreen window commands
