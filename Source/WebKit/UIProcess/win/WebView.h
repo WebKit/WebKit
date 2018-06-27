@@ -90,6 +90,7 @@ private:
     LRESULT onTimerEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onShowWindowEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onSetCursor(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onMenuCommand(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
 
     void paint(HDC, const WebCore::IntRect& dirtyRect);
     void setWasActivatedByMouseEvent(bool flag) { m_wasActivatedByMouseEvent = flag; }

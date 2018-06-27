@@ -207,6 +207,10 @@ typedef GtkWidget* PlatformWidget;
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 #endif
 
+#if PLATFORM(WIN)
+typedef HWND PlatformWidget;
+#endif
+
 namespace WebKit {
 class CertificateInfo;
 class DrawingAreaProxy;
@@ -694,6 +698,10 @@ public:
     PlatformWidget viewWidget();
     const WebCore::Color& backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(const WebCore::Color& color) { m_backgroundColor = color; }
+#endif
+
+#if PLATFORM(WIN)
+    PlatformWidget viewWidget();
 #endif
 
     bool isProcessingMouseEvents() const;

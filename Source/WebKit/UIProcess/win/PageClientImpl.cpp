@@ -352,4 +352,9 @@ void PageClientImpl::derefView()
     notImplemented();
 }
 
+HWND PageClientImpl::viewWidget()
+{
+    return m_view.window();
+}
+
 } // namespace WebKit

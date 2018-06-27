@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 
 #include "NotImplemented.h"
+#include "PageClientImpl.h"
 #include <WebCore/UserAgent.h>
 
 namespace WebKit {
@@ -55,5 +56,11 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
     m_editorState = editorState;
 }
+
+PlatformWidget WebPageProxy::viewWidget()
+{
+    return static_cast<PageClientImpl&>(m_pageClient).viewWidget();
+}
+
 
 } // namespace WebKit

@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "WebContextMenuListenerProxy.h"
 #include "WebContextMenuProxy.h"
 
 namespace WebKit {
@@ -49,6 +50,8 @@ private:
     void show() override;
 
     WebPageProxy& m_page;
+    RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;
+    HMENU m_menu;
 };
 
 

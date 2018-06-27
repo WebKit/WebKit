@@ -166,6 +166,9 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_SETCURSOR:
         lResult = onSetCursor(hWnd, message, wParam, lParam, handled);
         break;
+    case WM_MENUCOMMAND:
+        lResult = onMenuCommand(hWnd, message, wParam, lParam, handled);
+        break;
     default:
         handled = false;
         break;
@@ -567,6 +570,35 @@ LRESULT WebView::onSetCursor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
     }
 
     ::SetCursor(m_lastCursorSet);
+    return 0;
+}
+
+LRESULT WebView::onMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
+{
+    auto hMenu = reinterpret_cast<HMENU>(lParam);
+    auto index = static_cast<unsigned>(wParam);
+
+    MENUITEMINFO menuItemInfo;
+    menuItemInfo.cbSize = sizeof(menuItemInfo);
+    menuItemInfo.cch = 0;
+    menuItemInfo.fMask = MIIM_STRING;
+    ::GetMenuItemInfo(hMenu, index, TRUE, &menuItemInfo);
+
+    menuItemInfo.cch++;
+    Vector<WCHAR> buffer(menuItemInfo.cch);
+    menuItemInfo.dwTypeData = buffer.data();
+    menuItemInfo.fMask |= MIIM_ID;
+
+    ::GetMenuItemInfo(hMenu, index, TRUE, &menuItemInfo);
+
+    String title(buffer.data(), menuItemInfo.cch);
+    ContextMenuAction action = static_cast<ContextMenuAction>(menuItemInfo.wID);
+    bool enabled = !(menuItemInfo.fState & MFS_DISABLED);
+    bool checked = menuItemInfo.fState & MFS_CHECKED;
+    WebContextMenuItemData item(ContextMenuItemType::ActionType, action, title, enabled, checked);
+    m_page->contextMenuItemSelected(item);
+
+    handled = true;
     return 0;
 }
 

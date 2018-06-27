@@ -1,3 +1,30 @@
+2018-06-27  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Wincairo] Add support for context menus to non-legacy minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=186815.
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewWidget):
+        * UIProcess/win/PageClientImpl.h:
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        (WebKit::WebContextMenuProxyWin::show):
+        (WebKit::createMenu):
+        (WebKit::createMenuItem):
+        (WebKit::populate):
+        (WebKit::WebContextMenuProxyWin::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyWin::WebContextMenuProxyWin):
+        (WebKit::WebContextMenuProxyWin::~WebContextMenuProxyWin):
+        * UIProcess/win/WebContextMenuProxyWin.h:
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::viewWidget):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc):
+        (WebKit::WebView::onMenuCommand):
+        * UIProcess/win/WebView.h:
+
 2018-06-27  Youenn Fablet  <youenn@apple.com>
 
         Disable content blockers in NetworkLoadChecker except for ping loads

@@ -48,6 +48,7 @@ class PageClientImpl : public PageClient
 public:
     PageClientImpl(WebView&);
 
+    HWND viewWidget();
 private:
     // PageClient
     std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
