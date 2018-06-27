@@ -1,3 +1,13 @@
+2018-06-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Rename badly named variable kls to schedulerType
+        https://bugs.webkit.org/show_bug.cgi?id=186926
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py:
+        (loadBuilderConfig): Renamed kls to schedulerType.
+
 2018-06-26  Daniel Bates  <dabates@apple.com>
 
         EWS should pass --status-host-uses-http when invoking webkit-patch, if needed
