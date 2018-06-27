@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <script src="/resources/testharness.js"></script>
-    <script src="/resources/testharnessreport.js"></script>
-    <script src="/common/get-host-info.sub.js"></script>
-</head>
-<body>
-    <script>
+// META: script=/common/get-host-info.sub.js
+// META: script=/resources/testharness.js
+
+if (!self.document) {
+    importScripts("/resources/testharness.js");
+    importScripts("/common/get-host-info.sub.js");
+}
+
 const host = get_host_info();
-const localBaseURL = host.HTTP_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
-const sameSiteBaseURL = "http://" + host.ORIGINAL_HOST + ":" + host.HTTP_PORT2 + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
-const notSameSiteBaseURL = host.HTTP_NOTSAMESITE_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
-const httpsBaseURL = host.HTTPS_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
+const path = "/fetch/cross-origin-resource-policy/";
+const localBaseURL = host.HTTP_ORIGIN + path;
+const sameSiteBaseURL = "http://" + host.ORIGINAL_HOST + ":" + host.HTTP_PORT2 + path;
+const notSameSiteBaseURL = host.HTTP_NOTSAMESITE_ORIGIN + path;
+const httpsBaseURL = host.HTTPS_ORIGIN + path;
 
 promise_test(async () => {
     const response = await fetch("./resources/hello.py?corp=same-origin");
@@ -78,6 +78,3 @@ promise_test(async (test) => {
 
     return promise_rejects(test, new TypeError, fetch(notSameSiteBaseURL + "resources/redirect.py?corp=same-origin&redirectTo=" + encodeURIComponent(finalURL), { mode: "no-cors" }));
 }, "Cross-origin no-cors fetch with a 'Cross-Origin-Resource-Policy: same-origin' redirect response header.");
-    </script>
-</body>
-</html>
