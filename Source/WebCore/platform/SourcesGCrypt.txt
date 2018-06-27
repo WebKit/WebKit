@@ -38,4 +38,5 @@ crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp
 crypto/gcrypt/CryptoKeyECGCrypt.cpp
 crypto/gcrypt/CryptoKeyRSAGCrypt.cpp
+crypto/gcrypt/GCryptUtilities.cpp
 crypto/gcrypt/SerializedCryptoKeyWrapGCrypt.cpp

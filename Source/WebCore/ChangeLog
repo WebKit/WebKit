@@ -1,3 +1,33 @@
+2018-06-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Move definitions of GCryptUtilities helpers into a separate source file
+        https://bugs.webkit.org/show_bug.cgi?id=187033
+
+        Reviewed by Michael Catanzaro.
+
+        Move the GCryptUtilities helpers that operate on libgcrypt values and
+        constants into a separate source file. This limits a bit the amount of
+        inlining the compiler might feel compelled to do, and the resulting
+        shared library is 8kB smaller in size.
+
+        * crypto/gcrypt/GCryptUtilities.cpp: Copied from Source/WebCore/crypto/gcrypt/GCryptUtilities.h.
+        (WebCore::hmacAlgorithm):
+        (WebCore::digestAlgorithm):
+        (WebCore::hashCryptoDigestAlgorithm):
+        (WebCore::mpiLength):
+        (WebCore::mpiData):
+        (WebCore::mpiZeroPrefixedData):
+        (WebCore::mpiSignedData):
+        * crypto/gcrypt/GCryptUtilities.h:
+        (WebCore::hmacAlgorithm): Deleted.
+        (WebCore::digestAlgorithm): Deleted.
+        (WebCore::hashCryptoDigestAlgorithm): Deleted.
+        (WebCore::mpiLength): Deleted.
+        (WebCore::mpiData): Deleted.
+        (WebCore::mpiZeroPrefixedData): Deleted.
+        (WebCore::mpiSignedData): Deleted.
+        * platform/SourcesGCrypt.txt:
+
 2018-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Pass VM& to functions more
