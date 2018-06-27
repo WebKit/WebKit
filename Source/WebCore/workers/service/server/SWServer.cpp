@@ -64,6 +64,10 @@ HashSet<SWServer*>& SWServer::allServers()
 
 SWServer::~SWServer()
 {
+    // Destroy the remaining connections before the SWServer gets destroyed since they have a raw pointer
+    // to the server and since they try to unregister clients from the server in their destructor.
+    m_connections.clear();
+
     allServers().remove(this);
 }
 

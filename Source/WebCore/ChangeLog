@@ -1,3 +1,22 @@
+2018-06-27  Chris Dumez  <cdumez@apple.com>
+
+        Crash under SWServer::unregisterServiceWorkerClient()
+        https://bugs.webkit.org/show_bug.cgi?id=187115
+        <rdar://problem/41539197>
+
+        Reviewed by Youenn Fablet.
+
+        Connections are usually destroyed before their SWServer. However, as per crash traces, it is possible
+        for SWServers to get destroyed while they still have connections. When this happens, the connections
+        (which are owned by the SWServer) get destroyed with other SWServer data members. In turn, the
+        connection destructor tries to unregister its clients from the server that is currently being destroyed.
+
+        To address the issue, the SWServer destructor now destroys remaining connections early, before SWServer's
+        other data members get destroyed.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::~SWServer):
+
 2018-06-27  Youenn Fablet  <youenn@apple.com>
 
         NetworkLoadChecker should not need to hard ref NetworkConnectionToWebProcess
