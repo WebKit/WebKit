@@ -1,3 +1,32 @@
+2018-06-27  Antti Koivisto  <antti@apple.com>
+
+        Don't invoke post resolution callbacks when resolving computed style
+        https://bugs.webkit.org/show_bug.cgi?id=187113
+        <rdar://problem/41365766>
+
+        Reviewed by Geoff Garen.
+
+        Post-resolution callbacks should only be invoked when we resolve the full document style,
+        not when resolving computed style for a single element.
+
+        Tests: fast/dom/object-computed-style-event.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        * dom/Element.cpp:
+        (WebCore::Element::resolveComputedStyle):
+
+        Also ref the ancestor stack to be safe.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::PostResolutionCallbackDisabler::PostResolutionCallbackDisabler):
+        (WebCore::Style::PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler):
+
+        Add an option to not drain the callback queue on destruction. In this mode we
+        just block network loads.
+
+        * style/StyleTreeResolver.h:
+
 2018-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Find on page selection color isn't adapted for dark mode.

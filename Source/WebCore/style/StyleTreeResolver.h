@@ -112,8 +112,11 @@ bool postResolutionCallbacksAreSuspended();
 
 class PostResolutionCallbackDisabler {
 public:
-    explicit PostResolutionCallbackDisabler(Document&);
+    enum class DrainCallbacks { Yes, No };
+    explicit PostResolutionCallbackDisabler(Document&, DrainCallbacks = DrainCallbacks::Yes);
     ~PostResolutionCallbackDisabler();
+private:
+    DrainCallbacks m_drainCallbacks;
 };
 
 }

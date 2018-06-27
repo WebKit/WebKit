@@ -1,3 +1,14 @@
+2018-06-27  Antti Koivisto  <antti@apple.com>
+
+        Don't invoke post resolution callbacks when resolving computed style
+        https://bugs.webkit.org/show_bug.cgi?id=187113
+        <rdar://problem/41365766>
+
+        Reviewed by Geoff Garen.
+
+        * fast/dom/object-computed-style-event-expected.txt: Added.
+        * fast/dom/object-computed-style-event.html: Added.
+
 2018-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Find on page selection color isn't adapted for dark mode.
