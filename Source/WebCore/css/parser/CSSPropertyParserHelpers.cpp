@@ -957,6 +957,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
         result->addStop(stop);
     }
 
+    result->doneAddingStops();
     return result;
 }
 
@@ -983,6 +984,8 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
             return false;
         gradient.addStop(stop);
     } while (consumeCommaIncludingWhitespace(range));
+
+    gradient.doneAddingStops();
 
     // The last color stop cannot be a color hint.
     if (previousStopWasColorHint)
@@ -1016,6 +1019,8 @@ static bool consumeAngularGradientColorStops(CSSParserTokenRange& range, CSSPars
             return false;
         gradient.addStop(stop);
     } while (consumeCommaIncludingWhitespace(range));
+
+    gradient.doneAddingStops();
 
     // The last color stop cannot be a color hint.
     if (previousStopWasColorHint)

@@ -69,6 +69,7 @@ public:
     void setSecondY(RefPtr<CSSPrimitiveValue>&& val) { m_secondY = WTFMove(val); }
 
     void addStop(const CSSGradientColorStop& stop) { m_stops.append(stop); }
+    void doneAddingStops() { m_stops.shrinkToFit(); }
 
     unsigned stopCount() const { return m_stops.size(); }
 

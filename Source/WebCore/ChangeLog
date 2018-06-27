@@ -1,3 +1,19 @@
+2018-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        CSSGradientValue's color stops vector wastes 12KB on theverge.com
+        https://bugs.webkit.org/show_bug.cgi?id=186988
+
+        Reviewed by Sam Weinig.
+
+        Shrink the color stops vector when we're done parsing the stops.
+
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::doneAddingStops):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeGradientColorStops):
+        (WebCore::CSSPropertyParserHelpers::consumeAngularGradientColorStops):
+
 2018-06-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove static initializers more
