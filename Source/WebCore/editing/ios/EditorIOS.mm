@@ -189,7 +189,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     PasteboardImage pasteboardImage;
 
     RefPtr<Image> image;
-    CachedImage* cachedImage;
+    CachedImage* cachedImage = nullptr;
     getImage(imageElement, image, cachedImage);
     if (!image)
         return;

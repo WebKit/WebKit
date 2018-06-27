@@ -358,7 +358,7 @@ static inline bool emphasisPositionHasNeitherLeftNorRight(OptionSet<TextEmphasis
     return !(emphasisPosition & TextEmphasisPosition::Left) && !(emphasisPosition & TextEmphasisPosition::Right);
 }
 
-bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool& above) const
+bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, std::optional<bool>& above) const
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
     if (style.textEmphasisMark() == TextEmphasisMark::None)
@@ -1001,11 +1001,11 @@ void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatR
     const RenderStyle& lineStyle = this->lineStyle();
 
     float emphasisMarkOffset = 0;
-    bool emphasisMarkAbove;
+    std::optional<bool> emphasisMarkAbove;
     bool hasTextEmphasis = emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkAbove);
     const AtomicString& emphasisMark = hasTextEmphasis ? lineStyle.textEmphasisMarkString() : nullAtom();
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = emphasisMarkAbove ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = (emphasisMarkAbove && *emphasisMarkAbove) ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
 
     TextPainter textPainter { context };
     textPainter.setFont(font);

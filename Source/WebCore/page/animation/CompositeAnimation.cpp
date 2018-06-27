@@ -109,9 +109,9 @@ void CompositeAnimation::updateTransitions(Element& element, const RenderStyle* 
             for (int propertyIndex = 0; propertyIndex < CSSPropertyAnimation::getNumProperties(); ++propertyIndex) {
                 if (all) {
                     // Get the next property which is not a shorthand.
-                    bool isShorthand;
+                    std::optional<bool> isShorthand;
                     prop = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
-                    if (isShorthand)
+                    if (isShorthand && *isShorthand)
                         continue;
                 }
 

@@ -263,7 +263,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
 {
     PasteboardImage pasteboardImage;
 
-    CachedImage* cachedImage;
+    CachedImage* cachedImage = nullptr;
     getImage(imageElement, pasteboardImage.image, cachedImage);
     if (!pasteboardImage.image)
         return;

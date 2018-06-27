@@ -320,9 +320,9 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
 
     auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
     for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
-        bool isShorthand;
+        std::optional<bool> isShorthand;
         auto property = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
-        if (isShorthand)
+        if (isShorthand && *isShorthand)
             continue;
 
         const Animation* matchingBackingAnimation = nullptr;

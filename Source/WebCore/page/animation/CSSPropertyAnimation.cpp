@@ -1790,7 +1790,7 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(CSSPropertyID prop, const R
     return false;
 }
 
-CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, bool& isShorthand)
+CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, std::optional<bool>& isShorthand)
 {
     CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::singleton();
 

@@ -1,3 +1,61 @@
+2018-06-27  David Kilzer  <ddkilzer@apple.com>
+
+        Fix clang static analyzer warnings: Branch condition evaluates to a garbage value
+        <https://webkit.org/b/186968>
+
+        Reviewed by Zalan Bujtas.
+
+        This patch changes two stack-allocated `bool` variables into
+        `std::optional<bool>` since the functions that set the variable
+        may return early without setting it.  It also changes one
+        stack-allocated pointer to be initialized to `nullptr`.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        Update for change to CSSPropertyAnimation::getPropertyAtIndex()
+        argument type.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::writeImageToPasteboard): Initialize
+        `cachedImage` stack pointer to nullptr since getImage() has an
+        early return that doesn't set `cachedImage`.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::writeImageToPasteboard): Ditto.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimation::getPropertyAtIndex):
+        * page/animation/CSSPropertyAnimation.h:
+        (WebCore::CSSPropertyAnimation::getPropertyAtIndex):
+        - Change method to take `std::optional<bool>` instead of `bool`
+          as second argument since the method may return early without
+          setting `isShorthand`.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions): Update for
+        change to CSSPropertyAnimation::getPropertyAtIndex() argument
+        type.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection): Also
+        rename local `emphasisMarkIsOver` to `emphasisMarkIsAbove` to
+        match other call sites.
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment const):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment const):
+        - Update for change to InlineTextBox::emphasisMarkExistsAndIsAbove()
+          argument type.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove const):
+        - Change method to take `std::optional<bool>` instead of `bool`
+          as second argument since the method may return early without
+          setting `above`.
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        - Update for change to InlineTextBox::emphasisMarkExistsAndIsAbove()
+          argument type.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove const):
+        - Change method to take `std::optional<bool>` instead of `bool`.
+
 2018-06-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Move formatting context root layout logic to a dedicated function.
