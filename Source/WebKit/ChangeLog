@@ -1,3 +1,15 @@
+2018-06-27  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r233208): Completion handler does not get called on GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=187099
+
+        Reviewed by Antti Koivisto.
+
+        Make sure UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler's completion handler
+        gets called on non-COCOA ports.
+
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-06-27  Tim Horton  <timothy_horton@apple.com>
 
         When trying to print a very long email on iOS, the print preview is blank
