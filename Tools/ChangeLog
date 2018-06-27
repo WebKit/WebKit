@@ -1,3 +1,9 @@
+2018-06-27  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Unreviewed, add myself as a WebKit committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-06-27  Daniel Bates  <dabates@apple.com>
 
         webkit-patch should ignore non-ASCII characters in the status server API key
