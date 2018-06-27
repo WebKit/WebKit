@@ -1,3 +1,33 @@
+2018-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Deal better with the network process crashing on startup
+        https://bugs.webkit.org/show_bug.cgi?id=187065
+        <rdar://problem/41451622>
+
+        Reviewed by Geoffrey Garen.
+
+        When a network process crashes on startup, we would not attempt to relaunch it. If there were web
+        processes waiting for a connection to this network process, we would send them an invalid connection
+        identifier which would cause them to forcefully crash.
+
+        Instead, we now apply the same policy whether a network process crashes on startup or later:
+        - We attempt to relaunch the network process
+        - If there were pending connections from WebContent processes, we ask the new Network process instead.
+
+        As a result, WebContent processes no longer crash in this case. Instead, they wait for a valid
+        connection to the network process.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _makeNextNetworkProcessLaunchFailForTesting]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessCrashed):
+        * UIProcess/WebProcessPool.h:
+
 2018-06-26  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r231479): Unable to buy Odeon cinema tickets in STP (bogus 'X-Frame-Options' to 'SAMEORIGIN')

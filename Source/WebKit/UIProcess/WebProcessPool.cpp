@@ -544,17 +544,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
 void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy, Vector<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&& pendingReplies)
 {
-    networkProcessFailedToLaunch(networkProcessProxy);
-    ASSERT(!m_networkProcess);
-    if (pendingReplies.isEmpty())
-        return;
-    auto& newNetworkProcess = ensureNetworkProcess();
-    for (auto& reply : pendingReplies)
-        newNetworkProcess.getNetworkProcessConnection(WTFMove(reply));
-}
-
-void WebProcessPool::networkProcessFailedToLaunch(NetworkProcessProxy& networkProcessProxy)
-{
     ASSERT(m_networkProcess);
     ASSERT(&networkProcessProxy == m_networkProcess.get());
     m_didNetworkProcessCrash = true;
@@ -569,6 +558,13 @@ void WebProcessPool::networkProcessFailedToLaunch(NetworkProcessProxy& networkPr
 
     // Leave the process proxy around during client call, so that the client could query the process identifier.
     m_networkProcess = nullptr;
+
+    // Attempt to re-launch.
+    if (pendingReplies.isEmpty())
+        return;
+    auto& newNetworkProcess = ensureNetworkProcess();
+    for (auto& reply : pendingReplies)
+        newNetworkProcess.getNetworkProcessConnection(WTFMove(reply));
 }
 
 void WebProcessPool::getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)

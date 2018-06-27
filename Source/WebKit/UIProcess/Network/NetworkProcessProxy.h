@@ -112,7 +112,6 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
 
-    void networkProcessFailedToLaunch();
     void networkProcessCrashed();
     void clearCallbackStates();
 

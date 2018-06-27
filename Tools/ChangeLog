@@ -1,3 +1,18 @@
+2018-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Deal better with the network process crashing on startup
+        https://bugs.webkit.org/show_bug.cgi?id=187065
+        <rdar://problem/41451622>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * TestWebKitAPI/Tests/WebKit/NetworkProcessCrashWithPendingConnection.mm:
+        (-[MonitorWebContentCrashNavigationDelegate _webView:webContentProcessDidTerminateWithReason:]):
+        (-[MonitorWebContentCrashNavigationDelegate webView:didFinishNavigation:]):
+        (TestWebKitAPI::TEST):
+
 2018-06-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove static initializers more

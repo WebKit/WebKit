@@ -37,12 +37,31 @@
 
 #if WK_API_ENABLED
 
-namespace TestWebKitAPI {
-
 static bool loadedOrCrashed = false;
 static bool loaded = false;
 static bool webProcessCrashed = false;
 static bool networkProcessCrashed = false;
+static pid_t pid;
+static WKWebView* testView;
+
+@interface MonitorWebContentCrashNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation MonitorWebContentCrashNavigationDelegate
+
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
+{
+    webProcessCrashed = true;
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    loaded = true;
+}
+
+@end
+
+namespace TestWebKitAPI {
 
 TEST(WebKit, NetworkProcessCrashWithPendingConnection)
 {
@@ -105,6 +124,47 @@ TEST(WebKit, NetworkProcessCrashWithPendingConnection)
     TestWebKitAPI::Util::run(&loadedOrCrashed);
     EXPECT_TRUE(loaded);
     EXPECT_FALSE(webProcessCrashed);
+}
+
+TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPool = adoptNS([[WKProcessPool alloc] init]);
+
+    [configuration setProcessPool:processPool.get()];
+
+    webProcessCrashed = false;
+    loaded = false;
+    networkProcessCrashed = false;
+
+    WKContextClientV0 client;
+    memset(&client, 0, sizeof(client));
+    client.networkProcessDidCrash = [](WKContextRef context, const void* clientInfo) {
+        pid = [testView _webProcessIdentifier];
+        EXPECT_GT(pid, 0); // The WebProcess is already launched when the network process crashes.
+        networkProcessCrashed = true;
+    };
+    WKContextSetClient(static_cast<WKContextRef>(processPool.get()), &client.base);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    testView = webView.get();
+
+    // Constucting a WebView starts a network process so terminate this one. The page load below will then request a network process and we
+    // make this new network process launch crash on startup.
+    [processPool _terminateNetworkProcess];
+    [processPool _makeNextNetworkProcessLaunchFailForTesting];
+
+    auto delegate = adoptNS([[MonitorWebContentCrashNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    TestWebKitAPI::Util::run(&loaded);
+
+    EXPECT_TRUE(networkProcessCrashed);
+    EXPECT_FALSE(webProcessCrashed);
+    EXPECT_GT([webView _webProcessIdentifier], 0);
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]);
+    EXPECT_GT([processPool.get() _networkProcessIdentifier], 0);
 }
 
 } // namespace TestWebKitAPI

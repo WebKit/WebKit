@@ -102,6 +102,11 @@ void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launc
 {
     launchOptions.processType = ProcessLauncher::ProcessType::Network;
     ChildProcessProxy::getLaunchOptions(launchOptions);
+
+    if (processPool().shouldMakeNextNetworkProcessLaunchFailForTesting()) {
+        processPool().setShouldMakeNextNetworkProcessLaunchFailForTesting(false);
+        launchOptions.shouldMakeProcessLaunchFailForTesting = true;
+    }
 }
 
 void NetworkProcessProxy::connectionWillOpen(IPC::Connection& connection)
@@ -203,25 +208,6 @@ void NetworkProcessProxy::networkProcessCrashed()
 
     // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
     m_processPool.networkProcessCrashed(*this, WTFMove(pendingReplies));
-}
-
-void NetworkProcessProxy::networkProcessFailedToLaunch()
-{
-    // The network process must have crashed or exited, send any pending sync replies we might have.
-    while (!m_pendingConnectionReplies.isEmpty()) {
-        auto reply = m_pendingConnectionReplies.takeFirst();
-
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-        reply(IPC::Attachment());
-#elif OS(DARWIN)
-        reply(IPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
-#else
-        notImplemented();
-#endif
-    }
-    clearCallbackStates();
-    // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
-    m_processPool.networkProcessFailedToLaunch(*this);
 }
 
 void NetworkProcessProxy::clearCallbackStates()
@@ -359,7 +345,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
-        networkProcessFailedToLaunch();
+        networkProcessCrashed();
         return;
     }
 

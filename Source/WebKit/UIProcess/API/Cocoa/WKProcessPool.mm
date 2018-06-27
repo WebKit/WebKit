@@ -473,6 +473,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->setShouldMakeNextWebProcessLaunchFailForTesting(true);
 }
 
+- (void)_makeNextNetworkProcessLaunchFailForTesting
+{
+    _processPool->setShouldMakeNextNetworkProcessLaunchFailForTesting(true);
+}
+
 - (size_t)_prewarmedWebProcessCount
 {
     size_t result = 0;
