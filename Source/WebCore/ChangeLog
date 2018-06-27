@@ -1,3 +1,18 @@
+2018-06-27  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] Remove the ability to set keyboard focus when VoiceOver takes focus
+        https://bugs.webkit.org/show_bug.cgi?id=187076
+
+        Reviewed by Chris Fleizach.
+
+        We shouldn't set keyboard focus when assistive technology takes focus since
+        this is causing website incompatibility issues by causing focus to be lost.
+
+        Test: accessibility/ios-simulator/accessibility-focus-do-not-set-focus.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityElementDidBecomeFocused]):
+
 2018-06-21  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Move clearChildNeedsStyleRecalc into resetStyleForNonRenderedDescendants.

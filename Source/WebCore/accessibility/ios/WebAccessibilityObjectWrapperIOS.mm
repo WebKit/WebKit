@@ -2063,26 +2063,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return;
     
-    // The focused VoiceOver element might be the text inside a link.
-    // In those cases we should focus on the link itself.
-    for (AccessibilityObject* object = m_object; object != nil; object = object->parentObject()) {
-        if (object->roleValue() == AccessibilityRole::WebArea)
-            break;
-
-        if (object->canSetFocusAttribute()) {
-            // webkit.org/b/162041 Taking focus onto elements inside a details node will cause VO focusing onto random items.
-            if ([self detailParentForObject:object])
-                break;
-            
-            // webkit.org/b/162322 When a dialog is focusable, allowing focusing onto the dialog node will cause VO cursor jumping
-            // back and forward while navigating its children.
-            if ([object->wrapper() accessibilityIsDialog])
-                break;
-            
-            object->setFocused(true);
-            break;
-        }
-    }
+    m_object->dispatchAccessibilityEventWithType(AccessibilityEventType::Focus);
 }
 
 - (void)accessibilityModifySelection:(TextGranularity)granularity increase:(BOOL)increase

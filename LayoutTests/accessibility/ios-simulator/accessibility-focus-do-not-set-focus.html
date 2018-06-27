@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<a id="link" onaccessiblefocus="focusEventCallback()" href="#" tabIndex="0">focusable</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that accessibilityElementDidBecomeFocused on elements won't set focus.");
+
+    var link = document.getElementById("link");
+
+    if (window.accessibilityController) {
+    	jsTestIsAsync = true;
+    
+        var linkAX = accessibilityController.accessibleElementById("link");
+        linkAX.assistiveTechnologySimulatedFocus();
+    }
+
+    // Also make sure we dispatch the accessiblefocus event.
+    function focusEventCallback() {
+        debug("received accessiblefocus event");
+        shouldBeFalse("link === document.activeElement");
+        finishJSTest();
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

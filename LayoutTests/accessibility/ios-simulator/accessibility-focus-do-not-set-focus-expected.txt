@@ -1,0 +1,12 @@
+focusable
+This tests that accessibilityElementDidBecomeFocused on elements won't set focus.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+received accessiblefocus event
+PASS link === document.activeElement is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

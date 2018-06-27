@@ -1,3 +1,15 @@
+2018-06-27  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] Remove the ability to set keyboard focus when VoiceOver takes focus
+        https://bugs.webkit.org/show_bug.cgi?id=187076
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/accessibility-focus-do-not-set-focus-expected.txt: Added.
+        * accessibility/ios-simulator/accessibility-focus-do-not-set-focus.html: Added.
+        * accessibility/ios-simulator/dom-focus-fires-on-correct-element-expected.txt: Removed.
+        * accessibility/ios-simulator/dom-focus-fires-on-correct-element.html: Removed.
+
 2018-06-26  Youenn Fablet  <youenn@apple.com>
 
         Import wpt CORP tests
