@@ -67,6 +67,13 @@ static CGSize sizeExpandedToSize(CGSize initial, CGSize other)
     return CGSizeMake(std::max(initial.width, other.width),  std::max(initial.height, other.height));
 }
 
+static CGRect safeInlineRect(CGRect initial, CGSize parentSize)
+{
+    if (initial.origin.y > parentSize.height || initial.origin.y < -initial.size.height || initial.origin.x > parentSize.width || initial.origin.x < -initial.size.width)
+        return CGRectMake(parentSize.width / 2, parentSize.height / 2, 1, 1);
+    return initial;
+}
+
 static void replaceViewWithView(UIView *view, UIView *otherView)
 {
     [CATransaction begin];
@@ -594,7 +601,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     
     _initialFrame.size = sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
     _finalFrame.size = sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
-    
+    _initialFrame = safeInlineRect(_initialFrame, [_rootViewController view].frame.size);
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
@@ -664,7 +672,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     
     _initialFrame.size = sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
     _finalFrame.size = sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
-    
+    _finalFrame = safeInlineRect(_finalFrame, [_rootViewController view].frame.size);
+
     [self._webView _page]->setSuppressVisibilityUpdates(true);
 
     [_fullscreenViewController setPrefersStatusBarHidden:NO];

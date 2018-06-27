@@ -1,3 +1,19 @@
+2018-06-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Ensure element fullscreen animation is always visible.
+        https://bugs.webkit.org/show_bug.cgi?id=187068
+        rdar://problem/36187369
+
+        Reviewed by Eric Carlson.
+
+        The fullscreen animation is important for communicating to users that they are no longer in inline mode.
+        If fullscreen animation's inline rect is not visible, animate from a point in the middle of the screen.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (WebKit::safeInlineRect):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+
 2018-06-26  Youenn Fablet  <youenn@apple.com>
 
         Add a sandbox profile for com.google.o1dbrowserplugin plugin
