@@ -1,5 +1,14 @@
 2018-06-27  Robin Morisset  <rmorisset@apple.com>
 
+        [WSL] Fix minor formatting issues in the grammar section
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        * WebGPUShadingLanguageRI/SpecWork/source/index.rst:
+
+2018-06-27  Robin Morisset  <rmorisset@apple.com>
+
         [WSL] Put the full grammar in the Sphinx document
         https://bugs.webkit.org/show_bug.cgi?id=186310
 

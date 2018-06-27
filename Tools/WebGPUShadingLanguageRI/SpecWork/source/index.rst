@@ -119,7 +119,7 @@ Top-level declarations
 A valid file is made of a sequence of 0 or more top-level declarations, followed by the special End-Of-File token.
 
 .. productionlist::
-    topLevelDecl: ";" | typedef | structDef | enumDef | funcDef
+    topLevelDecl: ";" | `typedef` | `structDef` | `enumDef` | `funcDef`
 
 .. todo:: We may want to also allow variable declarations at the top-level if it can easily be supported by all of our targets.
 .. todo:: Decide whether we put native/restricted in the spec or not.
@@ -159,19 +159,19 @@ Statements
     terminatorStmt: "break" | "continue" | "fallthrough" | "return" `expr`? | "trap"
 
 .. productionlist::
-    ifStmt: "if" "(" expr ")" stmt
-    ifElseStmt: "if" "(" expr ")" stmt "else" stmt
-
-The first of these two productions is merely syntactic sugar for the second:
+    ifStmt: "if" "(" `expr` ")" `stmt`
+    ifElseStmt: "if" "(" `expr` ")" `stmt` "else" `stmt`
 
 .. todo:: should I forbid assignments (without parentheses) inside the conditions of if/while to avoid the common mistaking of "=" for "==" ? 
+
+The first of these two productions is merely syntactic sugar for the second:
 
 .. math:: \textbf{if}(e) \,s \leadsto \textbf{if}(e) \,s\, \textbf{else} \,\{\}
 
 .. productionlist::
-    whileStmt: "while" "(" `expr` ")" stmt
-    forStmt: "for" "(" (maybeEffectfulExpr | variableDecls) ";" `expr`? ";" `expr`? ")" `stmt`
-    doWhileStmt: "do" s "while" "(" `expr` ")" ";"
+    whileStmt: "while" "(" `expr` ")" `stmt`
+    forStmt: "for" "(" (`maybeEffectfulExpr` | `variableDecls`) ";" `expr`? ";" `expr`? ")" `stmt`
+    doWhileStmt: "do" `stmt` "while" "(" `expr` ")" ";"
 
 Similarily, we desugar first for loops into while loops, and then all while loops into do while loops.
 First, if the second element of the for is empty we replace it by "true".
@@ -185,10 +185,10 @@ Then, we apply the following two rules:
 
 .. productionlist::
     switchStmt: "switch" "(" `expr` ")" "{" `switchCase`* "}"
-    switchCase: ("case" `constexpr` | "default") ":" stmt*
+    switchCase: ("case" `constexpr` | "default") ":" `stmt`*
 
 .. productionlist::
-    variableDecls: `type` `variableDecl` ("," variableDecl)*
+    variableDecls: `type` `variableDecl` ("," `variableDecl`)*
     variableDecl: `Identifier` ("=" `expr`)?
 
 Complex variable declarations are also mere syntactic sugar.
@@ -206,7 +206,7 @@ Types
         : | `Identifier` `typeArguments` `typeSuffixNonAbbreviated`*
     addressSpace: "constant" | "device" | "threadgroup" | "thread"
     typeSuffixAbbreviated: "*" | "[" "]" | "[" `IntLiteral` "]"
-    typeSuffixNonAbbreviated: "*" addressSpace | "[" "]" addressSpace | "[" `IntLiteral` "]"
+    typeSuffixNonAbbreviated: "*" `addressSpace` | "[" "]" `addressSpace` | "[" `IntLiteral` "]"
 
 
 Putting the address space before the identifier is just syntactic sugar for having that same address space applied to all type suffixes.
@@ -217,7 +217,7 @@ Putting the address space before the identifier is just syntactic sugar for havi
                  : (`typeArgument` ("," `typeArgument`)*)? ">>"
                  : | "<" (`typeArgument` ("," `typeArgument`)* ">"
                  : | ("<" ">")?
-    typeArgument: constepxr | type
+    typeArgument: `constepxr` | `type`
 
 The first production rule for typeArguments is a way to say that `>>` can be parsed as two `>` closing delimiters, in the case of nested typeArguments.
 
@@ -241,16 +241,16 @@ We accept three different kinds of expressions, in different places in the gramm
     exprLogicalAnd: (`exprLogicalAnd` "&&")? `exprBitwiseOr`
     exprBitwiseOr: (`exprBitwiseOr` "|")? `exprBitwiseXor`
     exprBitwiseXor: (`exprBitwiseXor` "^")? `exprBitwiseAnd`
-    exprBitwiseAnd: (`exprBitwiseAnd` "&")? `exprRelationalOperator`
-    exprRelationalOperator: `exprShift` (`relationalBinop` `exprShift`)?
+    exprBitwiseAnd: (`exprBitwiseAnd` "&")? `exprRelational`
+    exprRelational: `exprShift` (`relationalBinop` `exprShift`)?
     relationalBinop: "<" | ">" | "<=" | ">=" | "==" | "!="
     exprShift: (`exprShift` ("<<" | ">>"))? `exprAdd`
     exprAdd: (`exprMult` ("*" | "/" | "%"))? `exprPrefix`
     exprPrefix: `prefixOp` `exprPrefix` | `exprSuffix`
     prefixOp: "++" | "--" | "+" | "-" | "~" | "!" | "*" | "&" | "@"
-    exprSuffix: `callExpression` `limitedSuffixOperator`*
-              : | `term` (`limitedSuffixOperator` | "++" | "--")*
-    limitedSuffixOperator: "." `Identifier` | "->" `Identifier` | "[" `expr` "]"
+    exprSuffix: `callExpression` `limitedSuffixOp`*
+              : | `term` (`limitedSuffixOp` | "++" | "--")*
+    limitedSuffixOp: "." `Identifier` | "->" `Identifier` | "[" `expr` "]"
     callExpression: `Identifier` "(" (`ternaryConditional` ("," `ternaryConditional`)*)? ")"
     term: `Literal` | `Identifier` | "(" `expr` ")"
 
