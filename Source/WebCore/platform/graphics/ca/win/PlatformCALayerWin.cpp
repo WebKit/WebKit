@@ -535,6 +535,11 @@ void PlatformCALayerWin::setSupportsSubpixelAntialiasedText(bool)
 {
 }
 
+bool PlatformCALayerWin::hasContents() const
+{
+    return !!CACFLayerGetContents(m_layer.get());
+}
+
 CFTypeRef PlatformCALayerWin::contents() const
 {
     return CACFLayerGetContents(m_layer.get());

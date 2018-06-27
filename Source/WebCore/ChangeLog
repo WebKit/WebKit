@@ -1,3 +1,11 @@
+2018-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build after r233268.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::hasContents const):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
 2018-06-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Out-of-flow positioned element's height depends on its containing block's height.
