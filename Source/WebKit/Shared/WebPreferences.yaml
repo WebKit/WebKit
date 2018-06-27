@@ -158,15 +158,6 @@ LinkPreconnect:
   defaultValue: DEFAULT_LINK_PRECONNECT_ENABLED
   webcoreName: linkPreconnectEnabled
 
-FullScreenEnabled:
-  type: bool
-  defaultValue: DEFAULT_ENABLE_FULLSCREEN_API
-  condition: ENABLE(FULLSCREEN_API)
-  visibleCondition: PLATFORM(IOS)
-  humanReadableName: "Fullscreen API"
-  humanReadableDescription: "Fullscreen API"
-  category: experimental
-
 AsynchronousSpellCheckingEnabled:
   type: bool
   defaultValue: false
@@ -658,15 +649,6 @@ MenuItemElementEnabled:
   type: bool
   defaultValue: false
   webcoreBinding: RuntimeEnabledFeatures
-
-EncryptedMediaAPIEnabled:
-  type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Modern Encrypted Media API"
-  humanReadableDescription: "Modern Encrypted Media API"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
-  condition: ENABLE(ENCRYPTED_MEDIA)
 
 MediaPreloadingEnabled:
   type: bool
@@ -1280,3 +1262,21 @@ ServerTimingEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: serverTimingEnabled
+
+FullScreenEnabled:
+  type: bool
+  defaultValue: DEFAULT_ENABLE_FULLSCREEN_API
+  condition: ENABLE(FULLSCREEN_API)
+  visibleCondition: PLATFORM(IOS)
+  humanReadableName: "Fullscreen API"
+  humanReadableDescription: "Fullscreen API"
+  category: experimental
+
+EncryptedMediaAPIEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Modern Encrypted Media API"
+  humanReadableDescription: "Modern Encrypted Media API"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(ENCRYPTED_MEDIA)

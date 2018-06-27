@@ -1,3 +1,9 @@
+2018-06-26  Timothy Horton  <timothy_horton@apple.com>
+
+        Rearrange some WebPreferences; move two experimental prefs into the experimental section
+
+        * Shared/WebPreferences.yaml:
+
 2018-06-26  Chris Dumez  <cdumez@apple.com>
 
         Deal better with the network process crashing on startup
