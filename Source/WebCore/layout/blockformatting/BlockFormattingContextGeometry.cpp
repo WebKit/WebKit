@@ -138,7 +138,9 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
     auto compute = [&]() {
+
         // 10.3.3 Block-level, non-replaced elements in normal flow
+        //
         // The following constraints must hold among the used values of the other properties:
         // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
         //
@@ -159,76 +161,61 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
         //    edges of the containing block.
 
         auto& style = layoutBox.style();
-        auto width = precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth();
         auto* containingBlock = layoutBox.containingBlock();
         auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*containingBlock)->contentBoxWidth();
         auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
 
-        LayoutUnit computedWidthValue;
-        std::optional<LayoutUnit> computedMarginLeftValue;
-        std::optional<LayoutUnit> computedMarginRightValue;
-
-        auto marginLeft = style.marginLeft();
-        if (!marginLeft.isAuto())
-            computedMarginLeftValue = valueForLength(marginLeft, containingBlockWidth);
-
-        auto marginRight = style.marginRight();
-        if (!marginRight.isAuto())
-            computedMarginRightValue = valueForLength(marginRight, containingBlockWidth);
-
+        auto width = FormattingContext::Geometry::computedValueIfNotAuto(precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
+        auto marginLeft = FormattingContext::Geometry::computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
+        auto marginRight = FormattingContext::Geometry::computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
         auto borderLeft = displayBox.borderLeft();
         auto borderRight = displayBox.borderRight();
         auto paddingLeft = displayBox.paddingLeft();
         auto paddingRight = displayBox.paddingRight();
 
         // #1
-        if (!width.isAuto()) {
-            computedWidthValue = valueForLength(width, containingBlockWidth);
-            auto horizontalSpaceForMargin = containingBlockWidth - (computedMarginLeftValue.value_or(0) + borderLeft + paddingLeft 
-                + computedWidthValue + paddingRight + borderRight + computedMarginRightValue.value_or(0));
-
+        if (width) {
+            auto horizontalSpaceForMargin = containingBlockWidth - (marginLeft.value_or(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + marginRight.value_or(0));
             if (horizontalSpaceForMargin < 0) {
-                if (!computedMarginLeftValue)
-                    computedMarginLeftValue = LayoutUnit(0);
-                if (!computedMarginRightValue)
-                    computedMarginRightValue = LayoutUnit(0);
+                marginLeft = marginLeft.value_or(0);
+                marginRight = marginRight.value_or(0);
             }
         }
 
         // #2
-        if (!width.isAuto() && !marginLeft.isAuto() && !marginRight.isAuto()) {
-            ASSERT(computedMarginLeftValue);
-            ASSERT(computedMarginRightValue);
-
+        if (width && marginLeft && marginRight) {
             if (containingBlock->style().isLeftToRightDirection())
-                computedMarginRightValue = containingBlockWidth - (*computedMarginLeftValue + borderLeft + paddingLeft  + computedWidthValue + paddingRight + borderRight);
+                marginRight = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft  + *width + paddingRight + borderRight);
             else
-                computedMarginLeftValue = containingBlockWidth - (borderLeft + paddingLeft  + computedWidthValue + paddingRight + borderRight + *computedMarginRightValue);
+                marginLeft = containingBlockWidth - (borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight);
         }
 
         // #3
-        if (!computedMarginLeftValue && !marginRight.isAuto() && !width.isAuto()) {
-            ASSERT(computedMarginRightValue);
-            computedMarginLeftValue = containingBlockWidth - (borderLeft + paddingLeft  + computedWidthValue + paddingRight + borderRight + *computedMarginRightValue);
-        } else if (!computedMarginRightValue && !marginLeft.isAuto() && !width.isAuto()) {
-            ASSERT(computedMarginLeftValue);
-            computedMarginRightValue = containingBlockWidth - (*computedMarginLeftValue + borderLeft + paddingLeft  + computedWidthValue + paddingRight + borderRight);
-        }
+        if (!marginLeft && width && marginRight)
+            marginLeft = containingBlockWidth - (borderLeft + paddingLeft  + *width + paddingRight + borderRight + *marginRight);
+        else if (marginLeft && !width && marginRight)
+            width = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + paddingRight + borderRight + *marginRight);
+        else if (marginLeft && width && !marginRight)
+            marginRight = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight);
 
         // #4
-        if (width.isAuto())
-            computedWidthValue = containingBlockWidth - (computedMarginLeftValue.value_or(0) + borderLeft + paddingLeft + paddingRight + borderRight + computedMarginRightValue.value_or(0));
-
-        // #5
-        if (!computedMarginLeftValue && !computedMarginRightValue) {
-            auto horizontalSpaceForMargin = containingBlockWidth - (borderLeft + paddingLeft  + computedWidthValue + paddingRight + borderRight);
-            computedMarginLeftValue = computedMarginRightValue = horizontalSpaceForMargin / 2;
+        if (!width) {
+            marginLeft = marginLeft.value_or(0);
+            marginRight = marginRight.value_or(0);
+            width = containingBlockWidth - (*marginLeft + borderLeft + paddingLeft + paddingRight + borderRight + *marginRight);
         }
 
-        ASSERT(computedMarginLeftValue);
-        ASSERT(computedMarginRightValue);
+        // #5
+        if (!marginLeft && !marginRight) {
+            auto horizontalSpaceForMargin = containingBlockWidth - (borderLeft + paddingLeft  + *width + paddingRight + borderRight);
+            marginLeft = marginRight = horizontalSpaceForMargin / 2;
+        }
 
-        return FormattingContext::Geometry::WidthAndMargin { computedWidthValue, { *computedMarginLeftValue, *computedMarginRightValue } };
+        ASSERT(width);
+        ASSERT(marginLeft);
+        ASSERT(marginRight);
+
+        return FormattingContext::Geometry::WidthAndMargin { *width, { *marginLeft, *marginRight } };
     };
 
     auto widthAndMargin = compute();
