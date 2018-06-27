@@ -1,5 +1,17 @@
 2018-06-27  Robin Morisset  <rmorisset@apple.com>
 
+        [WSL] Add a control-flow stack to the execution rules in WSL.ott
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        The goal of this is to enable (future) rules about uniform control flow for barriers.
+        It required adding two new special construct: Join(s) and JoinExpr(e) whose only role is to pop the last element of the stack.
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL.ott:
+
+2018-06-27  Robin Morisset  <rmorisset@apple.com>
+
         [WSL] Fix minor formatting issues in the grammar section
         https://bugs.webkit.org/show_bug.cgi?id=186310
 
