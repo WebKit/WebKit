@@ -2010,7 +2010,13 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue function = object->get(exec, propertyName);
+    PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
+    // FIXME: Remove this when we have fixed: rdar://problem/33451840
+    // https://bugs.webkit.org/show_bug.cgi?id=187109.
+    constexpr bool debugNullStructure = mode == TypeHintMode::TakesHint;
+    bool hasProperty = const_cast<JSObject*>(object)->getPropertySlot<debugNullStructure>(exec, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, scope.exception());
+    JSValue function = hasProperty ? slot.getValue(exec, propertyName) : jsUndefined();
     RETURN_IF_EXCEPTION(scope, scope.exception());
     if (function.isUndefinedOrNull() && mode == TypeHintMode::TakesHint)
         return JSValue();

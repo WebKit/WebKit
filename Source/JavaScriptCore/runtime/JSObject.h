@@ -167,6 +167,7 @@ public:
     JSValue get(ExecState*, PropertyName) const;
     JSValue get(ExecState*, unsigned propertyName) const;
 
+    template<bool checkNullStructure = false>
     bool getPropertySlot(ExecState*, PropertyName, PropertySlot&);
     bool getPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(ExecState*, PropertyName, CallbackWhenNoException) const;
@@ -1402,6 +1403,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exe
 
 // It may seem crazy to inline a function this large but it makes a big difference
 // since this is function very hot in variable lookup
+template<bool checkNullStructure>
 ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
@@ -1421,6 +1423,10 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
         }
         ASSERT(object->type() != ProxyObjectType);
         Structure* structure = structureIDTable.get(object->structureID());
+#if USE(JSVALUE64)
+        if (checkNullStructure && UNLIKELY(!structure))
+            CRASH_WITH_INFO(object->type(), object->structureID(), structureIDTable.size());
+#endif
         if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
             return true;
         // FIXME: This doesn't look like it's following the specification:

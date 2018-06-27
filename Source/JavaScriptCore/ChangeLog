@@ -1,3 +1,20 @@
+2018-06-27  Keith Miller  <keith_miller@apple.com>
+
+        Add logging to try to diagnose where we get a null structure.
+        https://bugs.webkit.org/show_bug.cgi?id=187106
+
+        Reviewed by Mark Lam.
+
+        Add a logging to JSObject::toPrimitive to help diagnose a nullptr
+        structure crash.
+
+        This code should be removed when we fix <rdar://problem/33451840>
+
+        * runtime/JSObject.cpp:
+        (JSC::callToPrimitiveFunction):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getPropertySlot):
+
 2018-06-27  Mark Lam  <mark.lam@apple.com>
 
         DFG's compileReallocatePropertyStorage() and compileAllocatePropertyStorage() slow paths should also clear unused properties.
