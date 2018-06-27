@@ -7,7 +7,7 @@
     width: 180px;
     height: 180px;
     border: 1px solid black;
-    background-color: red;
+    background-color: blue;
 }
 #clip {
     width: 160px;
@@ -16,18 +16,12 @@
     background-color: green;
     -webkit-clip-path: url(#c2);
 }
-#clip-ref {
-    width: 32px;
-    height: 32px;
-    margin: 74px;
-    background-color: green;
-}
 </style>
 </head>
 <body>
 <svg height="100" width="100">
 <clipPath id="c2" clipPathUnits="userSpaceOnUse">
-  <rect x="75" y="179" width="32" height="32"/>
+  <rect x="65" y="65" width="32" height="32"/>
 </clipPath>
 </svg>
 <div id="d"><div id="clip"></div></div>

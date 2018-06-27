@@ -1,3 +1,22 @@
+2018-06-27  Dirk Schulze  <krit@webkit.org>
+
+        -webkit-clip-path wrong offset for clipPath references
+        https://bugs.webkit.org/show_bug.cgi?id=129246
+
+        Reviewed by Simon Fraser.
+
+        Compute the correct offset for reference clip-paths by reusing
+        some of the logic from basic shapes.
+        Makes reference based clip-path interoperable and follows the
+        spec.
+
+        Test: css3/masking/clip-path-reference-2.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox):
+        (WebCore::RenderLayer::computeClipPath const):
+        (WebCore::RenderLayer::setupClipPath):
+
 2018-06-27  Antti Koivisto  <antti@apple.com>
 
         Don't invoke post resolution callbacks when resolving computed style

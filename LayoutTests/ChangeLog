@@ -1,3 +1,19 @@
+2018-06-27  Dirk Schulze  <krit@webkit.org>
+
+        -webkit-clip-path wrong offset for clipPath references
+        https://bugs.webkit.org/show_bug.cgi?id=129246
+
+        Reviewed by Simon Fraser.
+
+        Add test for reference clip-path offset. Correct a broken test.
+        All tests in the repo for references are interoperable between Gecko, Blink
+        and WebKit now.
+
+        * css3/masking/clip-path-reference-2-expected.html: Added.
+        * css3/masking/clip-path-reference-2.html: Added.
+        * css3/masking/clip-path-reference-userSpaceOnUse-expected.html:
+        * css3/masking/clip-path-reference-userSpaceOnUse.html:
+
 2018-06-27  Antti Koivisto  <antti@apple.com>
 
         Don't invoke post resolution callbacks when resolving computed style
