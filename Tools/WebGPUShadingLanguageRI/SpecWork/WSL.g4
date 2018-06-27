@@ -15,11 +15,11 @@ fragment DecimalUIntLiteral: CoreDecimalIntLiteral 'u' ;
 fragment CoreHexadecimalIntLiteral: '0x' [0-9a-fA-F]+ ;
 fragment HexadecimalIntLiteral: '-'? CoreHexadecimalIntLiteral;
 fragment HexadecimalUIntLiteral: CoreHexadecimalIntLiteral 'u';
-fragment IntLiteral: DecimalIntLiteral | DecimalUIntLiteral | HexadecimalIntLiteral | HexadecimalUIntLiteral ;
+IntLiteral: DecimalIntLiteral | DecimalUIntLiteral | HexadecimalIntLiteral | HexadecimalUIntLiteral ;
 // Do we want to allow underscores in the middle of numbers for readability?
 
 fragment CoreFloatLiteral: [0-9]+'.'[0-9]* | [0-9]*'.'[0-9]+ ;
-fragment FloatLiteral: '-'? CoreFloatLiteral [fd]? ;
+FloatLiteral: '-'? CoreFloatLiteral [fd]? ;
 // TODO: what to do about floats that are too big or too small to represent?
 // TODO: what is the default precision? double?
 // IDEA: add Nan, +infinity, -infinity
@@ -78,8 +78,6 @@ OperatorName
     | 'operator.' ValidIdentifier ;
 // Note: operator!= is not user-definable, it is automatically derived from operator==
 
-Literal: IntLiteral | FloatLiteral | NULL | TRUE | FALSE;
-
 /*
  * Parser: Top-level
  */
@@ -137,8 +135,8 @@ type
     : addressSpace Identifier typeArguments typeSuffixAbbreviated+
     | Identifier typeArguments typeSuffixNonAbbreviated* ;
 addressSpace: CONSTANT | DEVICE | THREADGROUP | THREAD ;
-typeSuffixAbbreviated: '*' | '[]' | '[' constexpr ']';
-typeSuffixNonAbbreviated: '*' addressSpace | '[]' addressSpace | '[' constexpr ']' ;
+typeSuffixAbbreviated: '*' | '[]' | '[' IntLiteral ']';
+typeSuffixNonAbbreviated: '*' addressSpace | '[]' addressSpace | '[' IntLiteral ']' ;
 // Note: in this formulation of typeSuffix*, we don't allow whitespace between the '[' and the ']' in '[]'. We easily could at the cost of a tiny more bit of lookahead. to bikeshed
 
 typeArguments
@@ -185,7 +183,7 @@ variableDecl: Identifier ('=' expr)? ;
  * Parser: Expressions
  */
 constexpr
-    : Literal 
+    : literal 
     | Identifier // to get the (constexpr) value of a type variable
     | Identifier '.' Identifier; // to get a value out of an enum
 
@@ -193,7 +191,7 @@ constexpr
 // "x * y;". Without this trick, it would look like both an expression and a variable declaration, and could not be disambiguated until name resolution.
 effectfulExpr: ((effAssignment ',')* effAssignment)? ; 
 effAssignment
-    : possiblePrefix assignOperator expr
+    : possiblePrefix assignOperator possibleTernaryConditional
     | effPrefix ;
 assignOperator: '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '<<=' ;
 effPrefix
@@ -216,7 +214,7 @@ possibleTernaryConditional
     : possibleLogicalBinop '?' expr ':' possibleTernaryConditional
     | possiblePrefix assignOperator possibleTernaryConditional
     | possibleLogicalBinop ;
-possibleLogicalBinop: possibleRelationalBinop (logicalBinop possibleLogicalBinop)*;
+possibleLogicalBinop: possibleRelationalBinop (logicalBinop possibleRelationallBinop)*;
 logicalBinop: '||' | '&&' | '|' | '^' | '&' ;
 // Note: the list above may need some manipulation to get the proper left-to-right associativity
 possibleRelationalBinop: possibleShift (relationalBinop possibleShift)?;
@@ -233,6 +231,9 @@ possibleSuffix
     | term (limitedSuffixOperator | '++' | '--')* ;
 callExpression: Identifier typeArguments '(' (possibleTernaryConditional (',' possibleTernaryConditional)*)? ')';
 term
-    : Literal
+    : literal
     | Identifier
     | '(' expr ')' ;
+
+literal: IntLiteral | FloatLiteral | NULL | TRUE | FALSE;
+

@@ -66,19 +66,19 @@ The following strings are reserved keywords of the language:
 
 Similarily, the following elements of punctuation are valid tokens:
 
-+----------------------+-----------------------------------------------------------------------------------------+
-| Relational operators | ``==`` ``!=`` ``<=`` ``=>`` ``<`` ``>``                                                 |
-+----------------------+-----------------------------------------------------------------------------------------+
-| Assignment operators | ``++`` ``--`` ``+=`` ``-=`` ``*=`` ``/=`` ``%=`` ``^=`` ``&=``  ``|=`` ``>>=``  ``<<=`` |
-+----------------------+-----------------------------------------------------------------------------------------+
-| Arithmetic operators | ``+``  ``-`` ``*`` ``/`` ``%``                                                          |
-+----------------------+-----------------------------------------------------------------------------------------+
-| Logic operators      | ``&&`` ``||`` ``&``  ``|``  ``^`` ``>>`` ``<<`` ``!`` ``~``                             |
-+----------------------+-----------------------------------------------------------------------------------------+
-| Memory operators     | ``->`` ``.`` ``&`` ``@``                                                                |
-+----------------------+-----------------------------------------------------------------------------------------+
-| Other                | ``?`` ``:`` ``;`` ``,`` ``[`` ``]`` ``{`` ``}`` ``(`` ``)``                             |
-+----------------------+-----------------------------------------------------------------------------------------+
++----------------------+-----------------------------------------------------------------------------------------------+
+| Relational operators | ``==`` ``!=`` ``<=`` ``=>`` ``<`` ``>``                                                       |
++----------------------+-----------------------------------------------------------------------------------------------+
+| Assignment operators | ``=`` ``++`` ``--`` ``+=`` ``-=`` ``*=`` ``/=`` ``%=`` ``^=`` ``&=``  ``|=`` ``>>=``  ``<<=`` |
++----------------------+-----------------------------------------------------------------------------------------------+
+| Arithmetic operators | ``+``  ``-`` ``*`` ``/`` ``%``                                                                |
++----------------------+-----------------------------------------------------------------------------------------------+
+| Logic operators      | ``&&`` ``||`` ``&``  ``|``  ``^`` ``>>`` ``<<`` ``!`` ``~``                                   |
++----------------------+-----------------------------------------------------------------------------------------------+
+| Memory operators     | ``->`` ``.`` ``&`` ``@``                                                                      |
++----------------------+-----------------------------------------------------------------------------------------------+
+| Other                | ``?`` ``:`` ``;`` ``,`` ``[`` ``]`` ``{`` ``}`` ``(`` ``)``                                   |
++----------------------+-----------------------------------------------------------------------------------------------+
 
 Identifiers and operator names
 """"""""""""""""""""""""""""""
@@ -175,8 +175,7 @@ The first of these two productions is merely syntactic sugar for the second:
 
 Similarily, we desugar first for loops into while loops, and then all while loops into do while loops.
 First, if the second element of the for is empty we replace it by "true".
-Then, if the third element of the for is empty, we replace it by "null" (any expression without side effect would do)
-Finally, we apply the following two rules:
+Then, we apply the following two rules:
 
 .. math::
     \textbf{for} (X_{pre} ; e_{cond} ; e_{iter}) \, s \leadsto \{ X_{pre} ; \textbf{while} (e_{cond}) \{ s \, e_{iter} ; \} \}
@@ -202,39 +201,83 @@ These two transformations can always be done because variable declarations are o
 Types
 """""
 
+.. productionlist::
+    type: `addressSpace` `Identifier` `typeArguments` `typeSuffixAbbreviated`+
+        : | `Identifier` `typeArguments` `typeSuffixNonAbbreviated`*
+    addressSpace: "constant" | "device" | "threadgroup" | "thread"
+    typeSuffixAbbreviated: "*" | "[" "]" | "[" `IntLiteral` "]"
+    typeSuffixNonAbbreviated: "*" addressSpace | "[" "]" addressSpace | "[" `IntLiteral` "]"
+
+
+Putting the address space before the identifier is just syntactic sugar for having that same address space applied to all type suffixes.
+``thread int *[]*[42]`` is for example the same as ``int *thread []thread *thread [42]``.
+
+.. productionlist::
+    typeArguments: "<" (`typeArgument` ",")* `addressSpace`? `Identifier` "<" 
+                 : (`typeArgument` ("," `typeArgument`)*)? ">>"
+                 : | "<" (`typeArgument` ("," `typeArgument`)* ">"
+                 : | ("<" ">")?
+    typeArgument: constepxr | type
+
+The first production rule for typeArguments is a way to say that `>>` can be parsed as two `>` closing delimiters, in the case of nested typeArguments.
+
 Expressions
 """""""""""
+
+We accept three different kinds of expressions, in different places in the grammar.
+
+- ``expr`` is the most generic, and includes all expressions.
+- ``maybeEffectfulExpr`` is used in places where a variable declaration would also be allowed. It forbids some expressions that are clearly effect-free, such as ``x*y`` or ``x < y``.
+  As the name indicates, it may be empty. In that case it is equivalent to "null" (any other effect-free expression would be fine, as the result of such an expression is always discarded).
+- ``constexpr`` is limited to literals and the elements of an enum. It is used in switch cases, and in type arguments.
+
+.. productionlist::
+    expr: (`expr` ",")? `ternaryConditional`
+    ternaryConditional: `exprLogicalOr` "?" `expr` ":" `ternaryConditional`
+                      : | `exprPrefix` `assignOperator` `ternaryConditional`
+                      : | `exprLogicalOr`
+    assignOperator: "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | ">>=" | "<<="
+    exprLogicalOr: (`exprLogicalOr` "||")? `exprLogicalAnd`
+    exprLogicalAnd: (`exprLogicalAnd` "&&")? `exprBitwiseOr`
+    exprBitwiseOr: (`exprBitwiseOr` "|")? `exprBitwiseXor`
+    exprBitwiseXor: (`exprBitwiseXor` "^")? `exprBitwiseAnd`
+    exprBitwiseAnd: (`exprBitwiseAnd` "&")? `exprRelationalOperator`
+    exprRelationalOperator: `exprShift` (`relationalBinop` `exprShift`)?
+    relationalBinop: "<" | ">" | "<=" | ">=" | "==" | "!="
+    exprShift: (`exprShift` ("<<" | ">>"))? `exprAdd`
+    exprAdd: (`exprMult` ("*" | "/" | "%"))? `exprPrefix`
+    exprPrefix: `prefixOp` `exprPrefix` | `exprSuffix`
+    prefixOp: "++" | "--" | "+" | "-" | "~" | "!" | "*" | "&" | "@"
+    exprSuffix: `callExpression` `limitedSuffixOperator`*
+              : | `term` (`limitedSuffixOperator` | "++" | "--")*
+    limitedSuffixOperator: "." `Identifier` | "->" `Identifier` | "[" `expr` "]"
+    callExpression: `Identifier` "(" (`ternaryConditional` ("," `ternaryConditional`)*)? ")"
+    term: `Literal` | `Identifier` | "(" `expr` ")"
+
+We match the precedence and associativity of operators from C++, with one exception: we made relational operators non-associative,
+so that they cannot be chained. Chaining them has sufficiently surprising results that it is not a clear reduction in usability, and it should make it a lot easier to extend the syntax in the future to accept generics.
+
+There is exactly one piece of syntactic sugar in the above rules: the ``!=`` operator.
+``e0 != e1`` is equivalent with ``! (e0 == e1)``.
+
+.. productionlist::
+    maybeEffectfulExpr: (`effAssignment` ("," `effAssignment`)*)?
+    effAssignment: `exprPrefix` `assignOperator` `expr` | `effPrefix`
+    effPrefix: ("++" | "--") `exprPrefix` | `effSuffix`
+    effSuffix: `exprSuffix` ("++" | "--") | `callExpression` | "(" `expr` ")"
+
+The structure of maybeEffectfulExpr roughly match the structure of normal expressions, just with normally effect-free operators left off.
+
+If the programmer still wants to use them in such a position (for example due to having overloaded an operator with an effectful operation),
+it can be done just by wrapping the expression in parentheses (see the last alternative for effSuffix).
+
+.. productionlist::
+    constexpr: `Literal` | `Identifier` "." `Identifier`
 
 Static rules
 ============
 
-Phase 1: Desugaring
--------------------
-
-TODO: move everything from this phase straight into the parser.
-
-desugaring top level:
-
-- Adding <> in basically every possible place. (after a struct name, after a typedef name, after a function/operator name)
-
-desugaring statements:
-
-- for (X; e; e') s --> {X; while (e) {s e';}}
-  With special cases for if X is empty/vdecl/effectful expr
-  if e is empty/an expr
-  if e' is empty/an expr
-- while (e) s --> if (e) do s while (e);
-- if (e) s --> if (e) s else {}
-- t vdecl0, vdecl1 .. vdecln --> t vdecl0; t vdecl1 .. vdecln (premise: n > 0)
-- t x = e; --> t x; x = e;
-- ; --> {}
-
-desugaring expressions:
-
-- e != e' --> ! (e == e')
-- foo(x0, .., xn) --> foo<>(x0, .., xn)
-
-Phase 2: Gathering declarations
+Phase 1: Gathering declarations
 -------------------------------
 
 the goal is to build the global typing environment, as well as the global execution environment.
@@ -242,7 +285,7 @@ I am afraid it may require several steps.
 The first step would do most of the work, gathering all function signatures, as well as typedefs, etc..
 The second step would go through the resulting environment, resolving all types, in particular all typedefs (as well as connecting function parameters to the corresponding type variables, etc..)
 
-Phase 3: Local typing and early validation
+Phase 2: Local typing and early validation
 ------------------------------------------
 
 Notations and definitions
@@ -298,7 +341,7 @@ Typing expressions
 - check that every case in a switch statement ends in a terminator (fallthrough/break/return/continue/trap)
 - check that literals fit into the type they are stored into (optional?)
 
-Phase 4: Monomorphisation and late validation
+Phase 3: Monomorphisation and late validation
 ---------------------------------------------
 
 - monomorphisation itself

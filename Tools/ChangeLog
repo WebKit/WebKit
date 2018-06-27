@@ -1,3 +1,16 @@
+2018-06-27  Robin Morisset  <rmorisset@apple.com>
+
+        [WSL] Put the full grammar in the Sphinx document
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        Put the grammar's production rules in the Sphinx document, along with a few comments and the rules for desugaring.
+        Also includes a bit of clean-up of the antlr rules.
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL.g4:
+        * WebGPUShadingLanguageRI/SpecWork/source/index.rst:
+
 2018-06-26  Chris Dumez  <cdumez@apple.com>
 
         Deal better with the network process crashing on startup
