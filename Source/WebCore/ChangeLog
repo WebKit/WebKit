@@ -1,3 +1,25 @@
+2018-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Out-of-flow positioned element's height depends on its containing block's height.
+        https://bugs.webkit.org/show_bug.cgi?id=187082
+
+        Reviewed by Antti Koivisto.
+
+        We can't really compute the final height of an out-of-flow element until after its containing block's height is computed.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingContext.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::updateLayout):
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/layouttree/LayoutContainer.h:
+        (WebCore::Layout::Container::outOfFlowDescendants const):
+        (WebCore::Layout::Container::outOfFlowDescendants): Deleted.
+
 2018-06-27  Youenn Fablet  <youenn@apple.com>
 
         Disable content blockers in NetworkLoadChecker except for ping loads

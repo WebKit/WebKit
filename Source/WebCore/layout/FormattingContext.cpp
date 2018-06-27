@@ -105,14 +105,22 @@ void FormattingContext::placeInFlowPositionedChildren(LayoutContext& layoutConte
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> context: " << &layoutContext << " parent: " << &container);
 }
 
-void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext) const
+void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    if (!is<Container>(m_root.get()))
+    // Initial containing block by definition is a containing block.
+    if (!layoutBox.isPositioned() && !layoutBox.isInitialContainingBlock())
+        return;
+
+    if (!is<Container>(layoutBox))
+        return;
+
+    auto& container = downcast<Container>(layoutBox);
+    if (!container.hasChild())
         return;
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow descendants -> context: " << &layoutContext << " root: " << &root());
 
-    for (auto& outOfFlowBox : downcast<Container>(*m_root).outOfFlowDescendants()) {
+    for (auto& outOfFlowBox : container.outOfFlowDescendants()) {
         auto& layoutBox = *outOfFlowBox;
         auto& displayBox = layoutContext.createDisplayBox(layoutBox);
 
@@ -120,7 +128,6 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         // More precisely, the static position for 'top' is the distance from the top edge of the containing block to the top margin edge
         // of a hypothetical box that would have been the first box of the element if its specified 'position' value had been 'static' and
         // its specified 'float' had been 'none' and its specified 'clear' had been 'none'.
-        computeStaticPosition(layoutContext, layoutBox, displayBox);
         computeBorderAndPadding(layoutContext, layoutBox, displayBox);
         computeOutOfFlowHorizontalGeometry(layoutContext, layoutBox, displayBox);
 
@@ -129,6 +136,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext)
         formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox, *formattingContext));
 
         computeOutOfFlowVerticalGeometry(layoutContext, layoutBox, displayBox);
+        layoutOutOfFlowDescendants(layoutContext, layoutBox);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutContext << " root: " << &root());
 }

@@ -86,6 +86,8 @@ public:
     void verifyAndOutputMismatchingLayoutTree(const RenderView&) const;
 
 private:
+    void layoutFormattingContextSubtree(const Box&);
+
     WeakPtr<Container> m_root;
     HashSet<const Container*> m_formattingContextRootListForLayout;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;

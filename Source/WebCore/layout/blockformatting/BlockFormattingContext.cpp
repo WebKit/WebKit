@@ -114,6 +114,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& container = downcast<Container>(layoutBox);
             // Move in-flow positioned children to their final position.
             placeInFlowPositionedChildren(layoutContext, container);
+            layoutOutOfFlowDescendants(layoutContext, container);
             if (auto* nextSibling = container.nextInFlowOrFloatingSibling()) {
                 layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
                 break;
@@ -122,11 +123,6 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     }
     // Place the inflow positioned children.
     placeInFlowPositionedChildren(layoutContext, formattingRoot);
-    // And take care of out-of-flow boxes as the final step.
-    layoutOutOfFlowDescendants(layoutContext);
-#ifndef NDEBUG
-    validateGeometryConstraintsAfterLayout(layoutContext);
-#endif
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> block formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
 }
 

@@ -51,6 +51,7 @@ public:
     virtual ~FormattingContext();
 
     virtual void layout(LayoutContext&, FormattingState&) const = 0;
+    void layoutOutOfFlowDescendants(LayoutContext&, const Box&) const;
     virtual std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const = 0;
     virtual Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const = 0;
 
@@ -72,7 +73,6 @@ protected:
     void computeBorderAndPadding(LayoutContext&, const Box&, Display::Box&) const;
 
     void placeInFlowPositionedChildren(LayoutContext&, const Container&) const;
-    void layoutOutOfFlowDescendants(LayoutContext&s) const;
 
 #ifndef NDEBUG
     virtual void validateGeometryConstraintsAfterLayout(const LayoutContext&) const;

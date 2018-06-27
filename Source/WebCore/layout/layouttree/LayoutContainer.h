@@ -53,7 +53,7 @@ public:
     bool hasInFlowChild() const { return firstInFlowChild(); }
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
 
-    const Vector<WeakPtr<Box>>& outOfFlowDescendants() { return m_outOfFlowDescendants; }
+    const Vector<WeakPtr<Box>>& outOfFlowDescendants() const { return m_outOfFlowDescendants; }
 
 protected:
     Container(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);

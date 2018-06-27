@@ -71,13 +71,18 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
 void LayoutContext::updateLayout()
 {
     ASSERT(!m_formattingContextRootListForLayout.isEmpty());
-    for (auto* layoutRoot : m_formattingContextRootListForLayout) {
-        RELEASE_ASSERT(layoutRoot->establishesFormattingContext());
-        auto context = formattingContext(*layoutRoot);
-        auto& state = establishedFormattingState(*layoutRoot, *context);
-        context->layout(*this, state);
-    }
+    for (auto* layoutRoot : m_formattingContextRootListForLayout)
+        layoutFormattingContextSubtree(*layoutRoot);
     m_formattingContextRootListForLayout.clear();
+}
+
+void LayoutContext::layoutFormattingContextSubtree(const Box& layoutRoot)
+{
+    RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
+    auto formattingContext = this->formattingContext(layoutRoot);
+    auto& formattingState = establishedFormattingState(layoutRoot, *formattingContext);
+    formattingContext->layout(*this, formattingState);
+    formattingContext->layoutOutOfFlowDescendants(*this, layoutRoot);
 }
 
 Display::Box& LayoutContext::createDisplayBox(const Box& layoutBox)
