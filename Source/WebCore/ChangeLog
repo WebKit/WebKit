@@ -1,3 +1,18 @@
+2018-06-21  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Move clearChildNeedsStyleRecalc into resetStyleForNonRenderedDescendants.
+        https://bugs.webkit.org/show_bug.cgi?id=186881
+
+        Reviewed by Antti Koivisto.
+
+        Every caller does this already.
+
+        No new tests, no change in behavior.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
 2018-06-27  Tomas Popela  <tpopela@redhat.com>
 
         [GStreamer] Coverity scan issues

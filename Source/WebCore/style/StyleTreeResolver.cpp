@@ -145,11 +145,10 @@ static void resetStyleForNonRenderedDescendants(Element& current)
             child.setHasValidStyle();
         }
 
-        if (child.childNeedsStyleRecalc()) {
+        if (child.childNeedsStyleRecalc())
             resetStyleForNonRenderedDescendants(child);
-            child.clearChildNeedsStyleRecalc();
-        }
     }
+    current.clearChildNeedsStyleRecalc();
 }
 
 static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle)
@@ -483,7 +482,6 @@ void TreeResolver::resolveComposedTree()
 
         if (it.depth() > Settings::defaultMaximumRenderTreeDepth) {
             resetStyleForNonRenderedDescendants(element);
-            element.clearChildNeedsStyleRecalc();
             it.traverseNextSkippingChildren();
             continue;
         }
@@ -516,10 +514,8 @@ void TreeResolver::resolveComposedTree()
             clearNeedsStyleResolution(element);
         }
 
-        if (!style) {
+        if (!style)
             resetStyleForNonRenderedDescendants(element);
-            element.clearChildNeedsStyleRecalc();
-        }
 
         bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None);
 
