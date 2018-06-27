@@ -74,6 +74,10 @@ private:
     PluginProcess();
     ~PluginProcess();
 
+#if PLATFORM(MAC)
+    bool shouldOverrideQuarantine() final;
+#endif
+
     // ChildProcess
     void initializeProcess(const ChildProcessInitializationParameters&) override;
     void initializeProcessName(const ChildProcessInitializationParameters&) override;
