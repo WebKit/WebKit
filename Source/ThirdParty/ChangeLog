@@ -1,3 +1,20 @@
+2018-06-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        MIME type subclass check should guard against small strings
+        https://bugs.webkit.org/show_bug.cgi?id=186977
+
+        Reviewed by Carlos Garcia Campos.
+
+        Sadly, this code is duplicated between two different files because it is not good.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmime.c:
+        (ends_with):
+        (xdg_mime_is_super_type):
+        * xdgmime/src/xdgmimecache.c:
+        (ends_with):
+        (is_super_type):
+
 2018-06-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Update xdgmime

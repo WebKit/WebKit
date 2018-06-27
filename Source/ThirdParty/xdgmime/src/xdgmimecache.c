@@ -817,18 +817,27 @@ _xdg_mime_cache_get_mime_types_from_file_name (const char *file_name,
 
 #if 1
 static int
-is_super_type (const char *mime)
+ends_with (const char *str,
+           const char *suffix)
 {
   int length;
-  const char *type;
+  int suffix_length;
 
-  length = strlen (mime);
-  type = &(mime[length - 2]);
+  length = strlen (str);
+  suffix_length = strlen (suffix);
+  if (length < suffix_length)
+    return 0;
 
-  if (strcmp (type, "/*") == 0)
+  if (strcmp (str + length - suffix_length, suffix) == 0)
     return 1;
 
   return 0;
+}
+
+static int
+is_super_type (const char *mime)
+{
+  return ends_with (mime, "/*");
 }
 #endif
 

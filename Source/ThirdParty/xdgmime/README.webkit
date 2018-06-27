@@ -17,3 +17,4 @@ Changes included from GLib sources:
 
  - 2542b6f60492fadfb21f2c4a29976c3494c7e6c5 xdgmime: Handle EINTR in open()
  - 83d34f630939aa13539e03895bef87da738c4127 Don't forget to free resources in an early return
+ - be7f40185fb2ce884112c1f8a4b196ea65350466 xdgmime: Fix an invalid read
