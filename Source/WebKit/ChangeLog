@@ -1,3 +1,17 @@
+2018-06-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Enable WebKit iOS 12 build
+        https://bugs.webkit.org/show_bug.cgi?id=187024
+        <rdar://problem/39759057>
+
+        Reviewed by David Kilzer.
+
+        * Platform/spi/ios/PDFKitSPI.h: Added PDFKit SPI.
+        * Platform/spi/ios/UIKitSPI.h: Add new UIKit SPI and UICompositingMode enumeration.
+        * UIProcess/ios/WKPDFView.mm: Use PDFKitSPI header.
+        * UIProcess/ios/WKSystemPreviewView.mm: Use CoreGraphicsSPI.h.
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm: Use QuartzCoreSPI.h.
+
 2018-06-27  Timothy Horton  <timothy_horton@apple.com>
 
         CSS Animation Triggers is not an experimental feature, should be globally off by default

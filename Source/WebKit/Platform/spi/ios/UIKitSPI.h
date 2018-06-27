@@ -474,6 +474,8 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (void)safeAreaInsetsDidChange;
 #endif
 @property (nonatomic, setter=_setContinuousCornerRadius:) CGFloat _continuousCornerRadius;
+- (void)insertSubview:(UIView *)view above:(UIView *)sibling;
+- (void)viewWillMoveToSuperview:(UIView *)newSuperview;
 @end
 
 @interface UIWebSelectionView : UIView
@@ -935,14 +937,22 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 - (void)configureLayerView:(UIView *)view;
 @end
 
+@interface _UIVisualEffectTintLayerConfig : _UIVisualEffectLayerConfig
++ (instancetype)layerWithTintColor:(UIColor *)tintColor;
++ (instancetype)layerWithTintColor:(UIColor *)tintColor filterType:(NSString *)filterType NS_AVAILABLE_IOS(9_0);
+@end
+
 @interface _UIVisualEffectConfig : NSObject
 @property (nonatomic, readonly) _UIVisualEffectLayerConfig *contentConfig;
 + (_UIVisualEffectConfig *)configWithContentConfig:(_UIVisualEffectLayerConfig *)contentConfig;
 @end
 
+typedef NSInteger UICompositingMode;
+
 @interface UIVisualEffect ()
 + (UIVisualEffect *)emptyEffect;
 + (UIVisualEffect *)effectCombiningEffects:(NSArray<UIVisualEffect *> *)effects;
++ (UIVisualEffect *)effectCompositingColor:(UIColor *)color withMode:(UICompositingMode)compositingMode alpha:(CGFloat)alpha;
 @end
 
 @interface UIColorEffect : UIVisualEffect

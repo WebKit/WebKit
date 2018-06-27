@@ -143,8 +143,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMNotificationCenterAddListener, O
 #define CMNotificationCenterAddListener softLink_CoreMedia_CMNotificationCenterAddListener
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMNotificationCenterRemoveListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object), (center, listener, callback, notification, object))
 #define CMNotificationCenterRemoveListener softLink_CoreMedia_CMNotificationCenterRemoveListener
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCallForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (* CMSAMPLEBUFFERCALL_NOESCAPE callback)( CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon), void *refcon), (sbuf, callback, refcon))
-#define CMSampleBufferCallForEachSample softLink_CoreMedia_CMSampleBufferCallForEachSample
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCreate, OSStatus, (CFAllocatorRef allocator, CMBlockBufferRef dataBuffer, Boolean dataReady, CMSampleBufferMakeDataReadyCallback makeDataReadyCallback, void *makeDataReadyRefcon, CMFormatDescriptionRef formatDescription, CMItemCount numSamples, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo *sampleTimingArray, CMItemCount numSampleSizeEntries, const size_t *sampleSizeArray, CMSampleBufferRef *sBufOut), (allocator, dataBuffer, dataReady, makeDataReadyCallback, makeDataReadyRefcon, formatDescription, numSamples, numSampleTimingEntries, sampleTimingArray, numSampleSizeEntries, sampleSizeArray, sBufOut))
 #define CMSampleBufferCreate softLink_CoreMedia_CMSampleBufferCreate
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCreateCopy, OSStatus, (CFAllocatorRef allocator, CMSampleBufferRef sbuf, CMSampleBufferRef *sbufCopyOut), (allocator, sbuf, sbufCopyOut))
@@ -252,8 +250,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetAudioBufferListWi
 #define CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer softLink_CoreMedia_CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetNumSamples, CMItemCount, (CMSampleBufferRef sbuf), (sbuf))
 #define CMSampleBufferGetNumSamples softLink_CoreMedia_CMSampleBufferGetNumSamples
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCallBlockForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (^ CMSAMPLEBUFFERCALL_NOESCAPE handler)(CMSampleBufferRef, CMItemCount)), (sbuf, handler))
-#define CMSampleBufferCallBlockForEachSample softLink_CoreMedia_CMSampleBufferCallBlockForEachSample
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCopySampleBufferForRange, OSStatus, (CFAllocatorRef allocator, CMSampleBufferRef sbuf, CFRange sampleRange, CMSampleBufferRef* sBufOut), (allocator, sbuf, sampleRange, sBufOut))
 #define CMSampleBufferCopySampleBufferForRange softLink_CoreMedia_CMSampleBufferCopySampleBufferForRange
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetSampleSizeArray, OSStatus, (CMSampleBufferRef sbuf, CMItemCount sizeArrayEntries, size_t* sizeArrayOut, CMItemCount* sizeArrayEntriesNeededOut), (sbuf, sizeArrayEntries, sizeArrayOut, sizeArrayEntriesNeededOut))
@@ -271,6 +267,16 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMClockGetHostTimeClock, CMClockRe
 #define CMClockGetHostTimeClock  softLink_CoreMedia_CMClockGetHostTimeClock
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMClockGetTime, CMTime, (CMClockRef clock), (clock))
 #define CMClockGetTime  softLink_CoreMedia_CMClockGetTime
+
+#if !PLATFORM(IOS) || __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCallForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (* CMSAMPLEBUFFERCALL_NOESCAPE callback)( CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon), void *refcon), (sbuf, callback, refcon))
+#define CMSampleBufferCallForEachSample softLink_CoreMedia_CMSampleBufferCallForEachSample
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCallBlockForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (^ CMSAMPLEBUFFERCALL_NOESCAPE handler)(CMSampleBufferRef, CMItemCount)), (sbuf, handler))
+#define CMSampleBufferCallBlockForEachSample softLink_CoreMedia_CMSampleBufferCallBlockForEachSample
+
+#endif
+
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS)

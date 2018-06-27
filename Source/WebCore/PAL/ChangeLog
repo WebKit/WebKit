@@ -1,3 +1,17 @@
+2018-06-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Enable WebKit iOS 12 build
+        https://bugs.webkit.org/show_bug.cgi?id=187024
+        <rdar://problem/39759057>
+
+        Reviewed by David Kilzer.
+
+        * pal/cf/CoreMediaSoftLink.cpp: Condition some CoreMedia functions on version.
+        * pal/cf/CoreMediaSoftLink.h: Ditto.
+        * pal/spi/cocoa/NSXPCConnectionSPI.h: Use XPCSPI.h instead of xpc.h.
+        * pal/spi/ios/QuickLookSPI.h: QLItem adopts QLPreviewItem.
+        * pal/spi/ios/SystemPreviewSPI.h: Fix compiler errors.
+
 2018-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPad apps on macOS] Unable to interact with video elements that have started playing

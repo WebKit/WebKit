@@ -30,11 +30,12 @@
 
 #import "APIUIClient.h"
 #import "FindClient.h"
+#import "PDFKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "_WKWebViewPrintFormatterInternal.h"
-#import <PDFKit/PDFHostViewController.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>

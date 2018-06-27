@@ -35,6 +35,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/ios/SystemPreviewSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>

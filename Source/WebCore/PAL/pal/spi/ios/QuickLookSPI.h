@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <QuickLook/QuickLook.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -53,8 +54,11 @@
 - (NSData *)provideDataForItem:(QLItem *)item;
 @end
 
-@interface QLItem : NSObject
+@interface QLItem : NSObject<QLPreviewItem>
 - (instancetype)initWithDataProvider:(id<QLPreviewItemDataProvider>)data contentType:(NSString *)contentType previewTitle:(NSString *)previewTitle;
+- (instancetype)initWithPreviewItemProvider:(NSItemProvider *)itemProvider contentType:(NSString *)contentType previewTitle:(NSString *)previewTitle fileSize:(NSNumber *)fileSize;
+- (void)setPreviewItemProviderProgress:(NSNumber*)progress;
+- (void)setUseLoadingTimeout:(BOOL) timeout;
 @end
 
 #define kQLReturnPasswordProtected 1 << 2

@@ -25,25 +25,37 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <AssetViewer/ASVThumbnailView.h>
+#import <PDFKit/PDFHostViewController.h>
 
 #else
 
-#import <UIKit/UIKit.h>
+#import "UIKitSPI.h"
 
-@class ASVThumbnailView;
-@class QLItem;
-@class QLPreviewController;
-
-@protocol ASVThumbnailViewDelegate <NSObject>
-- (void)thumbnailView:(ASVThumbnailView *)thumbnailView wantsToPresentPreviewController:(QLPreviewController *)previewController forItem:(QLItem *)item;
+@interface _UIRemoteViewController : UIViewController
 @end
 
-@interface ASVThumbnailView : UIView
-@property (nonatomic, weak) id<ASVThumbnailViewDelegate> delegate;
-@property (nonatomic, assign) QLItem *thumbnailItem;
-@property (nonatomic) CGSize maxThumbnailSize;
+@protocol PDFHostViewControllerDelegate<NSObject>
+@end
+
+@interface PDFHostViewController : _UIRemoteViewController<UIGestureRecognizerDelegate, UIDocumentPasswordViewDelegate>
+
++ (void) createHostView:(void(^)(PDFHostViewController* hostViewController)) callback forExtensionIdentifier:(NSString*) extensionIdentifier;
+- (void) setDelegate:(id<PDFHostViewControllerDelegate>) delegate;
+- (void) setDocumentData:(NSData*) data withScrollView:(UIScrollView*) scrollView;
+
+- (void) findString:(NSString*) string withOptions:(NSStringCompareOptions) options;
+- (void) cancelFindString;
+- (void) focusOnSearchResultAtIndex:(NSUInteger) searchIndex;
+
+- (NSInteger) currentPageIndex;
+- (NSInteger) pageCount;
+- (UIView*) pageNumberIndicator;
+- (void) goToPageIndex:(NSInteger) pageIndex;
+- (void) updatePDFViewLayout;
+
+- (void) beginPDFViewRotation;
+- (void) endPDFViewRotation;
+
 @end
 
 #endif
-

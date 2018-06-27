@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/spi/darwin/XPCSPI.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <Foundation/NSXPCConnection_Private.h>
@@ -32,7 +34,6 @@
 #else
 
 #import <Foundation/NSXPCConnection.h>
-#import <xpc/xpc.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

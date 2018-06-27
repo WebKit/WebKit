@@ -1,3 +1,14 @@
+2018-06-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Enable WebKit iOS 12 build
+        https://bugs.webkit.org/show_bug.cgi?id=187024
+        <rdar://problem/39759057>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/configure-xcode-for-ios-development:
+        (copyMissingHeadersFromSDKToSDKIfNeeded): Copy launch.h into embedded SDKs.
+
 2018-06-27  Robin Morisset  <rmorisset@apple.com>
 
         [WSL] Add a control-flow stack to the execution rules in WSL.ott

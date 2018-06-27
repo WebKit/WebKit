@@ -75,6 +75,7 @@ sub copyMissingHeadersFromSDKToSDKIfNeeded($$)
 {
     my @missingHeaders = qw(
         /usr/include/crt_externs.h
+        /usr/include/launch.h
         /usr/include/MacErrors.h
         /usr/include/mach/mach_types.defs
         /usr/include/mach/machine/machine_types.defs

@@ -1,3 +1,13 @@
+2018-06-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Enable WebKit iOS 12 build
+        https://bugs.webkit.org/show_bug.cgi?id=187024
+        <rdar://problem/39759057>
+
+        Reviewed by David Kilzer.
+
+        * WebKitPrivateFrameworkStubs/iOS/12: Added.
+
 2018-05-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Hard link AppSupport instead of soft linking

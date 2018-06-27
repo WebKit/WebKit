@@ -3146,6 +3146,7 @@
 		31607F3819627002009B87DA /* LegacySessionStateCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacySessionStateCoding.h; sourceTree = "<group>"; };
 		316B8B612054B55800BD4A62 /* WKSystemPreviewView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSystemPreviewView.mm; path = ios/WKSystemPreviewView.mm; sourceTree = "<group>"; };
 		316B8B622054B55800BD4A62 /* WKSystemPreviewView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKSystemPreviewView.h; path = ios/WKSystemPreviewView.h; sourceTree = "<group>"; };
+		3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFKitSPI.h; sourceTree = "<group>"; };
 		317FE7C11C487A6600A0CA89 /* APIExperimentalFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIExperimentalFeature.cpp; sourceTree = "<group>"; };
 		317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIExperimentalFeature.h; sourceTree = "<group>"; };
 		317FE7C71C487D9D00A0CA89 /* _WKExperimentalFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKExperimentalFeature.h; sourceTree = "<group>"; };
@@ -8624,6 +8625,7 @@
 				2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */,
 				CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */,
 				A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */,
+				3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */,
 				CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */,
 				CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */,
 				CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */,

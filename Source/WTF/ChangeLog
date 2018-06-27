@@ -1,3 +1,13 @@
+2018-06-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Enable WebKit iOS 12 build
+        https://bugs.webkit.org/show_bug.cgi?id=187024
+        <rdar://problem/39759057>
+
+        Reviewed by David Kilzer.
+
+        * wtf/spi/darwin/XPCSPI.h: Add endpoint and connection declarations.
+
 2018-06-25  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233120.
