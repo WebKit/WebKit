@@ -1,5 +1,17 @@
 2018-06-27  Jonathan Bedard  <jbedard@apple.com>
 
+        Build fix after r233266 
+        https://bugs.webkit.org/show_bug.cgi?id=187024
+        <rdar://problem/39759057>
+
+        Unreviewed build fix.
+
+        * pal/cf/CoreMediaSoftLink.cpp: Do not soft-link CMSampleBufferCallForEachSample for
+        iOS 12 and up on iPhone device and simulator.
+        * pal/cf/CoreMediaSoftLink.h: Ditto.
+
+2018-06-27  Jonathan Bedard  <jbedard@apple.com>
+
         Enable WebKit iOS 12 build
         https://bugs.webkit.org/show_bug.cgi?id=187024
         <rdar://problem/39759057>
