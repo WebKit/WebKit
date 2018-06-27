@@ -86,7 +86,7 @@ private:
     MediaSourceGStreamer* m_mediaSource;
     ContentType m_type;
     Ref<MediaSourceClientGStreamerMSE> m_client;
-    SourceBufferPrivateClient* m_sourceBufferPrivateClient;
+    SourceBufferPrivateClient* m_sourceBufferPrivateClient { nullptr };
     bool m_isReadyForMoreSamples = true;
     bool m_notifyWhenReadyForMoreSamples = false;
     AtomicString m_trackId;

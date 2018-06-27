@@ -1,3 +1,16 @@
+2018-06-27  Tomas Popela  <tpopela@redhat.com>
+
+        [GStreamer] Coverity scan issues
+        https://bugs.webkit.org/show_bug.cgi?id=187087
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Fix uninitialized members.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+
 2018-06-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Move definitions of GCryptUtilities helpers into a separate source file

@@ -267,10 +267,10 @@ public:
 
 private:
     GstBuffer* m_buffer;
-    GstVideoFrame m_videoFrame;
+    GstVideoFrame m_videoFrame { };
     IntSize m_size;
     bool m_hasAlphaChannel;
-    TextureMapperGL::Flags m_flags;
+    TextureMapperGL::Flags m_flags { };
     GLuint m_textureID { 0 };
     bool m_isMapped { false };
 };

@@ -134,7 +134,7 @@ struct _WebKitVideoSinkPrivate {
 
     VideoRenderRequestScheduler scheduler;
     GstVideoInfo info;
-    GstCaps* currentCaps;
+    GstCaps* currentCaps { nullptr };
 };
 
 #define webkit_video_sink_parent_class parent_class
