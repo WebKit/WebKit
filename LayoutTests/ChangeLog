@@ -1,5 +1,15 @@
 2018-06-26  Truitt Savell  <tsavell@apple.com>
 
+        [iOS] Rebaseline two webanimations tests after r233164
+        https://bugs.webkit.org/show_bug.cgi?id=187071
+
+        Unreviewed gardening
+
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * platform/ios/webanimations/opacity-animation-yields-compositing-span-expected.txt: Added.
+
+2018-06-26  Truitt Savell  <tsavell@apple.com>
+
         REGRESSION (r232314): Flaky Test: imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html
         https://bugs.webkit.org/show_bug.cgi?id=186161
 
