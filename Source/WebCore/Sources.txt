@@ -1409,7 +1409,6 @@ page/PointerLockController.cpp
 page/PrintContext.cpp
 page/RemoteDOMWindow.cpp
 page/RemoteFrame.cpp
-page/ResourceUsageData.cpp
 page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
 page/RuntimeEnabledFeatures.cpp

@@ -11142,7 +11142,6 @@
 		A5071E831C56D079009951BE /* ResourceUsageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageThread.cpp; sourceTree = "<group>"; };
 		A5071E841C56D079009951BE /* ResourceUsageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsageThread.h; sourceTree = "<group>"; };
 		A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceUsageThreadCocoa.mm; sourceTree = "<group>"; };
-		A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageData.cpp; sourceTree = "<group>"; };
 		A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedDateCache.h; sourceTree = "<group>"; };
 		A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDateCache.mm; sourceTree = "<group>"; };
 		A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = InspectorOverlayPage.css; sourceTree = "<group>"; };
@@ -19392,7 +19391,6 @@
 				46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */,
 				46B9518C207D632900A7D2DD /* RemoteFrame.cpp */,
 				46B95192207D632E00A7D2DD /* RemoteFrame.h */,
-				A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */,
 				A5071E821C56D079009951BE /* ResourceUsageData.h */,
 				ADBAD6EC1BCDD95000381325 /* ResourceUsageOverlay.cpp */,
 				ADBAD6ED1BCDD95000381325 /* ResourceUsageOverlay.h */,

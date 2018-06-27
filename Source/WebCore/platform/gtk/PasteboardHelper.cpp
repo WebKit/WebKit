@@ -40,14 +40,18 @@ static GdkAtom uriListAtom;
 static GdkAtom smartPasteAtom;
 static GdkAtom unknownAtom;
 
-static const String gMarkupPrefix = "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"_s;
+static const String& markupPrefix()
+{
+    static NeverDestroyed<const String> prefix(MAKE_STATIC_STRING_IMPL("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"));
+    return prefix.get();
+}
 
 static void removeMarkupPrefix(String& markup)
 {
     // The markup prefix is not harmful, but we remove it from the string anyway, so that
     // we can have consistent results with other ports during the layout tests.
-    if (markup.startsWith(gMarkupPrefix))
-        markup.remove(0, gMarkupPrefix.length());
+    if (markup.startsWith(markupPrefix()))
+        markup.remove(0, markupPrefix().length());
 }
 
 PasteboardHelper& PasteboardHelper::singleton()
@@ -163,7 +167,7 @@ void PasteboardHelper::fillSelectionData(const SelectionData& selection, unsigne
     else if (info == TargetTypeMarkup) {
         // Some Linux applications refuse to accept pasted markup unless it is
         // prefixed by a content-type meta tag.
-        CString markup = String(gMarkupPrefix + selection.markup()).utf8();
+        CString markup = makeString(markupPrefix(), selection.markup()).utf8();
         gtk_selection_data_set(selectionData, markupAtom, 8, reinterpret_cast<const guchar*>(markup.data()), markup.length());
 
     } else if (info == TargetTypeURIList) {

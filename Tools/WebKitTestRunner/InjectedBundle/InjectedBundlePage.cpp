@@ -256,12 +256,16 @@ static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
     return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileUrl))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
 }
 
-static HashMap<uint64_t, String> assignedUrlsCache;
+static HashMap<uint64_t, String>& assignedUrlsCache()
+{
+    static NeverDestroyed<HashMap<uint64_t, String>> cache;
+    return cache.get();
+}
 
 static inline void dumpResourceURL(uint64_t identifier, StringBuilder& stringBuilder)
 {
-    if (assignedUrlsCache.contains(identifier))
-        stringBuilder.append(assignedUrlsCache.get(identifier));
+    if (assignedUrlsCache().contains(identifier))
+        stringBuilder.append(assignedUrlsCache().get(identifier));
     else
         stringBuilder.appendLiteral("<unknown>");
 }
@@ -433,7 +437,7 @@ void InjectedBundlePage::resetAfterTest()
 
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
     WebCoreTestSupport::resetInternalsObject(context);
-    assignedUrlsCache.clear();
+    assignedUrlsCache().clear();
 
     // User scripts need to be removed after the test and before loading about:blank, as otherwise they would run in about:blank, and potentially leak results into a subsequest test.
     WKBundlePageRemoveAllUserContent(m_page);
@@ -1118,7 +1122,7 @@ void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBund
         return;
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
-    assignedUrlsCache.add(identifier, pathSuitableForTestResult(url.get()));
+    assignedUrlsCache().add(identifier, pathSuitableForTestResult(url.get()));
 }
 
 // Resource Load Client Callbacks

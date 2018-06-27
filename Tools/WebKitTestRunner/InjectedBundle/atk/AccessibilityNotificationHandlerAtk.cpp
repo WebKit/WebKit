@@ -40,8 +40,18 @@ namespace {
 
 typedef HashMap<AtkObject*, AccessibilityNotificationHandler*> NotificationHandlersMap;
 
-WTF::Vector<unsigned> listenerIds;
-NotificationHandlersMap notificationHandlers;
+static WTF::Vector<unsigned>& listenerIds()
+{
+    static NeverDestroyed<WTF::Vector<unsigned>> ids;
+    return ids.get();
+}
+
+static NotificationHandlersMap& notificationHandlers()
+{
+    static NeverDestroyed<NotificationHandlersMap> map;
+    return map.get();
+}
+
 AccessibilityNotificationHandler* globalNotificationHandler = nullptr;
 
 gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numParamValues, const GValue* paramValues, gpointer data)
@@ -124,14 +134,14 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
     if (notificationName) {
         JSRetainPtr<JSStringRef> jsNotificationEventName(Adopt, JSStringCreateWithUTF8CString(notificationName));
         JSValueRef notificationNameArgument = JSValueMakeString(jsContext, jsNotificationEventName.get());
-        NotificationHandlersMap::iterator elementNotificationHandler = notificationHandlers.find(accessible);
+        NotificationHandlersMap::iterator elementNotificationHandler = notificationHandlers().find(accessible);
         JSValueRef arguments[5]; // this dimension must be >= 2 + max(extraArgs.size())
         arguments[0] = toJS(jsContext, WTF::getPtr(WTR::AccessibilityUIElement::create(accessible)));
         arguments[1] = notificationNameArgument;
         size_t numOfExtraArgs = extraArgs.size();
         for (size_t i = 0; i < numOfExtraArgs; i++)
             arguments[i + 2] = extraArgs[i];
-        if (elementNotificationHandler != notificationHandlers.end()) {
+        if (elementNotificationHandler != notificationHandlers().end()) {
             // Listener for one element. As arguments, it gets the notification name
             // and sometimes extra arguments.
             JSObjectCallAsFunction(jsContext,
@@ -189,13 +199,13 @@ void AccessibilityNotificationHandler::setNotificationFunctionCallback(JSValueRe
     JSValueProtect(jsContext, m_notificationFunctionCallback);
     // Check if this notification handler is related to a specific element.
     if (m_platformElement) {
-        NotificationHandlersMap::iterator currentNotificationHandler = notificationHandlers.find(m_platformElement.get());
-        if (currentNotificationHandler != notificationHandlers.end()) {
+        NotificationHandlersMap::iterator currentNotificationHandler = notificationHandlers().find(m_platformElement.get());
+        if (currentNotificationHandler != notificationHandlers().end()) {
             ASSERT(currentNotificationHandler->value->platformElement());
             JSValueUnprotect(jsContext, currentNotificationHandler->value->notificationFunctionCallback());
-            notificationHandlers.remove(currentNotificationHandler->value->platformElement().get());
+            notificationHandlers().remove(currentNotificationHandler->value->platformElement().get());
         }
-        notificationHandlers.add(m_platformElement.get(), this);
+        notificationHandlers().add(m_platformElement.get(), this);
     } else {
         if (globalNotificationHandler)
             JSValueUnprotect(jsContext, globalNotificationHandler->notificationFunctionCallback());
@@ -219,10 +229,10 @@ void AccessibilityNotificationHandler::removeAccessibilityNotificationHandler()
         JSValueUnprotect(jsContext, globalNotificationHandler->notificationFunctionCallback());
         globalNotificationHandler = nullptr;
     } else if (m_platformElement.get()) {
-        NotificationHandlersMap::iterator removeNotificationHandler = notificationHandlers.find(m_platformElement.get());
-        if (removeNotificationHandler != notificationHandlers.end()) {
+        NotificationHandlersMap::iterator removeNotificationHandler = notificationHandlers().find(m_platformElement.get());
+        if (removeNotificationHandler != notificationHandlers().end()) {
             JSValueUnprotect(jsContext, removeNotificationHandler->value->notificationFunctionCallback());
-            notificationHandlers.remove(removeNotificationHandler);
+            notificationHandlers().remove(removeNotificationHandler);
         }
     }
 }
@@ -262,22 +272,22 @@ void AccessibilityNotificationHandler::connectAccessibilityCallbacks()
             continue;
         }
 
-        listenerIds.append(id);
+        listenerIds().append(id);
     }
 }
 
 bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
 {
     // Only disconnect if there is no notification handler.
-    if (!notificationHandlers.isEmpty() || globalNotificationHandler)
+    if (!notificationHandlers().isEmpty() || globalNotificationHandler)
         return false;
 
     // AtkObject signals.
-    for (size_t i = 0; i < listenerIds.size(); i++) {
-        ASSERT(listenerIds[i]);
-        atk_remove_global_event_listener(listenerIds[i]);
+    for (size_t i = 0; i < listenerIds().size(); i++) {
+        ASSERT(listenerIds()[i]);
+        atk_remove_global_event_listener(listenerIds()[i]);
     }
-    listenerIds.clear();
+    listenerIds().clear();
     return true;
 }
 

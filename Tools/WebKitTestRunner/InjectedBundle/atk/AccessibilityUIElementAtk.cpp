@@ -63,11 +63,6 @@ enum AtkAttributeType {
     TextAttributeType
 };
 
-enum AttributeDomain {
-    CoreDomain = 0,
-    AtkDomain
-};
-
 enum AttributesIndex {
     // Attribute names.
     InvalidNameIndex = 0,
@@ -96,30 +91,39 @@ enum AttributesIndex {
 };
 
 // Attribute names & Values (keep on sync with enum AttributesIndex).
-const String attributesMap[][2] = {
-    // Attribute names.
-    { "AXInvalid", "invalid" },
-    { "AXARIAColumnCount", "colcount" },
-    { "AXARIAColumnIndex", "colindex" },
-    { "AXARIAColumnSpan", "colspan" },
-    { "AXARIARowCount", "rowcount" },
-    { "AXARIARowIndex", "rowindex" },
-    { "AXARIARowSpan", "rowspan" },
-    { "AXARIAPosInSet", "posinset" },
-    { "AXARIASetSize", "setsize" },
-    { "AXPlaceholderValue", "placeholder-text" } ,
-    { "AXSortDirection", "sort" },
-    { "AXARIACurrent", "current" },
-    { "AXARIALive", "live" },
-    { "AXARIAAtomic", "atomic" },
-    { "AXARIARelevant", "relevant" },
-    { "AXElementBusy", "busy" },
-
-    // Attribute values.
-    { "AXAscendingSortDirection", "ascending" },
-    { "AXDescendingSortDirection", "descending" },
-    { "AXUnknownSortDirection", "unknown" }
+struct Attribute {
+    String coreDomain;
+    String atkDomain;
 };
+using Attributes = std::array<Attribute, NumberOfAttributes>;
+static const Attributes& attributesMap()
+{
+    static NeverDestroyed<Attributes> attributes = Attributes({
+        // Attribute names.
+        Attribute { "AXInvalid", "invalid" },
+        Attribute { "AXARIAColumnCount", "colcount" },
+        Attribute { "AXARIAColumnIndex", "colindex" },
+        Attribute { "AXARIAColumnSpan", "colspan" },
+        Attribute { "AXARIARowCount", "rowcount" },
+        Attribute { "AXARIARowIndex", "rowindex" },
+        Attribute { "AXARIARowSpan", "rowspan" },
+        Attribute { "AXARIAPosInSet", "posinset" },
+        Attribute { "AXARIASetSize", "setsize" },
+        Attribute { "AXPlaceholderValue", "placeholder-text" } ,
+        Attribute { "AXSortDirection", "sort" },
+        Attribute { "AXARIACurrent", "current" },
+        Attribute { "AXARIALive", "live" },
+        Attribute { "AXARIAAtomic", "atomic" },
+        Attribute { "AXARIARelevant", "relevant" },
+        Attribute { "AXElementBusy", "busy" },
+
+        // Attribute values.
+        Attribute { "AXAscendingSortDirection", "ascending" },
+        Attribute { "AXDescendingSortDirection", "descending" },
+        Attribute { "AXUnknownSortDirection", "unknown" },
+    });
+    return attributes.get();
+}
 
 #if ATK_CHECK_VERSION(2, 11, 3)
 const char* landmarkStringBanner = "AXLandmarkBanner";
@@ -145,8 +149,8 @@ String coreAttributeToAtkAttribute(JSStringRef attribute)
 {
     String attributeString = jsStringToWTFString(attribute);
     for (int i = 0; i < NumberOfAttributes; ++i) {
-        if (attributesMap[i][CoreDomain] == attributeString)
-            return attributesMap[i][AtkDomain];
+        if (attributesMap()[i].coreDomain == attributeString)
+            return attributesMap()[i].atkDomain;
     }
 
     return attributeString;
@@ -156,23 +160,23 @@ String atkAttributeValueToCoreAttributeValue(AtkAttributeType type, const String
 {
     if (type == ObjectAttributeType) {
         // We don't expose the "current" attribute if there is no author-provided value.
-        if (id == attributesMap[CurrentNameIndex][AtkDomain] && value.isEmpty())
+        if (id == attributesMap()[CurrentNameIndex].atkDomain && value.isEmpty())
             return "false";
 
         // We need to translate ATK values exposed for 'aria-sort' (e.g. 'ascending')
         // into those expected by the layout tests (e.g. 'AXAscendingSortDirection').
-        if (id == attributesMap[SortNameIndex][AtkDomain] && !value.isEmpty()) {
-            if (value == attributesMap[SortAscendingValueIndex][AtkDomain])
-                return attributesMap[SortAscendingValueIndex][CoreDomain];
-            if (value == attributesMap[SortDescendingValueIndex][AtkDomain])
-                return attributesMap[SortDescendingValueIndex][CoreDomain];
+        if (id == attributesMap()[SortNameIndex].atkDomain && !value.isEmpty()) {
+            if (value == attributesMap()[SortAscendingValueIndex].atkDomain)
+                return attributesMap()[SortAscendingValueIndex].coreDomain;
+            if (value == attributesMap()[SortDescendingValueIndex].atkDomain)
+                return attributesMap()[SortDescendingValueIndex].coreDomain;
 
-            return attributesMap[SortUnknownValueIndex][CoreDomain];
+            return attributesMap()[SortUnknownValueIndex].coreDomain;
         }
     } else if (type == TextAttributeType) {
         // In case of 'aria-invalid' when the attribute empty or has "false" for ATK
         // it should not be mapped at all, but layout tests will expect 'false'.
-        if (id == attributesMap[InvalidNameIndex][AtkDomain] && value.isEmpty())
+        if (id == attributesMap()[InvalidNameIndex].atkDomain && value.isEmpty())
             return "false";
     }
 
@@ -1094,7 +1098,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     // Additional check to make sure that the exposure of the state ATK_STATE_INVALID_ENTRY
     // is consistent with the exposure of aria-invalid as a text attribute, if present.
-    if (atkAttributeName == attributesMap[InvalidNameIndex][AtkDomain]) {
+    if (atkAttributeName == attributesMap()[InvalidNameIndex].atkDomain) {
         bool isInvalidState = checkElementState(m_element.get(), ATK_STATE_INVALID_ENTRY);
         if (attributeValue.isEmpty())
             return JSStringCreateWithUTF8CString(isInvalidState ? "true" : "false");

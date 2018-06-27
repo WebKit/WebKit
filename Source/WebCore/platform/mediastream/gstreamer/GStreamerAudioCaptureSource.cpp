@@ -34,7 +34,10 @@
 
 namespace WebCore {
 
-const static CapabilityValueOrRange defaultVolumeCapability = CapabilityValueOrRange(0.0, 1.0);
+static CapabilityValueOrRange defaultVolumeCapability()
+{
+    return CapabilityValueOrRange(0.0, 1.0);
+}
 const static RealtimeMediaSourceCapabilities::EchoCancellation defaultEchoCancellationCapability = RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite;
 
 GST_DEBUG_CATEGORY(webkit_audio_capture_source_debug);
@@ -162,7 +165,7 @@ const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
     capabilities.setDeviceId(id());
     capabilities.setEchoCancellation(defaultEchoCancellationCapability);
-    capabilities.setVolume(defaultVolumeCapability);
+    capabilities.setVolume(defaultVolumeCapability());
     capabilities.setSampleRate(CapabilityValueOrRange(minSampleRate, maxSampleRate));
     m_capabilities = WTFMove(capabilities);
 

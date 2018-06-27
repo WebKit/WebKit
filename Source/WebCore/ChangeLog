@@ -1,3 +1,41 @@
+2018-06-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove static initializers more
+        https://bugs.webkit.org/show_bug.cgi?id=186969
+
+        Reviewed by Michael Catanzaro.
+
+        This patch removes static initializers more. They typically exists in GTK port.
+
+        No behavior change.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ResourceUsageData.cpp: Removed.
+        * page/ResourceUsageData.h:
+        Remove ResourceUsageData constructors since default constructors are enough.
+
+        (WebCore::MemoryCategoryInfo::MemoryCategoryInfo):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::markupPrefix):
+        (WebCore::removeMarkupPrefix):
+        (WebCore::PasteboardHelper::fillSelectionData):
+        Use NeverDestroyed<> and static functions.
+
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::defaultVolumeCapability):
+        (WebCore::GStreamerAudioCaptureSource::capabilities const):
+        CapabilityValueOrRange's constructor is not constexpr.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::initialAcceptLanguages):
+        (WebCore::proxySettings):
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+        (WebCore::SoupNetworkSession::setupProxy):
+        (WebCore::SoupNetworkSession::setProxySettings):
+        (WebCore::SoupNetworkSession::setInitialAcceptLanguages):
+        Use NeverDestroyed<> and static functions.
+
 2018-06-26  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r231479): Unable to buy Odeon cinema tickets in STP (bogus 'X-Frame-Options' to 'SAMEORIGIN')
