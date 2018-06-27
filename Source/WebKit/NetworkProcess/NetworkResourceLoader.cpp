@@ -119,7 +119,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     }
 
     if (synchronousReply || parameters.shouldRestrictHTTPResponseAccess) {
-        m_networkLoadChecker = std::make_unique<NetworkLoadChecker>(m_connection, m_parameters.webPageID, m_parameters.webFrameID, identifier(), FetchOptions { m_parameters.options }, m_parameters.sessionID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), shouldCaptureExtraNetworkLoadMetrics());
+        m_networkLoadChecker = std::make_unique<NetworkLoadChecker>(FetchOptions { m_parameters.options }, m_parameters.sessionID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), shouldCaptureExtraNetworkLoadMetrics());
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -184,7 +184,7 @@ void NetworkResourceLoader::start()
     m_wasStarted = true;
 
     if (m_networkLoadChecker) {
-        m_networkLoadChecker->check(ResourceRequest { originalRequest() }, [this] (auto&& result) {
+        m_networkLoadChecker->check(ResourceRequest { originalRequest() }, this, [this] (auto&& result) {
             if (!result.has_value()) {
                 if (!result.error().isCancellation())
                     this->didFailLoading(result.error());
@@ -581,7 +581,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
     if (m_networkLoadChecker) {
         m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
-        m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(redirectRequest), [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(), request = WTFMove(request), redirectResponse](auto&& result) mutable {
+        m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(redirectRequest), this, [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(), request = WTFMove(request), redirectResponse](auto&& result) mutable {
             if (!result.has_value()) {
                 if (result.error().isCancellation())
                     return;

@@ -1,3 +1,33 @@
+2018-06-27  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should not need to hard ref NetworkConnectionToWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=186551
+
+        Reviewed by Daniel Bates.
+
+        Removed the need for NetworkLoadChecker to reference a NetworkConnectionToWebProcess.
+        Instead a CSP client is given to NetworkLoadChecker when needed.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::check):
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy):
+        (WebKit::NetworkLoadChecker::addConsoleMessage): Deleted.
+        (WebKit::NetworkLoadChecker::sendCSPViolationReport): Deleted.
+        (WebKit::NetworkLoadChecker::enqueueSecurityPolicyViolationEvent): Deleted.
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        * NetworkProcess/PingLoad.h:
+
 2018-06-27  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Wincairo] Add support for context menus to non-legacy minibrowser

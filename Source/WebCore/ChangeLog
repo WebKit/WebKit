@@ -1,3 +1,16 @@
+2018-06-27  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should not need to hard ref NetworkConnectionToWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=186551
+
+        Reviewed by Daniel Bates.
+
+        No change of behavior.
+        Add a way to set the client receiving any CSP warning/error notification.
+
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::setClient):
+
 2018-06-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Do not collapse margin with the parent when element has border/padding.

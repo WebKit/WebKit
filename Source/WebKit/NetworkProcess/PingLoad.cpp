@@ -38,11 +38,11 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, WTF::CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
+PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, WTF::CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
     : m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(connection, m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, FetchOptions { m_parameters.options}, m_parameters.sessionID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
+    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(FetchOptions { m_parameters.options}, m_parameters.sessionID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
 {
     m_networkLoadChecker->enableContentExtensionsCheck();
     if (m_parameters.cspResponseHeaders)
@@ -55,7 +55,7 @@ PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, NetworkConnection
     // Set a very generous timeout, just in case.
     m_timeoutTimer.startOneShot(60000_s);
 
-    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, [this] (auto&& result) {
+    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this] (auto&& result) {
         if (!result.has_value()) {
             this->didFinish(result.error());
             return;
@@ -93,7 +93,7 @@ void PingLoad::loadRequest(ResourceRequest&& request)
 
 void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
-    m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(request), [this, completionHandler = WTFMove(completionHandler)](auto&& result) {
+    m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(request), nullptr, [this, completionHandler = WTFMove(completionHandler)](auto&& result) {
         if (!result.has_value()) {
             completionHandler({ });
             this->didFinish(result.error());
