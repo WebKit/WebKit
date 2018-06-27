@@ -1097,6 +1097,11 @@ StorageAccessPromptsEnabled:
   defaultValue: true
   webcoreBinding: RuntimeEnabledFeatures
 
+LinkPreloadEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableName for all experimental features. They
@@ -1125,14 +1130,6 @@ ImageBitmapOffscreenCanvasEnabled:
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "ImageBitmap and OffscreenCanvas"
   humanReadableDescription: "Support for the ImageBitmap and OffscreenCanvas APIs"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-
-LinkPreloadEnabled:
-  type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Link Preload"
-  humanReadableDescription: "Link preload support"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 

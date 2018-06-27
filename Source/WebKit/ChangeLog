@@ -1,3 +1,13 @@
+2018-06-27  Timothy Horton  <timothy_horton@apple.com>
+
+        Make Link Preload an on-by-default feature
+        https://bugs.webkit.org/show_bug.cgi?id=187104
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPreferences.yaml:
+        This should be on, not experimental. It already shipped on in the past.
+
 2018-06-27  Chris Dumez  <cdumez@apple.com>
 
         Regression(r233208): Completion handler does not get called on GTK port
