@@ -115,7 +115,7 @@ Structure* InternalFunction::createSubclassStructureSlow(ExecState* exec, JSValu
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(!newTarget || newTarget.isConstructor());
+    ASSERT(!newTarget || newTarget.isConstructor(vm));
     ASSERT(newTarget && newTarget != exec->jsCallee());
 
     ASSERT(baseClass->hasMonoProto());

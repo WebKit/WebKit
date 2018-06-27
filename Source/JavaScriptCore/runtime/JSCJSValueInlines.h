@@ -772,22 +772,18 @@ inline bool JSValue::isCallable(VM& vm, CallType& callType, CallData& callData) 
     return asCell()->isCallable(vm, callType, callData);
 }
 
-inline bool JSValue::isConstructor() const
+inline bool JSValue::isConstructor(VM& vm) const
 {
     if (!isCell())
         return false;
-    JSCell* cell = asCell();
-    ConstructData ignored;
-    return cell->methodTable()->getConstructData(cell, ignored) != ConstructType::None;
+    return asCell()->isConstructor(vm);
 }
 
-inline bool JSValue::isConstructor(ConstructType& constructType, ConstructData& constructData) const
+inline bool JSValue::isConstructor(VM& vm, ConstructType& constructType, ConstructData& constructData) const
 {
     if (!isCell())
         return false;
-    JSCell* cell = asCell();
-    constructType = cell->methodTable()->getConstructData(cell, constructData);
-    return constructType != ConstructType::None;
+    return asCell()->isConstructor(vm, constructType, constructData);
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

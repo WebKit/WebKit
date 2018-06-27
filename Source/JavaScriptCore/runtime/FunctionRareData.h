@@ -122,7 +122,7 @@ private:
             : m_rareData(rareData)
         { }
     protected:
-        void fireInternal(const FireDetail&) override;
+        void fireInternal(VM&, const FireDetail&) override;
     private:
         FunctionRareData* m_rareData;
     };

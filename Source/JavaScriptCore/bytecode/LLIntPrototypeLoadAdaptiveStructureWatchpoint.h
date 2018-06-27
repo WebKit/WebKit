@@ -36,12 +36,12 @@ public:
     LLIntPrototypeLoadAdaptiveStructureWatchpoint() = default;
     LLIntPrototypeLoadAdaptiveStructureWatchpoint(const ObjectPropertyCondition&, Instruction*);
 
-    void install();
+    void install(VM&);
 
     const ObjectPropertyCondition& key() const { return m_key; }
 
 protected:
-    void fireInternal(const FireDetail&) override;
+    void fireInternal(VM&, const FireDetail&) override;
 
 private:
     ObjectPropertyCondition m_key;

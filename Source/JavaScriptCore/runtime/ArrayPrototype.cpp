@@ -238,7 +238,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
 
         constructor = thisObject->get(exec, vm.propertyNames->constructor);
         RETURN_IF_EXCEPTION(scope, exceptionResult());
-        if (constructor.isConstructor()) {
+        if (constructor.isConstructor(vm)) {
             JSObject* constructorObject = jsCast<JSObject*>(constructor);
             if (exec->lexicalGlobalObject() != constructorObject->globalObject(vm))
                 return std::make_pair(SpeciesConstructResult::FastPath, nullptr);;
@@ -1427,7 +1427,7 @@ public:
     ArrayPrototypeAdaptiveInferredPropertyWatchpoint(const ObjectPropertyCondition&, ArrayPrototype*);
 
 private:
-    void handleFire(const FireDetail&) override;
+    void handleFire(VM&, const FireDetail&) override;
 
     ArrayPrototype* m_arrayPrototype;
 };
@@ -1496,10 +1496,10 @@ void ArrayPrototype::tryInitializeSpeciesWatchpoint(ExecState* exec)
     }
 
     m_constructorWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(constructorCondition, this);
-    m_constructorWatchpoint->install();
+    m_constructorWatchpoint->install(vm);
 
     m_constructorSpeciesWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(speciesCondition, this);
-    m_constructorSpeciesWatchpoint->install();
+    m_constructorSpeciesWatchpoint->install(vm);
 
     // We only watch this from the DFG, and the DFG makes sure to only start watching if the watchpoint is in the IsWatched state.
     RELEASE_ASSERT(!globalObject->arraySpeciesWatchpoint().isBeingWatched()); 
@@ -1512,15 +1512,15 @@ ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferred
 {
 }
 
-void ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire(const FireDetail& detail)
+void ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire(VM& vm, const FireDetail& detail)
 {
     auto lazyDetail = createLazyFireDetail("ArrayPrototype adaption of ", key(), " failed: ", detail);
 
     if (ArrayPrototypeInternal::verbose)
         WTF::dataLog(lazyDetail, "\n");
 
-    JSGlobalObject* globalObject = m_arrayPrototype->globalObject();
-    globalObject->arraySpeciesWatchpoint().fireAll(globalObject->vm(), lazyDetail);
+    JSGlobalObject* globalObject = m_arrayPrototype->globalObject(vm);
+    globalObject->arraySpeciesWatchpoint().fireAll(vm, lazyDetail);
 }
 
 } // namespace JSC

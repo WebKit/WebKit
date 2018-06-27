@@ -33,21 +33,19 @@ template<typename Watchpoint>
 class ObjectPropertyChangeAdaptiveWatchpoint : public AdaptiveInferredPropertyValueWatchpointBase {
 public:
     using Base = AdaptiveInferredPropertyValueWatchpointBase;
-    ObjectPropertyChangeAdaptiveWatchpoint(VM& vm, const ObjectPropertyCondition& condition, Watchpoint& watchpoint)
+    ObjectPropertyChangeAdaptiveWatchpoint(const ObjectPropertyCondition& condition, Watchpoint& watchpoint)
         : Base(condition)
-        , m_vm(vm)
         , m_watchpoint(watchpoint)
     {
         RELEASE_ASSERT(watchpoint.stateOnJSThread() == IsWatched);
     }
 
 private:
-    void handleFire(const FireDetail&) override
+    void handleFire(VM& vm, const FireDetail&) override
     {
-        m_watchpoint.fireAll(m_vm, StringFireDetail("Object Property is changed."));
+        m_watchpoint.fireAll(vm, StringFireDetail("Object Property is changed."));
     }
 
-    VM& m_vm;
     Watchpoint& m_watchpoint;
 };
 

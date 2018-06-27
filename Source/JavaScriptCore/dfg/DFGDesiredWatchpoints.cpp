@@ -58,12 +58,13 @@ void InferredValueAdaptor::add(
 void AdaptiveStructureWatchpointAdaptor::add(
     CodeBlock* codeBlock, const ObjectPropertyCondition& key, CommonData& common)
 {
+    VM& vm = *codeBlock->vm();
     switch (key.kind()) {
     case PropertyCondition::Equivalence:
-        common.adaptiveInferredPropertyValueWatchpoints.add(key, codeBlock)->install();
+        common.adaptiveInferredPropertyValueWatchpoints.add(key, codeBlock)->install(vm);
         break;
     default:
-        common.adaptiveStructureWatchpoints.add(key, codeBlock)->install();
+        common.adaptiveStructureWatchpoints.add(key, codeBlock)->install(vm);
         break;
     }
 }

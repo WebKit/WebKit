@@ -91,7 +91,7 @@ public:
 
 private:
     bool isValid() const override;
-    void handleFire(const FireDetail&) override;
+    void handleFire(VM&, const FireDetail&) override;
 
     StructureRareData* m_structureRareData;
 };
@@ -100,10 +100,10 @@ class ObjectToStringAdaptiveStructureWatchpoint : public Watchpoint {
 public:
     ObjectToStringAdaptiveStructureWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
 
-    void install();
+    void install(VM&);
 
 protected:
-    void fireInternal(const FireDetail&) override;
+    void fireInternal(VM&, const FireDetail&) override;
     
 private:
     ObjectPropertyCondition m_key;
@@ -160,9 +160,9 @@ void StructureRareData::setObjectToStringValue(ExecState* exec, VM& vm, Structur
     for (ObjectPropertyCondition condition : conditionSet) {
         if (condition.condition().kind() == PropertyCondition::Presence) {
             m_objectToStringAdaptiveInferredValueWatchpoint = std::make_unique<ObjectToStringAdaptiveInferredPropertyValueWatchpoint>(equivCondition, this);
-            m_objectToStringAdaptiveInferredValueWatchpoint->install();
+            m_objectToStringAdaptiveInferredValueWatchpoint->install(vm);
         } else
-            m_objectToStringAdaptiveWatchpointSet.add(condition, this)->install();
+            m_objectToStringAdaptiveWatchpointSet.add(condition, this)->install(vm);
     }
 
     m_objectToStringValue.set(vm, this, value);
@@ -185,20 +185,20 @@ ObjectToStringAdaptiveStructureWatchpoint::ObjectToStringAdaptiveStructureWatchp
     RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
 }
 
-void ObjectToStringAdaptiveStructureWatchpoint::install()
+void ObjectToStringAdaptiveStructureWatchpoint::install(VM& vm)
 {
     RELEASE_ASSERT(m_key.isWatchable());
 
-    m_key.object()->structure()->addTransitionWatchpoint(this);
+    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
 }
 
-void ObjectToStringAdaptiveStructureWatchpoint::fireInternal(const FireDetail&)
+void ObjectToStringAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
     if (!m_structureRareData->isLive())
         return;
 
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        install();
+        install(vm);
         return;
     }
 
@@ -216,7 +216,7 @@ bool ObjectToStringAdaptiveInferredPropertyValueWatchpoint::isValid() const
     return m_structureRareData->isLive();
 }
 
-void ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire(const FireDetail&)
+void ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire(VM&, const FireDetail&)
 {
     m_structureRareData->clearObjectToStringValue();
 }

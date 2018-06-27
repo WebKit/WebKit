@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+class VM;
+
 class FireDetail {
     void* operator new(size_t) = delete;
     
@@ -96,11 +98,11 @@ public:
     virtual ~Watchpoint();
 
 protected:
-    virtual void fireInternal(const FireDetail&) = 0;
+    virtual void fireInternal(VM&, const FireDetail&) = 0;
 
 private:
     friend class WatchpointSet;
-    void fire(const FireDetail&);
+    void fire(VM&, const FireDetail&);
 };
 
 enum WatchpointState {

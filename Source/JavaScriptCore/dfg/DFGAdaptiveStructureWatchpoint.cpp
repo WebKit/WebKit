@@ -43,17 +43,17 @@ AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint(
     RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
 }
 
-void AdaptiveStructureWatchpoint::install()
+void AdaptiveStructureWatchpoint::install(VM& vm)
 {
     RELEASE_ASSERT(m_key.isWatchable());
     
-    m_key.object()->structure()->addTransitionWatchpoint(this);
+    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
 }
 
-void AdaptiveStructureWatchpoint::fireInternal(const FireDetail& detail)
+void AdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail& detail)
 {
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        install();
+        install(vm);
         return;
     }
     

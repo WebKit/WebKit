@@ -1015,64 +1015,64 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, m_vm.propertyNames->next);
-            m_arrayIteratorPrototypeNext = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_arrayIteratorProtocolWatchpoint);
-            m_arrayIteratorPrototypeNext->install();
+            m_arrayIteratorPrototypeNext = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_arrayIteratorProtocolWatchpoint);
+            m_arrayIteratorPrototypeNext->install(vm);
         }
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), m_vm.propertyNames->iteratorSymbol);
-            m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_arrayIteratorProtocolWatchpoint);
-            m_arrayPrototypeSymbolIteratorWatchpoint->install();
+            m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_arrayIteratorProtocolWatchpoint);
+            m_arrayPrototypeSymbolIteratorWatchpoint->install(vm);
         }
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(mapIteratorPrototype, m_vm.propertyNames->next);
-            m_mapIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_mapIteratorProtocolWatchpoint);
-            m_mapIteratorPrototypeNextWatchpoint->install();
+            m_mapIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapIteratorProtocolWatchpoint);
+            m_mapIteratorPrototypeNextWatchpoint->install(vm);
         }
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->iteratorSymbol);
-            m_mapPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_mapIteratorProtocolWatchpoint);
-            m_mapPrototypeSymbolIteratorWatchpoint->install();
+            m_mapPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapIteratorProtocolWatchpoint);
+            m_mapPrototypeSymbolIteratorWatchpoint->install(vm);
         }
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(setIteratorPrototype, m_vm.propertyNames->next);
-            m_setIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_setIteratorProtocolWatchpoint);
-            m_setIteratorPrototypeNextWatchpoint->install();
+            m_setIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setIteratorProtocolWatchpoint);
+            m_setIteratorPrototypeNextWatchpoint->install(vm);
         }
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->iteratorSymbol);
-            m_setPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_setIteratorProtocolWatchpoint);
-            m_setPrototypeSymbolIteratorWatchpoint->install();
+            m_setPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setIteratorProtocolWatchpoint);
+            m_setPrototypeSymbolIteratorWatchpoint->install(vm);
         }
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringIteratorPrototype.get(), m_vm.propertyNames->next);
-            m_stringIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_stringIteratorProtocolWatchpoint);
-            m_stringIteratorPrototypeNextWatchpoint->install();
+            m_stringIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_stringIteratorProtocolWatchpoint);
+            m_stringIteratorPrototypeNextWatchpoint->install(vm);
         }
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringPrototype.get(), m_vm.propertyNames->iteratorSymbol);
-            m_stringPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_stringIteratorProtocolWatchpoint);
-            m_stringPrototypeSymbolIteratorWatchpoint->install();
+            m_stringPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_stringIteratorProtocolWatchpoint);
+            m_stringPrototypeSymbolIteratorWatchpoint->install(vm);
         }
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->set);
-            m_mapPrototypeSetWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_mapSetWatchpoint);
-            m_mapPrototypeSetWatchpoint->install();
+            m_mapPrototypeSetWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapSetWatchpoint);
+            m_mapPrototypeSetWatchpoint->install(vm);
         }
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->add);
-            m_setPrototypeAddWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_setAddWatchpoint);
-            m_setPrototypeAddWatchpoint->install();
+            m_setPrototypeAddWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setAddWatchpoint);
+            m_setPrototypeAddWatchpoint->install(vm);
         }
 
         {
             ObjectPropertyCondition condition = setupAdaptiveWatchpoint(numberPrototype(), m_vm.propertyNames->toString);
-            m_numberPrototypeToStringWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_numberToStringWatchpoint);
-            m_numberPrototypeToStringWatchpoint->install();
+            m_numberPrototypeToStringWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_numberToStringWatchpoint);
+            m_numberPrototypeToStringWatchpoint->install(vm);
             m_numberProtoToStringFunction.set(vm, this, jsCast<JSFunction*>(numberPrototype()->getDirect(vm, vm.propertyNames->toString)));
         }
     }

@@ -49,10 +49,10 @@ Watchpoint::~Watchpoint()
     }
 }
 
-void Watchpoint::fire(const FireDetail& detail)
+void Watchpoint::fire(VM& vm, const FireDetail& detail)
 {
     RELEASE_ASSERT(!isOnList());
-    fireInternal(detail);
+    fireInternal(vm, detail);
 }
 
 WatchpointSet::WatchpointSet(WatchpointState state)
@@ -137,7 +137,7 @@ void WatchpointSet::fireAllWatchpoints(VM& vm, const FireDetail& detail)
         ASSERT(m_set.begin() != watchpoint);
         ASSERT(!watchpoint->isOnList());
         
-        watchpoint->fire(detail);
+        watchpoint->fire(vm, detail);
         // After we fire the watchpoint, the watchpoint pointer may be a dangling pointer. That's
         // fine, because we have no use for the pointer anymore.
     }

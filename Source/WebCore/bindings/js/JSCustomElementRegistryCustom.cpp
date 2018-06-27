@@ -95,7 +95,7 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     JSValue constructorValue = state.uncheckedArgument(1);
-    if (!constructorValue.isConstructor())
+    if (!constructorValue.isConstructor(vm))
         return throwTypeError(&state, scope, "The second argument must be a constructor"_s);
     JSObject* constructor = constructorValue.getObject();
 

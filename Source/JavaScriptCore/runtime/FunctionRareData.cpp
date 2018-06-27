@@ -90,7 +90,7 @@ void FunctionRareData::clear(const char* reason)
     m_objectAllocationProfileWatchpoint.fireAll(*vm(), reason);
 }
 
-void FunctionRareData::AllocationProfileClearingWatchpoint::fireInternal(const FireDetail&)
+void FunctionRareData::AllocationProfileClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 {
     m_rareData->clear("AllocationProfileClearingWatchpoint fired.");
 }

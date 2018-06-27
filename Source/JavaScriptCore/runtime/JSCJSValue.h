@@ -220,8 +220,8 @@ public:
     bool isEmpty() const;
     bool isFunction(VM&) const;
     bool isCallable(VM&, CallType&, CallData&) const;
-    bool isConstructor() const;
-    bool isConstructor(ConstructType&, ConstructData&) const;
+    bool isConstructor(VM&) const;
+    bool isConstructor(VM&, ConstructType&, ConstructData&) const;
     bool isUndefined() const;
     bool isNull() const;
     bool isUndefinedOrNull() const;

@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-void InferredStructureWatchpoint::fireInternal(const FireDetail&)
+void InferredStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
     InferredStructure* inferredStructure =
         bitwise_cast<InferredStructure*>(
@@ -41,7 +41,7 @@ void InferredStructureWatchpoint::fireInternal(const FireDetail&)
     if (!inferredType->isLive())
         return;
     
-    inferredType->removeStructure(*inferredType->vm());
+    inferredType->removeStructure(vm);
 }
 
 } // namespace JSC

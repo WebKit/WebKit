@@ -101,13 +101,13 @@ EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(ExecState* exec)
 
     ConstructData constructData;
     ConstructType constructType;
-    if (!target.isConstructor(constructType, constructData))
+    if (!target.isConstructor(vm, constructType, constructData))
         return JSValue::encode(throwTypeError(exec, scope, "Reflect.construct requires the first argument be a constructor"_s));
 
     JSValue newTarget = target;
     if (exec->argumentCount() >= 3) {
         newTarget = exec->argument(2);
-        if (!newTarget.isConstructor())
+        if (!newTarget.isConstructor(vm))
             return JSValue::encode(throwTypeError(exec, scope, "Reflect.construct requires the third argument be a constructor if present"_s));
     }
 

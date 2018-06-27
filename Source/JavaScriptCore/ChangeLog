@@ -1,3 +1,81 @@
+2018-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Pass VM& to functions more
+        https://bugs.webkit.org/show_bug.cgi?id=186241
+
+        Reviewed by Mark Lam.
+
+        This patch threads VM& to functions requiring VM& more.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectIsConstructor):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::install):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::fire):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint::fireInternal):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint::fireInternal):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        * bytecode/CodeBlockJettisoningWatchpoint.cpp:
+        (JSC::CodeBlockJettisoningWatchpoint::fireInternal):
+        * bytecode/CodeBlockJettisoningWatchpoint.h:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::install):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        * bytecode/StructureStubClearingWatchpoint.h:
+        * bytecode/Watchpoint.cpp:
+        (JSC::Watchpoint::fire):
+        (JSC::WatchpointSet::fireAllWatchpoints):
+        * bytecode/Watchpoint.h:
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::handleFire):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h:
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::install):
+        (JSC::DFG::AdaptiveStructureWatchpoint::fireInternal):
+        * dfg/DFGAdaptiveStructureWatchpoint.h:
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::add):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::tryInitializeSpeciesWatchpoint):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+        * runtime/ECMAScriptSpecInternalFunctions.cpp:
+        (JSC::esSpecIsConstructor):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::AllocationProfileClearingWatchpoint::fireInternal):
+        * runtime/FunctionRareData.h:
+        * runtime/InferredStructureWatchpoint.cpp:
+        (JSC::InferredStructureWatchpoint::fireInternal):
+        * runtime/InferredStructureWatchpoint.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructureSlow):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isConstructor const):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isConstructor):
+        (JSC::JSCell::methodTable const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectPropertyChangeAdaptiveWatchpoint.h:
+        (JSC::ObjectPropertyChangeAdaptiveWatchpoint::ObjectPropertyChangeAdaptiveWatchpoint):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::finishCreation):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::setObjectToStringValue):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::install):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::fireInternal):
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire):
+
 2018-06-26  Mark Lam  <mark.lam@apple.com>
 
         eval() is wrong about the LiteralParser never throwing any exceptions.

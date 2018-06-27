@@ -630,9 +630,7 @@ bool JSObjectIsConstructor(JSContextRef ctx, JSObjectRef object)
     JSLockHolder locker(vm);
     if (!object)
         return false;
-    JSObject* jsObject = toJS(object);
-    ConstructData constructData;
-    return jsObject->methodTable(vm)->getConstructData(jsObject, constructData) != ConstructType::None;
+    return toJS(object)->isConstructor(vm);
 }
 
 JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

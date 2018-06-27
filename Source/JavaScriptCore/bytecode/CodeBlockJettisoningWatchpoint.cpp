@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-void CodeBlockJettisoningWatchpoint::fireInternal(const FireDetail& detail)
+void CodeBlockJettisoningWatchpoint::fireInternal(VM&, const FireDetail& detail)
 {
     if (DFG::shouldDumpDisassembly())
         dataLog("Firing watchpoint ", RawPointer(this), " on ", *m_codeBlock, "\n");

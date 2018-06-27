@@ -1,3 +1,13 @@
+2018-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Pass VM& to functions more
+        https://bugs.webkit.org/show_bug.cgi?id=186241
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::define):
+
 2018-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         CSSGradientValue's color stops vector wastes 12KB on theverge.com

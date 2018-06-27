@@ -676,7 +676,7 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc,
             return;
         if (condition.condition().kind() == PropertyCondition::Presence)
             offset = condition.condition().offset();
-        watchpoints.add(condition, pc)->install();
+        watchpoints.add(condition, pc)->install(vm);
     }
 
     ASSERT((offset == invalidOffset) == slot.isUnset());

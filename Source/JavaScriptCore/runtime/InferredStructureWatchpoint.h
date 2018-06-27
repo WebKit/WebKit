@@ -31,7 +31,7 @@ namespace JSC {
 
 class InferredStructureWatchpoint : public Watchpoint {
 protected:
-    void fireInternal(const FireDetail&) override;
+    void fireInternal(VM&, const FireDetail&) override;
 };
 
 } // namespace JSC

@@ -35,7 +35,7 @@ namespace JSC {
 
 EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(ExecState* exec)
 {
-    bool isConstructor = exec->uncheckedArgument(0).isConstructor();
+    bool isConstructor = exec->uncheckedArgument(0).isConstructor(exec->vm());
     return JSValue::encode(jsBoolean(isConstructor));
 }
 

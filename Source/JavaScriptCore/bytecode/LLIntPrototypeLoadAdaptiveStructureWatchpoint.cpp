@@ -40,17 +40,17 @@ LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructu
     RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
 }
 
-void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install()
+void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM& vm)
 {
     RELEASE_ASSERT(m_key.isWatchable());
 
-    m_key.object()->structure()->addTransitionWatchpoint(this);
+    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
 }
 
-void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(const FireDetail&)
+void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        install();
+        install(vm);
         return;
     }
 

@@ -48,7 +48,7 @@ StructureStubClearingWatchpoint* StructureStubClearingWatchpoint::push(
     return head.get();
 }
 
-void StructureStubClearingWatchpoint::fireInternal(const FireDetail&)
+void StructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
     if (!m_key || !m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         // This will implicitly cause my own demise: stub reset removes all watchpoints.
@@ -59,7 +59,6 @@ void StructureStubClearingWatchpoint::fireInternal(const FireDetail&)
         return;
     }
 
-    VM& vm = *m_key.object()->vm();
     if (m_key.kind() == PropertyCondition::Presence) {
         // If this was a presence condition, let's watch the property for replacements. This is profitable
         // for the DFG, which will want the replacement set to be valid in order to do constant folding.

@@ -112,8 +112,7 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
         RELEASE_ASSERT(info.implementsHasInstance() && info.implementsDefaultHasInstance());
     }
 
-    ConstructData ignoredConstructData;
-    m_isConstructible = jsCast<JSObject*>(target)->methodTable(vm)->getConstructData(jsCast<JSObject*>(target), ignoredConstructData) != ConstructType::None;
+    m_isConstructible = jsCast<JSObject*>(target)->isConstructor(vm);
 
     m_target.set(vm, this, targetAsObject);
     m_handler.set(vm, this, handler);

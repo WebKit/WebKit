@@ -98,7 +98,7 @@ ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(ExecState* ex
 {
     // We allow newTarget == JSValue() because the API needs to be able to create classes without having a real JS frame.
     // Since we don't allow subclassing in the API we just treat newTarget == JSValue() as newTarget == exec->jsCallee()
-    ASSERT(!newTarget || newTarget.isConstructor());
+    ASSERT(!newTarget || newTarget.isConstructor(exec->vm()));
 
     if (newTarget && newTarget != exec->jsCallee())
         return createSubclassStructureSlow(exec, newTarget, baseClass);
