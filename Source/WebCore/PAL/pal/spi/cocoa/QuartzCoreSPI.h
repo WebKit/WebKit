@@ -94,6 +94,7 @@ typedef struct _CARenderContext CARenderContext;
 - (void *)regionBeingDrawn;
 - (void)reloadValueForKeyPath:(NSString *)keyPath;
 @property BOOL allowsGroupBlending;
+@property BOOL allowsHitTesting;
 @property BOOL canDrawConcurrently;
 @property BOOL contentsOpaque;
 @property BOOL hitTestsAsOpaque;

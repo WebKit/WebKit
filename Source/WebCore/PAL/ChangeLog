@@ -1,3 +1,15 @@
+2018-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPad apps on macOS] Unable to interact with video elements that have started playing
+        https://bugs.webkit.org/show_bug.cgi?id=187073
+        <rdar://problem/40591107>
+
+        Reviewed by Tim Horton.
+
+        Define an SPI method on CALayer. See WebKit ChangeLog for more detail.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+
 2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add user-defined literal for ASCIILiteral

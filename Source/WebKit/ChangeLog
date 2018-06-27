@@ -1,3 +1,28 @@
+2018-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPad apps on macOS] Unable to interact with video elements that have started playing
+        https://bugs.webkit.org/show_bug.cgi?id=187073
+        <rdar://problem/40591107>
+
+        Reviewed by Tim Horton.
+
+        On iOS, we currently force remote hosting contexts to be non-interactive by passing in `kCAContextIgnoresHitTest`
+        when creating the CAContext. However, this flag is not respected by CoreAnimation when running iOS apps on macOS.
+        This means all HID events dispatched over a video that has been played (which causes WebKit to insert a
+        CALayerHost-backed WKRemoteView in the view hierarchy) will be routed to the context ID of the video's CAContext
+        rather than the context ID of the key window containing the WKWebView.
+
+        This subsequently causes all gesture recognizers (hover, touch, tap, long press) to fail recognition when
+        running iOS apps on macOS. To address this, we set a flag on WKRemoteView's CALayerHost to prevent hit-testing
+        to the remote layer. This allows us to avoid routing HID events to the wrong context, and instead target the
+        main UIWindow.
+
+        Manually verified that click, touch, and mouseenter/mouseleave events are dispatched when interacting over a
+        video element.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (-[WKRemoteView initWithFrame:contextID:]):
+
 2018-06-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233232.
