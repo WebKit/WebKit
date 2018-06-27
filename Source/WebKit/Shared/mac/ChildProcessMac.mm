@@ -211,13 +211,11 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
     }
 
-    if (shouldOverrideQuarantine()) {
-        // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
-        OSStatus error = enableSandboxStyleFileQuarantine();
-        if (error) {
-            WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
-            exit(EX_NOPERM);
-        }
+    // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
+    OSStatus error = enableSandboxStyleFileQuarantine();
+    if (error) {
+        WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
+        exit(EX_NOPERM);
     }
 }
 

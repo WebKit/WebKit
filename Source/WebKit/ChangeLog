@@ -1,3 +1,17 @@
+2018-06-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r233232.
+        https://bugs.webkit.org/show_bug.cgi?id=187081
+
+        "This is breaking launching some plugins" (Requested by youenn
+        on #webkit).
+
+        Reverted changeset:
+
+        "Remove quarantine for Webex plugin"
+        https://bugs.webkit.org/show_bug.cgi?id=187050
+        https://trac.webkit.org/changeset/233232
+
 2018-06-26  Timothy Horton  <timothy_horton@apple.com>
 
         Rearrange some WebPreferences; move two experimental prefs into the experimental section

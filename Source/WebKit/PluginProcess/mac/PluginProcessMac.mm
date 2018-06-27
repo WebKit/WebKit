@@ -688,10 +688,6 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }
 
-bool PluginProcess::shouldOverrideQuarantine()
-{
-    return m_pluginBundleIdentifier != "com.cisco.webex.plugin.gpc64";
-}
 
 void PluginProcess::stopRunLoop()
 {
