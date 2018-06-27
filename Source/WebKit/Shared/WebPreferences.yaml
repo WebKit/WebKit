@@ -1102,6 +1102,11 @@ LinkPreloadEnabled:
   defaultValue: true
   webcoreBinding: RuntimeEnabledFeatures
 
+IsSecureContextAttributeEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableName for all experimental features. They
@@ -1149,14 +1154,6 @@ MDNSICECandidatesEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
   condition: ENABLE(WEB_RTC)
-
-IsSecureContextAttributeEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "Secure Contexts API"
-  humanReadableDescription: "Enable Secure Contexts API"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
 
 FetchAPIKeepAliveEnabled:
   type: bool

@@ -1,5 +1,14 @@
 2018-06-27  Timothy Horton  <timothy_horton@apple.com>
 
+        Promote the Secure Context API feature from experimental-yet-on-by-default to always-on
+
+        Reviewed by Dan Bates.
+
+        * Shared/WebPreferences.yaml:
+        Secure Context API is on by default, it's not experimental anymore.
+
+2018-06-27  Timothy Horton  <timothy_horton@apple.com>
+
         Make Link Preload an on-by-default feature
         https://bugs.webkit.org/show_bug.cgi?id=187104
 
