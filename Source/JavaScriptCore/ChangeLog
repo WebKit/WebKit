@@ -1,3 +1,47 @@
+2018-06-27  Mark Lam  <mark.lam@apple.com>
+
+        Fix a bug in $vm.callFrame() and apply previously requested renaming of $vm.println to print.
+        https://bugs.webkit.org/show_bug.cgi?id=187119
+
+        Reviewed by Keith Miller.
+
+        $vm.callFrame()'s JSDollarVMCallFrame::finishCreation()
+        should be checking for codeBlock instead of !codeBlock
+        before using the codeBlock.
+
+        I also renamed some other "print" functions to use "dump" instead
+        to match their underlying C++ code that they will call e.g.
+        CodeBlock::dumpSource().
+
+        * tools/JSDollarVM.cpp:
+        (WTF::JSDollarVMCallFrame::finishCreation):
+        (JSC::functionDumpSourceFor):
+        (JSC::functionDumpBytecodeFor):
+        (JSC::doPrint):
+        (JSC::functionDataLog):
+        (JSC::functionPrint):
+        (JSC::functionDumpCallFrame):
+        (JSC::functionDumpStack):
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::functionPrintSourceFor): Deleted.
+        (JSC::functionPrintBytecodeFor): Deleted.
+        (JSC::doPrintln): Deleted.
+        (JSC::functionPrintln): Deleted.
+        (JSC::functionPrintCallFrame): Deleted.
+        (JSC::functionPrintStack): Deleted.
+        * tools/VMInspector.cpp:
+        (JSC::DumpFrameFunctor::DumpFrameFunctor):
+        (JSC::DumpFrameFunctor::operator() const):
+        (JSC::VMInspector::dumpCallFrame):
+        (JSC::VMInspector::dumpStack):
+        (JSC::VMInspector::dumpValue):
+        (JSC::PrintFrameFunctor::PrintFrameFunctor): Deleted.
+        (JSC::PrintFrameFunctor::operator() const): Deleted.
+        (JSC::VMInspector::printCallFrame): Deleted.
+        (JSC::VMInspector::printStack): Deleted.
+        (JSC::VMInspector::printValue): Deleted.
+        * tools/VMInspector.h:
+
 2018-06-27  Keith Miller  <keith_miller@apple.com>
 
         Add logging to try to diagnose where we get a null structure.

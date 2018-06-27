@@ -99,7 +99,7 @@ public:
                 addProperty(vm, "callee", visitor->callee().asCell());
 
             CodeBlock* codeBlock = visitor->codeBlock();
-            if (!codeBlock) {
+            if (codeBlock) {
                 addProperty(vm, "codeBlock", codeBlock);
                 addProperty(vm, "unlinkedCodeBlock", codeBlock->unlinkedCodeBlock());
                 addProperty(vm, "executable", codeBlock->ownerExecutable());
@@ -1316,6 +1316,17 @@ static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)
 // Gets a JSDollarVMCallFrame for a specified frame index.
 // Usage: var callFrame = $vm.callFrame(0) // frame 0 is the top frame.
 // Usage: var callFrame = $vm.callFrame() // implies frame 0 i.e. current frame.
+//
+// This gives you the ability to query the following:
+//    callFrame.valid; // false if we asked for a frame beyond the end of the stack, else true.
+//    callFrame.callee;
+//    callFrame.codeBlock;
+//    callFrame.unlinkedCodeBlock;
+//    callFrame.executable;
+//
+// Note: you cannot toString() a codeBlock, unlinkedCodeBlock, or executable because
+// there are internal objects and not a JS object. Hence, you cannot do string
+// concatenation with them.
 static EncodedJSValue JSC_HOST_CALL functionCallFrame(ExecState* exec)
 {
     unsigned frameNumber = 1;
@@ -1385,8 +1396,10 @@ static CodeBlock* codeBlockFromArg(ExecState* exec)
     return nullptr;
 }
 
-// Usage: print("codeblock = " + $vm.codeBlockFor(functionObj))
-// Usage: print("codeblock = " + $vm.codeBlockFor(codeBlockToken))
+// Usage: $vm.print("codeblock = ", $vm.codeBlockFor(functionObj))
+// Usage: $vm.print("codeblock = ", $vm.codeBlockFor(codeBlockToken))
+// Note: you cannot toString() a codeBlock because it's an internal object and not
+// a JS object. Hence, you cannot do string concatenation with it.
 static EncodedJSValue JSC_HOST_CALL functionCodeBlockFor(ExecState* exec)
 {
     CodeBlock* codeBlock = codeBlockFromArg(exec);
@@ -1398,9 +1411,9 @@ static EncodedJSValue JSC_HOST_CALL functionCodeBlockFor(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-// Usage: $vm.printSourceFor(functionObj)
-// Usage: $vm.printSourceFor(codeBlockToken)
-static EncodedJSValue JSC_HOST_CALL functionPrintSourceFor(ExecState* exec)
+// Usage: $vm.dumpSourceFor(functionObj)
+// Usage: $vm.dumpSourceFor(codeBlockToken)
+static EncodedJSValue JSC_HOST_CALL functionDumpSourceFor(ExecState* exec)
 {
     CodeBlock* codeBlock = codeBlockFromArg(exec);
     if (codeBlock)
@@ -1408,9 +1421,9 @@ static EncodedJSValue JSC_HOST_CALL functionPrintSourceFor(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-// Usage: $vm.printBytecodeFor(functionObj)
-// Usage: $vm.printBytecode(codeBlockToken)
-static EncodedJSValue JSC_HOST_CALL functionPrintBytecodeFor(ExecState* exec)
+// Usage: $vm.dumpBytecodeFor(functionObj)
+// Usage: $vm.dumpBytecodeFor(codeBlock)
+static EncodedJSValue JSC_HOST_CALL functionDumpBytecodeFor(ExecState* exec)
 {
     CodeBlock* codeBlock = codeBlockFromArg(exec);
     if (codeBlock)
@@ -1418,7 +1431,7 @@ static EncodedJSValue JSC_HOST_CALL functionPrintBytecodeFor(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-static EncodedJSValue doPrintln(ExecState* exec, bool addLineFeed)
+static EncodedJSValue doPrint(ExecState* exec, bool addLineFeed)
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
@@ -1440,43 +1453,43 @@ static EncodedJSValue doPrintln(ExecState* exec, bool addLineFeed)
 }
 
 // Prints a series of comma separate strings without appending a newline.
-// Usage: $vm.print(str1, str2, str3)
-static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
+// Usage: $vm.dataLog(str1, str2, str3)
+static EncodedJSValue JSC_HOST_CALL functionDataLog(ExecState* exec)
 {
     const bool addLineFeed = false;
-    return doPrintln(exec, addLineFeed);
+    return doPrint(exec, addLineFeed);
 }
 
 // Prints a series of comma separate strings and appends a newline.
-// Usage: $vm.println(str1, str2, str3)
-static EncodedJSValue JSC_HOST_CALL functionPrintln(ExecState* exec)
+// Usage: $vm.print(str1, str2, str3)
+static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 {
     const bool addLineFeed = true;
-    return doPrintln(exec, addLineFeed);
+    return doPrint(exec, addLineFeed);
 }
 
-// Prints the current CallFrame.
-// Usage: $vm.printCallFrame()
-static EncodedJSValue JSC_HOST_CALL functionPrintCallFrame(ExecState* exec)
+// Dumps the current CallFrame.
+// Usage: $vm.dumpCallFrame()
+static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState* exec)
 {
-    // When the callers call this function, they are expecting to print their
+    // When the callers call this function, they are expecting to dump their
     // own frame. So skip 1 for this frame.
-    VMInspector::printCallFrame(exec, 1);
+    VMInspector::dumpCallFrame(exec, 1);
     return JSValue::encode(jsUndefined());
 }
 
-// Prints the JS stack.
+// Dumps the JS stack.
 // Usage: $vm.printStack()
-static EncodedJSValue JSC_HOST_CALL functionPrintStack(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL functionDumpStack(ExecState* exec)
 {
-    // When the callers call this function, they are expecting to print the
+    // When the callers call this function, they are expecting to dump the
     // stack starting their own frame. So skip 1 for this frame.
-    VMInspector::printStack(exec, 1);
+    VMInspector::dumpStack(exec, 1);
     return JSValue::encode(jsUndefined());
 }
 
 // Gets the dataLog dump of the indexingMode of the passed value.
-// Usage: print("indexingMode = " + $vm.indexingMode(jsValue))
+// Usage: $vm.print("indexingMode = " + $vm.indexingMode(jsValue))
 static EncodedJSValue JSC_HOST_CALL functionIndexingMode(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
@@ -1497,7 +1510,7 @@ static EncodedJSValue JSC_HOST_CALL functionInlineCapacity(ExecState* exec)
 }
 
 // Gets the dataLog dump of a given JS value as a string.
-// Usage: print("value = " + $vm.value(jsValue))
+// Usage: $vm.print("value = " + $vm.value(jsValue))
 static EncodedJSValue JSC_HOST_CALL functionValue(ExecState* exec)
 {
     WTF::StringPrintStream stream;
@@ -1511,7 +1524,7 @@ static EncodedJSValue JSC_HOST_CALL functionValue(ExecState* exec)
 }
 
 // Gets the pid of the current process.
-// Usage: print("pid = " + $vm.getpid())
+// Usage: $vm.print("pid = " + $vm.getpid())
 static EncodedJSValue JSC_HOST_CALL functionGetPID(ExecState*)
 {
     return JSValue::encode(jsNumber(getCurrentProcessID()));
@@ -1968,13 +1981,13 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "callFrame", functionCallFrame, 1);
     addFunction(vm, "codeBlockFor", functionCodeBlockFor, 1);
     addFunction(vm, "codeBlockForFrame", functionCodeBlockForFrame, 1);
-    addFunction(vm, "printSourceFor", functionPrintSourceFor, 1);
-    addFunction(vm, "printBytecodeFor", functionPrintBytecodeFor, 1);
+    addFunction(vm, "dumpSourceFor", functionDumpSourceFor, 1);
+    addFunction(vm, "dumpBytecodeFor", functionDumpBytecodeFor, 1);
 
+    addFunction(vm, "dataLog", functionDataLog, 1);
     addFunction(vm, "print", functionPrint, 1);
-    addFunction(vm, "println", functionPrintln, 1);
-    addFunction(vm, "printCallFrame", functionPrintCallFrame, 0);
-    addFunction(vm, "printStack", functionPrintStack, 0);
+    addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
+    addFunction(vm, "dumpStack", functionDumpStack, 0);
 
     addFunction(vm, "indexingMode", functionIndexingMode, 1);
     addFunction(vm, "inlineCapacity", functionInlineCapacity, 1);

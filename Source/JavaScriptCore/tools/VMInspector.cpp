@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -326,14 +326,14 @@ CodeBlock* VMInspector::codeBlockForFrame(CallFrame* topCallFrame, unsigned fram
     return functor.codeBlock;
 }
 
-class PrintFrameFunctor {
+class DumpFrameFunctor {
 public:
     enum Action {
-        PrintOne,
-        PrintAll
+        DumpOne,
+        DumpAll
     };
 
-    PrintFrameFunctor(Action action, unsigned framesToSkip)
+    DumpFrameFunctor(Action action, unsigned framesToSkip)
         : m_action(action)
         , m_framesToSkip(framesToSkip)
     {
@@ -347,7 +347,7 @@ public:
                 out.print("[", (m_currentFrame - m_framesToSkip - 1), "] ");
             });
         }
-        if (m_action == PrintOne && m_currentFrame > m_framesToSkip)
+        if (m_action == DumpOne && m_currentFrame > m_framesToSkip)
             return StackVisitor::Done;
         return StackVisitor::Continue;
     }
@@ -358,25 +358,25 @@ private:
     mutable unsigned m_currentFrame { 0 };
 };
 
-void VMInspector::printCallFrame(CallFrame* callFrame, unsigned framesToSkip)
+void VMInspector::dumpCallFrame(CallFrame* callFrame, unsigned framesToSkip)
 {
     if (!ensureCurrentThreadOwnsJSLock(callFrame))
         return;
-    PrintFrameFunctor functor(PrintFrameFunctor::PrintOne, framesToSkip);
+    DumpFrameFunctor functor(DumpFrameFunctor::DumpOne, framesToSkip);
     callFrame->iterate(functor);
 }
 
-void VMInspector::printStack(CallFrame* topCallFrame, unsigned framesToSkip)
+void VMInspector::dumpStack(CallFrame* topCallFrame, unsigned framesToSkip)
 {
     if (!ensureCurrentThreadOwnsJSLock(topCallFrame))
         return;
     if (!topCallFrame)
         return;
-    PrintFrameFunctor functor(PrintFrameFunctor::PrintAll, framesToSkip);
+    DumpFrameFunctor functor(DumpFrameFunctor::DumpAll, framesToSkip);
     topCallFrame->iterate(functor);
 }
 
-void VMInspector::printValue(JSValue value)
+void VMInspector::dumpValue(JSValue value)
 {
     dataLog(value);
 }
