@@ -1,5 +1,22 @@
 2018-06-27  Youenn Fablet  <youenn@apple.com>
 
+        Add a sandbox profile for some additional bank plugins
+        https://bugs.webkit.org/show_bug.cgi?id=187105
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/PlugInSandboxProfiles/cfca.com.npCryptoKit.CGB.MAC.sb: Added.
+        * Resources/PlugInSandboxProfiles/cfca.com.npP11CertEnroll.MAC.CGB.sb: Added.
+        * Resources/PlugInSandboxProfiles/com.apple.BocomSubmitCtrl.sb: Added.
+        * Resources/PlugInSandboxProfiles/com.apple.NPSafeInput.sb: Added.
+        * Resources/PlugInSandboxProfiles/com.apple.NPSafeSubmit.sb: Added.
+        * Resources/PlugInSandboxProfiles/com.cfca.npSecEditCtl.MAC.BOC.plugin.sb: Added.
+        * Resources/PlugInSandboxProfiles/com.cmbchina.CMBSecurity.sb: Added.
+        * Resources/PlugInSandboxProfiles/com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier.sb: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2018-06-27  Youenn Fablet  <youenn@apple.com>
+
         NetworkLoadChecker should not need to hard ref NetworkConnectionToWebProcess
         https://bugs.webkit.org/show_bug.cgi?id=186551
 

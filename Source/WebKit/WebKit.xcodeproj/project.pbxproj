@@ -913,6 +913,13 @@
 		410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 410482CC1DDD2FB500F006D0 /* RTCNetwork.h */; };
 		4112B5551FA0EA7A00E67875 /* NetworkRTCResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */; };
 		4112B5551FA0EA7A00E67986 /* NetworkRTCResolverCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */; };
+		4112EDDA20E407A500BEA92A /* cfca.com.npP11CertEnroll.MAC.CGB.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD620E4077400BEA92A /* cfca.com.npP11CertEnroll.MAC.CGB.sb */; };
+		4112EDDB20E407A500BEA92A /* com.apple.BocomSubmitCtrl.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD920E4077500BEA92A /* com.apple.BocomSubmitCtrl.sb */; };
+		4112EDDC20E407A500BEA92A /* com.apple.NPSafeInput.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD820E4077500BEA92A /* com.apple.NPSafeInput.sb */; };
+		4112EDDD20E407A500BEA92A /* com.apple.NPSafeSubmit.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD720E4077500BEA92A /* com.apple.NPSafeSubmit.sb */; };
+		4112EDDE20E407A500BEA92A /* com.cfca.npSecEditCtl.MAC.BOC.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD320E4077400BEA92A /* com.cfca.npSecEditCtl.MAC.BOC.plugin.sb */; };
+		4112EDDF20E407A500BEA92A /* com.cmbchina.CMBSecurity.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD520E4077400BEA92A /* com.cmbchina.CMBSecurity.sb */; };
+		4112EDE020E407A500BEA92A /* com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD220E4077300BEA92A /* com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier.sb */; };
 		411A8DDB20DDD1AC0060D34F /* WKMockMediaDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		411A8DDC20DDD23F0060D34F /* WKMockMediaDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 411A8DDA20DDB6050060D34F /* WKMockMediaDevice.cpp */; };
 		411B22641E371BA6004F7363 /* LibWebRTCNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 411B22621E371244004F7363 /* LibWebRTCNetwork.h */; };
@@ -2336,6 +2343,13 @@
 			dstPath = PlugInSandboxProfiles;
 			dstSubfolderSpec = 7;
 			files = (
+				4112EDDA20E407A500BEA92A /* cfca.com.npP11CertEnroll.MAC.CGB.sb in Copy Plug-in Sandbox Profiles */,
+				4112EDDB20E407A500BEA92A /* com.apple.BocomSubmitCtrl.sb in Copy Plug-in Sandbox Profiles */,
+				4112EDDC20E407A500BEA92A /* com.apple.NPSafeInput.sb in Copy Plug-in Sandbox Profiles */,
+				4112EDDD20E407A500BEA92A /* com.apple.NPSafeSubmit.sb in Copy Plug-in Sandbox Profiles */,
+				4112EDDE20E407A500BEA92A /* com.cfca.npSecEditCtl.MAC.BOC.plugin.sb in Copy Plug-in Sandbox Profiles */,
+				4112EDDF20E407A500BEA92A /* com.cmbchina.CMBSecurity.sb in Copy Plug-in Sandbox Profiles */,
+				4112EDE020E407A500BEA92A /* com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier.sb in Copy Plug-in Sandbox Profiles */,
 				E19BDA86193665E300B97F57 /* com.apple.appstore.CodeRedeemerNetscapePlugin.sb in Copy Plug-in Sandbox Profiles */,
 				7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */,
 				7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */,
@@ -3306,6 +3320,14 @@
 		4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCResolverCocoa.cpp; path = NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp; sourceTree = "<group>"; };
 		4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCResolver.h; path = NetworkProcess/webrtc/NetworkRTCResolver.h; sourceTree = "<group>"; };
 		4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCResolverCocoa.h; path = NetworkProcess/webrtc/NetworkRTCResolverCocoa.h; sourceTree = "<group>"; };
+		4112EDD220E4077300BEA92A /* com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier.sb"; sourceTree = "<group>"; };
+		4112EDD320E4077400BEA92A /* com.cfca.npSecEditCtl.MAC.BOC.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.cfca.npSecEditCtl.MAC.BOC.plugin.sb; sourceTree = "<group>"; };
+		4112EDD420E4077400BEA92A /* cfca.com.npCryptoKit.CGB.MAC.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cfca.com.npCryptoKit.CGB.MAC.sb; sourceTree = "<group>"; };
+		4112EDD520E4077400BEA92A /* com.cmbchina.CMBSecurity.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.cmbchina.CMBSecurity.sb; sourceTree = "<group>"; };
+		4112EDD620E4077400BEA92A /* cfca.com.npP11CertEnroll.MAC.CGB.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cfca.com.npP11CertEnroll.MAC.CGB.sb; sourceTree = "<group>"; };
+		4112EDD720E4077500BEA92A /* com.apple.NPSafeSubmit.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.NPSafeSubmit.sb; sourceTree = "<group>"; };
+		4112EDD820E4077500BEA92A /* com.apple.NPSafeInput.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.NPSafeInput.sb; sourceTree = "<group>"; };
+		4112EDD920E4077500BEA92A /* com.apple.BocomSubmitCtrl.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.BocomSubmitCtrl.sb; sourceTree = "<group>"; };
 		411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockMediaDevice.h; sourceTree = "<group>"; };
 		411A8DDA20DDB6050060D34F /* WKMockMediaDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockMediaDevice.cpp; sourceTree = "<group>"; };
 		411B22621E371244004F7363 /* LibWebRTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCNetwork.h; path = Network/webrtc/LibWebRTCNetwork.h; sourceTree = "<group>"; };
@@ -6950,10 +6972,18 @@
 		7CB16FE11724B9B5007A0A95 /* PlugInSandboxProfiles */ = {
 			isa = PBXGroup;
 			children = (
+				4112EDD420E4077400BEA92A /* cfca.com.npCryptoKit.CGB.MAC.sb */,
+				4112EDD620E4077400BEA92A /* cfca.com.npP11CertEnroll.MAC.CGB.sb */,
 				E19BDA8419365F4B00B97F57 /* com.apple.appstore.CodeRedeemerNetscapePlugin.sb */,
+				4112EDD920E4077500BEA92A /* com.apple.BocomSubmitCtrl.sb */,
 				7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */,
+				4112EDD820E4077500BEA92A /* com.apple.NPSafeInput.sb */,
+				4112EDD720E4077500BEA92A /* com.apple.NPSafeSubmit.sb */,
 				7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */,
+				4112EDD320E4077400BEA92A /* com.cfca.npSecEditCtl.MAC.BOC.plugin.sb */,
 				414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */,
+				4112EDD520E4077400BEA92A /* com.cmbchina.CMBSecurity.sb */,
+				4112EDD220E4077300BEA92A /* com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier.sb */,
 				413CCD4F20DEBC2F0065A21A /* com.google.googletalkbrowserplugin.sb */,
 				4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */,
 				7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */,
