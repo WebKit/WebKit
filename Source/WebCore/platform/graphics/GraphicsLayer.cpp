@@ -787,7 +787,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
         ts << indent << "(acceleratesDrawing " << m_acceleratesDrawing << ")\n";
 
     if (behavior & LayerTreeAsTextIncludeBackingStoreAttached)
-        ts << indent << "(backingStoreAttached " << backingStoreAttached() << ")\n";
+        ts << indent << "(backingStoreAttached " << backingStoreAttachedForTesting() << ")\n";
 
     if (!m_transform.isIdentity()) {
         ts << indent << "(transform ";
@@ -931,7 +931,7 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
     if (!layer)
         return;
 
-    String output = layer->layerTreeAsText(WebCore::LayerTreeAsTextDebug | WebCore::LayerTreeAsTextIncludeVisibleRects | WebCore::LayerTreeAsTextIncludeTileCaches | WebCore::LayerTreeAsTextIncludeContentLayers);
+    String output = layer->layerTreeAsText(WebCore::LayerTreeAsTextShowAll);
     fprintf(stderr, "%s\n", output.utf8().data());
 }
 #endif

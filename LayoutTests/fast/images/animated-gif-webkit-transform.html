@@ -4,13 +4,13 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body onload="runTest()">
-<div id="scroller" style="width: 800px; overflow: hidden">
-    <div id="scroller-cont" style="height: 245px; width: 1600px; position: relative; top: 0; left: 0; -webkit-transform: translate(0px, 0px) translateZ(0px);">
-        <div id="wrapper1" style="-webkit-transform: translate3d(0px, 0px, 0px); width: 800px; height: 245px; float: left; margin: 0; padding: 0">
+<div id="scroller" style="width: 800px; overflow: scroll">
+    <div id="scroller-cont" style="height: 245px; width: 1410px; position: relative; top: 0; left: 0; -webkit-transform: translate(0px, 0px) translateZ(0px);">
+        <div id="wrapper1" style="-webkit-transform: translate3d(0px, 0px, 0px); width: 710px; height: 245px; float: left; margin: 0; padding: 0">
             <img id="a" src="resources/animated.gif"/>
         </div>
-        <div id="wrapper2" style="-webkit-transform: translate3d(0px, 0px, 0px); width: 800px; height: 245px; float: left; margin: 0; padding: 0">
-            <img id="b" src="resources/animated-10color.gif"/>
+        <div id="wrapper2" style="-webkit-transform: translate3d(0px, 0px, 0px); width: 700px; height: 245px; float: left; margin: 0; padding: 0">
+            <img id="b" src="resources/animated-10color.gif" style="margin-left: 100px;"/>
         </div>
     </div>
 </div>
@@ -42,7 +42,7 @@ function translateImagesLeft() {
   shouldBeFalse("isFirstImagePaused()");
   debug("Translating images left so that first image is no longer visible, but second image is.");
   forceLayout();
-  document.getElementById("scroller-cont").style["-webkit-transform"] = "translate(-800px, 0px)";
+  document.getElementById("scroller-cont").style["-webkit-transform"] = "translate(-610px, 0px)";
   shouldBecomeEqual("isFirstImagePaused()", "true", checkSecondImageUnpaused);
 }
 

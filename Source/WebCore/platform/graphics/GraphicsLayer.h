@@ -552,6 +552,7 @@ public:
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;
 
     virtual bool backingStoreAttached() const { return true; }
+    virtual bool backingStoreAttachedForTesting() const { return backingStoreAttached(); }
 
     void setCanDetachBackingStore(bool b) { m_canDetachBackingStore = b; }
     bool canDetachBackingStore() const { return m_canDetachBackingStore; }

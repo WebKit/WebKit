@@ -158,7 +158,7 @@ inline void dumpStats()
     task_vm_info_data_t vmInfo;
     mach_msg_type_number_t vmSize = TASK_VM_INFO_COUNT;
     if (KERN_SUCCESS == task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)(&vmInfo), &vmSize)) {
-        dump("phys_footrpint", vmInfo.phys_footprint);
+        dump("phys_footprint", vmInfo.phys_footprint);
         dump("internal+compressed", vmInfo.internal + vmInfo.compressed);
     }
 #endif

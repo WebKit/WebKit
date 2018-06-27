@@ -1,3 +1,43 @@
+2018-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        https://hackernoon.com/ uses lots of layer backing store
+        https://bugs.webkit.org/show_bug.cgi?id=186909
+        rdar://problem/40257540
+
+        Reviewed by Tim Horton.
+        
+        The existing "backing store detached" logic, which was used to eliminate backing store
+        for compositing layers outside the viewport, had a number of bugs that allowed layers
+        to have backing store when they should not.
+        
+        Specifically, any code path that ended up in setNeedsDisplay{InRect}() in PlatformCALayer
+        could trigger backing store creation on layers that should have never had any.
+        
+        Rather than monkeypatch all the GraphicsLayerCA call sites that call setNeedsDisplay{InRect}(),
+        just bail early from the PlatformCALayer* methods that trigger repaints.
+        
+        Tests didn't catch this because they just dumped the state of the backingStoreAttached flag. To fix this,
+        create backingStoreAttachedForTesting() which also tests whether the layer has contents.
+
+        Test: compositing/backing/backing-store-attachment-outside-viewport.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        (showGraphicsLayerTree):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::backingStoreAttachedForTesting const):
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::backingStoreAttachedForTesting const):
+        (WebCore::GraphicsLayerCA::setNeedsDisplay):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::setNeedsDisplay):
+        (PlatformCALayerCocoa::setNeedsDisplayInRect):
+        (PlatformCALayerCocoa::hasContents const):
+
 2018-06-27  David Kilzer  <ddkilzer@apple.com>
 
         Fix clang static analyzer warnings: Branch condition evaluates to a garbage value

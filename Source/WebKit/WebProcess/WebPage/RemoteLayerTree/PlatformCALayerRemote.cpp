@@ -190,7 +190,9 @@ void PlatformCALayerRemote::didCommit()
 void PlatformCALayerRemote::ensureBackingStore()
 {
     ASSERT(owner());
-    
+
+    ASSERT(m_properties.backingStoreAttached);
+
     if (!m_properties.backingStore)
         m_properties.backingStore = std::make_unique<RemoteLayerBackingStore>(this);
 
@@ -202,11 +204,16 @@ void PlatformCALayerRemote::updateBackingStore()
     if (!m_properties.backingStore)
         return;
 
+    ASSERT(m_properties.backingStoreAttached);
+
     m_properties.backingStore->ensureBackingStore(m_properties.bounds.size(), m_properties.contentsScale, m_acceleratesDrawing, m_wantsDeepColorBackingStore, m_properties.opaque);
 }
 
 void PlatformCALayerRemote::setNeedsDisplayInRect(const FloatRect& rect)
 {
+    if (!m_properties.backingStoreAttached)
+        return;
+
     ensureBackingStore();
 
     // FIXME: Need to map this through contentsRect/etc.
@@ -215,6 +222,9 @@ void PlatformCALayerRemote::setNeedsDisplayInRect(const FloatRect& rect)
 
 void PlatformCALayerRemote::setNeedsDisplay()
 {
+    if (!m_properties.backingStoreAttached)
+        return;
+
     ensureBackingStore();
 
     m_properties.backingStore->setNeedsDisplay();
@@ -536,13 +546,18 @@ void PlatformCALayerRemote::setUserInteractionEnabled(bool value)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::UserInteractionEnabledChanged);
 }
 
-void PlatformCALayerRemote::setBackingStoreAttached(bool value)
+void PlatformCALayerRemote::setBackingStoreAttached(bool attached)
 {
-    if (m_properties.backingStoreAttached == value)
+    if (m_properties.backingStoreAttached == attached)
         return;
 
-    m_properties.backingStoreAttached = value;
+    m_properties.backingStoreAttached = attached;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreAttachmentChanged);
+    
+    if (attached)
+        setNeedsDisplay();
+    else
+        m_properties.backingStore = nullptr;
 }
 
 bool PlatformCALayerRemote::backingStoreAttached() const
@@ -615,6 +630,11 @@ bool PlatformCALayerRemote::supportsSubpixelAntialiasedText() const
 
 void PlatformCALayerRemote::setSupportsSubpixelAntialiasedText(bool)
 {
+}
+
+bool PlatformCALayerRemote::hasContents() const
+{
+    return !!m_properties.backingStore;
 }
 
 CFTypeRef PlatformCALayerRemote::contents() const

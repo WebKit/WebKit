@@ -390,6 +390,8 @@ bool BitmapImage::canDestroyDecodedData()
 
 BitmapImage::StartAnimationStatus BitmapImage::internalStartAnimation()
 {
+    LOG_WITH_STREAM(Images, stream << "BitmapImage " << this << " internalStartAnimation");
+
     if (!canAnimate())
         return StartAnimationStatus::CannotStart;
 

@@ -264,6 +264,7 @@ private:
     bool isRunningTransformAnimation() const;
 
     WEBCORE_EXPORT bool backingStoreAttached() const override;
+    WEBCORE_EXPORT bool backingStoreAttachedForTesting() const override;
 
     bool animationIsRunning(const String& animationName) const
     {

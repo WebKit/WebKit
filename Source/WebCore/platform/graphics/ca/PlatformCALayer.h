@@ -180,6 +180,7 @@ public:
     virtual bool supportsSubpixelAntialiasedText() const = 0;
     virtual void setSupportsSubpixelAntialiasedText(bool) = 0;
 
+    virtual bool hasContents() const = 0;
     virtual CFTypeRef contents() const = 0;
     virtual void setContents(CFTypeRef) = 0;
 

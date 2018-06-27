@@ -1,3 +1,22 @@
+2018-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        https://hackernoon.com/ uses lots of layer backing store
+        https://bugs.webkit.org/show_bug.cgi?id=186909
+        rdar://problem/40257540
+
+        Reviewed by Tim Horton.
+        
+        PlatformCALayerRemote was actually holding onto backing stores for layers with
+        backing store detached, which could increase memory use. When told that backing stores
+        are not attached, explicitly throw away the backing, and re-create it (via setNeedsDisplay)
+        when attached. This is now similar to what PlatformLayerCACocoa does.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::setNeedsDisplayInRect):
+        (WebKit::PlatformCALayerRemote::setNeedsDisplay):
+        (WebKit::PlatformCALayerRemote::hasContents const):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+
 2018-06-27  Jonathan Bedard  <jbedard@apple.com>
 
         Enable WebKit iOS 12 build

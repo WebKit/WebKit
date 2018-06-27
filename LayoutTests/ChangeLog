@@ -1,3 +1,16 @@
+2018-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        https://hackernoon.com/ uses lots of layer backing store
+        https://bugs.webkit.org/show_bug.cgi?id=186909
+        rdar://problem/40257540
+
+        Reviewed by Tim Horton.
+        
+        New test.
+
+        * compositing/backing/backing-store-attachment-outside-viewport-expected.txt: Added.
+        * compositing/backing/backing-store-attachment-outside-viewport.html: Added.
+
 2018-06-27  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] Remove the ability to set keyboard focus when VoiceOver takes focus

@@ -391,6 +391,9 @@ void PlatformCALayerCocoa::animationEnded(const String& animationKey)
 
 void PlatformCALayerCocoa::setNeedsDisplay()
 {
+    if (!m_backingStoreAttached)
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setNeedsDisplay];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -398,6 +401,9 @@ void PlatformCALayerCocoa::setNeedsDisplay()
 
 void PlatformCALayerCocoa::setNeedsDisplayInRect(const FloatRect& dirtyRect)
 {
+    if (!m_backingStoreAttached)
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setNeedsDisplayInRect:dirtyRect];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -638,6 +644,7 @@ void PlatformCALayerCocoa::setBackingStoreAttached(bool attached)
 {
     if (attached == m_backingStoreAttached)
         return;
+
     m_backingStoreAttached = attached;
 
     if (attached)
@@ -737,6 +744,11 @@ void PlatformCALayerCocoa::setSupportsSubpixelAntialiasedText(bool supportsSubpi
     }
 
     updateContentsFormat();
+}
+
+bool PlatformCALayerCocoa::hasContents() const
+{
+    return [m_layer contents];
 }
 
 CFTypeRef PlatformCALayerCocoa::contents() const

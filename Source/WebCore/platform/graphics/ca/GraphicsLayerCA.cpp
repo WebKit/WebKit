@@ -881,12 +881,14 @@ bool GraphicsLayerCA::backingStoreAttached() const
     return m_layer->backingStoreAttached();
 }
 
+bool GraphicsLayerCA::backingStoreAttachedForTesting() const
+{
+    return m_layer->backingStoreAttached() || m_layer->hasContents();
+}
+
 void GraphicsLayerCA::setNeedsDisplay()
 {
     if (!drawsContent())
-        return;
-
-    if (!backingStoreAttached())
         return;
 
     m_needsFullRepaint = true;
@@ -2348,6 +2350,8 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
         bool requiresBacking = m_intersectsCoverageRect
             || commitState.ancestorWithTransformAnimationIntersectsCoverageRect // FIXME: Compute backing exactly for descendants of animating layers.
             || (isRunningTransformAnimation() && !animationExtent()); // Create backing if we don't know the animation extent.
+
+        LOG_WITH_STREAM(Compositing, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking);
 
         m_layer->setBackingStoreAttached(requiresBacking);
         if (m_layerClones) {

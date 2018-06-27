@@ -1,3 +1,16 @@
+2018-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        https://hackernoon.com/ uses lots of layer backing store
+        https://bugs.webkit.org/show_bug.cgi?id=186909
+        rdar://problem/40257540
+
+        Reviewed by Tim Horton.
+        
+        Drive-by typo fix.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::dumpStats):
+
 2018-06-26  Saam Barati  <sbarati@apple.com>
 
         Unreviewed followup. Fix the watchos build after r233192.
