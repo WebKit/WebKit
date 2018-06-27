@@ -1373,7 +1373,6 @@ set(webrtc_SOURCES
     Source/webrtc/voice_engine/channel_proxy.cc
     Source/webrtc/voice_engine/transport_feedback_packet_loss_tracker.cc
     Source/webrtc/voice_engine/utility.cc
-    $<TARGET_OBJECTS:gflags>
     $<TARGET_OBJECTS:libsrtp>
 )
 
@@ -1461,30 +1460,6 @@ target_include_directories(webrtc PRIVATE
 target_link_libraries(webrtc ${VPX_LIBRARY})
 
 target_link_libraries(webrtc ${EVENT_LIBRARY})
-
-# gflags package compilation
-set(gflags_SOURCES
-    Source/third_party/gflags/src/src/gflags.cc
-    Source/third_party/gflags/src/src/gflags_completions.cc
-    Source/third_party/gflags/src/src/gflags_reporting.cc
-)
-
-add_library(gflags OBJECT ${gflags_SOURCES})
-
-target_compile_options(gflags PRIVATE
-    "-w"
-)
-
-target_compile_definitions(gflags PRIVATE
-    GFLAGS_DLL_DECL=
-    GFLAGS_DLL_DECLARE_FLAG=
-    GFLAGS_DLL_DEFINE_FLAG=
-)
-
-target_include_directories(gflags PRIVATE
-    Source/third_party/gflags/gen/posix/include/gflags/
-    Source/third_party/gflags/gen/posix/include/private/
-)
 
 # libsrtp package compilation
 set(libsrtp_SOURCES

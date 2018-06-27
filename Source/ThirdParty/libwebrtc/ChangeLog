@@ -1,3 +1,19 @@
+2018-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][WPE] Remove gflags from libwebrtc build
+        https://bugs.webkit.org/show_bug.cgi?id=187078
+
+        Reviewed by Alejandro G. Castro.
+
+        gflags is used only in libyuv unit tests. So the Apple ports do not build & link it.
+        GTK and WPE can do the same thing: not building gflags. By doing so, we can achieve
+        the following results.
+
+        1. Remove static initializers defined for gflags.
+        2. Reduce binary size.
+
+        * CMakeLists.txt:
+
 2018-06-25  Keith Rollin  <krollin@apple.com>
 
         Adjust webrtc library for LTO
