@@ -1,3 +1,21 @@
+2018-06-26  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231479): Unable to buy Odeon cinema tickets in STP (bogus 'X-Frame-Options' to 'SAMEORIGIN')
+        https://bugs.webkit.org/show_bug.cgi?id=186090
+        <rdar://problem/40692595>
+
+        Reviewed by Andy Estes.
+
+        Fix up Content Security Policy logic for checking the frame ancestors now that we
+        exclude the frame that initiated the load request.
+
+        Test: http/tests/security/XFrameOptions/cross-origin-iframe-post-form-to-parent-same-origin-x-frame-options-page-allow.html
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowFrameAncestors const): 
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkFrameAncestors):
+
 2018-06-26  Chris Dumez  <cdumez@apple.com>
 
         Simplify NetworkStorageSession::getAllStorageAccessEntries()

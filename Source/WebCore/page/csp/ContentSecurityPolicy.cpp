@@ -493,8 +493,7 @@ bool ContentSecurityPolicy::allowFrameAncestors(const Vector<RefPtr<SecurityOrig
 {
     if (overrideContentSecurityPolicy)
         return true;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!ancestorOrigins.isEmpty());
-    bool isTopLevelFrame = ancestorOrigins.size() == 1;
+    bool isTopLevelFrame = ancestorOrigins.isEmpty();
     if (isTopLevelFrame)
         return true;
     String sourceURL;

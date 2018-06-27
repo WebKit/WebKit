@@ -97,10 +97,9 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
     if (!directive)
         return true;
     bool didReceiveRedirectResponse = false;
-    auto end = ancestorOrigins.end();
-    for (auto it = ancestorOrigins.begin() + 1; it != end; ++it) {
-        URL origin = urlFromOrigin(*(*it));
-        if (!origin.isValid() || !directive->allows(origin, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
+    for (auto& origin : ancestorOrigins) {
+        URL originURL = urlFromOrigin(*origin);
+        if (!originURL.isValid() || !directive->allows(originURL, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
     return true;

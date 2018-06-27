@@ -331,7 +331,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     if (resourceLoader.options().mode == FetchOptions::Mode::Navigate) {
         Vector<RefPtr<SecurityOrigin>> frameAncestorOrigins;
-        for (auto* frame = resourceLoader.frame(); frame; frame = frame->tree().parent())
+        for (auto* frame = resourceLoader.frame()->tree().parent(); frame; frame = frame->tree().parent())
             frameAncestorOrigins.append(makeRefPtr(frame->document()->securityOrigin()));
         loadParameters.frameAncestorOrigins = WTFMove(frameAncestorOrigins);
     }

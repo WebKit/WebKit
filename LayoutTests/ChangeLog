@@ -1,3 +1,19 @@
+2018-06-26  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r231479): Unable to buy Odeon cinema tickets in STP (bogus 'X-Frame-Options' to 'SAMEORIGIN')
+        https://bugs.webkit.org/show_bug.cgi?id=186090
+        <rdar://problem/40692595>
+
+        Reviewed by Andy Estes.
+
+        Add a test to ensure that we allow a same-origin page with "X-Frame-Options: SAMEORIGIN" to
+        load as a result of a redirected cross-origin POST request.
+
+        * http/tests/security/XFrameOptions/cross-origin-iframe-post-form-to-parent-same-origin-x-frame-options-page-allow-expected.txt: Added.
+        * http/tests/security/XFrameOptions/cross-origin-iframe-post-form-to-parent-same-origin-x-frame-options-page-allow.html: Added.
+        * http/tests/security/XFrameOptions/resources/post-form-to-x-frame-options-parent-same-origin-allow.html: Added.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi:
+
 2018-06-26  Saam Barati  <sbarati@apple.com>
 
         JSImmutableButterfly can't be allocated from a subspace with HeapCell::Kind::Auxiliary
