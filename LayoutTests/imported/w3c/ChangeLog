@@ -1,3 +1,50 @@
+2018-06-26  Youenn Fablet  <youenn@apple.com>
+
+        Import wpt CORP tests
+        https://bugs.webkit.org/show_bug.cgi?id=187027
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/common/get-host-info.sub.js:
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch-in-iframe-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch-in-iframe.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/iframe-loads-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/iframe-loads.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/image-loads-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/image-loads.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/green.png: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/hello.py: Added.
+        (main):
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/iframe.py: Added.
+        (main):
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/iframeFetch.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/image.py: Added.
+        (main):
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/redirect.py: Added.
+        (main):
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/script.py: Added.
+        (main):
+        * web-platform-tests/fetch/cross-origin-resource-policy/resources/w3c-import.log: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.any-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.any.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.any.js: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.any.worker.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.https.window.js: Added.
+        (promise_test.t.return.new.Promise):
+        (promise_test.t.finally):
+        * web-platform-tests/fetch/cross-origin-resource-policy/script-loads-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/script-loads.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/syntax.any-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/syntax.any.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/syntax.any.js: Added.
+        (string_appeared_here.forEach.incorrectHeaderValue.promise_test.t.return.fetch.crossOriginURL.encodeURIComponent):
+        * web-platform-tests/fetch/cross-origin-resource-policy/syntax.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/syntax.any.worker.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/w3c-import.log: Added.
+
 2018-06-26  Frederic Wang  <fwang@igalia.com>
 
         Import WPT tests for webmessaging

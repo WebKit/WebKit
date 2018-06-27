@@ -14,6 +14,7 @@ http/wpt/service-workers [ Skip ]
 http/wpt/cache-storage [ Skip ]
 http/tests/cache-storage [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
+imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
 
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]

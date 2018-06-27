@@ -1,3 +1,16 @@
+2018-06-26  Youenn Fablet  <youenn@apple.com>
+
+        Import wpt CORP tests
+        https://bugs.webkit.org/show_bug.cgi?id=187027
+
+        Reviewed by Chris Dumez.
+
+        Skipping tests for WK1.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-06-26  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r231479): Unable to buy Odeon cinema tickets in STP (bogus 'X-Frame-Options' to 'SAMEORIGIN')

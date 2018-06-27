@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/hello.py?corp=SAME-ORIGIN because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/hello.py?corp=SAME-ORIGIN due to access control checks.
+CONSOLE MESSAGE: Cancelled load to http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/hello.py?corp=Same-Origin because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/hello.py?corp=Same-Origin due to access control checks.
+
+PASS Parsing Cross-Origin-Resource-Policy: same 
+PASS Parsing Cross-Origin-Resource-Policy: same, same-origin 
+FAIL Parsing Cross-Origin-Resource-Policy: SAME-ORIGIN promise_test: Unhandled rejection with value: object "TypeError: Cancelled load to http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/hello.py?corp=SAME-ORIGIN because it violates the resource's Cross-Origin-Resource-Policy response header."
+FAIL Parsing Cross-Origin-Resource-Policy: Same-Origin promise_test: Unhandled rejection with value: object "TypeError: Cancelled load to http://127.0.0.1:8800/fetch/cross-origin-resource-policy/resources/hello.py?corp=Same-Origin because it violates the resource's Cross-Origin-Resource-Policy response header."
+PASS Parsing Cross-Origin-Resource-Policy: same-origin, <> 
+PASS Parsing Cross-Origin-Resource-Policy: same-origin, same-origin 
+

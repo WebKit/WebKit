@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/fetch/cross-origin-resource-policy/resources/hello.py?corp=same-site because it violates the resource's Cross-Origin-Resource-Policy response header.
+
+PASS Cross-Origin-Resource-Policy: same-site blocks retrieving HTTPS from HTTP 
+
