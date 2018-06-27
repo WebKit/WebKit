@@ -1,3 +1,13 @@
+2018-06-26  Youenn Fablet  <youenn@apple.com>
+
+        Add a sandbox profile for com.google.o1dbrowserplugin plugin
+        https://bugs.webkit.org/show_bug.cgi?id=187067
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/PlugInSandboxProfiles/com.google.o1dbrowserplugin.sb: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-06-26  Tim Horton  <timothy_horton@apple.com>
 
         Promote two more experimental features to traditional features

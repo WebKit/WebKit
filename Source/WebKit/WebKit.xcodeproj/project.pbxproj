@@ -936,6 +936,7 @@
 		414DD37A20BF49A5006959FB /* com.cisco.webex.plugin.gpc64.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */; };
 		414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */; };
 		414DEDD81F9EDDE50047C40D /* ServiceWorkerProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */; };
+		4157E4B020E2ECDF00A6C0D7 /* com.google.o1dbrowserplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */; };
 		41897ECF1F415D620016FA42 /* WebCacheStorageConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ECE1F415D5C0016FA42 /* WebCacheStorageConnection.cpp */; };
 		41897ED01F415D650016FA42 /* WebCacheStorageProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ECC1F415D5C0016FA42 /* WebCacheStorageProvider.cpp */; };
 		41897ED11F415D680016FA42 /* WebCacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ECD1F415D5C0016FA42 /* WebCacheStorageConnection.h */; };
@@ -2341,6 +2342,7 @@
 				7A772C8D1DDD4A25000F34F1 /* com.apple.WebKit.plugin-common.sb in Copy Plug-in Sandbox Profiles */,
 				414DD37A20BF49A5006959FB /* com.cisco.webex.plugin.gpc64.sb in Copy Plug-in Sandbox Profiles */,
 				413CCD5020DEBC740065A21A /* com.google.googletalkbrowserplugin.sb in Copy Plug-in Sandbox Profiles */,
+				4157E4B020E2ECDF00A6C0D7 /* com.google.o1dbrowserplugin.sb in Copy Plug-in Sandbox Profiles */,
 				A102A7081EC0EEE900D81D82 /* com.macromedia.Flash Player ESR.plugin.sb in Copy Plug-in Sandbox Profiles */,
 				7CB16FF21724BA28007A0A95 /* com.macromedia.Flash Player.plugin.sb in Copy Plug-in Sandbox Profiles */,
 				7CB16FF31724BA2F007A0A95 /* com.microsoft.SilverlightPlugin.sb in Copy Plug-in Sandbox Profiles */,
@@ -3333,6 +3335,7 @@
 		414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProcessProxy.h; sourceTree = "<group>"; };
 		414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProcessProxy.cpp; sourceTree = "<group>"; };
 		4151E5C31FBB90A900E47E2D /* FormDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataReference.h; sourceTree = "<group>"; };
+		4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.google.o1dbrowserplugin.sb; sourceTree = "<group>"; };
 		41897ECB1F415D5C0016FA42 /* WebCacheStorageConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCacheStorageConnection.messages.in; sourceTree = "<group>"; };
 		41897ECC1F415D5C0016FA42 /* WebCacheStorageProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCacheStorageProvider.cpp; sourceTree = "<group>"; };
 		41897ECD1F415D5C0016FA42 /* WebCacheStorageConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageConnection.h; sourceTree = "<group>"; };
@@ -6951,6 +6954,7 @@
 				7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */,
 				414DD37820BF43EA006959FB /* com.cisco.webex.plugin.gpc64.sb */,
 				413CCD4F20DEBC2F0065A21A /* com.google.googletalkbrowserplugin.sb */,
+				4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */,
 				7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */,
 				7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */,
 				7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */,
