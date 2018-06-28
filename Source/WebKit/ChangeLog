@@ -1,3 +1,14 @@
+2018-06-28  Youenn Fablet  <youenn@apple.com>
+
+        Add sandbox to microdone plugin
+        https://bugs.webkit.org/show_bug.cgi?id=187149
+        rdar://problem/41538057
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/PlugInSandboxProfiles/cn.microdone.cmb.safari: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-06-28  Brian Burg  <bburg@apple.com>
 
         Web Inspector: REGRESSION(r223770): "Open Link" context menu action on a linkified URL doesn't work
