@@ -142,9 +142,13 @@ class TestSummaryProviders(unittest.TestCase):
     # MARK: WTFVector_SummaryProvider test cases
 
     def serial_test_WTFVectorProvider_empty_vector(self):
-        summary = lldb_webkit.WTFVector_SummaryProvider(self._sbFrame.FindVariable('anEmptyVector'), {})
+        variable = self._sbFrame.FindVariable('anEmptyVector');
+        self.assertIsNotNone(variable)
+        summary = lldb_webkit.WTFVector_SummaryProvider(variable, {})
         self.assertEqual(summary, "{ size = 0, capacity = 0 }")
 
     def serial_test_WTFVectorProvider_vector_size_and_capacity(self):
-        summary = lldb_webkit.WTFVector_SummaryProvider(self._sbFrame.FindVariable('aVectorWithOneItem'), {})
+        variable = self._sbFrame.FindVariable('aVectorWithOneItem');
+        self.assertIsNotNone(variable)
+        summary = lldb_webkit.WTFVector_SummaryProvider(variable, {})
         self.assertEqual(summary, "{ size = 1, capacity = 16 }")

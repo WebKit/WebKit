@@ -1,3 +1,14 @@
+2018-06-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to address test failures on the bots.
+
+        Allow the test to distinguish between a failure to find the variable, and an error
+        reporting vector capacity.
+
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFVectorProvider_empty_vector):
+        (TestSummaryProviders.serial_test_WTFVectorProvider_vector_size_and_capacity):
+
 2018-06-28  Lucas Forschler  <lforschler@apple.com>
 
         Add Windows support for WEBKIT_API_KEY.
