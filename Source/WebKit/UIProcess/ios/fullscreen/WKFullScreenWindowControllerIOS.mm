@@ -762,8 +762,13 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 - (void)placeholderWillMoveToSuperview:(UIView *)superview
 {
-    if (!superview)
-        [self close];
+    if (superview)
+        return;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([_webViewPlaceholder superview] == nil && [_webViewPlaceholder parent] == self)
+            [self close];
+    });
 }
 
 #pragma mark -

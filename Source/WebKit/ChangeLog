@@ -1,3 +1,16 @@
+2018-06-28  Jeremy Jones  <jeremyj@apple.com>
+
+        Fullscreen exits when placeholder is removed then added during a single runloop.
+        https://bugs.webkit.org/show_bug.cgi?id=187079
+
+        Reviewed by Jer Noble.
+
+        Instead of closing fullscreen as soon as the placeholder is removed from the view hierarchy,
+        give the placeholder until the next runloop to be re-added to the view hierarchy.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController placeholderWillMoveToSuperview:]):
+
 2018-06-28  Youenn Fablet  <youenn@apple.com>
 
         Handle the case of registerMDNSNameCallback called several times
