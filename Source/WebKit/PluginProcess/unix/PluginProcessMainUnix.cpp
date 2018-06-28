@@ -44,12 +44,13 @@
 #if PLATFORM(X11)
 #include <WebCore/PlatformDisplayX11.h>
 #include <WebCore/XErrorTrapper.h>
+#include <wtf/NeverDestroyed.h>
 #endif
 
 namespace WebKit {
 
 #if PLATFORM(X11)
-static std::unique_ptr<WebCore::XErrorTrapper> xErrorTrapper;
+static LazyNeverDestroyed<WebCore::XErrorTrapper> xErrorTrapper;
 #endif
 
 class PluginProcessMain final: public ChildProcessMainBase {
@@ -82,7 +83,7 @@ public:
 #if PLATFORM(X11)
         if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
             auto* display = downcast<WebCore::PlatformDisplayX11>(WebCore::PlatformDisplay::sharedDisplay()).native();
-            xErrorTrapper = std::make_unique<WebCore::XErrorTrapper>(display, WebCore::XErrorTrapper::Policy::Warn);
+            xErrorTrapper.construct(display, WebCore::XErrorTrapper::Policy::Warn);
         }
 #endif
 

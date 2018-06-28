@@ -1,3 +1,17 @@
+2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][WPE] Use LazyNeverDestroyed<XErrorTrapper> to remove static initializers
+        https://bugs.webkit.org/show_bug.cgi?id=187089
+
+        Reviewed by Michael Catanzaro.
+
+        Use LazyNeverDestroyed<XErrorTrapper> instead of global std::unique_ptr<XErrorTrapper>.
+        Since this variable's exit time destructor is not important in this code, using
+        LazyNeverDestroyed<XErrorTrapper> is fine. This removes the last static initializer
+        of libwebkit2gtk.so.
+
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+
 2018-06-27  Youenn Fablet  <youenn@apple.com>
 
         Add a sandbox profile for some additional bank plugins

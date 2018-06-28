@@ -1,3 +1,14 @@
+2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][WPE] Use LazyNeverDestroyed<XErrorTrapper> to remove static initializers
+        https://bugs.webkit.org/show_bug.cgi?id=187089
+
+        Reviewed by Michael Catanzaro.
+
+        Do not allow copying since XErrorTrapper's logic relies on the address of XErrorTrapper.
+
+        * platform/graphics/x11/XErrorTrapper.h:
+
 2018-06-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Align inFlowNonReplacedWidthAndMargin() style with the rest of the compute functions.
