@@ -2182,3 +2182,5 @@ webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_get
 
 webkit.org/b/186848 imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.html [ Pass Failure ]
 webkit.org/b/179176 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
+
+webkit.org/b/172864 imported/blink/storage/indexeddb/blob-delete-objectstore-db.html [ Pass Timeout ]
