@@ -78,6 +78,7 @@ private:
     void readURLFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, String& url, String& title);
     void readBufferFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, SharedMemory::Handle&, uint64_t& size);
     void getPasteboardItemsCount(const String& pasteboardName, uint64_t& itemsCount);
+    void allPasteboardItemInfo(const String& pasteboardName, Vector<WebCore::PasteboardItemInfo>&);
     void informationForItemAtIndex(int index, const String& pasteboardName, WebCore::PasteboardItemInfo& filename);
     void updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName);
 #endif

@@ -226,6 +226,11 @@ void WebPasteboardProxy::getPasteboardItemsCount(const String& pasteboardName, u
     itemsCount = PlatformPasteboard(pasteboardName).count();
 }
 
+void WebPasteboardProxy::allPasteboardItemInfo(const String& pasteboardName, Vector<PasteboardItemInfo>& allInfo)
+{
+    allInfo = PlatformPasteboard(pasteboardName).allPasteboardItemInfo();
+}
+
 void WebPasteboardProxy::informationForItemAtIndex(int index, const String& pasteboardName, PasteboardItemInfo& info)
 {
     info = PlatformPasteboard(pasteboardName).informationForItemAtIndex(index);

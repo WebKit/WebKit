@@ -1,3 +1,17 @@
+2018-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] DataTransfer.getData always returns the empty string when dropping text
+        https://bugs.webkit.org/show_bug.cgi?id=187130
+        <rdar://problem/41014117>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add plumbing to grab information for each item in the pasteboard. See WebCore ChangeLog for more detail.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::allPasteboardItemInfo):
+
 2018-06-26  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] AirPlay picker uses incorrect theme in Dark mode

@@ -1,3 +1,26 @@
+2018-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] DataTransfer.getData always returns the empty string when dropping text
+        https://bugs.webkit.org/show_bug.cgi?id=187130
+        <rdar://problem/41014117>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add 2 new API tests to verify that:
+        -   When dropping an item with text, markup, and URL representations, the page is allowed to get "text/html",
+            "text/plain" and "text/uri-list" data.
+        -   Adding a suggested name to a plain text item causes WebKit to treat it as a file, and suppress access to
+            DataTransfer.getData().
+
+        Additionally tweaks a couple of existing API tests. Namely, in two API tests
+        (ExternalSourceOverrideDropFileUpload and ExternalSourceHTMLToUploadArea) only a markup string is dropped, and
+        we previously expected to handle the drop as a file. To allow this test to continue serving its purpose, tweak
+        them such that the registered items appear to be file-backed (i.e. by adding a suggested filename in one of the
+        tests, and specifying UIPreferredPresentationStyleAttachment in the other).
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-06-28  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         Unreviewed, rolling out r226652.

@@ -122,6 +122,14 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
     }
 }
 
+Vector<PasteboardItemInfo> PlatformPasteboard::allPasteboardItemInfo()
+{
+    Vector<PasteboardItemInfo> itemInfo;
+    for (NSInteger itemIndex = 0; itemIndex < [m_pasteboard numberOfItems]; ++itemIndex)
+        itemInfo.append(informationForItemAtIndex(itemIndex));
+    return itemInfo;
+}
+
 PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
 {
     if (index >= [m_pasteboard numberOfItems])
@@ -136,12 +144,39 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
 
     NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
     info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
+    info.suggestedFileName = itemProvider.suggestedName;
+    for (NSString *typeIdentifier in itemProvider.registeredTypeIdentifiers) {
+        CFStringRef cfTypeIdentifier = (CFStringRef)typeIdentifier;
+        if (!UTTypeIsDeclared(cfTypeIdentifier))
+            continue;
+
+        if (UTTypeConformsTo(cfTypeIdentifier, kUTTypeText))
+            continue;
+
+        if (UTTypeConformsTo(cfTypeIdentifier, kUTTypeURL))
+            continue;
+
+        if (UTTypeConformsTo(cfTypeIdentifier, kUTTypeRTFD))
+            continue;
+
+        if (UTTypeConformsTo(cfTypeIdentifier, kUTTypeFlatRTFD))
+            continue;
+
+        info.isNonTextType = true;
+        break;
+    }
+
     return info;
 }
 
 #else
 
 PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int)
+{
+    return { };
+}
+
+Vector<PasteboardItemInfo> PlatformPasteboard::allPasteboardItemInfo()
 {
     return { };
 }

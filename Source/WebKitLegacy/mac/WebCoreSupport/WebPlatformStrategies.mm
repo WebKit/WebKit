@@ -240,6 +240,11 @@ String WebPlatformStrategies::readStringFromPasteboard(int index, const String& 
     return PlatformPasteboard(pasteboardName).readString(index, type);
 }
 
+Vector<WebCore::PasteboardItemInfo> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).allPasteboardItemInfo();
+}
+
 WebCore::PasteboardItemInfo WebPlatformStrategies::informationForItemAtIndex(int index, const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index);

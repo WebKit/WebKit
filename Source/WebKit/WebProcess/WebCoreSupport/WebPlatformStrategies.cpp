@@ -322,6 +322,13 @@ int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
     return itemsCount;
 }
 
+Vector<PasteboardItemInfo> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName)
+{
+    Vector<PasteboardItemInfo> allInfo;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::AllPasteboardItemInfo(pasteboardName), Messages::WebPasteboardProxy::AllPasteboardItemInfo::Reply(allInfo), 0);
+    return allInfo;
+}
+
 PasteboardItemInfo WebPlatformStrategies::informationForItemAtIndex(int index, const String& pasteboardName)
 {
     PasteboardItemInfo info;

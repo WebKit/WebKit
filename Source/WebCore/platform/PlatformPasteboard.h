@@ -60,6 +60,7 @@ public:
     WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
 #if PLATFORM(IOS) || PLATFORM(WPE)
     WEBCORE_EXPORT PlatformPasteboard();
+    WEBCORE_EXPORT Vector<PasteboardItemInfo> allPasteboardItemInfo();
     WEBCORE_EXPORT PasteboardItemInfo informationForItemAtIndex(int index);
     WEBCORE_EXPORT void getTypesByFidelityForItemAtIndex(Vector<String>& types, int index);
     WEBCORE_EXPORT void updateSupportedTypeIdentifiers(const Vector<String>& types);

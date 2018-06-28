@@ -30,6 +30,7 @@ messages -> WebPasteboardProxy {
     ReadURLFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String url, String title)
     ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount)
+    AllPasteboardItemInfo(String pasteboardName) -> (Vector<WebCore::PasteboardItemInfo> allInfo)
     InformationForItemAtIndex(uint64_t index, String pasteboardName) -> (struct WebCore::PasteboardItemInfo info)
     UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
     GetPasteboardTypesByFidelityForItemAtIndex(uint64_t index, String pasteboardName) -> (Vector<String> types)

@@ -39,6 +39,8 @@ enum class PasteboardItemPresentationStyle {
 struct PasteboardItemInfo {
     String pathForFileUpload;
     String contentTypeForFileUpload;
+    String suggestedFileName;
+    bool isNonTextType { false };
     PasteboardItemPresentationStyle preferredPresentationStyle { PasteboardItemPresentationStyle::Unspecified };
 
     template<class Encoder> void encode(Encoder&) const;
@@ -48,7 +50,7 @@ struct PasteboardItemInfo {
 template<class Encoder>
 void PasteboardItemInfo::encode(Encoder& encoder) const
 {
-    encoder << pathForFileUpload << contentTypeForFileUpload;
+    encoder << pathForFileUpload << contentTypeForFileUpload << suggestedFileName << isNonTextType;
     encoder.encodeEnum(preferredPresentationStyle);
 }
 
@@ -60,6 +62,12 @@ std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
         return std::nullopt;
 
     if (!decoder.decode(result.contentTypeForFileUpload))
+        return std::nullopt;
+
+    if (!decoder.decode(result.suggestedFileName))
+        return std::nullopt;
+
+    if (!decoder.decode(result.isNonTextType))
         return std::nullopt;
 
     if (!decoder.decodeEnum(result.preferredPresentationStyle))

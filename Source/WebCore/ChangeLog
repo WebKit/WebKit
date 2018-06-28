@@ -1,3 +1,70 @@
+2018-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] DataTransfer.getData always returns the empty string when dropping text
+        https://bugs.webkit.org/show_bug.cgi?id=187130
+        <rdar://problem/41014117>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, DataTransfer.getData() always returns the empty string on drop. This is because all data on drop is
+        backed by local files in the temporary directory, so the number of files is never 0; this, combined with the
+        fact that WebKit will suppress access to the DataTransfer object if there is one or more file in the pasteboard,
+        means that getData() never works for drag and drop on iOS at the moment. To fix this, we need to know whether a
+        dropped item provider is a file.
+
+        Ideally, we'd have a flag to tell us whether or not an NSItemProvider being dropped is a file, or instead just
+        inline data - in fact, this flag already exists in the form of UIPreferredPresentationStyle. Unfortunately, not
+        all apps that vend draggable files specify this, so we can't simply ask the item provider whether it's intended
+        to be a file. As a workaround, we can use several heuristics to determine the "file content state" of the drag
+        pasteboard on iOS (see below for more details).
+
+        This patch adds some plumbing through the client layers to grab a list of item information describing each
+        dropped item provider on iOS. Using this information, we tweak the logic in Pasteboard::fileContentState to make
+        an educated guess at whether or not the pasteboard really contains files; if we determine that the pasteboard
+        probably contains no files, we'll allow DataTransfer.getData() to retrieve information from the pasteboard.
+        Otherwise, if the pasteboard may contain files, we'll fall back to our current behavior of including the "Files"
+        type in DataTransfer.types and allowing the page to grab file data using DataTransfer.files or
+        DataTransfer.items.
+
+        Tests:  DataInteractionTests.DataTransferGetDataReadPlainAndRichText
+                DataInteractionTests.DataTransferSuppressGetDataDueToPresenceOfTextFile
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::filesFromPasteboardAndItemList const):
+
+        Check Pasteboard::fileContentState() to ensure that we don't expose files when DataTransfer.types does not
+        contain the "Files" type, and vice versa, and DataTranser.files is also empty in this case.
+
+        * dom/DataTransferItemList.cpp:
+        * platform/PasteboardItemInfo.h:
+
+        Add a couple of additional members to PasteboardItemInfo: suggestedFileName and hasDeclaredNonTextType, a flag
+        that indicates whether or not the pasteboard item has a type representation that is a declared type, but is not
+        a text type (i.e. does not conform to "public.text", "public.url", or rich text format with attachment types).
+
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::fileContentState):
+
+        Instead of always considering a dropped item provider on iOS to represent a file, only do so if at least one of
+        the following conditions are met:
+        - The drop session contains multiple item providers (flocking text selections is a very rare use case).
+        - The item provider was explicitly marked as an attachment.
+        - The item provider has a suggested file name.
+        - The item provider has any other content that is not text.
+
+        In the case where none of the above conditions are met, the item provider (if it ends up being a file) is
+        essentially indistinguishable from inline data. An example of this is dropping a plain text file that is
+        unnamed, with no presentation style, and alongside no other items nor other known type representations. These
+        are cases in which whether the item is treated as a file or as inline data is (hopefully) irrelevant.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::allPasteboardItemInfo):
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
 2018-06-28  Timothy Hatcher  <timothy@apple.com>
 
         Don't force black text when TextIndicator draws backgrounds or all content.

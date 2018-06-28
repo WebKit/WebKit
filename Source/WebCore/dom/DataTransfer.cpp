@@ -327,7 +327,7 @@ Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const
 {
     bool addedFilesFromPasteboard = false;
     Vector<Ref<File>> files;
-    if (!forDrag() || forFileDrag()) {
+    if ((!forDrag() || forFileDrag()) && m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData) {
         WebCorePasteboardFileReader reader;
         m_pasteboard->read(reader);
         files = WTFMove(reader.files);

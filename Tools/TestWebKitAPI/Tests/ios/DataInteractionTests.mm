@@ -650,6 +650,7 @@ TEST(DataInteractionTests, ExternalSourceHTMLToUploadArea)
     auto simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
+    [simulatedHTMLItemProvider setSuggestedName:@"index.html"];
 
     auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setShouldAllowMoveOperation:NO];
@@ -980,6 +981,7 @@ TEST(DataInteractionTests, ExternalSourceOverrideDropFileUpload)
     auto simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *firstHTMLData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:firstHTMLData];
+    [simulatedHTMLItemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
 
     auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
@@ -1689,6 +1691,51 @@ TEST(DataInteractionTests, DataTransferSetDataCannotWritePlatformTypes)
             @"com.adobe.pdf": @"try and decode me!"
         }
     });
+}
+
+TEST(DataInteractionTests, DataTransferGetDataReadPlainAndRichText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSDictionary *textAttributes = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:20] };
+    NSAttributedString *richText = [[NSAttributedString alloc] initWithString:@"WebKit" attributes:textAttributes];
+    [itemProvider registerObject:richText visibility:NSItemProviderRepresentationVisibilityAll];
+    [itemProvider registerObject:[NSURL URLWithString:@"https://www.webkit.org/"] visibility:NSItemProviderRepresentationVisibilityAll];
+    [itemProvider registerObject:@"WebKit" visibility:NSItemProviderRepresentationVisibilityAll];
+
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointZero to:CGPointMake(50, 100)];
+
+    EXPECT_WK_STREQ("text/html, text/plain, text/uri-list", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("WebKit", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("https://www.webkit.org/", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("WebKit", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
+    EXPECT_WK_STREQ("(STRING, text/html), (STRING, text/plain), (STRING, text/uri-list)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
+}
+
+TEST(DataInteractionTests, DataTransferSuppressGetDataDueToPresenceOfTextFile)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [itemProvider registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
+    [itemProvider setSuggestedName:@"hello.txt"];
+
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointZero to:CGPointMake(50, 100)];
+
+    EXPECT_WK_STREQ("Files", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
+    EXPECT_WK_STREQ("(FILE, text/plain)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("('hello.txt', text/plain)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
 }
 
 TEST(DataInteractionTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)
