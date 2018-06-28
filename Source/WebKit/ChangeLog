@@ -1,3 +1,13 @@
+2018-06-27  Timothy Hatcher  <timothy@apple.com>
+
+        Don't expose new semantic -apple-system color keywords on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=187080
+        rdar://problem/41505699
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make: Use gnu++14, since gnu++17 is giving errors on macOS 10.12.
+
 2018-06-27  Megan Gardner  <megan_gardner@apple.com>
 
         Fix IBeam issues with iPad apps on Mac
