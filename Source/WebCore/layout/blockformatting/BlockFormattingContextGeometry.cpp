@@ -60,7 +60,8 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
-    auto compute = [&]() -> LayoutUnit {
+    auto compute = [&]() -> FormattingContext::Geometry::HeightAndMargin {
+
         // 10.6.3 Block-level non-replaced elements in normal flow when 'overflow' computes to 'visible'
         //
         // If 'margin-top', or 'margin-bottom' are 'auto', their used value is 0.
@@ -74,21 +75,24 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
         // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
 
-        if (!layoutBox.style().logicalHeight().isAuto()) {
-            // FIXME: Only fixed values yet.
-            return layoutBox.style().logicalHeight().value();
-        }
+        auto& style = layoutBox.style();
+        auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
+        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+
+        auto marginTop = FormattingContext::Geometry::computedValueIfNotAuto(style.marginTop(), containingBlockWidth).value_or(0);
+        auto marginBottom = FormattingContext::Geometry::computedValueIfNotAuto(style.marginBottom(), containingBlockWidth).value_or(0);
+        auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop();
+        
+        if (!style.logicalHeight().isAuto())
+            return { style.logicalHeight().value(), { marginTop, marginBottom } };
 
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
-            return 0;
-
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
-        auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop();
+            return { 0, { marginTop, marginBottom } };
 
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
         if (layoutBox.establishesInlineFormattingContext()) {
             // height = lastLineBox().bottom();
-            return 0;
+            return { 0, { marginTop, marginBottom } };
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
@@ -97,7 +101,7 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         if (!MarginCollapse::isMarginBottomCollapsedWithParent(*lastInFlowChild)) {
             auto* lastInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*lastInFlowChild);
             ASSERT(lastInFlowDisplayBox);
-            return lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom() - borderAndPaddingTop;
+            return { lastInFlowDisplayBox->bottom() + lastInFlowDisplayBox->marginBottom() - borderAndPaddingTop, { marginTop, marginBottom } };
         }
 
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
@@ -107,29 +111,29 @@ FormattingContext::Geometry::HeightAndMargin BlockFormattingContext::Geometry::i
         if (inFlowChild) {
             auto* inFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*inFlowChild);
             ASSERT(inFlowDisplayBox);
-            return inFlowDisplayBox->top() + inFlowDisplayBox->borderBox().height() - borderAndPaddingTop;
+            return { inFlowDisplayBox->top() + inFlowDisplayBox->borderBox().height() - borderAndPaddingTop, { marginTop, marginBottom } };
         }
 
         // 4. zero, otherwise
-        return 0;
+        return { 0, { marginTop, marginBottom } };
     };
 
-    auto height = compute();
-    auto marginTop = MarginCollapse::marginTop(layoutContext, layoutBox);
-    auto marginBottom =  MarginCollapse::marginBottom(layoutContext, layoutBox);
+    auto heightAndMargin = compute();
+    auto collapsedMarginTop = MarginCollapse::marginTop(layoutContext, layoutBox);
+    auto collapsedMarginBottom =  MarginCollapse::marginBottom(layoutContext, layoutBox);
 
     if (!isStretchedToViewport(layoutContext, layoutBox)) {
-        LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << height << "px) margin(" << marginTop << "px, " << marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
-        return { height, { marginTop, marginBottom } };
+        LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << heightAndMargin.height << "px) margin(" << collapsedMarginTop << "px, " << collapsedMarginBottom << "px) -> layoutBox(" << &layoutBox << ")");
+        return { heightAndMargin.height, { collapsedMarginTop, collapsedMarginBottom } };
     }
 
     auto initialContainingBlockHeight = layoutContext.displayBoxForLayoutBox(initialContainingBlock(layoutBox))->contentBoxHeight();
     // Stretch but never overstretch with the margins.
-    if (height + marginTop + marginBottom < initialContainingBlockHeight)
-        height = initialContainingBlockHeight - marginTop - marginBottom;
+    if (heightAndMargin.height + collapsedMarginTop + collapsedMarginBottom < initialContainingBlockHeight)
+        heightAndMargin.height = initialContainingBlockHeight - collapsedMarginTop - collapsedMarginBottom;
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << height << "px) margin(" << marginTop << "px, " << marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
-    return { height, { marginTop, marginBottom } };
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << collapsedMarginTop << "px, " << collapsedMarginBottom << "px) -> layoutBox(" << &layoutBox << ")");
+    return { heightAndMargin.height, { collapsedMarginTop, collapsedMarginBottom } };
 }
 
 FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,

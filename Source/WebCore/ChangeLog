@@ -1,3 +1,13 @@
+2018-06-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Align inFlowNonReplacedHeightAndMargin() style with the rest of the compute functions.
+        https://bugs.webkit.org/show_bug.cgi?id=187126
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+
 2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][WPE] Use LazyNeverDestroyed<XErrorTrapper> to remove static initializers
