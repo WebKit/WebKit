@@ -1,3 +1,12 @@
+2018-06-28  Lucas Forschler  <lforschler@apple.com>
+
+        Add Windows support for WEBKIT_API_KEY.
+        https://bugs.webkit.org/show_bug.cgi?id=187155
+
+        Reviewed by Daniel Bates.
+
+        * EWSTools/start-queue-win.sh:
+
 2018-06-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add support for WebKitPy-Tests-EWS

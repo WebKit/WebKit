@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [[ $# -lt 4 ]]; then
-echo "Usage: start-queue-win.sh WEBKIT_BUGZILLA_USERNAME WEBKIT_BUGZILLA_PASSWORD BOT_ID RESET_AFTER_ITERATION"
+echo "Usage: start-queue-win.sh WEBKIT_BUGZILLA_USERNAME WEBKIT_BUGZILLA_PASSWORD BOT_ID RESET_AFTER_ITERATION WEBKIT_STATUS_API_KEY"
 exit 1
 fi
 
@@ -9,6 +9,7 @@ export WEBKIT_BUGZILLA_USERNAME=$1
 export WEBKIT_BUGZILLA_PASSWORD=$2
 export BOT_ID=$3
 export RESET_AFTER_ITERATION=$4
+export WEBKIT_STATUS_API_KEY=$5
 
 function error_handler()
 {
