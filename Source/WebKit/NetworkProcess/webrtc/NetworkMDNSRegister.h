@@ -71,8 +71,6 @@ private:
     NetworkConnectionToWebProcess& m_connection;
 #if ENABLE_MDNS
     HashMap<WebCore::DocumentIdentifier, DNSServiceRef> m_services;
-
-    uint64_t m_registrationCount { 0 };
 #endif
 };
 

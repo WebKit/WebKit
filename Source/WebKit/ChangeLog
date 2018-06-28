@@ -1,3 +1,26 @@
+2018-06-28  Youenn Fablet  <youenn@apple.com>
+
+        Handle the case of registerMDNSNameCallback called several times
+        https://bugs.webkit.org/show_bug.cgi?id=187150
+        <rdar://problem/41329832>
+
+        Reviewed by Eric Carlson.
+
+        This is a speculative fix on the basis that registerMDNSNameCallback may be called several times.
+        In that case, we would have freed the context after the first call and would reuse it for the second call.
+
+        Instead, keep a map of pending requests and pass to registerMDNSNameCallback an identifier to that map.
+        If the map has no value for that identifier, return early.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::~NetworkMDNSRegister):
+        (WebKit::pendingRegistrationRequests):
+        (WebKit::registerMDNSNameCallback):
+        (WebKit::NetworkMDNSRegister::clearPendingRequests):
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * NetworkProcess/webrtc/NetworkMDNSRegister.h:
+        (): Deleted.
+
 2018-06-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix Win Cairo build after r233310.
