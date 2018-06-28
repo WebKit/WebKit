@@ -1,3 +1,17 @@
+2018-06-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r232040): Cursor jumping in Safari text fields
+        https://bugs.webkit.org/show_bug.cgi?id=187142
+        <rdar://problem/41397577>
+
+        Reviewed by Tim Horton.
+
+        Added test to ensure that the 'selectionchange' event is only fired once per
+        click in an editable node.
+
+        * fast/events/ios/click-selectionchange-once-expected.txt: Added.
+        * fast/events/ios/click-selectionchange-once.html: Added.
+
 2018-06-28  Dirk Schulze  <krit@webkit.org>
 
         [css-masking] Update clip-path box mapping to unified box

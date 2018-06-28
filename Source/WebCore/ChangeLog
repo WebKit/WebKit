@@ -1,3 +1,27 @@
+2018-06-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r232040): Cursor jumping in Safari text fields
+        https://bugs.webkit.org/show_bug.cgi?id=187142
+        <rdar://problem/41397577>
+
+        Reviewed by Tim Horton.
+
+        r232040 enabled click events to fire on nodes that are already being edited in
+        iOS. This resulted FrameSelection::setSelection being called twice. One call
+        originated from the UIWKTextInteractionAssistant, which snaps the caret to word
+        boundaries. The other call originates from handleMousePressEvent in EventHandler,
+        and uses character boundaries. Consequently, we see the caret jumping around.
+
+        To fix this issue, an early return was added in the handleMousePressEvent
+        codepath, which prevents FrameSelection::setSelection from being called when
+        clicking on a node that is already being edited. This ensures that the
+        UIWKTextInteractionAssistant codepath is the only influence on the caret position.
+
+        Test: fast/events/ios/click-selectionchange-once.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+
 2018-06-28  Chris Dumez  <cdumez@apple.com>
 
         Fix encoding / decoding issues in ResourceLoadStatistics

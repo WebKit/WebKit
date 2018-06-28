@@ -681,6 +681,12 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     VisibleSelection newSelection = m_frame.selection().selection();
     TextGranularity granularity = CharacterGranularity;
 
+#if PLATFORM(IOS)
+    // The text selection assistant will handle selection in the case where we are already editing the node
+    if (newSelection.rootEditableElement() == targetNode->rootEditableElement())
+        return true;
+#endif
+
     if (extendSelection && newSelection.isCaretOrRange()) {
         VisibleSelection selectionInUserSelectAll = expandSelectionToRespectSelectOnMouseDown(*targetNode, VisibleSelection(pos));
         if (selectionInUserSelectAll.isRange()) {
