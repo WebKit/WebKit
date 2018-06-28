@@ -1,3 +1,24 @@
+2018-06-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r213000): copy from Search results content view broken
+        https://bugs.webkit.org/show_bug.cgi?id=187020
+        <rdar://problem/40928766>
+
+        Reviewed by Timothy Hatcher.
+
+        Since WI._copy listens for a copy event from the document, it is called
+        after CodeMirror handles the event and sets clipboard data. If WI._copy
+        finds a custom copy handler to call, that handler can determine whether
+        to overwrite the current clipboard data, or leave it alone.
+
+        SearchTabContentView's handleCopyEvent method should return early if the
+        content tree outline doesn't have the focus. This prevents the selection
+        in the TextEditor from being overwritten, without any special knowledge of
+        the content browser's current view.
+
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView.prototype.handleCopyEvent):
+
 2018-06-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: Box Model section should have dark background

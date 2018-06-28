@@ -99,7 +99,11 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
 
     handleCopyEvent(event)
     {
-        let selectedTreeElement = this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement;
+        let contentTreeOutline = this.navigationSidebarPanel.contentTreeOutline;
+        if (contentTreeOutline.element !== document.activeElement)
+            return;
+
+        let selectedTreeElement = contentTreeOutline.selectedTreeElement;
         if (!selectedTreeElement)
             return;
 
