@@ -398,7 +398,7 @@ Color RenderThemeMac::platformActiveTextSearchHighlightColor(OptionSet<StyleColo
     return colorFromNSColor([NSColor findHighlightColor]);
 #else
     UNUSED_PARAM(options);
-    return Color(255, 204, 0); // Yellow.
+    return Color(255, 255, 0); // Yellow.
 #endif
 }
 

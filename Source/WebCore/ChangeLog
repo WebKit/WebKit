@@ -1,3 +1,13 @@
+2018-06-28  Timothy Hatcher  <timothy@apple.com>
+
+        Find on page selection color isn't adapted for dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=187072
+
+        Unreviewed, revert part of r233280.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveTextSearchHighlightColor const): Use pure yellow again.
+
 2018-06-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-starttime.html pass reliably

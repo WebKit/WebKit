@@ -1,3 +1,17 @@
+2018-06-28  Timothy Hatcher  <timothy@apple.com>
+
+        Find on page selection color isn't adapted for dark mode.
+        https://bugs.webkit.org/show_bug.cgi?id=187072
+        rdar://problem/40354841
+
+        Unreviewed test gardening.
+
+        * fast/css/apple-system-control-colors-expected.txt: Use pure yellow for find.
+        * fast/text/mark-matches-broken-line-rendering-expected.html:
+        * fast/text/mark-matches-rendering-expected.html:
+        Use -apple-system-find-highlight-background to work on all macOS versions.
+        * platform/mac-sierra/fast/css/apple-system-control-colors-expected.txt: Use pure yellow for find.
+
 2018-06-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-starttime.html pass reliably
