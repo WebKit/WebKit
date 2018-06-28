@@ -579,6 +579,12 @@ static Vector<Function<void ()>>& postResolutionCallbackQueue()
     return vector;
 }
 
+static Vector<RefPtr<Frame>>& memoryCacheClientCallsResumeQueue()
+{
+    static NeverDestroyed<Vector<RefPtr<Frame>>> vector;
+    return vector;
+}
+
 void queuePostResolutionCallback(Function<void ()>&& callback)
 {
     postResolutionCallbackQueue().append(WTFMove(callback));
@@ -592,10 +598,7 @@ static void suspendMemoryCacheClientCalls(Document& document)
 
     page->setMemoryCacheClientCallsEnabled(false);
 
-    postResolutionCallbackQueue().append([protectedMainFrame = makeRef(page->mainFrame())] {
-        if (Page* page = protectedMainFrame->page())
-            page->setMemoryCacheClientCallsEnabled(true);
-    });
+    memoryCacheClientCallsResumeQueue().append(&page->mainFrame());
 }
 
 static unsigned resolutionNestingDepth;
@@ -622,6 +625,14 @@ PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler()
                 queue[i]();
             queue.clear();
         }
+
+        auto& queue = memoryCacheClientCallsResumeQueue();
+        for (size_t i = 0; i < queue.size(); ++i) {
+            if (auto* page = queue[i]->page())
+                page->setMemoryCacheClientCallsEnabled(true);
+        }
+        queue.clear();
+
         platformStrategies()->loaderStrategy()->resumePendingRequests();
     }
 

@@ -1,3 +1,20 @@
+2018-06-28  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (233281): fast/dom/location-new-window-no-crash.html and some other tests are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=187156
+
+        Reviewed by Zalan Bujtas.
+
+        We need still need to re-enable memory cache client calls even when not doing other post-resolution callbacks.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::memoryCacheClientCallsResumeQueue):
+
+        Add a separate queue for this.
+
+        (WebCore::Style::suspendMemoryCacheClientCalls):
+        (WebCore::Style::PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler):
+
 2018-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] DataTransfer.getData always returns the empty string when dropping text
