@@ -1,3 +1,16 @@
+2018-06-27  Saam Barati  <sbarati@apple.com>
+
+        Add some more register state information when we crash in repatchPutById
+        https://bugs.webkit.org/show_bug.cgi?id=187112
+
+        Reviewed by Mark Lam.
+
+        This will help us gather info when we end up seeing a ObjectPropertyConditionSet
+        with an offset that is different than what the put tells us.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+
 2018-06-27  Mark Lam  <mark.lam@apple.com>
 
         Fix a bug in $vm.callFrame() and apply previously requested renaming of $vm.println to print.

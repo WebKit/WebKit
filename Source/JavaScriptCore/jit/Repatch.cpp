@@ -573,7 +573,9 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
 
-                        RELEASE_ASSERT(offset == conditionSet.slotBaseCondition().offset());
+                        PropertyOffset conditionSetOffset = conditionSet.slotBaseCondition().offset();
+                        if (UNLIKELY(offset != conditionSetOffset))
+                            CRASH_WITH_INFO(offset, conditionSetOffset, slot.base()->type(), baseCell->type(), conditionSet.size());
                     }
 
                 }
