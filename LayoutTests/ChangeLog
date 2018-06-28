@@ -1,3 +1,11 @@
+2018-06-28  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; media/video-buffering-allowed.html is flakey due to not completing in time.
+
+        Remove the artificial early timeout (1s) in this test.
+
+        * media/video-buffering-allowed.html:
+
 2018-06-28  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r232040): Cursor jumping in Safari text fields

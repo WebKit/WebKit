@@ -7,7 +7,6 @@
     <script>
         async function runTest() {
             findMediaElement();
-            failTestIn(1000);
 
             run('video.src = findMediaFile("video", "content/test")');
             await waitFor(video, 'canplaythrough');
