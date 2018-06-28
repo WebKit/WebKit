@@ -67,10 +67,19 @@ static bool outputMismatchingBoxInformationIfNeeded(TextStream& stream, const La
         return true;
     }
 
-    if (renderer.marginBoxRect() != displayBox->marginBox()) {
+#ifndef NDEBUG
+    if (renderer.marginBoxRect() != displayBox->nonCollapsedMarginBox()) {
+        outputRect("marginBox", renderer.marginBoxRect(), displayBox->nonCollapsedMarginBox());
+        return true;
+    }
+#else
+    // For now in non-debug builds, verify the horizontal margin only
+    if (renderer.marginBoxRect().left() != displayBox->marginBox().left()
+        || renderer.marginBoxRect().right() != displayBox->marginBox().right() ) {
         outputRect("marginBox", renderer.marginBoxRect(), displayBox->marginBox());
         return true;
     }
+#endif
 
     if (renderer.borderBoxRect() != displayBox->borderBox()) {
         outputRect("borderBox", renderer.borderBoxRect(), displayBox->borderBox());

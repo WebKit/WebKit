@@ -147,6 +147,9 @@ public:
     LayoutUnit contentBoxWidth() const;
 
     Rect marginBox() const;
+#ifndef NDEBUG
+    Rect nonCollapsedMarginBox() const;
+#endif
     Rect borderBox() const;
     Rect paddingBox() const;
     Rect contentBox() const;
@@ -186,6 +189,9 @@ private:
 
     void setHorizontalMargin(HorizontalEdges);
     void setVerticalMargin(VerticalEdges);
+#ifndef NDEBUG
+    void setVerticalNonCollapsedMargin(VerticalEdges margin) {  m_nonCollapsedVertivalMargin = margin; }
+#endif
     void setBorder(Edges);
     void setPadding(Edges);
 
@@ -211,6 +217,9 @@ private:
     LayoutUnit m_contentHeight;
 
     Edges m_margin;
+#ifndef NDEBUG
+    VerticalEdges m_nonCollapsedVertivalMargin;
+#endif
     Edges m_border;
     Edges m_padding;
 

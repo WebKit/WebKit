@@ -55,7 +55,8 @@ void FormattingContext::computeFloatingHeightAndMargin(LayoutContext& layoutCont
 {
     auto heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
     displayBox.setContentBoxHeight(heightAndMargin.height);
-    displayBox.moveVertically(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top);
+    displayBox.moveVertically(heightAndMargin.margin.top);
+    ASSERT(!heightAndMargin.collapsedMargin);
     displayBox.setVerticalMargin(heightAndMargin.margin);
 }
 
