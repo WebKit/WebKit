@@ -295,6 +295,39 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
         return self.runStep()
 
 
+class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunWebKitPyTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/test-webkitpy'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='webkitpy-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunWebKitPyTests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/test-webkitpy'],
+                        )
+            + ExpectShell.log('stdio', stdout='''Ran 1744 tests in 5.913s
+FAILED (failures=1, errors=0)''')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='webkitpy-tests (failure)')
+        return self.runStep()
+
+
 class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

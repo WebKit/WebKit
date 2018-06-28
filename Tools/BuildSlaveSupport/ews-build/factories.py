@@ -51,6 +51,12 @@ class WebKitPerlFactory(Factory):
         self.addStep(RunWebKitPerlTests())
 
 
+class WebKitPyFactory(Factory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(RunWebKitPyTests())
+
+
 class BuildFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
@@ -92,8 +98,4 @@ class WPEFactory(Factory):
 
 
 class JSCTestsFactory(Factory):
-    pass
-
-
-class WebkitpyFactory(Factory):
     pass

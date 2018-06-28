@@ -269,8 +269,8 @@
       "workernames": ["webkit-misc"]
     },
     {
-      "name": "Webkitpy-tests-EWS",
-      "factory": "WebkitpyFactory",
+      "name": "WebKitPy-Tests-EWS",
+      "factory": "WebKitPyFactory",
       "platform": "*",
       "workernames": ["webkit-misc"]
     },
@@ -288,7 +288,7 @@
       "port": 5555,
       "builderNames": ["Style-EWS", "JSC-tests-EWS", "macOS-Sierra-Release-WK1-EWS", "GTK-Webkit2-EWS", "macOS-Sierra-Release-WK2-EWS",
                        "macOS-High-Sierra-Release-32bit-WK2-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-EWS", "WinCairo-EWS", "iOS-11-Simulator-EWS",
-                       "Webkitpy-tests-EWS", "WebKitPerl-Tests-EWS", "macOS-Sierra-Debug-WK1-EWS", "Bindings-tests-EWS"]
+                       "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-Sierra-Debug-WK1-EWS", "Bindings-tests-EWS"]
     }
   ]
 }

@@ -90,6 +90,14 @@ class RunWebKitPerlTests(shell.ShellCommand):
     command = ['Tools/Scripts/test-webkitperl']
 
 
+class RunWebKitPyTests(shell.ShellCommand):
+    name = 'webkitpy-tests'
+    description = ['webkitpy-tests running']
+    descriptionDone = ['webkitpy-tests']
+    flunkOnFailure = True
+    command = ['Tools/Scripts/test-webkitpy']
+
+
 def appendCustomBuildFlags(step, platform, fullPlatform):
     # FIXME: Make a common 'supported platforms' list.
     if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):

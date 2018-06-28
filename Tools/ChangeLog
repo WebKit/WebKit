@@ -1,3 +1,15 @@
+2018-06-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add support for WebKitPy-Tests-EWS
+        https://bugs.webkit.org/show_bug.cgi?id=187148
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/factories.py: Added WebKitPyFactory.
+        * BuildSlaveSupport/ews-build/steps.py: Added build step RunWebKitPyTests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/config.json: Updated to use CamelCase. 
+
 2018-06-28  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS build following r233299
