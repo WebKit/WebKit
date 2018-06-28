@@ -1,3 +1,22 @@
+2018-06-28  Youenn Fablet  <youenn@apple.com>
+
+        Early return when handling fetch event in case service worker origin does not match origin of a subresource load
+        https://bugs.webkit.org/show_bug.cgi?id=187153
+        <rdar://problem/41329832>
+
+        Reviewed by Chris Dumez.
+
+        Stop crashing the service worker process in case a subresource load origin is not matching a service worker origin.
+        Instead, just return early so that the load will be handled by the network process.
+
+        Keep crashing in case a navigation load is not matching its service worker origin.
+        Add more logging to help with the debugging.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::logValidFetchError):
+        (WebKit::isValidFetch):
+        (WebKit::WebSWContextManagerConnection::startFetch):
+
 2018-06-28  Jeremy Jones  <jeremyj@apple.com>
 
         Fullscreen exits when placeholder is removed then added during a single runloop.
