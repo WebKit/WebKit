@@ -154,7 +154,7 @@ class ComponentBase extends CommonComponentBase {
 
         let content;
         let stylesheet;
-        if (!thisClass._parsed) {
+        if (!thisClass.hasOwnProperty('_parsed') || !thisClass._parsed) {
             thisClass._parsed = true;
 
             const contentTemplate = thisClass['contentTemplate'];

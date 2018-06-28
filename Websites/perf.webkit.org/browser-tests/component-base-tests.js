@@ -195,6 +195,27 @@ describe('ComponentBase', function() {
             expect(container.textContent).to.be('hello, world');
         });
 
+        it('it must create content using derived class content template', async () => {
+            const context = new BrowsingContext();
+            const ComponentBase = await importComponentBase(context);
+
+            class BaseClass extends ComponentBase { };
+            BaseClass.contentTemplate = ['div', {id: 'container'}, 'base-class'];
+            const baseInstance = new BaseClass('base-class');
+
+            class DerivedClass extends BaseClass {};
+            DerivedClass.contentTemplate = ['div', {id: 'container'}, 'derived-class'];
+            const derivedInstance = new DerivedClass('derived-class');
+
+            const baseContainer = baseInstance.content('container');
+            expect(baseContainer).to.be.a(context.global.HTMLDivElement);
+            expect(baseContainer.textContent).to.be('base-class');
+
+            const derivedContainer = derivedInstance.content('container');
+            expect(derivedContainer).to.be.a(context.global.HTMLDivElement);
+            expect(derivedContainer.textContent).to.be('derived-class');
+        });
+
         it('it must create stylsheet from styleTemplate', async () => {
             const context = new BrowsingContext();
             const ComponentBase = await importComponentBase(context);
@@ -697,6 +718,30 @@ describe('ComponentBase', function() {
             });
         });
 
+    });
+
+    describe('_ensureShadowTree', () => {
+        it('should parse derived component after parsing base component', async () => {
+            const context = new BrowsingContext();
+            const ComponentBase = await importComponentBase(context);
+            class DerivedComponent extends ComponentBase {};
+            const baseInstance = new ComponentBase;
+            expect(ComponentBase.hasOwnProperty('_parsed')).to.be(false);
+            expect(DerivedComponent.hasOwnProperty('_parsed')).to.be(false);
+
+            baseInstance._ensureShadowTree();
+            expect(ComponentBase.hasOwnProperty('_parsed')).to.be(true);
+            expect(DerivedComponent.hasOwnProperty('_parsed')).to.be(false);
+            expect(!!ComponentBase._parsed).to.be(true);
+            expect(!!DerivedComponent._parsed).to.be(true);
+
+            const derivedInstance = new DerivedComponent;
+            derivedInstance._ensureShadowTree();
+            expect(ComponentBase.hasOwnProperty('_parsed')).to.be(true);
+            expect(DerivedComponent.hasOwnProperty('_parsed')).to.be(true);
+            expect(!!ComponentBase._parsed).to.be(true);
+            expect(!!DerivedComponent._parsed).to.be(true);
+        });
     });
 
 });
