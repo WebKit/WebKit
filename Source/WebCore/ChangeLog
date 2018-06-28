@@ -1,3 +1,18 @@
+2018-06-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] The margin bottom of the document element does not collapse with its last inflow child's bottom margin.
+        https://bugs.webkit.org/show_bug.cgi?id=187135
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBottom):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLastChild):
+
 2018-06-28  Dirk Schulze  <krit@webkit.org>
 
         [css-masking] Update clip-path box mapping to unified box

@@ -83,7 +83,7 @@ private:
         static LayoutUnit marginTop(const LayoutContext&, const Box&);
         static LayoutUnit marginBottom(const LayoutContext&, const Box&);
 
-        static bool isMarginBottomCollapsedWithParent(const Box&);
+        static bool isMarginBottomCollapsedWithParent(const LayoutContext&, const Box&);
         static bool isMarginTopCollapsedWithParentMarginBottom(const Box&);
     
     private:

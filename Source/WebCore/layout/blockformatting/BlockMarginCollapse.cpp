@@ -186,7 +186,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBottom(const LayoutCont
         return 0;
 
     // TODO: take _hasAdjoiningMarginTopAndBottom() into account.
-    if (BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(layoutBox))
+    if (BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(layoutContext, layoutBox))
         return 0;
 
     // Floats and out of flow positioned boxes do not collapse their margins.
@@ -200,7 +200,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBottom(const LayoutCont
     return nonCollapsedMarginBottom(layoutContext, layoutBox);
 }
 
-bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(const Box& layoutBox)
+bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     // last inflow box to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -221,13 +221,14 @@ bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(c
         return false;
 
     // Margins of the root element's box do not collapse.
-    if (parent.isInitialContainingBlock())
+    if (parent.isDocumentBox() || parent.isInitialContainingBlock())
         return false;
 
-    if (!parent.style().borderTop().nonZero())
+    auto& parentDisplayBox = *layoutContext.displayBoxForLayoutBox(parent);
+    if (parentDisplayBox.borderTop())
         return false;
 
-    if (!parent.style().paddingTop().isZero())
+    if (parentDisplayBox.paddingTop())
         return false;
 
     if (!parent.style().height().isAuto())
@@ -248,7 +249,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLast
         return 0;
 
     auto& lastInFlowChild = *downcast<Container>(layoutBox).lastInFlowChild();
-    if (!isMarginBottomCollapsedWithParent(lastInFlowChild))
+    if (!isMarginBottomCollapsedWithParent(layoutContext, lastInFlowChild))
         return 0;
 
     // Collect collapsed margin bottom recursively.
