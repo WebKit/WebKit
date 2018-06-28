@@ -1,8 +1,8 @@
 diff --git a/resources/runner/motionmark.js b/resources/runner/motionmark.js
-index 65e8c54..1643e70 100644
+index d45155e..b10635a 100644
 --- a/resources/runner/motionmark.js
 +++ b/resources/runner/motionmark.js
-@@ -393,6 +393,61 @@ window.benchmarkRunnerClient = {
+@@ -411,6 +411,61 @@ window.benchmarkRunnerClient = {
      didFinishLastIteration: function()
      {
          benchmarkController.showResults();
@@ -64,12 +64,12 @@ index 65e8c54..1643e70 100644
      }
  };
  
-@@ -436,7 +491,7 @@ window.sectionsManager =
- window.benchmarkController = {
-     initialize: function()
-     {
--        benchmarkController.addOrientationListenerIfNecessary();
-+        setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
-     },
+@@ -652,4 +707,7 @@ window.benchmarkController = {
+     }
+ };
  
-     determineCanvasSize: function() {
+-window.addEventListener("load", function() { benchmarkController.initialize(); });
++window.addEventListener("load", function() {
++    setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
++    benchmarkController.initialize();
++});
