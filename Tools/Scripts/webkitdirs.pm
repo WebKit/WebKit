@@ -104,6 +104,7 @@ BEGIN {
 # Ports
 use constant {
     AppleWin => "AppleWin",
+    Fuchsia  => "Fuchsia",
     GTK      => "GTK",
     iOS      => "iOS",
     tvOS     => "tvOS",
@@ -476,6 +477,7 @@ sub argumentsForConfiguration()
     push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
+    push(@args, '--fuchsia') if isFuchsia();
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
@@ -1189,6 +1191,7 @@ sub determinePortName()
     return if defined $portName;
 
     my %argToPortName = (
+        fuchsia => Fuchsia,
         gtk => GTK,
         'jsc-only' => JSCOnly,
         wincairo => WinCairo,
@@ -1242,6 +1245,11 @@ sub portName()
 {
     determinePortName();
     return $portName;
+}
+
+sub isFuchsia()
+{
+    return portName() eq Fuchsia;
 }
 
 sub isGtk()
@@ -2023,7 +2031,7 @@ sub isCachedArgumentfileOutOfDate($@)
 
 sub wrapperPrefixIfNeeded()
 {
-    if (isAnyWindows() || isJSCOnly()) {
+    if (isAnyWindows() || isJSCOnly() || isFuchsia()) {
         return ();
     }
     if (isAppleCocoaWebKit()) {

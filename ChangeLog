@@ -1,3 +1,16 @@
+2018-06-27  Adam Barth  <abarth@webkit.org>
+
+        Add Fuchsia support to build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=187086
+
+        Reviewed by Yusuke Suzuki.
+
+        Add Fuchsia port to cmake build system. After this patch, the build
+        errors out due to a missing sysroot.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsFuchsia.cmake: Added.
+
 2018-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Updating the WPT expectations by removing

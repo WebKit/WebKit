@@ -37,6 +37,7 @@ endif ()
 set(ALL_PORTS
     AppleWin
     Efl
+    Fuchsia
     GTK
     JSCOnly
     Mac
