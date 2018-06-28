@@ -1,3 +1,15 @@
+2018-06-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Cookie API: cookie creation time is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=187101
+
+        Reviewed by Geoffrey Garen.
+
+        Add test coverage: make sure the cookie creation time returned is the same as set.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+
 2018-06-28  Simon Fraser  <simon.fraser@apple.com>
 
         The lldb vector summary provider always shows zero capacity

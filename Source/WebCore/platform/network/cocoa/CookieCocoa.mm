@@ -161,7 +161,7 @@ Cookie::operator NSHTTPCookie * _Nullable () const
         [properties setObject:[NSString stringWithFormat:@"%f", maxAge] forKey:NSHTTPCookieMaximumAge];
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
-    [properties setObject:[NSNumber numberWithDouble:created / 1000.0] forKey:@"Created"];
+    [properties setObject:[NSNumber numberWithDouble:created / 1000.0 - NSTimeIntervalSince1970] forKey:@"Created"];
 #endif
 
     auto* portString = portStringFromVector(ports);

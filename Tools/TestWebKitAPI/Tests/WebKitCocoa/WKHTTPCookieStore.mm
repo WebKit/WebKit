@@ -367,12 +367,14 @@ TEST(WebKit, WKHTTPCookieStoreCreationTime)
 
     globalCookieStore = dataStore.httpCookieStore;
 
-    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:@{
-        NSHTTPCookiePath: @"/path",
-        NSHTTPCookieName: @"CookieName",
-        NSHTTPCookieValue: @"CookieValue",
-        NSHTTPCookieDomain: @".www.webkit.org",
-    }];
+    NSMutableDictionary *cookieProperties = [[NSMutableDictionary alloc] init];
+    [cookieProperties setObject:@"cookieName" forKey:NSHTTPCookieName];
+    [cookieProperties setObject:@"cookieValue" forKey:NSHTTPCookieValue];
+    [cookieProperties setObject:@".www.webkit.org" forKey:NSHTTPCookieDomain];
+    [cookieProperties setObject:@"/path" forKey:NSHTTPCookiePath];
+    RetainPtr<NSNumber> creationTime = [NSNumber numberWithDouble:100000];
+    [cookieProperties setObject:creationTime.get() forKey:@"Created"];
+    RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
 
     [globalCookieStore setCookie:cookie.get() completionHandler:[]() {
         gotFlag = true;
@@ -380,10 +382,10 @@ TEST(WebKit, WKHTTPCookieStoreCreationTime)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 
-    RetainPtr<NSNumber> creationTime = nil;
     [globalCookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *cookies) {
         ASSERT_EQ(1u, cookies.count);
-        creationTime = [cookies objectAtIndex:0].properties[@"Created"];
+        NSNumber* createdTime = [cookies objectAtIndex:0].properties[@"Created"];
+        EXPECT_TRUE([creationTime.get() isEqual:createdTime]);
         gotFlag = true;
     }];
     TestWebKitAPI::Util::run(&gotFlag);
@@ -393,8 +395,8 @@ TEST(WebKit, WKHTTPCookieStoreCreationTime)
 
     [globalCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
         ASSERT_EQ(1u, cookies.count);
-        NSNumber* creationTime2 = [cookies objectAtIndex:0].properties[@"Created"];
-        EXPECT_TRUE([creationTime.get() isEqual:creationTime2]);
+        NSNumber* createdTime = [cookies objectAtIndex:0].properties[@"Created"];
+        EXPECT_TRUE([creationTime.get() isEqual:createdTime]);
         gotFlag = true;
     }];
     TestWebKitAPI::Util::run(&gotFlag);

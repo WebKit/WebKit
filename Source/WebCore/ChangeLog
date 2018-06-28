@@ -1,3 +1,15 @@
+2018-06-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Cookie API: cookie creation time is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=187101
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by API test: WebKit.WKHTTPCookieStoreCreationTime.
+
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::Cookie::operator NSHTTPCookie * _Nullable  const):
+
 2018-06-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add Display::Box::nonCollapsedMarginBox for verification purposes.
