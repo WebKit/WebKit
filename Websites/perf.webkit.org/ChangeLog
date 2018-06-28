@@ -1,3 +1,18 @@
+2018-06-25  Dewei Zhu  <dewei_zhu@apple.com>
+
+        MeasurementSetAnalyzer should check triggerable availability before creating confirming A/B tests.
+        https://bugs.webkit.org/show_bug.cgi?id=187028
+
+        Reviewed by Ryosuke Niwa.
+
+        If the triggerable is not available, MeasurmentSetAnalyzer should only create analysis task without
+        confirming A/B tests.
+
+        * tools/js/measurement-set-analyzer.js: Added logic to check triggerable availability.
+        (MeasurementSetAnalyzer.prototype.async._analyzeMeasurementSet):
+        (MeasurementSetAnalyzer):
+        * unit-tests/measurement-set-analyzer-tests.js: Updated unit tests and added a new unit test for this change.
+
 2018-06-11  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend test group rule to support 'userInitiated' field.

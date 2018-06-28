@@ -101,10 +101,11 @@ class MeasurementSetAnalyzer {
         const startCommitSet = rangeWithMostSignificantChange.startPoint.commitSet();
         const endCommitSet = rangeWithMostSignificantChange.endPoint.commitSet();
         const summary = `Potential ${rangeWithMostSignificantChange.valueChangeSummary.changeLabel} on ${platform.name()} between ${CommitSet.diff(startCommitSet, endCommitSet)}`;
+        const confirmingTaskArguments = Triggerable.findByTestConfiguration(metric.test(), platform) ? ['Confirm', 4, true] : [];
 
         // FIXME: The iteration count should be smarter than hard-coding.
         const analysisTask = await AnalysisTask.create(summary, rangeWithMostSignificantChange.startPoint,
-            rangeWithMostSignificantChange.endPoint, 'Confirm', 4, true);
+            rangeWithMostSignificantChange.endPoint, ...confirmingTaskArguments);
 
         this._logger.info(`Created analysis task with id "${analysisTask.id()}" to confirm: "${summary}".`);
     }

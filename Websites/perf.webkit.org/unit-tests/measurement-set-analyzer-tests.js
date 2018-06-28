@@ -148,6 +148,11 @@ describe('MeasurementSetAnalyzer', () => {
 
         it('should not show created analysis task logging if failed to create analysis task', async () => {
             PrivilegedAPI.configure('test', 'password');
+
+            Triggerable.ensureSingleton(4, {name: 'some-triggerable',
+                repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();
             const measurementSetAnalyzer = new MeasurementSetAnalyzer([measurementSet], 4000, 5000, logger);
@@ -202,6 +207,11 @@ describe('MeasurementSetAnalyzer', () => {
 
         it('should analyze if a new regression is detected', async () => {
             PrivilegedAPI.configure('test', 'password');
+
+            Triggerable.ensureSingleton(4, {name: 'some-triggerable',
+                repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();
             const measurementSetAnalyzer = new MeasurementSetAnalyzer([measurementSet], 4000, 5000, logger);
@@ -258,6 +268,89 @@ describe('MeasurementSetAnalyzer', () => {
                     author: null,
                     bugs: [],
                     buildRequestCount: 8,
+                    finishedBuildRequestCount: 0,
+                    category: 'identified',
+                    causes: [],
+                    createdAt: 4500,
+                    endRun: 6448,
+                    endRunTime:  5000,
+                    fixes: [],
+                    id: 5255,
+                    metric: MockModels.someMetric.id(),
+                    name: 'Potential 2.38% regression on Some platform between WebKit: r40-r49',
+                    needed: null,
+                    platform: MockModels.somePlatform.id(),
+                    result: 'regression',
+                    segmentationStrategy: 1,
+                    startRun: 6439,
+                    startRunTime: 4000,
+                    testRangeStrategy: 2
+                }],
+                bugs: [],
+                commits: [],
+                status: 'OK'
+            });
+
+            await analysisPromise;
+            assert.deepEqual(logger.info_logs, ['==== "Some test : Some metric" on "Some platform" ====',
+                'Created analysis task with id "5255" to confirm: "Potential 2.38% regression on Some platform between WebKit: r35-r44".']);
+            assert.deepEqual(logger.error_logs, []);
+        });
+
+
+        it('should not create confirming A/B tests if a new regression is detected but no triggerable available', async () => {
+            PrivilegedAPI.configure('test', 'password');
+            const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
+            const logger = mockLogger();
+            const measurementSetAnalyzer = new MeasurementSetAnalyzer([measurementSet], 4000, 5000, logger);
+            measurementSetAnalyzer._startTime = 4000;
+            measurementSetAnalyzer._endTime = 5000;
+            const analysisPromise = measurementSetAnalyzer.analyzeOnce(measurementSet);
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, `/data/measurement-set-${MockModels.somePlatform.id()}-${MockModels.someMetric.id()}.json`);
+            requests[0].resolve({
+                'clusterStart': 1000,
+                'clusterSize': 1000,
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'configurations': {current: makeSampleRuns(simpleSegmentableValues, 6400, 4000, 1000 / 50)},
+                'startTime': 4000,
+                'endTime': 5000,
+                'lastModified': 5000,
+                'clusterCount': 4,
+                'status': 'OK'});
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/api/analysis-tasks?platform=65&metric=2884');
+            requests[1].resolve({
+                analysisTasks: [],
+                bugs: [],
+                commits: [],
+                status: 'OK'
+            });
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 3);
+            assert.equal(requests[2].url, '/privileged-api/create-analysis-task');
+            assert.deepEqual(requests[2].data, {
+                slaveName: 'test',
+                slavePassword: 'password',
+                name: 'Potential 2.38% regression on Some platform between WebKit: r35-r44',
+                startRun: 6434,
+                endRun: 6443
+            });
+            requests[2].resolve({taskId: '5255', status: 'OK'});
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 4);
+            assert.equal(requests[3].url, '/api/analysis-tasks?id=5255');
+
+            requests[3].resolve({
+                analysisTasks: [{
+                    author: null,
+                    bugs: [],
+                    buildRequestCount: 0,
                     finishedBuildRequestCount: 0,
                     category: 'identified',
                     causes: [],
@@ -347,6 +440,11 @@ describe('MeasurementSetAnalyzer', () => {
 
         it('should favor regression if the progression is not big enough', async () => {
             PrivilegedAPI.configure('test', 'password');
+
+            Triggerable.ensureSingleton(4, {name: 'some-triggerable',
+                repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();
             const measurementSetAnalyzer = new MeasurementSetAnalyzer([measurementSet], 4000, 5000, logger);
@@ -434,6 +532,11 @@ describe('MeasurementSetAnalyzer', () => {
 
         it('should choose analyze progression when it is big enough', async () => {
             PrivilegedAPI.configure('test', 'password');
+
+            Triggerable.ensureSingleton(4, {name: 'some-triggerable',
+                repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
+                configurations: [{test: MockModels.someMetric.test(), platform: MockModels.somePlatform}]});
+
             const measurementSet = MeasurementSet.findSet(MockModels.somePlatform.id(), MockModels.someMetric.id(), 5000);
             const logger = mockLogger();
             const measurementSetAnalyzer = new MeasurementSetAnalyzer([measurementSet], 4000, 5000, logger);
