@@ -40,7 +40,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
 {
     ASSERT(isMainThread());
 
-    if (!connection || xpc_get_type(connection->xpcConnection()) != XPC_TYPE_CONNECTION) {
+    if (!connection || !connection->xpcConnection()) {
         ASSERT_NOT_REACHED();
         return;
     }

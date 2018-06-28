@@ -1,3 +1,20 @@
+2018-06-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add nullptr check for xpc_connection_t in AuthenticationManager::initializeConnection
+        https://bugs.webkit.org/show_bug.cgi?id=187110
+        <rdar://problem/41536815>
+
+        Reviewed by Brent Fulgham.
+
+        In some rare cases as shown by crash tracers that the passed xpc_connection_t object could be nullptr,
+        and xpc_connection_set_event_handler won't do the nullptr check on its parameters. Therefore, we should
+        do it by ourselves.
+
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection):
+        * UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm:
+        (WebKit::AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc const):
+
 2018-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] DataTransfer.getData always returns the empty string when dropping text
