@@ -1,3 +1,19 @@
+2018-06-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) when dragging file into webview
+        https://bugs.webkit.org/show_bug.cgi?id=175602
+
+        Reviewed by Carlos Garcia Campos.
+
+        We check using the GdkDragContext to ensure the DroppingContext is still alive (present in
+        m_droppingContexts), but access it via the pointer to the DroppingContext that could be
+        dangling. This happens on every drag. I can't actually reproduce the original assertion
+        since I'm currently working with an asan build, but I imagine it's probably the same issue
+        that I'm fixing here.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::dragLeave):
+
 2018-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Don't expose new semantic -apple-system color keywords on iOS.
