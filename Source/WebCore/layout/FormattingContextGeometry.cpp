@@ -227,7 +227,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     ASSERT(marginBottom);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow non-replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << *height << "px) margin(" << *marginTop << "px, "  << *marginBottom << "px) layoutBox(" << &layoutBox << ")");
-    return { *top, *bottom, { *height, { *marginTop, *marginBottom } } };
+    return { *top, *bottom, { *height, { *marginTop, *marginBottom }, { } } };
 }
 
 FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
@@ -440,7 +440,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
         bottom = containingBlockHeight - (*top + *marginTop + borderTop + paddingTop + height + paddingBottom + borderBottom + *marginBottom); 
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << height << "px) margin(" << *marginTop << "px, "  << *marginBottom << "px) layoutBox(" << &layoutBox << ")");
-    return { *top, *bottom, { height, { *marginTop, *marginBottom } } };
+    return { *top, *bottom, { height, { *marginTop, *marginBottom }, { } } };
 }
 
 FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
@@ -570,7 +570,7 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floati
         height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating non-replaced -> height(" << *height << "px) margin(" << *marginTop << "px, " << *marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
-    return FormattingContext::Geometry::HeightAndMargin { *height, { *marginTop, *marginBottom } };
+    return FormattingContext::Geometry::HeightAndMargin { *height, { *marginTop, *marginBottom }, { } };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -699,7 +699,7 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inline
     ASSERT(height);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow replaced -> height(" << *height << "px) margin(" << margin.top << "px, " << margin.bottom << "px) -> layoutBox(" << &layoutBox << ")");
-    return { *height, margin };
+    return { *height, margin, { } };
 }
 
 FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,

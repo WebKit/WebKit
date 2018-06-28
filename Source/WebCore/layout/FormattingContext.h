@@ -96,6 +96,7 @@ protected:
         struct HeightAndMargin {
             LayoutUnit height;
             Display::Box::VerticalEdges margin;
+            std::optional<Display::Box::VerticalEdges> collapsedMargin;
         };
 
          struct HorizontalGeometry {

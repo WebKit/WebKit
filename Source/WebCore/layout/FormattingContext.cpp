@@ -55,7 +55,7 @@ void FormattingContext::computeFloatingHeightAndMargin(LayoutContext& layoutCont
 {
     auto heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
     displayBox.setContentBoxHeight(heightAndMargin.height);
-    displayBox.moveVertically(heightAndMargin.margin.top);
+    displayBox.moveVertically(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top);
     displayBox.setVerticalMargin(heightAndMargin.margin);
 }
 
@@ -79,7 +79,8 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutCo
 {
     auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
     displayBox.setTop(verticalGeometry.top);
-    displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
+    displayBox.setContentBoxHeight(verticalGeometry.bottom - verticalGeometry.top);
+    ASSERT(!verticalGeometry.heightAndMargin.collapsedMargin);
     displayBox.setVerticalMargin(verticalGeometry.heightAndMargin.margin);
 }
 

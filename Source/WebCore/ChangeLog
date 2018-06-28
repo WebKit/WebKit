@@ -1,5 +1,32 @@
 2018-06-27  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Compute both the collapsed and the non-collapsed margin values.
+        https://bugs.webkit.org/show_bug.cgi?id=187129
+
+        Reviewed by Antti Koivisto.
+
+        For validation purposes only at this point.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginTop):
+
+2018-06-27  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Align inFlowNonReplacedHeightAndMargin() style with the rest of the compute functions.
         https://bugs.webkit.org/show_bug.cgi?id=187126
 

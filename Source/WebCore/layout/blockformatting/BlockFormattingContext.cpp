@@ -192,7 +192,7 @@ void BlockFormattingContext::computeInFlowHeightAndMargin(LayoutContext& layoutC
 {
     auto heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);
     displayBox.setContentBoxHeight(heightAndMargin.height);
-    displayBox.moveVertically(heightAndMargin.margin.top);
+    displayBox.moveVertically(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top);
     displayBox.setVerticalMargin(heightAndMargin.margin);
 }
 

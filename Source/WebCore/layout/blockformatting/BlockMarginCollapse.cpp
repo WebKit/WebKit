@@ -78,7 +78,7 @@ static bool isMarginBottomCollapsedWithSibling(const Box& layoutBox)
     return layoutBox.style().bottom().isAuto();
 }
 
-static bool isMarginTopCollapsedWithParent(const Box& layoutBox, const Display::Box& displayBox)
+static bool isMarginTopCollapsedWithParent(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     // The first inflow child could propagate its top margin to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -99,13 +99,14 @@ static bool isMarginTopCollapsedWithParent(const Box& layoutBox, const Display::
         return false;
 
     // Margins of the root element's box do not collapse.
-    if (layoutBox.isInitialContainingBlock())
+    if (parent.isDocumentBox() || parent.isInitialContainingBlock())
         return false;
 
-    if (displayBox.borderTop())
+    auto& parentDisplayBox = *layoutContext.displayBoxForLayoutBox(parent);
+    if (parentDisplayBox.borderTop())
         return false;
 
-    if (!displayBox.paddingTop())
+    if (parentDisplayBox.paddingTop())
         return false;
 
     return true;
@@ -118,8 +119,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstCh
         return 0;
 
     auto& firstInFlowChild = *downcast<Container>(layoutBox).firstInFlowChild();
-    auto& fistInflowDisplayBox = *layoutContext.displayBoxForLayoutBox(firstInFlowChild);
-    if (!isMarginTopCollapsedWithParent(firstInFlowChild, fistInflowDisplayBox))
+    if (!isMarginTopCollapsedWithParent(layoutContext, firstInFlowChild))
         return 0;
 
     // Collect collapsed margin top recursively.
@@ -162,8 +162,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginTop(const LayoutContext
         return 0;
 
     // TODO: take _hasAdjoiningMarginTopAndBottom() into account.
-    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
-    if (isMarginTopCollapsedWithParent(layoutBox, displayBox))
+    if (isMarginTopCollapsedWithParent(layoutContext, layoutBox))
         return 0;
 
     // Floats and out of flow positioned boxes do not collapse their margins.
