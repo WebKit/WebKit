@@ -171,7 +171,8 @@ private:
         [_stackView setAlpha:1];
         self.prefersStatusBarHidden = NO;
         self.prefersHomeIndicatorAutoHidden = NO;
-        [self.view removeConstraints:@[_topConstraint.get()]];
+        if (_topConstraint)
+            [NSLayoutConstraint deactivateConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor];
         [_topConstraint setActive:YES];
         if (auto* manager = self._manager)
@@ -184,7 +185,8 @@ private:
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
 
-        [self.view removeConstraints:@[_topConstraint.get()]];
+        if (_topConstraint)
+            [NSLayoutConstraint deactivateConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.topAnchor constant:self.view.safeAreaInsets.top];
         [_topConstraint setActive:YES];
         [_stackView setAlpha:0];
