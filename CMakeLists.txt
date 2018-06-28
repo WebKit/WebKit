@@ -37,7 +37,6 @@ endif ()
 set(ALL_PORTS
     AppleWin
     Efl
-    Fuchsia
     GTK
     JSCOnly
     Mac
@@ -115,6 +114,8 @@ if (UNIX)
     endif ()
 elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
     set(WTF_OS_WINDOWS 1)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Fuchsia")
+    set(WTF_OS_FUCHSIA 1)
 else ()
     message(FATAL_ERROR "Unknown OS '${CMAKE_SYSTEM_NAME}'")
 endif ()

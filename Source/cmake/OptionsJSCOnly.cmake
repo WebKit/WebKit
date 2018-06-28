@@ -97,7 +97,10 @@ else ()
 endif ()
 
 if (NOT APPLE)
-    find_package(ICU REQUIRED)
+    if (NOT WTF_OS_FUCHSIA)
+        # TODO: Add ICU on Fuchsia.
+        find_package(ICU REQUIRED)
+    endif ()
 else ()
     add_definitions(-DU_DISABLE_RENAMING=1 -DU_SHOW_CPLUSPLUS_API=0)
     set(ICU_LIBRARIES libicucore.dylib)

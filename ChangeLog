@@ -1,3 +1,19 @@
+2018-06-28  Adam Barth  <abarth@webkit.org>
+
+        Switch OS(FUCHSIA) to using JSCOnly
+        https://bugs.webkit.org/show_bug.cgi?id=187133
+
+        Reviewed by Yusuke Suzuki.
+
+        Rather than creating a Fuchsia port, OS(FUCHSIA) now uses the JSCOnly
+        port.
+
+        * CMakeLists.txt: Set the WTF_OS_FUCHSIA flag
+        * Source/cmake/OptionsFuchsia.cmake: Removed.
+        * Source/cmake/OptionsJSCOnly.cmake: Temporarily disable ICU for
+        OS(FUCHSIA). We'll get ICU wired in, but I'd like to work through the
+        other compile errors first.
+
 2018-06-27  Adam Barth  <abarth@webkit.org>
 
         Add Fuchsia support to build-jsc

@@ -1,3 +1,17 @@
+2018-06-28  Adam Barth  <abarth@webkit.org>
+
+        Switch OS(FUCHSIA) to using JSCOnly
+        https://bugs.webkit.org/show_bug.cgi?id=187133
+
+        Reviewed by Yusuke Suzuki.
+
+        Switch Fuchsia from being a port to just being an OS. We now use a
+        CMAKE_TOOLCHAIN_FILE to configure the toolchain and the target triple.
+
+        * Scripts/webkitdirs.pm: Remove isFuchsia() and clients. Turns out we
+        can do everything we need using a CMAKE_TOOLCHAIN_FILE via the
+        --cmakeargs flag.
+
 2018-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make MotionMark's plan file more robust against code changes
