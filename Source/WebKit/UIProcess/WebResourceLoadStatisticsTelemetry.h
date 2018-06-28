@@ -29,11 +29,11 @@
 
 namespace WebKit {
 
-class WebResourceLoadStatisticsStore;
+class ResourceLoadStatisticsMemoryStore;
 
 namespace WebResourceLoadStatisticsTelemetry {
     
-void calculateAndSubmit(const WebResourceLoadStatisticsStore&);
+void calculateAndSubmit(const ResourceLoadStatisticsMemoryStore&);
 void setNotifyPagesWhenTelemetryWasCaptured(bool);
     
 }

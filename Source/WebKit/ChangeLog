@@ -1,3 +1,184 @@
+2018-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Split memory store logic out of WebResourceLoadStatisticsStore to clarify threading model
+        https://bugs.webkit.org/show_bug.cgi?id=187055
+        <rdar://problem/41584026>
+
+        Reviewed by Brent Fulgham.
+
+        Split memory store logic out of WebResourceLoadStatisticsStore and into a ResourceLoadStatisticsMemoryStore class
+        to clarify the threading model. Previously, some of the methods of the WebResourceLoadStatisticsStore had to be
+        called on the main thread and some of them on the background queue, which was confusing and error prone. Now,
+        all WebResourceLoadStatisticsStore methods (except for IPC ones which will be addressed in a follow-up) are called
+        on the main thread. The ResourceLoadStatisticsMemoryStore objects is constructed / used and destroyed on the
+        background queue, similarly to the ResourceLoadStatisticsPersistentStore. The WebResourceLoadStatisticsStore
+        objects merely proxies calls from WebKit to those persistent / memory stores and takes care of hopping back and
+        forth between the background thread and the work queue.
+
+        While spliting code code, I found several instances where we were calling completion handlers on the wrong thread.
+        I fixed those in this patch now that the model is clearer.
+
+        We can likely clean up (organize the code a bit better) in a follow-up). This patch takes care of splitting the
+        code as it was. Code that was called on the background queue was moved to ResourceLoadStatisticsMemoryStore class
+        and code that was called on the main thread stays in WebResourceLoadStatisticsStore.
+
+        * CMakeLists.txt:
+        * UIProcess/Cocoa/ResourceLoadStatisticsMemoryStoreCocoa.mm: Renamed from Source/WebKit/UIProcess/Cocoa/WebResourceLoadStatisticsStoreCocoa.mm.
+        (WebKit::ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp: Added.
+        (WebKit::appendWithDelimiter):
+        (WebKit::OperatingDate::fromWallTime):
+        (WebKit::OperatingDate::today):
+        (WebKit::OperatingDate::secondsSinceEpoch const):
+        (WebKit::OperatingDate::operator== const):
+        (WebKit::OperatingDate::operator< const):
+        (WebKit::OperatingDate::operator<= const):
+        (WebKit::OperatingDate::OperatingDate):
+        (WebKit::mergeOperatingDates):
+        (WebKit::pruneResources):
+        (WebKit::computeImportance):
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        (WebKit::ResourceLoadStatisticsMemoryStore::~ResourceLoadStatisticsMemoryStore):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPersistentStorage):
+        (WebKit::ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setShouldSubmitTelemetry):
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsMemoryStore::recursivelyGetAllDomainsThatHaveRedirectedToThisDomain):
+        (WebKit::ResourceLoadStatisticsMemoryStore::markAsPrevalentIfHasRedirectedToPrevalent):
+        (WebKit::ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::ResourceLoadStatisticsMemoryStore::scheduleStatisticsProcessingRequestIfNecessary):
+        (WebKit::ResourceLoadStatisticsMemoryStore::cancelPendingStatisticsProcessingRequest):
+        (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsMemoryStore::logUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::logNonRecentUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPrevalentResource):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isPrevalentResource const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isVeryPrevalentResource const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isRegisteredAsSubFrameUnder):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isRegisteredAsRedirectingTo):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clearPrevalentResource):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setGrandfathered):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isGrandfathered const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setSubresourceUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setTopFrameUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setTimeToLiveUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setTimeToLiveCookiePartitionFree):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setGrandfatheringTime):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveDataRecords const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setDataRecordsBeingRemoved):
+        (WebKit::ResourceLoadStatisticsMemoryStore::ensureResourceStatisticsForPrimaryDomain):
+        (WebKit::ResourceLoadStatisticsMemoryStore::createEncoderFromData const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::mergeWithDataFromDecoder):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+        (WebKit::ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldPartitionCookies):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldBlockCookies):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasUserGrantedStorageAccessThroughPrompt):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookiePartitioning):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookiePartitioningForDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clearPartitioningStateForDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::resetCookiePartitioningState):
+        (WebKit::ResourceLoadStatisticsMemoryStore::processStatistics const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsMemoryStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStatisticsExpired const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setMaxStatisticsEntries):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPruneEntriesDownTo):
+        (WebKit::ResourceLoadStatisticsMemoryStore::pruneStatisticsIfNeeded):
+        (WebKit::ResourceLoadStatisticsMemoryStore::resetParametersToDefaultValues):
+        (WebKit::ResourceLoadStatisticsMemoryStore::logTestingEvent):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setLastSeen):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setVeryPrevalentResource):
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeAllStorageAccess):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h: Added.
+        (WebKit::ResourceLoadStatisticsMemoryStore::isEmpty const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setStorageAccessPromptsEnabled):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setDebugLogggingEnabled):
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::startMonitoringDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore):
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldSubmitTelemetry):
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::callGrantStorageAccessHandler):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+        (WebKit::WebResourceLoadStatisticsStore::submitTelemetry):
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdate):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearPartitioningStateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemory):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree):
+        (WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfatheringTime):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler):
+        (WebKit::WebResourceLoadStatisticsStore::callRemoveDomainsHandler):
+        (WebKit::WebResourceLoadStatisticsStore::setMaxStatisticsEntries):
+        (WebKit::WebResourceLoadStatisticsStore::setPruneEntriesDownTo):
+        (WebKit::WebResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        (WebKit::WebResourceLoadStatisticsStore::logTestingEvent):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::sortedPrevalentResourceTelemetry):
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+        * UIProcess/WebResourceLoadStatisticsTelemetry.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-06-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) when dragging file into webview

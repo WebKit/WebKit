@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#import "WebResourceLoadStatisticsStore.h"
+#import "config.h"
+#import "ResourceLoadStatisticsMemoryStore.h"
 
 namespace WebKit {
 
-void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
+void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
 {
     static dispatch_once_t initOnce;
 
-    dispatch_once(&initOnce, ^ {
+    dispatch_once(&initOnce, ^{
         Seconds timeToLiveUserInteraction([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveUserInteraction"]);
         if (timeToLiveUserInteraction > 0_s && timeToLiveUserInteraction <= 24_h * 30)
             setTimeToLiveUserInteraction(timeToLiveUserInteraction);

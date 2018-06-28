@@ -30,6 +30,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,13 +39,13 @@ class FileMonitor;
 
 namespace WebKit {
 
-class WebResourceLoadStatisticsStore;
+class ResourceLoadStatisticsMemoryStore;
 
 // Can only be constructed / destroyed / used from the WebResourceLoadStatisticsStore's statistic queue.
 class ResourceLoadStatisticsPersistentStorage : public CanMakeWeakPtr<ResourceLoadStatisticsPersistentStorage> {
 public:
     enum class IsReadOnly { No, Yes };
-    ResourceLoadStatisticsPersistentStorage(WebResourceLoadStatisticsStore&, const String& storageDirectoryPath, IsReadOnly);
+    ResourceLoadStatisticsPersistentStorage(ResourceLoadStatisticsMemoryStore&, WorkQueue&, const String& storageDirectoryPath, IsReadOnly);
     ~ResourceLoadStatisticsPersistentStorage();
 
     void clear();
@@ -65,7 +66,8 @@ private:
     void excludeFromBackup() const;
     void refreshMemoryStoreFromDisk();
 
-    WebResourceLoadStatisticsStore& m_memoryStore;
+    ResourceLoadStatisticsMemoryStore& m_memoryStore;
+    Ref<WorkQueue> m_workQueue;
     const String m_storageDirectoryPath;
     std::unique_ptr<WebCore::FileMonitor> m_fileMonitor;
     WallTime m_lastStatisticsFileSyncTime;
