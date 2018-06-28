@@ -51,11 +51,11 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 @interface LSBundleProxy : LSResourceProxy <NSSecureCoding>
 @end
 
+#if HAVE(APP_LINKS)
 @interface LSApplicationProxy : LSBundleProxy <NSSecureCoding>
 - (NSString *)localizedNameForContext:(NSString *)context;
 @end
 
-#if HAVE(APP_LINKS)
 @interface LSAppLink : NSObject <NSSecureCoding>
 @end
 

@@ -159,7 +159,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMAudioFormatDescriptionCreate, OS
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMClockGetHostTimeClock, CMClockRef, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMClockGetTime, CMTime, (CMClockRef clock), (clock))
 
-#if PLATFORM(APPLETV) || PLATFORM(MAC) || PLATFORM(WATCHOS) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 120000)
+#if PLATFORM(APPLETV) || PLATFORM(MAC) || ENABLE(MINIMAL_SIMULATOR) || PLATFORM(WATCHOS) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 120000)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMSampleBufferCallForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (* CMSAMPLEBUFFERCALL_NOESCAPE callback)( CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon), void *refcon), (sbuf, callback, refcon))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMSampleBufferCallBlockForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (^ CMSAMPLEBUFFERCALL_NOESCAPE handler)(CMSampleBufferRef, CMItemCount)), (sbuf, handler))
 #endif
