@@ -1,3 +1,17 @@
+2018-06-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-starttime.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183834
+        <rdar://problem/40997932>
+
+        Reviewed by Dean Jackson.
+
+        This test now passes reliably so we remove any specific expectation. Another test needed to be modified to account for 
+        the pending state being updated at a different time, so we just wait a frame to ensure the animation is started.
+
+        * TestExpectations:
+        * compositing/visible-rect/animated.html:
+
 2018-06-28  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; media/video-buffering-allowed.html is flakey due to not completing in time.

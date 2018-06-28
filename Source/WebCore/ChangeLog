@@ -1,3 +1,29 @@
+2018-06-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-starttime.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183834
+        <rdar://problem/40997932>
+
+        Reviewed by Dean Jackson.
+
+        We need to run pending tasks in the "update animations" procedure to ensure that the start time has been set
+        to a different time than the timeline time at the time the animation was asked to play(). This ensure the
+        timeline current time has progressed and can be queried to a different value in a requestAnimationFrame()
+        callback.
+
+        When invalidating events, we need to make sure we disregard instances when an animation has and is still pending
+        so that we wait until we change the pending state to work out which events to enqueue.
+
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::updateAnimations):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::updatePendingTasks):
+        (WebCore::WebAnimation::timeToNextRequiredTick const):
+        (WebCore::WebAnimation::runPendingTasks):
+        * animation/WebAnimation.h:
+
 2018-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in ScriptController::canExecuteScripts via WebCore::SVGUseElement::insertedIntoAncestor

@@ -232,6 +232,9 @@ void DocumentTimeline::animationResolutionTimerFired()
 
 void DocumentTimeline::updateAnimations()
 {
+    for (const auto& animation : animations())
+        animation->runPendingTasks();
+
     if (m_document && hasElementAnimations()) {
         for (const auto& elementToAnimationsMapItem : elementToAnimationsMap())
             elementToAnimationsMapItem.key->invalidateStyleAndLayerComposition();

@@ -6,7 +6,7 @@ PASS startTime is unresolved when paused
 PASS startTime while pause-pending and play-pending 
 PASS startTime while play-pending from finished state 
 PASS startTime while play-pending from finished state using finish() 
-FAIL Pausing should make the startTime become null assert_true: After the animation has started, startTime is greater than the time when it was started expected true got false
+PASS Pausing should make the startTime become null 
 PASS Sanity test to check round-tripping assigning to a new animation's startTime 
 PASS Skipping forward through animation 
 PASS Skipping backwards through animation 

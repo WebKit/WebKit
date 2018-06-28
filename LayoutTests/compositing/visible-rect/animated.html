@@ -34,11 +34,13 @@
         function doTest()
         {
             document.getElementById('animated').addEventListener('webkitAnimationStart', function() {
-                if (window.internals)
-                    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+                requestAnimationFrame(() => {
+                    if (window.internals)
+                        document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
 
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
             }, false);
         }
         window.addEventListener('load', doTest, false);

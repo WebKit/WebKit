@@ -121,6 +121,9 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
     auto* animationEffect = effect();
 
     auto isPending = pending();
+    if (isPending && m_wasPending)
+        return;
+
     auto iteration = animationEffect ? animationEffect->currentIteration().value_or(0) : 0;
     auto currentPhase = animationEffect ? animationEffect->phase() : phaseWithoutEffect();
 

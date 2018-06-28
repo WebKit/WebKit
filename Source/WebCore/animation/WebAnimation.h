@@ -107,6 +107,7 @@ public:
 
     Seconds timeToNextRequiredTick() const;
     virtual void resolve(RenderStyle&);
+    void runPendingTasks();
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
     void acceleratedStateDidChange();
     void applyPendingAcceleratedActions();

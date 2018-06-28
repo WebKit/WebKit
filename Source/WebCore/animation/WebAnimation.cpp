@@ -988,25 +988,6 @@ void WebAnimation::runPendingPauseTask()
 
 void WebAnimation::updatePendingTasks()
 {
-    if (hasPendingPauseTask() && is<DocumentTimeline>(m_timeline)) {
-        if (auto document = downcast<DocumentTimeline>(*m_timeline).document()) {
-            document->postTask([this, protectedThis = makeRef(*this)] (auto&) {
-                if (this->hasPendingPauseTask() && m_timeline)
-                    this->runPendingPauseTask();
-            });
-        }
-    }
-
-    // FIXME: This should only happen if we're ready, at the moment we think we're ready if we have a timeline.
-    if (hasPendingPlayTask() && is<DocumentTimeline>(m_timeline)) {
-        if (auto document = downcast<DocumentTimeline>(*m_timeline).document()) {
-            document->postTask([this, protectedThis = makeRef(*this)] (auto&) {
-                if (this->hasPendingPlayTask() && m_timeline)
-                    this->runPendingPlayTask();
-            });
-        }
-    }
-
     timingModelDidChange();
 }
 
@@ -1014,11 +995,17 @@ Seconds WebAnimation::timeToNextRequiredTick() const
 {
     // If we don't have a timeline, an effect, a start time or a playback rate other than 0,
     // there is no value to apply so we don't need to schedule invalidation.
-    if (!m_timeline || !m_effect || !m_startTime || !m_playbackRate)
+    if (!m_timeline || !m_effect || !m_playbackRate)
         return Seconds::infinity();
 
-    // If we're in the running state, we need to schedule invalidation as soon as possible.
-    if (playState() == PlayState::Running)
+    if (pending())
+        return 0_s;
+
+    if (!m_startTime)
+        return Seconds::infinity();
+
+    // If we're in or expected to be in the running state, we need to schedule invalidation as soon as possible.
+    if (hasPendingPlayTask() || playState() == PlayState::Running)
         return 0_s;
 
     // If our current time is negative, we need to be scheduled to be resolved at the inverse
@@ -1031,6 +1018,15 @@ Seconds WebAnimation::timeToNextRequiredTick() const
     // In any other case, we're idle or already outside our active duration and have no need
     // to schedule an invalidation.
     return Seconds::infinity();
+}
+
+void WebAnimation::runPendingTasks()
+{
+    if (hasPendingPauseTask())
+        runPendingPauseTask();
+
+    if (hasPendingPlayTask())
+        runPendingPlayTask();
 }
 
 void WebAnimation::resolve(RenderStyle& targetStyle)
