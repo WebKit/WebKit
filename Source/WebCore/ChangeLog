@@ -1,3 +1,28 @@
+2018-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Fix encoding / decoding issues in ResourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=186890
+
+        Reviewed by Brent Fulgham.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::encodeHashCountedSet):
+        (WebCore::encodeHashSet):
+        Do not return early if the container we're trying to encode is empty. Instead,
+        have the encoder encode an empty array. This is important for encoding / decoding
+        to be fully symmetric. Otherwise, when trying to decode one of these empty containers,
+        the decoder would fail (silently since we were ignoring decoding errors). Worse, the
+        decoder might succeed but actually be decoding the *next* container in the file, since
+        we have several HashCountedSets / HashSets encoded one after another.
+
+        (WebCore::decodeHashCountedSet):
+        (WebCore::decodeHashSet):
+        Return a boolean to indicate if the decoding suceeded or not.
+
+        (WebCore::ResourceLoadStatistics::decode):
+        Check for container decoding errors and return false when decoding fails.
+        Otherwise, we would just silently keep going.
+
 2018-06-28  Sihui Liu  <sihui_liu@apple.com>
 
         Cookie API: cookie creation time is wrong

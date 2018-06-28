@@ -40,9 +40,6 @@ typedef WTF::HashMap<String, unsigned, StringHash, HashTraits<String>, HashTrait
 
 static void encodeHashCountedSet(KeyedEncoder& encoder, const String& label, const HashCountedSet<String>& hashCountedSet)
 {
-    if (hashCountedSet.isEmpty())
-        return;
-
     encoder.encodeObjects(label, hashCountedSet.begin(), hashCountedSet.end(), [](KeyedEncoder& encoderInner, const ResourceLoadStatisticsValue& origin) {
         encoderInner.encodeString("origin", origin.key);
         encoderInner.encodeUInt32("count", origin.value);
@@ -51,9 +48,6 @@ static void encodeHashCountedSet(KeyedEncoder& encoder, const String& label, con
 
 static void encodeHashSet(KeyedEncoder& encoder, const String& label, const HashSet<String>& hashSet)
 {
-    if (hashSet.isEmpty())
-        return;
-    
     encoder.encodeObjects(label, hashSet.begin(), hashSet.end(), [](KeyedEncoder& encoderInner, const String& origin) {
         encoderInner.encodeString("origin", origin);
     });
@@ -94,10 +88,10 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
     encoder.encodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI);
 }
 
-static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<String>& hashCountedSet)
+static bool decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<String>& hashCountedSet)
 {
     Vector<String> ignore;
-    decoder.decodeObjects(label, ignore, [&hashCountedSet](KeyedDecoder& decoderInner, String& origin) {
+    return decoder.decodeObjects(label, ignore, [&hashCountedSet](KeyedDecoder& decoderInner, String& origin) {
         if (!decoderInner.decodeString("origin", origin))
             return false;
         
@@ -110,16 +104,17 @@ static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, Has
     });
 }
 
-static void decodeHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
+static bool decodeHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
 {
-    Vector<String> ignore;
-    decoder.decodeObjects(label, ignore, [&hashSet](KeyedDecoder& decoderInner, String& origin) {
-        if (!decoderInner.decodeString("origin", origin))
-            return false;
-        
-        hashSet.add(origin);
-        return true;
+    Vector<String> origins;
+    bool success = decoder.decodeObjects(label, origins, [](KeyedDecoder& decoderInner, String& origin) {
+        return decoderInner.decodeString("origin", origin);
     });
+    if (!success)
+        return false;
+
+    hashSet.add(origins.begin(), origins.end());
+    return true;
 }
 
 bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion)
@@ -132,22 +127,33 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
         return false;
 
     // Storage access
-    decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
+    if (!decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins))
+        return false;
 
     // Top frame stats
     if (modelVersion >= 11) {
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
+        if (!decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo))
+            return false;
+
+        if (!decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom))
+            return false;
     }
 
     // Subframe stats
-    decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
+    if (!decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins))
+        return false;
     
     // Subresource stats
-    decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameOrigins);
-    decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
-    if (modelVersion >= 11)
-        decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
+    if (!decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameOrigins))
+        return false;
+
+    if (!decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo))
+        return false;
+
+    if (modelVersion >= 11) {
+        if (!decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom))
+            return false;
+    }
 
     // Prevalent Resource
     if (!decoder.decodeBool("isPrevalentResource", isPrevalentResource))
