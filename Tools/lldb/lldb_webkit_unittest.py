@@ -33,6 +33,7 @@ import unittest
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.config import Config
 
+# Run just the tests in this file with ./Tools/Scripts/test-webkitpy lldb_webkit_unittest
 
 # We cache the lldb debug session state so that we don't create it again for each call to a serial_test_ method.
 # We store it in a global variable so that we can delete this cached state on exit(3).
@@ -137,3 +138,13 @@ class TestSummaryProviders(unittest.TestCase):
     def serial_test_WTFString_SummaryProvider_16bit_string(self):
         summary = lldb_webkit.WTFString_SummaryProvider(self._sbFrame.FindVariable('a16BitString'), {})
         self.assertEqual(summary, u"{ length = 13, contents = '\\u1680Cappuccino\\u1680\\x00' }")
+
+    # MARK: WTFVector_SummaryProvider test cases
+
+    def serial_test_WTFVectorProvider_empty_vector(self):
+        summary = lldb_webkit.WTFVector_SummaryProvider(self._sbFrame.FindVariable('anEmptyVector'), {})
+        self.assertEqual(summary, "{ size = 0, capacity = 0 }")
+
+    def serial_test_WTFVectorProvider_vector_size_and_capacity(self):
+        summary = lldb_webkit.WTFVector_SummaryProvider(self._sbFrame.FindVariable('aVectorWithOneItem'), {})
+        self.assertEqual(summary, "{ size = 1, capacity = 16 }")

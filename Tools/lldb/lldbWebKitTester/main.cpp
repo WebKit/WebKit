@@ -54,6 +54,12 @@ static void testSummaryProviders()
     String a16BitString = utf16String(u"\u1680Cappuccino\u1680");
     StringImpl* a16BitStringImpl = a16BitString.impl();
 
+
+    Vector<int> anEmptyVector;
+    Vector<int> aVectorWithOneItem;
+    aVectorWithOneItem.reserveCapacity(16);
+    aVectorWithOneItem.append(1);
+
     breakForTestingSummaryProviders();
 }
 

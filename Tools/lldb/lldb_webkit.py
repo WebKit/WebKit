@@ -383,7 +383,7 @@ class WTFVectorProvider:
     def update(self):
         self.buffer = self.valobj.GetChildMemberWithName('m_buffer')
         self.size = self.valobj.GetChildMemberWithName('m_size').GetValueAsUnsigned(0)
-        self.capacity = self.buffer.GetChildMemberWithName('m_capacity').GetValueAsUnsigned(0)
+        self.capacity = self.valobj.GetChildMemberWithName('m_capacity').GetValueAsUnsigned(0)
         self.data_type = self.buffer.GetType().GetPointeeType()
         self.data_size = self.data_type.GetByteSize()
 
