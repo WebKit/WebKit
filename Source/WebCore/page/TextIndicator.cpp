@@ -134,14 +134,16 @@ static bool hasNonInlineOrReplacedElements(const Range& range)
 static SnapshotOptions snapshotOptionsForTextIndicatorOptions(TextIndicatorOptions options)
 {
     SnapshotOptions snapshotOptions = SnapshotOptionsNone;
-    if (!(options & TextIndicatorOptionRespectTextColor))
-        snapshotOptions |= SnapshotOptionsForceBlackText;
 
     if (!(options & TextIndicatorOptionPaintAllContent)) {
         if (options & TextIndicatorOptionPaintBackgrounds)
             snapshotOptions |= SnapshotOptionsPaintSelectionAndBackgroundsOnly;
-        else
+        else {
             snapshotOptions |= SnapshotOptionsPaintSelectionOnly;
+
+            if (!(options & TextIndicatorOptionRespectTextColor))
+                snapshotOptions |= SnapshotOptionsForceBlackText;
+        }
     } else
         snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
 

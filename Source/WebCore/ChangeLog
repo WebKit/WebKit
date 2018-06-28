@@ -1,5 +1,18 @@
 2018-06-28  Timothy Hatcher  <timothy@apple.com>
 
+        Don't force black text when TextIndicator draws backgrounds or all content.
+        https://bugs.webkit.org/show_bug.cgi?id=187161
+        rdar://problem/40434644
+
+        Reviewed by Tim Horton.
+
+        * page/TextIndicator.cpp:
+        (WebCore::snapshotOptionsForTextIndicatorOptions):
+        Only set SnapshotOptionsForceBlackText when TextIndicatorOptionRespectTextColor and
+        TextIndicatorOptionPaintBackgrounds are not set.
+
+2018-06-28  Timothy Hatcher  <timothy@apple.com>
+
         Find on page selection color isn't adapted for dark mode.
         https://bugs.webkit.org/show_bug.cgi?id=187072
 
