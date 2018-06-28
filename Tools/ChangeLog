@@ -1,3 +1,17 @@
+2018-06-28  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        Unreviewed, rolling out r226652.
+        https://bugs.webkit.org/show_bug.cgi?id=180827
+
+        "PlatformInfo should never be instantiated in isolation. So, PlatformInfo should
+        not have default argument values. The preferred way to get a PlatformInfo object
+        is to instantiate a Host object." (Requested by dbates).
+
+        Reverted changeset:
+
+        "[webkitpy] PlatformInfo should have default argument for casual use"
+        https://bugs.webkit.org/show_bug.cgi?id=180827
+
 2018-06-28  Simon Fraser  <simon.fraser@apple.com>
 
         Try to address test failures on the bots.
