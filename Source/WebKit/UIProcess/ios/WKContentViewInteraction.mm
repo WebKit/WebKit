@@ -1500,6 +1500,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return _outstandingPositionInformationRequest && _outstandingPositionInformationRequest->isValidForRequest(request);
 }
 
+- (BOOL)_currentPositionInformationIsApproximatelyValidForRequest:(const InteractionInformationRequest&)request
+{
+    return _hasValidPositionInformation && _positionInformation.request.isApproximatelyValidForRequest(request);
+}
+
 - (void)_invokeAndRemovePendingHandlersValidForCurrentPositionInformation
 {
     ASSERT(_hasValidPositionInformation);
@@ -3320,6 +3325,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 /* Hit testing. */
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point
 {
+#if ENABLE(MINIMAL_SIMULATOR)
+    InteractionInformationRequest request(roundedIntPoint(point));
+    [self requestAsynchronousPositionInformationUpdate:request];
+    if ([self _currentPositionInformationIsApproximatelyValidForRequest:request] && _positionInformation.isSelectable)
+        return [WKTextPosition textPositionWithRect:_positionInformation.caretRect];
+#endif
     return nil;
 }
 

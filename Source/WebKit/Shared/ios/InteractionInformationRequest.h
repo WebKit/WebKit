@@ -49,6 +49,7 @@ struct InteractionInformationRequest {
     }
 
     bool isValidForRequest(const InteractionInformationRequest&);
+    bool isApproximatelyValidForRequest(const InteractionInformationRequest& other);
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, InteractionInformationRequest&);

@@ -62,6 +62,9 @@ struct InteractionInformationAtPosition {
     String title;
     String idAttribute;
     WebCore::IntRect bounds;
+#if ENABLE(MINIMAL_SIMULATOR)
+    WebCore::IntRect caretRect;
+#endif
     RefPtr<ShareableBitmap> image;
     String textBefore;
     String textAfter;

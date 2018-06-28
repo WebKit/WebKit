@@ -1,3 +1,39 @@
+2018-06-27  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix IBeam issues with iPad apps on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=186900
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Add functionality to determine what a caret rect should be, but as it is
+        expensive, it should only be done for this platform.
+        
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::isApproximateForRequest):
+        * Shared/ios/InteractionInformationRequest.h:
+
+        As there is no way to premptively request information on hover, we need to use 
+        the last cached information, but only if it is close to the point we are about
+        to request information for. So having a way to determine if a point is very close
+        to a previous point is a good idea.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _currentPositionInformationIsApproximateForRequest:]):
+        (-[WKContentView closestPositionToPoint:]):
+
+        UIKit is using this function to determine if we should show an Ibeam or not.
+        So we need to implement it, at least for this platform. 
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
+        Pass up the calculated caret rect, but only for iPad apps on Mac.
+
 2018-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][WPE] Use LazyNeverDestroyed<XErrorTrapper> to remove static initializers

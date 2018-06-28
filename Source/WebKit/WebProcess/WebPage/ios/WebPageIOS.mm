@@ -2175,6 +2175,11 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                 if (info.isSelectable && !hitNode->isTextNode())
                     info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
             }
+#if ENABLE(MINIMAL_SIMULATOR)
+            bool isInsideFixedPosition;
+            VisiblePosition caretPosition(renderer->positionForPoint(request.point, nullptr));
+            info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);
+#endif
         }
     }
 
