@@ -60,16 +60,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
 
-CGColorRef GraphicsContext::focusRingColor()
-{
-    static CGColorRef color = [] {
-        CGFloat colorComponents[] = { 0.5, 0.75, 1.0, 1.0 };
-        return CGColorCreate(sRGBColorSpaceRef(), colorComponents);
-    }();
-    return color;
-}
-
-static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset)
+static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset, const Color& color)
 {
     CGFocusRingStyle focusRingStyle;
     BOOL needsRepaint = NSInitializeCGFocusRingStyleForTime(NSFocusRingOnly, &focusRingStyle, timeOffset);
@@ -79,7 +70,7 @@ static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset)
     // -1. According to CoreGraphics, the reasoning for this behavior has been
     // lost in time.
     focusRingStyle.accumulate = -1;
-    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, GraphicsContext::focusRingColor()));
+    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color)));
 
     CGContextSaveGState(context);
     CGContextSetStyle(context, style.get());
@@ -89,24 +80,24 @@ static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset)
     return needsRepaint;
 }
 
-static void drawFocusRing(CGContextRef context)
+static void drawFocusRing(CGContextRef context, const Color& color)
 {
-    drawFocusRingAtTime(context, std::numeric_limits<double>::max());
+    drawFocusRingAtTime(context, std::numeric_limits<double>::max(), color);
 }
 
-static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath)
+static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath, const Color& color)
 {
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
-    drawFocusRing(context);
+    drawFocusRing(context, color);
 }
 
-static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRingPath, double timeOffset)
+static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRingPath, double timeOffset, const Color& color)
 {
     UNUSED_PARAM(timeOffset);
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
-    return drawFocusRingAtTime(context, std::numeric_limits<double>::max());
+    return drawFocusRingAtTime(context, std::numeric_limits<double>::max(), color);
 }
 
 #endif // PLATFORM(MAC)
@@ -122,7 +113,7 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
         return;
     }
 
-    drawFocusRingToContext(platformContext(), path.platformPath());
+    drawFocusRingToContext(platformContext(), path.platformPath(), color);
 #else
     UNUSED_PARAM(path);
     UNUSED_PARAM(width);
@@ -132,7 +123,7 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
 }
 
 #if PLATFORM(MAC)
-void GraphicsContext::drawFocusRing(const Path& path, double timeOffset, bool& needsRedraw)
+void GraphicsContext::drawFocusRing(const Path& path, double timeOffset, bool& needsRedraw, const Color& color)
 {
     if (paintingDisabled() || path.isNull())
         return;
@@ -140,10 +131,10 @@ void GraphicsContext::drawFocusRing(const Path& path, double timeOffset, bool& n
     if (m_impl) // FIXME: implement animated focus ring drawing.
         return;
 
-    needsRedraw = drawFocusRingToContextAtTime(platformContext(), path.platformPath(), timeOffset);
+    needsRedraw = drawFocusRingToContextAtTime(platformContext(), path.platformPath(), timeOffset, color);
 }
 
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeOffset, bool& needsRedraw)
+void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeOffset, bool& needsRedraw, const Color& color)
 {
     if (paintingDisabled())
         return;
@@ -155,7 +146,7 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, double timeO
     for (const auto& rect : rects)
         CGPathAddRect(focusRingPath.get(), 0, CGRect(rect));
 
-    needsRedraw = drawFocusRingToContextAtTime(platformContext(), focusRingPath.get(), timeOffset);
+    needsRedraw = drawFocusRingToContextAtTime(platformContext(), focusRingPath.get(), timeOffset, color);
 }
 #endif
 
@@ -174,7 +165,7 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     for (auto& rect : rects)
         CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rect, -offset, -offset));
 
-    drawFocusRingToContext(platformContext(), focusRingPath.get());
+    drawFocusRingToContext(platformContext(), focusRingPath.get(), color);
 #else
     UNUSED_PARAM(rects);
     UNUSED_PARAM(width);

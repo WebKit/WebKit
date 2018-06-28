@@ -442,9 +442,8 @@ public:
     void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&);
     void drawFocusRing(const Path&, float width, float offset, const Color&);
 #if PLATFORM(MAC)
-    void drawFocusRing(const Path&, double timeOffset, bool& needsRedraw);
-    void drawFocusRing(const Vector<FloatRect>&, double timeOffset, bool& needsRedraw);
-    static CGColorRef focusRingColor();
+    void drawFocusRing(const Path&, double timeOffset, bool& needsRedraw, const Color&);
+    void drawFocusRing(const Vector<FloatRect>&, double timeOffset, bool& needsRedraw, const Color&);
 #endif
 
     void setLineCap(LineCap);

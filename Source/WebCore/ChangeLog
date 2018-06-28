@@ -1,3 +1,28 @@
+2018-06-28  Timothy Hatcher  <timothy@apple.com>
+
+        Focus ring color does not honor dark mode or system accent color.
+        https://bugs.webkit.org/show_bug.cgi?id=187144
+        rdar://problem/41105081
+
+        Reviewed by Tim Horton.
+
+        Pass the focus ring color through to the GraphicsContext methods that draw it.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::drawFocusRingAtTime):
+        (WebCore::drawFocusRing):
+        (WebCore::drawFocusRingToContext):
+        (WebCore::drawFocusRingToContextAtTime):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::focusRingColor): Deleted.
+        * platform/mac/ThemeMac.mm:
+        (WebCore::drawCellFocusRingWithFrameAtTime):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+
 2018-06-28  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r232040): Cursor jumping in Safari text fields
