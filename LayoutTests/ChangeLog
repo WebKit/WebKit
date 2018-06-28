@@ -1,3 +1,25 @@
+2018-06-28  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Update clip-path box mapping to unified box
+        https://bugs.webkit.org/show_bug.cgi?id=185797
+
+        Reviewed by Simon Fraser.
+
+        Update existing tests and add new tests to check the slightly different behavior.
+
+        * fast/masking/parsing-clip-path-shape-expected.txt:
+        * fast/masking/parsing-clip-path-shape.html:
+        * svg/clip-path/clip-path-shape-border-box-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-border-box.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-stroke.svg.
+        * svg/clip-path/clip-path-shape-content-box-expected.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-fill.svg.
+        * svg/clip-path/clip-path-shape-content-box.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-fill.svg.
+        * svg/clip-path/clip-path-shape-fill.svg:
+        * svg/clip-path/clip-path-shape-margin-box-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-margin-box.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-stroke.svg.
+        * svg/clip-path/clip-path-shape-padding-box-expected.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-fill.svg.
+        * svg/clip-path/clip-path-shape-padding-box.svg: Copied from LayoutTests/svg/clip-path/clip-path-shape-fill.svg.
+        * svg/clip-path/clip-path-shape-stroke.svg:
+
 2018-06-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/blink/storage/indexeddb/blob-delete-objectstore-db.html as flaky.

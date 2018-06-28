@@ -4918,11 +4918,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSBoxType cssBox)
     case CSSBoxType::ContentBox:
         m_value.valueID = CSSValueContentBox;
         break;
-    case CSSBoxType::Fill:
-        m_value.valueID = CSSValueFill;
+    case CSSBoxType::FillBox:
+        m_value.valueID = CSSValueFillBox;
         break;
-    case CSSBoxType::Stroke:
-        m_value.valueID = CSSValueStroke;
+    case CSSBoxType::StrokeBox:
+        m_value.valueID = CSSValueStrokeBox;
         break;
     case CSSBoxType::ViewBox:
         m_value.valueID = CSSValueViewBox;
@@ -4946,10 +4946,10 @@ template<> inline CSSPrimitiveValue::operator CSSBoxType() const
     case CSSValueContentBox:
         return CSSBoxType::ContentBox;
     // The following are used in an SVG context.
-    case CSSValueFill:
-        return CSSBoxType::Fill;
-    case CSSValueStroke:
-        return CSSBoxType::Stroke;
+    case CSSValueFillBox:
+        return CSSBoxType::FillBox;
+    case CSSValueStrokeBox:
+        return CSSBoxType::StrokeBox;
     case CSSValueViewBox:
         return CSSBoxType::ViewBox;
     default:

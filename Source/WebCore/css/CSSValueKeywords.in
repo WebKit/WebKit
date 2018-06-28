@@ -888,6 +888,7 @@ verso
 margin-box
 
 // clip-path
+stroke-box
 view-box
 
 //

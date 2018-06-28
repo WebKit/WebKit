@@ -83,8 +83,8 @@ RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& rende
             renderer.paddingLeft() + renderer.borderLeft(), renderer.paddingRight() + renderer.borderRight());
     // fill, stroke, view-box compute to border-box for HTML elements.
     case CSSBoxType::BorderBox:
-    case CSSBoxType::Fill:
-    case CSSBoxType::Stroke:
+    case CSSBoxType::FillBox:
+    case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:
     case CSSBoxType::BoxMissing:
         return style.getRoundedBorderFor(renderer.borderBoxRect());

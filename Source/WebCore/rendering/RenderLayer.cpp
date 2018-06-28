@@ -4094,6 +4094,7 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
     const auto& box = downcast<RenderBox>(renderer);
     switch (boxType) {
     case CSSBoxType::ContentBox:
+    case CSSBoxType::FillBox:
         referenceBox = box.contentBoxRect();
         referenceBox.move(offsetFromRoot);
         break;
@@ -4104,9 +4105,8 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
     // FIXME: Support margin-box. Use bounding client rect for now.
     // https://bugs.webkit.org/show_bug.cgi?id=127984
     case CSSBoxType::MarginBox:
-    // fill, stroke, view-box compute to border-box for HTML elements.
-    case CSSBoxType::Fill:
-    case CSSBoxType::Stroke:
+    // stroke-box, view-box compute to border-box for HTML elements.
+    case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:
     case CSSBoxType::BorderBox:
     case CSSBoxType::BoxMissing:

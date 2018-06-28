@@ -1998,8 +1998,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
                 referenceBoxRect = contentBoxRect();
                 break;
             case CSSBoxType::BoxMissing:
-            case CSSBoxType::Fill:
-            case CSSBoxType::Stroke:
+            case CSSBoxType::FillBox:
+            case CSSBoxType::StrokeBox:
             case CSSBoxType::ViewBox:
                 referenceBoxRect = borderBoxRect();
             }

@@ -1073,8 +1073,8 @@ enum class CSSBoxType {
     BorderBox,
     PaddingBox,
     ContentBox,
-    Fill,
-    Stroke,
+    FillBox,
+    StrokeBox,
     ViewBox
 };
 

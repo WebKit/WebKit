@@ -545,8 +545,8 @@ inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleRes
                 || primitiveValue.valueID() == CSSValueBorderBox
                 || primitiveValue.valueID() == CSSValuePaddingBox
                 || primitiveValue.valueID() == CSSValueMarginBox
-                || primitiveValue.valueID() == CSSValueFill
-                || primitiveValue.valueID() == CSSValueStroke
+                || primitiveValue.valueID() == CSSValueFillBox
+                || primitiveValue.valueID() == CSSValueStrokeBox
                 || primitiveValue.valueID() == CSSValueViewBox);
             ASSERT(referenceBox == CSSBoxType::BoxMissing);
             referenceBox = primitiveValue;

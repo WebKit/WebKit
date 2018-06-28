@@ -1,3 +1,52 @@
+2018-06-28  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Update clip-path box mapping to unified box
+        https://bugs.webkit.org/show_bug.cgi?id=185797
+
+        Reviewed by Simon Fraser.
+
+        The box mapping for fill-box, stroke-box, view-box on HTML elements
+        and content-box, padding-box, margin-box, border-box for SVG elements
+        was aligned with the transform-box CSS property.
+
+        Furthermore, the keywords fill changed to fill-box and stroke changed
+        to stroke-box.
+
+        https://drafts.fxtf.org/css-masking-1/#typedef-geometry-box
+
+        Update the -webkit-clip-path property.
+
+        Tests: svg/clip-path/clip-path-shape-border-box-expected.svg
+               svg/clip-path/clip-path-shape-border-box.svg
+               svg/clip-path/clip-path-shape-content-box-expected.svg
+               svg/clip-path/clip-path-shape-content-box.svg
+               svg/clip-path/clip-path-shape-margin-box-expected.svg
+               svg/clip-path/clip-path-shape-margin-box.svg
+               svg/clip-path/clip-path-shape-padding-box-expected.svg
+               svg/clip-path/clip-path-shape-padding-box.svg
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CSSBoxType const):
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertClipPath):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasicShapeOrBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox):
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::computeRoundedRectForBoxShape):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::setReferenceBoxLogicalSize):
+        (WebCore::ShapeOutsideInfo::logicalTopOffset const):
+        (WebCore::ShapeOutsideInfo::logicalLeftOffset const):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
 2018-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Don't expose new semantic -apple-system color keywords on iOS.
