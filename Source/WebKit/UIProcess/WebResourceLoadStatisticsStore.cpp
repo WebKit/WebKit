@@ -143,8 +143,6 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 
 void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
 {
-    ASSERT(RunLoop::isMain());
-
     if (!m_persistentStorage && !m_memoryStore)
         return;
 

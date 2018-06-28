@@ -1,3 +1,15 @@
+2018-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Split memory store logic out of WebResourceLoadStatisticsStore to clarify threading model
+        https://bugs.webkit.org/show_bug.cgi?id=187055
+        <rdar://problem/41584026>
+
+        Unreviewed, temporarily disable main thread assertion added to flushAndDestroyPersistentStore()
+        in r233310, until Bug 187143 is fixed.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+
 2018-06-28  Youenn Fablet  <youenn@apple.com>
 
         Add sandbox to microdone plugin
