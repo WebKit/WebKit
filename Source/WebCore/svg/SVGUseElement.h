@@ -61,6 +61,7 @@ private:
 
     bool isValid() const override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void buildPendingResource() override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;

@@ -505,6 +505,8 @@ void CachedResource::didAddClient(CachedResourceClient& client)
 
     if (m_clientsAwaitingCallback.remove(&client))
         m_clients.add(&client);
+
+    // FIXME: Make calls to notifyFinished async
     if (!isLoading() && !stillNeedsLoad())
         client.notifyFinished(*this);
 }

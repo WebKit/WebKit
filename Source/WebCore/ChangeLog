@@ -1,3 +1,29 @@
+2018-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in ScriptController::canExecuteScripts via WebCore::SVGUseElement::insertedIntoAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=187137
+        <rdar://problem/41081885>
+
+        Reviewed by Zalan Bujtas.
+
+        The bug was caused by SVGUseElement::notifyFinished firing a DOM event via SVGUseElement::updateExternalDocument
+        inside SVGUseElement::insertedIntoAncestor. Ideally, we make every call to notifyFinished asynchronous
+        but simply delay the call to updateExternalDocument() until didFinishInsertingNode() for now.
+
+        No new tests since the failure is caught with the newly added assertion in notifyFinished by existing SVG tests
+        such as svg/batik/filters/filterRegions.svg and svg/batik/text/smallFonts.svg. Unfortunately, I could not
+        construct a test case which hits this release assertion since the real crash happens when the cached resource
+        had an error but in the all cases I could find, the resource response with an error results in a reload or
+        an asynchronous failure callback.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::didAddClient): Added a FIXME.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedIntoAncestor): Delay the call to updateExternalDocument.
+        (WebCore::SVGUseElement::didFinishInsertingNode): Invoke updateExternalDocument.
+        (WebCore::SVGUseElement::notifyFinished): Added an assertion.
+        * svg/SVGUseElement.h:
+
 2018-06-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r233309.
