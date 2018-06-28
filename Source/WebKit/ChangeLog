@@ -1,3 +1,20 @@
+2018-06-28  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: REGRESSION(r223770): "Open Link" context menu action on a linkified URL doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=187146
+        <rdar://problem/41369591>
+
+        Reviewed by Joseph Pecoraro.
+
+        When Web Inspector's page receives a navigation request, it's supposed to redirect any
+        non-Inspector navigations to be loaded in the inspected page. When I refactored to use
+        modern a policy delegate, the one line that redirects the loads was left out.
+
+        No new tests, because inspector tests can't navigate the inspector or inspected pages.
+
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webView:decidePolicyForNavigationAction:decisionHandler:]):
+
 2018-06-28  Jeremy Jones  <jeremyj@apple.com>
 
         Crash when _topConstraint is null in element fullscreen.

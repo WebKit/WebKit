@@ -225,6 +225,9 @@ using namespace WebKit;
 
     // Prevent everything else.
     decisionHandler(WKNavigationActionPolicyCancel);
+    
+    // And instead load it in the inspected page.
+    _inspectedPage->loadRequest(navigationAction.request);
 }
 
 // MARK: WKInspectorWKWebViewDelegate methods
