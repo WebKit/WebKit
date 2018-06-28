@@ -61,7 +61,8 @@ from .svn import SVN
 
 # We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.
 # We store it in a global variable so that we can delete this cached repo on exit(3).
-# FIXME: Remove this once we migrate to Python 2.7. Unittest in Python 2.7 supports module-specific setup and teardown functions.
+# FIXME: Remove this once test-webkitpy supports class and module fixtures (i.e. setUpClass()/setUpModule()
+# are called exactly once per class/module).
 cached_svn_repo_path = None
 
 
@@ -71,7 +72,8 @@ def remove_dir(path):
     shutil.rmtree(path)
 
 
-# FIXME: Remove this once we migrate to Python 2.7. Unittest in Python 2.7 supports module-specific setup and teardown functions.
+# FIXME: Remove this once test-webkitpy supports class and module fixtures (i.e. setUpClass()/setUpModule()
+# are called exactly once per class/module).
 @atexit.register
 def delete_cached_mock_repo_at_exit():
     if cached_svn_repo_path:
