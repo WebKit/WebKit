@@ -1,5 +1,17 @@
 2018-06-29  Antoine Quint  <graouts@apple.com>
 
+        Layout Test compositing/animation/layer-for-filling-animation.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=187163
+
+        Unreviewed.
+
+        This test needed to be modified to account for the pending state being updated at a different time,
+        so we just wait a frame to ensure the animation is ended. See r233325.
+
+        * compositing/animation/layer-for-filling-animation.html:
+
+2018-06-29  Antoine Quint  <graouts@apple.com>
+
         [mac][wk2] REGRESSION (Tiled Drawing): Some css3/ tests fail with fringing around tiled background-images that intersect tile boundaries
         https://bugs.webkit.org/show_bug.cgi?id=122235
 

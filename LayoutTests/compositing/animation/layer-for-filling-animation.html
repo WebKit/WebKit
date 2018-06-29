@@ -30,10 +30,12 @@
         function doTest()
         {
             document.getElementById('box').addEventListener('webkitAnimationEnd', function() {
-                if (window.testRunner) {
-                    document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
-                    testRunner.notifyDone();
-                }
+                requestAnimationFrame(() => {
+                    if (window.testRunner) {
+                        document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
+                        testRunner.notifyDone();
+                    }
+                });
             })
         }
         window.addEventListener('load', doTest, false);
