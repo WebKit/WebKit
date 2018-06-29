@@ -1,3 +1,15 @@
+2018-06-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add timeout to webkitpy and webkitperl tests
+        https://bugs.webkit.org/show_bug.cgi?id=187191
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitPerlTests.__init__): Set timeout of 2 minutes.
+        (RunWebKitPyTests.__init__): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2018-06-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE]: Fix exception handling when flatpak is not installed

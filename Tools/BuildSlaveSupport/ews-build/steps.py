@@ -89,6 +89,9 @@ class RunWebKitPerlTests(shell.ShellCommand):
     flunkOnFailure = True
     command = ['Tools/Scripts/test-webkitperl']
 
+    def __init__(self, **kwargs):
+        super(RunWebKitPerlTests, self).__init__(timeout=2 * 60, **kwargs)
+
 
 class RunWebKitPyTests(shell.ShellCommand):
     name = 'webkitpy-tests'
@@ -96,6 +99,9 @@ class RunWebKitPyTests(shell.ShellCommand):
     descriptionDone = ['webkitpy-tests']
     flunkOnFailure = True
     command = ['Tools/Scripts/test-webkitpy']
+
+    def __init__(self, **kwargs):
+        super(RunWebKitPyTests, self).__init__(timeout=2 * 60, **kwargs)
 
 
 def appendCustomBuildFlags(step, platform, fullPlatform):

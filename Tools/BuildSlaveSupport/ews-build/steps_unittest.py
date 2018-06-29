@@ -273,6 +273,7 @@ class TestunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/test-webkitperl'],
+                        timeout=120,
                         )
             + 0,
         )
@@ -284,6 +285,7 @@ class TestunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/test-webkitperl'],
+                        timeout=120,
                         )
             + ExpectShell.log('stdio', stdout='''Failed tests:  1-3, 5-7, 9, 11-13
 Files=40, Tests=630,  4 wallclock secs ( 0.16 usr  0.09 sys +  2.78 cusr  0.64 csys =  3.67 CPU)
@@ -308,6 +310,7 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/test-webkitpy'],
+                        timeout=120,
                         )
             + 0,
         )
@@ -319,6 +322,7 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         command=['Tools/Scripts/test-webkitpy'],
+                        timeout=120,
                         )
             + ExpectShell.log('stdio', stdout='''Ran 1744 tests in 5.913s
 FAILED (failures=1, errors=0)''')
