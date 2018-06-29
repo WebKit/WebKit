@@ -1441,7 +1441,7 @@ bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
 
 void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
 {
-    if (enabled == resourceLoadStatisticsEnabled())
+    if (m_sessionID.isEphemeral() || enabled == resourceLoadStatisticsEnabled())
         return;
 
     if (enabled) {
@@ -1471,6 +1471,8 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
 
 void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback)
 {
+    ASSERT(!m_sessionID.isEphemeral());
+
     if (m_resourceLoadStatistics) {
         m_resourceLoadStatistics->setStatisticsTestingCallback(WTFMove(callback));
         return;

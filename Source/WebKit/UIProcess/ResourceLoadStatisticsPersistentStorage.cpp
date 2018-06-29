@@ -82,11 +82,10 @@ static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)
     return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size());
 }
 
-ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage(ResourceLoadStatisticsMemoryStore& memoryStore, WorkQueue& workQueue, const String& storageDirectoryPath, IsReadOnly isReadOnly)
+ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage(ResourceLoadStatisticsMemoryStore& memoryStore, WorkQueue& workQueue, const String& storageDirectoryPath)
     : m_memoryStore(memoryStore)
     , m_workQueue(workQueue)
     , m_storageDirectoryPath(storageDirectoryPath)
-    , m_isReadOnly(isReadOnly)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -247,7 +246,6 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
 void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
 {
     ASSERT(!RunLoop::isMain());
-    RELEASE_ASSERT(m_isReadOnly != IsReadOnly::Yes);
 
     m_hasPendingWrite = false;
     stopMonitoringDisk();
@@ -282,8 +280,6 @@ void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
 void ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore(ForceImmediateWrite forceImmediateWrite)
 {
     ASSERT(!RunLoop::isMain());
-    if (m_isReadOnly == IsReadOnly::Yes)
-        return;
 
     auto timeSinceLastWrite = MonotonicTime::now() - m_lastStatisticsWriteTime;
     if (forceImmediateWrite != ForceImmediateWrite::Yes && timeSinceLastWrite < minimumWriteInterval) {

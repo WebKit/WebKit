@@ -118,9 +118,9 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(WebsiteDataStore&
 {
     ASSERT(RunLoop::isMain());
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), isPersistent = websiteDataStore.isPersistent(), resourceLoadStatisticsDirectory = websiteDataStore.resolvedResourceLoadStatisticsDirectory().isolatedCopy()] {
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), resourceLoadStatisticsDirectory = websiteDataStore.resolvedResourceLoadStatisticsDirectory().isolatedCopy()] {
         m_memoryStore = std::make_unique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue);
-        m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*m_memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory, isPersistent ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::No : ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes);
+        m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*m_memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory);
     });
 
     m_statisticsQueue->dispatchAfter(5_s, [this, protectedThis = makeRef(*this)] {

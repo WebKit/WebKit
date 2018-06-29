@@ -1,3 +1,30 @@
+2018-06-29  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Don't create a WebResourceLoadStatisticsStore for ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=187154
+        <rdar://problem/41487250>
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        Most of the changes in this patch remove the boolean parameter for tracking
+        ephemeral sessions and the IsReadOnly enum.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsTestingCallback:]):
+            Now returns early for ephemeral sessions.
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore):
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+            Now returns early for ephemeral sessions.
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+
 2018-06-29  Chris Dumez  <cdumez@apple.com>
 
         Stop using lambdas for WebResourceLoadStatisticsStore to interact with its WebsiteDataStore

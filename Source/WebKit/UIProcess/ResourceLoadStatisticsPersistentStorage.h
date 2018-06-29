@@ -44,8 +44,7 @@ class ResourceLoadStatisticsMemoryStore;
 // Can only be constructed / destroyed / used from the WebResourceLoadStatisticsStore's statistic queue.
 class ResourceLoadStatisticsPersistentStorage : public CanMakeWeakPtr<ResourceLoadStatisticsPersistentStorage> {
 public:
-    enum class IsReadOnly { No, Yes };
-    ResourceLoadStatisticsPersistentStorage(ResourceLoadStatisticsMemoryStore&, WorkQueue&, const String& storageDirectoryPath, IsReadOnly);
+    ResourceLoadStatisticsPersistentStorage(ResourceLoadStatisticsMemoryStore&, WorkQueue&, const String& storageDirectoryPath);
     ~ResourceLoadStatisticsPersistentStorage();
 
     void clear();
@@ -72,7 +71,6 @@ private:
     std::unique_ptr<WebCore::FileMonitor> m_fileMonitor;
     WallTime m_lastStatisticsFileSyncTime;
     MonotonicTime m_lastStatisticsWriteTime;
-    IsReadOnly m_isReadOnly { IsReadOnly::No };
     bool m_hasPendingWrite { false };
 };
 
