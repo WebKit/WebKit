@@ -1,3 +1,14 @@
+2018-06-29  Antoine Quint  <graouts@apple.com>
+
+        [mac][wk2] REGRESSION (Tiled Drawing): Some css3/ tests fail with fringing around tiled background-images that intersect tile boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=122235
+
+        Unreviewed. This test has not been flaky on all ports by GTK for a long time.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2018-06-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Using a Web Animation leaks the Document
