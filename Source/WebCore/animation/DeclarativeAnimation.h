@@ -45,10 +45,10 @@ public:
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
     void invalidateDOMEvents(Seconds elapsedTime = 0_s);
+    void prepareAnimationForRemoval() final;
 
     void setTimeline(RefPtr<AnimationTimeline>&&) final;
     void cancel() final;
-    void remove() final;
 
 protected:
     DeclarativeAnimation(Element&, const Animation&);

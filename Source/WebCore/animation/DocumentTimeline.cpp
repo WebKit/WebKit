@@ -63,10 +63,6 @@ void DocumentTimeline::detachFromDocument()
     m_invalidationTaskQueue.close();
     m_eventDispatchTaskQueue.close();
     m_animationScheduleTimer.stop();
-
-    for (const auto& animation : animations())
-        animation->remove();
-
     m_document = nullptr;
 }
 

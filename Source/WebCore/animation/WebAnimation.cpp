@@ -70,10 +70,9 @@ WebAnimation::~WebAnimation()
 {
 }
 
-void WebAnimation::remove()
+void WebAnimation::prepareAnimationForRemoval()
 {
     setEffectInternal(nullptr);
-    setTimelineInternal(nullptr);
 }
 
 void WebAnimation::suspendEffectInvalidation()
@@ -178,6 +177,12 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     if (m_startTime)
         setHoldTime(std::nullopt);
 
+    if (m_timeline)
+        m_timeline->removeAnimation(*this);
+
+    if (timeline)
+        timeline->addAnimation(*this);
+
     if (is<KeyframeEffectReadOnly>(m_effect)) {
         auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(m_effect.get());
         auto* target = keyframeEffect->target();
@@ -192,7 +197,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
         }
     }
 
-    setTimelineInternal(WTFMove(timeline));
+    m_timeline = WTFMove(timeline);
 
     setSuspended(is<DocumentTimeline>(m_timeline) && downcast<DocumentTimeline>(*m_timeline).animationsAreSuspended());
 
@@ -201,17 +206,6 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     // 5. Run the procedure to update an animation’s finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
-}
-
-void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
-{
-    if (m_timeline)
-        m_timeline->removeAnimation(*this);
-
-    if (timeline)
-        timeline->addAnimation(*this);
-
-    m_timeline = WTFMove(timeline);
 }
 
 void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTarget)

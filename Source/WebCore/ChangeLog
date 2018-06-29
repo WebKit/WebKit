@@ -1,3 +1,15 @@
+2018-06-29  David Fenton  <david_fenton@apple.com>
+
+        Unreviewed, rolling out r233349.
+
+        caused 42 crashes on iOS GuardMalloc and iOS ASan tests
+
+        Reverted changeset:
+
+        "[Web Animations] Using a Web Animation leaks the Document"
+        https://bugs.webkit.org/show_bug.cgi?id=187088
+        https://trac.webkit.org/changeset/233349
+
 2018-06-29  Jer Noble  <jer.noble@apple.com>
 
         Returning PiP'd video to fullscreen while playing leaves video muted.

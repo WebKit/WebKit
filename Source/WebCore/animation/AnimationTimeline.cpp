@@ -176,8 +176,10 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
 
 void AnimationTimeline::removeAnimationsForElement(Element& element)
 {
-    for (auto& animation : animationsForElement(element))
-        animation->remove();
+    for (auto& animation : animationsForElement(element)) {
+        animation->prepareAnimationForRemoval();
+        removeAnimation(animation.releaseNonNull());
+    }
 }
 
 void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)

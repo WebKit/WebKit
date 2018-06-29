@@ -63,6 +63,7 @@ public:
 
     AnimationEffectReadOnly* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffectReadOnly>&&);
+    void setEffectInternal(RefPtr<AnimationEffectReadOnly>&&, bool = false);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
@@ -116,7 +117,7 @@ public:
     void unsuspendEffectInvalidation();
     void setSuspended(bool);
     bool isSuspended() const { return m_isSuspended; }
-    virtual void remove();
+    virtual void prepareAnimationForRemoval();
 
     String description();
 
@@ -155,9 +156,7 @@ private:
     void runPendingPauseTask();
     void runPendingPlayTask();
     void resetPendingTasks();
-    void setEffectInternal(RefPtr<AnimationEffectReadOnly>&&, bool = false);
-    void setTimelineInternal(RefPtr<AnimationTimeline>&&);
-
+    
     String m_id;
     RefPtr<AnimationEffectReadOnly> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
