@@ -1,5 +1,20 @@
 2018-06-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] When the formatting root is also a containing block for out-of-flow elements.
+        https://bugs.webkit.org/show_bug.cgi?id=187179
+
+        Reviewed by Antti Koivisto.
+
+        Out-of-flow descendants' layout requires their containing block height to be computed. This patch takes care of the case
+        when the containing block is also a formatting context root (e.g. relative positioned with overflow other than visible).
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+
+2018-06-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Do not skip the next inflow sibling after finishing a formatting context root layout.
         https://bugs.webkit.org/show_bug.cgi?id=187178
 

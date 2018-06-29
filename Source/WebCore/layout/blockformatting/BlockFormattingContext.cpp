@@ -148,6 +148,8 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     FloatingContext(formattingState.floatingState()).computePosition(layoutBox, displayBox);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeHeightAndMargin(layoutContext, layoutBox, displayBox);
+    // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
+    formattingContext->layoutOutOfFlowDescendants(layoutContext, layoutBox);
 }
 
 std::unique_ptr<FormattingState> BlockFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState) const
