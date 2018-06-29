@@ -1,3 +1,25 @@
+2018-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Stop using lambdas for WebResourceLoadStatisticsStore to interact with its WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=187165
+
+        Reviewed by Brent Fulgham.
+
+        Stop using lambdas for WebResourceLoadStatisticsStore to interact with its WebsiteDataStore. Instead,
+        WebResourceLoadStatisticsStore now holds a weak pointer to its WebsiteDataStore and is able to call
+        methods on it directly. Reducing the indirection makes the code less complex and more understandable.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        (WebKit::WebResourceLoadStatisticsStore::callGrantStorageAccessHandler):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler):
+        (WebKit::WebResourceLoadStatisticsStore::callRemoveDomainsHandler):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+
 2018-06-29  Miguel Gomez  <magomez@igalia.com>
 
         [WPE] Some frames are dropped when using rAF to animate an element

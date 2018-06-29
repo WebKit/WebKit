@@ -111,21 +111,16 @@ void WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(bool value)
     });
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessHandler&& grantStorageAccessHandler, RemoveAllStorageAccessHandler&& removeAllStorageAccessHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
-    : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
-    , m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler))
-    , m_hasStorageAccessForFrameHandler(WTFMove(hasStorageAccessForFrameHandler))
-    , m_grantStorageAccessHandler(WTFMove(grantStorageAccessHandler))
-    , m_removeAllStorageAccessHandler(WTFMove(removeAllStorageAccessHandler))
-    , m_removeDomainsHandler(WTFMove(removeDomainsHandler))
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(WebsiteDataStore& websiteDataStore)
+    : m_websiteDataStore(makeWeakPtr(websiteDataStore))
+    , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
-    , m_statisticsTestingCallback(WTFMove(testingCallback))
 {
     ASSERT(RunLoop::isMain());
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), isEphemeral, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy()] {
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), isPersistent = websiteDataStore.isPersistent(), resourceLoadStatisticsDirectory = websiteDataStore.resolvedResourceLoadStatisticsDirectory().isolatedCopy()] {
         m_memoryStore = std::make_unique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue);
-        m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*m_memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory, isEphemeral ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes : ResourceLoadStatisticsPersistentStorage::IsReadOnly::No);
+        m_persistentStorage = std::make_unique<ResourceLoadStatisticsPersistentStorage>(*m_memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory, isPersistent ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::No : ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes);
     });
 
     m_statisticsQueue->dispatchAfter(5_s, [this, protectedThis = makeRef(*this)] {
@@ -227,7 +222,13 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const S
 {
     ASSERT(RunLoop::isMain());
 
-    m_hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_websiteDataStore) {
+        m_websiteDataStore->hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+        return;
+    }
+#endif
+    callback(false);
 }
 
 void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
@@ -294,14 +295,23 @@ void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const String&
 {
     ASSERT(RunLoop::isMain());
 
-    m_grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_websiteDataStore) {
+        m_websiteDataStore->grantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
+        return;
+    }
+#endif
+    callback(false);
 }
 
 void WebResourceLoadStatisticsStore::removeAllStorageAccess()
 {
     ASSERT(RunLoop::isMain());
 
-    m_removeAllStorageAccessHandler();
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_websiteDataStore)
+        m_websiteDataStore->removeAllStorageAccessHandler();
+#endif
 }
 
 
@@ -804,14 +814,24 @@ void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, WTFMove(completionHandler));
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_websiteDataStore) {
+        m_websiteDataStore->updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, WTFMove(completionHandler));
+        return;
+    }
+#endif
+    completionHandler();
 }
 
 void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<String>& domains)
 {
     ASSERT(RunLoop::isMain());
 
-    m_removeDomainsHandler(domains);
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_websiteDataStore)
+        m_websiteDataStore->removePrevalentDomains(domains);
+#endif
 }
     
 void WebResourceLoadStatisticsStore::setMaxStatisticsEntries(size_t maximumEntryCount)

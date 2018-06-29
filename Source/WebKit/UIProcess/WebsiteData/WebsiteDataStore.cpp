@@ -1476,26 +1476,8 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
         return;
     }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), m_sessionID.isEphemeral(), [weakThis = makeWeakPtr(*this)] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler) {
-        if (weakThis)
-            weakThis->updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, WTFMove(completionHandler));
-    }, [weakThis = makeWeakPtr(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&& completionHandler) {
-        if (weakThis)
-            weakThis->hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
-    }, [weakThis = makeWeakPtr(*this)] (const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& completionHandler) {
-        if (weakThis)
-            weakThis->grantStorageAccessHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
-    }, [weakThis = makeWeakPtr(*this)] () {
-        if (weakThis)
-            weakThis->removeAllStorageAccessHandler();
-    }, [weakThis = makeWeakPtr(*this)] (const Vector<String>& domainsToRemove) {
-        if (weakThis)
-            weakThis->removePrevalentDomains(domainsToRemove);
-    });
-#else
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), m_sessionID.isEphemeral());
-#endif
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this);
+    m_resourceLoadStatistics->setStatisticsTestingCallback(WTFMove(callback));
 
     for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false))
         processPool->setResourceLoadStatisticsEnabled(true);

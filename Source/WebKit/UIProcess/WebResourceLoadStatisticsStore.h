@@ -32,6 +32,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -50,6 +51,7 @@ class ResourceLoadStatisticsMemoryStore;
 class ResourceLoadStatisticsPersistentStorage;
 class WebFrameProxy;
 class WebProcessProxy;
+class WebsiteDataStore;
 
 enum class ShouldClearFirst;
 enum class StorageAccessStatus {
@@ -60,14 +62,9 @@ enum class StorageAccessStatus {
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, private IPC::MessageReceiver {
 public:
-    using UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler = WTF::Function<void(const WTF::Vector<String>& domainsToPartition, const WTF::Vector<String>& domainsToBlock, const WTF::Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&)>;
-    using HasStorageAccessForFrameHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::Function<void(bool hasAccess)>&& callback)>;
-    using GrantStorageAccessHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::Function<void(bool wasGranted)>&& callback)>;
-    using RemoveAllStorageAccessHandler = WTF::Function<void()>;
-    using RemovePrevalentDomainsHandler = WTF::Function<void(const WTF::Vector<String>&)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, WTF::Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const WTF::Vector<String>&, const WTF::Vector<String>&, const WTF::Vector<String>&, ShouldClearFirst, CompletionHandler<void()>&& callback) { callback(); }, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, GrantStorageAccessHandler&& grantStorageAccessHandler = [](const String&, const String&, std::optional<uint64_t>, uint64_t, WTF::Function<void(bool)>&&) { }, RemoveAllStorageAccessHandler&& removeAllStorageAccessHandler = []() { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const WTF::Vector<String>&) { })
+    static Ref<WebResourceLoadStatisticsStore> create(WebsiteDataStore& websiteDataStore)
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), isEphemeral, WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(hasStorageAccessForFrameHandler), WTFMove(grantStorageAccessHandler), WTFMove(removeAllStorageAccessHandler), WTFMove(removeDomainsHandler)));
+        return adoptRef(*new WebResourceLoadStatisticsStore(websiteDataStore));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -146,7 +143,7 @@ public:
     void callHasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::Function<void(bool)>&&);
 
 private:
-    WebResourceLoadStatisticsStore(const String&, WTF::Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, HasStorageAccessForFrameHandler&&, GrantStorageAccessHandler&&, RemoveAllStorageAccessHandler&&, RemovePrevalentDomainsHandler&&);
+    explicit WebResourceLoadStatisticsStore(WebsiteDataStore&);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -161,15 +158,10 @@ private:
 
     void flushAndDestroyPersistentStore();
 
+    WeakPtr<WebsiteDataStore> m_websiteDataStore;
     Ref<WorkQueue> m_statisticsQueue;
     std::unique_ptr<ResourceLoadStatisticsMemoryStore> m_memoryStore;
     std::unique_ptr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
-
-    UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler;
-    HasStorageAccessForFrameHandler m_hasStorageAccessForFrameHandler;
-    GrantStorageAccessHandler m_grantStorageAccessHandler;
-    RemoveAllStorageAccessHandler m_removeAllStorageAccessHandler;
-    RemovePrevalentDomainsHandler m_removeDomainsHandler;
 
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;
 
