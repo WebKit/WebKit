@@ -37,10 +37,13 @@ import sys
 import tempfile
 import urllib2
 import urlparse
+from webkitpy.common.memoized import memoized
 
-REST_API_URL = 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2_1/'
-REST_API_ENDPOINT = 'archives/'
-REST_API_MINIFIED_ENDPOINT = 'minified-archives/'
+REST_API_URL = 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2_2/'
+REST_API_ARCHIVE_ENDPOINT = 'archives/'
+REST_API_MINIFIED_ARCHIVE_ENDPOINT = 'minified-archives/'
+REST_API_PLATFORM_ENDPOINT = 'platforms'
+REST_API_MINIFIED_PLATFORM_ENDPOINT = 'minified-platforms'
 
 
 def bisect_builds(revision_list, start_index, end_index, options):
@@ -62,7 +65,7 @@ def bisect_builds(revision_list, start_index, end_index, options):
 
 
 def download_archive(options, revision):
-    api_url = get_api_url(options)
+    api_url = get_api_archive_url(options)
     s3_url = get_s3_location_for_revision(api_url, revision)
     print('Archive URL: {}'.format(s3_url))
     command = ['python', '../BuildSlaveSupport/download-built-product', '--{}'.format(options.configuration), '--platform', options.platform, s3_url]
@@ -93,11 +96,11 @@ def find_ge(a, x):
 # ---- end bisect helpers ----
 
 
-def get_api_url(options, LastEvaluatedKey=None):
+def get_api_archive_url(options, LastEvaluatedKey=None):
     if options.full:
-        base_url = urlparse.urljoin(REST_API_URL, REST_API_ENDPOINT)
+        base_url = urlparse.urljoin(REST_API_URL, REST_API_ARCHIVE_ENDPOINT)
     else:
-        base_url = urlparse.urljoin(REST_API_URL, REST_API_MINIFIED_ENDPOINT)
+        base_url = urlparse.urljoin(REST_API_URL, REST_API_MINIFIED_ARCHIVE_ENDPOINT)
 
     api_url = urlparse.urljoin(base_url, '-'.join([options.platform, options.architecture, options.configuration]))
     if LastEvaluatedKey:
@@ -192,27 +195,36 @@ def test_archive(options, revision):
     if command:
         subprocess.call(command)
     return prompt_did_reproduce()
+
+
+def get_platforms(endpoint):
+    platform_url = urlparse.urljoin(REST_API_URL, endpoint)
+    r = urllib2.urlopen(platform_url)
+    data = json.load(r)
+    platforms = []
+    for platform in data.get('Items'):
+        platforms.append(str(platform['identifier']['S']))
     
-
+    return platforms
+     
+@memoized
 def minified_platforms():
-    # FIXME: query this dynamically from API
-    return  ['mac-elcapitan', 'mac-sierra', 'mac-highsierra', 'ios-simulator-10', 'ios-simulator-11']
-
-
+    return get_platforms(REST_API_MINIFIED_PLATFORM_ENDPOINT)
+ 
+@memoized
 def unminified_platforms():
-    # FIXME: query this dynamically from API
-    return ['gtk', 'ios-simulator-10', 'ios-simulator-11', 'mac-elcapitan', 'mac-sierra', 'mac-highsierra', 'win', 'wpe']
-
-
+    return get_platforms(REST_API_PLATFORM_ENDPOINT)
+ 
 def is_supported_platform(options):
+    platform = '-'.join([options.platform, options.architecture, options.configuration])    
     if options.full:
-        return options.platform in unminified_platforms()
-    return options.platform in minified_platforms()
+        return platform in unminified_platforms()
+    return platform in minified_platforms()
 
 
 def validate_options(options):
     if not is_supported_platform(options):
-        print('Unsupported platform: [{}], exiting...'.format(options.platform))
+        print('Unsupported platform combination: [{}], exiting...'.format('-'.join([options.platform, options.architecture, options.configuration])))
         if options.full:
             print('Available Unminified platforms: {}'.format(unminified_platforms()))
         else:
@@ -228,7 +240,7 @@ def print_list_and_exit(revision_list, options):
         exit(0)
 
 def fetch_revision_list(options, LastEvaluatedKey=None):
-    url = get_api_url(options, LastEvaluatedKey)
+    url = get_api_archive_url(options, LastEvaluatedKey)
     r = urllib2.urlopen(url)
     data = json.load(r)
     revision_list = get_sorted_revisions(data)

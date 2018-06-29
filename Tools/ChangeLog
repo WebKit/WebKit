@@ -1,3 +1,23 @@
+2018-06-29  Lucas Forschler  <lforschler@apple.com>
+
+        Teach bisect-builds to retrieve supported platforms from the rest api.
+        https://bugs.webkit.org/show_bug.cgi?id=187195
+        
+        This patch updates bisect-builds to use v2_2 of the API. v2_2 adds two api endpoints: /platforms, and /minified-platforms.
+        These endpoints scan a dynamoDB database, returning the identifier key for all available platforms.
+        The identifier keys are in the format: platform-architecture-configuration.
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/bisect-builds:
+        (get_api_archive_url): refactored from get_api_url.
+        (get_platforms): helper function to retrieve from the platforms api.
+        (minified_platforms): returns a list of minified platforms currently in the database
+        (unminified_platforms): returns a list of unminified platforms currently in the database
+        (is_supported_platform): checks if the platform-architecture-configuration combo is supported
+        (fetch_revision_list): refactored to use get_api_archive_url
+        (get_api_url): Deleted/refactored to get_api_archive_url.
+
 2018-06-29  Keith Miller  <keith_miller@apple.com>
 
         run-jsc should print when jsc exits with non-zero status
