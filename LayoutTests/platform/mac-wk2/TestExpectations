@@ -403,6 +403,7 @@ fast/dom/frame-loading-via-document-write.html [ Timeout ]
 fast/speechsynthesis/speech-synthesis-cancel.html [ Pass Timeout ]
 
 webkit.org/b/140084 js/dom/dfg-inline-resolve.html [ Pass Timeout ]
+webkit.org/b/187103 [ Sierra Debug ] js/error-should-not-strong-reference-global-object.html [ Pass Timeout ]
 
 webkit.org/b/139828 svg/animations/animateMotion-additive-2a.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/139828 svg/animations/animateMotion-additive-2b.svg [ Pass ImageOnlyFailure ]

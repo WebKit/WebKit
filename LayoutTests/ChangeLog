@@ -1,3 +1,13 @@
+2018-06-29  Truitt Savell  <tsavell@apple.com>
+
+        Layout Test js/error-should-not-strong-reference-global-object.html is flaky on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=187103
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-06-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Infinite loop if a <use> element references its ancestor and the DOMNodeInserted event handler of one its ancestor's descents updates the document style
