@@ -1,5 +1,11 @@
 2018-06-28  Zalan Bujtas  <zalan@apple.com>
 
+        [iOS] Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2018-06-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add block formatting only test cases
         https://bugs.webkit.org/show_bug.cgi?id=187162
 
