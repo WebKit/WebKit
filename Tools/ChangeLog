@@ -1,3 +1,15 @@
+2018-06-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE]: Fix exception handling when flatpak is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=186771
+
+        Unreviewed followup-fix after r233362
+
+        This was causing failures when flatpak is not installed.
+
+        * flatpak/flatpakutils.py:
+        (check_flatpak):
+
 2018-06-29  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSCOnly] Restore Windows build.

@@ -83,7 +83,7 @@ def check_flatpak():
     for app, required_version in FLATPAK_REQ:
         try:
             output = subprocess.check_output([app, "--version"])
-        except subprocess.CalledProcessError, OSError:
+        except (subprocess.CalledProcessError, OSError):
             Console.message("\n%sYou need to install %s >= %s"
                             " to be able to use the '%s' script.\n\n"
                             "You can find some informations about"
