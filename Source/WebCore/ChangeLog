@@ -1,5 +1,18 @@
 2018-06-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Do not skip the next inflow sibling after finishing a formatting context root layout.
+        https://bugs.webkit.org/show_bug.cgi?id=187178
+
+        Reviewed by Antti Koivisto.
+
+        Since the block formatting layout is based on pre-order traversal, after finishing a formatting
+        context layout (which takes care of its entire subtre), we need to visit the next (in-flow)sibling. 
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+
+2018-06-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] The static position for an out-of-flow box should include the previous sibling's collapsed margin
         https://bugs.webkit.org/show_bug.cgi?id=187169
 

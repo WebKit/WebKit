@@ -82,7 +82,12 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
                 layoutFormattingContextRoot(layoutContext, formattingState, layoutBox, displayBox);
                 layoutQueue.removeLast();
                 // Since this box is a formatting context root, it takes care of its entire subtree.
-                break;
+                // Continue with next sibling if exists.
+                if (!layoutBox.nextInFlowOrFloatingSibling())
+                    break;
+                auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling();
+                layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
+                continue;
             }
 
             LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Position][Border][Padding][Width][Margin] -> for layoutBox(" << &layoutBox << ")");
