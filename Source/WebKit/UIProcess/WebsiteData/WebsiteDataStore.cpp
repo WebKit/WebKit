@@ -162,6 +162,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.webSQLDatabaseDirectory);
     if (!m_configuration.indexedDBDatabaseDirectory.isEmpty())
         m_resolvedConfiguration.indexedDBDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.indexedDBDatabaseDirectory);
+    if (!m_configuration.resourceLoadStatisticsDirectory.isEmpty())
+        m_resolvedConfiguration.resourceLoadStatisticsDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.resourceLoadStatisticsDirectory);
     if (!m_configuration.serviceWorkerRegistrationDirectory.isEmpty() && m_resolvedConfiguration.serviceWorkerRegistrationDirectory.isEmpty())
         m_resolvedConfiguration.serviceWorkerRegistrationDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration.serviceWorkerRegistrationDirectory);
     if (!m_configuration.javaScriptConfigurationDirectory.isEmpty())
@@ -1478,6 +1480,7 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
         return;
     }
 
+    resolveDirectoriesIfNecessary();
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this);
     m_resourceLoadStatistics->setStatisticsTestingCallback(WTFMove(callback));
 

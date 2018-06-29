@@ -1,3 +1,23 @@
+2018-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r233359): Caused ITP tests to be flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187189
+
+        Reviewed by Youenn Fablet.
+
+        r233359 started using m_resolvedConfiguration.resourceLoadStatisticsDirectory instead of
+        m_configuration.resourceLoadStatisticsDirectory for the ITP path. This is consistent
+        with what we do for other database paths so that things like '~' in paths get resolved.
+
+        This introduced flakiness because the resourceLoadStatisticsDirectory was never getting
+        resolved and m_resolvedConfiguration.resourceLoadStatisticsDirectory was not set.
+        Update the WebsiteDataStore so that m_resolvedConfiguration.resourceLoadStatisticsDirectory
+        properly gets set to the resolved version of m_configuration.resourceLoadStatisticsDirectory.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+
 2018-06-29  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Don't create a WebResourceLoadStatisticsStore for ephemeral sessions
