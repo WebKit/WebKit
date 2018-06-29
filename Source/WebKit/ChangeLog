@@ -1,3 +1,27 @@
+2018-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Make sure the WebResourceLoadStatisticsStore gets destroyed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=187143
+
+        Reviewed by Youenn Fablet.
+
+        Have WebResourceLoadStatisticsStore subclass ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>
+        instead of IPC::Connection::WorkQueueMessageReceiver. This makes sure that the WebResourceLoadStatisticsStore
+        objects get destroyed on the main thread, even if the last ref was held by a background thread.
+
+        Also, methods called by IPC are now called on the main thread instead of the background queue. I think it is clearer for all
+        of WebResourceLoadStatisticsStore usage to be on the main thread. Expensive work is still done on the background queue, inside
+        the persistent / memory store classes.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadStatisticsStore::processWillOpenConnection):
+        (WebKit::WebResourceLoadStatisticsStore::processDidCloseConnection):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-06-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add nullptr check for xpc_connection_t in AuthenticationManager::initializeConnection

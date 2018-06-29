@@ -138,11 +138,15 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
 
 WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
+    ASSERT(RunLoop::isMain());
+
     flushAndDestroyPersistentStore();
 }
 
 void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
 {
+    ASSERT(RunLoop::isMain());
+
     if (!m_persistentStorage && !m_memoryStore)
         return;
 
@@ -177,22 +181,26 @@ void WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing(
     });
 }
 
-// On background queue due to IPC.
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT(RunLoop::isMain());
 
-    if (!m_memoryStore)
-        return;
+    // It is safe to move the origins to the background queue without isolated copy here because this is an r-value
+    // coming from IPC. ResourceLoadStatistics only contains strings which are safe to move to other threads as long
+    // as nobody on this thread holds a reference to those strings.
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), origins = WTFMove(origins)]() mutable {
+        if (!m_memoryStore)
+            return;
 
-    m_memoryStore->mergeStatistics(WTFMove(origins));
+        m_memoryStore->mergeStatistics(WTFMove(origins));
 
-    // We can cancel any pending request to process statistics since we're doing it synchronously below.
-    m_memoryStore->cancelPendingStatisticsProcessingRequest();
+        // We can cancel any pending request to process statistics since we're doing it synchronously below.
+        m_memoryStore->cancelPendingStatisticsProcessingRequest();
 
-    // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
-    m_memoryStore->updateCookiePartitioning([]() { });
-    m_memoryStore->processStatisticsAndDataRecords();
+        // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
+        m_memoryStore->updateCookiePartitioning([]() { });
+        m_memoryStore->processStatisticsAndDataRecords();
+    });
 }
 
 void WebResourceLoadStatisticsStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void (bool)>&& completionHandler)
@@ -250,12 +258,17 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
     });
 }
 
-// On background queue due to IPC.
 void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(String&& primaryDomainInNeedOfStorageAccess, uint64_t openerPageID, String&& openerPrimaryDomain, bool isTriggeredByUserGesture)
 {
-    ASSERT(!RunLoop::isMain());
-    if (m_memoryStore)
-        m_memoryStore->requestStorageAccessUnderOpener(WTFMove(primaryDomainInNeedOfStorageAccess), openerPageID, WTFMove(openerPrimaryDomain), isTriggeredByUserGesture);
+    ASSERT(RunLoop::isMain());
+
+    // It is safe to move the strings to the background queue without isolated copy here because they are r-value references
+    // coming from IPC. Strings which are safe to move to other threads as long as nobody on this thread holds a reference
+    // to those strings.
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomainInNeedOfStorageAccess = WTFMove(primaryDomainInNeedOfStorageAccess), openerPageID, openerPrimaryDomain = WTFMove(openerPrimaryDomain), isTriggeredByUserGesture]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->requestStorageAccessUnderOpener(WTFMove(primaryDomainInNeedOfStorageAccess), openerPageID, WTFMove(openerPrimaryDomain), isTriggeredByUserGesture);
+    });
 }
 
 void WebResourceLoadStatisticsStore::grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&& completionHandler)
@@ -290,15 +303,16 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess()
 
     m_removeAllStorageAccessHandler();
 }
-    
-void WebResourceLoadStatisticsStore::processWillOpenConnection(WebProcessProxy&, IPC::Connection& connection)
+
+
+void WebResourceLoadStatisticsStore::processWillOpenConnection(WebProcessProxy& process, IPC::Connection&)
 {
-    connection.addWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), m_statisticsQueue.get(), this);
+    process.addMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), *this);
 }
 
-void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy&, IPC::Connection& connection)
+void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy& process, IPC::Connection&)
 {
-    connection.removeWorkQueueMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
+    process.removeMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
 }
 
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
