@@ -1,5 +1,14 @@
 2018-06-29  Per Arne Vollan  <pvollan@apple.com>
 
+        Layout Test imported/mozilla/css-animations/test_animation-starttime.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=186807
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2018-06-29  Per Arne Vollan  <pvollan@apple.com>
+
         Layout Test fast/text/mark-matches-broken-line-rendering.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=187177
 
