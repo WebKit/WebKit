@@ -1,3 +1,18 @@
+2018-06-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Using a Web Animation leaks the Document
+        https://bugs.webkit.org/show_bug.cgi?id=187088
+        <rdar://problem/41392046>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that creates an Animation object in JS within an iframe and checks that removing
+        the iframe clears its Document. 
+
+        * webanimations/leak-document-with-web-animation-expected.txt: Added.
+        * webanimations/leak-document-with-web-animation.html: Added.
+        * webanimations/resources/web-animation-leak-iframe.html: Added.
+
 2018-06-28  Olivia Barnett  <obarnett@apple.com>
         
         Find in page for typographic quotes does not find low (German) quotes

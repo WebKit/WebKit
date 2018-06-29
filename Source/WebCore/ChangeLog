@@ -1,3 +1,35 @@
+2018-06-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Using a Web Animation leaks the Document
+        https://bugs.webkit.org/show_bug.cgi?id=187088
+        <rdar://problem/41392046>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/leak-document-with-web-animation.html
+
+        We need to ensure that any remaining animation is cleared when the DocumentTimeline is detached from its Document.
+        We rename WebAnimation::prepareAnimationForRemoval() to WebAnimation::remove() since it really actively disassociates
+        the animation from its timeline.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::removeAnimationsForElement): We no longer need the call to removeAnimation()
+        since the new WebAnimation::remove() method will also set the timeline to null which will eventually call
+        removeAnimation() on the disassociated timeline.
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::remove):
+        (WebCore::DeclarativeAnimation::prepareAnimationForRemoval): Deleted.
+        * animation/DeclarativeAnimation.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::detachFromDocument): Call remove() on all known animations.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::remove): Set the timeline to null to fully disassociate this animation from its timeline.
+        (WebCore::WebAnimation::setTimeline): Factor the internal timeline-association code out of this JS API method so
+        that we can call this code without any JS-facing implications.
+        (WebCore::WebAnimation::setTimelineInternal):
+        (WebCore::WebAnimation::prepareAnimationForRemoval): Deleted.
+        * animation/WebAnimation.h:
+
 2018-06-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Out-of-flow positioned height does not necessarily equal to "bottom - top".
