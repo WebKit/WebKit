@@ -1,3 +1,17 @@
+2018-06-28  Michael Saboff  <msaboff@apple.com>
+
+        Disable IsoHeaps when Gigacage is off
+        https://bugs.webkit.org/show_bug.cgi?id=187160
+
+        Reviewed by Saam Barati.
+
+        If Gigacage is disabled, it may be due to lack of address space.
+        Therefore we should also turn off IsoHeaps since it uses more virtual
+        address space as well.
+
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::determineMallocFallbackState):
+
 2018-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         https://hackernoon.com/ uses lots of layer backing store
