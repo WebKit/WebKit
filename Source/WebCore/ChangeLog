@@ -1,3 +1,17 @@
+2018-06-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Out-of-flow positioned height does not necessarily equal to "bottom - top".
+        https://bugs.webkit.org/show_bug.cgi?id=187168
+
+        Reviewed by Antti Koivisto.
+
+        According to the spec "For absolutely positioned elements, the used values of the vertical dimensions must satisfy this constraint:
+        'top' + 'margin-top' + 'border-top-width' + 'padding-top' + 'height' + 'padding-bottom' + 'border-bottom-width' + 'margin-bottom' + 'bottom' = height of containing block"
+        With a non-auto "height" value, the bottom - top does not necessarily compute to the height of the element.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+
 2018-06-28  Olivia Barnett  <obarnett@apple.com>
 
         Find in page for typographic quotes does not find low (German) quotes

@@ -80,7 +80,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutCo
 {
     auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
     displayBox.setTop(verticalGeometry.top);
-    displayBox.setContentBoxHeight(verticalGeometry.bottom - verticalGeometry.top);
+    displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
     ASSERT(!verticalGeometry.heightAndMargin.collapsedMargin);
     displayBox.setVerticalMargin(verticalGeometry.heightAndMargin.margin);
 }
