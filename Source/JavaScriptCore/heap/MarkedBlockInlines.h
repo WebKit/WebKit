@@ -203,6 +203,11 @@ inline bool MarkedBlock::Handle::isLiveCell(const void* p)
     return isLiveCell(space()->markingVersion(), space()->newlyAllocatedVersion(), space()->isMarking(), p);
 }
 
+inline bool MarkedBlock::Handle::areMarksStaleForSweep()
+{
+    return marksMode() == MarksStale;
+}
+
 // The following has to be true for specialization to kick in:
 //
 // sweepMode == SweepToFreeList

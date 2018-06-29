@@ -1,3 +1,18 @@
+2018-06-28  Michael Saboff  <msaboff@apple.com>
+  
+        IsoCellSet::sweepToFreeList() not safe when Full GC in process
+        https://bugs.webkit.org/show_bug.cgi?id=187157
+
+        Reviewed by Mark Lam.
+
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::sweepToFreeList): Changed the "stale marks logic" to match what
+        is in MarkedBlock::Handle::specializedSweep where it takes into account whether
+        or not we are in the process of marking during a full GC.
+        * heap/MarkedBlock.h:
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::areMarksStaleForSweep): New helper.
+
 2018-06-27  Saam Barati  <sbarati@apple.com>
 
         Add some more register state information when we crash in repatchPutById

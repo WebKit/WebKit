@@ -127,11 +127,12 @@ void IsoCellSet::sweepToFreeList(MarkedBlock::Handle* block)
     }
     
     if (block->block().hasAnyNewlyAllocated()) {
+        // The newlyAllocated() bits are a superset of the marks() bits.
         m_bits[block->index()]->concurrentFilter(block->block().newlyAllocated());
         return;
     }
 
-    if (block->isEmpty() || block->areMarksStale()) {
+    if (block->isEmpty() || block->areMarksStaleForSweep()) {
         {
             // Holding the bitvector lock happens to be enough because that's what we also hold in
             // other places where we manipulate this bitvector.

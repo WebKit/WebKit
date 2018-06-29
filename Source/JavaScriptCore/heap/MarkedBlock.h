@@ -187,6 +187,7 @@ public:
         template <typename Functor> inline IterationStatus forEachMarkedCell(const Functor&);
             
         JS_EXPORT_PRIVATE bool areMarksStale();
+        bool areMarksStaleForSweep();
         
         void assertMarksNotStale();
             
