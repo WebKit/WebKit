@@ -908,6 +908,8 @@ LayoutUnit IndefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const
         return LayoutUnit();
 
     auto minSize = renderGrid()->computeContentLogicalHeight(MinSize, renderGrid()->style().logicalMinHeight(), std::nullopt);
+    if (!minSize)
+        return LayoutUnit();
     return minSize.value() - computeTrackBasedSize();
 }
 

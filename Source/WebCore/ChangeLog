@@ -1,3 +1,19 @@
+2018-06-29  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WPE] Three CSS Grid Layout tests crash due to valueless std::optional access
+        https://bugs.webkit.org/show_bug.cgi?id=186752
+
+        Reviewed by Frédéric Wang.
+
+        This is a simple fix for the crash we're getting on WPE
+        in IndefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep().
+
+        Covered by existent tests, just remove them from TestExpectations file.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::IndefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep const):
+        Check if minSize is null before trying to access it's value.
+
 2018-06-29  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233349.
