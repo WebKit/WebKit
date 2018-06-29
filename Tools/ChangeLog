@@ -1,3 +1,19 @@
+2018-06-29  Chris Dumez  <cdumez@apple.com>
+
+        WebKitLegacy: Can trigger recursive loads triggering debug assertions
+        https://bugs.webkit.org/show_bug.cgi?id=187121
+        <rdar://problem/41259430>
+
+        Reviewed by Brent Fulgham.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/StartLoadInDidFailProvisionalLoad.mm: Added.
+        (-[StartLoadInDidFailProvisionalLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        (-[StartLoadInDidFailProvisionalLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2018-06-29  Lucas Forschler  <lforschler@apple.com>
 
         Teach bisect-builds to retrieve supported platforms from the rest api.

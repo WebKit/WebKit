@@ -1,3 +1,38 @@
+2018-06-29  Chris Dumez  <cdumez@apple.com>
+
+        WebKitLegacy: Can trigger recursive loads triggering debug assertions
+        https://bugs.webkit.org/show_bug.cgi?id=187121
+        <rdar://problem/41259430>
+
+        Reviewed by Brent Fulgham.
+
+        In order to support asynchronous policy delegates, r229722 added a call to
+        FrameLoader::clearProvisionalLoadForPolicyCheck() when starting a navigation
+        policy decision in PolicyChecker::checkNavigationPolicy(). This calls
+        stopLoading() on the current provisional loader if there is one, and potentially
+        calls the didFailProvisionalLoadWithError cleint delegate. This delegate call
+        is synchronous on WebKit1, so the client may start a new load from this delegate
+        and re-enter Webcore. This happens in practive with Quickens 2017 / 2018 on Mac.
+
+        Before r229722, this was not an issue because pending loads were canceled after
+        the (asynchronous) navigation policy decision, via FrameLoader::stopAllLoaders().
+        FrameLoader::stopAllLoaders() sets a m_inStopAllLoaders flag and we return early
+        in FrameLoader::loadRequest() when this flag is set to prevent recursive loads.
+
+        To maintain shipping behavior as much as possible, this patch introduces a similar
+        inClearProvisionalLoadForPolicyCheck which gets set during
+        FrameLoader::clearProvisionalLoadForPolicyCheck() and we prevent new loads while
+        this flag is set.
+
+        I have verified that Quickens 2017 / 2018 works again after this change and I added
+        API test coverage for this behavior.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::clearProvisionalLoadForPolicyCheck):
+        * loader/FrameLoader.h:
+
 2018-06-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Infinite loop if a <use> element references its ancestor and the DOMNodeInserted event handler of one its ancestor's descents updates the document style
