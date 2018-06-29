@@ -1,3 +1,12 @@
+2018-06-29  Keith Miller  <keith_miller@apple.com>
+
+        run-jsc should print when jsc exits with non-zero status
+        https://bugs.webkit.org/show_bug.cgi?id=187192
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc:
+
 2018-06-29  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add timeout to webkitpy and webkitperl tests

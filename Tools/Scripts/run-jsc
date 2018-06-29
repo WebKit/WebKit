@@ -62,5 +62,8 @@ print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";
 
 while ($count--) {
     my $status = system("$jsc") >> 8;
-    exit $status if $status != 0;
+    if ($status != 0) {
+        print STDERR "\njsc exited with non-zero status: $status\n";
+        exit $status;
+    }
 }
