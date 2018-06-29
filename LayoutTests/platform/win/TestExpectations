@@ -4131,3 +4131,6 @@ webkit.org/b/186868 imported/mozilla/css-transitions/test_element-get-animations
 
 webkit.org/b/187041 imported/mozilla/css-animations/test_animation-pausing.html [ Failure ]
 webkit.org/b/187041 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
+
+webkit.org/b/187177 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/187177 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
