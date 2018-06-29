@@ -1,3 +1,13 @@
+2018-06-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Infinite loop if a <use> element references its ancestor and the DOMNodeInserted event handler of one its ancestor's descents updates the document style
+        https://bugs.webkit.org/show_bug.cgi?id=186925
+
+        Reviewed by Antti Koivisto.
+
+        * svg/dom/svg-use-infinite-loop-cloning-expected.txt: Added.
+        * svg/dom/svg-use-infinite-loop-cloning.html: Added.
+
 2018-06-29  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPE] Three CSS Grid Layout tests crash due to valueless std::optional access

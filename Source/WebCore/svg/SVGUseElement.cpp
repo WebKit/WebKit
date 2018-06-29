@@ -260,6 +260,9 @@ void SVGUseElement::updateShadowTree()
         return;
     }
 
+    if (isDescendantOf(target))
+        return;
+    
     {
         auto& shadowRoot = ensureUserAgentShadowRoot();
         cloneTarget(shadowRoot, *target);

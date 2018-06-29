@@ -1,3 +1,28 @@
+2018-06-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Infinite loop if a <use> element references its ancestor and the DOMNodeInserted event handler of one its ancestor's descents updates the document style
+        https://bugs.webkit.org/show_bug.cgi?id=186925
+
+        Reviewed by Antti Koivisto.
+
+        This patches fixes two issues:
+        -- SVGTRefTargetEventListener should not assume it has to be attached to
+        target when its handleEvent() is called.
+        Because SVGTRefTargetEventListener::handleEvent() references the target
+        element, we just return if the listener is detached.
+
+        -- The <use> element should not clone its shadow tree if it references one
+        of its ancestors. The DOMNodeInserted of any node in the target element
+        tree may issue a document command. This document command will cause the 
+        shadow tree to be re-cloned so this will cause infinite loop to happen.
+
+        Test: svg/dom/svg-use-infinite-loop-cloning.html
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefTargetEventListener::handleEvent):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::updateShadowTree):
+
 2018-06-29  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPE] Three CSS Grid Layout tests crash due to valueless std::optional access
