@@ -1,3 +1,14 @@
+2018-06-29  Jer Noble  <jer.noble@apple.com>
+
+        Returning PiP'd video to fullscreen while playing leaves video muted.
+        https://bugs.webkit.org/show_bug.cgi?id=187181
+        <rdar://problem/41408335>
+
+        Reviewed by Eric Carlson.
+
+        * media/picture-in-picture-interruption-expected.txt: Added.
+        * media/picture-in-picture-interruption.html: Added.
+
 2018-06-29  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test imported/mozilla/css-animations/test_animation-starttime.html is failing.

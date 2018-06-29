@@ -1,0 +1,14 @@
+This tests that video is in the correct media session state after ending a background interruption while pipped.
+
+RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EVENT(webkitpresentationmodechanged)
+RUN(internals.beginMediaSessionInterruption("enteringbackground"))
+EXPECTED (internals.mediaSessionState(video) == 'Playing') OK
+RUN(internals.endMediaSessionInterruption("enteringbackground"))
+EXPECTED (internals.mediaSessionState(video) == 'Playing') OK
+END OF TEST
+

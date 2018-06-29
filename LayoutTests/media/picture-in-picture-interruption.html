@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            findMediaElement();
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+
+            run('video.src = findMediaFile("video", "content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            run('video.play()');
+            await waitFor(video, 'playing');
+
+            runWithKeyDown(function(){ video.webkitSetPresentationMode('picture-in-picture'); });
+            await waitFor(video, 'webkitpresentationmodechanged');
+
+            run('internals.beginMediaSessionInterruption("enteringbackground")');
+
+            testExpected('internals.mediaSessionState(video)', 'Playing');
+
+            run('internals.endMediaSessionInterruption("enteringbackground")');
+
+            testExpected('internals.mediaSessionState(video)', 'Playing');
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <div>This tests that video is in the correct media session state after ending a background interruption while pipped.</div>
+    <video controls></video>
+</body>
+</html>

@@ -87,6 +87,14 @@ enum EventThrottlingBehavior {
     "NowPlaying"
 };
 
+[Conditional=VIDEO] enum MediaSessionState {
+    "Idle",
+    "Autoplaying",
+    "Playing",
+    "Paused",
+    "Interrupted"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
@@ -635,6 +643,7 @@ enum EventThrottlingBehavior {
     [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);
+    [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
 
     DOMString ongoingLoadsDescriptions();
     void setCaptureExtraNetworkLoadMetricsEnabled(boolean value);

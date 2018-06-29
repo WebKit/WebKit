@@ -154,6 +154,9 @@ void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)
     if (--m_interruptionCount)
         return;
 
+    if (m_interruptionType == NoInterruption)
+        return;
+
     State stateToRestore = m_stateToRestore;
     m_stateToRestore = Idle;
     m_interruptionType = NoInterruption;

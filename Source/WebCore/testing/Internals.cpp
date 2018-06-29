@@ -3744,6 +3744,11 @@ HTMLMediaElement* Internals::bestMediaElementForShowingPlaybackControlsManager(I
 {
     return HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(purpose);
 }
+
+Internals::MediaSessionState Internals::mediaSessionState(HTMLMediaElement& element)
+{
+    return element.mediaSession().state();
+}
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
