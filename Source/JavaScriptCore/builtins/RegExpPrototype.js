@@ -63,7 +63,10 @@ function regExpExec(regexp, str)
 }
 
 @globalPrivate
-function hasObservableSideEffectsForRegExpMatch(regexp) {
+function hasObservableSideEffectsForRegExpMatch(regexp)
+{
+    "use strict";
+
     // This is accessed by the RegExpExec internal function.
     let regexpExec = @tryGetById(regexp, "exec");
     if (regexpExec !== @regExpBuiltinExec)
@@ -351,7 +354,10 @@ function search(strArg)
 }
 
 @globalPrivate
-function hasObservableSideEffectsForRegExpSplit(regexp) {
+function hasObservableSideEffectsForRegExpSplit(regexp)
+{
+    "use strict";
+
     // This is accessed by the RegExpExec internal function.
     let regexpExec = @tryGetById(regexp, "exec");
     if (regexpExec !== @regExpBuiltinExec)

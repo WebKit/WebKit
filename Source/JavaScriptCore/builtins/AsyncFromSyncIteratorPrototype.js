@@ -151,6 +151,8 @@ function throw(exception)
 @globalPrivate
 function createAsyncFromSyncIterator(syncIterator, nextMethod)
 {
+    "use strict";
+
     if (!@isObject(syncIterator))
         @throwTypeError('Only objects can be wrapped by async-from-sync wrapper');
 
@@ -161,6 +163,8 @@ function createAsyncFromSyncIterator(syncIterator, nextMethod)
 @constructor
 function AsyncFromSyncIteratorConstructor(syncIterator, nextMethod)
 {
+    "use strict";
+
     @putByIdDirectPrivate(this, "syncIterator", syncIterator);
     @putByIdDirectPrivate(this, "nextMethod", nextMethod);
 }

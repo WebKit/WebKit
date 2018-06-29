@@ -87,6 +87,7 @@ function newPromiseCapability(constructor)
 @globalPrivate
 function newHandledRejectedPromise(error)
 {
+    "use strict";
     let promise = @Promise.@reject(error);
     @putByIdDirectPrivate(promise, "promiseIsHandled", true);
     return promise;

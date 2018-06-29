@@ -6,7 +6,7 @@ var it = 1e5;
 
 const check = (got, expect) => { if (got != expect) throw "Error: bad result got " + got + " expected " + expect; };
 
-fooPlusBar = createBuiltin(`(function(o) { return @tryGetById(o, "foo") + @tryGetById(o, "bar"); })`);
+fooPlusBar = createBuiltin(`(function (o) { return @tryGetById(o, "foo") + @tryGetById(o, "bar"); })`);
 noInline(fooPlusBar);
 
 const bench = f => { f(); }

@@ -5,7 +5,7 @@ function assert(x) {
         throw Error("Bad");
 }
 
-let isConstructor = createBuiltin("(function(c) { return @isConstructor(c); })");
+let isConstructor = createBuiltin("(function (c) { return @isConstructor(c); })");
 
 // Functions.
 assert(isConstructor(assert));

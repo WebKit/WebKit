@@ -1,3 +1,25 @@
+2018-06-29  Saam Barati  <sbarati@apple.com>
+
+        We shouldn't recurse into the parser when gathering metadata about various function offsets
+        https://bugs.webkit.org/show_bug.cgi?id=184074
+        <rdar://problem/37165897>
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/try-get-by-id-basic.js:
+        (const.bench.f.const.fooPlusBar.createBuiltin):
+        * microbenchmarks/try-get-by-id-polymorphic.js:
+        (fooPlusBar.createBuiltin):
+        * stress/array-push-with-force-exit.js:
+        * stress/dont-crash-on-stack-overflow-when-parsing-builtin.js: Added.
+        (f):
+        * stress/dont-crash-on-stack-overflow-when-parsing-default-constructor.js: Added.
+        (foo):
+        (prototype.runNearStackLimit):
+        * stress/is-constructor.js:
+        * stress/tailCallForwardArguments.js:
+        (putFuncToPrivateName.createBuiltin):
+
 2018-06-27  Mark Lam  <mark.lam@apple.com>
 
         DFG's compileReallocatePropertyStorage() and compileAllocatePropertyStorage() slow paths should also clear unused properties.

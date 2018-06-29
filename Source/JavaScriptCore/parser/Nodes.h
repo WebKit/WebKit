@@ -1988,6 +1988,14 @@ namespace JSC {
             int functionNameStart, int parametersStart, bool isInStrictContext, 
             ConstructorKind, SuperBinding, unsigned parameterCount,
             SourceParseMode, bool isArrowFunctionBodyExpression);
+        FunctionMetadataNode(
+            const JSTokenLocation& start, const JSTokenLocation& end, 
+            unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
+            int functionNameStart, int parametersStart, bool isInStrictContext, 
+            ConstructorKind, SuperBinding, unsigned parameterCount,
+            SourceParseMode, bool isArrowFunctionBodyExpression);
+
+        void dump(PrintStream&) const;
 
         void finishParsing(const SourceCode&, const Identifier&, FunctionMode);
         
@@ -2028,7 +2036,13 @@ namespace JSC {
         }
         unsigned lastLine() const { return m_lastLine; }
 
-    protected:
+        bool operator==(const FunctionMetadataNode&) const;
+        bool operator!=(const FunctionMetadataNode& other) const
+        {
+            return !(*this == other);
+        }
+
+    public:
         Identifier m_ident;
         Identifier m_ecmaName;
         Identifier m_inferredName;

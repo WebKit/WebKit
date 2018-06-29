@@ -191,7 +191,10 @@ function padEnd(maxLength/*, fillString*/)
 }
 
 @globalPrivate
-function hasObservableSideEffectsForStringReplace(regexp, replacer) {
+function hasObservableSideEffectsForStringReplace(regexp, replacer)
+{
+    "use strict";
+
     if (replacer !== @regExpPrototypeSymbolReplace)
         return true;
     
@@ -235,6 +238,8 @@ function replace(search, replace)
 @globalPrivate
 function getDefaultCollator()
 {
+    "use strict";
+
     return @getDefaultCollator.collator || (@getDefaultCollator.collator = new @Collator());
 }
     

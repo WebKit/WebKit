@@ -83,6 +83,7 @@ public:
     const JSToken& token() const { return m_token; }
     const String& message() const { return m_message; }
     int line() const { return m_line; }
+    ErrorType type() const { return m_type; }
 
     JSObject* toErrorObject(
         JSGlobalObject* globalObject, const SourceCode& source, 

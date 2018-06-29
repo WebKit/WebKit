@@ -1964,8 +1964,11 @@ std::unique_ptr<ParsedNode> parse(
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (builtinMode == JSParserBuiltinMode::Builtin) {
-            if (!result)
-                dataLogLn("Error compiling builtin: ", error.message());
+            if (!result) {
+                ASSERT(error.isValid());
+                if (error.type() != ParserError::StackOverflow)
+                    dataLogLn("Unexpected error compiling builtin: ", error.message());
+            }
         }
     } else {
         ASSERT_WITH_MESSAGE(defaultConstructorKind == ConstructorKind::None, "BuiltinExecutables::createDefaultConstructor should always use a 8-bit string");

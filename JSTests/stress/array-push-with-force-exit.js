@@ -1,6 +1,6 @@
 var createBuiltin = $vm.createBuiltin;
 
-var target = createBuiltin(`(function(array)
+var target = createBuiltin(`(function (array)
 {
     if (array) {
         @idWithProfile(array, "SpecOther").push(42);
