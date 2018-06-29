@@ -1,0 +1,15 @@
+layer at (0,0) size 785x886
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x881
+  RenderBlock {HTML} at (0,0) size 785x881
+    RenderBody {BODY} at (8,8) size 769x865
+      RenderBlock {DIV} at (0,0) size 220x220 [border: (10px solid #008000)]
+        RenderBlock {DIV} at (10,10) size 202x202 [border: (1px solid #008000)]
+      RenderBlock {DIV} at (0,220) size 200x205 [border: (5px solid #008000) none]
+        RenderBlock {DIV} at (0,5) size 200x201 [border: none (1px solid #008000) none]
+      RenderBlock {DIV} at (0,425) size 220x220 [border: (10px solid #008000)]
+        RenderBlock {DIV} at (10,10) size 222x222 [border: (1px solid #008000)]
+      RenderBlock {DIV} at (0,645) size 220x220 [border: (10px solid #008000)]
+        RenderBlock {DIV} at (20,20) size 202x202 [border: (1px solid #008000)]
+          RenderBlock {DIV} at (11,11) size 200x200
+            RenderBlock {DIV} at (10,0) size 202x202 [border: (1px solid #008000)]

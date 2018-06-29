@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x346
+  RenderBlock {HTML} at (0,0) size 800x346
+    RenderBody {BODY} at (8,8) size 784x330
+      RenderBlock {DIV} at (0,280) size 40x50
+layer at (8,8) size 30x70
+  RenderBlock {DIV} at (0,0) size 30x70
+    RenderBlock {DIV} at (0,0) size 20x50
+      RenderBlock {DIV} at (0,0) size 20x50
+layer at (8,78) size 50x160
+  RenderBlock {DIV} at (0,70) size 50x160
+    RenderBlock {DIV} at (0,0) size 40x50
+    RenderBlock {DIV} at (0,110) size 40x50
