@@ -1,3 +1,15 @@
+2018-06-28  Olivia Barnett  <obarnett@apple.com>
+
+        Find in page for typographic quotes does not find low (German) quotes
+        https://bugs.webkit.org/show_bug.cgi?id=187164
+        <rdar://problem/29612785>
+
+        Reviewed by Tim Horton.
+
+        Added Unicode definitions for German quotation marks.
+
+        * wtf/unicode/CharacterNames.h:
+
 2018-06-27  Jonathan Bedard  <jbedard@apple.com>
 
         Enable WebKit iOS 12 build

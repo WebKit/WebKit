@@ -15,7 +15,9 @@
         var hebrewPunctuationGeresh = String.fromCharCode(0x05F3);
         var hebrewPunctuationGershayim = String.fromCharCode(0x05F4);
         var leftDoubleQuotationMark = String.fromCharCode(0x201C);
+        var leftLowDoubleQuotationMark = String.fromCharCode(0x201E);
         var leftSingleQuotationMark = String.fromCharCode(0x2018);
+        var leftLowSingleQuotationMark = String.fromCharCode(0x201A);
         var quotationMark = '"';
         var rightDoubleQuotationMark = String.fromCharCode(0x201D);
         var rightSingleQuotationMark = String.fromCharCode(0x2019);
@@ -49,8 +51,8 @@
             if (window.testRunner)
                 testRunner.dumpAsText();
 
-            var singleQuotes = [ "apostrophe", "hebrewPunctuationGeresh", "leftSingleQuotationMark", "rightSingleQuotationMark" ];
-            var doubleQuotes = [ "quotationMark", "hebrewPunctuationGershayim", "leftDoubleQuotationMark", "rightDoubleQuotationMark" ];
+            var singleQuotes = [ "apostrophe", "hebrewPunctuationGeresh", "leftSingleQuotationMark", "rightSingleQuotationMark", "leftLowSingleQuotationMark"];
+            var doubleQuotes = [ "quotationMark", "hebrewPunctuationGershayim", "leftDoubleQuotationMark", "rightDoubleQuotationMark", "leftLowDoubleQuotationMark"];
 
             for (var i = 0; i < singleQuotes.length; ++i) {
                 for (var j = 0; j < singleQuotes.length; ++j)

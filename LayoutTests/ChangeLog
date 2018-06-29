@@ -1,3 +1,15 @@
+2018-06-28  Olivia Barnett  <obarnett@apple.com>
+        
+        Find in page for typographic quotes does not find low (German) quotes
+        https://bugs.webkit.org/show_bug.cgi?id=187164
+        <rdar://problem/29612785>
+       
+        Reviewed by Tim Horton.
+
+        Added additional test for German quotes.
+
+        * fast/text/find-quotes.html:
+
 2018-06-28  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Unreviewed test gardening.

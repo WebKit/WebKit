@@ -1,3 +1,19 @@
+2018-06-28  Olivia Barnett  <obarnett@apple.com>
+
+        Find in page for typographic quotes does not find low (German) quotes
+        https://bugs.webkit.org/show_bug.cgi?id=187164
+        <rdar://problem/29612785>
+
+        Reviewed by Tim Horton.
+
+        Added additional quote test to LayoutTests/fast/text/find-quotes.html.
+
+        Added functionality to replace German quotes when matching.
+
+        * editing/TextIterator.cpp:
+        (WebCore::foldQuoteMark):
+        (WebCore::foldQuoteMarks):
+
 2018-06-28  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (233281): fast/dom/location-new-window-no-crash.html and some other tests are timing out

@@ -1756,10 +1756,12 @@ static inline UChar foldQuoteMark(UChar c)
     switch (c) {
         case hebrewPunctuationGershayim:
         case leftDoubleQuotationMark:
+        case leftLowDoubleQuotationMark:
         case rightDoubleQuotationMark:
             return '"';
         case hebrewPunctuationGeresh:
         case leftSingleQuotationMark:
+        case leftLowSingleQuotationMark:
         case rightSingleQuotationMark:
             return '\'';
         default:
@@ -1775,7 +1777,9 @@ static inline String foldQuoteMarks(String string)
     string.replace(hebrewPunctuationGeresh, '\'');
     string.replace(hebrewPunctuationGershayim, '"');
     string.replace(leftDoubleQuotationMark, '"');
+    string.replace(leftLowDoubleQuotationMark, '"');
     string.replace(leftSingleQuotationMark, '\'');
+    string.replace(leftLowSingleQuotationMark, '\'');
     string.replace(rightDoubleQuotationMark, '"');
     string.replace(rightSingleQuotationMark, '\'');
 
