@@ -1,3 +1,23 @@
+2018-06-29  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] VoiceOver scroll position is jumpy in frames
+        https://bugs.webkit.org/show_bug.cgi?id=186956
+
+        Reviewed by Simon Fraser.
+
+        iOS is using delegate scrolling and we should not take into account
+        the scroll offset when converting rects.
+
+        Also fixed a issue where we want to scroll the element into view even
+        if it's partially visible.
+
+        Test: fast/scrolling/ios/iframe-scroll-into-view.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::scrollToMakeVisible const):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::contentsToContainingViewContents const):
+
 2018-06-29  Chris Dumez  <cdumez@apple.com>
 
         WebKitLegacy: Can trigger recursive loads triggering debug assertions

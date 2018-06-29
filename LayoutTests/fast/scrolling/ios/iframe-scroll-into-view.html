@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin: 0;
+}
+iframe {
+    border: 0;
+    height: 200px;
+    width: 200px;
+}
+</style>
+</head>
+
+ <body>
+<div style="height: 2000px;"></div>
+<iframe srcdoc="<body style='margin: 0;'><div>This tests that the iframe should be scroll to the top of the page on iOS.</div></body>" onload="runTest()"></iframe>
+<div style="height: 2000px;"></div>
+</body>
+
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function runTest() {
+        window.scrollTo(0, 200);
+        window.frames[0].document.body.scrollIntoView();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+     </script>
+</html>
