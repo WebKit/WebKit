@@ -1,3 +1,23 @@
+2018-06-29  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] Non-empty strings may be pretty-printed as empty
+        https://bugs.webkit.org/show_bug.cgi?id=187185
+
+        Reviewed by Simon Fraser.
+
+        For some reason lldb(1) sometimes has an issue accessing members of WTF::StringImplShape
+        via a WTF::StringImpl pointer (why?). Explicitly casting a WTF::StringImpl* to a
+        WTF::StringImplShape* before accessing such members makes LLDB happy.
+
+        I tried writing a test for this both for the LLVM project and to add to our lldb_webkit unit
+        tests to no avail. I have only been able to reproduce this bug sporadically during my WebCore/WebKit
+        debugging sessions so far.
+
+        * lldb/lldb_webkit.py:
+        (WTFStringImplProvider.__init__): Explicitly cast the WTF::StringImpl* to WTF::StringImplShape*.
+        (WTFStringImplProvider.get_data8): Update code now that we are directly accessing WTF::StringImplShape*.
+        (WTFStringImplProvider.get_data16): Ditto.
+
 2018-06-29  Chris Dumez  <cdumez@apple.com>
 
         WebKitLegacy: Can trigger recursive loads triggering debug assertions

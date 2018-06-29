@@ -231,16 +231,19 @@ def lstring_to_string(valobj, error, length=None):
 
 class WTFStringImplProvider:
     def __init__(self, valobj, dict):
-        self.valobj = valobj
+        # FIXME: For some reason lldb(1) sometimes has an issue accessing members of WTF::StringImplShape
+        # via a WTF::StringImpl pointer (why?). As a workaround we explicitly cast to WTF::StringImplShape*.
+        string_impl_shape_ptr_type = valobj.GetTarget().FindFirstType('WTF::StringImplShape').GetPointerType()
+        self.valobj = valobj.Cast(string_impl_shape_ptr_type)
 
     def get_length(self):
         return self.valobj.GetChildMemberWithName('m_length').GetValueAsUnsigned(0)
 
     def get_data8(self):
-        return self.valobj.GetChildAtIndex(0).GetChildAtIndex(2).GetChildMemberWithName('m_data8')
+        return self.valobj.GetChildAtIndex(2).GetChildMemberWithName('m_data8')
 
     def get_data16(self):
-        return self.valobj.GetChildAtIndex(0).GetChildAtIndex(2).GetChildMemberWithName('m_data16')
+        return self.valobj.GetChildAtIndex(2).GetChildMemberWithName('m_data16')
 
     def to_string(self):
         error = lldb.SBError()
