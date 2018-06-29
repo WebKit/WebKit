@@ -58,6 +58,7 @@ void FormattingContext::computeFloatingHeightAndMargin(LayoutContext& layoutCont
     displayBox.moveVertically(heightAndMargin.margin.top);
     ASSERT(!heightAndMargin.collapsedMargin);
     displayBox.setVerticalMargin(heightAndMargin.margin);
+    displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
 }
 
 void FormattingContext::computeFloatingWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -83,6 +84,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutCo
     displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
     ASSERT(!verticalGeometry.heightAndMargin.collapsedMargin);
     displayBox.setVerticalMargin(verticalGeometry.heightAndMargin.margin);
+    displayBox.setVerticalNonCollapsedMargin(verticalGeometry.heightAndMargin.margin);
 }
 
 void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

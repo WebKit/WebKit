@@ -194,9 +194,7 @@ void BlockFormattingContext::computeInFlowHeightAndMargin(LayoutContext& layoutC
     displayBox.setContentBoxHeight(heightAndMargin.height);
     displayBox.moveVertically(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top);
     displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
-#ifndef NDEBUG
     displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
-#endif
 }
 
 void BlockFormattingContext::computeInFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

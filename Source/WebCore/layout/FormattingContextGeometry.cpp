@@ -80,6 +80,11 @@ static LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const LayoutConte
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
     LayoutUnit top;
+    // Add sibling offset
+    if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
+        auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
+        top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.nonCollapsedMarginBottom();
+    }
     // Resolve top all the way up to the containing block.
     auto* containingBlock = layoutBox.containingBlock();
     for (auto* parent = layoutBox.parent(); parent; parent = parent->parent()) {
@@ -87,11 +92,6 @@ static LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const LayoutConte
         top += (displayBox.top() + displayBox.contentBoxTop());
         if (parent == containingBlock)
             break;
-    }
-    // Add sibling offset
-    if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-        auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
-        top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.marginBottom();
     }
     // FIXME: floatings need to be taken into account.
     return top;

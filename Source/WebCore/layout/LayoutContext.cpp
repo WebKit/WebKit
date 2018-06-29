@@ -59,6 +59,7 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
     // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)
     displayBox.setHorizontalMargin({ });
     displayBox.setVerticalMargin({ });
+    displayBox.setVerticalNonCollapsedMargin({ });
     displayBox.setBorder({ });
     displayBox.setPadding({ });
     displayBox.setContentBoxHeight(containerSize.height());

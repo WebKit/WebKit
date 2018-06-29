@@ -62,19 +62,17 @@ Box::Rect Box::marginBox() const
     return marginBox;
 }
 
-#ifndef NDEBUG
 Box::Rect Box::nonCollapsedMarginBox() const
 {
     auto borderBox = this->borderBox();
 
     Rect marginBox;
-    marginBox.setTop(borderBox.top() - m_nonCollapsedVertivalMargin.top);
+    marginBox.setTop(borderBox.top() - nonCollapsedMarginTop());
     marginBox.setLeft(borderBox.left() - marginLeft());
-    marginBox.setHeight(borderBox.height() + m_nonCollapsedVertivalMargin.top + m_nonCollapsedVertivalMargin.bottom);
+    marginBox.setHeight(borderBox.height() + nonCollapsedMarginTop() + nonCollapsedMarginBottom());
     marginBox.setWidth(borderBox.width() + marginLeft() + marginRight());
     return marginBox;
 }
-#endif
 
 Box::Rect Box::borderBox() const
 {
