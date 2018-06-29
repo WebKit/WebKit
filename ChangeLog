@@ -1,3 +1,14 @@
+2018-06-29  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSCOnly] Restore Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=187127
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+        Don't forget to set -DUCHAR_TYPE=wchar_t for ICU on Windows.
+        Use bin64/lib64 on Windows (for consistency with full WebKit build).
+
 2018-06-28  Adam Barth  <abarth@webkit.org>
 
         Switch OS(FUCHSIA) to using JSCOnly

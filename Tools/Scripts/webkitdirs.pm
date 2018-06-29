@@ -815,10 +815,10 @@ sub executableProductDir
     my $productDirectory = productDir();
 
     my $binaryDirectory;
-    if (isGtk() || isJSCOnly() || isWPE()) {
-        $binaryDirectory = "bin";
-    } elsif (isAnyWindows()) {
+    if (isAnyWindows()) {
         $binaryDirectory = isWin64() ? "bin64" : "bin32";
+    } elsif (isGtk() || isJSCOnly() || isWPE()) {
+        $binaryDirectory = "bin";
     } else {
         return $productDirectory;
     }
@@ -1296,7 +1296,7 @@ sub isWin64()
 sub determineIsWin64()
 {
     return if defined($isWin64);
-    $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit") || isWinCairo() && !shouldBuild32Bit();
+    $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit") || ((isWinCairo() || isJSCOnly()) && !shouldBuild32Bit());
 }
 
 sub determineIsWin64FromArchitecture($)

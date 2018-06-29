@@ -115,7 +115,7 @@ if ($showHelp) {
    exit 1;
 }
 
-if (isAppleWinWebKit()) {
+if (isAnyWindows()) {
     $ftlJIT = 0;
 }
 

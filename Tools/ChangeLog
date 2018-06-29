@@ -1,3 +1,19 @@
+2018-06-29  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSCOnly] Restore Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=187127
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/build-jsc:
+        Fix condition for disabling FTL JIT on Windows.
+
+        * Scripts/webkitdirs.pm:
+        (executableProductDir):
+        JSCOnly should still use bin64 on Windows (for consistency with full WebKit build).
+        (determineIsWin64):
+        JSCOnly already defaults to 64-bit on Windows with Ninja -- ensure that this is true even with MSBuild.
+
 2018-06-29  Thibault Saunier  <tsaunier@igalia.com>
 
         [GTK][WPE]: Add a way to setup our development environment inside flatpak
