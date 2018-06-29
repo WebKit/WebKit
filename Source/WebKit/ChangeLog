@@ -1,3 +1,16 @@
+2018-06-29  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] Some frames are dropped when using rAF to animate an element
+        https://bugs.webkit.org/show_bug.cgi?id=187175
+
+        Always call renderNextFrame in ThreadedCompositor::requestDisplayRefreshMonitorUpdate()
+        so we have to process any pending layer flush request.
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::handleDisplayRefreshMonitorUpdate):
+
 2018-06-28  Chris Dumez  <cdumez@apple.com>
 
         Make sure the WebResourceLoadStatisticsStore gets destroyed on the main thread
