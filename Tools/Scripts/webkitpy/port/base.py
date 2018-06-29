@@ -1225,7 +1225,7 @@ class Port(object):
         This is needed only by ports that use the apache_http_server module."""
         # The Apache binary path can vary depending on OS and distribution
         # See http://wiki.apache.org/httpd/DistrosDefaultLayout
-        for path in ["/usr/sbin/httpd", "/usr/sbin/apache2"]:
+        for path in ["/usr/sbin/httpd", "/usr/sbin/apache2", "/app/bin/httpd"]:
             if self._filesystem.exists(path):
                 return path
         _log.error("Could not find apache. Not installed or unknown path.")
@@ -1250,6 +1250,9 @@ class Port(object):
 
     def _is_arch_based(self):
         return self._filesystem.exists('/etc/arch-release')
+
+    def _is_flatpak(self):
+        return self._filesystem.exists('/usr/manifest.json')
 
     def _apache_version(self):
         config = self._executive.run_command([self._path_to_apache(), '-v'])
@@ -1288,6 +1291,8 @@ class Port(object):
                 return 'debian-httpd-' + self._apache_version() + self._debian_php_version() + '.conf'
             if self._is_arch_based():
                 return 'archlinux-httpd.conf'
+            if self._is_flatpak():
+                return 'flatpak-httpd.conf'
         # All platforms use apache2 except for CYGWIN (and Mac OS X Tiger and prior, which we no longer support).
         return 'apache' + self._apache_version() + '-httpd.conf'
 
@@ -1440,7 +1445,19 @@ class Port(object):
         # --pixel-test-directory is not specified.
         return True
 
+    def _should_use_flatpak(self):
+        suffix = ""
+        if self.port_name:
+            suffix = self.port_name.upper()
+        return self._filesystem.exists(self.path_from_webkit_base('WebKitBuild', suffix, "FlatpakTree"))
+
+    def _in_flatpak_sandbox(self):
+        return os.path.exists("/usr/manifest.json")
+
     def _should_use_jhbuild(self):
+        if self._in_flatpak_sandbox():
+            return False
+
         suffix = ""
         if self.port_name:
             suffix = self.port_name.upper()

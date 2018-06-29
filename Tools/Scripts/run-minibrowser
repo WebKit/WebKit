@@ -45,6 +45,8 @@ prohibitUnknownPort();
 setConfiguration();
 
 if (isGtk() || isWPE()) {
+    runInFlatpakIfAvalaible("/app/webkit/Tools/Scripts/run-minibrowser");
+
     # Check to see that all the frameworks are built.
     checkFrameworks();
 

@@ -1,3 +1,12 @@
+2018-06-29  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][WPE]: Add a way to setup our development environment inside flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=186771
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * http/conf/flatpak-httpd.conf: Added. Apache configuration file to be used inside flaptak.
+
 2018-06-29  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233349.

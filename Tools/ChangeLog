@@ -1,3 +1,119 @@
+2018-06-29  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][WPE]: Add a way to setup our development environment inside flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=186771
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This patch introduce a way to setup the development environment inside flatpak[0]
+        removing the need for jhbuild when doing so. Anything needed to build/run minibrowser/ run
+        layout tests is provided either but the org.gnome.Sdk runtime or built with flatpak-builder.
+
+        The workflow is very similar to the "jhbuild based" one except that you should use update-webkit$PORTNAME-flatpak instead
+        of update-webkit$PORTNAME-libs and that script requires to specify a build configuration (--release is default).
+
+        Our scripts have been updated to be able to run inside that new build environment.
+
+        Since everything runs inside a flatpak sandbox, gdb needs to be run from within the sandbox, the script exposes a way to do it
+        easily with the `--gdb` option:
+
+          $ webkit-flatpak --gdb [-m COREDUMPCTL MATCHES]
+
+        The Layout test `GDBCrashLogGenerator` has been taugth how to use that and is able to retrieve stacktrace as with the jhbuild based workflow.
+
+        [0] http://flatpak.org
+
+        * Scripts/build-webkit:
+        * Scripts/generate-jsc-bundle:
+        (main):
+        * Scripts/run-gtk-tests:
+        * Scripts/run-minibrowser:
+        * Scripts/run-webdriver-tests:
+        * Scripts/run-webkit-tests:
+        * Scripts/run-wpe-tests:
+        * Scripts/update-webkitgtk-libs:
+        * Scripts/update-webkitwpe-libs:
+        * Scripts/webkit-flatpak: Added.
+        * Scripts/webkitdirs.pm:
+        (getJhbuildPath):
+        (getFlatpakPath):
+        (inFlatpakSandbox):
+        (runInFlatpak):
+        (runInFlatpakIfAvalaible):
+        (wrapperPrefixIfNeeded):
+        (shouldUseFlatpak):
+        * Scripts/webkitpy/port/base.py:
+        (Port._path_to_apache):
+        (Port._is_flatpak):
+        (Port._apache_config_file_name_for_platform):
+        (Port._should_use_flatpak):
+        (Port):
+        (Port._in_flatpak_sandbox):
+        (Port._should_use_jhbuild):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator._get_trace_from_systemd):
+        (GDBCrashLogGenerator.generate_crash_log):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (main):
+        * flatpak/files/default.xkm: Added.
+        * flatpak/files/httpd-autogen.sh: Added.
+        * flatpak/flatpakutils.py: Added.
+        (Colors):
+        (Console):
+        (Console.message):
+        (remove_extension_points):
+        (remove_comments):
+        (remove_comments._replacer):
+        (load_manifest):
+        (expand_manifest):
+        (FlatpakObject):
+        (FlatpakObject.__init__):
+        (FlatpakObject.flatpak):
+        (FlatpakPackages):
+        (FlatpakPackages.__init__):
+        (FlatpakPackages.__detect_packages):
+        (FlatpakPackages.__detect_packages.in):
+        (FlatpakPackages.__detect_runtimes):
+        (FlatpakPackages.__detect_apps):
+        (FlatpakPackages.__iter__):
+        (FlatpakRepos):
+        (FlatpakRepos.__init__):
+        (FlatpakRepos.update):
+        (FlatpakRepos.add):
+        (FlatpakRepo):
+        (FlatpakRepo.__init__):
+        (FlatpakRepo.repo_file):
+        (FlatpakPackage):
+        (FlatpakPackage.__init__):
+        (FlatpakPackage.__str__):
+        (FlatpakPackage.is_installed):
+        (FlatpakPackage.install):
+        (FlatpakPackage.update):
+        (WebkitFlatpak):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.check_flatpak):
+        (WebkitFlatpak.check_flatpak.comparable_version):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.run):
+        (WebkitFlatpak.has_environment):
+        (WebkitFlatpak.setup_dev_env):
+        (WebkitFlatpak.install_all):
+        (WebkitFlatpak.run_gdb):
+        (WebkitFlatpak.update_all):
+        (is_sandboxed):
+        (run_in_sandbox_if_available):
+        * flatpak/org.webkit.GTK.yaml: Added.
+        * flatpak/org.webkit.WPE.yaml: Added.
+        * flatpak/org.webkit.WebKit.yaml: Added.
+        * flatpak/patches/httpd-0001-configure-use-pkg-config-for-PCRE-detection.patch: Added.
+        * flatpak/patches/xvfb-0001-HACK-Avoid-compiling-a-kbm-file.patch: Added.
+
 2018-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] DataTransfer.getData always returns the empty string when dropping text

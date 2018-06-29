@@ -24,8 +24,10 @@ import optparse
 
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "jhbuild"))
+sys.path.insert(0, os.path.join(top_level_directory, "Tools", "flatpak"))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
 import jhbuildutils
+import flatpakutils
 from api_test_runner import TestRunner, add_options
 
 class WPETestRunner(TestRunner):
@@ -46,10 +48,12 @@ class WPETestRunner(TestRunner):
 
 
 if __name__ == "__main__":
-    if not jhbuildutils.enter_jhbuild_environment_if_available("wpe"):
-        print "***"
-        print "*** Warning: jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing."
-        print "***"
+    flatpakutils.run_in_sandbox_if_available(sys.argv)
+    if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available("wpe"):
+        print '***'
+        print '*** Warning: jhbuild environment not present and not running in flatpak.'
+        print '*** Run update-webkitgtk-libs or update-webkitgtk-flatpak before build-webkit to ensure proper testing..'
+        print '***'
 
     option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
     add_options(option_parser);

@@ -48,6 +48,15 @@ use POSIX;
 sub cMakeArgsFromFeatures();
 sub writeCongrats();
 
+checkRequiredSystemConfig();
+setConfiguration();
+
+if (shouldUseFlatpak()) {
+    print "Building flatpak based environment\n";
+
+    runInFlatpak("/app/webkit/Tools/Scripts/build-webkit");
+}
+
 my $originalWorkingDirectory = getcwd();
 chdirWebKit();
 
@@ -167,8 +176,6 @@ if ($useCCache == 1) {
     $ENV{'WK_USE_CCACHE'} = "NO";
 }
 
-checkRequiredSystemConfig();
-setConfiguration();
 
 my $productDir = productDir();
 

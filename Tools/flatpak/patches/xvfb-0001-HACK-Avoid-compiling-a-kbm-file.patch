@@ -1,0 +1,50 @@
+From aed1b6e8de41375c1b8b1dfc48a350e0a9b9cbba Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Mon, 11 Jun 2018 10:55:43 -0400
+Subject: [PATCH xserver] HACK: Avoid compiling a kbm file
+
+This would need to be in /usr/share/X11/ as this is where
+resource files are in the sandbox but it is read only in there.
+
+Hack around that.
+---
+ xkb/ddxLoad.c | 9 +--------
+ xkb/xkbInit.c | 2 +-
+ 2 files changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/xkb/ddxLoad.c b/xkb/ddxLoad.c
+index bbe3952..a4a03a1 100644
+--- a/xkb/ddxLoad.c
++++ b/xkb/ddxLoad.c
+@@ -148,14 +148,7 @@ RunXkbComp(xkbcomp_buffer_callback callback, void *userdata)
+         }
+     }
+ 
+-    if (asprintf(&buf,
+-                 "\"%s%sxkbcomp\" -w %d %s -xkm \"%s\" "
+-                 "-em1 %s -emp %s -eml %s \"%s%s.xkm\"",
+-                 xkbbindir, xkbbindirsep,
+-                 ((xkbDebugFlags < 2) ? 1 :
+-                  ((xkbDebugFlags > 10) ? 10 : (int) xkbDebugFlags)),
+-                 xkbbasedirflag ? xkbbasedirflag : "", xkmfile,
+-                 PRE_ERROR_MSG, ERROR_PREFIX, POST_ERROR_MSG1,
++    if (asprintf(&buf, "cp /app/webkit/Tools/flatpak/files/default.xkm \"%s%s.xkm\"",
+                  xkm_output_dir, keymap) == -1)
+         buf = NULL;
+ 
+diff --git a/xkb/xkbInit.c b/xkb/xkbInit.c
+index 9c772f5..4e0b774 100644
+--- a/xkb/xkbInit.c
++++ b/xkb/xkbInit.c
+@@ -87,7 +87,7 @@ typedef struct _SrvXkmInfo {
+ #define	XKB_DFLT_RULES_PROP	TRUE
+ #endif
+ 
+-const char *XkbBaseDirectory = XKB_BASE_DIRECTORY;
++const char *XkbBaseDirectory = "/usr/share/X11/xkb/";
+ const char *XkbBinDirectory = XKB_BIN_DIRECTORY;
+ static int XkbWantAccessX = 0;
+ 
+-- 
+2.17.1
+

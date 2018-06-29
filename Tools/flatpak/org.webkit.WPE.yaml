@@ -1,0 +1,43 @@
+- name: wpebackend
+  buildsystem: cmake-ninja
+  sources:
+    - type: git
+      url: https://github.com/WebPlatformForEmbedded/WPEBackend.git
+      branch: 761496dff51b6962200294b4fe2bc9529da731a8
+- name: wpebackend-fdo
+  buildsystem: cmake-ninja
+  sources:
+    - type: git
+      url: https://github.com/Igalia/WPEBackend-fdo.git
+      branch: bdd46870b1dc3c92005343e3161bdd24f620b11d
+- name: lua
+  buildsystem: simple
+  build-commands:
+    - make MYCFLAGS="$CFLAGS -fPIC -DLUA_COMPAT_5_2 -DLUA_COMPAT_5_1" linux
+    - make install INSTALL_TOP=/app INSTALL_MAN=/app/share/man/man1 INSTALL_DATA='cp -d'
+  sources:
+    - type: archive
+      url: https://www.lua.org/ftp/lua-5.3.4.tar.gz
+      sha1: 79790cfd40e09ba796b01a571d4d63b52b1cd950
+- name: luajit
+  buildsystem: simple
+  build-commands:
+    - make amalg PREFIX=/app
+    - make install PREFIX=/app
+  sources:
+    - type: archive
+      url: https://luajit.org/download/LuaJIT-2.0.5.tar.gz
+      md5: 48353202cbcacab84ee41a5a70ea0a2c
+- name: webkitgtk-test-fonts
+  no-autogen: true
+  sources:
+    - type: git
+      url: https://github.com/WebKitGTK/webkitgtk-test-fonts.git
+  buildsystem: simple
+  build-commands:
+    # FIXME: Make ActivateFontWPE smarter.
+    - make install DESTDIR=/app/WebKitBuild/DependenciesWPE/Root
+- name: org.webkit.WPE
+  buildsystem: simple
+  build-commands:
+    - /app/webkit/Tools/Scripts/build-webkit --wpe --prefix=/app

@@ -35,8 +35,10 @@ import tempfile
 import zipfile
 
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
 sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'jhbuild'))
 import jhbuildutils
+import flatpakutils
 
 
 # Ideally we should use something like lddtree or create our own version of that
@@ -229,7 +231,9 @@ def main():
     platform = options.platform.lower()
     configuration = options.configuration.lower()
     if platform == 'gtk':
-        jhbuildutils.enter_jhbuild_environment_if_available(platform)
+        flatpakutils.run_in_sandbox_if_available(sys.argv)
+        if not flatpakutils.is_sandboxed():
+            jhbuildutils.enter_jhbuild_environment_if_available("gtk")
     else:
         raise NotImplementedError('Unsupported platform')
 

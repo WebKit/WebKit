@@ -28,6 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
+import os
+import sys
+
 from webkitpy.common import multiprocessing_bootstrap
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
+import flatpakutils
+flatpakutils.run_in_sandbox_if_available(sys.argv)
 
 multiprocessing_bootstrap.run('webkitpy', 'layout_tests', 'run_webkit_tests.py')

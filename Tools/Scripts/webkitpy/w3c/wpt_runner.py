@@ -53,11 +53,16 @@ def main(script_name, argv):
     # If necessary, inject the jhbuild wrapper.
     if port.name() in ['gtk', 'wpe']:
         filesystem = host.filesystem
+
         top_level_directory = filesystem.normpath(filesystem.join(filesystem.dirname(__file__), '..', '..', '..', '..'))
+        sys.path.insert(0, filesystem.join(top_level_directory, 'Tools', 'flatpak'))
+        import flatpakutils
+        flatpakutils.run_in_sandbox_if_available(sys.argv)
+
         sys.path.insert(0, filesystem.join(top_level_directory, 'Tools', 'jhbuild'))
         import jhbuildutils
 
-        if not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
+        if flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
             _log.warning('jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing.')
 
     # Create the Port-specific driver.
