@@ -1,3 +1,9 @@
+2018-06-30  Dan Bernstein  <mitz@apple.com>
+
+        Added a missing availability attribute.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+
 2018-06-29  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make network process calls only for the process pool that the page belongs to
