@@ -72,6 +72,12 @@ bool DocumentAnimationScheduler::scheduleScriptedAnimationResolution()
 
 void DocumentAnimationScheduler::displayRefreshFired()
 {
+    if (!m_document || !m_document->domWindow())
+        return;
+
+    m_isFiring = true;
+    m_lastTimestamp = Seconds(m_document->domWindow()->nowTimestamp());
+
     if (m_scheduledWebAnimationsResolution) {
         m_scheduledWebAnimationsResolution = false;
         m_document->timeline().documentAnimationSchedulerDidFire();
@@ -82,6 +88,8 @@ void DocumentAnimationScheduler::displayRefreshFired()
         if (auto* scriptedAnimationController = m_document->scriptedAnimationController())
             scriptedAnimationController->documentAnimationSchedulerDidFire();
     }
+
+    m_isFiring = false;
 }
 
 void DocumentAnimationScheduler::windowScreenDidChange(PlatformDisplayID displayID)

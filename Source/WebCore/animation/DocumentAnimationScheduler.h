@@ -32,6 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -49,12 +50,17 @@ public:
     bool scheduleWebAnimationsResolution();
     bool scheduleScriptedAnimationResolution();
 
+    Seconds lastTimestamp() { return m_lastTimestamp; }
+    bool isFiring() const { return m_isFiring; }
+
 private:
     DocumentAnimationScheduler(Document&, PlatformDisplayID);
 
     RefPtr<Document> m_document;
     bool m_scheduledWebAnimationsResolution { false };
     bool m_scheduledScriptedAnimationResolution { false };
+    bool m_isFiring { false };
+    Seconds m_lastTimestamp { 0_s };
 
     void displayRefreshFired() override;
     RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;

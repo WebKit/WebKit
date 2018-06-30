@@ -83,10 +83,12 @@ private:
     void scheduleAnimationResolution();
     void updateAnimations();
     void performEventDispatchTask();
+    void maybeClearCachedCurrentTime();
 
     RefPtr<Document> m_document;
     bool m_paused { false };
     bool m_isSuspended { false };
+    bool m_waitingOnVMIdle { false };
     std::optional<Seconds> m_cachedCurrentTime;
     GenericTaskQueue<Timer> m_invalidationTaskQueue;
     GenericTaskQueue<Timer> m_eventDispatchTaskQueue;

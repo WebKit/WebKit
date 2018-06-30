@@ -1,3 +1,15 @@
+2018-06-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make WPT test at timing-model/timelines/document-timelines.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186507
+        <rdar://problem/41000257>
+
+        Reviewed by Dean Jackson.
+
+        Record WPT test progressions.
+
+        * web-platform-tests/web-animations/timing-model/timelines/document-timelines-expected.txt:
+
 2018-06-27  Youenn Fablet  <youenn@apple.com>
 
         Add Cross-Origin-Resource-Policy tests for workers and service workers

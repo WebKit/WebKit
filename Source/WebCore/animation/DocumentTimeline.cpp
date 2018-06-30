@@ -130,9 +130,36 @@ std::optional<Seconds> DocumentTimeline::currentTime()
     if (m_paused || m_isSuspended || !m_document || !m_document->domWindow())
         return AnimationTimeline::currentTime();
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    // If we're in the middle of firing a frame, either due to a requestAnimationFrame callback
+    // or scheduling an animation update, we want to ensure we use the same time we're using as
+    // the timestamp for requestAnimationFrame() callbacks.
+    if (m_document->animationScheduler().isFiring())
+        m_cachedCurrentTime = m_document->animationScheduler().lastTimestamp();
+#endif
+
     if (!m_cachedCurrentTime) {
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+        // If we're not in the middle of firing a frame, let's make our best guess at what the currentTime should
+        // be since the last time a frame fired by increment of our update interval. This way code using something
+        // like setTimeout() or handling events will get a time that's only updating at around 60fps, or less if
+        // we're throttled.
+        auto lastAnimationSchedulerTimestamp = m_document->animationScheduler().lastTimestamp();
+        auto delta = Seconds(m_document->domWindow()->nowTimestamp()) - lastAnimationSchedulerTimestamp;
+        int frames = std::floor(delta.seconds() / animationInterval().seconds());
+        m_cachedCurrentTime = lastAnimationSchedulerTimestamp + Seconds(frames * animationInterval().seconds());
+#else
         m_cachedCurrentTime = Seconds(m_document->domWindow()->nowTimestamp());
+#endif
+        // We want to be sure to keep this time cached until we've both finished running JS and finished updating
+        // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
+        // fire syncronously if no JS is running.
         scheduleInvalidationTaskIfNeeded();
+        m_waitingOnVMIdle = true;
+        m_document->vm().whenIdle([this]() {
+            m_waitingOnVMIdle = false;
+            maybeClearCachedCurrentTime();
+        });
     }
     return m_cachedCurrentTime;
 }
@@ -175,7 +202,17 @@ void DocumentTimeline::performInvalidationTask()
     applyPendingAcceleratedAnimations();
 
     updateAnimationSchedule();
-    m_cachedCurrentTime = std::nullopt;
+    maybeClearCachedCurrentTime();
+}
+
+void DocumentTimeline::maybeClearCachedCurrentTime()
+{
+    // We want to make sure we only clear the cached current time if we're not currently running
+    // JS or waiting on all current animation updating code to have completed. This is so that
+    // we're guaranteed to have a consistent current time reported for all work happening in a given
+    // JS frame or throughout updating animations in WebCore.
+    if (!m_waitingOnVMIdle && !m_invalidationTaskQueue.hasPendingTasks())
+        m_cachedCurrentTime = std::nullopt;
 }
 
 void DocumentTimeline::updateAnimationSchedule()

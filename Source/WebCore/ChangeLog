@@ -1,3 +1,49 @@
+2018-06-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make WPT test at timing-model/timelines/document-timelines.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186507
+        <rdar://problem/41000257>
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations spec, along with the HTML5 event loop spec, specify some assumptions on the time reported by
+        document.timeline.currentTime:
+
+        - it should only increase once per frame
+        - it should have the same value as the timestamp passed to requestAnimationFrame() callbacks
+
+        The WPT test at web-platform-tests/web-animations/timing-model/timelines/document-timelines.html relies on these
+        assumptions to be true so that we check that the start time of a new animation is not the same as the timeline time
+        when it was created, since it will be in the "play-pending" state for a frame.
+
+        In order to support this, we add two new methods on DocumentAnimationScheduler. First, when a scheduled display update
+        fires, we record the timestamp and expose it via lastTimestamp() such that DocumentTimeline and ScriptedAnimationController
+        can use the same value when updating animations. Then, to know whether code is run as a result of a display update, we
+        expose isFiring().
+
+        Now, within DocumentTimeline::currentTime(), we can cache the current time this way:
+
+        - if we're in the middle of a display update, use the value returned by lastTimestamp().
+        - otherwise, compute what would have been the ideal number of frames (at 60fps or less if throttled) and add those to
+        the lastTimestamp() value.
+
+        Then, we remove this cached current time when both currently-running JavaScript has completed and all animation update
+        code has completed by waiting on the invalidation task to run.
+
+        * animation/DocumentAnimationScheduler.cpp:
+        (WebCore::DocumentAnimationScheduler::displayRefreshFired):
+        * animation/DocumentAnimationScheduler.h:
+        (WebCore::DocumentAnimationScheduler::lastTimestamp):
+        (WebCore::DocumentAnimationScheduler::isFiring const):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::currentTime):
+        (WebCore::DocumentTimeline::performInvalidationTask):
+        (WebCore::DocumentTimeline::maybeClearCachedCurrentTime):
+        * animation/DocumentTimeline.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        (WebCore::ScriptedAnimationController::documentAnimationSchedulerDidFire):
+
 2018-06-29  Nan Wang  <n_wang@apple.com>
 
         Crash under WebCore::AXObjectCache::handleMenuItemSelected

@@ -196,7 +196,8 @@ void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
 
     TraceScope tracingScope(RAFCallbackStart, RAFCallbackEnd);
 
-    double highResNowMs = 1000 * timestamp;
+    // We round this to the nearest microsecond so that we can return a time that matches what is returned by document.timeline.currentTime.
+    double highResNowMs = std::round(1000 * timestamp);
     double legacyHighResNowMs = 1000 * (timestamp + m_document->loader()->timing().referenceWallTime().secondsSinceEpoch().seconds());
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
@@ -297,7 +298,8 @@ void ScriptedAnimationController::animationTimerFired()
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 void ScriptedAnimationController::documentAnimationSchedulerDidFire()
 {
-    serviceScriptedAnimations(m_document->domWindow()->nowTimestamp());
+    // We obtain the time from the animation scheduler so that we use the same timestamp as the DocumentTimeline.
+    serviceScriptedAnimations(m_document->animationScheduler().lastTimestamp().seconds());
 }
 #endif
 
