@@ -1,5 +1,29 @@
 2018-06-29  Saam Barati  <sbarati@apple.com>
 
+        Don't use tracePoints in JS/Wasm entry
+        https://bugs.webkit.org/show_bug.cgi?id=187196
+
+        Reviewed by Mark Lam.
+
+        This puts VM entry and Wasm entry tracePoints behind a runtime
+        option. This is a ~4x speedup on a soon to be released Wasm
+        benchmark. tracePoints should basically never run more than 50
+        times a second. Entering the VM and entering Wasm are user controlled,
+        and can happen hundreds of thousands of times in a second. Depending
+        on how the Wasm/JS code is structured, this can be disastrous for
+        performance.
+
+        * runtime/Options.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+
+2018-06-29  Saam Barati  <sbarati@apple.com>
+
         We shouldn't recurse into the parser when gathering metadata about various function offsets
         https://bugs.webkit.org/show_bug.cgi?id=184074
         <rdar://problem/37165897>

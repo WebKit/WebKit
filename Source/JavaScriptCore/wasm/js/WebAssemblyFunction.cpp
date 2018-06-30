@@ -79,7 +79,9 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         }
     }
 
-    TraceScope traceScope(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
+    std::optional<TraceScope> traceScope;
+    if (Options::useTracePoints())
+        traceScope.emplace(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
 
     Vector<JSValue> boxedArgs;
     JSWebAssemblyInstance* instance = wasmFunction->instance();
