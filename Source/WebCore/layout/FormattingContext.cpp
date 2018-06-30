@@ -72,7 +72,7 @@ void FormattingContext::computeFloatingWidthAndMargin(LayoutContext& layoutConte
 void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     auto horizontalGeometry = Geometry::outOfFlowHorizontalGeometry(layoutContext, layoutBox);
-    displayBox.setLeft(horizontalGeometry.left);
+    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.margin.left);
     displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
     displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.margin);
 }
@@ -80,7 +80,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layout
 void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
-    displayBox.setTop(verticalGeometry.top);
+    displayBox.setTop(verticalGeometry.top + verticalGeometry.heightAndMargin.margin.top);
     displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
     ASSERT(!verticalGeometry.heightAndMargin.collapsedMargin);
     displayBox.setVerticalMargin(verticalGeometry.heightAndMargin.margin);

@@ -1,3 +1,14 @@
+2018-06-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Adjust final out-of-flow position with the computed margin value.
+        https://bugs.webkit.org/show_bug.cgi?id=187219
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+
 2018-06-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at timing-model/timelines/document-timelines.html pass reliably
