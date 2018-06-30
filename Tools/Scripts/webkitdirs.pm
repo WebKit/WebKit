@@ -2028,7 +2028,7 @@ sub isCachedArgumentfileOutOfDate($@)
     }
 
     open(CONTENTS_FILE, $filename);
-    chomp(my $previousContents = <CONTENTS_FILE>);
+    chomp(my $previousContents = <CONTENTS_FILE> || "");
     close(CONTENTS_FILE);
 
     if ($previousContents ne $currentContents) {

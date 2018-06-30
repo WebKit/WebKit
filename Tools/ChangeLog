@@ -1,5 +1,20 @@
 2018-06-29  Daniel Bates  <dabates@apple.com>
 
+        build-webkit: Perl "use of uninitialized value $previousContents"
+        https://bugs.webkit.org/show_bug.cgi?id=185776
+
+        Reviewed by Michael Catanzaro.
+
+        Fixes an issue where reading an empty cached argument file would cause
+        Perl "uninitialized value" warnings of the form:
+            Use of uninitialized value $previousContents in chomp at C:/WebKit-BuildWorker/wincairo-wkl-debug/build/Tools/Scripts/webkitdirs.pm line 1969.
+            Use of uninitialized value $previousContents in string ne at C:/WebKit-BuildWorker/wincairo-wkl-debug/build/Tools/Scripts/webkitdirs.pm line 1972.
+
+        * Scripts/webkitdirs.pm:
+        (isCachedArgumentfileOutOfDate):
+
+2018-06-29  Daniel Bates  <dabates@apple.com>
+
         Perl uninitialized value $isEnabled when running build-jsc using a CMake build
         https://bugs.webkit.org/show_bug.cgi?id=187208
 
