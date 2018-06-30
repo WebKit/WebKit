@@ -1,3 +1,31 @@
+2018-06-29  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make network process calls only for the process pool that the page belongs to
+        https://bugs.webkit.org/show_bug.cgi?id=187206
+        <rdar://problem/41659160>
+
+        Reviewed by Chris Dumez.
+
+        Instead of iterating over all process pools, we should resolve which
+        process pool the page belongs to and call the network process only for
+        that pool. This is especially important since we use WTFMove for the
+        completion handlers.
+
+        This patch also renames "callback" to "completionHandler" for
+        the functions touched.
+
+        A FIXME comment is added to WebsiteDataStore::getAllStorageAccessEntries()
+        where we currently don't have a page ID to do the lookup with.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies):
+        (WebKit::WebsiteDataStore::hasStorageAccessForFrameHandler):
+        (WebKit::WebsiteDataStore::getAllStorageAccessEntries):
+        (WebKit::WebsiteDataStore::grantStorageAccessHandler):
+        (WebKit::WebsiteDataStore::hasStorageAccess):
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        (WebKit::WebsiteDataStore::grantStorageAccess):
+
 2018-06-29  Chris Dumez  <cdumez@apple.com>
 
         Add utility methods to WebResourceLoadStatisticsStore to hop back and forth between threads

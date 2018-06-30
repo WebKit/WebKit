@@ -1214,26 +1214,39 @@ void WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies(const Vec
 
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
-            process->updatePrevalentDomainsToPartitionOrBlockCookies(m_sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst,  [callbackAggregator = callbackAggregator.copyRef()] { });
+            process->updatePrevalentDomainsToPartitionOrBlockCookies(m_sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
-void WebsiteDataStore::hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback)
+void WebsiteDataStore::hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&& completionHandler)
 {
-    for (auto& processPool : processPools())
-        processPool->networkProcess()->hasStorageAccessForFrame(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+    auto* webPage = WebProcessProxy::webPage(pageID);
+    if (!webPage) {
+        completionHandler(false);
+        return;
+    }
+
+    auto& networkProcess = webPage->process().processPool().ensureNetworkProcess();
+    networkProcess.hasStorageAccessForFrame(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::getAllStorageAccessEntries(CompletionHandler<void(Vector<String>&& domains)>&& callback)
+void WebsiteDataStore::getAllStorageAccessEntries(CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
 {
+    // FIXME: Although this is only used for testing, it should not iterate and WTFMove the completion handler.
     for (auto& processPool : processPools())
-        processPool->networkProcess()->getAllStorageAccessEntries(m_sessionID, WTFMove(callback));
+        processPool->networkProcess()->getAllStorageAccessEntries(m_sessionID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback)
+void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&& completionHandler)
 {
-    for (auto& processPool : processPools())
-        processPool->networkProcess()->grantStorageAccess(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+    auto* webPage = WebProcessProxy::webPage(pageID);
+    if (!webPage) {
+        completionHandler(false);
+        return;
+    }
+
+    auto& networkProcess = webPage->process().processPool().ensureNetworkProcess();
+    networkProcess.grantStorageAccess(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::removeAllStorageAccessHandler()
@@ -1250,34 +1263,34 @@ void WebsiteDataStore::removePrevalentDomains(const Vector<String>& domains)
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::RemovePrevalentDomains(m_sessionID, domains));
 }
 
-void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
+void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!resourceLoadStatisticsEnabled()) {
-        callback(false);
+        completionHandler(false);
         return;
     }
     
-    m_resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
+    m_resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& callback)
+void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     if (!resourceLoadStatisticsEnabled()) {
-        callback(StorageAccessStatus::CannotRequestAccess);
+        completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
     }
     
-    m_resourceLoadStatistics->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, promptEnabled, WTFMove(callback));
+    m_resourceLoadStatistics->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, promptEnabled, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& callback)
+void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!resourceLoadStatisticsEnabled()) {
-        callback(false);
+        completionHandler(false);
         return;
     }
     
-    m_resourceLoadStatistics->grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(callback));
+    m_resourceLoadStatistics->grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(completionHandler));
 }
 #endif
 
