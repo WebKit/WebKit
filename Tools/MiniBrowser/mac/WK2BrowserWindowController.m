@@ -396,6 +396,8 @@ static BOOL areEssentiallyEqual(double a, double b)
     SettingsController *settings = [SettingsController shared];
     WKPreferences *preferences = _webView.configuration.preferences;
 
+    _webView._useSystemAppearance = settings.useSystemAppearance;
+
     preferences._tiledScrollingIndicatorVisible = settings.tiledScrollingIndicatorVisible;
     preferences._compositingBordersVisible = settings.layerBordersVisible;
     preferences._compositingRepaintCountersVisible = settings.layerBordersVisible;

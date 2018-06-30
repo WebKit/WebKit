@@ -311,6 +311,9 @@ static BOOL areEssentiallyEqual(double a, double b)
     [[WebPreferences standardPreferences] setVisualViewportEnabled:settings.visualViewportEnabled];
     [[WebPreferences standardPreferences] setLargeImageAsyncDecodingEnabled:settings.largeImageAsyncDecodingEnabled];
     [[WebPreferences standardPreferences] setAnimatedImageAsyncDecodingEnabled:settings.animatedImageAsyncDecodingEnabled];
+    [[WebPreferences standardPreferences] setColorFilterEnabled:settings.appleColorFilterEnabled];
+
+    _webView._useSystemAppearance = settings.useSystemAppearance;
 
     BOOL useTransparentWindows = settings.useTransparentWindows;
     if (useTransparentWindows != !self.window.isOpaque) {

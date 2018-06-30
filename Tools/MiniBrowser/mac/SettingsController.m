@@ -64,6 +64,8 @@ static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPix
 static NSString * const VisualViewportEnabledPreferenceKey = @"VisualViewportEnabled";
 static NSString * const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
 static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
+static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
+static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
@@ -170,7 +172,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Enable Resource Load Statistics" action:@selector(toggleResourceLoadStatisticsEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Large Image Async Decoding" action:@selector(toggleLargeImageAsyncDecodingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Animated Image Async Decoding" action:@selector(toggleAnimatedImageAsyncDecodingEnabled:) indented:NO];
-
+    [self _addItemWithTitle:@"Enable -apple-color-filter" action:@selector(toggleAppleColorFilterEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Use System Appearance" action:@selector(toggleUseSystemAppearance:) indented:NO];
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
     [self _addItemWithTitle:@"Reserve Space For Banners" action:@selector(toggleReserveSpaceForBanners:) indented:YES];
@@ -260,6 +263,10 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self largeImageAsyncDecodingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAnimatedImageAsyncDecodingEnabled:))
         [menuItem setState:[self animatedImageAsyncDecodingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleAppleColorFilterEnabled:))
+        [menuItem setState:[self appleColorFilterEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleUseSystemAppearance:))
+        [menuItem setState:[self useSystemAppearance] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleVisualViewportEnabled:))
         [menuItem setState:[self visualViewportEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
@@ -566,6 +573,26 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)animatedImageAsyncDecodingEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:AnimatedImageAsyncDecodingEnabledPreferenceKey];
+}
+
+- (void)toggleAppleColorFilterEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:AppleColorFilterEnabledPreferenceKey];
+}
+
+- (BOOL)appleColorFilterEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AppleColorFilterEnabledPreferenceKey];
+}
+
+- (void)toggleUseSystemAppearance:(id)sender
+{
+    [self _toggleBooleanDefault:UseSystemAppearancePreferenceKey];
+}
+
+- (BOOL)useSystemAppearance
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:UseSystemAppearancePreferenceKey];
 }
 
 - (void)toggleEnableSubPixelCSSOMMetrics:(id)sender
