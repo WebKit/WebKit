@@ -106,15 +106,15 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
 
     JSTokenLocation start;
     start.line = -1;
-    start.lineStartOffset = -1;
+    start.lineStartOffset = std::numeric_limits<unsigned>::max();
     start.startOffset = 10;
-    start.endOffset = -1;
+    start.endOffset = std::numeric_limits<unsigned>::max();
 
     JSTokenLocation end;
     end.line = 1;
     end.lineStartOffset = 0;
     end.startOffset = 1;
-    end.endOffset = -1;
+    end.endOffset = std::numeric_limits<unsigned>::max();
 
     unsigned startColumn = 10; // strlen("function (") == 10
     int functionKeywordStart = 1; // (f
