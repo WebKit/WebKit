@@ -79,19 +79,30 @@ static LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const LayoutConte
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
+    // For the purposes of this section and the next, the term "static position" (of an element) refers, roughly, to the position an element would have
+    // had in the normal flow. More precisely, the static position for 'top' is the distance from the top edge of the containing block to the top margin
+    // edge of a hypothetical box that would have been the first box of the element if its specified 'position' value had been 'static' and its specified
+    // 'float' had been 'none' and its specified 'clear' had been 'none'. (Note that due to the rules in section 9.7 this might require also assuming a different
+    // computed value for 'display'.) The value is negative if the hypothetical box is above the containing block.
+
+    // Start with this box's border box offset from the parent's border box.
     LayoutUnit top;
-    // Add sibling offset
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
+        // Add sibling offset
         auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
         top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.nonCollapsedMarginBottom();
+    } else {
+        ASSERT(layoutBox.parent());
+        top = layoutContext.displayBoxForLayoutBox(*layoutBox.parent())->contentBoxTop();
     }
+
     // Resolve top all the way up to the containing block.
     auto* containingBlock = layoutBox.containingBlock();
-    for (auto* parent = layoutBox.parent(); parent; parent = parent->parent()) {
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(*parent);
-        top += (displayBox.top() + displayBox.contentBoxTop());
-        if (parent == containingBlock)
-            break;
+    for (auto* container = layoutBox.parent(); container != containingBlock; container = container->containingBlock()) {
+        auto& displayBox = *layoutContext.displayBoxForLayoutBox(*container);
+        // Display::Box::top is the border box top position in its containing block's coordinate system.
+        top += displayBox.top();
+        ASSERT(!container->isPositioned());
     }
     // FIXME: floatings need to be taken into account.
     return top;
@@ -100,15 +111,19 @@ static LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const LayoutConte
 static LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
+    // See staticVerticalPositionForOutOfFlowPositioned for the definition of the static position.
 
-    LayoutUnit left;
+    // Start with this box's border box offset from the parent's border box.
+    ASSERT(layoutBox.parent());
+    auto left = layoutContext.displayBoxForLayoutBox(*layoutBox.parent())->contentBoxLeft();
+
     // Resolve left all the way up to the containing block.
     auto* containingBlock = layoutBox.containingBlock();
-    for (auto* parent = layoutBox.parent(); parent; parent = parent->parent()) {
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(*parent);
-        left += (displayBox.left() + displayBox.contentBoxLeft());
-        if (parent == containingBlock)
-            break;
+    for (auto* container = layoutBox.parent(); container != containingBlock; container = container->containingBlock()) {
+        auto& displayBox = *layoutContext.displayBoxForLayoutBox(*container);
+        // Display::Box::left is the border box left position in its containing block's coordinate system.
+        left += displayBox.left();
+        ASSERT(!container->isPositioned());
     }
     // FIXME: floatings need to be taken into account.
     return left;

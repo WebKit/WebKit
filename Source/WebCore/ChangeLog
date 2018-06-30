@@ -1,5 +1,20 @@
 2018-06-30  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Do not add the containing block's offset while computing the out-of-flow static position.
+        https://bugs.webkit.org/show_bug.cgi?id=187202
+
+        Reviewed by Antti Koivisto.
+
+        The static position for an out-of-flow elements is
+        1. the distance from the parent's border box.
+        2. climbing up on the containing block chain and offset the containers until we reach the out-of-flow element's containing block.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::staticVerticalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::staticHorizontalPositionForOutOfFlowPositioned):
+
+2018-06-30  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] If the top and bottom margins of a box are adjoining, then it is possible for margins to collapse through it.
         https://bugs.webkit.org/show_bug.cgi?id=187220
 
