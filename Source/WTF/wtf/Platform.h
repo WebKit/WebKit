@@ -359,6 +359,11 @@
 #define WTF_OS_FREEBSD 1
 #endif
 
+/* OS(FUCHSIA) - Fuchsia */
+#ifdef __Fuchsia__
+#define WTF_OS_FUCHSIA 1
+#endif
+
 /* OS(HURD) - GNU/Hurd */
 #ifdef __GNU__
 #define WTF_OS_HURD 1
@@ -391,6 +396,7 @@
 #if    OS(AIX)              \
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
+    || OS(FUCHSIA)          \
     || OS(HURD)             \
     || OS(LINUX)            \
     || OS(NETBSD)           \
@@ -630,6 +636,11 @@
 #if OS(UNIX)
 #define USE_PTHREADS 1
 #endif /* OS(UNIX) */
+
+#if OS(UNIX) && !OS(FUCHSIA)
+#define HAVE_RESOURCE_H 1
+#define HAVE_PTHREAD_SETSCHEDPARAM 1
+#endif
 
 #if OS(DARWIN)
 #define HAVE_DISPATCH_H 1

@@ -1,3 +1,20 @@
+2018-06-30  Adam Barth  <abarth@webkit.org>
+
+        Port WTF to OS(FUCHSIA)
+        https://bugs.webkit.org/show_bug.cgi?id=187221
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/FastMalloc.cpp: Fuchsia does not have resource.h
+        (WTF::fastMallocStatistics): Skip collecting stats without resource.h
+        * wtf/InlineASM.h: Fuchsia uses ELF
+        * wtf/Platform.h: Define OS(FUCHSIA) as an OS(UNIX) variant
+        * wtf/RandomDevice.cpp: Call zx_cprng_draw for crypographic randomness
+        (WTF::RandomDevice::cryptographicallyRandomValues):
+        * wtf/ThreadingPthreads.cpp: Fuchsia does not have pthread_setschedparam
+        (WTF::Thread::changePriority):
+        * wtf/unix/CPUTimeFuchsia.cpp: Added.
+
 2018-06-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233391.

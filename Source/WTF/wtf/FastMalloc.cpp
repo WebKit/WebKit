@@ -35,7 +35,9 @@
 #include <windows.h>
 #else
 #include <pthread.h>
+#if HAVE(RESOURCE_H)
 #include <sys/resource.h>
+#endif // HAVE(RESOURCE_H)
 #endif
 
 #if OS(DARWIN)
@@ -361,7 +363,7 @@ FastMallocStatistics fastMallocStatistics()
     PROCESS_MEMORY_COUNTERS resourceUsage;
     GetProcessMemoryInfo(GetCurrentProcess(), &resourceUsage, sizeof(resourceUsage));
     statistics.committedVMBytes = resourceUsage.PeakWorkingSetSize;
-#else
+#elif HAVE(RESOURCE_H)
     struct rusage resourceUsage;
     getrusage(RUSAGE_SELF, &resourceUsage);
 

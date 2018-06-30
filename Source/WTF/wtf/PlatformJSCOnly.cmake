@@ -19,9 +19,18 @@ else ()
 
         text/unix/TextBreakIteratorInternalICUUnix.cpp
 
-        unix/CPUTimeUnix.cpp
         unix/LanguageUnix.cpp
     )
+    if (WTF_OS_FUCHSIA)
+        list(APPEND WTF_SOURCES
+            fuchsia/CPUTimeFuchsia.cpp
+        )
+    else ()
+        list(APPEND WTF_SOURCES
+            unix/CPUTimeUnix.cpp
+        )
+    endif ()
+
 endif ()
 
 if (WIN32)
