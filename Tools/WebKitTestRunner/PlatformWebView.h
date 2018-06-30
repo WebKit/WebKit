@@ -97,7 +97,7 @@ public:
     void removeFromWindow();
     void addToWindow();
 
-    bool viewSupportsOptions(const TestOptions& options) const { return m_options.hasSameInitializationOptions(options); }
+    bool viewSupportsOptions(const TestOptions& options) const { return !options.runSingly && m_options.hasSameInitializationOptions(options); }
 
     PlatformImage windowSnapshotImage();
     const TestOptions& options() const { return m_options; }

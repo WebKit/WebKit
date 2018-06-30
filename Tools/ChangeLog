@@ -1,3 +1,28 @@
+2018-06-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Do not crash if there is an attempt to copy a file URL to the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=187183
+
+        Reviewed by Wenson Hsieh.
+
+        Added a 'runSingly' option to the TestOptions struct. Setting this option to true
+        will force a new PlatformWebView to be created before running a test. This ensures
+        that any state set by previous tests are not preserved.
+
+        One example of the importance of having this ability is in the case where we want
+        to test functionality that deals with read access to files. If a test were to
+        load a valid file URL, universal read access will be granted in WebProcessProxy.
+        This prevents us from testing cases that rely on us not have universal read
+        access. Now, if we write the test using the 'runSingly' option, any state set
+        by previous tests is cleared. Consequently, our test will behave as expected.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::viewSupportsOptions const):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2018-06-29  Daniel Bates  <dabates@apple.com>
 
         [lldb-webkit] Non-empty strings may be pretty-printed as empty

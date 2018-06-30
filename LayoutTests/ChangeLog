@@ -1,3 +1,19 @@
+2018-06-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Do not crash if there is an attempt to copy a file URL to the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=187183
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test to ensure that the WebProcess does not crash if we attempt to copy a
+        file URL to the clipboard. The test also ensures the clipboard content remains
+        unchanged.
+
+        * TestExpectations:
+        * http/tests/security/pasteboard-file-url-expected.txt: Added.
+        * http/tests/security/pasteboard-file-url.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2018-06-29  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] VoiceOver scroll position is jumpy in frames

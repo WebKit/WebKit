@@ -128,7 +128,6 @@ void WebPasteboardProxy::setPasteboardPathnamesForType(IPC::Connection& connecti
         
         for (const auto& pathname : pathnames) {
             if (!webProcessProxy->checkURLReceivedFromWebProcess(pathname)) {
-                connection.markCurrentlyDispatchedMessageAsInvalid();
                 newChangeCount = 0;
                 return;
             }

@@ -62,6 +62,8 @@ http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
 applicationmanifest/ [ Pass ]
 
+webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

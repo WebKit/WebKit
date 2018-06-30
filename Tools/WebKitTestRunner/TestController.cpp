@@ -1134,6 +1134,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableColorFilter = parseBooleanTestHeaderValue(value);
         else if (key == "jscOptions")
             testOptions.jscOptions = value;
+        else if (key == "runSingly")
+            testOptions.runSingly = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

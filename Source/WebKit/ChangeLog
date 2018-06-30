@@ -1,3 +1,18 @@
+2018-06-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Do not crash if there is an attempt to copy a file URL to the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=187183
+
+        Reviewed by Wenson Hsieh.
+
+        r210683 introduced logic to prevent file URLs from being copied to the clipboard
+        in unexpected cases. The current logic always crashes the WebProcess if
+        webProcessProxy->checkURLReceivedFromWebProcess returns false. Instead of
+        crashing, we can fail silently and not copy anything to the clipboard.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardPathnamesForType): Removed call to markCurrentlyDispatchedMessageAsInvalid() which was causing the process to crash.
+
 2018-06-29  Chris Dumez  <cdumez@apple.com>
 
         Regression(r233359): Caused ITP tests to be flaky

@@ -59,6 +59,7 @@ struct TestOptions {
     bool enableProcessSwapOnNavigation { false };
     bool enableProcessSwapOnWindowOpen { false };
     bool enableColorFilter { false };
+    bool runSingly { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -94,7 +95,8 @@ struct TestOptions {
             || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
             || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
             || enableColorFilter != options.enableColorFilter
-            || jscOptions != options.jscOptions)
+            || jscOptions != options.jscOptions
+            || runSingly != options.runSingly)
             return false;
 
         return true;
