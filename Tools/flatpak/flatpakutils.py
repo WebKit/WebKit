@@ -75,7 +75,7 @@ class Console:
         sys.stdout.flush()
 
 
-def check_flatpak():
+def check_flatpak(verbose=True):
     # Flatpak is only supported on Linux.
     if not sys.platform.startswith("linux"):
         return False
@@ -84,12 +84,13 @@ def check_flatpak():
         try:
             output = subprocess.check_output([app, "--version"])
         except (subprocess.CalledProcessError, OSError):
-            Console.message("\n%sYou need to install %s >= %s"
-                            " to be able to use the '%s' script.\n\n"
-                            "You can find some informations about"
-                            " how to install it for your distribution at:\n"
-                            "    * http://flatpak.org/%s\n", Colors.FAIL,
-                            app, required_version, sys.argv[0], Colors.ENDC)
+            if verbose:
+                Console.message("\n%sYou need to install %s >= %s"
+                                " to be able to use the '%s' script.\n\n"
+                                "You can find some informations about"
+                                " how to install it for your distribution at:\n"
+                                "    * http://flatpak.org/%s\n", Colors.FAIL,
+                                app, required_version, sys.argv[0], Colors.ENDC)
             return False
 
         def comparable_version(version):
@@ -810,7 +811,7 @@ def run_in_sandbox_if_available(args):
     if is_sandboxed():
         return None
 
-    if not check_flatpak():
+    if not check_flatpak(verbose=False):
         return None
 
     flatpak_runner = WebkitFlatpak.load_from_args(args)
