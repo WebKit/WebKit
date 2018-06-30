@@ -964,6 +964,7 @@ http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html [ Sk
 media/audio-dealloc-crash.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions.html [ Skip ]
+media/picture-in-picture-interruption.html [ Skip ]
 media/restricted-audio-playback-with-document-gesture.html [ Skip ]
 media/restricted-audio-playback-with-multiple-settimeouts.html [ Skip ]
 media/video-fullscreen-reload-crash.html [ Skip ]

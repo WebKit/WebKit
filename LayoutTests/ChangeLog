@@ -1,3 +1,12 @@
+2018-06-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip media/picture-in-picture-interruption.html on iOS since it relies on 'runWithKeyDown'.
+        https://bugs.webkit.org/show_bug.cgi?id=187181
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-06-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Do not crash if there is an attempt to copy a file URL to the clipboard
