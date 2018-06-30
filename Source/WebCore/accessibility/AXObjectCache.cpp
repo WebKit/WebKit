@@ -741,6 +741,10 @@ void AXObjectCache::remove(Node& node)
         m_deferredAttributeChange.remove(downcast<Element>(&node));
     }
     m_deferredTextChangedList.remove(&node);
+    // Remove the entry if the new focused node is being removed.
+    m_deferredFocusedNodeChange.removeAllMatching([&node](auto& entry) -> bool {
+        return entry.second == &node;
+    });
     removeNodeForUse(node);
 
     remove(m_nodeObjectMapping.take(&node));

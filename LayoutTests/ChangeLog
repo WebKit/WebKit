@@ -1,3 +1,14 @@
+2018-06-29  Nan Wang  <n_wang@apple.com>
+
+        Crash under WebCore::AXObjectCache::handleMenuItemSelected
+        https://bugs.webkit.org/show_bug.cgi?id=186918
+        <rdar://problem/41365984>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/accessibility-crash-focused-element-change-expected.txt: Added.
+        * accessibility/accessibility-crash-focused-element-change.html: Added.
+
 2018-06-29  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r232806): Facebook login fields have blue fill background instead of white

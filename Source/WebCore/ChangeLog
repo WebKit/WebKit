@@ -1,3 +1,21 @@
+2018-06-29  Nan Wang  <n_wang@apple.com>
+
+        Crash under WebCore::AXObjectCache::handleMenuItemSelected
+        https://bugs.webkit.org/show_bug.cgi?id=186918
+        <rdar://problem/41365984>
+
+        Reviewed by Chris Fleizach.
+
+        When a node is being destroyed, we deregister it from the AX cache through the Node's destructor.
+        But we did not remove the corresponding entry from the m_deferredFocusedNodeChange list. It would
+        then lead to a crash if we try to access the deleted node from m_deferredFocusedNodeChange.
+        Fixed it by removing the entry if the newly focused node is being destroyed.
+
+        Test: accessibility/accessibility-crash-focused-element-change.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+
 2018-06-29  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r232806): Facebook login fields have blue fill background instead of white
