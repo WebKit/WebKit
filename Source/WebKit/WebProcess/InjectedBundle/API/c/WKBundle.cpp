@@ -297,7 +297,7 @@ void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
 
 void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes)
 {
-#if WK_API_ENABLED
+#if PLATFORM(COCOA) && WK_API_ENABLED
     auto classList = WebKit::toImpl(classes);
     if (!classList)
         return;
