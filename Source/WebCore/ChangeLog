@@ -1,3 +1,31 @@
+2018-06-29  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r230921): Cannot log in to forums.swift.org using GitHub account
+        https://bugs.webkit.org/show_bug.cgi?id=187197
+        <rdar://problem/40420821>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes an issue where a Same-Site cookies are not sent with any child window load if the
+        load is cross-origin with respect to the window's opener. One example where this issue
+        manifest itself was in the GitHub sign in flow on forums.swift.org.
+
+        Currently we always consider the origin of the window's opener (if we have one) when
+        determining whether a frame load request is same-origin and hence should send Same-Site
+        cookies when performing the request. So, when page A.com opens a child window to B.com and
+        then a person clicks a hyperlink or submits a form to B.com/b2 then we do not send Same-
+        Site cookies with the request to B.com/b2 (because its origin, B.com, is cross-origin
+        with its opener, A.com). But we should send Same-Site cookies with the request to B.com/b2
+        because it is same-origin with the page that initiated the request, B.com. Instead of
+        always considering the origin the window's opener for every frame load we should only
+        consider it for the first non-empty document load.
+
+        Tests: http/tests/cookies/same-site/fetch-in-about-blank-popup.html
+               http/tests/cookies/same-site/post-from-cross-site-popup.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+
 2018-06-29  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] VoiceOver scroll position is jumpy in frames

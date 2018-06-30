@@ -1,3 +1,22 @@
+2018-06-29  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r230921): Cannot log in to forums.swift.org using GitHub account
+        https://bugs.webkit.org/show_bug.cgi?id=187197
+        <rdar://problem/40420821>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that Same-Site cookies are sent in a subsequent same-origin form submission
+        from a child window that is cross-origin with its opener. Also add a test to ensure that Same-Site
+        cookies are visible to an about:blank pop-up window (as about:blank is Same-Site with its opener
+        by definition of being same-origin with it).
+
+        * http/tests/cookies/same-site/fetch-in-about-blank-popup-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-about-blank-popup.html: Added.
+        * http/tests/cookies/same-site/post-from-cross-site-popup-expected.txt: Added.
+        * http/tests/cookies/same-site/post-from-cross-site-popup.html: Added.
+        * http/tests/cookies/same-site/resources/post-from-popup.html: Added.
+
 2018-06-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip media/picture-in-picture-interruption.html on iOS since it relies on 'runWithKeyDown'.

@@ -2776,7 +2776,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
         auto* initiator = m_frame.document();
         if (isMainResource) {
             auto* ownerFrame = m_frame.tree().parent();
-            if (!ownerFrame)
+            if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument())
                 ownerFrame = m_opener;
             if (ownerFrame)
                 initiator = ownerFrame->document();
