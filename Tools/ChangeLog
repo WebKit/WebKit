@@ -1,3 +1,18 @@
+2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] build-webkit should be able to enable address sanitizer
+        https://bugs.webkit.org/show_bug.cgi?id=187222
+
+        Reviewed by Daniel Bates.
+
+        If 'set-webkit-configuration --asan' has been run, then build-webkit should pass
+        -DENABLE_ADDRESS_SANITIZER=ON to CMake, so that it actually does something.
+
+        This also works for build-jsc.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2018-06-30  Thibault Saunier  <tsaunier@igalia.com>
 
         Make check_flatpak() not verbose when only trying to run command inside flatpak
