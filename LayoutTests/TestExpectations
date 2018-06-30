@@ -386,6 +386,8 @@ http/wpt/cross-origin-resource-policy/ [ Skip ]
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/187145 imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html [ Crash ]
+
 # media/video-seek-after-end.html is flaky
 webkit.org/b/116293 media/video-seek-after-end.html [ Pass Failure ]
 
