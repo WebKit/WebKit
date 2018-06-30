@@ -173,6 +173,11 @@ ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResource
     registerUserDefaultsIfNeeded();
 #endif
     includeTodayAsOperatingDateIfNecessary();
+
+    m_workQueue->dispatchAfter(5_s, [weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->calculateAndSubmitTelemetry();
+    });
 }
 
 ResourceLoadStatisticsMemoryStore::~ResourceLoadStatisticsMemoryStore()

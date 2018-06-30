@@ -1,3 +1,68 @@
+2018-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Add utility methods to WebResourceLoadStatisticsStore to hop back and forth between threads
+        https://bugs.webkit.org/show_bug.cgi?id=187200
+
+        Reviewed by Brent Fulgham.
+
+        Add utility methods to WebResourceLoadStatisticsStore to hop back and forth between threads,
+        in order the simplify the code a little bit.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldSubmitTelemetry):
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::postTask):
+        (WebKit::WebResourceLoadStatisticsStore::postTaskReply):
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+        (WebKit::WebResourceLoadStatisticsStore::submitTelemetry):
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdate):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearPartitioningStateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemory):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree):
+        (WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfatheringTime):
+        (WebKit::WebResourceLoadStatisticsStore::setMaxStatisticsEntries):
+        (WebKit::WebResourceLoadStatisticsStore::setPruneEntriesDownTo):
+        (WebKit::WebResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-06-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Do not crash if there is an attempt to copy a file URL to the clipboard

@@ -145,6 +145,9 @@ public:
 private:
     explicit WebResourceLoadStatisticsStore(WebsiteDataStore&);
 
+    void postTask(WTF::Function<void()>&&);
+    static void postTaskReply(WTF::Function<void()>&&);
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
