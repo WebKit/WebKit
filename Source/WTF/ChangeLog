@@ -1,3 +1,29 @@
+2018-06-29  Darin Adler  <darin@apple.com>
+
+        [Cocoa] reduce unnecessary use of .mm source files in WTF, spruce up some implementation details
+        https://bugs.webkit.org/show_bug.cgi?id=186924
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.xcodeproj/project.pbxproj: Update for file and directory renames, file type changes,
+        and deletions.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::holdOff): Deleted empty placeholder; this one is not needed.
+
+        * wtf/PlatformMac.cmake: Update for file and directory renames, file type changes,
+        and deletions.
+
+        * wtf/cocoa/CPUTimeCocoa.cpp: Renamed from Source/WTF/wtf/cocoa/CPUTimeCocoa.mm.
+
+        * wtf/text/cocoa/StringImplCocoa.mm: Renamed from Source/WTF/wtf/text/mac/StringImplMac.mm.
+        Also removed an unneeded include.
+
+        * wtf/text/cocoa/StringViewCocoa.mm: Renamed from Source/WTF/wtf/text/mac/StringViewObjC.mm.
+
+        * wtf/text/cocoa/TextBreakIteratorInternalICUCocoa.cpp: Renamed from
+        Source/WTF/wtf/text/mac/TextBreakIteratorInternalICUMac.mm.
+
 2018-06-28  Olivia Barnett  <obarnett@apple.com>
 
         Find in page for typographic quotes does not find low (German) quotes
