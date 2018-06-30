@@ -1,3 +1,20 @@
+2018-06-29  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r232806): Facebook login fields have blue fill background instead of white
+        https://bugs.webkit.org/show_bug.cgi?id=187207
+        <rdar://problem/41606349>
+
+        Reviewed by Tim Horton.
+
+        This happens because a 'prefers-dark-interface' media query on UA sheet always evaluates to true in dark mode.
+
+        Tests: fast/forms/input-background-ua-media-query.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersDarkInterfaceEvaluate):
+
+        Make prefers-dark-interface media query match only when using system appearance.
+
 2018-06-29  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r230921): Cannot log in to forums.swift.org using GitHub account

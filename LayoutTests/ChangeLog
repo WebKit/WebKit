@@ -1,3 +1,13 @@
+2018-06-29  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r232806): Facebook login fields have blue fill background instead of white
+        https://bugs.webkit.org/show_bug.cgi?id=187207
+
+        Reviewed by Tim Horton.
+
+        * fast/forms/input-background-ua-media-query-expected.html: Added.
+        * fast/forms/input-background-ua-media-query.html: Added.
+
 2018-06-29  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r230921): Cannot log in to forums.swift.org using GitHub account
