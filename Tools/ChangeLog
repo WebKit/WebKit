@@ -1,3 +1,28 @@
+2018-06-29  Daniel Bates  <dabates@apple.com>
+
+        Perl uninitialized value $isEnabled when running build-jsc using a CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=187208
+
+        Reviewed by Tim Horton.
+
+        Share logic for computing the feature flags to enable in CMake with both script
+        build-webkit and script build-jsc instead of duplicating it. This also fixes a
+        bug in the version of this logic in build-jsc that was inadvertently not updated
+        in r222394. In r222394 we removed the notion of a default value for a feature flag
+        listed in webkitperl::FeatureList.
+
+        We keep the current behavior of build-jsc and leave it up to the build system
+        to determine whether to enable or disable ENABLE_EXPERIMENTAL_FEATURES.
+
+        * Scripts/build-jsc:
+        (buildMyProject):
+        (cMakeArgsFromFeatures): Deleted.
+        * Scripts/build-webkit:
+        (cMakeArgsFromFeatures): Deleted; moved to webkitdirs.pm.
+        * Scripts/webkitdirs.pm:
+        (cmakeArgsFromFeatures): Moved code from script build-webkit so that it can be shared
+        with build-jsc.
+
 2018-06-29  Tim Horton  <timothy_horton@apple.com>
 
         Add -apple-color-filter and system appearance toggles to MiniBrowser

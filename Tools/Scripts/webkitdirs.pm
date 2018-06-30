@@ -65,6 +65,7 @@ BEGIN {
        &baseProductDir
        &chdirWebKit
        &checkFrameworks
+       &cmakeArgsFromFeatures
        &cmakeBasedPortArguments
        &currentSVNRevision
        &debugSafari
@@ -2353,6 +2354,26 @@ sub buildCMakeProjectOrExit($$$@)
     exit($returnCode) if $returnCode;
     return 0;
 }
+
+sub cmakeArgsFromFeatures(\@;$)
+{
+    my ($featuresArrayRef, $enableExperimentalFeatures) = @_;
+
+    my @args;
+    push @args, "-DENABLE_EXPERIMENTAL_FEATURES=ON" if $enableExperimentalFeatures;
+    foreach (@$featuresArrayRef) {
+        my $featureName = $_->{define};
+        if ($featureName) {
+            my $featureValue = ${$_->{value}}; # Undef to let the build system use its default.
+            if (defined($featureValue)) {
+                my $featureEnabled = $featureValue ? "ON" : "OFF";
+                push @args, "-D$featureName=$featureEnabled";
+            }
+        }
+    }
+    return @args;
+}
+
 
 sub cmakeBasedPortArguments()
 {

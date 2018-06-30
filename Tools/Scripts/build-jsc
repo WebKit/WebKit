@@ -37,7 +37,6 @@ use webkitdirs;
 use webkitperl::FeatureList qw(getFeatureOptionList);
 use POSIX;
 
-sub cMakeArgsFromFeatures();
 sub writeCongrats();
 
 prohibitUnknownPort();
@@ -149,7 +148,7 @@ if (isCMakeBuild()) {
         setBaseProductDir($buildDir);
     }
 
-    my @featureArgs = cMakeArgsFromFeatures();
+    my @featureArgs = cmakeArgsFromFeatures(@features);
 
     my $buildTarget = "";
     unless (isAnyWindows()) {
@@ -209,22 +208,6 @@ sub buildMyProject
     }
     exit exitStatus($result) if exitStatus($result);
     chdirWebKit();
-}
-
-sub cMakeArgsFromFeatures()
-{
-    my @args;
-    foreach (@features) {
-        my $featureName = $_->{define};
-        if ($featureName) {
-            my $isEnabled = ${$_->{value}};
-            if ($isEnabled != $_->{default}) {
-                my $featureEnabled = $isEnabled ? "ON" : "OFF";
-                push @args, "-D$featureName=$featureEnabled";
-            }
-        }
-    }
-    return @args;
 }
 
 sub writeCongrats()
