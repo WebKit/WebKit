@@ -1,3 +1,17 @@
+2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Asan false positive: stack use after scope under WebCore::ApplyPropertyBorderImageModifier in WebCore::Length::Length(WebCore::Length&&)
+        https://bugs.webkit.org/show_bug.cgi?id=186980
+        <rdar://problem/41409838>
+
+        Reviewed by Oliver Hunt.
+
+        We believe that we have found a bug in GCC's address sanitizer. It is blocking work on other
+        issues, so work around it by changing a temporary into a local variable.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::ApplyPropertyBorderImageModifier::applyInitialValue):
+
 2018-06-30  David Kilzer  <ddkilzer@apple.com>
 
         Fix clang static analyzer warnings: Garbage return value
