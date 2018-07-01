@@ -1,3 +1,22 @@
+2018-06-30  Daniel Bates  <dabates@apple.com>
+
+        test-webkitpy never rebuilds lldbWebKitTester
+        https://bugs.webkit.org/show_bug.cgi?id=187229
+
+        Reviewed by David Kilzer.
+
+        Have test-webkitpy always call script build-lldbwebkittester to build lldbWebKitTester, if needed.
+
+        Currently test-webkitpy only calls script build-lldbwebkittester if lldbWebKitTester does not
+        exist in the build products directory for the active configuration (e.g. Debug); => we do not
+        build lldbWebKitTester again if its source changes (say, as a result of hacking on lldbWebKitTester).
+        Instead we should have test-webkitpy unconditionally call build-lldbwebkittester to ensure
+        that we have an up-to-date build of lldbWebKitTester.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+        (_find_lldb_webkit_tester): Deleted.
+
 2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] build-webkit should be able to enable address sanitizer

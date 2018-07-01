@@ -52,12 +52,6 @@ _host = SystemHost()
 _webkit_root = None
 
 
-def _find_lldb_webkit_tester():
-    config = Config(_host.executive, _host.filesystem)
-    lldb_webkit_tester_executable = os.path.join(config.build_directory(config.default_configuration()), 'lldbWebKitTester')
-    return os.path.isfile(lldb_webkit_tester_executable) and os.access(lldb_webkit_tester_executable, os.X_OK)
-
-
 def _build_lldb_webkit_tester():
     if not _host.platform.is_mac():
         _log.error('lldbWebKitTester is not supported on this platform.')
@@ -194,12 +188,10 @@ class Tester(object):
         autoinstall_everything()
 
         if will_run_lldb_webkit_tests:
-            self.printer.write_update("Checking lldbWebKitTester ...")
-            if not _find_lldb_webkit_tester():
-                self.printer.write_update("Building lldbWebKitTester ...")
-                if not _build_lldb_webkit_tester():
-                    _log.error('Failed to build lldbWebKitTester.')
-                    return False
+            self.printer.write_update('Building lldbWebKitTester ...')
+            if not _build_lldb_webkit_tester():
+                _log.error('Failed to build lldbWebKitTester.')
+                return False
 
         if self._options.coverage:
             _log.warning("Checking code coverage, so running things serially")
