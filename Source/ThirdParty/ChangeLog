@@ -1,3 +1,21 @@
+2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix off-by-one error in xdg_mime_get_simple_globs
+        https://bugs.webkit.org/show_bug.cgi?id=186554
+
+        Reviewed by Daniel Bates.
+
+        We have an off-by-one error here in some code that was added for WebKit. (This is not an
+        issue with upstream xdgmime.)
+
+        No new tests. This problem is caught by TestDownloads, but only when running with ASan
+        enabled.
+
+        * xdgmime/src/xdgmimecache.c:
+        (get_simple_globs):
+        * xdgmime/src/xdgmimeglob.c:
+        (get_simple_globs):
+
 2018-06-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         MIME type subclass check should guard against small strings
