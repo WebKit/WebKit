@@ -1,3 +1,24 @@
+2018-07-01  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE][GTK] Fix retrieving backtrace from within flatpak sandbox in test runner
+        https://bugs.webkit.org/show_bug.cgi?id=187232
+
+        Reviewed by Michael Catanzaro.
+
+        The place where host tmp folder is mounted changed to /run/host/ we
+        need to take that into account.
+
+        Also explicitely close temporary files as relying on garbage collection to
+        remove them is a bad idea.
+
+        Also minor optimization avoiding to compile regex for each backtrace
+        retrieval.
+
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator):
+        (GDBCrashLogGenerator._get_tmp_file_name):
+        (GDBCrashLogGenerator._get_trace_from_systemd):
+
 2018-06-30  Daniel Bates  <dabates@apple.com>
 
         test-webkitpy never rebuilds lldbWebKitTester

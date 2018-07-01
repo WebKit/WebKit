@@ -39,6 +39,7 @@ from webkitpy.common.system.executive import ScriptError
 
 
 class GDBCrashLogGenerator(object):
+    _find_pid_regex = re.compile(r'PID: (\d+) \(.*\)')
 
     def __init__(self, executive, name, pid, newer_than, filesystem, path_to_driver):
         self.name = name
@@ -58,6 +59,12 @@ class GDBCrashLogGenerator(object):
             stdout = ('ERROR: The gdb process exited with non-zero return code %s\n\n' % proc.returncode) + stdout
         return (stdout.decode('utf8', 'ignore'), errors)
 
+    def _get_tmp_file_name(self, coredumpctl, filename):
+        if coredumpctl[0] == 'flatpak-spawn':
+            return "/run/host/" + filename
+
+        return filename
+
     def _get_trace_from_systemd(self, coredumpctl, pid):
         # Letting up to 5 seconds for the backtrace to be generated on the systemd side
         for try_number in range(5):
@@ -74,18 +81,19 @@ class GDBCrashLogGenerator(object):
             found_newer = False
             # Coredumpctl will use the latest core dump with the specified PID
             # assume it is the right one.
-            pids = re.findall(r'PID: (\d+) \(.*\)', info)
+            pids = self._find_pid_regex.findall(info)
             if not pids:
-                print(self.name + "\n" + info)
                 continue
 
             pid = pids[0]
+            with tempfile.NamedTemporaryFile() as temp_file:
+                if self._executive.run_command(coredumpctl + ['dump', pid, '--output',
+                        temp_file.name], return_exit_code=True):
+                    continue
 
-            temp_file = tempfile.NamedTemporaryFile()
-            if self._executive.run_command(coredumpctl + ['dump', pid, '--output', temp_file.name], return_exit_code=True):
-                continue
+                res = self._get_gdb_output(self._get_tmp_file_name(coredumpctl, temp_file.name))
 
-            return self._get_gdb_output(temp_file.name)
+                return res
 
         return '', []
 
