@@ -113,6 +113,7 @@
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -399,7 +400,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
 
 bool WebPage::parentProcessHasServiceWorkerEntitlement() const
 {
-    static bool hasEntitlement = connectedProcessHasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
+    static bool hasEntitlement = WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
     return hasEntitlement;
 }
 

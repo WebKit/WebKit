@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,18 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <JavaScriptCore/JavaScriptCore.h>
+#pragma once
 
-#if JSC_OBJC_API_ENABLED
-
-#import <JavaScriptCore/JSContext.h>
-
-struct CallbackData {
-    CallbackData* next;
-    JSContext *context;
-    JSValue *preservedException;
-    JSValueRef calleeValue;
-    JSValueRef thisValue;
-    size_t argumentCount;
-    const JSValueRef *arguments;
-    NSArray *currentArguments;
-};
-
-@class JSWrapperMap;
-
-@interface JSContext(Internal)
-
-- (void)notifyException:(JSValueRef)exception;
-- (JSValue *)valueFromNotifyException:(JSValueRef)exception;
-- (BOOL)boolFromNotifyException:(JSValueRef)exception;
-
-- (void)beginCallbackWithData:(CallbackData *)callbackData calleeValue:(JSValueRef)calleeValue thisValue:(JSValueRef)thisValue argumentCount:(size_t)argumentCount arguments:(const JSValueRef *)arguments;
-- (void)endCallbackWithData:(CallbackData *)callbackData;
-
-- (JSValue *)wrapperForObjCObject:(id)object;
-- (JSValue *)wrapperForJSObject:(JSValueRef)value;
-
-@end
-
+#if USE(APPLE_INTERNAL_SDK)
+#import <CoreFoundation/CFXPCBridge.h>
 #endif
+
+WTF_EXTERN_C_BEGIN
+
+xpc_object_t _CFXPCCreateXPCMessageWithCFObject(CFTypeRef);
+CFTypeRef _CFXPCCreateCFObjectFromXPCMessage(xpc_object_t);
+
+WTF_EXTERN_C_END

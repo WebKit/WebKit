@@ -29,6 +29,7 @@
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/Process.h>
+#import <wtf/cocoa/Entitlements.h>
 
 using namespace WebCore;
 
@@ -140,11 +141,7 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 
 bool XPCServiceInitializerDelegate::hasEntitlement(const char* entitlement)
 {
-    auto value = adoptOSObject(xpc_connection_copy_entitlement_value(m_connection.get(), entitlement));
-    if (!value)
-        return false;
-
-    return xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
+    return WTF::hasEntitlement(m_connection.get(), entitlement);
 }
 
 bool XPCServiceInitializerDelegate::isClientSandboxed()

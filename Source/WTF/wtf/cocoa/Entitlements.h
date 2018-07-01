@@ -25,8 +25,12 @@
 
 #if PLATFORM(COCOA)
 
+#include <wtf/spi/darwin/XPCSPI.h>
+
 namespace WTF {
 
+WTF_EXPORT bool hasEntitlement(audit_token_t, const char* entitlement);
+WTF_EXPORT bool hasEntitlement(xpc_connection_t, const char* entitlement);
 WTF_EXPORT bool processHasEntitlement(const char* entitlement);
 
 } // namespace WTF

@@ -125,7 +125,7 @@ static JSC::JSObject* makeWrapper(JSContextRef ctx, JSClassRef jsClass, id wrapp
 
     ASSERT(jsClass);
     JSC::JSCallbackObject<JSC::JSAPIWrapperObject>* object = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->objcWrapperObjectStructure(), jsClass, 0);
-    object->setWrappedObject(wrappedObject);
+    object->setWrappedObject((__bridge void*)wrappedObject);
     if (JSC::JSObject* prototype = jsClass->prototype(exec))
         object->setPrototypeDirect(vm, prototype);
 
@@ -524,8 +524,8 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);
 
-    JSC::JSCallbackObject<JSC::JSAPIWrapperObject>* wrapper = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(exec, exec->lexicalGlobalObject(), structure, m_classRef, 0);
-    wrapper->setWrappedObject(object);
+    auto wrapper = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(exec, exec->lexicalGlobalObject(), structure, m_classRef, 0);
+    wrapper->setWrappedObject((__bridge void*)object);
     return wrapper;
 }
 
@@ -644,10 +644,10 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 - (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value inContext:context
 {
     ASSERT(toJSGlobalObject([context JSGlobalContextRef])->wrapperMap() == self);
-    JSValue *wrapper = static_cast<JSValue *>(NSMapGet(m_cachedObjCWrappers, value));
+    JSValue *wrapper = (__bridge JSValue *)NSMapGet(m_cachedObjCWrappers, value);
     if (!wrapper) {
         wrapper = [[[JSValue alloc] initWithValue:value inContext:context] autorelease];
-        NSMapInsert(m_cachedObjCWrappers, value, wrapper);
+        NSMapInsert(m_cachedObjCWrappers, value, (__bridge void*)wrapper);
     }
     return wrapper;
 }
@@ -664,7 +664,7 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     JSC::JSLockHolder locker(toJS(context));
     JSC::VM& vm = toJS(context)->vm();
     if (toJS(object)->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>(vm))
-        return (id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
+        return (__bridge id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
     if (id target = tryUnwrapConstructor(&vm, object))
         return target;
     return nil;

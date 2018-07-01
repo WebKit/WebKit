@@ -26,26 +26,35 @@
 #include "config.h"
 #include "Entitlements.h"
 
+#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace WTF {
 
-bool processHasEntitlement(const char* entitlement)
+static bool hasEntitlement(SecTaskRef task, const char* entitlement)
 {
-    auto task = adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault));
     if (!task)
         return false;
+    auto string = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement, kCFStringEncodingASCII, kCFAllocatorNull));
+    auto value = adoptCF(SecTaskCopyValueForEntitlement(task, string.get(), nullptr));
+    return value && CFGetTypeID(value.get()) == CFBooleanGetTypeID() && CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
+}
 
-    auto cfEntitlement = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement, kCFStringEncodingUTF8, kCFAllocatorNull));
-    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), cfEntitlement.get(), nullptr));
-    if (!value)
-        return false;
+bool hasEntitlement(audit_token_t token, const char* entitlement)
+{
+    return hasEntitlement(adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token)).get(), entitlement);
+}
 
-    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
-        return false;
+bool hasEntitlement(xpc_connection_t connection, const char *entitlement)
+{
+    auto value = adoptOSObject(xpc_connection_copy_entitlement_value(connection, entitlement));
+    return value && xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
+}
 
-    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
+bool processHasEntitlement(const char* entitlement)
+{
+    return hasEntitlement(adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault)).get(), entitlement);
 }
 
 } // namespace WTF

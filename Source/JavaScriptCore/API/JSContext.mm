@@ -337,24 +337,4 @@
 
 @end
 
-WeakContextRef::WeakContextRef(JSContext *context)
-{
-    objc_initWeak(&m_weakContext, context);
-}
-
-WeakContextRef::~WeakContextRef()
-{
-    objc_destroyWeak(&m_weakContext);
-}
-
-JSContext * WeakContextRef::get()
-{
-    return objc_loadWeak(&m_weakContext);
-}
-
-void WeakContextRef::set(JSContext *context)
-{
-    objc_storeWeak(&m_weakContext, context);
-}
-
 #endif

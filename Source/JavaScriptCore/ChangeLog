@@ -1,3 +1,77 @@
+2018-06-23  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Improve ARC compatibility of more code in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=186973
+
+        Reviewed by Dan Bernstein.
+
+        * API/JSContext.mm:
+        (WeakContextRef::WeakContextRef): Deleted.
+        (WeakContextRef::~WeakContextRef): Deleted.
+        (WeakContextRef::get): Deleted.
+        (WeakContextRef::set): Deleted.
+
+        * API/JSContextInternal.h: Removed unneeded header guards since this is
+        an Objective-C++ header. Removed unused WeakContextRef class. Removed declaration
+        of method -[JSContext initWithGlobalContextRef:] and JSContext property wrapperMap
+        since neither is used outside the class implementation.
+
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue initWithValue:]): Use a bridging cast.
+        (-[JSManagedValue dealloc]): Ditto.
+        (-[JSManagedValue didAddOwner:]): Ditto.
+        (-[JSManagedValue didRemoveOwner:]): Ditto.
+        (JSManagedValueHandleOwner::isReachableFromOpaqueRoots): Ditto.
+        (JSManagedValueHandleOwner::finalize): Ditto.
+        * API/JSValue.mm:
+        (+[JSValue valueWithNewRegularExpressionFromPattern:flags:inContext:]): Ditto.
+        (+[JSValue valueWithNewErrorFromMessage:inContext:]): Ditto.
+        (-[JSValue valueForProperty:]): Ditto.
+        (-[JSValue setValue:forProperty:]): Ditto.
+        (-[JSValue deleteProperty:]): Ditto.
+        (-[JSValue hasProperty:]): Ditto.
+        (-[JSValue invokeMethod:withArguments:]): Ditto.
+        (valueToObjectWithoutCopy): Ditto. Also removed unneeded explicit type names.
+        (valueToArray): Ditto.
+        (valueToDictionary): Ditto.
+        (objectToValueWithoutCopy): Ditto.
+        (objectToValue): Ditto.
+        * API/JSVirtualMachine.mm:
+        (+[JSVMWrapperCache addWrapper:forJSContextGroupRef:]): Ditto.
+        (+[JSVMWrapperCache wrapperForJSContextGroupRef:]): Ditto.
+        (-[JSVirtualMachine isOldExternalObject:]): Ditto.
+        (-[JSVirtualMachine addManagedReference:withOwner:]): Ditto.
+        (-[JSVirtualMachine removeManagedReference:withOwner:]): Ditto.
+        (-[JSVirtualMachine contextForGlobalContextRef:]): Ditto.
+        (-[JSVirtualMachine addContext:forGlobalContextRef:]): Ditto.
+        (scanExternalObjectGraph): Ditto.
+        (scanExternalRememberedSet): Ditto.
+        * API/JSWrapperMap.mm:
+        (makeWrapper): Ditto.
+        (-[JSObjCClassInfo wrapperForObject:inContext:]): Ditto.
+        (-[JSWrapperMap objcWrapperForJSValueRef:inContext:]): Ditto.
+        (tryUnwrapObjcObject): Ditto.
+        * API/ObjCCallbackFunction.mm:
+        (blockSignatureContainsClass): Ditto.
+        (objCCallbackFunctionForMethod): Switched from retain to CFRetain, but not
+        sure we will be keeping this the same way under ARC.
+        (objCCallbackFunctionForBlock): Use a bridging cast.
+
+        * API/ObjcRuntimeExtras.h:
+        (protocolImplementsProtocol): Use a more specific type that includes the
+        explicit __unsafe_unretained for copied protocol lists.
+        (forEachProtocolImplementingProtocol): Ditto.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::convertNSNullToNil): Added to replace the CONVERT_NSNULL_TO_NIL macro.
+        (Inspector::RemoteInspector::receivedSetupMessage): Use convertNSNullToNil.
+
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm: Moved the
+        CFXPCBridge SPI to a header named CFXPCBridgeSPI.h.
+        (auditTokenHasEntitlement): Deleted. Moved to Entitlements.h/cpp in WTF.
+        (Inspector::RemoteInspectorXPCConnection::handleEvent): Use WTF::hasEntitlement.
+        (Inspector::RemoteInspectorXPCConnection::sendMessage): Use a bridging cast.
+
 2018-06-30  Adam Barth  <abarth@webkit.org>
 
         Port JavaScriptCore to OS(FUCHSIA)

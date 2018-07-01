@@ -603,7 +603,7 @@ static bool blockSignatureContainsClass()
 {
     static bool containsClass = ^{
         id block = ^(NSString *string){ return string; };
-        return _Block_has_signature(block) && strstr(_Block_signature(block), "NSString");
+        return _Block_has_signature((__bridge void*)block) && strstr(_Block_signature((__bridge void*)block), "NSString");
     }();
     return containsClass;
 }
@@ -677,18 +677,20 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protoco
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
     [invocation setSelector:sel];
-    // We need to retain the target Class because m_invocation doesn't retain it by default (and we don't want it to).
-    // FIXME: What releases it?
-    if (!isInstanceMethod)
-        [invocation setTarget:[cls retain]];
+    if (!isInstanceMethod) {
+        [invocation setTarget:cls];
+        // We need to retain the target Class because m_invocation doesn't retain it by default (and we don't want it to).
+        // FIXME: What releases it?
+        CFRetain((__bridge CFTypeRef)cls);
+    }
     return objCCallbackFunctionForInvocation(context, invocation, isInstanceMethod ? CallbackInstanceMethod : CallbackClassMethod, isInstanceMethod ? cls : nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, isInstanceMethod));
 }
 
 JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
 {
-    if (!_Block_has_signature(target))
+    if (!_Block_has_signature((__bridge void*)target))
         return nullptr;
-    const char* signature = _Block_signature(target);
+    const char* signature = _Block_signature((__bridge void*)target);
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:signature]];
 
     // We don't want to use -retainArguments because that leaks memory. Arguments 

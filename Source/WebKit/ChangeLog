@@ -1,3 +1,23 @@
+2018-06-23  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Improve ARC compatibility of more code in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=186973
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::hasEntitlement): Use WTF::hasEntitlement.
+
+        * Shared/mac/SandboxUtilities.h: Removed connectedProcessHasEntitlement since
+        we can now use WTF::hasEntitlement instead.
+        * Shared/mac/SandboxUtilities.mm: Ditto.
+
+        * StorageProcess/ios/StorageProcessIOS.mm:
+        (WebKit::StorageProcess::parentProcessHasServiceWorkerEntitlement): Use
+        WTF::hasEntitlement.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::parentProcessHasServiceWorkerEntitlement): Ditto.
+
 2018-06-30  David Kilzer  <ddkilzer@apple.com>
 
         Fix clang static analyzer warnings: Garbage return value

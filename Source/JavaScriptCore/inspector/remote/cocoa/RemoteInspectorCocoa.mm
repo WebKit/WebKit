@@ -59,14 +59,13 @@
             return;                                             \
     } while (0);
 
-#define CONVERT_NSNULL_TO_NIL(expr)          \
-    do {                                     \
-        if ([expr isEqual:[NSNull null]])    \
-            expr = nil;                      \
-    } while (0);
-
-
 namespace Inspector {
+
+static void convertNSNullToNil(__strong NSNumber *& number)
+{
+    if ([number isEqual:[NSNull null]])
+        number = nil;
+}
 
 static bool canAccessWebInspectorMachPort()
 {
@@ -491,7 +490,7 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     BAIL_IF_UNEXPECTED_TYPE(sender, [NSString class]);
 
     NSNumber *automaticallyPauseNumber = userInfo[WIRAutomaticallyPause];
-    CONVERT_NSNULL_TO_NIL(automaticallyPauseNumber);
+    convertNSNullToNil(automaticallyPauseNumber);
     BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(automaticallyPauseNumber, [NSNumber class]);
     BOOL automaticallyPause = automaticallyPauseNumber.boolValue;
 

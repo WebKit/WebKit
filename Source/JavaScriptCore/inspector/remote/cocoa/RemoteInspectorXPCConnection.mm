@@ -34,35 +34,10 @@
 #import <wtf/Lock.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/Entitlements.h>
+#import <wtf/spi/cocoa/CFXPCBridgeSPI.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <CoreFoundation/CFXPCBridge.h>
-#else
-extern "C" {
-    xpc_object_t _CFXPCCreateXPCMessageWithCFObject(CFTypeRef);
-    CFTypeRef _CFXPCCreateCFObjectFromXPCMessage(xpc_object_t);
-}
-#endif
-
-#if PLATFORM(MAC)
-static bool auditTokenHasEntitlement(audit_token_t token, NSString *entitlement)
-{
-    auto task = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
-    if (!task)
-        return false;
-
-    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), (CFStringRef)entitlement, nullptr));
-    if (!value)
-        return false;
-
-    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
-        return false;
-
-    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
-}
-#endif
 
 namespace Inspector {
 
@@ -173,7 +148,7 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
     if (!m_validated) {
         audit_token_t token;
         xpc_connection_get_audit_token(m_connection, &token);
-        if (!auditTokenHasEntitlement(token, @"com.apple.private.webinspector.webinspectord")) {
+        if (!WTF::hasEntitlement(token, "com.apple.private.webinspector.webinspectord")) {
             std::lock_guard<Lock> lock(m_mutex);
             // This will trigger one last XPC_ERROR_CONNECTION_INVALID event on the queue and deref us.
             closeOnQueue();
@@ -211,7 +186,7 @@ void RemoteInspectorXPCConnection::sendMessage(NSString *messageName, NSDictiona
     if (userInfo)
         [dictionary setObject:userInfo forKey:RemoteInspectorXPCConnectionUserInfoKey];
 
-    xpc_object_t xpcDictionary = _CFXPCCreateXPCMessageWithCFObject((CFDictionaryRef)dictionary.get());
+    xpc_object_t xpcDictionary = _CFXPCCreateXPCMessageWithCFObject((__bridge CFDictionaryRef)dictionary.get());
     ASSERT_WITH_MESSAGE(xpcDictionary && xpc_get_type(xpcDictionary) == XPC_TYPE_DICTIONARY, "Unable to serialize xpc message");
     if (!xpcDictionary)
         return;

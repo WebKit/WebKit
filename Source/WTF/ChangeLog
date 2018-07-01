@@ -1,3 +1,22 @@
+2018-06-23  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Improve ARC compatibility of more code in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=186973
+
+        Reviewed by Dan Bernstein.
+
+        * WTF.xcodeproj/project.pbxproj: Added CFXPCBridgeSPI.h, fixed a few
+        other small problems in the project file, and let Xcode fix a few too.
+
+        * wtf/cocoa/Entitlements.h: Added hasEntitlement function with overloads
+        for an audit token and an XPC connection.
+        * wtf/cocoa/Entitlements.mm:
+        (WTF::hasEntitlement): Added, with overloads for a SecTask, an audit token,
+        and an XPC connection.
+        (WTF::processHasEntitlement): Refactored to use the function above.
+
+        * wtf/spi/cocoa/CFXPCBridgeSPI.h: Added.
+
 2018-06-30  Adam Barth  <abarth@webkit.org>
 
         Port JavaScriptCore to OS(FUCHSIA)

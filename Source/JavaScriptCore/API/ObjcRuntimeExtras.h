@@ -40,7 +40,7 @@ inline std::unique_ptr<T, WTF::SystemFree<T>> adoptSystem(U value)
 inline bool protocolImplementsProtocol(Protocol *candidate, Protocol *target)
 {
     unsigned protocolProtocolsCount;
-    auto protocolProtocols = adoptSystem<Protocol*[]>(protocol_copyProtocolList(candidate, &protocolProtocolsCount));
+    auto protocolProtocols = adoptSystem<__unsafe_unretained Protocol*[]>(protocol_copyProtocolList(candidate, &protocolProtocolsCount));
     for (unsigned i = 0; i < protocolProtocolsCount; ++i) {
         if (protocol_isEqual(protocolProtocols[i], target))
             return true;
@@ -59,7 +59,7 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
     // Initially fill the worklist with the Class's protocols.
     {
         unsigned protocolsCount;
-        auto protocols = adoptSystem<Protocol*[]>(class_copyProtocolList(cls, &protocolsCount));
+        auto protocols = adoptSystem<__unsafe_unretained Protocol*[]>(class_copyProtocolList(cls, &protocolsCount));
         worklist.append(protocols.get(), protocolsCount);
     }
 
@@ -69,7 +69,7 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
         worklist.removeLast();
 
         // Are we encountering this Protocol for the first time?
-        if (!visited.add(protocol).isNewEntry)
+        if (!visited.add((__bridge void*)protocol).isNewEntry)
             continue;
 
         // If it implements the protocol, make the callback.
@@ -82,7 +82,7 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
         // Add incorporated protocols to the worklist.
         {
             unsigned protocolsCount;
-            auto protocols = adoptSystem<Protocol*[]>(protocol_copyProtocolList(protocol, &protocolsCount));
+            auto protocols = adoptSystem<__unsafe_unretained Protocol*[]>(protocol_copyProtocolList(protocol, &protocolsCount));
             worklist.append(protocols.get(), protocolsCount);
         }
     }
