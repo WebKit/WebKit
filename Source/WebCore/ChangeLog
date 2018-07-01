@@ -1,3 +1,14 @@
+2018-06-30  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Fix clang static analyzer warnings: Garbage return value
+        <https://webkit.org/b/187224>
+
+        Address review feedback from Eric Carlson.
+
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::NumericConstraint::valueForCapabilityRange const):
+        - Use brace initialization for more local variables.
+
 2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Asan false positive: stack use after scope under WebCore::ApplyPropertyBorderImageModifier in WebCore::Length::Length(WebCore::Length&&)
