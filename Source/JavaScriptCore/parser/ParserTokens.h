@@ -191,7 +191,7 @@ enum JSTokenType {
 };
 
 struct JSTextPosition {
-    JSTextPosition() : line(0), offset(0), lineStartOffset(0) { }
+    JSTextPosition() = default;
     JSTextPosition(int _line, int _offset, int _lineStartOffset) : line(_line), offset(_offset), lineStartOffset(_lineStartOffset) { }
     JSTextPosition(const JSTextPosition& other) : line(other.line), offset(other.offset), lineStartOffset(other.lineStartOffset) { }
 
@@ -213,12 +213,17 @@ struct JSTextPosition {
         return !(*this == other);
     }
 
-    int line;
-    int offset;
-    int lineStartOffset;
+    int line { 0 };
+    int offset { 0 };
+    int lineStartOffset { 0 };
 };
 
 union JSTokenData {
+    struct {
+        const Identifier* cooked;
+        const Identifier* raw;
+        bool isTail;
+    };
     struct {
         uint32_t line;
         uint32_t offset;
@@ -234,18 +239,13 @@ union JSTokenData {
         uint8_t radix;
     };
     struct {
-        const Identifier* cooked;
-        const Identifier* raw;
-        bool isTail;
-    };
-    struct {
         const Identifier* pattern;
         const Identifier* flags;
     };
 };
 
 struct JSTokenLocation {
-    JSTokenLocation() : line(0), lineStartOffset(0), startOffset(0) { }
+    JSTokenLocation() = default;
     JSTokenLocation(const JSTokenLocation& location)
     {
         line = location.line;
@@ -254,15 +254,15 @@ struct JSTokenLocation {
         endOffset = location.endOffset;
     }
 
-    int line;
-    unsigned lineStartOffset;
-    unsigned startOffset;
-    unsigned endOffset;
+    int line { 0 };
+    unsigned lineStartOffset { 0 };
+    unsigned startOffset { 0 };
+    unsigned endOffset { 0 };
 };
 
 struct JSToken {
-    JSTokenType m_type;
-    JSTokenData m_data;
+    JSTokenType m_type { ERRORTOK };
+    JSTokenData m_data { { nullptr, nullptr, false } };
     JSTokenLocation m_location;
     JSTextPosition m_startPosition;
     JSTextPosition m_endPosition;

@@ -1,3 +1,25 @@
+2018-07-01  David Kilzer  <ddkilzer@apple.com>
+
+        JavaScriptCore: Fix clang static analyzer warnings: Assigned value is garbage or undefined
+        <https://webkit.org/b/187233>
+
+        Reviewed by Mark Lam.
+
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode): Initialize `changed`.
+        * parser/ParserTokens.h:
+        (JSC::JSTextPosition::JSTextPosition): Add struct member
+        initialization. Simplify default constructor.
+        (JSC::JSTokenLocation::JSTokenData): Move largest struct in the
+        union to the beginning to make it easy to zero out all fields.
+        (JSC::JSTokenLocation::JSTokenLocation): Add struct member
+        initialization.  Simplify default constructor.  Note that
+        `endOffset` was not being initialized previously.
+        (JSC::JSTextPosition::JSToken): Add struct member initialization
+        where necessary.
+        * runtime/IntlObject.cpp:
+        (JSC::MatcherResult): Add struct member initialization.
+
 2018-06-23  Darin Adler  <darin@apple.com>
 
         [Cocoa] Improve ARC compatibility of more code in JavaScriptCore

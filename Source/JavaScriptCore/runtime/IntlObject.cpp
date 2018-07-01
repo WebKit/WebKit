@@ -69,7 +69,7 @@ namespace JSC {
 struct MatcherResult {
     String locale;
     String extension;
-    size_t extensionIndex;
+    size_t extensionIndex { 0 };
 };
 
 const ClassInfo IntlObject::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlObject) };

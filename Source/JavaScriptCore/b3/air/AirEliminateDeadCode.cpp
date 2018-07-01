@@ -43,7 +43,7 @@ bool eliminateDeadCode(Code& code)
 
     TmpSet liveTmps;
     IndexSet<StackSlot*> liveStackSlots;
-    bool changed;
+    bool changed { false };
     
     auto isArgLive = [&] (const Arg& arg) -> bool {
         switch (arg.kind()) {
