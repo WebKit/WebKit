@@ -1,3 +1,12 @@
+2018-06-30  Adam Barth  <abarth@webkit.org>
+
+        Port JavaScriptCore to OS(FUCHSIA)
+        https://bugs.webkit.org/show_bug.cgi?id=187223
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/OptionsJSCOnly.cmake: Add back ICU.
+
 2018-06-29  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSCOnly] Restore Windows build.

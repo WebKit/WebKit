@@ -187,7 +187,7 @@ static inline void*& stackPointerImpl(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
-#elif defined(__GLIBC__) || defined(__BIONIC__)
+#elif OS(FUCHSIA) || defined(__GLIBC__) || defined(__BIONIC__)
 
 #if CPU(X86)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ESP]);
@@ -334,7 +334,7 @@ static inline void*& framePointerImpl(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
-#elif defined(__GLIBC__) || defined(__BIONIC__)
+#elif OS(FUCHSIA) || defined(__GLIBC__) || defined(__BIONIC__)
 
 // The following sequence depends on glibc's sys/ucontext.h.
 #if CPU(X86)
@@ -477,7 +477,7 @@ static inline void*& instructionPointerImpl(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
-#elif defined(__GLIBC__) || defined(__BIONIC__)
+#elif OS(FUCHSIA) || defined(__GLIBC__) || defined(__BIONIC__)
 
 // The following sequence depends on glibc's sys/ucontext.h.
 #if CPU(X86)
@@ -634,7 +634,7 @@ inline void*& argumentPointer<1>(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
-#elif defined(__GLIBC__) || defined(__BIONIC__)
+#elif OS(FUCHSIA) || defined(__GLIBC__) || defined(__BIONIC__)
 
 // The following sequence depends on glibc's sys/ucontext.h.
 #if CPU(X86)
@@ -751,7 +751,7 @@ inline void*& llintInstructionPointer(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
-#elif defined(__GLIBC__) || defined(__BIONIC__)
+#elif OS(FUCHSIA) || defined(__GLIBC__) || defined(__BIONIC__)
 
 // The following sequence depends on glibc's sys/ucontext.h.
 #if CPU(X86)

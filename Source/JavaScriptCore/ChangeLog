@@ -1,3 +1,19 @@
+2018-06-30  Adam Barth  <abarth@webkit.org>
+
+        Port JavaScriptCore to OS(FUCHSIA)
+        https://bugs.webkit.org/show_bug.cgi?id=187223
+
+        Reviewed by Daniel Bates.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::cacheFlush): Call zx_cache_flush to flush cache.
+        * runtime/MachineContext.h: Fuchsia has the same mcontext_t as glibc.
+        (JSC::MachineContext::stackPointerImpl):
+        (JSC::MachineContext::framePointerImpl):
+        (JSC::MachineContext::instructionPointerImpl):
+        (JSC::MachineContext::argumentPointer<1>):
+        (JSC::MachineContext::llintInstructionPointer):
+
 2018-06-30  David Kilzer  <ddkilzer@apple.com>
 
         Fix clang static analyzer warnings: Garbage return value
