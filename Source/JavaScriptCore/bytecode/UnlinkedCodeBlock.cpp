@@ -118,11 +118,11 @@ size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell)
 int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     ASSERT(bytecodeOffset < instructions().count());
-    int divot;
-    int startOffset;
-    int endOffset;
-    unsigned line;
-    unsigned column;
+    int divot { 0 };
+    int startOffset { 0 };
+    int endOffset { 0 };
+    unsigned line { 0 };
+    unsigned column { 0 };
     expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
     return line;
 }

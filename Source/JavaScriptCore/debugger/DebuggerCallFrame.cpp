@@ -57,8 +57,8 @@ public:
     unsigned column() const { return m_column; }
 
 private:
-    mutable unsigned m_line;
-    mutable unsigned m_column;
+    mutable unsigned m_line { 0 };
+    mutable unsigned m_column { 0 };
 };
 
 Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)

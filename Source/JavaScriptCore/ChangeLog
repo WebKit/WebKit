@@ -1,3 +1,17 @@
+2018-06-30  David Kilzer  <ddkilzer@apple.com>
+
+        Fix clang static analyzer warnings: Garbage return value
+        <https://webkit.org/b/187224>
+
+        Reviewed by Eric Carlson.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::lineNumberForBytecodeOffset):
+        - Use brace initialization for local variables.
+        * debugger/DebuggerCallFrame.cpp:
+        (class JSC::LineAndColumnFunctor):
+        - Use class member initialization for member variables.
+
 2018-06-29  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Try to fix Windows build after r233377

@@ -1,3 +1,24 @@
+2018-06-30  David Kilzer  <ddkilzer@apple.com>
+
+        Fix clang static analyzer warnings: Garbage return value
+        <https://webkit.org/b/187224>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::changeCount):
+        (WebKit::WebPlatformStrategies::addTypes):
+        (WebKit::WebPlatformStrategies::setTypes):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::setPathnamesForType):
+        (WebKit::WebPlatformStrategies::setStringForType):
+        (WebKit::WebPlatformStrategies::getNumberOfFiles):
+        (WebKit::WebPlatformStrategies::getPasteboardItemsCount):
+        (WebKit::WebPlatformStrategies::writeCustomData):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::substitutionsPanelIsShowing):
+        - Use brace initialization for local variables.
+
 2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, add missing PLATFORM(COCOA) guard after r233207

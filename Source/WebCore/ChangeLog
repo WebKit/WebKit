@@ -1,3 +1,14 @@
+2018-06-30  David Kilzer  <ddkilzer@apple.com>
+
+        Fix clang static analyzer warnings: Garbage return value
+        <https://webkit.org/b/187224>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::NumericConstraint::valueForCapabilityRange const):
+        - Use brace initialization for local variables.
+
 2018-06-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Do not add the containing block's offset while computing the out-of-flow static position.
