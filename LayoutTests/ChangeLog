@@ -1,3 +1,10 @@
+2018-07-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context-expected.txt: Added.
+
 2018-07-02  Eric Carlson  <eric.carlson@apple.com>
 
         Video sometimes flickers when playing to AppleTV

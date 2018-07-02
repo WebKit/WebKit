@@ -1178,9 +1178,12 @@ webkit.org/b/186219 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFai
 css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
 webkit.org/b/187044 animations/transition-and-animation-1.html [ Failure ]
-webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
+webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure Timeout ]
 
-webkit.org/b/187041 imported/mozilla/css-animations/test_animation-pausing.html [ Failure ]
+webkit.org/b/187041 imported/mozilla/css-animations/test_animation-pausing.html [ Failure Timeout ]
+
+# Requires support for testing text replacement
+editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1919,7 +1922,7 @@ webkit.org/b/183903 http/tests/media/video-buffered-range-contains-currentTime.h
 
 webkit.org/b/183904 imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.html [ Crash Pass ]
 
-webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure Pass ]
+webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure Pass Timeout ]
 
 webkit.org/b/186143 imported/mozilla/css-animations/test_event-dispatch.html [ Timeout Pass ]
 
@@ -2324,10 +2327,49 @@ webkit.org/b/184080 animations/animation-iteration-event-destroy-renderer.html [
 webkit.org/b/186253 http/tests/media/remove-while-loading.html [ Timeout ]
 webkit.org/b/186253 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Timeout ]
 
-webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Timeout Failure ]
+webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Timeout Failure Pass ]
 webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html [ Timeout ]
 webkit.org/b/186662 animations/transition-and-animation-3.html [ Timeout ]
 webkit.org/b/186853 imported/mozilla/css-transitions/test_element-get-animations.html [ Timeout ]
+
+webkit.org/b/187264 animations/transition-and-animation-2.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/cancel.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/pause.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/pending.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/play.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/playbackRate.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/ready.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/startTime.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/interfaces/AnimationEffectTiming/duration.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/timing-model/animations/canceling-an-animation.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reversing-an-animation.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-target-effect-of-an-animation.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation.html [ Failure ]
+webkit.org/b/187264 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure ]
+webkit.org/b/187264 imported/mozilla/css-animations/test_animation-cancel.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-animations/test_animation-computed-timing.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-animations/test_animation-currenttime.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-animations/test_animation-finish.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-animations/test_animation-ready.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-animations/test_animation-starttime.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-animations/test_setting-effect.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-transitions/test_animation-cancel.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-transitions/test_animation-computed-timing.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-transitions/test_animation-currenttime.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-transitions/test_animation-pausing.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-transitions/test_animation-ready.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-transitions/test_animation-starttime.html [ Timeout ]
+webkit.org/b/187264 imported/mozilla/css-transitions/test_setting-effect.html [ Timeout ]
+webkit.org/b/187264 webanimations/opacity-animation-yields-compositing.html [ Timeout ]
+
+webkit.org/b/187266 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Pass Timeout ]
+
+webkit.org/b/187267 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue.htm [ Pass Failure ]
+
+webkit.org/b/187273 media/picture-in-picture-interruption.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3439,7 +3481,7 @@ webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.htm
 webkit.org/b/186100 css3/color-filters/color-filter-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 
-webkit.org/b/186138 imported/mozilla/css-transitions/test_event-dispatch.html [ Failure ]
+webkit.org/b/186138 imported/mozilla/css-transitions/test_event-dispatch.html [ Failure Timeout ]
 
 webkit.org/b/186139 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ Failure ]
 
@@ -3460,7 +3502,11 @@ webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
 webkit.org/b/186845 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Failure Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Failure Timeout ]
 
-webkit.org/b/186144 transitions/move-after-transition.html [ Failure ]
+webkit.org/b/186144 transitions/move-after-transition.html [ Failure Timeout ]
+
+webkit.org/b/187268 compositing/backing/backing-store-attachment-outside-viewport.html [ Failure ]
+
+webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
