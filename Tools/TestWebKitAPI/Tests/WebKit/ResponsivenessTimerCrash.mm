@@ -26,6 +26,7 @@
 #import "config.h"
 
 #if WK_API_ENABLED
+#if WK_HAVE_C_SPI
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -85,4 +86,5 @@ TEST(WebKit, ResponsivenessTimerCrash)
 
 } // namespace TestWebKitAPI
 
+#endif // WK_HAVE_C_SPI
 #endif // WK_API_ENABLED

@@ -1,5 +1,12 @@
 2018-07-02  Brady Eidson  <beidson@apple.com>
 
+        Unreviewed followup to:
+        Crash notifying observers of responsiveness state change
+
+        * TestWebKitAPI/Tests/WebKit/ResponsivenessTimerCrash.mm: Need the C-SPI for this test.
+
+2018-07-02  Brady Eidson  <beidson@apple.com>
+
         Crash notifying observers of responsiveness state change
         <rdar://problem/41267796> and https://bugs.webkit.org/show_bug.cgi?id=187262
 
