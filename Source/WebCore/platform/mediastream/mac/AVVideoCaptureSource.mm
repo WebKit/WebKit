@@ -384,12 +384,12 @@ bool AVVideoCaptureSource::setupCaptureSession()
     NSError *error = nil;
     RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {
-        LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), failed to allocate AVCaptureDeviceInput: %s", this, [[error localizedDescription] UTF8String]);
+        RELEASE_LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), failed to allocate AVCaptureDeviceInput: %s", this, [[error localizedDescription] UTF8String]);
         return false;
     }
 
     if (![session() canAddInput:videoIn.get()]) {
-        LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video input device", this);
+        RELEASE_LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video input device", this);
         return false;
     }
     [session() addInput:videoIn.get()];
@@ -409,7 +409,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     setVideoSampleBufferDelegate(m_videoOutput.get());
 
     if (![session() canAddOutput:m_videoOutput.get()]) {
-        LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video sample buffer output delegate", this);
+        RELEASE_LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video sample buffer output delegate", this);
         return false;
     }
     [session() addOutput:m_videoOutput.get()];

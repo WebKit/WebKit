@@ -347,14 +347,47 @@ UserMediaRequest::PendingActivationMediaStream::~PendingActivationMediaStream()
 
 void UserMediaRequest::PendingActivationMediaStream::characteristicsChanged()
 {
-    if (m_mediaStream->privateStream().hasVideo() || m_mediaStream->privateStream().hasAudio())
-        m_userMediaRequest.mediaStreamIsReady(m_mediaStream.copyRef());
+    if (!m_userMediaRequest.m_pendingActivationMediaStream)
+        return;
+
+    for (auto& track : m_mediaStream->privateStream().tracks()) {
+        if (track->source().captureDidFail()) {
+            m_userMediaRequest.mediaStreamDidFail(track->source().type());
+            return;
+        }
+    }
+
+    if (m_mediaStream->privateStream().hasVideo() || m_mediaStream->privateStream().hasAudio()) {
+        m_userMediaRequest.mediaStreamIsReady(WTFMove(m_mediaStream));
+        return;
+    }
 }
 
 void UserMediaRequest::mediaStreamIsReady(Ref<MediaStream>&& stream)
 {
+    RELEASE_LOG(MediaStream, "UserMediaRequest::mediaStreamIsReady");
     stream->document()->setHasCaptureMediaStreamTrack();
     m_promise.resolve(WTFMove(stream));
+    // We are in an observer iterator loop, we do not want to change the observers within this loop.
+    callOnMainThread([stream = WTFMove(m_pendingActivationMediaStream)] { });
+}
+
+void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
+{
+    RELEASE_LOG(MediaStream, "UserMediaRequest::mediaStreamDidFail");
+    const char* typeDescription = "";
+    switch (type) {
+    case RealtimeMediaSource::Type::Audio:
+        typeDescription = "audio";
+        break;
+    case RealtimeMediaSource::Type::Video:
+        typeDescription = "video";
+        break;
+    case RealtimeMediaSource::Type::None:
+        typeDescription = "unknown";
+        break;
+    }
+    m_promise.reject(NotReadableError, makeString("Failed starting capture of a "_s, typeDescription, " track"_s));
     // We are in an observer iterator loop, we do not want to change the observers within this loop.
     callOnMainThread([stream = WTFMove(m_pendingActivationMediaStream)] { });
 }

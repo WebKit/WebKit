@@ -90,8 +90,6 @@ public:
     void stopProducingData();
     bool isProducingData() const;
 
-    void endStream();
-
     bool hasVideo() const;
     bool hasAudio() const;
     bool muted() const;

@@ -36,6 +36,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "RealtimeMediaSource.h"
 
+#include "Logging.h"
 #include "MediaConstraints.h"
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceCapabilities.h"
@@ -187,6 +188,8 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
 
 void RealtimeMediaSource::captureFailed()
 {
+    RELEASE_LOG_ERROR(MediaStream, "RealtimeMediaSource::captureFailed");
+
     m_isProducingData = false;
     m_captureDidFailed = true;
 

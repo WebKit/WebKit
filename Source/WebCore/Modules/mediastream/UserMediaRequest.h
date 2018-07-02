@@ -79,6 +79,7 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     void mediaStreamIsReady(Ref<MediaStream>&&);
+    void mediaStreamDidFail(RealtimeMediaSource::Type);
 
     class PendingActivationMediaStream : public RefCounted<PendingActivationMediaStream>, private MediaStreamPrivate::Observer {
     public:
