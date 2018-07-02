@@ -1,3 +1,12 @@
+2018-07-02  Frederic Wang  <fwang@igalia.com>
+
+        WTF's internal std::optional implementation should abort() on bad optional access
+        https://bugs.webkit.org/show_bug.cgi?id=186536
+
+        Reviewed by Michael Catanzaro.
+
+        * TestExpectations: Mark two tests as crashing (bug #187145 and bug #187243).
+
 2018-07-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WK2] fast/parser/document-open-in-unload.html makes the following test crash

@@ -1,3 +1,30 @@
+2018-07-02  Frederic Wang  <fwang@igalia.com>
+
+        WTF's internal std::optional implementation should abort() on bad optional access
+        https://bugs.webkit.org/show_bug.cgi?id=186536
+
+        Reviewed by Michael Catanzaro.
+
+        Currently, some ports built with recent compilers will cause the program to abort when one
+        tries to access the value of an unset std:optional (i.e. std::nullopt) as specified by C++17.
+        However, most ports still use WTF's internal std::optional implementation, which does not
+        verify illegal access. Hence it's not possible for developers working on these ports to
+        detect issues like bugs #186189, #186535, #186752, #186753, #187139, #187145 or #187243.
+        WTF's version of std::optional was introduced in bug #164199 but it was not possible to
+        verify the availability of the value inside constexpr member functions because the assert
+        might involve asm declarations. This commit introduces a new
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT macro (a simplified version of RELEASE_ASSERT that can
+        be used in constexpr context) and uses it in WTF's implementation of std::optional.
+
+        * wtf/Assertions.h: Define RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT as a version of
+        RELEASE_ASSERT that can be used in constexpr context (in particular avoids asm declarations).
+        * wtf/Optional.h:
+        (std::optional::operator ->): Add an assert to ensure the optional value is available.
+        (std::optional::operator *): Ditto.
+        (std::optional::value const): Ditto.
+        (std::optional::value): Ditto.
+        (std::optional<T::value const): Ditto.
+
 2018-07-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] RandomDevice should be initialized inside std::call_once
