@@ -41,11 +41,9 @@ static void forEachLine(FILE* file, Functor functor)
     char* buffer = nullptr;
     size_t size = 0;
     while (getline(&buffer, &size, file) != -1) {
-        functor(buffer, size);
-        free(buffer);
-        buffer = nullptr;
-        size = 0;
+        functor(buffer);
     }
+    free(buffer);
 }
 #endif
 
@@ -58,7 +56,7 @@ std::optional<size_t> memoryFootprint()
 
     unsigned long totalPrivateDirtyInKB = 0;
     bool isAnonymous = false;
-    forEachLine(file, [&] (char* buffer, size_t) {
+    forEachLine(file, [&] (char* buffer) {
         {
             unsigned long start;
             unsigned long end;
