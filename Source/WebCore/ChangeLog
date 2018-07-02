@@ -1,3 +1,27 @@
+2018-07-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Enable copy paste on iOS apps for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=187194
+        <rdar://problem/41451148>
+
+        Reviewed by Darin Adler.
+
+        Difficult to test this platform.
+
+        UIKit doesn't support itemProviders for iOS apps for Mac, so we need to revert to the
+        older way of setting a dictionary of objects and keys for items. Not everything is
+        availble in this form, and we haven't cleaned up our itemProvider code yet, so we 
+        need to case some things out for now. Hopefully in the future, this will be implmented
+        and can just work as expected, but for now, this is the best workaround.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::registerItemToPasteboard):
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::PlatformPasteboard::readURL):
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfoList itemProvider]):
+
 2018-07-02  Eric Carlson  <eric.carlson@apple.com>
 
         Video sometimes flickers when playing to AppleTV

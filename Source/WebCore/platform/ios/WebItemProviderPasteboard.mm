@@ -26,7 +26,7 @@
 #include "config.h"
 #import "WebItemProviderPasteboard.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DATA_INTERACTION) || ENABLE(MINIMAL_SIMULATOR)
 
 #import <Foundation/NSItemProvider.h>
 #import <Foundation/NSProgress.h>
@@ -256,6 +256,7 @@ using WebCore::PasteboardCustomData;
         block([self itemAtIndex:index], index);
 }
 
+#if !ENABLE(MINIMAL_SIMULATOR)
 static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPresentationStyle style)
 {
     switch (style) {
@@ -270,6 +271,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
         return UIPreferredPresentationStyleUnspecified;
     }
 }
+#endif
 
 - (UIItemProvider *)itemProvider
 {
@@ -279,10 +281,14 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     auto itemProvider = adoptNS([allocUIItemProviderInstance() init]);
     for (id <WebItemProviderRegistrar> representation in _representations.get())
         [representation registerItemProvider:itemProvider.get()];
-    [itemProvider setPreferredPresentationSize:self.preferredPresentationSize];
     [itemProvider setSuggestedName:self.suggestedName];
+    // UIItemProviders are not implemented for iOS apps for Mac, because they were depricated last year.
+    // We need to switch over to NSItemProviders everywhere. This should just be a temporary fix.
+#if !ENABLE(MINIMAL_SIMULATOR)
+    [itemProvider setPreferredPresentationSize:self.preferredPresentationSize];
     [itemProvider setPreferredPresentationStyle:uiPreferredPresentationStyle(self.preferredPresentationStyle)];
     [itemProvider setTeamData:self.teamData];
+#endif
     return itemProvider.autorelease();
 }
 
@@ -832,4 +838,4 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 
 @end
 
-#endif // ENABLE(DATA_INTERACTION)
+#endif // ENABLE(DATA_INTERACTION) || ENABLE(MINIMAL_SIMULATOR)

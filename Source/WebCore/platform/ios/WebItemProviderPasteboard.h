@@ -27,6 +27,17 @@
 
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 
+// UIItemProviders are not implemented for iOS apps for Mac, because they were depricated last year.
+// We need to switch over to NSItemProviders everywhere. This should just be a temporary fix.
+#if defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC
+
+#define UIItemProvider NSItemProvider
+#define UIItemProviderReading NSItemProviderReading
+#define UIItemProviderWriting NSItemProviderWriting
+#define UIItemProviderRepresentationOptionsVisibilityAll NSItemProviderRepresentationVisibilityAll
+
+#endif
+
 @class UIItemProvider;
 @protocol UIItemProviderWriting;
 
