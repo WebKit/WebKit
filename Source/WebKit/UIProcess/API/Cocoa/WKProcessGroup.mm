@@ -185,11 +185,6 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     if (!self)
         return nil;
 
-#if PLATFORM(IOS)
-    // FIXME: Remove once <rdar://problem/15256572> is fixed.
-    InitWebCoreThreadSystemInterface();
-#endif
-
     auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
     configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
 

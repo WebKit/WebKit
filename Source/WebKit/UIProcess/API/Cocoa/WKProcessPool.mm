@@ -74,11 +74,6 @@ static WKProcessPool *sharedProcessPool;
     if (!(self = [super init]))
         return nil;
 
-#if PLATFORM(IOS)
-    // FIXME: Remove once <rdar://problem/15256572> is fixed.
-    InitWebCoreThreadSystemInterface();
-#endif
-
     API::Object::constructInWrapper<WebKit::WebProcessPool>(self, *configuration->_processPoolConfiguration);
 
     return self;
