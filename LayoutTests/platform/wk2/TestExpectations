@@ -157,9 +157,6 @@ plugins/npruntime/embed-property-iframe-equality.html
 
 webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure ]
 
-# Causes next test to crash only on WebKit2
-webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
-
 webkit.org/b/141122 editing/selection/programmatic-selection-on-mac-is-directionless.html [ Pass Failure ]
 
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
