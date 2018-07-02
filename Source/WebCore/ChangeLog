@@ -1,3 +1,45 @@
+2018-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] LastResort in the font family list causes emoji with joiners to be rendered as multiple .notdef characters
+        https://bugs.webkit.org/show_bug.cgi?id=187209
+        <rdar://problem/40920785>
+
+        Reviewed by Darin Adler.
+
+        Inside our complex text codepath, we perform our own font fallback, which
+        includes a function that asks "can this font support this grapheme cluster?"
+        Because of the mechanics of how fonts work, the implementation of this
+        function is "Does the font's cmap table support every character of the
+        cluster?" We were using Font::glyphForCharacter() to determine this; however,
+        this function maps certain control characters to the zero width space
+        character (with the intention that these control characters shouldn't be
+        visible in the fast text codepath). That replacement, however, was causing
+        us to get false negatives, because Apple Color Emoji doesn't support zero
+        width space. Therefore, Apple Color Emoji was looking like it didn't support
+        emoji combining sequences.
+
+        The best solution to this would be to get Font::glyphForCharacter() to stop
+        performing these replacements (see https://bugs.webkit.org/show_bug.cgi?id=187166).
+        However, that is too risky of a change to be making right now. Instead,
+        a more localized solution is to implement a version of "Does the font's cmap
+        table support every character of the cluster" that doesn't perform the
+        substitutions. This patch does exactly that, and uses a bit vector to cache
+        the results. In order to not have a giant bit vector, we take the old code
+        path if we know the substitutions won't affect us (and uses ASSERT()s to 
+        validate this) so the bit vector only holds at maximum 3 words of storage.
+
+        Test: fast/text/emoji-with-joiner.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::codePointSupportIndex):
+        (WebCore::createAndFillGlyphPage):
+        (WebCore::Font::platformSupportsCodePoint const):
+        (WebCore::Font::supportsCodePoint const):
+        (WebCore::Font::canRenderCombiningCharacterSequence const):
+        * platform/graphics/Font.h:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformSupportsCodePoint const):
+
 2018-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Text replacements that end with symbols are expanded immediately

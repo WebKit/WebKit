@@ -171,6 +171,8 @@ public:
 
     GlyphData glyphDataForCharacter(UChar32) const;
     Glyph glyphForCharacter(UChar32) const;
+    bool supportsCodePoint(UChar32) const;
+    bool platformSupportsCodePoint(UChar32) const;
 
     RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, bool isForPlatformFont) const;
 
@@ -251,6 +253,7 @@ private:
     mutable HashMap<unsigned, RefPtr<GlyphPage>> m_glyphPages;
     mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
+    mutable BitVector m_codePointSupport;
 
     mutable RefPtr<OpenTypeMathData> m_mathData;
 #if ENABLE(OPENTYPE_VERTICAL)

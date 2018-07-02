@@ -1,3 +1,14 @@
+2018-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] LastResort in the font family list causes emoji with joiners to be rendered as multiple .notdef characters
+        https://bugs.webkit.org/show_bug.cgi?id=187209
+        <rdar://problem/40920785>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/emoji-with-joiner-expected.txt: Added.
+        * fast/text/emoji-with-joiner.html: Added.
+
 2018-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Text replacements that end with symbols are expanded immediately

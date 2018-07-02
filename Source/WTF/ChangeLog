@@ -1,3 +1,13 @@
+2018-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] LastResort in the font family list causes emoji with joiners to be rendered as multiple .notdef characters
+        https://bugs.webkit.org/show_bug.cgi?id=187209
+        <rdar://problem/40920785>
+
+        Reviewed by Darin Adler.
+
+        * wtf/unicode/CharacterNames.h:
+
 2018-06-23  Darin Adler  <darin@apple.com>
 
         [Cocoa] Improve ARC compatibility of more code in JavaScriptCore

@@ -151,6 +151,121 @@ static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferL
     return hasGlyphs;
 }
 
+static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
+{
+    // FIXME: Consider reordering these so the most common ones are at the front.
+    // Doing this could cause the BitVector to fit inside inline storage and therefore
+    // be both a performance and a memory progression.
+    if (codePoint < 0x20)
+        return codePoint;
+    if (codePoint >= 0x7F && codePoint < 0xA0)
+        return codePoint - 0x7F + 0x20;
+    std::optional<size_t> result;
+    switch (codePoint) {
+    case softHyphen:
+        result = 0x41;
+        break;
+    case newlineCharacter:
+        result = 0x42;
+        break;
+    case tabCharacter:
+        result = 0x43;
+        break;
+    case noBreakSpace:
+        result = 0x44;
+        break;
+    case narrowNoBreakSpace:
+        result = 0x45;
+        break;
+    case leftToRightMark:
+        result = 0x46;
+        break;
+    case rightToLeftMark:
+        result = 0x47;
+        break;
+    case leftToRightEmbed:
+        result = 0x48;
+        break;
+    case rightToLeftEmbed:
+        result = 0x49;
+        break;
+    case leftToRightOverride:
+        result = 0x4A;
+        break;
+    case rightToLeftOverride:
+        result = 0x4B;
+        break;
+    case leftToRightIsolate:
+        result = 0x4C;
+        break;
+    case rightToLeftIsolate:
+        result = 0x4D;
+        break;
+    case zeroWidthNonJoiner:
+        result = 0x4E;
+        break;
+    case zeroWidthJoiner:
+        result = 0x4F;
+        break;
+    case popDirectionalFormatting:
+        result = 0x50;
+        break;
+    case popDirectionalIsolate:
+        result = 0x51;
+        break;
+    case firstStrongIsolate:
+        result = 0x52;
+        break;
+    case objectReplacementCharacter:
+        result = 0x53;
+        break;
+    case zeroWidthNoBreakSpace:
+        result = 0x54;
+        break;
+    default:
+        result = std::nullopt;
+    }
+
+#ifndef NDEBUG
+    UChar32 codePointOrder[] = {
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+        0x7F,
+        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F,
+        0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 0x9F,
+        softHyphen,
+        newlineCharacter,
+        tabCharacter,
+        noBreakSpace,
+        narrowNoBreakSpace,
+        leftToRightMark,
+        rightToLeftMark,
+        leftToRightEmbed,
+        rightToLeftEmbed,
+        leftToRightOverride,
+        rightToLeftOverride,
+        leftToRightIsolate,
+        rightToLeftIsolate,
+        zeroWidthNonJoiner,
+        zeroWidthJoiner,
+        popDirectionalFormatting,
+        popDirectionalIsolate,
+        firstStrongIsolate,
+        objectReplacementCharacter,
+        zeroWidthNoBreakSpace
+    };
+    bool found = false;
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(codePointOrder); ++i) {
+        if (codePointOrder[i] == codePoint) {
+            ASSERT(i == result);
+            found = true;
+        }
+    }
+    ASSERT(found == static_cast<bool>(result));
+#endif
+    return result;
+}
+
 static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font& font)
 {
 #if PLATFORM(IOS)
@@ -177,11 +292,14 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
         auto overwriteCodePoints = [&](unsigned minimum, unsigned maximum, UChar newCodePoint) {
             unsigned begin = std::max(start, minimum);
             unsigned complete = std::min(end, maximum);
-            for (unsigned i = begin; i < complete; ++i)
+            for (unsigned i = begin; i < complete; ++i) {
+                ASSERT(codePointSupportIndex(i));
                 buffer[i - start] = newCodePoint;
+            }
         };
 
         auto overwriteCodePoint = [&](UChar codePoint, UChar newCodePoint) {
+            ASSERT(codePointSupportIndex(codePoint));
             if (codePoint >= start && codePoint < end)
                 buffer[codePoint - start] = newCodePoint;
         };
@@ -511,14 +629,39 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
         return true;
     }
 }
+
+bool Font::platformSupportsCodePoint(UChar32 character) const
+{
+    return glyphForCharacter(character);
+}
 #endif
+
+bool Font::supportsCodePoint(UChar32 character) const
+{
+    // This is very similar to static_cast<bool>(glyphForCharacter(character))
+    // except that glyphForCharacter() maps certain code points to ZWS (because they
+    // shouldn't be visible). This function doesn't do that mapping, and instead is
+    // as honest as possible about what code points the font supports. This is so
+    // that we can accurately determine which characters are supported by this font
+    // so we know which boundaries to break strings when we send them to the complex
+    // text codepath. The complex text codepath is totally separate from this ZWS
+    // replacement logic (because CoreText handles those characters instead of WebKit).
+    if (auto index = codePointSupportIndex(character)) {
+        m_codePointSupport.ensureSize(2 * (*index + 1));
+        bool hasBeenSet = m_codePointSupport.quickSet(2 * *index);
+        if (!hasBeenSet && platformSupportsCodePoint(character))
+            m_codePointSupport.quickSet(2 * *index + 1);
+        return m_codePointSupport.quickGet(2 * *index + 1);
+    }
+    return glyphForCharacter(character);
+}
 
 bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
 {
     ASSERT(isMainThread());
 
     for (UChar32 codePoint : StringView(characters, length).codePoints()) {
-        if (!glyphForCharacter(codePoint))
+        if (!supportsCodePoint(codePoint))
             return false;
     }
     return true;

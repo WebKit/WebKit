@@ -597,4 +597,13 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return advance.width + m_syntheticBoldOffset;
 }
 
+bool Font::platformSupportsCodePoint(UChar32 character) const
+{
+    UniChar codeUnits[2];
+    CGGlyph glyphs[2];
+    CFIndex count = 0;
+    U16_APPEND_UNSAFE(codeUnits, count, character);
+    return CTFontGetGlyphsForCharacters(platformData().ctFont(), codeUnits, glyphs, count);
+}
+
 } // namespace WebCore
