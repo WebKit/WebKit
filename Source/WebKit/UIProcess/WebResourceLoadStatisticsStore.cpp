@@ -157,9 +157,11 @@ void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
         return;
 
     // Make sure we destroy the persistent store on the background queue and wait for it to die
-    // synchronously since it has a C++ reference to us.
+    // synchronously since it has a C++ reference to us. Blocking nature of this task allows us
+    // to not maintain a WebResourceLoadStatisticsStore reference for the duration of dispatch,
+    // avoiding double-deletion issues when this is invoked from the destructor.
     BinarySemaphore semaphore;
-    postTask([&semaphore, this] {
+    m_statisticsQueue->dispatch([&semaphore, this] {
         m_persistentStorage = nullptr;
         m_memoryStore = nullptr;
         semaphore.signal();

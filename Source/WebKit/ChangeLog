@@ -1,3 +1,19 @@
+2018-07-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r233381): Double WebResourceLoadStatisticsStore destructor invocation
+        https://bugs.webkit.org/show_bug.cgi?id=187247
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+        Don't call postTask() to dispatch this task, as that keeps a reference
+        to this WebResourceLoadStatisticsStore object and thus causes problems
+        when invoked from the destructor in the form of a second destructor
+        invocation that ends up crashing the process. Blocking nature of this
+        call should be enough to avoid WebResourceLoadStatisticsStore lifetime
+        issues.
+
 2018-07-02  Per Arne Vollan  <pvollan@apple.com>
 
         Delete display link when closing page or the WebContent process has crashed.
