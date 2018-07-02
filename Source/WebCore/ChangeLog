@@ -1,3 +1,38 @@
+2018-07-02  David Kilzer  <ddkilzer@apple.com>
+
+        Refactor InlineTextBox::emphasisMarkExistsAndIsAbove()
+        <https://webkit.org/b/187204>
+
+        Reviewed by Darin Adler.
+
+        No new tests since there is no change in behavior.
+
+        Refactor emphasisMarkExistsAndIsAbove() to return a
+        std::optional<bool> instead of returning a bool and taking a
+        std::optional<bool> argument.  The state returned is now:
+        - std::nullopt => emphasis mark doesn't exist or is suppressed.
+        - false => emphasis mark exists and is not suppressed, but is not above.
+        - true => emphasis mark exists and is not suppressed, and is above.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment const):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment const):
+        - Update for refactored method.  Remove some redundant checks
+          for TextEmphasisMark::None that already happen in
+          emphasisMarkExistsAndIsAbove().
+        * rendering/InlineTextBox.cpp:
+        (WebCore::emphasisPositionHasNeitherLeftNorRight): Delete.
+        - Replaced by an OptionSet<TextEmphasisPosition>.
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove const):
+        - Refactor as described above.
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        - Update for refactored method.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::emphasisMarkExistsAndIsAbove const):
+        - Update for new method signature.
+
 2018-07-02  Megan Gardner  <megan_gardner@apple.com>
 
         Enable copy paste on iOS apps for Mac

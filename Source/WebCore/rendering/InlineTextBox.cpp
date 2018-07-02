@@ -353,43 +353,45 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-static inline bool emphasisPositionHasNeitherLeftNorRight(OptionSet<TextEmphasisPosition> emphasisPosition)
-{
-    return !(emphasisPosition & TextEmphasisPosition::Left) && !(emphasisPosition & TextEmphasisPosition::Right);
-}
-
-bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, std::optional<bool>& above) const
+std::optional<bool> InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style) const
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
     if (style.textEmphasisMark() == TextEmphasisMark::None)
-        return false;
+        return std::nullopt;
+
+    const OptionSet<TextEmphasisPosition> horizontalMask { TextEmphasisPosition::Left, TextEmphasisPosition::Right };
 
     auto emphasisPosition = style.textEmphasisPosition();
+    auto emphasisPositionHorizontalValue = emphasisPosition & horizontalMask;
     ASSERT(!((emphasisPosition & TextEmphasisPosition::Over) && (emphasisPosition & TextEmphasisPosition::Under)));
-    ASSERT(!((emphasisPosition & TextEmphasisPosition::Left) && (emphasisPosition & TextEmphasisPosition::Right)));
-    
-    if (emphasisPositionHasNeitherLeftNorRight(emphasisPosition))
-        above = emphasisPosition.contains(TextEmphasisPosition::Over);
+    ASSERT(emphasisPositionHorizontalValue != horizontalMask);
+
+    bool isAbove = false;
+    if (!emphasisPositionHorizontalValue)
+        isAbove = emphasisPosition.contains(TextEmphasisPosition::Over);
     else if (style.isHorizontalWritingMode())
-        above = emphasisPosition.contains(TextEmphasisPosition::Over);
+        isAbove = emphasisPosition.contains(TextEmphasisPosition::Over);
     else
-        above = emphasisPosition.contains(TextEmphasisPosition::Right);
-    
+        isAbove = emphasisPositionHorizontalValue == TextEmphasisPosition::Right;
+
     if ((style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Under))
         || (!style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Left)))
-        return true; // Ruby text is always over, so it cannot suppress emphasis marks under.
+        return isAbove; // Ruby text is always over, so it cannot suppress emphasis marks under.
 
     RenderBlock* containingBlock = renderer().containingBlock();
     if (!containingBlock->isRubyBase())
-        return true; // This text is not inside a ruby base, so it does not have ruby text over it.
+        return isAbove; // This text is not inside a ruby base, so it does not have ruby text over it.
 
     if (!is<RenderRubyRun>(*containingBlock->parent()))
-        return true; // Cannot get the ruby text.
+        return isAbove; // Cannot get the ruby text.
 
     RenderRubyText* rubyText = downcast<RenderRubyRun>(*containingBlock->parent()).rubyText();
 
     // The emphasis marks over are suppressed only if there is a ruby text box and it not empty.
-    return !rubyText || !rubyText->hasLines();
+    if (rubyText && rubyText->hasLines())
+        return std::nullopt;
+
+    return isAbove;
 }
 
 struct InlineTextBox::MarkedTextStyle {
@@ -1012,11 +1014,10 @@ void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatR
     const RenderStyle& lineStyle = this->lineStyle();
 
     float emphasisMarkOffset = 0;
-    std::optional<bool> emphasisMarkAbove;
-    bool hasTextEmphasis = emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkAbove);
-    const AtomicString& emphasisMark = hasTextEmphasis ? lineStyle.textEmphasisMarkString() : nullAtom();
+    std::optional<bool> markExistsAndIsAbove = emphasisMarkExistsAndIsAbove(lineStyle);
+    const AtomicString& emphasisMark = markExistsAndIsAbove ? lineStyle.textEmphasisMarkString() : nullAtom();
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = (emphasisMarkAbove && *emphasisMarkAbove) ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = *markExistsAndIsAbove ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
 
     TextPainter textPainter { context };
     textPainter.setFont(font);
