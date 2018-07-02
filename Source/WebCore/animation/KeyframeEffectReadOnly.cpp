@@ -1243,7 +1243,11 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
 
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
 
-    auto timeOffset = animation()->currentTime().value().seconds();
+    auto currentTime = animation()->currentTime();
+    if (!currentTime)
+        return;
+
+    auto timeOffset = currentTime->seconds();
     if (timing()->delay() < 0_s)
         timeOffset = -timing()->delay().seconds();
 
