@@ -1,3 +1,9 @@
+2018-07-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Repository fix after r233427 and r233443.
+
+        * jstests: Removed.
+
 2018-06-30  Adam Barth  <abarth@webkit.org>
 
         Port JavaScriptCore to OS(FUCHSIA)
