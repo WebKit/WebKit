@@ -57,6 +57,7 @@
 - (void)waitForMessage:(NSString *)message;
 - (void)performAfterLoading:(dispatch_block_t)actions;
 - (void)waitForNextPresentationUpdate;
+- (void)typeCharacter:(char)character;
 @end
 
 #if PLATFORM(IOS)
@@ -74,7 +75,6 @@
 - (void)mouseUpAtPoint:(NSPoint)point;
 - (void)mouseMoveToPoint:(NSPoint)point withFlags:(NSEventModifierFlags)flags;
 - (void)sendClicksAtPoint:(NSPoint)point numberOfClicks:(NSUInteger)numberOfClicks;
-- (void)typeCharacter:(char)character;
 - (NSWindow *)hostWindow;
 @end
 #endif

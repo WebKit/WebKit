@@ -1,3 +1,13 @@
+2018-07-02  Brady Eidson  <beidson@apple.com>
+
+        Crash notifying observers of responsiveness state change
+        <rdar://problem/41267796> and https://bugs.webkit.org/show_bug.cgi?id=187262
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::callObserverCallback): Copy the container ahead of time.
+
 2018-07-02  Sihui Liu  <sihui_liu@apple.com>
 
         Remove InitWebCoreThreadSystemInterface() in WKProcessPool _initWithConfiguration
