@@ -34,17 +34,19 @@
 
 @class LayoutTestTextCheckingResult;
 
+using TextCheckingResultsDictionary = NSDictionary<NSString *, NSArray<LayoutTestTextCheckingResult *> *>;
+
 @interface LayoutTestSpellChecker : NSSpellChecker {
 @private
-    RetainPtr<NSDictionary<NSString *, LayoutTestTextCheckingResult *>> _replacements;
+    RetainPtr<TextCheckingResultsDictionary> _results;
     BOOL _spellCheckerLoggingEnabled;
 }
 
 + (instancetype)checker;
 + (void)uninstallAndReset;
 
-- (void)setReplacementsFromJSObject:(JSObjectRef)replacements inContext:(JSContextRef)context;
-@property (nonatomic, copy) NSDictionary<NSString *, LayoutTestTextCheckingResult *> *replacements;
+- (void)setResultsFromJSObject:(JSObjectRef)resultsObject inContext:(JSContextRef)context;
+@property (nonatomic, copy) TextCheckingResultsDictionary *results;
 @property (nonatomic) BOOL spellCheckerLoggingEnabled;
 @end
 

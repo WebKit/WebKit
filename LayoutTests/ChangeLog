@@ -1,3 +1,27 @@
+2018-07-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK1] editing/spelling/markers.html is failing on recent builds of macOS Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=187253
+
+        Reviewed by Tim Horton.
+
+        In recent builds of macOS Mojave, NSSpellChecker returns both grammar and spelling errors when asked to analyze
+        the string "I have a issue.". While arguably correct, the change causes this existing layout test to fail due
+        to one of the calls to `verifyUnexpectedMarkers` expecting either grammar markers and not spelling markers, or
+        vice versa.
+
+        To fix this, we can leverage the mechanism added in r233412 to simulate different results from the platform
+        spellchecker, such that the test now exercises all combinations of grammar and spelling corrections observed on
+        each macOS platform, regardless of the actual platform where the test is being run.
+
+        This patch also enhances the capabilities of `LayoutTestSpellChecker`. See `Tools/ChangeLog` for more details.
+
+        * editing/spelling/markers-expected.txt:
+        * editing/spelling/markers.html:
+        * editing/spelling/text-replacement-after-typing-to-word.html:
+
+        Adjusted for a renamed TestRunner method.
+
 2018-07-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK gardening

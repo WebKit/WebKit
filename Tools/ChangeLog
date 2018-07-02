@@ -1,3 +1,51 @@
+2018-07-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK1] editing/spelling/markers.html is failing on recent builds of macOS Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=187253
+
+        Reviewed by Tim Horton.
+
+        Enhances and refactors LayoutTestSpellChecker, which was introduced in r233412.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setSpellCheckerResultsCallback):
+
+        Rename setSpellCheckerTextReplacements to setSpellCheckerResults.
+
+        (TestRunner::staticFunctions):
+        (setSpellCheckerTextReplacementsCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setSpellCheckerResults):
+        (TestRunner::setSpellCheckerTextReplacements): Deleted.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setSpellCheckerResults):
+        (TestRunner::setSpellCheckerTextReplacements): Deleted.
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.h:
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (-[LayoutTestTextCheckingResult initWithType:range:replacement:details:]):
+        (-[LayoutTestTextCheckingResult grammarDetails]):
+        (-[LayoutTestSpellChecker reset]):
+        (-[LayoutTestSpellChecker results]):
+        (-[LayoutTestSpellChecker setResults:]):
+        (-[LayoutTestSpellChecker setResultsFromJSObject:inContext:]):
+
+        Add support for passing in a list of grammar correction detail ranges. Necessary for simulating grammar errors.
+
+        (-[LayoutTestSpellChecker checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:]):
+
+        Tweaked to always call the superclass method. This ensures that we set the `orthography` and `wordCount`
+        outpointers if applicable.
+
+        (-[LayoutTestSpellChecker requestCheckingOfString:range:types:options:inSpellDocumentWithTag:completionHandler:]):
+
+        Added support for simulating asynchronous spell checking.
+
+        (-[LayoutTestTextCheckingResult initWithType:range:replacement:]): Deleted.
+        (-[LayoutTestSpellChecker replacements]): Deleted.
+        (-[LayoutTestSpellChecker setReplacements:]): Deleted.
+        (-[LayoutTestSpellChecker setReplacementsFromJSObject:inContext:]): Deleted.
+
 2018-07-02  Brady Eidson  <beidson@apple.com>
 
         Another unreviewed followup to:

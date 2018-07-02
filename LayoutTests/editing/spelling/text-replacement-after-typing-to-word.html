@@ -17,19 +17,23 @@ async function runTest()
         internals.settings.setAsynchronousSpellCheckingEnabled(false);
         internals.setAutomaticTextReplacementEnabled(true);
         internals.setAutomaticSpellingCorrectionEnabled(true);
-        testRunner.setSpellCheckerTextReplacements({
-            "YT?": {
-                "replacement": "You there?",
-                "type": "replacement",
-                "from": 0,
-                "to": 3
-            },
-            "YT?\n": {
-                "replacement": "You there?",
-                "type": "replacement",
-                "from": 0,
-                "to": 3
-            }
+        testRunner.setSpellCheckerResults({
+            "YT?": [
+                {
+                    "replacement": "You there?",
+                    "type": "replacement",
+                    "from": 0,
+                    "to": 3
+                }
+            ],
+            "YT?\n": [
+                {
+                    "replacement": "You there?",
+                    "type": "replacement",
+                    "from": 0,
+                    "to": 3
+                }
+            ]
         });
     }
 

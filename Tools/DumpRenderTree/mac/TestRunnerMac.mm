@@ -219,12 +219,12 @@ void TestRunner::setSpellCheckerLoggingEnabled(bool enabled)
 #endif
 }
 
-void TestRunner::setSpellCheckerTextReplacements(JSContextRef context, JSObjectRef replacements)
+void TestRunner::setSpellCheckerResults(JSContextRef context, JSObjectRef results)
 {
 #if PLATFORM(MAC)
-    [[LayoutTestSpellChecker checker] setReplacementsFromJSObject:replacements inContext:context];
+    [[LayoutTestSpellChecker checker] setResultsFromJSObject:results inContext:context];
 #else
-    UNUSED_PARAM(replacements);
+    UNUSED_PARAM(results);
     UNUSED_PARAM(context);
 #endif
 }

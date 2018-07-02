@@ -7,6 +7,18 @@ Checking for issue on 'I have a issue.'
 PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
 PASS range.toString() is "a"
 
+Checking for issue on 'I have a issue.'
+PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+PASS range.toString() is "a"
+
+Checking for issue on 'I have a issue.'
+PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+PASS range.toString() is "a"
+
+Checking for issue on 'I have a issue.'
+PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+PASS range.toString() is "a"
+
 Checking for issue on 'zz.'
 PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
 PASS range.toString() is "zz"
@@ -18,6 +30,9 @@ PASS range.toString() is "orange,zz,apple."
 Checking for issue on 'orange,zz,apple.'
 PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
 PASS range.toString() is "orange,zz,apple"
+
+Checking for no other issues on 'I have a issue.'
+PASS internals.markerCountForNode(element.firstChild, oppositeMarker) became 0
 
 Checking for no other issues on 'I have a issue.'
 PASS internals.markerCountForNode(element.firstChild, oppositeMarker) became 0

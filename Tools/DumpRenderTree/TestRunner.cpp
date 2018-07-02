@@ -1788,13 +1788,13 @@ static JSValueRef setSpellCheckerLoggingEnabledCallback(JSContextRef context, JS
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setSpellCheckerTextReplacementsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef setSpellCheckerResultsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
     auto* runner = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    runner->setSpellCheckerTextReplacements(context, JSValueToObject(context, arguments[0], nullptr));
+    runner->setSpellCheckerResults(context, JSValueToObject(context, arguments[0], nullptr));
     return JSValueMakeUndefined(context);
 }
 
@@ -2265,7 +2265,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "runUIScript", runUIScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "imageCountInGeneralPasteboard", imageCountInGeneralPasteboardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSpellCheckerLoggingEnabled", setSpellCheckerLoggingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setSpellCheckerTextReplacements", setSpellCheckerTextReplacementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setSpellCheckerResults", setSpellCheckerResultsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setOpenPanelFiles", setOpenPanelFilesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "forceImmediateCompletion", forceImmediateCompletionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
