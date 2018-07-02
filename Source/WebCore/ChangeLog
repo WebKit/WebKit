@@ -1,3 +1,42 @@
+2018-07-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clean up some spellchecking code
+        https://bugs.webkit.org/show_bug.cgi?id=187238
+
+        Reviewed by Tim Horton.
+
+        A few minor tweaks to modernize some spellchecking code. No change in behavior.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired):
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+
+        Use move semantics when passing Ranges to markAllMisspellingsAndBadGrammarInRanges.
+
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+
+        Change this to take RefPtr<Range>&& instead of Range*.
+
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+
+        Remove an unnecessary call to `RefPtr::get()`.
+
+        * editing/Editor.h:
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::invalidateParagraphRangeValues):
+        (WebCore::TextCheckingParagraph::checkingStart const):
+        (WebCore::TextCheckingParagraph::checkingEnd const):
+        (WebCore::TextCheckingParagraph::checkingLength const):
+        (WebCore::TextCheckingParagraph::automaticReplacementStart const):
+        (WebCore::TextCheckingParagraph::automaticReplacementLength const):
+
+        Currently, all of these cached range offsets are `int`s, and use a value of -1 to denote that their values are
+        missing and must be recomputed. Instead, make these `std::optional`s and let `std::nullopt` represent the
+        missing value.
+
+        * editing/TextCheckingHelper.h:
+
 2018-07-02  Antoine Quint  <graouts@apple.com>
 
         Crash in WebCore::WebAnimation::timeToNextRequiredTick when running imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html
