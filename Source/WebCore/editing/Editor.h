@@ -293,7 +293,7 @@ public:
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
     WEBCORE_EXPORT void toggleOverwriteModeEnabled();
 
-    void markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask, Range* spellingRange, Range* grammarRange);
+    void markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask, Range* spellingRange, Range* automaticReplacementRange, Range* grammarRange);
 #if PLATFORM(IOS)
     NO_RETURN_DUE_TO_ASSERT
 #endif

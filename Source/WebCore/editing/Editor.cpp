@@ -667,7 +667,7 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, bool selec
         return;
 
     auto rangeToCheck = Range::create(document(), firstPositionInNode(nodeToCheck), lastPositionInNode(nodeToCheck));
-    if (auto request = SpellCheckRequest::create(resolveTextCheckingTypeMask(*nodeToCheck, TextCheckingTypeSpelling | TextCheckingTypeGrammar), TextCheckingProcessBatch, rangeToCheck.copyRef(), rangeToCheck.copyRef()))
+    if (auto request = SpellCheckRequest::create(resolveTextCheckingTypeMask(*nodeToCheck, TextCheckingTypeSpelling | TextCheckingTypeGrammar), TextCheckingProcessBatch, rangeToCheck.copyRef(), rangeToCheck.copyRef(), rangeToCheck.copyRef()))
         m_spellChecker->requestCheckingFor(request.releaseNonNull());
 }
 
@@ -2342,7 +2342,8 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
         return;
 
     VisibleSelection adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
-    markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWords.toNormalizedRange().get(), adjacentWords.toNormalizedRange().get());
+    auto adjacentWordRange = adjacentWords.toNormalizedRange();
+    markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWordRange.get(), adjacentWordRange.get(), adjacentWordRange.get());
 #else
 #if !USE(AUTOMATIC_TEXT_REPLACEMENT)
     UNUSED_PARAM(doReplacement);
@@ -2417,13 +2418,17 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
         if (!spellCheckingRange)
             return;
 
+        auto adjacentWordRange = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary)).toNormalizedRange();
+        if (!adjacentWordRange)
+            return;
+
         // The spelling and grammar markers in these ranges are recomputed. This is because typing a word may
         // cause any other part of the current sentence to lose or gain spelling correction markers, due to
         // sentence retro correction. As such, we expand the spell checking range to encompass as much of the
         // full sentence as we can, respecting boundaries where spellchecking is disabled.
         fullSentenceRange->ownerDocument().markers().removeMarkers(fullSentenceRange.get(), DocumentMarker::Grammar);
         spellCheckingRange->ownerDocument().markers().removeMarkers(spellCheckingRange.get(), DocumentMarker::Spelling);
-        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellCheckingRange.get(), fullSentenceRange.get());
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellCheckingRange.get(), adjacentWordRange.get(), fullSentenceRange.get());
         return;
     }
 
@@ -2547,7 +2552,7 @@ void Editor::markBadGrammar(const VisibleSelection& selection)
 #endif
 }
 
-void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textCheckingOptions, Range* spellingRange, Range* grammarRange)
+void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textCheckingOptions, Range* spellingRange, Range* automaticReplacementRange, Range* grammarRange)
 {
     ASSERT(unifiedTextCheckerEnabled());
 
@@ -2579,7 +2584,8 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
 
     // In asynchronous mode, we intentionally check paragraph-wide sentence.
     const auto resolvedOptions = resolveTextCheckingTypeMask(editableNode, textCheckingOptions);
-    auto request = SpellCheckRequest::create(resolvedOptions, TextCheckingProcessIncremental, asynchronous ? paragraphRange.get() : rangeToCheck, paragraphRange.copyRef());
+    auto& textReplacementRange = automaticReplacementRange ? *automaticReplacementRange : rangeToCheck;
+    auto request = SpellCheckRequest::create(resolvedOptions, TextCheckingProcessIncremental, asynchronous ? paragraphRange.get() : rangeToCheck, textReplacementRange, paragraphRange.copyRef());
     if (!request)
         return;
 
@@ -2627,7 +2633,8 @@ static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingPara
 
     RefPtr<Range> newParagraphRange = TextIterator::rangeFromLocationAndLength(&scope, paragraphLocation, paragraphLength + replacement.length() - resultLength);
 
-    paragraph = TextCheckingParagraph(TextIterator::subrange(*newParagraphRange, resultLocation, replacement.length()), newParagraphRange.get());
+    auto spellCheckingRange = TextIterator::subrange(*newParagraphRange, resultLocation, replacement.length());
+    paragraph = TextCheckingParagraph(spellCheckingRange.copyRef(), spellCheckingRange.copyRef(), newParagraphRange.get());
 }
 
 void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<TextCheckingResult>& results)
@@ -2635,7 +2642,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
     Ref<Frame> protection(m_frame);
 
     TextCheckingTypeMask textCheckingOptions = request.data().mask();
-    TextCheckingParagraph paragraph(request.checkingRange(), &request.paragraphRange());
+    TextCheckingParagraph paragraph(request.checkingRange(), request.automaticReplacementRange(), &request.paragraphRange());
 
     const bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
     const bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;
@@ -2675,6 +2682,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
         const int resultLocation = results[i].location + offsetDueToReplacement;
         const int resultLength = results[i].length;
         const int resultEndLocation = resultLocation + resultLength;
+        const int automaticReplacementEndLocation = paragraph.automaticReplacementStart() + paragraph.automaticReplacementLength() + offsetDueToReplacement;
         const String& replacement = results[i].replacement;
         const bool resultEndsAtAmbiguousBoundary = useAmbiguousBoundaryOffset && selectionOffset - 1 <= resultEndLocation;
 
@@ -2699,12 +2707,12 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
                     badGrammarRange->startContainer().document().markers().addMarker(badGrammarRange.ptr(), DocumentMarker::Grammar, detail.userDescription);
                 }
             }
-        } else if (resultEndLocation <= spellingRangeEndOffset && resultEndLocation >= paragraph.checkingStart()
+        } else if (resultEndLocation <= automaticReplacementEndLocation && resultEndLocation >= paragraph.automaticReplacementStart()
             && isAutomaticTextReplacementType(resultType)) {
-            // In this case the result range just has to touch the spelling range, so we can handle replacing non-word text such as punctuation.
+            // In this case the result range just has to touch the automatic replacement range, so we can handle replacing non-word text such as punctuation.
             ASSERT(resultLength > 0 && resultLocation >= 0);
 
-            if (shouldShowCorrectionPanel && (resultEndLocation < spellingRangeEndOffset
+            if (shouldShowCorrectionPanel && (resultEndLocation < automaticReplacementEndLocation
                 || !(resultType & (TextCheckingTypeReplacement | TextCheckingTypeCorrection))))
                 continue;
 
@@ -2728,7 +2736,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
                 continue;
 
             if (shouldShowCorrectionPanel) {
-                if (resultEndLocation == spellingRangeEndOffset) {
+                if (resultEndLocation == automaticReplacementEndLocation) {
                     // We only show the correction panel on the last word.
                     m_alternativeTextController->show(rangeToReplace, replacement);
                     break;
@@ -2829,7 +2837,8 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelec
         TextCheckingTypeMask textCheckingOptions = TextCheckingTypeSpelling;
         if (markGrammar && isGrammarCheckingEnabled())
             textCheckingOptions |= TextCheckingTypeGrammar;
-        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellingSelection.toNormalizedRange().get(), grammarSelection.toNormalizedRange().get());
+        auto spellCheckingRange = spellingSelection.toNormalizedRange();
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellCheckingRange.get(), spellCheckingRange.get(), grammarSelection.toNormalizedRange().get());
         return;
     }
 

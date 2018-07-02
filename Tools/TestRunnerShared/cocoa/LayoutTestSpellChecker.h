@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,4 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-void setSpellCheckerLoggingEnabled(bool);
+#pragma once
+
+#import <JavaScriptCore/JavaScriptCore.h>
+#import <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
+
+#import <AppKit/NSSpellChecker.h>
+
+@class LayoutTestTextCheckingResult;
+
+@interface LayoutTestSpellChecker : NSSpellChecker {
+@private
+    RetainPtr<NSDictionary<NSString *, LayoutTestTextCheckingResult *>> _replacements;
+    BOOL _spellCheckerLoggingEnabled;
+}
+
++ (instancetype)checker;
++ (void)uninstallAndReset;
+
+- (void)setReplacementsFromJSObject:(JSObjectRef)replacements inContext:(JSContextRef)context;
+@property (nonatomic, copy) NSDictionary<NSString *, LayoutTestTextCheckingResult *> *replacements;
+@property (nonatomic) BOOL spellCheckerLoggingEnabled;
+@end
+
+#endif // PLATFORM(MAC)

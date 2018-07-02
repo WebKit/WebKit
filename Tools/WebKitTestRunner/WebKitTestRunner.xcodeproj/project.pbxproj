@@ -133,6 +133,7 @@
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
+		F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -372,6 +373,8 @@
 		E1C642C217CBCC7300D66A3C /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoseAsClass.h; sourceTree = "<group>"; };
 		E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerPasteboard.mm; sourceTree = "<group>"; };
 		E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPasteboard.h; sourceTree = "<group>"; };
+		F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestSpellChecker.mm; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.mm; sourceTree = "<group>"; };
+		F4C3578B20E8444000FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTestSpellChecker.h; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -479,6 +482,7 @@
 			isa = PBXGroup;
 			children = (
 				0F18E71B1D6BC4E60027E547 /* Bindings */,
+				F4B6C31620E84369008AC225 /* cocoa */,
 				0F73B5471BA782FE004B3EF4 /* UIScriptContext */,
 				3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */,
 				3148A0541E6F85B600D3B316 /* IOSLayoutTestCommunication.h */,
@@ -822,6 +826,15 @@
 			name = Shared;
 			sourceTree = "<group>";
 		};
+		F4B6C31620E84369008AC225 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F4C3578B20E8444000FA0748 /* LayoutTestSpellChecker.h */,
+				F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */,
+			);
+			name = cocoa;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1046,6 +1059,7 @@
 				31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */,
 				0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */,
 				0F18E7181D6BC4560027E547 /* JSWrapper.cpp in Sources */,
+				F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */,
 				A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */,
 				A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */,
 				2DFA98491D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm in Sources */,

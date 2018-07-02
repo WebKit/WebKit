@@ -44,11 +44,12 @@ class SpellChecker;
 
 class SpellCheckRequest : public TextCheckingRequest {
 public:
-    static RefPtr<SpellCheckRequest> create(TextCheckingTypeMask, TextCheckingProcessType, Ref<Range>&& checkingRange, Ref<Range>&& paragraphRange);
+    static RefPtr<SpellCheckRequest> create(TextCheckingTypeMask, TextCheckingProcessType, Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange);
     virtual ~SpellCheckRequest();
 
     Range& checkingRange() const { return m_checkingRange.get(); }
     Range& paragraphRange() const { return m_paragraphRange.get(); }
+    Range& automaticReplacementRange() const { return m_automaticReplacementRange.get(); }
     Element* rootEditableElement() const { return m_rootEditableElement.get(); }
 
     void setCheckerAndSequence(SpellChecker*, int sequence);
@@ -60,10 +61,11 @@ public:
     void didCancel() override;
 
 private:
-    SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& paragraphRange, const String&, TextCheckingTypeMask, TextCheckingProcessType);
+    SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange, const String&, TextCheckingTypeMask, TextCheckingProcessType);
 
     SpellChecker* m_checker { nullptr };
     Ref<Range> m_checkingRange;
+    Ref<Range> m_automaticReplacementRange;
     Ref<Range> m_paragraphRange;
     RefPtr<Element> m_rootEditableElement;
     TextCheckingRequestData m_requestData;

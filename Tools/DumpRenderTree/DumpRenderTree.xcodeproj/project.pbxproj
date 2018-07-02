@@ -77,7 +77,6 @@
 		29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29CFBA2D12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm */; };
 		2CE88FA217124D8C00734FC0 /* JavaScriptThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CE88FA117124CEE00734FC0 /* JavaScriptThreading.cpp */; };
 		2D403F1B15087209005358D2 /* LayoutTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D403EA215087142005358D2 /* LayoutTestHelper.m */; };
-		2DA2E3A51E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA2E3A41E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm */; };
 		31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */; };
 		312943F91E71F2B4001EE2CC /* IOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */; };
 		4464CABE1C20A08B00E5BB55 /* DumpRenderTreeAppMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4464CABD1C20A07000E5BB55 /* DumpRenderTreeAppMain.mm */; };
@@ -148,6 +147,7 @@
 		C23EA2081BC9F05100C980B7 /* FontWithFeatures.otf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */; };
 		C23EA2091BC9F05100C980B7 /* FontWithFeatures.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */; };
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
+		F4C3578D20E8444E00FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578820E8442700FA0748 /* LayoutTestSpellChecker.mm */; };
 		F4D423611DD5048200678290 /* TextInputControllerIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */; };
 /* End PBXBuildFile section */
 
@@ -282,8 +282,6 @@
 		2CE88FA117124CEE00734FC0 /* JavaScriptThreading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptThreading.cpp; sourceTree = "<group>"; };
 		2D403EA215087142005358D2 /* LayoutTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LayoutTestHelper.m; path = mac/LayoutTestHelper.m; sourceTree = "<group>"; };
 		2D403F19150871F9005358D2 /* LayoutTestHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LayoutTestHelper; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DA2E3A31E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeSpellChecker.h; path = mac/DumpRenderTreeSpellChecker.h; sourceTree = "<group>"; };
-		2DA2E3A41E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeSpellChecker.mm; path = mac/DumpRenderTreeSpellChecker.mm; sourceTree = "<group>"; };
 		2EDE0DAA1F5131DE00D5F8DF /* AppKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppKitTestSPI.h; path = mac/AppKitTestSPI.h; sourceTree = "<group>"; };
 		31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockWebNotificationProvider.h; path = mac/MockWebNotificationProvider.h; sourceTree = "<group>"; };
 		31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockWebNotificationProvider.mm; path = mac/MockWebNotificationProvider.mm; sourceTree = "<group>"; };
@@ -412,6 +410,8 @@
 		C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.ttf; path = fonts/FontWithFeatures.ttf; sourceTree = "<group>"; };
 		E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockGeolocationProvider.h; path = mac/MockGeolocationProvider.h; sourceTree = "<group>"; };
 		E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockGeolocationProvider.mm; path = mac/MockGeolocationProvider.mm; sourceTree = "<group>"; };
+		F4C3578820E8442700FA0748 /* LayoutTestSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestSpellChecker.mm; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.mm; sourceTree = "<group>"; };
+		F4C3578920E8442700FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTestSpellChecker.h; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.h; sourceTree = "<group>"; };
 		F4D4235F1DD5045300678290 /* TextInputControllerIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextInputControllerIOS.m; path = ios/TextInputControllerIOS.m; sourceTree = "<group>"; };
 		F4D423601DD5046900678290 /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -687,6 +687,7 @@
 		3148A0651E6F90F400D3B316 /* TestRunnerShared */ = {
 			isa = PBXGroup;
 			children = (
+				F4B6C31820E84382008AC225 /* cocoa */,
 				3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */,
 				3148A0561E6F90F400D3B316 /* IOSLayoutTestCommunication.h */,
 			);
@@ -779,8 +780,6 @@
 			children = (
 				A8B91ADF0CF3B372008F91FF /* DumpRenderTreePasteboard.h */,
 				A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.mm */,
-				2DA2E3A31E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.h */,
-				2DA2E3A41E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm */,
 				A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */,
 				A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */,
 			);
@@ -815,6 +814,15 @@
 				BCB2848C0CFA8221007E533E /* PixelDumpSupportMac.mm */,
 			);
 			name = PixelDump;
+			sourceTree = "<group>";
+		};
+		F4B6C31820E84382008AC225 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F4C3578920E8442700FA0748 /* LayoutTestSpellChecker.h */,
+				F4C3578820E8442700FA0748 /* LayoutTestSpellChecker.mm */,
+			);
+			name = cocoa;
 			sourceTree = "<group>";
 		};
 		F4D4235D1DD4F99900678290 /* mac */ = {
@@ -1081,7 +1089,6 @@
 				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
 				A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */,
 				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.mm in Sources */,
-				2DA2E3A51E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm in Sources */,
 				A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */,
 				BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */,
 				BCA18B700C9B08DB00114369 /* EventSendingController.mm in Sources */,
@@ -1093,6 +1100,7 @@
 				2CE88FA217124D8C00734FC0 /* JavaScriptThreading.cpp in Sources */,
 				0F18E7061D6BA0230027E547 /* JSUIScriptController.cpp in Sources */,
 				0F18E7131D6BC43A0027E547 /* JSWrapper.cpp in Sources */,
+				F4C3578D20E8444E00FA0748 /* LayoutTestSpellChecker.mm in Sources */,
 				E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */,
 				31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */,
 				BCA18B720C9B08DB00114369 /* NavigationController.m in Sources */,

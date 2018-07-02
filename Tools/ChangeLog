@@ -1,3 +1,87 @@
+2018-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Text replacements that end with symbols are expanded immediately
+        https://bugs.webkit.org/show_bug.cgi?id=187225
+        <rdar://problem/41112433>
+
+        Reviewed by Darin Adler.
+
+        Adds testing support for mocking NSSpellChecker's text checking results. See below for more details, and the new
+        layout test for an example of its usage.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestRunner.cpp:
+        (setSpellCheckerTextReplacementsCallback):
+
+        Add bindings support in TestRunner to specify a set of text replacement mappings. Each entry in the dictionary
+        maps a string representing an input to the NSSpellChecker to some information describing the spell checking
+        result that LayoutTestSpellChecker will return.
+
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+
+        Restore the original shared NSSpellchecker before transitioning to the next layout test, if needed.
+
+        * DumpRenderTree/mac/DumpRenderTreeSpellChecker.mm: Removed.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setSpellCheckerLoggingEnabled):
+        (TestRunner::setSpellCheckerTextReplacements):
+
+        These testRunner methods ensure that `-[NSSpellChecker sharedSpellChecker]` is swizzled to return our mock
+        LayoutTestSpellChecker instance before calling into it.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setSpellCheckerTextReplacements):
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.h: Renamed from Tools/DumpRenderTree/mac/DumpRenderTreeSpellChecker.h.
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm: Added.
+
+        Moved DumpRenderTreeSpellChecker to LayoutTestSpellChecker, and made it compile for both WebKitTestRunner
+        (modern WebKit) and DumpRenderTree (legacy WebKit) by putting it in TestRunnerShared.
+
+        (existingGlobalLayoutTestSpellChecker):
+        (ensureGlobalLayoutTestSpellChecker):
+        (stringForCorrectionResponse):
+        (nsTextCheckingType):
+        (-[LayoutTestTextCheckingResult initWithType:range:replacement:]):
+        (-[LayoutTestTextCheckingResult range]):
+        (-[LayoutTestTextCheckingResult resultType]):
+        (-[LayoutTestTextCheckingResult replacementString]):
+        (-[LayoutTestTextCheckingResult description]):
+
+        LayoutTestTextCheckingResult represents a fake NSTextCheckingResult containing spell checking results supplied
+        by the layout test.
+
+        (+[LayoutTestSpellChecker installIfNecessary]):
+        (+[LayoutTestSpellChecker uninstallAndReset]):
+
+        Helper methods to begin and end swizzling the shared NSSpellChecker.
+
+        (-[LayoutTestSpellChecker reset]):
+
+        Resets the state of the LayoutTestSpellChecker (this entails clearing the fake replacements dictionary and
+        turning off logging for recorded spellchecking responses).
+
+        (-[LayoutTestSpellChecker replacements]):
+        (-[LayoutTestSpellChecker setReplacements:]):
+        (-[LayoutTestSpellChecker setReplacementsFromJSObject:inContext:]):
+
+        Helper method to take a `JSObjectRef` supplied by the test runner and transform it into a map of spell checking
+        string inputs to LayoutTestTextCheckingResults.
+
+        (-[LayoutTestSpellChecker checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:]):
+
+        Consult the text replacement map and bail early if a match is found, before calling into real NSSpellChecker
+        logic to perform spellchecking.
+
+        (-[LayoutTestSpellChecker recordResponse:toCorrection:forWord:language:inSpellDocumentWithTag:]):
+
+        Reimplement the original functionality in DumpRenderTreeSpellChecker to make `-recordResponse:…` print to stdout
+        by overriding the method and printing if the `-spellCheckerLoggingEnabled` property has been set to YES.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2018-07-01  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK] Fix retrieving backtrace from within flatpak sandbox in test runner

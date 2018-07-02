@@ -1,3 +1,20 @@
+2018-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Text replacements that end with symbols are expanded immediately
+        https://bugs.webkit.org/show_bug.cgi?id=187225
+        <rdar://problem/41112433>
+
+        Reviewed by Darin Adler.
+
+        Adds a layout test to check that if a user has configured a text replacement that ends with punctuation, then:
+        1. Typing that text replacement won't immediately trigger replacement.
+        2. Text replacement is triggered after pressing enter.
+
+        * editing/spelling/text-replacement-after-typing-to-word-expected.txt: Added.
+        * editing/spelling/text-replacement-after-typing-to-word.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-06-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at timing-model/timelines/document-timelines.html pass reliably

@@ -1,3 +1,82 @@
+2018-07-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Text replacements that end with symbols are expanded immediately
+        https://bugs.webkit.org/show_bug.cgi?id=187225
+        <rdar://problem/41112433>
+
+        Reviewed by Darin Adler.
+
+        In shipping Safari, enabling grammar correction causes text shortcuts that end with symbols or punctuation marks
+        to immediately trigger when typing; normally, when grammar correction is off, this is only triggered after the
+        user has additionally inserted a punctuation mark or whitespace character after the replaced text.
+
+        This bug happens because enabling grammar checking causes the spell checking range to expand to the range of the
+        full sentence, so any text checking results that replace an existing range are triggered as long as they end
+        anywhere in the sentence. In contrast, when grammar checking is disabled, the spell checking range is limited to
+        the nearest adjacent word, which prevents text replacement from occurring elsewhere in the sentence.
+
+        However, after r232530, we now always expand the spell checking range to the extent of the sentence when a word
+        is typed regardless of whether grammar checking is enabled, which means that the issue described above now
+        happens everywhere. To fix this recent regression and the existing bug, we:
+
+        -   Augment our spellchecking codepaths to include a new automatic text replacement range, alongside
+            spellchecking and paragraph ranges.
+        -   Let this automatic text replacement range be the range of the adjacent word in the case where the user has
+            finished typing a word.
+        -   When marking and replacing text checking results, consult this new automatic text replacement instead of the
+            spellchecking range.
+
+        This keeps the behavior grammar and sentence retro correction results intact, while limiting the scope in which
+        text replacement results are applied.
+
+        Test: editing/spelling/text-replacement-after-typing-to-word.html
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired):
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+
+        Pass in the adjacent word range for the `automaticReplacementRange`, instead of the spell checking range (which
+        may be extended to the full range of the sentence).
+
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+
+        Add an `automaticReplacementRange` argument to markAllMisspellingsAndBadGrammarInRanges, and adjust call sites
+        to pass in a range (generally the same as the spell checking range, but in the case where a word has been typed,
+        this is a narrower range).
+
+        (WebCore::correctSpellcheckingPreservingTextCheckingParagraph):
+        (WebCore::Editor::markAndReplaceFor):
+
+        When replacing text, only allow text replacement in the automatic replacement range rather than the spell
+        checking range.
+
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        * editing/Editor.h:
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellCheckRequest::SpellCheckRequest):
+
+        Add a new version of this constructor that takes a single Range representing both the spellchecking range and
+        the automatic text replacement range, for convenience.
+
+        (WebCore::SpellCheckRequest::create):
+        * editing/SpellChecker.h:
+
+        Add plumbing for the automatic replacement range.
+
+        (WebCore::SpellCheckRequest::automaticReplacementRange const):
+        * editing/TextCheckingHelper.cpp:
+
+        Add plumbing for the automatic replacement range, and new helpers to locate the range as offsets within the
+        text checking paragraph range.
+
+        (WebCore::TextCheckingParagraph::TextCheckingParagraph):
+        (WebCore::TextCheckingParagraph::invalidateParagraphRangeValues):
+        (WebCore::TextCheckingParagraph::automaticReplacementStart const):
+        (WebCore::TextCheckingParagraph::automaticReplacementLength const):
+        * editing/TextCheckingHelper.h:
+
 2018-06-30  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: Fix clang static analyzer warnings: Garbage return value

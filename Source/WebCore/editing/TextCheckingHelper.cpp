@@ -117,12 +117,16 @@ static Ref<Range> expandToParagraphBoundary(Range& range)
     return paragraphRange;
 }
 
-TextCheckingParagraph::TextCheckingParagraph(Ref<Range>&& checkingRange, Range* paragraphRange)
+TextCheckingParagraph::TextCheckingParagraph(Ref<Range>&& checkingAndAutomaticReplacementRange)
+    : m_checkingRange(checkingAndAutomaticReplacementRange.copyRef())
+    , m_automaticReplacementRange(checkingAndAutomaticReplacementRange.copyRef())
+{
+}
+
+TextCheckingParagraph::TextCheckingParagraph(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, RefPtr<Range>&& paragraphRange)
     : m_checkingRange(WTFMove(checkingRange))
-    , m_paragraphRange(paragraphRange)
-    , m_checkingStart(-1)
-    , m_checkingEnd(-1)
-    , m_checkingLength(-1)
+    , m_automaticReplacementRange(WTFMove(automaticReplacementRange))
+    , m_paragraphRange(WTFMove(paragraphRange))
 {
 }
 
@@ -135,6 +139,8 @@ void TextCheckingParagraph::expandRangeToNextEnd()
 void TextCheckingParagraph::invalidateParagraphRangeValues()
 {
     m_checkingStart = m_checkingEnd = -1;
+    m_automaticReplacementStart = -1;
+    m_automaticReplacementLength = -1;
     m_offsetAsRange = nullptr;
     m_text = String();
 }
@@ -209,6 +215,26 @@ int TextCheckingParagraph::checkingLength() const
     if (-1 == m_checkingLength)
         m_checkingLength = TextIterator::rangeLength(m_checkingRange.ptr());
     return m_checkingLength;
+}
+
+int TextCheckingParagraph::automaticReplacementStart() const
+{
+    if (m_automaticReplacementStart != -1)
+        return m_automaticReplacementStart;
+
+    auto startOffsetRange = Range::create(paragraphRange().startContainer().document(), paragraphRange().startPosition(), m_automaticReplacementRange->startPosition());
+    m_automaticReplacementStart = TextIterator::rangeLength(startOffsetRange.ptr());
+    return m_automaticReplacementStart;
+}
+
+int TextCheckingParagraph::automaticReplacementLength() const
+{
+    if (m_automaticReplacementLength != -1)
+        return m_automaticReplacementLength;
+
+    auto endOffsetRange = Range::create(paragraphRange().startContainer().document(), paragraphRange().startPosition(), m_automaticReplacementRange->endPosition());
+    m_automaticReplacementLength = TextIterator::rangeLength(endOffsetRange.ptr()) - automaticReplacementStart();
+    return m_automaticReplacementLength;
 }
 
 TextCheckingHelper::TextCheckingHelper(EditorClient& client, Range& range)

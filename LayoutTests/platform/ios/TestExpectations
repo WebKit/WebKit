@@ -110,6 +110,9 @@ editing/spelling/spelling-markers-in-overlapping-lines-large-font.html [ WontFix
 fast/writing-mode/english-bt-text-with-spelling-marker.html [ WontFix ]
 fast/writing-mode/english-rl-text-with-spelling-marker.html [ WontFix ]
 
+# Requires support for testing text replacement
+editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
+
 # UIKit draws selection on iOS
 fast/selectors/input-with-selection-pseudo-element.html [ WontFix ]
 fast/selectors/selection-window-inactive.html [ WontFix ]

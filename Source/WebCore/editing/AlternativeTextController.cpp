@@ -283,7 +283,8 @@ void AlternativeTextController::timerFired()
         VisiblePosition start(selection.start(), selection.affinity());
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
-        m_frame.editor().markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeSpelling | TextCheckingTypeReplacement | TextCheckingTypeShowCorrectionPanel, adjacentWords.toNormalizedRange().get(), 0);
+        auto adjacentWordRange = adjacentWords.toNormalizedRange();
+        m_frame.editor().markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeSpelling | TextCheckingTypeReplacement | TextCheckingTypeShowCorrectionPanel, adjacentWordRange.get(), adjacentWordRange.get(), nullptr);
     }
         break;
     case AlternativeTextTypeReversion: {
