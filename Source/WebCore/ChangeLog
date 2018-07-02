@@ -1,3 +1,41 @@
+2018-07-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Video sometimes flickers when playing to AppleTV
+        https://bugs.webkit.org/show_bug.cgi?id=187193
+        <rdar://problem/40153865>
+
+        Reviewed by Jer Noble and Youenn Fablet.
+        
+        No new tests, existing test updated.
+
+        Delay 100ms before changing the iOS audio session category because it is an expensive and
+        potentially disruptive operation, and changing an audio or video element configuration
+        can result in several quick, ultimately unnecessary, category changes.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::clientWillBeginPlayback): Add logging.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::PlatformMediaSessionManager): Initialize timer.
+        (WebCore::PlatformMediaSessionManager::removeSession): Deactivate audio session when there
+        are no sessions.
+        (WebCore::PlatformMediaSessionManager::updateSessionStateTimerFired): New, update session now.
+        (WebCore::PlatformMediaSessionManager::updateSessionState): Add parameter.
+        * platform/audio/PlatformMediaSessionManager.h:
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (PlatformMediaSessionManager::updateSessionState): Defer update if it isn't supposed to happen
+        immediately.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory): Drive-by: setting the audio category to nil is a noop,
+        so don't waste time doing it.
+        (WebCore::AudioSession::tryToSetActive): Allow other apps to resume playback when we deactivate
+        the audio session.
+
+        * platform/Timer.h:
+        (WebCore::DeferrableOneShotTimer): Add WTF_MAKE_FAST_ALLOCATED so it can be used in a unique_ptr.
+
 2018-07-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Clean up some spellchecking code

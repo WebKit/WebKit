@@ -13,8 +13,8 @@
         waitForEvent('playing', playing);
     }
 
-    function playing() {
-        testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+    async function playing() {
+        await testExpectedEventually('internals.audioSessionCategory()', 'MediaPlayback');
         endTest();
     }
     </script>

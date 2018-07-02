@@ -29,6 +29,7 @@
 #include "AudioHardwareListener.h"
 #include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
+#include "Timer.h"
 #include <pal/system/SystemSleepListener.h>
 #include <wtf/Vector.h>
 
@@ -125,7 +126,7 @@ protected:
 private:
     friend class Internals;
 
-    void updateSessionState();
+    void scheduleUpdateSessionState();
 
     // RemoteCommandListenerClient
     WEBCORE_EXPORT void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override;
@@ -150,6 +151,8 @@ private:
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
     bool m_canPlayToTarget { false };
 #endif
+
+    std::unique_ptr<DeferrableOneShotTimer> m_updateStateTimer;
 
     bool m_interrupted { false };
     mutable bool m_isApplicationInBackground { false };

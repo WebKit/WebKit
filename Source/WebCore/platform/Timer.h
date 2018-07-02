@@ -146,6 +146,7 @@ inline bool TimerBase::isActive() const
 }
 
 class DeferrableOneShotTimer : protected TimerBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     template<typename TimerFiredClass>
     DeferrableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), Seconds delay)

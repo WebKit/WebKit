@@ -1,3 +1,14 @@
+2018-07-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Video sometimes flickers when playing to AppleTV
+        https://bugs.webkit.org/show_bug.cgi?id=187193
+        <rdar://problem/40153865>
+
+        Reviewed by Jer Noble and Youenn Fablet.
+
+        * platform/mac/media/audio-session-category-audio-autoplay.html: Update as audio category
+        doesn't change immediately.
+
 2018-07-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.

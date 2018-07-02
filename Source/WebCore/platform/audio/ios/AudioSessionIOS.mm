@@ -135,9 +135,7 @@ void AudioSession::setCategory(CategoryType newCategory)
         categoryString = AVAudioSessionCategoryAudioProcessing;
         break;
     case None:
-    default:
-        categoryString = nil;
-        break;
+        return;
     }
 
     NSError *error = nil;
@@ -217,7 +215,7 @@ size_t AudioSession::numberOfOutputChannels() const
 bool AudioSession::tryToSetActive(bool active)
 {
     NSError *error = nil;
-    [[AVAudioSession sharedInstance] setActive:active error:&error];
+    [[AVAudioSession sharedInstance] setActive:active withOptions:active ? 0 : AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:&error];
     return !error;
 }
 

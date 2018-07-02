@@ -116,7 +116,7 @@ void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::Interr
     forEachSession([type] (PlatformMediaSession& session, size_t) {
         session.beginInterruption(type);
     });
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInterruptionFlags flags)
@@ -143,7 +143,7 @@ void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
     if (!m_audioHardwareListener)
         m_audioHardwareListener = AudioHardwareListener::create(*this);
 
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
@@ -162,9 +162,12 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
     if (m_sessions.isEmpty() || std::all_of(m_sessions.begin(), m_sessions.end(), std::logical_not<void>())) {
         m_remoteCommandListener = nullptr;
         m_audioHardwareListener = nullptr;
+#if USE(AUDIO_SESSION)
+        AudioSession::sharedSession().tryToSetActive(false);
+#endif
     }
 
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::addRestriction(PlatformMediaSession::MediaType type, SessionRestrictions restriction)
@@ -250,7 +253,7 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
 
 void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession&)
 {
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)
@@ -290,7 +293,7 @@ Vector<PlatformMediaSession*> PlatformMediaSessionManager::currentSessionsMatchi
     });
     return matchingSessions;
 }
-    
+
 void PlatformMediaSessionManager::applicationWillBecomeInactive() const
 {
     LOG(Media, "PlatformMediaSessionManager::applicationWillBecomeInactive");
@@ -354,11 +357,11 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
 
 void PlatformMediaSessionManager::sessionCanProduceAudioChanged(PlatformMediaSession&)
 {
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 #if !PLATFORM(COCOA)
-void PlatformMediaSessionManager::updateSessionState()
+void PlatformMediaSessionManager::scheduleUpdateSessionState()
 {
 }
 #endif
@@ -401,7 +404,7 @@ void PlatformMediaSessionManager::systemDidWake()
 
 void PlatformMediaSessionManager::audioOutputDeviceChanged()
 {
-    updateSessionState();
+    scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::stopAllMediaPlaybackForDocument(const Document* document)
