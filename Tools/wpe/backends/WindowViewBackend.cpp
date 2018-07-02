@@ -311,6 +311,66 @@ const struct wl_keyboard_listener WindowViewBackend::s_keyboardListener = {
     },
 };
 
+const struct wl_touch_listener WindowViewBackend::s_touchListener = {
+    // down
+    [](void* data, struct wl_touch*, uint32_t, uint32_t time, struct wl_surface* surface, int32_t id, wl_fixed_t x, wl_fixed_t y)
+    {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        if (window.m_surface != surface || id < 0 || id >= 10)
+            return;
+
+        auto& seatData = window.m_seatData;
+        seatData.touch.tracking = true;
+        struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_down,
+            time, id, wl_fixed_to_int(x), wl_fixed_to_int(y) };
+        memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
+
+        struct wpe_input_touch_event event = { seatData.touch.points, 10,
+            rawEvent.type, rawEvent.id, rawEvent.time };
+        window.dispatchInputTouchEvent(&event);
+    },
+    // up
+    [](void* data, struct wl_touch*, uint32_t, uint32_t time, int32_t id)
+    {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        auto& seatData = window.m_seatData;
+        if (!seatData.touch.tracking || id < 0 || id >= 10)
+            return;
+
+        seatData.touch.tracking = false;
+
+        struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_up,
+            time, id, seatData.touch.points[id].x, seatData.touch.points[id].y };
+        memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
+
+        struct wpe_input_touch_event event = { seatData.touch.points, 10,
+            rawEvent.type, rawEvent.id, rawEvent.time };
+        window.dispatchInputTouchEvent(&event);
+
+        memset(&seatData.touch.points[id], 0x00, sizeof(struct wpe_input_touch_event_raw));
+    },
+    // motion
+    [](void* data, struct wl_touch*, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y)
+    {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        auto& seatData = window.m_seatData;
+        if (!seatData.touch.tracking || id < 0 || id >= 10)
+            return;
+
+        struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_motion,
+            time, id, wl_fixed_to_int(x), wl_fixed_to_int(y) };
+        memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
+
+        struct wpe_input_touch_event event = { seatData.touch.points, 10,
+            rawEvent.type, rawEvent.id, rawEvent.time };
+        window.dispatchInputTouchEvent(&event);
+    },
+    // frame
+    [](void*, struct wl_touch*) { },
+    // cancel
+    [](void*, struct wl_touch*) { },
+};
+
 const struct wl_seat_listener WindowViewBackend::s_seatListener = {
     // capabilities
     [](void* data, struct wl_seat* seat, uint32_t capabilities)
@@ -338,6 +398,17 @@ const struct wl_seat_listener WindowViewBackend::s_seatListener = {
         if (!hasKeyboardCap && seatData.keyboard.object) {
             wl_keyboard_destroy(seatData.keyboard.object);
             seatData.keyboard.object = nullptr;
+        }
+
+        // WL_SEAT_CAPABILITY_TOUCH
+        const bool hasTouchCap = capabilities & WL_SEAT_CAPABILITY_TOUCH;
+        if (hasTouchCap && !seatData.touch.object) {
+            seatData.touch.object = wl_seat_get_touch(seat);
+            wl_touch_add_listener(seatData.touch.object, &s_touchListener, window);
+        }
+        if (!hasTouchCap && seatData.touch.object) {
+            wl_touch_destroy(seatData.touch.object);
+            seatData.touch.object = nullptr;
         }
     },
     // name

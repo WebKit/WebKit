@@ -50,6 +50,7 @@ public:
         virtual bool dispatchPointerEvent(struct wpe_input_pointer_event*) { return false; }
         virtual bool dispatchAxisEvent(struct wpe_input_axis_event*) { return false; }
         virtual bool dispatchKeyboardEvent(struct wpe_input_keyboard_event*) { return false; }
+        virtual bool dispatchTouchEvent(struct wpe_input_touch_event*) { return false; }
     };
     void setInputClient(std::unique_ptr<InputClient>&&);
 
@@ -63,6 +64,7 @@ protected:
     void dispatchInputPointerEvent(struct wpe_input_pointer_event*);
     void dispatchInputAxisEvent(struct wpe_input_axis_event*);
     void dispatchInputKeyboardEvent(struct wpe_input_keyboard_event*);
+    void dispatchInputTouchEvent(struct wpe_input_touch_event*);
 
     virtual void displayBuffer(struct wl_resource*) = 0;
 

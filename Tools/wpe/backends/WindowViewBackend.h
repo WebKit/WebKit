@@ -50,6 +50,7 @@ private:
     static const struct zxdg_shell_v6_listener s_xdgWmBaseListener;
     static const struct wl_pointer_listener s_pointerListener;
     static const struct wl_keyboard_listener s_keyboardListener;
+    static const struct wl_touch_listener s_touchListener;
     static const struct wl_seat_listener s_seatListener;
     static const struct wl_callback_listener s_frameListener;
     static const struct zxdg_surface_v6_listener s_xdgSurfaceListener;
@@ -70,6 +71,12 @@ private:
             struct wl_keyboard* object { nullptr };
             struct wl_surface* target { nullptr };
         } keyboard;
+
+        struct {
+            struct wl_touch* object { nullptr };
+            struct wpe_input_touch_event_raw points[10];
+            bool tracking { false };
+        } touch;
 
         struct {
             struct xkb_context* context { nullptr };

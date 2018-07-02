@@ -134,4 +134,11 @@ void ViewBackend::dispatchInputKeyboardEvent(struct wpe_input_keyboard_event* ev
     wpe_view_backend_dispatch_keyboard_event(backend(), event);
 }
 
+void ViewBackend::dispatchInputTouchEvent(struct wpe_input_touch_event* event)
+{
+    if (m_inputClient && m_inputClient->dispatchTouchEvent(event))
+        return;
+    wpe_view_backend_dispatch_touch_event(backend(), event);
+}
+
 } // namespace WPEToolingBackends
