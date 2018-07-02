@@ -1,5 +1,15 @@
 2018-07-02  Brady Eidson  <beidson@apple.com>
 
+        Another unreviewed followup to:
+        Crash notifying observers of responsiveness state change
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView typeCharacter:]): Move this back to the Mac-only category, as we won't be running this
+          test on iOS for other reasons.
+
+2018-07-02  Brady Eidson  <beidson@apple.com>
+
         Unreviewed followup to:
         Crash notifying observers of responsiveness state change
 

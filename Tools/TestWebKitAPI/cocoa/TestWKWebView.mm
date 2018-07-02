@@ -311,14 +311,6 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     TestWebKitAPI::Util::run(&done);
 }
 
-- (void)typeCharacter:(char)character {
-    NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
-    NSEventType keyDownEventType = NSEventTypeKeyDown;
-    NSEventType keyUpEventType = NSEventTypeKeyUp;
-    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
-    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
-}
-
 @end
 
 #if PLATFORM(IOS)
@@ -391,6 +383,15 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
     return _hostWindow.get();
 }
+
+- (void)typeCharacter:(char)character {
+    NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
+    NSEventType keyDownEventType = NSEventTypeKeyDown;
+    NSEventType keyUpEventType = NSEventTypeKeyUp;
+    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+}
+
 @end
 #endif
 
