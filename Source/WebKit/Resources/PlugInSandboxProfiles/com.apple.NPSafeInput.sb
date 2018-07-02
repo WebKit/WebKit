@@ -21,3 +21,12 @@
 ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ; THE POSSIBILITY OF SUCH DAMAGE.
 
+(allow mach-lookup
+    (global-name "com.apple.dock.fullscreen")
+    (global-name "com.apple.iohideventsystem"))
+
+(allow file-read*
+    (literal "/Library/Internet Plug-Ins/data.ini"))
+
+(allow iokit-get-properties
+    (iokit-property "manufacturer"))
