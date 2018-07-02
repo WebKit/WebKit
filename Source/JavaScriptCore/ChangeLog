@@ -1,3 +1,28 @@
+2018-07-01  Mark Lam  <mark.lam@apple.com>
+
+        Builtins and host functions should get their own structures.
+        https://bugs.webkit.org/show_bug.cgi?id=187211
+        <rdar://problem/41646336>
+
+        Reviewed by Saam Barati.
+
+        JSFunctions do lazy reification of properties, but ordinary functions applies
+        different rules of property reification than builtin and host functions.  Hence,
+        we should give builtins and host functions their own structures.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::selectStructureForNewFuncExp):
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::hostFunctionStructure const):
+        (JSC::JSGlobalObject::arrowFunctionStructure const):
+        (JSC::JSGlobalObject::sloppyFunctionStructure const):
+        (JSC::JSGlobalObject::strictFunctionStructure const):
+
 2018-07-01  David Kilzer  <ddkilzer@apple.com>
 
         JavaScriptCore: Fix clang static analyzer warnings: Assigned value is garbage or undefined

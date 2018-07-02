@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2009, 2015-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2015 Canon Inc. All rights reserved.
@@ -67,11 +67,13 @@ bool JSFunction::isHostFunctionNonInline() const
 
 Structure* JSFunction::selectStructureForNewFuncExp(JSGlobalObject* globalObject, FunctionExecutable* executable)
 {
+    ASSERT(!executable->isHostFunction());
+    bool isBuiltin = executable->isBuiltinFunction();
     if (executable->isArrowFunction())
-        return globalObject->arrowFunctionStructure();
+        return globalObject->arrowFunctionStructure(isBuiltin);
     if (executable->isStrictMode())
-        return globalObject->strictFunctionStructure();
-    return globalObject->sloppyFunctionStructure();
+        return globalObject->strictFunctionStructure(isBuiltin);
+    return globalObject->sloppyFunctionStructure(isBuiltin);
 }
 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
@@ -89,7 +91,7 @@ JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* 
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, signature, name);
-    Structure* structure = globalObject->strictFunctionStructure();
+    Structure* structure = globalObject->hostFunctionStructure();
     JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, structure);
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, length, name);
@@ -436,9 +438,8 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
         
         slot.setCacheableCustom(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete, argumentsGetter);
         return true;
-    }
 
-    if (propertyName == vm.propertyNames->caller) {
+    } else if (propertyName == vm.propertyNames->caller) {
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
             return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 

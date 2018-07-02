@@ -416,9 +416,16 @@ void JSGlobalObject::init(VM& vm)
     ExecState::initGlobalExec(JSGlobalObject::globalExec(), globalCallee);
     ExecState* exec = JSGlobalObject::globalExec();
 
-    m_strictFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
-    m_sloppyFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
-    m_arrowFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+    m_hostFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+
+    auto initFunctionStructures = [&] (FunctionStructures& structures) {
+        structures.strictFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+        structures.sloppyFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+        structures.arrowFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+    };
+    initFunctionStructures(m_builtinFunctions);
+    initFunctionStructures(m_ordinaryFunctions);
+
     m_customGetterSetterFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSCustomGetterSetterFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
@@ -1394,9 +1401,16 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_nullPrototypeObjectStructure);
     visitor.append(thisObject->m_errorStructure);
     visitor.append(thisObject->m_calleeStructure);
-    visitor.append(thisObject->m_strictFunctionStructure);
-    visitor.append(thisObject->m_sloppyFunctionStructure);
-    visitor.append(thisObject->m_arrowFunctionStructure);
+
+    visitor.append(thisObject->m_hostFunctionStructure);
+    auto visitFunctionStructures = [&] (FunctionStructures& structures) {
+        visitor.append(structures.arrowFunctionStructure);
+        visitor.append(structures.sloppyFunctionStructure);
+        visitor.append(structures.strictFunctionStructure);
+    };
+    visitFunctionStructures(thisObject->m_builtinFunctions);
+    visitFunctionStructures(thisObject->m_ordinaryFunctions);
+
     thisObject->m_customGetterSetterFunctionStructure.visit(visitor);
     thisObject->m_boundFunctionStructure.visit(visitor);
     visitor.append(thisObject->m_getterSetterStructure);

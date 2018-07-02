@@ -341,9 +341,17 @@ public:
 #endif
     WriteBarrier<Structure> m_nullPrototypeObjectStructure;
     WriteBarrier<Structure> m_calleeStructure;
-    WriteBarrier<Structure> m_strictFunctionStructure;
-    WriteBarrier<Structure> m_arrowFunctionStructure;
-    WriteBarrier<Structure> m_sloppyFunctionStructure;
+
+    WriteBarrier<Structure> m_hostFunctionStructure;
+
+    struct FunctionStructures {
+        WriteBarrier<Structure> arrowFunctionStructure;
+        WriteBarrier<Structure> sloppyFunctionStructure;
+        WriteBarrier<Structure> strictFunctionStructure;
+    };
+    FunctionStructures m_builtinFunctions;
+    FunctionStructures m_ordinaryFunctions;
+
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customGetterSetterFunctionStructure;
     WriteBarrier<Structure> m_getterSetterStructure;
@@ -657,9 +665,27 @@ public:
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
     Structure* errorStructure() const { return m_errorStructure.get(); }
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
-    Structure* strictFunctionStructure() const { return m_strictFunctionStructure.get(); }
-    Structure* sloppyFunctionStructure() const { return m_sloppyFunctionStructure.get(); }
-    Structure* arrowFunctionStructure() const { return m_arrowFunctionStructure.get(); }
+    Structure* hostFunctionStructure() const { return m_hostFunctionStructure.get(); }
+
+    Structure* arrowFunctionStructure(bool isBuiltin) const
+    {
+        if (isBuiltin)
+            return m_builtinFunctions.arrowFunctionStructure.get();
+        return m_ordinaryFunctions.arrowFunctionStructure.get();
+    }
+    Structure* sloppyFunctionStructure(bool isBuiltin) const
+    {
+        if (isBuiltin)
+            return m_builtinFunctions.sloppyFunctionStructure.get();
+        return m_ordinaryFunctions.sloppyFunctionStructure.get();
+    }
+    Structure* strictFunctionStructure(bool isBuiltin) const
+    {
+        if (isBuiltin)
+            return m_builtinFunctions.strictFunctionStructure.get();
+        return m_ordinaryFunctions.strictFunctionStructure.get();
+    }
+
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
     Structure* customGetterSetterFunctionStructure() const { return m_customGetterSetterFunctionStructure.get(this); }
     Structure* getterSetterStructure() const { return m_getterSetterStructure.get(); }

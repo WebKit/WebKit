@@ -1,3 +1,13 @@
+2018-06-30  Mark Lam  <mark.lam@apple.com>
+
+        Builtins and host functions should get their own structures.
+        https://bugs.webkit.org/show_bug.cgi?id=187211
+        <rdar://problem/41646336>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-187211.js: Added.
+
 2018-06-29  Saam Barati  <sbarati@apple.com>
 
         We shouldn't recurse into the parser when gathering metadata about various function offsets
