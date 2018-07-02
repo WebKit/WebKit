@@ -1008,12 +1008,14 @@ Seconds WebAnimation::timeToNextRequiredTick() const
     if (hasPendingPlayTask() || playState() == PlayState::Running)
         return 0_s;
 
-    // If our current time is negative, we need to be scheduled to be resolved at the inverse
-    // of our current time, unless we fill backwards, in which case we want to invalidate as
-    // soon as possible.
-    auto localTime = currentTime().value();
-    if (localTime < 0_s)
-        return -localTime;
+    if (auto animationCurrentTime = currentTime()) {
+        // If our current time is negative, we need to be scheduled to be resolved at the inverse
+        // of our current time, unless we fill backwards, in which case we want to invalidate as
+        // soon as possible.
+        auto localTime = animationCurrentTime.value();
+        if (localTime < 0_s)
+            return -localTime;
+    }
 
     // In any other case, we're idle or already outside our active duration and have no need
     // to schedule an invalidation.
