@@ -1,3 +1,15 @@
+2018-07-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        Adjust or add a few test expectations. Remove a bad text baseline for
+        one W3C Fetch test, add a proper text baseline for another.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/headers: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/headers/header-values-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security: Removed.
+
 2018-07-02  Frederic Wang  <fwang@igalia.com>
 
         WTF's internal std::optional implementation should abort() on bad optional access
