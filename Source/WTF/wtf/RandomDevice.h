@@ -34,7 +34,7 @@ namespace WTF {
 class RandomDevice {
     WTF_MAKE_NONCOPYABLE(RandomDevice);
 public:
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(DARWIN) || OS(FUCHSIA) || OS(WINDOWS)
     RandomDevice() = default;
 #else
     RandomDevice();

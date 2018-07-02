@@ -1,3 +1,18 @@
+2018-07-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] RandomDevice should be initialized inside std::call_once
+        https://bugs.webkit.org/show_bug.cgi?id=186017
+
+        Reviewed by Darin Adler.
+
+        While Linux ports uses mutex-guarded static variables, Mac ports do not.
+        So we should guard static variables' initialization by using std::call_once.
+        This patch does it for RandomDevice.
+
+        * wtf/OSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+        * wtf/RandomDevice.h: Small fix for OS(FUCHSIA).
+
 2018-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] LastResort in the font family list causes emoji with joiners to be rendered as multiple .notdef characters
