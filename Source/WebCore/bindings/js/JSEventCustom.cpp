@@ -42,19 +42,6 @@
 namespace WebCore {
 using namespace JSC;
 
-#define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
-    case interfaceName##InterfaceType: \
-        return createWrapper<interfaceName>(globalObject, WTFMove(event));
-
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Event>&& event)
-{
-    switch (event->eventInterface()) {
-        DOM_EVENT_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
-    }
-
-    return createWrapper<Event>(globalObject, WTFMove(event));
-}
-
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Event& event)
 {
     return wrap(state, globalObject, event);

@@ -193,14 +193,14 @@ sub generateInterfacesHeader()
 
     my $F;
     my $namespace = $parsedParameters{"namespace"};
+    my $useNamespaceAsSuffix = $parsedParameters{"useNamespaceAsSuffix"};
     my $outputFile = "$outputDir/${namespace}Interfaces.h";
 
     open F, ">$outputFile" or die "Failed to open file: $!";
 
     print F license();
 
-    print F "#ifndef ${namespace}Interfaces_h\n";
-    print F "#define ${namespace}Interfaces_h\n";
+    print F "#pragma once\n";
     print F "\n";
 
     my %unconditionalInterfaces = ();
@@ -222,36 +222,35 @@ sub generateInterfacesHeader()
 
     my $macroStyledNamespace = $object->toMacroStyle($namespace);
 
+    print F "namespace WebCore {\n";
+    print F "\n";
+    print F "enum ${namespace}Interface {\n";
+
+    my $suffix = "InterfaceType";
+    if ($useNamespaceAsSuffix eq "true") {
+        $suffix = $namespace . $suffix;
+    }
+
+    my $count = 1;
     for my $conditional (sort keys %interfacesByConditional) {
         my $preferredConditional = $object->preferredConditional($conditional);
         print F "#if " . $object->conditionalStringFromAttributeValue($conditional) . "\n";
-        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional(macro) \\\n";
-
         for my $interface (sort keys %{ $interfacesByConditional{$conditional} }) {
             next if defined($unconditionalInterfaces{$interface});
-            print F "    macro($interface) \\\n";
+            print F "    ${interface}${suffix} = $count,\n";
+            $count++;
         }
-
-        print F "// End of DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional\n";
-        print F "#else\n";
-        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional(macro)\n";
         print F "#endif\n";
-        print F "\n";
     }
 
-    print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH(macro) \\\n";
-    print F "    \\\n";
     for my $interface (sort keys %unconditionalInterfaces) {
-            print F "    macro($interface) \\\n";
-    }
-    print F "    \\\n";
-    for my $conditional (sort keys %interfacesByConditional) {
-        my $preferredConditional = $object->preferredConditional($conditional);
-        print F "    DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional(macro) \\\n";
+        print F "    ${interface}${suffix} = $count,\n";
+        $count++;
     }
 
+    print F "};\n";
     print F "\n";
-    print F "#endif // ${namespace}Interfaces_h\n";
+    print F "} // namespace WebCore\n";
 
     close F;
 }

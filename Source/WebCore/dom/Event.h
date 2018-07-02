@@ -38,14 +38,6 @@ class EventPath;
 class EventTarget;
 class ScriptExecutionContext;
 
-enum EventInterface {
-
-#define DOM_EVENT_INTERFACE_DECLARE(name) name##InterfaceType,
-DOM_EVENT_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
-#undef DOM_EVENT_INTERFACE_DECLARE
-
-};
-
 class Event : public ScriptWrappable, public RefCounted<Event> {
 public:
     enum class IsTrusted { No, Yes };

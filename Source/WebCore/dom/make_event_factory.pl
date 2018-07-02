@@ -38,7 +38,9 @@ use lib "$FindBin::Bin/../bindings/scripts";
 use InFilesCompiler;
 
 my %defaultParameters = (
-    'namespace' => 0
+    'namespace' => 0,
+    'factoryFunction' => 0,
+    'useNamespaceAsSuffix' => 0,
 );
 
 sub defaultItemFactory
@@ -62,7 +64,7 @@ sub generateCode()
 
     generateImplementation($parsedParametersRef, $parsedItemsRef);
     $InCompiler->generateInterfacesHeader();
-    $InCompiler->generateHeadersHeader()
+    $InCompiler->generateHeadersHeader();
 }
 
 sub generateImplementation()
@@ -74,43 +76,72 @@ sub generateImplementation()
     my %parsedParameters = %{ $parsedParametersRef };
 
     my $namespace = $parsedParameters{"namespace"};
-
-    # Currently, only Events have factory files.
-    return if $namespace ne "Event";
+    my $factoryFunction = $parsedParameters{"factoryFunction"};
+    ($factoryFunction eq "toJS" or $factoryFunction eq "toNewlyCreated") or die "factoryFunction should be either toJS or toNewlyCreated";
+    my $useNamespaceAsSuffix = $parsedParameters{"useNamespaceAsSuffix"};
 
     my $F;
     open F, ">", "$outputDir/${namespace}Factory.cpp" or die "Failed to open file: $!";
 
     print F $InCompiler->license();
 
+    my $interfaceMethodName = lcfirst $namespace . "Interface";
+
     print F "#include \"config.h\"\n";
-    print F "#include \"${namespace}Factory.h\"\n";
-    print F "\n";
     print F "#include \"${namespace}Headers.h\"\n";
+    print F "\n";
+    print F "#include \"JSDOMGlobalObject.h\"\n";
     print F "#include <JavaScriptCore/StructureInlines.h>\n";
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
-    print F "RefPtr<$namespace> ${namespace}Factory::create(const String& type)\n";
-    print F "{\n";
+    # FIXME: Why does Event need toNewlyCreated but EventTarget need toJS?
+    if ($factoryFunction eq "toNewlyCreated") {
+        print F "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<${namespace}>&& impl)\n";
+        print F "{\n";
+        print F "    switch (impl->${interfaceMethodName}()) {\n";
+    } else {
+        print F "JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ${namespace}& impl)\n";
+        print F "{\n";
+        print F "    switch (impl.${interfaceMethodName}()) {\n";
+    }
+
+    my %generatedInterfaceNames = ();
 
     for my $eventName (sort keys %parsedEvents) {
         my $conditional = $parsedEvents{$eventName}{"conditional"};
         my $runtimeEnabled = $parsedEvents{$eventName}{"runtimeEnabled"};
         my $interfaceName = $InCompiler->interfaceForItem($eventName);
 
-        # FIXME: This should pay attention to $runtimeConditional so it can support RuntimeEnabledFeatures.
+        next if $generatedInterfaceNames{$interfaceName};
+        $generatedInterfaceNames{$interfaceName} = 1;
 
+        my $suffix = "";
+        if ($useNamespaceAsSuffix eq "true") {
+            $suffix = $namespace . $suffix;
+        }
+
+        # FIXME: This should pay attention to $runtimeConditional so it can support RuntimeEnabledFeatures.
         if ($conditional) {
             my $conditionals = "#if ENABLE(" . join(") || ENABLE(", split("\\|", $conditional)) . ")";
             print F "$conditionals\n";
         }
-        print F "    if (equalIgnoringASCIICase(type, \"$eventName\"))\n";
-        print F "        return ${interfaceName}::create();\n";
+        print F "    case ${interfaceName}${suffix}InterfaceType:\n";
+        if ($factoryFunction eq "toNewlyCreated") {
+            print F "        return createWrapper<$interfaceName$suffix>(globalObject, WTFMove(impl));\n";
+        } else {
+            print F "        return toJS(state, globalObject, static_cast<$interfaceName&>(impl));\n";
+        }
         print F "#endif\n" if $conditional;
     }
 
-    print F "    return nullptr;\n";
+    print F "    }\n";
+    if ($factoryFunction eq "toNewlyCreated") {
+        print F "    return createWrapper<$namespace>(globalObject, WTFMove(impl));\n";
+    } else {
+        print F "    ASSERT_NOT_REACHED();\n";
+        print F "    return JSC::jsNull();\n";
+    }
     print F "}\n";
     print F "\n";
     print F "} // namespace WebCore\n";

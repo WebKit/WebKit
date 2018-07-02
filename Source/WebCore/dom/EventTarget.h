@@ -50,14 +50,6 @@ public:
     bool isFiringEventListeners { false };
 };
 
-enum EventTargetInterface {
-
-#define DOM_EVENT_INTERFACE_DECLARE(name) name##EventTargetInterfaceType,
-DOM_EVENT_TARGET_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
-#undef DOM_EVENT_INTERFACE_DECLARE
-
-};
-
 class EventTarget : public ScriptWrappable {
 public:
     void ref() { refEventTarget(); }

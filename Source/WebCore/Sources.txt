@@ -2361,6 +2361,8 @@ xml/parser/XMLDocumentParserScope.cpp
 
 CSSValueKeywords.cpp
 ColorData.cpp
+EventFactory.cpp
+EventTargetFactory.cpp
 HTMLElementFactory.cpp
 HTMLEntityTable.cpp
 MathMLElementFactory.cpp

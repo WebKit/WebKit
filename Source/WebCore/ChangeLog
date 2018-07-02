@@ -1,3 +1,41 @@
+2018-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Generate event and event target interface types directly instead of via macros
+        https://bugs.webkit.org/show_bug.cgi?id=187215
+
+        Reviewed by Chris Dumez.
+
+        Made make_event_factory.pl directly generate EventInterface enum values and toJSNewlyCreated for Event,
+        and EventTargetInterface enum values and toJS for EventTarget. Removed the code to generate EventFactory::create
+        since it was never even compiled or used anywhere.
+
+        This patch faithfully replicates what the macro used to generate but we should consider always generating either
+        toJS or toJSNewlyCreated for both interfaces in the future.
+
+        No new tests since there should be no observable behavioral changes.
+
+        * DerivedSources.make: Generate EventTargetFactory.cpp, which is used to generate toJS function for EventTarget.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJSNewlyCreated): Deleted. Now generated directly in EventFactory.cpp.
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped): Removed the use of TRY_TO_UNWRAP_WITH_INTERFACE.
+        (WebCore::toJS): Deleted. Now generated directly in EventFactory.cpp.
+        * bindings/scripts/InFilesCompiler.pm:
+        (generateInterfacesHeader): Use #pragma once. Generate enum values directly. Added the support for suffixing
+        each type name with namespace for EventTarget.
+        * dom/Event.h: Removed the declaration of EventInterface enum. It's now directly generated in EventInterfaces.h
+        * dom/EventNames.in: Generate toJSNewlyCreated.
+        * dom/EventTarget.h: Removed the declaration of EventTargetInterface as it's now done in EventTargetInterfaces.h.
+        * dom/EventTargetFactory.in: Generate toJS.
+        * dom/make_event_factory.pl:
+        (defaultParameters): Added two new options. factoryFunction specifies whether toJS or toJSNewlyCreated is generated,
+        and useNamespaceAsSuffix specifies whether each entry should be suffixed by the namespace (used by EventTarget).
+        (generateCode): Added a missing semicolon.
+        (generateImplementation): Removed the early exit for EventTarget since we now need to generate its toJS function.
+        Replaced the code to generate EventFactory::create by the one to generate toJS / toJSNewlyCreated.
+
 2018-07-02  Zalan Bujtas  <zalan@apple.com>
 
         HTML widget displays blank when playing on page

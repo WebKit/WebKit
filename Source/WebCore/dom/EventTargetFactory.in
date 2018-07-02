@@ -1,4 +1,6 @@
 namespace="EventTarget"
+factoryFunction=toJS
+useNamespaceAsSuffix=true
 
 AbortSignal
 ApplePaySession conditional=APPLE_PAY

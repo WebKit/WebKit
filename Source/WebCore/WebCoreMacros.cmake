@@ -159,11 +159,12 @@ macro(GENERATE_FONT_NAMES _infile)
 endmacro()
 
 
-macro(GENERATE_EVENT_FACTORY _infile _outfile)
+macro(GENERATE_EVENT_FACTORY _infile _namespace)
     set(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_event_factory.pl)
+    set(_outputfiles ${DERIVED_SOURCES_WEBCORE_DIR}/${_namespace}Interfaces.h ${DERIVED_SOURCES_WEBCORE_DIR}/${_namespace}Factory.cpp)
 
     add_custom_command(
-        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
+        OUTPUT  ${_outputfiles}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
         COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}

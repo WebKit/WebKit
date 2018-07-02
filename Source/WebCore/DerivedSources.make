@@ -1396,8 +1396,8 @@ EventFactory%cpp EventHeaders%h EventInterfaces%h : dom/make_event_factory.pl $(
 
 EVENT_TARGET_FACTORY = EventTargetFactory.in $(ADDITIONAL_EVENT_TARGET_FACTORY)
 
-all : EventTargetHeaders.h EventTargetInterfaces.h
-EventTargetHeaders%h EventTargetInterfaces%h : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
+all : EventTargetFactory.cpp EventTargetHeaders.h EventTargetInterfaces.h
+EventTargetFactory%cpp EventTargetHeaders%h EventTargetInterfaces%h : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
 # --------

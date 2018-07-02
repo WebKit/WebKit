@@ -1,4 +1,6 @@
 namespace="Event"
+factoryFunction=toNewlyCreated
+useNamespaceAsSuffix=false
 
 Event
 Events interfaceName=Event
