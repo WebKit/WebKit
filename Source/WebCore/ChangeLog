@@ -1,3 +1,19 @@
+2018-07-02  Zalan Bujtas  <zalan@apple.com>
+
+        HTML widget displays blank when playing on page
+        https://bugs.webkit.org/show_bug.cgi?id=187272
+        <rdar://problem/39317899>
+
+        Reviewed by Simon Fraser.
+
+        When a composited layer gains content (in this particular case, going from NoContentsLayer to ContentsLayerForMedia),
+        we need to size the associated graphics layer accordingly (NoContentsLayer means zero sized graphics layer).  
+
+        Not testable on iOS.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+
 2018-07-02  David Kilzer  <ddkilzer@apple.com>
 
         Refactor InlineTextBox::emphasisMarkExistsAndIsAbove()

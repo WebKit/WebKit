@@ -752,6 +752,7 @@ bool RenderLayerBacking::updateConfiguration()
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
         auto* mediaElement = downcast<HTMLMediaElement>(renderer().element());
         m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerForMedia);
+        resetContentsRect();
     }
 #endif
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
