@@ -736,28 +736,27 @@ static InlineCacheAction tryCacheInstanceOf(
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
         
         JSCell* value = valueValue.asCell();
-        JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue);
-        
         Structure* structure = value->structure(vm);
-        
         std::unique_ptr<AccessCase> newCase;
-        
-        if (!jsDynamicCast<JSObject*>(vm, value)) {
-            newCase = InstanceOfAccessCase::create(
-                vm, codeBlock, AccessCase::InstanceOfMiss, structure, ObjectPropertyConditionSet(),
-                prototype);
-        } else if (prototype && structure->prototypeQueriesAreCacheable()) {
-            // FIXME: Teach this to do poly proto.
-            // https://bugs.webkit.org/show_bug.cgi?id=185663
-            
-            ObjectPropertyConditionSet conditionSet = generateConditionsForInstanceOf(
-                vm, codeBlock, exec, structure, prototype, wasFound);
-            
-            if (conditionSet.isValid()) {
+        JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue);
+        if (prototype) {
+            if (!jsDynamicCast<JSObject*>(vm, value)) {
                 newCase = InstanceOfAccessCase::create(
-                    vm, codeBlock,
-                    wasFound ? AccessCase::InstanceOfHit : AccessCase::InstanceOfMiss,
-                    structure, conditionSet, prototype);
+                    vm, codeBlock, AccessCase::InstanceOfMiss, structure, ObjectPropertyConditionSet(),
+                    prototype);
+            } else if (structure->prototypeQueriesAreCacheable()) {
+                // FIXME: Teach this to do poly proto.
+                // https://bugs.webkit.org/show_bug.cgi?id=185663
+
+                ObjectPropertyConditionSet conditionSet = generateConditionsForInstanceOf(
+                    vm, codeBlock, exec, structure, prototype, wasFound);
+
+                if (conditionSet.isValid()) {
+                    newCase = InstanceOfAccessCase::create(
+                        vm, codeBlock,
+                        wasFound ? AccessCase::InstanceOfHit : AccessCase::InstanceOfMiss,
+                        structure, conditionSet, prototype);
+                }
             }
         }
         

@@ -1,3 +1,15 @@
+2018-07-02  Keith Miller  <keith_miller@apple.com>
+
+        InstanceOf IC should do generic if the prototype is not an object.
+        https://bugs.webkit.org/show_bug.cgi?id=187250
+
+        Reviewed by Mark Lam.
+
+        * stress/instanceof-non-object-prototype.js: Added.
+        (let):
+        (test):
+        (i.catch):
+
 2018-06-30  Mark Lam  <mark.lam@apple.com>
 
         Builtins and host functions should get their own structures.

@@ -1,3 +1,17 @@
+2018-07-02  Keith Miller  <keith_miller@apple.com>
+
+        InstanceOf IC should do generic if the prototype is not an object.
+        https://bugs.webkit.org/show_bug.cgi?id=187250
+
+        Reviewed by Mark Lam.
+
+        The old code was wrong for two reasons. First, the AccessCase expected that
+        the prototype value would be non-null. Second, we would end up returning
+        false instead of throwing an exception.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheInstanceOf):
+
 2018-07-01  Mark Lam  <mark.lam@apple.com>
 
         Builtins and host functions should get their own structures.
