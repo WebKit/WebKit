@@ -920,6 +920,10 @@ void WebPageProxy::close()
     m_activityToken = nullptr;
 #endif
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    m_displayLink = nullptr;
+#endif
+
     stopAllURLSchemeTasks();
 }
 
@@ -6085,6 +6089,11 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #if PLATFORM(IOS)
     m_activityToken = nullptr;
 #endif
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    m_displayLink = nullptr;
+#endif
+
     m_pageIsUserObservableCount = nullptr;
     m_visiblePageToken = nullptr;
 

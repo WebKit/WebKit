@@ -1,3 +1,17 @@
+2018-07-02  Per Arne Vollan  <pvollan@apple.com>
+
+        Delete display link when closing page or the WebContent process has crashed.
+        https://bugs.webkit.org/show_bug.cgi?id=186895
+
+        Reviewed by Brent Fulgham.
+
+        If there is a running display link in the UI process, there is no need to keep it around if the
+        page is being closed or the WebContent process has crashed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
 2018-06-23  Darin Adler  <darin@apple.com>
 
         [Cocoa] Improve ARC compatibility of more code in JavaScriptCore
