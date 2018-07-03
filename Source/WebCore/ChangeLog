@@ -1,3 +1,28 @@
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Implement support for Element.toggleAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=186883
+
+        Reviewed by Sam Weinig.
+
+        Implement support for Element.toggleAttribute as per:
+        - https://github.com/whatwg/dom/issues/461
+        - https://dom.spec.whatwg.org/#dom-element-toggleattribute
+
+        This was already implemented in Blink:
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=854960
+
+        Edge expressed public support:
+        - https://github.com/whatwg/dom/issues/461#issuecomment-398206390
+
+        Gecko is working on it:
+        - https://bugzilla.mozilla.org/show_bug.cgi?id=1469592
+
+        * dom/Element.cpp:
+        (WebCore::Element::toggleAttribute):
+        * dom/Element.h:
+        * dom/Element.idl:
+
 2018-07-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement minimum/maximum content width logic.

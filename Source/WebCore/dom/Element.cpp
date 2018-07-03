@@ -1272,6 +1272,31 @@ const AtomicString& Element::getAttributeNS(const AtomicString& namespaceURI, co
     return getAttribute(QualifiedName(nullAtom(), localName, namespaceURI));
 }
 
+// https://dom.spec.whatwg.org/#dom-element-toggleattribute
+ExceptionOr<bool> Element::toggleAttribute(const AtomicString& localName, std::optional<bool> force)
+{
+    if (!Document::isValidName(localName))
+        return Exception { InvalidCharacterError };
+
+    synchronizeAttribute(localName);
+
+    auto caseAdjustedLocalName = shouldIgnoreAttributeCase(*this) ? localName.convertToASCIILowercase() : localName;
+    unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedLocalName, false) : ElementData::attributeNotFound;
+    if (index == ElementData::attributeNotFound) {
+        if (!force || *force) {
+            setAttributeInternal(index, QualifiedName { nullAtom(), caseAdjustedLocalName, nullAtom() }, emptyString(), NotInSynchronizationOfLazyAttribute);
+            return true;
+        }
+        return false;
+    }
+
+    if (!force || !*force) {
+        removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+        return false;
+    }
+    return true;
+}
+
 ExceptionOr<void> Element::setAttribute(const AtomicString& localName, const AtomicString& value)
 {
     if (!Document::isValidName(localName))

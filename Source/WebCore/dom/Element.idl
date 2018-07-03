@@ -44,6 +44,7 @@
     [CEReactions, MayThrowException] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
     [CEReactions] void removeAttribute(DOMString qualifiedName);
     [CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions, MayThrowException] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
     boolean hasAttribute(DOMString qualifiedName);
     boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
 

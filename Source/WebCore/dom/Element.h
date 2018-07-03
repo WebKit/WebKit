@@ -114,6 +114,8 @@ public:
     static ExceptionOr<QualifiedName> parseAttributeName(const AtomicString& namespaceURI, const AtomicString& qualifiedName);
     WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value);
 
+    ExceptionOr<bool> toggleAttribute(const AtomicString& name, std::optional<bool> force);
+
     const AtomicString& getIdAttribute() const;
     void setIdAttribute(const AtomicString&);
 

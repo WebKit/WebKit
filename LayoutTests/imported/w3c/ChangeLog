@@ -1,3 +1,16 @@
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Implement support for Element.toggleAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=186883
+
+        Reviewed by Sam Weinig.
+
+        Import WPT test coverage from:
+        https://github.com/web-platform-tests/wpt/commit/c3db018b96681af3c73ec331ecc01d38e48b8b10
+
+        * web-platform-tests/dom/nodes/attributes-expected.txt:
+        * web-platform-tests/dom/nodes/attributes.html:
+
 2018-07-03  Frederic Wang  <fwang@igalia.com>
 
         Import WPT infrastructure tests

@@ -1,4 +1,14 @@
 
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (toggleAttribute) 
+PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (toggleAttribute) 
+PASS toggleAttribute should lowercase its name argument (upper case attribute) 
+PASS toggleAttribute should lowercase its name argument (mixed case attribute) 
+PASS toggleAttribute should not throw even when qualifiedName starts with 'xmlns' 
+PASS Basic functionality should be intact. (toggleAttribute) 
+PASS toggleAttribute should not change the order of previously set attributes. 
+PASS toggleAttribute should set the first attribute with the given name 
+PASS toggleAttribute should set the attribute with the given qualified name 
+PASS Toggling element with inline style should make inline style disappear 
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown. (setAttribute) 
 PASS When qualifiedName does not match the Name production, an INVALID_CHARACTER_ERR exception is to be thrown, even if the attribute is already present. (setAttribute) 
 PASS setAttribute should lowercase its name argument (upper case attribute) 
