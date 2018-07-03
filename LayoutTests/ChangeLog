@@ -1,3 +1,12 @@
+2018-07-03  Truitt Savell  <tsavell@apple.com>
+
+        re-enable some canvas tests that are now consistently passing
+        https://bugs.webkit.org/show_bug.cgi?id=187305
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-07-03  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r233461.
