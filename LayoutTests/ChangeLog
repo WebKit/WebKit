@@ -1,3 +1,14 @@
+2018-07-02  Antti Koivisto  <antti@apple.com>
+
+        Tighter limit for canvas memory use on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=187279
+        <rdar://problem/38420562>
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-simulator/fast/canvas/canvas-crash-expected.txt:
+        * platform/ios-simulator/fast/canvas/canvas-skia-excessive-size-expected.txt:
+
 2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         RegExp.exec returns wrong value with a long integer quantifier

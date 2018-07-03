@@ -1,3 +1,20 @@
+2018-07-02  Antti Koivisto  <antti@apple.com>
+
+        Tighter limit for canvas memory use on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=187279
+        <rdar://problem/38420562>
+
+        Reviewed by Simon Fraser.
+
+        We allowed 448MB of canvas buffer memory. This is still too much in some cases. Painting a large
+        canvas may also requires several other temporary canvas sized buffers getting us easily over
+        the process size limit.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::maxActivePixelMemory):
+
+        Drop to (ramSize() / 4) which computes to 224MB on 2GB devices.
+
 2018-07-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Google Fonts doesn't work if the user has the requested font locally-installed

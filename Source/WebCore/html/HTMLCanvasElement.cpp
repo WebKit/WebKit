@@ -197,7 +197,7 @@ static inline size_t maxActivePixelMemory()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if PLATFORM(IOS)
-        maxPixelMemory = ramSize() / 2;
+        maxPixelMemory = ramSize() / 4;
 #else
         maxPixelMemory = std::max(ramSize() / 4, 2151 * MB);
 #endif
