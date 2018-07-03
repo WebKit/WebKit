@@ -669,7 +669,7 @@ public:
     bool hasRichlyEditableSelection() const;
 
     void setLayerTreeStateIsFrozen(bool);
-    void markLayersVolatile(WTF::Function<void ()>&& completionHandler = { });
+    void markLayersVolatile(WTF::Function<void (bool)>&& completionHandler = { });
     void cancelMarkLayersVolatile();
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
@@ -1146,7 +1146,7 @@ private:
 
     bool markLayersVolatileImmediatelyIfPossible();
     void layerVolatilityTimerFired();
-    void callVolatilityCompletionHandlers();
+    void callVolatilityCompletionHandlers(bool succeeded);
 
     String sourceForFrame(WebFrame*);
 
@@ -1669,7 +1669,7 @@ private:
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;
-    Vector<WTF::Function<void ()>> m_markLayersAsVolatileCompletionHandlers;
+    Vector<WTF::Function<void (bool)>> m_markLayersAsVolatileCompletionHandlers;
     bool m_isSuspendedUnderLock { false };
 
     HashSet<String, ASCIICaseInsensitiveHash> m_mimeTypesWithCustomContentProviders;

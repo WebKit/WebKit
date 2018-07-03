@@ -430,43 +430,53 @@ RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
 #if HAVE(IOSURFACE)
 bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolatile)
 {
+    // Return value is true if we succeeded in making volatile.
+    auto makeVolatile = [] (Buffer& buffer) -> bool {
+        if (!buffer.surface || buffer.isVolatile)
+            return true;
+
+        buffer.surface->releaseGraphicsContext();
+
+        if (!buffer.surface->isInUse()) {
+            buffer.surface->setIsVolatile(true);
+            buffer.isVolatile = true;
+            return true;
+        }
+    
+        return false;
+    };
+
+    // Return value is true if we need to repaint.
+    auto makeNonVolatile = [] (Buffer& buffer) -> bool {
+        if (!buffer.surface || !buffer.isVolatile)
+            return false;
+
+        auto previousState = buffer.surface->setIsVolatile(false);
+        buffer.isVolatile = false;
+
+        return previousState == WebCore::IOSurface::SurfaceState::Empty;
+    };
+
     switch (type) {
     case BufferType::Front:
-        if (m_frontBuffer.surface && m_frontBuffer.isVolatile != isVolatile) {
-            if (isVolatile)
-                m_frontBuffer.surface->releaseGraphicsContext();
-            if (!isVolatile || !m_frontBuffer.surface->isInUse()) {
-                auto previousState = m_frontBuffer.surface->setIsVolatile(isVolatile);
-                m_frontBuffer.isVolatile = isVolatile;
-
-                // Becoming non-volatile and the front buffer was purged, so we need to repaint.
-                if (!isVolatile && (previousState == WebCore::IOSurface::SurfaceState::Empty))
-                    setNeedsDisplay();
-            } else
-                return false;
-        }
+        if (isVolatile)
+            return makeVolatile(m_frontBuffer);
+        
+        // Becoming non-volatile and the front buffer was purged, so we need to repaint.
+        if (makeNonVolatile(m_frontBuffer))
+            setNeedsDisplay();
         break;
     case BufferType::Back:
-        if (m_backBuffer.surface && m_backBuffer.isVolatile != isVolatile) {
-            if (isVolatile)
-                m_backBuffer.surface->releaseGraphicsContext();
-            if (!isVolatile || !m_backBuffer.surface->isInUse()) {
-                m_backBuffer.surface->setIsVolatile(isVolatile);
-                m_backBuffer.isVolatile = isVolatile;
-            } else
-                return false;
-        }
+        if (isVolatile)
+            return makeVolatile(m_backBuffer);
+    
+        makeNonVolatile(m_backBuffer);
         break;
     case BufferType::SecondaryBack:
-        if (m_secondaryBackBuffer.surface && m_secondaryBackBuffer.isVolatile != isVolatile) {
-            if (isVolatile)
-                m_secondaryBackBuffer.surface->releaseGraphicsContext();
-            if (!isVolatile || !m_secondaryBackBuffer.surface->isInUse()) {
-                m_secondaryBackBuffer.surface->setIsVolatile(isVolatile);
-                m_secondaryBackBuffer.isVolatile = isVolatile;
-            } else
-                return false;
-        }
+        if (isVolatile)
+            return makeVolatile(m_secondaryBackBuffer);
+    
+        makeNonVolatile(m_secondaryBackBuffer);
         break;
     }
     return true;

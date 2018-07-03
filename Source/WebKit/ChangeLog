@@ -1,3 +1,30 @@
+2018-07-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up the layer volatility code and logging
+        https://bugs.webkit.org/show_bug.cgi?id=187286
+
+        Reviewed by Tim Horton.
+        
+        Fix the layer volatility logging so it doesn't say "succeeded" when it actually failed
+        and gave up.
+        
+        Use a couple of lambda functions in RemoteLayerBackingStore::setBufferVolatility() to
+        make the code easier to read.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::callVolatilityCompletionHandlers):
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatile):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::markLayersVolatile):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        (WebKit::WebProcess::markAllLayersVolatile):
+        * WebProcess/WebProcess.h:
+
 2018-07-03  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make WebsiteDataStore::getAllStorageAccessEntries() call the right network process instead of iterating over the process pools

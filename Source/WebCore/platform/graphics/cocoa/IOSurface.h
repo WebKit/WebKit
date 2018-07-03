@@ -130,7 +130,7 @@ public:
 
     CGColorSpaceRef colorSpace() const { return m_colorSpace.get(); }
     WEBCORE_EXPORT Format format() const;
-    IOSurfaceID surfaceID() const;
+    WEBCORE_EXPORT IOSurfaceID surfaceID() const;
     size_t bytesPerRow() const;
 
     WEBCORE_EXPORT bool isInUse() const;

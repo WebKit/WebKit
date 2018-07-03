@@ -1375,8 +1375,11 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     accessibilityProcessSuspendedNotification(true);
 #endif
 
-    markAllLayersVolatile([this, shouldAcknowledgeWhenReadyToSuspend] {
-        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Successfuly marked all layers as volatile", this);
+    markAllLayersVolatile([this, shouldAcknowledgeWhenReadyToSuspend](bool success) {
+        if (success)
+            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Successfuly marked all layers as volatile", this);
+        else
+            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Failed to mark all layers as volatile", this);
 
         if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
             RELEASE_LOG(ProcessSuspension, "%p - WebProcess::actualPrepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
@@ -1427,20 +1430,25 @@ void WebProcess::cancelPrepareToSuspend()
     parentProcessConnection()->send(Messages::WebProcessProxy::DidCancelProcessSuspension(), 0);
 }
 
-void WebProcess::markAllLayersVolatile(WTF::Function<void()>&& completionHandler)
+void WebProcess::markAllLayersVolatile(WTF::Function<void(bool)>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile()", this);
     ASSERT(!m_pageMarkingLayersAsVolatileCounter);
+    m_countOfPagesFailingToMarkVolatile = 0;
+
     m_pageMarkingLayersAsVolatileCounter = std::make_unique<PageMarkingLayersAsVolatileCounter>([this, completionHandler = WTFMove(completionHandler)] (RefCounterEvent) {
         if (m_pageMarkingLayersAsVolatileCounter->value())
             return;
 
-        completionHandler();
+        completionHandler(m_countOfPagesFailingToMarkVolatile == 0);
         m_pageMarkingLayersAsVolatileCounter = nullptr;
     });
     auto token = m_pageMarkingLayersAsVolatileCounter->count();
     for (auto& page : m_pageMap.values())
-        page->markLayersVolatile([token] { });
+        page->markLayersVolatile([token, this] (bool succeeded) {
+            if (!succeeded)
+                ++m_countOfPagesFailingToMarkVolatile;
+        });
 }
 
 void WebProcess::cancelMarkAllLayersVolatile()

@@ -90,6 +90,7 @@ public:
         SecondaryBack
     };
 
+    // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
     bool setBufferVolatility(BufferType, bool isVolatile);
 
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
