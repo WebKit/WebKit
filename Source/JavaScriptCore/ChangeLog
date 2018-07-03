@@ -1,3 +1,32 @@
+2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        RegExp.exec returns wrong value with a long integer quantifier
+        https://bugs.webkit.org/show_bug.cgi?id=187042
+
+        Reviewed by Saam Barati.
+
+        Prior to this patch, the Yarr parser checked for integer overflow when
+        parsing quantifiers in regular expressions by adding one digit at a time
+        to a number and checking if the result got larger. This is wrong;
+        The parser would fail to detect overflow when parsing, for example,
+        10,000,000,003 because (1000000000*10 + 3) % (2^32) = 1410065411 > 1000000000.
+
+        Another issue was that once it detected overflow, it stopped consuming
+        the remaining digits. Since it didn't find the closing bracket, it
+        parsed the quantifier as a normal string instead.
+
+        This patch fixes these issues by reading all the digits and checking for
+        overflow with Checked<unsigned, RecordOverflow>. If it overflows, it
+        returns the largest possible value (quantifyInfinite in this case). This
+        matches Chrome [1], Firefox [2], and Edge [3].
+
+        [1] https://chromium.googlesource.com/v8/v8.git/+/23222f0a88599dcf302ccf395883944620b70fd5/src/regexp/regexp-parser.cc#1042
+        [2] https://dxr.mozilla.org/mozilla-central/rev/aea3f3457f1531706923b8d4c595a1f271de83da/js/src/irregexp/RegExpParser.cpp#1310
+        [3] https://github.com/Microsoft/ChakraCore/blob/fc08987381da141bb686b5d0c71d75da96f9eb8a/lib/Parser/RegexParser.cpp#L1149
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::consumeNumber):
+
 2018-07-02  Keith Miller  <keith_miller@apple.com>
 
         InstanceOf IC should do generic if the prototype is not an object.

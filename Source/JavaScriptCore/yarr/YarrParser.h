@@ -974,13 +974,10 @@ private:
 
     unsigned consumeNumber()
     {
-        unsigned n = consumeDigit();
-        // check for overflow.
-        for (unsigned newValue; peekIsDigit() && ((newValue = n * 10 + peekDigit()) >= n); ) {
-            n = newValue;
-            consume();
-        }
-        return n;
+        Checked<unsigned, RecordOverflow> n = consumeDigit();
+        while (peekIsDigit())
+            n = n * 10 + consumeDigit();
+        return n.hasOverflowed() ? quantifyInfinite : n.unsafeGet();
     }
 
     unsigned consumeOctal()

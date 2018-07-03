@@ -1,3 +1,13 @@
+2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        RegExp.exec returns wrong value with a long integer quantifier
+        https://bugs.webkit.org/show_bug.cgi?id=187042
+
+        Reviewed by Saam Barati.
+
+        * fast/regex/overflow-expected.txt:
+        * fast/regex/script-tests/overflow.js:
+
 2018-07-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Google Fonts doesn't work if the user has the requested font locally-installed

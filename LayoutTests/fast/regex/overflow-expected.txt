@@ -7,6 +7,7 @@ PASS regexp1.exec('') is null
 PASS regexp2.exec('') is null
 PASS regexp3.exec(s3) is null
 PASS function f() { /[^a$]{4294967295}/ } threw exception SyntaxError: Invalid regular expression: number too large in {} quantifier.
+PASS new RegExp('((?=$))??(?:\\1){34359738368,}') threw exception SyntaxError: Invalid regular expression: number too large in {} quantifier.
 PASS successfullyParsed is true
 
 TEST COMPLETE

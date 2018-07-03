@@ -7,7 +7,6 @@ function testRegExp(pattern, flags, string, result)
         throw("Expected " + r + "exec(\"" + string + "\") to return " + result + ".");
 }
 
-testRegExp("((?=$))??(?:\\1){34359738368,}", "gm", "abc\nabc\nabc\nabc\n", null);
 testRegExp("(\\w+)(?:\\s(\\1)){1100000000,}", "i", "word Word WORD WoRd", null);
 testRegExp("\\d{4,}.{1073741825}", "", "1234567\u1234", null);
 testRegExp("(?:abcd){2148473648,}", "", "abcdabcdabcd", null);

@@ -11,3 +11,5 @@ var regexp3 = new RegExp(s3, "");
 shouldBe("regexp3.exec(s3)", 'null');
 
 shouldThrow("function f() { /[^a$]{4294967295}/ }", '"SyntaxError: Invalid regular expression: number too large in {} quantifier"');
+
+shouldThrow("new RegExp('((?=$))??(?:\\\\1){34359738368,}')", '"SyntaxError: Invalid regular expression: number too large in {} quantifier"');

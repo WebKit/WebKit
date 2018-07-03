@@ -1,3 +1,14 @@
+2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        RegExp.exec returns wrong value with a long integer quantifier
+        https://bugs.webkit.org/show_bug.cgi?id=187042
+
+        Reviewed by Saam Barati.
+
+        * stress/regexp-large-quantifier.js: Added.
+        (testRegExp):
+        * stress/regress-159744.js:
+
 2018-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Repository fix after r233427 and r233443.
