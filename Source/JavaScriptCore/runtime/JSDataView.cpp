@@ -180,12 +180,6 @@ void JSDataView::getOwnNonIndexPropertyNames(
     Base::getOwnNonIndexPropertyNames(thisObject, exec, array, mode);
 }
 
-ArrayBuffer* JSDataView::slowDownAndWasteMemory(JSArrayBufferView*)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return 0;
-}
-
 RefPtr<ArrayBufferView> JSDataView::getTypedArrayImpl(JSArrayBufferView* object)
 {
     JSDataView* thisObject = jsCast<JSDataView*>(object);

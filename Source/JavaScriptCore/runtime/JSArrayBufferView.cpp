@@ -28,6 +28,7 @@
 
 #include "JSArrayBuffer.h"
 #include "JSCInlines.h"
+#include "JSTypedArrays.h"
 #include "TypeError.h"
 #include "TypedArrayController.h"
 #include <wtf/Gigacage.h>
@@ -215,6 +216,92 @@ void JSArrayBufferView::neuter()
     RELEASE_ASSERT(!isShared());
     m_length = 0;
     m_vector.clear();
+}
+
+static const constexpr size_t ElementSizeData[] = {
+    sizeof(typename Int8Adaptor::Type), // Int8ArrayType
+    sizeof(typename Uint8Adaptor::Type), // Uint8ArrayType
+    sizeof(typename Uint8ClampedAdaptor::Type), // Uint8ClampedArrayType
+    sizeof(typename Int16Adaptor::Type), // Int16ArrayType
+    sizeof(typename Uint16Adaptor::Type), // Uint16ArrayType
+    sizeof(typename Int32Adaptor::Type), // Int32ArrayType
+    sizeof(typename Uint32Adaptor::Type), // Uint32ArrayType
+    sizeof(typename Float32Adaptor::Type), // Float32ArrayType
+    sizeof(typename Float64Adaptor::Type), // Float64ArrayType
+};
+
+static_assert(std::is_final<JSInt8Array>::value, "");
+static_assert(std::is_final<JSUint8Array>::value, "");
+static_assert(std::is_final<JSUint8ClampedArray>::value, "");
+static_assert(std::is_final<JSInt16Array>::value, "");
+static_assert(std::is_final<JSUint16Array>::value, "");
+static_assert(std::is_final<JSInt32Array>::value, "");
+static_assert(std::is_final<JSUint32Array>::value, "");
+static_assert(std::is_final<JSFloat32Array>::value, "");
+static_assert(std::is_final<JSFloat64Array>::value, "");
+
+static inline size_t elementSize(JSType type)
+{
+    ASSERT(type >= Int8ArrayType && type <= Float64ArrayType);
+    return ElementSizeData[type - Int8ArrayType];
+}
+
+ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
+{
+    ASSERT(m_mode == FastTypedArray || m_mode == OversizeTypedArray);
+
+    // We play this game because we want this to be callable even from places that
+    // don't have access to ExecState* or the VM, and we only allocate so little
+    // memory here that it's not necessary to trigger a GC - just accounting what
+    // we have done is good enough. The sort of bizarre exception to the "allocating
+    // little memory" is when we transfer a backing buffer into the C heap; this
+    // will temporarily get counted towards heap footprint (incorrectly, in the case
+    // of adopting an oversize typed array) but we don't GC here anyway. That's
+    // almost certainly fine. The worst case is if you created a ton of fast typed
+    // arrays, and did nothing but caused all of them to slow down and waste memory.
+    // In that case, your memory footprint will double before the GC realizes what's
+    // up. But if you do *anything* to trigger a GC watermark check, it will know
+    // that you *had* done those allocations and it will GC appropriately.
+    Heap* heap = Heap::heap(this);
+    VM& vm = *heap->vm();
+    DeferGCForAWhile deferGC(*heap);
+
+    RELEASE_ASSERT(!hasIndexingHeader(vm));
+    Structure* structure = this->structure(vm);
+    setButterfly(vm, Butterfly::createOrGrowArrayRight(
+        butterfly(), vm, this, structure,
+        structure->outOfLineCapacity(), false, 0, 0));
+
+    RefPtr<ArrayBuffer> buffer;
+    unsigned byteLength = m_length * elementSize(type());
+
+    switch (m_mode) {
+    case FastTypedArray:
+        buffer = ArrayBuffer::create(vector(), byteLength);
+        break;
+
+    case OversizeTypedArray:
+        // FIXME: consider doing something like "subtracting" from extra memory
+        // cost, since right now this case will cause the GC to think that we reallocated
+        // the whole buffer.
+        buffer = ArrayBuffer::createAdopted(vector(), byteLength);
+        break;
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    {
+        auto locker = holdLock(cellLock());
+        butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
+        m_vector.setWithoutBarrier(buffer->data());
+        WTF::storeStoreFence();
+        m_mode = WastefulTypedArray;
+    }
+    heap->addReference(this, buffer.get());
+
+    return buffer.get();
 }
 
 } // namespace JSC

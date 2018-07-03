@@ -70,7 +70,6 @@ protected:
 
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-    static ArrayBuffer* slowDownAndWasteMemory(JSArrayBufferView*);
     static RefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
     
 public:

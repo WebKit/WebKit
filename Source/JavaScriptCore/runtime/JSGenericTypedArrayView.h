@@ -290,7 +290,6 @@ protected:
 
     // Allocates the full-on native buffer and moves data into the C heap if
     // necessary. Note that this never allocates in the GC heap.
-    static ArrayBuffer* slowDownAndWasteMemory(JSArrayBufferView*);
     static RefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
 
 private:

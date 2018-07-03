@@ -181,6 +181,7 @@ public:
     static RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
 
 private:
+    JS_EXPORT_PRIVATE ArrayBuffer* slowDownAndWasteMemory();
     static void finalize(JSCell*);
 
 protected:

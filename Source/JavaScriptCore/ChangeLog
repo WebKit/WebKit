@@ -1,3 +1,33 @@
+2018-07-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move slowDownAndWasteMemory function to JSArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=187290
+
+        Reviewed by Saam Barati.
+
+        slowDownAndWasteMemory is just overridden by typed arrays. Since they are limited,
+        we do not need to add this function to MethodTable: just dispatching it in JSArrayBufferView
+        is fine. And slowDownAndWasteMemory only requires the sizeof(element), which can be
+        easily calculated from JSType.
+        This patch removes slowDownAndWasteMemory from MethodTable, and moves it to JSArrayBufferView.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::elementSize):
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::possiblySharedBuffer):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::slowDownAndWasteMemory): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::slowDownAndWasteMemory): Deleted.
+        * runtime/JSDataView.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory): Deleted.
+
 2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Regular expressions with ".?" expressions at the start and the end match the entire string

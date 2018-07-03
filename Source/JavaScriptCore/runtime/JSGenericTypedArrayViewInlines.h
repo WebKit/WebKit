@@ -549,63 +549,6 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
 }
 
 template<typename Adaptor>
-ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBufferView* object)
-{
-    JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
-    
-    // We play this game because we want this to be callable even from places that
-    // don't have access to ExecState* or the VM, and we only allocate so little
-    // memory here that it's not necessary to trigger a GC - just accounting what
-    // we have done is good enough. The sort of bizarro exception to the "allocating
-    // little memory" is when we transfer a backing buffer into the C heap; this
-    // will temporarily get counted towards heap footprint (incorrectly, in the case
-    // of adopting an oversize typed array) but we don't GC here anyway. That's
-    // almost certainly fine. The worst case is if you created a ton of fast typed
-    // arrays, and did nothing but caused all of them to slow down and waste memory.
-    // In that case, your memory footprint will double before the GC realizes what's
-    // up. But if you do *anything* to trigger a GC watermark check, it will know
-    // that you *had* done those allocations and it will GC appropriately.
-    Heap* heap = Heap::heap(thisObject);
-    VM& vm = *heap->vm();
-    DeferGCForAWhile deferGC(*heap);
-    
-    RELEASE_ASSERT(!thisObject->hasIndexingHeader(vm));
-    thisObject->setButterfly(vm, Butterfly::createOrGrowArrayRight(
-        thisObject->butterfly(), vm, thisObject, thisObject->structure(vm),
-        thisObject->structure(vm)->outOfLineCapacity(), false, 0, 0));
-
-    RefPtr<ArrayBuffer> buffer;
-    
-    switch (thisObject->m_mode) {
-    case FastTypedArray:
-        buffer = ArrayBuffer::create(thisObject->vector(), thisObject->byteLength());
-        break;
-        
-    case OversizeTypedArray:
-        // FIXME: consider doing something like "subtracting" from extra memory
-        // cost, since right now this case will cause the GC to think that we reallocated
-        // the whole buffer.
-        buffer = ArrayBuffer::createAdopted(thisObject->vector(), thisObject->byteLength());
-        break;
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-
-    {
-        auto locker = holdLock(thisObject->cellLock());
-        thisObject->butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-        thisObject->m_vector.setWithoutBarrier(buffer->data());
-        WTF::storeStoreFence();
-        thisObject->m_mode = WastefulTypedArray;
-    }
-    heap->addReference(thisObject, buffer.get());
-    
-    return buffer.get();
-}
-
-template<typename Adaptor>
 RefPtr<ArrayBufferView> JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl(JSArrayBufferView* object)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);

@@ -101,9 +101,6 @@ struct MethodTable {
     using DefineOwnPropertyFunctionPtr = bool (*)(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool);
     DefineOwnPropertyFunctionPtr WTF_METHOD_TABLE_ENTRY(defineOwnProperty);
 
-    using SlowDownAndWasteMemory = ArrayBuffer* (*)(JSArrayBufferView*);
-    SlowDownAndWasteMemory WTF_METHOD_TABLE_ENTRY(slowDownAndWasteMemory);
-
     using GetTypedArrayImpl = RefPtr<ArrayBufferView> (*)(JSArrayBufferView*);
     GetTypedArrayImpl WTF_METHOD_TABLE_ENTRY(getTypedArrayImpl);
 
@@ -174,7 +171,6 @@ struct MethodTable {
         &ClassName::toStringName, \
         &ClassName::customHasInstance, \
         &ClassName::defineOwnProperty, \
-        &ClassName::slowDownAndWasteMemory, \
         &ClassName::getTypedArrayImpl, \
         &ClassName::preventExtensions, \
         &ClassName::isExtensible, \
