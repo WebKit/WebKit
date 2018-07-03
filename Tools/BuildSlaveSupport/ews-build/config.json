@@ -134,11 +134,11 @@
     },
     {
       "name": "ews127",
-      "platform": "*"
+      "platform": "jsc-only"
     },
     {
       "name": "ews128",
-      "platform": "*"
+      "platform": "jsc-only"
     },
     {
       "name": "ews200",
@@ -257,9 +257,10 @@
       "workernames": ["igalia-wpe-ews", "aperez-wpe-gcc5-ews", "aperez-wpe-gcc6-ews"]
     },
     {
-      "name": "JSC-tests-EWS",
+      "name": "JSC-Tests-EWS",
       "factory": "JSCTestsFactory",
-      "platform": "*",
+      "platform": "jsc-only",
+      "configuration": "release",
       "workernames": ["ews127", "ews128"]
     },
     {
@@ -286,7 +287,7 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Style-EWS", "JSC-tests-EWS", "macOS-Sierra-Release-WK1-EWS", "GTK-Webkit2-EWS", "macOS-Sierra-Release-WK2-EWS",
+      "builderNames": ["Style-EWS", "JSC-Tests-EWS", "macOS-Sierra-Release-WK1-EWS", "GTK-Webkit2-EWS", "macOS-Sierra-Release-WK2-EWS",
                        "macOS-High-Sierra-Release-32bit-WK2-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-EWS", "WinCairo-EWS", "iOS-11-Simulator-EWS",
                        "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-Sierra-Debug-WK1-EWS", "Bindings-tests-EWS"]
     }

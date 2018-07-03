@@ -420,7 +420,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='compiled webkit')
+        self.expectOutcome(result=SUCCESS, state_string='compiled')
         return self.runStep()
 
     def test_failure(self):
@@ -434,7 +434,43 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='compiled webkit (failure)')
+        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        return self.runStep()
+
+
+class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CompileJSCOnly())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=["perl", "Tools/Scripts/build-jsc", '--release'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CompileJSCOnly())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=["perl", "Tools/Scripts/build-jsc", '--debug'],
+                        )
+            + ExpectShell.log('stdio', stdout='1 error generated.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
         return self.runStep()
 
 

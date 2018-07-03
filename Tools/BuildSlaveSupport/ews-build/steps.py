@@ -117,8 +117,8 @@ def appendCustomBuildFlags(step, platform, fullPlatform):
 
 class CompileWebKit(shell.Compile):
     name = "compile-webkit"
-    description = ["compiling webkit"]
-    descriptionDone = ["compiled webkit"]
+    description = ["compiling"]
+    descriptionDone = ["compiled"]
     env = {'MFLAGS': ''}
     warningPattern = ".*arning: .*"
     command = ["perl", "Tools/Scripts/build-webkit", WithProperties("--%(configuration)s")]
@@ -145,6 +145,11 @@ class CompileWebKit(shell.Compile):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
+
+
+class CompileJSCOnly(CompileWebKit):
+    name = "build-jsc"
+    command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 
 class CleanBuild(shell.Compile):
