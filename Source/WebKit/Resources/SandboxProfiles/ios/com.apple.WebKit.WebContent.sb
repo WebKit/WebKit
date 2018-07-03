@@ -54,6 +54,9 @@
 (play-audio)
 (play-media)
 
+;; Access to media controls
+(media-remote)
+
 (url-translation)
 
 ;; For <rdar://problem/20812377> All applications need to be able to access the com.apple.UIKit.KeyboardManagement running in backboardd
@@ -308,10 +311,6 @@
 ;;; End UIKit-apps.sb content
 ;;;
 
-;; Access to media controls
-(play-media)
-(media-remote)
-
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
@@ -330,8 +329,11 @@
     (iokit-property-regex #"^DisplayPipe(PlaneBaseAlignment|StrideRequirements)")
     (iokit-property-regex #"^IOGL(|ES(|Metal))BundleName")
     (iokit-property "IOGLESDefaultUseMetal")
+    (iokit-property "IOClassNameOverride")
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
     (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
+    (iokit-property "artwork-device-subtype")
+    (iokit-property "device-perf-memory-class")
     (iokit-property "emu")
     (iokit-property "hdcp-hoover-protocol")
     (iokit-property "iommu-present")
