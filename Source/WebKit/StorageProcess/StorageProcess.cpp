@@ -40,6 +40,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SWServerWorker.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
@@ -72,6 +73,8 @@ StorageProcess::StorageProcess()
     // Make sure the UTF8Encoding encoding and the text encoding maps have been built on the main thread before a background thread needs it.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=135365 - Need a more explicit way of doing this besides accessing the UTF8Encoding.
     UTF8Encoding();
+
+    WebCore::setWebKitProcessType(WebKitProcessType::StorageProcess);
 }
 
 StorageProcess::~StorageProcess()

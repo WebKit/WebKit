@@ -33,14 +33,18 @@ WEBCORE_EXPORT void setPresentingApplicationPID(int);
 WEBCORE_EXPORT int presentingApplicationPID();
 
 #if PLATFORM(WIN)
+inline bool isInNetworkProcess() { return false; }
+inline bool isInStorageProcess() { return false; }
 inline bool isInWebProcess() { return false; }
-#elif !PLATFORM(COCOA)
-inline bool isInWebProcess() { return true; }
+#else
+enum class WebKitProcessType { UIProcess = 0, NetworkProcess, StorageProcess, WebProcess };
+WEBCORE_EXPORT void setWebKitProcessType(WebKitProcessType);
+bool isInNetworkProcess();
+bool isInStorageProcess();
+bool isInWebProcess();
 #endif
 
 #if PLATFORM(COCOA)
-
-bool isInWebProcess();
 
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 String applicationBundleIdentifier();

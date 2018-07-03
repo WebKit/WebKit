@@ -1,3 +1,38 @@
+2018-07-03  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Add assert to catch improper use of WebCore::Timer in UI Process
+        <https://webkit.org/b/185330>
+        <rdar://problem/32816079>
+
+        Reviewed by Darin Adler.
+
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::s_webKitProcessType): Add. Global to track process
+        type.
+        (WebCore::setWebKitProcessType): Implement new function that is
+        called when initializing Web, Network, and Storage processes.
+        (WebCore::isInNetworkProcess): Add.
+        (WebCore::isInStorageProcess): Add.
+        (WebCore::isInWebProcess): Add.
+        - Check value in s_webKitProcessType to determine which process
+          is currently running.
+        * platform/RuntimeApplicationChecks.h:
+        (WebCore::isInNetworkProcess): Add.
+        (WebCore::isInStorageProcess): Add.
+        (WebCore::isInWebProcess):
+        - Make available for all platforms.
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::TimerBase): Add assert and os_log_fault.
+        This catches the unwanted behavior on iOS using isAllowed().
+        (WebCore::TimerBase::isAllowed): Add implementation.
+        * platform/Timer.h:
+        (WebCore::TimerBase::isAllowed): Add declaration.
+
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::isInWebProcess): Delete.  Replace with method in
+        RuntimeApplicationChecks.cpp.
+
 2018-07-02  Antti Koivisto  <antti@apple.com>
 
         Tighter limit for canvas memory use on iOS

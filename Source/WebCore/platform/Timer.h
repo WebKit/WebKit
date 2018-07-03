@@ -78,6 +78,8 @@ private:
     void checkConsistency() const;
     void checkHeapIndex() const;
 
+    static bool isAllowed();
+
     void setNextFireTime(MonotonicTime);
 
     bool inHeap() const { return m_heapIndex != -1; }

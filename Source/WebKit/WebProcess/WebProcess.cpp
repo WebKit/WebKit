@@ -209,6 +209,8 @@ WebProcess::WebProcess()
     });
     
     Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
+
+    WebCore::setWebKitProcessType(WebKitProcessType::WebProcess);
 }
 
 WebProcess::~WebProcess()

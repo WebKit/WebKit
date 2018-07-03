@@ -1,3 +1,20 @@
+2018-07-03  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Add assert to catch improper use of WebCore::Timer in UI Process
+        <https://webkit.org/b/185330>
+        <rdar://problem/32816079>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::StorageProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_nonVisibleProcessCleanupTimer):
+        - Call setWebKitProcessType() to se the global for the current
+          process.
+
 2018-07-03  Frederic Wang  <fred.wang@free.fr>
 
         [iOS] Animations with Bézier timing function not suspended on UI process when animation-play-state is set to "paused"
