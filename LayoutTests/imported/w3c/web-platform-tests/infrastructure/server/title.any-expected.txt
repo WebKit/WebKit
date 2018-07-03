@@ -1,0 +1,3 @@
+
+FAIL Untitled assert_equals: expected "foobar" but got ""
+

@@ -803,6 +803,25 @@ imported/w3c/web-platform-tests/fonts [ Skip ]
 imported/w3c/web-platform-tests/images [ Skip ]
 imported/w3c/web-platform-tests/tools [ Skip ]
 
+# Skip WPT infrastructure tests using expectation manifest.
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/browsers/firefox [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/expected-fail/failing-test.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/expected-fail/timeout.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_and_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_cycle_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_match_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_mismatch_fail.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_ref_timeout.html [ Skip ]
+webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_timeout.html [ Skip ]
+
+# WPT infrastructure tests failing.
+imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/infrastructure/assumptions/min-font-size.html [ ImageOnlyFailure ]
+webkit.org/b/186045 imported/w3c/web-platform-tests/infrastructure/reftest-wait.html [ ImageOnlyFailure ] # reftest-wait not supported yet.
+webkit.org/b/187039 imported/w3c/web-platform-tests/infrastructure/testdriver [ Skip ] # testdriver not supported yet.
+webkit.org/b/187093 imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html [ Pass Crash ]
+imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.html [ Skip ] # non deterministic URL in text dump
+
 # Imported W3C canvas failed tests
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.null.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.pattern.image.incomplete.omitted.html [ Failure ]

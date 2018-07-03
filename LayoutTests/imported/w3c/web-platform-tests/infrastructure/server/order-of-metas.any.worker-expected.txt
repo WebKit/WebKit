@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: test
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: test
+CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: test
+
+Harness Error (FAIL), message = Error in remote http://localhost:8800/infrastructure/server/resources/expect-seen-testharness.js: ReferenceError: Can't find variable: test
+
+

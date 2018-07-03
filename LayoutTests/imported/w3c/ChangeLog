@@ -1,3 +1,141 @@
+2018-07-03  Frederic Wang  <fwang@igalia.com>
+
+        Import WPT infrastructure tests
+        https://bugs.webkit.org/show_bug.cgi?id=187095
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/infrastructure/META.yml: Added.
+        * web-platform-tests/infrastructure/README.md: Added.
+        * web-platform-tests/infrastructure/assumptions/META.yml: Added.
+        * web-platform-tests/infrastructure/assumptions/ahem-expected.html: Added.
+        * web-platform-tests/infrastructure/assumptions/ahem-notref.html: Added.
+        * web-platform-tests/infrastructure/assumptions/ahem-ref-expected.html: Added.
+        * web-platform-tests/infrastructure/assumptions/ahem-ref.html: Added.
+        * web-platform-tests/infrastructure/assumptions/ahem.html: Added.
+        * web-platform-tests/infrastructure/assumptions/canvas-background-expected.html: Added.
+        * web-platform-tests/infrastructure/assumptions/canvas-background.html: Added.
+        * web-platform-tests/infrastructure/assumptions/html-elements-expected.txt: Added.
+        * web-platform-tests/infrastructure/assumptions/html-elements.html: Added.
+        * web-platform-tests/infrastructure/assumptions/initial-color-expected.html: Added.
+        * web-platform-tests/infrastructure/assumptions/initial-color.html: Added.
+        * web-platform-tests/infrastructure/assumptions/medium-font-size-expected.html: Added.
+        * web-platform-tests/infrastructure/assumptions/medium-font-size.html: Added.
+        * web-platform-tests/infrastructure/assumptions/min-font-size-expected.html: Added.
+        * web-platform-tests/infrastructure/assumptions/min-font-size.html: Added.
+        * web-platform-tests/infrastructure/assumptions/non-secure-context.any-expected.txt: Added.
+        * web-platform-tests/infrastructure/assumptions/non-secure-context.any.html: Added.
+        * web-platform-tests/infrastructure/assumptions/non-secure-context.any.js: Added.
+        (test):
+        * web-platform-tests/infrastructure/assumptions/non-secure-context.any.worker-expected.txt: Added.
+        * web-platform-tests/infrastructure/assumptions/non-secure-context.any.worker.html: Added.
+        * web-platform-tests/infrastructure/assumptions/tools/ahem-generate-table.py: Added.
+        (grouper):
+        (build_header):
+        (build_table):
+        * web-platform-tests/infrastructure/assumptions/tools/build.sh: Added.
+        * web-platform-tests/infrastructure/assumptions/tools/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/assumptions/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/browsers/firefox/prefs.html: Added.
+        * web-platform-tests/infrastructure/browsers/firefox/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/expected-fail/failing-test.html: Added.
+        * web-platform-tests/infrastructure/expected-fail/timeout.html: Added.
+        * web-platform-tests/infrastructure/expected-fail/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/browsers/firefox/__dir__.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/browsers/firefox/prefs.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/browsers/firefox/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/expected-fail/failing-test.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/expected-fail/timeout.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/expected-fail/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/reftest/reftest_and_fail.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/reftest/reftest_cycle_fail.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/reftest/reftest_match_fail.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/reftest/reftest_mismatch_fail.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/reftest/reftest_ref_timeout.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/reftest/reftest_timeout.html.ini: Added.
+        * web-platform-tests/infrastructure/metadata/infrastructure/reftest/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/reftest-wait-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest-wait.html: Added.
+        * web-platform-tests/infrastructure/reftest/green-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/green-ref-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/green-ref.html: Added.
+        * web-platform-tests/infrastructure/reftest/green.html: Added.
+        * web-platform-tests/infrastructure/reftest/red.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest.https-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest.https.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_and_fail-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_and_fail.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_and_fail_0-ref-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_and_fail_0-ref.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_0-ref-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_0-ref.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_1-ref-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_1-ref.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_fail-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_fail.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_fail_0-ref-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_cycle_fail_0-ref.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_match-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_match.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_match_fail-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_match_fail.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_mismatch-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_mismatch.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_mismatch_fail-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_mismatch_fail.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_or_0-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_or_0.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_ref_timeout-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_ref_timeout.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_timeout-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_timeout.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_wait_0-expected.html: Added.
+        * web-platform-tests/infrastructure/reftest/reftest_wait_0.html: Added.
+        * web-platform-tests/infrastructure/reftest/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/server/order-of-metas.any-expected.txt: Added.
+        * web-platform-tests/infrastructure/server/order-of-metas.any.html: Added.
+        * web-platform-tests/infrastructure/server/order-of-metas.any.js: Added.
+        (test):
+        * web-platform-tests/infrastructure/server/order-of-metas.any.worker-expected.txt: Added.
+        * web-platform-tests/infrastructure/server/order-of-metas.any.worker.html: Added.
+        * web-platform-tests/infrastructure/server/order-of-metas.window.js: Added.
+        (test):
+        * web-platform-tests/infrastructure/server/resources/expect-global.js: Added.
+        (test):
+        * web-platform-tests/infrastructure/server/resources/expect-seen-testharness.js: Added.
+        (test):
+        * web-platform-tests/infrastructure/server/resources/expect-title-meta.js: Added.
+        (self.GLOBAL.self.GLOBAL.isWindow):
+        * web-platform-tests/infrastructure/server/resources/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/server/secure-context.https.any-expected.txt: Added.
+        * web-platform-tests/infrastructure/server/secure-context.https.any.html: Added.
+        * web-platform-tests/infrastructure/server/secure-context.https.any.js: Added.
+        (test):
+        * web-platform-tests/infrastructure/server/secure-context.https.any.worker-expected.txt: Added.
+        * web-platform-tests/infrastructure/server/secure-context.https.any.worker.html: Added.
+        * web-platform-tests/infrastructure/server/title.any-expected.txt: Added.
+        * web-platform-tests/infrastructure/server/title.any.html: Added.
+        * web-platform-tests/infrastructure/server/title.any.js: Added.
+        (test.t.GLOBAL.isWindow):
+        * web-platform-tests/infrastructure/server/title.any.worker-expected.txt: Added.
+        * web-platform-tests/infrastructure/server/title.any.worker.html: Added.
+        * web-platform-tests/infrastructure/server/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/server/wpt-server-http.sub-expected.txt: Added.
+        * web-platform-tests/infrastructure/server/wpt-server-http.sub.html: Added.
+        * web-platform-tests/infrastructure/server/wpt-server-websocket.sub.html: Added.
+        * web-platform-tests/infrastructure/testdriver/click.html: Added.
+        * web-platform-tests/infrastructure/testdriver/send_keys.html: Added.
+        * web-platform-tests/infrastructure/testdriver/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/w3c-import.log: Added.
+        * web-platform-tests/infrastructure/webdriver/tests/conftest.py: Added.
+        * web-platform-tests/infrastructure/webdriver/tests/test_load_file.py: Added.
+        (test_load):
+        * web-platform-tests/infrastructure/webdriver/tests/w3c-import.log: Added.
+
 2018-07-03  Antoine Quint  <graouts@apple.com>
 
         Unreviewed, rebaselining a Web Animations test expectation.

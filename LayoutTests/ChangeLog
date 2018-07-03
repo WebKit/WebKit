@@ -1,5 +1,14 @@
 2018-07-03  Frederic Wang  <fwang@igalia.com>
 
+        Import WPT infrastructure tests
+        https://bugs.webkit.org/show_bug.cgi?id=187095
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Mark known failures.
+
+2018-07-03  Frederic Wang  <fwang@igalia.com>
+
         REGRESSION (r232186): Hardware-accelerated CSS animations using steps() timing function no longer work
         https://bugs.webkit.org/show_bug.cgi?id=186129
 

@@ -242,7 +242,7 @@
     "web-platform-tests/http": "skip", 
     "web-platform-tests/image-decodes": "skip", 
     "web-platform-tests/imagebitmap-renderingcontext": "import", 
-    "web-platform-tests/infrastructure": "skip", 
+    "web-platform-tests/infrastructure": "import", 
     "web-platform-tests/innerText": "import", 
     "web-platform-tests/input-events": "skip", 
     "web-platform-tests/interfaces": "skip", 

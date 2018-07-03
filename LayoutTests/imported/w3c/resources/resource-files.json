@@ -1089,6 +1089,8 @@
         "web-platform-tests/html/syntax/parsing/foreign_content_013.html",
         "web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/xhtml-mathml-dtd-entity-support.htm",
         "web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html",
+        "web-platform-tests/infrastructure/assumptions/ahem-notref.html",
+        "web-platform-tests/infrastructure/reftest/red.html",
         "web-platform-tests/intersection-observer/observer-in-iframe.html",
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-1.html",
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-2.html",

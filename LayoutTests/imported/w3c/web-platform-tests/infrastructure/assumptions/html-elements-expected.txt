@@ -1,0 +1,13 @@
+
+PASS (pre-req for comparison tests) all CSS short-hand supported 
+PASS (pre-req for comparison tests) initial CSS value supported 
+FAIL Compare CSS div definitions (only valid if pre-reqs pass) assert_equals: Different value for -webkit-mask-box-image-slice expected "0" but got "0 fill"
+FAIL Compare CSS span definitions (only valid if pre-reqs pass) assert_equals: Different value for -webkit-mask-box-image-slice expected "0" but got "0 fill"
+PASS p is display: block 
+PASS ul > li is display: list-item 
+PASS ol > li is display: list-item 
+PASS table is display: table 
+PASS tbody is display: table-row-group 
+PASS tr is display: table-row 
+PASS td is display: table-cell 
+
