@@ -96,7 +96,7 @@ TEST(ActionSheetTests, DismissingActionSheetShouldNotDismissPresentingViewContro
     UIApplicationInitialize();
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
-    auto window = [[TestWKWebViewControllerWindow alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
+    auto window = adoptNS([[TestWKWebViewControllerWindow alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)]);
     auto rootViewController = adoptNS([[UIViewController alloc] init]);
     auto navigationController = adoptNS([[UINavigationController alloc] initWithRootViewController:rootViewController.get()]);
     auto observer = adoptNS([[ActionSheetObserver alloc] init]);

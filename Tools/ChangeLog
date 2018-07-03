@@ -1,3 +1,15 @@
+2018-07-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix a leak in ActionSheetTests.DismissingActionSheetShouldNotDismissPresentingViewController
+        https://bugs.webkit.org/show_bug.cgi?id=187280
+
+        Reviewed by Tim Horton.
+
+        Add a missing `adoptNS()`.
+
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-07-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Google Fonts doesn't work if the user has the requested font locally-installed
