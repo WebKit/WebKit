@@ -1,3 +1,14 @@
+2018-07-03  Jer Noble  <jer.noble@apple.com>
+
+        Update Fullscreen anti-phishing alert text
+        https://bugs.webkit.org/show_bug.cgi?id=187199
+        <rdar://problem/41162543>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]):
+
 2018-07-03  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Add assert to catch improper use of WebCore::Timer in UI Process
