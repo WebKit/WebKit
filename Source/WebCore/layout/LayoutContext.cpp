@@ -122,7 +122,7 @@ FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) cons
 FormattingState& LayoutContext::establishedFormattingState(const Box& formattingContextRoot, const FormattingContext& context)
 {
     return *m_formattingStates.ensure(&formattingContextRoot, [this, &context] {
-        return context.createFormattingState(context.createOrFindFloatingState(*this));
+        return context.createFormattingState(context.createOrFindFloatingState(*this), *this);
     }).iterator->value;
 }
 

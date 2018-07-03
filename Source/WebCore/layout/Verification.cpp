@@ -120,11 +120,11 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const RenderView& rende
 {
     TextStream stream;
     auto mismatchingGeometry = verifyAndOutputSubtree(stream, *this, renderView, *m_root.get());
+    if (!mismatchingGeometry)
+        return;
 #if ENABLE(TREE_DEBUGGING)
-    if (mismatchingGeometry) {
-        showRenderTree(&renderView);
-        TreeBuilder::showLayoutTree(*this, *m_root.get());
-    }
+    showRenderTree(&renderView);
+    TreeBuilder::showLayoutTree(*this, *m_root.get());
 #endif
     WTFLogAlways("%s", stream.release().utf8().data());
 }

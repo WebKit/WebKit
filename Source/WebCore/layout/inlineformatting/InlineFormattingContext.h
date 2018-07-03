@@ -44,13 +44,14 @@ public:
     InlineFormattingContext(const Box& formattingContextRoot);
 
     void layout(LayoutContext&, FormattingState&) const override;
-    std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const override;
+    std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&, const LayoutContext&) const override;
     Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 private:
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
 
+    InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;
 };
 
 }

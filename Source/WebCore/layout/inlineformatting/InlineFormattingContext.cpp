@@ -48,9 +48,9 @@ void InlineFormattingContext::layout(LayoutContext&, FormattingState&) const
 {
 }
 
-std::unique_ptr<FormattingState> InlineFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState) const
+std::unique_ptr<FormattingState> InlineFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState, const LayoutContext& layoutContext) const
 {
-    return std::make_unique<InlineFormattingState>(WTFMove(floatingState));
+    return std::make_unique<InlineFormattingState>(WTFMove(floatingState), layoutContext);
 }
 
 Ref<FloatingState> InlineFormattingContext::createOrFindFloatingState(LayoutContext& layoutContext) const
@@ -72,6 +72,11 @@ void InlineFormattingContext::computeStaticPosition(LayoutContext&, const Box&, 
 
 void InlineFormattingContext::computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const
 {
+}
+
+FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints(LayoutContext&, const Box&) const
+{
+    return { };
 }
 
 }

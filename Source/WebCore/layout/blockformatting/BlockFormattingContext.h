@@ -47,7 +47,7 @@ public:
     BlockFormattingContext(const Box& formattingContextRoot);
 
     void layout(LayoutContext&, FormattingState&) const override;
-    std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const override;
+    std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&, const LayoutContext&) const override;
     Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 private:
@@ -61,6 +61,8 @@ private:
     void computeInFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeInFlowHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
 
+    FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;
+
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry {
     public:
@@ -69,6 +71,9 @@ private:
 
         static FormattingContext::Geometry::Position staticPosition(LayoutContext&, const Box&);
         static FormattingContext::Geometry::Position inFlowPositionedPosition(LayoutContext&, const Box&);
+
+        static bool instrinsicWidthConstraintsNeedChildrenWidth(const Box&);
+        static FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&);
 
     private:
         static FormattingContext::Geometry::HeightAndMargin inFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);

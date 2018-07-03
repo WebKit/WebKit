@@ -1,3 +1,54 @@
+2018-07-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement minimum/maximum content width logic.
+        https://bugs.webkit.org/show_bug.cgi?id=187241
+
+        Reviewed by Antti Koivisto.
+
+        Compute the minimum/maximum content width if needed and cache the values on the formatting state.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::shrinkToFitWidth): Deleted.
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::FormattingState):
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::setMinimumMaximumContentWidth):
+        (WebCore::Layout::FormattingState::clearMinimumMaximumContentWidth):
+        (WebCore::Layout::FormattingState::minimumMaximumContentWidth const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::establishedFormattingState):
+        * layout/LayoutContext.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::createFormattingState const):
+        (WebCore::Layout::BlockFormattingContext::minimumMaximumContentWidth const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::minimumMaximumContentWidthNeedsChildrenWidth):
+        (WebCore::Layout::BlockFormattingContext::Geometry::minimumMaximumContentWidth):
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::BlockFormattingState):
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::createFormattingState const):
+        (WebCore::Layout::InlineFormattingContext::minimumMaximumContentWidth const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::InlineFormattingState):
+        * layout/inlineformatting/InlineFormattingState.h:
+        * page/FrameViewLayoutContext.cpp:
+
 2018-07-03  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r233461.

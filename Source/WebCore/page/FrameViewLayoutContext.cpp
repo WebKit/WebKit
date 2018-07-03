@@ -40,6 +40,7 @@
 #include "Settings.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+#include "FormattingState.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include "LayoutTreeBuilder.h"

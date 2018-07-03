@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
-#include "FormattingState.h"
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
@@ -48,6 +47,7 @@ namespace Layout {
 enum class StyleDiff;
 class Box;
 class Container;
+class FormattingState;
 
 // LayoutContext is the entry point for layout. It takes a (formatting root)container which acts as the root of the layout context.
 // LayoutContext::layout() generates the display tree for the root container's subtree (it does not run layout on the root though).

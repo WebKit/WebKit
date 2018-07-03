@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "LayoutChildIterator.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 
@@ -371,6 +372,52 @@ FormattingContext::Geometry::WidthAndMargin BlockFormattingContext::Geometry::in
     if (!layoutBox.replaced())
         return inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox);
     return inFlowReplacedWidthAndMargin(layoutContext, layoutBox);
+}
+
+bool BlockFormattingContext::Geometry::instrinsicWidthConstraintsNeedChildrenWidth(const Box& layoutBox)
+{
+    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
+        return false;
+    return layoutBox.style().width().isAuto();
+}
+
+FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::instrinsicWidthConstraints(LayoutContext& layoutContext, const Box& layoutBox)
+{
+    auto& style = layoutBox.style();
+    if (auto width = FormattingContext::Geometry::fixedValue(style.logicalWidth()))
+        return { *width, *width };
+
+    // Minimum/maximum width can't be depending on the containing block's width.
+    if (!style.logicalWidth().isAuto())
+        return { };
+
+    if (!is<Container>(layoutBox))
+        return { };
+
+    LayoutUnit minimumIntrinsicWidth;
+    LayoutUnit maximumIntrinsicWidth;
+
+    for (auto& child : childrenOfType<Box>(downcast<Container>(layoutBox))) {
+        if (child.isOutOfFlowPositioned())
+            continue;
+        auto& formattingState = layoutContext.formattingStateForBox(child);
+        ASSERT(formattingState.isBlockFormattingState());
+        auto childInstrinsicWidthConstraints = formattingState.instrinsicWidthConstraints(child);
+        ASSERT(childInstrinsicWidthConstraints);
+        
+        auto& style = child.style();
+        auto horizontalMarginBorderAndPadding = FormattingContext::Geometry::fixedValue(style.marginLeft()).value_or(0)
+            + LayoutUnit { style.borderLeftWidth() }
+            + FormattingContext::Geometry::fixedValue(style.paddingLeft()).value_or(0)
+            + FormattingContext::Geometry::fixedValue(style.paddingRight()).value_or(0)
+            + LayoutUnit { style.borderRightWidth() }
+            + FormattingContext::Geometry::fixedValue(style.marginRight()).value_or(0);
+
+        minimumIntrinsicWidth = std::max(minimumIntrinsicWidth, childInstrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding); 
+        maximumIntrinsicWidth = std::max(maximumIntrinsicWidth, childInstrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding); 
+    }
+
+    return { minimumIntrinsicWidth, maximumIntrinsicWidth };
 }
 
 }

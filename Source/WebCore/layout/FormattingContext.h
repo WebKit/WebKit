@@ -52,8 +52,14 @@ public:
 
     virtual void layout(LayoutContext&, FormattingState&) const = 0;
     void layoutOutOfFlowDescendants(LayoutContext&, const Box&) const;
-    virtual std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&) const = 0;
+    virtual std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&, const LayoutContext&) const = 0;
     virtual Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const = 0;
+
+    struct InstrinsicWidthConstraints {
+        LayoutUnit minimum;
+        LayoutUnit maximum;
+    };
+    virtual InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const = 0;
 
 protected:
     struct LayoutPair {
@@ -112,10 +118,10 @@ protected:
         };
 
         static VerticalGeometry outOfFlowVerticalGeometry(LayoutContext&, const Box&);
-        static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutContext&, const Box&);
+        static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutContext&, const FormattingContext&, const Box&);
 
         static HeightAndMargin floatingHeightAndMargin(LayoutContext&, const Box&);
-        static WidthAndMargin floatingWidthAndMargin(LayoutContext&, const Box&);
+        static WidthAndMargin floatingWidthAndMargin(LayoutContext&, const FormattingContext&, const Box&);
 
         static HeightAndMargin inlineReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin inlineReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedMarginLeft = { },
@@ -128,19 +134,22 @@ protected:
         static Display::Box::VerticalEdges computedNonCollapsedVerticalMarginValue(const LayoutContext&, const Box&);
 
         static std::optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
+        static std::optional<LayoutUnit> fixedValue(const Length& geometryProperty);
 
     private:
         static VerticalGeometry outOfFlowReplacedVerticalGeometry(LayoutContext&, const Box&);
         static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(LayoutContext&, const Box&);
 
         static VerticalGeometry outOfFlowNonReplacedVerticalGeometry(LayoutContext&, const Box&);
-        static HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(LayoutContext&, const Box&);
+        static HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(LayoutContext&, const FormattingContext&, const Box&);
 
         static HeightAndMargin floatingReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingReplacedWidthAndMargin(LayoutContext&, const Box&);
 
         static HeightAndMargin floatingNonReplacedHeightAndMargin(LayoutContext&, const Box&);
-        static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutContext&, const Box&);
+        static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutContext&, const FormattingContext&, const Box&);
+
+        static LayoutUnit shrinkToFitWidth(LayoutContext&, const FormattingContext&, const Box&);
     };
 
 private:

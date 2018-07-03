@@ -28,6 +28,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatingState.h"
+#include "LayoutBox.h"
+#include "LayoutContext.h"
+#include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -47,17 +50,45 @@ public:
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&);
 
+    void setInstrinsicWidthConstraints(const Box&,  FormattingContext::InstrinsicWidthConstraints);
+    void clearInstrinsicWidthConstraints(const Box&);
+    std::optional<FormattingContext::InstrinsicWidthConstraints> instrinsicWidthConstraints(const Box&) const;
+
     bool isBlockFormattingState() const { return m_type == Type::Block; }
     bool isInlineFormattingState() const { return m_type == Type::Inline; }
 
 protected:
     enum class Type { Block, Inline };
-    FormattingState(Ref<FloatingState>&&, Type);
+    FormattingState(Ref<FloatingState>&&, Type, const LayoutContext&);
+
+    const LayoutContext& m_layoutContext;
 
 private:
     Ref<FloatingState> m_floatingState;
+    HashMap<const Box*, FormattingContext::InstrinsicWidthConstraints> m_instrinsicWidthConstraints;
     Type m_type;
 };
+
+inline void FormattingState::setInstrinsicWidthConstraints(const Box& layoutBox, FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints)
+{
+    ASSERT(!m_instrinsicWidthConstraints.contains(&layoutBox));
+    ASSERT(&m_layoutContext.formattingStateForBox(layoutBox) == this);
+    m_instrinsicWidthConstraints.set(&layoutBox, instrinsicWidthConstraints);
+}
+
+inline void FormattingState::clearInstrinsicWidthConstraints(const Box& layoutBox)
+{
+    m_instrinsicWidthConstraints.remove(&layoutBox);
+}
+
+inline std::optional<FormattingContext::InstrinsicWidthConstraints> FormattingState::instrinsicWidthConstraints(const Box& layoutBox) const
+{
+    ASSERT(&m_layoutContext.formattingStateForBox(layoutBox) == this);
+    auto iterator = m_instrinsicWidthConstraints.find(&layoutBox);
+    if (iterator == m_instrinsicWidthConstraints.end())
+        return { };
+    return iterator->value;
+}
 
 }
 }
