@@ -1,3 +1,69 @@
+2018-07-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Embed certificate information into ResourceResponse.
+        https://bugs.webkit.org/show_bug.cgi?id=187102
+
+        Reviewed by Youenn Fablet.
+
+        No new tests but tested internally.
+
+        Collect certificate information from the communication and put them into
+        ResourceResponse for the sake of advanced security checking and information
+        providing to the user.
+
+        * platform/Curl.cmake:
+        * platform/network/curl/CertificateInfo.cpp: Copied from Source/WebCore/platform/network/curl/CertificateInfo.h.
+        (WebCore::CertificateInfo::CertificateInfo):
+        (WebCore::CertificateInfo::isolatedCopy const):
+        (WebCore::CertificateInfo::makeCertificate):
+        * platform/network/curl/CertificateInfo.h:
+        (WebCore::CertificateInfo::verificationError const):
+        (WebCore::CertificateInfo::certificateChain const):
+        (WebCore::operator==):
+        (WebCore::CertificateInfo::CertificateInfo): Deleted.
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::getCertificateInfo const):
+        (WebCore::CurlRequest::getNetworkLoadMetrics const):
+        (WebCore::CurlRequest::getNetworkLoadMetrics): Deleted.
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+        (WebCore::CurlResourceHandleDelegate::curlDidComplete):
+        * platform/network/curl/CurlSSLHandle.cpp:
+        (WebCore::CurlSSLHandle::setHostAllowsAnyHTTPSCertificate):
+        (WebCore::CurlSSLHandle::canIgnoredHTTPSCertificate):
+        * platform/network/curl/CurlSSLHandle.h:
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::CurlSSLVerifier):
+        (WebCore::CurlSSLVerifier::verifyCallback):
+        (WebCore::StackOfX509::StackOfX509): For RAII. Used in pemDataFromCtx().
+        (WebCore::StackOfX509::~StackOfX509): Ditto.
+        (WebCore::StackOfX509::count): Ditto.
+        (WebCore::StackOfX509::item): Ditto.
+        (WebCore::BIOHolder::BIOHolder): Ditto.
+        (WebCore::BIOHolder::~BIOHolder): Ditto.
+        (WebCore::BIOHolder::write): Ditto.
+        (WebCore::BIOHolder::asCertificate): Ditto.
+        (WebCore::pemDataFromCtx): Become simple static function.
+        (WebCore::convertToSSLCertificateFlags): Ditto.
+        (WebCore::CurlSSLVerifier::certVerifyCallback): Deleted.
+        (WebCore::CurlSSLVerifier::getPemDataFromCtx): Deleted.
+        (WebCore::CurlSSLVerifier::convertToSSLCertificateFlags): Deleted.
+        * platform/network/curl/CurlSSLVerifier.h:
+        (WebCore::CurlSSLVerifier::verificationError):
+        (WebCore::CurlSSLVerifier::certificateChain const):
+        * platform/network/curl/ResourceError.h:
+        * platform/network/curl/ResourceErrorCurl.cpp:
+        (WebCore::ResourceError::isSSLConnectError const):
+        (WebCore::ResourceError::isSSLCertVerificationError const):
+        (WebCore::ResourceError::hasSSLConnectError const): Deleted.
+        * platform/network/curl/ResourceResponse.h:
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::setCertificateInfo):
+        (WebCore::ResourceResponse::setDeprecatedNetworkLoadMetrics):
+
 2018-07-02  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up the layer volatility code and logging

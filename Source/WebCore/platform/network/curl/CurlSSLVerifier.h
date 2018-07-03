@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <wtf/ListHashSet.h>
+#include "CertificateInfo.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,19 +53,18 @@ public:
     CurlSSLVerifier(CurlHandle*, const String& hostName, void* sslCtx);
 
     int sslErrors() { return m_sslErrors; }
+    const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
 
 private:
-    static int certVerifyCallback(int, X509_STORE_CTX*);
-
-#if !PLATFORM(WIN)
-    static bool getPemDataFromCtx(X509_STORE_CTX*, ListHashSet<String>&);
-#endif
-
-    SSLCertificateFlags convertToSSLCertificateFlags(const unsigned&);
+    static int verifyCallback(int, X509_STORE_CTX*);
 
     CurlHandle* m_curlHandle { };
     String m_hostName;
+
     int m_sslErrors { 0 };
+    CertificateInfo m_certificateInfo;
+
+    bool verify(X509_STORE_CTX*);
 };
 
 } // namespace WebCore

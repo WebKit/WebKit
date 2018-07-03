@@ -34,15 +34,18 @@
 
 namespace WebCore {
 
+static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_CTX*);
+static CurlSSLVerifier::SSLCertificateFlags convertToSSLCertificateFlags(unsigned);
+
 CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName, void* sslCtx)
     : m_curlHandle(curlHandle)
     , m_hostName(hostName)
 {
     auto* ctx = static_cast<SSL_CTX*>(sslCtx);
-    auto& sslHandle = CurlContext::singleton().sslHandle();
+    const auto& sslHandle = CurlContext::singleton().sslHandle();
 
     SSL_CTX_set_app_data(ctx, this);
-    SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), certVerifyCallback);
+    SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), verifyCallback);
 
 #if defined(LIBRESSL_VERSION_NUMBER)
     if (auto data = WTF::get_if<Vector<char>>(sslHandle.getCACertInfo()))
@@ -50,94 +53,129 @@ CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName,
 #endif
 
 #if (!defined(LIBRESSL_VERSION_NUMBER))
-    auto signatureAlgorithmsList = sslHandle.getSignatureAlgorithmsList();
+    const auto& signatureAlgorithmsList = sslHandle.getSignatureAlgorithmsList();
     if (!signatureAlgorithmsList.isEmpty())
         SSL_CTX_set1_sigalgs_list(ctx, signatureAlgorithmsList->utf8().data());
 #endif
 
-    auto curvesList = sslHandle.getCurvesList();
+    const auto& curvesList = sslHandle.getCurvesList();
     if (!curvesList.isEmpty())
         SSL_CTX_set1_curves_list(ctx, curvesList.utf8().data());
 }
 
-int CurlSSLVerifier::certVerifyCallback(int ok, X509_STORE_CTX* storeCtx)
+bool CurlSSLVerifier::verify(X509_STORE_CTX* ctx)
 {
     // whether the verification of the certificate in question was passed (preverify_ok=1) or not (preverify_ok=0)
-    int certErrCd = X509_STORE_CTX_get_error(storeCtx);
-    if (!certErrCd)
+    m_certificateInfo = CertificateInfo { X509_STORE_CTX_get_error(ctx), pemDataFromCtx(ctx) };
+
+    auto error = m_certificateInfo.verificationError();
+    if (!error)
         return 1;
 
-    SSL* ssl = static_cast<SSL*>(X509_STORE_CTX_get_ex_data(storeCtx, SSL_get_ex_data_X509_STORE_CTX_idx()));
-    SSL_CTX* sslCtx = SSL_get_SSL_CTX(ssl);
-    CurlSSLVerifier* verifier = static_cast<CurlSSLVerifier*>(SSL_CTX_get_app_data(sslCtx));
-    if (!verifier)
-        return 0;
-
-    verifier->m_sslErrors = static_cast<int>(verifier->convertToSSLCertificateFlags(certErrCd));
+    m_sslErrors = static_cast<int>(convertToSSLCertificateFlags(error));
 
 #if PLATFORM(WIN)
-    ok = CurlContext::singleton().sslHandle().isAllowedHTTPSCertificateHost(verifier->m_hostName);
+    bool ok = CurlContext::singleton().sslHandle().isAllowedHTTPSCertificateHost(m_hostName);
 #else
-    ListHashSet<String> certificates;
-    if (!getPemDataFromCtx(storeCtx, certificates))
-        return 0;
-
-    ok = CurlContext::singleton().sslHandle().canIgnoredHTTPSCertificate(verifier->m_hostName, certificates);
+    bool ok = CurlContext::singleton().sslHandle().canIgnoredHTTPSCertificate(m_hostName, m_certificateInfo.certificateChain());
 #endif
 
     if (ok) {
         // if the host and the certificate are stored for the current handle that means is enabled,
         // so don't need to curl verifies the authenticity of the peer's certificate
-        if (verifier->m_curlHandle)
-            verifier->m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
+        if (m_curlHandle)
+            m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
     }
 
     return ok;
 }
 
-#if !PLATFORM(WIN)
-
-bool CurlSSLVerifier::getPemDataFromCtx(X509_STORE_CTX* ctx, ListHashSet<String>& certificates)
+int CurlSSLVerifier::verifyCallback(int ok, X509_STORE_CTX* ctx)
 {
-    bool ok = true;
-    STACK_OF(X509)* certs = X509_STORE_CTX_get1_chain(ctx);
-    for (int i = 0; i < sk_X509_num(certs); i++) {
-        X509* uCert = sk_X509_value(certs, i);
-        BIO* bio = BIO_new(BIO_s_mem());
-        int res = PEM_write_bio_X509(bio, uCert);
-        if (!res) {
-            ok = false;
-            BIO_free(bio);
-            break;
-        }
+    auto ssl = static_cast<SSL*>(X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx()));
+    auto sslCtx = SSL_get_SSL_CTX(ssl);
+    auto verifier = static_cast<CurlSSLVerifier*>(SSL_CTX_get_app_data(sslCtx));
 
-        unsigned char* certificateData;
-        long length = BIO_get_mem_data(bio, &certificateData);
-        if (length < 0) {
-            ok = false;
-            BIO_free(bio);
-            break;
-        }
-
-        certificateData[length] = '\0';
-        String certificate = certificateData;
-        certificates.add(certificate);
-        BIO_free(bio);
-    }
-
-    sk_X509_pop_free(certs, X509_free);
-    return ok;
+    // whether the verification of the certificate in question was passed (preverify_ok=1) or not (preverify_ok=0)
+    return verifier->verify(ctx);
 }
 
-#endif
+class StackOfX509 {
+public:
+    explicit StackOfX509(X509_STORE_CTX* ctx)
+        : m_certs { X509_STORE_CTX_get1_chain(ctx) }
+    {
+    }
 
-CurlSSLVerifier::SSLCertificateFlags CurlSSLVerifier::convertToSSLCertificateFlags(const unsigned& sslError)
+    ~StackOfX509()
+    {
+        if (m_certs)
+            sk_X509_pop_free(m_certs, X509_free);
+    }
+
+    unsigned count() { return sk_X509_num(m_certs); }
+    X509* item(unsigned i) { return sk_X509_value(m_certs, i); }
+
+private:
+    STACK_OF(X509)* m_certs { nullptr };
+};
+
+class BIOHolder {
+public:
+    BIOHolder()
+        : m_bio { BIO_new(BIO_s_mem()) }
+    {
+    }
+
+    ~BIOHolder()
+    {
+        if (m_bio)
+            BIO_free(m_bio);
+    }
+
+    bool write(X509* data) { return PEM_write_bio_X509(m_bio, data); }
+    CertificateInfo::Certificate asCertificate()
+    {
+        char* data;
+        long length = BIO_get_mem_data(m_bio, &data);
+        if (length < 0)
+            return CertificateInfo::Certificate();
+
+        auto cert = CertificateInfo::makeCertificate(data, length);
+        return cert;
+    }
+
+private:
+    BIO* m_bio { nullptr };
+};
+
+static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_CTX* ctx)
+{
+    Vector<CertificateInfo::Certificate> result;
+    StackOfX509 certs { ctx };
+    for (int i = 0; i < certs.count(); i++) {
+        BIOHolder bio;
+
+        if (!bio.write(certs.item(i)))
+            return Vector<CertificateInfo::Certificate> { };
+
+        auto certificate = bio.asCertificate();
+        if (certificate.isEmpty())
+            return Vector<CertificateInfo::Certificate> { };
+
+        result.append(WTFMove(certificate));
+    }
+
+    return result;
+}
+
+static CurlSSLVerifier::SSLCertificateFlags convertToSSLCertificateFlags(unsigned sslError)
 {
     switch (sslError) {
     case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT : // the issuer certificate could not be found: this occurs if the issuer certificate of an untrusted certificate cannot be found.
     case X509_V_ERR_UNABLE_TO_GET_CRL : // the CRL of a certificate could not be found.
     case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY : // the issuer certificate of a locally looked up certificate could not be found. This normally means the list of trusted certificates is not complete.
-        return SSLCertificateFlags::SSL_CERTIFICATE_UNKNOWN_CA;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_UNKNOWN_CA;
     case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE : // the certificate signature could not be decrypted. This means that the actual signature value could not be determined rather than it not matching the expected value, this is only meaningful for RSA keys.
     case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE : // the CRL signature could not be decrypted: this means that the actual signature value could not be determined rather than it not matching the expected value. Unused.
     case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY : // the public key in the certificate SubjectPublicKeyInfo could not be read.
@@ -150,13 +188,13 @@ CurlSSLVerifier::SSLCertificateFlags CurlSSLVerifier::convertToSSLCertificateFla
     case X509_V_ERR_CERT_REJECTED : // the root CA is marked to reject the specified purpose.
     case X509_V_ERR_NO_EXPLICIT_POLICY : // the verification flags were set to require and explicit policy but none was present.
     case X509_V_ERR_DIFFERENT_CRL_SCOPE : // the only CRLs that could be found did not match the scope of the certificate.
-        return SSLCertificateFlags::SSL_CERTIFICATE_INSECURE;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_INSECURE;
     case X509_V_ERR_CERT_NOT_YET_VALID : // the certificate is not yet valid: the notBefore date is after the current time.
     case X509_V_ERR_CRL_NOT_YET_VALID : // the CRL is not yet valid.
-        return SSLCertificateFlags::SSL_CERTIFICATE_NOT_ACTIVATED;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_NOT_ACTIVATED;
     case X509_V_ERR_CERT_HAS_EXPIRED : // the certificate has expired: that is the notAfter date is before the current time.
     case X509_V_ERR_CRL_HAS_EXPIRED : // the CRL has expired.
-        return SSLCertificateFlags::SSL_CERTIFICATE_EXPIRED;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_EXPIRED;
     case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD : // the certificate notBefore field contains an invalid time.
     case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD : // the certificate notAfter field contains an invalid time.
     case X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD : // the CRL lastUpdate field contains an invalid time.
@@ -174,17 +212,17 @@ CurlSSLVerifier::SSLCertificateFlags CurlSSLVerifier::convertToSSLCertificateFla
     case X509_V_ERR_UNSUPPORTED_CONSTRAINT_SYNTAX : // the format of the name constraint is not recognised: for example an email address format of a form not mentioned in RFC3280. This could be caused by a garbage extension or some new feature not currently supported.
     case X509_V_ERR_CRL_PATH_VALIDATION_ERROR : // an error occured when attempting to verify the CRL path. This error can only happen if extended CRL checking is enabled.
     case X509_V_ERR_APPLICATION_VERIFICATION : // an application specific error. This will never be returned unless explicitly set by an application.
-        return SSLCertificateFlags::SSL_CERTIFICATE_GENERIC_ERROR;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_GENERIC_ERROR;
     case X509_V_ERR_CERT_REVOKED : // the certificate has been revoked.
-        return SSLCertificateFlags::SSL_CERTIFICATE_REVOKED;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_REVOKED;
     case X509_V_ERR_INVALID_CA : // a CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
     case X509_V_ERR_SUBJECT_ISSUER_MISMATCH : // the current candidate issuer certificate was rejected because its subject name did not match the issuer name of the current certificate. This is only set if issuer check debugging is enabled it is used for status notification and is not in itself an error.
     case X509_V_ERR_AKID_SKID_MISMATCH : // the current candidate issuer certificate was rejected because its subject key identifier was present and did not match the authority key identifier current certificate. This is only set if issuer check debugging is enabled it is used for status notification and is not in itself an error.
     case X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH : // the current candidate issuer certificate was rejected because its issuer name and serial number was present and did not match the authority key identifier of the current certificate. This is only set if issuer check debugging is enabled it is used for status notification and is not in itself an error.
     case X509_V_ERR_KEYUSAGE_NO_CERTSIGN : // the current candidate issuer certificate was rejected because its keyUsage extension does not permit certificate signing. This is only set if issuer check debugging is enabled it is used for status notification and is not in itself an error.
-        return SSLCertificateFlags::SSL_CERTIFICATE_BAD_IDENTITY;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_BAD_IDENTITY;
     default :
-        return SSLCertificateFlags::SSL_CERTIFICATE_GENERIC_ERROR;
+        return CurlSSLVerifier::SSLCertificateFlags::SSL_CERTIFICATE_GENERIC_ERROR;
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CertificateInfo.h"
 
-#include "NotImplemented.h"
-#include <wtf/Vector.h>
+#include <wtf/CrossThreadCopier.h>
+
+#if USE(CURL)
 
 namespace WebCore {
 
-class CertificateInfo {
-public:
-    using Certificate = Vector<char>;
-
-    CertificateInfo() = default;
-    WEBCORE_EXPORT CertificateInfo(int verificationError, Vector<Certificate>&&);
-
-    WEBCORE_EXPORT CertificateInfo isolatedCopy() const;
-
-    int verificationError() const { return m_verificationError; }
-    const Vector<Certificate>& certificateChain() const { return m_certificateChain; }
-
-    bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
-
-    static Certificate makeCertificate(const char*, size_t);
-
-private:
-    int m_verificationError { 0 };
-    Vector<Certificate> m_certificateChain;
-};
-
-inline bool operator==(const CertificateInfo& a, const CertificateInfo& b)
+CertificateInfo::CertificateInfo(int verificationError, Vector<Certificate>&& certificateChain)
+    : m_verificationError(verificationError)
+    , m_certificateChain(WTFMove(certificateChain))
 {
-    return a.verificationError() == b.verificationError() && a.certificateChain() == b.certificateChain();
 }
 
-} // namespace WebCore
+CertificateInfo CertificateInfo::isolatedCopy() const
+{
+    return { m_verificationError, crossThreadCopy(m_certificateChain) };
+}
+
+CertificateInfo::Certificate CertificateInfo::makeCertificate(const char* buffer, size_t size)
+{
+    Certificate certificate;
+    certificate.append(buffer, size);
+    return certificate;
+}
+
+}
+
+#endif

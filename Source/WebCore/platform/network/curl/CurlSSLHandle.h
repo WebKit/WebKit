@@ -26,9 +26,9 @@
 
 #pragma once
 
+#include "CertificateInfo.h"
 #include <openssl/crypto.h>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Variant.h>
@@ -49,7 +49,7 @@ class CurlSSLHandle {
     using ClientCertificate = std::pair<String, String>;
 
 public:
-    using CACertInfo = Variant<Monostate, String, Vector<char>>;
+    using CACertInfo = Variant<Monostate, String, CertificateInfo::Certificate>;
 
     CurlSSLHandle();
 
@@ -66,12 +66,12 @@ public:
 
     const CACertInfo& getCACertInfo() const { return m_caCertInfo; }
     WEBCORE_EXPORT void setCACertPath(String&&);
-    WEBCORE_EXPORT void setCACertData(Vector<char>&&);
+    WEBCORE_EXPORT void setCACertData(CertificateInfo::Certificate&&);
     WEBCORE_EXPORT void clearCACertInfo();
 
     WEBCORE_EXPORT void setHostAllowsAnyHTTPSCertificate(const String&);
     bool isAllowedHTTPSCertificateHost(const String&);
-    bool canIgnoredHTTPSCertificate(const String&, const ListHashSet<String>&);
+    bool canIgnoredHTTPSCertificate(const String&, const Vector<CertificateInfo::Certificate>&);
 
     WEBCORE_EXPORT void setClientCertificateInfo(const String&, const String&, const String&);
     std::optional<ClientCertificate> getSSLClientCertificate(const String&);
@@ -114,7 +114,7 @@ private:
     bool m_ignoreSSLErrors { false };
 
     Lock m_mutex;
-    HashMap<String, ListHashSet<String>, ASCIICaseInsensitiveHash> m_allowedHosts;
+    HashMap<String, Vector<CertificateInfo::Certificate>, ASCIICaseInsensitiveHash> m_allowedHosts;
     HashMap<String, ClientCertificate, ASCIICaseInsensitiveHash> m_allowedClientHosts;
 };
 

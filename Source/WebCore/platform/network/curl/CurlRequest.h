@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CertificateInfo.h"
 #include "CurlFormDataStream.h"
 #include "CurlMultipartHandle.h"
 #include "CurlMultipartHandleClient.h"
@@ -87,7 +88,8 @@ public:
     void enableDownloadToFile();
     const String& getDownloadedFilePath();
 
-    NetworkLoadMetrics getNetworkLoadMetrics() { return m_networkLoadMetrics.isolatedCopy(); }
+    const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
+    const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
 
 private:
     enum class Action {
@@ -193,6 +195,7 @@ private:
     String m_downloadFilePath;
     FileSystem::PlatformFileHandle m_downloadFileHandle { FileSystem::invalidPlatformFileHandle };
 
+    CertificateInfo m_certificateInfo;
     NetworkLoadMetrics m_networkLoadMetrics;
 };
 

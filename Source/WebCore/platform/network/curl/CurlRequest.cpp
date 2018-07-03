@@ -352,6 +352,9 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (m_response.availableProxyAuth)
         CurlContext::singleton().setProxyAuthMethod(m_response.availableProxyAuth);
 
+    if (m_sslVerifier)
+        m_certificateInfo = m_sslVerifier->certificateInfo();
+
     if (m_enableMultipart)
         m_multipartHandle = CurlMultipartHandle::createIfNeeded(*this, m_response);
 
@@ -460,8 +463,11 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     } else {
         auto type = (result == CURLE_OPERATION_TIMEDOUT && m_request.timeoutInterval() > 0.0) ? ResourceError::Type::Timeout : ResourceError::Type::General;
         auto resourceError = ResourceError::httpError(result, m_request.url(), type);
-        if (m_sslVerifier && m_sslVerifier->sslErrors())
+        if (m_sslVerifier) {
             resourceError.setSslErrors(m_sslVerifier->sslErrors());
+
+            m_certificateInfo = m_sslVerifier->certificateInfo();
+        }
 
         finalizeTransfer();
         callClient([error = resourceError.isolatedCopy()](CurlRequest& request, CurlRequestClient& client) {

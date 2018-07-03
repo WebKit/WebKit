@@ -81,7 +81,7 @@ void CurlSSLHandle::setCACertPath(String&& caCertPath)
     m_caCertInfo = WTFMove(caCertPath);
 }
 
-void CurlSSLHandle::setCACertData(Vector<char>&& caCertData)
+void CurlSSLHandle::setCACertData(CertificateInfo::Certificate&& caCertData)
 {
     RELEASE_ASSERT(!caCertData.isEmpty());
     m_caCertInfo = WTFMove(caCertData);
@@ -96,8 +96,7 @@ void CurlSSLHandle::setHostAllowsAnyHTTPSCertificate(const String& hostName)
 {
     LockHolder mutex(m_mutex);
 
-    ListHashSet<String> certificates;
-    m_allowedHosts.set(hostName, certificates);
+    m_allowedHosts.set(hostName, Vector<CertificateInfo::Certificate> { });
 }
 
 bool CurlSSLHandle::isAllowedHTTPSCertificateHost(const String& hostName)
@@ -108,7 +107,7 @@ bool CurlSSLHandle::isAllowedHTTPSCertificateHost(const String& hostName)
     return (it != m_allowedHosts.end());
 }
 
-bool CurlSSLHandle::canIgnoredHTTPSCertificate(const String& hostName, const ListHashSet<String>& certificates)
+bool CurlSSLHandle::canIgnoredHTTPSCertificate(const String& hostName, const Vector<CertificateInfo::Certificate>& certificates)
 {
     LockHolder mutex(m_mutex);
 
@@ -129,8 +128,7 @@ void CurlSSLHandle::setClientCertificateInfo(const String& hostName, const Strin
 {
     LockHolder mutex(m_mutex);
 
-    ClientCertificate clientInfo(certificate, key);
-    m_allowedClientHosts.set(hostName, clientInfo);
+    m_allowedClientHosts.set(hostName, ClientCertificate { certificate, key });
 }
 
 std::optional<CurlSSLHandle::ClientCertificate> CurlSSLHandle::getSSLClientCertificate(const String& hostName)

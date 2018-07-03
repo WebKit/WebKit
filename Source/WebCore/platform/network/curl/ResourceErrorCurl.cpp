@@ -46,9 +46,14 @@ ResourceError ResourceError::sslError(int errorCode, unsigned sslErrors, const U
     return resourceError;
 }
 
-bool ResourceError::hasSSLConnectError() const
+bool ResourceError::isSSLConnectError() const
 {
     return errorCode() == CURLE_SSL_CONNECT_ERROR;
+}
+
+bool ResourceError::isSSLCertVerificationError() const
+{
+    return errorCode() == CURLE_SSL_CACERT || errorCode() == CURLE_PEER_FAILED_VERIFICATION;
 }
 
 void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)

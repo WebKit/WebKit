@@ -49,7 +49,9 @@ public:
 
     unsigned sslErrors() const { return m_sslErrors; }
     void setSslErrors(unsigned sslErrors) { m_sslErrors = sslErrors; }
-    bool hasSSLConnectError() const;
+
+    bool isSSLConnectError() const;
+    WEBCORE_EXPORT bool isSSLCertVerificationError() const;
 
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 

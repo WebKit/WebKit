@@ -1,3 +1,13 @@
+2018-07-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Embed certificate information into ResourceResponse.
+        https://bugs.webkit.org/show_bug.cgi?id=187102
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::curlDidComplete):.
+
 2018-07-03  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] We fail to make surfaces volatile when suspending, increasing memory impact

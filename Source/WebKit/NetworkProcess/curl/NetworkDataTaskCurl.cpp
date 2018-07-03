@@ -200,7 +200,7 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest& request)
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
-    m_response.setDeprecatedNetworkLoadMetrics(request.getNetworkLoadMetrics());
+    m_response.setDeprecatedNetworkLoadMetrics(request.networkLoadMetrics().isolatedCopy());
 
     m_client->didCompleteWithError({ }, m_response.deprecatedNetworkLoadMetrics());
 }

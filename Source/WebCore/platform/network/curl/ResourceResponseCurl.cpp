@@ -142,6 +142,16 @@ void ResourceResponse::setStatusLine(const String& header)
     }
 }
 
+void ResourceResponse::setCertificateInfo(CertificateInfo&& certificateInfo)
+{
+    m_certificateInfo = WTFMove(certificateInfo);
+}
+
+void ResourceResponse::setDeprecatedNetworkLoadMetrics(NetworkLoadMetrics&& networkLoadMetrics)
+{
+    m_networkLoadMetrics = WTFMove(networkLoadMetrics);
+}
+
 String ResourceResponse::platformSuggestedFilename() const
 {
     return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
