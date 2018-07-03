@@ -81,15 +81,19 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
         return std::nullopt;
     };
 
-    // Skip RenderText (and some others) for now.
-    for (auto& child : childrenOfType<RenderElement>(rootRenderer)) {
+    for (auto& child : childrenOfType<RenderObject>(rootRenderer)) {
         Box* box = nullptr;
 
-        if (is<RenderBlock>(child))
-            box = new BlockContainer(elementAttributes(child), RenderStyle::clone(child.style()));
-        else if (is<RenderInline>(child))
-            box = new InlineContainer(elementAttributes(child), RenderStyle::clone(child.style()));
-        else
+        if (is<RenderElement>(child)) {
+            auto& renderer = downcast<RenderElement>(child);
+            if (is<RenderBlock>(renderer))
+                box = new BlockContainer(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            else if (is<RenderInline>(renderer))
+                box = new InlineContainer(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        } else if (is<RenderText>(child)) {
+            box = new InlineBox( { }, RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
+            downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
+        } else
             ASSERT_NOT_IMPLEMENTED_YET();
 
         if (!rootContainer.hasChild()) {
@@ -108,7 +112,8 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
             // Collect the out-of-flow descendants at the formatting root lever (as opposed to at the containing block level, though they might be the same).
             const_cast<Container&>(box->formattingContextRoot()).addOutOfFlowDescendant(*box);
         }
-        createSubTree(child, downcast<Container>(*box));
+        if (is<RenderElement>(child))
+            createSubTree(downcast<RenderElement>(child), downcast<Container>(*box));
     }
 }
 

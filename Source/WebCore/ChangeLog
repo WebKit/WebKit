@@ -1,3 +1,19 @@
+2018-07-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Generate anonymous inline box for text content.
+        https://bugs.webkit.org/show_bug.cgi?id=187301
+
+        Reviewed by Antti Koivisto.
+
+        Always have a inline container for text content (and no dedicated text renderer).
+
+        * layout/layouttree/LayoutInlineBox.cpp:
+        (WebCore::Layout::InlineBox::InlineBox):
+        * layout/layouttree/LayoutInlineBox.h:
+        (WebCore::Layout::InlineBox::setContent):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
 2018-07-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Embed certificate information into ResourceResponse.
