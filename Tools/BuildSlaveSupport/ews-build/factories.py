@@ -101,7 +101,3 @@ class WinCairoFactory(Factory):
 
 class WPEFactory(Factory):
     pass
-
-
-class JSCTestsFactory(Factory):
-    pass
