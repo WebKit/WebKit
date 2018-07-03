@@ -315,6 +315,36 @@ describe('CommitSetRangeBisector', () => {
         ];
     }
 
+    function commitSetsWithTime()
+    {
+        return [
+            CommitSet.ensureSingleton(28, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(201, MockModels.osx, 'osx-commit-201', 8), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(29, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(203, MockModels.osx, 'osx-commit-203', 11), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(30, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(204, MockModels.osx, 'osx-commit-204', 12), requiresBuild: false }
+                ],
+                customRoots: []}),
+            CommitSet.ensureSingleton(31, {
+                revisionItems: [
+                    { commit: makeCommit(1, MockModels.webkit, 'webkit-commit-1', 10), requiresBuild: false },
+                    { commit: makeCommit(205, MockModels.osx, 'osx-commit-205', 13), requiresBuild: false }
+                ],
+                customRoots: []}),
+        ];
+    }
+
     function createRoot()
     {
         return UploadedFile.ensureSingleton(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
@@ -986,6 +1016,51 @@ describe('CommitSetRangeBisector', () => {
             });
 
             assert.equal(await promise, allCommitSets[3]);
+        });
+
+        it('should not double count a commit if start and end commits are the same', async () => {
+            const allCommitSets = commitSetsWithTime();
+            const startCommitSet = allCommitSets[0];
+            const endCommitSet = allCommitSets[allCommitSets.length - 1];
+            const promise = CommitSetRangeBisector.commitSetClosestToMiddleOfAllCommits([startCommitSet, endCommitSet], allCommitSets);
+            assert.equal(requests.length, 1);
+            const osxFetchRequest = requests[0];
+            assert.equal(osxFetchRequest.url, '/api/commits/9/?precedingRevision=osx-commit-201&lastRevision=osx-commit-205');
+            const osxId = MockModels.osx.id();
+            osxFetchRequest.resolve({
+                'commits': [
+                    {
+                        repository: osxId,
+                        id: 202,
+                        revision: 'osx-commit-202',
+                        ownsCommits: false,
+                        time: 9
+                    },
+                    {
+                        repository: osxId,
+                        id: 203,
+                        revision: 'osx-commit-203',
+                        ownsCommits: false,
+                        time: 11
+                    },
+                    {
+                        repository: osxId,
+                        id: 204,
+                        revision: 'osx-commit-204',
+                        ownsCommits: false,
+                        time: 12
+                    },
+                    {
+                        repository: osxId,
+                        id: 205,
+                        revision: 'osx-commit-205',
+                        ownsCommits: false,
+                        time: 13
+                    }
+                ]
+            });
+
+            assert.equal(await promise, allCommitSets[1]);
         });
     });
 

@@ -29,17 +29,17 @@ class CommitSetRangeBisector {
             }
 
             const [startCommit, endCommit] = CommitLog.orderTwoCommits(firstCommit, secondCommit);
-            const commits = startCommit === endCommit ? [startCommit] : await CommitLog.fetchBetweenRevisions(repository, startCommit.revision(), endCommit.revision());
+            const commitsExcludingStartCommit = startCommit === endCommit ? [] : await CommitLog.fetchBetweenRevisions(repository, startCommit.revision(), endCommit.revision());
 
             if (startCommit.hasCommitTime()) {
-                allCommitsWithCommitTime.push(startCommit, ...commits);
+                allCommitsWithCommitTime.push(startCommit, ...commitsExcludingStartCommit);
                 commitRangeByRepository.set(repository, (commit) =>
                     commit.hasCommitTime() && startCommit.time() <= commit.time() && commit.time() <= endCommit.time());
                 repositoriesWithCommitTime.add(repository);
             } else {
                 const indexByCommit = new Map;
                 indexByCommit.set(startCommit, 0);
-                commits.forEach((commit, index) => indexByCommit.set(commit, index + 1));
+                commitsExcludingStartCommit.forEach((commit, index) => indexByCommit.set(commit, index + 1));
                 indexForAllTimelessCommitsWithOrderByRepository.set(repository, indexByCommit);
                 commitRangeByRepository.set(repository, (commit) =>
                     commit.hasCommitOrder() && startCommit.order() <= commit.order() && commit.order() <= endCommit.order());
