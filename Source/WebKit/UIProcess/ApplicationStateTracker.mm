@@ -94,7 +94,10 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
     ASSERT(window);
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    UIApplication *application = [UIApplication sharedApplication];
+
     auto weakThis = makeWeakPtr(*this);
+    // FIXME: this notification never fires any more: rdar://problem/41752351.
     m_didCreateWindowContextObserver = [notificationCenter addObserverForName:@"_UIWindowDidCreateWindowContextNotification" object:window queue:nil usingBlock:[weakThis](NSNotification *) {
         auto applicationStateTracker = weakThis.get();
         if (!applicationStateTracker)
@@ -102,7 +105,7 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         applicationStateTracker->applicationDidCreateWindowContext();
     }];
 
-    m_didFinishSnapshottingAfterEnteringBackgroundObserver = [notificationCenter addObserverForName:@"_UIWindowWillDestroyWindowContextNotification" object:window queue:nil usingBlock:[weakThis](NSNotification *) {
+    m_didFinishSnapshottingAfterEnteringBackgroundObserver = [notificationCenter addObserverForName:@"_UIApplicationDidFinishSuspensionSnapshotNotification" object:application queue:nil usingBlock:[weakThis](NSNotification *) {
         auto applicationStateTracker = weakThis.get();
         if (!applicationStateTracker)
             return;
@@ -111,8 +114,6 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
 
     switch (applicationType(window)) {
     case ApplicationType::Application: {
-        UIApplication *application = [UIApplication sharedApplication];
-
         m_isInBackground = application.applicationState == UIApplicationStateBackground;
 
         m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {

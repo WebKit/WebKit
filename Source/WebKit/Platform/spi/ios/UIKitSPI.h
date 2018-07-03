@@ -104,7 +104,7 @@
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
-#else
+#else // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
@@ -1028,6 +1028,8 @@ BOOL UIKeyboardEnabledInputModesAllowChineseTransliterationForText(NSString *);
 
 extern const float UITableCellDefaultFontSize;
 extern const float UITableViewCellDefaultFontSize;
+
+extern NSString *const _UIApplicationDidFinishSuspensionSnapshotNotification;
 
 extern NSString * const UIWindowDidMoveToScreenNotification;
 extern NSString * const UIWindowDidRotateNotification;

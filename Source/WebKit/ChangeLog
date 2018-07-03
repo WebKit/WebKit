@@ -1,3 +1,24 @@
+2018-07-03  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] We fail to make surfaces volatile when suspending, increasing memory impact
+        https://bugs.webkit.org/show_bug.cgi?id=187285
+        rdar://problem/41732391
+
+        Reviewed by Tim Horton.
+        
+        The "Mach port as layer contents" code path used in iOS WK2 relies on replacing the 
+        Mach port layer contents with the actual IOSurface on suspension (otherwise the
+        live Mach port will keep the surface in use). However, we were never hitting this
+        RemoteLayerTreeHost::mapAllIOSurfaceBackingStore() code path on iOS 11 and later
+        because UIKit stopped firing the notification we relied on.
+        
+        To fix this, use the _UIApplicationDidFinishSuspensionSnapshotNotification notification
+        which is fired on UIApp.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+
 2018-07-02  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up the layer volatility code and logging
