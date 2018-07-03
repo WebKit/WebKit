@@ -1026,10 +1026,10 @@ public:
             }
             
             PatternTerm& firstNonAnchorTerm = terms[termIndex];
-            if ((firstNonAnchorTerm.type != PatternTerm::TypeCharacterClass)
-                || (firstNonAnchorTerm.characterClass != dotCharacterClass)
-                || !((firstNonAnchorTerm.quantityType == QuantifierGreedy)
-                    || (firstNonAnchorTerm.quantityType == QuantifierNonGreedy)))
+            if (firstNonAnchorTerm.type != PatternTerm::TypeCharacterClass
+                || firstNonAnchorTerm.characterClass != dotCharacterClass
+                || firstNonAnchorTerm.quantityMinCount
+                || firstNonAnchorTerm.quantityMaxCount != quantifyInfinite)
                 return;
             
             firstExpressionTerm = termIndex + 1;
@@ -1041,9 +1041,11 @@ public:
             }
             
             PatternTerm& lastNonAnchorTerm = terms[termIndex];
-            if ((lastNonAnchorTerm.type != PatternTerm::TypeCharacterClass)
-                || (lastNonAnchorTerm.characterClass != dotCharacterClass)
-                || (lastNonAnchorTerm.quantityType != QuantifierGreedy))
+            if (lastNonAnchorTerm.type != PatternTerm::TypeCharacterClass
+                || lastNonAnchorTerm.characterClass != dotCharacterClass
+                || lastNonAnchorTerm.quantityType != QuantifierGreedy
+                || lastNonAnchorTerm.quantityMinCount
+                || lastNonAnchorTerm.quantityMaxCount != quantifyInfinite)
                 return;
 
             size_t endIndex = termIndex;

@@ -1,5 +1,24 @@
 2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
+        Regular expressions with ".?" expressions at the start and the end match the entire string
+        https://bugs.webkit.org/show_bug.cgi?id=119191
+
+        Reviewed by Michael Saboff.
+
+        r90962 optimized regular expressions in the form of /.*abc.*/ by looking
+        for "abc" first and then processing the leading and trailing dot stars
+        to find the beginning and the end of the match. However, it erroneously
+        enabled this optimization for regular expressions whose leading or
+        trailing dots had quantifiers that were not of arbitrary length, e.g.,
+        /.?abc.*/, /.*abc.?/, /.{0,4}abc.*/, etc. This caused the expression to
+        match the entire string when it shouldn't. This patch disables the
+        optimization for those cases.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::optimizeDotStarWrappedExpressions):
+
+2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
         RegExp.exec returns wrong value with a long integer quantifier
         https://bugs.webkit.org/show_bug.cgi?id=187042
 

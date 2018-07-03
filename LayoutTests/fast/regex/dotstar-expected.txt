@@ -112,6 +112,12 @@ PASS regexp12.exec('first\nblah') is ['blah']
 PASS regexp12.exec('first\nblah\nthird') is null
 PASS regexp12.exec('first\nblah2\nblah3') is ['blah3']
 PASS regexp13.exec('abc\n123') is ['abc\n123']
+PASS regexp14.exec('abcdefg') is ['cdefg']
+PASS regexp15.exec('abcdefg') is ['abcde']
+PASS regexp16.exec('abcdefg') is ['cde']
+PASS regexp17.exec('abcdefg') is ['bcdefg']
+PASS regexp18.exec('abcdefg') is ['abcdef']
+PASS regexp19.exec('abcdefg') is ['bcdef']
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -135,3 +135,20 @@ shouldBe("regexp12.exec('first\\nblah2\\nblah3')", "['blah3']");
 var regexp13 = /.*\n\d+.*/;
 shouldBe("regexp13.exec('abc\\n123')", "['abc\\n123']");
 
+var regexp14 = /.?d.*/;
+shouldBe("regexp14.exec('abcdefg')", "['cdefg']");
+
+var regexp15 = /.*d.?/;
+shouldBe("regexp15.exec('abcdefg')", "['abcde']");
+
+var regexp16 = /.?d.?/;
+shouldBe("regexp16.exec('abcdefg')", "['cde']");
+
+var regexp17 = /.{0,2}d.*/;
+shouldBe("regexp17.exec('abcdefg')", "['bcdefg']");
+
+var regexp18 = /.*d.{0,2}/;
+shouldBe("regexp18.exec('abcdefg')", "['abcdef']");
+
+var regexp19 = /.{0,2}d.{0,2}/;
+shouldBe("regexp19.exec('abcdefg')", "['bcdef']");
