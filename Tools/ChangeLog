@@ -1,3 +1,14 @@
+2018-07-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add test-list file for regression testing
+        https://bugs.webkit.org/show_bug.cgi?id=187296
+
+        Reviewed by Antti Koivisto.
+
+        run-webkit-tests --test-list=./Tools/LayoutReloaded/misc/LFC-passing-tests.txt
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt: Added.
+
 2018-07-03  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make WebsiteDataStore::getAllStorageAccessEntries() call the right network process instead of iterating over the process pools
