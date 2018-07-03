@@ -1,3 +1,22 @@
+2018-07-03  Mark Lam  <mark.lam@apple.com>
+
+        [32-bit JSC tests] ASSERTION FAILED: !getDirect(offset) || !JSValue::encode(getDirect(offset)).
+        https://bugs.webkit.org/show_bug.cgi?id=187255
+        <rdar://problem/41785257>
+
+        Reviewed by Saam Barati.
+
+        The 32-bit JIT::emit_op_create_this() needs to initialize uninitialized properties
+        too: basically, do what the 64-bit code is doing.  At present, this change only
+        serves to pacify an assertion.  It is not needed for correctness because the
+        concurrent GC is not used on 32-bit builds.
+
+        This issue is already covered by the slowMicrobenchmarks/rest-parameter-allocation-elimination.js
+        test.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+
 2018-07-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Move slowDownAndWasteMemory function to JSArrayBufferView
