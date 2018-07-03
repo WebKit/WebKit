@@ -1,3 +1,16 @@
+2018-07-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Video sometimes flickers when playing to AppleTV
+        https://bugs.webkit.org/show_bug.cgi?id=187193
+        <rdar://problem/40153865>
+
+        Unreviewed, fix test broken by r233435.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        (TestWebKitAPI::waitUntilAudioSessionCategoryIsEqualTo): Poll for a change in audio session 
+        category because it doesn't necessarily happen synchronously.
+        (TestWebKitAPI::TEST):
+
 2018-07-03  Thibault Saunier  <tsaunier@igalia.com>
 
         Unreviewed, add myself as a WebKit committer.
