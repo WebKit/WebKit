@@ -1,3 +1,14 @@
+2018-07-02  Youenn Fablet  <youenn@apple.com>
+
+        Add sandbox to microdone plugin
+        https://bugs.webkit.org/show_bug.cgi?id=187149
+        <rdar://problem/41538057>
+
+        Unreviewed.
+
+        * Resources/PlugInSandboxProfiles/cn.microdone.cmb.safari.sb: Renamed from Source/WebKit/Resources/PlugInSandboxProfiles/cn.microdone.cmb.safari.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-07-02  Tim Horton  <timothy_horton@apple.com>
 
         Adjust now-incorrect animated resize logging after r232544
