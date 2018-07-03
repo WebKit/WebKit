@@ -1,3 +1,11 @@
+2018-07-03  Antoine Quint  <graouts@apple.com>
+
+        Unreviewed, rebaselining somes Web Animations test expectations.
+
+        * css-animations/test_animations-dynamic-changes-expected.txt:
+        * css-animations/test_document-get-animations-expected.txt:
+        * css-animations/test_keyframeeffect-getkeyframes-expected.txt: Added.
+
 2018-06-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-starttime.html pass reliably

@@ -1,3 +1,9 @@
+2018-07-03  Antoine Quint  <graouts@apple.com>
+
+        Unreviewed, rebaselining a Web Animations test expectation.
+
+        * web-platform-tests/web-animations/interfaces/Animation/finished-expected.txt:
+
 2018-06-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at timing-model/timelines/document-timelines.html pass reliably
