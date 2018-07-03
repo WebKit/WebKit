@@ -1230,11 +1230,16 @@ void WebsiteDataStore::hasStorageAccessForFrameHandler(const String& resourceDom
     networkProcess.hasStorageAccessForFrame(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::getAllStorageAccessEntries(CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
+void WebsiteDataStore::getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&& completionHandler)
 {
-    // FIXME: Although this is only used for testing, it should not iterate and WTFMove the completion handler.
-    for (auto& processPool : processPools())
-        processPool->networkProcess()->getAllStorageAccessEntries(m_sessionID, WTFMove(completionHandler));
+    auto* webPage = WebProcessProxy::webPage(pageID);
+    if (!webPage) {
+        completionHandler({ });
+        return;
+    }
+    
+    auto& networkProcess = webPage->process().processPool().ensureNetworkProcess();
+    networkProcess.getAllStorageAccessEntries(m_sessionID, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&& completionHandler)

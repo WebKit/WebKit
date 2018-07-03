@@ -31,7 +31,9 @@
 #import "APIString.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
+#import "WKWebViewInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
+#import "WebPageProxy.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebResourceLoadStatisticsTelemetry.h"
 #import "WebsiteDataFetchOption.h"
@@ -343,14 +345,24 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     WebKit::WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins();
 }
 
-- (void)_getAllStorageAccessEntries:(void (^)(NSArray<NSString *> *domains))completionHandler
+- (void)_getAllStorageAccessEntriesFor:(WKWebView *)webView completionHandler:(void (^)(NSArray<NSString *> *domains))completionHandler
 {
-    _websiteDataStore->websiteDataStore().getAllStorageAccessEntries([completionHandler = makeBlockPtr(completionHandler)](auto domains) {
+    if (!webView) {
+        completionHandler({ });
+        return;
+    }
+
+    auto* webPageProxy = [webView _page];
+    if (!webPageProxy) {
+        completionHandler({ });
+        return;
+    }
+
+    _websiteDataStore->websiteDataStore().getAllStorageAccessEntries(webPageProxy->pageID(), [completionHandler = makeBlockPtr(completionHandler)](auto domains) {
         Vector<RefPtr<API::Object>> apiDomains;
         apiDomains.reserveInitialCapacity(domains.size());
         for (auto& domain : domains)
             apiDomains.uncheckedAppend(API::String::create(domain));
-
         completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
     });
 }

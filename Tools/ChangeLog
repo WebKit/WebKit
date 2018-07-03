@@ -1,3 +1,14 @@
+2018-07-03  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make WebsiteDataStore::getAllStorageAccessEntries() call the right network process instead of iterating over the process pools
+        https://bugs.webkit.org/show_bug.cgi?id=187277
+        <rdar://problem/41745510>
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::getAllStorageAccessEntries):
+
 2018-07-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix a leak in ActionSheetTests.DismissingActionSheetShouldNotDismissPresentingViewController

@@ -266,7 +266,11 @@ void TestController::removeAllSessionCredentials()
 void TestController::getAllStorageAccessEntries()
 {
 #if WK_API_ENABLED
-    [globalWebViewConfiguration.websiteDataStore _getAllStorageAccessEntries:^(NSArray<NSString *> *nsDomains) {
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return;
+
+    [globalWebViewConfiguration.websiteDataStore _getAllStorageAccessEntriesFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *nsDomains) {
         Vector<String> domains;
         domains.reserveInitialCapacity(nsDomains.count);
         for (NSString *domain : nsDomains)
