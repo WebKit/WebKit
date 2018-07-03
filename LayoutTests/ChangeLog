@@ -1,3 +1,12 @@
+2018-07-03  Antoine Quint  <graouts@apple.com>
+
+        Crash in WebCore::WebAnimation::timeToNextRequiredTick when running imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html
+        https://bugs.webkit.org/show_bug.cgi?id=187145
+
+        Unreviewed. Forgot to remove the expectation change when fixing the bug in r233430.
+
+        * TestExpectations:
+
 2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Regular expressions with ".?" expressions at the start and the end match the entire string
