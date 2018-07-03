@@ -1,3 +1,39 @@
+2018-07-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Google Fonts doesn't work if the user has the requested font locally-installed
+        https://bugs.webkit.org/show_bug.cgi?id=187228
+        <rdar://problem/40967280>
+
+        Reviewed by Brent Fulgham.
+
+        This is due to the local() items in the src: descriptor in the @font-family blocks.
+
+        This is because of a behavior difference between CSSFontFaceSource::load() and CSSFontFaceSource::font().
+        load() is supposed to set the status() to Success iff the font can be used, and then CSSFontFaceSource::font()
+        is supposed to return the font itself to use. load() works by constructing a dummy FontDescription and
+        performing a system lookup (to see if the local font really exists). However, this dummy FontDescription
+        doesn't set the ShouldAllowUserInstalledFonts flag. Then, in CSSFontFaceSource::font(), a similar lookup is
+        performed, except this one has the original FontDescription (with the correct value of the
+        ShouldAllowUserInstalledFonts flag set. Therefore, the two functions disagree about the state of the flag.
+
+        When the CSSFontFaceSource's status gets set to Success, that means "this is the font face source that
+        represents the @font-face block" but when CSSFontFaceSource::font() returns nullptr, that means "The font face
+        source can't be used for some reason" so we then continue searching down the font-family list (and render the
+        text in Helvetica or whatever comes next).
+
+        The solution is simple - just set the ShouldAllowUserInstalledFonts flag correctly in the dummy
+        FontDescription.
+
+        Test: fast/text/user-installed-fonts/local.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::allowUserInstalledFonts const):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+
 2018-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Generate event and event target interface types directly instead of via macros

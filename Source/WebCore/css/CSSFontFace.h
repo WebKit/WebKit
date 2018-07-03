@@ -161,6 +161,8 @@ public:
 
     bool purgeable() const;
 
+    AllowUserInstalledFonts allowUserInstalledFonts() const;
+
     void updateStyleIfNeeded();
 
 #if ENABLE(SVG_FONTS)

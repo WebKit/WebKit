@@ -1688,6 +1688,8 @@ webkit.org/b/176693 storage/indexeddb/modern/idbtransaction-objectstore-failures
 webkit.org/b/180062 [ ElCapitan Sierra HighSierra ] fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
+webkit.org/b/187228 [ ElCapitan Sierra HighSierra ] fast/text/user-installed-fonts/local.html [ ImageOnlyFailure ]
+
 
 webkit.org/b/180560 accessibility/mac/html5-input-number.html [ Pass Failure ]
 

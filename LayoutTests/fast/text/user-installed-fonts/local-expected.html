@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("../../../resources/Ahem.otf");
+}
+</style>
+</head>
+<body>
+This test makes sure that local() doesn't find a user-installed font, and that
+local() will be skipped if it lists a user-installed font.
+The test passes if you see some black boxes below (and no text below).
+<div style="font: 48px 'WebFont';">Hello, World</div>
+</body>
+</html>

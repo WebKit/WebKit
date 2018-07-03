@@ -179,6 +179,7 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
             FontCascadeDescription fontDescription;
             fontDescription.setOneFamily(m_familyNameOrURI);
             fontDescription.setComputedSize(1);
+            fontDescription.setShouldAllowUserInstalledFonts(m_face.allowUserInstalledFonts());
             success = FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, nullptr, nullptr, FontSelectionSpecifiedCapabilities(), true);
         }
         setStatus(success ? Status::Success : Status::Failure);

@@ -582,6 +582,13 @@ void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
     ASSERT(!m_sourcesPopulated);
 }
 
+AllowUserInstalledFonts CSSFontFace::allowUserInstalledFonts() const
+{
+    if (m_fontSelector && m_fontSelector->document())
+        return m_fontSelector->document()->settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
+    return AllowUserInstalledFonts::Yes;
+}
+
 static Settings::FontLoadTimingOverride fontLoadTimingOverride(CSSFontSelector* fontSelector)
 {
     auto overrideValue = Settings::FontLoadTimingOverride::None;

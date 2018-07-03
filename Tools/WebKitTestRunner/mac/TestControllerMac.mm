@@ -212,6 +212,7 @@ static NSSet *allowedFontFamilySet()
         @"Helvetica CY",
         @"Helvetica Neue",
         @"Helvetica",
+        @"Helvetica2",
         @"Herculanum",
         @"Hiragino Kaku Gothic Pro",
         @"Hiragino Kaku Gothic ProN",

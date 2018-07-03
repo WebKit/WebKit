@@ -1,3 +1,16 @@
+2018-07-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Google Fonts doesn't work if the user has the requested font locally-installed
+        https://bugs.webkit.org/show_bug.cgi?id=187228
+        <rdar://problem/40967280>
+
+        Reviewed by Brent Fulgham.
+
+        The test only fails before the patch if the lookup for Helvetica2 is allowed to occur.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet):
+
 2018-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark should include the version number of MotionMark's results
