@@ -1,3 +1,21 @@
+2018-07-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        check-webkit-style: Run the tool without SVN client.
+        https://bugs.webkit.org/show_bug.cgi?id=187294
+
+        Reviewed by Daniel Bates.
+
+        When invoking check-webkit-style without SVN client, the exception was raised and terminated.
+        Using Git repository is acceptable workflow according to the wording on:
+        <https://webkit.org/getting-the-code/#checking-out-with-git>
+        and using Subversion is considered optional by following link:
+        <https://webkit.org/webkit-on-windows/#installing-developer-tools>.
+        This patch makes it so that people with only a Git checkout of WebKit that commit using
+        the commit-queue (or another machine with an SVN checkout) can run check-webkit-style.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.in_working_directory):
+
 2018-07-03  Aakash Jain  <aakash_jain@apple.com>
 
         Remove old JSCTestsFactory

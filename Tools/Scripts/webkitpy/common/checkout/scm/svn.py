@@ -96,10 +96,13 @@ class SVN(SCM, SVNRepository):
             # but doesn't work for SVN >= 1.7.
             return True
 
-        executive = executive or Executive()
-        svn_info_args = [cls.executable_name, 'info']
-        exit_code = executive.run_command(svn_info_args, cwd=path, return_exit_code=True)
-        return (exit_code == 0)
+        try:
+            executive = executive or Executive()
+            svn_info_args = [cls.executable_name, 'info']
+            exit_code = executive.run_command(svn_info_args, cwd=path, return_exit_code=True)
+            return (exit_code == 0)
+        except OSError as e:
+            return False
 
     def find_uuid(self, path):
         if not self.in_working_directory(path):
