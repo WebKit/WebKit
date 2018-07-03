@@ -1,3 +1,17 @@
+2018-07-03  Frederic Wang  <fwang@igalia.com>
+
+        REGRESSION (r232186): Hardware-accelerated CSS animations using steps() timing function no longer work
+        https://bugs.webkit.org/show_bug.cgi?id=186129
+
+        Reviewed by Antoine Quint.
+
+        Add a test to ensure that accelerated and non-accelerated animations are properly started
+        when WebAnimationsCSSIntegration is enabled. In particular, consider the case of animated
+        transform using steps() timing function.
+
+        * http/wpt/css/css-animations/start-animation-001-expected.html: Added.
+        * http/wpt/css/css-animations/start-animation-001.html: Added.
+
 2018-07-03  Frederic Wang  <fred.wang@free.fr>
 
         [iOS] Animations with Bézier timing function not suspended on UI process when animation-play-state is set to "paused"
