@@ -27,21 +27,14 @@
 #include "config.h"
 #include "Timer.h"
 
-#include "Logging.h"
-#include "RuntimeApplicationChecks.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
 #include <limits.h>
 #include <limits>
 #include <math.h>
-#include <wtf/Compiler.h>
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
-
-#if USE(WEB_THREAD)
-#include "WebCoreThread.h"
-#endif
 
 namespace WebCore {
 
@@ -193,14 +186,6 @@ inline bool TimerHeapLessThanFunction::operator()(const TimerBase* a, const Time
 
 TimerBase::TimerBase()
 {
-#if PLATFORM(IOS)
-    if (UNLIKELY(!isAllowed())) {
-#define WEBCORE_TIMERBASE_ASSERTION_MESSAGE "WebCore::Timer should not be used in UI Process."
-        ASSERT_WITH_MESSAGE(false, WEBCORE_TIMERBASE_ASSERTION_MESSAGE);
-        RELEASE_LOG_FAULT(Threading, WEBCORE_TIMERBASE_ASSERTION_MESSAGE);
-#undef WEBCORE_TIMERBASE_ASSERTION_MESSAGE
-    }
-#endif
 }
 
 TimerBase::~TimerBase()
@@ -255,23 +240,6 @@ inline void TimerBase::checkConsistency() const
     ASSERT(inHeap() == static_cast<bool>(m_nextFireTime));
     if (inHeap())
         checkHeapIndex();
-}
-
-bool TimerBase::isAllowed()
-{
-#if PLATFORM(IOS)
-    if (isInWebProcess() || isInNetworkProcess() || isInStorageProcess())
-        return true;
-
-#if USE(WEB_THREAD)
-    if (WebThreadIsEnabled() && (WebThreadIsCurrent() || WebThreadIsLocked()))
-        return true;
-#endif
-
-    return false;
-#else
-    return true;
-#endif
 }
 
 void TimerBase::heapDecreaseKey()

@@ -128,8 +128,6 @@ NetworkProcess::NetworkProcess()
         for (auto& webProcessConnection : webProcessConnections)
             webProcessConnection->setOnLineState(isOnLine);
     });
-
-    WebCore::setWebKitProcessType(WebKitProcessType::NetworkProcess);
 }
 
 NetworkProcess::~NetworkProcess()

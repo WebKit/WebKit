@@ -65,6 +65,14 @@ void setApplicationBundleIdentifier(const String& bundleIdentifier)
     applicationBundleIdentifierOverride() = bundleIdentifier;
 }
 
+bool isInWebProcess()
+{
+    static bool mainBundleIsWebProcess = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent.Development"]
+        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent"]
+        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebProcess"];
+    return mainBundleIsWebProcess;
+}
+
 static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
 {
     return applicationBundleIdentifier() == bundleIdentifierString;

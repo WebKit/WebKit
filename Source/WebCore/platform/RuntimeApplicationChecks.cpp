@@ -46,30 +46,6 @@ static std::optional<int>& presentingApplicationPIDOverride()
     return pid;
 }
 
-#if !PLATFORM(WIN)
-static WebKitProcessType s_webKitProcessType { WebKitProcessType::UIProcess };
-
-void setWebKitProcessType(WebKitProcessType type)
-{
-    s_webKitProcessType = type;
-}
-
-bool isInNetworkProcess()
-{
-    return s_webKitProcessType == WebKitProcessType::NetworkProcess;
-}
-
-bool isInStorageProcess()
-{
-    return s_webKitProcessType == WebKitProcessType::StorageProcess;
-}
-
-bool isInWebProcess()
-{
-    return s_webKitProcessType == WebKitProcessType::WebProcess;
-}
-#endif
-
 int presentingApplicationPID()
 {
     const auto& pid = presentingApplicationPIDOverride();
