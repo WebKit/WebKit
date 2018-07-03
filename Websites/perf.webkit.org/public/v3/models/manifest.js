@@ -17,6 +17,8 @@ class Manifest {
         Triggerable.clearStaticMap();
         TriggerableRepositoryGroup.clearStaticMap();
         UploadedFile.clearStaticMap();
+        BugTracker.clearStaticMap();
+        Bug.clearStaticMap();
     }
 
     static fetch()

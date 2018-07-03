@@ -57,6 +57,23 @@ describe('/api/manifest', function () {
         });
     });
 
+    it("should clear Bug and BugTracker static maps when reset", async () => {
+        await TestServer.database().insert('bug_trackers', bugzillaData);
+        const content = await TestServer.remoteAPI().getJSON('/api/manifest');
+        assert.deepEqual(content.bugTrackers, {1: {name: 'Bugzilla', bugUrl: 'https://webkit.org/b/$number',
+            newBugUrl: 'https://bugs.webkit.org/', repositories: null}});
+
+        Manifest._didFetchManifest(content);
+        const trackerFromFirstFetch = BugTracker.findById(1);
+
+        Manifest.reset();
+        assert(!BugTracker.findById(1));
+
+        Manifest._didFetchManifest(content);
+        const trackerFromSecondFetch = BugTracker.findById(1);
+        assert(trackerFromFirstFetch != trackerFromSecondFetch);
+    });
+
     it("should generate manifest with bug trackers and repositories", () => {
         let db = TestServer.database();
         return Promise.all([
