@@ -1,3 +1,15 @@
+2018-07-03  Frederic Wang  <fred.wang@free.fr>
+
+        [iOS] Animations with Bézier timing function not suspended on UI process when animation-play-state is set to "paused"
+        https://bugs.webkit.org/show_bug.cgi?id=170784
+
+        Add a reftest to visually check pausing of transform animations.
+
+        Reviewed by Antoine Quint.
+
+        * http/wpt/css/css-animations/set-animation-play-state-to-paused-001-expected.html: Added.
+        * http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html: Added.
+
 2018-07-03  Antoine Quint  <graouts@apple.com>
 
         Crash in WebCore::WebAnimation::timeToNextRequiredTick when running imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html

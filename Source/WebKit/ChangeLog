@@ -1,3 +1,18 @@
+2018-07-03  Frederic Wang  <fred.wang@free.fr>
+
+        [iOS] Animations with Bézier timing function not suspended on UI process when animation-play-state is set to "paused"
+        https://bugs.webkit.org/show_bug.cgi?id=170784
+
+        Reviewed by Antoine Quint.
+
+        In order to pause a running animation, GraphicsLayerCA::pauseCAAnimationOnLayer calls
+        PlatformCALayer::addAnimationForKey, assuming it will replace the current animation.
+        This patch fixes PlatformCALayerRemote::addAnimationForKey to ensure this assumption holds.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::addAnimationForKey): If the animation was already sent to
+        the UI process, make sure it is properly updated.
+
 2018-07-02  Youenn Fablet  <youenn@apple.com>
 
         Add sandbox to microdone plugin

@@ -338,16 +338,22 @@ void PlatformCALayerRemote::adoptSublayers(PlatformCALayer& source)
 void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
 {
     auto addResult = m_animations.set(key, &animation);
-    if (addResult.isNewEntry)
-        m_properties.addedAnimations.append(std::pair<String, PlatformCAAnimationRemote::Properties>(key, downcast<PlatformCAAnimationRemote>(animation).properties()));
-    else {
+    bool appendToAddedAnimations = true;
+    if (!addResult.isNewEntry) {
+        // There is already an animation for this key. If the animation has not been sent to the UI
+        // process yet, we update the key properties before it happens. Otherwise, we just append it
+        // to the list of animations to be added: PlatformCAAnimationRemote::updateLayerAnimations
+        // will actually take care of replacing the existing animation.
         for (auto& keyAnimationPair : m_properties.addedAnimations) {
             if (keyAnimationPair.first == key) {
                 keyAnimationPair.second = downcast<PlatformCAAnimationRemote>(animation).properties();
+                appendToAddedAnimations = false;
                 break;
             }
         }
     }
+    if (appendToAddedAnimations)
+        m_properties.addedAnimations.append(std::pair<String, PlatformCAAnimationRemote::Properties>(key, downcast<PlatformCAAnimationRemote>(animation).properties()));
     
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::AnimationsChanged);
 
