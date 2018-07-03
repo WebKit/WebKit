@@ -1,3 +1,14 @@
+2018-07-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Use JOB_POOLS to avoid memory-hungry linker processes running at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=187254
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/WebKitCommon.cmake: Set the maximum number of
+        concurrent link processes using job pools (four for release builds,
+        two otherwise) to avoid running out of memory during builds.
+
 2018-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Repository fix after r233427 and r233443.
