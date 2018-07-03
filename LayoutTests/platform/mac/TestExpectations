@@ -1623,10 +1623,6 @@ webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 [ HighSierra+ ] canvas/philip/tests/2d.gradient.interpolate.solid.html [ Failure ]
 [ HighSierra+ ] imported/w3c/canvas/2d.gradient.interpolate.solid.html [ Failure ]
 
-# <rdar://problem/32799745> REGRESSION: LayoutTests canvas/philip/tests/initial.reset.gradient.html and imported/w3c/canvas/initial.reset.gradient.html are failing
-[ HighSierra+ ] canvas/philip/tests/initial.reset.gradient.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/initial.reset.gradient.html [ Failure ]
-
 # <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
 [ HighSierra+ ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
 
