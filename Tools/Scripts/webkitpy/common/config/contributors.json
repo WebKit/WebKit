@@ -5316,7 +5316,7 @@
          "tabatkins"
       ]
    },
-   "Tadeu Zagallo": {
+   "Tadeu Zagallo" : {
       "emails" : [
          "tzagallo@apple.com"
       ],
@@ -5424,7 +5424,8 @@
       "expertise" : "WebRTC",
       "nicks" : [
          "thiblahute"
-      ]
+      ],
+      "status" : "committer"
    },
    "Thomas Sepez" : {
       "emails" : [
