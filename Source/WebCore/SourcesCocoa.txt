@@ -26,6 +26,7 @@ Modules/mediasession/WebMediaSessionManager.cpp
 Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/webauthn/cocoa/LocalAuthenticator.mm
+Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm
 
 accessibility/ios/AccessibilityObjectIOS.mm
 accessibility/ios/AXObjectCacheIOS.mm

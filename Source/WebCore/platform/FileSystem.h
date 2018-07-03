@@ -186,6 +186,8 @@ String roamingUserSpecificStorageDirectory();
 WEBCORE_EXPORT NSString *createTemporaryDirectory(NSString *directoryPrefix);
 #endif
 
+WEBCORE_EXPORT String realPath(const String&);
+
 class MappedFileData {
 public:
     MappedFileData() { }

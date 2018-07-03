@@ -1,3 +1,17 @@
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Disable vnode guard related simulated crashes for WKTR / DRT and WebSQL
+        https://bugs.webkit.org/show_bug.cgi?id=187270
+        <rdar://problem/40674034>
+
+        Reviewed by Geoffrey Garen.
+
+        Disable vnode guard related simulated crashes for WKTR / DRT by setting the
+        expected environment variable in the test driver.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver):
+
 2018-07-03  Eric Carlson  <eric.carlson@apple.com>
 
         Video sometimes flickers when playing to AppleTV

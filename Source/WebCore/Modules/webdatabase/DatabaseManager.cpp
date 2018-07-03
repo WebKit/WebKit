@@ -77,6 +77,7 @@ DatabaseManager& DatabaseManager::singleton()
 
 void DatabaseManager::initialize(const String& databasePath)
 {
+    platformInitialize(databasePath);
     DatabaseTracker::initializeTracker(databasePath);
 }
 
@@ -270,5 +271,12 @@ void DatabaseManager::logErrorMessage(ScriptExecutionContext& context, const Str
 {
     context.addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
+
+#if !PLATFORM(COCOA)
+void DatabaseManager::platformInitialize(const String& databasePath)
+{
+    UNUSED_PARAM(databasePath);
+}
+#endif
 
 } // namespace WebCore

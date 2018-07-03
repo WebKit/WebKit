@@ -72,6 +72,8 @@ private:
     DatabaseManager() = default;
     ~DatabaseManager() = delete;
 
+    void platformInitialize(const String& databasePath);
+
     enum OpenAttempt { FirstTryToOpenDatabase, RetryOpenDatabase };
     ExceptionOr<Ref<Database>> openDatabaseBackend(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase);
     ExceptionOr<Ref<Database>> tryToOpenDatabaseBackend(ScriptExecutionContext&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, bool setVersionInNewDatabase, OpenAttempt);

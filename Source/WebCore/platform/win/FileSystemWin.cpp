@@ -546,5 +546,10 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
     return fileInformation.dwVolumeSerialNumber;
 }
 
+String realPath(const String& filePath)
+{
+    return getFinalPathName(filePath);
+}
+
 } // namespace FileSystem
 } // namespace WebCore

@@ -1,3 +1,28 @@
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Disable vnode guard related simulated crashes for WKTR / DRT and WebSQL
+        https://bugs.webkit.org/show_bug.cgi?id=187270
+        <rdar://problem/40674034>
+
+        Reviewed by Geoffrey Garen.
+
+        Disable vnode guard related simulated crashes for WebSQL by setting the expected
+        environment variable, if not already set by WKTR / DRT.
+
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::initialize):
+        (WebCore::DatabaseManager::platformInitialize):
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm: Added.
+        (WebCore::DatabaseManager::paltformInitialize):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FileSystem.h:
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::FileSystem::realPath):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::FileSystem::realPath):
+
 2018-07-03  Eric Carlson  <eric.carlson@apple.com>
 
         Don't allow autoplay when the element is suspended

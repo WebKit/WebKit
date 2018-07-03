@@ -445,5 +445,13 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
     return fileStat.st_dev;
 }
 
+String realPath(const String& filePath)
+{
+    CString fsRep = fileSystemRepresentation(filePath);
+    char resolvedName[PATH_MAX];
+    const char* result = realpath(fsRep.data(), resolvedName);
+    return result ? String::fromUTF8(result) : filePath;
+}
+
 } // namespace FileSystem
 } // namespace WebCore
