@@ -45,6 +45,7 @@ enum class MediaPlaybackDenialReason {
     UserGestureRequired,
     FullscreenRequired,
     PageConsentRequired,
+    InvalidState,
 };
 
 class Document;

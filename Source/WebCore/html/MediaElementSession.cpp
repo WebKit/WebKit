@@ -256,8 +256,10 @@ static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
 
 SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() const
 {
-    if (m_element.isSuspended())
-        return { };
+    if (m_element.isSuspended()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is suspended");
+        return MediaPlaybackDenialReason::InvalidState;
+    }
 
     auto& document = m_element.document();
     if (document.isMediaDocument() && !document.ownerElement())

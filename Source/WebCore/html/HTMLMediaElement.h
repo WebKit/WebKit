@@ -559,6 +559,8 @@ public:
     WEBCORE_EXPORT void didBecomeFullscreenElement() override;
     WEBCORE_EXPORT void willExitFullscreen();
 
+    enum class PlaybackWithoutUserGesture { None, Started, Prevented };
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual void finishInitialization();
@@ -802,7 +804,6 @@ private:
     void dispatchPlayPauseEventsIfNeedsQuirks();
     SuccessOr<MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
 
-    enum class PlaybackWithoutUserGesture { None, Started, Prevented };
     void setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture);
     void userDidInterfereWithAutoplay();
     void handleAutoplayEvent(AutoplayEvent);
@@ -1167,7 +1168,21 @@ private:
 #endif
 };
 
+String convertEnumerationToString(HTMLMediaElement::PlaybackWithoutUserGesture);
+
 } // namespace WebCore
+
+namespace WTF {
+
+template <>
+struct LogArgument<WebCore::HTMLMediaElement::PlaybackWithoutUserGesture> {
+    static String toString(const WebCore::HTMLMediaElement::PlaybackWithoutUserGesture reason)
+    {
+        return convertEnumerationToString(reason);
+    }
+};
+    
+} // namespace WTF
 
 #if ENABLE(VIDEO_TRACK) && !defined(NDEBUG)
 namespace WTF {

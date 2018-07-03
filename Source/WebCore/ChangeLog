@@ -1,3 +1,29 @@
+2018-07-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Don't allow autoplay when the element is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=187299
+        <rdar://problem/41044691>
+
+        Reviewed by Youenn Fablet.
+        
+        Block autoplay when a media element is suspended. Add more release logging to the methods
+        that handle autoplay attempts to help diagnose future media playback problems.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::convertEnumerationToString): Convert PlaybackWithoutUserGesture to a string.
+        (WebCore::HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks): Add logging.
+        (WebCore::HTMLMediaElement::hardwareMutedStateDidChange): Ditto.
+        (WebCore::HTMLMediaElement::handleAutoplayEvent): Ditto.
+        (WebCore::HTMLMediaElement::userDidInterfereWithAutoplay): Ditto.
+        (WebCore::HTMLMediaElement::setPlaybackWithoutUserGesture): Ditto.
+        * html/HTMLMediaElement.h:
+        (WTF::LogArgument<WebCore::HTMLMediaElement::PlaybackWithoutUserGesture>::toString):
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted const): Playback is not permitted when the
+        element is suspended.
+        * html/MediaElementSession.h:
+
 2018-07-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Generate anonymous inline box for text content.
