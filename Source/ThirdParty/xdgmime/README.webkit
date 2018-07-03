@@ -18,3 +18,7 @@ Changes included from GLib sources:
  - 2542b6f60492fadfb21f2c4a29976c3494c7e6c5 xdgmime: Handle EINTR in open()
  - 83d34f630939aa13539e03895bef87da738c4127 Don't forget to free resources in an early return
  - be7f40185fb2ce884112c1f8a4b196ea65350466 xdgmime: Fix an invalid read
+
+Changes included from Chromium:
+
+ - c432cac0a0beb77c63081536fc9d53b40e642cbf small patch that fixes potential crash in xdg_mime_get_mime_type_for_file() - use of pointer after being freed.

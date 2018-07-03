@@ -1,3 +1,20 @@
+2018-07-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Another memory issue in xdgmime
+        https://bugs.webkit.org/show_bug.cgi?id=187239
+
+        Reviewed by Carlos Garcia Campos.
+
+        Sync the end of xdg_mime_get_mime_type_for_file() with _xdg_mime_cache_get_mime_type_for_file()
+        to avoid a memory issue.
+
+        I'm pretty sure this code is never executed by either Chromium or WebKit, but I'm not
+        comfortable with leaving it broken.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmime.c:
+        (xdg_mime_get_mime_type_for_file):
+
 2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix off-by-one error in xdg_mime_get_simple_globs
