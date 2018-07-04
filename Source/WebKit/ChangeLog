@@ -1,3 +1,16 @@
+2018-07-04  Olivia Barnett  <obarnett@apple.com>
+
+        A WKWebView in a UIViewController that is presented modally and uses a file picker will be incorrectly dismissed by the system
+        https://bugs.webkit.org/show_bug.cgi?id=185257
+        <rdar://problem/40819252>
+
+        Reviewed by Tim Horton.
+
+        Call to dismiss the presented modal was being called on the parent and not the child, which caused the file picker to be incorrectly dismissed along with the modal. A test for this bug-fix could not be completed without additional tools as TestWebKitAPI is not a UI application.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _dismissDisplayAnimated:]):
+
 2018-07-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce PLATFORM(IOSMAC)

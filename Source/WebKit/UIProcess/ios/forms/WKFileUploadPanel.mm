@@ -283,9 +283,12 @@ static inline UIImage *cameraIcon()
     }
 
     if (_presentationViewController) {
-        [_presentationViewController dismissViewControllerAnimated:animated completion:^{
-            _presentationViewController = nil;
-        }];
+        UIViewController *currentPresentedViewController = [_presentationViewController presentedViewController];
+        if (currentPresentedViewController == self) {
+            [currentPresentedViewController dismissViewControllerAnimated:YES completion:^{
+                _presentationViewController = nil;
+            }];
+        }
     }
 }
 
