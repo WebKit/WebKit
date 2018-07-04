@@ -40,6 +40,7 @@ enum qtn_flags {
 #define qtn_proc_alloc _qtn_proc_alloc
 #define qtn_proc_apply_to_self _qtn_proc_apply_to_self
 #define qtn_proc_free _qtn_proc_free
+#define qtn_proc_init _qtn_proc_init
 #define qtn_proc_init_with_self _qtn_proc_init_with_self
 #define qtn_proc_set_flags _qtn_proc_set_flags
 
@@ -50,6 +51,7 @@ typedef struct _qtn_proc *qtn_proc_t;
 WTF_EXTERN_C_BEGIN
 
 int qtn_proc_apply_to_self(qtn_proc_t);
+void qtn_proc_init(qtn_proc_t);
 int qtn_proc_init_with_self(qtn_proc_t);
 int qtn_proc_set_flags(qtn_proc_t, uint32_t flags);
 qtn_proc_t qtn_proc_alloc();

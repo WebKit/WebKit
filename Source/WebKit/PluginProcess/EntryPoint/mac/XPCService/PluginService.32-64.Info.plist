@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>${BUNDLE_VERSION}</string>
 	<key>LSFileQuarantineEnabled</key>
-	<true/>
+	<false/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>WebKitEntryPoint</key>

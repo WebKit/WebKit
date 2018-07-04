@@ -112,6 +112,8 @@ protected:
 #endif
 
 private:
+    virtual bool shouldOverrideQuarantine() { return true; }
+
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override;
     uint64_t messageSenderDestinationID() override;

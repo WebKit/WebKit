@@ -90,16 +90,18 @@ void ChildProcess::platformInitialize()
 static OSStatus enableSandboxStyleFileQuarantine()
 {
 #if !ENABLE(MINIMAL_SIMULATOR)
-    int error;
     qtn_proc_t quarantineProperties = qtn_proc_alloc();
     auto quarantinePropertiesDeleter = makeScopeExit([quarantineProperties]() {
         qtn_proc_free(quarantineProperties);
     });
 
-    if ((error = qtn_proc_init_with_self(quarantineProperties)))
-        return error;
 
-    if ((error = qtn_proc_set_flags(quarantineProperties, QTN_FLAG_SANDBOX)))
+    if (qtn_proc_init_with_self(quarantineProperties)) {
+        // See <rdar://problem/13463752>.
+        qtn_proc_init(quarantineProperties);
+    }
+
+    if (auto error = qtn_proc_set_flags(quarantineProperties, QTN_FLAG_SANDBOX))
         return error;
 
     // QTN_FLAG_SANDBOX is silently ignored if security.mac.qtn.sandbox_enforce sysctl is 0.
@@ -211,11 +213,13 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
     }
 
-    // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
-    OSStatus error = enableSandboxStyleFileQuarantine();
-    if (error) {
-        WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
-        exit(EX_NOPERM);
+    if (shouldOverrideQuarantine()) {
+        // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
+        OSStatus error = enableSandboxStyleFileQuarantine();
+        if (error) {
+            WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
+            exit(EX_NOPERM);
+        }
     }
 }
 

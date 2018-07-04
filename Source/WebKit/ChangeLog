@@ -1,5 +1,26 @@
 2018-07-03  Youenn Fablet  <youenn@apple.com>
 
+        Remove quarantine for Webex plugin
+        https://bugs.webkit.org/show_bug.cgi?id=187050
+        rdar://problem/41478189
+
+        Reviewed by Brent Fulgham.
+
+        Update the Plugin Info.plist to not do quarantine of downloaded files by default.
+        Update PluginProcess implementation to reenable quarantine for all plug-ins except cisco webex plug-in.
+
+        * Platform/spi/mac/QuarantineSPI.h: Add qtn_proc_init.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::shouldOverrideQuarantine):
+        * Shared/ChildProcess.h:
+        (WebKit::ChildProcess::shouldOverrideQuarantine):
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
+2018-07-03  Youenn Fablet  <youenn@apple.com>
+
         Crash in  WebKit::CacheStorage::Cache::toRecordInformation when running http/tests/cache-storage/cache-persistency.https.html
         https://bugs.webkit.org/show_bug.cgi?id=187243
 
