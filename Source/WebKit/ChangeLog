@@ -1,3 +1,16 @@
+2018-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        50 failing WebDriver tests after r233417
+        https://bugs.webkit.org/show_bug.cgi?id=187263
+
+        Reviewed by Frédéric Wang.
+
+        A std::optional value is used while being std::nullopt. This is because the wrong input source is used when
+        transitioning keyboard input states.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+
 2018-07-03  Youenn Fablet  <youenn@apple.com>
 
         Remove quarantine for Webex plugin

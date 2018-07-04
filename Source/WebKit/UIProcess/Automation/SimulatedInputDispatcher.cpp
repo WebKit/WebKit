@@ -270,7 +270,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         if (!a.pressedCharKey && b.pressedCharKey)
             m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyPress, b.pressedCharKey.value(), WTFMove(eventDispatchFinished));
         else if (a.pressedCharKey && !b.pressedCharKey)
-            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, b.pressedCharKey.value(), WTFMove(eventDispatchFinished));
+            m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, a.pressedCharKey.value(), WTFMove(eventDispatchFinished));
         else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
             for (VirtualKey key : b.pressedVirtualKeys) {
                 if (!a.pressedVirtualKeys.contains(key))
