@@ -290,6 +290,7 @@ void Engine::initialize(CompletionCallback&& callback)
     }
 
     if (!shouldPersist()) {
+        m_salt = NetworkCache::Salt { };
         callback(std::nullopt);
         return;
     }

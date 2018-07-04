@@ -386,8 +386,6 @@ http/wpt/cross-origin-resource-policy/ [ Skip ]
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/187243 http/tests/cache-storage/cache-persistency.https.html [ Crash ]
-
 # media/video-seek-after-end.html is flaky
 webkit.org/b/116293 media/video-seek-after-end.html [ Pass Failure ]
 
@@ -2024,7 +2022,7 @@ webkit.org/b/182311 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
 
-webkit.org/b/182928 http/tests/cache-storage/cache-representation.https.html [ Pass Failure Crash ]
+webkit.org/b/182928 http/tests/cache-storage/cache-representation.https.html [ Pass Failure ]
 
 webkit.org/b/116621 fast/replaced/preferred-widths.html [ Pass Failure ]
 

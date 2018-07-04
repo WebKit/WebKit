@@ -1,5 +1,21 @@
 2018-07-03  Youenn Fablet  <youenn@apple.com>
 
+        Crash in  WebKit::CacheStorage::Cache::toRecordInformation when running http/tests/cache-storage/cache-persistency.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=187243
+
+        Reviewed by Chris Dumez.
+
+        In case a caches object has an engine, it uses the engine to get the salt.
+        In case engine/caches are non persistent, no salt was set for the engine, hence the crashes.
+        Add an empty salt whenever initializing a non-persistent engine to remove the crash.
+
+        Covered by updated expectations for two tests.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::initialize):
+
+2018-07-03  Youenn Fablet  <youenn@apple.com>
+
         Fix regression introduced in r233335
         https://bugs.webkit.org/show_bug.cgi?id=187282
 
