@@ -239,8 +239,19 @@ bool WebKitMediaKeySession::hasPendingActivity() const
     return (m_keys && m_session) || m_asyncEventQueue.hasPendingEvents();
 }
 
+void WebKitMediaKeySession::suspend(ReasonForSuspension)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void WebKitMediaKeySession::resume()
+{
+    ASSERT_NOT_REACHED();
+}
+
 void WebKitMediaKeySession::stop()
 {
+    m_asyncEventQueue.close();
     close();
 }
 

@@ -76,6 +76,8 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
     void stop() final;
     bool canSuspendForDocumentSuspension() const final;
     const char* activeDOMObjectName() const final;

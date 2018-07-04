@@ -34,14 +34,15 @@
 #include "ScriptExecutionContext.h"
 #include "TrackEvent.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* context)
-    : ContextDestructionObserver(context)
+    : ActiveDOMObject(context)
     , m_element(element)
     , m_asyncEventQueue(*this)
 {
-    ASSERT(is<Document>(context));
+    ASSERT(!context || is<Document>(context));
+    suspendIfNeeded();
 }
 
 TrackListBase::~TrackListBase()
@@ -173,5 +174,27 @@ bool TrackListBase::isAnyTrackEnabled() const
     }
     return false;
 }
+
+bool TrackListBase::canSuspendForDocumentSuspension() const
+{
+    return !m_asyncEventQueue.hasPendingEvents();
+}
+
+void TrackListBase::suspend(ReasonForSuspension)
+{
+    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+}
+
+void TrackListBase::resume()
+{
+    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+}
+
+void TrackListBase::stop()
+{
+    m_asyncEventQueue.close();
+}
+
+} // namespace WebCore
 
 #endif

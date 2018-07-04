@@ -692,124 +692,127 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
     // 3. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
     buffer.abortIfUpdating();
 
-    // 4. Let SourceBuffer audioTracks list equal the AudioTrackList object returned by sourceBuffer.audioTracks.
-    auto& audioTracks = buffer.audioTracks();
+    ASSERT(scriptExecutionContext());
+    if (!scriptExecutionContext()->activeDOMObjectsAreStopped()) {
+        // 4. Let SourceBuffer audioTracks list equal the AudioTrackList object returned by sourceBuffer.audioTracks.
+        auto& audioTracks = buffer.audioTracks();
 
-    // 5. If the SourceBuffer audioTracks list is not empty, then run the following steps:
-    if (audioTracks.length()) {
-        // 5.1 Let HTMLMediaElement audioTracks list equal the AudioTrackList object returned by the audioTracks
-        // attribute on the HTMLMediaElement.
-        // 5.2 Let the removed enabled audio track flag equal false.
-        bool removedEnabledAudioTrack = false;
+        // 5. If the SourceBuffer audioTracks list is not empty, then run the following steps:
+        if (audioTracks.length()) {
+            // 5.1 Let HTMLMediaElement audioTracks list equal the AudioTrackList object returned by the audioTracks
+            // attribute on the HTMLMediaElement.
+            // 5.2 Let the removed enabled audio track flag equal false.
+            bool removedEnabledAudioTrack = false;
 
-        // 5.3 For each AudioTrack object in the SourceBuffer audioTracks list, run the following steps:
-        while (audioTracks.length()) {
-            auto& track = *audioTracks.lastItem();
+            // 5.3 For each AudioTrack object in the SourceBuffer audioTracks list, run the following steps:
+            while (audioTracks.length()) {
+                auto& track = *audioTracks.lastItem();
 
-            // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
-            track.setSourceBuffer(nullptr);
+                // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
+                track.setSourceBuffer(nullptr);
 
-            // 5.3.2 If the enabled attribute on the AudioTrack object is true, then set the removed enabled
-            // audio track flag to true.
-            if (track.enabled())
-                removedEnabledAudioTrack = true;
+                // 5.3.2 If the enabled attribute on the AudioTrack object is true, then set the removed enabled
+                // audio track flag to true.
+                if (track.enabled())
+                    removedEnabledAudioTrack = true;
 
-            // 5.3.3 Remove the AudioTrack object from the HTMLMediaElement audioTracks list.
-            // 5.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-            // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement audioTracks list.
-            if (mediaElement())
-                mediaElement()->removeAudioTrack(track);
+                // 5.3.3 Remove the AudioTrack object from the HTMLMediaElement audioTracks list.
+                // 5.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement audioTracks list.
+                if (mediaElement())
+                    mediaElement()->removeAudioTrack(track);
 
-            // 5.3.5 Remove the AudioTrack object from the SourceBuffer audioTracks list.
-            // 5.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-            // cancelable, and that uses the TrackEvent interface, at the SourceBuffer audioTracks list.
-            audioTracks.remove(track);
+                // 5.3.5 Remove the AudioTrack object from the SourceBuffer audioTracks list.
+                // 5.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                // cancelable, and that uses the TrackEvent interface, at the SourceBuffer audioTracks list.
+                audioTracks.remove(track);
+            }
+
+            // 5.4 If the removed enabled audio track flag equals true, then queue a task to fire a simple event
+            // named change at the HTMLMediaElement audioTracks list.
+            if (removedEnabledAudioTrack)
+                mediaElement()->audioTracks().scheduleChangeEvent();
         }
 
-        // 5.4 If the removed enabled audio track flag equals true, then queue a task to fire a simple event
-        // named change at the HTMLMediaElement audioTracks list.
-        if (removedEnabledAudioTrack)
-            mediaElement()->audioTracks().scheduleChangeEvent();
-    }
+        // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
+        auto& videoTracks = buffer.videoTracks();
 
-    // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
-    auto& videoTracks = buffer.videoTracks();
+        // 7. If the SourceBuffer videoTracks list is not empty, then run the following steps:
+        if (videoTracks.length()) {
+            // 7.1 Let HTMLMediaElement videoTracks list equal the VideoTrackList object returned by the videoTracks
+            // attribute on the HTMLMediaElement.
+            // 7.2 Let the removed selected video track flag equal false.
+            bool removedSelectedVideoTrack = false;
 
-    // 7. If the SourceBuffer videoTracks list is not empty, then run the following steps:
-    if (videoTracks.length()) {
-        // 7.1 Let HTMLMediaElement videoTracks list equal the VideoTrackList object returned by the videoTracks
-        // attribute on the HTMLMediaElement.
-        // 7.2 Let the removed selected video track flag equal false.
-        bool removedSelectedVideoTrack = false;
+            // 7.3 For each VideoTrack object in the SourceBuffer videoTracks list, run the following steps:
+            while (videoTracks.length()) {
+                auto& track = *videoTracks.lastItem();
 
-        // 7.3 For each VideoTrack object in the SourceBuffer videoTracks list, run the following steps:
-        while (videoTracks.length()) {
-            auto& track = *videoTracks.lastItem();
+                // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
+                track.setSourceBuffer(nullptr);
 
-            // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
-            track.setSourceBuffer(nullptr);
+                // 7.3.2 If the selected attribute on the VideoTrack object is true, then set the removed selected
+                // video track flag to true.
+                if (track.selected())
+                    removedSelectedVideoTrack = true;
 
-            // 7.3.2 If the selected attribute on the VideoTrack object is true, then set the removed selected
-            // video track flag to true.
-            if (track.selected())
-                removedSelectedVideoTrack = true;
+                // 7.3.3 Remove the VideoTrack object from the HTMLMediaElement videoTracks list.
+                // 7.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement videoTracks list.
+                if (mediaElement())
+                    mediaElement()->removeVideoTrack(track);
 
-            // 7.3.3 Remove the VideoTrack object from the HTMLMediaElement videoTracks list.
-            // 7.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-            // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement videoTracks list.
-            if (mediaElement())
-                mediaElement()->removeVideoTrack(track);
+                // 7.3.5 Remove the VideoTrack object from the SourceBuffer videoTracks list.
+                // 7.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                // cancelable, and that uses the TrackEvent interface, at the SourceBuffer videoTracks list.
+                videoTracks.remove(track);
+            }
 
-            // 7.3.5 Remove the VideoTrack object from the SourceBuffer videoTracks list.
-            // 7.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-            // cancelable, and that uses the TrackEvent interface, at the SourceBuffer videoTracks list.
-            videoTracks.remove(track);
+            // 7.4 If the removed selected video track flag equals true, then queue a task to fire a simple event
+            // named change at the HTMLMediaElement videoTracks list.
+            if (removedSelectedVideoTrack)
+                mediaElement()->videoTracks().scheduleChangeEvent();
         }
 
-        // 7.4 If the removed selected video track flag equals true, then queue a task to fire a simple event
-        // named change at the HTMLMediaElement videoTracks list.
-        if (removedSelectedVideoTrack)
-            mediaElement()->videoTracks().scheduleChangeEvent();
-    }
+        // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
+        auto& textTracks = buffer.textTracks();
 
-    // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
-    auto& textTracks = buffer.textTracks();
+        // 9. If the SourceBuffer textTracks list is not empty, then run the following steps:
+        if (textTracks.length()) {
+            // 9.1 Let HTMLMediaElement textTracks list equal the TextTrackList object returned by the textTracks
+            // attribute on the HTMLMediaElement.
+            // 9.2 Let the removed enabled text track flag equal false.
+            bool removedEnabledTextTrack = false;
 
-    // 9. If the SourceBuffer textTracks list is not empty, then run the following steps:
-    if (textTracks.length()) {
-        // 9.1 Let HTMLMediaElement textTracks list equal the TextTrackList object returned by the textTracks
-        // attribute on the HTMLMediaElement.
-        // 9.2 Let the removed enabled text track flag equal false.
-        bool removedEnabledTextTrack = false;
+            // 9.3 For each TextTrack object in the SourceBuffer textTracks list, run the following steps:
+            while (textTracks.length()) {
+                auto& track = *textTracks.lastItem();
 
-        // 9.3 For each TextTrack object in the SourceBuffer textTracks list, run the following steps:
-        while (textTracks.length()) {
-            auto& track = *textTracks.lastItem();
+                // 9.3.1 Set the sourceBuffer attribute on the TextTrack object to null.
+                track.setSourceBuffer(nullptr);
 
-            // 9.3.1 Set the sourceBuffer attribute on the TextTrack object to null.
-            track.setSourceBuffer(nullptr);
+                // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
+                // set the removed enabled text track flag to true.
+                if (track.mode() == TextTrack::Mode::Showing || track.mode() == TextTrack::Mode::Hidden)
+                    removedEnabledTextTrack = true;
 
-            // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
-            // set the removed enabled text track flag to true.
-            if (track.mode() == TextTrack::Mode::Showing || track.mode() == TextTrack::Mode::Hidden)
-                removedEnabledTextTrack = true;
+                // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.
+                // 9.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement textTracks list.
+                if (mediaElement())
+                    mediaElement()->removeTextTrack(track);
 
-            // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.
-            // 9.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-            // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement textTracks list.
-            if (mediaElement())
-                mediaElement()->removeTextTrack(track);
+                // 9.3.5 Remove the TextTrack object from the SourceBuffer textTracks list.
+                // 9.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+                // cancelable, and that uses the TrackEvent interface, at the SourceBuffer textTracks list.
+                textTracks.remove(track);
+            }
 
-            // 9.3.5 Remove the TextTrack object from the SourceBuffer textTracks list.
-            // 9.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
-            // cancelable, and that uses the TrackEvent interface, at the SourceBuffer textTracks list.
-            textTracks.remove(track);
+            // 9.4 If the removed enabled text track flag equals true, then queue a task to fire a simple event
+            // named change at the HTMLMediaElement textTracks list.
+            if (removedEnabledTextTrack)
+                mediaElement()->textTracks().scheduleChangeEvent();
         }
-
-        // 9.4 If the removed enabled text track flag equals true, then queue a task to fire a simple event
-        // named change at the HTMLMediaElement textTracks list.
-        if (removedEnabledTextTrack)
-            mediaElement()->textTracks().scheduleChangeEvent();
     }
 
     // 10. If sourceBuffer is in activeSourceBuffers, then remove sourceBuffer from activeSourceBuffers ...
@@ -930,6 +933,16 @@ bool MediaSource::hasPendingActivity() const
 {
     return m_private || m_asyncEventQueue.hasPendingEvents()
         || ActiveDOMObject::hasPendingActivity();
+}
+
+void MediaSource::suspend(ReasonForSuspension)
+{
+    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+}
+
+void MediaSource::resume()
+{
+    ASSERT(!m_asyncEventQueue.hasPendingEvents());
 }
 
 void MediaSource::stop()

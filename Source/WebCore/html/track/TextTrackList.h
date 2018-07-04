@@ -62,6 +62,7 @@ private:
     TextTrackList(HTMLMediaElement*, ScriptExecutionContext*);
 
     void invalidateTrackIndexesAfterTrack(TextTrack&);
+    const char* activeDOMObjectName() const final;
 
     Vector<RefPtr<TrackBase>> m_addTrackTracks;
     Vector<RefPtr<TrackBase>> m_elementTracks;

@@ -29,6 +29,7 @@
  */
  
 [
+    ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
     GenerateIsReachable=Impl,
 ] interface SourceBufferList : EventTarget {

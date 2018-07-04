@@ -1,3 +1,86 @@
+2018-07-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Nullptr crash accessing Document in GenericEventQueue::dispatchOneEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=187284
+
+        Reviewed by Eric Carlson.
+
+        The null pointer crash was caused by some GenericEventQueue dispatching an event in a stopped document,
+        which does not have a valid script execution context because some uses of GenericEventQueue in media code
+        was not closing the queue upon stopping of all active DOM objects.
+
+        Fixed all uses of GenericEventQueue which did not suspend or stop the queue with active DOM objects.
+        Made SourceBufferList and TrackListBase (along with AudioTrackList, TextTrackList, and VideoTrackList)
+        inherit from ActiveDOMObject instead of ContextDestructionObserver to do this.
+
+        Also fixed a bug that media elements inside a template element (and other cases where the document doesn't
+        have a browsing context) were scheduling events since this would hit the newly added debug assertion in
+        GenericEventQueue::dispatchOneEvent.
+
+        Test: media/track/video-track-addition-and-frame-removal.html
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::suspend): Assert that we never try to suspend when the document has
+        this object alive since canSuspendForDocumentSuspension always returns false.
+        (WebCore::WebKitMediaKeySession::resume): Ditto.
+        (WebCore::WebKitMediaKeySession::stop): Stop the event queue to avoid the crash.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer): Don't do any work to update tracks when the active DOM
+        objects are stopped since this MediaSource and the related media objects are about to be destructed.
+        (WebCore::MediaSource::suspend): Assert that m_asyncEventQueue is empty as canSuspendForDocumentSuspension
+        returns false whenever the queue is not empty.
+        (WebCore::MediaSource::resume): Ditto.
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::suspend): Ditto.
+        (WebCore::SourceBuffer::resume): Ditto.
+        (WebCore::SourceBuffer::stop): Stop the event queue to avoid the crash.
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList): Made this an active DOM object.
+        (WebCore::SourceBufferList::SourceBufferList):
+        (WebCore::SourceBufferList::canSuspendForDocumentSuspension const): Added. Return false when there are
+        pending events to match other media code.
+        (WebCore::SourceBufferList::suspend): Added. Assert that the event queue is empty here.
+        (WebCore::SourceBufferList::resume): Ditto.
+        (WebCore::SourceBufferList::stop): Added. Stop the event queue to avoid the crash.
+        (WebCore::SourceBufferList::activeDOMObjectName const): Added.
+        * Modules/mediasource/SourceBufferList.h:
+        (WebCore::SourceBufferList): Made this an active DOM object.
+        * Modules/mediasource/SourceBufferList.idl:
+        * dom/Document.h:
+        (WebCore::Document::hasBrowsingContext const): Added.
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::dispatchOneEvent): Added an assertion to catch when an event is dispatched
+        inside a stopped document, which is never correct and causes this crash down the line.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playInternal): Exit early when the document doesn't have a browsing context;
+        e.g. when the media element is inside a template element.
+        (WebCore::HTMLMediaElement::pauseInternal): Ditto.
+        (WebCore::HTMLMediaElement::sourceWasAdded): Ditto.
+        * html/track/AudioTrackList.cpp:
+        (AudioTrackList::activeDOMObjectName const): Added.
+        * html/track/AudioTrackList.h:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrackList.cpp::
+        (TextTrackList::activeDOMObjectName const): Added.
+        * html/track/TextTrackList.h:
+        * html/track/TextTrackList.idl:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase): Made this an active DOM object.
+        (WebCore::TrackListBase::TrackListBase): 
+        (WebCore::TrackListBase::canSuspendForDocumentSuspension const): Added. Return false when there are pending events
+        to match other media code.
+        (WebCore::TrackListBase::suspend): Added. Assert that the event queue is empty here.
+        (WebCore::TrackListBase::resume): Ditto.
+        (WebCore::TrackListBase::stop): Added. Stop the event queue to avoid the crash.
+        * html/track/TrackListBase.h:
+        * html/track/VideoTrackList.cpp:
+        (VideoTrackList::activeDOMObjectName const): Added.
+        * html/track/VideoTrackList.h:
+        * html/track/VideoTrackList.idl:
+
 2018-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [cairo] Doesn't paint box-shadow with zero blur-radius

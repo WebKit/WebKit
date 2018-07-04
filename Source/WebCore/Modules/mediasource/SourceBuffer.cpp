@@ -458,8 +458,19 @@ bool SourceBuffer::hasPendingActivity() const
     return m_source || m_asyncEventQueue.hasPendingEvents();
 }
 
+void SourceBuffer::suspend(ReasonForSuspension)
+{
+    ASSERT(!hasPendingActivity());
+}
+
+void SourceBuffer::resume()
+{
+    ASSERT(!hasPendingActivity());
+}
+
 void SourceBuffer::stop()
 {
+    m_asyncEventQueue.close();
     m_appendBufferTimer.stop();
     m_removeTimer.stop();
 }

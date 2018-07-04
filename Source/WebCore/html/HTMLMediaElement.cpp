@@ -1299,6 +1299,9 @@ void HTMLMediaElement::prepareForLoad()
     m_loadState = WaitingForSource;
     m_currentSourceNode = nullptr;
 
+    if (!document().hasBrowsingContext())
+        return;
+
     createMediaPlayer();
 
     // 2 - Let pending tasks be a list of all tasks from the media element's media element event task source in one of the task queues.
@@ -1415,7 +1418,6 @@ void HTMLMediaElement::selectMediaResource()
     // playlist that starts in a foreground tab to continue automatically if the tab is subsequently
     // put into the background.
     m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
-
 
     m_resourceSelectionTaskQueue.enqueueTask([this]  {
         // 5. If the media element’s blocked-on-parser flag is false, then populate the list of pending text tracks.
@@ -2893,7 +2895,7 @@ bool HTMLMediaElement::supportsScanning() const
 void HTMLMediaElement::prepareToPlay()
 {
     INFO_LOG(LOGIDENTIFIER);
-    if (m_havePreparedToPlay)
+    if (m_havePreparedToPlay || !document().hasBrowsingContext())
         return;
     m_havePreparedToPlay = true;
     if (m_player)
@@ -3488,6 +3490,11 @@ void HTMLMediaElement::playInternal()
         return;
     }
 
+    if (!document().hasBrowsingContext()) {
+        INFO_LOG(LOGIDENTIFIER, "  returning because there is no browsing context");
+        return;
+    }
+
     if (!m_mediaSession->clientWillBeginPlayback()) {
         ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");
         return;
@@ -3576,6 +3583,11 @@ void HTMLMediaElement::pauseInternal()
 
     if (isSuspended()) {
         ALWAYS_LOG(LOGIDENTIFIER, "  returning because context is suspended");
+        return;
+    }
+
+    if (!document().hasBrowsingContext()) {
+        INFO_LOG(LOGIDENTIFIER, "  returning because there is no browsing context");
         return;
     }
 
@@ -4639,6 +4651,11 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
     if (willLog(WTFLogLevelInfo) && source.hasTagName(sourceTag)) {
         URL url = source.getNonEmptyURLAttribute(srcAttr);
         INFO_LOG(LOGIDENTIFIER, "'src' is ", url);
+    }
+
+    if (!document().hasBrowsingContext()) {
+        INFO_LOG(LOGIDENTIFIER, "<source> inserted inside a document without a browsing context is not loaded");
+        return;
     }
 
     // We should only consider a <source> element when there is not src attribute at all.
