@@ -1,5 +1,19 @@
 2018-07-04  Thibault Saunier  <tsaunier@igalia.com>
 
+        RealtimeIncomingVideoSources: Call stop() directly in the destructor
+        https://bugs.webkit.org/show_bug.cgi?id=187303
+
+        Reviewed by Youenn Fablet.
+
+        Avoiding to call stopProducingData when we are not actually producing data.
+
+        This fixes tests that will run once the WPE/GTK PeerConnection implementation is merged.
+
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        (WebCore::RealtimeIncomingVideoSource::~RealtimeIncomingVideoSource):
+
+2018-07-04  Thibault Saunier  <tsaunier@igalia.com>
+
         [GTK][WPE] Stop pushing the StreamCollection as event in GStreamerMediaStreamSource
         https://bugs.webkit.org/show_bug.cgi?id=187304
 
