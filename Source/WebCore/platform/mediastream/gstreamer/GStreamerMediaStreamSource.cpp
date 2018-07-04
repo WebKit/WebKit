@@ -383,7 +383,6 @@ static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbe
         gst_event_unref(event);
 
         gst_pad_push_event(pad, stream_start);
-        gst_pad_push_event(pad, gst_event_new_stream_collection(self->streamCollection.get()));
         gst_pad_push_event(pad, gst_event_new_tag(mediaStreamTrackPrivateGetTags(data->track.get())));
 
         webkitMediaStreamSrcAddPad(self, pad, data->pad_template);

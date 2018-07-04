@@ -1,3 +1,19 @@
+2018-07-04  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][WPE] Stop pushing the StreamCollection as event in GStreamerMediaStreamSource
+        https://bugs.webkit.org/show_bug.cgi?id=187304
+
+        Reviewed by Philippe Normand.
+
+        We let parsebin build the StreamCollection for us and pass extra metadata through the
+        `TAG_EVENT` pushing the collection ourself is not bringing anything but adds extra work in the
+        MediaPlayerGStreamer duplicating the STREAM_COLLECTION message for no good reason.
+
+        MediaStream layout tests already test that code path.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::webkitMediaStreamSrcPadProbeCb):
+
 2018-07-04  Frederic Wang  <fwang@igalia.com>
 
         [WebIDL] Remove custom bindings for HTMLDocument
