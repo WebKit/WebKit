@@ -105,9 +105,8 @@ public:
         if (!m_callback)
             return;
 
-        m_callback.value()(returnValue..., Error::None);
-
-        m_callback = std::nullopt;
+        auto callback = std::exchange(m_callback, std::nullopt);
+        callback.value()(returnValue..., Error::None);
     }
 
     void performCallback()
@@ -122,9 +121,8 @@ public:
         if (!m_callback)
             return;
 
-        m_callback.value()(typename std::remove_reference<T>::type()..., error);
-
-        m_callback = std::nullopt;
+        auto callback = std::exchange(m_callback, std::nullopt);
+        callback.value()(typename std::remove_reference<T>::type()..., error);
     }
 
 private:
@@ -163,10 +161,9 @@ typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;
 template<typename T>
 void invalidateCallbackMap(HashMap<uint64_t, T>& callbackMap, CallbackBase::Error error)
 {
-    for (auto& callback : copyToVector(callbackMap.values()))
+    auto map = WTFMove(callbackMap);
+    for (auto& callback : map.values())
         callback->invalidate(error);
-
-    callbackMap.clear();
 }
 
 class CallbackMap {

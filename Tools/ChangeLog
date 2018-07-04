@@ -1,5 +1,18 @@
 2018-07-03  Chris Dumez  <cdumez@apple.com>
 
+        Make CallbackMap::invalidate() safe to re-enter
+        https://bugs.webkit.org/show_bug.cgi?id=187298
+        <rdar://problem/41057167>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (TEST):
+
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
         [Cocoa] Disable vnode guard related simulated crashes for WKTR / DRT and WebSQL
         https://bugs.webkit.org/show_bug.cgi?id=187270
         <rdar://problem/40674034>

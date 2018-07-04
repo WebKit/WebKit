@@ -1,3 +1,19 @@
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Make CallbackMap::invalidate() safe to re-enter
+        https://bugs.webkit.org/show_bug.cgi?id=187298
+        <rdar://problem/41057167>
+
+        Reviewed by Geoffrey Garen.
+
+        Made it safe to re-enter CallbackMap::invalidate(), GenericCallback::performCallbackWithReturnValue(),
+        GenericCallback::invalidate() & invalidateCallbackMap() since those execute client blocks which may
+        re-enter WebKit.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::invalidateCallbackMap):
+
 2018-07-03  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Clean up sandbox warnings found during Public Beta
