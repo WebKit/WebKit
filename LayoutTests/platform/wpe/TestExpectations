@@ -1239,3 +1239,5 @@ webkit.org/b/171599 animations/trigger-container-scroll-empty.html [ Pass Failur
 webkit.org/b/171599 legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Pass Failure ]
 
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
+
+webkit.org/b/187323 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Pass Failure ]
