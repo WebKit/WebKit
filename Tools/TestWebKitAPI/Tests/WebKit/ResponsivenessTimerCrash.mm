@@ -32,12 +32,12 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKPagePrivateMac.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/Vector.h>
 
 static bool didBecomeUnresponsive;
 static RetainPtr<TestWKWebView> webView;
-static Vector<RetainPtr<id>> observableStates;
+static HashSet<RetainPtr<id>> observableStates;
 static bool webViewSeen;
 
 @interface ResponsivenessTimerObserver : NSObject
@@ -49,10 +49,16 @@ static bool webViewSeen;
 {
     if (object == webView.get())
         webViewSeen = true;
+    else {
+        [object removeObserver:self forKeyPath:@"_webProcessIsResponsive"];
+        observableStates.remove(object);
+    }
 
-    if (!observableStates.isEmpty())
-        observableStates.removeLast();
-    
+    if (!observableStates.isEmpty()) {
+        [observableStates.begin()->get() removeObserver:self forKeyPath:@"_webProcessIsResponsive"];
+        observableStates.remove(observableStates.begin());
+    }
+
     if (webViewSeen && observableStates.isEmpty())
         didBecomeUnresponsive = true;
 }
@@ -71,10 +77,10 @@ TEST(WebKit, ResponsivenessTimerCrash)
 
         auto pageRef = [webView _pageRefForTransitionToWKWebView];
         
-        for (size_t i = 0; i < 10; ++i) {
+        for (size_t i = 0; i < 50; ++i) {
             RetainPtr<id> observableState = adoptNS(WKPageCreateObservableState(pageRef));
             [observableState.get() addObserver:observer.get() forKeyPath:@"_webProcessIsResponsive" options:0 context:nullptr];
-            observableStates.append(WTFMove(observableState));
+            observableStates.add(WTFMove(observableState));
         }
 
         [webView synchronouslyLoadHTMLString:@"<script>document.addEventListener('keydown', function(){while(1){}});</script>"];
@@ -82,6 +88,8 @@ TEST(WebKit, ResponsivenessTimerCrash)
     }
     
     Util::run(&didBecomeUnresponsive);
+
+    [webView removeObserver:observer.get() forKeyPath:@"_webProcessIsResponsive"];
 }
 
 } // namespace TestWebKitAPI

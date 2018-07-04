@@ -1,3 +1,15 @@
+2018-07-03  Brady Eidson  <beidson@apple.com>
+
+        WebKit.ResponsivenessTimerCrash sometimes fails.
+        https://bugs.webkit.org/show_bug.cgi?id=187314
+
+        Reviewed by Tim Horton.
+
+        Actually unregister observers from objects we're about to destroy before destroying them.
+
+        * TestWebKitAPI/Tests/WebKit/ResponsivenessTimerCrash.mm:
+        (-[ResponsivenessTimerObserver observeValueForKeyPath:ofObject:change:context:]): 
+
 2018-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         update-webkitgtk-flatpak fails if running with python2
