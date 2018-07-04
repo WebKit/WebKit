@@ -343,9 +343,9 @@ TCPConnection::TCPConnection(TCPPort* port,
         << ", port() Network:" << port->Network()->ToString();
     const std::vector<rtc::InterfaceAddress>& desired_addresses =
         port_->Network()->GetIPs();
-    RTC_DCHECK(std::find(desired_addresses.begin(), desired_addresses.end(),
-                         socket_->GetLocalAddress().ipaddr()) !=
-               desired_addresses.end());
+    RTC_DCHECK(socket->GetLocalAddress().IsLoopbackIP() ||
+        std::find(desired_addresses.begin(), desired_addresses.end(),
+        socket_->GetLocalAddress().ipaddr()) != desired_addresses.end());
     ConnectSocketSignals(socket);
   }
 }

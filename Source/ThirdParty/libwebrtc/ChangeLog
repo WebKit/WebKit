@@ -1,3 +1,14 @@
+2018-07-04  Thibault Saunier  <tsaunier@igalia.com>
+
+        [libwebrtc] Allow IP mismatch for local connections on localhost
+        https://bugs.webkit.org/show_bug.cgi?id=187302
+
+        Reviewed by Youenn Fablet.
+
+        The rest of the code allows it, but there was an unecessary assert
+
+        * Source/webrtc/p2p/base/tcpport.cc:
+
 2018-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][WPE] Remove gflags from libwebrtc build
