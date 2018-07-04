@@ -38,9 +38,9 @@ except ImportError:
     from urlparse import urlparse
 
 try:
-    from urllib.request import urlretrieve  # pylint: disable=E0611
+    from urllib.request import urlopen  # pylint: disable=E0611
 except ImportError:
-    from urllib import urlretrieve
+    from urllib2 import urlopen
 
 FLATPAK_REQ = [
     ("flatpak", "0.10.0"),
@@ -374,8 +374,9 @@ class FlatpakRepo(FlatpakObject):
             return self._repo_file
 
         assert self.repo_file_name
-        self._repo_file = tempfile.NamedTemporaryFile(mode="w")
-        urlretrieve(self.repo_file_name, self._repo_file.name)
+        self._repo_file = tempfile.NamedTemporaryFile(mode="wb")
+        self._repo_file.write(urlopen(self.repo_file_name).read())
+        self._repo_file.flush()
 
         return self._repo_file
 

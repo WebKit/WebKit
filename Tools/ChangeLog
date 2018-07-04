@@ -1,3 +1,18 @@
+2018-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        update-webkitgtk-flatpak fails if running with python2
+        https://bugs.webkit.org/show_bug.cgi?id=187240
+
+        Reviewed by Michael Catanzaro.
+
+        urllib.urlretrieve of Python2 sends invalid requests. Use
+        urllib2.urlopen instead.
+
+        * flatpak/flatpakutils.py: Import urllib2.urlopen for Python2,
+        urllib.request.urlopen for Python3.
+        (FlatpakRepo.repo_file): Copy the content of urlopen result to the
+        temporary file.
+
 2018-07-03  Chris Dumez  <cdumez@apple.com>
 
         Make CallbackMap::invalidate() safe to re-enter
