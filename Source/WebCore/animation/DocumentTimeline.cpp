@@ -31,6 +31,7 @@
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "KeyframeEffect.h"
+#include "Microtasks.h"
 #include "Page.h"
 #include "RenderElement.h"
 
@@ -271,6 +272,10 @@ void DocumentTimeline::updateAnimations()
 {
     for (const auto& animation : animations())
         animation->runPendingTasks();
+
+    // Perform a microtask checkpoint such that all promises that may have resolved while
+    // running pending tasks can fire right away.
+    MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
 
     if (m_document && hasElementAnimations()) {
         for (const auto& elementToAnimationsMapItem : elementToAnimationsMap())

@@ -1974,7 +1974,6 @@ webkit.org/b/177997 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.h
 
 webkit.org/b/179069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_032.htm [ Pass Failure ]
 
-webkit.org/b/179287 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Pass Failure ]
 webkit.org/b/181116 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/finished.html [ Pass Failure ]
 webkit.org/b/181120 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onfinish.html [ Pass Failure ]
 webkit.org/b/181121 imported/w3c/web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html [ Pass Failure ]

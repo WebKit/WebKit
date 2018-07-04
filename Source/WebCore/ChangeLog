@@ -1,3 +1,20 @@
+2018-07-03  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make WPT test at timing-model/timelines/timelines.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186508
+        <rdar://problem/41000260>
+
+        Reviewed by Dean Jackson.
+
+        The remaining failing assertion in this test assumes that the ready promise for an animation is fired
+        prior to requestAnimationFrame callbacks being fired in the current event loop such that registering
+        the requestAnimationFrame() call within the ready promise has its callback fired with the same timeline
+        time. To ensure that is true, we perform a microtask checkpoint as soon as we're done running pending
+        tasks, which will resolve the ready promise for any play-pending animations.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::updateAnimations):
+
 2018-07-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Nullptr crash accessing Document in GenericEventQueue::dispatchOneEvent()
