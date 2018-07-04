@@ -1,5 +1,30 @@
 2018-07-03  Chris Dumez  <cdumez@apple.com>
 
+        Improve window.event compliance: Should not be set when target is in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=186266
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync dom/events web-platform-tests from 59d4a411a8e to gain test coverage.
+
+        * web-platform-tests/dom/events/Event-returnValue-expected.txt:
+        * web-platform-tests/dom/events/Event-returnValue.html:
+        * web-platform-tests/dom/events/event-global-expected.txt: Added.
+        * web-platform-tests/dom/events/event-global-extra.window.js: Added.
+        (async_test.t.frame.onload.t.step_func_done):
+        * web-platform-tests/dom/events/event-global.html: Added.
+        * web-platform-tests/dom/events/event-global.worker-expected.txt: Added.
+        * web-platform-tests/dom/events/event-global.worker.html: Added.
+        * web-platform-tests/dom/events/event-global.worker.js: Added.
+        * web-platform-tests/dom/events/relatedTarget.window.js: Added.
+        (test):
+        (test.t.input.oninput.t.step_func):
+        * web-platform-tests/dom/events/resources/event-global-extra-frame.html: Added.
+        * web-platform-tests/dom/events/resources/w3c-import.log: Added.
+        * web-platform-tests/dom/events/w3c-import.log:
+
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
         Implement support for Element.toggleAttribute
         https://bugs.webkit.org/show_bug.cgi?id=186883
 

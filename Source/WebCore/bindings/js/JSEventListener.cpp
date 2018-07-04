@@ -157,7 +157,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         ASSERT(!args.hasOverflowed());
 
         Event* savedEvent = globalObject->currentEvent();
-        globalObject->setCurrentEvent(&event);
+
+        // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
+        bool isTargetInsideShadowTree = is<Node>(event.currentTarget()) && downcast<Node>(*event.currentTarget()).isInShadowTree();
+        if (!isTargetInsideShadowTree)
+            globalObject->setCurrentEvent(&event);
 
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 

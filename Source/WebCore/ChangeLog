@@ -1,5 +1,25 @@
 2018-07-03  Chris Dumez  <cdumez@apple.com>
 
+        Improve window.event compliance: Should not be set when target is in shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=186266
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop exposing window.event to Shadow DOM by not setting window.event if the event's target
+        is a Node inside a shadow tree. This is as per the latest DOM specification:
+        - https://github.com/whatwg/dom/pull/407
+
+        This aligns our behavior with Blink as well:
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=779461
+
+        Tests: imported/w3c/web-platform-tests/dom/events/event-global.html
+               imported/w3c/web-platform-tests/dom/events/event-global.worker.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
         [Cocoa] Disable vnode guard related simulated crashes for WKTR / DRT and WebSQL
         https://bugs.webkit.org/show_bug.cgi?id=187270
         <rdar://problem/40674034>
