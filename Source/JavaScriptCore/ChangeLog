@@ -1,3 +1,13 @@
+2018-07-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce PLATFORM(IOSMAC)
+        https://bugs.webkit.org/show_bug.cgi?id=187315
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-07-03  Mark Lam  <mark.lam@apple.com>
 
         [32-bit JSC tests] ASSERTION FAILED: !getDirect(offset) || !JSValue::encode(getDirect(offset)).

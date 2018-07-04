@@ -1,3 +1,28 @@
+2018-07-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce PLATFORM(IOSMAC)
+        https://bugs.webkit.org/show_bug.cgi?id=187315
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/WebCore.xcconfig:
+        * Modules/geolocation/ios/GeolocationPositionIOS.mm:
+        (WebCore::GeolocationPosition::GeolocationPosition):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory):
+        (WebCore::AudioSession::routingContextUID const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::registerItemToPasteboard):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfoList itemProvider]):
+
 2018-07-03  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at timing-model/timelines/timelines.html pass reliably

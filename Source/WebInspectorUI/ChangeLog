@@ -1,3 +1,12 @@
+2018-07-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce PLATFORM(IOSMAC)
+        https://bugs.webkit.org/show_bug.cgi?id=187315
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+
 2018-06-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r213000): copy from Search results content view broken

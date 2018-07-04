@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC) || ENABLE(MINIMAL_SIMULATOR)
+#if PLATFORM(MAC) || PLATFORM(IOSMAC)
 #import "ChildProcess.h"
 
 #import "CodeSigning.h"
@@ -67,7 +67,7 @@ static void initializeTimerCoalescingPolicy()
 
 void ChildProcess::setApplicationIsDaemon()
 {
-#if !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOSMAC)
     OSStatus error = SetApplicationIsDaemon(true);
     ASSERT_UNUSED(error, error == noErr);
 #endif
@@ -89,7 +89,7 @@ void ChildProcess::platformInitialize()
 
 static OSStatus enableSandboxStyleFileQuarantine()
 {
-#if !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOSMAC)
     qtn_proc_t quarantineProperties = qtn_proc_alloc();
     auto quarantinePropertiesDeleter = makeScopeExit([quarantineProperties]() {
         qtn_proc_free(quarantineProperties);
@@ -234,7 +234,7 @@ void ChildProcess::stopNSAppRunLoop()
 }
 #endif
 
-#if !ENABLE(MINIMAL_SIMULATOR) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if !PLATFORM(IOSMAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 void ChildProcess::stopNSRunLoop()
 {
     ASSERT([NSRunLoop mainRunLoop]);
@@ -244,7 +244,7 @@ void ChildProcess::stopNSRunLoop()
 }
 #endif
 
-#if ENABLE(MINIMAL_SIMULATOR)
+#if PLATFORM(IOSMAC)
 void ChildProcess::platformStopRunLoop()
 {
     XPCServiceExit(WTFMove(m_priorityBoostMessage));

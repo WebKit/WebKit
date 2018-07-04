@@ -46,7 +46,7 @@
 #import <wtf/text/StringHash.h>
 
 #define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
-#define NSURL_SUPPORTS_TITLE (!ENABLE(MINIMAL_SIMULATOR))
+#define NSURL_SUPPORTS_TITLE (!PLATFORM(IOSMAC))
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIImage)
@@ -289,7 +289,7 @@ static NSString *webIOSPastePboardType = @"iOS rich content paste pasteboard typ
 
 static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *representationsToRegister, id <AbstractPasteboard> pasteboard)
 {
-#if ENABLE(MINIMAL_SIMULATOR)
+#if PLATFORM(IOSMAC)
     auto itemDictionary = adoptNS([[NSMutableDictionary alloc] init]);
     [representationsToRegister enumerateItems:[itemDictionary] (id <WebItemProviderRegistrar> item, NSUInteger) {
         if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])

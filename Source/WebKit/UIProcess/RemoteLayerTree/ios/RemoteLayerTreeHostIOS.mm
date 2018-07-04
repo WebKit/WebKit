@@ -137,7 +137,7 @@ using namespace WebCore;
     if ((self = [super initWithFrame:frame])) {
         CALayerHost *layer = (CALayerHost *)self.layer;
         layer.contextId = contextID;
-#if ENABLE(MINIMAL_SIMULATOR)
+#if PLATFORM(IOSMAC)
         // When running iOS apps on macOS, kCAContextIgnoresHitTest isn't respected; instead, we avoid
         // hit-testing to the remote context by disabling hit-testing on its host layer. See
         // <rdar://problem/40591107> for more details.

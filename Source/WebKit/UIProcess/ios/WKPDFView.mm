@@ -518,7 +518,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 #pragma mark _WKWebViewPrintProvider
 
-#if !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOSMAC)
 
 @interface WKPDFView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
 @end
@@ -558,6 +558,6 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 @end
 
-#endif // !ENABLE(MINIMAL_SIMULATOR)
+#endif // !PLATFORM(IOSMAC)
 
 #endif // ENABLE(WKPDFVIEW)

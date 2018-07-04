@@ -1120,7 +1120,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         if (position.rootEditableElement())
             range = Range::create(*frame.document(), position, position);
         else
-#if !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOSMAC)
             range = wordRangeFromPosition(position);
 #else
             switch (wkGestureState) {
@@ -2176,7 +2176,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                 if (info.isSelectable && !hitNode->isTextNode())
                     info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
             }
-#if ENABLE(MINIMAL_SIMULATOR)
+#if PLATFORM(IOSMAC)
             bool isInsideFixedPosition;
             VisiblePosition caretPosition(renderer->positionForPoint(request.point, nullptr));
             info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);

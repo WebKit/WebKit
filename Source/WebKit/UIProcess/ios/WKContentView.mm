@@ -348,7 +348,7 @@ private:
         return;
 
     [_textSelectionAssistant deactivateSelection];
-#if !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOSMAC)
     [[_webSelectionAssistant selectionView] setHidden:YES];
 #endif
 }
@@ -637,7 +637,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #pragma mark Printing
 
-#if !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOSMAC)
 
 @interface WKContentView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
 @end
@@ -705,6 +705,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 @end
 
-#endif // !ENABLE(MINIMAL_SIMULATOR)
+#endif // !PLATFORM(IOSMAC)
 
 #endif // PLATFORM(IOS)

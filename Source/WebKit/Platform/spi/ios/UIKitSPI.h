@@ -499,7 +499,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (void)setGestureRecognizers;
 - (void)willStartScrollingOrZoomingPage;
 - (void)willStartScrollingOverflow;
-#if !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOSMAC)
 @property (nonatomic, retain) UIWebSelectionView *selectionView;
 #endif
 @property (nonatomic, readonly) CGRect selectionFrame;

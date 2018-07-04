@@ -1,3 +1,12 @@
+2018-07-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce PLATFORM(IOSMAC)
+        https://bugs.webkit.org/show_bug.cgi?id=187315
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+
 2018-06-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r233347.

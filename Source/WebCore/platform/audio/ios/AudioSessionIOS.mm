@@ -140,7 +140,7 @@ void AudioSession::setCategory(CategoryType newCategory)
 
     NSError *error = nil;
     [[AVAudioSession sharedInstance] setCategory:categoryString mode:categoryMode routeSharingPolicy:policy options:options error:&error];
-#if !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR)
+#if !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC)
     ASSERT(!error);
 #endif
 }
@@ -176,7 +176,7 @@ RouteSharingPolicy AudioSession::routeSharingPolicy() const
 
 String AudioSession::routingContextUID() const
 {
-#if !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR) && !PLATFORM(WATCHOS)
+#if !PLATFORM(IOS_SIMULATOR) && !PLATFORM(IOSMAC) && !PLATFORM(WATCHOS)
     return [[AVAudioSession sharedInstance] routingContextUID];
 #else
     return emptyString();

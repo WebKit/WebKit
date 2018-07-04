@@ -1,3 +1,14 @@
+2018-07-04  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce PLATFORM(IOSMAC)
+        https://bugs.webkit.org/show_bug.cgi?id=187315
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+
 2018-07-02  Alicia Boya García  <aboya@igalia.com>
 
         [Linux] Fix memory leak in WTF::forEachLine()
