@@ -1,3 +1,12 @@
+2018-07-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [cairo] Doesn't paint box-shadow with zero blur-radius
+        https://bugs.webkit.org/show_bug.cgi?id=187244
+
+        Reviewed by Žan Doberšek.
+
+        * platform/gtk/fast/box-shadow/inset-expected.png: Updated.
+
 2018-07-03  Youenn Fablet  <youenn@apple.com>
 
         Crash in  WebKit::CacheStorage::Cache::toRecordInformation when running http/tests/cache-storage/cache-persistency.https.html

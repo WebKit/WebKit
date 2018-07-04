@@ -612,8 +612,7 @@ bool ShadowState::isVisible() const
 
 bool ShadowState::isRequired(PlatformContextCairo& platformContext) const
 {
-    // We can't avoid ShadowBlur if the shadow has blur.
-    if (color.isVisible() && blur)
+    if (color.isVisible())
         return true;
 
     // We can avoid ShadowBlur and optimize, since we're not drawing on a
