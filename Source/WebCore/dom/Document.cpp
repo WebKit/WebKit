@@ -2613,6 +2613,7 @@ ExceptionOr<Document&> Document::openForBindings(Document* responsibleDocument, 
         return Exception { InvalidStateError };
 
     // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     open(responsibleDocument);
     return *this;
@@ -2752,6 +2753,7 @@ ExceptionOr<void> Document::closeForBindings()
         return Exception { InvalidStateError };
 
     // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     close();
     return { };
@@ -2982,6 +2984,7 @@ ExceptionOr<void> Document::write(Document* responsibleDocument, Vector<String>&
         return Exception { InvalidStateError };
 
     // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     SegmentedString text;
     for (auto& string : strings)
@@ -2998,6 +3001,7 @@ ExceptionOr<void> Document::writeln(Document* responsibleDocument, Vector<String
         return Exception { InvalidStateError };
 
     // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     SegmentedString text;
     for (auto& string : strings)

@@ -1,3 +1,15 @@
+2018-07-04  Frederic Wang  <fwang@igalia.com>
+
+        [WebIDL] Remove custom bindings for HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=173444
+
+        Unreviewed, add missing bugzilla link for FIXME comments.
+
+        * dom/Document.cpp:
+        (WebCore::Document::closeForBindings):
+        (WebCore::Document::write):
+        (WebCore::Document::writeln):
+
 2018-07-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce PLATFORM(IOSMAC)
