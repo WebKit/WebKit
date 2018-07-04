@@ -2324,6 +2324,16 @@ unsigned Internals::referencingNodeCount(const Document& document) const
     return document.referencingNodeCount();
 }
 
+uint64_t Internals::documentIdentifier(const Document& document) const
+{
+    return document.identifier().toUInt64();
+}
+
+bool Internals::isDocumentAlive(uint64_t documentIdentifier) const
+{
+    return Document::allDocumentsMap().contains(makeObjectIdentifier<DocumentIdentifierType>(documentIdentifier));
+}
+
 RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
 {
     auto* inspectedPage = contextDocument()->frame()->page();

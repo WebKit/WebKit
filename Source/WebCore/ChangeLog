@@ -1,5 +1,23 @@
 2018-07-03  Chris Dumez  <cdumez@apple.com>
 
+        performance-api/performance-observer-no-document-leak.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=186938
+        <rdar://problem/41379336>
+
+        Reviewed by Simon Fraser.
+
+        Add internals API to get the identifier of a document and to ask if the document with
+        a given identifier is still alive. This is helpful to write tests for document leaking
+        fixes.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::documentIdentifier const):
+        (WebCore::Internals::isDocumentAlive const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
         Improve window.event compliance: Should not be set when target is in shadow tree
         https://bugs.webkit.org/show_bug.cgi?id=186266
 

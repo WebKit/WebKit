@@ -1,3 +1,21 @@
+2018-07-03  Chris Dumez  <cdumez@apple.com>
+
+        performance-api/performance-observer-no-document-leak.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=186938
+        <rdar://problem/41379336>
+
+        Reviewed by Simon Fraser.
+
+        Update test to stop relying on internals.numberOfLiveDocuments() and instead rely on the new
+        internals.documentIdentifier() / internals.isDocumentAlive(documentIdentifier) API in order
+        to address the flakiness. Relying on the number of live documents to check if a particular
+        document was destroyed is unreliable and flaky given that WebKit constructs documents for
+        various reasons.
+
+        * TestExpectations:
+        * performance-api/performance-observer-no-document-leak-expected.txt:
+        * performance-api/performance-observer-no-document-leak.html:
+
 2018-07-03  Truitt Savell  <tsavell@apple.com>
 
         Re-enabling canvas tests for canvas/philip/tests/initial.reset.gradient.html

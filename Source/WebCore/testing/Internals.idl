@@ -613,6 +613,9 @@ enum EventThrottlingBehavior {
     [Conditional=MEDIA_STREAM] void simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] void setMediaStreamTrackIdentifier(MediaStreamTrack track, DOMString identifier);
 
+    unsigned long long documentIdentifier(Document document);
+    boolean isDocumentAlive(unsigned long long documentIdentifier);
+
     Promise<void> clearCacheStorageMemoryRepresentation();
     Promise<DOMString> cacheStorageEngineRepresentation();
     void setResponseSizeWithPadding(FetchResponse response, unsigned long long size);

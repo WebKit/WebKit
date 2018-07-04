@@ -364,6 +364,9 @@ public:
     unsigned numberOfLiveDocuments() const;
     unsigned referencingNodeCount(const Document&) const;
 
+    uint64_t documentIdentifier(const Document&) const;
+    bool isDocumentAlive(uint64_t documentIdentifier) const;
+
     RefPtr<WindowProxy> openDummyInspectorFrontend(const String& url);
     void closeDummyInspectorFrontend();
     ExceptionOr<void> setInspectorIsUnderTest(bool);

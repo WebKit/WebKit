@@ -9,13 +9,12 @@
 description("Tests that using PerformanceObserver does not cause the document to get leaked.");
 window.jsTestIsAsync = true;
 
-function numberOfDocumentsShouldBecome(count)
+function documentShouldDie(documentIdentifier)
 {
     return new Promise(function(resolve, reject) {
         handle = setInterval(function() {
             gc();
-            if (internals.numberOfLiveDocuments() == count) {
-                testPassed("Number of document is " + count);
+            if (!internals.isDocumentAlive(documentIdentifier)) {
                 clearInterval(handle);
                 resolve();
             }
@@ -24,13 +23,14 @@ function numberOfDocumentsShouldBecome(count)
 }
 
 onload = function() {
-    numberOfDocumentsShouldBecome(2).then(function() {
+    setTimeout(function() {
+        let frameDocumentIdentifier = internals.documentIdentifier(testFrame.contentDocument);
         testFrame.remove();
-        numberOfDocumentsShouldBecome(1).then(function() {
+        documentShouldDie(frameDocumentIdentifier).then(function() {
             testPassed("Document did not leak");
             finishJSTest();
         });
-    });
+    }, 10);
 }
 </script>
 <script src="../resources/js-test-post.js"></script>
