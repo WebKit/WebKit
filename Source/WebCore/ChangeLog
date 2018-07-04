@@ -1,3 +1,18 @@
+2018-07-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a release assert to diagnose infinite recursions in removeAllEventListeners()
+        https://bugs.webkit.org/show_bug.cgi?id=187287
+
+        Reviewed by Keith Miller.
+
+        Assert that we never re-enter removeAllEventListeners per thread.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::removeAllEventListeners):
+        * platform/ThreadGlobalData.h:
+        (WebCore::ThreadGlobalData::ThreadGlobalData::isInRemoveAllEventListeners const):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::setIsInRemoveAllEventListeners):
+
 2018-07-03  Chris Dumez  <cdumez@apple.com>
 
         performance-api/performance-observer-no-document-leak.html is flaky

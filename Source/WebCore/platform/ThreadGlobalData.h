@@ -62,6 +62,9 @@ namespace WebCore {
         void setWebCoreThreadData();
 #endif
 
+        bool isInRemoveAllEventListeners() const { return m_isInRemoveAllEventListeners; }
+        void setIsInRemoveAllEventListeners(bool value) { m_isInRemoveAllEventListeners = value; }
+
     private:
         std::unique_ptr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
         std::unique_ptr<EventNames> m_eventNames;
@@ -71,6 +74,8 @@ namespace WebCore {
 #ifndef NDEBUG
         bool m_isMainThread;
 #endif
+
+        bool m_isInRemoveAllEventListeners { false };
 
         std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
 

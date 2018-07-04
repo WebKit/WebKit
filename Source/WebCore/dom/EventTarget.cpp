@@ -310,10 +310,16 @@ const EventListenerVector& EventTarget::eventListeners(const AtomicString& event
 
 void EventTarget::removeAllEventListeners()
 {
+    auto& threadData = threadGlobalData();
+    RELEASE_ASSERT(!threadData.isInRemoveAllEventListeners());
+
+    threadData.setIsInRemoveAllEventListeners(true);
+
     auto* data = eventTargetData();
-    if (!data)
-        return;
-    data->eventListenerMap.clear();
+    if (data)
+        data->eventListenerMap.clear();
+
+    threadData.setIsInRemoveAllEventListeners(false);
 }
 
 void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
