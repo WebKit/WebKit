@@ -1,3 +1,19 @@
+2018-07-04  Guillaume Emont  <guijemont@igalia.com>
+
+        FunctionTraits: Make cCallArity() constant on 32-bits.
+        https://bugs.webkit.org/show_bug.cgi?id=187292
+
+        Reviewed by Yusuke Suzuki.
+
+        On X86, in Source/JavaScriptCore/jit/CCallHelpers.h we have a
+        static_assert that uses cCallArity(), so it needs to be constant to
+        avoid a compilation error. This is achieved by changing an ASSERT into
+        a static_assert.
+
+
+        * wtf/FunctionTraits.h:
+        (WTF::slotsForCCallArgument):
+
 2018-07-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce PLATFORM(IOSMAC)
