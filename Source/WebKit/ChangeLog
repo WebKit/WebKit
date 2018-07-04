@@ -1,3 +1,20 @@
+2018-07-03  Youenn Fablet  <youenn@apple.com>
+
+        Fix regression introduced in r233335
+        https://bugs.webkit.org/show_bug.cgi?id=187282
+
+        Reviewed by Chris Dumez.
+
+        When checking for navigation loads, we need to return whether the request URL matches the service worker URL.
+        Before this patch, if the request URL was not matching the service worker URL, we were using the origin/referrer
+        which should only be used for subresource loads.
+
+        Covered by imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html
+        being no longer flaky.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::isValidFetch):
+
 2018-07-03  Chris Dumez  <cdumez@apple.com>
 
         Make CallbackMap::invalidate() safe to re-enter

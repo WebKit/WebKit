@@ -189,12 +189,15 @@ static inline bool isValidFetch(const ResourceRequest& request, const FetchOptio
     if (!serviceWorkerURL.protocolIsInHTTPFamily())
         return true;
 
-    if (options.mode == FetchOptions::Mode::Navigate && !protocolHostAndPortAreEqual(request.url(), serviceWorkerURL)) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Should not intercept a navigation load that is not same-origin as the service worker URL");
-        RELEASE_ASSERT_WITH_MESSAGE(request.url().host() == serviceWorkerURL.host(), "Hosts do not match");
-        RELEASE_ASSERT_WITH_MESSAGE(request.url().protocol() == serviceWorkerURL.protocol(), "Protocols do not match");
-        RELEASE_ASSERT_WITH_MESSAGE(request.url().port() == serviceWorkerURL.port(), "Ports do not match");
-        return false;
+    if (options.mode == FetchOptions::Mode::Navigate) {
+        if (!protocolHostAndPortAreEqual(request.url(), serviceWorkerURL)) {
+            RELEASE_LOG_ERROR(ServiceWorker, "Should not intercept a navigation load that is not same-origin as the service worker URL");
+            RELEASE_ASSERT_WITH_MESSAGE(request.url().host() == serviceWorkerURL.host(), "Hosts do not match");
+            RELEASE_ASSERT_WITH_MESSAGE(request.url().protocol() == serviceWorkerURL.protocol(), "Protocols do not match");
+            RELEASE_ASSERT_WITH_MESSAGE(request.url().port() == serviceWorkerURL.port(), "Ports do not match");
+            return false;
+        }
+        return true;
     }
 
     String origin = request.httpOrigin();
