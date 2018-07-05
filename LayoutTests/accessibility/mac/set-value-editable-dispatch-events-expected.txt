@@ -1,0 +1,29 @@
+
+ 
+This tests that setting value to a text control would dispatch input events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test: contenteditable
+Role: AXRole: AXTextArea
+Value: AXValue: current
+Writable: true
+input event dispatched for contenteditable
+
+Test: input
+Role: AXRole: AXTextField
+Value: AXValue: somevalue
+Writable: true
+input event dispatched for input
+
+Test: textarea
+Role: AXRole: AXTextArea
+Value: AXValue: sometext
+Writable: true
+input event dispatched for textarea
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

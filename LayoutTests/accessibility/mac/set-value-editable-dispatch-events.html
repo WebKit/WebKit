@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test-pre.js"></script>
+<div id="content">
+
+<div contenteditable="true" id="contenteditable" oninput="updateContenteditable();">current</div>
+<input type="text" id="input" value="somevalue" oninput="updateInput();">
+<textarea id="textarea" oninput="updateTextarea();">sometext</textarea>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that setting value to a text control would dispatch input events.");
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+
+        var inputValue;
+        var contenteditableValue;
+        var textareaValue;
+
+       function updateContenteditable(){
+           debug("input event dispatched for contenteditable");
+           testElement("input");
+       }
+
+       function updateInput(){
+          debug("input event dispatched for input");
+          testElement("textarea");
+       }
+
+       function updateTextarea(){
+          debug("input event dispatched for textarea");
+          finishJSTest();
+       }
+
+        function testElement(idValue) {
+            debug("\nTest: " + idValue);
+            var axElement = accessibilityController.accessibleElementById(idValue);
+            debug("Role: " + axElement.role);
+            debug("Value: " + axElement.stringValue);
+
+            var writable = axElement.isAttributeSettable("AXValue");
+            debug("Writable: " + writable);
+
+            document.getElementById(idValue).focus();
+
+            axElement.setValue("Updated value for " + idValue);
+        }
+
+        testElement("contenteditable");
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

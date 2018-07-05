@@ -1772,22 +1772,21 @@ void AccessibilityRenderObject::setValue(const String& string)
     Element& element = downcast<Element>(*m_renderer->node());
     RenderObject& renderer = *m_renderer;
     
+    // We should use the editor's insertText to mimic typing into the field.
+    // Also only do this when the field is in editing mode.
+    if (Frame* frame = renderer.document().frame()) {
+        Editor& editor = frame->editor();
+        if (element.shouldUseInputMethod()) {
+            editor.clearText();
+            editor.insertText(string, nullptr);
+            return;
+        }
+    }
     // FIXME: Do we want to do anything here for ARIA textboxes?
     if (renderer.isTextField() && is<HTMLInputElement>(element))
         downcast<HTMLInputElement>(element).setValue(string);
     else if (renderer.isTextArea() && is<HTMLTextAreaElement>(element))
         downcast<HTMLTextAreaElement>(element).setValue(string);
-    else if (is<HTMLElement>(element) && contentEditableAttributeIsEnabled(&element)) {
-        // We should use the editor's insertText to mimic typing into the contenteditable field.
-        // Also only do this when the field is in editing mode.
-        if (Frame* frame = renderer.document().frame()) {
-            Editor& editor = frame->editor();
-            if (element.shouldUseInputMethod()) {
-                editor.clearText();
-                editor.insertText(string, nullptr);
-            }
-        }
-    }
 }
 
 bool AccessibilityRenderObject::supportsARIAOwns() const
