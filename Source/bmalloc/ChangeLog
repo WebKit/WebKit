@@ -1,3 +1,26 @@
+2018-07-05  Michael Saboff  <msaboff@apple.com>
+
+        Disable IsoHeaps when Gigacage is off
+        https://bugs.webkit.org/show_bug.cgi?id=187160
+
+        Reviewed by Saam Barati.
+
+        Updated determineMallocFallbackState to base enabling of Iso Heaps on Gigacage 
+        being enabled.  We do this because if Gigacage is disabled, it may be due to lack
+        of address space.
+
+        To work around a compiler issue uncovered by the change above, I added explicit
+        instantiation of PerThread's static variables.  Defined the same explicit
+        instantiated static variables with export scope in the new file PerThread.cpp
+        to eliminate separate variables allocations in each linked framework / library.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::determineMallocFallbackState):
+        * bmalloc/PerThread.cpp: Added.
+        * bmalloc/PerThread.h:
+
 2018-07-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce PLATFORM(IOSMAC)
