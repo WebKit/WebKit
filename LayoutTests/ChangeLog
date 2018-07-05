@@ -1,3 +1,7 @@
+2018-07-05  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r233417. rdar://problem/41863878
+
 2018-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r233325): [GTK] Broke 40 animations tests
