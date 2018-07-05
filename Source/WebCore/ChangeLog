@@ -1,3 +1,20 @@
+2018-07-05  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Fix VRDisplayEvent implementation
+        https://bugs.webkit.org/show_bug.cgi?id=187337
+
+        Reviewed by Žan Doberšek.
+
+        VRDisplayEvent implementation had two issues. First there were no attributes storing the
+        VRDisplay the event refers to. Secondly the VRDisplayEventReason is not mandatory so it
+        should be handled via an optional.
+
+        * Modules/webvr/VRDisplayEvent.cpp:
+        (WebCore::VRDisplayEvent::VRDisplayEvent):
+        (WebCore::VRDisplayEvent::display const): Deleted.
+        (WebCore::VRDisplayEvent::reason const): Deleted.
+        * Modules/webvr/VRDisplayEvent.h:
+
 2018-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r233325): [GTK] Broke 40 animations tests

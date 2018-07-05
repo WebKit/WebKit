@@ -33,9 +33,14 @@ class VRDisplay;
 
 class VRDisplayEvent final : public Event {
 public:
+    static Ref<VRDisplayEvent> create(const AtomicString& type, const RefPtr<VRDisplay>& display, std::optional<VRDisplayEventReason>&& reason)
+    {
+        return adoptRef(*new VRDisplayEvent(type, display, WTFMove(reason)));
+    }
+
     struct Init : EventInit {
         RefPtr<VRDisplay> display;
-        VRDisplayEventReason reason;
+        std::optional<VRDisplayEventReason> reason;
     };
 
     static Ref<VRDisplayEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -45,14 +50,18 @@ public:
 
     virtual ~VRDisplayEvent();
 
-    RefPtr<VRDisplay> display() const;
-    VRDisplayEventReason reason() const;
+    RefPtr<VRDisplay> display() const { return m_display; }
+    const std::optional<VRDisplayEventReason>& reason() const { return m_reason; }
 
 private:
     VRDisplayEvent(const AtomicString&, const Init&, IsTrusted);
+    VRDisplayEvent(const AtomicString&, const RefPtr<VRDisplay>&, std::optional<VRDisplayEventReason>&&);
 
     // Event
     EventInterface eventInterface() const override;
+
+    RefPtr<VRDisplay> m_display;
+    std::optional<VRDisplayEventReason> m_reason;
 };
 
 } // namespace WebCore
