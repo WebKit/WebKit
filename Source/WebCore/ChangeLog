@@ -1,3 +1,20 @@
+2018-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        Do not assume that hypen's width can be computed using the simplified text measure codepath.
+        https://bugs.webkit.org/show_bug.cgi?id=187352
+        <rdar://problem/40821283>
+
+        Reviewed by Simon Fraser.
+
+        Just because the text content is qualified for simplified text measure, it does not necessarily mean the hyphen is simple enough as well.
+
+        Test: fast/text/hyphen-is-complex-crash.html
+
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragmentIterator):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2018-07-05  Eric Carlson  <eric.carlson@apple.com>
 
         Video sometimes flickers when playing to AppleTV

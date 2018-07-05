@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
-TextFragmentIterator::Style::Style(const RenderStyle& style, bool useSimplifiedTextMeasuring)
+TextFragmentIterator::Style::Style(const RenderStyle& style)
     : font(style.fontCascade())
     , textAlign(style.textAlign())
     , hasKerningOrLigatures(font.enableKerning() || font.requiresShaping())
@@ -49,7 +49,7 @@ TextFragmentIterator::Style::Style(const RenderStyle& style, bool useSimplifiedT
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
     , shouldHyphenate(style.hyphens() == Hyphens::Auto && canHyphenate(style.locale()))
-    , hyphenStringWidth(shouldHyphenate ? (useSimplifiedTextMeasuring ? font.widthForSimpleText(style.hyphenString()) : font.width(TextRun(String(style.hyphenString())))) : 0)
+    , hyphenStringWidth(shouldHyphenate ? font.width(TextRun(String(style.hyphenString()))) : 0)
     , hyphenLimitBefore(style.hyphenationLimitBefore() < 0 ? 2 : style.hyphenationLimitBefore())
     , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())
     , locale(style.locale())
@@ -62,7 +62,7 @@ TextFragmentIterator::TextFragmentIterator(const RenderBlockFlow& flow)
     : m_flowContents(flow)
     , m_currentSegment(m_flowContents.begin())
     , m_lineBreakIterator(m_currentSegment->text, flow.style().locale())
-    , m_style(flow.style(), m_currentSegment->canUseSimplifiedTextMeasuring)
+    , m_style(flow.style())
 {
 }
 
