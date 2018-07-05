@@ -617,7 +617,7 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
         }
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, resultElementBounds, resultInViewCenterPoint.value(), isObscured, String()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidComputeElementLayout(callbackID, resultElementBounds, resultInViewCenterPoint, isObscured, String()), 0);
 }
 
 void WebAutomationSessionProxy::selectOptionElement(uint64_t pageID, uint64_t frameID, String nodeHandle, uint64_t callbackID)
