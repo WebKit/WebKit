@@ -1,3 +1,13 @@
+2018-07-05  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] REGRESSION: Development WebContent service has restricted entitlements, rendering it useless for development
+        https://bugs.webkit.org/show_bug.cgi?id=187355
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebContentService.Development.xcconfig: Set WK_USE_RESTRICTED_ENTITLEMENTS
+          to NO for the Development service.
+
 2018-07-05  Rob Buis  <rbuis@igalia.com>
 
         [GTK] Remove soup/DownloadSoupErrors.h
