@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include <wtf/ASCIICType.h>
 
 namespace WebCore {

@@ -29,7 +29,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "CSSParser.h"
-#include "CSSParserMode.h"
 #include "CSSSelectorList.h"
 #include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"

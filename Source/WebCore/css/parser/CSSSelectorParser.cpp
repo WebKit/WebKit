@@ -30,7 +30,7 @@
 #include "config.h"
 #include "CSSSelectorParser.h"
 
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include "CSSSelectorList.h"
 #include "StyleSheetContents.h"
 #include <memory>

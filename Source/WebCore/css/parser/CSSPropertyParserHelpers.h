@@ -30,7 +30,7 @@
 #pragma once
 
 #include "CSSFunctionValue.h"
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSShadowValue.h"

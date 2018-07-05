@@ -4745,6 +4745,7 @@
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49BD9FA131FD2ED003C56F0 /* CSSValuePool.h in Headers */ = {isa = PBXBuildFile; fileRef = E49BD9F9131FD2ED003C56F0 /* CSSValuePool.h */; };
 		E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A007821B820EC8002C5A6E /* DataURLDecoder.h */; };
+		E4A7995220EE4B1400C19568 /* CSSParserContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A7994E20EE4AE100C19568 /* CSSParserContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4A814D41C6DEC4000BF85AC /* ClassChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */; };
 		E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */; };
 		E4A814E01C7338EB00BF85AC /* IdChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */; };
@@ -10844,7 +10845,7 @@
 		9B6C41521344949000085B62 /* StringWithDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringWithDirection.h; sourceTree = "<group>"; };
 		9B714E1E1C91166900AC0E92 /* EventPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventPath.cpp; sourceTree = "<group>"; };
 		9B714E1F1C91166900AC0E92 /* EventPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventPath.h; sourceTree = "<group>"; };
-		9B85530520E733B5009EEF4F /* EventTargetFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventTargetFactory.cpp; path = EventTargetFactory.cpp; sourceTree = "<group>"; };
+		9B85530520E733B5009EEF4F /* EventTargetFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetFactory.cpp; sourceTree = "<group>"; };
 		9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentReaderCocoa.mm; sourceTree = "<group>"; };
 		9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicalSelectionOffsetCaches.h; sourceTree = "<group>"; };
 		9BA827781F06156500F71E75 /* NavigationDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationDisabler.h; sourceTree = "<group>"; };
@@ -14402,6 +14403,8 @@
 		E4A007821B820EC8002C5A6E /* DataURLDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataURLDecoder.h; sourceTree = "<group>"; };
 		E4A007841B820ED3002C5A6E /* DataURLDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataURLDecoder.cpp; sourceTree = "<group>"; };
 		E4A1822F1F13BE5800FEF698 /* StyleInvalidationFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInvalidationFunctions.h; sourceTree = "<group>"; };
+		E4A7994E20EE4AE100C19568 /* CSSParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserContext.h; path = parser/CSSParserContext.h; sourceTree = "<group>"; };
+		E4A7995020EE4AE200C19568 /* CSSParserContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParserContext.cpp; path = parser/CSSParserContext.cpp; sourceTree = "<group>"; };
 		E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassChangeInvalidation.h; sourceTree = "<group>"; };
 		E4A814D51C6DEE8D00BF85AC /* ClassChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassChangeInvalidation.cpp; sourceTree = "<group>"; };
 		E4A814D71C70E10500BF85AC /* AttributeChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeChangeInvalidation.cpp; sourceTree = "<group>"; };
@@ -20804,6 +20807,8 @@
 				94476BD91DFCA4A700690E23 /* CSSDeferredParser.h */,
 				946D37281D6CB28B0077084F /* CSSParser.cpp */,
 				946D37291D6CB28B0077084F /* CSSParser.h */,
+				E4A7995020EE4AE200C19568 /* CSSParserContext.cpp */,
+				E4A7994E20EE4AE100C19568 /* CSSParserContext.h */,
 				949C76FE1D6E1D8C00C0DE4F /* CSSParserFastPaths.cpp */,
 				949C76FF1D6E1D8C00C0DE4F /* CSSParserFastPaths.h */,
 				94DE5C7D1D78CB2500164F2A /* CSSParserIdioms.cpp */,
@@ -28789,6 +28794,7 @@
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
 				E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */,
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
+				E4A7995220EE4B1400C19568 /* CSSParserContext.h in Headers */,
 				830A36BD1DAC5FAD006D7D09 /* JSMouseEventInit.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */,

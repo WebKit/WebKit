@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include "CachePolicy.h"
 #include "URL.h"
 #include <wtf/Function.h>

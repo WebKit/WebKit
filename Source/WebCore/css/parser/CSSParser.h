@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include "CSSValue.h"
 #include "WritingMode.h"
 #include <wtf/text/WTFString.h>

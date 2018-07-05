@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include "CSSStyleDeclaration.h"
 #include "DeprecatedCSSOMValue.h"
 #include <memory>

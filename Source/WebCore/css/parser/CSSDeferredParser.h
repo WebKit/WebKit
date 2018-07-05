@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 

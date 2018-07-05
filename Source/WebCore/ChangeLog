@@ -1,3 +1,56 @@
+2018-07-05  Antti Koivisto  <antti@apple.com>
+
+        Move CSSParserContext to a file of its own
+        https://bugs.webkit.org/show_bug.cgi?id=187342
+
+        Reviewed by Zalan Bujtas.
+
+        Move it out from CSSParserMode.h and CSSParser.cpp.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionParser.cpp:
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/StyleProperties.h:
+        * css/StyleSheetContents.h:
+        * css/parser/CSSDeferredParser.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::strictCSSParserContext): Deleted.
+        (WebCore::CSSParserContext::CSSParserContext): Deleted.
+        (WebCore::operator==): Deleted.
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserContext.cpp: Added.
+        (WebCore::strictCSSParserContext):
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+
+        Also add the missing textAutosizingEnabled bit.
+
+        * css/parser/CSSParserContext.h: Copied from Source/WebCore/css/parser/CSSParserMode.h.
+        (WebCore::CSSParserContextHash::hash):
+
+        Also add the missing bits to the hash function.
+        
+        (WebCore::isQuirksModeBehavior): Deleted.
+        (WebCore::isUASheetBehavior): Deleted.
+        (WebCore::isUnitLessValueParsingEnabledForMode): Deleted.
+        (WebCore::isCSSViewportParsingEnabledForMode): Deleted.
+        (WebCore::strictToCSSParserMode): Deleted.
+        (WebCore::isStrictParserMode): Deleted.
+        * css/parser/CSSParserIdioms.h:
+        * css/parser/CSSParserImpl.h:
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContext::completeURL const): Deleted.
+        (WebCore::operator!=): Deleted.
+        (WebCore::CSSParserContextHash::hash): Deleted.
+        (WebCore::CSSParserContextHash::equal): Deleted.
+        (WTF::HashTraits<WebCore::CSSParserContext>::constructDeletedValue): Deleted.
+        (WTF::HashTraits<WebCore::CSSParserContext>::isDeletedValue): Deleted.
+        (WTF::HashTraits<WebCore::CSSParserContext>::emptyValue): Deleted.
+        * css/parser/CSSPropertyParserHelpers.h:
+        * css/parser/CSSSelectorParser.cpp:
+        * css/parser/CSSVariableParser.cpp:
+
 2018-07-05  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] The ready promise should initially be resolved

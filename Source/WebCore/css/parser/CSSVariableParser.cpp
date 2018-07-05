@@ -31,7 +31,7 @@
 #include "CSSVariableParser.h"
 
 #include "CSSCustomPropertyValue.h"
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 
 namespace WebCore {
