@@ -231,6 +231,7 @@ Total errors found: 8 in 48 files''')
 class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        self.jsonFileName = 'bindings_test_results.json'
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -240,7 +241,8 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunBindingsTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/run-bindings-tests'],
+                        command=['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         )
             + 0,
         )
@@ -251,7 +253,8 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunBindingsTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/run-bindings-tests'],
+                        command=['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp')
             + 2,

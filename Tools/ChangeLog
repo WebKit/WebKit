@@ -1,5 +1,16 @@
 2018-07-05  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Bindings-tests-EWS should output result in json
+        https://bugs.webkit.org/show_bug.cgi?id=187330
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunBindingsTests):  Passed --json-output parameter to run-bindings-tests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
+2018-07-05  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] WebKitPy-Tests-EWS should output result in json
         https://bugs.webkit.org/show_bug.cgi?id=187331
 

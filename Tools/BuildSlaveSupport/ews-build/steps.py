@@ -79,7 +79,9 @@ class RunBindingsTests(shell.ShellCommand):
     description = ['bindings-tests running']
     descriptionDone = ['bindings-tests']
     flunkOnFailure = True
-    command = ['Tools/Scripts/run-bindings-tests']
+    jsonFileName = 'bindings_test_results.json'
+    logfiles = {'json': jsonFileName}
+    command = ['Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(jsonFileName)]
 
 
 class RunWebKitPerlTests(shell.ShellCommand):
