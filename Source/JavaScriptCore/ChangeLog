@@ -1,3 +1,20 @@
+2018-07-05  Saam Barati  <sbarati@apple.com>
+
+        ProgramExecutable may be collected as we checkSyntax on it
+        https://bugs.webkit.org/show_bug.cgi?id=187359
+        <rdar://problem/41832135>
+
+        Reviewed by Mark Lam.
+
+        The bug was we were passing in a reference to the SourceCode field on ProgramExecutable as
+        the ProgramExecutable itself may be collected. The fix here is to make a copy
+        of the field instead of passing in a reference inside of ParserError::toErrorObject.
+        
+        No new tests here as this was already caught by our iOS JSC testers.
+
+        * parser/ParserError.h:
+        (JSC::ParserError::toErrorObject):
+
 2018-07-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce PLATFORM(IOSMAC)

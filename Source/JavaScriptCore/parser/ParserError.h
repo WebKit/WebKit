@@ -86,7 +86,8 @@ public:
     ErrorType type() const { return m_type; }
 
     JSObject* toErrorObject(
-        JSGlobalObject* globalObject, const SourceCode& source, 
+        JSGlobalObject* globalObject,
+        SourceCode source, // Note: We must copy the source here, since the objects that pass in their SourceCode field may be destroyed in addErrorInfo.
         int overrideLineNumber = -1)
     {
         ExecState* exec = globalObject->globalExec();
