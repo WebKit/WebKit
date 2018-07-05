@@ -39,6 +39,13 @@
 namespace WebKit {
 using namespace WebCore;
 
+static const PlatformDisplayID primaryDisplayID = 0;
+#if PLATFORM(GTK)
+static const PlatformDisplayID compositingDisplayID = 1;
+#else
+static const PlatformDisplayID compositingDisplayID = primaryDisplayID;
+#endif
+
 Ref<ThreadedCoordinatedLayerTreeHost> ThreadedCoordinatedLayerTreeHost::create(WebPage& webPage)
 {
     return adoptRef(*new ThreadedCoordinatedLayerTreeHost(webPage));
@@ -70,10 +77,12 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
         if (m_surface->shouldPaintMirrored())
             paintFlags |= TextureMapper::PaintingMirrored;
 
-        m_compositor = ThreadedCompositor::create(m_compositorClient, webPage, scaledSize, scaleFactor, ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, compositingDisplayID, scaledSize, scaleFactor, ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
         m_layerTreeContext.contextID = m_surface->surfaceID();
     } else
-        m_compositor = ThreadedCompositor::create(m_compositorClient, webPage, scaledSize, scaleFactor);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, compositingDisplayID, scaledSize, scaleFactor);
+
+    m_webPage.windowScreenDidChange(compositingDisplayID);
 
     didChangeViewport();
 }
@@ -253,8 +262,10 @@ void ThreadedCoordinatedLayerTreeHost::setIsDiscardable(bool discardable)
     m_isDiscardable = discardable;
     if (m_isDiscardable) {
         m_discardableSyncActions = OptionSet<DiscardableSyncActions>();
+        m_webPage.windowScreenDidChange(primaryDisplayID);
         return;
     }
+    m_webPage.windowScreenDidChange(compositingDisplayID);
 
     if (m_discardableSyncActions.isEmpty())
         return;

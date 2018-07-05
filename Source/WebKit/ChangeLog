@@ -1,3 +1,28 @@
+2018-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r233325): [GTK] Broke 40 animations tests
+        https://bugs.webkit.org/show_bug.cgi?id=187264
+
+        Reviewed by Žan Doberšek.
+
+        Use a different PlatformDisplayID for compositing in the GTK port. This way, when entering AC a window screen
+        changed is emitted and the GTK default display refresh monitor is destroyed, ensuring the one created by the
+        threaded compositor is used.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create): Remove unused WebPage parameter and add PlatformDisplayID.
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Create the display refresh monitor with the given displayID.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor): Pass the given displayID to the parent constructor.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.h:
+        (WebKit::ThreadedDisplayRefreshMonitor::create): Add PlatformDisplayID parameter.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost): Use compositingDisplayID when
+        creating the threaded compositor and notify about the window screen change.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::setIsDiscardable): Use primaryDisplayID when leaving AC and
+        compositingDisplayID when re-entering.
+
 2018-07-04  Olivia Barnett  <obarnett@apple.com>
 
         A WKWebView in a UIViewController that is presented modally and uses a file picker will be incorrectly dismissed by the system

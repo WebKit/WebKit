@@ -1,3 +1,25 @@
+2018-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r233325): [GTK] Broke 40 animations tests
+        https://bugs.webkit.org/show_bug.cgi?id=187264
+
+        Reviewed by Žan Doberšek.
+
+        This is because DocumentAnimationScheduler uses DisplayRefreshMonitor, that is only used by GTK port when
+        accelerated compositing is enabled. Add a GTK display refresh monitor implementation to be used as the default.
+
+        * PlatformGTK.cmake: Add new file to compilation.
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor): Create DisplayRefreshMonitorGtk in GTK.
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp: Added.
+        (WebCore::DisplayRefreshMonitorGtk::DisplayRefreshMonitorGtk):
+        (WebCore::DisplayRefreshMonitorGtk::~DisplayRefreshMonitorGtk):
+        (WebCore::onFrameClockUpdate):
+        (WebCore::DisplayRefreshMonitorGtk::requestRefreshCallback):
+        (WebCore::DisplayRefreshMonitorGtk::displayLinkFired):
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.h: Added.
+        (WebCore::DisplayRefreshMonitorGtk::create):
+
 2018-07-04  Antti Koivisto  <antti@apple.com>
 
         Reparse user stylesheets when _useSystemAppearance changes

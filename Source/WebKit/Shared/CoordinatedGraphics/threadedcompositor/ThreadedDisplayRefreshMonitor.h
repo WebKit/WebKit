@@ -36,9 +36,9 @@ class ThreadedCompositor;
 
 class ThreadedDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor {
 public:
-    static Ref<ThreadedDisplayRefreshMonitor> create(ThreadedCompositor& compositor)
+    static Ref<ThreadedDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, ThreadedCompositor& compositor)
     {
-        return adoptRef(*new ThreadedDisplayRefreshMonitor(compositor));
+        return adoptRef(*new ThreadedDisplayRefreshMonitor(displayID, compositor));
     }
     virtual ~ThreadedDisplayRefreshMonitor() = default;
 
@@ -49,7 +49,7 @@ public:
     void invalidate();
 
 private:
-    ThreadedDisplayRefreshMonitor(ThreadedCompositor&);
+    ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, ThreadedCompositor&);
 
     void displayRefreshCallback();
     RunLoop::Timer<ThreadedDisplayRefreshMonitor> m_displayRefreshTimer;

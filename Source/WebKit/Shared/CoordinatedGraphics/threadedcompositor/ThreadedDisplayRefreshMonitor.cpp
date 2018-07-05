@@ -37,8 +37,8 @@
 
 namespace WebKit {
 
-ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(ThreadedCompositor& compositor)
-    : WebCore::DisplayRefreshMonitor(0)
+ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, ThreadedCompositor& compositor)
+    : WebCore::DisplayRefreshMonitor(displayID)
     , m_displayRefreshTimer(RunLoop::main(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
     , m_compositor(&compositor)
 {

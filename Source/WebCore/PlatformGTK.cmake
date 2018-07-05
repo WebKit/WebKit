@@ -48,6 +48,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/graphics/PlatformDisplay.cpp
 
     platform/graphics/gtk/ColorGtk.cpp
+    platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
     platform/graphics/gtk/GdkCairoUtilities.cpp
     platform/graphics/gtk/IconGtk.cpp
     platform/graphics/gtk/ImageBufferGtk.cpp
