@@ -3,6 +3,13 @@
         [ews-build] WebKitPy-Tests-EWS should output result in json
         https://bugs.webkit.org/show_bug.cgi?id=187331
 
+        Follow-up fix to r233527. Extracting jsonFileName as a variable and re-using it.
+
+2018-07-05  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] WebKitPy-Tests-EWS should output result in json
+        https://bugs.webkit.org/show_bug.cgi?id=187331
+
         Reviewed by David Kilzer.
 
         * BuildSlaveSupport/ews-build/steps.py:

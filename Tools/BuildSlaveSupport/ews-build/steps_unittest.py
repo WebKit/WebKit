@@ -300,6 +300,7 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
 class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        self.jsonFileName = 'webkitpy_test_results.json'
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -309,8 +310,8 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/test-webkitpy', '--json-output=webkitpy_test_results.json'],
-                        logfiles=RunWebKitPyTests.logfiles,
+                        command=['Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
             + 0,
@@ -322,8 +323,8 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/test-webkitpy', '--json-output=webkitpy_test_results.json'],
-                        logfiles=RunWebKitPyTests.logfiles,
+                        command=['Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
             + ExpectShell.log('stdio', stdout='''Ran 1744 tests in 5.913s
