@@ -1,3 +1,27 @@
+2018-07-05  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(m_dictionaryStack.size() == 1) assertion hit in ~KeyedDecoderCF() when decoding fails
+        https://bugs.webkit.org/show_bug.cgi?id=187152
+
+        Reviewed by Brent Fulgham.
+
+        Whenever a call to KeyedDecoderCF::beginArrayElement() succeeds (returns true), it
+        appends an item to m_dictionaryStack which is expected to get popped later on via
+        a matching call to KeyedDecoderCF::endArrayElement(). The ASSERT(m_dictionaryStack.size() == 1)
+        assertion in the destructor protects against a begin / end mismatch.
+
+        However, there was a bug in KeyedDecoder::decodeObjects(), which would cause us to return early
+        after a call to beginArrayElement() when the lambda function call returns false, causing us
+        not to call the matching endArrayElement() in this case. This patch addresses the issue by
+        calling endArrayElement() before returning early.
+
+        This bug was uncovered by r233309 which slightly changed the ITP encoding / decoding format.
+        Because empty HashCountedSets are now expected to be encoded as empty array, decoding of old
+        data fails and we hit the buggy code path.
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::decodeObjects):
+
 2018-07-05  Antti Koivisto  <antti@apple.com>
 
         Move CSSParserContext to a file of its own

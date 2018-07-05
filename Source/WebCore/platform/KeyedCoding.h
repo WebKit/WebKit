@@ -115,6 +115,7 @@ public:
             typename ContainerType::ValueType element;
             if (!function(*this, element)) {
                 result = false;
+                endArrayElement();
                 break;
             }
             objects.append(WTFMove(element));
