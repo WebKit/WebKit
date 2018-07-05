@@ -135,7 +135,8 @@ void AudioSession::setCategory(CategoryType newCategory)
         categoryString = AVAudioSessionCategoryAudioProcessing;
         break;
     case None:
-        return;
+        categoryString = AVAudioSessionCategoryAmbient;
+        break;
     }
 
     NSError *error = nil;

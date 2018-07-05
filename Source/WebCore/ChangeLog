@@ -1,3 +1,15 @@
+2018-07-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Video sometimes flickers when playing to AppleTV
+        https://bugs.webkit.org/show_bug.cgi?id=187193
+        <rdar://problem/40153865>
+
+        Unreviewed, fix a broken API test.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory): None should set the category to AVAudioSessionCategoryAmbient, 
+        because it signals that WebKit is not playing audio so we want allow other apps to play.
+
 2018-07-05  Per Arne Vollan  <pvollan@apple.com>
 
         Use ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) in ScrollAnimatorMac.mm
