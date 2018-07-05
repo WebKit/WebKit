@@ -1,3 +1,14 @@
+2018-07-05  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] WebKitPy-Tests-EWS should output result in json
+        https://bugs.webkit.org/show_bug.cgi?id=187331
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitPyTests): Passed --json-output parameter to test-webkitpy.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2018-07-05  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] Add gst-libav to dependencies

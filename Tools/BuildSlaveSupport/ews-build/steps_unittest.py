@@ -309,7 +309,8 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/test-webkitpy'],
+                        command=['Tools/Scripts/test-webkitpy', '--json-output=webkitpy_test_results.json'],
+                        logfiles=RunWebKitPyTests.logfiles,
                         timeout=120,
                         )
             + 0,
@@ -321,7 +322,8 @@ class TestWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(RunWebKitPyTests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/test-webkitpy'],
+                        command=['Tools/Scripts/test-webkitpy', '--json-output=webkitpy_test_results.json'],
+                        logfiles=RunWebKitPyTests.logfiles,
                         timeout=120,
                         )
             + ExpectShell.log('stdio', stdout='''Ran 1744 tests in 5.913s

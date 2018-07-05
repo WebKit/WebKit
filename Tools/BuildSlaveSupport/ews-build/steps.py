@@ -98,7 +98,9 @@ class RunWebKitPyTests(shell.ShellCommand):
     description = ['webkitpy-tests running']
     descriptionDone = ['webkitpy-tests']
     flunkOnFailure = True
-    command = ['Tools/Scripts/test-webkitpy']
+    jsonFileName = 'webkitpy_test_results.json'
+    logfiles = {'json': jsonFileName}
+    command = ['Tools/Scripts/test-webkitpy', '--json-output={0}'.format(jsonFileName)]
 
     def __init__(self, **kwargs):
         super(RunWebKitPyTests, self).__init__(timeout=2 * 60, **kwargs)
