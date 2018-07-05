@@ -1,3 +1,16 @@
+2018-07-05  Rob Buis  <rbuis@igalia.com>
+
+        [GTK] Remove soup/DownloadSoupErrors.h
+        https://bugs.webkit.org/show_bug.cgi?id=187339
+
+        This header is not used anymore.
+
+        Reviewed by Frédéric Wang.
+
+        * NetworkProcess/Downloads/soup/DownloadSoupErrors.h: Removed.
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        * PlatformGTK.cmake:
+
 2018-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r233325): [GTK] Broke 40 animations tests

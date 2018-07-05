@@ -29,7 +29,6 @@
 #include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "Download.h"
-#include "DownloadSoupErrors.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "NetworkSessionSoup.h"

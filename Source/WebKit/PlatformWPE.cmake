@@ -236,7 +236,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBKIT_DIR}/NetworkProcess/CustomProtocols/soup"
-    "${WEBKIT_DIR}/NetworkProcess/Downloads/soup"
     "${WEBKIT_DIR}/NetworkProcess/soup"
     "${WEBKIT_DIR}/NetworkProcess/unix"
     "${WEBKIT_DIR}/Platform/IPC/glib"

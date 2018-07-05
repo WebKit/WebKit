@@ -369,7 +369,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
     "${WEBKIT_DIR}/PluginProcess/unix"
     "${WEBKIT_DIR}/NetworkProcess/CustomProtocols/soup"
-    "${WEBKIT_DIR}/NetworkProcess/Downloads/soup"
     "${WEBKIT_DIR}/NetworkProcess/gtk"
     "${WEBKIT_DIR}/NetworkProcess/soup"
     "${WEBKIT_DIR}/NetworkProcess/unix"
