@@ -105,8 +105,10 @@
 #import <WebCore/WebItemProviderPasteboard.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.mm>
+#if PLATFORM(IOSMAC)
+#import "NativeWebMouseEvent.h"
+#import <UIKit/UIHoverGestureRecognizer.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
 @interface UIEvent(UIEventInternal)
@@ -617,8 +619,10 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-#if USE(APPLE_INTERNAL_SDK)
-    [self _internalSetupInteraction];
+#if PLATFORM(IOSMAC)
+    _hoverGestureRecognizer = adoptNS([[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(_hoverGestureRecognizerChanged:)]);
+    [_hoverGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
 
     _singleTapGestureRecognizer = adoptNS([[WKSyntheticClickTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapCommited:)]);
@@ -711,8 +715,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-#if USE(APPLE_INTERNAL_SDK)
-    [self _internalCleanupInteraction];
+#if PLATFORM(IOSMAC)
+    [_hoverGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
 
     [_singleTapGestureRecognizer setDelegate:nil];
@@ -775,9 +780,8 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
-
-#if USE(APPLE_INTERNAL_SDK)
-    [self _internalRemoveDefaultGestureRecognizers];
+#if PLATFORM(IOSMAC)
+    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
 }
 
@@ -790,9 +794,8 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
-
-#if USE(APPLE_INTERNAL_SDK)
-    [self _internalAddDefaultGestureRecognizers];
+#if PLATFORM(IOSMAC)
+    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
 }
 
@@ -5657,8 +5660,31 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 #endif // PLATFORM(WATCHOS)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
+#if PLATFORM(IOSMAC)
+- (void)_hoverGestureRecognizerChanged:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (!_page->isValid())
+        return;
+
+    // Make a timestamp that matches UITouch and UIEvent.
+    CFTimeInterval timestamp = GSCurrentEventTimestamp() / 1000000000.0;
+
+    CGPoint point;
+    switch (gestureRecognizer.state) {
+    case UIGestureRecognizerStateBegan:
+    case UIGestureRecognizerStateChanged:
+        point = [gestureRecognizer locationInView:self];
+        break;
+    case UIGestureRecognizerStateEnded:
+    case UIGestureRecognizerStateCancelled:
+    default:
+        point = CGPointMake(-1, -1);
+        break;
+    }
+
+    auto event = adoptNS([[::WebEvent alloc] initWithMouseEventType:WebEventMouseMoved timeStamp:timestamp location:point]);
+    _page->handleMouseEvent(NativeWebMouseEvent(event.get()));
+}
 #endif
 
 @end

@@ -77,20 +77,14 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 }
 
-@class WKActionSheetAssistant;
-@class WKFormInputSession;
-@class WKInspectorNodeSearchGestureRecognizer;
-@class WebEvent;
 @class _UIHighlightView;
 @class _UIWebHighlightLongPressGestureRecognizer;
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.h>
-#endif
-
-#if PLATFORM(WATCHOS)
+@class UIHoverGestureRecognizer;
+@class WebEvent;
+@class WKActionSheetAssistant;
 @class WKFocusedFormControlView;
-#endif
+@class WKFormInputSession;
+@class WKInspectorNodeSearchGestureRecognizer;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
@@ -151,10 +145,6 @@ struct WKAutoCorrectionData {
 
     BOOL _canSendTouchEventsAsynchronously;
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.h>
-#endif
-
     RetainPtr<WKSyntheticClickTapGestureRecognizer> _singleTapGestureRecognizer;
     RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _longPressGestureRecognizer;
@@ -163,6 +153,10 @@ struct WKAutoCorrectionData {
     RetainPtr<UITapGestureRecognizer> _twoFingerDoubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _twoFingerSingleTapGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
+
+#if PLATFORM(IOSMAC)
+    RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
+#endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
     RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
