@@ -1,3 +1,15 @@
+2018-07-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, rolling out r233511.
+
+        Proper fix provided in bug #187322
+
+        Reverted changeset:
+
+        "Unreviewed. Fixing a call in flatpakutils.py to
+        PortFactory.get(),"
+        https://trac.webkit.org/changeset/233511
+
 2018-07-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing a call in flatpakutils.py to PortFactory.get(),

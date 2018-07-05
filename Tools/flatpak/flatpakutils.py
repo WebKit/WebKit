@@ -556,13 +556,13 @@ class WebkitFlatpak:
         self.makeargs = ""
 
     def clean_args(self):
-        self.platform = self.platform.upper()
-
         if not self.debug and not self.release:
             factory = PortFactory(SystemHost())
-            port = factory.get(self.platform.lower())
+            port = factory.get(self.platform)
             self.debug = port.default_configuration() == "Debug"
         self.build_type = "Debug" if self.debug else "Release"
+
+        self.platform = self.platform.upper()
 
         if self.gdb is None and '--gdb' in sys.argv:
             self.gdb = ""
