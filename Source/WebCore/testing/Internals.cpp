@@ -3750,7 +3750,7 @@ ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
 }
 
 #if ENABLE(VIDEO)
-RefPtr<HTMLMediaElement> Internals::bestMediaElementForShowingPlaybackControlsManager(Internals::PlaybackControlsPurpose purpose)
+HTMLMediaElement* Internals::bestMediaElementForShowingPlaybackControlsManager(Internals::PlaybackControlsPurpose purpose)
 {
     return HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(purpose);
 }

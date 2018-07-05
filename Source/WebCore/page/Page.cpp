@@ -1487,19 +1487,6 @@ void Page::updateIsPlayingMedia(uint64_t sourceElementID)
     chrome().client().isPlayingMediaDidChange(state, sourceElementID);
 }
 
-void Page::schedulePlaybackControlsManagerUpdate()
-{
-    if (m_playbackControlsManagerUpdateTimer)
-        return;
-
-    m_playbackControlsManagerUpdateTimer = std::make_unique<DeferrableOneShotTimer>([this] () mutable {
-        if (auto bestMediaElement = HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager))
-            chrome().client().setUpPlaybackControlsManager(*bestMediaElement);
-        else
-            chrome().client().clearPlaybackControlsManager();
-    }, 0_s);
-}
-
 void Page::setMuted(MediaProducer::MutedStateFlags muted)
 {
     if (m_mutedState == muted)

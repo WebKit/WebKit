@@ -680,6 +680,7 @@ HTMLMediaElement::~HTMLMediaElement()
     m_seekTaskQueue.close();
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
+    m_updatePlaybackControlsManagerQueue.close();
     m_playbackControlsManagerBehaviorRestrictionsQueue.close();
     m_resourceSelectionTaskQueue.close();
     m_visibilityChangeTaskQueue.close();
@@ -695,7 +696,7 @@ HTMLMediaElement::~HTMLMediaElement()
     }
 
     m_mediaSession = nullptr;
-    scheduleUpdatePlaybackControlsManager();
+    updatePlaybackControlsManager();
 }
 
 static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
@@ -708,7 +709,7 @@ static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
     return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
-RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
+HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
 {
     auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
         return is<MediaElementSession>(session);
@@ -5521,7 +5522,7 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
         m_player->invalidate();
         m_player = nullptr;
     }
-    scheduleUpdatePlaybackControlsManager();
+    updatePlaybackControlsManager();
 
     stopPeriodicTimers();
     m_pendingActionTimer.stop();
@@ -5561,13 +5562,13 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 
     setPreparedToReturnVideoLayerToInline(true);
 
-    scheduleUpdatePlaybackControlsManager();
+    updatePlaybackControlsManager();
     setInActiveDocument(false);
 
     // Stop the playback without generating events
     setPlaying(false);
     setPausedInternal(true);
-    m_mediaSession->stopSession();
+    m_mediaSession->clientWillPausePlayback();
 
     setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::None);
 
@@ -5586,6 +5587,7 @@ void HTMLMediaElement::contextDestroyed()
     m_shadowDOMTaskQueue.close();
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
+    m_updatePlaybackControlsManagerQueue.close();
 #if ENABLE(ENCRYPTED_MEDIA)
     m_encryptedMediaQueue.close();
 #endif
@@ -5604,6 +5606,7 @@ void HTMLMediaElement::stop()
 
     m_asyncEventQueue.close();
     m_promiseTaskQueue.close();
+    m_updatePlaybackControlsManagerQueue.close();
     m_resourceSelectionTaskQueue.close();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
@@ -7905,12 +7908,23 @@ bool HTMLMediaElement::isVisibleInViewport() const
     return renderer && renderer->visibleInViewportState() == VisibleInViewportState::Yes;
 }
 
-void HTMLMediaElement::scheduleUpdatePlaybackControlsManager()
+void HTMLMediaElement::updatePlaybackControlsManager()
 {
     Page* page = document().page();
     if (!page)
         return;
-    page->schedulePlaybackControlsManagerUpdate();
+
+    // FIXME: Ensure that the renderer here should be up to date.
+    if (auto bestMediaElement = bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager))
+        page->chrome().client().setUpPlaybackControlsManager(*bestMediaElement);
+    else
+        page->chrome().client().clearPlaybackControlsManager();
+}
+
+void HTMLMediaElement::scheduleUpdatePlaybackControlsManager()
+{
+    if (!m_updatePlaybackControlsManagerQueue.hasPendingTasks())
+        m_updatePlaybackControlsManagerQueue.enqueueTask(std::bind(&HTMLMediaElement::updatePlaybackControlsManager, this));
 }
 
 void HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired()
