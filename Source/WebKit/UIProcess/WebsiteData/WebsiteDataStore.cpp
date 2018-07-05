@@ -100,6 +100,8 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID s
     WTF::setProcessPrivileges(allPrivileges());
     maybeRegisterWithSessionIDMap();
     platformInitialize();
+
+    ASSERT(RunLoop::isMain());
 }
 
 WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
@@ -109,10 +111,14 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
 {
     maybeRegisterWithSessionIDMap();
     platformInitialize();
+
+    ASSERT(RunLoop::isMain());
 }
 
 WebsiteDataStore::~WebsiteDataStore()
 {
+    ASSERT(RunLoop::isMain());
+
     platformDestroy();
 
     if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
@@ -239,17 +245,21 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply)
 {
     struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
+        CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply, WebsiteDataStore& dataStore)
             : fetchOptions(fetchOptions)
             , queue(WTFMove(queue))
             , apply(WTFMove(apply))
             , protectedDataStore(dataStore)
         {
+            ASSERT(RunLoop::isMain());
         }
 
         ~CallbackAggregator()
         {
             ASSERT(!pendingCallbacks);
+
+            // Make sure the data store gets destroyed on the main thread even though the CallbackAggregator can get destroyed on a background queue.
+            RunLoop::main().dispatch([protectedDataStore = WTFMove(protectedDataStore)] { });
         }
 
         void addPendingCallback()
@@ -653,10 +663,17 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, Function<void()>&& completionHandler)
 {
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
+        CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
             , protectedDataStore(dataStore)
         {
+            ASSERT(RunLoop::isMain());
+        }
+
+        ~CallbackAggregator()
+        {
+            // Make sure the data store gets destroyed on the main thread even though the CallbackAggregator can get destroyed on a background queue.
+            RunLoop::main().dispatch([protectedDataStore = WTFMove(protectedDataStore)] { });
         }
 
         void addPendingCallback()
@@ -913,10 +930,17 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     }
 
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
+        CallbackAggregator(WebsiteDataStore& dataStore, Function<void()>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
             , protectedDataStore(dataStore)
         {
+            ASSERT(RunLoop::isMain());
+        }
+
+        ~CallbackAggregator()
+        {
+            // Make sure the data store gets destroyed on the main thread even though the CallbackAggregator can get destroyed on a background queue.
+            RunLoop::main().dispatch([protectedDataStore = WTFMove(protectedDataStore)] { });
         }
 
         void addPendingCallback()

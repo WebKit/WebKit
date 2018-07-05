@@ -1,3 +1,29 @@
+2018-07-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r232886): WebsiteDataStore objects may get destroyed on a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=187356
+        <rdar://problem/41854555>
+
+        Reviewed by Geoffrey Garen.
+
+        As of r232886, CallbackAggregators in WebsiteDataStore hold a Ref<> to their WebsiteDataStore. This
+        is an issue because CallbackAggregator objects can get destroyed on a background thread and may be
+        the last ones holding a ref to the data store. When this happens, the WebsiteDataStore would get
+        destroyed on a background store and potentially cause crashes. Note that even if the callback
+        aggregator would not be the last one to hold a ref to the store, it still would not be safe to deref
+        the store on the background thread since WebsiteDataStore is not ThreadSafeRefCounted.
+
+        To address the issue, this patch updates the CallbackAggregators' destructor to deref their data
+        store member on the main thread. Note that we could also have WebsiteDataStore subclass
+        ThreadSafeRefCounted<T, DestructionThread::Main> but the data store technically does not need to
+        be ThreadSafeRefCounted at the moment.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+
 2018-07-05  Dan Bernstein  <mitz@apple.com>
 
         [macOS] REGRESSION: Development WebContent service has restricted entitlements, rendering it useless for development
