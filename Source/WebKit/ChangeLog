@@ -1,3 +1,22 @@
+2018-07-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix some -Wdocumentation warnings in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=187318
+
+        Reviewed by Dan Bernstein.
+
+        Fix most of the -Wdocumentation warnings in WebKit. The remaining
+        ones are slightly mysterious, so we can't turn the warning on yet.
+
+        * Configurations/BaseTarget.xcconfig:
+        Define U_HIDE_DEPRECATED_API. It's defined in all other WebKit projects,
+        and the doc comments in the deprecated ICU API have some errors.
+
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        Adjust comments or parameter names to be consistent with each other.
+
 2018-07-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r232886): WebsiteDataStore objects may get destroyed on a background thread

@@ -111,7 +111,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 /*! @abstract Sets the webpage contents and base URL.
  @param data The data to use as the contents of the webpage.
  @param MIMEType The MIME type of the data.
- @param encodingName The data's character encoding name.
+ @param characterEncodingName The data's character encoding name.
  @param baseURL A URL that is used to resolve relative URLs within the document.
  @result A new navigation.
  */
