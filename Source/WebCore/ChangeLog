@@ -1,3 +1,20 @@
+2018-07-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Use ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) in ScrollAnimatorMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=187334
+
+        Reviewed by Alex Christensen.
+
+        Use ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) instead of __MAC_OS_X_VERSION_MIN_REQUIRED when deciding
+        to use NSTimer or NSAnimation for scrollbar animation.
+
+        No new tests. No change in behavior.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]):
+        (-[WebScrollbarPartAnimation startAnimation]):
+        (-[WebScrollbarPartAnimation setCurrentProgress:setCurrentProgress:]):
+
 2018-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Don't invert text color for selections in light mode.

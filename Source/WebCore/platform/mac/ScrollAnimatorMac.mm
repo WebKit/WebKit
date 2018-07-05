@@ -286,7 +286,7 @@ enum FeatureToAnimate {
     ExpansionTransition
 };
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 @interface WebScrollbarPartAnimation : NSAnimation
 #else
 @interface WebScrollbarPartAnimation : NSObject
@@ -297,7 +297,7 @@ enum FeatureToAnimate {
     FeatureToAnimate _featureToAnimate;
     CGFloat _startValue;
     CGFloat _endValue;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     NSTimeInterval _duration;
     RetainPtr<NSTimer> _timer;
     RetainPtr<NSDate> _startDate;
@@ -305,7 +305,7 @@ enum FeatureToAnimate {
 #endif
 }
 - (id)initWithScrollbar:(Scrollbar*)scrollbar featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 - (void)setCurrentProgress:(NSTimer *)timer;
 - (void)setDuration:(NSTimeInterval)duration;
 - (void)stopAnimation;
@@ -316,7 +316,7 @@ enum FeatureToAnimate {
 
 - (id)initWithScrollbar:(Scrollbar*)scrollbar featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     self = [super initWithDuration:duration animationCurve:NSAnimationEaseInOut];
     if (!self)
         return nil;
@@ -332,7 +332,7 @@ enum FeatureToAnimate {
     _startValue = startValue;
     _endValue = endValue;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [self setAnimationBlockingMode:NSAnimationNonblocking];
 #endif
 
@@ -345,7 +345,7 @@ enum FeatureToAnimate {
 
     _scrollerImp = scrollerImpForScrollbar(*_scrollbar);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [super startAnimation];
 #else
     [[NSRunLoop mainRunLoop] addTimer:_timer.get() forMode:NSDefaultRunLoopMode];
@@ -363,13 +363,13 @@ enum FeatureToAnimate {
     _endValue = endValue;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 - (void)setCurrentProgress:(NSAnimationProgress)progress
 #else
 - (void)setCurrentProgress:(NSTimer *)timer
 #endif
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [super setCurrentProgress:progress];
 #else
     CGFloat progress = 0;
@@ -420,7 +420,7 @@ enum FeatureToAnimate {
     _scrollbar = 0;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 - (void)setDuration:(NSTimeInterval)duration
 {
     _duration = duration;
