@@ -57,7 +57,7 @@ public:
     explicit HTTPServer(HTTPRequestHandler&);
     ~HTTPServer() = default;
 
-    bool listen(unsigned port);
+    bool listen(const std::optional<String>& host, unsigned port);
     void disconnect();
 
 private:

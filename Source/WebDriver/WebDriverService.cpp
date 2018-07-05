@@ -45,14 +45,16 @@ WebDriverService::WebDriverService()
 static void printUsageStatement(const char* programName)
 {
     printf("Usage: %s options\n", programName);
-    printf("  -h, --help                Prints this help message\n");
+    printf("  -h,        --help         Prints this help message\n");
     printf("  -p <port>, --port=<port>  Port number the driver will use\n");
+    printf("             --host=<host>  Host IP the driver will use, or either 'local' or 'all' (default: 'local')");
     printf("\n");
 }
 
 int WebDriverService::run(int argc, char** argv)
 {
     String portString;
+    std::optional<String> host;
     for (int i = 1 ; i < argc; ++i) {
         const char* arg = argv[i];
         if (!strcmp(arg, "-h") || !strcmp(arg, "--help")) {
@@ -74,6 +76,12 @@ int WebDriverService::run(int argc, char** argv)
             portString = String(arg + portStrLength);
             continue;
         }
+
+        static const unsigned hostStrLength = strlen("--host=");
+        if (!strncmp(arg, "--host=", hostStrLength) && !host) {
+            host = String(arg + hostStrLength);
+            continue;
+        }
     }
 
     if (portString.isNull()) {
@@ -90,7 +98,7 @@ int WebDriverService::run(int argc, char** argv)
 
     RunLoop::initializeMainRunLoop();
 
-    if (!m_server.listen(port))
+    if (!m_server.listen(host, port))
         return EXIT_FAILURE;
 
     RunLoop::run();

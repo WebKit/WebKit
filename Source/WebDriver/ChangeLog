@@ -1,3 +1,22 @@
+2018-07-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add --host option to WebDriver process
+        https://bugs.webkit.org/show_bug.cgi?id=187288
+
+        Reviewed by Žan Doberšek.
+
+        We currently allow to pass a port number and the server always listens for connections on localhost. We should
+        allow to optionally pass a host IP address to be able to use WebDriver remotely.
+
+        * HTTPServer.h:
+        * WebDriverService.cpp:
+        (WebDriver::printUsageStatement): Update usage to include --host option.
+        (WebDriver::WebDriverService::run): Parse --host option and pass it to HTTPServer::listen().
+        * soup/HTTPServerSoup.cpp:
+        (WebDriver::soupServerListen): Helper to call soup_server_listen_local(), soup_server_listen_all() or
+        soup_server_listen() depending on the given host.
+        (WebDriver::HTTPServer::listen): Use soupServerListen() helper.
+
 2018-06-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebDriver tests after r233077.
