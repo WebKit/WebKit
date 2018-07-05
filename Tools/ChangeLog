@@ -1,3 +1,13 @@
+2018-07-05  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE][GTK]: Call gtk platform 'gtk' by default as this is what PortFactory expects
+        https://bugs.webkit.org/show_bug.cgi?id=187322
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.__init__):
+
 2018-07-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, rolling out r233511.

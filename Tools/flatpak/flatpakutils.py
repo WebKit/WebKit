@@ -531,7 +531,7 @@ class WebkitFlatpak:
         self.build_all = False
 
         self.sdk_branch = None
-        self.platform = "GTK"
+        self.platform = "gtk"
         self.build_type = "Release"
         self.manifest_path = None
         self.name = None
