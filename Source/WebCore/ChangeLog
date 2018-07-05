@@ -1,3 +1,17 @@
+2018-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        SimpleLineLayout::FlowContents wastes 54KB of Vector capacity on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=186709
+        <rdar://problem/41173793>
+
+        Reviewed by Simon Fraser.
+
+        The size of the m_segments vector in SimpleLineLayoutFlowContents is alway pre-computed and don't change after the initial append.  
+
+        Not testable.
+
+        * rendering/SimpleLineLayoutFlowContents.h:
+
 2018-07-05  Nan Wang  <n_wang@apple.com>
 
         AX: setValue on text controls should send out key events
