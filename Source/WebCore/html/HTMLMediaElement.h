@@ -155,7 +155,7 @@ public:
 
     static HashSet<HTMLMediaElement*>& allMediaElements();
 
-    WEBCORE_EXPORT static HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose);
+    WEBCORE_EXPORT static RefPtr<HTMLMediaElement> bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose);
 
     static bool isRunningDestructor();
 
@@ -933,7 +933,6 @@ private:
     GenericTaskQueue<Timer> m_shadowDOMTaskQueue;
     GenericTaskQueue<Timer> m_promiseTaskQueue;
     GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
-    GenericTaskQueue<Timer> m_updatePlaybackControlsManagerQueue;
     GenericTaskQueue<Timer> m_playbackControlsManagerBehaviorRestrictionsQueue;
     GenericTaskQueue<Timer> m_resourceSelectionTaskQueue;
     GenericTaskQueue<Timer> m_visibilityChangeTaskQueue;
