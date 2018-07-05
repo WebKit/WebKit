@@ -1,3 +1,17 @@
+2018-07-05  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] The ready promise should initially be resolved
+        https://bugs.webkit.org/show_bug.cgi?id=187341
+        <rdar://problem/41844711>
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/web-animations/interfaces/Animation/finish-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/current-time-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt:
+
 2018-07-03  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at timing-model/timelines/timelines.html pass reliably

@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Test exceptions when finishing non-running animation 
 PASS Test exceptions when finishing infinite animation 
 PASS Test finishing of animation 
@@ -14,6 +12,6 @@ PASS Test finish() while play-pending
 PASS Test finish() during aborted pause 
 PASS Test resetting of computed style 
 PASS Test finish() resolves finished promise synchronously 
-TIMEOUT Test finish() resolves finished promise synchronously with an animation without a target Test timed out
-NOTRUN Test normally finished animation resolves finished promise synchronously with an animation without a target 
+PASS Test finish() resolves finished promise synchronously with an animation without a target 
+FAIL Test normally finished animation resolves finished promise synchronously with an animation without a target assert_true: Animation.finished should be resolved soon after Animation finishes normally expected true got false
 

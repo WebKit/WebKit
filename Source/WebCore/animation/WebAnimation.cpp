@@ -63,6 +63,7 @@ WebAnimation::WebAnimation(Document& document)
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve))
     , m_finishedPromise(makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve))
 {
+    m_readyPromise->resolve(*this);
     suspendIfNeeded();
 }
 
