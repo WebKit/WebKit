@@ -715,6 +715,8 @@ public:
 
     void reloadWithoutContentExtensions();
 
+    void setUseSystemAppearance(bool);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

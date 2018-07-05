@@ -1,3 +1,14 @@
+2018-07-04  Antti Koivisto  <antti@apple.com>
+
+        Reparse user stylesheets when _useSystemAppearance changes
+        https://bugs.webkit.org/show_bug.cgi?id=187312
+        <rdar://problem/38565834>
+
+        Reviewed by Tim Horton.
+
+        * fast/media/use-system-appearance-user-stylesheet-parsing-expected.txt: Added.
+        * fast/media/use-system-appearance-user-stylesheet-parsing.html: Added.
+
 2018-07-04  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed GTK test gardening.

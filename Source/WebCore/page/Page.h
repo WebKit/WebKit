@@ -340,7 +340,7 @@ public:
 #endif
     
     bool useSystemAppearance() const { return m_useSystemAppearance; }
-    void setUseSystemAppearance(bool a) { m_useSystemAppearance = a; }
+    WEBCORE_EXPORT void setUseSystemAppearance(bool);
     
     WEBCORE_EXPORT bool defaultAppearance() const;
     void setDefaultAppearance(bool a) { m_defaultAppearance = a; }

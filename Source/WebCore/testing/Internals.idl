@@ -652,4 +652,6 @@ enum EventThrottlingBehavior {
     void setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
 
     void reloadWithoutContentExtensions();
+
+    void setUseSystemAppearance(boolean value);
 };

@@ -4629,5 +4629,12 @@ void Internals::reloadWithoutContentExtensions()
     if (auto* frame = this->frame())
         frame->loader().reload(ReloadOption::DisableContentBlockers);
 }
-    
+
+void Internals::setUseSystemAppearance(bool value)
+{
+    if (!contextDocument() || !contextDocument()->page())
+        return;
+    contextDocument()->page()->setUseSystemAppearance(value);
+}
+
 } // namespace WebCore

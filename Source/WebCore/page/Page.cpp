@@ -2369,6 +2369,22 @@ void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
     }
 }
 
+void Page::setUseSystemAppearance(bool value)
+{
+    if (m_useSystemAppearance == value)
+        return;
+    m_useSystemAppearance = value;
+
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* document = frame->document();
+        if (!document)
+            continue;
+        // System apperance change may affect stylesheet parsing. We need to reparse.
+        document->extensionStyleSheets().clearPageUserSheet();
+        document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
+    }
+}
+
 bool Page::defaultAppearance() const
 {
     FrameView* view = mainFrame().view();
