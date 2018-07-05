@@ -1,3 +1,14 @@
+2018-07-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] Add gst-libav to dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=187340
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/org.webkit.WebKit.yaml: Use tarballs instead of git
+        clones because the FFMPeg git server doesn't support shallow
+        clones.
+
 2018-07-05  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK]: Call gtk platform 'gtk' by default as this is what PortFactory expects
