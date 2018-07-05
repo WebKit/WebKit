@@ -1,3 +1,26 @@
+2018-07-05  Chris Dumez  <cdumez@apple.com>
+
+        Update Element API to use qualifiedName instead of name/localName where applicable
+        https://bugs.webkit.org/show_bug.cgi?id=187347
+
+        Reviewed by Darin Adler.
+
+        Update Element API to use qualifiedName instead of name/localName where applicable. Naming
+        is now consistent with the IDL and the specification:
+        - https://dom.spec.whatwg.org/#element
+
+        Our implementation properly deals with qualified names already, even though the parameters
+        were named localName.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute const):
+        (WebCore::Element::toggleAttribute):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::hasAttribute const):
+        * dom/Element.h:
+
 2018-07-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Youtube video pages crash after a couple of minutes

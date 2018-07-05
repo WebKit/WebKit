@@ -104,17 +104,17 @@ public:
     // in style attribute or one of the SVG animation attributes.
     bool hasAttributesWithoutUpdate() const;
 
-    WEBCORE_EXPORT bool hasAttribute(const AtomicString& name) const;
+    WEBCORE_EXPORT bool hasAttribute(const AtomicString& qualifiedName) const;
     WEBCORE_EXPORT bool hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
-    WEBCORE_EXPORT const AtomicString& getAttribute(const AtomicString& name) const;
+    WEBCORE_EXPORT const AtomicString& getAttribute(const AtomicString& qualifiedName) const;
     WEBCORE_EXPORT const AtomicString& getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
-    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomicString& name, const AtomicString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomicString& qualifiedName, const AtomicString& value);
     static ExceptionOr<QualifiedName> parseAttributeName(const AtomicString& namespaceURI, const AtomicString& qualifiedName);
     WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value);
 
-    ExceptionOr<bool> toggleAttribute(const AtomicString& name, std::optional<bool> force);
+    ExceptionOr<bool> toggleAttribute(const AtomicString& qualifiedName, std::optional<bool> force);
 
     const AtomicString& getIdAttribute() const;
     void setIdAttribute(const AtomicString&);
@@ -185,12 +185,12 @@ public:
     // Returns the absolute bounding box translated into screen coordinates.
     WEBCORE_EXPORT IntRect screenRect() const;
 
-    WEBCORE_EXPORT bool removeAttribute(const AtomicString& name);
+    WEBCORE_EXPORT bool removeAttribute(const AtomicString& qualifiedName);
     WEBCORE_EXPORT bool removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
     Ref<Attr> detachAttribute(unsigned index);
 
-    WEBCORE_EXPORT RefPtr<Attr> getAttributeNode(const AtomicString& name);
+    WEBCORE_EXPORT RefPtr<Attr> getAttributeNode(const AtomicString& qualifiedName);
     WEBCORE_EXPORT RefPtr<Attr> getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName);
     WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setAttributeNode(Attr&);
     WEBCORE_EXPORT ExceptionOr<RefPtr<Attr>> setAttributeNodeNS(Attr&);
