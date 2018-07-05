@@ -1,3 +1,12 @@
+2018-07-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing a call in flatpakutils.py to PortFactory.get(),
+        enforcing the passed platform argument to always be lowercase, as is
+        expected from the PortFactory code.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+
 2018-07-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce PLATFORM(IOSMAC)
