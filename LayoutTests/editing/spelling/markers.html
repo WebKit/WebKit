@@ -81,8 +81,8 @@ var tests = [
     function() { verifyDesiredMarkers(elementWithGrammarAndSpellingIssue, misspellings.slice(4, 6)) },
 
     // Those expect to have only one kind of markers either spelling or grammar.
-    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(0, 1)), results.slice(0, 1) },
-    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(1, 2)), results.slice(1, 2) },
+    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(0, 1), results.slice(0, 1)) },
+    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(1, 2), results.slice(1, 2)) },
     function() { verifyUnexpectedMarkers(elementWithSpellingIssue, misspellings.slice(3, 4)) },
 ];
 
