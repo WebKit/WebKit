@@ -20,12 +20,14 @@
 
 #pragma once
 
+#include "ColorHash.h"
 #include "ControlStates.h"
 #include "PaintInfo.h"
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
 #include "StyleColor.h"
 #include "ThemeTypes.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -54,7 +56,7 @@ public:
     // appropriate platform theme.
     WEBCORE_EXPORT static RenderTheme& singleton();
 
-    virtual void purgeCaches() { }
+    virtual void purgeCaches();
 
     // This method is called whenever style has been computed for an element and the appearance
     // property has been set to a value other than "none".  The theme should map in all of the appropriate
@@ -269,8 +271,8 @@ protected:
     virtual Color platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
     virtual Color platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
 
-    virtual bool supportsSelectionForegroundColors() const { return true; }
-    virtual bool supportsListBoxSelectionForegroundColors() const { return true; }
+    virtual bool supportsSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
+    virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
 
 #if !USE(NEW_THEME)
     // Methods for each appearance value.
@@ -398,19 +400,30 @@ public:
     bool isReadOnlyControl(const RenderObject&) const;
     bool isDefault(const RenderObject&) const;
 
+protected:
+    struct ColorCache {
+        HashMap<int, Color> systemStyleColors;
+
+        Color systemVisitedLinkColor;
+
+        Color activeSelectionBackgroundColor;
+        Color inactiveSelectionBackgroundColor;
+        Color activeSelectionForegroundColor;
+        Color inactiveSelectionForegroundColor;
+
+        Color activeListBoxSelectionBackgroundColor;
+        Color inactiveListBoxSelectionBackgroundColor;
+        Color activeListBoxSelectionForegroundColor;
+        Color inactiveListBoxSelectionForegroundColor;
+
+        Color activeTextSearchHighlightColor;
+        Color inactiveTextSearchHighlightColor;
+    };
+
+    virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const { return m_colorCache; }
+
 private:
-    mutable Color m_activeSelectionBackgroundColor;
-    mutable Color m_inactiveSelectionBackgroundColor;
-    mutable Color m_activeSelectionForegroundColor;
-    mutable Color m_inactiveSelectionForegroundColor;
-
-    mutable Color m_activeListBoxSelectionBackgroundColor;
-    mutable Color m_inactiveListBoxSelectionBackgroundColor;
-    mutable Color m_activeListBoxSelectionForegroundColor;
-    mutable Color m_inactiveListBoxSelectionForegroundColor;
-
-    mutable Color m_activeTextSearchHighlightColor;
-    mutable Color m_inactiveTextSearchHighlightColor;
+    mutable ColorCache m_colorCache;
 };
 
 } // namespace WebCore

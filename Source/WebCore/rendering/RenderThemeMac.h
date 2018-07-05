@@ -23,8 +23,6 @@
 #if PLATFORM(MAC)
 
 #import "RenderThemeCocoa.h"
-#import <wtf/RetainPtr.h>
-#import <wtf/HashMap.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 OBJC_CLASS NSServicesRolloverButtonCell;
@@ -52,6 +50,8 @@ public:
     void adjustRepaintRect(const RenderObject&, FloatRect&) final;
 
     bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer&, const Color& backgroundColor) const final;
+
+    bool supportsSelectionForegroundColors(OptionSet<StyleColor::Options>) const final;
 
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
@@ -173,6 +173,8 @@ private:
 
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const final;
 
+    ColorCache& colorCache(OptionSet<StyleColor::Options>) const final;
+
     void purgeCaches() final;
 
     // Get the control size based off the font. Used by some of the controls (like buttons).
@@ -244,10 +246,7 @@ private:
     bool m_isSliderThumbHorizontalPressed { false };
     bool m_isSliderThumbVerticalPressed { false };
 
-    mutable HashMap<int, Color> m_lightSystemColorCache;
-    mutable HashMap<int, Color> m_darkSystemColorCache;
-    mutable Color m_lightSystemVisitedLinkColor;
-    mutable Color m_darkSystemVisitedLinkColor;
+    mutable ColorCache m_darkColorCache;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 

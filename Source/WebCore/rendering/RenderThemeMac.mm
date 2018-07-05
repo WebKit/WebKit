@@ -259,6 +259,9 @@ void RenderThemeMac::purgeCaches()
     m_mediaControlsScript.clearImplIfNotShared();
     m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
     m_mediaControlsStyleSheet.clearImplIfNotShared();
+    m_darkColorCache = ColorCache();
+
+    RenderTheme::purgeCaches();
 }
 
 String RenderThemeMac::mediaControlsScript()
@@ -328,20 +331,30 @@ Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
 #endif
 }
 
+bool RenderThemeMac::supportsSelectionForegroundColors(OptionSet<StyleColor::Options> options) const
+{
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
+    return localAppearance.usingDarkAppearance();
+}
+
 Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
-    return colorFromNSColor([NSColor selectedTextColor]);
+    if (localAppearance.usingDarkAppearance())
+        return colorFromNSColor([NSColor selectedTextColor]);
+    return { };
 }
 
 Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDefaultAppearance));
-    return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
+    if (localAppearance.usingDarkAppearance())
+        return colorFromNSColor([NSColor unemphasizedSelectedTextColor]);
+    return { };
 #else
     UNUSED_PARAM(options);
-    return colorFromNSColor([NSColor textColor]);
+    return { };
 #endif
 }
 
@@ -504,13 +517,19 @@ static RGBA32 menuBackgroundColor()
 
 void RenderThemeMac::platformColorsDidChange()
 {
-    m_lightSystemColorCache.clear();
-    m_darkSystemColorCache.clear();
-
-    m_lightSystemVisitedLinkColor = Color();
-    m_darkSystemVisitedLinkColor = Color();
+    m_darkColorCache = ColorCache();
 
     RenderTheme::platformColorsDidChange();
+}
+
+auto RenderThemeMac::colorCache(OptionSet<StyleColor::Options> options) const -> ColorCache&
+{
+    const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
+    const bool useDefaultAppearance = options.contains(StyleColor::Options::UseDefaultAppearance);
+    LocalDefaultSystemAppearance localAppearance(useSystemAppearance, useDefaultAppearance);
+    if (localAppearance.usingDarkAppearance())
+        return m_darkColorCache;
+    return RenderTheme::colorCache(options);
 }
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
@@ -521,20 +540,16 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     LocalDefaultSystemAppearance localAppearance(useSystemAppearance, useDefaultAppearance);
 
+    auto& cache = colorCache(options);
+
     // The system color cache below can't handle visited links. The only color value
     // that cares about visited links is CSSValueWebkitLink, so handle it here.
     if (forVisitedLink && cssValueID == CSSValueWebkitLink) {
         // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
         if (useSystemAppearance) {
-            if (localAppearance.usingDarkAppearance()) {
-                if (!m_darkSystemVisitedLinkColor.isValid())
-                    m_darkSystemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
-                return m_darkSystemVisitedLinkColor;
-            }
-
-            if (!m_lightSystemVisitedLinkColor.isValid())
-                m_lightSystemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
-            return m_lightSystemVisitedLinkColor;
+            if (!cache.systemVisitedLinkColor.isValid())
+                cache.systemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
+            return cache.systemVisitedLinkColor;
         }
 
         return RenderTheme::systemColor(cssValueID, options);
@@ -542,8 +557,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     ASSERT(!forVisitedLink);
 
-    auto& systemColorCache = localAppearance.usingDarkAppearance() ? m_darkSystemColorCache : m_lightSystemColorCache;
-    return systemColorCache.ensure(cssValueID, [this, cssValueID, useSystemAppearance, options] () -> Color {
+    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, useSystemAppearance, options] () -> Color {
         auto selectCocoaColor = [cssValueID, useSystemAppearance] () -> SEL {
             switch (cssValueID) {
             case CSSValueWebkitLink:

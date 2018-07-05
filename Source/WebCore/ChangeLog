@@ -1,3 +1,46 @@
+2018-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Don't invert text color for selections in light mode.
+        https://bugs.webkit.org/show_bug.cgi?id=187349
+        rdar://problem/41297946
+
+        Reviewed by Tim Horton.
+
+        Fix color caching in RenderTheme so we don't cache a dark mode color
+        for a light appearance, or vise versa. Use the new color caching
+        in RenderThemeMac, and clear the color caches in purgeCaches.
+
+        Allow supportsSelectionForegroundColors to conditionalize on StyleColor::Options.
+        Return true only in dark mode.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeSelectionBackgroundColor const):
+        (WebCore::RenderTheme::inactiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::activeSelectionForegroundColor const):
+        (WebCore::RenderTheme::inactiveSelectionForegroundColor const):
+        (WebCore::RenderTheme::activeListBoxSelectionBackgroundColor const):
+        (WebCore::RenderTheme::inactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderTheme::activeListBoxSelectionForegroundColor const):
+        (WebCore::RenderTheme::inactiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderTheme::purgeCaches):
+        (WebCore::RenderTheme::platformColorsDidChange):
+        (WebCore::RenderTheme::activeTextSearchHighlightColor const):
+        (WebCore::RenderTheme::inactiveTextSearchHighlightColor const):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::supportsSelectionForegroundColors const):
+        (WebCore::RenderTheme::supportsListBoxSelectionForegroundColors const):
+        (WebCore::RenderTheme::colorCache const):
+        (WebCore::RenderTheme::purgeCaches): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::purgeCaches):
+        (WebCore::RenderThemeMac::supportsSelectionForegroundColors const):
+        (WebCore::RenderThemeMac::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformColorsDidChange):
+        (WebCore::RenderThemeMac::colorCache const):
+        (WebCore::RenderThemeMac::systemColor const):
+
 2018-07-05  Zalan Bujtas  <zalan@apple.com>
 
         SimpleLineLayout::FlowContents wastes 54KB of Vector capacity on nytimes.com
