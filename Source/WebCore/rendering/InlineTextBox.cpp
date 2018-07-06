@@ -767,7 +767,7 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
     }
     case MarkedText::TextMatch: {
         // Text matches always use the light system appearance.
-        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance, StyleColor::Options::UseDefaultAppearance };
+        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance, StyleColor::Options::UseDarkAppearance };
 #if PLATFORM(MAC)
         style.textStyles.fillColor = renderer().theme().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
 #endif

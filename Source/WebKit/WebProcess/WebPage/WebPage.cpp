@@ -511,7 +511,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
 #if PLATFORM(MAC)
     setUseSystemAppearance(parameters.useSystemAppearance);
-    setDefaultAppearance(parameters.defaultAppearance);
+    setUseDarkAppearance(parameters.useDarkAppearance);
 #endif
     // If the page is created off-screen, its visibilityState should be prerender.
     m_page->setActivityState(m_activityState);
@@ -1522,7 +1522,7 @@ void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffse
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(m_page->useSystemAppearance(), m_page->defaultAppearance());
+    LocalDefaultSystemAppearance localAppearance(m_page->useSystemAppearance(), m_page->useDarkAppearance());
 #endif
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
@@ -4205,9 +4205,9 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
     corePage()->setUseSystemAppearance(useSystemAppearance);
 }
     
-void WebPage::setDefaultAppearance(bool defaultAppearance)
+void WebPage::setUseDarkAppearance(bool useDarkAppearance)
 {
-    corePage()->setDefaultAppearance(defaultAppearance);
+    corePage()->setUseDarkAppearance(useDarkAppearance);
     RenderTheme::singleton().platformColorsDidChange();
     corePage()->setNeedsRecalcStyleInAllFrames();
 }

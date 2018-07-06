@@ -519,7 +519,7 @@ public:
     void setBottomOverhangImage(WebImage*);
     
     void setUseSystemAppearance(bool);
-    void setDefaultAppearance(bool);
+    void setUseDarkAppearance(bool);
 #endif
 
     bool windowIsFocused() const;

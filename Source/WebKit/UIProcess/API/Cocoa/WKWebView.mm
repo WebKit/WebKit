@@ -465,9 +465,9 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::LTR);
 }
 
-- (bool)_defaultAppearance
+- (bool)_effectiveAppearanceIsDark
 {
-    return _impl->useDefaultAppearance();
+    return _impl->effectiveAppearanceIsDark();
 }
 
 #endif // PLATFORM(MAC)
@@ -691,7 +691,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
     _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
-    _impl->setDefaultAppearance([self _defaultAppearance]);
+    _impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
@@ -6268,7 +6268,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
     _impl->setUseSystemAppearance(useSystemAppearance);
-    _impl->setDefaultAppearance([self _defaultAppearance]);
+    _impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
 - (void)effectiveAppearanceDidChange
@@ -6278,7 +6278,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     if (!_impl)
         return;
 
-    _impl->setDefaultAppearance([self _defaultAppearance]);
+    _impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
 - (void)_setHeaderBannerHeight:(int)height

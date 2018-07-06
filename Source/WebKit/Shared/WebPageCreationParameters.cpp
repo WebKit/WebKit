@@ -81,7 +81,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << colorSpace;
     encoder << useSystemAppearance;
-    encoder << defaultAppearance;
+    encoder << useDarkAppearance;
 #endif
 #if PLATFORM(IOS)
     encoder << screenSize;
@@ -239,7 +239,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.useSystemAppearance))
         return std::nullopt;
-    if (!decoder.decode(parameters.defaultAppearance))
+    if (!decoder.decode(parameters.useDarkAppearance))
         return std::nullopt;
 #endif
 

@@ -1,3 +1,55 @@
+2018-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Rename and flip the meaning of defaultAppearance to be useDarkAppearance.
+        https://bugs.webkit.org/show_bug.cgi?id=187369
+        rdar://problem/41870420
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _effectiveAppearanceIsDark]):
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setUseSystemAppearance:]):
+        (-[WKWebView effectiveAppearanceDidChange]):
+        (-[WKWebView _defaultAppearance]): Deleted.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _effectiveAppearanceIsDark]):
+        (-[WKView effectiveAppearanceDidChange]):
+        (-[WKView _setUseSystemAppearance:]):
+        (-[WKView _defaultAppearance]): Deleted.
+        (-[WKView _setDefaultAppearance:]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::effectiveAppearanceIsDark):
+        (WebKit::WebViewImpl::setUseDarkAppearance):
+        (WebKit::WebViewImpl::useDefaultAppearance): Deleted.
+        (WebKit::WebViewImpl::setDefaultAppearance): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setUseDarkAppearance):
+        (WebKit::WebPageProxy::showPlaybackTargetPicker):
+        (WebKit::WebPageProxy::setDefaultAppearance): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::useDarkAppearance const):
+        (WebKit::WebPageProxy::defaultAppearance const): Deleted.
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView drawRect:]):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::paintControlForLayerInContext):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        (WebKit::WebPage::drawRect):
+        (WebKit::WebPage::setUseDarkAppearance):
+        (WebKit::WebPage::setDefaultAppearance): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-07-05  Brian Burg  <bburg@apple.com>
 
         REGRESSION: ASSERT under WebAutomationSessionProxy::computeElementLayout when elementInViewClientCenterPoint returns nullopt

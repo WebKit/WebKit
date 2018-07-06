@@ -43,7 +43,7 @@ public:
 
     virtual ~MediaPlaybackTargetPickerMac();
 
-    void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, bool useDefaultAppearance) override;
+    void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) override;
     void startingMonitoringPlaybackTargets() override;
     void stopMonitoringPlaybackTargets() override;
     void invalidatePlaybackTargets() override;

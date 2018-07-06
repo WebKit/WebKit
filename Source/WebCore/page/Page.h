@@ -342,8 +342,8 @@ public:
     bool useSystemAppearance() const { return m_useSystemAppearance; }
     WEBCORE_EXPORT void setUseSystemAppearance(bool);
     
-    WEBCORE_EXPORT bool defaultAppearance() const;
-    void setDefaultAppearance(bool a) { m_defaultAppearance = a; }
+    WEBCORE_EXPORT bool useDarkAppearance() const;
+    void setUseDarkAppearance(bool a) { m_useDarkAppearance = a; }
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
@@ -754,7 +754,7 @@ private:
 #endif
     
     bool m_useSystemAppearance { false };
-    bool m_defaultAppearance { true };
+    bool m_useDarkAppearance { false };
 
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingWidth { 0 };

@@ -7084,12 +7084,12 @@ bool Document::useSystemAppearance() const
     return useSystemAppearance;
 }
 
-bool Document::useDefaultAppearance() const
+bool Document::useDarkAppearance() const
 {
-    bool useDefaultAppearance = true;
+    bool useDarkAppearance = false;
     if (Page* documentPage = page())
-        useDefaultAppearance = documentPage->defaultAppearance();
-    return useDefaultAppearance;
+        useDarkAppearance = documentPage->useDarkAppearance();
+    return useDarkAppearance;
 }
 
 OptionSet<StyleColor::Options> Document::styleColorOptions() const
@@ -7097,8 +7097,8 @@ OptionSet<StyleColor::Options> Document::styleColorOptions() const
     OptionSet<StyleColor::Options> options;
     if (useSystemAppearance())
         options |= StyleColor::Options::UseSystemAppearance;
-    if (useDefaultAppearance())
-        options |= StyleColor::Options::UseDefaultAppearance;
+    if (useDarkAppearance())
+        options |= StyleColor::Options::UseDarkAppearance;
     return options;
 }
 

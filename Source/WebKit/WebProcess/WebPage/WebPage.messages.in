@@ -448,7 +448,7 @@ messages -> WebPage LegacyReceiver {
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
 
     SetUseSystemAppearance(bool useSystemAppearance);
-    SetDefaultAppearance(bool defaultAppearance);
+    SetUseDarkAppearance(bool useDarkAppearance);
 
     SetHeaderBannerHeightForTesting(int height);
     SetFooterBannerHeightForTesting(int height);

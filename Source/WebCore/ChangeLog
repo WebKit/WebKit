@@ -1,3 +1,72 @@
+2018-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Rename and flip the meaning of defaultAppearance to be useDarkAppearance.
+        https://bugs.webkit.org/show_bug.cgi?id=187369
+        rdar://problem/41870420
+
+        Reviewed by Tim Horton.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersDarkInterfaceEvaluate):
+        * css/StyleColor.h:
+        * dom/Document.cpp:
+        (WebCore::Document::useDarkAppearance const):
+        (WebCore::Document::styleColorOptions const):
+        (WebCore::Document::useDefaultAppearance const): Deleted.
+        * dom/Document.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::paint):
+        * page/Page.cpp:
+        (WebCore::Page::useDarkAppearance const):
+        (WebCore::Page::defaultAppearance const): Deleted.
+        * page/Page.h:
+        (WebCore::Page::setUseDarkAppearance):
+        (WebCore::Page::setDefaultAppearance): Deleted.
+        * platform/Theme.h:
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink):
+        * platform/mac/LocalDefaultSystemAppearance.h:
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance):
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::paint):
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::showPlaybackTargetPicker):
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::resolveStyleForMarkedText):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor const):
+        (WebCore::RenderThemeMac::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::supportsSelectionForegroundColors const):
+        (WebCore::RenderThemeMac::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderThemeMac::platformActiveTextSearchHighlightColor const):
+        (WebCore::RenderThemeMac::colorCache const):
+        (WebCore::RenderThemeMac::systemColor const):
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+
 2018-07-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233539.

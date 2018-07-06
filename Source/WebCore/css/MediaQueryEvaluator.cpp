@@ -717,7 +717,7 @@ static bool prefersDarkInterfaceEvaluate(CSSValue* value, const CSSToLengthConve
 {
     bool prefersDarkInterface = false;
 
-    if (frame.page()->useSystemAppearance() && !frame.page()->defaultAppearance())
+    if (frame.page()->useSystemAppearance() && frame.page()->useDarkAppearance())
         prefersDarkInterface = true;
 
     if (!value)

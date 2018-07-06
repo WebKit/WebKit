@@ -568,7 +568,7 @@ static CFStringRef linkDestinationName(PDFDocument *document, PDFDestination *de
     if (!page)
         return;
 
-    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->defaultAppearance());
+    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->useDarkAppearance());
 
     if ([self _isPrintingPreview]) {
         [self _drawPreview:nsRect];

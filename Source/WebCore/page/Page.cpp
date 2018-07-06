@@ -2385,12 +2385,12 @@ void Page::setUseSystemAppearance(bool value)
     }
 }
 
-bool Page::defaultAppearance() const
+bool Page::useDarkAppearance() const
 {
     FrameView* view = mainFrame().view();
     if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"))
-        return true;
-    return m_defaultAppearance;
+        return false;
+    return m_useDarkAppearance;
 }
 
 void Page::setFullscreenInsets(const FloatBoxExtent& insets)

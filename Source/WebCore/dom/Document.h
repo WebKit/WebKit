@@ -553,7 +553,8 @@ public:
     float deviceScaleFactor() const;
 
     bool useSystemAppearance() const;
-    bool useDefaultAppearance() const;
+    bool useDarkAppearance() const;
+
     OptionSet<StyleColor::Options> styleColorOptions() const;
 
     WEBCORE_EXPORT Ref<Range> createRange();

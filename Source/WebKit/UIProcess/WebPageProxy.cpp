@@ -6184,7 +6184,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #if PLATFORM(MAC)
     parameters.colorSpace = m_pageClient.colorSpace();
     parameters.useSystemAppearance = m_useSystemAppearance;
-    parameters.defaultAppearance = m_defaultAppearance;
+    parameters.useDarkAppearance = m_useDarkAppearance;
 #endif
 #if PLATFORM(IOS)
     parameters.screenSize = screenSize();
@@ -7308,16 +7308,16 @@ void WebPageProxy::setUseSystemAppearance(bool useSystemAppearance)
     m_process->send(Messages::WebPage::SetUseSystemAppearance(useSystemAppearance), m_pageID);
 }
     
-void WebPageProxy::setDefaultAppearance(bool defaultAppearance)
+void WebPageProxy::setUseDarkAppearance(bool useDarkAppearance)
 {
     if (!isValid())
         return;
-    
-    if (defaultAppearance == m_defaultAppearance)
+
+    if (useDarkAppearance == m_useDarkAppearance)
         return;
-    
-    m_defaultAppearance = defaultAppearance;
-    m_process->send(Messages::WebPage::SetDefaultAppearance(defaultAppearance), m_pageID);
+
+    m_useDarkAppearance = useDarkAppearance;
+    m_process->send(Messages::WebPage::SetUseDarkAppearance(useDarkAppearance), m_pageID);
 }
 
 void WebPageProxy::setHeaderBannerHeightForTesting(int height)
@@ -7365,7 +7365,7 @@ void WebPageProxy::removePlaybackTargetPickerClient(uint64_t contextId)
 
 void WebPageProxy::showPlaybackTargetPicker(uint64_t contextId, const WebCore::FloatRect& rect, bool hasVideo)
 {
-    m_pageClient.mediaSessionManager().showPlaybackTargetPicker(*this, contextId, m_pageClient.rootViewToScreen(IntRect(rect)), hasVideo, m_defaultAppearance);
+    m_pageClient.mediaSessionManager().showPlaybackTargetPicker(*this, contextId, m_pageClient.rootViewToScreen(IntRect(rect)), hasVideo, m_useDarkAppearance);
 }
 
 void WebPageProxy::playbackTargetPickerClientStateDidChange(uint64_t contextId, WebCore::MediaProducer::MediaStateFlags state)

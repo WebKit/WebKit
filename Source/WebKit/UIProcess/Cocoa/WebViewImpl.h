@@ -538,8 +538,8 @@ public:
     
     void setUseSystemAppearance(bool);
     bool useSystemAppearance();
-    void setDefaultAppearance(bool);
-    bool useDefaultAppearance();
+    void setUseDarkAppearance(bool);
+    bool effectiveAppearanceIsDark();
 
 private:
 #if HAVE(TOUCH_BAR)

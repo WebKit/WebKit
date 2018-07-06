@@ -1574,7 +1574,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         ResourceHandle::forceContentSniffing();
 
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
-    _private->page->setDefaultAppearance([self _defaultAppearance]);
+    _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 #endif
 
     _private->page->settings().setContentDispositionAttachmentSandboxEnabled(true);
@@ -5275,19 +5275,19 @@ static Vector<String> toStringVector(NSArray* patterns)
     return insets;
 }
 
-- (bool)_defaultAppearance
+- (bool)_effectiveAppearanceIsDark
 {
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     NSAppearanceName appearance = [[self effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
-    return [appearance isEqualToString:NSAppearanceNameAqua];
+    return [appearance isEqualToString:NSAppearanceNameDarkAqua];
 #else
-    return true;
+    return false;
 #endif
 }
 
 - (void)_updateDefaultAppearance
 {
-    _private->page->setDefaultAppearance([self _defaultAppearance]);
+    _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
     RenderTheme::singleton().platformColorsDidChange();
     _private->page->setNeedsRecalcStyleInAllFrames();
 }

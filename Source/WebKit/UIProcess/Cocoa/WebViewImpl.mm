@@ -5013,19 +5013,19 @@ bool WebViewImpl::useSystemAppearance()
     return m_page->useSystemAppearance();
 }
 
-bool WebViewImpl::useDefaultAppearance()
+bool WebViewImpl::effectiveAppearanceIsDark()
 {
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     NSAppearanceName appearance = [[m_view effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
-    return [appearance isEqualToString:NSAppearanceNameAqua];
+    return [appearance isEqualToString:NSAppearanceNameDarkAqua];
 #else
-    return true;
+    return false;
 #endif
 }
 
-void WebViewImpl::setDefaultAppearance(bool defaultAppearance)
+void WebViewImpl::setUseDarkAppearance(bool useDarkAppearance)
 {
-    m_page->setDefaultAppearance(defaultAppearance);
+    m_page->setUseDarkAppearance(useDarkAppearance);
 }
 
 } // namespace WebKit

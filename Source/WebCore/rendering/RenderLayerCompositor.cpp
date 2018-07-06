@@ -2774,7 +2774,7 @@ void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRec
 void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior)
 {
 #if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(page().useSystemAppearance(), page().defaultAppearance());
+    LocalDefaultSystemAppearance localAppearance(page().useSystemAppearance(), page().useDarkAppearance());
 #endif
 
     IntRect pixelSnappedRectForIntegralPositionedItems = snappedIntRect(LayoutRect(clip));

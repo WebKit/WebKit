@@ -1622,32 +1622,26 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::Scrol
     _data->_impl->setShouldSuppressFirstResponderChanges(shouldSuppress);
 }
 
-- (bool)_defaultAppearance
+- (bool)_effectiveAppearanceIsDark
 {
-    return _data->_impl->useDefaultAppearance();
+    return _data->_impl->effectiveAppearanceIsDark();
 }
 
 - (void)effectiveAppearanceDidChange
 {
-    _data->_impl->setDefaultAppearance([self _defaultAppearance]);
+    _data->_impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
     _data->_impl->setUseSystemAppearance(useSystemAppearance);
-    _data->_impl->setDefaultAppearance([self _defaultAppearance]);
+    _data->_impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
 - (BOOL)_useSystemAppearance
 {
     return _data->_impl->useSystemAppearance();
 }
-
-- (void)_setDefaultAppearance:(BOOL)defaultAppearance
-{
-    _data->_impl->setDefaultAppearance(defaultAppearance);
-}
-
 
 @end
 

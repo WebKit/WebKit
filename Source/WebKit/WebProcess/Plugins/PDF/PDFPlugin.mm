@@ -1215,7 +1215,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
 {
 #if PLATFORM(MAC)
     auto* page = webFrame()->coreFrame()->page();
-    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->defaultAppearance());
+    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->useDarkAppearance());
 #endif
 
     GraphicsContext graphicsContext(context);
