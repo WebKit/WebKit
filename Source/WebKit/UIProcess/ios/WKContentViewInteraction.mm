@@ -3655,6 +3655,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     if (_page->editorState().isContentEditable)
         return std::nullopt;
+    
+    if (_assistedNodeInformation.elementType == InputType::Select)
+        return std::nullopt;
 
     NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
     if (!charactersIgnoringModifiers.length)

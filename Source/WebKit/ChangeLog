@@ -1,3 +1,16 @@
+2018-07-05  Olivia Barnett  <obarnett@apple.com>
+
+        iPad: Scrolling with hardware keyboard while SELECT popover is visible scrolls the page, detaches popover
+        https://bugs.webkit.org/show_bug.cgi?id=187363
+        <rdar://problem/41106306>
+
+        Reviewed by Tim Horton.
+
+        Added extra check to prevent keyboard scrolling when the select box is open.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _scrollOffsetForEvent:]):
+
 2018-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Rename and flip the meaning of defaultAppearance to be useDarkAppearance.
