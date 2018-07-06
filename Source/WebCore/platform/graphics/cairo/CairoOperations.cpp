@@ -612,7 +612,8 @@ bool ShadowState::isVisible() const
 
 bool ShadowState::isRequired(PlatformContextCairo& platformContext) const
 {
-    if (color.isVisible())
+    // We can't avoid ShadowBlur if the shadow has blur.
+    if (color.isVisible() && blur)
         return true;
 
     // We can avoid ShadowBlur and optimize, since we're not drawing on a
@@ -734,7 +735,7 @@ void fillRectWithRoundedHole(PlatformContextCairo& platformContext, const FloatR
 {
     // FIXME: this should leverage the specified color.
 
-    if (shadowState.isRequired(platformContext)) {
+    if (shadowState.isVisible()) {
         ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
         shadow.drawInsetShadow(State::getCTM(platformContext), State::getClipBounds(platformContext), rect, roundedHoleRect,
             [&platformContext, &shadowState](ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const FloatRect& sourceRect)

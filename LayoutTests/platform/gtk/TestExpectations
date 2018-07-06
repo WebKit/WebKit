@@ -3471,8 +3471,6 @@ webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 
 webkit.org/b/187323 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Failure ]
 
-webkit.org/b/187324 fast/text/multiple-text-shadow-overflow-layout-rect.html [ ImageOnlyFailure ]
-
 webkit.org/b/187325 http/wpt/css/css-animations/start-animation-001.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

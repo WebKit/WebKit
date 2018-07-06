@@ -1,3 +1,27 @@
+2018-07-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r233495) [cairo] drawGlyphsShadow should use the fast path for zero blur-radius
+        https://bugs.webkit.org/show_bug.cgi?id=187336
+
+        Reviewed by Carlos Garcia Campos.
+
+        drawGlyphsShadow has a fast path to draw a shadow without a shadow
+        layer. Since r233495, it is not used for zero blur-radius shadow.
+
+        In Bug 187244, I changed ShadowState::isRequired not to check
+        blur-radius is zero. This is not a right fix.
+
+        This change reverts r233495.
+
+        No new tests (Covered by existing tests).
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::ShadowState::isRequired const): Return false if
+        'blur' is zero.
+        (WebCore::Cairo::fillRectWithRoundedHole): Use
+        ShadowState::isVisible instead of ShadowState::isRequired to check
+        a shadow should be drawn.
+
 2018-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Rename and flip the meaning of defaultAppearance to be useDarkAppearance.
