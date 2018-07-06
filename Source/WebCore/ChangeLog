@@ -1,3 +1,19 @@
+2018-07-05  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make WPT test at interfaces/Animation/finished.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186497
+        <rdar://problem/41000193>
+
+        Reviewed by Dean Jackson.
+
+        We need to ensure the finished state is updated as a result of any timing property changing.
+
+        * animation/AnimationEffectReadOnly.cpp:
+        (WebCore::AnimationEffectReadOnly::timingDidChange):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::effectTimingPropertiesDidChange):
+        * animation/WebAnimation.h:
+
 2018-07-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Using a Web Animation leaks the Document

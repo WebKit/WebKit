@@ -112,6 +112,7 @@ public:
     void applyPendingAcceleratedActions();
 
     void timingModelDidChange();
+    void effectTimingPropertiesDidChange();
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
     void setSuspended(bool);

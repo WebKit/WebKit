@@ -48,7 +48,7 @@ AnimationEffectReadOnly::~AnimationEffectReadOnly()
 void AnimationEffectReadOnly::timingDidChange()
 {
     if (m_animation)
-        m_animation->timingModelDidChange();
+        m_animation->effectTimingPropertiesDidChange();
 }
 
 std::optional<Seconds> AnimationEffectReadOnly::localTime() const

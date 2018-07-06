@@ -90,6 +90,12 @@ void WebAnimation::unsuspendEffectInvalidation()
     --m_suspendCount;
 }
 
+void WebAnimation::effectTimingPropertiesDidChange()
+{
+    updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
+    timingModelDidChange();
+}
+
 void WebAnimation::timingModelDidChange()
 {
     if (!isEffectInvalidationSuspended() && m_effect)
