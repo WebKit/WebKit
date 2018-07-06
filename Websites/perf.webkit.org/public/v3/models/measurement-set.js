@@ -224,22 +224,25 @@ class MeasurementSet {
         var self = this;
         return Promise.all(promises).then(function (clusterSegmentations) {
             var segmentationSeries = [];
-            var addSegment = function (startingPoint, endingPoint) {
+            var addSegmentMergingIdenticalSegments = function (startingPoint, endingPoint) {
                 var value = Statistics.mean(timeSeries.valuesBetweenRange(startingPoint.seriesIndex, endingPoint.seriesIndex));
-                segmentationSeries.push({value: value, time: startingPoint.time, seriesIndex: startingPoint.seriesIndex, interval: function () { return null; }});
-                segmentationSeries.push({value: value, time: endingPoint.time, seriesIndex: endingPoint.seriesIndex, interval: function () { return null; }});
+                if (!segmentationSeries.length || value !== segmentationSeries[segmentationSeries.length - 1].value) {
+                    segmentationSeries.push({value: value, time: startingPoint.time, seriesIndex: startingPoint.seriesIndex, interval: function () { return null; }});
+                    segmentationSeries.push({value: value, time: endingPoint.time, seriesIndex: endingPoint.seriesIndex, interval: function () { return null; }});
+                } else
+                    segmentationSeries[segmentationSeries.length - 1].seriesIndex = endingPoint.seriesIndex;
             };
 
-            var startingIndex = 0;
-            for (var segmentation of clusterSegmentations) {
-                for (var endingIndex of segmentation) {
-                    addSegment(timeSeries.findPointByIndex(startingIndex), timeSeries.findPointByIndex(endingIndex));
+            let startingIndex = 0;
+            for (const segmentation of clusterSegmentations) {
+                for (const endingIndex of segmentation) {
+                    addSegmentMergingIdenticalSegments(timeSeries.findPointByIndex(startingIndex), timeSeries.findPointByIndex(endingIndex));
                     startingIndex = endingIndex;
                 }
             }
             if (extendToFuture)
                 timeSeries.extendToFuture();
-            addSegment(timeSeries.findPointByIndex(startingIndex), timeSeries.lastPoint());
+            addSegmentMergingIdenticalSegments(timeSeries.findPointByIndex(startingIndex), timeSeries.lastPoint());
             return segmentationSeries;
         });
     }
