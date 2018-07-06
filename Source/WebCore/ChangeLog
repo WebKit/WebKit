@@ -1,5 +1,49 @@
 2018-07-06  Youenn Fablet  <youenn@apple.com>
 
+        WebRTC MediaStreamTrack Enable / Disable causes video delay / lag
+        https://bugs.webkit.org/show_bug.cgi?id=186889
+        <rdar://problem/41370285>
+
+        Reviewed by Eric Carlson.
+
+        Libwebrtc expects a continuous flow of calls for audio data since the API
+        does not provide any possiblity to give timestamps.
+
+        We were optimizing previously when a source is muted so that we would not transmit audio data.
+        This breaks synchronization between audio and video frames (which are timestamped).
+
+        This patch reverts the optimization and instead makes sure to send zeros for silenced audio tracks.
+
+        This requires MediaStreamTrackPrivate to send audio data even if disabled,
+        so that RealtimeOutgoingAudioSource will continue sending zeros at the correct pace.
+        This also requires WebAudioSourceProviderAVFObjC to exit early if its track is disabled.
+
+        Covered by existing tests.
+        Manual testing shows that synchronization is kept.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::audioSamplesAvailable):
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::initializeConverter):
+        (WebCore::RealtimeOutgoingAudioSource::stop):
+        (WebCore::RealtimeOutgoingAudioSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingAudioSource::sourceEnabledChanged):
+        (WebCore::RealtimeOutgoingAudioSource::handleMutedIfNeeded): Deleted.
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        (WebCore::RealtimeOutgoingAudioSource::pullAudioData):
+        (WebCore::RealtimeOutgoingAudioSource::isSilenced const):
+        (WebCore::RealtimeOutgoingAudioSource::sendSilence): Deleted.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::pullAudioData):
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::handleMutedIfNeeded): Deleted.
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::sendSilence): Deleted.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::audioSamplesAvailable):
+
+2018-07-06  Youenn Fablet  <youenn@apple.com>
+
         Make RealtimeOutgoingVideoSource use DestructionThread::Main
         https://bugs.webkit.org/show_bug.cgi?id=187402
 

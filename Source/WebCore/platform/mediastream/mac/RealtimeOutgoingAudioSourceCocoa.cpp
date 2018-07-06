@@ -54,30 +54,6 @@ Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaSt
     return RealtimeOutgoingAudioSourceCocoa::create(WTFMove(audioSource));
 }
 
-void RealtimeOutgoingAudioSourceCocoa::handleMutedIfNeeded()
-{
-    bool isSilenced = m_muted || !m_enabled;
-    m_sampleConverter->setMuted(isSilenced);
-
-    RealtimeOutgoingAudioSource::handleMutedIfNeeded();
-}
-
-void RealtimeOutgoingAudioSourceCocoa::sendSilence()
-{
-    LibWebRTCProvider::callOnWebRTCSignalingThread([this, protectedThis = makeRef(*this)] {
-        size_t chunkSampleCount = m_outputStreamDescription.sampleRate() / 100;
-        size_t bufferSize = chunkSampleCount * LibWebRTCAudioFormat::sampleByteSize * m_outputStreamDescription.numberOfChannels();
-
-        if (!bufferSize)
-            return;
-
-        m_audioBuffer.grow(bufferSize);
-        memset(m_audioBuffer.data(), 0, bufferSize);
-        for (auto sink : m_sinks)
-            sink->OnData(m_audioBuffer.data(), LibWebRTCAudioFormat::sampleSize, m_outputStreamDescription.sampleRate(), m_outputStreamDescription.numberOfChannels(), chunkSampleCount);
-    });
-}
-
 bool RealtimeOutgoingAudioSourceCocoa::isReachingBufferedAudioDataHighLimit()
 {
     auto writtenAudioDuration = m_writeCount / m_inputStreamDescription.sampleRate();
@@ -152,6 +128,9 @@ void RealtimeOutgoingAudioSourceCocoa::pullAudioData()
     bufferList.mBuffers[0].mNumberChannels = m_outputStreamDescription.numberOfChannels();
     bufferList.mBuffers[0].mDataByteSize = bufferSize;
     bufferList.mBuffers[0].mData = m_audioBuffer.data();
+
+    if (isSilenced() !=  m_sampleConverter->muted())
+        m_sampleConverter->setMuted(isSilenced());
 
     m_sampleConverter->pullAvalaibleSamplesAsChunks(bufferList, chunkSampleCount, m_readCount, [this, chunkSampleCount] {
         m_readCount += chunkSampleCount;

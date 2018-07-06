@@ -38,7 +38,6 @@ namespace WebCore {
 
 RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&& audioSource)
     : m_audioSource(WTFMove(audioSource))
-    , m_silenceAudioTimer(*this, &RealtimeOutgoingAudioSource::sendSilence)
 {
     m_audioSource->addObserver(*this);
     initializeConverter();
@@ -58,35 +57,22 @@ void RealtimeOutgoingAudioSource::initializeConverter()
 {
     m_muted = m_audioSource->muted();
     m_enabled = m_audioSource->enabled();
-    handleMutedIfNeeded();
 }
 
 void RealtimeOutgoingAudioSource::stop()
 {
     ASSERT(isMainThread());
-    m_silenceAudioTimer.stop();
     m_audioSource->removeObserver(*this);
 }
 
 void RealtimeOutgoingAudioSource::sourceMutedChanged()
 {
     m_muted = m_audioSource->muted();
-    handleMutedIfNeeded();
 }
 
 void RealtimeOutgoingAudioSource::sourceEnabledChanged()
 {
     m_enabled = m_audioSource->enabled();
-    handleMutedIfNeeded();
-}
-
-void RealtimeOutgoingAudioSource::handleMutedIfNeeded()
-{
-    bool isSilenced = m_muted || !m_enabled;
-    if (isSilenced && !m_silenceAudioTimer.isActive())
-        m_silenceAudioTimer.startRepeating(1_s);
-    if (!isSilenced && m_silenceAudioTimer.isActive())
-        m_silenceAudioTimer.stop();
 }
 
 } // namespace WebCore

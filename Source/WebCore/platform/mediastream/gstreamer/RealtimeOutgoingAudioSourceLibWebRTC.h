@@ -43,9 +43,6 @@ private:
     bool hasBufferedEnoughData() final;
 
     void pullAudioData() final;
-
-    void handleMutedIfNeeded() final;
-    void sendSilence() final;
 };
 
 } // namespace WebCore

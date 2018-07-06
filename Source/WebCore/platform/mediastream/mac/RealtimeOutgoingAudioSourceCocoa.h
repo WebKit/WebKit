@@ -52,9 +52,6 @@ private:
 
     void pullAudioData() final;
 
-    void handleMutedIfNeeded() final;
-    void sendSilence() final;
-
     Ref<AudioSampleDataSource> m_sampleConverter;
     CAAudioStreamDescription m_inputStreamDescription;
     CAAudioStreamDescription m_outputStreamDescription;

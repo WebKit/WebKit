@@ -43,14 +43,6 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
 {
 }
 
-void RealtimeOutgoingAudioSourceLibWebRTC::handleMutedIfNeeded()
-{
-}
-
-void RealtimeOutgoingAudioSourceLibWebRTC::sendSilence()
-{
-}
-
 void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
 {
 }

@@ -1,3 +1,0 @@
-
-PASS Audio silent data not being sent in case track is muted from the start 
-

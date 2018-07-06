@@ -216,9 +216,6 @@ void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime& mediaTime, 
         updateReadyState();
     }
 
-    if (!enabled())
-        return;
-
     for (auto& observer : m_observers)
         observer->audioSamplesAvailable(*this, mediaTime, data, description, sampleCount);
 }
