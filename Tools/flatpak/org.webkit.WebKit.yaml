@@ -74,6 +74,9 @@ modules:
       - --disable-xmlwriter
       - --without-pear
       - --with-apxs2
+      - --with-zlib
+      - --with-libzip
+      - --enable-sockets=shared
   - name: libevent
     sources:
       - type: git
