@@ -1,5 +1,22 @@
 2018-07-06  Frederic Wang  <fwang@igalia.com>
 
+        [Crash] Illegal use of uninitialized std::optional value in WebCore::AnimationBase::updateStateMachine
+        https://bugs.webkit.org/show_bug.cgi?id=187382
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebCore::AnimationBase::updateStateMachine has two potential places where the use of an
+        uninitialized std:optional value is possible and one of them is hit when using Google drive.
+        Since that old animation code is going to be removed soon, we just quickly patch this issue
+        via value_or() so that we can restore the ASSERT added in bug 186536.
+
+        No new tests, code is going to be removed soon.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine): Use value_or(0) to avoid potential crashes.
+
+2018-07-06  Frederic Wang  <fwang@igalia.com>
+
         Rename HTMLTreeBuilder::didCreateCustomOrCallbackElement
         https://bugs.webkit.org/show_bug.cgi?id=187317
 

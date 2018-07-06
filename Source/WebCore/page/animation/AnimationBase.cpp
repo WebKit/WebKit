@@ -379,7 +379,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             ASSERT(input == AnimationStateInput::PlayStateRunning);
             ASSERT(paused());
             // Update the times
-            m_startTime = m_startTime.value() + beginAnimationUpdateTime() - m_pauseTime.value_or(0);
+            m_startTime = m_startTime.value_or(0) + beginAnimationUpdateTime() - m_pauseTime.value_or(0);
             m_pauseTime = std::nullopt;
 
             // we were waiting for the start timer to fire, go back and wait again
@@ -411,7 +411,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
 
                 // Update the times
                 if (m_animationState == AnimationState::PausedRun)
-                    m_startTime = m_startTime.value() + beginAnimationUpdateTime() - m_pauseTime.value_or(0);
+                    m_startTime = m_startTime.value_or(0) + beginAnimationUpdateTime() - m_pauseTime.value_or(0);
                 else
                     m_startTime = 0;
 
