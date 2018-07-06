@@ -1,4 +1,4 @@
-
+Updated value for contenteditable
  
 This tests that setting value to a text control would dispatch input events.
 
@@ -11,18 +11,21 @@ Role: AXRole: AXTextArea
 Value: AXValue: current
 Writable: true
 input event dispatched for contenteditable
+AXValue: Updated value for contenteditable
 
-Test: input
+Test: inputElement
 Role: AXRole: AXTextField
 Value: AXValue: somevalue
 Writable: true
-input event dispatched for input
+input event dispatched for inputElement
+AXValue: Updated value for inputElement
 
 Test: textarea
 Role: AXRole: AXTextArea
 Value: AXValue: sometext
 Writable: true
 input event dispatched for textarea
+AXValue: Updated value for textarea
 PASS successfullyParsed is true
 
 TEST COMPLETE

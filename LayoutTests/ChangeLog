@@ -1,3 +1,18 @@
+2018-07-06  Nan Wang  <n_wang@apple.com>
+
+        AX: setValue on text controls should send out key events
+        https://bugs.webkit.org/show_bug.cgi?id=186690
+        <rdar://problem/41169985>
+
+        Reviewed by Chris Fleizach.
+
+        Editor's clearText function will also dispatch the InputEvent. In the test, 
+        we need to make sure each test case finishes handling all the input events
+        before moving to the next test case.
+
+        * accessibility/mac/set-value-editable-dispatch-events-expected.txt:
+        * accessibility/mac/set-value-editable-dispatch-events.html:
+
 2018-07-06  Truitt Savell  <tsavell@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html is flaky

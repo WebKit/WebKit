@@ -5,7 +5,7 @@
 <div id="content">
 
 <div contenteditable="true" id="contenteditable" oninput="updateContenteditable();">current</div>
-<input type="text" id="input" value="somevalue" oninput="updateInput();">
+<input type="text" id="inputElement" value="somevalue" oninput="updateInput();">
 <textarea id="textarea" oninput="updateTextarea();">sometext</textarea>
 
 </div>
@@ -25,18 +25,30 @@
         var textareaValue;
 
        function updateContenteditable(){
-           debug("input event dispatched for contenteditable");
-           testElement("input");
+           contenteditableValue = accessibilityController.accessibleElementById("contenteditable").stringValue;
+           if (contenteditableValue.includes("contenteditable")) {
+               debug("input event dispatched for contenteditable");
+               debug(contenteditableValue);
+               testElement("inputElement");
+           }
        }
 
        function updateInput(){
-          debug("input event dispatched for input");
-          testElement("textarea");
+          inputValue = accessibilityController.accessibleElementById("inputElement").stringValue;
+          if (inputValue.includes("inputElement")) {
+              debug("input event dispatched for inputElement");
+              debug(inputValue);
+              testElement("textarea");
+          }
        }
 
        function updateTextarea(){
-          debug("input event dispatched for textarea");
-          finishJSTest();
+          textareaValue = accessibilityController.accessibleElementById("textarea").stringValue;
+          if (textareaValue.includes("textarea")) {
+              debug("input event dispatched for textarea");
+              debug(textareaValue);
+              finishJSTest();
+          }
        }
 
         function testElement(idValue) {
