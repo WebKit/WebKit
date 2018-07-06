@@ -1,3 +1,26 @@
+2018-07-06  Brian Burg  <bburg@apple.com>
+
+        WebDriver: hang in Selenium test alerts_tests.py::testShouldHandleAlertOnPageBeforeUnload
+        https://bugs.webkit.org/show_bug.cgi?id=187418
+        <rdar://problem/41909520>
+
+        Reviewed by Timothy Hatcher.
+
+        Per the W3C specification, “User prompts that are spawned from beforeunload event handlers,
+        are dismissed implicitly upon navigation or close window, regardless of the defined user prompt handler.”
+
+        This behavior differs from legacy Selenium behavior where (as in the test) it's expected that
+        a test can accept or dismiss a beforeunload alert manually.
+
+        Prior to this patch, beforeunload alerts hang because Safari uses a nested modal run loop, which does
+        not process incoming Automation messages, so there was no way for the test to manually dismiss
+        the alert.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        Don't show beforeunload alerts for pages being controlled by automation.
+
+
 2018-07-06  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: contextConnection under WebCore::SWServer::terminateWorkerInternal
