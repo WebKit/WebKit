@@ -181,6 +181,7 @@
 
 #if PLATFORM(IOS)
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
+static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 #endif
 
 #if PLATFORM(MAC)
@@ -356,6 +357,10 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     Vector<BlockPtr<void ()>> _visibleContentRectUpdateCallbacks;
 
     _WKDragInteractionPolicy _dragInteractionPolicy;
+
+    // For release-logging for <rdar://problem/39281269>.
+    MonotonicTime _timeOfRequestForVisibleContentRectUpdate;
+    MonotonicTime _timeOfLastVisibleContentRectUpdate;
 #endif
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -726,6 +731,9 @@ static void validate(WKWebViewConfiguration *configuration)
 
 #if PLATFORM(IOS)
     _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
+
+    _timeOfRequestForVisibleContentRectUpdate = MonotonicTime::now();
+    _timeOfLastVisibleContentRectUpdate = MonotonicTime::now();
 #if PLATFORM(WATCHOS)
     _allowsViewportShrinkToFit = YES;
 #else
@@ -1692,6 +1700,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _scrollViewBackgroundColor = WebCore::Color();
     _delayUpdateVisibleContentRects = NO;
     _hadDelayedUpdateVisibleContentRects = NO;
+    _currentlyAdjustingScrollViewInsetsForKeyboard = NO;
     _lastSentViewLayoutSize = std::nullopt;
     _lastSentMaximumUnobscuredSize = std::nullopt;
     _lastSentDeviceOrientation = std::nullopt;
@@ -2711,21 +2720,37 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     auto retainedSelf = retainPtr(self);
     [CATransaction addCommitHandler:[retainedSelf] {
         WKWebView *webView = retainedSelf.get();
-        if (![webView _isValid])
+        if (![webView _isValid]) {
+            RELEASE_LOG_IF(webView._page && webView._page->isAlwaysOnLoggingAllowed(), ViewState, "In CATransaction preCommitHandler, WKWebView %p is invalid", webView);
             return;
-        [webView _updateVisibleContentRects];
+        }
+
+        @try {
+            [webView _updateVisibleContentRects];
+        } @catch (NSException *exception) {
+            RELEASE_LOG_IF(webView._page && webView._page->isAlwaysOnLoggingAllowed(), ViewState, "In CATransaction preCommitHandler, -[WKWebView %p _updateVisibleContentRects] threw an exception", webView);
+        }
         webView->_hasScheduledVisibleRectUpdate = NO;
     } forPhase:kCATransactionPhasePreCommit];
 }
 
 - (void)_scheduleVisibleContentRectUpdateAfterScrollInView:(UIScrollView *)scrollView
 {
+    RELEASE_ASSERT(isMainThread());
+
     _visibleContentRectUpdateScheduledFromScrollViewInStableState = [self _scrollViewIsInStableState:scrollView];
 
-    if (_hasScheduledVisibleRectUpdate)
+    if (_hasScheduledVisibleRectUpdate) {
+        auto timeNow = MonotonicTime::now();
+        if ((timeNow - _timeOfRequestForVisibleContentRectUpdate) > delayBeforeNoVisibleContentsRectsLogging) {
+            RELEASE_LOG_IF_ALLOWED("-[WKWebView %p _scheduleVisibleContentRectUpdateAfterScrollInView]: _hasScheduledVisibleRectUpdate is true but haven't updated visible content rects for %.2fs (last update was %.2fs ago)",
+                self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value(), (timeNow - _timeOfLastVisibleContentRectUpdate).value());
+        }
         return;
+    }
 
     _hasScheduledVisibleRectUpdate = YES;
+    _timeOfRequestForVisibleContentRectUpdate = MonotonicTime::now();
 
     CATransactionPhase transactionPhase = [CATransaction currentPhase];
     if (transactionPhase == kCATransactionPhaseNull || transactionPhase == kCATransactionPhasePreLayout) {
@@ -2786,19 +2811,24 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     if (![self usesStandardContentView]) {
         [_passwordView setFrame:self.bounds];
         [_customContentView web_computedContentInsetDidChange];
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] - usesStandardContentView is NO, bailing", self);
         return;
     }
 
     if (_delayUpdateVisibleContentRects) {
         _hadDelayedUpdateVisibleContentRects = YES;
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] - _delayUpdateVisibleContentRects is YES, bailing", self);
         return;
     }
 
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing
         || (_needsResetViewStateAfterCommitLoadForMainFrame && ![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
         || [_scrollView isZoomBouncing]
-        || _currentlyAdjustingScrollViewInsetsForKeyboard)
+        || _currentlyAdjustingScrollViewInsetsForKeyboard) {
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] - scroll view state is non-stable, bailing (_dynamicViewportUpdateMode %d, _needsResetViewStateAfterCommitLoadForMainFrame %d, sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, _currentlyAdjustingScrollViewInsetsForKeyboard %d)",
+            self, _dynamicViewportUpdateMode, _needsResetViewStateAfterCommitLoadForMainFrame, [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _currentlyAdjustingScrollViewInsetsForKeyboard);
         return;
+    }
 
     CGRect visibleRectInContentCoordinates = [self _visibleContentRect];
 
@@ -2844,6 +2874,12 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         auto callback = _visibleContentRectUpdateCallbacks.takeLast();
         callback();
     }
+    
+    auto timeNow = MonotonicTime::now();
+    if ((timeNow - _timeOfRequestForVisibleContentRectUpdate) > delayBeforeNoVisibleContentsRectsLogging)
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] finally ran %.2fs after begin scheduled", self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value());
+
+    _timeOfLastVisibleContentRectUpdate = timeNow;
 }
 
 - (void)_didStartProvisionalLoadForMainFrame

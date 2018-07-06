@@ -1,3 +1,30 @@
+2018-07-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Address two possible causes of missing tiles in iOS Safari, and add logging to gather more data about other possible causes
+        https://bugs.webkit.org/show_bug.cgi?id=187376
+        rdar://problem/40941118
+
+        Reviewed by Tim Horton.
+        
+        We have continual reports of users experiencing missing tiles in MobileSafari, where loading a page
+        shows the tiles at the top, but we don't render new tiles as the user scrolls down. This is consistent
+        with failing to dispatch visible content rect updates via -[WKWebView _updateVisibleContentRects].
+        
+        This patch addresses two possible (but unlikely) causes. First, it resets _currentlyAdjustingScrollViewInsetsForKeyboard
+        after a web process crash. Second, it catches exceptions thrown by [webView _updateVisibleContentRects]
+        and resets _hasScheduledVisibleRectUpdate.
+        
+        This patch also adds release logging that fires if over 1s has elapsed between scheduling
+        a visible content rect update and trying to re-schedule, and logging for all reasons that
+        -_updateVisibleContentRects returns early.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _addUpdateVisibleContentRectPreCommitHandler]):
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+        (-[WKWebView _updateVisibleContentRects]):
+
 2018-07-05  Olivia Barnett  <obarnett@apple.com>
 
         iPad: Scrolling with hardware keyboard while SELECT popover is visible scrolls the page, detaches popover
