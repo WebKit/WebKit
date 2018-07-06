@@ -1,3 +1,12 @@
+2018-07-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html on debug.
+        https://bugs.webkit.org/show_bug.cgi?id=187093
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2018-07-06  Brady Eidson  <beidson@apple.com>
 
         This test is flaky. This unreviewed patch is my attempt to make it less so.

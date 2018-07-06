@@ -818,7 +818,7 @@ imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnly
 imported/w3c/web-platform-tests/infrastructure/assumptions/min-font-size.html [ ImageOnlyFailure ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/infrastructure/reftest-wait.html [ ImageOnlyFailure ] # reftest-wait not supported yet.
 webkit.org/b/187039 imported/w3c/web-platform-tests/infrastructure/testdriver [ Skip ] # testdriver not supported yet.
-webkit.org/b/187093 imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html [ Pass Crash ]
+webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.html [ Skip ] # non deterministic URL in text dump
 
 # Imported W3C canvas failed tests
