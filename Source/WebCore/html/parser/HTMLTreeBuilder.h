@@ -66,7 +66,7 @@ public:
     RefPtr<ScriptElement> takeScriptToProcess(TextPosition& scriptStartPosition);
 
     std::unique_ptr<CustomElementConstructionData> takeCustomElementConstructionData() { return WTFMove(m_customElementToConstruct); }
-    void didCreateCustomOrCallbackElement(Ref<Element>&&, CustomElementConstructionData&);
+    void didCreateCustomOrFallbackElement(Ref<Element>&&, CustomElementConstructionData&);
 
     // Done, close any open tags, etc.
     void finished();

@@ -873,7 +873,7 @@ inline void HTMLTreeBuilder::insertGenericHTMLElement(AtomicHTMLToken&& token)
     m_customElementToConstruct = m_tree.insertHTMLElementOrFindCustomElementInterface(WTFMove(token));
 }
 
-void HTMLTreeBuilder::didCreateCustomOrCallbackElement(Ref<Element>&& element, CustomElementConstructionData& data)
+void HTMLTreeBuilder::didCreateCustomOrFallbackElement(Ref<Element>&& element, CustomElementConstructionData& data)
 {
     m_tree.insertCustomElement(WTFMove(element), data.name, WTFMove(data.attributes));
 }
