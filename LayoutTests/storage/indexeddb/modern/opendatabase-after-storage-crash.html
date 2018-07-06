@@ -11,11 +11,12 @@ function continueTest()
 {
 	var request = window.indexedDB.open(dbname, 2);
 	request.onupgradeneeded = function(e) {
-		document.body.innerHTML = "openDatabase call after storage process termination should not have succeeded";
+		document.body.innerHTML = "openDatabase call after storage process termination should not have resulted in upgradeneeded";
 		if (window.testRunner)
 			testRunner.notifyDone();
 
 	}
+	
 	request.onerror = function(e) {
 		// Good, we received an expected error.
 		// Now reload to see if a new document connects successfully
@@ -23,10 +24,17 @@ function continueTest()
 			document.body.innerHTML = "Should not have reached this code twice!";
 			if (window.testRunner)
 				testRunner.notifyDone();
+			return;
 		}
 		
 		sessionStorage[location.href] = "Made it";
 		location.reload();
+	}
+
+	request.onsuccess = function(e) {
+		document.body.innerHTML = "Unexpected success during the second database open after document load. " + sessionStorage[location.href];
+		if (window.testRunner)
+			testRunner.notifyDone();
 	}
 }
 
@@ -43,18 +51,25 @@ request.onupgradeneeded = function(e) {
 	
 	sessionStorage.finishedFirstOpen = true;
 	
-	if (window.testRunner) {
+	if (window.testRunner)
 		testRunner.terminateStorageProcess();
-		// One spin of the runloop is *ALMOST* always enough delay here.
-		// Padding it makes this reliable.
-		setTimeout(continueTest, 10);
+
+	// Set an error handler on the database connection so once the storage process terminates we know to continue the test
+	e.target.result.onerror = function(e) {
+		setTimeout(continueTest, 0);
 	}
 }
 
 request.onerror = function(e) {
 	document.body.innerHTML = "Unexpected error during the first database open on document load. " + sessionStorage[location.href];
 	if (window.testRunner)
-		testRunner.notifyDone();	
+		testRunner.notifyDone();
+}
+
+request.onsuccess = function(e) {
+	document.body.innerHTML = "Unexpected success during the first database open on document load. " + sessionStorage[location.href];
+	if (window.testRunner)
+		testRunner.notifyDone();
 }
 
 </script>
