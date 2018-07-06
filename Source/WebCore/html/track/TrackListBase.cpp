@@ -180,14 +180,23 @@ bool TrackListBase::canSuspendForDocumentSuspension() const
     return !m_asyncEventQueue.hasPendingEvents();
 }
 
-void TrackListBase::suspend(ReasonForSuspension)
+void TrackListBase::suspend(ReasonForSuspension reason)
 {
-    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+    switch (reason) {
+    case ReasonForSuspension::PageCache:
+    case ReasonForSuspension::PageWillBeSuspended:
+        m_asyncEventQueue.suspend();
+        break;
+    case ReasonForSuspension::JavaScriptDebuggerPaused:
+    case ReasonForSuspension::WillDeferLoading:
+        // Do nothing, we don't pause media playback in these cases.
+        break;
+    }
 }
 
 void TrackListBase::resume()
 {
-    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+    m_asyncEventQueue.resume();
 }
 
 void TrackListBase::stop()

@@ -458,14 +458,23 @@ bool SourceBuffer::hasPendingActivity() const
     return m_source || m_asyncEventQueue.hasPendingEvents();
 }
 
-void SourceBuffer::suspend(ReasonForSuspension)
+void SourceBuffer::suspend(ReasonForSuspension reason)
 {
-    ASSERT(!hasPendingActivity());
+    switch (reason) {
+    case ReasonForSuspension::PageCache:
+    case ReasonForSuspension::PageWillBeSuspended:
+        m_asyncEventQueue.suspend();
+        break;
+    case ReasonForSuspension::JavaScriptDebuggerPaused:
+    case ReasonForSuspension::WillDeferLoading:
+        // Do nothing, we don't pause media playback in these cases.
+        break;
+    }
 }
 
 void SourceBuffer::resume()
 {
-    ASSERT(!hasPendingActivity());
+    m_asyncEventQueue.resume();
 }
 
 void SourceBuffer::stop()

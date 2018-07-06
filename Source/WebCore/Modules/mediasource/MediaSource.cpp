@@ -935,14 +935,23 @@ bool MediaSource::hasPendingActivity() const
         || ActiveDOMObject::hasPendingActivity();
 }
 
-void MediaSource::suspend(ReasonForSuspension)
+void MediaSource::suspend(ReasonForSuspension reason)
 {
-    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+    switch (reason) {
+    case ReasonForSuspension::PageCache:
+    case ReasonForSuspension::PageWillBeSuspended:
+        m_asyncEventQueue.suspend();
+        break;
+    case ReasonForSuspension::JavaScriptDebuggerPaused:
+    case ReasonForSuspension::WillDeferLoading:
+        // Do nothing, we don't pause media playback in these cases.
+        break;
+    }
 }
 
 void MediaSource::resume()
 {
-    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+    m_asyncEventQueue.resume();
 }
 
 void MediaSource::stop()

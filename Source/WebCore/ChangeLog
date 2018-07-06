@@ -1,3 +1,28 @@
+2018-07-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r233496): macOS Sierra hits debug assertions in TrackListBase::suspend
+        https://bugs.webkit.org/show_bug.cgi?id=187378
+        <rdar://problem/41878885>
+
+        Reviewed by Eric Carlson.
+
+        These assertions were wrong since inline debugger, alert, etc... can suspend active DOM objects without
+        calling canSuspendForDocumentSuspension. Fixed the bug by removing the assertion and instead suspending
+        and resuming the generic event queue.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::suspend):
+        (WebCore::MediaSource::resume):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::suspend):
+        (WebCore::SourceBuffer::resume):
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::suspend):
+        (WebCore::SourceBufferList::resume):
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::suspend):
+        (WebCore::TrackListBase::resume):
+
 2018-07-05  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r230843): Flash doesn't work; Produces blue box on page

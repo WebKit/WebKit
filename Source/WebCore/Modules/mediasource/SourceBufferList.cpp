@@ -103,14 +103,23 @@ bool SourceBufferList::canSuspendForDocumentSuspension() const
     return !m_asyncEventQueue.hasPendingEvents();
 }
 
-void SourceBufferList::suspend(ReasonForSuspension)
+void SourceBufferList::suspend(ReasonForSuspension reason)
 {
-    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+    switch (reason) {
+    case ReasonForSuspension::PageCache:
+    case ReasonForSuspension::PageWillBeSuspended:
+        m_asyncEventQueue.suspend();
+        break;
+    case ReasonForSuspension::JavaScriptDebuggerPaused:
+    case ReasonForSuspension::WillDeferLoading:
+        // Do nothing, we don't pause media playback in these cases.
+        break;
+    }
 }
 
 void SourceBufferList::resume()
 {
-    ASSERT(!m_asyncEventQueue.hasPendingEvents());
+    m_asyncEventQueue.resume();
 }
 
 void SourceBufferList::stop()
