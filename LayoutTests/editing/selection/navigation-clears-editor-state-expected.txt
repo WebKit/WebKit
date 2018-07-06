@@ -3,7 +3,7 @@ This tests navigating away from a document after setting a selection deletes the
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS freed more than 60 documents
+PASS freed more than 15% of documents
 PASS successfullyParsed is true
 
 TEST COMPLETE

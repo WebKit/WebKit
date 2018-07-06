@@ -59,10 +59,10 @@ async function runTest()
             GCController.collect();
             let after = internals.numberOfLiveDocuments();
             let delta = before - after;
-            if (delta > 0.3 * count)
-                debug("PASS freed more than 60 documents");
+            if (delta > 0.15 * count)
+                debug("PASS freed more than 15% of documents");
             else
-                debug("FAIL freed fewer than 60 documents");
+                debug("FAIL freed less than 15% of documents");
             finishJSTest();                
         };
     }
