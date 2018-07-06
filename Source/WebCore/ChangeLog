@@ -1,3 +1,14 @@
+2018-07-06  Youenn Fablet  <youenn@apple.com>
+
+        Make RealtimeOutgoingVideoSource use DestructionThread::Main
+        https://bugs.webkit.org/show_bug.cgi?id=187402
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+
 2018-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make HTMLMediaElement::remove*Track take a Ref<>&&

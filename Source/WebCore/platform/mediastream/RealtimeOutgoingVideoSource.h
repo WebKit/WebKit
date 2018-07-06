@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-class RealtimeOutgoingVideoSource : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource>, public webrtc::VideoTrackSourceInterface, private MediaStreamTrackPrivate::Observer {
+class RealtimeOutgoingVideoSource : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource, WTF::DestructionThread::Main>, public webrtc::VideoTrackSourceInterface, private MediaStreamTrackPrivate::Observer {
 public:
     static Ref<RealtimeOutgoingVideoSource> create(Ref<MediaStreamTrackPrivate>&& videoSource);
     ~RealtimeOutgoingVideoSource() { stop(); }
@@ -54,10 +54,9 @@ public:
     void AddRef() const final { ref(); }
     rtc::RefCountReleaseStatus Release() const final
     {
-        callOnMainThread([this] {
-            deref();
-        });
-        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
+        auto result = hasOneRef() ? rtc::RefCountReleaseStatus::kDroppedLastRef : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+        deref();
+        return result;
     }
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
