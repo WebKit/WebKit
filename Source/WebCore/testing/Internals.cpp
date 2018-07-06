@@ -119,6 +119,7 @@
 #include "PathUtilities.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformStrategies.h"
+#include "PluginData.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -4635,6 +4636,14 @@ void Internals::setUseSystemAppearance(bool value)
     if (!contextDocument() || !contextDocument()->page())
         return;
     contextDocument()->page()->setUseSystemAppearance(value);
+}
+
+size_t Internals::pluginCount()
+{
+    if (!contextDocument() || !contextDocument()->page())
+        return 0;
+
+    return contextDocument()->page()->pluginData().webVisiblePlugins().size();
 }
 
 } // namespace WebCore

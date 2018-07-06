@@ -111,6 +111,7 @@ editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
 # Plug-in blocking callback doesn't exist in WebKit1.
 plugins/unavailable-plugin-indicator-obscurity.html
+http/tests/plugins/plugin-allow-then-reload.html [ Skip ]
 
 http/tests/plugins/nounsupported-plugin.html [ Skip ]
 http/tests/plugins/supported-plugin-all-origin-visibility.html [ Skip ]

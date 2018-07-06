@@ -1,0 +1,47 @@
+<html>
+<body>
+<script>
+function doTest()
+{
+    if (!window.testRunner || !window.internals) {
+        document.body.innerHTML = "FAIL: requires internals API";
+        return;
+    }
+    if (!window.localStorage.step) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+
+        window.localStorage.step = 1;
+        window.localStorage.step0Value = window.internals.pluginCount();
+
+        testRunner.setBlockAllPlugins(true);
+
+        window.location.reload();
+        return;
+    }
+    if (window.localStorage.step == 1) {
+        window.localStorage.step = 2;
+        window.localStorage.step1Value = window.internals.pluginCount();
+
+        testRunner.setBlockAllPlugins(false);
+
+        window.location.reload();
+        return;
+    }
+    window.localStorage.step2Value = window.internals.pluginCount();
+    var test1 = window.localStorage.step0Value > window.localStorage.step1Value;
+    var test2 = window.localStorage.step2Value > window.localStorage.step1Value;
+
+    var message = "number of plugins decreased after blocking: " + (test1 ? "PASS" : "FAIL");
+    message += "<br>";
+    message += "number of plugins increased after allowing: " + (test2 ? "PASS" : "FAIL");
+    message += "<br>";
+    message += test1 && test2 ? "PASS" : "FAIL";
+    document.body.innerHTML = message;
+
+    testRunner.notifyDone();
+}
+doTest();
+</script>
+</body>
+</html>

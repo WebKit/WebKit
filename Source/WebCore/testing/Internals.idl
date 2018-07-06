@@ -654,4 +654,6 @@ enum EventThrottlingBehavior {
     void reloadWithoutContentExtensions();
 
     void setUseSystemAppearance(boolean value);
+
+    unsigned long pluginCount();
 };

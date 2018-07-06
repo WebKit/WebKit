@@ -717,6 +717,8 @@ public:
 
     void setUseSystemAppearance(bool);
 
+    size_t pluginCount();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

@@ -80,11 +80,14 @@ void WebPluginInfoProvider::setPluginLoadClientPolicy(WebCore::PluginLoadClientP
     versionsToPolicies.set(versionStringToSet, clientPolicy);
     policiesByIdentifier.set(bundleIdentifierToSet, versionsToPolicies);
     m_hostsToPluginIdentifierData.set(hostToSet, policiesByIdentifier);
+
+    clearPagesPluginData();
 }
 
 void WebPluginInfoProvider::clearPluginClientPolicies()
 {
     m_hostsToPluginIdentifierData.clear();
+    clearPagesPluginData();
 }
 #endif
 

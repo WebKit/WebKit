@@ -102,7 +102,7 @@ public:
     static Ref<PluginData> create(Page& page) { return adoptRef(*new PluginData(page)); }
 
     const Vector<PluginInfo>& plugins() const { return m_plugins; }
-    const Vector<PluginInfo>& webVisiblePlugins() const;
+    WEBCORE_EXPORT const Vector<PluginInfo>& webVisiblePlugins() const;
     Vector<PluginInfo> publiclyVisiblePlugins() const;
     WEBCORE_EXPORT void getWebVisibleMimesAndPluginIndices(Vector<MimeClassInfo>&, Vector<size_t>&) const;
 

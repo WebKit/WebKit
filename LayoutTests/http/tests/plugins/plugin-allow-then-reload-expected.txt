@@ -1,0 +1,3 @@
+number of plugins decreased after blocking: PASS
+number of plugins increased after allowing: PASS
+PASS
