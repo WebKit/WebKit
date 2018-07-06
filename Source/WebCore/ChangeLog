@@ -1,3 +1,19 @@
+2018-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make HTMLMediaElement::remove*Track take a Ref<>&&
+        https://bugs.webkit.org/show_bug.cgi?id=187407
+
+        Reviewed by Zalan Bujtas.
+
+        Make these functions take Ref<>&& since they can delete track objects.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removeAudioTrack):
+        (WebCore::HTMLMediaElement::removeTextTrack):
+        (WebCore::HTMLMediaElement::removeVideoTrack):
+        (WebCore::HTMLMediaElement::forgetResourceSpecificTracks):
+        * html/HTMLMediaElement.h:
+
 2018-07-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at interfaces/KeyframeEffect/processing-a-keyframes-argument-002.html pass reliably

@@ -4046,27 +4046,27 @@ void HTMLMediaElement::addVideoTrack(Ref<VideoTrack>&& track)
     videoTracks().append(WTFMove(track));
 }
 
-void HTMLMediaElement::removeAudioTrack(AudioTrack& track)
+void HTMLMediaElement::removeAudioTrack(Ref<AudioTrack>&& track)
 {
-    track.clearClient();
-    m_audioTracks->remove(track);
+    track->clearClient();
+    m_audioTracks->remove(track.get());
 }
 
-void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
+void HTMLMediaElement::removeTextTrack(Ref<TextTrack>&& track, bool scheduleEvent)
 {
     TrackDisplayUpdateScope scope { *this };
-    if (auto cues = makeRefPtr(track.cues()))
+    if (auto cues = makeRefPtr(track->cues()))
         textTrackRemoveCues(track, *cues);
-    track.clearClient();
+    track->clearClient();
     if (m_textTracks)
         m_textTracks->remove(track, scheduleEvent);
 
     closeCaptionTracksChanged();
 }
 
-void HTMLMediaElement::removeVideoTrack(VideoTrack& track)
+void HTMLMediaElement::removeVideoTrack(Ref<VideoTrack>&& track)
 {
-    track.clearClient();
+    track->clearClient();
     m_videoTracks->remove(track);
 }
 
@@ -4078,9 +4078,9 @@ void HTMLMediaElement::forgetResourceSpecificTracks()
     if (m_textTracks) {
         TrackDisplayUpdateScope scope { *this };
         for (int i = m_textTracks->length() - 1; i >= 0; --i) {
-            auto& track = *m_textTracks->item(i);
-            if (track.trackType() == TextTrack::InBand)
-                removeTextTrack(track, false);
+            auto track = makeRef(*m_textTracks->item(i));
+            if (track->trackType() == TextTrack::InBand)
+                removeTextTrack(WTFMove(track), false);
         }
     }
 
