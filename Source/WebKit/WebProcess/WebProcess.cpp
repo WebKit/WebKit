@@ -1179,14 +1179,26 @@ void WebProcess::webToStorageProcessConnectionClosed(WebToStorageProcessConnecti
     ASSERT(m_webToStorageProcessConnection);
     ASSERT(m_webToStorageProcessConnection == connection);
 
-    m_webToStorageProcessConnection = nullptr;
+#if ENABLE(INDEXED_DATABASE)
+    for (auto& page : m_pageMap.values()) {
+        auto idbConnection = page->corePage()->optionalIDBConnection();
+        if (!idbConnection)
+            continue;
 
+        if (connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())) {
+            ASSERT(idbConnection == &connection->existingIDBConnectionToServerForIdentifier(idbConnection->identifier())->coreConnectionToServer());
+            page->corePage()->clearIDBConnection();
+        }
+    }
+#endif
 #if ENABLE(SERVICE_WORKER)
     if (SWContextManager::singleton().connection()) {
         RELEASE_LOG(ServiceWorker, "Service worker process is exiting because its storage process is gone");
         _exit(EXIT_SUCCESS);
     }
 #endif
+
+    m_webToStorageProcessConnection = nullptr;
 }
 
 WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection(PAL::SessionID initialSessionID)

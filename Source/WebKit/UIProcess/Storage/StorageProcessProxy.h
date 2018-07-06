@@ -58,6 +58,8 @@ public:
 
     void getStorageProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply&&);
 
+    void terminateForTesting();
+
 private:
     StorageProcessProxy(WebProcessPool&);
 

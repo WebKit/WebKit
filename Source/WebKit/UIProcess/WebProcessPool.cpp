@@ -1602,12 +1602,12 @@ void WebProcessPool::clearCachedCredentials()
         m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(), 0);
 }
 
-void WebProcessPool::terminateStorageProcess()
+void WebProcessPool::terminateStorageProcessForTesting()
 {
     if (!m_storageProcess)
         return;
 
-    m_storageProcess->terminate();
+    m_storageProcess->terminateForTesting();
     m_storageProcess = nullptr;
 }
 

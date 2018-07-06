@@ -606,6 +606,8 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionToServer& idbConnection();
+    WEBCORE_EXPORT IDBClient::IDBConnectionToServer* optionalIDBConnection();
+    WEBCORE_EXPORT void clearIDBConnection();
 #endif
 
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
@@ -821,7 +823,7 @@ private:
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    RefPtr<IDBClient::IDBConnectionToServer> m_idbIDBConnectionToServer;
+    RefPtr<IDBClient::IDBConnectionToServer> m_idbConnectionToServer;
 #endif
 
     HashSet<String> m_seenPlugins;

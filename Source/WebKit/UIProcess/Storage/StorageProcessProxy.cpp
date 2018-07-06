@@ -65,6 +65,24 @@ StorageProcessProxy::~StorageProcessProxy()
     ASSERT(m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty());
 }
 
+void StorageProcessProxy::terminateForTesting()
+{
+    for (auto& callback : m_pendingFetchWebsiteDataCallbacks.values())
+        callback({ });
+
+    for (auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())
+        callback();
+
+    for (auto& callback : m_pendingDeleteWebsiteDataForOriginsCallbacks.values())
+        callback();
+    
+    m_pendingFetchWebsiteDataCallbacks.clear();
+    m_pendingDeleteWebsiteDataCallbacks.clear();
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.clear();
+    
+    terminate();
+}
+
 void StorageProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::ProcessType::Storage;

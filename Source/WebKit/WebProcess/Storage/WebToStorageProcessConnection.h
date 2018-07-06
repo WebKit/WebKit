@@ -51,6 +51,7 @@ public:
     IPC::Connection& connection() { return m_connection.get(); }
 
 #if ENABLE(INDEXED_DATABASE)
+    WebIDBConnectionToServer* existingIDBConnectionToServerForIdentifier(uint64_t identifier) { return m_webIDBConnectionsByIdentifier.get(identifier); };
     WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
 #endif
 #if ENABLE(SERVICE_WORKER)

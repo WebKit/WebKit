@@ -2196,7 +2196,7 @@ void Page::setSessionID(PAL::SessionID sessionID)
 
 #if ENABLE(INDEXED_DATABASE)
     if (sessionID != m_sessionID)
-        m_idbIDBConnectionToServer = nullptr;
+        m_idbConnectionToServer = nullptr;
 #endif
 
     bool privateBrowsingStateChanged = (sessionID.isEphemeral() != m_sessionID.isEphemeral());
@@ -2320,10 +2320,20 @@ void Page::setAllowsMediaDocumentInlinePlayback(bool flag)
 #if ENABLE(INDEXED_DATABASE)
 IDBClient::IDBConnectionToServer& Page::idbConnection()
 {
-    if (!m_idbIDBConnectionToServer)
-        m_idbIDBConnectionToServer = &databaseProvider().idbConnectionToServerForSession(m_sessionID);
+    if (!m_idbConnectionToServer)
+        m_idbConnectionToServer = &databaseProvider().idbConnectionToServerForSession(m_sessionID);
     
-    return *m_idbIDBConnectionToServer;
+    return *m_idbConnectionToServer;
+}
+
+IDBClient::IDBConnectionToServer* Page::optionalIDBConnection()
+{
+    return m_idbConnectionToServer.get();
+}
+
+void Page::clearIDBConnection()
+{
+    m_idbConnectionToServer = nullptr;
 }
 #endif
 

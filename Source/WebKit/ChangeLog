@@ -1,3 +1,40 @@
+2018-07-05  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB operations in a Page fail after a StorageProcess crash.
+        <rdar://problem/41626526> and https://bugs.webkit.org/show_bug.cgi?id=187123
+
+        Reviewed by Alex Christensen.
+
+        When the connection to a StorageProcess goes away, explicitly tell all of the WebPages
+        in the WebProcess about it.
+        
+        This puts Documents/Workers in an error mode where requests fail instead of timeout.
+        It also clears the Page's connection so *new* Documents and Workers will get a fresh 
+        new connection that works.
+        
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateStorageProcess):
+        
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateStorageProcess]):
+        
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::terminateForTesting):
+        * UIProcess/Storage/StorageProcessProxy.h:
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::terminateStorageProcessForTesting):
+        (WebKit::WebProcessPool::terminateStorageProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didClose):
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+        (WebKit::WebToStorageProcessConnection::existingIDBConnectionToServerForIdentifier):
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webToStorageProcessConnectionClosed):
+
 2018-07-05  Simon Fraser  <simon.fraser@apple.com>
 
         Address two possible causes of missing tiles in iOS Safari, and add logging to gather more data about other possible causes

@@ -118,6 +118,7 @@ http/tests/resourceLoadStatistics/ [ Skip ]
 http/tests/storageAccess/ [ Skip ]
 http/tests/navigation/process-swap-window-open.html [ Skip ]
 http/tests/navigation/useragent-reload.php [ Skip ]
+storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]

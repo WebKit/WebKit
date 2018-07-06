@@ -272,7 +272,7 @@ public:
     void setAllowsAnySSLCertificateForWebSocket(bool);
 
     void clearCachedCredentials();
-    void terminateStorageProcess();
+    void terminateStorageProcessForTesting();
     void terminateNetworkProcess();
     void terminateServiceWorkerProcesses();
     void disableServiceWorkerProcessTerminationDelay();

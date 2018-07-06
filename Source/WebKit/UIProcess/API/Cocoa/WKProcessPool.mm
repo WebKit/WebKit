@@ -425,7 +425,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (void)_terminateStorageProcess
 {
-    _processPool->terminateStorageProcess();
+    _processPool->terminateStorageProcessForTesting();
 }
 
 - (void)_terminateNetworkProcess

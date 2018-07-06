@@ -41,6 +41,11 @@ public:
     {
         return IDBError { UnknownError, "Database deleted by request of the user"_s };
     }
+    
+    static IDBError serverConnectionLostError()
+    {
+        return IDBError { UnknownError, "Connection to Indexed Database server lost. Refresh the page to try again"_s };
+    }
 
     WEBCORE_EXPORT IDBError& operator=(const IDBError&);
 

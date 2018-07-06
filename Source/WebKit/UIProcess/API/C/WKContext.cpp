@@ -613,7 +613,7 @@ void WKContextTerminateServiceWorkerProcess(WKContextRef context)
 
 void WKContextTerminateStorageProcess(WKContextRef context)
 {
-    toImpl(context)->terminateStorageProcess();
+    toImpl(context)->terminateStorageProcessForTesting();
 }
 
 ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)

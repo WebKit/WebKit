@@ -1,0 +1,1 @@
+Successfully opened the database in a new document
