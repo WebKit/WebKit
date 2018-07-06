@@ -239,6 +239,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
     , m_sessionID(PAL::SessionID::defaultSessionID())
+    , m_playbackControlsManagerUpdateTimer(*this, &Page::playbackControlsManagerUpdateTimerFired)
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : std::make_unique<PerformanceMonitor>(*this))
     , m_lowPowerModeNotifier(std::make_unique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowModePowerChange(isLowPowerModeEnabled); }))
@@ -1485,6 +1486,20 @@ void Page::updateIsPlayingMedia(uint64_t sourceElementID)
     m_mediaState = state;
 
     chrome().client().isPlayingMediaDidChange(state, sourceElementID);
+}
+
+void Page::schedulePlaybackControlsManagerUpdate()
+{
+    if (!m_playbackControlsManagerUpdateTimer.isActive())
+        m_playbackControlsManagerUpdateTimer.startOneShot(0_s);
+}
+
+void Page::playbackControlsManagerUpdateTimerFired()
+{
+    if (auto bestMediaElement = HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager))
+        chrome().client().setUpPlaybackControlsManager(*bestMediaElement);
+    else
+        chrome().client().clearPlaybackControlsManager();
 }
 
 void Page::setMuted(MediaProducer::MutedStateFlags muted)

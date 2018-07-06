@@ -680,7 +680,6 @@ HTMLMediaElement::~HTMLMediaElement()
     m_seekTaskQueue.close();
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
-    m_updatePlaybackControlsManagerQueue.close();
     m_playbackControlsManagerBehaviorRestrictionsQueue.close();
     m_resourceSelectionTaskQueue.close();
     m_visibilityChangeTaskQueue.close();
@@ -696,7 +695,7 @@ HTMLMediaElement::~HTMLMediaElement()
     }
 
     m_mediaSession = nullptr;
-    updatePlaybackControlsManager();
+    schedulePlaybackControlsManagerUpdate();
 }
 
 static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
@@ -709,7 +708,7 @@ static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
     return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
-HTMLMediaElement* HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
+RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
 {
     auto allSessions = PlatformMediaSessionManager::sharedManager().currentSessionsMatching([] (const PlatformMediaSession& session) {
         return is<MediaElementSession>(session);
@@ -1140,7 +1139,7 @@ void HTMLMediaElement::notifyAboutPlaying(PlayPromiseVector&& pendingPlayPromise
     dispatchEvent(Event::create(eventNames().playingEvent, false, true));
     resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
 
-    scheduleUpdatePlaybackControlsManager();
+    schedulePlaybackControlsManagerUpdate();
 }
 
 bool HTMLMediaElement::hasEverNotifiedAboutPlaying() const
@@ -3744,7 +3743,7 @@ void HTMLMediaElement::setMuted(bool muted)
         m_mediaSession->canProduceAudioChanged();
     }
 
-    scheduleUpdatePlaybackControlsManager();
+    schedulePlaybackControlsManagerUpdate();
 }
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
@@ -4403,7 +4402,7 @@ void HTMLMediaElement::layoutSizeChanged()
 
     if (!m_receivedLayoutSizeChanged) {
         m_receivedLayoutSizeChanged = true;
-        scheduleUpdatePlaybackControlsManager();
+        schedulePlaybackControlsManagerUpdate();
     }
 
     // If the video is a candidate for main content, we should register it for viewport visibility callbacks
@@ -5329,7 +5328,7 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
     }
 
     if (shouldBePlaying) {
-        scheduleUpdatePlaybackControlsManager();
+        schedulePlaybackControlsManagerUpdate();
 
         setDisplayMode(Video);
         invalidateCachedTime();
@@ -5358,7 +5357,7 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
         startPlaybackProgressTimer();
         setPlaying(true);
     } else {
-        scheduleUpdatePlaybackControlsManager();
+        schedulePlaybackControlsManagerUpdate();
 
         if (!playerPaused)
             m_player->pause();
@@ -5522,7 +5521,7 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
         m_player->invalidate();
         m_player = nullptr;
     }
-    updatePlaybackControlsManager();
+    schedulePlaybackControlsManagerUpdate();
 
     stopPeriodicTimers();
     m_pendingActionTimer.stop();
@@ -5562,13 +5561,13 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 
     setPreparedToReturnVideoLayerToInline(true);
 
-    updatePlaybackControlsManager();
+    schedulePlaybackControlsManagerUpdate();
     setInActiveDocument(false);
 
     // Stop the playback without generating events
     setPlaying(false);
     setPausedInternal(true);
-    m_mediaSession->clientWillPausePlayback();
+    m_mediaSession->stopSession();
 
     setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::None);
 
@@ -5587,7 +5586,6 @@ void HTMLMediaElement::contextDestroyed()
     m_shadowDOMTaskQueue.close();
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
-    m_updatePlaybackControlsManagerQueue.close();
 #if ENABLE(ENCRYPTED_MEDIA)
     m_encryptedMediaQueue.close();
 #endif
@@ -5606,7 +5604,6 @@ void HTMLMediaElement::stop()
 
     m_asyncEventQueue.close();
     m_promiseTaskQueue.close();
-    m_updatePlaybackControlsManagerQueue.close();
     m_resourceSelectionTaskQueue.close();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
@@ -6553,7 +6550,7 @@ void HTMLMediaElement::createMediaPlayer()
 #endif
     m_player = MediaPlayer::create(*this);
     m_player->setShouldBufferData(m_shouldBufferData);
-    scheduleUpdatePlaybackControlsManager();
+    schedulePlaybackControlsManagerUpdate();
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode) {
@@ -7865,7 +7862,7 @@ void HTMLMediaElement::isVisibleInViewportChanged()
     m_visibilityChangeTaskQueue.enqueueTask([this] {
         m_mediaSession->isVisibleInViewportChanged();
         updateShouldAutoplay();
-        scheduleUpdatePlaybackControlsManager();
+        schedulePlaybackControlsManagerUpdate();
     });
 }
 
@@ -7908,23 +7905,12 @@ bool HTMLMediaElement::isVisibleInViewport() const
     return renderer && renderer->visibleInViewportState() == VisibleInViewportState::Yes;
 }
 
-void HTMLMediaElement::updatePlaybackControlsManager()
+void HTMLMediaElement::schedulePlaybackControlsManagerUpdate()
 {
     Page* page = document().page();
     if (!page)
         return;
-
-    // FIXME: Ensure that the renderer here should be up to date.
-    if (auto bestMediaElement = bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::ControlsManager))
-        page->chrome().client().setUpPlaybackControlsManager(*bestMediaElement);
-    else
-        page->chrome().client().clearPlaybackControlsManager();
-}
-
-void HTMLMediaElement::scheduleUpdatePlaybackControlsManager()
-{
-    if (!m_updatePlaybackControlsManagerQueue.hasPendingTasks())
-        m_updatePlaybackControlsManagerQueue.enqueueTask(std::bind(&HTMLMediaElement::updatePlaybackControlsManager, this));
+    page->schedulePlaybackControlsManagerUpdate();
 }
 
 void HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired()
@@ -7942,7 +7928,7 @@ void HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired()
             return;
 
         mediaElementSession->addBehaviorRestriction(MediaElementSession::RequirePlaybackToControlControlsManager);
-        protectedThis->scheduleUpdatePlaybackControlsManager();
+        protectedThis->schedulePlaybackControlsManagerUpdate();
     });
 }
 
@@ -7963,7 +7949,7 @@ void HTMLMediaElement::fullscreenModeChanged(VideoFullscreenMode mode)
 
     m_videoFullscreenMode = mode;
     visibilityStateChanged();
-    scheduleUpdatePlaybackControlsManager();
+    schedulePlaybackControlsManagerUpdate();
 }
 
 #if !RELEASE_LOG_DISABLED

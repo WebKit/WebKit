@@ -1,5 +1,48 @@
 2018-07-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Youtube video pages crash after a couple of minutes
+        https://bugs.webkit.org/show_bug.cgi?id=187316
+
+        Reviewed by Antti Koivisto.
+
+        The crash was caused by HTMLMediaElement::stopWithoutDestroyingMediaPlayer invoking updatePlaybackControlsManager,
+        which traverses all media players across different documents including the one in the main frame while its iframe
+        is getting removed (to update the Touch Bar's media control).
+
+        Fixed the bug by making this code async in both stopWithoutDestroyingMediaPlayer and ~HTMLMediaElement. To do this,
+        this patch moves the timer to update the playback controls manager from HTMLMediaElement to Page since scheduling
+        a timer owned by HTMLMediaElement in its destructor wouldn't work as the timer would get destructed immediately.
+
+        Also replaced the call to clientWillPausePlayback by a call to stopSession in stopWithoutDestroyingMediaPlayer
+        since the former also updates the layout synchronously via updateNowPlayingInfo; the latter function schedules
+        a timer via scheduleUpdateNowPlayingInfo instead.
+
+        Test: media/remove-video-best-media-element-in-main-frame-crash.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Call scheduleUpdatePlaybackControlsManager now that timer has been
+        moved to Page.
+        (WebCore::HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager): Made this return a RefPtr instead of
+        a raw pointer while we're at it.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Call scheduleUpdatePlaybackControlsManager.
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer): Ditto. Also invoke stopSession instead of
+        clientWillPausePlayback on MediaSession since clientWillPausePlayback will synchronously try to update the layout.
+        (WebCore::HTMLMediaElement::contextDestroyed):
+        (WebCore::HTMLMediaElement::stop):
+        (WebCore::HTMLMediaElement::schedulePlaybackControlsManagerUpdate): Renamed from scheduleUpdatePlaybackControlsManager.
+        (WebCore::HTMLMediaElement::updatePlaybackControlsManager): Moved to Page::playbackControlsManagerUpdateTimerFired.
+        * html/HTMLMediaElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::schedulePlaybackControlsManagerUpdate): Added.
+        (WebCore::Page::playbackControlsManagerUpdateTimerFired): Moved from HTMLMediaElement::updatePlaybackControlsManager.
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::bestMediaElementForShowingPlaybackControlsManager):
+        * testing/Internals.h:
+
+2018-07-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r233496): Crash in WebCore::VideoTrack::clearClient()
         https://bugs.webkit.org/show_bug.cgi?id=187377
 

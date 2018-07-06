@@ -704,7 +704,7 @@ public:
 
 #if ENABLE(VIDEO)
     using PlaybackControlsPurpose = MediaElementSession::PlaybackControlsPurpose;
-    HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose);
+    RefPtr<HTMLMediaElement> bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose);
 
     using MediaSessionState = PlatformMediaSession::State;
     MediaSessionState mediaSessionState(HTMLMediaElement&);
