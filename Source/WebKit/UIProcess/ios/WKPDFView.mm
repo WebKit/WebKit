@@ -32,10 +32,12 @@
 #import "FindClient.h"
 #import "PDFKitSPI.h"
 #import "WKActionSheetAssistant.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <WebCore/DataDetection.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
@@ -439,7 +441,12 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     positionInformation.url = url;
 
     _positionInformation = WTFMove(positionInformation);
-    [_actionSheetAssistant showLinkSheet];
+#if ENABLE(DATA_DETECTION)
+    if (WebCore::DataDetection::canBePresentedByDataDetectors(_positionInformation.url))
+        [_actionSheetAssistant showDataDetectorsSheet];
+    else
+#endif
+        [_actionSheetAssistant showLinkSheet];
 }
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller didLongPressURL:(NSURL *)url atLocation:(CGPoint)location withAnnotationRect:(CGRect)annotationRect
@@ -511,6 +518,19 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
         return nil;
 
     return page->uiClient().actionsForElement(element, WTFMove(defaultActions));
+}
+
+- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    auto webView = _webView.getAutoreleased();
+    if (!webView)
+        return nil;
+
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>(webView.UIDelegate);
+    if (![uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
+        return nil;
+
+    return [uiDelegate _dataDetectionContextForWebView:webView];
 }
 
 @end

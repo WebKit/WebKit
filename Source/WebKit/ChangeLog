@@ -1,3 +1,19 @@
+2018-07-06  Andy Estes  <aestes@apple.com>
+
+        [iOS] WKPDFView should show the Data Detectors sheet when long-pressing a URL that Data Detectors can handle
+        https://bugs.webkit.org/show_bug.cgi?id=187396
+        <rdar://problem/41786980>
+
+        Reviewed by Dan Bernstein.
+
+        If a URL can be presented by Data Detectors, show the Data Detectors sheet instead
+        of the link sheet. Also implement the optional WKActionSheetAssistantDelegate
+        method that asks the UI delegate for its data detection context.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _showActionSheetForURL:atLocation:withAnnotationRect:]):
+        (-[WKPDFView dataDetectionContextForActionSheetAssistant:]):
+
 2018-07-06  Chris Dumez  <cdumez@apple.com>
 
         WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler() should take in a CompletionHandler
