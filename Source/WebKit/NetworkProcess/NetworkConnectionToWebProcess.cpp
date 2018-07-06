@@ -88,6 +88,8 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 
 void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoader& loader)
 {
+    RELEASE_ASSERT(loader.identifier());
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(m_networkResourceLoaders.get(loader.identifier()) == &loader);
 
     m_networkResourceLoaders.remove(loader.identifier());
@@ -101,9 +103,13 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
+        RELEASE_ASSERT(RunLoop::isMain());
+        RELEASE_ASSERT(decoder.destinationID());
         auto loaderIterator = m_networkResourceLoaders.find(decoder.destinationID());
-        if (loaderIterator != m_networkResourceLoaders.end())
+        if (loaderIterator != m_networkResourceLoaders.end()) {
+            RELEASE_ASSERT(loaderIterator->value);
             loaderIterator->value->didReceiveNetworkResourceLoaderMessage(connection, decoder);
+        }
         return;
     }
 
@@ -238,6 +244,8 @@ void NetworkConnectionToWebProcess::endSuspension()
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters)
 {
     auto identifier = loadParameters.identifier;
+    RELEASE_ASSERT(identifier);
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_networkResourceLoaders.contains(identifier));
 
     auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this);
@@ -248,6 +256,8 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& reply)
 {
     auto identifier = loadParameters.identifier;
+    RELEASE_ASSERT(identifier);
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_networkResourceLoaders.contains(identifier));
 
     auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this, WTFMove(reply));
@@ -280,6 +290,9 @@ void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)
 
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)
 {
+    RELEASE_ASSERT(identifier);
+    RELEASE_ASSERT(RunLoop::isMain());
+
     RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);
 
     // It's possible we have no loader for this identifier if the NetworkProcess crashed and this was a respawned NetworkProcess.
@@ -299,6 +312,9 @@ void NetworkConnectionToWebProcess::pageLoadCompleted(uint64_t webPageID)
 
 void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier identifier, bool defers)
 {
+    RELEASE_ASSERT(identifier);
+    RELEASE_ASSERT(RunLoop::isMain());
+
     RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);
     if (!loader)
         return;
@@ -352,6 +368,8 @@ void NetworkConnectionToWebProcess::startDownload(PAL::SessionID sessionID, Down
 
 void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+
     auto& networkProcess = NetworkProcess::singleton();
     // In case a response is served from service worker, we do not have yet the ability to convert the load.
     if (!mainResourceLoadIdentifier || response.source() == ResourceResponse::Source::ServiceWorker) {

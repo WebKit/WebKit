@@ -73,11 +73,14 @@ IPC::Connection* WebResourceLoader::messageSenderConnection()
 
 uint64_t WebResourceLoader::messageSenderDestinationID()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(m_coreLoader->identifier());
     return m_coreLoader->identifier();
 }
 
 void WebResourceLoader::detachFromCoreLoader()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     m_coreLoader = nullptr;
 }
 

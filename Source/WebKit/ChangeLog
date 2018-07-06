@@ -1,3 +1,28 @@
+2018-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Add release assertions to try and catch a possible HashMap corruption in NetworkConnectionToWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=187417
+
+        Reviewed by Ryosuke Niwa.
+
+        Add assertions to make sure we:
+        - Always use NetworkConnectionToWebProcess::m_networkResourceLoaders from the main thread
+        - Never use a 0 identifier as key for NetworkConnectionToWebProcess::m_networkResourceLoaders
+
+        We see crashes (rdar://problem/39265927) that only seem to make sense if this HashMap was
+        somehow getting corrupted. Let's try and catch the most common reasons for HashMap corruption.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didCleanupResourceLoader):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::setDefersLoading):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::messageSenderDestinationID):
+
 2018-07-06  Brian Burg  <bburg@apple.com>
 
         WebDriver: hang in Selenium test alerts_tests.py::testShouldHandleAlertOnPageBeforeUnload
