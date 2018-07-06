@@ -1,3 +1,14 @@
+2018-07-06  David Fenton  <david_fenton@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=187372
+
+        Unreviewed test gardening.
+
+        Added [ Slow ] to the existing [ Pass Timeout ] expectation.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-07-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline accessibility/ios-simulator/strong-password-field.html after r233578.

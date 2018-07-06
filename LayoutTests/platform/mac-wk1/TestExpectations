@@ -428,7 +428,7 @@ webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-rese
 
 webkit.org/b/180554 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Skip ]
 
-webkit.org/b/187372 imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Pass Timeout ]
+webkit.org/b/187372 imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Pass Timeout Slow ]
 
 # Beacon is not supported on WK1.
 http/tests/blink/sendbeacon/ [ Skip ]
