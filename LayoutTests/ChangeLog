@@ -1,3 +1,11 @@
+2018-07-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline accessibility/ios-simulator/strong-password-field.html after r233578.
+
+        Unreviewed test gardening.
+
+        * accessibility/ios-simulator/strong-password-field-expected.txt:
+
 2018-07-06  David Fenton  <david_fenton@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker.html is flaky timeout.
