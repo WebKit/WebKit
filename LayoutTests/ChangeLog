@@ -1,3 +1,14 @@
+2018-07-06  Saam Barati  <sbarati@apple.com>
+
+        Layout Test editing/selection/navigation-clears-editor-state.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187389
+
+        Reviewed by Mark Lam.
+
+        * editing/selection/navigation-clears-editor-state.html:
+        Make the test's internal time out mechanism longer since
+        it's being hit on the bots.
+
 2018-07-06  Nan Wang  <n_wang@apple.com>
 
         AX: setValue on text controls should send out key events

@@ -72,7 +72,7 @@ if (!window.GCController || !window.internals) {
     debug('This test requires GCController and internals');
 } else {
     if (window.testRunner)
-        setTimeout(() => testRunner.notifyDone(), 5000);
+        setTimeout(() => testRunner.notifyDone(), 18000);
     // Clear out any lingering documents from the previous tests.
     GCController.collect();
     GCController.collect();
