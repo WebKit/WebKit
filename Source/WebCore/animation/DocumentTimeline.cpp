@@ -55,15 +55,18 @@ DocumentTimeline::DocumentTimeline(Document& document)
 {
 }
 
-DocumentTimeline::~DocumentTimeline()
-{
-}
+DocumentTimeline::~DocumentTimeline() = default;
 
 void DocumentTimeline::detachFromDocument()
 {
     m_invalidationTaskQueue.close();
     m_eventDispatchTaskQueue.close();
     m_animationScheduleTimer.stop();
+
+    auto& animationsToRemove = animations();
+    while (!animationsToRemove.isEmpty())
+        animationsToRemove.first()->remove();
+
     m_document = nullptr;
 }
 

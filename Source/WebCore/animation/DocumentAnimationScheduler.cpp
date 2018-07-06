@@ -75,6 +75,9 @@ void DocumentAnimationScheduler::displayRefreshFired()
     if (!m_document || !m_document->domWindow())
         return;
 
+    // This object could be deleted after scripts in the the requestAnimationFrame callbacks are executed.
+    auto protectedThis = makeRef(*this);
+
     m_isFiring = true;
     m_lastTimestamp = Seconds(m_document->domWindow()->nowTimestamp());
 

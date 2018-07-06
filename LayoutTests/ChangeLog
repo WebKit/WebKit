@@ -1,3 +1,15 @@
+2018-07-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Using a Web Animation leaks the Document
+        https://bugs.webkit.org/show_bug.cgi?id=187088
+        <rdar://problem/41392046>
+
+        Reviewed by Darin Adler.
+
+        * webanimations/leak-document-with-web-animation-expected.txt: Added.
+        * webanimations/leak-document-with-web-animation.html: Added.
+        * webanimations/resources/web-animation-leak-iframe.html: Added.
+
 2018-07-06  Saam Barati  <sbarati@apple.com>
 
         Layout Test editing/selection/navigation-clears-editor-state.html is flaky

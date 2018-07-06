@@ -45,7 +45,6 @@ public:
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
     void invalidateDOMEvents(Seconds elapsedTime = 0_s);
-    void prepareAnimationForRemoval() final;
 
     void setTimeline(RefPtr<AnimationTimeline>&&) final;
     void cancel() final;
@@ -59,6 +58,7 @@ protected:
 private:
     AnimationEffectReadOnly::Phase phaseWithoutEffect() const;
     void enqueueDOMEvent(const AtomicString&, Seconds);
+    void remove() final;
 
     Element& m_target;
     Ref<Animation> m_backingAnimation;

@@ -71,9 +71,12 @@ WebAnimation::~WebAnimation()
 {
 }
 
-void WebAnimation::prepareAnimationForRemoval()
+void WebAnimation::remove()
 {
+    // This object could be deleted after either clearing the effect or timeline relationship.
+    auto protectedThis = makeRef(*this);
     setEffectInternal(nullptr);
+    setTimelineInternal(nullptr);
 }
 
 void WebAnimation::suspendEffectInvalidation()
@@ -128,6 +131,9 @@ void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& newEffect)
     // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
     // while the effect was set via the API, the element still has a transition or animation set up and we must
     // not break the timeline-to-animation relationship.
+
+    // This object could be deleted after clearing the effect relationship.
+    auto protectedThis = makeRef(*this);
     setEffectInternal(WTFMove(newEffect), isDeclarativeAnimation());
 
     // 8. Run the procedure to update an animation’s finished state for animation with the did seek flag set to false,
@@ -139,9 +145,10 @@ void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& newEffect)
 
 void WebAnimation::setEffectInternal(RefPtr<AnimationEffectReadOnly>&& newEffect, bool doNotRemoveFromTimeline)
 {
-    auto oldEffect = m_effect;
+    if (m_effect == newEffect)
+        return;
 
-    m_effect = WTFMove(newEffect);
+    auto oldEffect = std::exchange(m_effect, WTFMove(newEffect));
 
     Element* previousTarget = nullptr;
     if (is<KeyframeEffectReadOnly>(oldEffect))
@@ -178,12 +185,6 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     if (m_startTime)
         setHoldTime(std::nullopt);
 
-    if (m_timeline)
-        m_timeline->removeAnimation(*this);
-
-    if (timeline)
-        timeline->addAnimation(*this);
-
     if (is<KeyframeEffectReadOnly>(m_effect)) {
         auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(m_effect.get());
         auto* target = keyframeEffect->target();
@@ -198,7 +199,9 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
         }
     }
 
-    m_timeline = WTFMove(timeline);
+    // This object could be deleted after clearing the timeline relationship.
+    auto protectedThis = makeRef(*this);
+    setTimelineInternal(WTFMove(timeline));
 
     setSuspended(is<DocumentTimeline>(m_timeline) && downcast<DocumentTimeline>(*m_timeline).animationsAreSuspended());
 
@@ -207,6 +210,20 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     // 5. Run the procedure to update an animation’s finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
+}
+
+void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
+{
+    if (m_timeline == timeline)
+        return;
+
+    if (m_timeline)
+        m_timeline->removeAnimation(*this);
+
+    m_timeline = WTFMove(timeline);
+
+    if (m_timeline)
+        m_timeline->addAnimation(*this);
 }
 
 void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTarget)

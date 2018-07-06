@@ -49,10 +49,10 @@ DeclarativeAnimation::~DeclarativeAnimation()
 {
 }
 
-void DeclarativeAnimation::prepareAnimationForRemoval()
+void DeclarativeAnimation::remove()
 {
-    WebAnimation::prepareAnimationForRemoval();
     m_eventQueue.close();
+    WebAnimation::remove();
 }
 
 void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation)
