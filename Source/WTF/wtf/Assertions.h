@@ -220,6 +220,12 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #define WTFBreakpointTrap() WTFCrash() // Not implemented.
 #endif
 
+#if COMPILER(MSVC)
+#define WTFBreakpointTrapUnderConstexprContext() __debugbreak()
+#else
+#define WTFBreakpointTrapUnderConstexprContext() __builtin_trap()
+#endif
+
 #ifndef CRASH
 
 #if defined(NDEBUG) && OS(DARWIN)
@@ -230,8 +236,13 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
     WTFBreakpointTrap(); \
     __builtin_unreachable(); \
 } while (0)
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() do { \
+    WTFBreakpointTrapUnderConstexprContext(); \
+    __builtin_unreachable(); \
+} while (0)
 #else
 #define CRASH() WTFCrash()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFCrash()
 #endif
 
 #endif // !defined(CRASH)
@@ -279,6 +290,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #if ASSERT_DISABLED
 
 #define ASSERT(assertion) ((void)0)
+#define ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) ((void)0)
 #define ASSERT_AT(assertion, file, line, function) ((void)0)
 #define ASSERT_NOT_REACHED() ((void)0)
 #define ASSERT_NOT_IMPLEMENTED_YET() ((void)0)
@@ -306,6 +318,13 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
     if (!(assertion)) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
         CRASH(); \
+    } \
+} while (0)
+
+#define ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) do { \
+    if (!(assertion)) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        CRASH_UNDER_CONSTEXPR_CONTEXT(); \
     } \
 } while (0)
 
