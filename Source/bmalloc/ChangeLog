@@ -1,3 +1,13 @@
+2018-07-05  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix (r233547): Disable IsoHeaps when Gigacage is off
+        <https://webkit.org/b/187160>
+
+        * bmalloc/PerThread.cpp: Add #if !HAVE_PTHREAD_MACHDEP_H/#endif
+        around variables only used when that macro is 0.  Include what
+        you use: Cache.h and Heap.h.
+        * bmalloc/PerThread.h: Include <memory> for std::once_flag.
+
 2018-07-05  Michael Saboff  <msaboff@apple.com>
 
         Disable IsoHeaps when Gigacage is off

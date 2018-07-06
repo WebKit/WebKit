@@ -26,9 +26,13 @@
 #include "PerThread.h"
 
 #include "BExport.h"
+#include "Cache.h"
+#include "Heap.h"
 
 namespace bmalloc {
-    
+
+#if !HAVE_PTHREAD_MACHDEP_H
+
 template<> BEXPORT bool PerThreadStorage<PerHeapKind<Cache>>::s_didInitialize = false;
 template<> BEXPORT pthread_key_t PerThreadStorage<PerHeapKind<Cache>>::s_key = 0;
 template<> BEXPORT std::once_flag PerThreadStorage<PerHeapKind<Cache>>::s_onceFlag = { };
@@ -36,5 +40,7 @@ template<> BEXPORT std::once_flag PerThreadStorage<PerHeapKind<Cache>>::s_onceFl
 template<> BEXPORT bool PerThreadStorage<PerHeapKind<Heap>>::s_didInitialize = false;
 template<> BEXPORT pthread_key_t PerThreadStorage<PerHeapKind<Heap>>::s_key = 0;
 template<> BEXPORT std::once_flag PerThreadStorage<PerHeapKind<Heap>>::s_onceFlag = { };
+
+#endif
 
 } // namespace bmalloc

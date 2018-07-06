@@ -30,6 +30,7 @@
 #include "BPlatform.h"
 #include "PerHeapKind.h"
 #include "VMAllocate.h"
+#include <memory>
 #include <mutex>
 #include <pthread.h>
 
