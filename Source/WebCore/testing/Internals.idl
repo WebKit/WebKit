@@ -62,8 +62,7 @@ enum AutoFillButtonType {
     "None",
     "Contacts",
     "Credentials",
-    "StrongPassword",
-    "StrongConfirmationPassword"
+    "StrongPassword"
 };
 
 enum UserInterfaceLayoutDirection {

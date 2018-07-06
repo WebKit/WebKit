@@ -22,12 +22,12 @@ else {
     evalAndLog("internals.setShowAutoFillButton(inputElement, 'StrongPassword')");
     shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "StrongPassword");
     shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Contacts");
-    evalAndLog("internals.setShowAutoFillButton(inputElement, 'StrongConfirmationPassword')");
-    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "StrongConfirmationPassword");
+    evalAndLog("internals.setShowAutoFillButton(inputElement, 'Credentials')");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "Credentials");
     shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "StrongPassword");
     evalAndLog("internals.setShowAutoFillButton(inputElement, 'None')");
     shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "None");
-    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "StrongConfirmationPassword");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Credentials");
 }
 </script>
 </body>

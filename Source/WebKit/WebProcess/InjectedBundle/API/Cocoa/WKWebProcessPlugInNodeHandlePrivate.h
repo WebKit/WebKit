@@ -31,7 +31,6 @@ typedef NS_ENUM(NSInteger, _WKAutoFillButtonType) {
     _WKAutoFillButtonTypeNone,
     _WKAutoFillButtonTypeCredentials,
     _WKAutoFillButtonTypeContacts,
-    _WKAutoFillButtonTypeStrongConfirmationPassword,
     _WKAutoFillButtonTypeStrongPassword,
 } WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 

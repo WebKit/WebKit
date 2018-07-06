@@ -1216,9 +1216,6 @@
 /* Label for the strong password auto fill button inside a text field. */
 "strong password auto fill" = "strong password auto fill";
 
-/* Label for the strong password confirmation auto fill button inside a text field. */
-"strong password confirmation auto fill" = "strong password confirmation auto fill";
-
 /* The suboptimal value description for a meter element. */
 "suboptimal value" = "suboptimal value";
 

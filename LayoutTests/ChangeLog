@@ -1,3 +1,44 @@
+2018-07-06  Daniel Bates  <dabates@apple.com>
+
+        Remove Strong Confirmation Password button
+        https://bugs.webkit.org/show_bug.cgi?id=187306
+        <rdar://problem/41795185>
+
+        Reviewed by Sam Weinig.
+
+        Remove support for the Strong Confirmation Password button because we never made use of it.
+
+        * accessibility/ios-simulator/strong-password-field-expected.txt:
+        * accessibility/ios-simulator/strong-password-field.html:
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-maxlength-changes-expected.html:
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-maxlength-changes.html:
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-minlength-changes-expected.html:
+        * fast/forms/auto-fill-button/auto-fill-strong-password-button-when-minlength-changes.html:
+        * fast/forms/auto-fill-button/hide-auto-fill-strong-password-button-when-form-is-reset-expected.html:
+        * fast/forms/auto-fill-button/hide-auto-fill-strong-password-button-when-form-is-reset.html:
+        * fast/forms/auto-fill-button/hide-auto-fill-strong-password-button-when-value-changes-expected.html:
+        * fast/forms/auto-fill-button/hide-auto-fill-strong-password-button-when-value-changes.html:
+        * fast/forms/auto-fill-button/hide-strong-password-when-field-type-changes-expected.html:
+        * fast/forms/auto-fill-button/hide-strong-password-when-field-type-changes.html:
+        * fast/forms/auto-fill-button/input-autofilled-disabled-strong-password-auto-fill-button-expected.html: Removed.
+        * fast/forms/auto-fill-button/input-autofilled-disabled-strong-password-auto-fill-button.html: Removed.
+        * fast/forms/auto-fill-button/input-autofilled-readonly-strong-password-auto-fill-button-expected.html: Removed.
+        * fast/forms/auto-fill-button/input-autofilled-readonly-strong-password-auto-fill-button.html: Removed.
+        * fast/forms/auto-fill-button/input-disabled-strong-password-and-strong-confirmation-password-auto-fill-buttons-expected.html:
+        * fast/forms/auto-fill-button/input-disabled-strong-password-and-strong-confirmation-password-auto-fill-buttons.html:
+        * fast/forms/auto-fill-button/input-readonly-strong-password-and-strong-confirmation-password-auto-fill-buttons-expected.html:
+        * fast/forms/auto-fill-button/input-readonly-strong-password-and-strong-confirmation-password-auto-fill-buttons.html:
+        * fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html: Removed.
+        * fast/forms/auto-fill-button/last-auto-fill-button-type-expected.txt:
+        * fast/forms/auto-fill-button/last-auto-fill-button-type.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt: Removed.
+        * platform/ios/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt: Removed.
+        * platform/mac/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * platform/win/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt: Removed.
+        * platform/wincairo/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt: Removed.
+
 2018-07-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Remove platform expectations for imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html

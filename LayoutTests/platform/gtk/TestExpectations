@@ -3350,7 +3350,6 @@ webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-dur
 webkit.org/b/180805 inspector/canvas/requestContent-bitmaprenderer.html [ Failure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
-webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Missing Failure ]
 
 webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Pass Crash ]
 

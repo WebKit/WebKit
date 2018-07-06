@@ -216,7 +216,6 @@ namespace WebCore {
     String AXAutoFillCredentialsLabel();
     String AXAutoFillContactsLabel();
     String AXAutoFillStrongPasswordLabel();
-    String AXAutoFillStrongConfirmationPasswordLabel();
     String autoFillStrongPasswordLabel();
 
     String missingPluginText();

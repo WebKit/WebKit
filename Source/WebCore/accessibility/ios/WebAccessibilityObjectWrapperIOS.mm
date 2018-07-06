@@ -1092,8 +1092,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!m_object->isPasswordField())
         return NO;
     
-    AutoFillButtonType type = m_object->valueAutofillButtonType();
-    return type == AutoFillButtonType::StrongConfirmationPassword || type == AutoFillButtonType::StrongPassword;
+    return m_object->valueAutofillButtonType() == AutoFillButtonType::StrongPassword;
 }
 
 - (CGFloat)_accessibilityMinValue

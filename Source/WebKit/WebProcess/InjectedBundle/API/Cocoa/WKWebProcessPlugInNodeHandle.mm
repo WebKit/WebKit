@@ -135,8 +135,6 @@ static WebCore::AutoFillButtonType toAutoFillButtonType(_WKAutoFillButtonType au
         return WebCore::AutoFillButtonType::Contacts;
     case _WKAutoFillButtonTypeCredentials:
         return WebCore::AutoFillButtonType::Credentials;
-    case _WKAutoFillButtonTypeStrongConfirmationPassword:
-        return WebCore::AutoFillButtonType::StrongConfirmationPassword;
     case _WKAutoFillButtonTypeStrongPassword:
         return WebCore::AutoFillButtonType::StrongPassword;
     }
@@ -153,8 +151,6 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
         return _WKAutoFillButtonTypeContacts;
     case WebCore::AutoFillButtonType::Credentials:
         return _WKAutoFillButtonTypeCredentials;
-    case WebCore::AutoFillButtonType::StrongConfirmationPassword:
-        return _WKAutoFillButtonTypeStrongConfirmationPassword;
     case WebCore::AutoFillButtonType::StrongPassword:
         return _WKAutoFillButtonTypeStrongPassword;
     }

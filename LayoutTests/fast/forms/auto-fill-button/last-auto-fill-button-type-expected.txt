@@ -13,12 +13,12 @@ PASS internals.lastAutoFillButtonType(inputElement) is "Credentials"
 internals.setShowAutoFillButton(inputElement, 'StrongPassword')
 PASS internals.autoFillButtonType(inputElement) is "StrongPassword"
 PASS internals.lastAutoFillButtonType(inputElement) is "Contacts"
-internals.setShowAutoFillButton(inputElement, 'StrongConfirmationPassword')
-PASS internals.autoFillButtonType(inputElement) is "StrongConfirmationPassword"
+internals.setShowAutoFillButton(inputElement, 'Credentials')
+PASS internals.autoFillButtonType(inputElement) is "Credentials"
 PASS internals.lastAutoFillButtonType(inputElement) is "StrongPassword"
 internals.setShowAutoFillButton(inputElement, 'None')
 PASS internals.autoFillButtonType(inputElement) is "None"
-PASS internals.lastAutoFillButtonType(inputElement) is "StrongConfirmationPassword"
+PASS internals.lastAutoFillButtonType(inputElement) is "Credentials"
 PASS successfullyParsed is true
 
 TEST COMPLETE
