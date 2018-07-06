@@ -1,4 +1,4 @@
+Message received from MessagePort: MessagePort echo: Message to a port!
 Message received from ServiceWorker: PASS: Got the MessagePort
 Message received from ServiceWorker: messageport thing received....
-Message received from MessagePort: MessagePort echo: Message to a port!
 
