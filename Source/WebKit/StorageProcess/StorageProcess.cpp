@@ -554,6 +554,9 @@ void StorageProcess::swContextConnectionMayNoLongerBeNeeded(WebSWServerToContext
     RELEASE_LOG(ServiceWorker, "Service worker process is no longer needed, terminating it");
     serverToContextConnection.terminate();
 
+    for (auto& swServer : m_swServers.values())
+        swServer->markAllWorkersForOriginAsTerminated(securityOrigin);
+
     serverToContextConnection.connectionClosed();
     m_serverToContextConnections.remove(securityOrigin);
 }

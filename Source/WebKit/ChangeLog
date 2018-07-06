@@ -1,3 +1,17 @@
+2018-07-06  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: contextConnection under WebCore::SWServer::terminateWorkerInternal
+        https://bugs.webkit.org/show_bug.cgi?id=187348
+        <rdar://problem/41853270>
+
+        Reviewed by Youenn Fablet.
+
+        Make sure we mark corresponding SWServerWorkers as terminated when we terminate a
+        Service Worker context connection once it is no longer needed.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::swContextConnectionMayNoLongerBeNeeded):
+
 2018-07-06  Andy Estes  <aestes@apple.com>
 
         [iOS] WKPDFView should show the Data Detectors sheet when long-pressing a URL that Data Detectors can handle
