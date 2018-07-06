@@ -13,5 +13,5 @@ PASS Test finish() during aborted pause
 PASS Test resetting of computed style 
 PASS Test finish() resolves finished promise synchronously 
 PASS Test finish() resolves finished promise synchronously with an animation without a target 
-FAIL Test normally finished animation resolves finished promise synchronously with an animation without a target assert_true: Animation.finished should be resolved soon after Animation finishes normally expected true got false
+PASS Test normally finished animation resolves finished promise synchronously with an animation without a target 
 

@@ -105,6 +105,7 @@ public:
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
 
     Seconds timeToNextRequiredTick() const;
+    void resolve();
     virtual void resolve(RenderStyle&);
     void runPendingTasks();
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);

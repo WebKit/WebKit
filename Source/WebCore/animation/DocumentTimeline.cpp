@@ -280,6 +280,12 @@ void DocumentTimeline::updateAnimations()
     // running pending tasks can fire right away.
     MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
 
+    // Let's first resolve any animation that does not have a target.
+    for (auto* animation : animationsWithoutTarget())
+        animation->resolve();
+
+    // For the rest of the animations, we will resolve them via TreeResolver::createAnimatedElementUpdate()
+    // by invalidating their target element's style.
     if (m_document && hasElementAnimations()) {
         for (const auto& elementToAnimationsMapItem : elementToAnimationsMap())
             elementToAnimationsMapItem.key->invalidateStyleAndLayerComposition();

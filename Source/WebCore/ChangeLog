@@ -1,5 +1,30 @@
 2018-07-05  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Make WPT test at interfaces/Animation/finish.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186496
+        <rdar://problem/41000179>
+
+        Reviewed by Dean Jackson.
+
+        We used to only resolve animations that had a target element, but animations need not have a target and their
+        current time should still advance so that their finished promise may resolve. We now maintain a list of animations
+        without targets and we iterate through them as well as animations with targets in DocumentTimeline::updateAnimations().
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::addAnimation):
+        (WebCore::AnimationTimeline::removeAnimation):
+        (WebCore::AnimationTimeline::animationWasAddedToElement):
+        (WebCore::AnimationTimeline::animationWasRemovedFromElement):
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline:: const):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::updateAnimations):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::resolve):
+        * animation/WebAnimation.h:
+
+2018-07-05  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Make WPT test at interfaces/Animation/finished.html pass reliably
         https://bugs.webkit.org/show_bug.cgi?id=186497
         <rdar://problem/41000193>

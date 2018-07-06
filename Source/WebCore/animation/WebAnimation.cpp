@@ -1055,10 +1055,14 @@ void WebAnimation::runPendingTasks()
         runPendingPlayTask();
 }
 
-void WebAnimation::resolve(RenderStyle& targetStyle)
+void WebAnimation::resolve()
 {
     updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
+}
 
+void WebAnimation::resolve(RenderStyle& targetStyle)
+{
+    resolve();
     if (m_effect)
         m_effect->apply(targetStyle);
 }

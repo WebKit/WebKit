@@ -81,6 +81,7 @@ protected:
 
     bool hasElementAnimations() const { return !m_elementToAnimationsMap.isEmpty() || !m_elementToCSSAnimationsMap.isEmpty() || !m_elementToCSSTransitionsMap.isEmpty(); }
 
+    const ListHashSet<WebAnimation*>& animationsWithoutTarget() const { return m_animationsWithoutTarget; }
     const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
     const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToCSSAnimationsMap() { return m_elementToCSSAnimationsMap; }
     const HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& elementToCSSTransitionsMap() { return m_elementToCSSTransitionsMap; }
@@ -97,6 +98,7 @@ private:
     HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>> m_elementToCSSTransitionsMap;
     ListHashSet<RefPtr<WebAnimation>> m_animations;
 
+    ListHashSet<WebAnimation*> m_animationsWithoutTarget;
     HashMap<Element*, HashMap<String, RefPtr<CSSAnimation>>> m_elementToCSSAnimationByName;
     HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToRunningCSSTransitionByCSSPropertyID;
     HashMap<Element*, HashMap<CSSPropertyID, RefPtr<CSSTransition>>> m_elementToCompletedCSSTransitionByCSSPropertyID;

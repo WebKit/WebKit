@@ -56,12 +56,14 @@ AnimationTimeline::~AnimationTimeline()
 
 void AnimationTimeline::addAnimation(Ref<WebAnimation>&& animation)
 {
+    m_animationsWithoutTarget.add(animation.ptr());
     m_animations.add(WTFMove(animation));
     timingModelDidChange();
 }
 
 void AnimationTimeline::removeAnimation(Ref<WebAnimation>&& animation)
 {
+    m_animationsWithoutTarget.remove(animation.ptr());
     m_animations.remove(WTFMove(animation));
     timingModelDidChange();
 }
@@ -91,6 +93,8 @@ HashMap<Element*, ListHashSet<RefPtr<WebAnimation>>>& AnimationTimeline::relevan
 
 void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
 {
+    m_animationsWithoutTarget.remove(&animation);
+
     relevantMapForAnimation(animation).ensure(&element, [] {
         return ListHashSet<RefPtr<WebAnimation>> { };
     }).iterator->value.add(&animation);
@@ -111,6 +115,9 @@ static inline bool removeCSSTransitionFromMap(CSSTransition& transition, Element
 
 void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
 {
+    // This animation doesn't have a target for now.
+    m_animationsWithoutTarget.add(&animation);
+
     // First, we clear this animation from one of the m_elementToCSSAnimationsMap, m_elementToCSSTransitionsMap,
     // m_elementToAnimationsMap or m_elementToCompletedCSSTransitionByCSSPropertyID map, whichever is relevant to
     // this type of animation.
