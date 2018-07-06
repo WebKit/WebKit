@@ -1,5 +1,16 @@
 2018-07-06  Chris Dumez  <cdumez@apple.com>
 
+        WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler() should take in a CompletionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=187392
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
+2018-07-06  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Assertion failure in WebProcessProxy::allProcesses() (isMainThread())
         https://bugs.webkit.org/show_bug.cgi?id=187394
 
