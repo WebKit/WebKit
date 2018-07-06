@@ -1,3 +1,14 @@
+2018-07-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] EWS should run javascriptcore tests
+        https://bugs.webkit.org/show_bug.cgi?id=187365
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/ews-build/steps.py: Added step to run JavaScriptCoreTests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/factories.py:
+
 2018-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] REGRESSION(r233111): Test /webkit/WebKitUserContentManager/script-message-received fails

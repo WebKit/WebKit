@@ -156,6 +156,20 @@ class CompileJSCOnly(CompileWebKit):
     command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 
+class RunJavaScriptCoreTests(shell.Test):
+    name = 'jscore-test'
+    description = ['jscore-tests running']
+    descriptionDone = ['jscore-tests']
+    flunkOnFailure = True
+    jsonFileName = 'jsc_results.json'
+    logfiles = {"json": jsonFileName}
+    command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
+
+    def start(self):
+        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        return shell.Test.start(self)
+
+
 class CleanBuild(shell.Compile):
     name = "delete-WebKitBuild-directory"
     description = ["deleting WebKitBuild directory"]

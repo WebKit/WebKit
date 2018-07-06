@@ -480,5 +480,44 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'jsc_results.json'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunJavaScriptCoreTests())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='jscore-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunJavaScriptCoreTests())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='9 failures found.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='jscore-tests (failure)')
+        return self.runStep()
+
+
 if __name__ == '__main__':
     unittest.main()
