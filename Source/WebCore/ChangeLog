@@ -1,3 +1,16 @@
+2018-07-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make WPT test at interfaces/KeyframeEffect/processing-a-keyframes-argument-002.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186502
+        <rdar://problem/41000229>l
+
+        Reviewed by Dean Jackson.
+
+        Ensure we only attempt to convert defined objects or we risk to throw errors in valid situations.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::processKeyframeLikeObject):
+
 2018-07-05  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at interfaces/Animation/finish.html pass reliably

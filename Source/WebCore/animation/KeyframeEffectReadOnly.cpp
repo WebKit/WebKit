@@ -270,7 +270,7 @@ static inline ExceptionOr<KeyframeEffectReadOnly::KeyframeLikeObject> processKey
         // Values as the only element.
         if (rawValue.isString())
             propertyValues = { rawValue.toWTFString(&state) };
-        else
+        else if (rawValue.isObject())
             propertyValues = convert<IDLSequence<IDLDOMString>>(state, rawValue);
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
