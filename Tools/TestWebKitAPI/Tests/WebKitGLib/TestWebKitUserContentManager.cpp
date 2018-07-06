@@ -222,7 +222,8 @@ public:
     static void scriptMessageReceived(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* jsResult, UserScriptMessageTest* test)
     {
         g_signal_handlers_disconnect_by_func(userContentManager, reinterpret_cast<gpointer>(scriptMessageReceived), test);
-        g_main_loop_quit(test->m_mainLoop);
+        if (!test->m_waitForScriptRun)
+            g_main_loop_quit(test->m_mainLoop);
 
         g_assert(!test->m_userScriptMessage);
         test->m_userScriptMessage = webkit_javascript_result_ref(jsResult);
@@ -239,19 +240,29 @@ public:
         g_signal_connect(m_userContentManager.get(), signalName.get(), G_CALLBACK(scriptMessageReceived), this);
 
         g_main_loop_run(m_mainLoop);
+        g_assert(!m_waitForScriptRun);
         g_assert(m_userScriptMessage);
         return m_userScriptMessage;
+    }
+
+    static void runJavaScriptFinished(GObject*, GAsyncResult* result, UserScriptMessageTest* test)
+    {
+        g_assert(test->m_waitForScriptRun);
+        test->m_waitForScriptRun = false;
+        g_main_loop_quit(test->m_mainLoop);
     }
 
     WebKitJavascriptResult* postMessageAndWaitUntilReceived(const char* handlerName, const char* javascriptValueAsText)
     {
         GUniquePtr<char> javascriptSnippet(g_strdup_printf("window.webkit.messageHandlers.%s.postMessage(%s);", handlerName, javascriptValueAsText));
-        webkit_web_view_run_javascript(m_webView, javascriptSnippet.get(), nullptr, nullptr, nullptr);
+        m_waitForScriptRun = true;
+        webkit_web_view_run_javascript(m_webView, javascriptSnippet.get(), nullptr, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptFinished), this);
         return waitUntilMessageReceived(handlerName);
     }
 
 private:
     WebKitJavascriptResult* m_userScriptMessage;
+    bool m_waitForScriptRun { false };
 };
 
 static void testUserContentManagerScriptMessageReceived(UserScriptMessageTest* test, gconstpointer)

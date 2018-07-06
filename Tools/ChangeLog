@@ -1,3 +1,22 @@
+2018-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] REGRESSION(r233111): Test /webkit/WebKitUserContentManager/script-message-received fails
+        https://bugs.webkit.org/show_bug.cgi?id=187383
+
+        Reviewed by Žan Doberšek.
+
+        This is actually a problem in the test itself. The problem is that we run js, connect to message-received and
+        quite the main loop when the message is received, which happens before the run js operation has been
+        completed. The test finishes early and since r233111 an IPC message is still pending (I guess the run js
+        callback) and the web page is still protected. Just adding a run loop operation before finishing the test would
+        fix it. We should wait for the js run to complete, instead of the message.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (UserScriptMessageTest::scriptMessageReceived):
+        (UserScriptMessageTest::waitUntilMessageReceived):
+        (UserScriptMessageTest::runJavaScriptFinished):
+        (UserScriptMessageTest::postMessageAndWaitUntilReceived):
+
 2018-07-05  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r230843): Flash doesn't work; Produces blue box on page
