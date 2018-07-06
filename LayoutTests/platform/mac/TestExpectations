@@ -719,6 +719,8 @@ webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ 
 # resizing didn't work. Now the test fails. I believe this bug was never fixed for the Mac port.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 
+webkit.org/b/187408 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker.html [ Slow ]
+
 webkit.org/b/135015 plugins/quicktime-plugin-replacement.html [ Pass Failure ]
 
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
