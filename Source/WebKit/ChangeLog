@@ -1,3 +1,15 @@
+2018-07-06  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Assertion failure in WebProcessProxy::allProcesses() (isMainThread())
+        https://bugs.webkit.org/show_bug.cgi?id=187394
+
+        Reviewed by Dan Bernstein.
+
+        Use RunLoop::isMain() instead of isMainThread() in the assertion to fix issues for
+        applications using both WebKit and WebKitLegacy.
+
+        * UIProcess/WebProcessProxy.cpp:
+
 2018-07-06  Daniel Bates  <dabates@apple.com>
 
         Remove Strong Confirmation Password button

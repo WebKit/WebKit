@@ -82,7 +82,7 @@ namespace WebKit {
 
 static HashMap<ProcessIdentifier, WebProcessProxy*>& allProcesses()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashMap<ProcessIdentifier, WebProcessProxy*>> map;
     return map;
 }
