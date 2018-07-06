@@ -53,7 +53,7 @@ static CString& initialAcceptLanguages()
     return storage.get();
 }
 
-static SoupNetworkProxySettings proxySettings()
+static SoupNetworkProxySettings& proxySettings()
 {
     static NeverDestroyed<SoupNetworkProxySettings> settings;
     return settings.get();
