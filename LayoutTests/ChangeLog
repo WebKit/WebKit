@@ -1,3 +1,11 @@
+2018-07-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Remove platform expectations for imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html
+
+        Since r233512 we are getting the same results as other ports.
+
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context-expected.txt: Removed.
+
 2018-07-05  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r230843): Flash doesn't work; Produces blue box on page
