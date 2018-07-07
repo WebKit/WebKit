@@ -2736,8 +2736,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_scheduleVisibleContentRectUpdateAfterScrollInView:(UIScrollView *)scrollView
 {
-    RELEASE_ASSERT(isMainThread());
-
     _visibleContentRectUpdateScheduledFromScrollViewInStableState = [self _scrollViewIsInStableState:scrollView];
 
     if (_hasScheduledVisibleRectUpdate) {
