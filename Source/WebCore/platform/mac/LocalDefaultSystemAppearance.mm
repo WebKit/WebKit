@@ -31,16 +31,9 @@
 
 namespace WebCore {
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-static size_t recursionCount = 0;
-#endif
-
 LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppearance, bool useDarkAppearance)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    if (recursionCount++)
-        return;
-
     m_savedSystemAppearance = [NSAppearance currentAppearance];
     m_usingDarkAppearance = useSystemAppearance && useDarkAppearance;
 
@@ -54,9 +47,6 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppeara
 LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    if (--recursionCount)
-        return;
-
     [NSAppearance setCurrentAppearance:m_savedSystemAppearance.get()];
 #endif
 }

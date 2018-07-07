@@ -168,6 +168,8 @@ public:
     WEBCORE_EXPORT static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     WEBCORE_EXPORT static void clearPreviousItemFromAllPages(HistoryItem*);
 
+    void updateStyleAfterChangeInEnvironment();
+
     WEBCORE_EXPORT explicit Page(PageConfiguration&&);
     WEBCORE_EXPORT ~Page();
 
@@ -343,7 +345,7 @@ public:
     WEBCORE_EXPORT void setUseSystemAppearance(bool);
     
     WEBCORE_EXPORT bool useDarkAppearance() const;
-    void setUseDarkAppearance(bool a) { m_useDarkAppearance = a; }
+    WEBCORE_EXPORT void setUseDarkAppearance(bool);
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }

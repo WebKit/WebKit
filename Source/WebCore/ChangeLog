@@ -1,3 +1,33 @@
+2018-07-06  Timothy Hatcher  <timothy@apple.com>
+
+        Semantic colors don't update when accessibility Increase Contrast mode is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=187425
+        rdar://problem/39948240
+
+        Reviewed by Tim Horton.
+
+        Added a listener for the accessibility change notification to invalidate our color caches.
+
+        Removed calls to RenderTheme::singleton().platformColorsDidChange() in Page, since that
+        ended up calling Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment multiple times.
+        Instead, changed the functions to use the new instance version instead.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleAfterChangeInEnvironment): Added. Gives Page a direct way to do this work
+        per instance instead of on all pages (since appearance can be difference per view).
+        (WebCore::Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment): Call updateStyleAfterChangeInEnvironment.
+        (WebCore::Page::setUseSystemAppearance): Call updateStyleAfterChangeInEnvironment.
+        (WebCore::Page::setUseDarkAppearance): Added. Call updateStyleAfterChangeInEnvironment.
+        * page/Page.h:
+        (WebCore::Page::setUseDarkAppearance): Moved to the implementation file.
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        (WebCore::LocalDefaultSystemAppearance::LocalDefaultSystemAppearance): Removed recursive check since it was interfering
+        with the setting of m_usingDarkAppearance and causing the wrong color cache to be used.
+        (WebCore::LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance): Ditto.
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreRenderThemeNotificationObserver init]): Listen for NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification.
+        (-[WebCoreRenderThemeNotificationObserver systemColorsDidChange:]): Removed assert since multiple notifications are used now.
+
 2018-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make ReasonForSuspension enum class
