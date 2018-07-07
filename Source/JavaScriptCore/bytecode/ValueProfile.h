@@ -45,8 +45,6 @@ struct ValueProfileBase {
     
     ValueProfileBase()
         : m_bytecodeOffset(-1)
-        , m_prediction(SpecNone)
-        , m_numberOfSamplesInPrediction(0)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
@@ -54,8 +52,6 @@ struct ValueProfileBase {
     
     ValueProfileBase(int bytecodeOffset)
         : m_bytecodeOffset(bytecodeOffset)
-        , m_prediction(SpecNone)
-        , m_numberOfSamplesInPrediction(0)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
@@ -147,9 +143,9 @@ struct ValueProfileBase {
     }
     
     int m_bytecodeOffset; // -1 for prologue
+    unsigned m_numberOfSamplesInPrediction { 0 };
     
-    SpeculatedType m_prediction;
-    unsigned m_numberOfSamplesInPrediction;
+    SpeculatedType m_prediction { SpecNone };
     
     EncodedJSValue m_buckets[totalNumberOfBuckets];
 };

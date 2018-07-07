@@ -1,3 +1,15 @@
+2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize layout of ValueProfile to reduce padding
+        https://bugs.webkit.org/show_bug.cgi?id=187439
+
+        Reviewed by Mark Lam.
+
+        Reduce the size of ValueProfile from 40 to 32 by reordering members.
+
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::ValueProfileBase):
+
 2018-07-05  Saam Barati  <sbarati@apple.com>
 
         ProgramExecutable may be collected as we checkSyntax on it
