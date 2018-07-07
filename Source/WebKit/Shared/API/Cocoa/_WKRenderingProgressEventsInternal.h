@@ -51,6 +51,9 @@ static inline _WKRenderingProgressEvents renderingProgressEvents(WebCore::Layout
     if (milestones & WebCore::DidFirstPaintAfterSuppressedIncrementalRendering)
         events |= _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
 
+    if (milestones & WebCore::DidRenderSignificantAmountOfText)
+        events |= _WKRenderingProgressEventDidRenderSignificantAmountOfText;
+
     return events;
 }
 

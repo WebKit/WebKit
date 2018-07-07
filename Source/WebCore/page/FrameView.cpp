@@ -129,6 +129,9 @@ MonotonicTime FrameView::sCurrentPaintTimeStamp { };
 // The maximum number of updateEmbeddedObjects iterations that should be done before returning.
 static const unsigned maxUpdateEmbeddedObjectsIterations = 2;
 
+static constexpr unsigned significantRenderedTextCharacterThreshold = 3000;
+static constexpr float significantRenderedTextMeanLength = 50;
+
 static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
 {
     RenderLayer::UpdateLayerPositionsFlags flags = RenderLayer::defaultFlags;
@@ -276,6 +279,9 @@ void FrameView::reset()
     m_visuallyNonEmptyPixelCount = 0;
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
+    m_renderTextCountForVisuallyNonEmptyCharacters = 0;
+    m_renderedSignificantAmountOfText = false;
+    m_significantRenderedTextMilestonePending = true;
     m_needsDeferredScrollbarsUpdate = false;
     m_maintainScrollPositionAnchor = nullptr;
     layoutContext().reset();
@@ -4301,6 +4307,17 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     ASSERT(!needsLayout());
 }
 
+static bool elementOverflowRectIsLargerThanThreshold(const Element& element)
+{
+    // Require the document to grow a bit.
+    // Using a value of 48 allows the header on Google's search page to render immediately before search results populate later.
+    static const int documentHeightThreshold = 48;
+    if (auto* elementRenderBox = element.renderBox())
+        return snappedIntRect(elementRenderBox->layoutOverflowRect()).height() >= documentHeightThreshold;
+
+    return false;
+}
+
 bool FrameView::qualifiesAsVisuallyNonEmpty() const
 {
     // No content yet.
@@ -4316,11 +4333,7 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
     if (frame().document()->styleScope().hasPendingSheetsBeforeBody())
         return false;
 
-    // Require the document to grow a bit.
-    // Using a value of 48 allows the header on Google's search page to render immediately before search results populate later.
-    static const int documentHeightThreshold = 48;
-    LayoutRect overflowRect = documentElement->renderBox()->layoutOverflowRect();
-    if (snappedIntRect(overflowRect).height() < documentHeightThreshold)
+    if (!elementOverflowRectIsLargerThanThreshold(*documentElement))
         return false;
 
     // The first few hundred characters rarely contain the interesting content of the page.
@@ -4330,6 +4343,28 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
     if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
         return true;
     return false;
+}
+
+void FrameView::updateSignificantRenderedTextMilestoneIfNeeded()
+{
+    if (m_renderedSignificantAmountOfText)
+        return;
+
+    auto* document = frame().document();
+    if (!document || document->styleScope().hasPendingSheetsBeforeBody())
+        return;
+
+    auto* documentElement = document->documentElement();
+    if (!documentElement || !elementOverflowRectIsLargerThanThreshold(*documentElement))
+        return;
+
+    if (m_visuallyNonEmptyCharacterCount < significantRenderedTextCharacterThreshold)
+        return;
+
+    if (!m_renderTextCountForVisuallyNonEmptyCharacters || m_visuallyNonEmptyCharacterCount / static_cast<float>(m_renderTextCountForVisuallyNonEmptyCharacters) < significantRenderedTextMeanLength)
+        return;
+
+    m_renderedSignificantAmountOfText = true;
 }
 
 void FrameView::updateIsVisuallyNonEmpty()
@@ -4929,12 +4964,19 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
             page->startCountingRelevantRepaintedObjects();
     }
     updateIsVisuallyNonEmpty();
+    updateSignificantRenderedTextMilestoneIfNeeded();
 
     // If the layout was done with pending sheets, we are not in fact visually non-empty yet.
-    if (m_isVisuallyNonEmpty &&m_firstVisuallyNonEmptyLayoutCallbackPending) {
+    if (m_isVisuallyNonEmpty && m_firstVisuallyNonEmptyLayoutCallbackPending) {
         m_firstVisuallyNonEmptyLayoutCallbackPending = false;
         if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
             milestonesAchieved |= DidFirstVisuallyNonEmptyLayout;
+    }
+
+    if (m_renderedSignificantAmountOfText && m_significantRenderedTextMilestonePending) {
+        m_significantRenderedTextMilestonePending = false;
+        if (requestedMilestones & DidRenderSignificantAmountOfText)
+            milestonesAchieved |= DidRenderSignificantAmountOfText;
     }
 
     if (milestonesAchieved && frame().isMainFrame())

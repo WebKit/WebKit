@@ -4547,6 +4547,9 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     if (events & _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering)
         milestones |= WebCore::DidFirstPaintAfterSuppressedIncrementalRendering;
 
+    if (events & _WKRenderingProgressEventDidRenderSignificantAmountOfText)
+        milestones |= WebCore::DidRenderSignificantAmountOfText;
+
     return milestones;
 }
 

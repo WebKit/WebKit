@@ -393,6 +393,7 @@ public:
     void incrementVisuallyNonEmptyCharacterCount(unsigned);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
     void updateIsVisuallyNonEmpty();
+    void updateSignificantRenderedTextMilestoneIfNeeded();
     bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
     WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize, const IntSize& maxSize);
     WEBCORE_EXPORT void setAutoSizeFixedMinimumHeight(int);
@@ -858,6 +859,10 @@ private:
     bool m_isVisuallyNonEmpty;
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
 
+    unsigned m_renderTextCountForVisuallyNonEmptyCharacters;
+    bool m_renderedSignificantAmountOfText;
+    bool m_significantRenderedTextMilestonePending;
+
     bool m_needsDeferredScrollbarsUpdate { false };
 
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
@@ -923,12 +928,14 @@ private:
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)
 {
-    if (m_isVisuallyNonEmpty)
+    if (m_isVisuallyNonEmpty && m_renderedSignificantAmountOfText)
         return;
     m_visuallyNonEmptyCharacterCount += count;
-    if (m_visuallyNonEmptyCharacterCount <= visualCharacterThreshold)
-        return;
-    updateIsVisuallyNonEmpty();
+    ++m_renderTextCountForVisuallyNonEmptyCharacters;
+    if (!m_isVisuallyNonEmpty && m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
+        updateIsVisuallyNonEmpty();
+    if (!m_renderedSignificantAmountOfText)
+        updateSignificantRenderedTextMilestoneIfNeeded();
 }
 
 inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)

@@ -875,6 +875,8 @@ inline WKLayoutMilestones toWKLayoutMilestones(WebCore::LayoutMilestones milesto
         wkMilestones |= kWKDidFirstLayoutAfterSuppressedIncrementalRendering;
     if (milestones & WebCore::DidFirstPaintAfterSuppressedIncrementalRendering)
         wkMilestones |= kWKDidFirstPaintAfterSuppressedIncrementalRendering;
+    if (milestones & WebCore::DidRenderSignificantAmountOfText)
+        wkMilestones |= kWKDidRenderSignificantAmountOfText;
     
     return wkMilestones;
 }
@@ -895,6 +897,8 @@ inline WebCore::LayoutMilestones toLayoutMilestones(WKLayoutMilestones wkMilesto
         milestones |= WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering;
     if (wkMilestones & kWKDidFirstPaintAfterSuppressedIncrementalRendering)
         milestones |= WebCore::DidFirstPaintAfterSuppressedIncrementalRendering;
+    if (wkMilestones & kWKDidRenderSignificantAmountOfText)
+        milestones |= WebCore::DidRenderSignificantAmountOfText;
     
     return milestones;
 }

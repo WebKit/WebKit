@@ -1,3 +1,24 @@
+2018-07-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce a layout milestone to track when the document contains a large number of rendered characters
+        https://bugs.webkit.org/show_bug.cgi?id=187412
+        <rdar://problem/41744338>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add plumbing for the new significant rendered text layout milestone in the modern WebKit client layer. See
+        WebCore/ChangeLog for more details.
+
+        * Shared/API/Cocoa/_WKRenderingProgressEvents.h:
+        * Shared/API/Cocoa/_WKRenderingProgressEventsInternal.h:
+        (renderingProgressEvents):
+        * Shared/API/c/WKPageLoadTypes.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toWKLayoutMilestones):
+        (WebKit::toLayoutMilestones):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (layoutMilestones):
+
 2018-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r233561): MobileMail crashes when replying to an email

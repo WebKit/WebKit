@@ -37,7 +37,8 @@ enum LayoutMilestoneFlag {
     DidFirstFlushForHeaderLayer                         = 1 << 3,
     DidFirstLayoutAfterSuppressedIncrementalRendering   = 1 << 4,
     DidFirstPaintAfterSuppressedIncrementalRendering    = 1 << 5,
-    ReachedSessionRestorationRenderTreeSizeThreshold    = 1 << 6 // FIXME: only implemented by WK2 currently.
+    ReachedSessionRestorationRenderTreeSizeThreshold    = 1 << 6, // FIXME: only implemented by WK2 currently.
+    DidRenderSignificantAmountOfText            = 1 << 7,
 };
 
 typedef unsigned LayoutMilestones;

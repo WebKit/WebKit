@@ -1,3 +1,47 @@
+2018-07-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce a layout milestone to track when the document contains a large number of rendered characters
+        https://bugs.webkit.org/show_bug.cgi?id=187412
+        <rdar://problem/41744338>
+
+        Reviewed by Ryosuke Niwa.
+
+        Implements a new layout milestone: `DidRenderSignificantAmountOfText`. This is similar to the existing
+        `DidFirstVisuallyNonEmptyLayout` milestone, but with a few important additional constraints:
+
+        • The minimum threshold of rendered characters is much larger (3000 instead of 200).
+        • The mean length of a text node must be large (at least 50).
+
+        This is a (computationally) lightweight heuristic intended to estimate the likelihood that a page is capable of
+        being presented in Reader mode. In many article-like pages, the average length of a text node is significantly
+        longer than other types of pages; thus, on pages where the average length of a text node is very large *and*
+        there is a large quantity of text, we can use this as a cue to opportunistically detect and enter Safari reader
+        mode on watchOS.
+
+        Test: RenderingProgressTests.DidRenderSignificantAmountOfText
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+
+        Clear out new state members that keep track of whether the significant rendered text milestone has been met.
+
+        (WebCore::elementOverflowRectIsLargerThanThreshold):
+
+        Factor out logic to grab the overflow height of an element into a separate helper function.
+
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty const):
+        (WebCore::FrameView::updateSignificantRenderedTextMilestoneIfNeeded):
+
+        Determines whether to fire this new milestone after the next layout pass is finished. The logic here is similar
+        to the logic in qualifiesAsVisuallyNonEmpty, requiring that there are not still pending stylesheets in the head
+        and that the document height is at least a minimum threshold. However, unlike the first visually non-empty
+        layout, this milestone is never guaranteed to fire.
+
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        * page/FrameView.h:
+        (WebCore::FrameView::incrementVisuallyNonEmptyCharacterCount):
+        * page/LayoutMilestones.h:
+
 2018-07-06  Timothy Hatcher  <timothy@apple.com>
 
         Semantic colors don't update when accessibility Increase Contrast mode is enabled.

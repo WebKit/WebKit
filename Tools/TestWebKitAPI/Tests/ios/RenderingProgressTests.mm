@@ -48,6 +48,27 @@
 
 @end
 
+#if PLATFORM(IOS)
+
+TEST(RenderingProgressTests, DidRenderSignificantAmountOfText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 156, 195)]);
+    [webView _setObservedRenderingProgressEvents:_WKRenderingProgressEventDidRenderSignificantAmountOfText];
+
+    bool observedSignificantRenderedText = false;
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setRenderingProgressDidChange:[&] (WKWebView *, _WKRenderingProgressEvents events) {
+        if (events & _WKRenderingProgressEventDidRenderSignificantAmountOfText)
+            observedSignificantRenderedText = true;
+    }];
+
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadTestPageNamed:@"significant-text-milestone"];
+    TestWebKitAPI::Util::run(&observedSignificantRenderedText);
+}
+
+#endif // PLATFORM(IOS)
+
 #if PLATFORM(WATCHOS)
 
 TEST(RenderingProgressTests, FirstPaintWithSignificantArea)
