@@ -696,6 +696,12 @@ private:
 
     Map m_map;
     ScopeOffset m_maxScopeOffset;
+public:
+    mutable ConcurrentJSLock m_lock;
+private:
+    unsigned m_usesNonStrictEval : 1;
+    unsigned m_nestedLexicalScope : 1; // Non-function LexicalScope.
+    unsigned m_scopeType : 3; // ScopeType
     
     struct SymbolTableRareData {
         UniqueIDMap m_uniqueIDMap;
@@ -705,17 +711,10 @@ private:
     };
     std::unique_ptr<SymbolTableRareData> m_rareData;
 
-    bool m_usesNonStrictEval : 1;
-    bool m_nestedLexicalScope : 1; // Non-function LexicalScope.
-    unsigned m_scopeType : 3; // ScopeType
-    
     WriteBarrier<ScopedArgumentsTable> m_arguments;
     WriteBarrier<InferredValue> m_singletonScope;
     
     std::unique_ptr<LocalToEntryVec> m_localToEntry;
-
-public:
-    mutable ConcurrentJSLock m_lock;
 };
 
 } // namespace JSC

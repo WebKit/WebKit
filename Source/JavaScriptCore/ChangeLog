@@ -1,5 +1,16 @@
 2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Optimize layout of SymbolTable to reduce padding
+        https://bugs.webkit.org/show_bug.cgi?id=187437
+
+        Reviewed by Mark Lam.
+
+        Arrange the layout of SymbolTable to reduce the size from 88 to 72.
+
+        * runtime/SymbolTable.h:
+
+2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Optimize layout of RegExp to reduce padding
         https://bugs.webkit.org/show_bug.cgi?id=187438
 
