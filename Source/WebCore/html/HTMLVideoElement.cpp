@@ -191,6 +191,14 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
 #endif // PLATFORM(IOS)
 }
 
+
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+void HTMLVideoElement::webkitRequestFullscreen()
+{
+    webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);
+}
+#endif
+
 unsigned HTMLVideoElement::videoWidth() const
 {
     if (!player())

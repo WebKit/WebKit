@@ -1,3 +1,21 @@
+2018-07-06  Jeremy Jones  <jeremyj@apple.com>
+
+        For <video> element, use video fullscreen instead of element fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=186093
+        rdar://problem/40144751
+
+        Reviewed by Jer Noble.
+
+        Some pages use webkitRequestFullscreen directly on the video element, without any custom controls.
+        This will prevent native fullscreeen presentation mode conrols from being used.
+
+        This change makes webkitRequestFullscreen on a video element call webKitSetPresentationMode.
+
+        * dom/Element.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitRequestFullscreen):
+        * html/HTMLVideoElement.h:
+
 2018-07-06  Youenn Fablet  <youenn@apple.com>
 
         WebRTC MediaStreamTrack Enable / Disable causes video delay / lag
