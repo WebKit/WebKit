@@ -1,3 +1,16 @@
+2018-07-06  Youenn Fablet  <youenn@apple.com>
+
+        libWebRTC GetThreadCpuTimeNanos() leaks mach_ports
+        https://bugs.webkit.org/show_bug.cgi?id=187403
+        <rdar://problem/41741599>
+
+        Reviewed by Simon Fraser.
+
+        * Source/webrtc/rtc_base/cpu_time.cc: Call mach_port_deallocate to
+        to ensure mach_port is deleted.
+        * libwebrtc.xcodeproj/project.pbxproj: Stop compiling this file since
+        this is not used except by libwebrtc tests.
+
 2018-07-04  Thibault Saunier  <tsaunier@igalia.com>
 
         [libwebrtc] Allow IP mismatch for local connections on localhost

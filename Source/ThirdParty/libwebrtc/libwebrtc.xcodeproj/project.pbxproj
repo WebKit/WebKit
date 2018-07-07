@@ -138,7 +138,6 @@
 		413A23071FE18E0700373E99 /* httpbase.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413A21B21FE18D9700373E99 /* httpbase.cc */; };
 		413A23091FE18E0700373E99 /* memory_usage.h in Headers */ = {isa = PBXBuildFile; fileRef = 413A21B41FE18D9700373E99 /* memory_usage.h */; };
 		413A230A1FE18E0700373E99 /* ptr_util.h in Headers */ = {isa = PBXBuildFile; fileRef = 413A21B51FE18D9800373E99 /* ptr_util.h */; };
-		413A230C1FE18E0700373E99 /* cpu_time.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413A21B81FE18D9900373E99 /* cpu_time.cc */; };
 		413A230D1FE18E0700373E99 /* rate_statistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 413A21B91FE18D9A00373E99 /* rate_statistics.h */; };
 		413A230F1FE18E0700373E99 /* rtccertificate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413A21BB1FE18D9B00373E99 /* rtccertificate.cc */; };
 		413A23101FE18E0700373E99 /* fakeclock.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413A21BC1FE18D9B00373E99 /* fakeclock.cc */; };
@@ -12987,7 +12986,6 @@
 				5CDD907A1E43D15C00621E92 /* covariance_matrix_generator.cc in Sources */,
 				5C4B4CCA1E4320A9002651C8 /* cpu_features.cc in Sources */,
 				5C4B4CCB1E4320A9002651C8 /* cpu_info.cc in Sources */,
-				413A230C1FE18E0700373E99 /* cpu_time.cc in Sources */,
 				5CDD87B11E43BC0500621E92 /* crc.c in Sources */,
 				413A23431FE18E0700373E99 /* crc32.cc in Sources */,
 				5CDD8B8B1E43C2B500621E92 /* create_augmented_vec.c in Sources */,
