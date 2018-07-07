@@ -531,7 +531,7 @@ mtd
       
 meter
       AXRole: AXProgressIndicator
-      AXSubrole: 
+      AXSubrole: AXMeter
       AXRoleDescription: progress indicator
       
 nav

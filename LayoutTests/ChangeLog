@@ -1,3 +1,15 @@
+2018-07-06  Nan Wang  <n_wang@apple.com>
+
+        AX: add a subrole for meter elements on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=187409
+        <rdar://problem/41905702>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/meter-subrole-expected.txt: Added.
+        * accessibility/mac/meter-subrole.html: Added.
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2018-07-06  Youenn Fablet  <youenn@apple.com>
 
         WebRTC MediaStreamTrack Enable / Disable causes video delay / lag

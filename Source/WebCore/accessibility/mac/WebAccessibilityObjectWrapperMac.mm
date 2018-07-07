@@ -2049,6 +2049,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
     }
     
+    if (m_object->isMeter())
+        return @"AXMeter";
+    
     AccessibilityRole role = m_object->roleValue();
     if (role == AccessibilityRole::HorizontalRule)
         return NSAccessibilityContentSeparatorSubrole;
