@@ -1,3 +1,16 @@
+2018-07-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: resource search field has white text on white background
+        https://bugs.webkit.org/show_bug.cgi?id=187423
+
+        Reviewed by Timothy Hatcher.
+
+        Match the colors of sidebar filter fields.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.find-banner > input[type="search"]):
+
 2018-07-04  Tim Horton  <timothy_horton@apple.com>
 
         Introduce PLATFORM(IOSMAC)
