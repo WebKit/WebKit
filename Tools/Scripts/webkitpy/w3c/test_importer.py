@@ -362,6 +362,9 @@ class TestImporter(object):
 
     def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
         content = '<!-- This file is required for WebKit test infrastructure to run the templated test -->'
+        if (orig_filepath.endswith('.window.js')):
+            self.filesystem.write_text_file(new_filepath.replace('.window.js', '.window.html'), content)
+            return
         if (orig_filepath.endswith('.worker.js')):
             self.filesystem.write_text_file(new_filepath.replace('.worker.js', '.worker.html'), content)
             return

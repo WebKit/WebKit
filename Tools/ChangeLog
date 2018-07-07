@@ -1,3 +1,16 @@
+2018-07-07  Youenn Fablet  <youenn@apple.com>
+
+        WPT importer should create dummy HTML files for *.window.js script files
+        https://bugs.webkit.org/show_bug.cgi?id=187426
+
+        Reviewed by Ryosuke Niwa.
+
+        Some WPT tests use *.window.js tests, which should be accessed as *.window.html.
+        Do the same strategy as done for worker.js/any.js files.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.write_html_files_for_templated_js_tests):
+
 2018-07-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce a layout milestone to track when the document contains a large number of rendered characters
