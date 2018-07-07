@@ -119,10 +119,11 @@ static std::atomic<Thread*> targetThread { nullptr };
 #pragma clang diagnostic ignored "-Wreturn-stack-address"
 #endif // COMPILER(CLANG)
 
-static UNUSED_FUNCTION NEVER_INLINE void* getApproximateStackPointer()
+static NEVER_INLINE void* getApproximateStackPointer()
 {
-    volatile void* stackLocation = nullptr;
-    return &stackLocation;
+    volatile uintptr_t stackLocation;
+    stackLocation = bitwise_cast<uintptr_t>(&stackLocation);
+    return bitwise_cast<void*>(stackLocation);
 }
 
 #if COMPILER(GCC)
@@ -132,14 +133,6 @@ static UNUSED_FUNCTION NEVER_INLINE void* getApproximateStackPointer()
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif // COMPILER(CLANG)
-
-static UNUSED_FUNCTION bool isOnAlternativeSignalStack()
-{
-    stack_t stack { };
-    int ret = sigaltstack(nullptr, &stack);
-    RELEASE_ASSERT(!ret);
-    return stack.ss_flags == SS_ONSTACK;
-}
 
 void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
 {
@@ -156,14 +149,25 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
         return;
     }
 
-    ASSERT_WITH_MESSAGE(!isOnAlternativeSignalStack(), "Using an alternative signal stack is not supported. Consider disabling the concurrent GC.");
+    void* approximateStackPointer = getApproximateStackPointer();
+    if (!thread->m_stack.contains(approximateStackPointer)) {
+        // This happens if we use an alternative signal stack.
+        // 1. A user-defined signal handler is invoked with an alternative signal stack.
+        // 2. In the middle of the execution of the handler, we attempt to suspend the target thread.
+        // 3. A nested signal handler is executed.
+        // 4. The stack pointer saved in the machine context will be pointing to the alternative signal stack.
+        // In this case, we back off the suspension and retry a bit later.
+        thread->m_platformRegisters = nullptr;
+        globalSemaphoreForSuspendResume->post();
+        return;
+    }
 
 #if HAVE(MACHINE_CONTEXT)
     ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
     thread->m_platformRegisters = &registersFromUContext(userContext);
 #else
     UNUSED_PARAM(ucontext);
-    PlatformRegisters platformRegisters { getApproximateStackPointer() };
+    PlatformRegisters platformRegisters { approximateStackPointer };
     thread->m_platformRegisters = &platformRegisters;
 #endif
 
@@ -354,10 +358,18 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
         // But it can be used in a few platforms, like Linux.
         // Instead, we use Thread* stored in a global variable to pass it to the signal handler.
         targetThread.store(this);
-        int result = pthread_kill(m_handle, SigThreadSuspendResume);
-        if (result)
-            return makeUnexpected(result);
-        globalSemaphoreForSuspendResume->wait();
+
+        while (true) {
+            int result = pthread_kill(m_handle, SigThreadSuspendResume);
+            if (result)
+                return makeUnexpected(result);
+            globalSemaphoreForSuspendResume->wait();
+            if (m_platformRegisters)
+                break;
+            // Because of an alternative signal stack, we failed to suspend this thread.
+            // Retry suspension again after yielding.
+            Thread::yield();
+        }
     }
     ++m_suspendCount;
     return { };
