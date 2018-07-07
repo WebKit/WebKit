@@ -563,12 +563,12 @@
 
 #if PLATFORM(COCOA)
 
+#define HAVE_OUT_OF_PROCESS_LAYER_HOSTING 1
+#define HAVE_RUNLOOP_TIMER 1
 #define USE_CF 1
+#define USE_FILE_LOCK 1
 #define USE_FOUNDATION 1
 #define USE_NETWORK_CFDATA_ARRAY_CALLBACK 1
-#define HAVE_OUT_OF_PROCESS_LAYER_HOSTING 1
-#define HAVE_DTRACE 0
-#define USE_FILE_LOCK 1
 
 /* Cocoa defines a series of platform macros for debugging. */
 /* Some of them are really annoying because they use common names (e.g. check()). */
@@ -581,7 +581,6 @@
 #if PLATFORM(MAC)
 
 #define USE_APPKIT 1
-#define HAVE_RUNLOOP_TIMER 1
 #define HAVE_SEC_KEYCHAIN 1
 
 #if CPU(X86_64)

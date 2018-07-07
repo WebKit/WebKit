@@ -1,3 +1,15 @@
+2018-07-07  David Kilzer  <ddkilzer@apple.com>
+
+        iOS port should define HAVE_RUNLOOP_TIMER
+        <https://webkit.org/b/187370>
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Platform.h:
+        (HAVE_DTRACE): Remove unused macro since r200568.
+        (HAVE_RUNLOOP_TIMER): Define for PLATFORM(COCOA), not just
+        PLATFORM(MAC).  Alphabetize macros.
+
 2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [linux] ASSERT: Using an alternative signal stack is not supported. Consider disabling the concurrent GC.
