@@ -2261,9 +2261,9 @@ void Document::didBecomeCurrentDocumentInFrame()
             timeline().suspendAnimations();
         else
             m_frame->animation().suspendAnimationsForDocument(this);
-        suspendScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
+        suspendScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
     } else {
-        resumeScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
+        resumeScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
         if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
             timeline().resumeAnimations();
         else
@@ -2523,14 +2523,14 @@ void Document::platformSuspendOrStopActiveDOMObjects()
 #endif
 }
 
-void Document::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
+void Document::suspendActiveDOMObjects(ReasonForSuspension why)
 {
     ScriptExecutionContext::suspendActiveDOMObjects(why);
     suspendDeviceMotionAndOrientationUpdates();
     platformSuspendOrStopActiveDOMObjects();
 }
 
-void Document::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
+void Document::resumeActiveDOMObjects(ReasonForSuspension why)
 {
     ScriptExecutionContext::resumeActiveDOMObjects(why);
     resumeDeviceMotionAndOrientationUpdates();
@@ -4897,7 +4897,7 @@ void Document::documentWillBecomeInactive()
         renderView()->setIsInWindow(false);
 }
 
-void Document::suspend(ActiveDOMObject::ReasonForSuspension reason)
+void Document::suspend(ReasonForSuspension reason)
 {
     if (m_isSuspended)
         return;
@@ -4930,7 +4930,7 @@ void Document::suspend(ActiveDOMObject::ReasonForSuspension reason)
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ActiveDOMObject::ReasonForSuspension::PageCache) {
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ReasonForSuspension::PageCache) {
         ASSERT_WITH_MESSAGE(!activeServiceWorker(), "Documents with an active service worker should not go into PageCache in the first place");
         setServiceWorkerConnection(nullptr);
     }
@@ -4947,7 +4947,7 @@ void Document::suspend(ActiveDOMObject::ReasonForSuspension reason)
     m_isSuspended = true;
 }
 
-void Document::resume(ActiveDOMObject::ReasonForSuspension reason)
+void Document::resume(ReasonForSuspension reason)
 {
     if (!m_isSuspended)
         return;
@@ -4976,7 +4976,7 @@ void Document::resume(ActiveDOMObject::ReasonForSuspension reason)
     m_isSuspended = false;
 
 #if ENABLE(SERVICE_WORKER)
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ActiveDOMObject::ReasonForSuspension::PageCache) {
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ReasonForSuspension::PageCache) {
         ASSERT_WITH_MESSAGE(!activeServiceWorker(), "Documents with an active service worker should not go into PageCache in the first place");
         setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(sessionID()));
     }
@@ -5864,13 +5864,13 @@ void Document::pendingTasksTimerFired()
         task.performTask(*this);
 }
 
-void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
+void Document::suspendScheduledTasks(ReasonForSuspension reason)
 {
     if (m_scheduledTasksAreSuspended) {
         // A page may subsequently suspend DOM objects, say as part of handling a scroll or zoom gesture, after the
         // embedding client requested the page be suspended. We ignore such requests so long as the embedding client
         // requested the suspension first. See <rdar://problem/13754896> for more details.
-        ASSERT(reasonForSuspendingActiveDOMObjects() == ActiveDOMObject::PageWillBeSuspended);
+        ASSERT(reasonForSuspendingActiveDOMObjects() == ReasonForSuspension::PageWillBeSuspended);
         return;
     }
 
@@ -5887,20 +5887,20 @@ void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason
     // (e.g. while displaying an alert).
     // It is not currently possible to suspend parser unless loading is deferred, because new data arriving from network
     // will trigger parsing, and leave the scheduler in an inconsistent state where it doesn't know whether it's suspended or not.
-    if (reason == ActiveDOMObject::WillDeferLoading && m_parser)
+    if (reason == ReasonForSuspension::WillDeferLoading && m_parser)
         m_parser->suspendScheduledTasks();
 
     m_scheduledTasksAreSuspended = true;
 }
 
-void Document::resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
+void Document::resumeScheduledTasks(ReasonForSuspension reason)
 {
     if (reasonForSuspendingActiveDOMObjects() != reason)
         return;
 
     ASSERT(m_scheduledTasksAreSuspended);
 
-    if (reason == ActiveDOMObject::WillDeferLoading && m_parser)
+    if (reason == ReasonForSuspension::WillDeferLoading && m_parser)
         m_parser->resumeScheduledTasks();
 
 #if ENABLE(XSLT)

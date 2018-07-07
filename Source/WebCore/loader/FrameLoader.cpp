@@ -2018,7 +2018,7 @@ void FrameLoader::commitProvisionalLoad()
         // Note, didReceiveDocType is expected to be called for cached pages. See <rdar://problem/5906758> for more details.
         if (auto* page = m_frame.page())
             page->chrome().didReceiveDocType(m_frame);
-        m_frame.document()->resume(ActiveDOMObject::PageCache);
+        m_frame.document()->resume(ReasonForSuspension::PageCache);
 
         // Force a layout to update view size and thereby update scrollbars.
 #if PLATFORM(IOS)

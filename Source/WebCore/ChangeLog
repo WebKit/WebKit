@@ -1,3 +1,51 @@
+2018-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make ReasonForSuspension enum class
+        https://bugs.webkit.org/show_bug.cgi?id=187405
+
+        Reviewed by Zalan Bujtas.
+
+        Made ReasonForSuspension an enum class instead of enum and moved out of ActiveDOMObject.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::suspend):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::suspend):
+        * dom/ActiveDOMObject.h:
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        (WebCore::Document::suspend):
+        (WebCore::Document::resume):
+        (WebCore::Document::suspendScheduledTasks):
+        (WebCore::Document::resumeScheduledTasks):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::reasonForSuspendingActiveDOMObjects const):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::suspend):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::suspend):
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        * page/Frame.cpp:
+        (WebCore::Frame::suspendActiveDOMObjectsAndAnimations):
+        (WebCore::Frame::resumeActiveDOMObjectsAndAnimations):
+        * page/PageGroupLoadDeferrer.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::suspend):
+
 2018-07-06  Nan Wang  <n_wang@apple.com>
 
         AX: add a subrole for meter elements on macOS

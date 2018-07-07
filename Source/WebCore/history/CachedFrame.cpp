@@ -103,7 +103,7 @@ void CachedFrameBase::restore()
     else
         frame.animation().resumeAnimationsForDocument(m_document.get());
 
-    m_document->resume(ActiveDOMObject::PageCache);
+    m_document->resume(ReasonForSuspension::PageCache);
 
     // It is necessary to update any platform script objects after restoring the
     // cached page.
@@ -153,7 +153,7 @@ CachedFrame::CachedFrame(Frame& frame)
         m_childFrames.append(std::make_unique<CachedFrame>(*child));
 
     // Active DOM objects must be suspended before we cache the frame script data.
-    m_document->suspend(ActiveDOMObject::PageCache);
+    m_document->suspend(ReasonForSuspension::PageCache);
 
     m_cachedFrameScriptData = std::make_unique<ScriptCachedFrameData>(frame);
 

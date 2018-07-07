@@ -1050,7 +1050,7 @@ void Frame::suspendActiveDOMObjectsAndAnimations()
     // FIXME: Suspend/resume calls will not match if the frame is navigated, and gets a new document.
     clearTimers(); // Suspends animations and pending relayouts.
     if (m_doc)
-        m_doc->suspendScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
+        m_doc->suspendScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
 }
 
 void Frame::resumeActiveDOMObjectsAndAnimations()
@@ -1067,7 +1067,7 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
         return;
 
     // FIXME: Suspend/resume calls will not match if the frame is navigated, and gets a new document.
-    m_doc->resumeScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
+    m_doc->resumeScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
 
     // Frame::clearTimers() suspended animations and pending relayouts.
     animation().resumeAnimationsForDocument(m_doc.get());

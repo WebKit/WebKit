@@ -604,8 +604,8 @@ public:
 
     // Override ScriptExecutionContext methods to do additional work
     WEBCORE_EXPORT bool shouldBypassMainWorldContentSecurityPolicy() const final;
-    void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) final;
-    void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) final;
+    void suspendActiveDOMObjects(ReasonForSuspension) final;
+    void resumeActiveDOMObjects(ReasonForSuspension) final;
     void stopActiveDOMObjects() final;
 
     void suspendDeviceMotionAndOrientationUpdates();
@@ -1036,8 +1036,8 @@ public:
     void unregisterForDocumentSuspensionCallbacks(Element*);
 
     void documentWillBecomeInactive();
-    void suspend(ActiveDOMObject::ReasonForSuspension);
-    void resume(ActiveDOMObject::ReasonForSuspension);
+    void suspend(ReasonForSuspension);
+    void resume(ReasonForSuspension);
 
     void registerForMediaVolumeCallbacks(Element*);
     void unregisterForMediaVolumeCallbacks(Element*);
@@ -1251,8 +1251,8 @@ public:
 
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
-    void suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension);
-    void resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension);
+    void suspendScheduledTasks(ReasonForSuspension);
+    void resumeScheduledTasks(ReasonForSuspension);
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     IntSize initialViewportSize() const;

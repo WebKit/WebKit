@@ -256,7 +256,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension(Vec
     return canSuspend;
 }
 
-void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
+void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
 {
     checkConsistency();
 
@@ -264,7 +264,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
         // A page may subsequently suspend DOM objects, say as part of entering the page cache, after the embedding
         // client requested the page be suspended. We ignore such requests so long as the embedding client requested
         // the suspension first. See <rdar://problem/13754896> for more details.
-        ASSERT(m_reasonForSuspendingActiveDOMObjects == ActiveDOMObject::PageWillBeSuspended);
+        ASSERT(m_reasonForSuspendingActiveDOMObjects == ReasonForSuspension::PageWillBeSuspended);
         return;
     }
 
@@ -291,7 +291,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
     m_reasonForSuspendingActiveDOMObjects = why;
 }
 
-void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
+void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
 {
     checkConsistency();
 

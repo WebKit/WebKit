@@ -1115,7 +1115,7 @@ void XMLHttpRequest::suspend(ReasonForSuspension reason)
         m_dispatchErrorOnResuming = true;
     }
 
-    if (reason == ActiveDOMObject::PageCache && m_loader) {
+    if (reason == ReasonForSuspension::PageCache && m_loader) {
         // Going into PageCache, abort the request and dispatch a network error on resuming.
         genericError();
         m_dispatchErrorOnResuming = true;

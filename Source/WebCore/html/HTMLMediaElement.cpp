@@ -5615,29 +5615,28 @@ void HTMLMediaElement::stop()
     m_mediaSession->stopSession();
 }
 
-void HTMLMediaElement::suspend(ReasonForSuspension why)
+void HTMLMediaElement::suspend(ReasonForSuspension reason)
 {
     INFO_LOG(LOGIDENTIFIER);
     Ref<HTMLMediaElement> protectedThis(*this);
 
-    switch (why)
-    {
-        case PageCache:
-            stopWithoutDestroyingMediaPlayer();
-            m_asyncEventQueue.suspend();
-            setShouldBufferData(false);
-            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
-            break;
-        case PageWillBeSuspended:
-            if (!m_pausedInternal) {
-                m_shouldUnpauseInternalOnResume = true;
-                setPausedInternal(true);
-            }
-            break;
-        case JavaScriptDebuggerPaused:
-        case WillDeferLoading:
-            // Do nothing, we don't pause media playback in these cases.
-            break;
+    switch (reason) {
+    case ReasonForSuspension::PageCache:
+        stopWithoutDestroyingMediaPlayer();
+        m_asyncEventQueue.suspend();
+        setShouldBufferData(false);
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
+        break;
+    case ReasonForSuspension::PageWillBeSuspended:
+        if (!m_pausedInternal) {
+            m_shouldUnpauseInternalOnResume = true;
+            setPausedInternal(true);
+        }
+        break;
+    case ReasonForSuspension::JavaScriptDebuggerPaused:
+    case ReasonForSuspension::WillDeferLoading:
+        // Do nothing, we don't pause media playback in these cases.
+        break;
     }
 }
 
