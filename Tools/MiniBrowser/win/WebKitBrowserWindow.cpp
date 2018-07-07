@@ -27,20 +27,16 @@
 
 #include "MiniBrowserLibResource.h"
 #include <WebKit/WKInspector.h>
+#include <vector>
 
 std::wstring
 createString(WKStringRef wkString)
 {
-    size_t maxSize = WKStringGetMaximumUTF8CStringSize(wkString);
-    char* utf8Buffer = new char[maxSize];
-    size_t utf8Length = WKStringGetUTF8CString(wkString, utf8Buffer, maxSize);
+    size_t maxSize = WKStringGetLength(wkString);
 
-    int wcharLength = MultiByteToWideChar(CP_UTF8, 0, utf8Buffer, utf8Length, 0, 0);
-    wchar_t* wcharBuffer = new wchar_t[wcharLength + 1];
-    MultiByteToWideChar(CP_UTF8, 0, utf8Buffer, utf8Length, wcharBuffer, wcharLength);
-    wcharBuffer[wcharLength] = L'\0';
-    std::wstring dest(wcharBuffer);
-    return dest;
+    std::vector<WKChar> wkCharBuffer(maxSize);
+    size_t actualLength = WKStringGetCharacters(wkString, wkCharBuffer.data(), maxSize);
+    return std::wstring(wkCharBuffer.data(), actualLength);
 }
 
 std::wstring createString(WKURLRef wkURL)
@@ -49,30 +45,28 @@ std::wstring createString(WKURLRef wkURL)
     return createString(url.get());
 }
 
-std::string toUtf8(const wchar_t* src, size_t srcLength)
+std::vector<char> toNullTerminatedUTF8(const wchar_t* src, size_t srcLength)
 {
     int utf8Length = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, 0, 0, nullptr, nullptr);
-    char* utf8Buffer = new char[utf8Length];
+    std::vector<char> utf8Buffer(utf8Length + 1);
     WideCharToMultiByte(CP_UTF8, 0, src, srcLength,
-        utf8Buffer, utf8Length, nullptr, nullptr);
+        utf8Buffer.data(), utf8Length, nullptr, nullptr);
     utf8Buffer[utf8Length] = '\0';
-    std::string dest(utf8Buffer);
-    delete[] utf8Buffer;
-    return dest;
+    return utf8Buffer;
 }
 
 WKRetainPtr<WKStringRef>
 createWKString(_bstr_t str)
 {
-    auto utf8 = toUtf8(str, str.length());
-    return adoptWK(WKStringCreateWithUTF8CString(utf8.c_str()));
+    auto utf8 = toNullTerminatedUTF8(str, str.length());
+    return adoptWK(WKStringCreateWithUTF8CString(utf8.data()));
 }
 
 WKRetainPtr<WKURLRef>
 createWKURL(_bstr_t str)
 {
-    auto utf8 = toUtf8(str, str.length());
-    return adoptWK(WKURLCreateWithUTF8CString(utf8.c_str()));
+    auto utf8 = toNullTerminatedUTF8(str, str.length());
+    return adoptWK(WKURLCreateWithUTF8CString(utf8.data()));
 }
 
 Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool, bool)

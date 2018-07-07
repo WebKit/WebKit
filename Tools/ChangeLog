@@ -1,3 +1,15 @@
+2018-07-06  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] WebKit MiniBrowser crashes when attempting to navigate to certain URLs
+        https://bugs.webkit.org/show_bug.cgi?id=187167
+
+        Reviewed by Alex Christensen.
+
+        A null byte was written past the end of the buffer causing the crash.
+        Some of the heap allocated buffers were also not getting deleted.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+
 2018-07-06  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK] Build php zlib plugin and enable sockets in flatpak
