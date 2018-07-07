@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0FC1C35420E5391E001E9FB0 /* DumpClassLayoutTesting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */; };
 		7CB6844B1AFA7978002B305C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6844A1AFA7978002B305C /* main.cpp */; };
 		CE6C3AFF20C0B17B003E33D8 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3AFE20C0B17B003E33D8 /* libWTF.a */; };
 		CE6C3B0120C0C444003E33D8 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3B0020C0C443003E33D8 /* libicucore.dylib */; };
@@ -25,6 +26,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DumpClassLayoutTesting.cpp; sourceTree = "<group>"; };
+		0FC1C35520E53932001E9FB0 /* DumpClassLayoutTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DumpClassLayoutTesting.h; sourceTree = "<group>"; };
 		7C2227511AFC4D9C008C3338 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		7C2227521AFC4D9C008C3338 /* lldbWebKitTester.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = lldbWebKitTester.xcconfig; sourceTree = "<group>"; };
 		7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -78,6 +81,8 @@
 		CE3F4424205C66D9007195B3 /* lldbWebKitTester */ = {
 			isa = PBXGroup;
 			children = (
+				0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */,
+				0FC1C35520E53932001E9FB0 /* DumpClassLayoutTesting.h */,
 				7CB6844A1AFA7978002B305C /* main.cpp */,
 			);
 			name = lldbWebKitTester;
@@ -142,6 +147,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FC1C35420E5391E001E9FB0 /* DumpClassLayoutTesting.cpp in Sources */,
 				7CB6844B1AFA7978002B305C /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

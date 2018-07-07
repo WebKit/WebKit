@@ -1,3 +1,93 @@
+2018-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        dump-class-layout reports wrong padding in many cases
+        https://bugs.webkit.org/show_bug.cgi?id=185801
+
+        Reviewed by Dan Bates.
+        
+        Enhance dump-class-layout, fixing bugs and adding unit tests. This also includes
+        the patch from bug 187141.
+        
+        Move the code that uses lldb to fetch the class layout to its own module,
+        lldb_dump_class_layout.py, so it can be unit tested. Change this code
+        to build up a data structure for the class. This is necessary since correct
+        padding computation is easier with second traversal over the data structure.
+        
+        Try to deal with the empty base class optimization, which is necessary to report
+        correct padding in classes using std::unique_ptr, and correctly handle virtual base classes.
+        
+        The ClassLayoutBase class knows how to test for equality and generate a string
+        or string list representation of itself. The derived ClassLayout class knows
+        how to build up the class layout using the lldb Python bindings.
+        
+        Finally we wrap the lldb debugger instance in LLDBDebuggerInstance so that we don't
+        have to make a new one for each unit test. The tests have to run serially.
+        
+        Add to lldbWebKitTester a .cpp file that contains a set of C++ classes to unit-test
+        dump-class-layout.
+
+        * Scripts/dump-class-layout:
+        (main):
+        * lldb/dump_class_layout_unittest.py:
+        (destroy_cached_debug_session):
+        (TestDumpClassLayout):
+        (TestDumpClassLayout.setUpClass):
+        (TestDumpClassLayout.setUp):
+        (TestDumpClassLayout.serial_test_BasicClassLayout):
+        (serial_test_PaddingBetweenClassMembers):
+        (serial_test_BoolPaddingClass):
+        (serial_test_ClassWithEmptyClassMembers):
+        (serial_test_SimpleVirtualClass):
+        (serial_test_SimpleVirtualClassWithNonVirtualBase):
+        (serial_test_InterleavedVirtualNonVirtual):
+        (serial_test_ClassWithTwoVirtualBaseClasses):
+        (serial_test_ClassWithClassMembers):
+        (serial_test_ClassWithBitfields):
+        (serial_test_ClassWithUniquePtrs):
+        (serial_test_ClassWithOptionals):
+        (TestDumpClassLayout.test_BasicClassLayout): Deleted.
+        * lldb/lldbWebKitTester/DumpClassLayoutTesting.cpp:
+        (EmptyClass::doStuff):
+        (VirtualBaseClass::~VirtualBaseClass):
+        (VirtualBaseClass2::~VirtualBaseClass2):
+        (SimpleVirtualClass::~SimpleVirtualClass):
+        (SimpleVirtualClass::doStuff):
+        (SimpleVirtualClassWithNonVirtualBase::~SimpleVirtualClassWithNonVirtualBase):
+        (SimpleVirtualClassWithNonVirtualBase::doStuff):
+        (avoidClassDeadStripping):
+        * lldb/lldb_dump_class_layout.py:
+        (ansi_colors):
+        (ClassLayoutBase):
+        (ClassLayoutBase.__init__):
+        (ClassLayoutBase.__ne__):
+        (ClassLayoutBase.__eq__):
+        (ClassLayoutBase._to_string_recursive):
+        (ClassLayoutBase.as_string_list):
+        (ClassLayoutBase.as_string):
+        (ClassLayoutBase.dump):
+        (ClassLayoutExpected):
+        (ClassLayoutExpected.__init__):
+        (ClassLayout):
+        (ClassLayout.__init__):
+        (ClassLayout._has_polymorphic_base_class):
+        (ClassLayout._parse):
+        (ClassLayout._probably_has_empty_base_class_optimization):
+        (ClassLayout._compute_padding_recursive):
+        (ClassLayout._compute_padding):
+        (LLDBDebuggerInstance):
+        (LLDBDebuggerInstance.__init__):
+        (LLDBDebuggerInstance.__del__):
+        (LLDBDebuggerInstance._get_first_file_architecture):
+        (LLDBDebuggerInstance.layout_for_classname):
+        (ClassLayoutDumper): Deleted.
+        (ClassLayoutDumper.__init__): Deleted.
+        (ClassLayoutDumper._get_first_file_architecture): Deleted.
+        (ClassLayoutDumper.verify_type): Deleted.
+        (ClassLayoutDumper.verify_type_recursive): Deleted.
+        (ClassLayoutDumper._class_layout_as_string): Deleted.
+        (ClassLayoutDumper.dump_to_string): Deleted.
+        (ClassLayoutDumper.dump): Deleted.
+
 2018-07-06  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] WebKit MiniBrowser crashes when attempting to navigate to certain URLs

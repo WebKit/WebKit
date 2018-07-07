@@ -23,51 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpClassLayoutTesting.h"
-#include <stdio.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
+#pragma once
 
-extern void breakForTestingSummaryProviders();
-void breakForTestingSummaryProviders() { return; }
-
-template<size_t length>
-static String utf16String(const char16_t (&string)[length])
-{
-    StringBuilder builder;
-    builder.reserveCapacity(length - 1);
-    for (auto c : string)
-        builder.append(static_cast<UChar>(c));
-    return builder.toString();
-}
-
-static void testSummaryProviders()
-{
-    String aNullString { "" };
-    StringImpl* aNullStringImpl = aNullString.impl();
-
-    String anEmptyString { "" };
-    StringImpl* anEmptyStringImpl = anEmptyString.impl();
-
-    String an8BitString { "résumé" };
-    StringImpl* an8BitStringImpl = an8BitString.impl();
-
-    String a16BitString = utf16String(u"\u1680Cappuccino\u1680");
-    StringImpl* a16BitStringImpl = a16BitString.impl();
-
-
-    Vector<int> anEmptyVector;
-    Vector<int> aVectorWithOneItem;
-    aVectorWithOneItem.reserveCapacity(16);
-    aVectorWithOneItem.append(1);
-
-    breakForTestingSummaryProviders();
-}
-
-int main(int argc, const char* argv[])
-{
-    avoidClassDeadStripping();
-    testSummaryProviders();
-    fprintf(stderr, "This executable does nothing and is only meant for debugging lldb_webkit.py.\n");
-    return 0;
-}
+void avoidClassDeadStripping();

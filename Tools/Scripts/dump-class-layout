@@ -31,9 +31,11 @@ import os
 import subprocess
 from sets import Set
 
-from webkitpy.common.system.systemhost import SystemHost
-sys.path.append(SystemHost().path_to_lldb_python_directory())
-import lldb
+up = os.path.dirname
+tools_directory = up(up(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(tools_directory, "lldb"))
+
+from lldb_dump_class_layout import LLDBDebuggerInstance, ClassLayout
 
 framework = "WebCore"
 build_directory = ""
@@ -43,120 +45,6 @@ arch = None
 def webkit_build_dir():
     scriptpath = os.path.dirname(os.path.realpath(__file__))
     return subprocess.check_output([os.path.join(scriptpath, "webkit-build-directory"), "--top-level"]).strip()
-
-def verify_type(target, type):
-    typename = type.GetName()
-    seenOffset = Set()
-    (end_offset, padding) = verify_type_recursive(target, type, None, 0, 0, 0, seenOffset)
-    byte_size = type.GetByteSize()
-    print 'Total byte size: %u' % (byte_size)
-    print 'Total pad bytes: %u' % (padding)
-    if padding > 0:
-        print 'Padding percentage: %2.2f %%' % ((float(padding) / float(byte_size)) * 100.0)
-    print
-
-def verify_type_recursive(target, type, member_name, depth, base_offset, padding, seenOffset):
-    prev_end_offset = base_offset
-    typename = type.GetName()
-    byte_size = type.GetByteSize()
-    if member_name and member_name != typename:
-        print '%+4u <%3u> %s%s %s;' % (base_offset, byte_size, '    ' * depth, typename, member_name)
-    else:
-        print '%+4u {%3u} %s%s' % (base_offset, byte_size, '    ' * depth, typename)
-
-    members = type.members
-    if members:
-        for member_idx, member in enumerate(members):
-            member_type = member.GetType()
-            member_canonical_type = member_type.GetCanonicalType()
-            member_type_class = member_canonical_type.GetTypeClass()
-            member_name = member.GetName()
-            member_offset = member.GetOffsetInBytes()
-            member_total_offset = member_offset + base_offset
-            member_byte_size = member_type.GetByteSize()
-            member_is_class_or_struct = False
-
-            if (member_offset, member_name) in seenOffset:
-                continue
-            seenOffset.add((member_offset, member_name))
-
-            if member_type_class == lldb.eTypeClassStruct or member_type_class == lldb.eTypeClassClass:
-                member_is_class_or_struct = True
-            if member_idx == 0 and member_offset == target.GetAddressByteSize() and type.IsPolymorphicClass():
-                ptr_size = target.GetAddressByteSize()
-                print '%+4u <%3u> %s__vtbl_ptr_type * _vptr;' % (prev_end_offset, ptr_size, '    ' * (depth + 1))
-                prev_end_offset = ptr_size
-            else:
-                if prev_end_offset < member_total_offset:
-                    member_padding = member_total_offset - prev_end_offset
-                    padding = padding + member_padding
-                    print '%+4u <%3u> %s<PADDING>' % (prev_end_offset, member_padding, '    ' * (depth + 1))
-
-            if member_is_class_or_struct:
-                (prev_end_offset, padding) = verify_type_recursive(target, member_canonical_type, member_name, depth + 1, member_total_offset, padding, seenOffset)
-            else:
-                prev_end_offset = member_total_offset + member_byte_size
-                member_typename = member_type.GetName()
-                if member.IsBitfield():
-                    print '%+4u <%3u> %s%s:%u %s;' % (member_total_offset, member_byte_size, '    ' * (depth + 1), member_typename, member.GetBitfieldSizeInBits(), member_name)
-                else:
-                    print '%+4u <%3u> %s%s %s;' % (member_total_offset, member_byte_size, '    ' * (depth + 1), member_typename, member_name)
-
-        if prev_end_offset < byte_size:
-            last_member_padding = byte_size - prev_end_offset
-            print '%+4u <%3u> %s<PADDING>' % (prev_end_offset, last_member_padding, '    ' * (depth + 1))
-            padding += last_member_padding
-    else:
-        if type.IsPolymorphicClass():
-            ptr_size = target.GetAddressByteSize()
-            print '%+4u <%3u> %s__vtbl_ptr_type * _vptr;' % (prev_end_offset, ptr_size, '    ' * (depth + 1))
-            prev_end_offset = ptr_size
-        prev_end_offset = base_offset + byte_size
-
-    return (prev_end_offset, padding)
-
-def get_first_file_architecture(framework_path):
-    p = re.compile('shared library +(\w+)$')
-    file_result = subprocess.check_output(["file", framework_path]).split('\n')
-    arches = []
-    for line in file_result:
-        match = p.search(line)
-        if match:
-            arches.append(match.group(1));
-
-    if len(arches) > 1:
-        print 'Found architectures %s, using %s' % (arches, arches[0])
-
-    if len(arches) > 0:
-        return arches[0]
-    
-    return lldb.LLDB_ARCH_DEFAULT
-
-def dump_class(framework_path, classname, architecture):
-    debugger = lldb.SBDebugger.Create()
-    debugger.SetAsync(False)
-    if not architecture:
-        architecture = get_first_file_architecture(framework_path)
-
-    target = debugger.CreateTargetWithFileAndArch(framework_path, architecture)
-    if not target:
-        print "Failed to make target for " + framework_path;
-        sys.exit(1)
-
-    module = target.GetModuleAtIndex(0)
-    if not module:
-        print "Failed to get first module in " + framework_path;
-        sys.exit(1)
-
-    types = module.FindTypes(classname)
-    if types.GetSize():
-        print 'Found %u types matching "%s" in "%s" for %s' % (len(types), classname, module.file, architecture)
-        for type in types:
-            verify_type(target, type)
-    else:
-        print 'error: no type matches "%s" in "%s"' % (classname, module.file)
-
-    lldb.SBDebugger.Destroy(debugger)
 
 def main():
     parser = argparse.ArgumentParser(description='Dumps the in-memory layout of the given class or classes, showing padding holes.')
@@ -184,7 +72,11 @@ def main():
         build_dir = args.build_directory
 
     target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
-    dump_class(target_path, args.classname, args.arch)
+    
+    lldb_instance = LLDBDebuggerInstance(target_path, args.arch)
+    class_layout = lldb_instance.layout_for_classname(args.classname)
+    class_layout.dump()
+
 
 if __name__ == "__main__":
     main()

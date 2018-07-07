@@ -291,6 +291,12 @@ class _Loader(unittest.TestLoader):
     test_method_prefixes = []
 
     def getTestCaseNames(self, testCaseClass):
+        should_skip_class_method = getattr(testCaseClass, "shouldSkip", None)
+        if callable(should_skip_class_method):
+            if testCaseClass.shouldSkip():
+                _log.info('Skipping tests in %s' % (testCaseClass.__name__))
+                return []
+
         def isTestMethod(attrname, testCaseClass=testCaseClass):
             if not hasattr(getattr(testCaseClass, attrname), '__call__'):
                 return False
