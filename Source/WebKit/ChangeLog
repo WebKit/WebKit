@@ -1,3 +1,20 @@
+2018-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r233561): MobileMail crashes when replying to an email
+        https://bugs.webkit.org/show_bug.cgi?id=187436
+        rdar://problem/41931915
+
+        Reviewed by Alan Bujtas.
+        
+        r233561 added a RELEASE_ASSERT(isMainThread()) in this function. This is fine most of the time,
+        until Mail spawns a WebThread for mail compose, at which point the meaning of isMainThread changes
+        and the RELEASE_ASSERT fires.
+        
+        For now, just remove the RELEASE_ASSERT.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+
 2018-07-06  Timothy Hatcher  <timothy@apple.com>
 
         Semantic colors don't update when accessibility Increase Contrast mode is enabled.
