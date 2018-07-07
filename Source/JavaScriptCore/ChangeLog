@@ -1,5 +1,20 @@
 2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Optimize layout of RegExp to reduce padding
+        https://bugs.webkit.org/show_bug.cgi?id=187438
+
+        Reviewed by Mark Lam.
+
+        Reduce the size of RegExp from 168 to 144.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * runtime/RegExp.h:
+        * runtime/RegExpKey.h:
+        * yarr/YarrErrorCode.h:
+
+2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Optimize layout of ValueProfile to reduce padding
         https://bugs.webkit.org/show_bug.cgi?id=187439
 

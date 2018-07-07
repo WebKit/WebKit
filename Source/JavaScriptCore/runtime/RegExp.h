@@ -132,7 +132,7 @@ private:
 
     static RegExp* createWithoutCaching(VM&, const String&, RegExpFlags);
 
-    enum RegExpState {
+    enum RegExpState : uint8_t {
         ParseError,
         JITCode,
         ByteCode,
@@ -151,13 +151,15 @@ private:
     void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);
 #endif
 
-    RegExpState m_state { NotCompiled };
     String m_patternString;
+    RegExpState m_state { NotCompiled };
     RegExpFlags m_flags;
+    ConcurrentJSLock m_lock;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
     unsigned m_numSubpatterns { 0 };
     Vector<String> m_captureGroupNames;
     HashMap<String, unsigned> m_namedGroupToParenIndex;
+    std::unique_ptr<Yarr::BytecodePattern> m_regExpBytecode;
 #if ENABLE(REGEXP_TRACING)
     double m_rtMatchOnlyTotalSubjectStringLen { 0.0 };
     double m_rtMatchTotalSubjectStringLen { 0.0 };
@@ -166,12 +168,10 @@ private:
     unsigned m_rtMatchCallCount { 0 };
     unsigned m_rtMatchFoundCount { 0 };
 #endif
-    ConcurrentJSLock m_lock;
 
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock m_regExpJITCode;
 #endif
-    std::unique_ptr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
 } // namespace JSC

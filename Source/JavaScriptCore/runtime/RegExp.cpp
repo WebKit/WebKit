@@ -211,7 +211,6 @@ void RegExpFunctionalTestCollector::outputEscapedString(const String& s, bool es
 
 RegExp::RegExp(VM& vm, const String& patternString, RegExpFlags flags)
     : JSCell(vm, vm.regExpStructure.get())
-    , m_state(NotCompiled)
     , m_patternString(patternString)
     , m_flags(flags)
 {

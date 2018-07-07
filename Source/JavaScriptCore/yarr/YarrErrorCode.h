@@ -32,7 +32,7 @@ class JSObject;
 
 namespace Yarr {
 
-enum class ErrorCode : unsigned {
+enum class ErrorCode : uint8_t {
     NoError = 0,
     PatternTooLarge,
     QuantifierOutOfOrder,

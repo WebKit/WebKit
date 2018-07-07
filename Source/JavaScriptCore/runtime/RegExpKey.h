@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-enum RegExpFlags {
+enum RegExpFlags : int8_t {
     NoFlags = 0,
     FlagGlobal = 1,
     FlagIgnoreCase = 2,
