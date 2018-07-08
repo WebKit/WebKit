@@ -1,3 +1,14 @@
+2018-07-08  Filip Pizlo  <fpizlo@apple.com>
+
+        run-benchmark should run ARES-6 1.0.1
+        https://bugs.webkit.org/show_bug.cgi?id=187452
+
+        Reviewed by Sam Weinig.
+        
+        We forgot to update this when we released 1.0.1!
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/ares6.plan:
+
 2018-07-07  Youenn Fablet  <youenn@apple.com>
 
         WPT importer should create dummy HTML files for *.window.js script files
