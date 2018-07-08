@@ -83,7 +83,7 @@ void* prepareOSREntry(
     }
     
     RELEASE_ASSERT(
-        static_cast<int>(values.numberOfLocals()) == baseline->m_numCalleeLocals);
+        static_cast<int>(values.numberOfLocals()) == baseline->numCalleeLocals());
     
     EncodedJSValue* scratch = static_cast<EncodedJSValue*>(
         entryCode->entryBuffer()->dataBuffer());

@@ -853,7 +853,7 @@ public:
             CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
             FullBytecodeLiveness& fullLiveness = livenessFor(codeBlock);
             const FastBitVector& liveness = fullLiveness.getLiveness(codeOriginPtr->bytecodeIndex);
-            for (unsigned relativeLocal = codeBlock->m_numCalleeLocals; relativeLocal--;) {
+            for (unsigned relativeLocal = codeBlock->numCalleeLocals(); relativeLocal--;) {
                 VirtualRegister reg = stackOffset + virtualRegisterForLocal(relativeLocal);
                 
                 // Don't report if our callee already reported.

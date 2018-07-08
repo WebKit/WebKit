@@ -514,7 +514,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
         return;
     }
     case op_enter: {
-        for (unsigned i = codeBlock->m_numVars; i--;)
+        for (unsigned i = codeBlock->numVars(); i--;)
             functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(i).offset());
         return;
     }

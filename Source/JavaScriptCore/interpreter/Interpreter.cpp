@@ -459,7 +459,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     size_t numberOfCalleeSaveSlots = codeBlock->calleeSaveSpaceAsVirtualRegisters();
     const Register* endOfCalleeSaves = it - numberOfCalleeSaveSlots;
 
-    end = it - codeBlock->m_numVars;
+    end = it - codeBlock->numVars();
     if (it != end) {
         do {
             JSValue v = it->jsValue();
@@ -474,7 +474,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     }
     dataLogF("-----------------------------------------------------------------------------\n");
 
-    end = it - codeBlock->m_numCalleeLocals + codeBlock->m_numVars;
+    end = it - codeBlock->numCalleeLocals() + codeBlock->numVars();
     if (it != end) {
         do {
             JSValue v = (*it).jsValue();

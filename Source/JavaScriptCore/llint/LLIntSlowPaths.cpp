@@ -246,7 +246,7 @@ static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpec
     dataLogF("<%p> %p / %p: in %s of ", &Thread::current(), codeBlock, exec, comment);
     dataLog(*codeBlock);
     dataLogF(" function %p, executable %p; numVars = %u, numParameters = %u, numCalleeLocals = %u, caller = %p.\n",
-        callee, executable, codeBlock->m_numVars, codeBlock->numParameters(), codeBlock->m_numCalleeLocals, exec->callerFrame());
+        callee, executable, codeBlock->numVars(), codeBlock->numParameters(), codeBlock->numCalleeLocals(), exec->callerFrame());
 }
 
 LLINT_SLOW_PATH_DECL(trace_prologue_function_for_call)
@@ -498,8 +498,8 @@ LLINT_SLOW_PATH_DECL(stack_check)
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Checking stack height with exec = %p.\n", exec);
     dataLog("CodeBlock = ", *exec->codeBlock(), "\n");
-    dataLogF("Num callee registers = %u.\n", exec->codeBlock()->m_numCalleeLocals);
-    dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
+    dataLogF("Num callee registers = %u.\n", exec->codeBlock()->numCalleeLocals());
+    dataLogF("Num vars = %u.\n", exec->codeBlock()->numVars());
 
     dataLogF("Current OS stack end is at %p.\n", vm.softStackLimit());
 #if !ENABLE(JIT)

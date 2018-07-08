@@ -1902,7 +1902,7 @@ void BytecodeDumper<Block>::dumpBlock(Block* block, const typename Block::Unpack
         ": %lu m_instructions; %lu bytes; %d parameter(s); %d callee register(s); %d variable(s)",
         static_cast<unsigned long>(instructions.size()),
         static_cast<unsigned long>(instructions.size() * sizeof(Instruction)),
-        block->numParameters(), block->numCalleeLocals(), block->m_numVars);
+        block->numParameters(), block->numCalleeLocals(), block->numVars());
     out.print("; scope at ", block->scopeRegister());
     out.printf("\n");
 

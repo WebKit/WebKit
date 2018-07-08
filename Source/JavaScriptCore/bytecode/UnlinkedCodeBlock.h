@@ -257,6 +257,7 @@ public:
     const UnlinkedInstructionStream& instructions() const;
 
     int numCalleeLocals() const { return m_numCalleeLocals; }
+    int numVars() const { return m_numVars; }
 
     int m_numVars;
     int m_numCapturedVars;

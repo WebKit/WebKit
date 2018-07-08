@@ -148,9 +148,9 @@ unsigned VariableEventStream::reconstruct(
     };
 
     if (codeOrigin.inlineCallFrame)
-        numVariables = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame)->m_numCalleeLocals + VirtualRegister(codeOrigin.inlineCallFrame->stackOffset).toLocal() + 1;
+        numVariables = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame)->numCalleeLocals() + VirtualRegister(codeOrigin.inlineCallFrame->stackOffset).toLocal() + 1;
     else
-        numVariables = baselineCodeBlock->m_numCalleeLocals;
+        numVariables = baselineCodeBlock->numCalleeLocals();
     
     // Crazy special case: if we're at index == 0 then this must be an argument check
     // failure, in which case all variables are already set up. The recoveries should

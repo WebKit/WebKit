@@ -1,5 +1,62 @@
 2018-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Optimize layout of CodeBlock to reduce padding
+        https://bugs.webkit.org/show_bug.cgi?id=187441
+
+        Reviewed by Mark Lam.
+
+        Arrange the order of members to reduce the size of CodeBlock from 552 to 544.
+        We also make SourceCodeRepresentation 1 byte since CodeBlock has a vector of this,
+        Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation.
+
+        We also move m_numCalleeLocals and m_numVars from `public` to `private` in CodeBlock.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBlock):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numVars const):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::numVars const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::flushForTerminalImpl):
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct const):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        * jit/JIT.cpp:
+        (JSC::JIT::frameRegisterCountFor):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/JITOperations.cpp:
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::frameRegisterCountFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSCJSValue.h:
+
+2018-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Optimize padding of UnlinkedCodeBlock to shrink
         https://bugs.webkit.org/show_bug.cgi?id=187448
 
