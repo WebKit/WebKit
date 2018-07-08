@@ -1,3 +1,35 @@
+2018-07-08  Mark Lam  <mark.lam@apple.com>
+
+        PropertyTable::skipDeletedEntries() should guard against iterating past the table end.
+        https://bugs.webkit.org/show_bug.cgi?id=187444
+        <rdar://problem/41282849>
+
+        Reviewed by Saam Barati.
+
+        PropertyTable supports C++ iteration by offering begin() and end() methods, and
+        an iterator class.  The begin() methods and the iterator operator++() method uses
+        PropertyTable::skipDeletedEntries() to skip over deleted entries in the table.
+        However, PropertyTable::skipDeletedEntries() does not prevent the iteration
+        pointer from being incremented past the end of the table.  As a result, we can
+        iterate past the end of the table.  Note that the C++ iteration protocol tests
+        for the iterator not being equal to the end() value.  It does not do a <= test.
+        If the iterator ever shoots past end, the loop will effectively not terminate.
+
+        This issue can manifest if and only if the last entry in the table is a deleted
+        one, and the key field of the PropertyMapEntry shaped space at the end of the
+        table (the one beyond the last) contains a 1 (i.e. PROPERTY_MAP_DELETED_ENTRY_KEY)
+        value.
+
+        No test because manifesting this issue requires uncontrollable happenstance where
+        memory just beyond the end of the table looks like a deleted entry.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::begin):
+        (JSC::PropertyTable::end):
+        (JSC::PropertyTable::begin const):
+        (JSC::PropertyTable::end const):
+        (JSC::PropertyTable::skipDeletedEntries):
+
 2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize layout of SymbolTable to reduce padding
