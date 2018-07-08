@@ -1,3 +1,16 @@
+2018-07-08  David Kilzer  <ddkilzer@apple.com>
+
+        DOMMatrix.invertSelf() returns garbage values for a non-invertible matrix
+        <https://webkit.org/b/187446>
+        <rdar://problem/41853187>
+
+        Reviewed by Daniel Bates.
+
+        * http/wpt/css/geometry/DOMMatrix-invertSelf-expected.txt: Add.
+        * http/wpt/css/geometry/DOMMatrix-invertSelf.html: Add.
+        * http/wpt/css/geometry/support/dommatrix-test-util.js: Copy from
+          LayoutTests/imported/w3c/web-platform-tests/css/geometry/support/dommatrix-test-util.js.
+
 2018-07-06  Nan Wang  <n_wang@apple.com>
 
         AX: add a subrole for meter elements on macOS

@@ -229,7 +229,9 @@ Ref<DOMMatrix> DOMMatrix::skewYSelf(double sy)
 Ref<DOMMatrix> DOMMatrix::invertSelf()
 {
     auto inverse = m_matrix.inverse();
-    if (!inverse) {
+    if (inverse)
+        m_matrix = *inverse;
+    else {
         m_matrix.setMatrix(
             std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(),
@@ -238,7 +240,6 @@ Ref<DOMMatrix> DOMMatrix::invertSelf()
         );
         m_is2D = false;
     }
-    m_matrix = inverse.value();
     return Ref<DOMMatrix> { *this };
 }
 
