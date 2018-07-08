@@ -1,3 +1,16 @@
+2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize layout of SourceProvider to reduce padding
+        https://bugs.webkit.org/show_bug.cgi?id=187440
+
+        Reviewed by Mark Lam.
+
+        Arrange members of SourceProvider to reduce the size from 80 to 72.
+
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::SourceProvider):
+        * parser/SourceProvider.h:
+
 2018-07-08  Mark Lam  <mark.lam@apple.com>
 
         PropertyTable::skipDeletedEntries() should guard against iterating past the table end.

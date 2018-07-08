@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-    enum class SourceProviderSourceType {
+    enum class SourceProviderSourceType : uint8_t {
         Program,
         Module,
         WebAssembly,
@@ -80,14 +80,14 @@ namespace JSC {
     private:
         JS_EXPORT_PRIVATE void getID();
 
+        SourceProviderSourceType m_sourceType;
+        bool m_validated : 1;
         SourceOrigin m_sourceOrigin;
         String m_url;
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         TextPosition m_startPosition;
-        SourceProviderSourceType m_sourceType;
-        bool m_validated : 1;
-        uintptr_t m_id : sizeof(uintptr_t) * 8 - 1;
+        uintptr_t m_id { 0 };
     };
 
     class StringSourceProvider : public SourceProvider {
