@@ -617,7 +617,7 @@ public:
     {
         if (hasBeenDictionary() || (!shouldOptimize && !m_inferredTypeTable) || !VM::canUseJIT())
             return;
-        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::NewProperty);
+        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::StoredPropertyAge::NewProperty);
     }
 
     // Call this when we know that this is a new property for the object, but not new for the
@@ -628,7 +628,7 @@ public:
     {
         if (hasBeenDictionary() || !m_inferredTypeTable || !VM::canUseJIT())
             return;
-        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::NewProperty);
+        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::StoredPropertyAge::NewProperty);
     }
 
     // Call this when we know that the inferred type table exists and has an entry for this property.
@@ -637,7 +637,7 @@ public:
     {
         if (hasBeenDictionary() || !VM::canUseJIT())
             return;
-        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::OldProperty);
+        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::StoredPropertyAge::OldProperty);
     }
 
     Ref<StructureShape> toStructureShape(JSValue, bool& sawPolyProtoStructure);

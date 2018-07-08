@@ -1,3 +1,24 @@
+2018-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize padding of InferredTypeTable by using cellLock
+        https://bugs.webkit.org/show_bug.cgi?id=187447
+
+        Reviewed by Mark Lam.
+
+        Use cellLock() in InferredTypeTable to guard changes of internal structures.
+        This is the same usage to SparseArrayValueMap. By using cellLock(), we can
+        reduce the size of InferredTypeTable from 40 to 32.
+
+        * runtime/InferredTypeTable.cpp:
+        (JSC::InferredTypeTable::visitChildren):
+        (JSC::InferredTypeTable::get):
+        (JSC::InferredTypeTable::willStoreValue):
+        (JSC::InferredTypeTable::makeTop):
+        * runtime/InferredTypeTable.h:
+        Using enum class and using. And remove `isEmpty()` since it is not used.
+
+        * runtime/Structure.h:
+
 2018-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize layout of SourceProvider to reduce padding
