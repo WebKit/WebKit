@@ -319,7 +319,7 @@ public:
     UnlinkedLLIntCallLinkInfo addLLIntCallLinkInfo() { return m_llintCallLinkInfoCount++; }
     unsigned numberOfLLintCallLinkInfos() { return m_llintCallLinkInfoCount; }
 
-    CodeType codeType() const { return m_codeType; }
+    CodeType codeType() const { return static_cast<CodeType>(m_codeType); }
 
     VirtualRegister thisRegister() const { return m_thisRegister; }
     VirtualRegister scopeRegister() const { return m_scopeRegister; }
@@ -380,8 +380,12 @@ public:
 
     bool wasCompiledWithDebuggingOpcodes() const { return m_wasCompiledWithDebuggingOpcodes; }
 
-    TriState didOptimize() const { return m_didOptimize; }
-    void setDidOptimize(TriState didOptimize) { m_didOptimize = didOptimize; }
+    TriState didOptimize() const { return static_cast<TriState>(m_didOptimize); }
+    void setDidOptimize(TriState didOptimize)
+    {
+        m_didOptimize = static_cast<unsigned>(didOptimize);
+        ASSERT(didOptimize == this->didOptimize());
+    }
 
     void dump(PrintStream&) const;
 
@@ -436,10 +440,6 @@ private:
     std::unique_ptr<UnlinkedInstructionStream> m_unlinkedInstructions;
     std::unique_ptr<BytecodeLivenessAnalysis> m_liveness;
 
-    VirtualRegister m_thisRegister;
-    VirtualRegister m_scopeRegister;
-    VirtualRegister m_globalObjectRegister;
-
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
 
@@ -461,16 +461,21 @@ private:
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
     unsigned m_hasTailCalls : 1;
+    unsigned m_codeType : 2; // CodeType
+    unsigned m_didOptimize : 2; // TriState
     unsigned m_lineCount;
     unsigned m_endColumn;
+
+    VirtualRegister m_thisRegister;
+    VirtualRegister m_scopeRegister;
+    VirtualRegister m_globalObjectRegister;
+
+    SourceParseMode m_parseMode;
 
 public:
     ConcurrentJSLock m_lock;
 private:
-    TriState m_didOptimize;
-    SourceParseMode m_parseMode;
     CodeFeatures m_features;
-    CodeType m_codeType;
 
     Vector<unsigned> m_jumpTargets;
 

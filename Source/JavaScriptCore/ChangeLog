@@ -1,5 +1,24 @@
 2018-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Optimize padding of UnlinkedCodeBlock to shrink
+        https://bugs.webkit.org/show_bug.cgi?id=187448
+
+        Reviewed by Saam Barati.
+
+        We optimize the size of CodeType and TriState. And we arrange the layout of UnlinkedCodeBlock.
+        These optimizations reduce the size of UnlinkedCodeBlock from 304 to 288.
+
+        * bytecode/CodeType.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::codeType const):
+        (JSC::UnlinkedCodeBlock::didOptimize const):
+        (JSC::UnlinkedCodeBlock::setDidOptimize):
+        * bytecode/VirtualRegister.h:
+
+2018-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Optimize padding of InferredTypeTable by using cellLock
         https://bugs.webkit.org/show_bug.cgi?id=187447
 

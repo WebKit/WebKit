@@ -1,3 +1,12 @@
+2018-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize padding of UnlinkedCodeBlock to shrink
+        https://bugs.webkit.org/show_bug.cgi?id=187448
+
+        Reviewed by Saam Barati.
+
+        * wtf/TriState.h:
+
 2018-07-07  David Kilzer  <ddkilzer@apple.com>
 
         iOS port should define HAVE_RUNLOOP_TIMER
