@@ -44,7 +44,7 @@ struct BlockedStatus;
 class Document;
 class FrameLoader;
 struct ServiceWorkerRegistrationData;
-enum class ReferrerPolicy;
+enum class ReferrerPolicy : uint8_t;
 
 bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&);
 

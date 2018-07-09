@@ -128,20 +128,36 @@ static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHea
 static inline CFURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
 {
     switch (policy) {
-    case UseProtocolCachePolicy:
+    case ResourceRequestCachePolicy::UseProtocolCachePolicy:
         return kCFURLRequestCachePolicyProtocolDefault;
-    case ReturnCacheDataElseLoad:
+    case ResourceRequestCachePolicy::ReturnCacheDataElseLoad:
         return kCFURLRequestCachePolicyReturnCacheDataElseLoad;
-    case ReturnCacheDataDontLoad:
+    case ResourceRequestCachePolicy::ReturnCacheDataDontLoad:
         return kCFURLRequestCachePolicyReturnCacheDataDontLoad;
-    case ReloadIgnoringCacheData:
-    case DoNotUseAnyCache:
-    case RefreshAnyCacheData:
+    case ResourceRequestCachePolicy::ReloadIgnoringCacheData:
+    case ResourceRequestCachePolicy::DoNotUseAnyCache:
+    case ResourceRequestCachePolicy::RefreshAnyCacheData:
         return kCFURLRequestCachePolicyReloadIgnoringCache;
     }
 
     ASSERT_NOT_REACHED();
     return kCFURLRequestCachePolicyReloadIgnoringCache;
+}
+
+static inline ResourceRequestCachePolicy fromPlatformRequestCachePolicy(CFURLRequestCachePolicy policy)
+{
+    switch (policy) {
+    case kCFURLRequestCachePolicyProtocolDefault:
+        return ResourceRequestCachePolicy::UseProtocolCachePolicy;
+    case kCFURLRequestCachePolicyReloadIgnoringCache:
+        return ResourceRequestCachePolicy::ReloadIgnoringCacheData;
+    case kCFURLRequestCachePolicyReturnCacheDataElseLoad:
+        return ResourceRequestCachePolicy::ReturnCacheDataElseLoad;
+    case kCFURLRequestCachePolicyReturnCacheDataDontLoad:
+        return ResourceRequestCachePolicy::ReturnCacheDataDontLoad;
+    default:
+        return ResourceRequestCachePolicy::ReloadIgnoringCacheData;
+    }
 }
 
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
@@ -259,8 +275,8 @@ void ResourceRequest::doUpdateResourceRequest()
 
     m_url = CFURLRequestGetURL(m_cfRequest.get());
 
-    if (!m_cachePolicy)
-        m_cachePolicy = (ResourceRequestCachePolicy)CFURLRequestGetCachePolicy(m_cfRequest.get());
+    if (m_cachePolicy == ResourceRequestCachePolicy::UseProtocolCachePolicy)
+        m_cachePolicy = fromPlatformRequestCachePolicy(CFURLRequestGetCachePolicy(m_cfRequest.get()));
     m_timeoutInterval = CFURLRequestGetTimeoutInterval(m_cfRequest.get());
     m_firstPartyForCookies = CFURLRequestGetMainDocumentURL(m_cfRequest.get());
     if (CFStringRef method = CFURLRequestCopyHTTPRequestMethod(m_cfRequest.get())) {

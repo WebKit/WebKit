@@ -56,19 +56,19 @@
 namespace WebCore {
 
 CachedImage::CachedImage(CachedResourceRequest&& request, PAL::SessionID sessionID)
-    : CachedResource(WTFMove(request), ImageResource, sessionID)
+    : CachedResource(WTFMove(request), Type::ImageResource, sessionID)
 {
     setStatus(Unknown);
 }
 
 CachedImage::CachedImage(Image* image, PAL::SessionID sessionID)
-    : CachedResource(URL(), ImageResource, sessionID)
+    : CachedResource(URL(), Type::ImageResource, sessionID)
     , m_image(image)
 {
 }
 
 CachedImage::CachedImage(const URL& url, Image* image, PAL::SessionID sessionID, const String& domainForCachePartition)
-    : CachedResource(url, ImageResource, sessionID)
+    : CachedResource(url, Type::ImageResource, sessionID)
     , m_image(image)
     , m_isManuallyCached(true)
 {
@@ -498,14 +498,14 @@ EncodedDataStatus CachedImage::updateImageData(bool allDataReceived)
 
 void CachedImage::updateBuffer(SharedBuffer& data)
 {
-    ASSERT(dataBufferingPolicy() == BufferData);
+    ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
     updateBufferInternal(data);
     CachedResource::updateBuffer(data);
 }
 
 void CachedImage::updateData(const char* data, unsigned length)
 {
-    ASSERT(dataBufferingPolicy() == DoNotBufferData);
+    ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
     updateBufferInternal(SharedBuffer::create(data, length));
     CachedResource::updateData(data, length);
 }

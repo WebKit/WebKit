@@ -1,3 +1,252 @@
+2018-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink various loading-related enums to shrink CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=187443
+
+        Reviewed by Chris Dumez.
+        
+        ResourceRequestBase, ResourceResponseBase, ResourceLoaderOptions, FetchOptions and
+        CachedResource have a lot of enum members variables most of which took 4 bytes each.
+        These can be packed much more efficiently if the enums are declared with an 8-bit size.
+        This requires turning enums into enum classes in some cases.
+        
+        This reduces the size of CachedResource from 1464 to 1384 bytes, which saves about 49KB
+        over the ~600 CachedResources on nytimes.com.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::startLoadingBlobURL):
+        (WebCore::FetchLoader::start):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::resourceType const):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::shouldBufferResourceData):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveResponse):
+        (WebCore::InspectorNetworkAgent::loadResource):
+        (WebCore::InspectorNetworkAgent::cachedResourceContent):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::sourceMapURLForResource):
+        (WebCore::InspectorPageAgent::inspectorResourceType):
+        * loader/ApplicationManifestLoader.cpp:
+        (WebCore::ApplicationManifestLoader::startLoading):
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::deliverResourceData):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::notifyFinished):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::tryLoadingRedirectRequestFromApplicationCache):
+        (WebCore::DocumentLoader::subresource const):
+        (WebCore::DocumentLoader::loadMainResource):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::preflightSuccess):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FetchOptions.h:
+        (WebCore::FetchOptions::FetchOptions):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::defaultRequestCachingPolicy):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::resourceTypeFromAsAttribute):
+        (WebCore::createLinkPreloadResourceClient):
+        (WebCore::LinkLoader::isSupportedType):
+        (WebCore::LinkLoader::prefetchIfNeeded):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::setDataBufferingPolicy):
+        (WebCore::ResourceLoader::addDataOrBuffer):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveDataOrBuffer):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+        (WebCore::ResourceLoader::cleanupForError):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::shouldSendResourceLoadCallbacks const):
+        (WebCore::ResourceLoader::shouldSniffContent const):
+        (WebCore::ResourceLoader::shouldIncludeCertificateInfo const):
+        * loader/ResourceLoaderOptions.h:
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+        (WebCore::ResourceTimingInformation::storeResourceTimingInitiatorInformation):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::SubresourceLoader::shouldCreatePreviewLoaderForResponse const):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::logResourceLoaded):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * loader/cache/CachedApplicationManifest.cpp:
+        (WebCore::CachedApplicationManifest::CachedApplicationManifest):
+        * loader/cache/CachedApplicationManifest.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::updateBuffer):
+        (WebCore::CachedImage::updateData):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::updateBuffer):
+        (WebCore::CachedRawResource::updateData):
+        (WebCore::CachedRawResource::finishLoading):
+        (WebCore::CachedRawResource::canReuse const):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType):
+        (WebCore::deadDecodedDataDeletionIntervalForResourceType):
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::updateBuffer):
+        (WebCore::CachedResource::updateData):
+        (WebCore::CachedResource::isCORSSameOrigin const):
+        (WebCore::CachedResource::freshnessLifetime const):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::addClientToSet):
+        (WebCore::CachedResource::areAllClientsXMLHttpRequests const):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isImage const):
+        (WebCore::CachedResource::isMainOrMediaOrIconOrRawResource const):
+        (WebCore::CachedResource::ignoreForRequestCount const):
+        (WebCore::CachedResource::shouldSendResourceLoadCallbacks const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestFont):
+        (WebCore::CachedResourceLoader::requestTextTrack):
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestScript):
+        (WebCore::CachedResourceLoader::requestXSLStyleSheet):
+        (WebCore::CachedResourceLoader::requestSVGDocument):
+        (WebCore::CachedResourceLoader::requestLinkResource):
+        (WebCore::CachedResourceLoader::requestMedia):
+        (WebCore::CachedResourceLoader::requestIcon):
+        (WebCore::CachedResourceLoader::requestRawResource):
+        (WebCore::CachedResourceLoader::requestBeaconResource):
+        (WebCore::CachedResourceLoader::requestMainResource):
+        (WebCore::CachedResourceLoader::requestApplicationManifest):
+        (WebCore::contentTypeFromResourceType):
+        (WebCore::CachedResourceLoader::checkInsecureContent const):
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox const):
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest):
+        (WebCore::isResourceSuitableForDirectReuse):
+        (WebCore::destinationForType):
+        (WebCore::CachedResourceLoader::loadResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy const):
+        (WebCore::CachedResourceLoader::cachePolicy const):
+        (WebCore::CachedResourceLoader::preload):
+        (WebCore::CachedResourceLoader::warnUnusedPreloads):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::updateAccordingCacheMode):
+        * loader/cache/CachedResourceRequest.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::CachedSVGFont):
+        * loader/cache/CachedSVGFont.h:
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::CachedTextTrack):
+        (WebCore::CachedTextTrack::doUpdateBuffer):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::getStatistics):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willCacheResponseAsync):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect):
+        * platform/ReferrerPolicy.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+        * platform/ios/QuickLook.mm:
+        (WebCore::registerQLPreviewConverterIfNeeded):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::updateRedirectChainStatus):
+        (WebCore::redirectChainAllowsReuse):
+        * platform/network/CacheValidation.h:
+        (WebCore::RedirectChainCacheStatus::RedirectChainCacheStatus):
+        * platform/network/ResourceErrorBase.h:
+        * platform/network/ResourceLoadPriority.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::httpBody const):
+        (WebCore::ResourceRequestBase::updatePlatformRequest const):
+        (WebCore::ResourceRequestBase::updateResourceRequest const):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/StoredCredentialsPolicy.h:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::toPlatformRequestCachePolicy):
+        (WebCore::fromPlatformRequestCachePolicy):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::fromPlatformRequestCachePolicy):
+        (WebCore::toPlatformRequestCachePolicy):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionDataTask resource:receivedRedirect:request:completionHandler:]):
+        * platform/network/ios/PreviewConverter.mm:
+        (WebCore::PreviewConverter::safeRequest const):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        * testing/Internals.cpp:
+        (WebCore::toResourceRequestCachePolicy):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2018-07-09  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at interfaces/DocumentTimeline/constructor.html pass reliably

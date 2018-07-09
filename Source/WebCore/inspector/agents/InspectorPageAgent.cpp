@@ -146,7 +146,7 @@ String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResourc
         return String();
 
     // Scripts are handled in a separate path.
-    if (cachedResource->type() != CachedResource::CSSStyleSheet)
+    if (cachedResource->type() != CachedResource::Type::CSSStyleSheet)
         return String();
 
     String sourceMapHeader = cachedResource->response().httpHeaderField(HTTPHeaderName::SourceMap);
@@ -216,31 +216,31 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(Ins
 InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(CachedResource::Type type)
 {
     switch (type) {
-    case CachedResource::ImageResource:
+    case CachedResource::Type::ImageResource:
         return InspectorPageAgent::ImageResource;
 #if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
+    case CachedResource::Type::SVGFontResource:
 #endif
-    case CachedResource::FontResource:
+    case CachedResource::Type::FontResource:
         return InspectorPageAgent::FontResource;
 #if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
+    case CachedResource::Type::XSLStyleSheet:
 #endif
-    case CachedResource::CSSStyleSheet:
+    case CachedResource::Type::CSSStyleSheet:
         return InspectorPageAgent::StylesheetResource;
-    case CachedResource::Script:
+    case CachedResource::Type::Script:
         return InspectorPageAgent::ScriptResource;
-    case CachedResource::MainResource:
+    case CachedResource::Type::MainResource:
         return InspectorPageAgent::DocumentResource;
-    case CachedResource::Beacon:
+    case CachedResource::Type::Beacon:
         return InspectorPageAgent::BeaconResource;
 #if ENABLE(APPLICATION_MANIFEST)
-    case CachedResource::ApplicationManifest:
+    case CachedResource::Type::ApplicationManifest:
         return InspectorPageAgent::ApplicationManifestResource;
 #endif
-    case CachedResource::MediaResource:
-    case CachedResource::Icon:
-    case CachedResource::RawResource:
+    case CachedResource::Type::MediaResource:
+    case CachedResource::Type::Icon:
+    case CachedResource::Type::RawResource:
     default:
         return InspectorPageAgent::OtherResource;
     }
@@ -248,7 +248,7 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(Cache
 
 InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(const CachedResource& cachedResource)
 {
-    if (cachedResource.type() == CachedResource::RawResource) {
+    if (cachedResource.type() == CachedResource::Type::RawResource) {
         switch (cachedResource.resourceRequest().requester()) {
         case ResourceRequest::Requester::Fetch:
             return InspectorPageAgent::FetchResource;
@@ -386,12 +386,12 @@ static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
             continue;
 
         switch (cachedResource->type()) {
-        case CachedResource::ImageResource:
+        case CachedResource::Type::ImageResource:
             // Skip images that were not auto loaded (images disabled in the user agent).
 #if ENABLE(SVG_FONTS)
-        case CachedResource::SVGFontResource:
+        case CachedResource::Type::SVGFontResource:
 #endif
-        case CachedResource::FontResource:
+        case CachedResource::Type::FontResource:
             // Skip fonts that were referenced in CSS but never used/downloaded.
             if (cachedResource->stillNeedsLoad())
                 continue;

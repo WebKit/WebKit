@@ -68,37 +68,37 @@ using namespace WTF;
 ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
 {
     switch (type) {
-    case CachedResource::MainResource:
+    case Type::MainResource:
         return ResourceLoadPriority::VeryHigh;
-    case CachedResource::CSSStyleSheet:
-    case CachedResource::Script:
+    case Type::CSSStyleSheet:
+    case Type::Script:
         return ResourceLoadPriority::High;
 #if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
+    case Type::SVGFontResource:
 #endif
-    case CachedResource::MediaResource:
-    case CachedResource::FontResource:
-    case CachedResource::RawResource:
-    case CachedResource::Icon:
+    case Type::MediaResource:
+    case Type::FontResource:
+    case Type::RawResource:
+    case Type::Icon:
         return ResourceLoadPriority::Medium;
-    case CachedResource::ImageResource:
+    case Type::ImageResource:
         return ResourceLoadPriority::Low;
 #if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
+    case Type::XSLStyleSheet:
         return ResourceLoadPriority::High;
 #endif
-    case CachedResource::SVGDocumentResource:
+    case Type::SVGDocumentResource:
         return ResourceLoadPriority::Low;
-    case CachedResource::Beacon:
+    case Type::Beacon:
         return ResourceLoadPriority::VeryLow;
-    case CachedResource::LinkPrefetch:
+    case Type::LinkPrefetch:
         return ResourceLoadPriority::VeryLow;
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
+    case Type::TextTrackResource:
         return ResourceLoadPriority::Low;
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
-    case CachedResource::ApplicationManifest:
+    case Type::ApplicationManifest:
         return ResourceLoadPriority::Low;
 #endif
     }
@@ -108,7 +108,7 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
 
 static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
 {
-    if (type == CachedResource::Script)
+    if (type == CachedResource::Type::Script)
         return 0_s;
 
     return MemoryCache::singleton().deadDecodedDataDeletionInterval();
@@ -139,7 +139,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
 #endif
 
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
-    ASSERT(m_origin || m_type == CachedResource::MainResource);
+    ASSERT(m_origin || m_type == Type::MainResource);
 
     if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options))
         setCrossOrigin();
@@ -209,7 +209,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     }
 
     FrameLoader& frameLoader = frame.loader();
-    if (m_options.securityCheck == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
+    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         if (frameLoader.state() == FrameStateProvisional)
             RELEASE_LOG_IF_ALLOWED("load: Failed security check -- state is provisional (frame = %p)", &frame);
         else if (!frameLoader.activeDocumentLoader())
@@ -239,13 +239,13 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         }
     }
 
-    if (type() == CachedResource::LinkPrefetch)
+    if (type() == Type::LinkPrefetch)
         m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Purpose, "prefetch");
     m_resourceRequest.setPriority(loadPriority());
 
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
     // So no need for extra fields for MainResource.
-    if (type() != CachedResource::MainResource)
+    if (type() != Type::MainResource)
         frameLoader.addExtraFieldsToSubresourceRequest(m_resourceRequest);
 
 
@@ -343,12 +343,12 @@ void CachedResource::checkNotify()
 
 void CachedResource::updateBuffer(SharedBuffer&)
 {
-    ASSERT(dataBufferingPolicy() == BufferData);
+    ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
 }
 
 void CachedResource::updateData(const char*, unsigned)
 {
-    ASSERT(dataBufferingPolicy() == DoNotBufferData);
+    ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
 }
 
 void CachedResource::finishLoading(SharedBuffer*)
@@ -397,12 +397,12 @@ bool CachedResource::isCrossOrigin() const
 bool CachedResource::isCORSSameOrigin() const
 {
     // Following resource types do not use CORS
-    ASSERT(type() != CachedResource::Type::FontResource);
+    ASSERT(type() != Type::FontResource);
 #if ENABLE(SVG_FONTS)
-    ASSERT(type() != CachedResource::Type::SVGFontResource);
+    ASSERT(type() != Type::SVGFontResource);
 #endif
 #if ENABLE(XSLT)
-    ASSERT(type() != CachedResource::XSLStyleSheet);
+    ASSERT(type() != Type::XSLStyleSheet);
 #endif
 
     // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-same-origin
@@ -438,7 +438,7 @@ Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) cons
             // Don't cache non-HTTP main resources since we can't check for freshness.
             // FIXME: We should not cache subresources either, but when we tried this
             // it caused performance and flakiness issues in our test infrastructure.
-            if (m_type == MainResource || SchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol.toStringWithoutCopying()))
+            if (m_type == Type::MainResource || SchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol.toStringWithoutCopying()))
                 return 0_us;
         }
 
@@ -470,7 +470,7 @@ void CachedResource::setResponse(const ResourceResponse& response)
         return;
     }
 #endif
-    m_response.setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::NoRedirection);
+    m_response.setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::Status::NoRedirection);
     if (m_response.tainting() == ResourceResponse::Tainting::Basic || m_response.tainting() == ResourceResponse::Tainting::Cors)
         m_response.setTainting(m_responseTainting);
 }
@@ -513,18 +513,18 @@ void CachedResource::didAddClient(CachedResourceClient& client)
 
 bool CachedResource::addClientToSet(CachedResourceClient& client)
 {
-    if (m_preloadResult == PreloadNotReferenced && client.shouldMarkAsReferenced()) {
+    if (m_preloadResult == PreloadResult::PreloadNotReferenced && client.shouldMarkAsReferenced()) {
         if (isLoaded())
-            m_preloadResult = PreloadReferencedWhileComplete;
+            m_preloadResult = PreloadResult::PreloadReferencedWhileComplete;
         else if (m_requestedFromNetworkingLayer)
-            m_preloadResult = PreloadReferencedWhileLoading;
+            m_preloadResult = PreloadResult::PreloadReferencedWhileLoading;
         else
-            m_preloadResult = PreloadReferenced;
+            m_preloadResult = PreloadResult::PreloadReferenced;
     }
     if (allowsCaching() && !hasClients() && inCache())
         MemoryCache::singleton().addToLiveResourcesSize(*this);
 
-    if ((m_type == RawResource || m_type == MainResource) && !m_response.isNull() && !m_proxyResource) {
+    if ((m_type == Type::RawResource || m_type == Type::MainResource) && !m_response.isNull() && !m_proxyResource) {
         // Certain resources (especially XHRs and main resources) do crazy things if an asynchronous load returns
         // synchronously (e.g., scripts may not have set all the state they need to handle the load).
         // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,
@@ -852,7 +852,7 @@ unsigned CachedResource::overheadSize() const
 
 bool CachedResource::areAllClientsXMLHttpRequests() const
 {
-    if (type() != RawResource)
+    if (type() != Type::RawResource)
         return false;
 
     for (auto& client : m_clients) {

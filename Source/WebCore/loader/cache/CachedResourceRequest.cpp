@@ -181,27 +181,27 @@ void CachedResourceRequest::updateAccordingCacheMode()
 
     switch (m_options.cache) {
     case FetchOptions::Cache::NoCache:
-        m_resourceRequest.setCachePolicy(RefreshAnyCacheData);
+        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
         break;
     case FetchOptions::Cache::NoStore:
         m_options.cachingPolicy = CachingPolicy::DisallowCaching;
-        m_resourceRequest.setCachePolicy(DoNotUseAnyCache);
+        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
         break;
     case FetchOptions::Cache::Reload:
-        m_resourceRequest.setCachePolicy(ReloadIgnoringCacheData);
+        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
         break;
     case FetchOptions::Cache::Default:
         break;
     case FetchOptions::Cache::ForceCache:
-        m_resourceRequest.setCachePolicy(ReturnCacheDataElseLoad);
+        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataElseLoad);
         break;
     case FetchOptions::Cache::OnlyIfCached:
-        m_resourceRequest.setCachePolicy(ReturnCacheDataDontLoad);
+        m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataDontLoad);
         break;
     }
 }

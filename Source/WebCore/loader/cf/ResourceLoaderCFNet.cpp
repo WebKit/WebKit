@@ -35,7 +35,7 @@ namespace WebCore {
 
 bool ResourceLoader::shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef cachedResponse)
 {
-    if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
+    if (m_options.sendLoadCallbacks == SendCallbackPolicy::DoNotSendCallbacks)
         return false;
 
     CFURLResponseRef response = CFCachedURLResponseGetWrappedResponse(cachedResponse);

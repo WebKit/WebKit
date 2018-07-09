@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-enum class ReferrerPolicy {
+enum class ReferrerPolicy : uint8_t {
     EmptyString,
     NoReferrer,
     NoReferrerWhenDowngrade,
@@ -50,7 +50,7 @@ enum class ReferrerPolicy {
     UnsafeUrl
 };
 
-enum class ReferrerPolicySource { MetaTag, HTTPHeader };
+enum class ReferrerPolicySource : uint8_t { MetaTag, HTTPHeader };
 std::optional<ReferrerPolicy> parseReferrerPolicy(StringView, ReferrerPolicySource);
 
 }

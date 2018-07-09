@@ -42,5 +42,5 @@ WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
 
 NSURLRequest* WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest)
 {
-    return [toImpl(urlRequest)->resourceRequest().nsURLRequest(DoNotUpdateHTTPBody) copy];
+    return [toImpl(urlRequest)->resourceRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) copy];
 }

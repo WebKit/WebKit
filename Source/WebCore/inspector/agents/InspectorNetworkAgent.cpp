@@ -458,7 +458,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     InspectorPageAgent::ResourceType type = m_resourcesData->resourceType(requestId);
     InspectorPageAgent::ResourceType newType = cachedResource ? InspectorPageAgent::inspectorResourceType(*cachedResource) : type;
 
-    // FIXME: XHRResource is returned for CachedResource::RawResource, it should be OtherResource unless it truly is an XHR.
+    // FIXME: XHRResource is returned for CachedResource::Type::RawResource, it should be OtherResource unless it truly is an XHR.
     // RawResource is used for loading worker scripts, and those should stay as ScriptResource and not change to XHRResource.
     if (type != newType && newType != InspectorPageAgent::XHRResource && newType != InspectorPageAgent::OtherResource)
         type = newType;
@@ -822,7 +822,7 @@ void InspectorNetworkAgent::loadResource(const String& frameId, const String& ur
     request.setHiddenFromInspector(true);
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = SendCallbacks; // So we remove this from m_hiddenRequestIdentifiers on completion.
+    options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks; // So we remove this from m_hiddenRequestIdentifiers on completion.
     options.defersLoadingPolicy = DefersLoadingPolicy::DisallowDefersLoading; // So the request is never deferred.
     options.mode = FetchOptions::Mode::NoCors;
     options.credentials = FetchOptions::Credentials::SameOrigin;
@@ -941,12 +941,12 @@ bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, Stri
     }
 
     switch (resource.type()) {
-    case CachedResource::CSSStyleSheet:
+    case CachedResource::Type::CSSStyleSheet:
         *base64Encoded = false;
         *result = downcast<CachedCSSStyleSheet>(resource).sheetText();
         // The above can return a null String if the MIME type is invalid.
         return !result->isNull();
-    case CachedResource::Script:
+    case CachedResource::Type::Script:
         *base64Encoded = false;
         *result = downcast<CachedScript>(resource).script().toString();
         return true;

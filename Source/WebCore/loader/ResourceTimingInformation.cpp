@@ -70,7 +70,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
         return;
 
     Document* initiatorDocument = &document;
-    if (resource.type() == CachedResource::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
+    if (resource.type() == CachedResource::Type::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
         document.frame()->loader().setShouldReportResourceTimingToParentFrame(false);
         initiatorDocument = document.parentDocument();
     }
@@ -93,7 +93,7 @@ void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const Ca
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     ASSERT(resource.get());
 
-    if (resource->type() == CachedResource::MainResource) {
+    if (resource->type() == CachedResource::Type::MainResource) {
         // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
         ASSERT(frame);
         if (frame->ownerElement()) {

@@ -41,27 +41,27 @@
 
 namespace WebCore {
 
-enum SendCallbackPolicy {
+enum class SendCallbackPolicy : uint8_t {
     SendCallbacks,
     DoNotSendCallbacks
 };
 
-enum ContentSniffingPolicy {
+enum class ContentSniffingPolicy : uint8_t {
     SniffContent,
     DoNotSniffContent
 };
 
-enum DataBufferingPolicy {
+enum class DataBufferingPolicy : uint8_t {
     BufferData,
     DoNotBufferData
 };
 
-enum SecurityCheckPolicy {
+enum class SecurityCheckPolicy : uint8_t {
     SkipSecurityCheck,
     DoSecurityCheck
 };
 
-enum CertificateInfoPolicy {
+enum class CertificateInfoPolicy : uint8_t {
     IncludeCertificateInfo,
     DoNotIncludeCertificateInfo
 };
@@ -81,38 +81,38 @@ enum class CachingPolicy : uint8_t {
     DisallowCaching
 };
 
-enum class ClientCredentialPolicy {
+enum class ClientCredentialPolicy : uint8_t {
     CannotAskClientForCredentials,
     MayAskClientForCredentials
 };
 
-enum class SameOriginDataURLFlag {
+enum class SameOriginDataURLFlag : uint8_t {
     Set,
     Unset
 };
 
-enum class InitiatorContext {
+enum class InitiatorContext : uint8_t {
     Document,
     Worker,
 };
 
-enum class ServiceWorkersMode {
+enum class ServiceWorkersMode : uint8_t {
     All,
     None,
     Only // An error will happen if service worker is not handling the fetch. Used to bypass preflight safely.
 };
 
-enum class ApplicationCacheMode {
+enum class ApplicationCacheMode : uint8_t {
     Use,
     Bypass
 };
 
-enum class ContentEncodingSniffingPolicy {
+enum class ContentEncodingSniffingPolicy : uint8_t {
     Sniff,
     DoNotSniff,
 };
 
-enum class PreflightPolicy {
+enum class PreflightPolicy : uint8_t {
     Consider,
     Force,
     Prevent
@@ -139,13 +139,13 @@ struct ResourceLoaderOptions : public FetchOptions {
         this->mode = mode;
     }
 
-    SendCallbackPolicy sendLoadCallbacks { DoNotSendCallbacks };
-    ContentSniffingPolicy sniffContent { DoNotSniffContent };
+    SendCallbackPolicy sendLoadCallbacks { SendCallbackPolicy::DoNotSendCallbacks };
+    ContentSniffingPolicy sniffContent { ContentSniffingPolicy::DoNotSniffContent };
     ContentEncodingSniffingPolicy sniffContentEncoding { ContentEncodingSniffingPolicy::Sniff };
-    DataBufferingPolicy dataBufferingPolicy { BufferData };
+    DataBufferingPolicy dataBufferingPolicy { DataBufferingPolicy::BufferData };
     StoredCredentialsPolicy storedCredentialsPolicy { StoredCredentialsPolicy::DoNotUse };
-    SecurityCheckPolicy securityCheck { DoSecurityCheck };
-    CertificateInfoPolicy certificateInfoPolicy { DoNotIncludeCertificateInfo };
+    SecurityCheckPolicy securityCheck { SecurityCheckPolicy::DoSecurityCheck };
+    CertificateInfoPolicy certificateInfoPolicy { CertificateInfoPolicy::DoNotIncludeCertificateInfo };
     ContentSecurityPolicyImposition contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };
     DefersLoadingPolicy defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
     CachingPolicy cachingPolicy { CachingPolicy::AllowCaching };

@@ -34,42 +34,42 @@ namespace WebCore {
 ResourceType toResourceType(CachedResource::Type type)
 {
     switch (type) {
-    case CachedResource::MainResource:
+    case CachedResource::Type::MainResource:
         return ResourceType::Document;
-    case CachedResource::SVGDocumentResource:
+    case CachedResource::Type::SVGDocumentResource:
         return ResourceType::SVGDocument;
-    case CachedResource::ImageResource:
+    case CachedResource::Type::ImageResource:
         return ResourceType::Image;
-    case CachedResource::CSSStyleSheet:
+    case CachedResource::Type::CSSStyleSheet:
 #if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
+    case CachedResource::Type::XSLStyleSheet:
 #endif
         return ResourceType::StyleSheet;
 
-    case CachedResource::Script:
+    case CachedResource::Type::Script:
         return ResourceType::Script;
 
-    case CachedResource::FontResource:
+    case CachedResource::Type::FontResource:
 #if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
+    case CachedResource::Type::SVGFontResource:
 #endif
         return ResourceType::Font;
 
-    case CachedResource::Beacon:
-    case CachedResource::MediaResource:
-    case CachedResource::Icon:
-    case CachedResource::RawResource:
+    case CachedResource::Type::Beacon:
+    case CachedResource::Type::MediaResource:
+    case CachedResource::Type::Icon:
+    case CachedResource::Type::RawResource:
         return ResourceType::Raw;
 
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
+    case CachedResource::Type::TextTrackResource:
         return ResourceType::Media;
 #endif
-    case CachedResource::LinkPrefetch:
+    case CachedResource::Type::LinkPrefetch:
         ASSERT_NOT_REACHED();
         break;
 #if ENABLE(APPLICATION_MANIFEST)
-    case CachedResource::ApplicationManifest:
+    case CachedResource::Type::ApplicationManifest:
         return ResourceType::Raw;
 #endif
     };

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& request, PAL::SessionID sessionID)
-    : CachedResource(WTFMove(request), ApplicationManifest, sessionID)
+    : CachedResource(WTFMove(request), Type::ApplicationManifest, sessionID)
     , m_decoder(TextResourceDecoder::create("application/manifest+json", UTF8Encoding()))
 {
 }

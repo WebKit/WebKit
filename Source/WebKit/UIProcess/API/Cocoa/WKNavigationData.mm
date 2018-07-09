@@ -52,7 +52,7 @@ using namespace WebKit;
 
 - (NSURLRequest *)originalRequest
 {
-    return _data->originalRequest().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+    return _data->originalRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
 - (NSURL *)destinationURL

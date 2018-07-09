@@ -115,31 +115,31 @@ static Seconds maximumBufferingTime(CachedResource* resource)
         return 0_s;
 
     switch (resource->type()) {
-    case CachedResource::Beacon:
-    case CachedResource::CSSStyleSheet:
-    case CachedResource::Script:
+    case CachedResource::Type::Beacon:
+    case CachedResource::Type::CSSStyleSheet:
+    case CachedResource::Type::Script:
 #if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
+    case CachedResource::Type::SVGFontResource:
 #endif
-    case CachedResource::FontResource:
+    case CachedResource::Type::FontResource:
 #if ENABLE(APPLICATION_MANIFEST)
-    case CachedResource::ApplicationManifest:
+    case CachedResource::Type::ApplicationManifest:
 #endif
         return Seconds::infinity();
-    case CachedResource::ImageResource:
+    case CachedResource::Type::ImageResource:
         return 500_ms;
-    case CachedResource::MediaResource:
+    case CachedResource::Type::MediaResource:
         return 50_ms;
-    case CachedResource::MainResource:
-    case CachedResource::Icon:
-    case CachedResource::RawResource:
-    case CachedResource::SVGDocumentResource:
-    case CachedResource::LinkPrefetch:
+    case CachedResource::Type::MainResource:
+    case CachedResource::Type::Icon:
+    case CachedResource::Type::RawResource:
+    case CachedResource::Type::SVGDocumentResource:
+    case CachedResource::Type::LinkPrefetch:
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
+    case CachedResource::Type::TextTrackResource:
 #endif
 #if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
+    case CachedResource::Type::XSLStyleSheet:
 #endif
         return 0_s;
     }
@@ -254,7 +254,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()));
 
-    ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? SniffContent : DoNotSniffContent;
+    ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? ContentSniffingPolicy::SniffContent : ContentSniffingPolicy::DoNotSniffContent;
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy = resourceLoader.shouldSniffContentEncoding() ? ContentEncodingSniffingPolicy::Sniff : ContentEncodingSniffingPolicy::DoNotSniff;
     StoredCredentialsPolicy storedCredentialsPolicy = resourceLoader.shouldUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
@@ -518,7 +518,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.request = request;
-    loadParameters.contentSniffingPolicy = SniffContent;
+    loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
     loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;

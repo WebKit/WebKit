@@ -139,14 +139,14 @@ Key Cache::makeCacheKey(const WebCore::ResourceRequest& request)
 static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
 {
     switch (policy) {
-    case WebCore::ReturnCacheDataElseLoad:
-    case WebCore::ReturnCacheDataDontLoad:
+    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad:
+    case WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad:
         return true;
-    case WebCore::UseProtocolCachePolicy:
-    case WebCore::ReloadIgnoringCacheData:
-    case WebCore::RefreshAnyCacheData:
+    case WebCore::ResourceRequestCachePolicy::UseProtocolCachePolicy:
+    case WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData:
+    case WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData:
         return false;
-    case WebCore::DoNotUseAnyCache:
+    case WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache:
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -209,12 +209,12 @@ static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRe
 
 static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& request)
 {
-    ASSERT(request.cachePolicy() != WebCore::DoNotUseAnyCache);
+    ASSERT(request.cachePolicy() != WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache);
 
     // FIXME: Support HEAD requests.
     if (request.httpMethod() != "GET")
         return RetrieveDecision::NoDueToHTTPMethod;
-    if (request.cachePolicy() == WebCore::ReloadIgnoringCacheData && !request.isConditional())
+    if (request.cachePolicy() == WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData && !request.isConditional())
         return RetrieveDecision::NoDueToReloadIgnoringCache;
 
     return RetrieveDecision::Yes;

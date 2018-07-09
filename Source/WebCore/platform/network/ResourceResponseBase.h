@@ -45,8 +45,8 @@ bool isScriptAllowedByNosniff(const ResourceResponse&);
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Type { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
-    enum class Tainting { Basic, Cors, Opaque, Opaqueredirect };
+    enum class Type : uint8_t { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
+    enum class Tainting : uint8_t { Basic, Cors, Opaque, Opaqueredirect };
 
     static bool isRedirectionStatusCode(int code) { return code == 301 || code == 302 || code == 303 || code == 307 || code == 308; }
 
@@ -142,7 +142,7 @@ public:
     WEBCORE_EXPORT std::optional<WallTime> lastModified() const;
     ParsedContentRange& contentRange() const;
 
-    enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache };
+    enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache };
     WEBCORE_EXPORT Source source() const;
     void setSource(Source source)
     {

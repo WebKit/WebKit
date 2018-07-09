@@ -38,13 +38,13 @@ class ResourceRequest;
 class ResourceResponse;
 
 struct RedirectChainCacheStatus {
-    enum Status {
+    enum class Status : uint8_t {
         NoRedirection,
         NotCachedRedirection,
         CachedRedirection
     };
     RedirectChainCacheStatus()
-        : status(NoRedirection)
+        : status(Status::NoRedirection)
         , endOfValidity(WallTime::infinity())
     { }
     Status status;

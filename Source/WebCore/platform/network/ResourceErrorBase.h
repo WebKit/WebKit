@@ -45,7 +45,7 @@ public:
     const URL& failingURL() const { lazyInit(); return m_failingURL; }
     const String& localizedDescription() const { lazyInit(); return m_localizedDescription; }
 
-    enum class Type {
+    enum class Type : uint8_t {
         Null,
         General,
         AccessControl,

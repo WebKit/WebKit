@@ -115,20 +115,20 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
 std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as)
 {
     if (equalLettersIgnoringASCIICase(as, "fetch"))
-        return CachedResource::RawResource;
+        return CachedResource::Type::RawResource;
     if (equalLettersIgnoringASCIICase(as, "image"))
-        return CachedResource::ImageResource;
+        return CachedResource::Type::ImageResource;
     if (equalLettersIgnoringASCIICase(as, "script"))
-        return CachedResource::Script;
+        return CachedResource::Type::Script;
     if (equalLettersIgnoringASCIICase(as, "style"))
-        return CachedResource::CSSStyleSheet;
+        return CachedResource::Type::CSSStyleSheet;
     if (RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video") || equalLettersIgnoringASCIICase(as, "audio")))
-        return CachedResource::MediaResource;
+        return CachedResource::Type::MediaResource;
     if (equalLettersIgnoringASCIICase(as, "font"))
-        return CachedResource::FontResource;
+        return CachedResource::Type::FontResource;
 #if ENABLE(VIDEO_TRACK)
     if (equalLettersIgnoringASCIICase(as, "track"))
-        return CachedResource::TextTrackResource;
+        return CachedResource::Type::TextTrackResource;
 #endif
     return std::nullopt;
 }
@@ -136,36 +136,36 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
 static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader)
 {
     switch (resource.type()) {
-    case CachedResource::ImageResource:
+    case CachedResource::Type::ImageResource:
         return std::make_unique<LinkPreloadImageResourceClient>(loader, downcast<CachedImage>(resource));
-    case CachedResource::Script:
+    case CachedResource::Type::Script:
         return std::make_unique<LinkPreloadDefaultResourceClient>(loader, downcast<CachedScript>(resource));
-    case CachedResource::CSSStyleSheet:
+    case CachedResource::Type::CSSStyleSheet:
         return std::make_unique<LinkPreloadStyleResourceClient>(loader, downcast<CachedCSSStyleSheet>(resource));
-    case CachedResource::FontResource:
+    case CachedResource::Type::FontResource:
         return std::make_unique<LinkPreloadFontResourceClient>(loader, downcast<CachedFont>(resource));
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
+    case CachedResource::Type::TextTrackResource:
         return std::make_unique<LinkPreloadDefaultResourceClient>(loader, downcast<CachedTextTrack>(resource));
 #endif
-    case CachedResource::MediaResource:
+    case CachedResource::Type::MediaResource:
         ASSERT(RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled());
         FALLTHROUGH;
-    case CachedResource::RawResource:
+    case CachedResource::Type::RawResource:
         return std::make_unique<LinkPreloadRawResourceClient>(loader, downcast<CachedRawResource>(resource));
-    case CachedResource::MainResource:
-    case CachedResource::Icon:
+    case CachedResource::Type::MainResource:
+    case CachedResource::Type::Icon:
 #if ENABLE(SVG_FONTS)
-    case CachedResource::SVGFontResource:
+    case CachedResource::Type::SVGFontResource:
 #endif
-    case CachedResource::SVGDocumentResource:
+    case CachedResource::Type::SVGDocumentResource:
 #if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
+    case CachedResource::Type::XSLStyleSheet:
 #endif
-    case CachedResource::Beacon:
-    case CachedResource::LinkPrefetch:
+    case CachedResource::Type::Beacon:
+    case CachedResource::Type::LinkPrefetch:
 #if ENABLE(APPLICATION_MANIFEST)
-    case CachedResource::ApplicationManifest:
+    case CachedResource::Type::ApplicationManifest:
 #endif
         // None of these values is currently supported as an `as` value.
         ASSERT_NOT_REACHED();
@@ -178,26 +178,26 @@ bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String
     if (mimeType.isEmpty())
         return true;
     switch (resourceType) {
-    case CachedResource::ImageResource:
+    case CachedResource::Type::ImageResource:
         return MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(mimeType);
-    case CachedResource::Script:
+    case CachedResource::Type::Script:
         return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
-    case CachedResource::CSSStyleSheet:
+    case CachedResource::Type::CSSStyleSheet:
         return MIMETypeRegistry::isSupportedStyleSheetMIMEType(mimeType);
-    case CachedResource::FontResource:
+    case CachedResource::Type::FontResource:
         return MIMETypeRegistry::isSupportedFontMIMEType(mimeType);
-    case CachedResource::MediaResource:
+    case CachedResource::Type::MediaResource:
         if (!RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled())
             ASSERT_NOT_REACHED();
         return MIMETypeRegistry::isSupportedMediaMIMEType(mimeType);
 
 #if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
+    case CachedResource::Type::TextTrackResource:
         return MIMETypeRegistry::isSupportedTextTrackMIMEType(mimeType);
 #endif
-    case CachedResource::RawResource:
+    case CachedResource::Type::RawResource:
 #if ENABLE(APPLICATION_MANIFEST)
-    case CachedResource::ApplicationManifest:
+    case CachedResource::Type::ApplicationManifest:
 #endif
         return true;
     default:
@@ -269,7 +269,7 @@ void LinkLoader::prefetchIfNeeded(const LinkRelAttribute& relAttribute, const UR
 
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().linkPrefetchEnabled());
     std::optional<ResourceLoadPriority> priority;
-    CachedResource::Type type = CachedResource::LinkPrefetch;
+    CachedResource::Type type = CachedResource::Type::LinkPrefetch;
 
     if (m_cachedLinkResource) {
         m_cachedLinkResource->removeClient(*this);

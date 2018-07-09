@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-enum ResourceRequestCachePolicy {
+enum class ResourceRequestCachePolicy : uint8_t {
     UseProtocolCachePolicy, // normal load, equivalent to fetch "default" cache mode.
     ReloadIgnoringCacheData, // reload, equivalent to fetch "reload"cache mode.
     ReturnCacheDataElseLoad, // back/forward or encoding change - allow stale data, equivalent to fetch "force-cache" cache mode.
@@ -45,7 +45,7 @@ enum ResourceRequestCachePolicy {
     RefreshAnyCacheData, // Serve cache data only if revalidated, equivalent to fetch "no-cache" mode.
 };
 
-enum HTTPBodyUpdatePolicy {
+enum HTTPBodyUpdatePolicy : uint8_t {
     DoNotUpdateHTTPBody,
     UpdateHTTPBody
 };
@@ -210,8 +210,8 @@ protected:
     {
     }
 
-    void updatePlatformRequest(HTTPBodyUpdatePolicy = DoNotUpdateHTTPBody) const;
-    void updateResourceRequest(HTTPBodyUpdatePolicy = DoNotUpdateHTTPBody) const;
+    void updatePlatformRequest(HTTPBodyUpdatePolicy = HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) const;
+    void updateResourceRequest(HTTPBodyUpdatePolicy = HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) const;
 
     template<class Encoder> void encodeBase(Encoder&) const;
     template<class Decoder> bool decodeBase(Decoder&);
@@ -228,7 +228,7 @@ protected:
     HTTPHeaderMap m_httpHeaderFields;
     Vector<String> m_responseContentDispositionEncodingFallbackArray;
     RefPtr<FormData> m_httpBody;
-    ResourceRequestCachePolicy m_cachePolicy { UseProtocolCachePolicy };
+    ResourceRequestCachePolicy m_cachePolicy { ResourceRequestCachePolicy::UseProtocolCachePolicy };
     SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
     Requester m_requester { Requester::Unspecified };

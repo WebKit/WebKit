@@ -1,3 +1,57 @@
+2018-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink various loading-related enums to shrink CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=187443
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        (WebKit::LegacyCustomProtocolManager::wasRedirectedToRequest):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::canUseCache const):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::cachePolicyAllowsExpired):
+        (WebKit::NetworkCache::makeRetrieveDecision):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCopyNSURLRequest):
+        * Shared/Cocoa/WKNSURLRequest.mm:
+        (-[WKNSURLRequest _web_createTarget]):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo request]):
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        (-[WKNavigation _request]):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction request]):
+        * UIProcess/API/Cocoa/WKNavigationData.mm:
+        (-[WKNavigationData originalRequest]):
+        * UIProcess/API/Cocoa/WKNavigationResponse.mm:
+        (-[WKNavigationResponse _request]):
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (-[WKURLSchemeTaskImpl request]):
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload request]):
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm:
+        (WebKit::LegacyCustomProtocolManagerClient::startLoading):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformCanHandleRequest):
+
 2018-07-09  Chris Dumez  <cdumez@apple.com>
 
         WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData() fails to protect the page in its lambda

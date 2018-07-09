@@ -186,7 +186,7 @@ static RetainPtr<NSURLRequest> createNSURLRequestFromSerializableRepresentation(
     
 void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
-    RetainPtr<NSURLRequest> requestToSerialize = resourceRequest.nsURLRequest(DoNotUpdateHTTPBody);
+    RetainPtr<NSURLRequest> requestToSerialize = resourceRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 
     bool requestIsPresent = requestToSerialize;
     encoder << requestIsPresent;

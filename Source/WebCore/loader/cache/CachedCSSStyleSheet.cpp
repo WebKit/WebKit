@@ -38,7 +38,7 @@
 namespace WebCore {
 
 CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID)
-    : CachedResource(WTFMove(request), CSSStyleSheet, sessionID)
+    : CachedResource(WTFMove(request), Type::CSSStyleSheet, sessionID)
     , m_decoder(TextResourceDecoder::create("text/css", request.charset()))
 {
 }

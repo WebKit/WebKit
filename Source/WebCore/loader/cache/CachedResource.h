@@ -60,7 +60,7 @@ class CachedResource {
     friend class MemoryCache;
 
 public:
-    enum Type {
+    enum class Type : uint8_t {
         MainResource,
         ImageResource,
         CSSStyleSheet,
@@ -131,7 +131,7 @@ public:
     bool hasClient(CachedResourceClient& client) { return m_clients.contains(&client) || m_clientsAwaitingCallback.contains(&client); }
     bool deleteIfPossible();
 
-    enum PreloadResult {
+    enum class PreloadResult : uint8_t {
         PreloadNotReferenced,
         PreloadReferenced,
         PreloadReferencedWhileLoading,
@@ -164,18 +164,18 @@ public:
 
     bool areAllClientsXMLHttpRequests() const;
 
-    bool isImage() const { return type() == ImageResource; }
+    bool isImage() const { return type() == Type::ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
-    bool isMainOrMediaOrIconOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == Icon || type() == RawResource || type() == Beacon; }
+    bool isMainOrMediaOrIconOrRawResource() const { return type() == Type::MainResource || type() == Type::MediaResource || type() == Type::Icon || type() == Type::RawResource || type() == Type::Beacon; }
 
     // Whether this request should impact request counting and delay window.onload.
     bool ignoreForRequestCount() const
     {
         return m_ignoreForRequestCount
-            || type() == MainResource
-            || type() == LinkPrefetch
-            || type() == Icon
-            || type() == RawResource;
+            || type() == Type::MainResource
+            || type() == Type::LinkPrefetch
+            || type() == Type::Icon
+            || type() == Type::RawResource;
     }
 
     void setIgnoreForRequestCount(bool ignoreForRequestCount) { m_ignoreForRequestCount = ignoreForRequestCount; }
@@ -224,7 +224,7 @@ public:
     bool errorOccurred() const { return m_status == LoadError || m_status == DecodeError; }
     bool loadFailedOrCanceled() const { return !m_error.isNull(); }
 
-    bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
+    bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }
 
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
@@ -336,7 +336,7 @@ private:
     unsigned m_handleCount { 0 };
     unsigned m_preloadCount { 0 };
 
-    PreloadResult m_preloadResult { PreloadNotReferenced };
+    PreloadResult m_preloadResult { PreloadResult::PreloadNotReferenced };
 
     bool m_requestedFromNetworkingLayer { false };
 

@@ -47,7 +47,7 @@
 namespace WebCore {
 
 CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, PAL::SessionID sessionID)
-    : CachedFont(WTFMove(request), sessionID, SVGFontResource)
+    : CachedFont(WTFMove(request), sessionID, Type::SVGFontResource)
     , m_externalSVGFontElement(nullptr)
 {
 }

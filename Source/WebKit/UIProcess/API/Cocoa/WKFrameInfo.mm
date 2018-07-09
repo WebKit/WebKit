@@ -53,7 +53,7 @@
 
 - (NSURLRequest *)request
 {
-    return _frameInfo->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+    return _frameInfo->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
 - (WKSecurityOrigin *)securityOrigin

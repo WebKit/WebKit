@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+// FIXME: should be : uint8_t but need to fix WebKit2 IPC codegen.
 enum class StoredCredentialsPolicy {
     DoNotUse,
     Use,

@@ -37,7 +37,7 @@ namespace WebCore {
 
 void ResourceLoader::willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler)
 {
-    if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
+    if (m_options.sendLoadCallbacks == SendCallbackPolicy::DoNotSendCallbacks)
         return completionHandler(nullptr);
     frameLoader()->client().willCacheResponse(documentLoader(), identifier(), response, WTFMove(completionHandler));
 }

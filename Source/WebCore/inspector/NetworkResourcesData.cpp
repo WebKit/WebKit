@@ -213,7 +213,7 @@ static bool shouldBufferResourceData(const NetworkResourcesData::ResourceData& r
         return true;
 
     // Buffer data for Web Inspector when the rest of the system would not normally buffer.
-    if (resourceData.cachedResource() && resourceData.cachedResource()->dataBufferingPolicy() == DoNotBufferData)
+    if (resourceData.cachedResource() && resourceData.cachedResource()->dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData)
         return true;
 
     return false;

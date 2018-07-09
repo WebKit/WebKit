@@ -309,15 +309,15 @@ private:
     {
         switch (m_tagId) {
         case TagId::Script:
-            return CachedResource::Script;
+            return CachedResource::Type::Script;
         case TagId::Img:
         case TagId::Input:
         case TagId::Source:
             ASSERT(m_tagId != TagId::Input || m_inputIsImage);
-            return CachedResource::ImageResource;
+            return CachedResource::Type::ImageResource;
         case TagId::Link:
             if (m_linkIsStyleSheet)
-                return CachedResource::CSSStyleSheet;
+                return CachedResource::Type::CSSStyleSheet;
             if (m_linkIsPreload)
                 return LinkLoader::resourceTypeFromAsAttribute(m_asAttribute);
             break;
@@ -330,7 +330,7 @@ private:
             break;
         }
         ASSERT_NOT_REACHED();
-        return CachedResource::RawResource;
+        return CachedResource::Type::RawResource;
     }
 
     bool shouldPreload()

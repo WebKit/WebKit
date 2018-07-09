@@ -59,7 +59,7 @@ PreviewConverter::PreviewConverter(NSData *data, const String& uti, const String
 
 ResourceRequest PreviewConverter::safeRequest(const ResourceRequest& request) const
 {
-    return [m_platformConverter safeRequestForRequest:request.nsURLRequest(DoNotUpdateHTTPBody)];
+    return [m_platformConverter safeRequestForRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
 }
 
 ResourceRequest PreviewConverter::previewRequest() const

@@ -130,7 +130,7 @@ namespace WebKit {
 
 void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, uint64_t customProtocolID, const ResourceRequest& coreRequest)
 {
-    NSURLRequest *request = coreRequest.nsURLRequest(DoNotUpdateHTTPBody);
+    NSURLRequest *request = coreRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
     if (!request)
         return;
 

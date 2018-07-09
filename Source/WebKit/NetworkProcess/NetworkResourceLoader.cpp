@@ -145,7 +145,7 @@ bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
 
     if (!request.url().protocolIsInHTTPFamily())
         return false;
-    if (originalRequest().cachePolicy() == WebCore::DoNotUseAnyCache)
+    if (originalRequest().cachePolicy() == WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache)
         return false;
 
     return true;
@@ -238,7 +238,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
             loader->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
             return;
         }
-        if (entry->needsValidation() || request.cachePolicy() == WebCore::RefreshAnyCacheData) {
+        if (entry->needsValidation() || request.cachePolicy() == WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Validating cache entry (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
             loader->validateCacheEntry(WTFMove(entry));
             return;

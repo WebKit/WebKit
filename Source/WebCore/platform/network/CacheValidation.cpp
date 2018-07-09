@@ -143,14 +143,14 @@ Seconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, 
 
 void updateRedirectChainStatus(RedirectChainCacheStatus& redirectChainCacheStatus, const ResourceResponse& response)
 {
-    if (redirectChainCacheStatus.status == RedirectChainCacheStatus::NotCachedRedirection)
+    if (redirectChainCacheStatus.status == RedirectChainCacheStatus::Status::NotCachedRedirection)
         return;
     if (response.cacheControlContainsNoStore() || response.cacheControlContainsNoCache() || response.cacheControlContainsMustRevalidate()) {
-        redirectChainCacheStatus.status = RedirectChainCacheStatus::NotCachedRedirection;
+        redirectChainCacheStatus.status = RedirectChainCacheStatus::Status::NotCachedRedirection;
         return;
     }
 
-    redirectChainCacheStatus.status = RedirectChainCacheStatus::CachedRedirection;
+    redirectChainCacheStatus.status = RedirectChainCacheStatus::Status::CachedRedirection;
     auto responseTimestamp = WallTime::now();
     // Store the nearest end of cache validity date
     auto endOfValidity = responseTimestamp + computeFreshnessLifetimeForHTTPFamily(response, responseTimestamp) - computeCurrentAge(response, responseTimestamp);
@@ -160,11 +160,11 @@ void updateRedirectChainStatus(RedirectChainCacheStatus& redirectChainCacheStatu
 bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus, ReuseExpiredRedirectionOrNot reuseExpiredRedirection)
 {
     switch (redirectChainCacheStatus.status) {
-    case RedirectChainCacheStatus::NoRedirection:
+    case RedirectChainCacheStatus::Status::NoRedirection:
         return true;
-    case RedirectChainCacheStatus::NotCachedRedirection:
+    case RedirectChainCacheStatus::Status::NotCachedRedirection:
         return false;
-    case RedirectChainCacheStatus::CachedRedirection:
+    case RedirectChainCacheStatus::Status::CachedRedirection:
         return reuseExpiredRedirection || WallTime::now() <= redirectChainCacheStatus.endOfValidity;
     }
     ASSERT_NOT_REACHED();

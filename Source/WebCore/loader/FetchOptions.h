@@ -35,11 +35,11 @@
 namespace WebCore {
 
 struct FetchOptions {
-    enum class Destination { EmptyString, Audio, Document, Embed, Font, Image, Manifest, Object, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
-    enum class Mode { Navigate, SameOrigin, NoCors, Cors };
-    enum class Credentials { Omit, SameOrigin, Include };
-    enum class Cache { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
-    enum class Redirect { Follow, Error, Manual };
+    enum class Destination : uint8_t { EmptyString, Audio, Document, Embed, Font, Image, Manifest, Object, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
+    enum class Mode : uint8_t { Navigate, SameOrigin, NoCors, Cors };
+    enum class Credentials : uint8_t { Omit, SameOrigin, Include };
+    enum class Cache : uint8_t { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
+    enum class Redirect : uint8_t { Follow, Error, Manual };
 
     FetchOptions() = default;
     FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool);
@@ -56,8 +56,8 @@ struct FetchOptions {
     Cache cache { Cache::Default };
     Redirect redirect { Redirect::Follow };
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
-    String integrity;
     bool keepAlive { false };
+    String integrity;
     std::optional<DocumentIdentifier> clientIdentifier;
 };
 
@@ -68,8 +68,8 @@ inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credential
     , cache(cache)
     , redirect(redirect)
     , referrerPolicy(referrerPolicy)
-    , integrity(WTFMove(integrity))
     , keepAlive(keepAlive)
+    , integrity(WTFMove(integrity))
 {
 }
 

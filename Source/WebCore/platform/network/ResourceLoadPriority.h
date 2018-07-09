@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-enum class ResourceLoadPriority {
+enum class ResourceLoadPriority : uint8_t {
     VeryLow,
     Low,
     Medium,
