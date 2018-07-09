@@ -4527,7 +4527,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(uint64_t frameID, const SecurityO
     // event handlers, are dismissed implicitly upon navigation or close window, regardless of the
     // defined user prompt handler." So, always allow the unload to proceed if the page is being automated.
     if (m_controlledByAutomation) {
-        if (auto* automationSession = process().processPool().automationSession()) {
+        if (!!process().processPool().automationSession()) {
             reply(true);
             return;
         }
