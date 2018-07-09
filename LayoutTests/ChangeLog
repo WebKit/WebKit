@@ -1,3 +1,9 @@
+2018-07-09  Brady Eidson  <beidson@apple.com>
+
+        This test is *still* flaky. This unreviewed patch is my attempt to make it less so.
+
+        * storage/indexeddb/modern/opendatabase-after-storage-crash.html:
+
 2018-07-09  Brian Burg  <bburg@apple.com>
 
         REGRESSION: Web Inspector no longer pauses in internal injected scripts like WDFindNodes.js

@@ -6,6 +6,7 @@ If this test completes quickly instead of hanging indefinitely, it has passed.
 <script>
 
 var dbname = setDBNameFromPath() + Date();
+var storageKey = "opendatabase-after-storage-crash.html";
 
 function continueTest()
 {
@@ -20,29 +21,30 @@ function continueTest()
 	request.onerror = function(e) {
 		// Good, we received an expected error.
 		// Now reload to see if a new document connects successfully
-		if (sessionStorage[location.href]) {
+		if (sessionStorage[storageKey]) {
 			document.body.innerHTML = "Should not have reached this code twice!";
 			if (window.testRunner)
 				testRunner.notifyDone();
 			return;
 		}
 		
-		sessionStorage[location.href] = "Made it";
+		sessionStorage[storageKey] = "Made it";
 		location.reload();
 	}
 
 	request.onsuccess = function(e) {
-		document.body.innerHTML = "Unexpected success during the second database open after document load. " + sessionStorage[location.href];
+		document.body.innerHTML = "Unexpected success during the second database open after document load. SessionStorage value: " + sessionStorage[storageKey];
 		if (window.testRunner)
 			testRunner.notifyDone();
 	}
 }
 
-var request = window.indexedDB.open(dbname, 1);
+var versionToOpen = sessionStorage.finishedFirstOpen ? 3 : 1;
+var request = window.indexedDB.open(dbname, versionToOpen);
 request.onupgradeneeded = function(e) {
 	if (sessionStorage.finishedFirstOpen) {
 		document.body.innerHTML = "";
-		if (sessionStorage[location.href] != "Made it")
+		if (sessionStorage[storageKey] != "Made it")
 			document.body.innerHTML += "Expected error in the first pass of the test was NOT logged<br>";
 		document.body.innerHTML += "Successfully opened the database in a new document"
 		if (window.testRunner)
@@ -61,13 +63,13 @@ request.onupgradeneeded = function(e) {
 }
 
 request.onerror = function(e) {
-	document.body.innerHTML = "Unexpected error during the first database open on document load. " + sessionStorage[location.href];
+	document.body.innerHTML = "Unexpected error during the first database open on document load. Message: " + e.message + ". Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
 	if (window.testRunner)
 		testRunner.notifyDone();
 }
 
 request.onsuccess = function(e) {
-	document.body.innerHTML = "Unexpected success during the first database open on document load. " + sessionStorage[location.href];
+	document.body.innerHTML = "Unexpected success during the first database open on document load. Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
 	if (window.testRunner)
 		testRunner.notifyDone();
 }
