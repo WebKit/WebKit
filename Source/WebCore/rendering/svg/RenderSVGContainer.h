@@ -73,10 +73,11 @@ private:
     bool isSVGContainer() const final { return true; }
 
     FloatRect m_objectBoundingBox;
-    bool m_objectBoundingBoxValid;
     FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
-    bool m_needsBoundariesUpdate : 1;
+
+    bool m_objectBoundingBoxValid { false };
+    bool m_needsBoundariesUpdate { true };
 };
 
 } // namespace WebCore

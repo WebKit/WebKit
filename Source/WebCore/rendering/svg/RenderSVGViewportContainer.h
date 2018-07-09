@@ -60,11 +60,12 @@ private:
     void applyViewportClip(PaintInfo&) override;
     bool pointIsInsideViewportClip(const FloatPoint& pointInParent) override;
 
-    FloatRect m_viewport;
-    mutable AffineTransform m_localToParentTransform;
     bool m_didTransformToRootUpdate : 1;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsTransformUpdate : 1;
+
+    FloatRect m_viewport;
+    mutable AffineTransform m_localToParentTransform;
 };
 
 } // namespace WebCore

@@ -44,8 +44,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGContainer);
 
 RenderSVGContainer::RenderSVGContainer(SVGElement& element, RenderStyle&& style)
     : RenderSVGModelObject(element, WTFMove(style))
-    , m_objectBoundingBoxValid(false)
-    , m_needsBoundariesUpdate(true)
 {
 }
 
