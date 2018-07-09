@@ -1,3 +1,18 @@
+2018-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink WebCore::Pair
+        https://bugs.webkit.org/show_bug.cgi?id=187450
+
+        Reviewed by Sam Weinig.
+
+        Move m_encoding to pack in with m_refCount and remove the virtual destructor,
+        shrinking the class from 40 to 24 bytes.
+        Also make the enum take only a byte, in case it gets used elsewhere
+        
+        There are about 500 Pairs on nytimes.com, so this memory saving is non-trivial.
+
+        * css/Pair.h:
+
 2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebCore] Annotate classes with WTF_MAKE_FAST_ALLOCATED as much as possible
