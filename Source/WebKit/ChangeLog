@@ -1,3 +1,17 @@
+2018-07-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Remove unused AuthenticationManager static methods.
+        https://bugs.webkit.org/show_bug.cgi?id=187419
+
+        Reviewed by Yusuke Suzuki.
+
+        The file for curl port was added without implementation and never called from anyware.
+        Also interfaces only used by the curl port were removed from the shared header file.
+
+        * PlatformWin.cmake:
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/curl/AuthenticationManagerCurl.cpp: Removed.
+
 2018-07-09  Stephan Szabo  <stephan.szabo@sony.com>
 
         Check that LayerTreeHost was created before use

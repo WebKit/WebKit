@@ -155,8 +155,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
 
         Shared/API/c/cairo/WKImageCairo.cpp
 
-        Shared/Authentication/curl/AuthenticationManagerCurl.cpp
-
         Shared/cairo/ShareableBitmapCairo.cpp
 
         Shared/curl/WebCoreArgumentCodersCurl.cpp
