@@ -520,27 +520,20 @@ void Page::initGroup()
     m_group = m_singlePageGroup.get();
 }
 
-void Page::updateStyleAfterChangeInEnvironment()
-{
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        // If a change in the global environment has occurred, we need to
-        // make sure all the properties a recomputed, therefore we invalidate
-        // the properties cache.
-        auto* document = frame->document();
-        if (!document)
-            continue;
-
-        if (StyleResolver* styleResolver = document->styleScope().resolverIfExists())
-            styleResolver->invalidateMatchedPropertiesCache();
-        document->scheduleForcedStyleRecalc();
-        document->styleScope().didChangeStyleSheetEnvironment();
-    }
-}
-
 void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 {
-    for (auto* page : allPages())
-        page->updateStyleAfterChangeInEnvironment();
+    for (auto* page : allPages()) {
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            // If a change in the global environment has occurred, we need to
+            // make sure all the properties a recomputed, therefore we invalidate
+            // the properties cache.
+            if (!frame->document())
+                continue;
+            if (StyleResolver* styleResolver = frame->document()->styleScope().resolverIfExists())
+                styleResolver->invalidateMatchedPropertiesCache();
+            frame->document()->scheduleForcedStyleRecalc();
+        }
+    }
 }
 
 void Page::setNeedsRecalcStyleInAllFrames()
@@ -2405,30 +2398,16 @@ void Page::setUseSystemAppearance(bool value)
 {
     if (m_useSystemAppearance == value)
         return;
-
     m_useSystemAppearance = value;
-
-    updateStyleAfterChangeInEnvironment();
 
     for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* document = frame->document();
         if (!document)
             continue;
-
         // System apperance change may affect stylesheet parsing. We need to reparse.
         document->extensionStyleSheets().clearPageUserSheet();
         document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
     }
-}
-
-void Page::setUseDarkAppearance(bool value)
-{
-    if (m_useDarkAppearance == value)
-        return;
-
-    m_useDarkAppearance = value;
-
-    updateStyleAfterChangeInEnvironment();
 }
 
 bool Page::useDarkAppearance() const

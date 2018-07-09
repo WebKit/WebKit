@@ -4208,6 +4208,8 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 void WebPage::setUseDarkAppearance(bool useDarkAppearance)
 {
     corePage()->setUseDarkAppearance(useDarkAppearance);
+    RenderTheme::singleton().platformColorsDidChange();
+    corePage()->setNeedsRecalcStyleInAllFrames();
 }
 #endif
 

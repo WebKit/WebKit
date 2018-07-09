@@ -1622,19 +1622,20 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::Scrol
     _data->_impl->setShouldSuppressFirstResponderChanges(shouldSuppress);
 }
 
-- (void)viewDidChangeEffectiveAppearance
+- (bool)_effectiveAppearanceIsDark
 {
-    // This can be called during [super initWithCoder:] and [super initWithFrame:].
-    // That is before _data or _impl is ready to be used, so check. <rdar://problem/39611236>
-    if (!_data || !_data->_impl)
-        return;
+    return _data->_impl->effectiveAppearanceIsDark();
+}
 
-    _data->_impl->effectiveAppearanceDidChange();
+- (void)effectiveAppearanceDidChange
+{
+    _data->_impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
     _data->_impl->setUseSystemAppearance(useSystemAppearance);
+    _data->_impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
 - (BOOL)_useSystemAppearance

@@ -136,19 +136,14 @@ static const double progressAnimationNumFrames = 256;
     self = [super init];
     if (!self)
         return nil;
-
     [[NSNotificationCenter defaultCenter] addObserver:self
         selector:@selector(systemColorsDidChange:) name:NSSystemColorsDidChangeNotification object:nil];
-
-    [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
-        selector:@selector(systemColorsDidChange:) name:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:nil];
-
     return self;
 }
 
-- (void)systemColorsDidChange:(NSNotification *)notification
+- (void)systemColorsDidChange:(NSNotification *)unusedNotification
 {
-    UNUSED_PARAM(notification);
+    ASSERT_UNUSED(unusedNotification, [[unusedNotification name] isEqualToString:NSSystemColorsDidChangeNotification]);
     WebCore::RenderTheme::singleton().platformColorsDidChange();
 }
 
