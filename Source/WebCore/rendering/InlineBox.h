@@ -294,7 +294,10 @@ private:
 
     RenderObject& m_renderer;
 
+private:
+    float m_logicalWidth { 0 };
     float m_expansion { 0 };
+    FloatPoint m_topLeft;
 
 #define ADD_BOOLEAN_BITFIELD(name, Name) \
     private:\
@@ -385,9 +388,9 @@ protected:
         , m_prev(prev)
         , m_parent(parent)
         , m_renderer(renderer)
-        , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
-        , m_topLeft(topLeft)
         , m_logicalWidth(logicalWidth)
+        , m_topLeft(topLeft)
+        , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
     {
     }
 
@@ -410,8 +413,6 @@ protected:
     bool extracted() const { return m_bitfields.extracted(); }
 
 protected:
-    FloatPoint m_topLeft;
-    float m_logicalWidth { 0 };
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 private:

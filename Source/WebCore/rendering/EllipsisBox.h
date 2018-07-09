@@ -46,9 +46,9 @@ private:
     InlineBox* markupBox() const;
 
     bool m_shouldPaintMarkupBox;
+    RenderObject::SelectionState m_selectionState { RenderObject::SelectionNone };
     int m_height;
     AtomicString m_str;
-    RenderObject::SelectionState m_selectionState;
 };
 
 } // namespace WebCore

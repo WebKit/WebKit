@@ -63,7 +63,6 @@ static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
 
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
     : InlineFlowBox(block)
-    , m_lineBreakPos(0)
 {
     setIsHorizontal(block.isHorizontalWritingMode());
 }

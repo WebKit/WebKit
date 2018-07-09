@@ -1,3 +1,44 @@
+2018-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize packing of RootInlineBox
+        https://bugs.webkit.org/show_bug.cgi?id=187430
+
+        Reviewed by Zalan Bujtas.
+
+        In InlineBox, move the m_logicalWidth float up next to the m_expansion float with m_topLeft next; this
+        avoids padding of 4 bytes after this float.
+        
+        In InlineFlowBox, move the bitfields before the pointers so they can snug up into the
+        4 bytes after m_expansion in the base class.
+        
+        The comment about m_lineBreakPos's padding in RootInlineBox is wrong; just move it to the end
+        to avoid padding before the m_lineBreakObj pointer.
+        
+        Make m_logicalWidth private and have derived classes use the accessor.
+        
+        Make EllipsisBox 4 bytes smaller too.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::EllipsisBox):
+        (WebCore::EllipsisBox::paintMarkupBox):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        * rendering/InlineFlowBox.cpp:
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::frameRectIncludingLineHeight const):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect const):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintCompositionUnderline const):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        * rendering/RootInlineBox.h:
+
 2018-07-08  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] A number of tests report an incorrect computed offset

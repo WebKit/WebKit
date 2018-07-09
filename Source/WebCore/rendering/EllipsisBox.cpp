@@ -39,7 +39,6 @@ EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomicString& ellipsis
     , m_shouldPaintMarkupBox(markupBox)
     , m_height(height)
     , m_str(ellipsisStr)
-    , m_selectionState(RenderObject::SelectionNone)
 {
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     m_isEverInChildList = false;
@@ -108,7 +107,7 @@ void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintO
         return;
 
     LayoutPoint adjustedPaintOffset = paintOffset;
-    adjustedPaintOffset.move(x() + m_logicalWidth - markupBox->x(),
+    adjustedPaintOffset.move(x() + logicalWidth() - markupBox->x(),
         y() + style.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()));
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
@@ -153,7 +152,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Hit test the markup box.
     if (InlineBox* markupBox = this->markupBox()) {
         const RenderStyle& lineStyle = this->lineStyle();
-        LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - markupBox->x();
+        LayoutUnit mtx = adjustedLocation.x() + logicalWidth() - markupBox->x();
         LayoutUnit mty = adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent());
         if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom, hitTestAction)) {
             blockFlow().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
@@ -161,7 +160,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         }
     }
 
-    LayoutRect boundsRect(adjustedLocation, LayoutSize(m_logicalWidth, m_height));
+    LayoutRect boundsRect(adjustedLocation, LayoutSize(logicalWidth(), m_height));
     if (visibleToHitTesting() && boundsRect.intersects(HitTestLocation::rectForPoint(locationInContainer.point(), 0, 0, 0, 0))) {
         blockFlow().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
         if (result.addNodeToListBasedTestResult(blockFlow().element(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)

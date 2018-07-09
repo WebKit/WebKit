@@ -42,10 +42,6 @@ class InlineFlowBox : public InlineBox {
 public:
     explicit InlineFlowBox(RenderBoxModelObject& renderer)
         : InlineBox(renderer)
-        , m_firstChild(nullptr)
-        , m_lastChild(nullptr)
-        , m_prevLineBox(nullptr)
-        , m_nextLineBox(nullptr)
         , m_includeLogicalLeftEdge(false)
         , m_includeLogicalRightEdge(false)
         , m_descendantsHaveSameLineHeightAndBaseline(true)
@@ -56,6 +52,10 @@ public:
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_hasBadChildList(false)
 #endif
+        , m_firstChild(nullptr)
+        , m_lastChild(nullptr)
+        , m_prevLineBox(nullptr)
+        , m_nextLineBox(nullptr)
     {
         // Internet Explorer and Firefox always create a marker for list items, even when the list-style-type is none.  We do not make a marker
         // in the list-style-type: none case, since it is wasteful to do so.  However, in order to match other browsers we have to pretend like
@@ -274,8 +274,8 @@ public:
     FloatRect frameRectIncludingLineHeight(LayoutUnit lineTop, LayoutUnit lineBottom) const
     {
         if (isHorizontal())
-            return FloatRect(m_topLeft.x(), lineTop, width(), lineBottom - lineTop);
-        return FloatRect(lineTop, m_topLeft.y(), lineBottom - lineTop, height());
+            return FloatRect(x(), lineTop, width(), lineBottom - lineTop);
+        return FloatRect(lineTop, y(), lineBottom - lineTop, height());
     }
     
     FloatRect logicalFrameRectIncludingLineHeight(LayoutUnit lineTop, LayoutUnit lineBottom) const
@@ -308,15 +308,6 @@ private:
     void addReplacedChildOverflow(const InlineBox*, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow);
     void constrainToLineTopAndBottomIfNeeded(LayoutRect&) const;
 
-protected:
-    RefPtr<RenderOverflow> m_overflow;
-
-    InlineBox* m_firstChild;
-    InlineBox* m_lastChild;
-    
-    InlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
-    InlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject
-
 private:
     unsigned m_includeLogicalLeftEdge : 1;
     unsigned m_includeLogicalRightEdge : 1;
@@ -346,6 +337,15 @@ protected:
 private:
     unsigned m_hasBadChildList : 1;
 #endif
+
+protected:
+    RefPtr<RenderOverflow> m_overflow;
+
+    InlineBox* m_firstChild;
+    InlineBox* m_lastChild;
+    
+    InlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
+    InlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject
 };
 
 #ifdef NDEBUG
