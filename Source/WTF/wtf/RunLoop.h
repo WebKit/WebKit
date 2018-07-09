@@ -79,6 +79,7 @@ public:
 #endif
 
     class TimerBase {
+        WTF_MAKE_FAST_ALLOCATED;
         friend class RunLoop;
     public:
         WTF_EXPORT_PRIVATE explicit TimerBase(RunLoop&);
