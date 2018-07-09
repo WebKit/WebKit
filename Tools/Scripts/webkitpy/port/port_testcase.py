@@ -168,7 +168,7 @@ class PortTestCase(unittest.TestCase):
     def integration_test_check_sys_deps(self):
         port = self.make_port()
         # Only checking that no exception is raised.
-        port.check_sys_deps(True)
+        port.check_sys_deps()
 
     def integration_test_helper(self):
         port = self.make_port()
@@ -666,19 +666,19 @@ MOCK output of child process
             return True
 
         port._build_driver = build_driver_called
-        port.check_build(False)
+        port.check_build()
         self.assertTrue(self.build_called)
 
         port = self.make_port(options=MockOptions(root='/tmp', build=True))
         self.build_called = False
         port._build_driver = build_driver_called
-        port.check_build(False)
+        port.check_build()
         self.assertFalse(self.build_called, None)
 
         port = self.make_port(options=MockOptions(build=False))
         self.build_called = False
         port._build_driver = build_driver_called
-        port.check_build(False)
+        port.check_build()
         self.assertFalse(self.build_called, None)
 
     def test_additional_platform_directory(self):

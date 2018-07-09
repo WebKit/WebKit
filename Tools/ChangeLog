@@ -1,3 +1,43 @@
+2018-07-09  Ross Kirsling  <rkirsling@gmail.com>
+
+        [WinCairo] httpd service install needs to precede server start
+        https://bugs.webkit.org/show_bug.cgi?id=187283
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_build):
+        Remove unused parameter `needs_http`.
+        
+        (Port.check_sys_deps):
+        (Port.start_http_server):
+        Move `check_httpd` call.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.check_httpd): Added.
+        (WinCairoPort.check_httpd): Deleted.
+        Move `httpd -k install` logic to common Windows location.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.check_sys_deps):
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.check_sys_deps):
+        * Scripts/webkitpy/port/mock_drt.py:
+        (MockDRTPort.check_build):
+        (MockDRTPort.check_sys_deps):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.integration_test_check_sys_deps):
+        (test_check_build):
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.check_sys_deps):
+        * Scripts/webkitpy/tool/commands/perfalizer.py:
+        (PerfalizerTask.run):
+        Remove `needs_http` arguments.
+
 2018-07-09  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak] Unreviewed, switch to https for the gst-libav tarball.

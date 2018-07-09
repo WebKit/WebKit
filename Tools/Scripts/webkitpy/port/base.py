@@ -223,7 +223,7 @@ class Port(object):
             return factory.get(target_port).default_baseline_search_path()
         return []
 
-    def check_build(self, needs_http):
+    def check_build(self):
         """This routine is used to ensure that the build is up to date
         and all the needed binaries are present."""
         # If we're using a pre-built copy of WebKit (--root), we assume it also includes a build of DRT.
@@ -272,14 +272,12 @@ class Port(object):
         # Ports can override this method to do additional checks.
         return True
 
-    def check_sys_deps(self, needs_http):
+    def check_sys_deps(self):
         """If the port needs to do some runtime checks to ensure that the
         tests can be run successfully, it should override this routine.
         This step can be skipped with --nocheck-sys-deps.
 
         Returns whether the system is properly configured."""
-        if needs_http:
-            return self.check_httpd()
         return True
 
     def check_image_diff(self, override_step=None, logging=True):
@@ -994,6 +992,9 @@ class Port(object):
 
         Ports can stub this out if they don't need a web server to be running."""
         assert not self._http_server, 'Already running an http server.'
+        if not self.check_httpd():
+            return
+
         http_port = self.get_option('http_port')
         if self._uses_apache():
             server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, port=http_port)

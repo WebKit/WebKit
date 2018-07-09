@@ -161,7 +161,7 @@ class Manager(object):
 
     def _set_up_run(self, test_names, device_class=None):
         self._printer.write_update("Checking build ...")
-        if not self._port.check_build(self.needs_servers(test_names)):
+        if not self._port.check_build():
             _log.error("Build check failed")
             return False
 
@@ -179,7 +179,7 @@ class Manager(object):
         # Check that the system dependencies (themes, fonts, ...) are correct.
         if not self._options.nocheck_sys_deps:
             self._printer.write_update("Checking system dependencies ...")
-            if not self._port.check_sys_deps(self.needs_servers(test_names)):
+            if not self._port.check_sys_deps():
                 self._port.stop_helper()
                 return False
 

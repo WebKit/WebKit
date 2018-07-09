@@ -452,6 +452,23 @@ class WinPort(ApplePort):
                 crash_logs[test_name] = crash_log
         return crash_logs
 
+    def check_httpd(self):
+        if not super(WinPort, self).check_httpd():
+            return False
+
+        path = self._path_to_apache()
+        if not path:
+            return False
+
+        # To launch Apache as a daemon, service installation is required.
+        exit_code = self._executive.run_command([path, '-k', 'install', '-T'], return_exit_code=True)
+        # 0=success, 2=already installed, 720005=permission error, etc.
+        if exit_code not in (0, 2):
+            _log.error('Could not install httpd as a service. Perhaps you forgot to run as adminstrator? (exit code={})'.format(exit_code))
+            return False
+
+        return True
+
 
 class WinCairoPort(WinPort):
     port_name = "wincairo"
@@ -470,19 +487,3 @@ class WinCairoPort(WinPort):
         fallback_names = ['wincairo-' + version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '') for version in fallback_versions]
         fallback_names.append('wincairo')
         return map(self._webkit_baseline_path, fallback_names)
-
-    def check_httpd(self):
-        if not super(WinCairoPort, self).check_httpd():
-            return False
-
-        path = self._path_to_apache()
-        if not path:
-            return False
-
-        # To launch Apache as a daemon, service installation is required.
-        exit_code = self._executive.run_command([path, '-k', 'install', '-T'], return_exit_code=True)
-        # 0=success, 2=already installed, 720005=permission error, etc.
-        if exit_code == 0 or exit_code == 2:
-            return True
-        _log.error('Httpd cannot run as a service. Perhaps you forgot to log in as an adminstrator user? (exit code=%s)' % exit_code)
-        return False

@@ -228,8 +228,8 @@ class GtkPort(Port):
     def show_results_html_file(self, results_filename):
         self._run_script("run-minibrowser", [path.abspath_to_uri(self.host.platform, results_filename)])
 
-    def check_sys_deps(self, needs_http):
-        return super(GtkPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
+    def check_sys_deps(self):
+        return super(GtkPort, self).check_sys_deps() and self._driver_class().check_driver(self)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         return GDBCrashLogGenerator(self._executive, name, pid, newer_than,

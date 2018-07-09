@@ -408,10 +408,10 @@ class TestPort(Port):
     def worker_startup_delay_secs(self):
         return 0
 
-    def check_build(self, needs_http):
+    def check_build(self):
         return True
 
-    def check_sys_deps(self, needs_http):
+    def check_sys_deps(self):
         return True
 
     def default_configuration(self):

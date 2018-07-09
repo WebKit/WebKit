@@ -137,11 +137,11 @@ class IOSSimulatorPort(IOSPort):
     def operating_system(self):
         return 'ios-simulator'
 
-    def check_sys_deps(self, needs_http):
+    def check_sys_deps(self):
         target_device_type = DeviceType(software_variant='iOS', software_version=self.ios_version())
         for device in SimulatedDeviceManager.available_devices(self.host):
             if device.platform_device.device_type in target_device_type:
-                return super(IOSSimulatorPort, self).check_sys_deps(needs_http)
+                return super(IOSSimulatorPort, self).check_sys_deps()
         _log.error('No Simulated device matching "{}" defined in Xcode iOS SDK'.format(str(target_device_type)))
         return False
 

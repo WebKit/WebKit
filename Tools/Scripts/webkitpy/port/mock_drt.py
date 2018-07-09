@@ -68,10 +68,10 @@ class MockDRTPort(object):
     def __getattr__(self, name):
         return getattr(self.__delegate, name)
 
-    def check_build(self, needs_http):
+    def check_build(self):
         return True
 
-    def check_sys_deps(self, needs_http):
+    def check_sys_deps(self):
         return True
 
     def create_driver(self, worker_number, no_timeout=False):

@@ -84,8 +84,8 @@ class WPEPort(Port):
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_FILE')
         return environment
 
-    def check_sys_deps(self, needs_http):
-        return super(WPEPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
+    def check_sys_deps(self):
+        return super(WPEPort, self).check_sys_deps() and self._driver_class().check_driver(self)
 
     def _generate_all_test_configurations(self):
         configurations = []

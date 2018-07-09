@@ -80,7 +80,7 @@ class PerfalizerTask(PatchAnalysisTask):
         if not self._build_without_patch():
             return False
 
-        if not self._port.check_build(needs_http=False):
+        if not self._port.check_build():
             self._logger('Failed to build DumpRenderTree.')
             return False
 
@@ -92,7 +92,7 @@ class PerfalizerTask(PatchAnalysisTask):
         if not self._apply() or not self._build():
             return False
 
-        if not self._port.check_build(needs_http=False):
+        if not self._port.check_build():
             self._logger('Failed to build DumpRenderTree.')
             return False
 
