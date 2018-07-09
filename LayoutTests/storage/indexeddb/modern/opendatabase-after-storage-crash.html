@@ -63,13 +63,13 @@ request.onupgradeneeded = function(e) {
 }
 
 request.onerror = function(e) {
-	document.body.innerHTML = "Unexpected error during the first database open on document load. Message: " + e.message + ". Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
+	document.body.innerHTML = "Unexpected error during the first database open on document load. Message: " + e.message + ". DB opening: " + dbname + ". Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
 	if (window.testRunner)
 		testRunner.notifyDone();
 }
 
 request.onsuccess = function(e) {
-	document.body.innerHTML = "Unexpected success during the first database open on document load. Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
+	document.body.innerHTML = "Unexpected success during the first database open on document load. DB opening: " + dbname + ". Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
 	if (window.testRunner)
 		testRunner.notifyDone();
 }
