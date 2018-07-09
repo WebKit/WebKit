@@ -653,6 +653,7 @@ class WebkitFlatpak:
         sandbox_build_path = os.path.join(self.sandbox_source_root, "WebKitBuild", self.build_type)
         with tempfile.NamedTemporaryFile(mode="w") as tmpscript:
             flatpak_command = ["flatpak", "build", "--die-with-parent",
+                "--bind-mount=/run/shm=/dev/shm",
                 "--bind-mount=/run/host/%s=%s" % (tempfile.gettempdir(), tempfile.gettempdir()),
                 "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root),
                 # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
