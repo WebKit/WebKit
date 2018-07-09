@@ -230,19 +230,18 @@ private:
     LayoutUnit m_outerBorderBefore;
     LayoutUnit m_outerBorderAfter;
 
-    bool m_needsCellRecalc  { false };
-
     // This HashSet holds the overflowing cells for faster painting.
     // If we have more than gMaxAllowedOverflowingCellRatio * total cells, it will be empty
     // and m_forceSlowPaintPathWithOverflowingCell will be set to save memory.
     HashSet<RenderTableCell*> m_overflowingCells;
-    bool m_forceSlowPaintPathWithOverflowingCell { false };
-
-    bool m_hasMultipleCellLevels { false };
 
     // This map holds the collapsed border values for cells with collapsed borders.
     // It is held at RenderTableSection level to spare memory consumption by table cells.
     HashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
+
+    bool m_forceSlowPaintPathWithOverflowingCell { false };
+    bool m_hasMultipleCellLevels { false };
+    bool m_needsCellRecalc  { false };
 };
 
 inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const

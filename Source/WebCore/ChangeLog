@@ -1,5 +1,16 @@
 2018-07-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Shrink RenderTableSection
+        https://bugs.webkit.org/show_bug.cgi?id=187457
+
+        Reviewed by Zalan Bujtas.
+
+        Shrink RenderTableSection from 344 to 336 bytes, saving about 3.6KB on nytimes.com.
+
+        * rendering/RenderTableSection.h:
+
+2018-07-08  Simon Fraser  <simon.fraser@apple.com>
+
         Optimize packing of RootInlineBox
         https://bugs.webkit.org/show_bug.cgi?id=187430
 
