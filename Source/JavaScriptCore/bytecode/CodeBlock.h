@@ -82,7 +82,6 @@ struct OSRExitState;
 } // namespace DFG
 #endif
 
-class BytecodeGenerator;
 class BytecodeLivenessAnalysis;
 class CodeBlockSet;
 class ExecState;
@@ -103,7 +102,6 @@ enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
 class CodeBlock : public JSCell {
     typedef JSCell Base;
-    friend class BytecodeGenerator;
     friend class BytecodeLivenessAnalysis;
     friend class JIT;
     friend class LLIntOffsetsExtractor;

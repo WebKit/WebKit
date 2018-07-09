@@ -47,6 +47,7 @@
 
 namespace JSC {
 
+class BytecodeGenerator;
 class BytecodeLivenessAnalysis;
 class BytecodeRewriter;
 class CodeBlock;
@@ -259,10 +260,6 @@ public:
     int numCalleeLocals() const { return m_numCalleeLocals; }
     int numVars() const { return m_numVars; }
 
-    int m_numVars;
-    int m_numCapturedVars;
-    int m_numCalleeLocals;
-
     // Jump Tables
 
     size_t numberOfSwitchJumpTables() const { return m_rareData ? m_rareData->m_switchJumpTables.size() : 0; }
@@ -423,6 +420,8 @@ protected:
 
 private:
     friend class BytecodeRewriter;
+    friend class BytecodeGenerator;
+
     void applyModification(BytecodeRewriter&, UnpackedInstructions&);
 
     void createRareDataIfNecessary()
@@ -435,8 +434,6 @@ private:
 
     void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
     BytecodeLivenessAnalysis& livenessAnalysisSlow(CodeBlock*);
-
-    int m_numParameters;
 
     std::unique_ptr<UnlinkedInstructionStream> m_unlinkedInstructions;
     std::unique_ptr<BytecodeLivenessAnalysis> m_liveness;
@@ -464,8 +461,12 @@ private:
     unsigned m_hasTailCalls : 1;
     unsigned m_codeType : 2; // CodeType
     unsigned m_didOptimize : 2; // TriState
-    unsigned m_lineCount;
-    unsigned m_endColumn;
+    unsigned m_lineCount { 0 };
+    unsigned m_endColumn { UINT_MAX };
+
+    int m_numVars { 0 };
+    int m_numCalleeLocals { 0 };
+    int m_numParameters { 0 };
 
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
@@ -476,7 +477,7 @@ private:
 public:
     ConcurrentJSLock m_lock;
 private:
-    CodeFeatures m_features;
+    CodeFeatures m_features { 0 };
 
     Vector<unsigned> m_jumpTargets;
 
@@ -493,11 +494,11 @@ private:
     FunctionExpressionVector m_functionExprs;
     std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
 
-    unsigned m_arrayProfileCount;
-    unsigned m_arrayAllocationProfileCount;
-    unsigned m_objectAllocationProfileCount;
-    unsigned m_valueProfileCount;
-    unsigned m_llintCallLinkInfoCount;
+    unsigned m_arrayProfileCount { 0 };
+    unsigned m_arrayAllocationProfileCount { 0 };
+    unsigned m_objectAllocationProfileCount { 0 };
+    unsigned m_valueProfileCount { 0 };
+    unsigned m_llintCallLinkInfoCount { 0 };
 
 public:
     struct RareData {

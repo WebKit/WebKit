@@ -54,9 +54,6 @@ const ClassInfo UnlinkedCodeBlock::s_info = { "UnlinkedCodeBlock", nullptr, null
 
 UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
     : Base(*vm, structure)
-    , m_numVars(0)
-    , m_numCalleeLocals(0)
-    , m_numParameters(0)
     , m_usesEval(info.usesEval())
     , m_isStrictMode(info.isStrictMode())
     , m_isConstructor(info.isConstructor())
@@ -73,15 +70,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_hasTailCalls(false)
     , m_codeType(codeType)
     , m_didOptimize(MixedTriState)
-    , m_lineCount(0)
-    , m_endColumn(UINT_MAX)
     , m_parseMode(info.parseMode())
-    , m_features(0)
-    , m_arrayProfileCount(0)
-    , m_arrayAllocationProfileCount(0)
-    , m_objectAllocationProfileCount(0)
-    , m_valueProfileCount(0)
-    , m_llintCallLinkInfoCount(0)
 {
     for (auto& constantRegisterIndex : m_linkTimeConstants)
         constantRegisterIndex = 0;

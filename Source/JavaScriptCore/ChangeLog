@@ -1,5 +1,22 @@
 2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Make some data members of UnlinkedCodeBlock private
+        https://bugs.webkit.org/show_bug.cgi?id=187467
+
+        Reviewed by Mark Lam.
+
+        This patch makes m_numVars, m_numCalleeLocals, and m_numParameters of UnlinkedCodeBlock private.
+        We also remove m_numCapturedVars since it is no longer used.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+
+2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Optimize layout of AccessCase / ProxyableAccessCase to reduce size of ProxyableAccessCase
         https://bugs.webkit.org/show_bug.cgi?id=187465
 
