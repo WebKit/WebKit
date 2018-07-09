@@ -1,3 +1,21 @@
+2018-07-09  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support overlapping keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=187481
+        <rdar://problem/41988674>
+
+        Reviewed by Dean Jackson.
+
+        We now support parsing of multiple keyframes for the same offset.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::computeMissingKeyframeOffsets): Keyframes with a null offset that don't yet have a non-zero
+        computed offset are keyframes with an offset that needs to be computed.
+        (WebCore::KeyframeEffectReadOnly::processKeyframes): Only file an exception if an offset is found that
+        is lower than a previously-parsed one, allowing offsets with the same value.
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::insert): Remove the assertion that prevented an offset to be found more than once.
+
 2018-07-09  Youenn Fablet  <youenn@apple.com>
 
         StringView operator==(char*) should check the length of the string

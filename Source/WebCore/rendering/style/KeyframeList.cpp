@@ -59,11 +59,6 @@ void KeyframeList::insert(KeyframeValue&& keyframe)
     bool inserted = false;
     size_t i = 0;
     for (; i < m_keyframes.size(); ++i) {
-        if (m_keyframes[i].key() == keyframe.key()) {
-            ASSERT_NOT_REACHED();
-            break;
-        }
-
         if (m_keyframes[i].key() > keyframe.key()) {
             // insert before
             m_keyframes.insert(i, WTFMove(keyframe));

@@ -54,9 +54,9 @@ PASS Element.animate() accepts a two property keyframe sequence where one proper
 PASS Element.animate() accepts a one property two keyframe sequence that needs to stringify its values 
 PASS Element.animate() accepts a keyframe sequence with a CSS variable reference 
 PASS Element.animate() accepts a keyframe sequence with a CSS variable reference in a shorthand property 
-FAIL Element.animate() accepts a keyframe sequence with duplicate values for a given interior offset Type error
-FAIL Element.animate() accepts a keyframe sequence with duplicate values for offsets 0 and 1 Type error
-FAIL Element.animate() accepts a two property four keyframe sequence Type error
+PASS Element.animate() accepts a keyframe sequence with duplicate values for a given interior offset 
+PASS Element.animate() accepts a keyframe sequence with duplicate values for offsets 0 and 1 
+PASS Element.animate() accepts a two property four keyframe sequence 
 PASS Element.animate() accepts a single keyframe sequence with omitted offset 
 PASS Element.animate() accepts a single keyframe sequence with null offset 
 PASS Element.animate() accepts a single keyframe sequence with string offset 
@@ -64,8 +64,8 @@ PASS Element.animate() accepts a one property keyframe sequence with some omitte
 PASS Element.animate() accepts a one property keyframe sequence with some null offsets 
 PASS Element.animate() accepts a two property keyframe sequence with some omitted offsets 
 PASS Element.animate() accepts a one property keyframe sequence with all omitted offsets 
-FAIL Element.animate() accepts a keyframe sequence with different easing values, but the same easing value for a given offset Type error
-FAIL Element.animate() accepts a keyframe sequence with different composite values, but the same composite value for a given offset Type error
+PASS Element.animate() accepts a keyframe sequence with different easing values, but the same easing value for a given offset 
+PASS Element.animate() accepts a keyframe sequence with different composite values, but the same composite value for a given offset 
 PASS Element.animate() does not accept keyframes with an out-of-bounded positive offset 
 PASS Element.animate() does not accept keyframes with an out-of-bounded negative offset 
 PASS Element.animate() does not accept property-indexed keyframes not loosely sorted by offset 

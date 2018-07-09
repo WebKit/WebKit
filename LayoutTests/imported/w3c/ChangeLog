@@ -1,3 +1,18 @@
+2018-07-09  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support overlapping keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=187481
+        <rdar://problem/41988674>
+
+        Reviewed by Dean Jackson.
+
+        Mark 20 new WPT progressions and 2 different failures.
+
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt:
+
 2018-07-09  Youenn Fablet  <youenn@apple.com>
 
         StringView operator==(char*) should check the length of the string

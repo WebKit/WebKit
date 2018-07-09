@@ -138,7 +138,9 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffectReadOnly::
     size_t indexOfLastKeyframeWithNonNullOffset = 0;
     for (size_t i = 1; i < keyframes.size(); ++i) {
         auto& keyframe = keyframes[i];
-        if (!keyframe.computedOffset)
+        // Keyframes with a null offset that don't yet have a non-zero computed offset are keyframes
+        // with an offset that needs to be computed.
+        if (!keyframe.offset && !keyframe.computedOffset)
             continue;
         if (indexOfLastKeyframeWithNonNullOffset != i - 1) {
             double lastNonNullOffset = keyframes[indexOfLastKeyframeWithNonNullOffset].computedOffset;
@@ -631,7 +633,7 @@ ExceptionOr<void> KeyframeEffectReadOnly::processKeyframes(ExecState& state, Str
         if (!keyframe.offset)
             continue;
         auto offset = keyframe.offset.value();
-        if (offset <= lastNonNullOffset || offset < 0 || offset > 1)
+        if (offset < lastNonNullOffset || offset < 0 || offset > 1)
             return Exception { TypeError };
         lastNonNullOffset = offset;
     }

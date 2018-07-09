@@ -99,12 +99,12 @@ PASS A KeyframeEffectReadOnly can be constructed with a keyframe sequence with a
 PASS A KeyframeEffectReadOnly constructed with a keyframe sequence with a CSS variable reference roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a keyframe sequence with a CSS variable reference in a shorthand property 
 PASS A KeyframeEffectReadOnly constructed with a keyframe sequence with a CSS variable reference in a shorthand property roundtrips 
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for a given interior offset Type error
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for a given interior offset roundtrips Type error
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for offsets 0 and 1 Type error
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for offsets 0 and 1 roundtrips Type error
-FAIL A KeyframeEffectReadOnly can be constructed with a two property four keyframe sequence Type error
-FAIL A KeyframeEffectReadOnly constructed with a two property four keyframe sequence roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for a given interior offset 
+PASS A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for a given interior offset roundtrips 
+PASS A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for offsets 0 and 1 
+PASS A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for offsets 0 and 1 roundtrips 
+PASS A KeyframeEffectReadOnly can be constructed with a two property four keyframe sequence 
+PASS A KeyframeEffectReadOnly constructed with a two property four keyframe sequence roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with omitted offset 
 PASS A KeyframeEffectReadOnly constructed with a single keyframe sequence with omitted offset roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with null offset 
@@ -119,10 +119,10 @@ PASS A KeyframeEffectReadOnly can be constructed with a two property keyframe se
 PASS A KeyframeEffectReadOnly constructed with a two property keyframe sequence with some omitted offsets roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a one property keyframe sequence with all omitted offsets 
 PASS A KeyframeEffectReadOnly constructed with a one property keyframe sequence with all omitted offsets roundtrips 
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different easing values, but the same easing value for a given offset Type error
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with different easing values, but the same easing value for a given offset roundtrips Type error
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different composite values, but the same composite value for a given offset Type error
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with different composite values, but the same composite value for a given offset roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different easing values, but the same easing value for a given offset 
+PASS A KeyframeEffectReadOnly constructed with a keyframe sequence with different easing values, but the same easing value for a given offset roundtrips 
+PASS A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different composite values, but the same composite value for a given offset 
+PASS A KeyframeEffectReadOnly constructed with a keyframe sequence with different composite values, but the same composite value for a given offset roundtrips 
 PASS KeyframeEffectReadOnly constructor throws with keyframes with an out-of-bounded positive offset 
 PASS KeyframeEffectReadOnly constructor throws with keyframes with an out-of-bounded negative offset 
 PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes not loosely sorted by offset 

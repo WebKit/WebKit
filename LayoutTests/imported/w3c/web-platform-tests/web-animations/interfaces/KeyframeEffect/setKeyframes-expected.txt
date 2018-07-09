@@ -47,9 +47,9 @@ PASS Keyframes can be replaced with a two property keyframe sequence where one p
 PASS Keyframes can be replaced with a one property two keyframe sequence that needs to stringify its values 
 PASS Keyframes can be replaced with a keyframe sequence with a CSS variable reference 
 PASS Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property 
-FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for a given interior offset Type error
-FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for offsets 0 and 1 Type error
-FAIL Keyframes can be replaced with a two property four keyframe sequence Type error
+PASS Keyframes can be replaced with a keyframe sequence with duplicate values for a given interior offset 
+PASS Keyframes can be replaced with a keyframe sequence with duplicate values for offsets 0 and 1 
+PASS Keyframes can be replaced with a two property four keyframe sequence 
 PASS Keyframes can be replaced with a single keyframe sequence with omitted offset 
 PASS Keyframes can be replaced with a single keyframe sequence with null offset 
 PASS Keyframes can be replaced with a single keyframe sequence with string offset 
@@ -57,8 +57,8 @@ PASS Keyframes can be replaced with a one property keyframe sequence with some o
 PASS Keyframes can be replaced with a one property keyframe sequence with some null offsets 
 PASS Keyframes can be replaced with a two property keyframe sequence with some omitted offsets 
 PASS Keyframes can be replaced with a one property keyframe sequence with all omitted offsets 
-FAIL Keyframes can be replaced with a keyframe sequence with different easing values, but the same easing value for a given offset Type error
-FAIL Keyframes can be replaced with a keyframe sequence with different composite values, but the same composite value for a given offset Type error
+PASS Keyframes can be replaced with a keyframe sequence with different easing values, but the same easing value for a given offset 
+PASS Keyframes can be replaced with a keyframe sequence with different composite values, but the same composite value for a given offset 
 PASS KeyframeEffect constructor throws with keyframes with an out-of-bounded positive offset 
 PASS KeyframeEffect constructor throws with keyframes with an out-of-bounded negative offset 
 PASS KeyframeEffect constructor throws with property-indexed keyframes not loosely sorted by offset 
