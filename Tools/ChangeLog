@@ -1,3 +1,9 @@
+2018-07-09  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] Unreviewed, switch to https for the gst-libav tarball.
+        
+        * flatpak/org.webkit.WebKit.yaml:
+
 2018-07-09  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] HTTP layout tests broken due to missing CGI.pm in the sandbox

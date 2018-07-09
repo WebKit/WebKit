@@ -184,7 +184,7 @@ modules:
     buildsystem: meson
     sources:
       - type: archive
-        url: http://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.1.tar.xz
+        url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.1.tar.xz
         sha256: eff80a02d2f2fb9f34b67e9a26e9954d3218c7aa18e863f2a47805fa7066029d
     config-opts:
       - -Ddisable_gtkdoc=true
