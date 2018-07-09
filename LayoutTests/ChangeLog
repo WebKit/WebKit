@@ -1,3 +1,13 @@
+2018-07-09  Truitt Savell  <tsavell@apple.com>
+
+        [macOS] Layout Test fast/hidpi/filters-and-image-buffer-resolution.html is flaky, but no longer Flaky on [iOS]
+        https://bugs.webkit.org/show_bug.cgi?id=187491
+
+        Unreviewed test gardening
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-07-09  Brady Eidson  <beidson@apple.com>
 
         Continued unreviewed hacking on this test because that's my full time job now.
