@@ -65,19 +65,19 @@ enum FontSynthesisValues {
 typedef unsigned FontSynthesis;
 const unsigned FontSynthesisWidth = 3;
 
-enum class FontVariantLigatures {
+enum class FontVariantLigatures : uint8_t {
     Normal,
     Yes,
     No
 };
 
-enum class FontVariantPosition {
+enum class FontVariantPosition : uint8_t {
     Normal,
     Subscript,
     Superscript
 };
 
-enum class FontVariantCaps {
+enum class FontVariantCaps : uint8_t {
     Normal,
     Small,
     AllSmall,
@@ -87,40 +87,40 @@ enum class FontVariantCaps {
     Titling
 };
 
-enum class FontVariantNumericFigure {
+enum class FontVariantNumericFigure : uint8_t {
     Normal,
     LiningNumbers,
     OldStyleNumbers
 };
 
-enum class FontVariantNumericSpacing {
+enum class FontVariantNumericSpacing : uint8_t {
     Normal,
     ProportionalNumbers,
     TabularNumbers
 };
 
-enum class FontVariantNumericFraction {
+enum class FontVariantNumericFraction : uint8_t {
     Normal,
     DiagonalFractions,
     StackedFractions
 };
 
-enum class FontVariantNumericOrdinal {
+enum class FontVariantNumericOrdinal : uint8_t {
     Normal,
     Yes
 };
 
-enum class FontVariantNumericSlashedZero {
+enum class FontVariantNumericSlashedZero : uint8_t {
     Normal,
     Yes
 };
 
-enum class FontVariantAlternates {
+enum class FontVariantAlternates : uint8_t {
     Normal,
     HistoricalForms
 };
 
-enum class FontVariantEastAsianVariant {
+enum class FontVariantEastAsianVariant : uint8_t {
     Normal,
     Jis78,
     Jis83,
@@ -130,13 +130,13 @@ enum class FontVariantEastAsianVariant {
     Traditional
 };
 
-enum class FontVariantEastAsianWidth {
+enum class FontVariantEastAsianWidth : uint8_t {
     Normal,
     Full,
     Proportional
 };
 
-enum class FontVariantEastAsianRuby {
+enum class FontVariantEastAsianRuby : uint8_t {
     Normal,
     Yes
 };
@@ -254,6 +254,7 @@ struct FontVariantSettings {
             | static_cast<unsigned>(eastAsianRuby) << 0;
     }
 
+    // FIXME: this would be much more compact with bitfields.
     FontVariantLigatures commonLigatures;
     FontVariantLigatures discretionaryLigatures;
     FontVariantLigatures historicalLigatures;
@@ -345,24 +346,24 @@ enum FontSmallCaps {
     FontSmallCapsOn = 1
 };
 
-enum class Kerning {
+enum class Kerning : uint8_t {
     Auto,
     Normal,
     NoShift
 };
 
-enum class FontOpticalSizing {
+enum class FontOpticalSizing : uint8_t {
     Enabled,
     Disabled
 };
 
 // https://www.microsoft.com/typography/otspec/fvar.htm#VAT
-enum class FontStyleAxis {
+enum class FontStyleAxis : uint8_t {
     slnt,
     ital
 };
 
-enum class AllowUserInstalledFonts {
+enum class AllowUserInstalledFonts : uint8_t {
     No,
     Yes
 };

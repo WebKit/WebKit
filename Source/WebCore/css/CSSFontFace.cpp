@@ -89,12 +89,12 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
 }
 
 CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
-    : m_timeoutTimer(*this, &CSSFontFace::timeoutFired)
-    , m_fontSelector(fontSelector)
+    : m_fontSelector(fontSelector)
     , m_cssConnection(cssConnection)
     , m_wrapper(makeWeakPtr(wrapper))
     , m_isLocalFallback(isLocalFallback)
     , m_mayBePurged(!wrapper)
+    , m_timeoutTimer(*this, &CSSFontFace::timeoutFired)
 {
 }
 

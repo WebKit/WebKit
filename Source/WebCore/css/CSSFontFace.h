@@ -78,7 +78,7 @@ public:
     void setFeatureSettings(CSSValue&);
     void setLoadingBehavior(CSSValue&);
 
-    enum class Status;
+    enum class Status : uint8_t;
     struct UnicodeRange;
     const CSSValueList* families() const { return m_families.get(); }
     FontSelectionRange weight() const { return m_fontSelectionCapabilities.computeWeight(); }
@@ -136,7 +136,7 @@ public:
     //              ||   //  \\   ||
     //              \/  \/    \/  \/
     //             Success    Failure
-    enum class Status { Pending, Loading, TimedOut, Success, Failure };
+    enum class Status : uint8_t { Pending, Loading, TimedOut, Success, Failure };
 
     struct UnicodeRange {
         UChar32 from;
@@ -183,20 +183,24 @@ private:
 
     RefPtr<CSSValueList> m_families;
     Vector<UnicodeRange> m_ranges;
+
     FontFeatureSettings m_featureSettings;
     FontVariantSettings m_variantSettings;
-    Timer m_timeoutTimer;
+    FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
+
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
     RefPtr<CSSFontSelector> m_fontSelector;
     RefPtr<StyleRuleFontFace> m_cssConnection;
     HashSet<Client*> m_clients;
     WeakPtr<FontFace> m_wrapper;
     FontSelectionSpecifiedCapabilities m_fontSelectionCapabilities;
-    FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
+    
     Status m_status { Status::Pending };
     bool m_isLocalFallback { false };
     bool m_sourcesPopulated { false };
     bool m_mayBePurged { true };
+
+    Timer m_timeoutTimer;
 };
 
 }

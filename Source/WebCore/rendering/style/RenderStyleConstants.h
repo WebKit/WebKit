@@ -1154,7 +1154,7 @@ enum class PaintType {
     Markers
 };
 
-enum class FontLoadingBehavior {
+enum class FontLoadingBehavior : uint8_t {
     Auto,
     Block,
     Swap,
