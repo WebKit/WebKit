@@ -1074,7 +1074,6 @@ namespace JSC {
         unsigned addConstant(const Identifier&);
         RegisterID* addConstantValue(JSValue, SourceCodeRepresentation = SourceCodeRepresentation::Other);
         RegisterID* addConstantEmptyValue();
-        unsigned addRegExp(RegExp*);
 
         UnlinkedFunctionExecutable* makeFunction(FunctionMetadataNode* metadata)
         {

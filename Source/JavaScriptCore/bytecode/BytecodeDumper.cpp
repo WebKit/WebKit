@@ -250,31 +250,6 @@ const Identifier& BytecodeDumper<Block>::identifier(int index) const
     return block()->identifier(index);
 }
 
-static CString regexpToSourceString(RegExp* regExp)
-{
-    char postfix[7] = { '/', 0, 0, 0, 0, 0, 0 };
-    int index = 1;
-    if (regExp->global())
-        postfix[index++] = 'g';
-    if (regExp->ignoreCase())
-        postfix[index++] = 'i';
-    if (regExp->multiline())
-        postfix[index] = 'm';
-    if (regExp->dotAll())
-        postfix[index++] = 's';
-    if (regExp->unicode())
-        postfix[index++] = 'u';
-    if (regExp->sticky())
-        postfix[index++] = 'y';
-
-    return toCString("/", regExp->pattern().impl(), postfix);
-}
-
-static CString regexpName(int re, RegExp* regexp)
-{
-    return toCString(regexpToSourceString(regexp), "(@re", re, ")");
-}
-
 template<class Instruction>
 static void printLocationAndOp(PrintStream& out, int location, const Instruction*&, const char* op)
 {
@@ -827,11 +802,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         int r0 = (++it)->u.operand;
         int re0 = (++it)->u.operand;
         printLocationAndOp(out, location, it, "new_regexp");
-        out.printf("%s, ", registerName(r0).data());
-        if (r0 >=0 && r0 < (int)block()->numberOfRegExps())
-            out.printf("%s", regexpName(re0, block()->regexp(re0)).data());
-        else
-            out.printf("bad_regexp(%d)", re0);
+        out.printf("%s, %s", registerName(r0).data(), registerName(re0).data());
         break;
     }
     case op_mov: {
@@ -1823,19 +1794,6 @@ void BytecodeDumper<Block>::dumpConstants(PrintStream& out)
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpRegExps(PrintStream& out)
-{
-    if (size_t count = block()->numberOfRegExps()) {
-        out.printf("\nm_regexps:\n");
-        size_t i = 0;
-        do {
-            out.printf("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(block()->regexp(i)).data());
-            ++i;
-        } while (i < count);
-    }
-}
-
-template<class Block>
 void BytecodeDumper<Block>::dumpExceptionHandlers(PrintStream& out)
 {
     if (unsigned count = block()->numberOfExceptionHandlers()) {
@@ -1914,7 +1872,6 @@ void BytecodeDumper<Block>::dumpBlock(Block* block, const typename Block::Unpack
 
     dumper.dumpIdentifiers(out);
     dumper.dumpConstants(out);
-    dumper.dumpRegExps(out);
     dumper.dumpExceptionHandlers(out);
     dumper.dumpSwitchJumpTables(out);
     dumper.dumpStringSwitchJumpTables(out);

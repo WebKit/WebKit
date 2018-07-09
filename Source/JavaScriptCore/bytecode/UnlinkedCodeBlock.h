@@ -158,23 +158,6 @@ public:
     void addParameter() { m_numParameters++; }
     unsigned numParameters() const { return m_numParameters; }
 
-    unsigned addRegExp(RegExp* r)
-    {
-        createRareDataIfNecessary();
-        VM& vm = *this->vm();
-        auto locker = lockDuringMarking(vm.heap, cellLock());
-        unsigned size = m_rareData->m_regexps.size();
-        m_rareData->m_regexps.append(WriteBarrier<RegExp>(vm, this, r));
-        return size;
-    }
-    unsigned numberOfRegExps() const
-    {
-        if (!m_rareData)
-            return 0;
-        return m_rareData->m_regexps.size();
-    }
-    RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
-
     // Constant Pools
 
     size_t numberOfIdentifiers() const { return m_identifiers.size(); }
@@ -505,9 +488,6 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
-
-        // Rare Constants
-        Vector<WriteBarrier<RegExp>> m_regexps;
 
         // Jump Tables
         Vector<UnlinkedSimpleJumpTable> m_switchJumpTables;

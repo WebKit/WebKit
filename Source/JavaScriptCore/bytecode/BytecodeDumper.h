@@ -59,7 +59,6 @@ private:
 
     void dumpIdentifiers(PrintStream& out);
     void dumpConstants(PrintStream& out);
-    void dumpRegExps(PrintStream& out);
     void dumpExceptionHandlers(PrintStream& out);
     void dumpSwitchJumpTables(PrintStream& out);
     void dumpStringSwitchJumpTables(PrintStream& out);

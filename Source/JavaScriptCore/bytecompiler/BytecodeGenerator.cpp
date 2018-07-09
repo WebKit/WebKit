@@ -1651,11 +1651,6 @@ RegisterID* BytecodeGenerator::moveLinkTimeConstant(RegisterID* dst, LinkTimeCon
     return dst;
 }
 
-unsigned BytecodeGenerator::addRegExp(RegExp* r)
-{
-    return m_codeBlock->addRegExp(r);
-}
-
 RegisterID* BytecodeGenerator::moveEmptyValue(RegisterID* dst)
 {
     RefPtr<RegisterID> emptyValue = addConstantEmptyValue();
@@ -3286,7 +3281,7 @@ RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
 {
     emitOpcode(op_new_regexp);
     instructions().append(dst->index());
-    instructions().append(addRegExp(regExp));
+    instructions().append(addConstantValue(regExp)->index());
     return dst;
 }
 

@@ -92,10 +92,6 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendValues(thisObject->m_constantRegisters.data(), thisObject->m_constantRegisters.size());
     if (thisObject->m_unlinkedInstructions)
         visitor.reportExtraMemoryVisited(thisObject->m_unlinkedInstructions->sizeInBytes());
-    if (thisObject->m_rareData) {
-        for (size_t i = 0, end = thisObject->m_rareData->m_regexps.size(); i != end; i++)
-            visitor.append(thisObject->m_rareData->m_regexps[i]);
-    }
 }
 
 size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell)
@@ -396,7 +392,6 @@ void UnlinkedCodeBlock::shrinkToFit()
 
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
-        m_rareData->m_regexps.shrinkToFit();
         m_rareData->m_switchJumpTables.shrinkToFit();
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();
         m_rareData->m_expressionInfoFatPositions.shrinkToFit();

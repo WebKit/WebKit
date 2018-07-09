@@ -550,7 +550,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
 LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
 {
     LLINT_BEGIN();
-    RegExp* regExp = exec->codeBlock()->regexp(pc[2].u.operand);
+    RegExp* regExp = jsCast<RegExp*>(LLINT_OP_C(2).jsValue());
     ASSERT(regExp->isValid());
     LLINT_RETURN(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regExp));
 }

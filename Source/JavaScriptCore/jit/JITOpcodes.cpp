@@ -990,7 +990,8 @@ void JIT::emitSlow_op_check_traps(Instruction*, Vector<SlowCaseEntry>::iterator&
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    callOperation(operationNewRegexp, m_codeBlock->regexp(currentInstruction[2].u.operand));
+    int regexp = currentInstruction[2].u.operand;
+    callOperation(operationNewRegexp, jsCast<RegExp*>(m_codeBlock->getConstant(regexp)));
     emitStoreCell(dst, returnValueGPR);
 }
 

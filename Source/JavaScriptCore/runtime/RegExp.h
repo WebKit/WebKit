@@ -49,6 +49,7 @@ public:
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
     static size_t estimatedSize(JSCell*);
+    JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
 
     bool global() const { return m_flags & FlagGlobal; }
     bool ignoreCase() const { return m_flags & FlagIgnoreCase; }

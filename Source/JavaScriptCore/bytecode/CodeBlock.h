@@ -560,9 +560,6 @@ public:
     int numberOfFunctionDecls() { return m_functionDecls.size(); }
     FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
     
-    RegExp* regexp(int index) const { return m_unlinkedCode->regexp(index); }
-    unsigned numberOfRegExps() const { return m_unlinkedCode->numberOfRegExps(); }
-
     const Vector<BitVector>& bitVectors() const { return m_unlinkedCode->bitVectors(); }
     const BitVector& bitVector(size_t i) { return m_unlinkedCode->bitVector(i); }
 

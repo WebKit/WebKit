@@ -1,3 +1,51 @@
+2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Embed RegExp into constant buffer in UnlinkedCodeBlock and CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=187477
+
+        Reviewed by Mark Lam.
+
+        Before this patch, RegExp* is specially held in m_regexp buffer which resides in CodeBlock's RareData.
+        However, it is not necessary since JSCells can be reside in a constant buffer.
+        This patch embeds RegExp* to a constant buffer in UnlinkedCodeBlock and CodeBlock. And remove RegExp
+        vector from RareData.
+
+        We also move the code of dumping RegExp from BytecodeDumper to RegExp::dumpToStream.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        (JSC::BytecodeDumper<Block>::dumpBlock):
+        (JSC::regexpToSourceString): Deleted.
+        (JSC::regexpName): Deleted.
+        (JSC::BytecodeDumper<Block>::dumpRegExps): Deleted.
+        * bytecode/BytecodeDumper.h:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::regexp const): Deleted.
+        (JSC::CodeBlock::numberOfRegExps const): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addRegExp): Deleted.
+        (JSC::UnlinkedCodeBlock::numberOfRegExps const): Deleted.
+        (JSC::UnlinkedCodeBlock::regexp const): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewRegExp):
+        (JSC::BytecodeGenerator::addRegExp): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_regexp):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure const):
+        * runtime/RegExp.cpp:
+        (JSC::regexpToSourceString):
+        (JSC::RegExp::dumpToStream):
+        * runtime/RegExp.h:
+
 2018-07-09  Brian Burg  <bburg@apple.com>
 
         REGRESSION: Web Inspector no longer pauses in internal injected scripts like WDFindNodes.js
