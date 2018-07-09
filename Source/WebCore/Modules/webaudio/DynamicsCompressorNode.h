@@ -32,7 +32,7 @@ namespace WebCore {
 
 class DynamicsCompressor;
 
-class DynamicsCompressorNode : public AudioNode {
+class DynamicsCompressorNode final : public AudioNode {
 public:
     static Ref<DynamicsCompressorNode> create(AudioContext& context, float sampleRate)
     {

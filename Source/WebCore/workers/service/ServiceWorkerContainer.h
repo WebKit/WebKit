@@ -49,6 +49,8 @@ enum class ServiceWorkerUpdateViaCache;
 enum class WorkerType;
 
 class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject, public ServiceWorkerJobClient {
+    WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ServiceWorkerContainer(ScriptExecutionContext&, NavigatorBase&);
     ~ServiceWorkerContainer();

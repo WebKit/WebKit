@@ -36,6 +36,8 @@
 namespace WebCore {
 
 class AudioParamTimeline {
+    WTF_MAKE_NONCOPYABLE(AudioParamTimeline);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioParamTimeline()
     {

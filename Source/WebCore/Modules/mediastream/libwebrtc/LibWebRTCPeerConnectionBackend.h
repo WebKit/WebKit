@@ -46,6 +46,7 @@ class RealtimeOutgoingAudioSource;
 class RealtimeOutgoingVideoSource;
 
 class LibWebRTCPeerConnectionBackend final : public PeerConnectionBackend {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCPeerConnectionBackend(RTCPeerConnection&, LibWebRTCProvider&);
     ~LibWebRTCPeerConnectionBackend();

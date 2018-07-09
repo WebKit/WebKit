@@ -36,7 +36,7 @@ namespace WebCore {
 
 // WaveShaperProcessor is an AudioDSPKernelProcessor which uses WaveShaperDSPKernel objects to implement non-linear distortion effects.
 
-class WaveShaperProcessor : public AudioDSPKernelProcessor {
+class WaveShaperProcessor final : public AudioDSPKernelProcessor {
 public:
     enum OverSampleType {
         OverSampleNone,

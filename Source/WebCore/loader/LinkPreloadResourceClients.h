@@ -77,6 +77,7 @@ private:
 };
 
 class LinkPreloadDefaultResourceClient : public LinkPreloadResourceClient, CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LinkPreloadDefaultResourceClient(LinkLoader& loader, CachedResource& resource)
         : LinkPreloadResourceClient(loader, resource)
@@ -91,6 +92,7 @@ private:
 };
 
 class LinkPreloadStyleResourceClient : public LinkPreloadResourceClient, public CachedStyleSheetClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LinkPreloadStyleResourceClient(LinkLoader& loader, CachedCSSStyleSheet& resource)
         : LinkPreloadResourceClient(loader, resource)
@@ -111,6 +113,7 @@ private:
 };
 
 class LinkPreloadImageResourceClient : public LinkPreloadResourceClient, public CachedImageClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LinkPreloadImageResourceClient(LinkLoader& loader, CachedImage& resource)
         : LinkPreloadResourceClient(loader, static_cast<CachedResource&>(resource))
@@ -125,6 +128,7 @@ private:
 };
 
 class LinkPreloadFontResourceClient : public LinkPreloadResourceClient, public CachedFontClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LinkPreloadFontResourceClient(LinkLoader& loader, CachedFont& resource)
         : LinkPreloadResourceClient(loader, resource)
@@ -144,6 +148,7 @@ private:
 };
 
 class LinkPreloadRawResourceClient : public LinkPreloadResourceClient, public CachedRawResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LinkPreloadRawResourceClient(LinkLoader& loader, CachedRawResource& resource)
         : LinkPreloadResourceClient(loader, resource)

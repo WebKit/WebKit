@@ -39,6 +39,7 @@ public:
 };
 
 class RemoteCommandListener {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static std::unique_ptr<RemoteCommandListener> create(RemoteCommandListenerClient&);
     RemoteCommandListener(RemoteCommandListenerClient& client) : m_client(client) { }

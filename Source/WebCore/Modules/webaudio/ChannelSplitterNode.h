@@ -30,7 +30,7 @@ namespace WebCore {
 
 class AudioContext;
     
-class ChannelSplitterNode : public AudioNode {
+class ChannelSplitterNode final : public AudioNode {
 public:
     static RefPtr<ChannelSplitterNode> create(AudioContext&, float sampleRate, unsigned numberOfOutputs);
 

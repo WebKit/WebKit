@@ -35,7 +35,7 @@ namespace WebCore {
 class AudioContext;
 class MediaStreamAudioSource;
 
-class MediaStreamAudioDestinationNode : public AudioBasicInspectorNode {
+class MediaStreamAudioDestinationNode final : public AudioBasicInspectorNode {
 public:
     static Ref<MediaStreamAudioDestinationNode> create(AudioContext&, size_t numberOfChannels);
 

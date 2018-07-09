@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class PeriodicWave : public RefCounted<PeriodicWave> {
+class PeriodicWave final : public RefCounted<PeriodicWave> {
 public:
     static Ref<PeriodicWave> createSine(float sampleRate);
     static Ref<PeriodicWave> createSquare(float sampleRate);

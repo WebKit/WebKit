@@ -37,7 +37,7 @@ namespace WebCore {
 class AudioContext;
 class MultiChannelResampler;
 
-class MediaStreamAudioSourceNode : public AudioNode, public AudioSourceProviderClient {
+class MediaStreamAudioSourceNode final : public AudioNode, public AudioSourceProviderClient {
 public:
     static Ref<MediaStreamAudioSourceNode> create(AudioContext&, MediaStream&, MediaStreamTrack&);
 

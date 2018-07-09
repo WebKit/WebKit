@@ -54,6 +54,7 @@ public:
 private:
     class DecodingTask {
         WTF_MAKE_NONCOPYABLE(DecodingTask);
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         DecodingTask(Ref<JSC::ArrayBuffer>&& audioData, float sampleRate, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback);
         void decode();

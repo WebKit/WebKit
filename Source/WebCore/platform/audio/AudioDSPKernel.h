@@ -38,6 +38,8 @@ namespace WebCore {
 // AudioDSPKernel does the processing for one channel of an AudioDSPKernelProcessor.
 
 class AudioDSPKernel {
+    WTF_MAKE_NONCOPYABLE(AudioDSPKernel);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioDSPKernel(AudioDSPKernelProcessor* kernelProcessor)
         : m_kernelProcessor(kernelProcessor)

@@ -39,6 +39,8 @@ class AudioNodeInput;
 // It may be connected to one or more AudioNodeInputs.
 
 class AudioNodeOutput {
+    WTF_MAKE_NONCOPYABLE(AudioNodeOutput);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // It's OK to pass 0 for numberOfChannels in which case setNumberOfChannels() must be called later on.
     AudioNodeOutput(AudioNode*, unsigned numberOfChannels);

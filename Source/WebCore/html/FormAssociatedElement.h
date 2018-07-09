@@ -38,6 +38,8 @@ class HTMLFormElement;
 class ValidityState;
 
 class FormAssociatedElement : public FormNamedItem {
+    WTF_MAKE_NONCOPYABLE(FormAssociatedElement);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~FormAssociatedElement();
 

@@ -35,6 +35,7 @@ OBJC_CLASS _NSScrollingPredominantAxisFilter;
 namespace WebCore {
 
 class WheelEventDeltaFilterMac final : public WheelEventDeltaFilter {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WheelEventDeltaFilterMac();
 

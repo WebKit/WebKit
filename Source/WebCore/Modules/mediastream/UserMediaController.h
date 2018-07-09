@@ -35,6 +35,7 @@ namespace WebCore {
 class UserMediaRequest;
 
 class UserMediaController : public Supplement<Page> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UserMediaController(UserMediaClient*);
     ~UserMediaController();

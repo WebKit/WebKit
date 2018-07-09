@@ -1,3 +1,167 @@
+2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebCore] Annotate classes with WTF_MAKE_FAST_ALLOCATED as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=187474
+
+        Reviewed by Mark Lam.
+
+        When opening cnn.com, debugger says that so many objects in WebCore are allocated
+        from system allocator. This patch attempts to annotate these found classes with
+        WTF_MAKE_FAST_ALLOCATED.
+
+        We also annotate WebAudio classes with `final` to make WebAudio class hierarchy solid.
+
+        No behavior change.
+
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/mediastream/UserMediaController.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        * Modules/webaudio/AudioListener.h:
+        (WebCore::AudioListener::create): Deleted.
+        (WebCore::AudioListener::setPosition): Deleted.
+        (WebCore::AudioListener::position const): Deleted.
+        (WebCore::AudioListener::setOrientation): Deleted.
+        (WebCore::AudioListener::orientation const): Deleted.
+        (WebCore::AudioListener::setUpVector): Deleted.
+        (WebCore::AudioListener::upVector const): Deleted.
+        (WebCore::AudioListener::setVelocity): Deleted.
+        (WebCore::AudioListener::velocity const): Deleted.
+        (WebCore::AudioListener::setDopplerFactor): Deleted.
+        (WebCore::AudioListener::dopplerFactor const): Deleted.
+        (WebCore::AudioListener::setSpeedOfSound): Deleted.
+        (WebCore::AudioListener::speedOfSound const): Deleted.
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioNodeInput.h:
+        (WebCore::AudioNodeInput::node const): Deleted.
+        * Modules/webaudio/AudioNodeOutput.h:
+        * Modules/webaudio/AudioParam.h:
+        (WebCore::AudioParam::create): Deleted.
+        (WebCore::AudioParam::name const): Deleted.
+        (WebCore::AudioParam::minValue const): Deleted.
+        (WebCore::AudioParam::maxValue const): Deleted.
+        (WebCore::AudioParam::defaultValue const): Deleted.
+        (WebCore::AudioParam::units const): Deleted.
+        (WebCore::AudioParam::resetSmoothedValue): Deleted.
+        (WebCore::AudioParam::setSmoothingConstant): Deleted.
+        (WebCore::AudioParam::setValueAtTime): Deleted.
+        (WebCore::AudioParam::linearRampToValueAtTime): Deleted.
+        (WebCore::AudioParam::exponentialRampToValueAtTime): Deleted.
+        (WebCore::AudioParam::setTargetAtTime): Deleted.
+        (WebCore::AudioParam::setValueCurveAtTime): Deleted.
+        (WebCore::AudioParam::cancelScheduledValues): Deleted.
+        (WebCore::AudioParam::hasSampleAccurateValues): Deleted.
+        (WebCore::AudioParam::AudioParam): Deleted.
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/AudioProcessingEvent.h:
+        (WebCore::AudioProcessingEvent::create): Deleted.
+        (WebCore::AudioProcessingEvent::createForBindings): Deleted.
+        (WebCore::AudioProcessingEvent::inputBuffer): Deleted.
+        (WebCore::AudioProcessingEvent::outputBuffer): Deleted.
+        (WebCore::AudioProcessingEvent::playbackTime const): Deleted.
+        * Modules/webaudio/BiquadDSPKernel.h:
+        (WebCore::BiquadDSPKernel::BiquadDSPKernel): Deleted.
+        (WebCore::BiquadDSPKernel::biquadProcessor): Deleted.
+        * Modules/webaudio/BiquadFilterNode.h:
+        (WebCore::BiquadFilterNode::create): Deleted.
+        (WebCore::BiquadFilterNode::frequency): Deleted.
+        (WebCore::BiquadFilterNode::q): Deleted.
+        (WebCore::BiquadFilterNode::gain): Deleted.
+        (WebCore::BiquadFilterNode::detune): Deleted.
+        (WebCore::BiquadFilterNode::biquadProcessor): Deleted.
+        * Modules/webaudio/BiquadProcessor.h:
+        (WebCore::BiquadProcessor::filterCoefficientsDirty const): Deleted.
+        (WebCore::BiquadProcessor::hasSampleAccurateValues const): Deleted.
+        (WebCore::BiquadProcessor::parameter1): Deleted.
+        (WebCore::BiquadProcessor::parameter2): Deleted.
+        (WebCore::BiquadProcessor::parameter3): Deleted.
+        (WebCore::BiquadProcessor::parameter4): Deleted.
+        (WebCore::BiquadProcessor::type const): Deleted.
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/DelayDSPKernel.h:
+        (WebCore::DelayDSPKernel::maxDelayTime const): Deleted.
+        (WebCore::DelayDSPKernel::setDelayFrames): Deleted.
+        (WebCore::DelayDSPKernel::delayProcessor): Deleted.
+        * Modules/webaudio/DelayNode.h:
+        * Modules/webaudio/DelayProcessor.h:
+        (WebCore::DelayProcessor::delayTime const): Deleted.
+        (WebCore::DelayProcessor::maxDelayTime): Deleted.
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        (WebCore::DynamicsCompressorNode::create): Deleted.
+        (WebCore::DynamicsCompressorNode::threshold): Deleted.
+        (WebCore::DynamicsCompressorNode::knee): Deleted.
+        (WebCore::DynamicsCompressorNode::ratio): Deleted.
+        (WebCore::DynamicsCompressorNode::attack): Deleted.
+        (WebCore::DynamicsCompressorNode::release): Deleted.
+        (WebCore::DynamicsCompressorNode::reduction): Deleted.
+        * Modules/webaudio/GainNode.h:
+        (WebCore::GainNode::create): Deleted.
+        (WebCore::GainNode::gain): Deleted.
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        (WebCore::MediaElementAudioSourceNode::mediaElement): Deleted.
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        (WebCore::MediaStreamAudioDestinationNode::stream): Deleted.
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        (WebCore::MediaStreamAudioSourceNode::mediaStream): Deleted.
+        * Modules/webaudio/OfflineAudioCompletionEvent.h:
+        (WebCore::OfflineAudioCompletionEvent::renderedBuffer): Deleted.
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        (WebCore::OfflineAudioDestinationNode::create): Deleted.
+        * Modules/webaudio/PannerNode.h:
+        (WebCore::PannerNode::create): Deleted.
+        (WebCore::PannerNode::panningModel const): Deleted.
+        (WebCore::PannerNode::position const): Deleted.
+        (WebCore::PannerNode::setPosition): Deleted.
+        (WebCore::PannerNode::orientation const): Deleted.
+        (WebCore::PannerNode::setOrientation): Deleted.
+        (WebCore::PannerNode::velocity const): Deleted.
+        (WebCore::PannerNode::setVelocity): Deleted.
+        (WebCore::PannerNode::refDistance): Deleted.
+        (WebCore::PannerNode::setRefDistance): Deleted.
+        (WebCore::PannerNode::maxDistance): Deleted.
+        (WebCore::PannerNode::setMaxDistance): Deleted.
+        (WebCore::PannerNode::rolloffFactor): Deleted.
+        (WebCore::PannerNode::setRolloffFactor): Deleted.
+        (WebCore::PannerNode::coneInnerAngle const): Deleted.
+        (WebCore::PannerNode::setConeInnerAngle): Deleted.
+        (WebCore::PannerNode::coneOuterAngle const): Deleted.
+        (WebCore::PannerNode::setConeOuterAngle): Deleted.
+        (WebCore::PannerNode::coneOuterGain const): Deleted.
+        (WebCore::PannerNode::setConeOuterGain): Deleted.
+        (WebCore::PannerNode::distanceGain): Deleted.
+        (WebCore::PannerNode::coneGain): Deleted.
+        * Modules/webaudio/PeriodicWave.h:
+        (WebCore::PeriodicWave::rateScale const): Deleted.
+        (WebCore::PeriodicWave::periodicWaveSize const): Deleted.
+        (WebCore::PeriodicWave::sampleRate const): Deleted.
+        (WebCore::PeriodicWave::numberOfRanges const): Deleted.
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * Modules/webaudio/ScriptProcessorNode.h:
+        (WebCore::ScriptProcessorNode::bufferSize const): Deleted.
+        (WebCore::ScriptProcessorNode::doubleBufferIndex const): Deleted.
+        (WebCore::ScriptProcessorNode::swapBuffers): Deleted.
+        * Modules/webaudio/WaveShaperDSPKernel.h:
+        (WebCore::WaveShaperDSPKernel::waveShaperProcessor): Deleted.
+        * Modules/webaudio/WaveShaperProcessor.h:
+        (WebCore::WaveShaperProcessor::curve): Deleted.
+        (WebCore::WaveShaperProcessor::oversample const): Deleted.
+        * dom/MessagePort.h:
+        * html/FormAssociatedElement.h:
+        * loader/LinkPreloadResourceClients.h:
+        * page/WheelEventDeltaFilter.h:
+        * page/mac/WheelEventDeltaFilterMac.h:
+        * platform/RemoteCommandListener.h:
+        * platform/audio/AudioDSPKernel.h:
+        * platform/audio/AudioProcessor.h:
+        * platform/audio/PlatformMediaSession.h:
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.h:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h:
+        * workers/service/ServiceWorkerContainer.h:
+
 2018-07-09  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink RenderSVGShape

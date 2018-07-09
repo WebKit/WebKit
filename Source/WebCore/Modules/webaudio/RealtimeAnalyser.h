@@ -38,6 +38,7 @@ class AudioBus;
 
 class RealtimeAnalyser {
     WTF_MAKE_NONCOPYABLE(RealtimeAnalyser);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RealtimeAnalyser();
     virtual ~RealtimeAnalyser();

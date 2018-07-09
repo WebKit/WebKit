@@ -36,6 +36,7 @@ namespace WebCore {
 
 // LibWebRTCAudioModule is pulling streamed data to ensure audio data is passed to the audio track.
 class LibWebRTCAudioModule final : public webrtc::AudioDeviceModule, private rtc::MessageHandler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCAudioModule();
 

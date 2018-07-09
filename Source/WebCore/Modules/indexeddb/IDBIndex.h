@@ -42,6 +42,8 @@ class IDBKeyRange;
 struct IDBKeyRangeData;
 
 class IDBIndex final : private ActiveDOMObject {
+    WTF_MAKE_NONCOPYABLE(IDBIndex);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
 

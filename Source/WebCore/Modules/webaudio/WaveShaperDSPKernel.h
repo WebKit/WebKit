@@ -35,7 +35,7 @@ namespace WebCore {
 
 // WaveShaperDSPKernel is an AudioDSPKernel and is responsible for non-linear distortion on one channel.
 
-class WaveShaperDSPKernel : public AudioDSPKernel {
+class WaveShaperDSPKernel final : public AudioDSPKernel {
 public:
     explicit WaveShaperDSPKernel(WaveShaperProcessor*);
 

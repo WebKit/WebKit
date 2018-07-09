@@ -45,6 +45,8 @@ namespace WebCore {
 class Frame;
 
 class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData, public CanMakeWeakPtr<MessagePort> {
+    WTF_MAKE_NONCOPYABLE(MessagePort);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MessagePort> create(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
     virtual ~MessagePort();

@@ -36,7 +36,7 @@ namespace WebCore {
 
 // AudioListener maintains the state of the listener in the audio scene as defined in the OpenAL specification.
 
-class AudioListener : public RefCounted<AudioListener> {
+class AudioListener final : public RefCounted<AudioListener> {
 public:
     static Ref<AudioListener> create()
     {

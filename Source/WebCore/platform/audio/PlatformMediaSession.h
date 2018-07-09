@@ -49,6 +49,7 @@ class PlatformMediaSession
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<PlatformMediaSession> create(PlatformMediaSessionClient&);
 

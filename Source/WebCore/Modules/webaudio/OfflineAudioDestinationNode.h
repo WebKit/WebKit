@@ -34,7 +34,7 @@ namespace WebCore {
 class AudioBus;
 class AudioContext;
     
-class OfflineAudioDestinationNode : public AudioDestinationNode {
+class OfflineAudioDestinationNode final : public AudioDestinationNode {
 public:
     static Ref<OfflineAudioDestinationNode> create(AudioContext& context, AudioBuffer* renderTarget)
     {

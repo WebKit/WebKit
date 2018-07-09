@@ -55,6 +55,8 @@ enum class ObjectStoreOverwriteMode;
 }
 
 class IDBObjectStore final : public ActiveDOMObject {
+    WTF_MAKE_NONCOPYABLE(IDBObjectStore);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IDBObjectStore(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
     ~IDBObjectStore();
