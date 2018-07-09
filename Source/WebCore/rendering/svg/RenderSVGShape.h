@@ -134,13 +134,14 @@ private:
 private:
     FloatRect m_repaintBoundingBox;
     FloatRect m_repaintBoundingBoxExcludingShadow;
-    AffineTransform m_localTransform;
-    std::unique_ptr<Path> m_path;
-    Vector<MarkerPosition> m_markerPositions;
 
     bool m_needsBoundariesUpdate : 1;
     bool m_needsShapeUpdate : 1;
     bool m_needsTransformUpdate : 1;
+
+    AffineTransform m_localTransform;
+    std::unique_ptr<Path> m_path;
+    Vector<MarkerPosition> m_markerPositions;
 };
 
 } // namespace WebCore

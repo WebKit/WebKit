@@ -1,5 +1,17 @@
 2018-07-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Shrink RenderSVGShape
+        https://bugs.webkit.org/show_bug.cgi?id=187459
+
+        Reviewed by Zalan Bujtas.
+
+        Shrink RenderSVGShape from 328 to 320 bytes by moving the bits before the AffineTransform,
+        which is 16-byte aligned. This saves 9.6KB on nytimes.com.
+
+        * rendering/svg/RenderSVGShape.h:
+
+2018-07-09  Simon Fraser  <simon.fraser@apple.com>
+
         Shrink CSSFontFace
         https://bugs.webkit.org/show_bug.cgi?id=187456
 
