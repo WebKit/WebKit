@@ -2496,6 +2496,7 @@ JSCSSTransition.cpp
 JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
 JSDocumentTimeline.cpp
+JSDocumentTimelineOptions.cpp
 JSDOMApplicationCache.cpp
 JSDOMCSSNamespace.cpp
 JSDOMCache.cpp

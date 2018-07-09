@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=WebAnimations,
-    Exposed=Window,
-    ConstructorCallWith=Document,
-    Constructor (optional DocumentTimelineOptions options)
-] interface DocumentTimeline : AnimationTimeline {
+#pragma once
+
+#include "DOMHighResTimeStamp.h"
+
+namespace WebCore {
+
+struct DocumentTimelineOptions {
+    DOMHighResTimeStamp originTime;
 };
+
+} // namespace WebCore

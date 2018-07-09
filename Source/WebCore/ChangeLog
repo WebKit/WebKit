@@ -1,5 +1,30 @@
 2018-07-09  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Make WPT test at interfaces/DocumentTimeline/constructor.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186498
+        <rdar://problem/41000205>
+        
+        Reviewed by Dean Jackson.
+
+        Add a Constructor to the DocumentTimeline IDL to match the spec and ensure we respect the provided
+        origin time. To ensure all DocumentTimeline instances report matching current times, we read the
+        current time from the "main" document timeline, the one created by the Document automatically.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::create):
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        (WebCore::DocumentTimeline::currentTime):
+        * animation/DocumentTimeline.h:
+        * animation/DocumentTimeline.idl:
+        * animation/DocumentTimelineOptions.h:
+        * animation/DocumentTimelineOptions.idl:
+
+2018-07-09  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Support overlapping keyframes
         https://bugs.webkit.org/show_bug.cgi?id=187481
         <rdar://problem/41988674>

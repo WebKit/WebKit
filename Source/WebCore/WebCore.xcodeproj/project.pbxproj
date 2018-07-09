@@ -2027,6 +2027,8 @@
 		715AD7202050513200D592DC /* DeclarativeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 715AD71D2050512400D592DC /* DeclarativeAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		715AD7212050513F00D592DC /* CSSTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 7123C186204739BA00789392 /* CSSTransition.h */; };
 		716E55B020DBABF100F0CF29 /* DocumentAnimationScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 716E55AD20DBABDC00F0CF29 /* DocumentAnimationScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71729F7B20F3BA4900801CE6 /* DocumentTimelineOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 71729F7A20F3BA3A00801CE6 /* DocumentTimelineOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71729F7E20F3BB4700801CE6 /* JSDocumentTimelineOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 71729F7C20F3BAB900801CE6 /* JSDocumentTimelineOptions.h */; };
 		71A1B6081DEE5AD70073BCFB /* modern-media-controls-localized-strings.js in Resources */ = {isa = PBXBuildFile; fileRef = 71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */; };
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
 		71B28427203CEC4C0036AA5D /* JSCSSAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B28426203CEC0D0036AA5D /* JSCSSAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9105,6 +9107,10 @@
 		716FA0FE1DB26591007323CC /* tracks-button.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "tracks-button.js"; sourceTree = "<group>"; };
 		716FA0FF1DB26591007323CC /* volume-slider.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "volume-slider.css"; sourceTree = "<group>"; };
 		716FA1001DB26591007323CC /* volume-slider.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-slider.js"; sourceTree = "<group>"; };
+		71729F7920F3BA3900801CE6 /* DocumentTimelineOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentTimelineOptions.idl; sourceTree = "<group>"; };
+		71729F7A20F3BA3A00801CE6 /* DocumentTimelineOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTimelineOptions.h; sourceTree = "<group>"; };
+		71729F7C20F3BAB900801CE6 /* JSDocumentTimelineOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentTimelineOptions.h; sourceTree = "<group>"; };
+		71729F7D20F3BABA00801CE6 /* JSDocumentTimelineOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentTimelineOptions.cpp; sourceTree = "<group>"; };
 		7177E2461DB80D2F00919A0B /* media-controller-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "media-controller-support.js"; sourceTree = "<group>"; };
 		7177E2471DB80D2F00919A0B /* mute-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "mute-support.js"; sourceTree = "<group>"; };
 		7177E2481DB80D2F00919A0B /* start-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "start-support.js"; sourceTree = "<group>"; };
@@ -15811,6 +15817,8 @@
 				7123C1842047399300789392 /* JSCSSTransition.h */,
 				71025EDB1F99F1A8004A250C /* JSDocumentTimeline.cpp */,
 				71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */,
+				71729F7D20F3BABA00801CE6 /* JSDocumentTimelineOptions.cpp */,
+				71729F7C20F3BAB900801CE6 /* JSDocumentTimelineOptions.h */,
 				712BE4841FE867C2002031CC /* JSFillMode.cpp */,
 				712BE4851FE86818002031CC /* JSFillMode.h */,
 				71247E281FEA5F61008C08CE /* JSIterationCompositeOperation.cpp */,
@@ -19532,6 +19540,8 @@
 				71025EC41F99F096004A250C /* DocumentTimeline.cpp */,
 				71025EC51F99F096004A250C /* DocumentTimeline.h */,
 				71025ECA1F99F096004A250C /* DocumentTimeline.idl */,
+				71729F7A20F3BA3A00801CE6 /* DocumentTimelineOptions.h */,
+				71729F7920F3BA3900801CE6 /* DocumentTimelineOptions.idl */,
 				712BE4811FE865D4002031CC /* FillMode.h */,
 				712BE4821FE865D5002031CC /* FillMode.idl */,
 				71247E331FEA5F80008C08CE /* IterationCompositeOperation.h */,
@@ -27544,6 +27554,7 @@
 				94E839511DFB2A0E007BC6A7 /* CSSNamespaceRule.h in Headers */,
 				A80E6D000A1989CA007FB8C5 /* CSSPageRule.h in Headers */,
 				946D372E1D6CB2940077084F /* CSSParser.h in Headers */,
+				E4A7995220EE4B1400C19568 /* CSSParserContext.h in Headers */,
 				949C77011D6E1D9800C0DE4F /* CSSParserFastPaths.h in Headers */,
 				946D37441D6CF7B20077084F /* CSSParserIdioms.h in Headers */,
 				94DE5C961D8301BD00164F2A /* CSSParserImpl.h in Headers */,
@@ -27717,6 +27728,7 @@
 				AD6E71AD1668899D00320C13 /* DocumentSharedObjectPool.h in Headers */,
 				0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */,
 				71025ED01F99F0CE004A250C /* DocumentTimeline.h in Headers */,
+				71729F7B20F3BA4900801CE6 /* DocumentTimelineOptions.h in Headers */,
 				86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */,
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,
 				973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */,
@@ -28510,6 +28522,7 @@
 				ADDA94C219687AA500453029 /* JSDocumentCustom.h in Headers */,
 				1A494EDF0A123F4C00FDAFC1 /* JSDocumentFragment.h in Headers */,
 				71025EE01F99F1EC004A250C /* JSDocumentTimeline.h in Headers */,
+				71729F7E20F3BB4700801CE6 /* JSDocumentTimelineOptions.h in Headers */,
 				65DF31F609D1CC60000BE325 /* JSDocumentType.h in Headers */,
 				7C57BFE71EDE2F6100534A48 /* JSDOMAbstractOperations.h in Headers */,
 				1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */,
@@ -28794,7 +28807,6 @@
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
 				E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */,
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
-				E4A7995220EE4B1400C19568 /* CSSParserContext.h in Headers */,
 				830A36BD1DAC5FAD006D7D09 /* JSMouseEventInit.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */,

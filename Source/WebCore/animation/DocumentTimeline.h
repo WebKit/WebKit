@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationTimeline.h"
+#include "DocumentTimelineOptions.h"
 #include "GenericTaskQueue.h"
 #include "Timer.h"
 #include <wtf/Ref.h>
@@ -39,6 +40,7 @@ class DocumentTimeline final : public AnimationTimeline
 {
 public:
     static Ref<DocumentTimeline> create(Document&);
+    static Ref<DocumentTimeline> create(Document&, DocumentTimelineOptions&&);
     ~DocumentTimeline();
 
     Document* document() const { return m_document.get(); }
@@ -74,7 +76,7 @@ public:
     WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
 
 private:
-    DocumentTimeline(Document&);
+    DocumentTimeline(Document&, Seconds);
 
     void scheduleInvalidationTaskIfNeeded();
     void performInvalidationTask();
@@ -86,6 +88,7 @@ private:
     void maybeClearCachedCurrentTime();
 
     RefPtr<Document> m_document;
+    Seconds m_originTime;
     bool m_paused { false };
     bool m_isSuspended { false };
     bool m_waitingOnVMIdle { false };

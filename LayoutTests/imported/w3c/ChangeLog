@@ -1,5 +1,17 @@
 2018-07-09  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Make WPT test at interfaces/DocumentTimeline/constructor.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186498
+        <rdar://problem/41000205>
+
+        Reviewed by Dean Jackson.
+
+        Mark 4 new WPT progressions.
+
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/constructor-expected.txt:
+
+2018-07-09  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Support overlapping keyframes
         https://bugs.webkit.org/show_bug.cgi?id=187481
         <rdar://problem/41988674>

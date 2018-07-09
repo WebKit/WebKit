@@ -454,6 +454,7 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/CompositeOperation.idl
     animation/ComputedTimingProperties.idl
     animation/DocumentTimeline.idl
+    animation/DocumentTimelineOptions.idl
     animation/FillMode.idl
     animation/IterationCompositeOperation.idl
     animation/KeyframeAnimationOptions.idl

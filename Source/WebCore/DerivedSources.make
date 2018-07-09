@@ -374,6 +374,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/CSSAnimation.idl \
     $(WebCore)/animation/CSSTransition.idl \
     $(WebCore)/animation/DocumentTimeline.idl \
+    $(WebCore)/animation/DocumentTimelineOptions.idl \
     $(WebCore)/animation/FillMode.idl \
     $(WebCore)/animation/IterationCompositeOperation.idl \
     $(WebCore)/animation/KeyframeAnimationOptions.idl \
