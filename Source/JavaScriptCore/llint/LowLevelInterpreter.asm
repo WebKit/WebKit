@@ -839,7 +839,7 @@ macro restoreStackPointerAfterCall()
 end
 
 macro traceExecution()
-    if EXECUTION_TRACING
+    if TRACING
         callSlowPath(_llint_trace)
     end
 end
@@ -1006,7 +1006,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     tagReturnAddress sp
     preserveCallerPCAndCFR()
 
-    if EXECUTION_TRACING
+    if TRACING
         subp maxFrameExtentForSlowPathCall, sp
         callSlowPath(traceSlowPath)
         addp maxFrameExtentForSlowPathCall, sp

@@ -34,7 +34,7 @@
 #include "LLIntCommon.h"
 #include "JSCInlines.h"
 
-#if LLINT_SLOW_PATH_TRACING
+#if LLINT_TRACING
 #include "Exception.h"
 #endif
 
@@ -47,8 +47,9 @@ void interpreterThrowInCaller(ExecState* exec, JSObject* error)
     auto scope = DECLARE_THROW_SCOPE(*vm);
 
     throwException(exec, scope, error);
-#if LLINT_SLOW_PATH_TRACING
-    dataLog("Throwing exception ", JSValue(scope.exception()), ".\n");
+#if LLINT_TRACING
+    if (UNLIKELY(Options::traceLLIntSlowPath()))
+        dataLog("Throwing exception ", JSValue(scope.exception()), ".\n");
 #endif
 }
 

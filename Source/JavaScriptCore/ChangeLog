@@ -1,3 +1,43 @@
+2018-07-09  Mark Lam  <mark.lam@apple.com>
+
+        Add --traceLLIntExecution and --traceLLIntSlowPath options.
+        https://bugs.webkit.org/show_bug.cgi?id=187479
+
+        Reviewed by Yusuke Suzuki and Saam Barati.
+
+        These options are only available if LLINT_TRACING is enabled in LLIntCommon.h.
+
+        The details:
+        1. LLINT_TRACING consolidates and replaces LLINT_EXECUTION_TRACING and LLINT_SLOW_PATH_TRACING.
+        2. Tracing is now guarded behind runtime options --traceLLIntExecution and --traceLLIntSlowPath.
+           This makes it such that enabling LLINT_TRACING doesn't means that we'll
+           continually spammed with logging until we rebuild.
+        3. Fixed slow path LLINT tracing to work with exception check validation.
+
+        * llint/LLIntCommon.h:
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::slowPathLog):
+        (JSC::LLInt::slowPathLn):
+        (JSC::LLInt::slowPathLogF):
+        (JSC::LLInt::slowPathLogLn):
+        (JSC::LLInt::llint_trace_operand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPathsExceptions.cpp:
+        (JSC::CommonSlowPaths::interpreterThrowInCaller):
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        * runtime/Options.h:
+
 2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Embed RegExp into constant buffer in UnlinkedCodeBlock and CodeBlock

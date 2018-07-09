@@ -188,9 +188,49 @@ namespace JSC { namespace LLInt {
         ExecState* __rcf_exec = (execCallee);                           \
         LLINT_RETURN_TWO(pc, __rcf_exec);                               \
     } while (false)
-    
+
+#if LLINT_TRACING
+
+template<typename... Types>
+void slowPathLog(const Types&... values)
+{
+    dataLogIf(Options::traceLLIntSlowPath(), values...);
+}
+
+template<typename... Types>
+void slowPathLn(const Types&... values)
+{
+    dataLogLnIf(Options::traceLLIntSlowPath(), values...);
+}
+
+template<typename... Types>
+void slowPathLogF(const char* format, const Types&... values)
+{
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#pragma GCC diagnostic ignored "-Wformat-security"
+#endif
+    if (Options::traceLLIntSlowPath())
+        dataLogF(format, values...);
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic pop
+#endif
+}
+
+#else // not LLINT_TRACING
+
+template<typename... Types> void slowPathLog(const Types&...) { }
+template<typename... Types> void slowPathLogLn(const Types&...) { }
+template<typename... Types> void slowPathLogF(const char*, const Types&...) { }
+
+#endif // LLINT_TRACING
+
 extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* pc, int fromWhere, int operand)
 {
+    if (!Options::traceLLIntExecution())
+        LLINT_END_IMPL();
+
     LLINT_BEGIN();
     dataLogF("<%p> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d\n",
             &Thread::current(),
@@ -206,6 +246,9 @@ extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* 
 
 extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc, int fromWhere, int operand)
 {
+    if (!Options::traceLLIntExecution())
+        LLINT_END_IMPL();
+
     JSValue value = LLINT_OP_C(operand).jsValue();
     union {
         struct {
@@ -233,18 +276,24 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
 
 LLINT_SLOW_PATH_DECL(trace_prologue)
 {
+    if (!Options::traceLLIntExecution())
+        LLINT_END_IMPL();
+
     dataLogF("<%p> %p / %p: in prologue of ", &Thread::current(), exec->codeBlock(), exec);
-    dataLog(*exec->codeBlock(), "\n");
+    dataLog(exec->codeBlock(), "\n");
     LLINT_END_IMPL();
 }
 
 static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpecializationKind kind)
 {
+    if (!Options::traceLLIntExecution())
+        return;
+
     JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     FunctionExecutable* executable = callee->jsExecutable();
     CodeBlock* codeBlock = executable->codeBlockFor(kind);
     dataLogF("<%p> %p / %p: in %s of ", &Thread::current(), codeBlock, exec, comment);
-    dataLog(*codeBlock);
+    dataLog(codeBlock);
     dataLogF(" function %p, executable %p; numVars = %u, numParameters = %u, numCalleeLocals = %u, caller = %p.\n",
         callee, executable, codeBlock->numVars(), codeBlock->numParameters(), codeBlock->numCalleeLocals(), exec->callerFrame());
 }
@@ -275,6 +324,9 @@ LLINT_SLOW_PATH_DECL(trace_arityCheck_for_construct)
 
 LLINT_SLOW_PATH_DECL(trace)
 {
+    if (!Options::traceLLIntExecution())
+        LLINT_END_IMPL();
+
     OpcodeID opcodeID = Interpreter::getOpcodeID(pc[0].u.opcode);
     dataLogF("<%p> %p / %p: executing bc#%zu, %s, pc = %p\n",
             &Thread::current(),
@@ -290,18 +342,6 @@ LLINT_SLOW_PATH_DECL(trace)
         dataLogF("Will be returning to %p\n", exec->returnPC().value());
         dataLogF("The new cfr will be %p\n", exec->callerFrame());
     }
-    LLINT_END_IMPL();
-}
-
-LLINT_SLOW_PATH_DECL(special_trace)
-{
-    dataLogF("<%p> %p / %p: executing special case bc#%zu, op#%u, return PC is %p\n",
-            &Thread::current(),
-            exec->codeBlock(),
-            exec,
-            static_cast<intptr_t>(exec->codeBlock()->bytecodeOffset(pc)),
-            Interpreter::getOpcodeID(pc[0].u.opcode),
-            exec->returnPC().value());
     LLINT_END_IMPL();
 }
 
@@ -495,18 +535,18 @@ LLINT_SLOW_PATH_DECL(stack_check)
 
     LLINT_SET_PC_FOR_STUBS();
 
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Checking stack height with exec = %p.\n", exec);
-    dataLog("CodeBlock = ", *exec->codeBlock(), "\n");
-    dataLogF("Num callee registers = %u.\n", exec->codeBlock()->numCalleeLocals());
-    dataLogF("Num vars = %u.\n", exec->codeBlock()->numVars());
-
-    dataLogF("Current OS stack end is at %p.\n", vm.softStackLimit());
+    CodeBlock* codeBlock = exec->codeBlock();
+    slowPathLogF("Checking stack height with exec = %p.\n", exec);
+    slowPathLog("CodeBlock = ", codeBlock, "\n");
+    if (codeBlock) {
+        slowPathLogF("Num callee registers = %u.\n", codeBlock->numCalleeLocals());
+        slowPathLogF("Num vars = %u.\n", codeBlock->numVars());
+    }
+    slowPathLogF("Current OS stack end is at %p.\n", vm.softStackLimit());
 #if !ENABLE(JIT)
-    dataLogF("Current C Loop stack end is at %p.\n", vm.cloopStackLimit());
+    slowPathLogF("Current C Loop stack end is at %p.\n", vm.cloopStackLimit());
 #endif
 
-#endif
     // If the stack check succeeds and we don't need to throw the error, then
     // we'll return 0 instead. The prologue will check for a non-zero value
     // when determining whether to set the callFrame or not.
@@ -1262,9 +1302,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Creating function!\n");
-#endif
+    slowPathLogF("Creating function!\n");
     LLINT_RETURN(JSFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
 }
 
@@ -1273,9 +1311,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Creating function!\n");
-#endif
+    slowPathLogF("Creating function!\n");
     LLINT_RETURN(JSGeneratorFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
 }
 
@@ -1284,9 +1320,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_func)
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Creating async function!\n");
-#endif
+    slowPathLogF("Creating async function!\n");
     LLINT_RETURN(JSAsyncFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
 }
 
@@ -1295,9 +1329,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_generator_func)
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Creating async generator function!\n");
-#endif
+    slowPathLogF("Creating async generator function!\n");
     LLINT_RETURN(JSAsyncGeneratorFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
 }
     
@@ -1358,9 +1390,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 {
     UNUSED_PARAM(pc);
 
-#if LLINT_SLOW_PATH_TRACING
-    dataLog("Performing host call.\n");
-#endif
+    slowPathLog("Performing host call.\n");
     
     ExecState* exec = execCallee->callerFrame();
     VM& vm = exec->vm();
@@ -1384,9 +1414,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
             LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
         }
         
-#if LLINT_SLOW_PATH_TRACING
-        dataLog("Call callee is not a function: ", callee, "\n");
-#endif
+        slowPathLog("Call callee is not a function: ", callee, "\n");
 
         ASSERT(callType == CallType::None);
         LLINT_CALL_THROW(exec, createNotAFunctionError(exec, callee));
@@ -1408,9 +1436,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
     }
     
-#if LLINT_SLOW_PATH_TRACING
-    dataLog("Constructor callee is not a function: ", callee, "\n");
-#endif
+    slowPathLog("Constructor callee is not a function: ", callee, "\n");
 
     ASSERT(constructType == ConstructType::None);
     LLINT_CALL_THROW(exec, createNotAConstructorError(exec, callee));
@@ -1422,9 +1448,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Performing call with recorded PC = %p\n", exec->currentVPC());
-#endif
+    slowPathLogF("Performing call with recorded PC = %p\n", exec->currentVPC());
     
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
