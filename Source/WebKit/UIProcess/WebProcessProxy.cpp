@@ -348,18 +348,18 @@ void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<Web
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
     
     HashSet<PAL::SessionID> visitedSessionIDs;
-    for (auto& page : globalPageMap()) {
-        auto& dataStore = page.value->websiteDataStore();
+    for (auto& page : globalPageMap().values()) {
+        auto& dataStore = page->websiteDataStore();
         if (!dataStore.isPersistent() || visitedSessionIDs.contains(dataStore.sessionID()))
             continue;
         visitedSessionIDs.add(dataStore.sessionID());
         callbackAggregator->addPendingCallback();
-        dataStore.topPrivatelyControlledDomainsWithWebsiteData(dataTypes, { }, [callbackAggregator, shouldNotifyPage, page](HashSet<String>&& domainsWithDataRecords) {
+        dataStore.topPrivatelyControlledDomainsWithWebsiteData(dataTypes, { }, [callbackAggregator, shouldNotifyPage, page = makeRef(*page)](HashSet<String>&& domainsWithDataRecords) {
             // When completing the task, we should be getting called on the main thread.
             ASSERT(RunLoop::isMain());
             
             if (shouldNotifyPage)
-                page.value->postMessageToInjectedBundle("WebsiteDataScanForTopPrivatelyControlledDomainsFinished", nullptr);
+                page->postMessageToInjectedBundle("WebsiteDataScanForTopPrivatelyControlledDomainsFinished", nullptr);
             
             callbackAggregator->addDomainsWithDeletedWebsiteData(WTFMove(domainsWithDataRecords));
             callbackAggregator->removePendingCallback();
