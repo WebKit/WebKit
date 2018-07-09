@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/log-pause-location.js"></script>
+<script>
+function entryConsoleLog() {
+    debugger;
+    console.log(window);
+    console.log(console);
+    console.log("string");
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.setPauseForInternalScripts");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.setPauseForInternalScripts.Disabled",
+        description: "Should not be able to step into console.log statements which use the Internal InjectedScript.",
+        expression: "setTimeout(entryConsoleLog)",
+        // Call out directly to the backend since there is no other way to wait on the command result if changing via the setting.
+        setup: async () => { return DebuggerAgent.setPauseForInternalScripts(false); },
+        steps: [
+            "over",
+                "in", // console.log(window)
+                "in", // console.log(console)
+                "in", // console.log("string")
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.setPauseForInternalScripts.Enabled",
+        description: "Should be able to step over console.log statements which use the Internal InjectedScript.",
+        expression: "setTimeout(entryConsoleLog)",
+        // Call out directly to the backend since there is no other way to wait on the command result if changing via the setting.
+        setup: async () => { return DebuggerAgent.setPauseForInternalScripts(true); },
+        teardown: async () => { return DebuggerAgent.setPauseForInternalScripts(false); },
+        steps: [
+            "over",
+                "in", // console.log(window)
+                "in", // [Somewhere inside console.log(window)]
+                "in", // [Somewhere inside console.log(window)]
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking whether console.log can be stepped into or not, depending on the value of WI.settings.pauseForInternalScripts.</p>
+</body>
+</html>

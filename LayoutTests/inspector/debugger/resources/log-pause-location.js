@@ -163,9 +163,9 @@ TestPage.registerInitializer(() => {
         });
     }
 
-    window.addSteppingTestCase = function({name, description, expression, steps, pauseOnAllException}) {
+    window.addSteppingTestCase = function({name, description, expression, steps, pauseOnAllException, setup, teardown}) {
         suite.addTestCase({
-            name, description,
+            name, description, setup, teardown,
             test(resolve, reject) {
                 // Setup.
                 currentSteps = steps;

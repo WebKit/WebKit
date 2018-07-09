@@ -61,6 +61,7 @@ public:
 
     void enable(ErrorString&) final;
     void disable(ErrorString&) final;
+    void setPauseForInternalScripts(ErrorString&, bool shouldPause) final;
     void setAsyncStackTraceDepth(ErrorString&, int depth) final;
     void setBreakpointsActive(ErrorString&, bool active) final;
     void setBreakpointByUrl(ErrorString&, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const JSON::Object* options, Protocol::Debugger::BreakpointId*, RefPtr<JSON::ArrayOf<Protocol::Debugger::Location>>& locations) final;
@@ -197,6 +198,7 @@ private:
     bool m_hasExceptionValue { false };
     bool m_didPauseStopwatch { false };
     bool m_pauseOnAssertionFailures { false };
+    bool m_pauseForInternalScripts { false };
     bool m_registeredIdleCallback { false };
     int m_asyncStackTraceDepth { 0 };
 };

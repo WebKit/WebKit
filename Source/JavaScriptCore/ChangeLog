@@ -1,3 +1,23 @@
+2018-07-09  Brian Burg  <bburg@apple.com>
+
+        REGRESSION: Web Inspector no longer pauses in internal injected scripts like WDFindNodes.js
+        https://bugs.webkit.org/show_bug.cgi?id=187350
+        <rdar://problem/41728249>
+
+        Reviewed by Matt Baker.
+
+        Add a new command that toggles whether or not to blackbox internal scripts.
+        If blackboxed, the scripts will not be shown to the frontend and the debugger will
+        not pause in source frames from blackboxed scripts. Sometimes we want to break into
+        those scripts when debugging Web Inspector, WebDriver, or other WebKit-internal code
+        that injects scripts.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setPauseForInternalScripts):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/protocol/Debugger.json:
+
 2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Make some data members of UnlinkedCodeBlock private

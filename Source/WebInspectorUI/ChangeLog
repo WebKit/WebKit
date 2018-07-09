@@ -1,3 +1,19 @@
+2018-07-09  Brian Burg  <bburg@apple.com>
+
+        REGRESSION: Web Inspector no longer pauses in internal injected scripts like WDFindNodes.js
+        https://bugs.webkit.org/show_bug.cgi?id=187350
+        <rdar://problem/41728249>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Setting.js: Add a new setting to allow pausing in internal scripts.
+        * UserInterface/Controllers/DebuggerManager.js: Listen to the setting change and toggle
+        the backend setting accordingly. The default is to not break into internal scripts.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+        Expose the new setting in the Debug settings panel.
+
 2018-07-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: resource search field has white text on white background

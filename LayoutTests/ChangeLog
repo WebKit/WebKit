@@ -1,3 +1,22 @@
+2018-07-09  Brian Burg  <bburg@apple.com>
+
+        REGRESSION: Web Inspector no longer pauses in internal injected scripts like WDFindNodes.js
+        https://bugs.webkit.org/show_bug.cgi?id=187350
+        <rdar://problem/41728249>
+
+        Reviewed by Matt Baker.
+
+        Add a new test to demonstrate a difference in behavior when Debugger.setPauseForInternalScripts(true)
+        is sent to the backend. There's no way to correctly stringify the current call frame when stepping into
+        console.log because the injected script was blackboxed at the time that the scripts were parsed.
+        Instead, the stepping output just shows that the debugger is paused somewhere inside console.log.
+
+        * inspector/debugger/pause-for-internal-scripts-expected.txt: Added.
+        * inspector/debugger/pause-for-internal-scripts.html: Added.
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.window.addSteppingTestCase):
+        (TestPage.registerInitializer):
+
 2018-07-09  Truitt Savell  <tsavell@apple.com>
 
         Layout Test media/video-background-playback.html is flaky

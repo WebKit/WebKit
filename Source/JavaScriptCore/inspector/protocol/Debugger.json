@@ -263,6 +263,13 @@
             ]
         },
         {
+            "name": "setPauseForInternalScripts",
+            "description": "Change whether to pause in the debugger for internal scripts. The default value is false.",
+            "parameters": [
+                { "name": "shouldPause", "type": "boolean" }
+            ]
+        },
+        {
             "name": "evaluateOnCallFrame",
             "description": "Evaluates expression on a given call frame.",
             "parameters": [

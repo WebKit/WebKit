@@ -884,6 +884,17 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
     return script.sourceMappingURL;
 }
 
+void InspectorDebuggerAgent::setPauseForInternalScripts(ErrorString&, bool shouldPause)
+{
+    if (shouldPause == m_pauseForInternalScripts)
+        return;
+
+    m_pauseForInternalScripts = shouldPause;
+
+    if (m_pauseForInternalScripts)
+        m_scriptDebugServer.clearBlacklist();
+}
+
 static bool isWebKitInjectedScript(const String& sourceURL)
 {
     return sourceURL.startsWith("__InjectedScript_") && sourceURL.endsWith(".js");
@@ -905,7 +916,7 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
 
     m_scripts.set(sourceID, script);
 
-    if (hasSourceURL && isWebKitInjectedScript(sourceURL))
+    if (hasSourceURL && isWebKitInjectedScript(sourceURL) && !m_pauseForInternalScripts)
         m_scriptDebugServer.addToBlacklist(sourceID);
 
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;

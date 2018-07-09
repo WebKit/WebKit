@@ -99,6 +99,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (DebuggerAgent.setAsyncStackTraceDepth)
             DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
 
+        // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
+        if (DebuggerAgent.setPauseForInternalScripts) {
+            let updateBackendSetting = () => { DebuggerAgent.setPauseForInternalScripts(WI.settings.pauseForInternalScripts.value); };
+            WI.settings.pauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, updateBackendSetting);
+
+            updateBackendSetting();
+        }
+
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
         function restoreBreakpointsSoon() {

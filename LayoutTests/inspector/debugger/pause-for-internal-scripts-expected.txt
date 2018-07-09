@@ -1,0 +1,127 @@
+CONSOLE MESSAGE: line 9: [object Window]
+CONSOLE MESSAGE: line 10: [object Console]
+CONSOLE MESSAGE: line 11: string
+CONSOLE MESSAGE: line 9: [object Window]
+CONSOLE MESSAGE: line 10: [object Console]
+CONSOLE MESSAGE: line 11: string
+Checking whether console.log can be stepped into or not, depending on the value of WI.settings.pauseForInternalScripts.
+
+
+== Running test suite: Debugger.setPauseForInternalScripts
+-- Running test setup.
+-- Running test case: Debugger.setPauseForInternalScripts.Disabled
+EXPRESSION: setTimeout(entryConsoleLog)
+STEPS: over, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryConsoleLog:8:5
+      4    <script src="resources/log-pause-location.js"></script>
+      5    <script>
+      6    function entryConsoleLog() {
+ ->   7        |debugger;
+      8        console.log(window);
+      9        console.log(console);
+     10        console.log("string");
+
+ACTION: step-over
+PAUSE AT entryConsoleLog:9:5
+      5    <script>
+      6    function entryConsoleLog() {
+      7        debugger;
+ ->   8        |console.log(window);
+      9        console.log(console);
+     10        console.log("string");
+     11    }
+
+ACTION: step-in
+PAUSE AT entryConsoleLog:10:5
+      6    function entryConsoleLog() {
+      7        debugger;
+      8        console.log(window);
+ ->   9        |console.log(console);
+     10        console.log("string");
+     11    }
+     12    
+
+ACTION: step-in
+PAUSE AT entryConsoleLog:11:5
+      7        debugger;
+      8        console.log(window);
+      9        console.log(console);
+ ->  10        |console.log("string");
+     11    }
+     12    
+     13    // ---------
+
+ACTION: step-in
+PAUSE AT entryConsoleLog:12:2
+      8        console.log(window);
+      9        console.log(console);
+     10        console.log("string");
+ ->  11    }|
+     12    
+     13    // ---------
+     14    
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+-- Running test setup.
+
+-- Running test case: Debugger.setPauseForInternalScripts.Enabled
+EXPRESSION: setTimeout(entryConsoleLog)
+STEPS: over, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryConsoleLog:8:5
+      4    <script src="resources/log-pause-location.js"></script>
+      5    <script>
+      6    function entryConsoleLog() {
+ ->   7        |debugger;
+      8        console.log(window);
+      9        console.log(console);
+     10        console.log("string");
+
+ACTION: step-over
+PAUSE AT entryConsoleLog:9:5
+      5    <script>
+      6    function entryConsoleLog() {
+      7        debugger;
+ ->   8        |console.log(window);
+      9        console.log(console);
+     10        console.log("string");
+     11    }
+
+ACTION: step-in
+PAUSE AT entryConsoleLog:9:16
+      5    <script>
+      6    function entryConsoleLog() {
+      7        debugger;
+ ->   8        console.log|(window);
+      9        console.log(console);
+     10        console.log("string");
+     11    }
+
+ACTION: step-in
+PAUSE AT entryConsoleLog:9:16
+      5    <script>
+      6    function entryConsoleLog() {
+      7        debugger;
+ ->   8        console.log|(window);
+      9        console.log(console);
+     10        console.log("string");
+     11    }
+
+ACTION: step-in
+PAUSE AT entryConsoleLog:9:16
+      5    <script>
+      6    function entryConsoleLog() {
+      7        debugger;
+ ->   8        console.log|(window);
+      9        console.log(console);
+     10        console.log("string");
+     11    }
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+-- Running test teardown.
+
