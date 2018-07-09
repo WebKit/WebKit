@@ -298,6 +298,24 @@ TEST(WTF, StringViewSplitWithConsecutiveSeparators)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 }
 
+TEST(WTF, StringViewEqualBasic)
+{
+    String referenceHolder;
+    StringView a = stringViewFromUTF8(referenceHolder, "Hello World!");
+    EXPECT_TRUE(a == "Hello World!");
+    EXPECT_FALSE(a == "Hello World");
+    EXPECT_FALSE(a == "Hello World!!");
+
+    auto test = "Hell\0";
+    a = StringView { (const LChar*)test, 5 };
+    EXPECT_FALSE(a == "Hell\0");
+    EXPECT_FALSE(a == "Hell");
+
+    StringView test3 = "Hello";
+    EXPECT_TRUE(test3 == "Hello\0");
+    EXPECT_TRUE(test3 == "Hello");
+}
+
 TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
 {
     RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG");

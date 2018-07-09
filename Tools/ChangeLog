@@ -1,3 +1,14 @@
+2018-07-09  Youenn Fablet  <youenn@apple.com>
+
+        StringView operator==(char*) should check the length of the string
+        https://bugs.webkit.org/show_bug.cgi?id=187422
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::equal2):
+        (TestWebKitAPI::TEST):
+
 2018-07-09  Ross Kirsling  <rkirsling@gmail.com>
 
         [WinCairo] httpd service install needs to precede server start

@@ -737,7 +737,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
 String SQLiteIDBBackingStore::databaseNameFromEncodedFilename(const String& encodedName)
 {
-    if (equal(encodedName, "%00"_s))
+    if (encodedName == "%00"_s)
         return { };
 
     String partiallyDecoded = encodedName;

@@ -1,3 +1,15 @@
+2018-07-09  Youenn Fablet  <youenn@apple.com>
+
+        StringView operator==(char*) should check the length of the string
+        https://bugs.webkit.org/show_bug.cgi?id=187422
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameFromEncodedFilename):
+
 2018-07-09  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink WebCore::Pair

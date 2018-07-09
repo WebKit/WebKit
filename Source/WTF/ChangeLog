@@ -1,3 +1,22 @@
+2018-07-09  Youenn Fablet  <youenn@apple.com>
+
+        StringView operator==(char*) should check the length of the string
+        https://bugs.webkit.org/show_bug.cgi?id=187422
+
+        Reviewed by Chris Dumez.
+
+        Update StringView operator== to ensure that any character raw pointer comparison actually check the length of the raw pointer string.
+        This patch mimicks the behavior of String.
+        For instance, comparing a StringView with "he\0llo" and "he" will give the same result.
+
+        * wtf/linux/MemoryFootprintLinux.cpp:
+        (WTF::memoryFootprint):
+        * wtf/text/StringView.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::equal):
+        (WTF::StringView::stripLeadingAndTrailingMatchedCharacters):
+
 2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Annotate RunLoop::Timer fast-allocated

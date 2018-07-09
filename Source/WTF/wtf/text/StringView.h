@@ -193,8 +193,7 @@ private:
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>&, StringView);
 
 bool equal(StringView, StringView);
-bool equal(StringView, const LChar*);
-bool equal(StringView, const char*);
+bool equal(StringView, const LChar* b);
 
 bool equalIgnoringASCIICase(StringView, StringView);
 bool equalIgnoringASCIICase(StringView, const char*);
@@ -202,16 +201,15 @@ bool equalIgnoringASCIICase(StringView, const char*);
 template<unsigned length> bool equalLettersIgnoringASCIICase(StringView, const char (&lowercaseLetters)[length]);
 
 inline bool operator==(StringView a, StringView b) { return equal(a, b); }
-inline bool operator==(StringView a, const LChar* b) { return equal(a, b); }
-inline bool operator==(StringView a, const char* b) { return equal(a, b); }
-inline bool operator==(const LChar* a, StringView b) { return equal(b, a); }
+inline bool operator==(StringView a, const LChar *b);
+inline bool operator==(StringView a, const char *b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
 inline bool operator==(const char* a, StringView b) { return equal(b, a); }
 
 inline bool operator!=(StringView a, StringView b) { return !equal(a, b); }
 inline bool operator!=(StringView a, const LChar* b) { return !equal(a, b); }
 inline bool operator!=(StringView a, const char* b) { return !equal(a, b); }
-inline bool operator!=(const LChar* a, StringView b) { return !equal(b, a); }
-inline bool operator!=(const char* a, StringView b) { return !equal(b, a); }
+inline bool operator!=(const LChar*a, StringView b) { return !equal(b, a); }
+inline bool operator!=(const char*a, StringView b) { return !equal(b, a); }
 
 }
 
@@ -605,7 +603,7 @@ inline bool equal(StringView a, StringView b)
         ASSERT(a.is8Bit() == b.is8Bit());
         return a.length() == b.length();
     }
-        
+
     return equalCommon(a, b);
 }
 
@@ -615,15 +613,14 @@ inline bool equal(StringView a, const LChar* b)
         return !a.isEmpty();
     if (a.isEmpty())
         return !b;
+
     unsigned aLength = a.length();
+    if (aLength != strlen(reinterpret_cast<const char*>(b)))
+        return false;
+
     if (a.is8Bit())
         return equal(a.characters8(), b, aLength);
     return equal(a.characters16(), b, aLength);
-}
-
-inline bool equal(StringView a, const char* b) 
-{
-    return equal(a, reinterpret_cast<const LChar*>(b)); 
 }
 
 inline bool equalIgnoringASCIICase(StringView a, StringView b)
@@ -956,10 +953,10 @@ inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const Cha
 
     unsigned start = 0;
     unsigned end = m_length - 1;
-    
+
     while (start <= end && predicate(characters[start]))
         ++start;
-    
+
     if (start > end)
         return StringView::empty();
 
