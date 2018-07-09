@@ -1,3 +1,12 @@
+2018-07-09  Truitt Savell  <tsavell@apple.com>
+
+        Layout Test media/video-background-playback.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187476
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-07-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark animations/needs-layout.html as flaky on iOS.
