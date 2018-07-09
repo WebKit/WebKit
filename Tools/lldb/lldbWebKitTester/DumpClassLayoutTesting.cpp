@@ -26,7 +26,6 @@
 #include "DumpClassLayoutTesting.h"
 
 #include <memory>
-#include <wtf/Optional.h>
 
 /*
 *** Dumping AST Record Layout
@@ -437,6 +436,83 @@ class ClassWithBitfields {
     bool bitfield8 : 1;
 };
 
+/*
+*** Dumping AST Record Layout
+         0 | class ClassWithPaddedBitfields
+         0 |   _Bool boolMember
+     1:0-0 |   unsigned int bitfield1
+     1:1-1 |   _Bool bitfield2
+     1:2-3 |   unsigned int bitfield3
+     1:4-4 |   unsigned int bitfield4
+     1:5-6 |   unsigned long bitfield5
+         4 |   int intMember
+     8:0-0 |   unsigned int bitfield7
+     8:1-9 |   unsigned int bitfield8
+     9:2-2 |   _Bool bitfield9
+           | [sizeof=16, dsize=10, align=8,
+           |  nvsize=10, nvalign=8]
+*/
+class ClassWithPaddedBitfields {
+    bool boolMember;
+
+    unsigned bitfield1 : 1;
+    bool bitfield2 : 1;
+    unsigned bitfield3 : 2;
+    unsigned bitfield4 : 1;
+    unsigned long bitfield5: 2;
+
+    int intMember;
+
+    unsigned bitfield7 : 1;
+    unsigned bitfield8 : 9;
+    bool bitfield9 : 1;
+};
+
+/*
+*** Dumping AST Record Layout
+         0 | class MemberHasBitfieldPadding
+         0 |   class ClassWithPaddedBitfields bitfieldMember
+         0 |     _Bool boolMember
+     1:0-0 |     unsigned int bitfield1
+     1:1-1 |     _Bool bitfield2
+     1:2-3 |     unsigned int bitfield3
+     1:4-4 |     unsigned int bitfield4
+     1:5-6 |     unsigned long bitfield5
+         4 |     int intMember
+     8:0-0 |     unsigned int bitfield7
+     8:1-9 |     unsigned int bitfield8
+     9:2-2 |     _Bool bitfield9
+    16:0-0 |   _Bool bitfield1
+           | [sizeof=24, dsize=17, align=8,
+           |  nvsize=17, nvalign=8]
+*/
+class MemberHasBitfieldPadding {
+    ClassWithPaddedBitfields bitfieldMember;
+    bool bitfield1 : 1;
+};
+
+/*
+*** Dumping AST Record Layout
+         0 | class InheritsFromClassWithPaddedBitfields
+         0 |   class ClassWithPaddedBitfields (base)
+         0 |     _Bool boolMember
+     1:0-0 |     unsigned int bitfield1
+     1:1-1 |     _Bool bitfield2
+     1:2-3 |     unsigned int bitfield3
+     1:4-4 |     unsigned int bitfield4
+     1:5-6 |     unsigned long bitfield5
+         4 |     int intMember
+     8:0-0 |     unsigned int bitfield7
+     8:1-9 |     unsigned int bitfield8
+     9:2-2 |     _Bool bitfield9
+    10:0-0 |   _Bool derivedBitfield
+           | [sizeof=16, dsize=11, align=8,
+           |  nvsize=11, nvalign=8]
+*/
+class InheritsFromClassWithPaddedBitfields : public ClassWithPaddedBitfields {
+    bool derivedBitfield : 1;
+};
+
 void avoidClassDeadStripping()
 {
     BasicClassLayout basicClassInstance;
@@ -453,4 +529,7 @@ void avoidClassDeadStripping()
     ClassWithClassMembers classWithClassMembersInstance;
     ClassWithPointerMember classWithPointerMemberInstance;
     ClassWithBitfields classWithBitfieldsInstance;
+    ClassWithPaddedBitfields classWithPaddedBitfieldsInstance;
+    MemberHasBitfieldPadding memberHasBitfieldPaddingInstance;
+    InheritsFromClassWithPaddedBitfields inheritsFromClassWithPaddedBitfieldsInstance;
 }

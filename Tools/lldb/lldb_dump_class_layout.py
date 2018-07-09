@@ -50,9 +50,12 @@ class ClassLayoutBase(object):
     MEMBER_CLASS_INSTANCE = 'class_instance'
     MEMBER_BYTE_SIZE = 'byte_size'
     MEMBER_OFFSET = 'offset'  # offset is local to this class.
+    MEMBER_OFFSET_IN_BITS = 'offset_in_bits'
     MEMBER_IS_BITFIELD = 'is_bitfield'
     MEMBER_BITFIELD_BIT_SIZE = 'bit_size'
-    PADDING_TYPE = '<PADDING>'
+    PADDING_BYTES_TYPE = 'padding'
+    PADDING_BITS_TYPE = 'padding_bits'
+    PADDING_BITS_SIZE = 'padding_bits_size'
     PADDING_NAME = ''
 
     def __init__(self, typename):
@@ -105,9 +108,13 @@ class ClassLayoutBase(object):
                 byte_size = data_member[self.MEMBER_BYTE_SIZE]
 
                 if self.MEMBER_IS_BITFIELD in data_member:
-                    str_list.append('%+4u <%3u> %s  %s %s : %d' % (member_total_offset, byte_size, '    ' * depth, data_member[self.MEMBER_TYPE_KEY], data_member[self.MEMBER_NAME_KEY], data_member[self.MEMBER_BITFIELD_BIT_SIZE]))
-                elif data_member[self.MEMBER_TYPE_KEY] == self.PADDING_TYPE:
+                    num_bits = data_member[self.MEMBER_BITFIELD_BIT_SIZE]
+                    str_list.append('%+4u < :%1u> %s  %s %s : %d' % (member_total_offset, num_bits, '    ' * depth, data_member[self.MEMBER_TYPE_KEY], data_member[self.MEMBER_NAME_KEY], num_bits))
+                elif data_member[self.MEMBER_TYPE_KEY] == self.PADDING_BYTES_TYPE:
                     str_list.append('%+4u <%3u> %s  %s<PADDING: %d %s>%s' % (member_total_offset, byte_size, '    ' * depth, warn_start, byte_size, 'bytes' if byte_size > 1 else 'byte', color_end))
+                elif data_member[self.MEMBER_TYPE_KEY] == self.PADDING_BITS_TYPE:
+                    padding_bits = data_member[self.PADDING_BITS_SIZE]
+                    str_list.append('%+4u < :%1u> %s  %s<UNUSED BITS: %d %s>%s' % (member_total_offset, padding_bits, '    ' * depth, warn_start, padding_bits, 'bits' if padding_bits > 1 else 'bit', color_end))
                 else:
                     str_list.append('%+4u <%3u> %s  %s %s' % (member_total_offset, byte_size, '    ' * depth, data_member[self.MEMBER_TYPE_KEY], data_member[self.MEMBER_NAME_KEY]))
 
@@ -231,6 +238,9 @@ class ClassLayout(ClassLayoutBase):
             if field.IsBitfield():
                 data_member[self.MEMBER_IS_BITFIELD] = True
                 data_member[self.MEMBER_BITFIELD_BIT_SIZE] = field.GetBitfieldSizeInBits()
+                data_member[self.MEMBER_OFFSET_IN_BITS] = field.GetOffsetInBits()
+                # For bitfields, member_byte_size was computed based on the field type without the bitfield modifiers, so compute from the number of bits.
+                data_member[self.MEMBER_BYTE_SIZE] = (field.GetBitfieldSizeInBits() + 7) / 8
             elif member_type_class == lldb.eTypeClassStruct or member_type_class == lldb.eTypeClassClass:
                 nested_class = ClassLayout(self.target, member_type, self)
                 data_member[self.MEMBER_CLASS_INSTANCE] = nested_class
@@ -302,14 +312,34 @@ class ClassLayout(ClassLayoutBase):
                 if padding_size > 0:
                     padding_member = {
                         self.MEMBER_NAME_KEY : self.PADDING_NAME,
-                        self.MEMBER_TYPE_KEY : self.PADDING_TYPE,
+                        self.MEMBER_TYPE_KEY : self.PADDING_BYTES_TYPE,
                         self.MEMBER_BYTE_SIZE : padding_size,
-                        self.MEMBER_OFFSET : current_offset,
+                        self.MEMBER_OFFSET : current_offset - start_offset,
                     }
 
                     self.data_members.insert(i, padding_member)
                     padding_bytes += padding_size
                     i += 1
+
+                if self.MEMBER_IS_BITFIELD in data_member:
+                    next_member_is_bitfield = False
+                    if i < len(self.data_members) - 1:
+                        next_data_member = self.data_members[i + 1]
+                        next_member_is_bitfield = self.MEMBER_IS_BITFIELD in next_data_member
+
+                    if not next_member_is_bitfield:
+                        end_bit_offset = data_member[self.MEMBER_OFFSET_IN_BITS] + data_member[self.MEMBER_BITFIELD_BIT_SIZE]
+                        unused_bits = (8 - end_bit_offset) % 8
+                        if unused_bits:
+                            bit_padding_member = {
+                                self.MEMBER_NAME_KEY : self.PADDING_NAME,
+                                self.MEMBER_TYPE_KEY : self.PADDING_BITS_TYPE,
+                                self.MEMBER_BYTE_SIZE : data_member[self.MEMBER_BYTE_SIZE],
+                                self.PADDING_BITS_SIZE : unused_bits,
+                                self.MEMBER_OFFSET : data_member[self.MEMBER_OFFSET],
+                            }
+                            self.data_members.insert(i + 1, bit_padding_member)
+                            i += 1
 
                 current_offset = start_offset + member_offset
 
@@ -328,9 +358,9 @@ class ClassLayout(ClassLayoutBase):
             if padding_size > 0:
                 padding_member = {
                     self.MEMBER_NAME_KEY : self.PADDING_NAME,
-                    self.MEMBER_TYPE_KEY : self.PADDING_TYPE,
+                    self.MEMBER_TYPE_KEY : self.PADDING_BYTES_TYPE,
                     self.MEMBER_BYTE_SIZE : padding_size,
-                    self.MEMBER_OFFSET : current_offset,
+                    self.MEMBER_OFFSET : current_offset - start_offset,
                 }
                 self.data_members.append(padding_member)
                 padding_bytes += padding_size

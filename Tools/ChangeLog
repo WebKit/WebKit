@@ -1,3 +1,38 @@
+2018-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix dump-class-layout to show bit padding, and fix issues with padding offsets
+        https://bugs.webkit.org/show_bug.cgi?id=187442
+
+        Reviewed by Daniel Bates.
+        
+        Synthetic padding members were shown with the wrong offset because they used the
+        absolute offset rather than the class-relative offset. This didn't change the padding
+        math, but made the output confusing.
+        
+        Also add support for showing empty bits in bitfields, and fix computation of padding
+        after bitfields. Empty bits are computed by inserting a bit padding member after
+        a bitfield that is not followed by another bitfield (making the assumption that bit
+        padding will fill to the next byte boundary).
+        
+        The computation of padding after bitfields was also wrong, since lldb's member_type.GetByteSize()
+        just reports the size of the type without the bitfield modifier (e.g. for "unsigned : 2" it returned 4).
+        Fix by setting the byte size for bitfield fields to the number of bits rounded up to the next byte;
+        this allows byte padding following the bitfield to be computed correctly.
+        
+        Add or modify test to cover these issues.
+
+        * lldb/dump_class_layout_unittest.py:
+        (serial_test_ClassWithPaddedBitfields):
+        (serial_test_MemberHasBitfieldPadding):
+        (serial_test_InheritsFromClassWithPaddedBitfields):
+        * lldb/lldbWebKitTester/DumpClassLayoutTesting.cpp:
+        (avoidClassDeadStripping):
+        * lldb/lldb_dump_class_layout.py:
+        (ClassLayoutBase):
+        (ClassLayoutBase._to_string_recursive):
+        (ClassLayout._parse):
+        (ClassLayout._compute_padding_recursive):
+
 2018-07-09  Youenn Fablet  <youenn@apple.com>
 
         StringView operator==(char*) should check the length of the string

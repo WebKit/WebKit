@@ -108,7 +108,7 @@ Padding percentage: 37.50 %"""
   +3 <  1>   <PADDING: 1 byte>
   +4 <  8>     BoolMemberFirst memberClass
   +4 <  1>       bool boolMember
-  +9 <  3>       <PADDING: 3 bytes>
+  +5 <  3>       <PADDING: 3 bytes>
   +8 <  4>       int intMember
 Total byte size: 12
 Total pad bytes: 4
@@ -196,7 +196,7 @@ Padding percentage: 29.17 %"""
  +24 <  8>         BasicClassLayout BasicClassLayout
  +24 <  4>           int intMember
  +28 <  1>           bool boolMember
- +45 <  3>       <PADDING: 3 bytes>
+ +29 <  3>       <PADDING: 3 bytes>
  +32 <  4>       int intMemberB
  +36 <  4>   <PADDING: 4 bytes>
  +40 <  8>   double derivedMember
@@ -221,9 +221,9 @@ Padding percentage: 28.12 %"""
  +24 <  8>         BasicClassLayout BasicClassLayout
  +24 <  4>           int intMember
  +28 <  1>           bool boolMember
- +45 <  3>       <PADDING: 3 bytes>
+ +29 <  3>       <PADDING: 3 bytes>
  +32 <  4>       int intMemberB
- +52 <  4>       <PADDING: 4 bytes>
+ +36 <  4>       <PADDING: 4 bytes>
  +40 < 16>         VirtualBase VirtualBase
  +40 <  8>            __vtbl_ptr_type * _vptr
  +48 <  1>           bool baseMember
@@ -251,7 +251,7 @@ Padding percentage: 31.25 %"""
  +24 <  8>             BasicClassLayout BasicClassLayout
  +24 <  4>               int intMember
  +28 <  1>               bool boolMember
- +45 <  3>           <PADDING: 3 bytes>
+ +29 <  3>           <PADDING: 3 bytes>
  +32 <  4>           int intMemberB
  +36 <  4>       <PADDING: 4 bytes>
  +40 <  8>       double derivedMember
@@ -298,19 +298,93 @@ Padding percentage: 38.89 %"""
     def serial_test_ClassWithBitfields(self):
         EXPECTED_RESULT = """  +0 < 12> ClassWithBitfields
   +0 <  1>   bool boolMember
-  +1 <  4>   unsigned int bitfield1 : 1
-  +1 <  4>   unsigned int bitfield2 : 2
-  +1 <  4>   unsigned int bitfield3 : 1
-  +1 <  1>   bool bitfield4 : 1
-  +1 <  1>   bool bitfield5 : 2
-  +1 <  1>   bool bitfield6 : 1
+  +1 < :1>   unsigned int bitfield1 : 1
+  +1 < :2>   unsigned int bitfield2 : 2
+  +1 < :1>   unsigned int bitfield3 : 1
+  +1 < :1>   bool bitfield4 : 1
+  +1 < :2>   bool bitfield5 : 2
+  +1 < :1>   bool bitfield6 : 1
   +2 <  2>   <PADDING: 2 bytes>
   +4 <  4>   int intMember
-  +8 <  4>   unsigned int bitfield7 : 1
-  +8 <  1>   bool bitfield8 : 1
+  +8 < :1>   unsigned int bitfield7 : 1
+  +8 < :1>   bool bitfield8 : 1
+  +8 < :6>   <UNUSED BITS: 6 bits>
   +9 <  3>   <PADDING: 3 bytes>
 Total byte size: 12
 Total pad bytes: 5
 Padding percentage: 41.67 %"""
         actual_layout = debugger_instance.layout_for_classname('ClassWithBitfields')
+        self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())
+
+    def serial_test_ClassWithPaddedBitfields(self):
+        EXPECTED_RESULT = """  +0 < 16> ClassWithPaddedBitfields
+  +0 <  1>   bool boolMember
+  +1 < :1>   unsigned int bitfield1 : 1
+  +1 < :1>   bool bitfield2 : 1
+  +1 < :2>   unsigned int bitfield3 : 2
+  +1 < :1>   unsigned int bitfield4 : 1
+  +1 < :2>   unsigned long bitfield5 : 2
+  +1 < :1>   <UNUSED BITS: 1 bit>
+  +2 <  2>   <PADDING: 2 bytes>
+  +4 <  4>   int intMember
+  +8 < :1>   unsigned int bitfield7 : 1
+  +8 < :9>   unsigned int bitfield8 : 9
+  +9 < :1>   bool bitfield9 : 1
+  +9 < :5>   <UNUSED BITS: 5 bits>
+ +10 <  6>   <PADDING: 6 bytes>
+Total byte size: 16
+Total pad bytes: 8
+Padding percentage: 50.00 %"""
+        actual_layout = debugger_instance.layout_for_classname('ClassWithPaddedBitfields')
+        self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())
+
+    def serial_test_MemberHasBitfieldPadding(self):
+        EXPECTED_RESULT = """  +0 < 24> MemberHasBitfieldPadding
+  +0 < 16>     ClassWithPaddedBitfields bitfieldMember
+  +0 <  1>       bool boolMember
+  +1 < :1>       unsigned int bitfield1 : 1
+  +1 < :1>       bool bitfield2 : 1
+  +1 < :2>       unsigned int bitfield3 : 2
+  +1 < :1>       unsigned int bitfield4 : 1
+  +1 < :2>       unsigned long bitfield5 : 2
+  +1 < :1>       <UNUSED BITS: 1 bit>
+  +2 <  2>       <PADDING: 2 bytes>
+  +4 <  4>       int intMember
+  +8 < :1>       unsigned int bitfield7 : 1
+  +8 < :9>       unsigned int bitfield8 : 9
+  +9 < :1>       bool bitfield9 : 1
+  +9 < :5>       <UNUSED BITS: 5 bits>
+ +10 <  6>   <PADDING: 6 bytes>
+ +16 < :1>   bool bitfield1 : 1
+ +16 < :7>   <UNUSED BITS: 7 bits>
+ +17 <  7>   <PADDING: 7 bytes>
+Total byte size: 24
+Total pad bytes: 15
+Padding percentage: 62.50 %"""
+        actual_layout = debugger_instance.layout_for_classname('MemberHasBitfieldPadding')
+        self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())
+
+    def serial_test_InheritsFromClassWithPaddedBitfields(self):
+        EXPECTED_RESULT = """  +0 < 16> InheritsFromClassWithPaddedBitfields
+  +0 < 16>     ClassWithPaddedBitfields ClassWithPaddedBitfields
+  +0 <  1>       bool boolMember
+  +1 < :1>       unsigned int bitfield1 : 1
+  +1 < :1>       bool bitfield2 : 1
+  +1 < :2>       unsigned int bitfield3 : 2
+  +1 < :1>       unsigned int bitfield4 : 1
+  +1 < :2>       unsigned long bitfield5 : 2
+  +1 < :1>       <UNUSED BITS: 1 bit>
+  +2 <  2>       <PADDING: 2 bytes>
+  +4 <  4>       int intMember
+  +8 < :1>       unsigned int bitfield7 : 1
+  +8 < :9>       unsigned int bitfield8 : 9
+  +9 < :1>       bool bitfield9 : 1
+  +9 < :5>       <UNUSED BITS: 5 bits>
+ +10 < :1>   bool derivedBitfield : 1
+ +10 < :7>   <UNUSED BITS: 7 bits>
+ +11 <  5>   <PADDING: 5 bytes>
+Total byte size: 16
+Total pad bytes: 7
+Padding percentage: 43.75 %"""
+        actual_layout = debugger_instance.layout_for_classname('InheritsFromClassWithPaddedBitfields')
         self.assertEqual(EXPECTED_RESULT, actual_layout.as_string())
