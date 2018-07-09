@@ -140,16 +140,14 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffectReadOnly::
         auto& keyframe = keyframes[i];
         if (!keyframe.computedOffset)
             continue;
-        if (indexOfLastKeyframeWithNonNullOffset == i - 1)
-            continue;
-
-        double lastNonNullOffset = keyframes[indexOfLastKeyframeWithNonNullOffset].computedOffset;
-        double offsetDelta = keyframe.computedOffset - lastNonNullOffset;
-        double offsetIncrement = offsetDelta / (i - indexOfLastKeyframeWithNonNullOffset);
-        size_t indexOfFirstKeyframeWithNullOffset = indexOfLastKeyframeWithNonNullOffset + 1;
-        for (size_t j = indexOfFirstKeyframeWithNullOffset; j < i; ++j)
-            keyframes[j].computedOffset = lastNonNullOffset + (j - indexOfLastKeyframeWithNonNullOffset) * offsetIncrement;
-
+        if (indexOfLastKeyframeWithNonNullOffset != i - 1) {
+            double lastNonNullOffset = keyframes[indexOfLastKeyframeWithNonNullOffset].computedOffset;
+            double offsetDelta = keyframe.computedOffset - lastNonNullOffset;
+            double offsetIncrement = offsetDelta / (i - indexOfLastKeyframeWithNonNullOffset);
+            size_t indexOfFirstKeyframeWithNullOffset = indexOfLastKeyframeWithNonNullOffset + 1;
+            for (size_t j = indexOfFirstKeyframeWithNullOffset; j < i; ++j)
+                keyframes[j].computedOffset = lastNonNullOffset + (j - indexOfLastKeyframeWithNonNullOffset) * offsetIncrement;
+        }
         indexOfLastKeyframeWithNonNullOffset = i;
     }
 }

@@ -21,17 +21,17 @@ PASS Element.animate() accepts a one property one non-array value property-index
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification where the first value is invalid 
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification where the second value is invalid 
 PASS Element.animate() accepts a property-indexed keyframe with a single offset 
-FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.45000000000000007
-FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets that is too short assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+PASS Element.animate() accepts a property-indexed keyframe with an array of offsets 
+PASS Element.animate() accepts a property-indexed keyframe with an array of offsets that is too short 
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets that is too long 
 PASS Element.animate() accepts a property-indexed keyframe with an empty array of offsets 
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets with an embedded null value 
-FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets with a trailing null value assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
-FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets with leading and trailing null values assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+PASS Element.animate() accepts a property-indexed keyframe with an array of offsets with a trailing null value 
+PASS Element.animate() accepts a property-indexed keyframe with an array of offsets with leading and trailing null values 
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets with adjacent null values 
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets with all null values (and too many at that) 
 PASS Element.animate() accepts a property-indexed keyframe with a single null offset 
-FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.2 but got 0.4
+PASS Element.animate() accepts a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array 
 PASS Element.animate() accepts a property-indexed keyframe without any specified easing 
 PASS Element.animate() accepts a property-indexed keyframe with a single easing 
 PASS Element.animate() accepts a property-indexed keyframe with an array of easings 

@@ -41,7 +41,7 @@ PASS Equivalent property-indexed and sequenced keyframes: same composite applied
 PASS Keyframes are read from a custom iterator 
 PASS 'easing' and 'offset' are ignored on iterable objects 
 PASS Keyframes are read from a custom iterator with multiple properties specified 
-FAIL Keyframes are read from a custom iterator with where an offset is specified assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.75 but got 0.5
+PASS Keyframes are read from a custom iterator with where an offset is specified 
 FAIL Reading from a custom iterator that returns a non-object keyframe should throw assert_throws: function "() => {
     new KeyframeEffect(null, createIterable([
       { done: false, value: { left: '100px' } },

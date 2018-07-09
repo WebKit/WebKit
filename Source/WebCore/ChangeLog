@@ -1,3 +1,18 @@
+2018-07-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] A number of tests report an incorrect computed offset
+        https://bugs.webkit.org/show_bug.cgi?id=187410
+        <rdar://problem/41905790>
+
+        Reviewed by Dean Jackson.
+
+        While we would correctly avoid computing missing offsets when processing the first keyframe following the last
+        keyframes with a specified offset, we were forgetting to update the index of the last keyframe with a specified
+        offset which meant we would accidentally override a specified offset with an automically-computed one.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::computeMissingKeyframeOffsets):
+
 2018-07-08  David Kilzer  <ddkilzer@apple.com>
 
         DOMMatrix.invertSelf() returns garbage values for a non-invertible matrix
