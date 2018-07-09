@@ -1,3 +1,13 @@
+2018-07-09  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Check that LayerTreeHost was created before use
+        https://bugs.webkit.org/show_bug.cgi?id=187404
+
+        Reviewed by Žan Doberšek.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode):
+
 2018-07-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233612.

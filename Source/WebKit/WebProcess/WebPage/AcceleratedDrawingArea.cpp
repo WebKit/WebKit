@@ -356,6 +356,9 @@ void AcceleratedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* grap
     } else {
         m_layerTreeHost = LayerTreeHost::create(m_webPage);
 
+        if (!m_layerTreeHost)
+            return;
+
         if (m_isPaintingSuspended)
             m_layerTreeHost->pauseRendering();
     }
