@@ -35,7 +35,6 @@ class ProxyableAccessCase : public AccessCase {
 public:
     using Base = AccessCase;
 
-    bool viaProxy() const override { return m_viaProxy; }
     WatchpointSet* additionalSet() const override { return m_additionalSet.get(); }
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell*, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
@@ -50,7 +49,6 @@ protected:
     ProxyableAccessCase(VM&, JSCell*, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain>);
 
 private:
-    bool m_viaProxy;
     RefPtr<WatchpointSet> m_additionalSet;
 };
 

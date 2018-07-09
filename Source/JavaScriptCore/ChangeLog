@@ -1,3 +1,25 @@
+2018-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize layout of AccessCase / ProxyableAccessCase to reduce size of ProxyableAccessCase
+        https://bugs.webkit.org/show_bug.cgi?id=187465
+
+        Reviewed by Keith Miller.
+
+        ProxyableAccessCase is allocated so frequently and it is persisted so long. Reducing the size
+        of ProxyableAccessCase can reduce the footprint of many web sites including nytimes.com.
+
+        This patch uses a bit complicated layout to reduce ProxyableAccessCase. We add unused bool member
+        in AccessCase's padding, and use it in ProxyableAccessCase. By doing so, we can reduce the size
+        of ProxyableAccessCase from 56 to 48. And it also reduces the size of GetterSetterAccessCase
+        from 104 to 96 since it inherits ProxyableAccessCase.
+
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::viaProxy const):
+        (JSC::AccessCase::AccessCase):
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::ProxyableAccessCase):
+        * bytecode/ProxyableAccessCase.h:
+
 2018-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for debug builds after r233630
