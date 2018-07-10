@@ -1,3 +1,30 @@
+2018-07-09  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r232416): Flickering when going back to Google search results on back swipe
+        https://bugs.webkit.org/show_bug.cgi?id=187506
+        <rdar://problem/41939594>
+
+        Reviewed by Chris Dumez.
+
+        Same document navigations won't have a preceding didStartProvisionalLoadForMainFrame,
+        so the code introduced in r232416 would immediately remove the snapshot
+        upon any same document navigation.
+
+        Instead, adjust r232416 slightly to start tracking snapshot removal events
+        after didStartProvisionalLoad OR didSameDocumentNavigation. Call the block
+        that starts tracking, then immediately fire the same-document navigation event.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+
 2018-07-09  Youenn Fablet  <youenn@apple.com>
 
         Remove cfca.com.npCryptoKit.CGB.MAC.sb and cfca.com.npP11CertEnroll.MAC.CGB.sb

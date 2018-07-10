@@ -743,7 +743,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(*targetItem);
 
-    m_provisionalLoadCallback = [this, renderTreeSize] {
+    m_provisionalOrSameDocumentLoadCallback = [this, renderTreeSize] {
         SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
             | SnapshotRemovalTracker::MainFrameLoad
             | SnapshotRemovalTracker::SubresourceLoads

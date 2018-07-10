@@ -126,8 +126,8 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 
 void ViewGestureController::didStartProvisionalLoadForMainFrame()
 {
-    if (auto provisionalLoadCallback = WTFMove(m_provisionalLoadCallback))
-        provisionalLoadCallback();
+    if (auto provisionalOrSameDocumentLoadCallback = WTFMove(m_provisionalOrSameDocumentLoadCallback))
+        provisionalOrSameDocumentLoadCallback();
 }
 
 
@@ -158,8 +158,8 @@ void ViewGestureController::didRestoreScrollPosition()
 
 void ViewGestureController::didReachMainFrameLoadTerminalState()
 {
-    if (m_provisionalLoadCallback) {
-        m_provisionalLoadCallback = nullptr;
+    if (m_provisionalOrSameDocumentLoadCallback) {
+        m_provisionalOrSameDocumentLoadCallback = nullptr;
         removeSwipeSnapshot();
         return;
     }
@@ -188,11 +188,9 @@ void ViewGestureController::didReachMainFrameLoadTerminalState()
 
 void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
-    if (m_provisionalLoadCallback) {
-        m_provisionalLoadCallback = nullptr;
-        removeSwipeSnapshot();
-        return;
-    }
+
+    if (auto provisionalOrSameDocumentLoadCallback = WTFMove(m_provisionalOrSameDocumentLoadCallback))
+        provisionalOrSameDocumentLoadCallback();
 
     bool cancelledOutstandingEvent = false;
 
@@ -287,9 +285,6 @@ bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events e
     if (!(m_outstandingEvents & event))
         return false;
 
-#if LOG_DISABLED
-    UNUSED_PARAM(logReason);
-#endif
     log(logReason + eventsDescription(event));
 
     m_outstandingEvents &= ~event;

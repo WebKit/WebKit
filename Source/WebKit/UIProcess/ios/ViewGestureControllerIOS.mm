@@ -301,7 +301,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    m_provisionalLoadCallback = [this] {
+    m_provisionalOrSameDocumentLoadCallback = [this] {
         if (auto drawingArea = m_webPageProxy.drawingArea()) {
             uint64_t pageID = m_webPageProxy.pageID();
             GestureID gestureID = m_currentGestureID;

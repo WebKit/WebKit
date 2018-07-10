@@ -296,7 +296,7 @@ private:
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
 #endif
 
-    WTF::Function<void()> m_provisionalLoadCallback;
+    WTF::Function<void()> m_provisionalOrSameDocumentLoadCallback;
     SnapshotRemovalTracker m_snapshotRemovalTracker;
 };
 
