@@ -2452,15 +2452,6 @@ void Page::setFullscreenInsets(const FloatBoxExtent& insets)
     }
 }
 
-void Page::setFullscreenAutoHideDelay(Seconds delay)
-{
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->document())
-            continue;
-        frame->document()->constantProperties().setFullscreenAutoHideDelay(delay);
-    }
-}
-
 void Page::setFullscreenAutoHideDuration(Seconds duration)
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {

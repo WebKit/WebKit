@@ -355,7 +355,6 @@ public:
     WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);
     const FloatBoxExtent& fullscreenInsets() const { return m_fullscreenInsets; }
 
-    WEBCORE_EXPORT void setFullscreenAutoHideDelay(Seconds);
     WEBCORE_EXPORT void setFullscreenAutoHideDuration(Seconds);
     WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
 

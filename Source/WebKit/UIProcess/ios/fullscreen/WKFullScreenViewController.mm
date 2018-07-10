@@ -331,7 +331,7 @@ private:
     [self.view insertSubview:self._webView atIndex:0];
 
     if (auto* manager = self._manager)
-        manager->setFullscreenAutoHideTiming(Seconds(autoHideDelay), Seconds(showHideAnimationDuration));
+        manager->setFullscreenAutoHideDuration(Seconds(showHideAnimationDuration));
 
     [super viewWillAppear:animated];
 }

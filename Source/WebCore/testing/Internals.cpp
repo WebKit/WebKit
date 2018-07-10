@@ -504,7 +504,6 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     page.settings().setStorageAccessAPIEnabled(false);
-    page.setFullscreenAutoHideDelay(0_s);
     page.setFullscreenAutoHideDuration(0_s);
     page.setFullscreenInsets({ });
     page.setFullscreenControlsHidden(false);
@@ -2855,14 +2854,6 @@ void Internals::setFullscreenInsets(FullscreenInsets insets)
     ASSERT(page);
 
     page->setFullscreenInsets(FloatBoxExtent(insets.top, insets.right, insets.bottom, insets.left));
-}
-
-void Internals::setFullscreenAutoHideDelay(double delay)
-{
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
-
-    page->setFullscreenAutoHideDelay(Seconds(delay));
 }
 
 void Internals::setFullscreenAutoHideDuration(double duration)

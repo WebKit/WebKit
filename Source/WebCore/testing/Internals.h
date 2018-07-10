@@ -411,7 +411,6 @@ public:
         float right { 0 };
     };
     void setFullscreenInsets(FullscreenInsets);
-    void setFullscreenAutoHideDelay(double);
     void setFullscreenAutoHideDuration(double);
     void setFullscreenControlsHidden(bool);
 

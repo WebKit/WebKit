@@ -1,3 +1,27 @@
+2018-07-09  Dean Jackson  <dino@apple.com>
+
+        Remove fullscreen-auto-hide-delay
+        https://bugs.webkit.org/show_bug.cgi?id=187493
+        <rdar://problem/41830852>
+
+        Reviewed by Antoine Quint.
+
+        Now there is no delay, rename setFullscreenAutoHideTiming to setFullscreenAutoHideDuration,
+        and only send that value over to the Web Process.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::setFullscreenAutoHideDuration):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenAutoHideTiming): Deleted.
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController viewWillAppear:]):
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::didExitFullScreen):
+        (WebKit::WebFullScreenManager::setFullscreenAutoHideDuration):
+        (WebKit::WebFullScreenManager::setFullscreenAutoHideTiming): Deleted.
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+
 2018-07-09  Timothy Hatcher  <timothy@apple.com>
 
         Semantic colors don't update when accessibility Increase Contrast mode is enabled.

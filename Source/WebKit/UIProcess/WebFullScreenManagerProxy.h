@@ -74,7 +74,7 @@ public:
     void saveScrollPosition();
     void restoreScrollPosition();
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
-    void setFullscreenAutoHideTiming(Seconds delay, Seconds duration);
+    void setFullscreenAutoHideDuration(Seconds);
     void setFullscreenControlsHidden(bool);
 
 private:

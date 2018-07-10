@@ -125,9 +125,9 @@ void WebFullScreenManagerProxy::setFullscreenInsets(const WebCore::FloatBoxExten
     m_page->process().send(Messages::WebFullScreenManager::SetFullscreenInsets(insets), m_page->pageID());
 }
 
-void WebFullScreenManagerProxy::setFullscreenAutoHideTiming(Seconds delay, Seconds duration)
+void WebFullScreenManagerProxy::setFullscreenAutoHideDuration(Seconds duration)
 {
-    m_page->process().send(Messages::WebFullScreenManager::SetFullscreenAutoHideTiming(delay, duration), m_page->pageID());
+    m_page->process().send(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration), m_page->pageID());
 }
 
 void WebFullScreenManagerProxy::setFullscreenControlsHidden(bool hidden)

@@ -1,3 +1,21 @@
+2018-07-09  Dean Jackson  <dino@apple.com>
+
+        Remove fullscreen-auto-hide-delay
+        https://bugs.webkit.org/show_bug.cgi?id=187493
+        <rdar://problem/41830852>
+
+        Reviewed by Antoine Quint.
+
+        Update the existing test that partially used the delay, and remove the ones that
+        used only the delay.
+
+        * fullscreen/fullscreen-auto-hide-delay-expected.txt: Removed.
+        * fullscreen/fullscreen-auto-hide-delay.html: Removed.
+        * fullscreen/fullscreen-env-expected.txt:
+        * fullscreen/fullscreen-env.html:
+        * legacy-animation-engine/fullscreen/fullscreen-auto-hide-delay-expected.txt: Removed.
+        * legacy-animation-engine/fullscreen/fullscreen-auto-hide-delay.html: Removed.
+
 2018-07-09  Truitt Savell  <tsavell@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html is flaky

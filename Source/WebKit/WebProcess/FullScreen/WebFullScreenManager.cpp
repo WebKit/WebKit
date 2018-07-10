@@ -182,7 +182,7 @@ void WebFullScreenManager::didExitFullScreen()
 {
     ASSERT(m_element);
     setFullscreenInsets(FloatBoxExtent());
-    setFullscreenAutoHideTiming(0_s, 0_s);
+    setFullscreenAutoHideDuration(0_s);
     m_element->document().webkitDidExitFullScreenForElement(m_element.get());
 }
 
@@ -218,11 +218,9 @@ void WebFullScreenManager::setFullscreenInsets(const WebCore::FloatBoxExtent& in
     m_page->corePage()->setFullscreenInsets(insets);
 }
 
-void WebFullScreenManager::setFullscreenAutoHideTiming(Seconds delay, Seconds duration)
+void WebFullScreenManager::setFullscreenAutoHideDuration(Seconds duration)
 {
-    auto corePage = m_page->corePage();
-    corePage->setFullscreenAutoHideDelay(delay);
-    corePage->setFullscreenAutoHideDuration(duration);
+    m_page->corePage()->setFullscreenAutoHideDuration(duration);
 }
 
 void WebFullScreenManager::setFullscreenControlsHidden(bool hidden)

@@ -1,3 +1,26 @@
+2018-07-09  Dean Jackson  <dino@apple.com>
+
+        Remove fullscreen-auto-hide-delay
+        https://bugs.webkit.org/show_bug.cgi?id=187493
+        <rdar://problem/41830852>
+
+        Reviewed by Antoine Quint.
+
+        Remove the env() value for fullscreen-auto-hide-delay.
+
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::nameForProperty const):
+        (WebCore::ConstantPropertyMap::setFullscreenAutoHideDelay): Deleted.
+        * dom/ConstantPropertyMap.h:
+        * page/Page.cpp:
+        (WebCore::Page::setFullscreenAutoHideDelay): Deleted.
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): No need to reset delay.
+        (WebCore::Internals::setFullscreenAutoHideDelay): Deleted.
+        * testing/Internals.h: Remove the delay setter/getter.
+        * testing/Internals.idl:
+
 2018-07-09  Timothy Hatcher  <timothy@apple.com>
 
         Semantic colors don't update when accessibility Increase Contrast mode is enabled.

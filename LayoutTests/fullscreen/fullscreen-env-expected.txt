@@ -14,17 +14,11 @@ EXPECTED (window.getComputedStyle(target).top == '0px') OK
 EXPECTED (window.getComputedStyle(target).left == '0px') OK
 EXPECTED (window.getComputedStyle(target).bottom == '0px') OK
 EXPECTED (window.getComputedStyle(target).right == '0px') OK
-RUN(internals.setFullscreenAutoHideDelay(1))
 RUN(internals.setFullscreenAutoHideDuration(2))
-EXPECTED (window.getComputedStyle(target).transitionDelay == '1s') OK
 EXPECTED (window.getComputedStyle(target).transitionDuration == '2s') OK
-RUN(internals.setFullscreenAutoHideDelay(20))
 RUN(internals.setFullscreenAutoHideDuration(30))
-EXPECTED (window.getComputedStyle(target).transitionDelay == '20s') OK
 EXPECTED (window.getComputedStyle(target).transitionDuration == '30s') OK
-RUN(internals.setFullscreenAutoHideDelay(0))
 RUN(internals.setFullscreenAutoHideDuration(0))
-EXPECTED (window.getComputedStyle(target).transitionDelay == '0s') OK
 EXPECTED (window.getComputedStyle(target).transitionDuration == '0s') OK
 EVENT(webkitfullscreenchange)
 RUN(internals.setFullscreenControlsHidden(true))

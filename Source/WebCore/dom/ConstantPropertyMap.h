@@ -47,7 +47,6 @@ enum class ConstantProperty {
     FullscreenInsetRight,
     FullscreenInsetBottom,
     FullscreenInsetLeft,
-    FullscreenAutoHideDelay,
     FullscreenAutoHideDuration,
 };
 
@@ -60,7 +59,6 @@ public:
 
     void didChangeSafeAreaInsets();
     void didChangeFullscreenInsets();
-    void setFullscreenAutoHideDelay(Seconds);
     void setFullscreenAutoHideDuration(Seconds);
 
 private:

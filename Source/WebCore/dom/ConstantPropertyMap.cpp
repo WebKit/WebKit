@@ -58,7 +58,6 @@ const AtomicString& ConstantPropertyMap::nameForProperty(ConstantProperty proper
     static NeverDestroyed<AtomicString> fullscreenInsetLeftName("fullscreen-inset-left", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> fullscreenInsetBottomName("fullscreen-inset-bottom", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> fullscreenInsetRightName("fullscreen-inset-right", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> fullscreenAutoHideDelayName("fullscreen-auto-hide-delay", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> fullscreenAutoHideDurationName("fullscreen-auto-hide-duration", AtomicString::ConstructFromLiteral);
 
     switch (property) {
@@ -78,8 +77,6 @@ const AtomicString& ConstantPropertyMap::nameForProperty(ConstantProperty proper
         return fullscreenInsetBottomName;
     case ConstantProperty::FullscreenInsetRight:
         return fullscreenInsetRightName;
-    case ConstantProperty::FullscreenAutoHideDelay:
-        return fullscreenAutoHideDelayName;
     case ConstantProperty::FullscreenAutoHideDuration:
         return fullscreenAutoHideDurationName;
     }
@@ -154,12 +151,6 @@ void ConstantPropertyMap::updateConstantsForFullscreenInsets()
 void ConstantPropertyMap::didChangeFullscreenInsets()
 {
     updateConstantsForFullscreenInsets();
-    m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
-}
-
-void ConstantPropertyMap::setFullscreenAutoHideDelay(Seconds delay)
-{
-    setValueForProperty(ConstantProperty::FullscreenAutoHideDelay, variableDataForPositiveDuration(delay));
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
