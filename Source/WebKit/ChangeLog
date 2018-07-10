@@ -1,3 +1,22 @@
+2018-07-09  Brian Burg  <bburg@apple.com>
+
+        WebDriver: hang when running Selenium test correct_event_firing_tests.py::testShouldEmitOnChangeEventsWhenSelectingElements[Safari]
+        https://bugs.webkit.org/show_bug.cgi?id=187486
+        <rdar://problem/41987110>
+
+        Reviewed by Tim Horton.
+
+        This test takes the unusual step of doing Element Click directly on a <select> element,
+        despite the specification supporting clicking on <option> elements directly. It hangs
+        because we fire a nested run loop when the Carbon popup menu appears, and the nested runloop
+        is not exited until the popup menu is clicked or dismissed.
+
+        If a click is being simulated on the <select> via WebDriver, we should just not show
+        the popup menu but still deliver all of the events that are fired when clicking the element.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+
 2018-07-10  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build
