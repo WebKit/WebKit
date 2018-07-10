@@ -1,3 +1,18 @@
+2018-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        FragmentInterval, FragmentIntervalTree and FragmentSearchAdapter should hold not hold raw pointers to renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=187249
+        <rdar://problem/41725869>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/multicol/crash-in-vertical-writing-mode.html
+
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect):
+        * rendering/RenderFragmentedFlow.h:
+        (WTF::ValueToString<WeakPtr<WebCore::RenderFragmentContainer>>::string):
+
 2018-07-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable cross-origin-window-policy by default

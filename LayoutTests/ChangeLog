@@ -1,3 +1,14 @@
+2018-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        FragmentInterval, FragmentIntervalTree and FragmentSearchAdapter should hold not hold raw pointers to renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=187249
+        <rdar://problem/41725869>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/crash-in-vertical-writing-mode-expected.txt: Added.
+        * fast/multicol/crash-in-vertical-writing-mode.html: Added.
+
 2018-07-10  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make testRunner.statisticsResetToConsistentState() take a completion handler

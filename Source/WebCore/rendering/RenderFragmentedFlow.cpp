@@ -791,7 +791,7 @@ void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
 
         fragment->setFragmentedFlowPortionRect(isHorizontalWritingMode() ? fragmentRect : fragmentRect.transposedRect());
 
-        m_fragmentIntervalTree.add(FragmentIntervalTree::createInterval(logicalHeight, logicalHeight + fragmentLogicalHeight, fragment));
+        m_fragmentIntervalTree.add(FragmentIntervalTree::createInterval(logicalHeight, logicalHeight + fragmentLogicalHeight, makeWeakPtr(fragment)));
 
         logicalHeight += fragmentLogicalHeight;
     }

@@ -2202,3 +2202,5 @@ webkit.org/b/179176 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
 webkit.org/b/172864 imported/blink/storage/indexeddb/blob-delete-objectstore-db.html [ Pass Timeout ]
 
 webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Skip ]
+
+[ Debug ] fast/multicol/crash-in-vertical-writing-mode.html [ Skip ]
