@@ -1,3 +1,21 @@
+2018-07-10  Michael Saboff  <msaboff@apple.com>
+
+        YARR: . doesn't match non-BMP Unicode characters in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=187248
+
+        Reviewed by Geoffrey Garen.
+
+        The safety check in optimizeAlternative() for moving character classes that only consist of BMP
+        characters did not take into account that the character class is inverted.  In this case, we
+        represent '.' as "not a newline" using the newline character class with an inverted check.
+        Clearly that includes non-BMP characters.
+
+        The fix is to check that the character class doesn't have non-BMP characters AND it isn't an
+        inverted use of that character class.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::optimizeAlternative):
+
 2018-07-09  Mark Lam  <mark.lam@apple.com>
 
         Add --traceLLIntExecution and --traceLLIntSlowPath options.
