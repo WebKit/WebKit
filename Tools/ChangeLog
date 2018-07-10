@@ -1,3 +1,16 @@
+2018-07-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to UnApply patch
+        https://bugs.webkit.org/show_bug.cgi?id=187357
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (UnApplyPatchIfRequired.__init__): Pass alwaysUseLatest parameter in order to unapply the patch.
+        (UnApplyPatchIfRequired.doStepIf): Run this step only if patch failed to build or failed test. These
+        properties will be set by build-steps for build and test.
+        (UnApplyPatchIfRequired.hideStepIf): Hide this step if it is not run.
+
 2018-07-10  Dewei Zhu  <dewei_zhu@apple.com>
 
         Update ARES-6.patch file accordingly for r233631.

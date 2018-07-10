@@ -66,6 +66,19 @@ class CheckOutSource(svn.SVN):
                                                 **kwargs)
 
 
+class UnApplyPatchIfRequired(CheckOutSource):
+    name = 'unapply-patch'
+
+    def __init__(self, **kwargs):
+        super(UnApplyPatchIfRequired, self).__init__(alwaysUseLatest=True, **kwargs)
+
+    def doStepIf(self, step):
+        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedTests')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class CheckStyle(shell.ShellCommand):
     name = 'check-webkit-style'
     description = ['check-webkit-style running']
