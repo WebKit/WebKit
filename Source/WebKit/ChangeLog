@@ -1,3 +1,44 @@
+2018-07-10  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Support display of webinspector ui on non-legacy minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=187415
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::getInspectedWindowInfo):
+        (WebKit::WebInspectorProxy::windowReceivedMessage):
+        (WebKit::WebInspectorProxy::wndProc):
+        (WebKit::WebInspectorProxy::registerWindowClass):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::webProcessDidCrash):
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorProxy::platformIsFront):
+        (WebKit::WebInspectorProxy::platformHide):
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::platformBringInspectedPageToFront):
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorProxy::platformInvalidate):
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openFrontendConnection):
+        * WebProcess/WebPage/win/WebInspectorUIWin.cpp:
+        (WebKit::WebInspectorUI::localizedStringsURL):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL):
+
 2018-07-10  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make testRunner.statisticsResetToConsistentState() take a completion handler

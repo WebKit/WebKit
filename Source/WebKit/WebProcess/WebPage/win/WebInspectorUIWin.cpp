@@ -29,6 +29,7 @@
 #include "RemoteWebInspectorUI.h"
 
 #include <WebCore/FileSystem.h>
+#include <WebCore/WebCoreBundleWin.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -40,12 +41,14 @@ bool WebInspectorUI::canSave()
 
 String WebInspectorUI::localizedStringsURL()
 {
-    return String();
+    RetainPtr<CFURLRef> stringsURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), CFSTR("WebInspectorUI")));
+    return CFURLGetString(stringsURLRef.get());
 }
 
 String RemoteWebInspectorUI::localizedStringsURL()
 {
-    return String();
+    RetainPtr<CFURLRef> stringsURLRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), CFSTR("WebInspectorUI")));
+    return CFURLGetString(stringsURLRef.get());
 }
 
 } // namespace WebKit

@@ -46,6 +46,8 @@ OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKWebInspectorProxyObjCAdapter;
 OBJC_CLASS WKInspectorViewController;
+#elif PLATFORM(WIN)
+#include "WebView.h"
 #endif
 
 namespace WebCore {
@@ -65,7 +67,13 @@ enum class AttachmentSide {
     Left,
 };
 
-class WebInspectorProxy : public API::ObjectImpl<API::Object::Type::Inspector>, public IPC::MessageReceiver {
+class WebInspectorProxy
+    : public API::ObjectImpl<API::Object::Type::Inspector>
+    , public IPC::MessageReceiver
+#if PLATFORM(WIN)
+    , public WebCore::WindowMessageListener
+#endif
+{
 public:
     static Ref<WebInspectorProxy> create(WebPageProxy* inspectedPage)
     {
@@ -213,6 +221,12 @@ private:
     void updateInspectorWindowTitle() const;
 #endif
 
+#if PLATFORM(WIN)
+    static LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
+    bool registerWindowClass();
+    void windowReceivedMessage(HWND, UINT, WPARAM, LPARAM) override;
+#endif
+
     WebPageProxy* m_inspectedPage { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };
 
@@ -244,6 +258,12 @@ private:
     GtkWidget* m_inspectorWindow { nullptr };
     GtkWidget* m_headerBar { nullptr };
     String m_inspectedURLString;
+#elif PLATFORM(WIN)
+    HWND m_inspectedViewWindow { nullptr };
+    HWND m_inspectedViewParentWindow { nullptr };
+    HWND m_inspectorViewWindow { nullptr };
+    HWND m_inspectorDetachWindow { nullptr };
+    RefPtr<WebView> m_inspectorView;
 #endif
 };
 

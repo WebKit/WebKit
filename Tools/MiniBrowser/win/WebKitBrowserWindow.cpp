@@ -80,6 +80,11 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
 {
     RECT rect = { };
     auto conf = adoptWK(WKPageConfigurationCreate());
+
+    auto prefs = WKPreferencesCreate();
+    WKPreferencesSetDeveloperExtrasEnabled(prefs, true);
+    WKPageConfigurationSetPreferences(conf.get(), prefs);
+
     auto context = adoptWK(WKContextCreate());
     WKPageConfigurationSetContext(conf.get(), context.get());
 

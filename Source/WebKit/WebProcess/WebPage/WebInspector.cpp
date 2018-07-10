@@ -88,13 +88,16 @@ void WebInspector::openFrontendConnection(bool underTest)
 
     IPC::Connection::Identifier connectionIdentifier(listeningPort);
     IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MOVE_SEND);
-
+#elif PLATFORM(WIN)
+    IPC::Connection::Identifier connectionIdentifier, connClient;
+    IPC::Connection::createServerAndClientIdentifiers(connectionIdentifier, connClient);
+    IPC::Attachment connectionClientPort(connClient);
 #else
     notImplemented();
     return;
 #endif
 
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(DARWIN) || PLATFORM(WIN)
     m_frontendConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
     m_frontendConnection->open();
 

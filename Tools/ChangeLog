@@ -1,3 +1,13 @@
+2018-07-10  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Support display of webinspector ui on non-legacy minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=187415
+
+        Reviewed by Brian Burg.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+
 2018-07-10  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make testRunner.statisticsResetToConsistentState() take a completion handler
