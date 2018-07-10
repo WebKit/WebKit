@@ -1591,7 +1591,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
         return VisiblePosition();
     
     AXObjectCache* cache = renderer->document().axObjectCache();
-    if (!cache->m_idsInUse.contains(textMarkerData.axID))
+    if (cache && !cache->m_idsInUse.contains(textMarkerData.axID))
         return VisiblePosition();
 
     return visiblePos;
@@ -2204,6 +2204,8 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
 
     // find or create an accessibility object for this node
     AXObjectCache* cache = domNode->document().axObjectCache();
+    if (!cache)
+        return std::nullopt;
     RefPtr<AccessibilityObject> obj = cache->getOrCreate(domNode);
 
     // This memory must be zero'd so instances of TextMarkerData can be tested for byte-equivalence.
@@ -2231,6 +2233,9 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTex
         return std::nullopt;
 
     AXObjectCache* cache = textControl.document().axObjectCache();
+    if (!cache)
+        return std::nullopt;
+
     RefPtr<AccessibilityObject> obj = cache->getOrCreate(&textControl);
     if (!obj)
         return std::nullopt;

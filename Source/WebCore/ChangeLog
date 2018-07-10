@@ -1,3 +1,19 @@
+2018-07-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash in accessing AXObjectCache in textMarkerDataForVisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=187528
+        <rdar://problem/37231941>
+
+        Reviewed by Joanmarie Diggs.
+
+        Occasional crashes reported when running accessibility/mac/search-field-cancel-button.html.
+        Looks like the cache object retrieved was not valid and we weren't checking for it.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        (WebCore::AXObjectCache::textMarkerDataForFirstPositionInTextControl):
+
 2018-07-10  Zalan Bujtas  <zalan@apple.com>
 
         FragmentInterval, FragmentIntervalTree and FragmentSearchAdapter should hold not hold raw pointers to renderers.
