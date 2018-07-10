@@ -50,9 +50,9 @@ static bool didChangeSafeAreaShouldAffectObscuredInsets;
 
 - (void)_endAnimatedResize
 {
-    [super _endAnimatedResize];
-
     didEndAnimatedResize = true;
+
+    [super _endAnimatedResize];
 }
 
 - (void)_webView:(WKWebView *)webView didChangeSafeAreaShouldAffectObscuredInsets:(BOOL)safeAreaShouldAffectObscuredInsets
@@ -152,7 +152,7 @@ TEST(WebKit, AnimatedResizeBlocksViewportFitChanges)
     [window addSubview:webView.get()];
     [window setHidden:NO];
 
-    [webView _beginAnimatedResizeWithUpdates:^ {
+    [webView _beginAnimatedResizeWithUpdates:^{
         [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
     }];
 
@@ -166,7 +166,7 @@ TEST(WebKit, AnimatedResizeBlocksViewportFitChanges)
     // Wait for a commit to come in /after/ loading the viewport-fit=cover
     // page, and ensure that we didn't call the UIDelegate callback,
     // because we're still in the resize. Then, end the resize.
-    [webView _doAfterNextPresentationUpdate:^ {
+    [webView _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:^{
         EXPECT_FALSE(didChangeSafeAreaShouldAffectObscuredInsets);
         [webView _endAnimatedResize];
     }];
@@ -177,7 +177,7 @@ TEST(WebKit, AnimatedResizeBlocksViewportFitChanges)
     // Wait for one more commit so that we see the viewport-fit state
     // change actually take place (post-resize), and ensure that it does.
     __block bool didGetCommitAfterEndAnimatedResize = false;
-    [webView _doAfterNextPresentationUpdate:^ {
+    [webView _doAfterNextPresentationUpdate:^{
         didGetCommitAfterEndAnimatedResize = true;
     }];
     TestWebKitAPI::Util::run(&didGetCommitAfterEndAnimatedResize);
@@ -201,7 +201,7 @@ TEST(WebKit, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
     [window addSubview:webView.get()];
     [window setHidden:NO];
 
-    [webView _beginAnimatedResizeWithUpdates:^ {
+    [webView _beginAnimatedResizeWithUpdates:^{
         [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
     }];
 
@@ -345,6 +345,43 @@ TEST(WebKit, ResizeWithContentHiddenCompletes)
     EXPECT_NOT_NULL(scrollView);
     EXPECT_NOT_NULL(contentView);
     EXPECT_FALSE(contentView.hidden);
+}
+
+
+TEST(WebKit, AnimatedResizeBlocksDoAfterNextPresentationUpdate)
+{
+    auto webView = createAnimatedResizeWebView();
+    [webView setUIDelegate:webView.get()];
+
+    // We need to have something loaded before beginning the animated
+    // resize, or it will bail.
+    [webView loadHTMLString:@"<head></head>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _beginAnimatedResizeWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
+    }];
+
+    __block bool didGetCommitAfterEndAnimatedResize = false;
+
+    // Despite being invoked first, this doAfterNextPresentationUpdate
+    // should be deferred until after we call endAnimatedResize, inside
+    // the below _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResize.
+    [webView _doAfterNextPresentationUpdate:^{
+        EXPECT_TRUE(didEndAnimatedResize);
+        didGetCommitAfterEndAnimatedResize = true;
+    }];
+
+    [webView _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:^{
+        [webView _endAnimatedResize];
+    }];
+
+    TestWebKitAPI::Util::run(&didEndAnimatedResize);
+    TestWebKitAPI::Util::run(&didGetCommitAfterEndAnimatedResize);
 }
 
 #endif

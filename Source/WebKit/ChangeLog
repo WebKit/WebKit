@@ -1,5 +1,43 @@
 2018-07-10  Tim Horton  <timothy_horton@apple.com>
 
+        doAfterNextPresentationUpdate should not be called while content is hidden due to animated resize
+        https://bugs.webkit.org/show_bug.cgi?id=187500
+        <rdar://problem/41294139>
+
+        Reviewed by Simon Fraser.
+
+        Clients generally expect that after doAfterNextPresentationUpdate, there's
+        something vaguely sensible on the screen. They use this to remove snapshots,
+        unhide web views, etc.
+
+        During some kinds of resize/rotation, we will hide the WKContentView,
+        and asynchronously hide it when the resize/rotation is complete. This
+        can cause clients to prematurely expose a blank WKWebView.
+
+        To fix this, avoid calling doAfterNextPresentationUpdate until the
+        animated resize completes. Add a variant that does not wait for this
+        (to be used for testing purposes).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCompleteAnimatedResize]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        Rename the vector of blocks that we call after animated resize completes
+        to be generic rather than just about snapshots.
+
+        (-[WKWebView _internalDoAfterNextPresentationUpdate:withoutWaitingForPainting:withoutWaitingForAnimatedResize:]):
+        Add this _internal variant of _doAfterNextPresentationUpdate that takes bits determining
+        which waits to perform or avoid, to reduce duplication.
+
+        (-[WKWebView _doAfterNextPresentationUpdate:]):
+        (-[WKWebView _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:]):
+        (-[WKWebView _doAfterNextPresentationUpdateWithoutWaitingForPainting:]):
+        Call _internalDoAfterNextPresentationUpdate with the appropriate bits set for each situation.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Add _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting to WKWebView(WKTesting).
+
+2018-07-10  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r231510): Dismissing PDFPlugin context menu automatically clicks the first item
         https://bugs.webkit.org/show_bug.cgi?id=187507
         <rdar://problem/42007155>

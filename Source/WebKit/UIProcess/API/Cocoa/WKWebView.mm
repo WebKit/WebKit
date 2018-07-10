@@ -347,7 +347,7 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     BOOL _waitingForEndAnimatedResize;
     BOOL _waitingForCommitAfterAnimatedResize;
 
-    Vector<WTF::Function<void ()>> _snapshotsDeferredDuringResize;
+    Vector<WTF::Function<void ()>> _callbacksDeferredDuringResize;
     RetainPtr<NSMutableArray> _stableStatePresentationUpdateCallbacks;
 
     RetainPtr<WKPasswordView> _passwordView;
@@ -2953,8 +2953,8 @@ static int32_t activeOrientation(WKWebView *webView)
     if (!_lastSentDeviceOrientation || newOrientation != _lastSentDeviceOrientation.value())
         [self _dispatchSetDeviceOrientation:newOrientation];
 
-    while (!_snapshotsDeferredDuringResize.isEmpty())
-        _snapshotsDeferredDuringResize.takeLast()();
+    while (!_callbacksDeferredDuringResize.isEmpty())
+        _callbacksDeferredDuringResize.takeLast()();
 }
 
 - (void)_didFinishLoadForMainFrame
@@ -5422,7 +5422,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         // Defer snapshotting until after the current resize completes.
         void (^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
         RetainPtr<WKWebView> retainedSelf = self;
-        _snapshotsDeferredDuringResize.append([retainedSelf, rectInViewCoordinates, imageWidth, copiedCompletionHandler] {
+        _callbacksDeferredDuringResize.append([retainedSelf, rectInViewCoordinates, imageWidth, copiedCompletionHandler] {
             [retainedSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:imageWidth completionHandler:copiedCompletionHandler];
             [copiedCompletionHandler release];
         });
@@ -6348,8 +6348,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return _page->pageScaleFactor();
 }
 
-// Execute the supplied block after the next transaction from the WebProcess.
-- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
+- (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize
 {
 #if PLATFORM(IOS)
     if (![self usesStandardContentView]) {
@@ -6358,25 +6357,44 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     }
 #endif
 
+    if (withoutWaitingForPainting)
+        _page->setShouldSkipWaitingForPaintAfterNextViewDidMoveToWindow(true);
+
     auto updateBlockCopy = makeBlockPtr(updateBlock);
 
-    _page->callAfterNextPresentationUpdate([updateBlockCopy](WebKit::CallbackBase::Error error) {
-        if (updateBlockCopy)
-            updateBlockCopy();
+    RetainPtr<WKWebView> strongSelf = self;
+    _page->callAfterNextPresentationUpdate([updateBlockCopy, withoutWaitingForAnimatedResize, strongSelf](WebKit::CallbackBase::Error error) {
+        if (!updateBlockCopy)
+            return;
+
+#if PLATFORM(IOS)
+        if (!withoutWaitingForAnimatedResize && strongSelf->_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+            strongSelf->_callbacksDeferredDuringResize.append([updateBlockCopy] {
+                updateBlockCopy();
+            });
+            
+            return;
+        }
+#endif
+
+        updateBlockCopy();
     });
+}
+
+// Execute the supplied block after the next transaction from the WebProcess.
+- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
+{
+    [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:NO withoutWaitingForAnimatedResize:NO];
+}
+
+- (void)_doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:(void (^)(void))updateBlock
+{
+    [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:NO withoutWaitingForAnimatedResize:YES];
 }
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForPainting:(void (^)(void))updateBlock
 {
-#if PLATFORM(IOS)
-    if (![self usesStandardContentView]) {
-        dispatch_async(dispatch_get_main_queue(), updateBlock);
-        return;
-    }
-#endif
-
-    _page->setShouldSkipWaitingForPaintAfterNextViewDidMoveToWindow(true);
-    [self _doAfterNextPresentationUpdate:updateBlock];
+    [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:YES withoutWaitingForAnimatedResize:NO];
 }
 
 - (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock

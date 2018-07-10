@@ -453,6 +453,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (CGFloat)_pageScale WK_API_AVAILABLE(ios(10.3));
 
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+- (void)_doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForPainting:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 - (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 

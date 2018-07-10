@@ -1,3 +1,31 @@
+2018-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        doAfterNextPresentationUpdate should not be called while content is hidden due to animated resize
+        https://bugs.webkit.org/show_bug.cgi?id=187500
+        <rdar://problem/41294139>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+        (-[AnimatedResizeWebView _endAnimatedResize]):
+        Set didEndAnimatedResize before calling super, because it makes the
+        new test easier and doesn't affect any of the existing ones.
+
+        (AnimatedResizeBlocksViewportFitChanges):
+        This doAfterNextPresentationUpdate is always called during animated resize,
+        and then synchronously waited for, so it /must/ use
+        _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeWithTesting.
+        
+        (AnimatedResizeBlocksDoAfterNextPresentationUpdate):
+        Add a test ensuring that doAfterNextPresentationUpdate is deferred
+        until endAnimatedResize is called.
+
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[WKWebView _test_waitForDidFinishNavigation]):
+        _test_waitForDidFinishNavigation is sometimes called during animated resize,
+        and synchronously waits for a doAfterNextPresentationUpdate, so
+        it cannot wait for the animated resize to complete.
+
 2018-07-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK][WPE] TestWTF and TestJSC fail to compile due to missing forwarding headers

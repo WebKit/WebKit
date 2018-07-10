@@ -118,7 +118,7 @@
 
 #if PLATFORM(IOS)
     __block bool presentationUpdateHappened = false;
-    [self _doAfterNextPresentationUpdate:^{
+    [self _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:^{
         presentationUpdateHappened = true;
     }];
     TestWebKitAPI::Util::run(&presentationUpdateHappened);
