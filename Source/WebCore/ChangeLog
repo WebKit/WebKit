@@ -1,3 +1,18 @@
+2018-07-10  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r233552): Find highlight has white text on yellow background
+        https://bugs.webkit.org/show_bug.cgi?id=187535
+        rdar://problem/42043371
+
+        Reviewed by Tim Horton.
+
+        Fixes existing image tests:
+        - fast/text/mark-matches-rendering.html
+        - fast/text/mark-matches-broken-line-rendering.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::resolveStyleForMarkedText): Remove incorect UseDarkAppearance.
+
 2018-07-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash in accessing AXObjectCache in textMarkerDataForVisiblePosition
