@@ -1,8 +1,8 @@
 diff --git a/driver.js b/driver.js
-index 26394093758..f6496f970ee 100644
+index 2ef7d63..bbbcc45 100644
 --- a/driver.js
 +++ b/driver.js
-@@ -136,6 +136,32 @@ class Driver {
+@@ -141,6 +141,32 @@ class Driver {
          this._benchmark = this._iterator ? this._iterator.next().value : null;
          if (!this._benchmark) {
              if (!this._numIterations) {
@@ -33,10 +33,10 @@ index 26394093758..f6496f970ee 100644
 +                xhr.send(content);
 +
                  if (isInBrowser) {
-                     this._statusCell.innerHTML =
-                         (this._hadErrors ? "Failures encountered!" : "Restart");
+                     this._statusCell.innerHTML = "Restart";
+                     this.readyTrigger();
 diff --git a/index.html b/index.html
-index 230657bac24..fb740f7f06d 100644
+index f676bb3..524220f 100644
 --- a/index.html
 +++ b/index.html
 @@ -11,6 +11,8 @@
