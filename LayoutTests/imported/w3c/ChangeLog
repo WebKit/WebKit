@@ -1,5 +1,21 @@
 2018-07-09  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Make WPT test at animation-model/keyframe-effects/effect-value-overlapping-keyframes.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186492
+        <rdar://problem/41000150>
+
+        Reviewed by Dean Jackson.
+
+        While we've fixed handling of overlapping keyframes in the fix for webkit.org/b/187498 (r233676), we weren't passing
+        the dedicated WPT test because it assumed absolute accuracy when reading the computed style opacity. This isn't correct
+        per the CSS spec and the WPT test has been updated (see https://github.com/web-platform-tests/wpt/pull/11880). We're
+        reflecting this change in our copy of this test which now passes. 
+
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes.html:
+
+2018-07-09  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Correct handle repetition of composite and easing values
         https://bugs.webkit.org/show_bug.cgi?id=187498
         <rdar://problem/41999183>

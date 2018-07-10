@@ -1,4 +1,4 @@
 
-FAIL Overlapping keyframes at 0 and 1 use the appropriate value when the progress is outside the range [0, 1] assert_equals: When progress is zero the last keyframe with offset 0 should be used expected "0.2" but got "0.20000000298023224"
-FAIL Overlapping keyframes between 0 and 1 use the appropriate value on each side of the overlap point assert_equals: Before the overlap point, the first keyframe from the overlap point should be used as interval endpoint expected "0.15" but got "0.15000000596046448"
+PASS Overlapping keyframes at 0 and 1 use the appropriate value when the progress is outside the range [0, 1] 
+PASS Overlapping keyframes between 0 and 1 use the appropriate value on each side of the overlap point 
 
