@@ -470,11 +470,6 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     return static_cast<uint32_t>(WebCore::UserInterfaceLayoutDirection::LTR);
 }
 
-- (bool)_effectiveAppearanceIsDark
-{
-    return _impl->effectiveAppearanceIsDark();
-}
-
 #endif // PLATFORM(MAC)
 
 static void validate(WKWebViewConfiguration *configuration)
@@ -696,7 +691,6 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
     _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
-    _impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
@@ -6305,17 +6299,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
     _impl->setUseSystemAppearance(useSystemAppearance);
-    _impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
-- (void)effectiveAppearanceDidChange
+- (void)viewDidChangeEffectiveAppearance
 {
     // This can be called during [super initWithCoder:] and [super initWithFrame:].
     // That is before _impl is ready to be used, so check. <rdar://problem/39611236>
     if (!_impl)
         return;
 
-    _impl->setUseDarkAppearance(self._effectiveAppearanceIsDark);
+    _impl->effectiveAppearanceDidChange();
 }
 
 - (void)_setHeaderBannerHeight:(int)height

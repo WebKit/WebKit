@@ -404,6 +404,8 @@ protected:
     struct ColorCache {
         HashMap<int, Color> systemStyleColors;
 
+        Color systemLinkColor;
+        Color systemActiveLinkColor;
         Color systemVisitedLinkColor;
 
         Color activeSelectionBackgroundColor;

@@ -1311,6 +1311,8 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     m_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
+    m_page->setUseDarkAppearance(effectiveAppearanceIsDark());
+
     m_page->initializeWebPage();
 
     registerDraggedTypes();
@@ -5011,6 +5013,11 @@ void WebViewImpl::setUseSystemAppearance(bool useSystemAppearance)
 bool WebViewImpl::useSystemAppearance()
 {
     return m_page->useSystemAppearance();
+}
+
+void WebViewImpl::effectiveAppearanceDidChange()
+{
+    setUseDarkAppearance(effectiveAppearanceIsDark());
 }
 
 bool WebViewImpl::effectiveAppearanceIsDark()

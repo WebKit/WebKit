@@ -1537,7 +1537,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 #if !PLATFORM(IOS)
     [self _registerDraggedTypes];
-    [self _updateDefaultAppearance];
 #endif
 
     [self _setIsVisible:[self _isViewVisible]];
@@ -5285,37 +5284,28 @@ static Vector<String> toStringVector(NSArray* patterns)
 #endif
 }
 
-- (void)_updateDefaultAppearance
-{
-    _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
-    RenderTheme::singleton().platformColorsDidChange();
-    _private->page->setNeedsRecalcStyleInAllFrames();
-}
-
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
-    if (auto page = _private->page) {
-        page->setUseSystemAppearance(useSystemAppearance);
-        [self _updateDefaultAppearance];
-    }
+    if (_private && _private->page)
+        _private->page->setUseSystemAppearance(useSystemAppearance);
 }
 
 - (BOOL)_useSystemAppearance
 {
     if (!_private->page)
         return NO;
-    
+
     return _private->page->useSystemAppearance();
 }
 
-- (void)effectiveAppearanceDidChange
+- (void)viewDidChangeEffectiveAppearance
 {
     // This can be called during [super initWithCoder:] and [super initWithFrame:].
     // That is before _private is ready to be used, so check. <rdar://problem/39611236>
     if (!_private || !_private->page)
         return;
 
-    [self _updateDefaultAppearance];
+    _private->page->setUseDarkAppearance(self._effectiveAppearanceIsDark);
 }
 
 - (void)_setSourceApplicationAuditData:(NSData *)sourceApplicationAuditData

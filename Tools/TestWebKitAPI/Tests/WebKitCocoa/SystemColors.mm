@@ -53,7 +53,7 @@ TEST(WebKit, LinkColorWithSystemAppearance)
     [webView synchronouslyLoadHTMLString:@"<a href>Test</a>"];
 
     NSString *linkColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.links[0]).color"];
-    EXPECT_WK_STREQ("rgb(0, 105, 217)", linkColor);
+    EXPECT_WK_STREQ("rgb(0, 104, 218)", linkColor);
 }
 #endif
 

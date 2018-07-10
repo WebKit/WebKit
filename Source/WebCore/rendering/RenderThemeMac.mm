@@ -136,14 +136,19 @@ static const double progressAnimationNumFrames = 256;
     self = [super init];
     if (!self)
         return nil;
+
     [[NSNotificationCenter defaultCenter] addObserver:self
         selector:@selector(systemColorsDidChange:) name:NSSystemColorsDidChangeNotification object:nil];
+
+    [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
+        selector:@selector(systemColorsDidChange:) name:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:nil];
+
     return self;
 }
 
-- (void)systemColorsDidChange:(NSNotification *)unusedNotification
+- (void)systemColorsDidChange:(NSNotification *)notification
 {
-    ASSERT_UNUSED(unusedNotification, [[unusedNotification name] isEqualToString:NSSystemColorsDidChangeNotification]);
+    UNUSED_PARAM(notification);
     WebCore::RenderTheme::singleton().platformColorsDidChange();
 }
 
@@ -542,31 +547,40 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     auto& cache = colorCache(options);
 
-    // The system color cache below can't handle visited links. The only color value
-    // that cares about visited links is CSSValueWebkitLink, so handle it here.
-    if (forVisitedLink && cssValueID == CSSValueWebkitLink) {
-        // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
-        if (useSystemAppearance) {
-            if (!cache.systemVisitedLinkColor.isValid())
-                cache.systemVisitedLinkColor = semanticColorFromNSColor([NSColor systemPurpleColor]);
-            return cache.systemVisitedLinkColor;
-        }
+    if (useSystemAppearance) {
+        // Only use NSColor for links when the system appearance is desired.
+        auto systemAppearanceColor = [] (Color& color, SEL selector) -> Color {
+            if (!color.isValid()) {
+                auto systemColor = wtfObjcMsgSend<NSColor *>([NSColor class], selector);
+                color = semanticColorFromNSColor(systemColor);
+            }
 
+            return color;
+        };
+
+        switch (cssValueID) {
+        case CSSValueWebkitLink:
+            if (forVisitedLink)
+                return systemAppearanceColor(cache.systemVisitedLinkColor, @selector(systemPurpleColor));
+            return systemAppearanceColor(cache.systemLinkColor, @selector(linkColor));
+        case CSSValueWebkitActivelink:
+            // FIXME: Use a semantic system color for this, instead of systemRedColor. <rdar://problem/39256684>
+            return systemAppearanceColor(cache.systemActiveLinkColor, @selector(systemRedColor));
+        default:
+            // Handle non-link colors below, with the regular cache.
+            break;
+        }
+    } else if (forVisitedLink && cssValueID == CSSValueWebkitLink) {
+        // The system color cache below can't handle visited links. The only color value
+        // that cares about visited links is CSSValueWebkitLink, so handle it here.
         return RenderTheme::systemColor(cssValueID, options);
     }
 
     ASSERT(!forVisitedLink);
 
-    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, useSystemAppearance, options] () -> Color {
-        auto selectCocoaColor = [cssValueID, useSystemAppearance] () -> SEL {
+    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
+        auto selectCocoaColor = [cssValueID] () -> SEL {
             switch (cssValueID) {
-            case CSSValueWebkitLink:
-                // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
-                return useSystemAppearance ? @selector(linkColor) : nullptr;
-            case CSSValueWebkitActivelink:
-                // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
-                // FIXME: Use a semantic system color for this, instead of systemRedColor. <rdar://problem/39256684>
-                return useSystemAppearance ? @selector(systemRedColor) : nullptr;
             case CSSValueActiveborder:
                 return @selector(keyboardFocusIndicatorColor);
             case CSSValueActivecaption:

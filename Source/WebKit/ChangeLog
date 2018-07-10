@@ -1,3 +1,31 @@
+2018-07-09  Timothy Hatcher  <timothy@apple.com>
+
+        Semantic colors don't update when accessibility Increase Contrast mode is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=187425
+        rdar://problem/39948240
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Moved call to setUseDarkAppearance to WebViewImpl.
+        (-[WKWebView _setUseSystemAppearance:]): No need to call setUseDarkAppearance here anymore.
+        (-[WKWebView viewDidChangeEffectiveAppearance]): Added. This is the proper NSView method to use.
+        (-[WKWebView _effectiveAppearanceIsDark]): Deleted.
+        (-[WKWebView effectiveAppearanceDidChange]): Deleted. This method is a deprecated name.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidChangeEffectiveAppearance]): Added. This is the proper NSView method to use.
+        (-[WKView _setUseSystemAppearance:]): No need to call setUseDarkAppearance here anymore.
+        (-[WKView _effectiveAppearanceIsDark]): Deleted.
+        (-[WKView effectiveAppearanceDidChange]): Deleted. This method is a deprecated name.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl): Call setUseDarkAppearance before page config is sent in initializeWebPage.
+        (WebKit::WebViewImpl::effectiveAppearanceDidChange): Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseDarkAppearance): WebCore::Page::setUseDarkAppearance now handles the style changes.
+        The RenderTheme color caches also don't need cleared with platformColorsDidChange(), since we cache light
+        and dark colors seperatly in RenderThemeMac.
+
 2018-07-09  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink various loading-related enums to shrink CachedResource
