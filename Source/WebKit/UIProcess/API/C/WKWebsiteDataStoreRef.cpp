@@ -37,6 +37,7 @@
 #include "WebsiteDataRecord.h"
 #include "WebsiteDataType.h"
 #include <WebCore/URL.h>
+#include <wtf/CallbackAggregator.h>
 
 WKTypeID WKWebsiteDataStoreGetTypeID()
 {
@@ -423,14 +424,18 @@ void WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(WKWebsiteDataSto
     });
 }
 
-void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef)
+void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsResetToConsistentStateFunction completionHandler)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
     if (!store)
         return;
 
-    store->resetParametersToDefaultValues();
-    store->scheduleClearInMemory();
+    auto callbackAggregator = CallbackAggregator::create([context, completionHandler]() {
+        completionHandler(context);
+    });
+    
+    store->resetParametersToDefaultValues([callbackAggregator = callbackAggregator.copyRef()] { });
+    store->scheduleClearInMemory([callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)

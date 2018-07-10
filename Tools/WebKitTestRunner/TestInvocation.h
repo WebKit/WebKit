@@ -72,6 +72,7 @@ public:
     void notifyDownloadDone();
 
     void didClearStatisticsThroughWebsiteDataRemoval();
+    void didResetStatisticsToConsistentState();
     void didSetPartitionOrBlockCookiesForHost();
     void didReceiveAllStorageAccessEntries(Vector<String>& domains);
 

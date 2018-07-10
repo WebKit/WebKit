@@ -305,6 +305,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidResetStatisticsToConsistentState")) {
+        m_testRunner->statisticsCallDidResetToConsistentStateCallback();
+        return;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPartitionOrBlockCookiesForHost")) {
         m_testRunner->statisticsCallDidSetPartitionOrBlockCookiesForHostCallback();
         return;

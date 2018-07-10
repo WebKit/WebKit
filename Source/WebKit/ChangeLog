@@ -1,3 +1,31 @@
+2018-07-10  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make testRunner.statisticsResetToConsistentState() take a completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=187499
+        <rdar://problem/41999431>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+            Now uses a WTF::CallbackAggregator to call its
+            completion handler when both the call to
+            WebResourceLoadStatisticsStore::scheduleClearInMemory()
+            and to
+            WebResourceLoadStatisticsStore::resetParametersToDefaultValues()
+            are complete.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemory):
+            Now takes a WTF::CompletionHandler so that it can support the
+            completion handler in
+            WKWebsiteDataStoreStatisticsResetToConsistentState().
+        (WebKit::WebResourceLoadStatisticsStore::resetParametersToDefaultValues):
+            Now takes a WTF::CompletionHandler so that it can support the
+            completion handler in
+            WKWebsiteDataStoreStatisticsResetToConsistentState().
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-07-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable cross-origin-window-policy by default

@@ -1,15 +1,15 @@
-CONSOLE MESSAGE: line 114: Bootstrapping test.
-CONSOLE MESSAGE: line 65: Step 1.
-CONSOLE MESSAGE: line 70: Step 2.
-CONSOLE MESSAGE: line 77: Step 3.
-CONSOLE MESSAGE: line 84: Step 4.
-CONSOLE MESSAGE: line 54: setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue().
-CONSOLE MESSAGE: line 91: Step 5.
-CONSOLE MESSAGE: line 48: setShortCookiePartitioningTimeOutPlusFireShouldPartitionCookiesHandlerAndContinue().
-CONSOLE MESSAGE: line 43: fireShouldPartitionCookiesHandlerAndContinue().
-CONSOLE MESSAGE: line 98: Step 6.
-CONSOLE MESSAGE: line 54: setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue().
-CONSOLE MESSAGE: line 105: Step 7.
+CONSOLE MESSAGE: line 117: Bootstrapping test.
+CONSOLE MESSAGE: line 68: Step 1.
+CONSOLE MESSAGE: line 73: Step 2.
+CONSOLE MESSAGE: line 80: Step 3.
+CONSOLE MESSAGE: line 87: Step 4.
+CONSOLE MESSAGE: line 57: setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue().
+CONSOLE MESSAGE: line 94: Step 5.
+CONSOLE MESSAGE: line 51: setShortCookiePartitioningTimeOutPlusFireShouldPartitionCookiesHandlerAndContinue().
+CONSOLE MESSAGE: line 46: fireShouldPartitionCookiesHandlerAndContinue().
+CONSOLE MESSAGE: line 101: Step 6.
+CONSOLE MESSAGE: line 57: setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue().
+CONSOLE MESSAGE: line 108: Step 7.
 PASS successfullyParsed is true
 
 TEST COMPLETE

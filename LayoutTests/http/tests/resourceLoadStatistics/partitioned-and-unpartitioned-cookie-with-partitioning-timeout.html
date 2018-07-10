@@ -17,17 +17,20 @@
     const fragmentWithReturnUrl = "http://" + partitionHost + "/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html";
     const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + thirdPartyCookieName;
 
-    function setEnableFeature(enable) {
-        if (!enable)
-            testRunner.statisticsResetToConsistentState();
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
+    function setEnableFeature(enable, completionHandler) {
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     function finishTest() {
-        setEnableFeature(false);
-        testRunner.notifyDone();
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
     }
 
     function openIframe(url, onLoadHandler) {
@@ -112,22 +115,24 @@
 
     if (document.location.hash === "" && window.testRunner && window.internals) {
         console.log("Bootstrapping test.");
-        setEnableFeature(true);
+        setEnableFeature(true, function() {
+            // Set localhost as prevalent and with non-recent user interaction to put it in the partitioning category.
+            testRunner.setStatisticsPrevalentResource("http://localhost", true);
+            if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
+                testFailed("Host did not get set as prevalent resource.");
+            testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
 
-        // Set localhost as prevalent and with non-recent user interaction to put it in the partitioning category.
-        testRunner.setStatisticsPrevalentResource("http://localhost", true);
-        if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
-            testFailed("Host did not get set as prevalent resource.");
-        testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
+            testRunner.statisticsUpdateCookiePartitioning();
 
-        testRunner.statisticsUpdateCookiePartitioning();
+            testRunner.waitUntilDone();
+            testRunner.dumpChildFramesAsText();
+            document.location.hash = "step1";
 
-        testRunner.waitUntilDone();
-        testRunner.dumpChildFramesAsText();
-        document.location.hash = "step1";
-    }
+            runTest();
+        });
+    } else
+        runTest();
 
-    runTest();
 </script>
 </body>
 </html>

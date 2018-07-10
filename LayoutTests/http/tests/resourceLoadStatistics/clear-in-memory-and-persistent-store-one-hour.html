@@ -19,9 +19,10 @@
         else
             testPassed("Host is no longer a prevalent resource after the store was cleared.");
 
-        testRunner.statisticsResetToConsistentState();
         internals.setResourceLoadStatisticsEnabled(false);
-        testRunner.notifyDone();
+        testRunner.statisticsResetToConsistentState(function() {
+            testRunner.notifyDone();
+        });
     }
 
     function testStep2() {

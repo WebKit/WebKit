@@ -19,13 +19,22 @@
     const prevalentResourceUrl3 = "http://127.0.1.3:8000/temp";
     const prevalentResourceUrl4 = "http://127.0.1.4:8000/temp";
 
+    function setEnableFeature(enable, completionHandler) {
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
+    }
+
     function checkInsufficientClassificationAndContinue() {
         if (!testRunner.isStatisticsPrevalentResource(prevalentResourceUrl1)) {
             testFailed("Host 1 did not get classified as prevalent resource.");
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         } else if (!testRunner.isStatisticsPrevalentResource(prevalentResourceUrl2)) {
             testFailed("Host 2 did not get classified as prevalent resource.");
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         } else {
             testPassed("Hosts classified as prevalent resources.");
             runTelemetryAndContinue();
@@ -35,16 +44,16 @@
     function checkSufficientClassificationAndContinue() {
         if (!testRunner.isStatisticsPrevalentResource(prevalentResourceUrl1)) {
             testFailed("Host 1 did not get classified as prevalent resource.");
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         } else if (!testRunner.isStatisticsPrevalentResource(prevalentResourceUrl2)) {
             testFailed("Host 2 did not get classified as prevalent resource.");
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         } else if (!testRunner.isStatisticsPrevalentResource(prevalentResourceUrl3)) {
             testFailed("Host 3 did not get classified as prevalent resource.");
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         } else if (!testRunner.isStatisticsPrevalentResource(prevalentResourceUrl4)) {
             testFailed("Host 4 did not get classified as prevalent resource.");
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         } else {
             testPassed("Hosts classified as prevalent resources.");
             runTelemetryAndContinue();
@@ -106,13 +115,15 @@
         shouldBe("testResult.totalPrevalentResources", "4");
         shouldBe("testResult.totalPrevalentResourcesWithUserInteraction", "1");
         shouldBe("testResult.top3SubframeUnderTopFrameOrigins", "4");
-        finishJSTest();
+        setEnableFeature(false, finishJSTest);
     }
 
     if (window.testRunner) {
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-        testRunner.setStatisticsNotifyPagesWhenTelemetryWasCaptured(true);
-        setUpInsufficientStatisticsAndContinue();
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            testRunner.setStatisticsNotifyPagesWhenTelemetryWasCaptured(true);
+            setUpInsufficientStatisticsAndContinue();
+        });
     }
 </script>
 </body>

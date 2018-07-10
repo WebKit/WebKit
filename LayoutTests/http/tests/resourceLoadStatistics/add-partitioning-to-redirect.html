@@ -9,11 +9,13 @@
     description("Tests that partitioning is added mid-flight in redirects.");
     jsTestIsAsync = true;
 
-    function setEnableFeature(enable) {
-        if (!enable)
-            testRunner.statisticsResetToConsistentState();
+    function setEnableFeature(enable, completionHandler) {
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     const partitionHost = "127.0.0.1:8000";
@@ -97,13 +99,14 @@
     }
 
     if (document.location.hash === "") {
-        setEnableFeature(true);
-        if (testRunner.isStatisticsPrevalentResource("http://localhost"))
-            testFailed("Localhost was classified as prevalent resource before the test started.");
-        testRunner.dumpChildFramesAsText();
-        document.location.hash = "step1";
-        // Make sure the network process is up-to-date.
-        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", false, runTest);
+        setEnableFeature(true, function () {
+            if (testRunner.isStatisticsPrevalentResource("http://localhost"))
+                testFailed("Localhost was classified as prevalent resource before the test started.");
+            testRunner.dumpChildFramesAsText();
+            document.location.hash = "step1";
+            // Make sure the network process is up-to-date.
+            testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", false, runTest);
+        });
     } else {
         runTest();
     }

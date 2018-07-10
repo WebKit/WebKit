@@ -11,11 +11,13 @@
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
     const otherPrevalentUrl = "http://localhost:8000/temp";
 
-    function setEnableFeature(enable) {
-        if (!enable)
-            testRunner.statisticsResetToConsistentState();
+    function setEnableFeature(enable, completionHandler) {
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     function runTestRunnerTest() {
@@ -46,8 +48,9 @@
             else
                 testFailed("Cookie deleted or document.cookie contains other cookies: " + document.cookie);
 
-            setEnableFeature(false);
-            testRunner.notifyDone();
+            setEnableFeature(false, function() {
+                testRunner.notifyDone();
+            });
         });
         testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
         testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
@@ -56,9 +59,10 @@
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         testRunner.waitUntilDone();
-        setEnableFeature(true);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-        runTestRunnerTest();
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            runTestRunnerTest();
+        });
     }
 </script>
 </body>

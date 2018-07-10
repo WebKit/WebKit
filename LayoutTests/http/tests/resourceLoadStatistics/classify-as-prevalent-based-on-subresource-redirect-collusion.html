@@ -16,11 +16,13 @@
     const subresourceOrigin3 = "http://127.0.0.4:8000/temp";
     const subresourceOrigin4 = "http://127.0.0.5:8000/temp";
 
-    function setEnableFeature(enable) {
-        if (!enable)
-            testRunner.statisticsResetToConsistentState();
+    function setEnableFeature(enable, completionHandler) {
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     function runTest() {
@@ -55,16 +57,16 @@
         if (testRunner.isStatisticsVeryPrevalentResource("http://localhost:8000"))
             testFailed("Colluding localhost got classified as very prevalent resource.");
 
-        setEnableFeature(false);
-        finishJSTest();
+        setEnableFeature(false, finishJSTest);
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
-        setEnableFeature(true);
+        setEnableFeature(true, function () {
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
+            if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as non-prevalent resource.");
 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
-        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host did not get set as non-prevalent resource.");
+        });
     }
 </script>
 <iframe onload="runTest()" src="http://localhost:8000/resourceLoadStatistics/resources/redirect.php?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/onclick.html"></iframe>

@@ -413,7 +413,8 @@ public:
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, JSValueRef callback);
     void statisticsClearThroughWebsiteDataRemoval(JSValueRef callback);
     void statisticsCallClearThroughWebsiteDataRemovalCallback();
-    void statisticsResetToConsistentState();
+    void statisticsResetToConsistentState(JSValueRef completionHandler);
+    void statisticsCallDidResetToConsistentStateCallback();
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(JSValueRef callback);

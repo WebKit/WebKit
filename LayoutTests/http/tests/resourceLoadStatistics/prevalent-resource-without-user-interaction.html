@@ -15,9 +15,10 @@
             testFailed("Cookie not deleted: " + document.cookie);
         else
             testPassed("Cookie deleted.");
-        testRunner.statisticsResetToConsistentState();
         internals.setResourceLoadStatisticsEnabled(false);
-        testRunner.notifyDone();
+        testRunner.statisticsResetToConsistentState(function() {
+            testRunner.notifyDone();
+        });
     }
 
     function runTestRunnerTest() {

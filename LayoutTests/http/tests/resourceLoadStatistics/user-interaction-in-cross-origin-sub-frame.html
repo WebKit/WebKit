@@ -10,6 +10,15 @@ jsTestIsAsync = true;
 const topFrameOrigin = "http://127.0.0.1:8000";
 const subFrameOrigin = "http://localhost:8000";
 
+function setEnableFeature(enable, completionHandler) {
+    internals.setResourceLoadStatisticsEnabled(enable);
+    testRunner.setCookieStoragePartitioningEnabled(enable);
+    if (!enable)
+        testRunner.statisticsResetToConsistentState(completionHandler);
+    else
+        completionHandler();
+}
+
 function activateElement(elementId) {
     var element = document.getElementById(elementId);
     var centerX = element.offsetLeft + element.offsetWidth / 2;
@@ -21,26 +30,25 @@ function finishTest() {
     shouldBeTrue("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
     shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
 
-    finishJSTest();
+    setEnableFeature(false, finishJSTest);
 }
 
 onload = function() {
-    if (internals)
-        internals.setResourceLoadStatisticsEnabled(true);
+    setEnableFeature(true, function() {
+        if (testRunner) {
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
+        }
 
-    if (testRunner) {
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-        testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
-    }
+        shouldBe("document.location.origin", "topFrameOrigin");
 
-    shouldBe("document.location.origin", "topFrameOrigin");
+        if (testRunner) {
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
 
-    if (testRunner) {
-        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
-        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
-
-        activateElement("testFrame");
-    }
+            activateElement("testFrame");
+        }
+    });
 };
 </script>
 <iframe id="testFrame" src="http://localhost:8000/resourceLoadStatistics/resources/dummy.html"></iframe>

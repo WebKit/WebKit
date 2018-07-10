@@ -17,11 +17,13 @@
     for (var i = startNum; i < numberOfSubresourceDomains + startNum; ++i)
         topFrameOrigins.push("http://127.0.0." + i + ":8000/temp")
 
-    function setEnableFeature(enable) {
-        if (!enable)
-            testRunner.statisticsResetToConsistentState();
+    function setEnableFeature(enable, completionHandler) {
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     function completeTest() {
@@ -32,8 +34,7 @@
         else
             testPassed("Host classified as very prevalent resource.");
 
-        setEnableFeature(false);
-        finishJSTest();
+        setEnableFeature(false, finishJSTest);
     }
 
     function runTestRunnerTest() {
@@ -64,8 +65,7 @@
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
-        setEnableFeature(true);
-        runTestRunnerTest();
+        setEnableFeature(true, runTestRunnerTest);
     }
 </script>
 </body>

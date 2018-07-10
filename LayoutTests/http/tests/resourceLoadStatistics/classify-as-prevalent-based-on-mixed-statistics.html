@@ -22,9 +22,10 @@
         else
             testPassed("Host classified as prevalent resource.");
 
-        testRunner.statisticsResetToConsistentState();
         internals.setResourceLoadStatisticsEnabled(false);
-        testRunner.notifyDone();        
+        testRunner.statisticsResetToConsistentState(function() {
+            testRunner.notifyDone();
+        });
     }
 
     function runTestRunnerTest() {

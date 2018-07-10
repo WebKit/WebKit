@@ -10,6 +10,15 @@
     const topFrameOrigin = "http://127.0.0.1:8000";
     const subFrameOrigin = "http://localhost:8000";
 
+    function setEnableFeature(enable, completionHandler) {
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
+    }
+
     function activateElement(elementId, callback) {
         var element = document.getElementById(elementId);
         var centerX = element.offsetLeft + element.offsetWidth / 2;
@@ -20,7 +29,7 @@
             },
             function() {
                 testFailed("Promise rejected.");
-                finishJSTest();
+                setEnableFeature(false, finishJSTest);
             }
         );
     }
@@ -47,16 +56,15 @@
         shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
         shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
 
-        finishJSTest();
+        setEnableFeature(false, finishJSTest);
     }
 
     onload = function() {
-        if (internals)
-            internals.setResourceLoadStatisticsEnabled(true);
+        setEnableFeature(true, function() {
+            shouldBe("document.location.origin", "topFrameOrigin");
 
-        shouldBe("document.location.origin", "topFrameOrigin");
-
-        firstInteraction();
+            firstInteraction();
+        });
     };
 </script>
 <div id="testElement">This is the test element</div>

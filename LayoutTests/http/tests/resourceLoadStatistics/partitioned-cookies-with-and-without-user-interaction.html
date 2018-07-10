@@ -17,18 +17,20 @@
     const fragmentWithReturnUrl = "http://127.0.0.1:8000/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html";
     const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + thirdPartyCookieName;
 
-    function setEnableFeature(enable) {
-        if (!enable) {
-            testRunner.statisticsResetToConsistentState();
-        }
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
+    function setEnableFeature(enable, completionHandler) {
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     function finishTest() {
-        setEnableFeature(false);
-        testRunner.notifyDone();
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
     }
 
     function openIframe(url, onLoadHandler) {
@@ -71,13 +73,13 @@
     }
 
     if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
-        setEnableFeature(true);
+        setEnableFeature(true, function() {
+            testRunner.waitUntilDone();
+            testRunner.dumpChildFramesAsText();
+            document.location.hash = "step1";
 
-        testRunner.waitUntilDone();
-        testRunner.dumpChildFramesAsText();
-        document.location.hash = "step1";
-
-        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true, runTest);
+            testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true, runTest);
+        });
     } else {
         runTest();
     }

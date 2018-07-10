@@ -33,8 +33,11 @@
                 failed = true;
             }
         }
-        if (failed)
-            finishJSTest();
+        if (failed) {
+            testRunner.statisticsResetToConsistentState(function() {
+                finishJSTest();
+            });
+        }
     }
 
     function checkIfPrevalent(begin, end, expected) {
@@ -45,8 +48,11 @@
                 failed = true;
             }
         }
-        if (failed)
-            finishJSTest();
+        if (failed) {
+            testRunner.statisticsResetToConsistentState(function() {
+                finishJSTest();
+            });
+        }
     }
 
     function initializeStatistics() {
@@ -90,7 +96,9 @@
             ++currentTest;
             runTest();
         } else {
-            finishJSTest();
+            testRunner.statisticsResetToConsistentState(function() {
+                finishJSTest();
+            });
         }
     }
 

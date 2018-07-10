@@ -7,22 +7,17 @@
         jsTestIsAsync = true;
         window.addEventListener("message", receiveMessage, false);
 
-        function setEnableFeature(enable) {
-            if (!enable)
-                testRunner.statisticsResetToConsistentState();
+        function setEnableFeature(enable, completionHandler) {
             internals.setResourceLoadStatisticsEnabled(enable);
             testRunner.setCookieStoragePartitioningEnabled(enable);
+            if (!enable)
+                testRunner.statisticsResetToConsistentState(completionHandler);
+            else
+                completionHandler();
         }
 
         function finishTest() {
-            setEnableFeature(false);
-            finishJSTest();
-        }
-
-        if (testRunner) {
-            setEnableFeature(true);
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-            testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
+            setEnableFeature(false, finishJSTest);
         }
 
         var lastPageInRedirectChainLoaded = false;
@@ -50,6 +45,13 @@
             statsChecked = true;
             if (lastPageInRedirectChainLoaded)
                 finishTest();
+        }
+
+        if (testRunner) {
+            setEnableFeature(true, function() {
+                testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+                testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
+            });
         }
     </script>
 </head>

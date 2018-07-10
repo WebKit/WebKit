@@ -114,7 +114,7 @@ public:
     void submitTelemetry();
     void scheduleCookiePartitioningStateReset();
 
-    void scheduleClearInMemory();
+    void scheduleClearInMemory(CompletionHandler<void()>&&);
     
     enum class ShouldGrandfather {
         No,
@@ -130,7 +130,7 @@ public:
     void setMaxStatisticsEntries(size_t);
     void setPruneEntriesDownTo(size_t);
 
-    void resetParametersToDefaultValues();
+    void resetParametersToDefaultValues(CompletionHandler<void()>&&);
 
     void setResourceLoadStatisticsDebugMode(bool);
 

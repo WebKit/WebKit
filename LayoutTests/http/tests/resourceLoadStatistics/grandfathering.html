@@ -18,18 +18,20 @@
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=" + cookieValue;
 
-    function setEnableFeature(enable) {
-        if (!enable) {
-            testRunner.statisticsResetToConsistentState();
-        }
+    function setEnableFeature(enable, completionHandler) {
         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     function finishTest() {
-        setEnableFeature(false);
-        testRunner.notifyDone();
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
     }
 
     function fireDataModificationHandlerAndContinue() {
@@ -103,17 +105,17 @@
     }
 
     if (document.location.hash === "" && window.testRunner && window.internals) {
-        setEnableFeature(true);
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+            testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
 
-        testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
-        testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-
-        testRunner.waitUntilDone();
-        testRunner.dumpChildFramesAsText();
-        document.location.hash = "step1";
-    }
-
-    runTest();
+            testRunner.waitUntilDone();
+            testRunner.dumpChildFramesAsText();
+            document.location.hash = "step1";
+            runTest();
+        });
+    } else
+        runTest();
 </script>
 </body>
 </html>

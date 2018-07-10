@@ -36,7 +36,11 @@ onload = function() {
 
         setTimeout(function() {
             testFrame.src = "about:blank";
-            setTimeout(finishJSTest, 0);
+            setTimeout(function() {
+                testRunner.statisticsResetToConsistentState(function() {
+                    finishJSTest();
+                });
+            }, 0);
         }, 0);
     });
     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);

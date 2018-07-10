@@ -740,6 +740,7 @@ enum {
     StatisticsDidScanDataRecordsCallbackID,
     StatisticsDidRunTelemetryCallbackID,
     StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
+    StatisticsDidResetToConsistentStateCallbackID,
     StatisticsDidSetPartitionOrBlockCookiesForHostCallbackID,
     AllStorageAccessEntriesCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
@@ -1894,10 +1895,17 @@ void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()
     callTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID);
 }
 
-void TestRunner::statisticsResetToConsistentState()
+void TestRunner::statisticsResetToConsistentState(JSValueRef completionHandler)
 {
+    cacheTestRunnerCallback(StatisticsDidResetToConsistentStateCallbackID, completionHandler);
+    
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsResetToConsistentState"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
+
+void TestRunner::statisticsCallDidResetToConsistentStateCallback()
+{
+    callTestRunnerCallback(StatisticsDidResetToConsistentStateCallbackID);
 }
 
 void TestRunner::installTextDidChangeInTextFieldCallback(JSValueRef callback)

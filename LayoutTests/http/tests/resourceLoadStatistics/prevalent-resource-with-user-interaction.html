@@ -37,9 +37,10 @@
                 testPassed("Cookie not deleted.");
             else
                 testFailed("Cookie deleted or document.cookie contains other cookies: " + document.cookie);
-            testRunner.statisticsResetToConsistentState();
             internals.setResourceLoadStatisticsEnabled(false);
-            testRunner.notifyDone();
+            testRunner.statisticsResetToConsistentState(function() {
+                testRunner.notifyDone();
+            });
         });
         testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
         testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);

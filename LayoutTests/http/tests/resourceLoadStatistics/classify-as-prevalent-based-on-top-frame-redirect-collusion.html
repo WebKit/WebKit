@@ -17,11 +17,13 @@
     const topFrameOrigin4 = "http://127.0.0.5:8000/temp";
     const topFrameOrigin5 = "http://localhost:8000/";
 
-    function setEnableFeature(enable) {
-        if (!enable)
-            testRunner.statisticsResetToConsistentState();
+    function setEnableFeature(enable, completionHandler) {
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+        if (!enable)
+            testRunner.statisticsResetToConsistentState(completionHandler);
+        else
+            completionHandler();
     }
 
     function runTest() {
@@ -54,18 +56,17 @@
         if (testRunner.isStatisticsVeryPrevalentResource(topFrameOrigin5))
             testFailed("Colluding localhost got classified as very prevalent resource.");
 
-        setEnableFeature(false);
-        finishJSTest();
+        setEnableFeature(false, finishJSTest);
     }
 
     if (document.location.hash === "" && window.testRunner && window.internals) {
-        setEnableFeature(true);
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
+            if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as non-prevalent resource.");
 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
-        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host did not get set as non-prevalent resource.");
-
-        document.location.href = topFrameOrigin5 + "resourceLoadStatistics/resources/redirect.php?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html#continue";
+            document.location.href = topFrameOrigin5 + "resourceLoadStatistics/resources/redirect.php?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html#continue";
+        });
     } else {
         testRunner.statisticsNotifyObserver();
         runTest();
