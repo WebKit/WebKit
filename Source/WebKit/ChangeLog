@@ -1,5 +1,17 @@
 2018-07-09  Youenn Fablet  <youenn@apple.com>
 
+        Remove cfca.com.npCryptoKit.CGB.MAC.sb and cfca.com.npP11CertEnroll.MAC.CGB.sb
+        https://bugs.webkit.org/show_bug.cgi?id=187487
+        <rdar://problem/41991584>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Resources/PlugInSandboxProfiles/cfca.com.npCryptoKit.CGB.MAC.sb: Removed.
+        * Resources/PlugInSandboxProfiles/cfca.com.npP11CertEnroll.MAC.CGB.sb: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2018-07-09  Youenn Fablet  <youenn@apple.com>
+
         Add the possibility to run unsandboxed plug-ins
         https://bugs.webkit.org/show_bug.cgi?id=187310
         <rdar://problem/41798808>
