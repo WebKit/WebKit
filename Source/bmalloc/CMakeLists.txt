@@ -27,7 +27,6 @@ set(bmalloc_SOURCES
     bmalloc/Mutex.cpp
     bmalloc/ObjectType.cpp
     bmalloc/PerProcess.cpp
-    bmalloc/PerThread.cpp
     bmalloc/Scavenger.cpp
     bmalloc/VMHeap.cpp
     bmalloc/bmalloc.cpp
