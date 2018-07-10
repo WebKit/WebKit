@@ -1,3 +1,17 @@
+2018-07-09  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (ICU-62100.0.1): JSC test mozilla-tests.yaml/ecma/String/15.5.4.12-3.js is failing
+        https://bugs.webkit.org/show_bug.cgi?id=187495
+
+        Reviewed by Saam Barati.
+
+        Commented out the Georgian section of this toUpper() test since Unicode 11 added new upper case characters for
+        most of this range.
+
+        * mozilla/ecma/String/15.5.4.12-3.js:
+        (getTestCases):
+        (DecimalToHexString):
+
 2018-07-02  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         RegExp.exec returns wrong value with a long integer quantifier

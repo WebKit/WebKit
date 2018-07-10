@@ -54,22 +54,25 @@ function getTestCases() {
     var array = new Array();
     var item = 0;
 
+    /*
+     * Unicode 11.0 added special uppercase values for U+10A0..U+10FA & U+10FD..U+10FF and thus toUpper()
+     * support for the Georgian range.  It doesn't make sense to make the test adaptive based on what version of
+     * Unicode is installed.  The simplest thing to do is not test this range.
     // Georgian
     // Range: U+10A0 to U+10FF
     for ( var i = 0x10A0; i <= 0x10FF; i++ ) {
         var U = new Unicode( i );
-/*
         array[item++] = new TestCase(   SECTION,
                                         "var s = new String( String.fromCharCode("+i+") ); s.toUpperCase()",
                                         String.fromCharCode(U.upper),
                                         eval("var s = new String( String.fromCharCode("+i+") ); s.toUpperCase()") );
-*/
         array[item++] = new TestCase(   SECTION,
                                         "var s = new String( String.fromCharCode("+i+") ); s.toUpperCase().charCodeAt(0)",
                                         U.upper,
                                         eval("var s = new String( String.fromCharCode(i) ); s.toUpperCase().charCodeAt(0)") );
 
     }
+    */
 
     // Halfwidth and Fullwidth Forms
     // Range: U+FF00 to U+FFEF
