@@ -1,5 +1,19 @@
 2018-07-10  Thibault Saunier  <tsaunier@igalia.com>
 
+        [Flatpak] Feature options to build-webkit and --makeargs are not passed inside the sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=187470
+
+        Reviewed by Philippe Normand.
+
+        Never force building, the user is responsible to make that decision and the workflow is
+        now based on external scripts so it doesn't make sense anymore. Doing that leads
+        to ignoring the options the user passed in.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_dev_env):
+
+2018-07-10  Thibault Saunier  <tsaunier@igalia.com>
+
         [Flatpak] Fix running wpt tests inside flatpak
         https://bugs.webkit.org/show_bug.cgi?id=187490
 

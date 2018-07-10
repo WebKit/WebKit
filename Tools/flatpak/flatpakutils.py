@@ -760,9 +760,6 @@ class WebkitFlatpak:
             builder_args.append("--stop-at=%s" % self.name)
             subprocess.check_call(builder_args)
 
-        if not self.update and not os.path.exists(os.path.join(self.build_path, "bin", "MiniBrowser")):
-            self.build_webkit = True
-
         if self.build_webkit:
             builder = [os.path.join(self.sandbox_source_root, 'Tools/Scripts/build-webkit'),
                 "--debug" if self.debug  else "--release", '--' + self.platform.lower()]
