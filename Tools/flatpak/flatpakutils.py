@@ -634,18 +634,19 @@ class WebkitFlatpak:
         return True
 
     def _cleanup_faltpak_args_for_tests_if_needed(self, args):
-        if args and not args[0].endswith('run-webkit-tests'):
+        if not args or not args[0].endswith('run-webkit-tests'):
             return self.finish_args
 
         # We are going to run our own Xvfb server in the sandbox
-        unwanted_args = ["--socket=x11", "--device=all"]
+        unwanted_args = ["--socket=x11"]
         finish_args = [e for e in self.finish_args if e not in unwanted_args]
 
         return finish_args
 
     def run_in_sandbox(self, *args, **kwargs):
         cwd = kwargs.pop("cwd", None)
-        remove_devices = kwargs.pop("remove_devices", False)
+        stdout = kwargs.pop("stdout", sys.stdout)
+        extra_flatpak_args = kwargs.pop("extra_flatpak_args", [])
 
         if not isinstance(args, list):
             args = list(args)
@@ -684,7 +685,7 @@ class WebkitFlatpak:
                 flatpak_command.append("--env=%s=%s" % (envvar, value))
 
             finish_args = self._cleanup_faltpak_args_for_tests_if_needed(args)
-            flatpak_command += finish_args + [self.flatpak_build_path]
+            flatpak_command += finish_args + extra_flatpak_args + [self.flatpak_build_path]
 
             shell_string = ""
             if args:
@@ -704,7 +705,7 @@ class WebkitFlatpak:
             flatpak_command.extend(['sh', "/run/host/" + tmpscript.name])
 
             try:
-                subprocess.check_call(flatpak_command)
+                subprocess.check_call(flatpak_command, stdout=stdout)
             except subprocess.CalledProcessError as e:
                 sys.stderr.write(str(e) + "\n")
                 return e.returncode

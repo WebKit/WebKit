@@ -50,19 +50,31 @@ def main(script_name, argv):
         _log.error(str(e))
         sys.exit(-1)
 
-    # If necessary, inject the jhbuild wrapper.
+    runner = WPTRunner(port, port.host, script_name, options)
+    # If necessary, inject the jhbuild wrapper or re-run in flatpak sandbox.
     if port.name() in ['gtk', 'wpe']:
         filesystem = host.filesystem
 
         top_level_directory = filesystem.normpath(filesystem.join(filesystem.dirname(__file__), '..', '..', '..', '..'))
         sys.path.insert(0, filesystem.join(top_level_directory, 'Tools', 'flatpak'))
         import flatpakutils
-        flatpakutils.run_in_sandbox_if_available(sys.argv)
+        if not flatpakutils.is_sandboxed() and flatpakutils.check_flatpak(verbose=False):
+            flatpak_runner = flatpakutils.WebkitFlatpak.load_from_args(sys.argv)
+            if flatpak_runner.clean_args() and flatpak_runner.has_environment():
+                if not runner.prepare_wpt_checkout():
+                    sys.exit(1)
+
+                hostfilename = os.path.join(flatpak_runner.build_path, "wpt_etc_hosts")
+                with open(hostfilename, "w") as stdout:
+                    flatpak_runner.run_in_sandbox(os.path.join(options.wpt_checkout, "wpt"), "make-hosts-file", stdout=stdout)
+
+                sys.exit(flatpak_runner.run_in_sandbox(*sys.argv,
+                    extra_flatpak_args=['--bind-mount=/etc/hosts=%s' % hostfilename]))
 
         sys.path.insert(0, filesystem.join(top_level_directory, 'Tools', 'jhbuild'))
         import jhbuildutils
 
-        if flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
+        if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
             _log.warning('jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing.')
 
     # Create the Port-specific driver.
@@ -76,7 +88,6 @@ def main(script_name, argv):
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
                                                  str(port.default_child_processes()))
 
-    runner = WPTRunner(port, port.host, script_name, options)
     if not runner.run(args):
         sys.exit(1)
 
@@ -130,7 +141,7 @@ class WPTRunner(object):
         self._create_webdriver_func = create_webdriver_func
         self._spawn_wpt_func = spawn_wpt_func
 
-    def _prepare_wpt_checkout(self):
+    def prepare_wpt_checkout(self):
         if not self._options.wpt_checkout:
             test_downloader = self._downloader_class(WPTPaths.checkout_directory(self._finder),
                 self._host, self._downloader_class.default_options())
@@ -177,7 +188,7 @@ class WPTRunner(object):
         return True
 
     def run(self, args):
-        if not self._prepare_wpt_checkout():
+        if not self.prepare_wpt_checkout():
             return False
 
         # Parse the test expectations JSON and construct corresponding metadata files.

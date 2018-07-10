@@ -153,26 +153,26 @@ class WPTRunnerTest(unittest.TestCase):
                 "/mock-checkout/WebPlatformTests/MockPort/TestManifest.ini", "{}")
 
     def test_prepare_wpt_checkout(self):
-        # Tests the _prepare_wpt_checkout() method with no WPT checkout specified in options.
+        # Tests the prepare_wpt_checkout() method with no WPT checkout specified in options.
 
         options, _ = parse_args([])
         instance = WPTRunnerTest.TestInstance(options)
 
-        self.assertTrue(instance.runner._prepare_wpt_checkout())
+        self.assertTrue(instance.runner.prepare_wpt_checkout())
 
         expected_wpt_checkout = "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests"
         self.assertEquals(instance.runner._options.wpt_checkout, expected_wpt_checkout)
         self.assertTrue(instance.host.filesystem.isdir(expected_wpt_checkout))
 
     def test_prepare_wpt_checkout_specified_path(self):
-        # Tests the _prepare_wpt_checkout() method with WPT checkout specified in options.
+        # Tests the prepare_wpt_checkout() method with WPT checkout specified in options.
 
         specified_wpt_checkout = "/mock-path/web-platform-tests"
         options, _ = parse_args(["--wpt-checkout", specified_wpt_checkout])
         instance = WPTRunnerTest.TestInstance(options)
         instance.host.filesystem.maybe_make_directory(specified_wpt_checkout)
 
-        self.assertTrue(instance.runner._prepare_wpt_checkout())
+        self.assertTrue(instance.runner.prepare_wpt_checkout())
         self.assertEquals(instance.runner._options.wpt_checkout, specified_wpt_checkout)
 
     def test_generate_metadata_directory(self):

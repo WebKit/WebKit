@@ -1,5 +1,23 @@
 2018-07-10  Thibault Saunier  <tsaunier@igalia.com>
 
+        [Flatpak] Fix running wpt tests inside flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=187490
+
+        Reviewed by Philippe Normand.
+
+        Still not *all* passing but a big majority do.
+
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (main): Generate the /etc/hosts and mount it in flatpak as required.
+        (WPTRunner.prepare_wpt_checkout): Renamed as we need to first checkout WPT code before generating /etc/hosts.
+        (WPTRunner._prepare_wpt_checkout): Deleted.
+        * flatpak/flatpakutils.py: Added a stdout= argument to run_in_sandbox() and
+        added a way to pass extra env to flatpak itself (so we can mount /etc/hosts).
+        Stopped passing `--device=all` as it is not required since r233638 (Bug 187400).
+        * flatpak/org.webkit.WebKit.yaml: Added virtualenv for python2 as required by wpt.
+
+2018-07-10  Thibault Saunier  <tsaunier@igalia.com>
+
         [Flatpak] Use logging to print debug information
         https://bugs.webkit.org/show_bug.cgi?id=187496
 
