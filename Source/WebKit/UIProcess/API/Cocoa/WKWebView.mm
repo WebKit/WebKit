@@ -6375,6 +6375,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
             
             return;
         }
+#else
+        UNUSED_PARAM(withoutWaitingForAnimatedResize);
 #endif
 
         updateBlockCopy();
