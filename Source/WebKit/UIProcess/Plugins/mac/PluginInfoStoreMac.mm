@@ -32,6 +32,7 @@
 #import "NetscapePluginModule.h"
 #import "SandboxUtilities.h"
 #import <WebCore/PluginBlacklist.h>
+#import <WebCore/RuntimeEnabledFeatures.h>
 #import <pwd.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
@@ -83,6 +84,16 @@ static bool shouldBlockPlugin(const PluginModuleInfo& plugin)
     return loadPolicy == PluginModuleBlockedForSecurity || loadPolicy == PluginModuleBlockedForCompatibility;
 }
 
+bool PluginInfoStore::shouldAllowPluginToRunUnsandboxed(const String& pluginBundleIdentifier)
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().experimentalPlugInSandboxProfilesEnabled())
+        return false;
+
+    return pluginBundleIdentifier == "com.cisco.webex.plugin.gpc64"_s
+        || pluginBundleIdentifier == "com.google.googletalkbrowserplugin"_s
+        || pluginBundleIdentifier == "com.google.o1dbrowserplugin"_s;
+}
+
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
 {
     for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
@@ -104,7 +115,7 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
         return false;
     }
 
-    if (currentProcessIsSandboxed() && !plugin.hasSandboxProfile) {
+    if (currentProcessIsSandboxed() && !plugin.hasSandboxProfile && !shouldAllowPluginToRunUnsandboxed(plugin.bundleIdentifier)) {
         LOG(Plugins, "Ignoring unsandboxed plug-in %s", plugin.bundleIdentifier.utf8().data());
         return false;
     }

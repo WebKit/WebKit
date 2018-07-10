@@ -31,6 +31,7 @@
 
 #import "ArgumentCoders.h"
 #import "NetscapePlugin.h"
+#import "PluginInfoStore.h"
 #import "PluginProcessCreationParameters.h"
 #import "PluginProcessProxyMessages.h"
 #import "PluginProcessShim.h"
@@ -633,6 +634,21 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
         return;
     }
 
+    char cacheDirectory[PATH_MAX];
+    if (!confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, sizeof(cacheDirectory))) {
+        WTFLogAlways("PluginProcess: couldn't retrieve system cache directory path: %d\n", errno);
+        exit(EX_OSERR);
+    }
+
+    m_nsurlCacheDirectory = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:strlen(cacheDirectory)] stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:[NSURL fileURLWithPath:m_nsurlCacheDirectory isDirectory:YES] withIntermediateDirectories:YES attributes:nil error:nil]) {
+        WTFLogAlways("PluginProcess: couldn't create NSURL cache directory '%s'\n", cacheDirectory);
+        exit(EX_OSERR);
+    }
+
+    if (PluginInfoStore::shouldAllowPluginToRunUnsandboxed(m_pluginBundleIdentifier))
+        return;
+
     bool parentIsSandboxed = parameters.connectionIdentifier.xpcConnection && connectedProcessIsSandboxed(parameters.connectionIdentifier.xpcConnection.get());
 
     if (parameters.extraInitializationData.get("disable-sandbox") == "1") {
@@ -657,18 +673,6 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("PluginProcess: couldn't retrieve system temporary directory path: %d\n", errno);
-        exit(EX_OSERR);
-    }
-
-    char cacheDirectory[PATH_MAX];
-    if (!confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, sizeof(cacheDirectory))) {
-        WTFLogAlways("PluginProcess: couldn't retrieve system cache directory path: %d\n", errno);
-        exit(EX_OSERR);
-    }
-
-    m_nsurlCacheDirectory = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:strlen(temporaryDirectory)] stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
-    if (![[NSFileManager defaultManager] createDirectoryAtURL:[NSURL fileURLWithPath:m_nsurlCacheDirectory isDirectory:YES] withIntermediateDirectories:YES attributes:nil error:nil]) {
-        WTFLogAlways("PluginProcess: couldn't create NSURL cache directory '%s'\n", temporaryDirectory);
         exit(EX_OSERR);
     }
 

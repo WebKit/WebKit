@@ -1257,6 +1257,15 @@ ServerTimingEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: serverTimingEnabled
 
+ExperimentalPlugInSandboxProfilesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Sandbox Plug-Ins"
+  humanReadableDescription: "Enable Plug-In sandboxing"
+  category: debug
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: experimentalPlugInSandboxProfilesEnabled
+
 FullScreenEnabled:
   type: bool
   defaultValue: DEFAULT_ENABLE_FULLSCREEN_API

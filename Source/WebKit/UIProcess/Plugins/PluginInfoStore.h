@@ -68,6 +68,8 @@ public:
     void addSupportedPlugin(String&& matchingDomain, String&& identifier, HashSet<String>&& mimeTypes, HashSet<String> extensions);
     void clearSupportedPlugins() { m_supportedPlugins = std::nullopt; }
 
+    static bool shouldAllowPluginToRunUnsandboxed(const String& pluginBundleIdentifier);
+
 private:
     PluginModuleInfo findPluginForMIMEType(const String& mimeType, WebCore::PluginData::AllowedPluginTypes) const;
     PluginModuleInfo findPluginForExtension(const String& extension, String& mimeType, WebCore::PluginData::AllowedPluginTypes) const;

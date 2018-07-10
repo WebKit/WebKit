@@ -1,3 +1,24 @@
+2018-07-09  Youenn Fablet  <youenn@apple.com>
+
+        Add the possibility to run unsandboxed plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=187310
+        <rdar://problem/41798808>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a utility method to know which plug-ins are allowed to run unsandboxed.
+        For such plug-ins, we skip the sandboxing done when starting the plug-in process.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::initializeSandbox):
+        * Shared/WebPreferences.yaml:
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::shouldRunPluginUnsandboxed):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldRunPluginUnsandboxed):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+
 2018-07-09  Dean Jackson  <dino@apple.com>
 
         Remove fullscreen-auto-hide-delay
