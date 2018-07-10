@@ -72,7 +72,7 @@ std::optional<size_t> memoryFootprint()
             }
             if (scannedCount == 7) {
                 StringView pathString(path);
-                isAnonymous = pathString == "[heap]" | pathString.startsWith("[stack");
+                isAnonymous = pathString == "[heap]" || pathString.startsWith("[stack");
                 return;
             }
         }

@@ -1,3 +1,10 @@
+2018-07-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r233660.
+
+        * wtf/linux/MemoryFootprintLinux.cpp:
+        (WTF::memoryFootprint): Revert accidental change of logical OR into a bitwise OR.
+
 2018-07-09  Youenn Fablet  <youenn@apple.com>
 
         StringView operator==(char*) should check the length of the string
