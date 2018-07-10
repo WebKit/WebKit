@@ -1,3 +1,22 @@
+2018-07-10  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] The LibWebRTCProvider object in RealtimeMediaSourceCenterLibWebRTC is not needed anymore
+        https://bugs.webkit.org/show_bug.cgi?id=187513
+
+        Reviewed by Youenn Fablet.
+
+        We used the factory of the LibWebRTCProvider in
+        RealtimeMediaSourceCenterLibWebRTC as a singleton to make sure the
+        devices were correctly listed and used, we needed this when using
+        libwebrtc media devices management. We are now using GStreamer to handle
+        the media devices so this is not needed anymore.
+
+        No new tests, this change removed unused code.
+
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp:
+        (WebCore::RealtimeMediaSourceCenterLibWebRTC::RealtimeMediaSourceCenterLibWebRTC):
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.h:
+
 2018-07-10  Zalan Bujtas  <zalan@apple.com>
 
         Rollout r233530: Candidate for Speedometer regression.

@@ -38,8 +38,6 @@ class RealtimeMediaSourceCenterLibWebRTC final : public RealtimeMediaSourceCente
 public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenterLibWebRTC& singleton();
 
-    webrtc::PeerConnectionFactoryInterface* factory() { return m_libWebRTCProvider->factory(); }
-
     static RealtimeMediaSource::VideoCaptureFactory& videoCaptureSourceFactory();
     static RealtimeMediaSource::AudioCaptureFactory& audioCaptureSourceFactory();
 
@@ -59,7 +57,6 @@ private:
     CaptureDeviceManager& displayCaptureDeviceManager() final;
 
     RealtimeMediaSource::AudioCaptureFactory* m_audioFactoryOverride { nullptr };
-    UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;
 };
 
 } // namespace WebCore
