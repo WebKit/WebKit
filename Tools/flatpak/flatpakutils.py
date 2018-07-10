@@ -15,6 +15,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import argparse
+import logging
 try:
     import configparser
 except ImportError:
@@ -31,6 +32,7 @@ import re
 
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.factory import PortFactory
+from webkitpy.common.system.logutils import configure_logging
 
 try:
     from urllib.parse import urlparse  # pylint: disable=E0611
@@ -48,6 +50,7 @@ FLATPAK_REQ = [
 ]
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
+_log = logging.getLogger(__name__)
 
 
 class Colors:
@@ -449,6 +452,8 @@ class WebkitFlatpak:
 
         parser = argparse.ArgumentParser(prog="webkit-flatpak")
         general = parser.add_argument_group("General")
+        general.add_argument('--verbose', action='store_true',
+                             help='Show debug message')
         general.add_argument("--debug",
                             help="Compile with Debug configuration, also installs Sdk debug symboles.",
                             action="store_true")
@@ -512,6 +517,7 @@ class WebkitFlatpak:
         self.sdk_debug = None
         self.app = None
 
+        self.verbose = True
         self.quiet = False
         self.packs = []
         self.update = False
@@ -556,6 +562,7 @@ class WebkitFlatpak:
         self.makeargs = ""
 
     def clean_args(self):
+        configure_logging(logging.DEBUG if self.verbose else logging.INFO)
         if not self.debug and not self.release:
             factory = PortFactory(SystemHost())
             port = factory.get(self.platform)
@@ -693,7 +700,7 @@ class WebkitFlatpak:
             tmpscript.write(shell_string)
             tmpscript.flush()
 
-            Console.message('Running in sandbox: "%s" %s\n' % ('" "'.join(flatpak_command), shell_string))
+            _log.debug('Running in sandbox: "%s" %s\n' % ('" "'.join(flatpak_command), shell_string))
             flatpak_command.extend(['sh', "/run/host/" + tmpscript.name])
 
             try:
