@@ -1,3 +1,27 @@
+2018-07-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r217505): Debugger content view doesn't update when left sidebar is collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=187482
+        <rdar://problem/41989190>
+
+        Reviewed by Brian Burg.
+
+        Subclasses of NavigationSidebarPanel must process tree selection changes
+        even when collapsed. Sidebar panels perform critical controller tasks
+        for their tabs, such as updating the view when pausing in the debugger,
+        and when the hierarchical path component selection changes.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/SourcesSidebarPanel.js:
+        (WI.SourcesSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WI.StorageSidebarPanel._treeSelectionDidChange):
+
 2018-07-09  Brian Burg  <bburg@apple.com>
 
         REGRESSION: Web Inspector no longer pauses in internal injected scripts like WDFindNodes.js

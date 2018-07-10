@@ -166,7 +166,7 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
 
     _treeSelectionDidChange(event)
     {
-        if (!this.visible)
+        if (!this.selected)
             return;
 
         let treeElement = event.data.selectedElement;

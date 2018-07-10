@@ -452,7 +452,7 @@ WI.SourcesSidebarPanel = class SourcesSidebarPanel extends WI.NavigationSidebarP
 
     _treeSelectionDidChange(event)
     {
-        if (!this.visible)
+        if (!this.selected)
             return;
 
         let treeElement = event.data.selectedElement;
