@@ -1,3 +1,25 @@
+2018-07-10  Ross Kirsling  <rkirsling@gmail.com>
+
+        Web Inspector: Layers inspector should allow control-dragging to pan the 3D render
+        https://bugs.webkit.org/show_bug.cgi?id=185109
+
+        Reviewed by Matt Baker.
+
+        Addressed in the three.js repo itself (https://github.com/mrdoob/three.js/pull/13972),
+        so this patch simply updates three.js and its OrbitControls module.
+
+        * UserInterface/External/three.js/LICENSE:
+        * UserInterface/External/three.js/three.js:
+        Update to r94.
+
+        * UserInterface/External/three.js/OrbitControls.js:
+        Update to latest.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView.prototype.initialLayout):
+        (WI.Layers3DContentView.prototype._restrictPan):
+        Adapt to recent changes in three.js.
+
 2018-07-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove unused NavigationSidebarPanel.treeElementAddedOrChanged

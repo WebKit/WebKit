@@ -150,12 +150,14 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         this._controls = new THREE.OrbitControls(this._camera, this._renderer.domElement);
         this._controls.enableDamping = true;
+        this._controls.panSpeed = 0.5;
         this._controls.enableKeys = false;
         this._controls.zoomSpeed = 0.5;
         this._controls.minDistance = 1000;
         this._controls.rotateSpeed = 0.5;
         this._controls.minAzimuthAngle = -Math.PI / 2;
         this._controls.maxAzimuthAngle = Math.PI / 2;
+        this._controls.screenSpacePanning = true;
         this._renderer.domElement.addEventListener("contextmenu", (event) => { event.stopPropagation(); });
 
         this._scene = new THREE.Scene;
@@ -365,7 +367,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     _restrictPan()
     {
-        let delta = this._boundingBox.clampPoint(this._controls.target).setZ(0).sub(this._controls.target);
+        let delta = new THREE.Vector3;
+        this._boundingBox.clampPoint(this._controls.target, delta).setZ(0).sub(this._controls.target);
         this._controls.target.add(delta);
         this._camera.position.add(delta);
     }
