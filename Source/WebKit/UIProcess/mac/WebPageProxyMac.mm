@@ -76,10 +76,10 @@ using namespace WebCore;
 
 #if ENABLE(PDFKIT_PLUGIN)
 @interface WKPDFMenuTarget : NSObject {
-    id _selectedMenuItem;
+    NSMenuItem *_selectedMenuItem;
 }
-- (id)selectedMenuItem;
-- (void)contextMenuAction:(id)sender;
+- (NSMenuItem *)selectedMenuItem;
+- (void)contextMenuAction:(NSMenuItem *)sender;
 @end
 
 @implementation WKPDFMenuTarget
@@ -93,12 +93,12 @@ using namespace WebCore;
     return self;
 }
 
-- (id)selectedMenuItem
+- (NSMenuItem *)selectedMenuItem
 {
     return _selectedMenuItem;
 }
 
-- (void)contextMenuAction:(id)sender
+- (void)contextMenuAction:(NSMenuItem *)sender
 {
     _selectedMenuItem = sender;
 }
@@ -563,7 +563,7 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 }
 
 #if ENABLE(PDFKIT_PLUGIN)
-void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, int32_t& selectedIndex)
+void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, std::optional<int32_t>& selectedIndex)
 {
     if (!contextMenu.m_items.size())
         return;
@@ -597,7 +597,9 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 
     auto view = [m_pageClient.platformWindow() contentView];
     [NSMenu popUpContextMenu:nsMenu.get() withEvent:event forView:view];
-    selectedIndex = [[menuTarget selectedMenuItem] tag];
+
+    if (auto selectedMenuItem = [menuTarget selectedMenuItem])
+        selectedIndex = [selectedMenuItem tag];
 }
 #endif
 

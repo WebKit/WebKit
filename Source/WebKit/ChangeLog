@@ -1,3 +1,26 @@
+2018-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r231510): Dismissing PDFPlugin context menu automatically clicks the first item
+        https://bugs.webkit.org/show_bug.cgi?id=187507
+        <rdar://problem/42007155>
+
+        Reviewed by Per Arne Vollan.
+
+        WebPageProxy::showPDFContextMenu, introduced in r213510, assumes that
+        the user always chooses some item from the menu; it does not handle
+        the case where the context menu is dismissed without selecting anything.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (-[WKPDFMenuTarget selectedMenuItem]):
+        (-[WKPDFMenuTarget contextMenuAction:]):
+        (WebKit::WebPageProxy::showPDFContextMenu):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+        Make showPDFContextMenu return an optional index, instead of always
+        returning an index. Don't perform any action if it is nullopt.
+
 2018-07-10  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Support display of webinspector ui on non-legacy minibrowser

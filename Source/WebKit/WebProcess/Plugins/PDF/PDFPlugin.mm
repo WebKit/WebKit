@@ -1606,10 +1606,11 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
         if (!webFrame()->page())
             return false;
 
-        int selectedIndex = -1;
+        std::optional<int> selectedIndex = -1;
         webFrame()->page()->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu), Messages::WebPageProxy::ShowPDFContextMenu::Reply(selectedIndex));
-        if (selectedIndex >= 0 && selectedIndex < itemCount)
-            [nsMenu performActionForItemAtIndex:selectedIndex];
+
+        if (selectedIndex && *selectedIndex >= 0 && *selectedIndex < itemCount)
+            [nsMenu performActionForItemAtIndex:*selectedIndex];
 
         return true;
     }
