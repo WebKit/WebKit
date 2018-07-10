@@ -1,3 +1,10 @@
+2018-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        Rollout r233530: Candidate for Speedometer regression.
+        https://bugs.webkit.org/show_bug.cgi?id=187518
+
+        * rendering/SimpleLineLayoutFlowContents.h:
+
 2018-07-09  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Correct handle repetition of composite and easing values

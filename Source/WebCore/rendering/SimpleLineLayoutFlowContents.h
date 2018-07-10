@@ -58,7 +58,7 @@ public:
 
 private:
     unsigned segmentIndexForRunSlow(unsigned start, unsigned end) const;
-    const Vector<Segment> m_segments;
+    const Vector<Segment, 8> m_segments;
     mutable unsigned m_lastSegmentIndex { 0 };
 };
 
