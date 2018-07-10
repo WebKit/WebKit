@@ -1,3 +1,18 @@
+2018-07-10  Mark Lam  <mark.lam@apple.com>
+
+        [32-bit JSC tests] ASSERTION FAILED: !butterfly->propertyStorage()[-I - 1].get() under JSC::ObjectInitializationScope::verifyPropertiesAreInitialized.
+        https://bugs.webkit.org/show_bug.cgi?id=187362
+        <rdar://problem/42027210>
+
+        Reviewed by Saam Barati.
+
+        On 32-bit targets, a 0 valued JSValue is not the empty JSValue, but it is a valid
+        value to use for initializing unused properties.  Updated an assertion to account
+        for this.
+
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::verifyPropertiesAreInitialized):
+
 2018-07-10  Michael Saboff  <msaboff@apple.com>
 
         YARR: . doesn't match non-BMP Unicode characters in some cases
