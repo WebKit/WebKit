@@ -449,11 +449,6 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         }
     }
 
-    treeElementAddedOrChanged(treeElement)
-    {
-        // Implemented by subclasses if needed.
-    }
-
     // Private
 
     _updateContentOverflowShadowVisibility()
@@ -604,8 +599,6 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
         if (this.selected)
             this._checkElementsForPendingViewStateCookie([treeElement]);
-
-        this.treeElementAddedOrChanged(treeElement);
     }
 
     _treeElementDisclosureDidChange(event)
