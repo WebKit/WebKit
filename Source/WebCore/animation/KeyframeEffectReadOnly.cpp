@@ -389,7 +389,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
     //    items as property keyframes.
     if (easings.size() < parsedKeyframes.size()) {
         size_t initialNumberOfEasings = easings.size();
-        for (i = initialNumberOfEasings + 1; i <= parsedKeyframes.size(); ++i)
+        for (i = initialNumberOfEasings; i < parsedKeyframes.size(); ++i)
             easings.append(easings[i % initialNumberOfEasings]);
     }
 
@@ -417,7 +417,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
         //    the list until composite modes has as many items as property keyframes.
         if (compositeModes.size() < parsedKeyframes.size()) {
             size_t initialNumberOfCompositeModes = compositeModes.size();
-            for (i = initialNumberOfCompositeModes + 1; i <= parsedKeyframes.size(); ++i)
+            for (i = initialNumberOfCompositeModes; i < parsedKeyframes.size(); ++i)
                 compositeModes.append(compositeModes[i % initialNumberOfCompositeModes]);
         }
         // 3. Assign each value in composite modes to the keyframe-specific composite operation on the keyframe with the corresponding position in property keyframes until

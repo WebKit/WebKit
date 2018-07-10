@@ -35,13 +35,13 @@ PASS Element.animate() accepts a property-indexed keyframe with an array of offs
 PASS Element.animate() accepts a property-indexed keyframe without any specified easing 
 PASS Element.animate() accepts a property-indexed keyframe with a single easing 
 PASS Element.animate() accepts a property-indexed keyframe with an array of easings 
-FAIL Element.animate() accepts a property-indexed keyframe with an array of easings that is too short assert_equals: value for 'easing' on ComputedKeyframe #2 expected "ease-in" but got "ease-out"
+PASS Element.animate() accepts a property-indexed keyframe with an array of easings that is too short 
 PASS Element.animate() accepts a property-indexed keyframe with a single-element array of easings 
 PASS Element.animate() accepts a property-indexed keyframe with an empty array of easings 
 PASS Element.animate() accepts a property-indexed keyframe with an array of easings that is too long 
 PASS Element.animate() accepts a property-indexed keyframe with a single composite operation 
 PASS Element.animate() accepts a property-indexed keyframe with a composite array 
-FAIL Element.animate() accepts a property-indexed keyframe with a composite array that is too short assert_equals: value for 'composite' on ComputedKeyframe #2 expected "add" but got "replace"
+PASS Element.animate() accepts a property-indexed keyframe with a composite array that is too short 
 PASS Element.animate() accepts a property-indexed keyframe with a composite array that is too long 
 PASS Element.animate() accepts a property-indexed keyframe with a single-element composite array 
 PASS Element.animate() accepts a one property one keyframe sequence 

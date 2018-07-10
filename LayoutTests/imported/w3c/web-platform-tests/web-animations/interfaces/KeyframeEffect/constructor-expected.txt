@@ -61,7 +61,7 @@ PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyfram
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single easing roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings 
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings roundtrips 
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings that is too short assert_equals: value for 'easing' on ComputedKeyframe #2 expected "ease-in" but got "ease-out"
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings that is too short 
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings that is too short roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single-element array of easings 
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single-element array of easings roundtrips 
@@ -73,7 +73,7 @@ PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyfram
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single composite operation roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array 
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array roundtrips 
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array that is too short assert_equals: value for 'composite' on ComputedKeyframe #2 expected "add" but got "replace"
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array that is too short 
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array that is too short roundtrips 
 PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array that is too long 
 PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array that is too long roundtrips 

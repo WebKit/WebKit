@@ -1,3 +1,18 @@
+2018-07-09  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correct handle repetition of composite and easing values
+        https://bugs.webkit.org/show_bug.cgi?id=187498
+        <rdar://problem/41999183>
+
+        Reviewed by Dean Jackson.
+
+        If there are fewer values for "easing" and "composite" than there are keyframes, we are supposed to
+        fill in missing values by repeating the pattern of specified values. We were starting our iteration
+        to fill those missing values on the second missing value rather than the first missing value.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::processPropertyIndexedKeyframes):
+
 2018-07-09  Youenn Fablet  <youenn@apple.com>
 
         Add the possibility to run unsandboxed plug-ins

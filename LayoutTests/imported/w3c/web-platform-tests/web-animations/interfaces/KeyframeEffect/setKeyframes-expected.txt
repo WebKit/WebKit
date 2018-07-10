@@ -28,13 +28,13 @@ PASS Keyframes can be replaced with a property-indexed keyframe with an array of
 PASS Keyframes can be replaced with a property-indexed keyframe without any specified easing 
 PASS Keyframes can be replaced with a property-indexed keyframe with a single easing 
 PASS Keyframes can be replaced with a property-indexed keyframe with an array of easings 
-FAIL Keyframes can be replaced with a property-indexed keyframe with an array of easings that is too short assert_equals: value for 'easing' on ComputedKeyframe #2 expected "ease-in" but got "ease-out"
+PASS Keyframes can be replaced with a property-indexed keyframe with an array of easings that is too short 
 PASS Keyframes can be replaced with a property-indexed keyframe with a single-element array of easings 
 PASS Keyframes can be replaced with a property-indexed keyframe with an empty array of easings 
 PASS Keyframes can be replaced with a property-indexed keyframe with an array of easings that is too long 
 PASS Keyframes can be replaced with a property-indexed keyframe with a single composite operation 
 PASS Keyframes can be replaced with a property-indexed keyframe with a composite array 
-FAIL Keyframes can be replaced with a property-indexed keyframe with a composite array that is too short assert_equals: value for 'composite' on ComputedKeyframe #2 expected "add" but got "replace"
+PASS Keyframes can be replaced with a property-indexed keyframe with a composite array that is too short 
 PASS Keyframes can be replaced with a property-indexed keyframe with a composite array that is too long 
 PASS Keyframes can be replaced with a property-indexed keyframe with a single-element composite array 
 PASS Keyframes can be replaced with a one property one keyframe sequence 
