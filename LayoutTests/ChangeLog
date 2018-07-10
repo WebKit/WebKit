@@ -1,3 +1,17 @@
+2018-07-10  Saam Barati  <sbarati@apple.com>
+
+        Layout Test editing/selection/navigation-clears-editor-state.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187389
+        <rdar://problem/41898822>
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        Make this test less susceptible to timing out on debug builds by:
+        - lowering the number of iframes we add by a factor of two
+        - removing the tests own internal 18 second timeout
+
+        * editing/selection/navigation-clears-editor-state.html:
+
 2018-07-10  Zalan Bujtas  <zalan@apple.com>
 
         FragmentInterval, FragmentIntervalTree and FragmentSearchAdapter should hold not hold raw pointers to renderers.
