@@ -323,6 +323,10 @@ WK_EXPORT void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef pre
 WK_EXPORT bool WKPreferencesGetCrossOriginResourcePolicyEnabled(WKPreferencesRef preferencesRef);
 WK_EXPORT void WKPreferencesSetCrossOriginResourcePolicyEnabled(WKPreferencesRef preferencesRef, bool allow);
 
+// Defaults to false.
+WK_EXPORT bool WKPreferencesGetCrossOriginWindowPolicyEnabled(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetCrossOriginWindowPolicyEnabled(WKPreferencesRef preferencesRef, bool enabled);
+
 #ifdef __cplusplus
 }
 #endif

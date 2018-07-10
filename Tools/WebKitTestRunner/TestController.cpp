@@ -772,6 +772,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetAccessibilityObjectModelEnabled(preferences, true);
     WKPreferencesSetMediaCapabilitiesEnabled(preferences, true);
 
+    WKPreferencesSetCrossOriginWindowPolicyEnabled(preferences, true);
     WKPreferencesSetRestrictedHTTPResponseAccess(preferences, true);
 
     WKPreferencesSetServerTimingEnabled(preferences, true);

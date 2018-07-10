@@ -745,7 +745,7 @@ clientCoordinatesRelativeToLayoutViewport:
   onChange: setNeedsRecalcStyleInAllFrames
 
 crossOriginWindowPolicySupportEnabled:
-  initial: true
+  initial: false
 
 accessibilityEventsEnabled:
   initial: true

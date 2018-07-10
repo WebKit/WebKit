@@ -1,3 +1,13 @@
+2018-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable cross-origin-window-policy by default
+        https://bugs.webkit.org/show_bug.cgi?id=187509
+
+        Reviewed by Chris Dumez.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2018-06-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add user-defined literal for ASCIILiteral

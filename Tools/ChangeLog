@@ -1,3 +1,15 @@
+2018-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable cross-origin-window-policy by default
+        https://bugs.webkit.org/show_bug.cgi?id=187509
+
+        Reviewed by Chris Dumez.
+
+        Enable the feature for testing purposes. DumpRenderTree does this already in enableExperimentalFeatures.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2018-07-10  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] Feature options to build-webkit and --makeargs are not passed inside the sandbox

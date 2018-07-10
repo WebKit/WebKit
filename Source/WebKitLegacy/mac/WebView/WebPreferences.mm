@@ -634,7 +634,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitWebGPUEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitCacheAPIEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitCrossOriginWindowPolicySupportEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 
 #if ENABLE(STREAMS_API)

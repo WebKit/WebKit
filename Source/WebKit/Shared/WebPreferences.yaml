@@ -1059,7 +1059,7 @@ ConstantPropertiesEnabled:
 
 CrossOriginWindowPolicySupportEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: false
 
 SubresourceIntegrityEnabled:
   type: bool
