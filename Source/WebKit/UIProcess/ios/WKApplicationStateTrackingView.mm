@@ -63,7 +63,7 @@
         return;
 
     ASSERT(!_applicationStateTracker);
-    _applicationStateTracker = std::make_unique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidCreateWindowContext), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
+    _applicationStateTracker = std::make_unique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
 }
 
 - (void)_applicationDidEnterBackground
@@ -74,10 +74,6 @@
 
     page->applicationDidEnterBackground();
     page->activityStateDidChange(WebCore::ActivityState::AllFlags & ~WebCore::ActivityState::IsInWindow);
-}
-
-- (void)_applicationDidCreateWindowContext
-{
 }
 
 - (void)_applicationDidFinishSnapshottingAfterEnteringBackground

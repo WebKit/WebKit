@@ -32,7 +32,6 @@
 @interface WKApplicationStateTrackingView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame webView:(WKWebView *)webView;
-- (void)_applicationDidCreateWindowContext;
 - (void)_applicationWillEnterForeground;
 @property (nonatomic, readonly) BOOL isBackground;
 @property (nonatomic, readonly) UIView *_contentView;

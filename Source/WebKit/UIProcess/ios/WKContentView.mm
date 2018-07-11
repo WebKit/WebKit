@@ -621,13 +621,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     _page->applicationWillResignActive();
 }
 
-- (void)_applicationDidCreateWindowContext
-{
-    [super _applicationDidCreateWindowContext];
-    if (auto drawingArea = _page->drawingArea())
-        drawingArea->hideContentUntilAnyUpdate();
-}
-
 - (void)_applicationDidBecomeActive:(NSNotification*)notification
 {
     _page->applicationDidBecomeActive();

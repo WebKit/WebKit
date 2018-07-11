@@ -1,3 +1,74 @@
+2018-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r233480): Mail contents flash black when activating
+        https://bugs.webkit.org/show_bug.cgi?id=187504
+        <rdar://problem/41752351>
+
+        Reviewed by Simon Fraser.
+
+        The sequence of events to reproduce the bug originally fixed in r203371
+        is either:
+
+        A) the simple background/foreground case
+
+        1] app begins to suspend
+        2] app suspension snapshots are taken
+        3] WKWebView's surfaces are marked volatile
+        4] app completes suspension
+            ... time goes by ...
+        5] WKWebView's volatile surfaces are purged
+            ... time goes by ...
+        6] app begins to resume, shows (good) suspension snapshot
+        7] app removes suspension snapshot
+        8] WKWebView has sublayers with purged (black) surfaces
+        9] WKWebView sublayers are repaired by a new commit with nonvolatile surfaces
+
+        B) the re-snapshot while in the background case
+
+        1] app begins to suspend
+        2] app suspension snapshots are taken
+        3] WKWebView's surfaces are marked volatile
+        4] app completes suspension
+        ... time goes by ...
+        5] WKWebView's volatile surfaces are purged
+        ... time goes by ...
+        6] app wakes up in the background to update its snapshots
+        7] in the updated snapshots, WKWebView has sublayers with purged (black) surfaces
+        ... time goes by ...
+        8] app begins to resume, shows (bad) suspension snapshot
+        9] WKWebView presents layers with purged (black) surfaces until new commit fixes them
+        10] WKWebView sublayers are repaired by a new commit with nonvolatile surfaces
+
+        WebKit's current approach to fix this problem is simply to hide the
+        WKWebView's sublayers at some point after A2/B2 (suspension snapshots),
+        but before A8/B7 (the first time the empty layers would be presented
+        or snapshotted).
+
+        Previously, we did this by hiding the layers when the window's CAContext
+        was created, which happened early enough in both cases (at A6/B6).
+        However, that notification was removed underneath us at some point.
+
+        However, in looking at the timelines, there's a better place to do this:
+        immediately after marking the surfaces volatile (A3/B3), which is always
+        strictly after the app suspension snapshots are taken, and also always
+        before the freshly-made-volatile layers could be presented or snapshotted.
+
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::applicationDidCreateWindowContext): Deleted.
+        * UIProcess/ios/WKApplicationStateTrackingView.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        (-[WKApplicationStateTrackingView _applicationDidCreateWindowContext]): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _applicationDidCreateWindowContext]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground):
+        Remove the didCreateWindowContext notification, and hide content after
+        snapshotting after entering the background.
+
 2018-07-10  Youenn Fablet  <youenn@apple.com>
 
         Make fetch() use "same-origin" credentials by default
