@@ -220,3 +220,22 @@ function testArithMul42WrittenAsDouble() {
     }
 }
 testArithMul42WrittenAsDouble();
+
+function testArithMulWithTypeConfusedConstant() {
+    let v1 = 1.0;
+
+    function testMult(v2) {
+        let v3 = [];
+        if (v3) {
+            v3 = v1 + 1;
+        }
+        return v2 * v3;
+    }
+
+    for (let i = 13.37; i < 10000; i++) {
+        let result = testMult(i);
+        if ((result / 2 - i) > 0.1E-20)
+            throw "testArithMulWithTypeConfusedConstant(i) = " + result + ", expected " + (i * 2);
+    }
+}
+testArithMulWithTypeConfusedConstant();

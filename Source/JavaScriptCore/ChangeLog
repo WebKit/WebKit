@@ -1,3 +1,16 @@
+2018-07-10  Michael Saboff  <msaboff@apple.com>
+
+        DFG JIT: compileMathIC produces incorrect machine code
+        https://bugs.webkit.org/show_bug.cgi?id=187537
+
+        Reviewed by Saam Barati.
+
+        Added checks for constant multipliers in JITMulGenerator::generateInline().  If we have a constant multiplier,
+        fall back to the fast path generator which handles such cases.
+
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateInline):
+
 2018-07-10  Filip Pizlo  <fpizlo@apple.com>
 
         Change the reoptimization backoff base to 1.3 from 2

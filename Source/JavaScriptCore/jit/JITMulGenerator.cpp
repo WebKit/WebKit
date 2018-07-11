@@ -46,10 +46,12 @@ JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICG
     if (lhs.isOnlyNonNumber() && rhs.isOnlyNonNumber())
         return JITMathICInlineResult::DontGenerate;
 
-    if (lhs.isOnlyNumber() && rhs.isOnlyNumber()) {
+    if (lhs.isOnlyNumber() && rhs.isOnlyNumber() && !m_leftOperand.isConst() && !m_rightOperand.isConst()) {
         if (!jit.supportsFloatingPoint())
             return JITMathICInlineResult::DontGenerate;
 
+        ASSERT(m_left);
+        ASSERT(m_right);
         if (!m_leftOperand.definitelyIsNumber())
             state.slowPathJumps.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
         if (!m_rightOperand.definitelyIsNumber())
