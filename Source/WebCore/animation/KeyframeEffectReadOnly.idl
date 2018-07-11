@@ -44,6 +44,12 @@ dictionary BasePropertyIndexedKeyframe {
     (sequence<CompositeOperation?> or CompositeOperation?) composite = [];
 };
 
+dictionary BaseKeyframe {
+    double? offset = null;
+    DOMString easing = "linear";
+    CompositeOperation? composite = null;
+};
+
 [
     JSGenerateToJSObject
 ] dictionary BaseComputedKeyframe {

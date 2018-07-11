@@ -1,3 +1,27 @@
+2018-07-10  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make WPT test at interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=186501
+        <rdar://problem/41000224>
+
+        Reviewed by Dean Jackson.
+
+        There were two remaining assertions that we were failing in this WPT test file, both related to processing iterable keyframes.
+        The first one was failing because didn't correctly propagate the TypeError exception in the forEachInIterable() callback. The
+        second one was failing because we didn't use the "process a keyframe-like object" procedure when processing iterable keyframes
+        and, as such, we didn't correctly sort property alphabetically before reading their values.
+
+        To fix this second issue, we make processIterableKeyframes() use processKeyframeLikeObject(). To do so, we update processKeyframeLikeObject()
+        to accept a new boolean flag to match the "allow lists" flag from the specification. We also ensure we sort the properties *before*
+        reading from them which we didn't use to do previously.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::processKeyframeLikeObject):
+        (WebCore::processIterableKeyframes):
+        (WebCore::processPropertyIndexedKeyframes):
+        * animation/KeyframeEffectReadOnly.h:
+        * animation/KeyframeEffectReadOnly.idl:
+
 2018-07-11  Zalan Bujtas  <zalan@apple.com>
 
         SimpleLineLayout::FlowContents wastes 54KB of Vector capacity on nytimes.com

@@ -51,6 +51,7 @@
 #include "TimingFunction.h"
 #include "TranslateTransformOperation.h"
 #include "WillChangeData.h"
+#include <JavaScriptCore/Exception.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
@@ -154,62 +155,7 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffectReadOnly::
     }
 }
 
-static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffectReadOnly::ParsedKeyframe>& parsedKeyframes)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 1. Let iter be GetIterator(object, method).
-    forEachInIterable(state, keyframesInput.get(), method, [&parsedKeyframes](VM& vm, ExecState& state, JSValue nextValue) -> ExceptionOr<void> {
-        if (!nextValue || !nextValue.isObject())
-            return Exception { TypeError };
-
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        JSObject* keyframe = nextValue.toObject(&state);
-        PropertyNameArray ownPropertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        JSObject::getOwnPropertyNames(keyframe, &state, ownPropertyNames, EnumerationMode());
-        size_t numberOfProperties = ownPropertyNames.size();
-
-        KeyframeEffectReadOnly::ParsedKeyframe keyframeOutput;
-
-        String easing("linear");
-        std::optional<double> offset;
-        std::optional<CompositeOperation> composite;
-
-        for (size_t j = 0; j < numberOfProperties; ++j) {
-            auto ownPropertyName = ownPropertyNames[j];
-            if (ownPropertyName == "easing")
-                easing = convert<IDLDOMString>(state, keyframe->get(&state, ownPropertyName));
-            else if (ownPropertyName == "offset")
-                offset = convert<IDLNullable<IDLDouble>>(state, keyframe->get(&state, ownPropertyName));
-            else if (ownPropertyName == "composite")
-                composite = convert<IDLNullable<IDLEnumeration<CompositeOperation>>>(state, keyframe->get(&state, ownPropertyName));
-            else {
-                auto cssPropertyId = IDLAttributeNameToAnimationPropertyName(ownPropertyName.string());
-                if (CSSPropertyAnimation::isPropertyAnimatable(cssPropertyId)) {
-                    auto stringValue = convert<IDLDOMString>(state, keyframe->get(&state, ownPropertyName));
-                    if (keyframeOutput.style->setProperty(cssPropertyId, stringValue))
-                        keyframeOutput.unparsedStyle.set(cssPropertyId, stringValue);
-                }
-            }
-            RETURN_IF_EXCEPTION(scope, Exception { TypeError });
-        }
-
-        keyframeOutput.easing = easing;
-        keyframeOutput.offset = offset;
-        keyframeOutput.composite = composite;
-
-        parsedKeyframes.append(WTFMove(keyframeOutput));
-
-        return { };
-    });
-    RETURN_IF_EXCEPTION(scope, Exception { TypeError });
-
-    return { };
-}
-
-static inline ExceptionOr<KeyframeEffectReadOnly::KeyframeLikeObject> processKeyframeLikeObject(ExecState& state, Strong<JSObject>&& keyframesInput)
+static inline ExceptionOr<KeyframeEffectReadOnly::KeyframeLikeObject> processKeyframeLikeObject(ExecState& state, Strong<JSObject>&& keyframesInput, bool allowLists)
 {
     // https://drafts.csswg.org/web-animations-1/#process-a-keyframe-like-object
 
@@ -218,14 +164,38 @@ static inline ExceptionOr<KeyframeEffectReadOnly::KeyframeLikeObject> processKey
 
     // 1. Run the procedure to convert an ECMAScript value to a dictionary type [WEBIDL] with keyframe input as the ECMAScript value as follows:
     // 
+    //    If allow lists is true, use the following dictionary type:
+    //
     //    dictionary BasePropertyIndexedKeyframe {
-    //        (double? or sequence<double?>)                       offset = [];
-    //        (DOMString or sequence<DOMString>)                   easing = [];
+    //        (double? or sequence<double?>)                         offset = [];
+    //        (DOMString or sequence<DOMString>)                     easing = [];
     //        (CompositeOperation? or sequence<CompositeOperation?>) composite = [];
     //    };
     //
+    //    Otherwise, use the following dictionary type:
+    //
+    //    dictionary BaseKeyframe {
+    //        double?             offset = null;
+    //        DOMString           easing = "linear";
+    //        CompositeOperation? composite = null;
+    //    };
+    //
     //    Store the result of this procedure as keyframe output.
-    auto baseProperties = convert<IDLDictionary<KeyframeEffectReadOnly::BasePropertyIndexedKeyframe>>(state, keyframesInput.get());
+    KeyframeEffect::BasePropertyIndexedKeyframe baseProperties;
+    if (allowLists)
+        baseProperties = convert<IDLDictionary<KeyframeEffectReadOnly::BasePropertyIndexedKeyframe>>(state, keyframesInput.get());
+    else {
+        auto baseKeyframe = convert<IDLDictionary<KeyframeEffectReadOnly::BaseKeyframe>>(state, keyframesInput.get());
+        if (baseKeyframe.offset)
+            baseProperties.offset = baseKeyframe.offset.value();
+        else
+            baseProperties.offset = nullptr;
+        baseProperties.easing = baseKeyframe.easing;
+        if (baseKeyframe.composite)
+            baseProperties.composite = baseKeyframe.composite.value();
+        else
+            baseProperties.composite = nullptr;
+    }
     RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
     KeyframeEffectReadOnly::KeyframeLikeObject keyframeOuput;
@@ -244,54 +214,122 @@ static inline ExceptionOr<KeyframeEffectReadOnly::KeyframeLikeObject> processKey
 
     // 4. Make up a new list animation properties that consists of all of the properties that are in both input properties and animatable
     //    properties, or which are in input properties and conform to the <custom-property-name> production.
-
-    // 5. Sort animation properties in ascending order by the Unicode codepoints that define each property name.
-    //    We only actually perform this after step 6.
-
-    // 6. For each property name in animation properties,
+    Vector<JSC::Identifier> animationProperties;
     size_t numberOfProperties = inputProperties.size();
     for (size_t i = 0; i < numberOfProperties; ++i) {
-        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(inputProperties[i].string());
-        if (!CSSPropertyAnimation::isPropertyAnimatable(cssPropertyID))
-            continue;
+        if (CSSPropertyAnimation::isPropertyAnimatable(IDLAttributeNameToAnimationPropertyName(inputProperties[i].string())))
+            animationProperties.append(inputProperties[i]);
+    }
 
+    // 5. Sort animation properties in ascending order by the Unicode codepoints that define each property name.
+    std::sort(animationProperties.begin(), animationProperties.end(), [](auto& lhs, auto& rhs) {
+        return lhs.string().utf8() < rhs.string().utf8();
+    });
+
+    // 6. For each property name in animation properties,
+    size_t numberOfAnimationProperties = animationProperties.size();
+    for (size_t i = 0; i < numberOfAnimationProperties; ++i) {
         // 1. Let raw value be the result of calling the [[Get]] internal method on keyframe input, with property name as the property
         //    key and keyframe input as the receiver.
-        auto rawValue = keyframesInput->get(&state, inputProperties[i]);
+        auto rawValue = keyframesInput->get(&state, animationProperties[i]);
 
         // 2. Check the completion record of raw value.
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
         // 3. Convert raw value to a DOMString or sequence of DOMStrings property values as follows:
         Vector<String> propertyValues;
-        // Let property values be the result of converting raw value to IDL type (DOMString or sequence<DOMString>)
-        // using the procedures defined for converting an ECMAScript value to an IDL value [WEBIDL].
-        // If property values is a single DOMString, replace property values with a sequence of DOMStrings with the original value of property
-        // Values as the only element.
-        if (rawValue.isString())
-            propertyValues = { rawValue.toWTFString(&state) };
-        else if (rawValue.isObject())
-            propertyValues = convert<IDLSequence<IDLDOMString>>(state, rawValue);
+        if (allowLists) {
+            // If allow lists is true,
+            // Let property values be the result of converting raw value to IDL type (DOMString or sequence<DOMString>)
+            // using the procedures defined for converting an ECMAScript value to an IDL value [WEBIDL].
+            // If property values is a single DOMString, replace property values with a sequence of DOMStrings with the original value of property
+            // Values as the only element.
+            if (rawValue.isString())
+                propertyValues = { rawValue.toWTFString(&state) };
+            else if (rawValue.isObject())
+                propertyValues = convert<IDLSequence<IDLDOMString>>(state, rawValue);
+        } else {
+            // Otherwise,
+            // Let property values be the result of converting raw value to a DOMString using the procedure for converting an ECMAScript value to a DOMString.
+            propertyValues = { convert<IDLDOMString>(state, rawValue) };
+        }
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
+        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(animationProperties[i].string());
+
         // 5. Add a property to to keyframe output with normalized property name as the property name, and property values as the property value.
         keyframeOuput.propertiesAndValues.append({ cssPropertyID, propertyValues });
     }
-
-    // Now we can perform step 5.
-    std::sort(keyframeOuput.propertiesAndValues.begin(), keyframeOuput.propertiesAndValues.end(), [](auto& lhs, auto& rhs) {
-        return getPropertyNameString(lhs.property).utf8() < getPropertyNameString(rhs.property).utf8();
-    });
 
     // 7. Return keyframe output.
     return { WTFMove(keyframeOuput) };
 }
 
+static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffectReadOnly::ParsedKeyframe>& parsedKeyframes)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let iter be GetIterator(object, method).
+    forEachInIterable(state, keyframesInput.get(), method, [&parsedKeyframes](VM& vm, ExecState& state, JSValue nextValue) -> ExceptionOr<void> {
+        // Steps 2 through 6 are already implemented by forEachInIterable().
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        if (!nextValue || !nextValue.isObject()) {
+            throwException(&state, scope, JSC::Exception::create(vm, createTypeError(&state)));
+            return { };
+        }
+
+        // 7. Append to processed keyframes the result of running the procedure to process a keyframe-like object passing nextItem
+        // as the keyframe input and with the allow lists flag set to false.
+        auto processKeyframeLikeObjectResult = processKeyframeLikeObject(state, Strong<JSObject>(vm, nextValue.toObject(&state)), false);
+        if (processKeyframeLikeObjectResult.hasException())
+            return processKeyframeLikeObjectResult.releaseException();
+        auto keyframeLikeObject = processKeyframeLikeObjectResult.returnValue();
+
+        KeyframeEffectReadOnly::ParsedKeyframe keyframeOutput;
+
+        // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only offset
+        // alternatives we should expect are double and nullptr.
+        if (WTF::holds_alternative<double>(keyframeLikeObject.baseProperties.offset))
+            keyframeOutput.offset = WTF::get<double>(keyframeLikeObject.baseProperties.offset);
+        else
+            ASSERT(WTF::holds_alternative<std::nullptr_t>(keyframeLikeObject.baseProperties.offset));
+
+        // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only easing
+        // alternative we should expect is String.
+        ASSERT(WTF::holds_alternative<String>(keyframeLikeObject.baseProperties.easing));
+        keyframeOutput.easing = WTF::get<String>(keyframeLikeObject.baseProperties.easing);
+
+        // When calling processKeyframeLikeObject() with the "allow lists" flag set to false, the only composite
+        // alternatives we should expect are CompositeOperation and nullptr.
+        if (WTF::holds_alternative<CompositeOperation>(keyframeLikeObject.baseProperties.composite))
+            keyframeOutput.composite = WTF::get<CompositeOperation>(keyframeLikeObject.baseProperties.composite);
+        else
+            ASSERT(WTF::holds_alternative<std::nullptr_t>(keyframeLikeObject.baseProperties.composite));
+
+        for (auto& propertyAndValue : keyframeLikeObject.propertiesAndValues) {
+            auto cssPropertyId = propertyAndValue.property;
+            // When calling processKeyframeLikeObject() with the "allow lists" flag set to false,
+            // there should only ever be a single value for a given property.
+            ASSERT(propertyAndValue.values.size() == 1);
+            auto stringValue = propertyAndValue.values[0];
+            if (keyframeOutput.style->setProperty(cssPropertyId, stringValue))
+                keyframeOutput.unparsedStyle.set(cssPropertyId, stringValue);
+        }
+
+        parsedKeyframes.append(WTFMove(keyframeOutput));
+
+        return { };
+    });
+
+    return { };
+}
+
 static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput, Vector<KeyframeEffectReadOnly::ParsedKeyframe>& parsedKeyframes, Vector<String>& unusedEasings)
 {
     // 1. Let property-indexed keyframe be the result of running the procedure to process a keyframe-like object passing object as the keyframe input.
-    auto processKeyframeLikeObjectResult = processKeyframeLikeObject(state, WTFMove(keyframesInput));
+    auto processKeyframeLikeObjectResult = processKeyframeLikeObject(state, WTFMove(keyframesInput), true);
     if (processKeyframeLikeObjectResult.hasException())
         return processKeyframeLikeObjectResult.releaseException();
     auto propertyIndexedKeyframe = processKeyframeLikeObjectResult.returnValue();

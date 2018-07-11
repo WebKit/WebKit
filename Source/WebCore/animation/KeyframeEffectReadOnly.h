@@ -55,6 +55,12 @@ public:
         Variant<std::nullptr_t, Vector<std::optional<CompositeOperation>>, CompositeOperation> composite = Vector<std::optional<CompositeOperation>>();
     };
 
+    struct BaseKeyframe {
+        std::optional<double> offset;
+        String easing { "linear" };
+        std::optional<CompositeOperation> composite;
+    };
+
     struct PropertyAndValues {
         CSSPropertyID property;
         Vector<String> values;

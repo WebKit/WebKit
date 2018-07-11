@@ -42,18 +42,11 @@ PASS Keyframes are read from a custom iterator
 PASS 'easing' and 'offset' are ignored on iterable objects 
 PASS Keyframes are read from a custom iterator with multiple properties specified 
 PASS Keyframes are read from a custom iterator with where an offset is specified 
-FAIL Reading from a custom iterator that returns a non-object keyframe should throw assert_throws: function "() => {
-    new KeyframeEffect(null, createIterable([
-      { done: false, value: { left: '100px' } },
-      { done: false, value: 1234 },
-      { done: false, value: { left: '200px' } },
-      { done: true },
-    ]));
-  }" did not throw
+PASS Reading from a custom iterator that returns a non-object keyframe should throw 
 PASS A list of values returned from a custom iterator should be ignored 
 PASS Only enumerable properties on keyframes are read 
 PASS Only properties defined directly on keyframes are read 
 PASS Only enumerable properties on property-indexed keyframes are read 
 PASS Only properties defined directly on property-indexed keyframes are read 
-FAIL Properties are read in ascending order by Unicode codepoint assert_array_equals: property access order property 0, expected "composite" but got "marginLeft"
+PASS Properties are read in ascending order by Unicode codepoint 
 
