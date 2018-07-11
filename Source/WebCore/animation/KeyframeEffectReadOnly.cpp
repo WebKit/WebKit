@@ -269,7 +269,6 @@ static inline ExceptionOr<KeyframeEffectReadOnly::KeyframeLikeObject> processKey
 static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffectReadOnly::ParsedKeyframe>& parsedKeyframes)
 {
     VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 1. Let iter be GetIterator(object, method).
     forEachInIterable(state, keyframesInput.get(), method, [&parsedKeyframes](VM& vm, ExecState& state, JSValue nextValue) -> ExceptionOr<void> {
