@@ -1,3 +1,18 @@
+2018-07-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] MIME type registry doesn't explicitly recognize *.css
+        https://bugs.webkit.org/show_bug.cgi?id=187538
+
+        Reviewed by Yusuke Suzuki.
+
+        MIMETypeRegistryWin doesn't explicitly recognize *.css; it instead falls back to the registry key "Content Type"
+        under HKEY_CLASSES_ROOT\.css. This key doesn't exist on Windows Server unless an application actually registers
+        it -- as a result, WinCairo bots are currently viewing it as an unrecognized filetype!
+
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        Add *.css to the list of recognized filetypes.
+
 2018-07-10  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION (r233552): Find highlight has white text on yellow background
