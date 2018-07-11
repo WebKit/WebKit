@@ -2136,7 +2136,6 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
 unsigned CodeBlock::reoptimizationRetryCounter() const
 {
 #if ENABLE(JIT)
-    ASSERT(m_reoptimizationRetryCounter <= Options::reoptimizationRetryCounterMax());
     return m_reoptimizationRetryCounter;
 #else
     return 0;
@@ -2174,8 +2173,6 @@ size_t CodeBlock::calleeSaveSpaceAsVirtualRegisters()
 void CodeBlock::countReoptimization()
 {
     m_reoptimizationRetryCounter++;
-    if (m_reoptimizationRetryCounter > Options::reoptimizationRetryCounterMax())
-        m_reoptimizationRetryCounter = Options::reoptimizationRetryCounterMax();
 }
 
 unsigned CodeBlock::numberOfDFGCompiles()
@@ -2294,7 +2291,7 @@ int32_t CodeBlock::adjustedCounterValue(int32_t desiredThreshold)
     return clipThreshold(
         static_cast<double>(desiredThreshold) *
         optimizationThresholdScalingFactor() *
-        (1 << reoptimizationRetryCounter()));
+        pow(Options::reoptimizationBackoffBase(), reoptimizationRetryCounter()));
 }
 
 bool CodeBlock::checkIfOptimizationThresholdReached()

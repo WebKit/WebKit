@@ -361,7 +361,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, osrExitCountForReoptimization, 100, Normal, nullptr) \
     v(unsigned, osrExitCountForReoptimizationFromLoop, 5, Normal, nullptr) \
     \
-    v(unsigned, reoptimizationRetryCounterMax, 0, Normal, nullptr)  \
+    v(double, reoptimizationBackoffBase, 1.3, Normal, nullptr) \
     \
     v(unsigned, minimumOptimizationDelay, 1, Normal, nullptr) \
     v(unsigned, maximumOptimizationDelay, 5, Normal, nullptr) \

@@ -1,3 +1,23 @@
+2018-07-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Change the reoptimization backoff base to 1.3 from 2
+        https://bugs.webkit.org/show_bug.cgi?id=187540
+
+        Reviewed by Saam Barati.
+        
+        I have data that hints at this being a speed-up on JetStream, ARES-6, and Speedometer2.
+        
+        I also have data that hints that a backoff base of 1 might be even better, but I think that
+        we want to keep *some* backoff in case we find ourselves in an unmitigated recomp loop.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reoptimizationRetryCounter const):
+        (JSC::CodeBlock::countReoptimization):
+        (JSC::CodeBlock::adjustedCounterValue):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2018-07-10  Mark Lam  <mark.lam@apple.com>
 
         [32-bit JSC tests] ASSERTION FAILED: !butterfly->propertyStorage()[-I - 1].get() under JSC::ObjectInitializationScope::verifyPropertiesAreInitialized.
