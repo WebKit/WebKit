@@ -64,11 +64,6 @@ inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
     return butterfly()->indexingHeader()->arrayBuffer();
 }
 
-inline RefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
-{
-    return methodTable()->getTypedArrayImpl(this);
-}
-
 inline RefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
 {
     RefPtr<ArrayBufferView> result = possiblySharedImpl();

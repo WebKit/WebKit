@@ -288,10 +288,6 @@ protected:
     static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    // Allocates the full-on native buffer and moves data into the C heap if
-    // necessary. Note that this never allocates in the GC heap.
-    static RefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
-
 private:
     // Returns true if successful, and false on error; it will throw on error.
     template<typename OtherAdaptor>
@@ -332,14 +328,6 @@ private:
     }
 
     template<typename IntegralType>
-    static bool ALWAYS_INLINE sortComparison(IntegralType a, IntegralType b)
-    {
-        if (a >= 0 || b >= 0)
-            return a < b;
-        return a > b;
-    }
-
-    template<typename IntegralType>
     void sortFloat()
     {
         ASSERT(sizeof(IntegralType) == sizeof(ElementType));
@@ -352,7 +340,11 @@ private:
         purifyArray();
 
         IntegralType* array = reinterpret_cast_ptr<IntegralType*>(typedVector());
-        std::sort(array, array + m_length, sortComparison<IntegralType>);
+        std::sort(array, array + m_length, [] (IntegralType a, IntegralType b) {
+            if (a >= 0 || b >= 0)
+                return a < b;
+            return a > b;
+        });
 
     }
 

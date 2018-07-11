@@ -256,12 +256,6 @@ bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, const Proper
     return false;
 }
 
-RefPtr<ArrayBufferView> JSCell::getTypedArrayImpl(JSArrayBufferView*)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 uint32_t JSCell::getEnumerableLength(ExecState*, JSObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();

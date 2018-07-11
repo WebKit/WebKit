@@ -163,7 +163,7 @@ public:
     JSArrayBuffer* unsharedJSBuffer(ExecState* exec);
     JSArrayBuffer* possiblySharedJSBuffer(ExecState* exec);
     RefPtr<ArrayBufferView> unsharedImpl();
-    RefPtr<ArrayBufferView> possiblySharedImpl();
+    JS_EXPORT_PRIVATE RefPtr<ArrayBufferView> possiblySharedImpl();
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     

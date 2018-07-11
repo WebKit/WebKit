@@ -70,8 +70,6 @@ protected:
 
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-    static RefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
-    
 public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     

@@ -31,7 +31,7 @@
 namespace JSC {
 
 template<typename Adaptor>
-class GenericTypedArrayView : public ArrayBufferView {
+class GenericTypedArrayView final : public ArrayBufferView {
 protected:
     GenericTypedArrayView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
 

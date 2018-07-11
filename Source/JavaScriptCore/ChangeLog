@@ -1,3 +1,43 @@
+2018-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove getTypedArrayImpl
+        https://bugs.webkit.org/show_bug.cgi?id=187338
+
+        Reviewed by Mark Lam.
+
+        getTypedArrayImpl is overridden only by typed arrays and DataView. Since the number of these classes
+        are limited, we do not need to add this function to MethodTable: dispatching it in JSArrayBufferView is fine.
+        This patch removes getTypedArrayImpl from MethodTable, and moves it to JSArrayBufferView.
+
+        * runtime/ClassInfo.h:
+        * runtime/GenericTypedArrayView.h:
+        (JSC::GenericTypedArrayView::data const): Deleted.
+        (JSC::GenericTypedArrayView::set): Deleted.
+        (JSC::GenericTypedArrayView::setRange): Deleted.
+        (JSC::GenericTypedArrayView::zeroRange): Deleted.
+        (JSC::GenericTypedArrayView::zeroFill): Deleted.
+        (JSC::GenericTypedArrayView::length const): Deleted.
+        (JSC::GenericTypedArrayView::item const): Deleted.
+        (JSC::GenericTypedArrayView::set const): Deleted.
+        (JSC::GenericTypedArrayView::setNative const): Deleted.
+        (JSC::GenericTypedArrayView::getRange): Deleted.
+        (JSC::GenericTypedArrayView::checkInboundData const): Deleted.
+        (JSC::GenericTypedArrayView::internalByteLength const): Deleted.
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::possiblySharedImpl):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::possiblySharedImpl): Deleted.
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getTypedArrayImpl): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::getTypedArrayImpl): Deleted.
+        * runtime/JSDataView.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl): Deleted.
+
 2018-07-10  Keith Miller  <keith_miller@apple.com>
 
         hasOwnProperty returns true for out of bounds property index on TypedArray

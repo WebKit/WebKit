@@ -32,6 +32,7 @@ namespace JSC {
 
 struct ClassInfo;
 
+// Keep in sync with the order of JSType.
 #define FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(macro) \
     macro(Int8) \
     macro(Uint8) \

@@ -71,7 +71,7 @@ enum JSType : uint8_t {
     DerivedArrayType,
     // End JSArray types.
 
-    // Start JSArrayBufferView types.
+    // Start JSArrayBufferView types. Keep in sync with the order of FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW.
     Int8ArrayType,
     Uint8ArrayType,
     Uint8ClampedArrayType,

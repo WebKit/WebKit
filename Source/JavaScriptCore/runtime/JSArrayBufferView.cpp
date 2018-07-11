@@ -26,11 +26,14 @@
 #include "config.h"
 #include "JSArrayBufferView.h"
 
+#include "GenericTypedArrayViewInlines.h"
 #include "JSArrayBuffer.h"
 #include "JSCInlines.h"
+#include "JSGenericTypedArrayViewInlines.h"
 #include "JSTypedArrays.h"
 #include "TypeError.h"
 #include "TypedArrayController.h"
+#include "TypedArrays.h"
 #include <wtf/Gigacage.h>
 
 namespace JSC {
@@ -219,26 +222,14 @@ void JSArrayBufferView::neuter()
 }
 
 static const constexpr size_t ElementSizeData[] = {
-    sizeof(typename Int8Adaptor::Type), // Int8ArrayType
-    sizeof(typename Uint8Adaptor::Type), // Uint8ArrayType
-    sizeof(typename Uint8ClampedAdaptor::Type), // Uint8ClampedArrayType
-    sizeof(typename Int16Adaptor::Type), // Int16ArrayType
-    sizeof(typename Uint16Adaptor::Type), // Uint16ArrayType
-    sizeof(typename Int32Adaptor::Type), // Int32ArrayType
-    sizeof(typename Uint32Adaptor::Type), // Uint32ArrayType
-    sizeof(typename Float32Adaptor::Type), // Float32ArrayType
-    sizeof(typename Float64Adaptor::Type), // Float64ArrayType
+#define FACTORY(type) sizeof(typename type ## Adaptor::Type),
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
+#undef FACTORY
 };
 
-static_assert(std::is_final<JSInt8Array>::value, "");
-static_assert(std::is_final<JSUint8Array>::value, "");
-static_assert(std::is_final<JSUint8ClampedArray>::value, "");
-static_assert(std::is_final<JSInt16Array>::value, "");
-static_assert(std::is_final<JSUint16Array>::value, "");
-static_assert(std::is_final<JSInt32Array>::value, "");
-static_assert(std::is_final<JSUint32Array>::value, "");
-static_assert(std::is_final<JSFloat32Array>::value, "");
-static_assert(std::is_final<JSFloat64Array>::value, "");
+#define FACTORY(type) static_assert(std::is_final<JS ## type ## Array>::value, "");
+FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
+#undef FACTORY
 
 static inline size_t elementSize(JSType type)
 {
@@ -302,6 +293,27 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     heap->addReference(this, buffer.get());
 
     return buffer.get();
+}
+
+// Allocates the full-on native buffer and moves data into the C heap if
+// necessary. Note that this never allocates in the GC heap.
+RefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
+{
+    ArrayBuffer* buffer = possiblySharedBuffer();
+    unsigned byteOffset = this->byteOffset();
+    unsigned length = this->length();
+    switch (type()) {
+#define FACTORY(type) \
+    case type ## ArrayType: \
+        return type ## Array::create(buffer, byteOffset, length);
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
+#undef FACTORY
+    case DataViewType:
+        return DataView::create(buffer, byteOffset, length);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 } // namespace JSC

@@ -101,9 +101,6 @@ struct MethodTable {
     using DefineOwnPropertyFunctionPtr = bool (*)(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool);
     DefineOwnPropertyFunctionPtr WTF_METHOD_TABLE_ENTRY(defineOwnProperty);
 
-    using GetTypedArrayImpl = RefPtr<ArrayBufferView> (*)(JSArrayBufferView*);
-    GetTypedArrayImpl WTF_METHOD_TABLE_ENTRY(getTypedArrayImpl);
-
     using PreventExtensionsFunctionPtr = bool (*)(JSObject*, ExecState*);
     PreventExtensionsFunctionPtr WTF_METHOD_TABLE_ENTRY(preventExtensions);
 
@@ -171,7 +168,6 @@ struct MethodTable {
         &ClassName::toStringName, \
         &ClassName::customHasInstance, \
         &ClassName::defineOwnProperty, \
-        &ClassName::getTypedArrayImpl, \
         &ClassName::preventExtensions, \
         &ClassName::isExtensible, \
         &ClassName::setPrototype, \

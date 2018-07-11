@@ -550,11 +550,4 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     }
 }
 
-template<typename Adaptor>
-RefPtr<ArrayBufferView> JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl(JSArrayBufferView* object)
-{
-    JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
-    return thisObject->possiblySharedTypedImpl();
-}
-
 } // namespace JSC

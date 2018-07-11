@@ -180,12 +180,6 @@ void JSDataView::getOwnNonIndexPropertyNames(
     Base::getOwnNonIndexPropertyNames(thisObject, exec, array, mode);
 }
 
-RefPtr<ArrayBufferView> JSDataView::getTypedArrayImpl(JSArrayBufferView* object)
-{
-    JSDataView* thisObject = jsCast<JSDataView*>(object);
-    return thisObject->possiblySharedTypedImpl();
-}
-
 Structure* JSDataView::createStructure(
     VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
