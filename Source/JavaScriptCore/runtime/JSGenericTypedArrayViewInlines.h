@@ -359,11 +359,13 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
             return true;
         }
 
-        if (thisObject->canGetIndexQuickly(index.value()))
+        if (thisObject->canGetIndexQuickly(index.value())) {
             slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, thisObject->getIndexQuickly(index.value()));
-        else
-            slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, jsUndefined());
-        return true;
+            return true;
+        }
+
+        slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, jsUndefined());
+        return false;
     }
     
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
