@@ -84,7 +84,7 @@ void URL::invalidate()
     m_userEnd = 0;
     m_passwordEnd = 0;
     m_hostEnd = 0;
-    m_portEnd = 0;
+    m_portLength = 0;
     m_pathEnd = 0;
     m_pathAfterLastSlash = 0;
     m_queryEnd = 0;
@@ -144,7 +144,7 @@ String URL::lastPathComponent() const
         --end;
 
     size_t start = m_string.reverseFind('/', end);
-    if (start < static_cast<unsigned>(m_portEnd))
+    if (start < static_cast<unsigned>(m_hostEnd + m_portLength))
         return String();
     ++start;
 
@@ -164,15 +164,15 @@ StringView URL::host() const
 
 std::optional<uint16_t> URL::port() const
 {
-    if (!m_portEnd || m_hostEnd >= m_portEnd - 1)
+    if (!m_portLength)
         return std::nullopt;
 
     bool ok = false;
     unsigned number;
     if (m_string.is8Bit())
-        number = charactersToUIntStrict(m_string.characters8() + m_hostEnd + 1, m_portEnd - m_hostEnd - 1, &ok);
+        number = charactersToUIntStrict(m_string.characters8() + m_hostEnd + 1, m_portLength - 1, &ok);
     else
-        number = charactersToUIntStrict(m_string.characters16() + m_hostEnd + 1, m_portEnd - m_hostEnd - 1, &ok);
+        number = charactersToUIntStrict(m_string.characters16() + m_hostEnd + 1, m_portLength - 1, &ok);
     if (!ok || number > std::numeric_limits<uint16_t>::max())
         return std::nullopt;
     return number;
@@ -187,7 +187,7 @@ String URL::hostAndPort() const
 
 String URL::protocolHostAndPort() const
 {
-    String result = m_string.substring(0, m_portEnd);
+    String result = m_string.substring(0, m_hostEnd + m_portLength);
 
     if (m_passwordEnd - m_userStart > 0) {
         const int allowForTrailingAtSign = 1;
@@ -370,7 +370,8 @@ String URL::query() const
 
 String URL::path() const
 {
-    return m_string.substring(m_portEnd, m_pathEnd - m_portEnd);
+    unsigned portEnd = m_hostEnd + m_portLength;
+    return m_string.substring(portEnd, m_pathEnd - portEnd);
 }
 
 bool URL::setProtocol(const String& s)
@@ -455,9 +456,9 @@ void URL::setHost(const String& s)
 
 void URL::removePort()
 {
-    if (m_hostEnd == m_portEnd)
+    if (!m_portLength)
         return;
-    URLParser parser(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
+    URLParser parser(m_string.left(m_hostEnd) + m_string.substring(m_hostEnd + m_portLength));
     *this = parser.result();
 }
 
@@ -466,10 +467,10 @@ void URL::setPort(unsigned short i)
     if (!m_isValid)
         return;
 
-    bool colonNeeded = m_portEnd == m_hostEnd;
+    bool colonNeeded = !m_portLength;
     unsigned portStart = (colonNeeded ? m_hostEnd : m_hostEnd + 1);
 
-    URLParser parser(makeString(m_string.left(portStart), (colonNeeded ? ":" : ""), String::number(i), m_string.substring(m_portEnd)));
+    URLParser parser(makeString(m_string.left(portStart), (colonNeeded ? ":" : ""), String::number(i), m_string.substring(m_hostEnd + m_portLength)));
     *this = parser.result();
 }
 
@@ -509,7 +510,7 @@ void URL::setHostAndPort(const String& hostAndPort)
         builder.appendLiteral(":");
         builder.append(port);
     }
-    builder.append(m_string.substring(m_portEnd));
+    builder.append(m_string.substring(m_hostEnd + m_portLength));
 
     URLParser parser(builder.toString());
     *this = parser.result();
@@ -658,7 +659,7 @@ void URL::setPath(const String& s)
     auto questionMarkOrNumberSign = [] (UChar character) {
         return character == '?' || character == '#';
     };
-    URLParser parser(makeString(StringView(m_string).left(m_portEnd), percentEncodeCharacters(path, questionMarkOrNumberSign), StringView(m_string).substring(m_pathEnd)));
+    URLParser parser(makeString(StringView(m_string).left(m_hostEnd + m_portLength), percentEncodeCharacters(path, questionMarkOrNumberSign), StringView(m_string).substring(m_pathEnd)));
     *this = parser.result();
 }
 

@@ -219,20 +219,27 @@ private:
     void copyToBuffer(Vector<char, 512>& buffer) const;
 
     String m_string;
-    bool m_isValid : 1;
-    bool m_protocolIsInHTTPFamily : 1;
-    bool m_cannotBeABaseURL : 1;
 
-    unsigned m_schemeEnd;
+    unsigned m_isValid : 1;
+    unsigned m_protocolIsInHTTPFamily : 1;
+    unsigned m_cannotBeABaseURL : 1;
+
+    // This is out of order to allign the bits better. The port is after the host.
+    unsigned m_portLength : 3;
+    static constexpr unsigned maxPortLength = (1 << 3) - 1;
+
+    static constexpr unsigned maxSchemeLength = (1 << 26) - 1;
+    unsigned m_schemeEnd : 26;
     unsigned m_userStart;
     unsigned m_userEnd;
     unsigned m_passwordEnd;
     unsigned m_hostEnd;
-    unsigned m_portEnd;
     unsigned m_pathAfterLastSlash;
     unsigned m_pathEnd;
     unsigned m_queryEnd;
 };
+
+static_assert(sizeof(URL) == sizeof(String) + 8 * sizeof(unsigned), "URL should stay small");
 
 template <class Encoder>
 void URL::encode(Encoder& encoder) const
@@ -242,12 +249,13 @@ void URL::encode(Encoder& encoder) const
     if (!m_isValid)
         return;
     encoder << static_cast<bool>(m_protocolIsInHTTPFamily);
-    encoder << m_schemeEnd;
+    encoder << static_cast<bool>(m_cannotBeABaseURL);
+    encoder << static_cast<unsigned>(m_schemeEnd);
     encoder << m_userStart;
     encoder << m_userEnd;
     encoder << m_passwordEnd;
     encoder << m_hostEnd;
-    encoder << m_portEnd;
+    encoder << static_cast<unsigned>(m_portLength);
     encoder << m_pathAfterLastSlash;
     encoder << m_pathEnd;
     encoder << m_queryEnd;
@@ -279,8 +287,18 @@ std::optional<URL> URL::decode(Decoder& decoder)
     if (!decoder.decode(protocolIsInHTTPFamily))
         return std::nullopt;
     url.m_protocolIsInHTTPFamily = protocolIsInHTTPFamily;
-    if (!decoder.decode(url.m_schemeEnd))
+    bool cannotBeABaseURL;
+    if (!decoder.decode(cannotBeABaseURL))
         return std::nullopt;
+    url.m_cannotBeABaseURL = cannotBeABaseURL;
+    unsigned schemeEnd;
+    if (!decoder.decode(schemeEnd))
+        return std::nullopt;
+    if (schemeEnd >= maxSchemeLength) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+    url.m_schemeEnd = schemeEnd;
     if (!decoder.decode(url.m_userStart))
         return std::nullopt;
     if (!decoder.decode(url.m_userEnd))
@@ -289,8 +307,14 @@ std::optional<URL> URL::decode(Decoder& decoder)
         return std::nullopt;
     if (!decoder.decode(url.m_hostEnd))
         return std::nullopt;
-    if (!decoder.decode(url.m_portEnd))
+    unsigned portLength;
+    if (!decoder.decode(portLength))
         return std::nullopt;
+    if (portLength > maxPortLength) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+    url.m_portLength = portLength;
     if (!decoder.decode(url.m_pathAfterLastSlash))
         return std::nullopt;
     if (!decoder.decode(url.m_pathEnd))
@@ -400,7 +424,7 @@ inline bool URL::isValid() const
 
 inline bool URL::hasPath() const
 {
-    return m_pathEnd != m_portEnd;
+    return m_pathEnd != m_hostEnd + m_portLength;
 }
 
 inline bool URL::hasUsername() const
@@ -440,7 +464,7 @@ inline unsigned URL::hostEnd() const
 
 inline unsigned URL::pathStart() const
 {
-    return m_portEnd;
+    return m_hostEnd + m_portLength;
 }
 
 inline unsigned URL::pathEnd() const

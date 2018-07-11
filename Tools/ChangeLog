@@ -1,3 +1,13 @@
+2018-07-11  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce size of WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=186820
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2018-07-11  Youenn Fablet  <youenn@apple.com>
 
         Fix remaining Cross-Origin-Resource-Policy failures, if any

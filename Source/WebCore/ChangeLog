@@ -1,3 +1,45 @@
+2018-07-11  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce size of WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=186820
+
+        Reviewed by Yusuke Suzuki.
+
+        We were using 32 bits for the length of the port, which is always between 0 and 5 inclusive
+        because port numbers are missing or between 0 and 65535.  Let's just use 3 bits here.
+        We were using 32 bits for the length of the scheme, which is usually 3-5 characters and can be
+        longer for some custom schemes, but I've never seen one more than 20 characters.  If we assume
+        schemes are always less than 64MB, we can save 8 bytes per URL!
+
+        No change in behavior, just less memory use!
+
+        * platform/URL.cpp:
+        (WebCore::URL::invalidate):
+        (WebCore::URL::lastPathComponent const):
+        (WebCore::URL::port const):
+        (WebCore::URL::protocolHostAndPort const):
+        (WebCore::URL::path const):
+        (WebCore::URL::removePort):
+        (WebCore::URL::setPort):
+        (WebCore::URL::setHostAndPort):
+        (WebCore::URL::setPath):
+        * platform/URL.h:
+        (WebCore::URL::encode const):
+        (WebCore::URL::decode):
+        (WebCore::URL::hasPath const):
+        (WebCore::URL::pathStart const):
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::copyBaseWindowsDriveLetter):
+        (WebCore::URLParser::urlLengthUntilPart):
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::shouldPopPath):
+        (WebCore::URLParser::popPath):
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::parsePort):
+        (WebCore::URLParser::parseHostAndPort):
+        (WebCore::URLParser::allValuesEqual):
+        (WebCore::URLParser::internalValuesConsistent):
+
 2018-07-11  Youenn Fablet  <youenn@apple.com>
 
         Fix remaining Cross-Origin-Resource-Policy failures, if any
