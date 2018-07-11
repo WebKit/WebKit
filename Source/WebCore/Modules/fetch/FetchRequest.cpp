@@ -151,7 +151,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
         return Exception { TypeError, "URL is not valid or contains user credentials."_s };
 
     m_options.mode = Mode::Cors;
-    m_options.credentials = Credentials::Omit;
+    m_options.credentials = Credentials::SameOrigin;
     m_referrer = "client"_s;
     m_request.setURL(requestURL);
     m_request.setRequester(ResourceRequest::Requester::Fetch);

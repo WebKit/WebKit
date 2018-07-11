@@ -53,7 +53,16 @@ public:
     using RequestOrError = Expected<WebCore::ResourceRequest, WebCore::ResourceError>;
     using ValidationHandler = CompletionHandler<void(RequestOrError&&)>;
     void check(WebCore::ResourceRequest&&, WebCore::ContentSecurityPolicyClient*, ValidationHandler&&);
-    void checkRedirection(WebCore::ResourceResponse&, WebCore::ResourceRequest&&, WebCore::ContentSecurityPolicyClient*, ValidationHandler&&);
+
+    struct RedirectionTriplet {
+        WebCore::ResourceRequest request;
+        WebCore::ResourceRequest redirectRequest;
+        WebCore::ResourceResponse redirectResponse;
+    };
+    using RedirectionRequestOrError = Expected<RedirectionTriplet, WebCore::ResourceError>;
+    using RedirectionValidationHandler = CompletionHandler<void(RedirectionRequestOrError&&)>;
+    void checkRedirection(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse, WebCore::ContentSecurityPolicyClient*, RedirectionValidationHandler&&);
+
     void prepareRedirectedRequest(WebCore::ResourceRequest&);
 
     WebCore::ResourceError validateResponse(WebCore::ResourceResponse&);

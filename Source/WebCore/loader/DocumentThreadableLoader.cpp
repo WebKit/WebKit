@@ -320,6 +320,10 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
 
     clearResource();
 
+    m_referrer = request.httpReferrer();
+    if (m_referrer.isNull())
+        m_options.referrerPolicy = ReferrerPolicy::NoReferrer;
+
     // Let's fetch the request with the original headers (equivalent to request cloning specified by fetch algorithm).
     // Do not copy the Authorization header if removed by the network layer.
     if (!request.httpHeaderFields().contains(HTTPHeaderName::Authorization))

@@ -1,3 +1,23 @@
+2018-07-10  Youenn Fablet  <youenn@apple.com>
+
+        Make fetch() use "same-origin" credentials by default
+        https://bugs.webkit.org/show_bug.cgi?id=176023
+
+        Reviewed by Chris Dumez.
+
+        Resource timing does not work properly on WK1 when stopping fetch/XHR load to restart it without credentials.
+        Updated expected results accordingly.
+
+        * http/tests/inspector/network/resource-mime-type.html:
+        Update resource-mime-type.html to ensure we go to the network for every load.
+        * http/wpt/resource-timing/rt-cors.js:
+        (assertRedirectWithDisallowedTimingData):
+        Updated test according https://www.w3.org/TR/resource-timing-1/#performanceresourcetiming.
+        * platform/mac-wk1/http/wpt/resource-timing/rt-cors-expected.txt: Added.
+        * platform/mac-wk1/http/wpt/resource-timing/rt-cors.worker-expected.txt: Added.
+        * platform/win/http/wpt/resource-timing/rt-cors-expected.txt: Added.
+        * platform/win/http/wpt/resource-timing/rt-cors.worker-expected.txt: Added.
+
 2018-07-10  Saam Barati  <sbarati@apple.com>
 
         Layout Test editing/selection/navigation-clears-editor-state.html is flaky

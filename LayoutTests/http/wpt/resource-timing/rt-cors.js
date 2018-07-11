@@ -23,7 +23,7 @@ function assertRedirectWithDisallowedTimingData(entry) {
     assertAlways(entry);
     assert_equals(entry.redirectStart, 0, "entry should not have a redirectStart time");
     assert_equals(entry.redirectEnd, 0, "entry should not have a redirectEnd time");
-    assert_not_equals(entry.startTime, entry.fetchStart, "entry startTime should have matched redirectStart but it was disallowed so it should not match fetchStart");
+    assert_equals(entry.startTime, entry.fetchStart, "entry startTime should have matched redirectStart but it was disallowed so it should match fetchStart");
 }
 
 function assertNonRedirectTimingData(entry) {

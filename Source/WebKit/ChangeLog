@@ -1,3 +1,30 @@
+2018-07-10  Youenn Fablet  <youenn@apple.com>
+
+        Make fetch() use "same-origin" credentials by default
+        https://bugs.webkit.org/show_bug.cgi?id=176023
+
+        Reviewed by Chris Dumez.
+
+        Before the patch, when changing the credential mode in case of redirection,
+        we were not waiting for WebProcess response to restart the load.
+        This patch updates the implementation to ask the WebProcess whether to proceed as for other regular asynchronous loads.
+        This requires some refactoring in particular we now pass request, redirectRequest and redirectResponse to NetworkLoadChecker
+        that will send them back as part of the completion handler.
+
+        To do so, we change manual redirection handling and make it a successful case and not an error case as before.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::redirectionError):
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::restartNetworkLoad):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+
 2018-07-10  Chris Dumez  <cdumez@apple.com>
 
         [IOS] We should prevent WebProcess suspension while the UIProcess is waiting for a reply from its injected bundle

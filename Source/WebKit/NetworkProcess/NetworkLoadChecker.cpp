@@ -102,19 +102,27 @@ void NetworkLoadChecker::prepareRedirectedRequest(ResourceRequest& request)
         request.setHTTPHeaderField(HTTPHeaderName::DNT, m_dntHeaderValue);
 }
 
-void NetworkLoadChecker::checkRedirection(ResourceResponse& redirectResponse, ResourceRequest&& request, ContentSecurityPolicyClient* client, ValidationHandler&& handler)
+static inline NetworkLoadChecker::RedirectionRequestOrError redirectionError(const ResourceResponse& redirectResponse, String&& errorMessage)
+{
+    return makeUnexpected(ResourceError { String { }, 0, redirectResponse.url(), WTFMove(errorMessage), ResourceError::Type::AccessControl });
+}
+
+void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, ContentSecurityPolicyClient* client, RedirectionValidationHandler&& handler)
 {
     ASSERT(!isChecking());
 
     auto error = validateResponse(redirectResponse);
     if (!error.isNull()) {
-        auto errorMessage = makeString("Cross-origin redirection to ", request.url().string(), " denied by Cross-Origin Resource Sharing policy: ", error.localizedDescription());
-        handler(makeUnexpected(ResourceError { String { }, 0, redirectResponse.url(), WTFMove(errorMessage), ResourceError::Type::AccessControl }));
+        handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to ", redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: ", error.localizedDescription())));
         return;
     }
 
-    if (m_options.redirect != FetchOptions::Redirect::Follow) {
-        handler(accessControlErrorForValidationHandler(makeString("Not allowed to follow a redirection while loading ", redirectResponse.url().string())));
+    if (m_options.redirect == FetchOptions::Redirect::Error) {
+        handler(redirectionError(redirectResponse, makeString("Not allowed to follow a redirection while loading ", redirectResponse.url().string())));
+        return;
+    }
+    if (m_options.redirect == FetchOptions::Redirect::Manual) {
+        handler(RedirectionTriplet { WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse) });
         return;
     }
 
@@ -122,14 +130,20 @@ void NetworkLoadChecker::checkRedirection(ResourceResponse& redirectResponse, Re
     // See https://github.com/whatwg/fetch/issues/393
 
     if (++m_redirectCount > 20) {
-        handler(accessControlErrorForValidationHandler("Load cannot follow more than 20 redirections"_s));
+        handler(redirectionError(redirectResponse, "Load cannot follow more than 20 redirections"_s));
         return;
     }
 
     m_previousURL = WTFMove(m_url);
-    m_url = request.url();
+    m_url = redirectRequest.url();
 
-    checkRequest(WTFMove(request), client, WTFMove(handler));
+    checkRequest(WTFMove(redirectRequest), client, [handler = WTFMove(handler), request = WTFMove(request), redirectResponse = WTFMove(redirectResponse)](auto&& result) mutable {
+        if (!result.has_value()) {
+            handler(makeUnexpected(WTFMove(result.error())));
+            return;
+        }
+        handler(RedirectionTriplet { WTFMove(request), WTFMove(result.value()), WTFMove(redirectResponse) });
+    });
 }
 
 ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)

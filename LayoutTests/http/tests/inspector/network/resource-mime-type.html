@@ -30,12 +30,12 @@ function loadImageWithURL(url) {
 
 function loadXHRWithURL(url) {
     let xhr = new XMLHttpRequest;
-    xhr.open("GET", url, true);
+    xhr.open("GET", url + "?xhr", true);
     xhr.send();
 }
 
 function loadFetchWithURL(url) {
-    fetch(url);
+    fetch(url + "?fetch");
 }
 
 function test()

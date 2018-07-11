@@ -1,3 +1,24 @@
+2018-07-10  Youenn Fablet  <youenn@apple.com>
+
+        Make fetch() use "same-origin" credentials by default
+        https://bugs.webkit.org/show_bug.cgi?id=176023
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated tests.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeWith):
+        Setting credentials mode to same-origin for FetchRequest by default.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        Handle correctly referrer in case we restart a load.
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::entryStartTime):
+        (WebCore::entryEndTime):
+        In case it is not allowed to disclose resource timing info, update as
+        https://www.w3.org/TR/resource-timing-1/#performanceresourcetiming
+
 2018-07-10  Chris Dumez  <cdumez@apple.com>
 
         "serviceworker.js" is fetched several times in a row

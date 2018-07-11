@@ -54,11 +54,17 @@ static double monotonicTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, Monot
 
 static double entryStartTime(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
 {
+    if (!resourceTiming.allowTimingDetails())
+        return monotonicTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.loadTiming().fetchStart());
+
     return monotonicTimeToDOMHighResTimeStamp(timeOrigin, resourceTiming.loadTiming().startTime());
 }
 
 static double entryEndTime(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
 {
+    if (!resourceTiming.allowTimingDetails())
+        return entryStartTime(timeOrigin, resourceTiming);
+
     if (resourceTiming.networkLoadMetrics().isComplete()) {
         Seconds endTime = (resourceTiming.loadTiming().fetchStart() + resourceTiming.networkLoadMetrics().responseEnd) - timeOrigin;
         return Performance::reduceTimeResolution(endTime).milliseconds();

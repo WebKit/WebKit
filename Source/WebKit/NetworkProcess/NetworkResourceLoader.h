@@ -145,6 +145,7 @@ private:
 
     enum class FirstLoad { No, Yes };
     void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);
+    void restartNetworkLoad(WebCore::ResourceRequest&&);
     void continueDidReceiveResponse();
 
     enum class LoadResult {
@@ -210,6 +211,7 @@ private:
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
     std::unique_ptr<NetworkLoadChecker> m_networkLoadChecker;
+    bool m_shouldRestartLoad { false };
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
 };

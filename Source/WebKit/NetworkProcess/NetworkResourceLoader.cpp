@@ -581,39 +581,35 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
     if (m_networkLoadChecker) {
         m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
-        m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(redirectRequest), this, [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(), request = WTFMove(request), redirectResponse](auto&& result) mutable {
+        m_networkLoadChecker->checkRedirection(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), this, [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy()](auto&& result) mutable {
             if (!result.has_value()) {
                 if (result.error().isCancellation())
                     return;
-
-                if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
-                    this->didFinishWithRedirectResponse(WTFMove(redirectResponse));
-                    return;
-                }
 
                 this->didFailLoading(result.error());
                 return;
             }
 
-            if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
-                // We need to restart the load to update the session according the new credential policy.
-                if (m_networkLoad)
-                    m_networkLoad->cancel();
-                auto request = WTFMove(result.value());
-                m_networkLoadChecker->prepareRedirectedRequest(request);
-
-                this->startNetworkLoad(WTFMove(request), FirstLoad::No);
+            if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
+                this->didFinishWithRedirectResponse(WTFMove(result->redirectResponse));
                 return;
             }
 
             if (this->isSynchronous()) {
+                if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
+                    // We need to restart the load to update the session according the new credential policy.
+                    this->restartNetworkLoad(WTFMove(result->redirectRequest));
+                    return;
+                }
+
                 // We do not support prompting for credentials for synchronous loads. If we ever change this policy then
                 // we need to take care to prompt if and only if request and redirectRequest are not mixed content.
-                this->continueWillSendRequest(WTFMove(result.value()), false);
+                this->continueWillSendRequest(WTFMove(result->redirectRequest), false);
                 return;
             }
 
-            this->continueWillSendRedirectedRequest(WTFMove(request), WTFMove(result.value()), WTFMove(redirectResponse));
+            m_shouldRestartLoad = storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy();
+            this->continueWillSendRedirectedRequest(WTFMove(result->request), WTFMove(result->redirectRequest), WTFMove(result->redirectResponse));
         });
         return;
     }
@@ -649,8 +645,24 @@ ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceRespo
     return WTFMove(response);
 }
 
+void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newRequest)
+{
+    if (m_networkLoad)
+        m_networkLoad->cancel();
+    if (m_networkLoadChecker)
+        m_networkLoadChecker->prepareRedirectedRequest(newRequest);
+
+    startNetworkLoad(WTFMove(newRequest), FirstLoad::No);
+}
+
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
+    if (m_shouldRestartLoad) {
+        m_shouldRestartLoad = false;
+        restartNetworkLoad(WTFMove(newRequest));
+        return;
+    }
+
     if (m_networkLoadChecker) {
         // FIXME: We should be doing this check when receiving the redirection and not allow about protocol as per fetch spec.
         if (!newRequest.url().protocolIsInHTTPFamily() && !newRequest.url().isBlankURL() && m_redirectCount) {
