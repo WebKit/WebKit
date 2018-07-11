@@ -1,3 +1,12 @@
+2018-07-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip JSC test stress/keep-checks-when-converting-to-lazy-js-constant-in-strength-reduction.js
+        https://bugs.webkit.org/show_bug.cgi?id=187559
+
+        Unreviewed test gardening.
+
+        * stress/keep-checks-when-converting-to-lazy-js-constant-in-strength-reduction.js:
+
 2018-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Iterator of Array.keys() returns object in wrong order

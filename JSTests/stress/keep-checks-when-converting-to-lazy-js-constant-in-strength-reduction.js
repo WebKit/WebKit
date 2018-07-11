@@ -1,3 +1,4 @@
+//@ skip
 //@ runDefault("--jitPolicyScale=0", "--useConcurrentJIT=false")
 
 let bar;
