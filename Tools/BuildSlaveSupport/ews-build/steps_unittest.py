@@ -147,7 +147,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckStyle())
         self.setProperty('try-codebase', 'internal')
         self.setProperty('platform', 'mac')
-        self.setProperty('configuration', 'Debug')
+        self.setProperty('configuration', 'debug')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -162,7 +162,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckStyle())
         self.setProperty('try-codebase', 'foo')
         self.setProperty('platform', 'mac')
-        self.setProperty('configuration', 'Debug')
+        self.setProperty('configuration', 'debug')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -177,7 +177,7 @@ class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckStyle())
         self.setProperty('try-codebase', 'internal')
         self.setProperty('platform', 'mac')
-        self.setProperty('configuration', 'Debug')
+        self.setProperty('configuration', 'debug')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -199,7 +199,7 @@ Total errors found: 8 in 48 files''')
         self.setupStep(CheckStyle())
         self.setProperty('try-codebase', 'internal')
         self.setProperty('platform', 'mac')
-        self.setProperty('configuration', 'Debug')
+        self.setProperty('configuration', 'debug')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -215,7 +215,7 @@ Total errors found: 8 in 48 files''')
         self.setupStep(CheckStyle())
         self.setProperty('try-codebase', 'internal')
         self.setProperty('platform', 'mac')
-        self.setProperty('configuration', 'Debug')
+        self.setProperty('configuration', 'debug')
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -383,10 +383,10 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(CleanBuild())
         self.setProperty('fullPlatform', 'ios-11')
-        self.setProperty('configuration', 'Release')
+        self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/BuildSlaveSupport/clean-build', '--platform=ios-11', '--Release'],
+                        command=['python', 'Tools/BuildSlaveSupport/clean-build', '--platform=ios-11', '--release'],
                         )
             + 0,
         )
@@ -396,10 +396,10 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure(self):
         self.setupStep(CleanBuild())
         self.setProperty('fullPlatform', 'ios-simulator-11')
-        self.setProperty('configuration', 'Debug')
+        self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/BuildSlaveSupport/clean-build', '--platform=ios-simulator-11', '--Debug'],
+                        command=['python', 'Tools/BuildSlaveSupport/clean-build', '--platform=ios-simulator-11', '--debug'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
@@ -419,10 +419,10 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(CompileWebKit())
         self.setProperty('fullPlatform', 'ios-simulator-11')
-        self.setProperty('configuration', 'Release')
+        self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=["perl", "Tools/Scripts/build-webkit", '--Release'],
+                        command=["perl", "Tools/Scripts/build-webkit", '--release'],
                         )
             + 0,
         )
@@ -432,15 +432,61 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure(self):
         self.setupStep(CompileWebKit())
         self.setProperty('fullPlatform', 'mac-sierra')
-        self.setProperty('configuration', 'Debug')
+        self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=["perl", "Tools/Scripts/build-webkit", '--Debug'],
+                        command=["perl", "Tools/Scripts/build-webkit", '--debug'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        return self.runStep()
+
+
+class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CompileWebKitToT())
+        self.setProperty('fullPlatform', 'ios-simulator-11')
+        self.setProperty('configuration', 'release')
+        self.setProperty('patchFailedToBuild', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CompileWebKitToT())
+        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('patchFailedToBuild', True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                        )
+            + ExpectShell.log('stdio', stdout='1 error generated.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(CompileWebKitToT())
+        self.setProperty('fullPlatform', 'ios-simulator-11')
+        self.setProperty('configuration', 'release')
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='compiled (skipped)')
         return self.runStep()
 
 

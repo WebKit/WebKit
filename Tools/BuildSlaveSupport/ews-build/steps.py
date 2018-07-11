@@ -138,6 +138,7 @@ class CompileWebKit(shell.Compile):
     descriptionDone = ["compiled"]
     env = {'MFLAGS': ''}
     warningPattern = ".*arning: .*"
+    haltOnFailure = False
     command = ["perl", "Tools/Scripts/build-webkit", WithProperties("--%(configuration)s")]
 
     def start(self):
@@ -162,6 +163,23 @@ class CompileWebKit(shell.Compile):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
+
+    def evaluateCommand(self, cmd):
+        if cmd.didFail():
+            self.setProperty('patchFailedToBuild', True)
+
+        return super(CompileWebKit, self).evaluateCommand(cmd)
+
+
+class CompileWebKitToT(CompileWebKit):
+    name = 'compile-webkit-tot'
+    haltOnFailure = True
+
+    def doStepIf(self, step):
+        return self.getProperty('patchFailedToBuild')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
 
 
 class CompileJSCOnly(CompileWebKit):

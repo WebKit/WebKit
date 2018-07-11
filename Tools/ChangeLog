@@ -1,3 +1,19 @@
+ 2018-07-11  Aakash Jain  <aakash_jain@apple.com>
+ 
+        [ews-build] EWS should unapply the patch and build ToT when patch fails to build
+        https://bugs.webkit.org/show_bug.cgi?id=187358
+ 
+        Reviewed by Alexey Proskuryakov.
+ 
+        * BuildSlaveSupport/ews-build/factories.py:
+        (BuildFactory.__init__):
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit): Set haltOnFailure to false so as to run next steps (e.g.: un-apply patch, compile ToT).
+        (CompileWebKit.evaluateCommand): Set patchFailedToBuild property.
+        (CompileWebKitToT): Build ToT without patch.
+        (CompileWebKitToT.doStepIf): Run this step only if patch failed to build.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests. Also lower-cased Release and Debug.
+
 2018-07-11  Robin Morisset  <rmorisset@apple.com>
 
         [WSL] WIP, more of the spec

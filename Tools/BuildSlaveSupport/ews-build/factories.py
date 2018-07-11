@@ -63,6 +63,8 @@ class BuildFactory(Factory):
         self.addStep(KillOldProcesses())
         self.addStep(CleanBuild())
         self.addStep(CompileWebKit())
+        self.addStep(UnApplyPatchIfRequired())
+        self.addStep(CompileWebKitToT())
 
 
 class JSCTestsFactory(Factory):
