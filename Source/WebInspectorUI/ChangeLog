@@ -1,3 +1,19 @@
+2018-07-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r229932) Use of uninitialized value in subroutine entry at copy-user-interface-resources.pl
+        https://bugs.webkit.org/show_bug.cgi?id=187511
+
+        Reviewed by Brian Burg.
+
+        copy-user-interface-resources.pl output warning messages unless
+        BUILT_PRODUCTS_DIR and BUILT_PRODUCTS_DIR env vars are defined.
+
+        * Scripts/copy-user-interface-resources.pl:
+        (webInspectorUIAdditionsDir): Added. Return UNDEF if
+        BUILT_PRODUCTS_DIR and SDKROOT env vars aren't defined.
+        (combineOrStripResourcesForWebKitAdditions): Check
+        $webInspectorUIAdditionsDir is defined.
+
 2018-07-10  Ross Kirsling  <rkirsling@gmail.com>
 
         Web Inspector: Layers inspector should allow control-dragging to pan the 3D render

@@ -168,12 +168,7 @@ my $esprimaPath = File::Spec->catdir($uiRoot, 'External', 'Esprima');
 my $eslintPath = File::Spec->catdir($uiRoot, 'External', 'ESLint');
 my $threejsPath = File::Spec->catdir($uiRoot, 'External', 'three.js');
 
-my $webkitAdditionsDir;
-$webkitAdditionsDir = File::Spec->catdir($ENV{'BUILT_PRODUCTS_DIR'}, 'usr', 'local', 'include', 'WebKitAdditions');
-$webkitAdditionsDir = File::Spec->catdir($ENV{'SDKROOT'}, 'usr', 'local', 'include', 'WebKitAdditions') unless -d $webkitAdditionsDir;
-my $webInspectorUIAdditionsDir = File::Spec->catdir($webkitAdditionsDir, 'WebInspectorUI');
-
-debugLog("webkitAdditionsDir: $webkitAdditionsDir");
+$webInspectorUIAdditionsDir = &webInspectorUIAdditionsDir();
 
 my $codeMirrorLicense = readLicenseFile(File::Spec->catfile($codeMirrorPath, 'LICENSE'));
 my $esprimaLicense = readLicenseFile(File::Spec->catfile($esprimaPath, 'LICENSE'));
@@ -210,10 +205,27 @@ make_path($derivedSourcesDir);
 my $derivedSourcesMainHTML = File::Spec->catfile($derivedSourcesDir, 'Main.html');
 copy(File::Spec->catfile($uiRoot, 'Main.html'), File::Spec->catfile($derivedSourcesDir, 'Main.html')) or die "Copy failed: $!";
 
+sub webInspectorUIAdditionsDir() {
+    my $webkitAdditionsDir;
+    if (defined $ENV{'BUILT_PRODUCTS_DIR'}) {
+        $webkitAdditionsDir = File::Spec->catdir($ENV{'BUILT_PRODUCTS_DIR'}, 'usr', 'local', 'include', 'WebKitAdditions');
+        undef $webkitAdditionsDir unless -d $webkitAdditionsDir
+    }
+    if (!$webkitAdditionsDir and defined $ENV{'SDKROOT'}) {
+        $webkitAdditionsDir = File::Spec->catdir($ENV{'SDKROOT'}, 'usr', 'local', 'include', 'WebKitAdditions');
+        undef $webkitAdditionsDir unless -d $webkitAdditionsDir
+    }
+    return unless $webkitAdditionsDir;
+    debugLog("webkitAdditionsDir: $webkitAdditionsDir");
+    return File::Spec->catdir($webkitAdditionsDir, 'WebInspectorUI');
+}
+
 sub combineOrStripResourcesForWebKitAdditions() {
     my $combineWebKitAdditions = 0;
 
-    if (-d $webInspectorUIAdditionsDir) {
+    if (!defined $webInspectorUIAdditionsDir) {
+        debugLog("Didn't define \$webInspectorUIAdditionsDir");
+    } elsif (-d $webInspectorUIAdditionsDir) {
         $combineWebKitAdditions = 1;
         debugLog("Found $webInspectorUIAdditionsDir");
     } else {
