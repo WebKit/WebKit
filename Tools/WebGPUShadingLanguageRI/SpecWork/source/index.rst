@@ -64,6 +64,8 @@ The following strings are reserved keywords of the language:
 | Reserved for future extension | protocol auto                                                                   |
 +-------------------------------+---------------------------------------------------------------------------------+
 
+``null``, ``true`` and ``false`` are keywords, but they are considered literals in the grammar rules later.
+
 Similarily, the following elements of punctuation are valid tokens:
 
 +----------------------+-----------------------------------------------------------------------------------------------+
@@ -193,8 +195,7 @@ Then, we apply the following two rules:
 
 Complex variable declarations are also mere syntactic sugar.
 Several variable declarations separated by commas are the same as separating them with semicolons and repeating the type for each one.
-And a variable declaration with an initializer is the same as an uninitialized declaration, followed by an assignment of the corresponding value to this variable.
-These two transformations can always be done because variable declarations are only allowed inside blocks (and for loops, but these get desugared into a block, see above).
+This transformation can always be done because variable declarations are only allowed inside blocks (and for loops, but these get desugared into a block, see above).
 
 .. todo:: should I make the requirement that variableDecls only appear in blocks be part of the syntax, or should it just be part of the validation rules?
 
@@ -274,8 +275,8 @@ it can be done just by wrapping the expression in parentheses (see the last alte
 .. productionlist::
     constexpr: `Literal` | `Identifier` "." `Identifier`
 
-Static rules
-============
+Validation
+===========
 
 Phase 1: Gathering declarations
 -------------------------------
@@ -306,7 +307,7 @@ Typedefs and structs:
 
 Structs:
 
-- checking that structs have distinct names for different fields, and that the type of their fields are well-defined
+- checking that structs have distinct names for different fields, and that the type of their fields are well-defined (and non-void)
 
 Enums:
 
@@ -325,6 +326,7 @@ Functions:
 - check that operator.field= is only defined if operator.field is as well, and that they agree on their return type in that case.
 - check that operator[]= is only defined if operator[] is as well, and that they agree on their return type in that case.
 - check that all of the type parameters of each operator declaration/definition are inferrable from their arguments (and from its return type in the case of cast operators).
+- check that no argument is of type void
 - finally, check that the function body can only end with a return of the right type, or with Nothing if it is a void function
 
 Typing statements
@@ -337,6 +339,7 @@ Typing expressions
 - checking returns
 - check that every variable declaration is in a block or at the top-level
 - check that no variable declaration shadows another one at the same scope
+- check that no variable is declared of type void
 - check that switch statements treat all cases
 - check that every case in a switch statement ends in a terminator (fallthrough/break/return/continue/trap)
 - check that literals fit into the type they are stored into (optional?)
@@ -357,8 +360,88 @@ Dynamic rules
 Definitions
 -----------
 
+We split the semantics in two parts: a per-thread execution semantics that does not know anything about concurrency or the memory, and a global set of rules for
+loads, stores, barriers and the like.
+
+The per-thread semantics is a fairly classic small-step operational semantics, meaning that it describes what a list of possible transitions that the program can
+take in one step.
+The per-thread state is made of a few element:
+
+- The program being executed. Each transition transforms it.
+- A control-flow stack. This is a stack of values, which tracks whether we are in a branch, and is used by the rules for barriers to check that control-flow is uniform.
+- A (constant) environment. This is a mapping from variable names to values and is used to keep track of arguments and variables declared in the function.
+
+Each transition is a statement of the form "With environment :math:`\rho`, if some conditions are respected, the program may be transformed into the following, modifing
+the control-flow stack in the following way, and emitting the following memory events."
+
 Execution of statements
 -----------------------
+
+Blocks and variable declarations
+""""""""""""""""""""""""""""""""
+
+The program fragments that we use to define our semantics are richer than just the syntactically correct programs. In particular, we allow annotating blocks
+(sequences of statements between braces) with an environment.
+
+Here is how to reduce a block by one step:
+
+#. If the block is not annotated, annotate it with the environment
+#. If the first statement of the block is an empty block, remove it
+#. Else if the first statement of the block is a terminator (break, continue, fallthrough, return or trap), replace the entire block by it.
+#. Else if the first statement of the block is a variable declaration:
+
+   #. Make a new environment from the one that annotates the block, mapping the variable name to its store identifier.
+   #. If the variable declaration has an initializing expression that can be reduced, reduce it using the new environment
+   #. Else:
+
+      #. Change the annotation of the block to the new environment.
+      #. Emit a store to the store identifier of the declaration, of a value that is either the initializing value (if available) or the default value for the type (otherwise)
+      #. Remove this variable declaration from the block
+
+#. Else reduce the first statement of the block, using the environment that the block was annotated with (not the top-level environment)
+
+.. todo:: Specify this "default value for the type". It should be very simple (null for ptrs/refs, false for booleans, 0/0. for ints/floats, and the natural extension for arrays/structs).
+
+Branches
+""""""""
+
+We add another kind of statement: the ``Join(s)`` construct, that takes as argument another statement ``s``.
+
+Here is how to reduce a branch (if-then-else construct, remember that if-then is just syntactic sugar that was eliminated during parsing) by one step:
+
+#. If the expression in the if is ``true`` or ``false``.
+
+   #. Push that value on the control flow stack
+   #. Replace the branch by the statement in the then (for ``true``) or else (for ``false``) branch, wrapped in the ``Join`` construct
+
+#. Else reduce that expression
+
+Here is how to reduce a ``Join(s)`` statement:
+
+#. If the argument of the ``Join`` is a terminator (``break;``, ``continue;``, ``fallthrough;``, ``return e?;`` or ``trap;``) or an empty block
+
+   #. Pop the last value from the control flow stack
+   #. Replace the ``Join`` statement by its argument
+
+#. Else reduce its argument
+
+.. note:: Popping the last value from the control flow stack never fails, as a Join only appears when eliminating a branch, which pushes a value on it.
+
+Switches
+""""""""
+
+We add another kind of statement: the ``Cases(..)`` construct that takes as argument a sequence.
+
+Loops
+"""""
+
+Barriers and uniform control flow
+"""""""""""""""""""""""""""""""""
+
+Other
+"""""
+
+TODO: return reduce, and effectful expr.
 
 Execution of expressions
 ------------------------

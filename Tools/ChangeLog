@@ -1,3 +1,16 @@
+2018-07-11  Robin Morisset  <rmorisset@apple.com>
+
+        [WSL] WIP, more of the spec
+        https://bugs.webkit.org/show_bug.cgi?id=186310
+
+        Rubberstamped by Filip Pizlo.
+
+        Fixed a few issues with the formal rules (such as adding the restrictions on pointers for compilation to SpirV),
+        and started writing some of the english in the spec.
+
+        * WebGPUShadingLanguageRI/SpecWork/WSL.ott:
+        * WebGPUShadingLanguageRI/SpecWork/source/index.rst:
+
 2018-07-10  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add build step to UnApply patch

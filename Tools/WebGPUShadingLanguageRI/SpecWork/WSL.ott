@@ -28,6 +28,7 @@ s :: stmt_ ::= {{com statement}}
     | { blockAnnot s0 .. sn } :: :: block
     | e ; :: :: effectful_expr
     | tval x : sid ; :: :: resolved_vdecl {{com post-monomorphisation variable declaration}}
+    | tval x : sid = e ; :: :: resolved_init_vdecl {{com post-monomorphisation}}
     | Loop ( s , s' ) :: :: loop_construct {{com Special, only during execution}}
     | Cases ( s0 , .. , sn ) :: :: cases_construct {{com Special, only during execution}}
     | Join ( s ) :: :: join_construct {{com Special, only during execution}}
@@ -132,18 +133,18 @@ B :: behaviour_ ::= {{com statement behaviour}}
     | ( B ) :: :: parens
 
 b :: single_behaviour_ ::=
-    | Return t :: :: return
+    | Return tval :: :: return
     | Break :: :: break
     | Continue :: :: continue
     | Fallthrough :: :: fallthrough
     | Nothing :: :: Nothing
 
 t {{tex \tau}} :: type_ ::= {{com type}}
-    | LVal ( tval ) :: :: lval {{com left value}}
+    | LVal ( tval , addressSpace ) :: :: lval {{com left value}}
     | tval :: :: tval
 tval {{tex {\tau^{val} } }} :: type_value_ ::=
-    | Ptr ( tval ) :: :: ptr {{com pointer}}
-    | Ref ( tval ) :: :: array_ref {{com array reference}}
+    | Ptr ( tval , addressSpace ) :: :: ptr {{com pointer}}
+    | Ref ( tval , addressSpace ) :: :: array_ref {{com array reference}}
     | [ tval ] :: :: array {{com array}}
     | bool :: :: bool
     | uint32 :: :: uint32 {{tex \textbf{uint32} }}
@@ -154,7 +155,7 @@ tx {{tex {\tau^{syntax} } }} :: type_syntactic_ ::= {{com syntactic type}}
     | tx * addressSpace :: :: ptr
     | tx [] addressSpace :: :: array_ref 
     | tx [ i ] :: :: array_fixed_size
-addressSpace :: address_space_ ::=
+addressSpace, as :: address_space_ ::=
     | thread :: :: thread
     | threadgroup :: :: threadgroup
     | device :: :: device
@@ -214,6 +215,8 @@ formula :: formula_ ::=
     | G |- isIntegerOrEnum ( t ) :: :: is_integer
     | G |- sc0 .. scn fully covers t :: :: full_switch_coverage % TODO: make it explicit
     | s != s' :: :: stmt_not_eq {{tex [[s]] \neq [[s']]}}
+    | tval != tval' :: :: tval_not_eq {{tex [[tval]] \neq [[tval']]}}
+    | as != as' :: :: address_space_not_eq {{tex [[as]] \neq [[as']]}}
     | b in B :: :: behaviour_in {{tex [[b]] \in [[B]]}}
     | b not in B :: :: behaviour_not_in {{tex [[b]] \not\in [[B]]}}
     | G = G' :: :: typing_env_eq
@@ -324,11 +327,11 @@ G |- tx : tval :: :: syntax :: '' {{com Evaluating types}} {{tex [[G]] [[|-]] [[
 
     G |- tx : tval
     ---------------------------------------- :: ref
-    G |- tx [] addressSpace : Ref(tval)
+    G |- tx [] addressSpace : Ref(tval, addressSpace)
 
     G |- tx : tval
     --------------------------------------- :: ptr
-    G |- tx * addressSpace : Ptr(tval)
+    G |- tx * addressSpace : Ptr(tval, addressSpace)
 
 defns
 well_formed :: '' ::=
@@ -341,7 +344,7 @@ G |- well_formed ( td ) :: :: top_level :: '' by
     G |- well_formed(tx f<()>() {s0..sn})
 
     G |- tx0 : tval
-    G[x0 -> LVal(tval)] |- well_formed (tx f<()>(tx1 x1, .., txm xm) {s0..sn})
+    G[x0 -> LVal(tval, thread)] |- well_formed (tx f<()>(tx1 x1, .., txm xm) {s0..sn})
     -------------------------------------------------------------------- :: func_param
     G |- well_formed (tx f<()>(tx0 x0, tx1 x1, .., txm xm) {s0..sn})
 
@@ -367,22 +370,31 @@ G |- s : B :: :: typing_statement :: '' {{com Validating statements' behaviours}
     G |- e : bool
     G |- s : B
     G |- s' : B'
+    Return Ptr(tval, as) not in B
+    Return Ptr(tval, as) not in B'
+    Return Ref(tval, as) not in B
+    Return Ref(tval, as) not in B'
     ------------------------------ :: if
     G |- if (e) s else s' : B + B'
+    % The last 4 premises are useful for compiling to SpirV
 
     G |- e : bool
     G |- s : B
+    Return Ptr(tval, as) not in B
+    Return Ref(tval, as) not in B
     ---------------------------------------------------------- :: do_while
     G |- do s while (e); : (B \ {Break, Continue}) + {Nothing}
     % Note: we could make this rule a bit more precise in the cases where we know that s always return/trap/break.. but such a piece of code is almost certainly a bug.
 
-    G |- e : t
-    G |- isIntegerOrEnum(t)
-    G |- sc0: t /\ .. /\ G |- scn: t
-    G |- sc0 .. scn fully covers t
+    G |- e : tval
+    G |- isIntegerOrEnum(tval)
+    G |- sc0: tval /\ .. /\ G |- scn: tval
+    G |- sc0 .. scn fully covers tval
     G |- sblock0: B0 /\ .. /\ G |- sblockn: Bn
-    Nothing not in B0 /\ .. /\  Nothing not in Bn
     B = U B0 .. Bn
+    Nothing not in B
+    Return Ptr(tval, as) not in B
+    Return Ref(tval, as) not in B
     --------------------------------------------------------------------------- :: switch
     G |- switch (e) {sc0: sblock0 .. scn : sblockn } : B \ {Break, Fallthrough}
 
@@ -395,30 +407,40 @@ G |- s : B :: :: typing_statement :: '' {{com Validating statements' behaviours}
     --------------------------------- :: fallthrough
     G |- fallthrough; : {Fallthrough}
 
-    G |- e : t
-    --------------------------- :: return
-    G |- return e; : {Return t}
+    G |- e : tval
+    ------------------------------ :: return
+    G |- return e; : {Return tval}
 
     ----------------------------- :: return_void
     G |- return ; : {Return void}
 
-    ----------------------- :: trap
-    G |- trap; : {Return t}
+    -------------------------- :: trap
+    G |- trap; : {Return tval}
 
     ------------------- :: empty_block
     G |- {} : {Nothing}
 
     G[x -> Nothing] |- tx : tval
-    G[x -> LVal(tval)] |- {s0 .. sn} : B
+    tval != Ptr(tval', as)
+    G[x -> LVal(tval, thread)] |- {s0 .. sn} : B
     s0 != tx' x; /\../\ sn != tx' x;
-    --------------------------------- :: variable_decl
+    s0 != tx' x = e'; /\../\ sn != tx' x = e';
+    -------------------------------------------- :: variable_decl
     G |- {tx x; s0 .. sn} : B
     % Note: we remove x from the environment before reducing tx, to avoid a situation where x is required in the definition of tx, which gets rather weird with multiple declarations
     % (see email from 20/06/2018).
-    % Note: there is a minor ambiguity between this rule and the next two, but it is harmless as the next two rules both fail in the next step
+    % TODO: we can maybe put types in a different namespace instead.
     % if they are applied where s is a variable declaration.
-    % Note: the second premise prevents redeclaration of a variable in the same scope it was declared in.
+    % Note: the last two premises prevent redeclaration of a variable in the same scope it was declared in.
     % Implemented naively it takes O(n**2) to check, but can easily be optimized.
+
+    G[x -> Nothing] |- tx : tval
+    G[x -> LVal(tval, thread)] |- e : tval
+    G[x -> LVal(tval, thread)] |- {s0 .. sn} : B
+    s0 != tx' x; /\../\ sn != tx' x;
+    s0 != tx' x = e'; /\../\ sn != tx' x = e';
+    -------------------------------------------- :: variable_decl_init
+    G |- {tx x = e; s0 .. sn} : B
 
     G |- s : B
     ------------ :: trivial_block
@@ -427,24 +449,26 @@ G |- s : B :: :: typing_statement :: '' {{com Validating statements' behaviours}
     G |- s : B
     G |- {s1 .. sn} : B'
     n > 0
+    Fallthrough not in B
     Nothing in B
     -------------------------------------- :: block
     G |- {s s1 .. sn} : (B \ {Nothing}) + B'
     % Note: the last premise forbids trivially dead code. It is optional and could be removed with no consequences on the rest of the language.
+    % Note: the penultimate premise makes it a bit easier to compile to MSL, could be relaxed in future versions of the language.
 
     G |- e : t
     ------------------- :: expr
     G |- e; : {Nothing}
 
 defn
-G |- sc : t :: :: typing_switch_case :: '' by
+G |- sc : tval :: :: typing_switch_case :: '' by
 
-    G |- rval : t
-    --------------- :: case
-    G |- case rval : t
+    G |- rval : tval
+    --------------------- :: case
+    G |- case rval : tval
 
-    ---------------- :: default
-    G |- default : t
+    ------------------- :: default
+    G |- default : tval
 
 defn
 G |- sblock : B :: :: typing_switch_block :: '' by
@@ -455,11 +479,12 @@ G |- sblock : B :: :: typing_switch_block :: '' by
 
 defn
 G |- e : t :: :: typing_expr :: '' {{com Typing expressions}} by
-    ------------------- :: null_lit_array_ref
-    G |- null : Ref (tval)
 
-    ------------------- :: null_lit_ptr
-    G |- null : Ptr (tval)
+    -------------------------- :: null_lit_array_ref
+    G |- null : Ref (tval, as)
+
+    -------------------------- :: null_lit_ptr
+    G |- null : Ptr (tval, as)
 
     ---------------- :: literal_true
     G |- true : bool
@@ -496,42 +521,43 @@ G |- e : t :: :: typing_expr :: '' {{com Typing expressions}} by
     -------------- :: not
     G |- !e : bool
 
-    G |- e : LVal(tval)
+    G |- e : LVal(tval, as)
     G |- e' : tval
-    ----------------- :: assignment
+    as != constant
+    ----------------------- :: assignment
     G |- e = e' : tval
 
     x -> t in G
     ----------- :: variable_name
     G |- x : t
 
-    G |- e : LVal(tval)
-    ---------------- :: lval_access
+    G |- e : LVal(tval, as)
+    ----------------------- :: lval_access
     G |- e : tval
 
-    G |- e : LVal(tval)
-    ---------------- :: address_taking
-    G |- &e : Ptr(tval)
+    G |- e : LVal(tval, as)
+    ----------------------- :: address_taking
+    G |- &e : Ptr(tval, as)
     % can the unary operator & be overloaded?
     % It seems that no
 
-    G |- e : Ptr(tval)
-    ----------------- :: ptr_deref
-    G |- *e : LVal(tval)
+    G |- e : Ptr(tval, as)
+    ------------------------ :: ptr_deref
+    G |- *e : LVal(tval, as)
     % can the unary operator * be overloaded?
     % It seems that no
 
     % Note: We currently do not have any special interaction between pointers and array references in these rules
     
-    G |- e : LVal(tval)
-    ---------------- :: take_ref_lval
-    G |- @e : Ref(tval)
+    G |- e : LVal(tval, as)
+    ------------------------ :: take_ref_lval
+    G |- @e : Ref(tval, as)
     % Note: in the execution rules, the behaviour depends on whether that LVal points to an array, but here we don't need to track it.
 
-    G |- e : LVal([tval])
+    G |- e : LVal([tval], as)
     G |- e' : uint32
-    -------------------- :: array_index_lval
-    G |- e[e'] : LVal(tval)
+    --------------------------- :: array_index_lval
+    G |- e[e'] : LVal(tval, as)
 
     G |- e : [tval]
     G |- e' : uint32
@@ -542,10 +568,10 @@ G |- e : t :: :: typing_expr :: '' {{com Typing expressions}} by
     % TODO: should we refuse during validation the case where e' is a constant that falls out of the bounds of e ?
     % I think it should be an allowed behaviour but not required of the implementation.
 
-    G |- e : Ref(tval)
+    G |- e : Ref(tval, as)
     G |- e' : uint32
-    -------------------- :: array_ref_index
-    G |- e[e'] : LVal(tval)
+    --------------------------- :: array_ref_index
+    G |- e[e'] : LVal(tval, as)
 
     G |- e0 : tval0 /\../\ G |- en : tvaln
     x -> Func{sig0, .., sigk} in G
@@ -725,6 +751,14 @@ R |- s -> s' ; E ; S :: :: exec_stmt :: '' {{com Small-step reduction on stateme
     rv = Default(tval)
     ------------------------------------------------------------ :: block_vdecl
     Rout |- {R tval x : sid; s1..sn} -> {R' s1..sn} ; sid <- rv;
+
+    R[x -> LVal(sid)] |- e -> e';;
+    ------------------------------------------------------------ :: block_vdecl_init_reduce
+    Rout |- {R tval x : sid = e; s1..sn} -> {R tval x : sid = e'; s1..sn} ;;
+
+    R' = R[x -> LVal(sid)]
+    ------------------------------------------------------------ :: block_vdecl_init_complete
+    Rout |- {R tval x : sid = rv; s1..sn} -> {R' s1..sn} ; sid <- rv;
 
     R |- e -> e' ; E ; S
     ---------------------- :: effectful_expr_reduce
