@@ -37,6 +37,7 @@
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactory.h"
+#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <Commctrl.h>
@@ -219,6 +220,16 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     ASSERT(m_isVisible == static_cast<bool>(::GetWindowLong(m_window, GWL_STYLE) & WS_VISIBLE));
 
     auto pageConfiguration = configuration.copy();
+    auto* preferences = pageConfiguration->preferences();
+    if (!preferences && pageConfiguration->pageGroup()) {
+        preferences = &pageConfiguration->pageGroup()->preferences();
+        pageConfiguration->setPreferences(preferences);
+    }
+    if (preferences) {
+        // Disable accelerated compositing until it is supported.
+        preferences->setAcceleratedCompositingEnabled(false);
+    }
+
     WebProcessPool* processPool = pageConfiguration->processPool();
     m_page = processPool->createWebPage(*m_pageClient, WTFMove(pageConfiguration));
     m_page->initializeWebPage();
