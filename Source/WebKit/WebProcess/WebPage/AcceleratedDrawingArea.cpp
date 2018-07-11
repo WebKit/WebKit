@@ -151,7 +151,10 @@ void AcceleratedDrawingArea::setPaintingEnabled(bool paintingEnabled)
 
 void AcceleratedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 {
-    m_webPage.corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
+    Settings& settings = m_webPage.corePage()->settings();
+    bool forceCompositiongMode = store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey());
+    settings.setForceCompositingMode(forceCompositiongMode);
+    settings.setAcceleratedCompositingForFixedPositionEnabled(forceCompositiongMode);
     if (!m_layerTreeHost)
         enterAcceleratedCompositingMode(nullptr);
 }
