@@ -911,10 +911,10 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
     if (strippedHeader.isEmpty())
         return CrossOriginResourcePolicy::None;
 
-    if (equalLettersIgnoringASCIICase(strippedHeader, "same-origin"))
+    if (strippedHeader == "same-origin")
         return CrossOriginResourcePolicy::SameOrigin;
 
-    if (equalLettersIgnoringASCIICase(strippedHeader, "same-site"))
+    if (strippedHeader == "same-site")
         return CrossOriginResourcePolicy::SameSite;
 
     return CrossOriginResourcePolicy::Invalid;

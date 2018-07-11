@@ -1,3 +1,22 @@
+2018-07-11  Youenn Fablet  <youenn@apple.com>
+
+        Fix remaining Cross-Origin-Resource-Policy failures, if any
+        https://bugs.webkit.org/show_bug.cgi?id=186761
+        <rdar://problem/41209829>
+
+        Reviewed by Alex Christensen.
+
+        Add case-sensitive check for CORP header value, as per fetch specification.
+        Add HTTP->HTTPS check for same-site case, as per fetch specification.
+        https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check
+
+        Test: imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.https.window.html
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::shouldCrossOriginResourcePolicyCancelLoad):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseCrossOriginResourcePolicyHeader):
+
 2018-07-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] MIME type registry doesn't explicitly recognize *.xht

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1489: The page at https://localhost:9443/fetch/cross-origin-resource-policy/scheme-restriction.https.window.html was allowed to display insecure content from http://localhost:8800/fetch/cross-origin-resource-policy/resources/image.py?corp=same-site.
+
+
+PASS Cross-Origin-Resource-Policy does not block Mixed Content <img> 
+

@@ -1,3 +1,24 @@
+2018-07-11  Youenn Fablet  <youenn@apple.com>
+
+        Fix remaining Cross-Origin-Resource-Policy failures, if any
+        https://bugs.webkit.org/show_bug.cgi?id=186761
+        <rdar://problem/41209829>
+
+        Reviewed by Alex Christensen.
+
+        Fixed some tests for correctness.
+
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch-in-service-worker-expected.txt:
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch.any-expected.txt:
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch.any.js:
+        (promise_test):
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch.any.worker-expected.txt:
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.https.window-expected.txt: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.https.window.html: Added.
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.https.window.js:
+        * web-platform-tests/fetch/cross-origin-resource-policy/syntax.any-expected.txt:
+        * web-platform-tests/fetch/cross-origin-resource-policy/syntax.any.worker-expected.txt:
+
 2018-07-10  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make WPT test at interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html pass reliably

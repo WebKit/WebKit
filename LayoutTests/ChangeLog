@@ -1,3 +1,29 @@
+2018-07-11  Youenn Fablet  <youenn@apple.com>
+
+        Fix remaining Cross-Origin-Resource-Policy failures, if any
+        https://bugs.webkit.org/show_bug.cgi?id=186761
+        <rdar://problem/41209829>
+
+        Reviewed by Alex Christensen.
+
+        Remove redundant tests with WPT.
+
+        * http/wpt/cross-origin-resource-policy/fetch-expected.txt: Removed.
+        * http/wpt/cross-origin-resource-policy/fetch-in-iframe-expected.txt: Removed.
+        * http/wpt/cross-origin-resource-policy/fetch-in-iframe.html: Removed.
+        * http/wpt/cross-origin-resource-policy/fetch.html: Removed.
+        * http/wpt/cross-origin-resource-policy/iframe-loads-expected.txt: Removed.
+        * http/wpt/cross-origin-resource-policy/iframe-loads.html: Removed.
+        * http/wpt/cross-origin-resource-policy/image-loads-expected.txt: Removed.
+        * http/wpt/cross-origin-resource-policy/image-loads.html: Removed.
+        * http/wpt/cross-origin-resource-policy/resources/hello.py: Removed.
+        * http/wpt/cross-origin-resource-policy/resources/iframe.py: Removed.
+        * http/wpt/cross-origin-resource-policy/resources/iframeFetch.html: Removed.
+        * http/wpt/cross-origin-resource-policy/resources/redirect.py: Removed.
+        * http/wpt/cross-origin-resource-policy/resources/script.py: Removed.
+        * http/wpt/cross-origin-resource-policy/script-loads-expected.txt: Removed.
+        * http/wpt/cross-origin-resource-policy/script-loads.html: Removed.
+
 2018-07-11  Jer Noble  <jer.noble@apple.com>
 
         Disable all network caching for HLS streams.

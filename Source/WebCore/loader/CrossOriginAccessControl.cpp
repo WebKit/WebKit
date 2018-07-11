@@ -212,21 +212,22 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(const SecurityOrigi
         return false;
 
     auto policy = parseCrossOriginResourcePolicyHeader(response.httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy));
-    switch (policy) {
-    case CrossOriginResourcePolicy::None:
-    case CrossOriginResourcePolicy::Invalid:
-        return false;
-    case CrossOriginResourcePolicy::SameOrigin:
-        return true;
-    case CrossOriginResourcePolicy::SameSite: {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-        return origin.isUnique() || !registrableDomainsAreEqual(response.url(), ResourceRequest::partitionName(origin.host()));
-#else
-        return true;
-#endif
-    }}
 
-    RELEASE_ASSERT_NOT_REACHED();
+    if (policy == CrossOriginResourcePolicy::SameOrigin)
+        return true;
+
+    if (policy == CrossOriginResourcePolicy::SameSite) {
+        if (origin.isUnique())
+            return true;
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+        if (!registrableDomainsAreEqual(response.url(), ResourceRequest::partitionName(origin.host())))
+            return true;
+#endif
+        if (origin.protocol() == "http" && response.url().protocol() == "https")
+            return true;
+    }
+
+    return false;
 }
 
 std::optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin& origin, const URL& requestURL, const ResourceResponse& response)
