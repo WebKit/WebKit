@@ -1184,6 +1184,9 @@ webkit.org/b/187041 imported/mozilla/css-animations/test_animation-pausing.html 
 # Requires support for testing text replacement
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
 
+# Depends on mac-specific code in TestController.
+webkit.org/b/187550 http/tests/plugins/plugin-allow-then-reload.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

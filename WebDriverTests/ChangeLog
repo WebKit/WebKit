@@ -1,3 +1,15 @@
+2018-07-11  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=187551
+
+        Unreviewed gardening.
+
+        * TestExpectations.json:
+          - imported/selenium/py/test/selenium/webdriver/common: fixed in r233548
+          - imported/w3c/webdriver/tests/actions/key.py: fixed in r233499
+          - imported/w3c/webdriver/tests/actions/special_keys.py: properly escape test names
+
 2018-06-27  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Update expectations for WebDriver tests.
