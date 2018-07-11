@@ -1,3 +1,15 @@
+2018-07-10  Mark Lam  <mark.lam@apple.com>
+
+        constructArray() should always allocate the requested length.
+        https://bugs.webkit.org/show_bug.cgi?id=187543
+        <rdar://problem/41947884>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-187543-2.js: Added.
+        * stress/regress-187543-3.js: Added.
+        * stress/regress-187543.js: Added.
+
 2018-07-10  Keith Miller  <keith_miller@apple.com>
 
         hasOwnProperty returns true for out of bounds property index on TypedArray

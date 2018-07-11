@@ -80,6 +80,8 @@ public:
         return tryCreateUninitializedRestricted(scope, nullptr, structure, initialLength);
     }
 
+    static void eagerlyInitializeButterfly(ObjectInitializationScope&, JSArray*, unsigned initialLength);
+
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool throwException);
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);

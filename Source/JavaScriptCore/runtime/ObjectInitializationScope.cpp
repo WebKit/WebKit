@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,16 @@ void ObjectInitializationScope::notifyAllocated(JSObject* object, bool wasCreate
         m_object = object;
     } else
         verifyPropertiesAreInitialized(object);
+}
+
+void ObjectInitializationScope::notifyInitialized(JSObject* object)
+{
+    if (m_object) {
+        m_disallowGC.disable();
+        m_disallowVMReentry.disable();
+        m_object = nullptr;
+    }
+    verifyPropertiesAreInitialized(object);
 }
 
 void ObjectInitializationScope::verifyPropertiesAreInitialized(JSObject* object)

@@ -48,7 +48,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
     VM& vm = scope.vm();
 
     if (UNLIKELY(initialLength > MAX_STORAGE_VECTOR_LENGTH))
-        return 0;
+        return nullptr;
 
     unsigned outOfLineStorage = structure->outOfLineCapacity();
     Butterfly* butterfly;
@@ -78,6 +78,9 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
                 butterfly->contiguous().atUnsafe(i).clear();
         }
     } else {
+        ASSERT(
+            indexingType == ArrayWithSlowPutArrayStorage
+            || indexingType == ArrayWithArrayStorage);
         static const unsigned indexBias = 0;
         unsigned vectorLength = ArrayStorage::optimalVectorLength(indexBias, structure, initialLength);
         void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
@@ -101,6 +104,34 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
     const bool createUninitialized = true;
     scope.notifyAllocated(result, createUninitialized);
     return result;
+}
+
+void JSArray::eagerlyInitializeButterfly(ObjectInitializationScope& scope, JSArray* array, unsigned initialLength)
+{
+    Structure* structure = array->structure(scope.vm());
+    IndexingType indexingType = structure->indexingType();
+    Butterfly* butterfly = array->butterfly();
+
+    // This function only serves as a companion to tryCreateUninitializedRestricted()
+    // in the event that we really can't defer initialization of the butterfly after all.
+    // tryCreateUninitializedRestricted() already initialized the elements between
+    // initialLength and vector length. We just need to do 0 - initialLength.
+    // ObjectInitializationScope::notifyInitialized() will verify that all elements are
+    // initialized.
+    if (LIKELY(!hasAnyArrayStorage(indexingType))) {
+        if (hasDouble(indexingType)) {
+            for (unsigned i = 0; i < initialLength; ++i)
+                butterfly->contiguousDouble().atUnsafe(i) = PNaN;
+        } else {
+            for (unsigned i = 0; i < initialLength; ++i)
+                butterfly->contiguous().atUnsafe(i).clear();
+        }
+    } else {
+        ArrayStorage* storage = butterfly->arrayStorage();
+        for (unsigned i = 0; i < initialLength; ++i)
+            storage->m_vector[i].clear();
+    }
+    scope.notifyInitialized(array);
 }
 
 void JSArray::setLengthWritable(ExecState* exec, bool writable)
@@ -1340,28 +1371,20 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
 
 inline JSArray* constructArray(ObjectInitializationScope& scope, Structure* arrayStructure, unsigned length)
 {
-    // FIXME: We only need this for subclasses of Array because we might need to allocate a new structure to change
-    // indexing types while initializing. If this triggered a GC then we might scan our currently uninitialized
-    // array and crash. https://bugs.webkit.org/show_bug.cgi?id=186811
-    JSArray* array;
-    if (arrayStructure->globalObject()->isOriginalArrayStructure(arrayStructure))
-        array = JSArray::tryCreateUninitializedRestricted(scope, arrayStructure, length);
-    else {
-        array = JSArray::create(scope.vm(), arrayStructure, length);
-
-        // Our client will initialize the storage using initializeIndex() up to
-        // length values, and expects that we've already set m_numValuesInVector
-        // to length. This matches the behavior of tryCreateUninitializedRestricted().
-        IndexingType indexingType = arrayStructure->indexingType();
-        if (UNLIKELY(hasAnyArrayStorage(indexingType)))
-            array->butterfly()->arrayStorage()->m_numValuesInVector = length;
-    }
+    JSArray* array = JSArray::tryCreateUninitializedRestricted(scope, arrayStructure, length);
 
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
     // function will correctly handle an exception being thrown from here.
     // https://bugs.webkit.org/show_bug.cgi?id=169786
     RELEASE_ASSERT(array);
+
+    // FIXME: We only need this for subclasses of Array because we might need to allocate a new structure to change
+    // indexing types while initializing. If this triggered a GC then we might scan our currently uninitialized
+    // array and crash. https://bugs.webkit.org/show_bug.cgi?id=186811
+    if (!arrayStructure->globalObject()->isOriginalArrayStructure(arrayStructure))
+        JSArray::eagerlyInitializeButterfly(scope, array, length);
+
     return array;
 }
 

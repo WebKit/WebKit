@@ -1532,7 +1532,7 @@ char* JIT_OPERATION operationNewArrayWithSizeAndHint(ExecState* exec, Structure*
         result = JSArray::createWithButterfly(vm, nullptr, arrayStructure, butterfly);
     else {
         result = JSArray::tryCreate(vm, arrayStructure, size, vectorLengthHint);
-        ASSERT(result);
+        RELEASE_ASSERT(result);
     }
     return bitwise_cast<char*>(result);
 }

@@ -1269,7 +1269,7 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
         type = first->indexingType();
 
     Structure* resultStructure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(type);
-    JSArray* result = JSArray::create(vm, resultStructure, resultSize);
+    JSArray* result = JSArray::tryCreate(vm, resultStructure, resultSize);
     if (UNLIKELY(!result)) {
         throwOutOfMemoryError(exec, scope);
         return encodedJSValue();

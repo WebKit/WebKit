@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ public:
 
     ALWAYS_INLINE VM& vm() const { return m_vm; }
     ALWAYS_INLINE void notifyAllocated(JSObject*, bool) { }
+    ALWAYS_INLINE void notifyInitialized(JSObject*) { }
 
 private:
     VM& m_vm;
@@ -57,6 +58,7 @@ public:
 
     VM& vm() const { return m_vm; }
     void notifyAllocated(JSObject*, bool wasCreatedUninitialized);
+    void notifyInitialized(JSObject*);
 
 private:
     void verifyPropertiesAreInitialized(JSObject*);

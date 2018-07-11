@@ -1,3 +1,43 @@
+2018-07-10  Mark Lam  <mark.lam@apple.com>
+
+        constructArray() should always allocate the requested length.
+        https://bugs.webkit.org/show_bug.cgi?id=187543
+        <rdar://problem/41947884>
+
+        Reviewed by Saam Barati.
+
+        Currently, it does not when we're having a bad time.  We fix this by switching
+        back to using tryCreateUninitializedRestricted() exclusively in constructArray().
+        If we detect that a structure transition is possible before we can initialize
+        the butterfly, we'll go ahead and eagerly initialize the rest of the butterfly.
+        We will introduce JSArray::eagerlyInitializeButterfly() to handle this.
+
+        Also enhanced the DisallowScope and ObjectInitializationScope to support this
+        eager initialization when needed.
+
+        * dfg/DFGOperations.cpp:
+        - the client of operationNewArrayWithSizeAndHint() (in FTL generated code) expects
+          the array allocation to always succeed.  Adding this RELEASE_ASSERT here makes
+          it clearer that we encountered an OutOfMemory condition instead of failing in FTL
+          generated code, which will appear as a generic null pointer dereference.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::concatAppendOne):
+        - the code here clearly wants to check for an allocation failure.  Switched to
+          using JSArray::tryCreate() instead of JSArray::create().
+
+        * runtime/DisallowScope.h:
+        (JSC::DisallowScope::disable):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::eagerlyInitializeButterfly):
+        (JSC::constructArray):
+        * runtime/JSArray.h:
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::notifyInitialized):
+        * runtime/ObjectInitializationScope.h:
+        (JSC::ObjectInitializationScope::notifyInitialized):
+
 2018-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove getTypedArrayImpl
