@@ -1,3 +1,14 @@
+2018-07-11  Jer Noble  <jer.noble@apple.com>
+
+        Disable all network caching for HLS streams.
+        https://bugs.webkit.org/show_bug.cgi?id=187544
+        <rdar://problem/41863600>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/cache/disk-cache/disk-cache-media-small-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-media-small.html:
+
 2018-07-11  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Unreviewed test gardening

@@ -1,3 +1,18 @@
+2018-07-11  Jer Noble  <jer.noble@apple.com>
+
+        Disable all network caching for HLS streams.
+        https://bugs.webkit.org/show_bug.cgi?id=187544
+        <rdar://problem/41863600>
+
+        Reviewed by Chris Dumez.
+
+        Revert the behavior added in r215263 where Media responses are cached if they are from
+        a resource whose expected content length is <4MB.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeStoreDecision):
+        (WebKit::NetworkCache::expectedTotalResourceSizeFromContentRange): Deleted.
+
 2018-07-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] AC for fixed-position elements is not enabled

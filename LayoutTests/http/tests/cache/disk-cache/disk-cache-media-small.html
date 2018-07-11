@@ -43,7 +43,7 @@ async function test() {
     logResponses(await loadTestMedia(), "Network");
 
     logdiv.innerHTML += "Second Load<br>";
-    logResponses(await loadTestMedia(), "Disk cache");
+    logResponses(await loadTestMedia(), "Network");
 
     testRunner.notifyDone();
 }

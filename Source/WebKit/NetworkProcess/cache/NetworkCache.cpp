@@ -225,33 +225,6 @@ static bool isMediaMIMEType(const String& type)
     return startsWithLettersIgnoringASCIICase(type, "video/") || startsWithLettersIgnoringASCIICase(type, "audio/");
 }
 
-static std::optional<size_t> expectedTotalResourceSizeFromContentRange(const WebCore::ResourceResponse& response)
-{
-    ASSERT(response.httpStatusCode() == 206);
-
-    auto contentRange = response.httpHeaderField(WebCore::HTTPHeaderName::ContentRange);
-    if (contentRange.isNull())
-        return { };
-
-    if (!contentRange.startsWith("bytes "))
-        return { };
-
-    auto slashPosition = contentRange.find('/');
-    if (slashPosition == notFound)
-        return { };
-
-    auto sizeStringLength = contentRange.length() - slashPosition - 1;
-    if (!sizeStringLength)
-        return { };
-
-    bool isValid;
-    auto size = StringView(contentRange).right(sizeStringLength).toIntStrict(isValid);
-    if (!isValid)
-        return { };
-
-    return size;
-}
-
 static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, size_t bodySize)
 {
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP())
@@ -286,25 +259,15 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
             return StoreDecision::NoDueToUnlikelyToReuse;
     }
 
+    // Media loaded via XHR is likely being used for MSE streaming (YouTube and Netflix for example).
     // Streaming media fills the cache quickly and is unlikely to be reused.
     // FIXME: We should introduce a separate media cache partition that doesn't affect other resources.
     // FIXME: We should also make sure make the MSE paths are copy-free so we can use mapped buffers from disk effectively.
     auto requester = originalRequest.requester();
-    bool isDefinitelyMedia = requester == WebCore::ResourceRequest::Requester::Media;
-    if (isDefinitelyMedia) {
-        // Allow caching of smaller media files if we know the total size.
-        const size_t maximumCacheableMediaSize = 5 * 1024 * 1024;
-        auto totalSize = response.httpStatusCode() == 206 ? expectedTotalResourceSizeFromContentRange(response) : bodySize;
-        if (!totalSize || *totalSize > maximumCacheableMediaSize)
-            return StoreDecision::NoDueToStreamingMedia;
-    }
-
+    bool isDefinitelyStreamingMedia = requester == WebCore::ResourceRequest::Requester::Media;
     bool isLikelyStreamingMedia = requester == WebCore::ResourceRequest::Requester::XHR && isMediaMIMEType(response.mimeType());
-    if (isLikelyStreamingMedia) {
-        // Media loaded via XHR is likely being used for MSE streaming (YouTube and Netflix for example).
-        // We have no way of knowing the total media size so disallow caching.
+    if (isLikelyStreamingMedia || isDefinitelyStreamingMedia)
         return StoreDecision::NoDueToStreamingMedia;
-    }
 
     return StoreDecision::Yes;
 }

@@ -1,5 +1,5 @@
 First load
 PASS: All response ranges from: Network
 Second Load
-PASS: All response ranges from: Disk cache
+PASS: All response ranges from: Network
  
