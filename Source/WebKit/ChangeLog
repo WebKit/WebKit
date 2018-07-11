@@ -1,3 +1,19 @@
+2018-07-11  Brady Eidson  <beidson@apple.com>
+
+        Make process-swap-on-navigation an experimental feature.
+        <rdar://problem/41995053> and https://bugs.webkit.org/show_bug.cgi?id=187558
+
+        Reviewed by Geoff Garen.
+
+        * Shared/WebPreferences.yaml:
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateBoolValueForExperimentalFeatureKey):
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage): If the new web page has PSON enabled via WebPreferences,
+          absorb that setting into this process pool's configuration.
+
 2018-07-11  Jer Noble  <jer.noble@apple.com>
 
         Disable all network caching for HLS streams.
