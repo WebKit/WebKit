@@ -1250,27 +1250,18 @@ test/built-ins/TypedArray/prototype/indexOf/length-zero-returns-minus-one.js:
 test/built-ins/TypedArray/prototype/lastIndexOf/length-zero-returns-minus-one.js:
   default: 'Test262Error:  (Testing with Float64Array.)'
   strict mode: 'Test262Error:  (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/slice/arraylength-internal.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-other-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/detached-buffer-zero-count-custom-ctor-same-targettype.js:
   default: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
   strict mode: 'TypeError: Underlying ArrayBuffer has been detached from the view (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/slice/results-with-empty-length.js:
-  default: 'Test262Error: begin == length & result.hasOwnProperty(0) === false Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: begin == length & result.hasOwnProperty(0) === false Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/slice/speciesctor-get-species-custom-ctor-length-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/sort/comparefn-nonfunction-call-throws.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArray/prototype/subarray/results-with-empty-length.js:
-  default: 'Test262Error: begin == length & result.hasOwnProperty(0) === false Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: begin == length & result.hasOwnProperty(0) === false Expected SameValue(Â«trueÂ», Â«falseÂ») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/toLocaleString/calls-tostring-from-each-value.js:
   default: 'Test262Error: should not call valueOf if toString is present (Testing with Float64Array.)'
   strict mode: 'Test262Error: should not call valueOf if toString is present (Testing with Float64Array.)'
@@ -1418,9 +1409,6 @@ test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/enumerate-detache
 test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/index-prop-desc.js:
   default: 'Test262Error: index descriptor is writable [0] Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: index descriptor is writable [0] Expected SameValue(Â«falseÂ», Â«trueÂ») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/key-is-out-of-bounds.js:
-  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«undefinedÂ») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/HasProperty/abrupt-from-ordinary-has-parent-hasproperty.js:
   default: 'Test262Error:  (Testing with Float64Array.)'
   strict mode: 'Test262Error:  (Testing with Float64Array.)'
