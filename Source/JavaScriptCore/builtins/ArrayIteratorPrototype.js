@@ -58,7 +58,7 @@ function arrayIteratorValueNext()
         }
     }
 
-    return { done, value };
+    return { value, done };
 }
 
 @globalPrivate
@@ -81,7 +81,7 @@ function arrayIteratorKeyNext()
         }
     }
 
-    return { done, value };
+    return { value, done };
 }
 
 @globalPrivate
@@ -104,5 +104,5 @@ function arrayIteratorKeyValueNext()
         }
     }
 
-    return { done, value };
+    return { value, done };
 }

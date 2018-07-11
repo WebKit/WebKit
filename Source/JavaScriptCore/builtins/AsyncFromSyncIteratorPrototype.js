@@ -37,11 +37,11 @@ function next(value)
     const syncIterator = @getByIdDirectPrivate(this, "syncIterator");
 
     try {
-        const { done: nextDone, value: nextValue } = @getByIdDirectPrivate(this, "nextMethod").@call(syncIterator, value);
+        const { value: nextValue, done: nextDone } = @getByIdDirectPrivate(this, "nextMethod").@call(syncIterator, value);
         const valueWrapperCapability = @newPromiseCapability(@Promise);
         valueWrapperCapability.@resolve.@call(@undefined, nextValue);
         valueWrapperCapability.@promise.@then(
-            function (result) { promiseCapability.@resolve.@call(@undefined, { done: !!nextDone, value: result }); },
+            function (result) { promiseCapability.@resolve.@call(@undefined, { value: result, done: !!nextDone }); },
             function (error) { promiseCapability.@reject.@call(@undefined, error); });
      } catch(e) {
          promiseCapability.@reject.@call(@undefined, e);
@@ -85,12 +85,12 @@ function return(value)
             return promiseCapability.@promise;
         }
 
-        const { done: resultDone, value: resultValue } = returnResult;
+        const { value: resultValue, done: resultDone } = returnResult;
         const valueWrapperCapability = @newPromiseCapability(@Promise);
 
         valueWrapperCapability.@resolve.@call(@undefined, resultValue);
         valueWrapperCapability.@promise.@then(
-            function (result) { promiseCapability.@resolve.@call(@undefined, { done: resultDone, value: result }); },
+            function (result) { promiseCapability.@resolve.@call(@undefined, { value: result, done: resultDone }); },
             function (error) { promiseCapability.@reject.@call(@undefined, error); });
     } catch (e) {
         promiseCapability.@reject.@call(@undefined, e);
@@ -134,12 +134,12 @@ function throw(exception)
             return promiseCapability.@promise;
         }
         
-        const { done: throwDone, value: throwValue } = throwResult;
+        const { value: throwValue, done: throwDone } = throwResult;
         const valueWrapperCapability = @newPromiseCapability(@Promise);
         
         valueWrapperCapability.@resolve.@call(@undefined, throwValue);
         valueWrapperCapability.@promise.@then(
-            function (result) { promiseCapability.@resolve.@call(@undefined, { done: throwDone, value: result }); },
+            function (result) { promiseCapability.@resolve.@call(@undefined, { value: result, done: throwDone }); },
             function (error) { promiseCapability.@reject.@call(@undefined, error); });
     } catch (e) {
         promiseCapability.@reject.@call(@undefined, e);

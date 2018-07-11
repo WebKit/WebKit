@@ -1,5 +1,28 @@
 2018-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Iterator of Array.keys() returns object in wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=185197
+
+        Reviewed by Keith Miller.
+
+        We align the shape of our iterator result to the spec: {value,done} instead of {done,value}.
+
+        * stress/iterator-field-order.js: Added.
+        (shouldBe):
+        (shouldBe.JSON.stringify.array.values.next):
+        (shouldBe.JSON.stringify.array.keys.next):
+        (shouldBe.JSON.stringify.array.entries.next):
+        (async.asyncIterator):
+        (iterator.next.then):
+        (generator):
+        (shouldBe.JSON.stringify.generator.next):
+        (shouldBe.JSON.stringify.map.keys.next):
+        (shouldBe.JSON.stringify.map.values.next):
+        (shouldBe.JSON.stringify.map.entries.next):
+        (set new):
+
+2018-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, clean up test262 expectations
 
         * test262/expectations.yaml:

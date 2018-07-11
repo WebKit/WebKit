@@ -134,17 +134,17 @@ void iteratorClose(ExecState* exec, IterationRecord iterationRecord)
     }
 }
 
-static const PropertyOffset donePropertyOffset = 0;
-static const PropertyOffset valuePropertyOffset = 1;
+static const PropertyOffset valuePropertyOffset = 0;
+static const PropertyOffset donePropertyOffset = 1;
 
 Structure* createIteratorResultObjectStructure(VM& vm, JSGlobalObject& globalObject)
 {
     Structure* iteratorResultStructure = vm.structureCache.emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity());
     PropertyOffset offset;
-    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->done, 0, offset);
-    RELEASE_ASSERT(offset == donePropertyOffset);
     iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == valuePropertyOffset);
+    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->done, 0, offset);
+    RELEASE_ASSERT(offset == donePropertyOffset);
     return iteratorResultStructure;
 }
 
@@ -152,8 +152,8 @@ JSObject* createIteratorResultObject(ExecState* exec, JSValue value, bool done)
 {
     VM& vm = exec->vm();
     JSObject* resultObject = constructEmptyObject(exec, exec->lexicalGlobalObject()->iteratorResultObjectStructure());
-    resultObject->putDirect(vm, donePropertyOffset, jsBoolean(done));
     resultObject->putDirect(vm, valuePropertyOffset, value);
+    resultObject->putDirect(vm, donePropertyOffset, jsBoolean(done));
     return resultObject;
 }
 

@@ -124,7 +124,7 @@ function asyncGeneratorResolve(generator, value, done)
     @assert(typeof @getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") === "number", "Generator is not an AsyncGenerator instance.");
 
     const { promiseCapability } = @asyncGeneratorDequeue(generator);
-    promiseCapability.@resolve.@call(@undefined, { done, value: value });
+    promiseCapability.@resolve.@call(@undefined, { value, done });
 
     return @asyncGeneratorResumeNext(generator);
 }

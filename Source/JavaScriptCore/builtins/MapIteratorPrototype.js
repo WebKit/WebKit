@@ -41,7 +41,7 @@ function mapIteratorNext(bucket, kind)
         else if (kind === @iterationKindKey)
             value = key;
     }
-    return { done, value };
+    return { value, done };
 }
 
 function next()

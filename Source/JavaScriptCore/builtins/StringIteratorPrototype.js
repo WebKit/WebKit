@@ -60,5 +60,5 @@ function next()
         }
     }
 
-    return {done, value};
+    return { value, done };
 }

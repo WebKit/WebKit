@@ -45,7 +45,7 @@ function generatorResume(generator, state, generatorThis, sentValue, value, resu
             throw error;
         }
     }
-    return { done, value };
+    return { value, done };
 }
 
 function next(value)

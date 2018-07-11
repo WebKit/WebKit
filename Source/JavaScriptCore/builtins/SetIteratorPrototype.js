@@ -38,7 +38,7 @@ function setIteratorNext(bucket, kind)
         if (kind === @iterationKindKeyValue)
             value = [ value, value ]
     }
-    return { done, value };
+    return { value, done };
 }
 
 function next()

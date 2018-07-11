@@ -1,3 +1,29 @@
+2018-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Iterator of Array.keys() returns object in wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=185197
+
+        Reviewed by Keith Miller.
+
+        * builtins/ArrayIteratorPrototype.js:
+        (globalPrivate.arrayIteratorValueNext):
+        (globalPrivate.arrayIteratorKeyNext):
+        (globalPrivate.arrayIteratorKeyValueNext):
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorResolve):
+        * builtins/GeneratorPrototype.js:
+        (globalPrivate.generatorResume):
+        * builtins/MapIteratorPrototype.js:
+        (globalPrivate.mapIteratorNext):
+        * builtins/SetIteratorPrototype.js:
+        (globalPrivate.setIteratorNext):
+        * builtins/StringIteratorPrototype.js:
+        (next):
+        * runtime/IteratorOperations.cpp:
+        (JSC::createIteratorResultObjectStructure):
+        (JSC::createIteratorResultObject):
+
 2018-07-10  Mark Lam  <mark.lam@apple.com>
 
         constructArray() should always allocate the requested length.
