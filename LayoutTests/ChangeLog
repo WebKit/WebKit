@@ -1,3 +1,12 @@
+2018-07-11  Truitt Savell  <tsavell@apple.com>
+
+        Layout Test media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187420
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-07-11  Youenn Fablet  <youenn@apple.com>
 
         Fix remaining Cross-Origin-Resource-Policy failures, if any

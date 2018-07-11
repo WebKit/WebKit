@@ -1458,7 +1458,7 @@ media/modern-media-controls/scrubber-support/ipad [ Skip ]
 webkit.org/b/169876 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Timeout ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Pass Failure ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html [ Pass Failure ]
-media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html [ Pass Failure ]
+webkit.org/b/187420 media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html [ Pass Timeout ]
 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]
 
 webkit.org/b/178126 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Skip ]
