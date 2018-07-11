@@ -1,3 +1,25 @@
+2018-07-10  Chris Dumez  <cdumez@apple.com>
+
+        "serviceworker.js" is fetched several times in a row
+        https://bugs.webkit.org/show_bug.cgi?id=187435
+        <rdar://problem/41940569>
+
+        Reviewed by Youenn Fablet.
+
+        Soft updates happen every time a fetch event is sent to a service worker for a main resource request.
+        This can happen many times during a page load and will cause us to spam the HTTP server with update
+        requests, especially considering that the default behavior is to bypass the HTTP cache. To address
+        the issue, we now do soft updates on a 1 second delay and we keep rescheduling this timer was long as
+        soft update requests keep coming. Based on my understanding of the Chromium code, this seems to be
+        what they are doing so this should align our behavior with them.
+
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::ServiceWorkerRegistration):
+        (WebCore::ServiceWorkerRegistration::scheduleSoftUpdate):
+        * workers/service/ServiceWorkerRegistration.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+
 2018-07-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] MIME type registry doesn't explicitly recognize *.css

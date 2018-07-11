@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerRegistrationData.h"
+#include "Timer.h"
 
 namespace WebCore {
 
@@ -66,7 +67,7 @@ public:
     void update(Ref<DeferredPromise>&&);
     void unregister(Ref<DeferredPromise>&&);
 
-    void softUpdate();
+    void scheduleSoftUpdate();
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -85,6 +86,8 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    void softUpdate();
+
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
@@ -99,6 +102,7 @@ private:
 
     bool m_isStopped { false };
     RefPtr<PendingActivity<ServiceWorkerRegistration>> m_pendingActivityForEventDispatch;
+    Timer m_softUpdateTimer;
 };
 
 } // namespace WebCore

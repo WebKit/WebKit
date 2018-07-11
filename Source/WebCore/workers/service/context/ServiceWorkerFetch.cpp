@@ -140,7 +140,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     auto& registration = globalScope.registration();
     if (isNonSubresourceRequest || registration.needsUpdate())
-        registration.softUpdate();
+        registration.scheduleSoftUpdate();
 }
 
 } // namespace ServiceWorkerFetch
