@@ -27,18 +27,31 @@
 #import "RemoteObjectRegistry.h"
 
 #import "MessageSender.h"
+#import "ProcessThrottler.h"
 #import "RemoteObjectInvocation.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "UserData.h"
+#import "WebPage.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 
 namespace WebKit {
 
-RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, IPC::MessageSender& messageSender)
+RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPage& page)
     : m_remoteObjectRegistry(remoteObjectRegistry)
-    , m_messageSender(messageSender)
+    , m_messageSender(page)
+    , m_takeBackgroundActivityToken([] { return ProcessThrottler::BackgroundActivityToken(); })
 {
 }
+
+RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)
+    : m_remoteObjectRegistry(remoteObjectRegistry)
+    , m_messageSender(page)
+    , m_takeBackgroundActivityToken([&page] { return page.process().throttler().backgroundActivityToken(); })
+{
+}
+
 
 RemoteObjectRegistry::~RemoteObjectRegistry()
 {
@@ -46,6 +59,11 @@ RemoteObjectRegistry::~RemoteObjectRegistry()
 
 void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocation)
 {
+    if (auto* replyInfo = invocation.replyInfo()) {
+        ASSERT(!m_pendingReplies.contains(replyInfo->replyID));
+        m_pendingReplies.add(replyInfo->replyID, m_takeBackgroundActivityToken());
+    }
+
     m_messageSender.send(Messages::RemoteObjectRegistry::InvokeMethod(invocation));
 }
 
@@ -68,6 +86,9 @@ void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation
 
 void RemoteObjectRegistry::callReplyBlock(uint64_t replyID, const UserData& blockInvocation)
 {
+    bool wasRemoved = m_pendingReplies.remove(replyID);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
+
 #if WK_API_ENABLED
     [m_remoteObjectRegistry _callReplyWithID:replyID blockInvocation:blockInvocation];
 #endif
@@ -75,6 +96,9 @@ void RemoteObjectRegistry::callReplyBlock(uint64_t replyID, const UserData& bloc
 
 void RemoteObjectRegistry::releaseUnusedReplyBlock(uint64_t replyID)
 {
+    bool wasRemoved = m_pendingReplies.remove(replyID);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
+
 #if WK_API_ENABLED
     [m_remoteObjectRegistry _releaseReplyWithID:replyID];
 #endif

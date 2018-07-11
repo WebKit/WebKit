@@ -106,12 +106,22 @@ struct PendingReply {
     return remoteObject.autorelease();
 }
 
-- (id)_initWithMessageSender:(IPC::MessageSender&)messageSender
+- (id)_initWithWebPage:(WebKit::WebPage&)page
 {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = std::make_unique<RemoteObjectRegistry>(self, messageSender);
+    _remoteObjectRegistry = std::make_unique<RemoteObjectRegistry>(self, page);
+
+    return self;
+}
+
+- (id)_initWithWebPageProxy:(WebKit::WebPageProxy&)page
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _remoteObjectRegistry = std::make_unique<RemoteObjectRegistry>(self, page);
 
     return self;
 }

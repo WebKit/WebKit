@@ -27,6 +27,8 @@
 #define RemoteObjectRegistry_h
 
 #include "MessageReceiver.h"
+#include "ProcessThrottler.h"
+#include <wtf/Function.h>
 
 OBJC_CLASS _WKRemoteObjectRegistry;
 
@@ -38,10 +40,14 @@ namespace WebKit {
 
 class RemoteObjectInvocation;
 class UserData;
+class WebPage;
+class WebPageProxy;
 
 class RemoteObjectRegistry final : public IPC::MessageReceiver {
 public:
-    RemoteObjectRegistry(_WKRemoteObjectRegistry *, IPC::MessageSender&);
+    RemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPage&);
+    RemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);
+
     ~RemoteObjectRegistry();
 
     void sendInvocation(const RemoteObjectInvocation&);
@@ -59,6 +65,8 @@ private:
 
     _WKRemoteObjectRegistry *m_remoteObjectRegistry;
     IPC::MessageSender& m_messageSender;
+    WTF::Function<ProcessThrottler::BackgroundActivityToken()> m_takeBackgroundActivityToken;
+    HashMap<uint64_t, ProcessThrottler::BackgroundActivityToken> m_pendingReplies;
 };
 
 } // namespace WebKit

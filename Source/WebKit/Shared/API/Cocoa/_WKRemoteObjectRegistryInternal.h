@@ -35,13 +35,16 @@ namespace WebKit {
 class RemoteObjectInvocation;
 class RemoteObjectRegistry;
 class UserData;
+class WebPage;
+class WebPageProxy;
 }
 
 @interface _WKRemoteObjectRegistry ()
 
 @property (nonatomic, readonly) WebKit::RemoteObjectRegistry& remoteObjectRegistry;
 
-- (id)_initWithMessageSender:(IPC::MessageSender&)messageSender;
+- (id)_initWithWebPage:(WebKit::WebPage&)messageSender;
+- (id)_initWithWebPageProxy:(WebKit::WebPageProxy&)messageSender;
 - (void)_invalidate;
 
 - (void)_sendInvocation:(NSInvocation *)invocation interface:(_WKRemoteObjectInterface *)interface;

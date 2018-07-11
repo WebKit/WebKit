@@ -1,3 +1,34 @@
+2018-07-10  Chris Dumez  <cdumez@apple.com>
+
+        [IOS] We should prevent WebProcess suspension while the UIProcess is waiting for a reply from its injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=187536
+        <rdar://problem/41931912>
+
+        Reviewed by Brady Eidson.
+
+        Update RemoteObjectRegistry to take a background process assertion for each pending reply on the
+        UIProcess side. Otherwise, the destination web process may get suspended and the reply block would
+        not get called. We already do this in WebPageProxy for callbacks waiting for an IPC from the
+        WebProcess.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::RemoteObjectRegistry):
+        (WebKit::RemoteObjectRegistry::sendInvocation):
+        (WebKit::RemoteObjectRegistry::callReplyBlock):
+        (WebKit::RemoteObjectRegistry::releaseUnusedReplyBlock):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _initWithWebPage:]):
+        (-[_WKRemoteObjectRegistry _initWithWebPageProxy:]):
+        (-[_WKRemoteObjectRegistry _initWithMessageSender:]): Deleted.
+        * Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _remoteObjectRegistry]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::remoteObjectRegistry):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _remoteObjectRegistry]):
+
 2018-07-09  Brian Burg  <bburg@apple.com>
 
         WebDriver: hang when running Selenium test correct_event_firing_tests.py::testShouldEmitOnChangeEventsWhenSelectingElements[Safari]
