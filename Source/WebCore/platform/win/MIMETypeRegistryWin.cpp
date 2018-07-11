@@ -83,6 +83,7 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
         mimetypeMap.add("xml", "text/xml");
         mimetypeMap.add("xsl", "text/xsl");
         mimetypeMap.add("js", "application/x-javascript");
+        mimetypeMap.add("xht", "application/xhtml+xml");
         mimetypeMap.add("xhtml", "application/xhtml+xml");
         mimetypeMap.add("rss", "application/rss+xml");
         mimetypeMap.add("webarchive", "application/x-webarchive");
