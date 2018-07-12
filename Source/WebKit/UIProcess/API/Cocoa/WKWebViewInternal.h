@@ -77,6 +77,7 @@ struct PrintInfo;
 
 #if PLATFORM(IOS)
 - (void)_processDidExit;
+- (void)_didRelaunchProcess;
 
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;

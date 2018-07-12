@@ -743,7 +743,7 @@ void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Nav
         m_process->frameCreated(*m_mainFrameID, *m_mainFrame);
     }
 
-    LOG(ProcessSwapping, "(ProcessSwapping) Reattaching WebPageProxy %p to WebProcessProxy %p with pid %i\n", this, m_process.ptr(), m_process->processIdentifier());
+    RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::reattachToWebProcess\n", this);
 
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
     if (m_process->state() == ChildProcessProxy::State::Running)
@@ -5849,6 +5849,9 @@ String WebPageProxy::currentURL() const
 
 void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
 {
+    if (reason != ProcessTerminationReason::NavigationSwap)
+        RELEASE_LOG_IF_ALLOWED(Process, "%p - WebPageProxy::processDidTerminate (pid %d), reason %d", this, processIdentifier(), reason);
+
     ASSERT(m_isValid);
 
 #if PLATFORM(IOS)

@@ -1665,6 +1665,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (void)_processDidExit
 {
+    RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _processDidExit]", self);
     [self _hidePasswordView];
     if (!_customContentView && _dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
         NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
@@ -1709,6 +1710,13 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _commitDidRestoreScrollPosition = NO;
 
     _avoidsUnsafeArea = YES;
+}
+
+- (void)_didRelaunchProcess
+{
+    RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _didRelaunchProcess]", self);
+    _hasScheduledVisibleRectUpdate = NO;
+    _visibleContentRectUpdateScheduledFromScrollViewInStableState = YES;
 }
 
 - (void)_didCommitLoadForMainFrame
@@ -2735,8 +2743,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_hasScheduledVisibleRectUpdate) {
         auto timeNow = MonotonicTime::now();
         if ((timeNow - _timeOfRequestForVisibleContentRectUpdate) > delayBeforeNoVisibleContentsRectsLogging) {
-            RELEASE_LOG_IF_ALLOWED("-[WKWebView %p _scheduleVisibleContentRectUpdateAfterScrollInView]: _hasScheduledVisibleRectUpdate is true but haven't updated visible content rects for %.2fs (last update was %.2fs ago)",
-                self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value(), (timeNow - _timeOfLastVisibleContentRectUpdate).value());
+            RELEASE_LOG_IF_ALLOWED("-[WKWebView %p _scheduleVisibleContentRectUpdateAfterScrollInView]: _hasScheduledVisibleRectUpdate is true but haven't updated visible content rects for %.2fs (last update was %.2fs ago) - valid %d",
+                self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value(), (timeNow - _timeOfLastVisibleContentRectUpdate).value(), [self _isValid]);
         }
         return;
     }
@@ -2869,7 +2877,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     
     auto timeNow = MonotonicTime::now();
     if ((timeNow - _timeOfRequestForVisibleContentRectUpdate) > delayBeforeNoVisibleContentsRectsLogging)
-        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] finally ran %.2fs after begin scheduled", self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value());
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] finally ran %.2fs after being scheduled", self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value());
 
     _timeOfLastVisibleContentRectUpdate = timeNow;
 }

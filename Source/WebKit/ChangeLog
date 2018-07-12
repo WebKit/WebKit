@@ -1,3 +1,37 @@
+2018-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Address a possible cause of missing tiles
+        https://bugs.webkit.org/show_bug.cgi?id=187570
+        rdar://problem/40941118
+
+        Reviewed by Tim Horton.
+        
+        If the web process crashes, it's possible for the user to trigger a scroll before
+        the process is re-launched. The pre-commit handler will bail early on the _isValid
+        check without clearing _hasScheduledVisibleRectUpdate, so that remains YES and we
+        get stuck doing no more visible content rect updates.
+        
+        Fix by adding -[WKWebView _didRelaunchProcess] (WKContentView got this already), and
+        in that clear state that could have been set in the UI process while the web process
+        connection was invalid.
+        
+        Also add more release logging around process termination, crash and relaunch.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _didRelaunchProcess]):
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::processDidTerminate):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didRelaunchProcess):
+
 2018-07-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Release logging dumps "Cleaning up dragging state…" every time gesture recognizers are reset in WKContentView
