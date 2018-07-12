@@ -73,7 +73,7 @@ class UnApplyPatchIfRequired(CheckOutSource):
         super(UnApplyPatchIfRequired, self).__init__(alwaysUseLatest=True, **kwargs)
 
     def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedTests')
+        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedJSCTests')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -187,6 +187,16 @@ class CompileJSCOnly(CompileWebKit):
     command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 
+class CompileJSCOnlyToT(CompileJSCOnly):
+    name = 'build-jsc-tot'
+
+    def doStepIf(self, step):
+        return self.getProperty('patchFailedToBuild')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class RunJavaScriptCoreTests(shell.Test):
     name = 'jscore-test'
     description = ['jscore-tests running']
@@ -199,6 +209,38 @@ class RunJavaScriptCoreTests(shell.Test):
     def start(self):
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
+
+    def evaluateCommand(self, cmd):
+        if cmd.didFail():
+            self.setProperty('patchFailedJSCTests', True)
+
+        return super(RunJavaScriptCoreTests, self).evaluateCommand(cmd)
+
+
+class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
+    name = 'jscore-test-rerun'
+
+    def doStepIf(self, step):
+        return self.getProperty('patchFailedJSCTests')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    def evaluateCommand(self, cmd):
+        self.setProperty('patchFailedJSCTests', cmd.didFail())
+        return super(RunJavaScriptCoreTests, self).evaluateCommand(cmd)
+
+
+class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
+    name = 'jscore-test-tot'
+    jsonFileName = 'jsc_results.json'
+    command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
+
+    def doStepIf(self, step):
+        return self.getProperty('patchFailedJSCTests')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
 
 
 class CleanBuild(shell.Compile):

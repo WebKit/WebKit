@@ -526,6 +526,52 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestCompileJSCOnlyToT(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CompileJSCOnlyToT())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'release')
+        self.setProperty('patchFailedToBuild', 'True')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/build-jsc', '--release'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CompileJSCOnlyToT())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('patchFailedToBuild', 'True')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
+                        )
+            + ExpectShell.log('stdio', stdout='1 error generated.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(CompileJSCOnlyToT())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='compiled (skipped)')
+        return self.runStep()
+
+
 class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -562,6 +608,104 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='jscore-tests (failure)')
+        return self.runStep()
+
+
+class TestReRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'jsc_results.json'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ReRunJavaScriptCoreTests())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'release')
+        self.setProperty('patchFailedJSCTests', 'True')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='jscore-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(ReRunJavaScriptCoreTests())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('patchFailedJSCTests', 'True')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='9 failures found.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='jscore-tests (failure)')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(ReRunJavaScriptCoreTests())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='jscore-tests (skipped)')
+        return self.runStep()
+
+
+class TestRunJavaScriptCoreTestsToT(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'jsc_results.json'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RunJavaScriptCoreTestsToT())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'release')
+        self.setProperty('patchFailedJSCTests', 'True')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='jscore-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunJavaScriptCoreTestsToT())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('patchFailedJSCTests', 'True')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='9 failures found.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='jscore-tests (failure)')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(RunJavaScriptCoreTestsToT())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'debug')
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='jscore-tests (skipped)')
         return self.runStep()
 
 
