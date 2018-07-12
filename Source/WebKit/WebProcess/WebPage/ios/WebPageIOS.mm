@@ -2826,9 +2826,8 @@ static inline void adjustVelocityDataForBoundedScale(double& horizontalVelocity,
 
 std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo) const
 {
-    auto transactionIDForLastScaleSentToUIProcess = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).lastCommittedTransactionID();
     auto transactionIDForLastScaleFromUIProcess = visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
-    if (transactionIDForLastScaleSentToUIProcess != transactionIDForLastScaleFromUIProcess)
+    if (m_lastTransactionIDWithScaleChange > transactionIDForLastScaleFromUIProcess)
         return std::nullopt;
 
     float scaleFromUIProcess = visibleContentRectUpdateInfo.scale();

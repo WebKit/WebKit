@@ -1666,6 +1666,8 @@ private:
     WebCore::FloatRect m_previousExposedContentRect;
     uint64_t m_currentAssistedNodeIdentifier { 0 };
     std::optional<DynamicViewportSizeUpdateID> m_pendingDynamicViewportSizeUpdateID;
+    double m_lastTransactionPageScaleFactor { 0 };
+    uint64_t m_lastTransactionIDWithScaleChange { 0 };
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;

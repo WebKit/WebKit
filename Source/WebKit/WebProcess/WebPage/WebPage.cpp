@@ -3252,6 +3252,10 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
         layerTransaction.setDynamicViewportSizeUpdateID(*m_pendingDynamicViewportSizeUpdateID);
         m_pendingDynamicViewportSizeUpdateID = std::nullopt;
     }
+    if (m_lastTransactionPageScaleFactor != layerTransaction.pageScaleFactor()) {
+        m_lastTransactionPageScaleFactor = layerTransaction.pageScaleFactor();
+        m_lastTransactionIDWithScaleChange = layerTransaction.transactionID();
+    }
 #endif
 
     layerTransaction.setScrollPosition(frameView->scrollPosition());

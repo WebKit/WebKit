@@ -1,3 +1,32 @@
+2018-07-12  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r232356): After zooming a page in and out, it's possible to temporarily have missing tiles (google.com, apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=187553
+        <rdar://problem/41863803>
+
+        Reviewed by Simon Fraser.
+
+        We ignore zoom scale from UI process if it doesn't match the last remote layer tree transaction. However nothing
+        guarantees that we receive the real scale again until user interacts with the page. This means the web process
+        scale and the UI process scale can be wildly out of sync.
+
+        This problem becomes more likely to be visible when
+        - we are under memory pressure so we don't update tiles during zooming and rely on the one final update afterwards
+        - the page generates lots of layer tree transactions
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+
+        Remember the last transaction where we actually changed the page scale.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::scaleFromUIProcess const):
+
+        Only reject the UI process scale if there has been a scale changing transaction meanwhile.
+        The transaction id test was added in r218149 and the problem it fixed remains fixed. This change also matches better
+        what it was purpoted to implement.
+
 2018-07-12  Megan Gardner  <megan_gardner@apple.com>
 
         Keep Selections within Shadow DOM boundaries
