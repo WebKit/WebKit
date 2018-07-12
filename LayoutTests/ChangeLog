@@ -1,3 +1,9 @@
+2018-07-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed test gardening.
+
+        * platform/wincairo/TestExpectations:
+
 2018-07-11  Truitt Savell  <tsavell@apple.com>
 
         Layout Test media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html is flaky
