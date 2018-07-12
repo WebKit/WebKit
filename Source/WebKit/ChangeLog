@@ -1,3 +1,14 @@
+2018-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Pass the backend library name as command line parameter to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=186841
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Add --backend-library parameter when launching the web process.
+        * WebProcess/wpe/WebProcessMainWPE.cpp: Call wpe_loader_init() with the library passed as --backend-library parameter.
+
 2018-07-11  Jon Lee  <jonlee@apple.com>
 
         Update iOS fullscreen alert text

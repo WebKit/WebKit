@@ -36,10 +36,6 @@ class WPETestRunner(TestRunner):
     def __init__(self, options, tests=[]):
         super(WPETestRunner, self).__init__("wpe", options, tests)
 
-    def _setup_testing_environment(self):
-        super(WPETestRunner, self)._setup_testing_environment()
-        self._test_env["WPE_BACKEND_LIBRARY"] = "libWPEBackend-fdo-0.1.so"
-
     def is_glib_test(self, test_program):
         return os.path.basename(os.path.dirname(test_program)) in ["WPE", "JavaScriptCore"]
 

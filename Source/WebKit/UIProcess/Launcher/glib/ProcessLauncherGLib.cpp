@@ -99,7 +99,13 @@ void ProcessLauncher::launchProcess()
 
 #if PLATFORM(WPE)
     GUniquePtr<gchar> wpeSocket;
+    CString wpeBackendLibraryParameter;
     if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(0, 2, 0)
+        wpeBackendLibraryParameter = FileSystem::fileSystemRepresentation(wpe_loader_get_loaded_implementation_library_name());
+#endif
+        nargs++;
+
         wpeSocket = GUniquePtr<gchar>(g_strdup_printf("%d", wpe_renderer_host_create_client()));
         nargs++;
     }
@@ -127,8 +133,10 @@ void ProcessLauncher::launchProcess()
     argv[i++] = processIdentifier.get();
     argv[i++] = webkitSocket.get();
 #if PLATFORM(WPE)
-    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web)
+    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+        argv[i++] = const_cast<char*>(wpeBackendLibraryParameter.isNull() ? "-" : wpeBackendLibraryParameter.data());
         argv[i++] = wpeSocket.get();
+    }
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     argv[i++] = const_cast<char*>(realPluginPath.data());

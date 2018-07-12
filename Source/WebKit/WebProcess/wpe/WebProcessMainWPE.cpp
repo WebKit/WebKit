@@ -33,6 +33,7 @@
 #include <glib.h>
 #include <iostream>
 #include <libsoup/soup.h>
+#include <wpe/wpe.h>
 
 using namespace WebCore;
 
@@ -56,14 +57,18 @@ public:
 
     bool parseCommandLine(int argc, char** argv) override
     {
-        ASSERT(argc == 4);
-        if (argc < 4)
+        ASSERT(argc == 5);
+        if (argc < 5)
             return false;
 
         if (!ChildProcessMainBase::parseCommandLine(argc, argv))
             return false;
 
-        int wpeFd = atoi(argv[3]);
+#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(0, 2, 0)
+        wpe_loader_init(argv[3]);
+#endif
+
+        int wpeFd = atoi(argv[4]);
         RunLoop::main().dispatch(
             [wpeFd] {
                 RELEASE_ASSERT(is<PlatformDisplayWPE>(PlatformDisplay::sharedDisplay()));

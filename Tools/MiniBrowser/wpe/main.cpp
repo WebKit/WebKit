@@ -101,9 +101,6 @@ static std::unique_ptr<WPEToolingBackends::ViewBackend> createViewBackend(uint32
 
 int main(int argc, char *argv[])
 {
-    // MiniBrowser only works with WPEBackend-fdo, so ensure no other backend is used,
-    // either by passing the WPE_BACKEND_LIBRARY env var or loading the default symlink.
-    g_setenv("WPE_BACKEND_LIBRARY", "libWPEBackend-fdo-0.1.so", TRUE);
 #if ENABLE_DEVELOPER_MODE
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
 #endif
