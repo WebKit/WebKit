@@ -1,3 +1,15 @@
+2018-07-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Release logging dumps "Cleaning up dragging state…" every time gesture recognizers are reset in WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=187562
+
+        Reviewed by Tim Horton.
+
+        Tweaks up a release logging statement, such that it only logs when performing a drag or drop.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpDragSourceSessionState]):
+
 2018-07-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233741.

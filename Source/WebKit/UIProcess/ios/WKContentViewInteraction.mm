@@ -4930,7 +4930,9 @@ static UIDropOperation dropOperationForWebCoreDragOperation(DragOperation operat
 
 - (void)cleanUpDragSourceSessionState
 {
-    RELEASE_LOG(DragAndDrop, "Cleaning up dragging state (has pending operation: %d)", [[WebItemProviderPasteboard sharedInstance] hasPendingOperation]);
+    if (_dragDropInteractionState.dragSession() || _dragDropInteractionState.isPerformingDrop())
+        RELEASE_LOG(DragAndDrop, "Cleaning up dragging state (has pending operation: %d)", [[WebItemProviderPasteboard sharedInstance] hasPendingOperation]);
+
     if (![[WebItemProviderPasteboard sharedInstance] hasPendingOperation]) {
         // If we're performing a drag operation, don't clear out the pasteboard yet, since another web view may still require access to it.
         // The pasteboard will be cleared after the last client is finished performing a drag operation using the item providers.
