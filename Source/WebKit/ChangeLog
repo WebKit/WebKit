@@ -1,3 +1,14 @@
+2018-07-11  Jon Lee  <jonlee@apple.com>
+
+        Update iOS fullscreen alert text
+        https://bugs.webkit.org/show_bug.cgi?id=187576
+        rdar://problem/42052284
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]): Update text and string keys.
+
 2018-07-11  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (231276): Attempting to copy an image fails
