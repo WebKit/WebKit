@@ -918,6 +918,8 @@ webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Slow ]
 [ Debug ] jquery/offset.html [ Slow ]
 [ Debug ] jquery/traversing.html [ Slow ]
 
+webkit.org/b/187389 [ Debug ] editing/selection/navigation-clears-editor-state.html [ Slow ]
+
 webkit.org/b/139638 [ Debug ] svg/filters/svg-deeply-nested-crash.html [ Slow ]
 webkit.org/b/126420 svg/custom/resource-invalidation-crash.svg [ Failure Pass ]
 

@@ -1,3 +1,15 @@
+2018-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Layout Test editing/selection/navigation-clears-editor-state.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187389
+
+        Reviewed by Wenson Hsieh.
+
+        Use 200 iterations like we did before r233701 and mark it as SLOW.
+
+        * TestExpectations:
+        * editing/selection/navigation-clears-editor-state.html:
+
 2018-07-11  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (231276): Attempting to copy an image fails
