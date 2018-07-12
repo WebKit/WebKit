@@ -170,8 +170,8 @@ public:
     void dump(PrintStream&) const;
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
 
-    size_t estimatedSizeInBytes() const;
-    JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*);
+    size_t estimatedSizeInBytes(VM&) const;
+    JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*, VM&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static void visitOutputConstraints(JSCell*, SlotVisitor&);
@@ -180,7 +180,6 @@ public:
 
     // Object operations, with the toObject operation included.
     const ClassInfo* classInfo(VM&) const;
-    const MethodTable* methodTable() const;
     const MethodTable* methodTable(VM&) const;
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
@@ -259,7 +258,7 @@ protected:
     static NO_RETURN_DUE_TO_CRASH bool setPrototype(JSObject*, ExecState*, JSValue, bool);
     static NO_RETURN_DUE_TO_CRASH JSValue getPrototype(JSObject*, ExecState*);
 
-    static String className(const JSObject*);
+    static String className(const JSObject*, VM&);
     static String toStringName(const JSObject*, ExecState*);
     JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, ExecState*, JSValue);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);

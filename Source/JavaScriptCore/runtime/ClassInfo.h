@@ -89,7 +89,7 @@ struct MethodTable {
     GetPropertyNamesFunctionPtr WTF_METHOD_TABLE_ENTRY(getStructurePropertyNames);
     GetPropertyNamesFunctionPtr WTF_METHOD_TABLE_ENTRY(getGenericPropertyNames);
 
-    using ClassNameFunctionPtr = String (*)(const JSObject*);
+    using ClassNameFunctionPtr = String (*)(const JSObject*, VM&);
     ClassNameFunctionPtr WTF_METHOD_TABLE_ENTRY(className);
 
     using ToStringNameFunctionPtr = String (*)(const JSObject*, ExecState*);
@@ -119,7 +119,7 @@ struct MethodTable {
     using HeapSnapshotFunctionPtr = void (*)(JSCell*, HeapSnapshotBuilder&);
     HeapSnapshotFunctionPtr WTF_METHOD_TABLE_ENTRY(heapSnapshot);
 
-    using EstimatedSizeFunctionPtr = size_t (*)(JSCell*);
+    using EstimatedSizeFunctionPtr = size_t (*)(JSCell*, VM&);
     EstimatedSizeFunctionPtr WTF_METHOD_TABLE_ENTRY(estimatedSize);
 
     using VisitOutputConstraintsPtr = void (*)(JSCell*, SlotVisitor&);

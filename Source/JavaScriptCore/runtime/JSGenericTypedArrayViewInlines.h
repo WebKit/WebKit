@@ -500,16 +500,16 @@ void JSGenericTypedArrayView<Adaptor>::getOwnPropertyNames(
 }
 
 template<typename Adaptor>
-size_t JSGenericTypedArrayView<Adaptor>::estimatedSize(JSCell* cell)
+size_t JSGenericTypedArrayView<Adaptor>::estimatedSize(JSCell* cell, VM& vm)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
     if (thisObject->m_mode == OversizeTypedArray)
-        return Base::estimatedSize(thisObject) + thisObject->byteSize();
+        return Base::estimatedSize(thisObject, vm) + thisObject->byteSize();
     if (thisObject->m_mode == FastTypedArray && thisObject->m_vector)
-        return Base::estimatedSize(thisObject) + thisObject->byteSize();
+        return Base::estimatedSize(thisObject, vm) + thisObject->byteSize();
 
-    return Base::estimatedSize(thisObject);
+    return Base::estimatedSize(thisObject, vm);
 }
 
 template<typename Adaptor>

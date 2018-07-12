@@ -346,7 +346,7 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static size_t estimatedSize(JSCell*);
+    static size_t estimatedSize(JSCell*, VM&);
 
     HashMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)

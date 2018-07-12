@@ -49,10 +49,10 @@ void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
     setPrototypeDirect(vm, globalObject->getPrototypeDirect(vm));
 }
 
-String JSProxy::className(const JSObject* object)
+String JSProxy::className(const JSObject* object, VM& vm)
 {
     const JSProxy* thisObject = jsCast<const JSProxy*>(object);
-    return thisObject->target()->methodTable()->className(thisObject->target());
+    return thisObject->target()->methodTable(vm)->className(thisObject->target(), vm);
 }
 
 String JSProxy::toStringName(const JSObject* object, ExecState* exec)

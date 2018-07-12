@@ -168,7 +168,8 @@ CallType pluginElementCustomGetCallData(JSHTMLElement* element, CallData& callDa
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
         CallData scriptObjectCallData;
         
-        if (scriptObject->methodTable()->getCallData(scriptObject, scriptObjectCallData) == CallType::None)
+        VM& vm = *scriptObject->vm();
+        if (scriptObject->methodTable(vm)->getCallData(scriptObject, scriptObjectCallData) == CallType::None)
             return CallType::None;
 
         callData.native.function = callPlugin;

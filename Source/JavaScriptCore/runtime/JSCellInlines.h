@@ -287,11 +287,6 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
     vm.heap.writeBarrier(this, structure);
 }
 
-inline const MethodTable* JSCell::methodTable() const
-{
-    return methodTable(*vm());
-}
-
 inline const MethodTable* JSCell::methodTable(VM& vm) const
 {
     Structure* structure = this->structure(vm);

@@ -46,7 +46,7 @@ public:
     enum class InitializationType { None, WithZero };
     void initialize(InitializationType);
 
-    static size_t estimatedSize(JSCell*);
+    static size_t estimatedSize(JSCell*, VM&);
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     static JSBigInt* createZero(VM&);

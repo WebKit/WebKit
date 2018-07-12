@@ -1,3 +1,77 @@
+2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Thread VM& to JSCell::methodTable(VM&)
+        https://bugs.webkit.org/show_bug.cgi?id=187548
+
+        Reviewed by Saam Barati.
+
+        This patch threads VM& to methodTable(VM&) and remove methodTable().
+        We add VM& parameter to estimatedSize() to thread VM& in estimatedSize implementations.
+
+        * API/APICast.h:
+        (toJS):
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::className):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::estimatedSize):
+        * bytecode/CodeBlock.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::estimatedSize):
+        * bytecode/UnlinkedCodeBlock.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::className):
+        * debugger/DebuggerScope.h:
+        * heap/Heap.cpp:
+        (JSC::GatherHeapSnapshotData::GatherHeapSnapshotData):
+        (JSC::GatherHeapSnapshotData::operator() const):
+        (JSC::Heap::gatherExtraHeapSnapshotData):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/ClassInfo.h:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::estimatedSize):
+        * runtime/DirectArguments.h:
+        * runtime/HashMapImpl.cpp:
+        (JSC::HashMapImpl<HashMapBucket>::estimatedSize):
+        * runtime/HashMapImpl.h:
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::estimatedSize):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::estimatedSize):
+        * runtime/JSBigInt.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::dump const):
+        (JSC::JSCell::estimatedSizeInBytes const):
+        (JSC::JSCell::estimatedSize):
+        (JSC::JSCell::className):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::estimatedSize):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::estimatedSize):
+        (JSC::JSObject::className):
+        (JSC::JSObject::toStringName):
+        (JSC::JSObject::calculatedClassName):
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::className):
+        * runtime/JSProxy.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::estimatedSize):
+        * runtime/JSString.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::estimatedSize):
+        * runtime/RegExp.h:
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<WeakMapBucket>::estimatedSize):
+        * runtime/WeakMapImpl.h:
+
 2018-07-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233714.

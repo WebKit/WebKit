@@ -58,7 +58,7 @@ public:
     static ArrayBuffer* toWrapped(VM&, JSValue);
     
 protected:
-    static size_t estimatedSize(JSCell*);
+    static size_t estimatedSize(JSCell*, VM&);
 
 private:
     Poisoned<JSArrayBufferPoison, ArrayBuffer*> m_impl;

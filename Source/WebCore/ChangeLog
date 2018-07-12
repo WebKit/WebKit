@@ -1,3 +1,21 @@
+2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Thread VM& to JSCell::methodTable(VM&)
+        https://bugs.webkit.org/show_bug.cgi?id=187548
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/JSDOMConstructorBase.h:
+        (WebCore::JSDOMConstructorBase::className):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementCustomGetCallData):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceName::estimatedSize):
+        * bindings/scripts/test/JS/JSInterfaceName.h:
+
 2018-07-11  Youenn Fablet  <youenn@apple.com>
 
         MediaDevices should derive from EventTarget in its IDL

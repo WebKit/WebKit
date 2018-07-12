@@ -713,8 +713,9 @@ bool Heap::isHeapSnapshotting() const
 }
 
 struct GatherHeapSnapshotData : MarkedBlock::CountFunctor {
-    GatherHeapSnapshotData(HeapSnapshotBuilder& builder)
-        : m_builder(builder)
+    GatherHeapSnapshotData(VM& vm, HeapSnapshotBuilder& builder)
+        : m_vm(vm)
+        , m_builder(builder)
     {
     }
 
@@ -722,11 +723,12 @@ struct GatherHeapSnapshotData : MarkedBlock::CountFunctor {
     {
         if (isJSCellKind(kind)) {
             JSCell* cell = static_cast<JSCell*>(heapCell);
-            cell->methodTable()->heapSnapshot(cell, m_builder);
+            cell->methodTable(m_vm)->heapSnapshot(cell, m_builder);
         }
         return IterationStatus::Continue;
     }
 
+    VM& m_vm;
     HeapSnapshotBuilder& m_builder;
 };
 
@@ -734,7 +736,7 @@ void Heap::gatherExtraHeapSnapshotData(HeapProfiler& heapProfiler)
 {
     if (HeapSnapshotBuilder* builder = heapProfiler.activeSnapshotBuilder()) {
         HeapIterationScope heapIterationScope(*this);
-        GatherHeapSnapshotData functor(*builder);
+        GatherHeapSnapshotData functor(*m_vm, *builder);
         m_objectSpace.forEachLiveCell(heapIterationScope, functor);
     }
 }

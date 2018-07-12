@@ -48,7 +48,7 @@ public:
     JS_EXPORT_PRIVATE static RegExp* create(VM&, const String& pattern, RegExpFlags);
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
-    static size_t estimatedSize(JSCell*);
+    static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
 
     bool global() const { return m_flags & FlagGlobal; }

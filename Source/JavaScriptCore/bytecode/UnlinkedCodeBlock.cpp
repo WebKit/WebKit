@@ -94,11 +94,11 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.reportExtraMemoryVisited(thisObject->m_unlinkedInstructions->sizeInBytes());
 }
 
-size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell)
+size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell, VM& vm)
 {
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
     size_t extraSize = thisObject->m_unlinkedInstructions ? thisObject->m_unlinkedInstructions->sizeInBytes() : 0;
-    return Base::estimatedSize(cell) + extraSize;
+    return Base::estimatedSize(cell, vm) + extraSize;
 }
 
 int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)

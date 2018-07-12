@@ -113,7 +113,7 @@ inline JSC::JSObject* toJS(JSObjectRef o)
 {
     JSC::JSObject* object = uncheckedToJS(o);
     if (object)
-        RELEASE_ASSERT(object->methodTable());
+        RELEASE_ASSERT(object->methodTable(*object->vm()));
     return object;
 }
 

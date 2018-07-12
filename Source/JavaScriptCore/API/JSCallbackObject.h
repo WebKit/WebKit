@@ -194,7 +194,7 @@ public:
     using Parent::methodTable;
 
 private:
-    static String className(const JSObject*);
+    static String className(const JSObject*, VM&);
 
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 

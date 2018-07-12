@@ -46,7 +46,7 @@ void JSCell::destroy(JSCell* cell)
 
 void JSCell::dump(PrintStream& out) const
 {
-    methodTable()->dumpToStream(this, out);
+    methodTable(*vm())->dumpToStream(this, out);
 }
 
 void JSCell::dumpToStream(const JSCell* cell, PrintStream& out)
@@ -54,12 +54,12 @@ void JSCell::dumpToStream(const JSCell* cell, PrintStream& out)
     out.printf("<%p, %s>", cell, cell->className(*cell->vm()));
 }
 
-size_t JSCell::estimatedSizeInBytes() const
+size_t JSCell::estimatedSizeInBytes(VM& vm) const
 {
-    return methodTable()->estimatedSize(const_cast<JSCell*>(this));
+    return methodTable(vm)->estimatedSize(const_cast<JSCell*>(this), vm);
 }
 
-size_t JSCell::estimatedSize(JSCell* cell)
+size_t JSCell::estimatedSize(JSCell* cell, VM&)
 {
     return cell->cellSize();
 }
@@ -222,7 +222,7 @@ void JSCell::getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArra
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String JSCell::className(const JSObject*)
+String JSCell::className(const JSObject*, VM&)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return String();

@@ -1183,9 +1183,9 @@ JSBigInt* JSBigInt::allocateFor(ExecState* exec, VM& vm, unsigned radix, unsigne
     return nullptr;
 }
 
-size_t JSBigInt::estimatedSize(JSCell* cell)
+size_t JSBigInt::estimatedSize(JSCell* cell, VM& vm)
 {
-    return Base::estimatedSize(cell) + jsCast<JSBigInt*>(cell)->m_length * sizeof(Digit);
+    return Base::estimatedSize(cell, vm) + jsCast<JSBigInt*>(cell)->m_length * sizeof(Digit);
 }
 
 double JSBigInt::toNumber(ExecState* exec) const

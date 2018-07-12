@@ -240,7 +240,7 @@ String HeapSnapshotBuilder::json(std::function<bool (const HeapSnapshotNode&)> a
         json.append(',');
         json.appendNumber(node.identifier);
         json.append(',');
-        json.appendNumber(node.cell->estimatedSizeInBytes());
+        json.appendNumber(node.cell->estimatedSizeInBytes(vm));
         json.append(',');
         json.appendNumber(classNameIndex);
         json.append(',');

@@ -2650,7 +2650,7 @@ sub GenerateHeader
     }
     
     if (InstanceNeedsEstimatedSize($interface)) {
-        push(@headerContent, "    static size_t estimatedSize(JSCell*);\n");
+        push(@headerContent, "    static size_t estimatedSize(JSCell*, JSC::VM&);\n");
     }
     
     if (!$hasParent) {
@@ -4505,10 +4505,10 @@ sub GenerateImplementation
     }
 
     if (InstanceNeedsEstimatedSize($interface)) {
-        push(@implContent, "size_t ${className}::estimatedSize(JSCell* cell)\n");
+        push(@implContent, "size_t ${className}::estimatedSize(JSCell* cell, VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
-        push(@implContent, "    return Base::estimatedSize(thisObject) + thisObject->wrapped().memoryCost();\n");
+        push(@implContent, "    return Base::estimatedSize(thisObject, vm) + thisObject->wrapped().memoryCost();\n");
         push(@implContent, "}\n\n");
     }
 

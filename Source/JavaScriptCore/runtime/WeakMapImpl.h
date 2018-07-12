@@ -203,7 +203,7 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    static size_t estimatedSize(JSCell*);
+    static size_t estimatedSize(JSCell*, VM&);
 
     WeakMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)

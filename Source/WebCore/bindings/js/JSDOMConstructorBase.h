@@ -37,7 +37,7 @@ protected:
     {
     }
 
-    static String className(const JSObject*);
+    static String className(const JSObject*, JSC::VM&);
     static JSC::CallType getCallData(JSCell*, JSC::CallData&);
 };
 
@@ -46,7 +46,7 @@ inline JSC::Structure* JSDOMConstructorBase::createStructure(JSC::VM& vm, JSC::J
     return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
 }
 
-inline String JSDOMConstructorBase::className(const JSObject*)
+inline String JSDOMConstructorBase::className(const JSObject*, JSC::VM&)
 {
     return "Function"_s;
 }

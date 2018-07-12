@@ -67,9 +67,9 @@ void HashMapImpl<HashMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
 }
 
 template <typename HashMapBucket>
-size_t HashMapImpl<HashMapBucket>::estimatedSize(JSCell* cell)
+size_t HashMapImpl<HashMapBucket>::estimatedSize(JSCell* cell, VM& vm)
 {
-    return Base::estimatedSize(cell) + static_cast<HashMapImpl<HashMapBucket>*>(cell)->approximateSize();
+    return Base::estimatedSize(cell, vm) + static_cast<HashMapImpl<HashMapBucket>*>(cell)->approximateSize();
 }
 
 const ClassInfo* getHashMapBucketKeyClassInfo()

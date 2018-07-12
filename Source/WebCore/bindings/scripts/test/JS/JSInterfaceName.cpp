@@ -162,10 +162,10 @@ void JSInterfaceName::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.reportExtraMemoryVisited(thisObject->wrapped().memoryCost());
 }
 
-size_t JSInterfaceName::estimatedSize(JSCell* cell)
+size_t JSInterfaceName::estimatedSize(JSCell* cell, VM& vm)
 {
     auto* thisObject = jsCast<JSInterfaceName*>(cell);
-    return Base::estimatedSize(thisObject) + thisObject->wrapped().memoryCost();
+    return Base::estimatedSize(thisObject, vm) + thisObject->wrapped().memoryCost();
 }
 
 bool JSInterfaceNameOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

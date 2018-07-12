@@ -49,10 +49,10 @@ void WeakMapImpl<WeakMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
 }
 
 template <typename WeakMapBucket>
-size_t WeakMapImpl<WeakMapBucket>::estimatedSize(JSCell* cell)
+size_t WeakMapImpl<WeakMapBucket>::estimatedSize(JSCell* cell, VM& vm)
 {
     auto* thisObject = static_cast<WeakMapImpl*>(cell);
-    return Base::estimatedSize(thisObject) + (sizeof(WeakMapImpl) - sizeof(Base)) + thisObject->m_capacity * sizeof(WeakMapBucket);
+    return Base::estimatedSize(thisObject, vm) + (sizeof(WeakMapImpl) - sizeof(Base)) + thisObject->m_capacity * sizeof(WeakMapBucket);
 }
 
 template <>

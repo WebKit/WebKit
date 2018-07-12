@@ -509,7 +509,7 @@ private:
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
-    static size_t estimatedSize(JSCell*);
+    static size_t estimatedSize(JSCell*, VM&);
 
 public:
     DECLARE_INFO;

@@ -41,7 +41,7 @@ public:
     JS_EXPORT_PRIVATE static DebuggerScope* create(VM& vm, JSScope* scope);
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    static String className(const JSObject*);
+    static String className(const JSObject*, VM&);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);

@@ -423,11 +423,11 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     return structure;
 }
 
-size_t JSObject::estimatedSize(JSCell* cell)
+size_t JSObject::estimatedSize(JSCell* cell, VM& vm)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
-    size_t butterflyOutOfLineSize = thisObject->m_butterfly ? thisObject->structure()->outOfLineSize() : 0;
-    return Base::estimatedSize(cell) + butterflyOutOfLineSize;
+    size_t butterflyOutOfLineSize = thisObject->m_butterfly ? thisObject->structure(vm)->outOfLineSize() : 0;
+    return Base::estimatedSize(cell, vm) + butterflyOutOfLineSize;
 }
 
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -507,18 +507,19 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
 }
 
-String JSObject::className(const JSObject* object)
+String JSObject::className(const JSObject* object, VM& vm)
 {
-    const ClassInfo* info = object->classInfo(*object->vm());
+    const ClassInfo* info = object->classInfo(vm);
     ASSERT(info);
     return info->className;
 }
 
-String JSObject::toStringName(const JSObject* object, ExecState*)
+String JSObject::toStringName(const JSObject* object, ExecState* exec)
 {
-    const ClassInfo* info = object->classInfo(*object->vm());
+    VM& vm = exec->vm();
+    const ClassInfo* info = object->classInfo(vm);
     ASSERT(info);
-    return info->methodTable.className(object);
+    return info->methodTable.className(object, vm);
 }
 
 String JSObject::calculatedClassName(JSObject* object)
@@ -552,7 +553,7 @@ String JSObject::calculatedClassName(JSObject* object)
         scope.clearException();
 
     if (prototypeFunctionName.isNull() || prototypeFunctionName == "Object") {
-        String tableClassName = object->methodTable(vm)->className(object);
+        String tableClassName = object->methodTable(vm)->className(object, vm);
         if (!tableClassName.isNull() && tableClassName != "Object")
             return tableClassName;
 
