@@ -1,3 +1,20 @@
+2018-07-12  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Run Unlock Keychain more reliably
+        https://bugs.webkit.org/show_bug.cgi?id=187604
+
+        Reviewed by Dan Bernstein.
+
+        Move unlocking to a separate target, and make it a dependency for all targets that
+        produce binaries.
+        
+        This is more than strictly required to fix the build, but this way, we won't need
+        to remember about keychain when project structure changes. Another consideration that
+        wasn't initially apparent to me is that is should be possible to build any target,
+        not just "All", so projects aren't necessarily built in the same order even now.
+
+        * WebKit.xcodeproj/project.pbxproj: 
+
 2018-07-12  Per Arne Vollan  <pvollan@apple.com>
 
         Add compile guard for enabling NSRunLoop in the WebContent process.

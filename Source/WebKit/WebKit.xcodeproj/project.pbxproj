@@ -48,6 +48,17 @@
 			name = "Derived Sources";
 			productName = "Derived Sources";
 		};
+		E1AC2E2720F7B94C00B0897D /* Unlock Keychain */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = E1AC2E2B20F7B94C00B0897D /* Build configuration list for PBXAggregateTarget "Unlock Keychain" */;
+			buildPhases = (
+				E1AC2E2C20F7B95800B0897D /* Unlock Keychain */,
+			);
+			dependencies = (
+			);
+			name = "Unlock Keychain";
+			productName = "Unlock keychain";
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -2309,6 +2320,69 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC3DE46515A91763008D26FC;
 			remoteInfo = WebKit2Service;
+		};
+		E1AC2E2D20F7B98800B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E2F20F7B98E00B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E3120F7B99B00B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E3320F7B99E00B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E3520F7B9A100B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E3720F7B9A300B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E3920F7B9A700B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E3B20F7B9AA00B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
+		};
+		E1AC2E3D20F7B9C000B0897D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -9913,6 +9987,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E2E20F7B98800B0897D /* PBXTargetDependency */,
 			);
 			name = PluginProcessShim;
 			productName = PluginProcessShim;
@@ -9927,12 +10002,12 @@
 				372EBB3B2017E64300085064 /* Sources */,
 				372EBB3D2017E64300085064 /* Frameworks */,
 				372EBB402017E64300085064 /* Resources */,
-				7A35F24F20BDAF8B003958EC /* Unlock keychain */,
 				7AFCBD5520B8917D00F55C9C /* Process WebContent entitlements */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3420F7B99E00B0897D /* PBXTargetDependency */,
 				372EBB392017E64300085064 /* PBXTargetDependency */,
 			);
 			name = WebContent.Development;
@@ -9951,6 +10026,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3020F7B98E00B0897D /* PBXTargetDependency */,
 			);
 			name = SecItemShim;
 			productName = PluginProcessShim;
@@ -9968,6 +10044,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3C20F7B9AA00B0897D /* PBXTargetDependency */,
 				375E0627191EA8CC004E3CAF /* PBXTargetDependency */,
 			);
 			name = Databases;
@@ -10005,6 +10082,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3E20F7B9C000B0897D /* PBXTargetDependency */,
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				37B1D0141C1E421100D67FE9 /* PBXTargetDependency */,
 				37B1D0161C1E421100D67FE9 /* PBXTargetDependency */,
@@ -10023,12 +10101,12 @@
 				BC3DE46215A91763008D26FC /* Sources */,
 				BCDC308D15FDB99A006B6695 /* Frameworks */,
 				BC3DE46415A91763008D26FC /* Resources */,
-				7A35F24E20BDAE40003958EC /* Unlock keychain */,
 				7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3220F7B99B00B0897D /* PBXTargetDependency */,
 				375E0633191EA909004E3CAF /* PBXTargetDependency */,
 			);
 			name = WebContent;
@@ -10047,6 +10125,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3620F7B9A100B0897D /* PBXTargetDependency */,
 				375E0631191EA904004E3CAF /* PBXTargetDependency */,
 			);
 			name = Networking;
@@ -10065,6 +10144,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3820F7B9A300B0897D /* PBXTargetDependency */,
 				375E063F191EAA33004E3CAF /* PBXTargetDependency */,
 			);
 			name = Plugin.32;
@@ -10083,6 +10163,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E1AC2E3A20F7B9A700B0897D /* PBXTargetDependency */,
 				375E062B191EA8D4004E3CAF /* PBXTargetDependency */,
 			);
 			name = Plugin.64;
@@ -10098,6 +10179,12 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
+				TargetAttributes = {
+					E1AC2E2720F7B94C00B0897D = {
+						CreatedOnToolsVersion = 9.3;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -10127,6 +10214,7 @@
 				BC82841E16B4FDF600A278FE /* Plugin.64 */,
 				51F7DC3F180CC93600212CA3 /* Databases */,
 				A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */,
+				E1AC2E2720F7B94C00B0897D /* Unlock Keychain */,
 			);
 		};
 /* End PBXProject section */
@@ -10407,34 +10495,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
 		};
-		7A35F24E20BDAE40003958EC /* Unlock keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
-		};
-		7A35F24F20BDAF8B003958EC /* Unlock keychain */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Unlock keychain";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
-		};
 		7A35F25020BDB7CC003958EC /* Remove stale entitlement file */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10582,6 +10642,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\n\nexport WebKit2=\"${SRCROOT}\"\n\n/bin/ln -sfh \"${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}\" JavaScriptCorePrivateHeaders\nexport JavaScriptCore_SCRIPTS_DIR=\"JavaScriptCorePrivateHeaders\"\n\nif [ ! $CC ]; then\n    export CC=\"`xcrun -find clang`\"\nfi\n\nMAKEFILE_INCLUDE_FLAGS=$(echo \"${WEBKITADDITIONS_HEADER_SEARCH_PATHS}\" | perl -e 'print \"-I\" . join(\" -I\", split(\" \", <>));')\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    make --no-builtin-rules ${MAKEFILE_INCLUDE_FLAGS} -f \"${WebKit2}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.activecpu` SDKROOT=${SDKROOT}\nfi\n";
+		};
+		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Unlock Keychain";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -11725,6 +11799,51 @@
 			target = BC3DE46515A91763008D26FC /* WebContent */;
 			targetProxy = BCA8D46715BCE0D6009DC1F1 /* PBXContainerItemProxy */;
 		};
+		E1AC2E2E20F7B98800B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E2D20F7B98800B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3020F7B98E00B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E2F20F7B98E00B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3220F7B99B00B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E3120F7B99B00B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3420F7B99E00B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E3320F7B99E00B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3620F7B9A100B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E3520F7B9A100B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3820F7B9A300B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E3720F7B9A300B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3A20F7B9A700B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E3920F7B9A700B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3C20F7B9AA00B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E3B20F7B9AA00B0897D /* PBXContainerItemProxy */;
+		};
+		E1AC2E3E20F7B9C000B0897D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = E1AC2E3D20F7B9C000B0897D /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -12040,6 +12159,30 @@
 			};
 			name = Production;
 		};
+		E1AC2E2820F7B94C00B0897D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E1AC2E2920F7B94C00B0897D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		E1AC2E2A20F7B94C00B0897D /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -12169,6 +12312,16 @@
 				C0CE72861247E66800BC0EC4 /* Debug */,
 				C0CE72871247E66800BC0EC4 /* Release */,
 				C0CE72881247E66800BC0EC4 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		E1AC2E2B20F7B94C00B0897D /* Build configuration list for PBXAggregateTarget "Unlock Keychain" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E1AC2E2820F7B94C00B0897D /* Debug */,
+				E1AC2E2920F7B94C00B0897D /* Release */,
+				E1AC2E2A20F7B94C00B0897D /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
