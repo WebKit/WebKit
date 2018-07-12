@@ -1149,11 +1149,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     ASSERT(!is<ServiceWorkerProcessProxy>(*process));
 #endif
 
-    auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
-    if (page->preferences().processSwapOnNavigationEnabled())
-        m_configuration->setProcessSwapsOnNavigation(true);
-
-    return page;
+    return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }
 
 #if ENABLE(SERVICE_WORKER)

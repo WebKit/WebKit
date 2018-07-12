@@ -1,3 +1,17 @@
+2018-07-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r233741.
+        https://bugs.webkit.org/show_bug.cgi?id=187568
+
+        "WKTR vs exp features, booooooo" (Requested by bradee-oh on
+        #webkit).
+
+        Reverted changeset:
+
+        "Make process-swap-on-navigation an experimental feature."
+        https://bugs.webkit.org/show_bug.cgi?id=187558
+        https://trac.webkit.org/changeset/233741
+
 2018-07-11  Brady Eidson  <beidson@apple.com>
 
         Make process-swap-on-navigation an experimental feature.
