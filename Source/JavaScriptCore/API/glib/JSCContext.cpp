@@ -786,6 +786,21 @@ JSCValue* jsc_context_evaluate_with_source_uri(JSCContext* context, const char* 
 }
 
 /**
+ * jsc_context_get_global_object:
+ * @context: a #JSCContext
+ *
+ * Get a #JSCValue referencing the @context global object
+ *
+ * Returns: (transfer full): a #JSCValue
+ */
+JSCValue* jsc_context_get_global_object(JSCContext* context)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+
+    return jscContextGetOrCreateValue(context, JSContextGetGlobalObject(context->priv->jsContext.get())).leakRef();
+}
+
+/**
  * jsc_context_set_value:
  * @context: a #JSCContext
  * @name: the value name
