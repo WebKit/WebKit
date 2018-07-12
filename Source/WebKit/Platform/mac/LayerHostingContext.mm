@@ -64,7 +64,7 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
         kCAContextDisplayId : @10000
 #endif
     }];
-#elif !PLATFORM(IOSMAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#elif !PLATFORM(IOSMAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [CAContext setAllowsCGSConnections:NO];
     layerHostingContext->m_context = [CAContext remoteContextWithOptions:@{kCAContextCIFilterBehavior :  @"ignore"}];
 #else

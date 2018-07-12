@@ -615,7 +615,7 @@ private:
     RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_accessibilityDisplayOptionsNotificationObserver;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
 #endif
 

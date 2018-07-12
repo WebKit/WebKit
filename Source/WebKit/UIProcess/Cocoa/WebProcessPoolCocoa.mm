@@ -558,7 +558,7 @@ void WebProcessPool::registerNotificationObservers()
         screenPropertiesStateChanged();
     }];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     m_scrollerStyleNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSPreferredScrollerStyleDidChangeNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         auto scrollbarStyle = [NSScroller preferredScrollerStyle];
         sendToAllProcesses(Messages::WebProcess::ScrollerStylePreferenceChanged(scrollbarStyle));
@@ -577,7 +577,7 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticQuoteSubstitutionNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticDashSubstitutionNotificationObserver.get()];
     [[NSWorkspace.sharedWorkspace notificationCenter] removeObserver:m_accessibilityDisplayOptionsNotificationObserver.get()];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [[NSNotificationCenter defaultCenter] removeObserver:m_scrollerStyleNotificationObserver.get()];
 #endif
 #endif // !PLATFORM(IOS)

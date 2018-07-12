@@ -380,7 +380,7 @@ private:
 
 #if PLATFORM(MAC)
     void setScreenProperties(const WebCore::ScreenProperties&);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
 #endif
 #endif

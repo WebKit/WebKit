@@ -637,7 +637,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
         auto view = webFrame()->coreFrame()->view();
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view)];

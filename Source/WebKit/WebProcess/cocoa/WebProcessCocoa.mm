@@ -171,7 +171,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 #endif
     
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
     // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
     // Currently, it is also needed to allocate and initialize an NSApplication object.
     // FIXME: Remove the following line when rdar://problem/36323569 is fixed.
@@ -338,7 +338,7 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 #if USE(APPKIT)
 void WebProcess::stopRunLoop()
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
     ChildProcess::stopNSRunLoop();
 #else
     ChildProcess::stopNSAppRunLoop();
@@ -579,7 +579,7 @@ void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
 }
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
 {
     ScrollerStyle::setUseOverlayScrollbars(useOverlayScrollbars);

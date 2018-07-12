@@ -48,7 +48,7 @@ static bool clientsMayIgnoreEvents()
 static void setClientsMayIgnoreEvents(bool clientsMayIgnoreEvents)
 {
     auto cgsId = CGSMainConnectionID();
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // In macOS 10.14 and later, the WebContent process does not have access to the WindowServer.
     // In this case, there will be no valid WindowServer main connection.
     if (!cgsId)

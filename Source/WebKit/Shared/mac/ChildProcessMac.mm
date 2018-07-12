@@ -234,7 +234,7 @@ void ChildProcess::stopNSAppRunLoop()
 }
 #endif
 
-#if !PLATFORM(IOSMAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if !PLATFORM(IOSMAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
 void ChildProcess::stopNSRunLoop()
 {
     ASSERT([NSRunLoop mainRunLoop]);
