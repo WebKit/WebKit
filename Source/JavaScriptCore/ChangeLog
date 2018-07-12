@@ -1,3 +1,26 @@
+2018-07-12  Mark Lam  <mark.lam@apple.com>
+
+        Need to handle CodeBlock::replacement() being null.
+        https://bugs.webkit.org/show_bug.cgi?id=187569
+        <rdar://problem/41468692>
+
+        Reviewed by Saam Barati.
+
+        CodeBlock::replacement() may return a nullptr.  Some of our code already checks
+        for this while others do not.  We should add null checks in all the places that
+        need it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::numberOfDFGCompiles):
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        * jit/JITOperations.cpp:
+
 2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Thread VM& to JSCell::methodTable(VM&)

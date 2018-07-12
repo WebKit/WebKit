@@ -2863,7 +2863,8 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, Cod
     //
     // Note that even if optimizedCodeBlock is an FTLForOSREntry style CodeBlock, this condition is a
     // sure bet that we don't have anything else left to do.
-    if (codeBlock->replacement() == codeBlock) {
+    CodeBlock* replacement = codeBlock->replacement();
+    if (!replacement || replacement == codeBlock) {
         if (Options::verboseOSR())
             dataLog(*codeBlock, ": Not reoptimizing because we've already been jettisoned.\n");
         return;
