@@ -1,3 +1,15 @@
+2018-07-12  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Add pads to the GstFlowCombiner in MediaStreamSrc
+        https://bugs.webkit.org/show_bug.cgi?id=187552
+
+        Reviewed by Alejandro G. Castro.
+
+        This was overlooked and it is the way the API is supposed to be used.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::webkitMediaStreamSrcAddPad):
+
 2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Thread VM& to JSCell::methodTable(VM&)

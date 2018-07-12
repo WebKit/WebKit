@@ -358,6 +358,7 @@ static void webkitMediaStreamSrcAddPad(WebKitMediaStreamSrc* self, GstPad* targe
         return;
     }
 
+    gst_flow_combiner_add_pad(self->flowCombiner, proxypad.get());
     gst_pad_set_chain_function(proxypad.get(),
         static_cast<GstPadChainFunction>(webkitMediaStreamSrcChain));
 }
