@@ -1241,3 +1241,25 @@ webkit.org/b/171599 legacy-animation-engine/animations/trigger-container-scroll-
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 
 webkit.org/b/187323 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Pass Failure ]
+
+webkit.org/b/187593 http/tests/cache/disk-cache/disk-cache-cancel.html [ Failure Pass ]
+
+webkit.org/b/187594 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Failure Pass ]
+
+webkit.org/b/187595 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-lr-002.html [ Failure Pass ]
+
+webkit.org/b/187596 fast/events/autoscroll-with-non-scrollable-parent.html [ Timeout Pass ]
+
+webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
+
+webkit.org/b/187598 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Timeout Pass ]
+
+webkit.org/b/187599 svg/hittest/svg-visual-overflow-rect.html [ Timeout Pass ]
+
+webkit.org/b/187601 fullscreen/full-screen-layer-dump.html [ Failure ]
+
+webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
+
+webkit.org/b/187602 media/media-source/media-source-remove-unload-crash.html [ Crash Pass ]
+
+webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]

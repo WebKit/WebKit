@@ -1179,8 +1179,6 @@ css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure Timeout ]
 
-webkit.org/b/187041 imported/mozilla/css-animations/test_animation-pausing.html [ Failure Timeout ]
-
 # Requires support for testing text replacement
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
 
@@ -1998,6 +1996,16 @@ webkit.org/b/186851 imported/w3c/web-platform-tests/XMLHttpRequest/formdata-blob
 webkit.org/b/187326 fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/187327 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-1.html [ Pass Timeout ]
+
+webkit.org/b/187587 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/fetch-in-service-worker.html [ Failure Pass ]
+
+webkit.org/b/187588 fast/forms/form-control-element-crash.html [ Timeout Pass ]
+
+webkit.org/b/187589 inspector/unit-tests/debounce.html [ Timeout Pass ]
+
+webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
+
+webkit.org/b/187591 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3470,10 +3478,6 @@ webkit.org/b/186144 transitions/move-after-transition.html [ Failure Timeout ]
 webkit.org/b/187268 compositing/backing/backing-store-attachment-outside-viewport.html [ Failure ]
 
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
-
-webkit.org/b/187323 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Failure ]
-
-webkit.org/b/187325 http/wpt/css/css-animations/start-animation-001.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

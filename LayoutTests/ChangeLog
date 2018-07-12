@@ -1,3 +1,10 @@
+2018-07-12  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ and WPE gardening after r233765.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-07-12  Zalan Bujtas  <zalan@apple.com>
 
         Newly added float should trigger full layout on the block.
