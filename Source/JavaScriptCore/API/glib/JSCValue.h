@@ -226,6 +226,14 @@ jsc_value_new_functionv                   (JSCContext           *context,
                                            guint                 n_parameters,
                                            GType                *parameter_types);
 
+JSC_API JSCValue *
+jsc_value_new_function_variadic           (JSCContext           *context,
+                                           const char           *name,
+                                           GCallback             callback,
+                                           gpointer              user_data,
+                                           GDestroyNotify        destroy_notify,
+                                           GType                 return_type);
+
 JSC_API gboolean
 jsc_value_is_function                     (JSCValue             *value);
 

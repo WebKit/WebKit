@@ -53,7 +53,7 @@ static JSObjectRef callAsConstructor(JSContextRef callerContext, JSObjectRef con
 
 const ClassInfo JSCCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCCallbackFunction) };
 
-JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, Vector<GType>&& parameters)
+JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, const String& name, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     Structure* structure = globalObject->glibCallbackFunctionStructure();
     JSCCallbackFunction* function = new (NotNull, allocateCell<JSCCallbackFunction>(vm.heap)) JSCCallbackFunction(vm, structure, type, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
@@ -61,7 +61,7 @@ JSCCallbackFunction* JSCCallbackFunction::create(VM& vm, JSGlobalObject* globalO
     return function;
 }
 
-JSCCallbackFunction::JSCCallbackFunction(VM& vm, Structure* structure, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, Vector<GType>&& parameters)
+JSCCallbackFunction::JSCCallbackFunction(VM& vm, Structure* structure, Type type, JSCClass* jscClass, GRefPtr<GClosure>&& closure, GType returnType, std::optional<Vector<GType>>&& parameters)
     : InternalFunction(vm, structure, APICallbackFunction::call<JSCCallbackFunction>, type == Type::Constructor ? APICallbackFunction::construct<JSCCallbackFunction> : nullptr)
     , m_functionCallback(callAsFunction)
     , m_constructCallback(callAsConstructor)
@@ -99,9 +99,9 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     auto callbackData = jscContextPushCallback(context.get(), toRef(this), thisObject, argumentCount, arguments);
 
     // GClosure always expect to have at least the instance parameter.
-    bool addInstance = instance || m_parameters.isEmpty();
+    bool addInstance = instance || (m_parameters && m_parameters->isEmpty());
 
-    auto parameterCount = std::min(m_parameters.size(), argumentCount);
+    auto parameterCount = m_parameters ? std::min(m_parameters->size(), argumentCount) : 1;
     if (addInstance)
         parameterCount++;
     auto* values = static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount));
@@ -113,8 +113,16 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
         g_value_set_pointer(&values[0], instance);
         firstParameter = 1;
     }
-    for (size_t i = firstParameter; i < parameterCount && !*exception; ++i)
-        jscContextJSValueToGValue(context.get(), arguments[i - firstParameter], m_parameters[i - firstParameter], &values[i], exception);
+    if (m_parameters) {
+        for (size_t i = firstParameter; i < parameterCount && !*exception; ++i)
+            jscContextJSValueToGValue(context.get(), arguments[i - firstParameter], m_parameters.value()[i - firstParameter], &values[i], exception);
+    } else {
+        auto* parameters = g_ptr_array_new_full(argumentCount, g_object_unref);
+        for (size_t i = 0; i < argumentCount; ++i)
+            g_ptr_array_add(parameters, jscContextGetOrCreateValue(context.get(), arguments[i]).leakRef());
+        g_value_init(&values[firstParameter], G_TYPE_PTR_ARRAY);
+        g_value_take_boxed(&values[firstParameter], parameters);
+    }
 
     GValue returnValue = G_VALUE_INIT;
     if (m_returnType != G_TYPE_NONE)
@@ -155,19 +163,27 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     GValue returnValue = G_VALUE_INIT;
     g_value_init(&returnValue, m_returnType);
 
-    if (m_parameters.isEmpty()) {
+    if (m_parameters && m_parameters->isEmpty()) {
         // GClosure always expect to have at least the instance parameter.
         GValue dummyValue = G_VALUE_INIT;
         g_value_init(&dummyValue, G_TYPE_POINTER);
         g_closure_invoke(m_closure.get(), &returnValue, 1, &dummyValue, nullptr);
         g_value_unset(&dummyValue);
     } else {
-        auto parameterCount = std::min(m_parameters.size(), argumentCount);
+        auto parameterCount = m_parameters ? std::min(m_parameters->size(), argumentCount) : 1;
         auto* values = static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount));
         memset(values, 0, sizeof(GValue) * parameterCount);
 
-        for (size_t i = 0; i < parameterCount && !*exception; ++i)
-            jscContextJSValueToGValue(context.get(), arguments[i], m_parameters[i], &values[i], exception);
+        if (m_parameters) {
+            for (size_t i = 0; i < parameterCount && !*exception; ++i)
+                jscContextJSValueToGValue(context.get(), arguments[i], m_parameters.value()[i], &values[i], exception);
+        } else {
+            auto* parameters = g_ptr_array_new_full(argumentCount, g_object_unref);
+            for (size_t i = 0; i < argumentCount; ++i)
+                g_ptr_array_add(parameters, jscContextGetOrCreateValue(context.get(), arguments[i]).leakRef());
+            g_value_init(&values[0], G_TYPE_PTR_ARRAY);
+            g_value_take_boxed(&values[0], parameters);
+        }
 
         if (!*exception)
             g_closure_invoke(m_closure.get(), &returnValue, parameterCount, values, nullptr);

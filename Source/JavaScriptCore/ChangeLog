@@ -1,5 +1,35 @@
 2018-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Add API to allow creating variadic functions
+        https://bugs.webkit.org/show_bug.cgi?id=187517
+
+        Reviewed by Michael Catanzaro.
+
+        Add a _variadic alternate method for jsc_class_add_constructor, jsc_class_add_method and
+        jsc_value_new_function. In that case the callback always receives a GPtrArray of JSCValue.
+
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::create): Make the parameters optional.
+        (JSC::JSCCallbackFunction::JSCCallbackFunction): Ditto.
+        (JSC::JSCCallbackFunction::call): Handle the case of parameters being nullopt by creating a GPtrArray of
+        JSCValue for the arguments.
+        (JSC::JSCCallbackFunction::construct): Ditto.
+        * API/glib/JSCCallbackFunction.h:
+        * API/glib/JSCClass.cpp:
+        (jscClassCreateConstructor): Make the parameters optional.
+        (jsc_class_add_constructor_variadic): Pass nullopt as parameters to jscClassCreateConstructor.
+        (jscClassAddMethod): Make the parameters optional.
+        (jsc_class_add_method_variadic): Pass nullopt as parameters to jscClassAddMethod.
+        * API/glib/JSCClass.h:
+        * API/glib/JSCValue.cpp:
+        (jsc_value_object_define_property_accessor): Update now that parameters are optional.
+        (jscValueFunctionCreate): Make the parameters optional.
+        (jsc_value_new_function_variadic): Pass nullopt as parameters to jscValueFunctionCreate.
+        * API/glib/JSCValue.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
+2018-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Add jsc_context_get_global_object() to GLib API
         https://bugs.webkit.org/show_bug.cgi?id=187515
 

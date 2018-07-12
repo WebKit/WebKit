@@ -1089,14 +1089,14 @@ void jsc_value_object_define_property_accessor(JSCValue* value, const char* prop
     if (getter) {
         GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
         auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), "get"_s,
-            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), propertyType, { }));
+            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), propertyType, Vector<GType> { }));
         GRefPtr<JSCValue> function = jscContextGetOrCreateValue(priv->context.get(), functionObject);
         jsc_value_object_set_property(descriptor.get(), "get", function.get());
     }
     if (setter) {
         GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(setter, userData, getter ? nullptr : reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
         auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), "set"_s,
-            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), G_TYPE_NONE, { propertyType }));
+            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType }));
         GRefPtr<JSCValue> function = jscContextGetOrCreateValue(priv->context.get(), functionObject);
         jsc_value_object_set_property(descriptor.get(), "set", function.get());
     }
@@ -1105,7 +1105,7 @@ void jsc_value_object_define_property_accessor(JSCValue* value, const char* prop
         JSC_TYPE_VALUE, value, G_TYPE_STRING, propertyName, JSC_TYPE_VALUE, descriptor.get(), G_TYPE_NONE));
 }
 
-static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, Vector<GType>&& parameters)
+static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
     JSC::ExecState* exec = toJS(jscContextGetJSContext(context));
@@ -1154,7 +1154,7 @@ JSCValue* jsc_value_new_function(JSCContext* context, const char* name, GCallbac
 
 /**
  * jsc_value_new_functionv: (rename-to jsc_value_new_function)
- * @context: a #JSCContext:
+ * @context: a #JSCContext
  * @name: (nullable): the function name or %NULL
  * @callback: (scope async): a #GCallback.
  * @user_data: (closure): user data to pass to @callback.
@@ -1184,6 +1184,30 @@ JSCValue* jsc_value_new_functionv(JSCContext* context, const char* name, GCallba
     }
 
     return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
+}
+
+/**
+ * jsc_value_new_function_variadic:
+ * @context: a #JSCContext
+ * @name: (nullable): the function name or %NULL
+ * @callback: (scope async): a #GCallback.
+ * @user_data: (closure): user data to pass to @callback.
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ * @return_type: the #GType of the function return value, or %G_TYPE_NONE if the function is void.
+ *
+ * Create a function in @context. If @name is %NULL an anonymous function will be created.
+ * When the function is called by JavaScript or jsc_value_function_call(), @callback is called
+ * receiving an #GPtrArray of #JSCValue<!-- -->s with the arguments and then @user_data as last parameter.
+ * When the function is cleared in @context, @destroy_notify is called with @user_data as parameter.
+ *
+ * Returns: (transfer full): a #JSCValue.
+ */
+JSCValue* jsc_value_new_function_variadic(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+    g_return_val_if_fail(callback, nullptr);
+
+    return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, std::nullopt).leakRef();
 }
 
 /**

@@ -521,7 +521,7 @@ JSCClass* jsc_class_get_parent(JSCClass* jscClass)
     return jscClass->priv->parentClass;
 }
 
-static GRefPtr<JSCValue> jscClassCreateConstructor(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, Vector<GType>&& parameters)
+static GRefPtr<JSCValue> jscClassCreateConstructor(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     JSCClassPrivate* priv = jscClass->priv;
     GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
@@ -555,7 +555,7 @@ static GRefPtr<JSCValue> jscClassCreateConstructor(JSCClass* jscClass, const cha
  * parameters and @user_data as the last parameter. When the constructor object is cleared in the #JSCClass context,
  * @destroy_notify is called with @user_data as parameter.
  *
- * This function creates the constructor, that needs to be added to an object as a property to be able to use it. Use
+ * This function creates the constructor, which needs to be added to an object as a property to be able to use it. Use
  * jsc_context_set_value() to make the constructor available in the global object.
  *
  * Returns: (transfer full): a #JSCValue representing the class constructor.
@@ -601,7 +601,7 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
  * parameters and @user_data as the last parameter. When the constructor object is cleared in the #JSCClass context,
  * @destroy_notify is called with @user_data as parameter.
  *
- * This function creates the constructor, that needs to be added to an object as a property to be able to use it. Use
+ * This function creates the constructor, which needs to be added to an object as a property to be able to use it. Use
  * jsc_context_set_value() to make the constructor available in the global object.
  *
  * Returns: (transfer full): a #JSCValue representing the class constructor.
@@ -628,7 +628,40 @@ JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCall
     return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
 }
 
-static void jscClassAddMethod(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, Vector<GType>&& parameters)
+/**
+ * jsc_class_add_constructor_variadic:
+ * @jsc_class: a #JSCClass
+ * @name: (nullable): the constructor name or %NULL
+ * @callback: (scope async): a #GCallback to be called to create an instance of @jsc_class
+ * @user_data: (closure): user data to pass to @callback
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ * @return_type: the #GType of the constructor return value
+ *
+ * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When <function>new</function>
+ * is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving
+ * a #GPtrArray of #JSCValue<!-- -->s as arguments and @user_data as the last parameter. When the constructor object
+ * is cleared in the #JSCClass context, @destroy_notify is called with @user_data as parameter.
+ *
+ * This function creates the constructor, which needs to be added to an object as a property to be able to use it. Use
+ * jsc_context_set_value() to make the constructor available in the global object.
+ *
+ * Returns: (transfer full): a #JSCValue representing the class constructor.
+ */
+JSCValue* jsc_class_add_constructor_variadic(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType)
+{
+    g_return_val_if_fail(JSC_IS_CLASS(jscClass), nullptr);
+    g_return_val_if_fail(callback, nullptr);
+
+    JSCClassPrivate* priv = jscClass->priv;
+    g_return_val_if_fail(jscClass->priv->context, nullptr);
+
+    if (!name)
+        name = priv->name.data();
+
+    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, std::nullopt).leakRef();
+}
+
+static void jscClassAddMethod(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     JSCClassPrivate* priv = jscClass->priv;
     GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
@@ -711,6 +744,30 @@ void jsc_class_add_methodv(JSCClass* jscClass, const char* name, GCallback callb
     }
 
     jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTFMove(parameters));
+}
+
+/**
+ * jsc_class_add_method_variadic:
+ * @jsc_class: a #JSCClass
+ * @name: the method name
+ * @callback: (scope async): a #GCallback to be called to invoke method @name of @jsc_class
+ * @user_data: (closure): user data to pass to @callback
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ * @return_type: the #GType of the method return value, or %G_TYPE_NONE if the method is void.
+ *
+ * Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
+ * @callback is called receiving the class instance as first parameter, followed by a #GPtrArray of #JSCValue<!-- -->s
+ * with the method arguments and then @user_data as last parameter. When the method is cleared in the #JSCClass context,
+ * @destroy_notify is called with @user_data as parameter.
+ */
+void jsc_class_add_method_variadic(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType)
+{
+    g_return_if_fail(JSC_IS_CLASS(jscClass));
+    g_return_if_fail(name);
+    g_return_if_fail(callback);
+    g_return_if_fail(jscClass->priv->context);
+
+    jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, std::nullopt);
 }
 
 /**
