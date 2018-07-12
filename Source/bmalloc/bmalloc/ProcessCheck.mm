@@ -46,6 +46,7 @@ bool gigacageEnabledForProcess()
 
     NSString *processName = [[NSProcessInfo processInfo] processName];
     bool isOptInBinary = [processName isEqualToString:@"jsc"]
+        || [processName isEqualToString:@"DumpRenderTree"]
         || [processName isEqualToString:@"wasm"]
         || [processName hasPrefix:@"test"];
 
