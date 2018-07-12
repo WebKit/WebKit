@@ -203,7 +203,7 @@ public:
 
     PageGroup& group();
 
-    static void forEachPage(const WTF::Function<void(Page&)>&);
+    WEBCORE_EXPORT static void forEachPage(const WTF::Function<void(Page&)>&);
 
     void incrementSubframeCount() { ++m_subframeCount; }
     void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }

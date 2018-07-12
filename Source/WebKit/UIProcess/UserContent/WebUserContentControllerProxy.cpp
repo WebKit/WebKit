@@ -31,6 +31,7 @@
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "DataReference.h"
+#include "InjectUserScriptImmediately.h"
 #include "NetworkContentRuleListManagerMessages.h"
 #include "NetworkProcessProxy.h"
 #include "WebPageCreationParameters.h"
@@ -167,7 +168,7 @@ void WebUserContentControllerProxy::removeUserContentWorldUses(HashCountedSet<Re
         process->send(Messages::WebUserContentController::RemoveUserContentWorlds(worldsToRemove), identifier().toUInt64());
 }
 
-void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript)
+void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript, InjectUserScriptImmediately immediately)
 {
     Ref<API::UserContentWorld> world = userScript.userContentWorld();
 
@@ -176,7 +177,7 @@ void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript)
     m_userScripts->elements().append(&userScript);
 
     for (WebProcessProxy* process : m_processes)
-        process->send(Messages::WebUserContentController::AddUserScripts({ { userScript.identifier(), world->identifier(), userScript.userScript() } }), identifier().toUInt64());
+        process->send(Messages::WebUserContentController::AddUserScripts({ { userScript.identifier(), world->identifier(), userScript.userScript() } }, immediately), identifier().toUInt64());
 }
 
 void WebUserContentControllerProxy::removeUserScript(API::UserScript& userScript)

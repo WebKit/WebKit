@@ -175,7 +175,8 @@ public:
 
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
-    void injectUserScripts(UserScriptInjectionTime);
+    WEBCORE_EXPORT void injectUserScripts(UserScriptInjectionTime);
+    WEBCORE_EXPORT void injectUserScriptImmediately(DOMWrapperWorld&, const UserScript&);
     
     WEBCORE_EXPORT String layerTreeAsText(LayerTreeFlags = 0) const;
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;

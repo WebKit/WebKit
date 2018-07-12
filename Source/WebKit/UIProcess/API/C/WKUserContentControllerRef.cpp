@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "APIContentRuleList.h"
 #include "APIUserScript.h"
+#include "InjectUserScriptImmediately.h"
 #include "WKAPICast.h"
 #include "WebUserContentControllerProxy.h"
 
@@ -52,7 +53,7 @@ WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControllerRef use
 
 void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentControllerRef, WKUserScriptRef userScriptRef)
 {
-    toImpl(userContentControllerRef)->addUserScript(*toImpl(userScriptRef));
+    toImpl(userContentControllerRef)->addUserScript(*toImpl(userScriptRef), InjectUserScriptImmediately::No);
 }
 
 void WKUserContentControllerRemoveAllUserScripts(WKUserContentControllerRef userContentControllerRef)

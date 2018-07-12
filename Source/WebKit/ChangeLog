@@ -1,3 +1,33 @@
+2018-07-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for immediate injection of user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=173342
+        <rdar://problem/29202285>
+
+        Reviewed by Brady Eidson, Youenn Fablet, and Geoff Garen.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserScript):
+        * UIProcess/API/C/WKUserContentControllerRef.cpp:
+        (WKUserContentControllerAddUserScript):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController addUserScript:]):
+        (-[WKUserContentController _addUserScriptImmediately:]):
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserScripts):
+        (WebKit::WebUserContentController::addUserScriptInternal):
+        If we are to inject the script internally, inject it into the appropriate pages.
+        If we're injecting into the top frame only, there's no need to traverse the frame tree.
+        (WebKit::WebUserContentController::addUserScript):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+
 2018-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Address a possible cause of missing tiles

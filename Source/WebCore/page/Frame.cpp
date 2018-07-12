@@ -735,18 +735,23 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
         return;
 
     m_page->userContentProvider().forEachUserScript([this, protectedThis = makeRef(*this), injectionTime](DOMWrapperWorld& world, const UserScript& script) {
-        auto* document = this->document();
-        if (!document)
-            return;
-        if (script.injectedFrames() == InjectInTopFrameOnly && ownerElement())
-            return;
-
-        if (script.injectionTime() == injectionTime && UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist())) {
-            if (m_page)
-                m_page->setAsRunningUserScripts();
-            m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
-        }
+        if (script.injectionTime() == injectionTime)
+            injectUserScriptImmediately(world, script);
     });
+}
+
+void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript& script)
+{
+    auto* document = this->document();
+    if (!document)
+        return;
+    if (script.injectedFrames() == InjectInTopFrameOnly && !isMainFrame())
+        return;
+    if (!UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist()))
+        return;
+    if (m_page)
+        m_page->setAsRunningUserScripts();
+    m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
 }
 
 RenderView* Frame::contentRenderer() const

@@ -1,5 +1,26 @@
 2018-07-11  Alex Christensen  <achristensen@webkit.org>
 
+        Add SPI for immediate injection of user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=173342
+        <rdar://problem/29202285>
+
+        Reviewed by Brady Eidson, Youenn Fablet, and Geoff Garen.
+
+        The new SPI is WKUserContentController._addUserScriptImmediately.
+        It is covered by new API tests.
+        Existing functionality remains unchanged unless the new SPI is adopted.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        (WebCore::Frame::injectUserScriptImmediately):
+        Move injection functionality to allow us to call it directly from the new SPI.
+        * page/Frame.h:
+        * page/Page.cpp:
+        (WebCore::Page::forEachPage):
+        * page/Page.h:
+
+2018-07-11  Alex Christensen  <achristensen@webkit.org>
+
         Reduce size of WebCore::URL
         https://bugs.webkit.org/show_bug.cgi?id=186820
 

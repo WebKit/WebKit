@@ -1,3 +1,15 @@
+2018-07-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for immediate injection of user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=173342
+        <rdar://problem/29202285>
+
+        Reviewed by Brady Eidson, Youenn Fablet, and Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        (waitForMessage):
+        (TEST):
+
 2018-07-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move WHLSL spec work to the W3C GPUWeb GitHub repository

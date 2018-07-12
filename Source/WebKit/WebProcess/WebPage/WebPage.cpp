@@ -40,6 +40,7 @@
 #include "FindController.h"
 #include "FormDataReference.h"
 #include "GeolocationPermissionRequestManager.h"
+#include "InjectUserScriptImmediately.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleScriptWorld.h"
@@ -612,7 +613,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
         registerURLSchemeHandler(iterator.value, iterator.key);
 
     m_userContentController->addUserContentWorlds(parameters.userContentWorlds);
-    m_userContentController->addUserScripts(parameters.userScripts);
+    m_userContentController->addUserScripts(WTFMove(parameters.userScripts), InjectUserScriptImmediately::No);
     m_userContentController->addUserStyleSheets(parameters.userStyleSheets);
     m_userContentController->addUserScriptMessageHandlers(parameters.messageHandlers);
 #if ENABLE(CONTENT_EXTENSIONS)

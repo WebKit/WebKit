@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "FrameInfoData.h"
+#include "InjectUserScriptImmediately.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebFrame.h"
@@ -36,6 +37,7 @@
 #include "WebUserContentControllerMessages.h"
 #include "WebUserContentControllerProxyMessages.h"
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/Frame.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/UserStyleSheet.h>
@@ -122,7 +124,7 @@ void WebUserContentController::removeUserContentWorlds(const Vector<uint64_t>& w
     }
 }
 
-void WebUserContentController::addUserScripts(const Vector<WebUserScriptData>& userScripts)
+void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userScripts, InjectUserScriptImmediately immediately)
 {
     for (const auto& userScriptData : userScripts) {
         auto it = worldMap().find(userScriptData.worldIdentifier);
@@ -132,7 +134,7 @@ void WebUserContentController::addUserScripts(const Vector<WebUserScriptData>& u
         }
 
         UserScript script = userScriptData.userScript;
-        addUserScriptInternal(*it->value.first, userScriptData.identifier, WTFMove(script));
+        addUserScriptInternal(*it->value.first, userScriptData.identifier, WTFMove(script), immediately);
     }
 }
 
@@ -360,15 +362,31 @@ void WebUserContentController::removeAllContentRuleLists()
 }
 #endif
 
-void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, uint64_t userScriptIdentifier, UserScript&& userScript)
+void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, uint64_t userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)
 {
+    if (immediately == InjectUserScriptImmediately::Yes) {
+        Page::forEachPage([&] (auto& page) {
+            if (&page.userContentProvider() != this)
+                return;
+
+            auto& mainFrame = page.mainFrame();
+            if (userScript.injectedFrames() == InjectInTopFrameOnly) {
+                mainFrame.injectUserScriptImmediately(world.coreWorld(), userScript);
+                return;
+            }
+
+            for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext(&mainFrame))
+                frame->injectUserScriptImmediately(world.coreWorld(), userScript);
+        });
+    }
+
     auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<uint64_t, WebCore::UserScript>>(); }).iterator->value;
     scriptsInWorld.append(std::make_pair(userScriptIdentifier, WTFMove(userScript)));
 }
 
 void WebUserContentController::addUserScript(InjectedBundleScriptWorld& world, UserScript&& userScript)
 {
-    addUserScriptInternal(world, 0, WTFMove(userScript));
+    addUserScriptInternal(world, 0, WTFMove(userScript), InjectUserScriptImmediately::No);
 }
 
 void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld& world, const URL& url)
