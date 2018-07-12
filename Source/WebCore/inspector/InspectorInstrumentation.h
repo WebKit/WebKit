@@ -1458,6 +1458,7 @@ inline InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForWork
 
 inline void InspectorInstrumentation::frontendCreated()
 {
+    ASSERT(isMainThread());
     s_frontendCounter++;
 
     if (s_frontendCounter == 1)
@@ -1466,6 +1467,7 @@ inline void InspectorInstrumentation::frontendCreated()
 
 inline void InspectorInstrumentation::frontendDeleted()
 {
+    ASSERT(isMainThread());
     s_frontendCounter--;
 
     if (!s_frontendCounter)

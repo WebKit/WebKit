@@ -1,5 +1,20 @@
 2018-07-12  Chris Dumez  <cdumez@apple.com>
 
+        Make sure WebProcess::ensureNetworkProcessConnection() is always called on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=187607
+
+        Reviewed by Alex Christensen.
+
+        Add release assertion to make sure that ensureNetworkProcessConnection() is always called on the main
+        thread. Calling it on a background thread would not be safe. It would not be safe because:
+        1. We check if we have a network process connection and then create one if we don't without any locking.
+        2. It is not safe to construct or use a NetworkProcessConnection object from a non-main thread
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
+2018-07-12  Chris Dumez  <cdumez@apple.com>
+
         Assert that the IPC::Connection is valid in Connection::dispatchMessage(Decoder&)
         https://bugs.webkit.org/show_bug.cgi?id=187617
 

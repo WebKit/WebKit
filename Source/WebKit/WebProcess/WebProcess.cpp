@@ -1099,6 +1099,8 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
 
 NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+
     // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
     if (!m_networkProcessConnection) {
         IPC::Attachment encodedConnectionIdentifier;
