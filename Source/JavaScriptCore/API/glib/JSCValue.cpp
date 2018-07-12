@@ -544,6 +544,31 @@ JSCValue* jsc_value_new_array_from_garray(JSCContext* context, GPtrArray* gArray
 }
 
 /**
+ * jsc_value_new_array_from_strv:
+ * @context: a #JSCContext
+ * @strv: (array zero-terminated=1) (element-type utf8): a %NULL-terminated array of strings
+ *
+ * Create a new #JSCValue referencing an array of strings with the items from @strv. If @array
+ * is %NULL or empty a new empty array will be created.
+ *
+ * Returns: (transfer full): a #JSCValue.
+ */
+JSCValue* jsc_value_new_array_from_strv(JSCContext* context, const char* const* strv)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+
+    auto strvLength = strv ? g_strv_length(const_cast<char**>(strv)) : 0;
+    if (!strvLength)
+        return jsc_value_new_array(context, G_TYPE_NONE);
+
+    GRefPtr<GPtrArray> gArray = adoptGRef(g_ptr_array_new_full(strvLength, g_object_unref));
+    for (unsigned i = 0; i < strvLength; i++)
+        g_ptr_array_add(gArray.get(), jsc_value_new_string(context, strv[i]));
+
+    return jsc_value_new_array_from_garray(context, gArray.get());
+}
+
+/**
  * jsc_value_is_array:
  * @value: a #JSCValue
  *

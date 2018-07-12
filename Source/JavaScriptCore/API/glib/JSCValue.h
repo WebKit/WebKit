@@ -130,6 +130,10 @@ JSC_API JSCValue *
 jsc_value_new_array_from_garray           (JSCContext           *context,
                                            GPtrArray            *array);
 
+JSC_API JSCValue *
+jsc_value_new_array_from_strv             (JSCContext           *context,
+                                           const char *const    *strv);
+
 JSC_API gboolean
 jsc_value_is_array                        (JSCValue             *value);
 

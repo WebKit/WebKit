@@ -1,3 +1,20 @@
+2018-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Handle G_TYPE_STRV in glib API
+        https://bugs.webkit.org/show_bug.cgi?id=187512
+
+        Reviewed by Michael Catanzaro.
+
+        Add jsc_value_new_array_from_strv() and handle G_TYPE_STRV types in function parameters.
+
+        * API/glib/JSCContext.cpp:
+        (jscContextGValueToJSValue):
+        (jscContextJSValueToGValue):
+        * API/glib/JSCValue.cpp:
+        (jsc_value_new_array_from_strv):
+        * API/glib/JSCValue.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2018-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Iterator of Array.keys() returns object in wrong order

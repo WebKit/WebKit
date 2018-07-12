@@ -494,6 +494,20 @@ static void testJSCTypes()
     g_assert_true(jsc_value_is_number(arrayLength.get()));
     g_assert_cmpint(jsc_value_to_int32(arrayLength.get()), ==, gArray->len);
 
+    const char* strv[] = { "one", "two", "three", nullptr };
+    array = adoptGRef(jsc_value_new_array_from_strv(context.get(), strv));
+    checker.watch(array.get());
+    g_assert_true(jsc_value_is_array(array.get()));
+    g_assert_true(jsc_value_is_object(array.get()));
+    g_assert_true(jsc_value_to_boolean(array.get()) == TRUE);
+    g_assert_cmpint(jsc_value_to_int32(array.get()), ==, 0);
+    valueString.reset(jsc_value_to_string(array.get()));
+    g_assert_cmpstr(valueString.get(), ==, "one,two,three");
+    arrayLength = adoptGRef(jsc_value_object_get_property(array.get(), "length"));
+    checker.watch(arrayLength.get());
+    g_assert_true(jsc_value_is_number(arrayLength.get()));
+    g_assert_cmpint(jsc_value_to_int32(arrayLength.get()), ==, 3);
+
     value = adoptGRef(jsc_value_new_object(context.get(), nullptr, nullptr));
     checker.watch(value.get());
     g_assert_true(jsc_value_is_object(value.get()));
@@ -560,6 +574,11 @@ static int sumFunction(GPtrArray* array)
     }, &retval);
 
     return retval;
+}
+
+static char* joinFunction(const char* const* strv, const char* sep)
+{
+    return g_strjoinv(sep, const_cast<char**>(strv));
 }
 
 static void testJSCFunction()
@@ -743,6 +762,48 @@ static void testJSCFunction()
         checker.watch(value.get());
         g_assert_true(jsc_value_is_number(value.get()));
         g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 9);
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        GRefPtr<JSCValue> function = adoptGRef(jsc_context_evaluate(context.get(),
+            "joinFunction = function(array, sep) {\n"
+            "    var result = '';\n"
+            "    for (var i in array) {\n"
+            "        result += array[i];\n"
+            "        if (i != array.length - 1) { result += sep; }\n"
+            "    }\n"
+            "    return result;\n"
+            "}", -1));
+        checker.watch(function.get());
+        g_assert_true(jsc_value_is_object(function.get()));
+
+        const char* strv[] = { "one", "two", "three", nullptr };
+        GRefPtr<JSCValue> value = adoptGRef(jsc_value_function_call(function.get(), G_TYPE_STRV, strv, G_TYPE_STRING, " ", G_TYPE_NONE));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_string(value.get()));
+        GUniquePtr<char> valueString(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString.get(), ==, "one two three");
+
+        function = adoptGRef(jsc_value_new_function(context.get(), "joinFunction2", G_CALLBACK(joinFunction), nullptr, nullptr, G_TYPE_STRING, 2, G_TYPE_STRV, G_TYPE_STRING));
+        checker.watch(function.get());
+        jsc_context_set_value(context.get(), "joinFunction2", function.get());
+        value = adoptGRef(jsc_context_evaluate(context.get(), "joinFunction2(['one','two','three'], ' ')", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_string(value.get()));
+        GUniquePtr<char> valueString2(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(valueString2.get(), ==, valueString.get());
+
+        bool didThrow = false;
+        g_assert_throw_begin(exceptionHandler, didThrow);
+        value = adoptGRef(jsc_context_evaluate(context.get(), "joinFunction2(['one',2,'three'], ' ')", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_undefined(value.get()));
+        g_assert_did_throw(exceptionHandler, didThrow);
     }
 }
 

@@ -327,6 +327,48 @@ static GRefPtr<GPtrArray> jscContextJSArrayToGArray(JSCContext* context, JSValue
     return gArray;
 }
 
+GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArray, JSValueRef* exception)
+{
+    JSCContextPrivate* priv = context->priv;
+    if (JSValueIsNull(priv->jsContext.get(), jsArray))
+        return nullptr;
+
+    if (!JSValueIsArray(priv->jsContext.get(), jsArray)) {
+        *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("invalid js type for GStrv")));
+        return nullptr;
+    }
+
+    auto* jsArrayObject = JSValueToObject(priv->jsContext.get(), jsArray, exception);
+    if (*exception)
+        return nullptr;
+
+    JSRetainPtr<JSStringRef> lengthString(Adopt, JSStringCreateWithUTF8CString("length"));
+    auto* jsLength = JSObjectGetProperty(priv->jsContext.get(), jsArrayObject, lengthString.get(), exception);
+    if (*exception)
+        return nullptr;
+
+    auto length = JSC::toUInt32(JSValueToNumber(priv->jsContext.get(), jsLength, exception));
+    if (*exception)
+        return nullptr;
+
+    GUniquePtr<char*> strv(static_cast<char**>(g_new0(char*, length + 1)));
+    for (unsigned i = 0; i < length; ++i) {
+        auto* jsItem = JSObjectGetPropertyAtIndex(priv->jsContext.get(), jsArrayObject, i, exception);
+        if (*exception)
+            return nullptr;
+
+        auto jsValueItem = jscContextGetOrCreateValue(context, jsItem);
+        if (!jsc_value_is_string(jsValueItem.get())) {
+            *exception = toRef(JSC::createTypeError(toJS(priv->jsContext.get()), makeString("invalid js type for GStrv: item ", String::number(i), " is not a string")));
+            return nullptr;
+        }
+
+        strv.get()[i] = jsc_value_to_string(jsValueItem.get());
+    }
+
+    return strv;
+}
+
 JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, JSValueRef* exception)
 {
     JSCContextPrivate* priv = context->priv;
@@ -377,6 +419,15 @@ JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, J
 
             if (g_type_is_a(G_VALUE_TYPE(value), G_TYPE_PTR_ARRAY))
                 return jscContextGArrayToJSArray(context, static_cast<GPtrArray*>(ptr), exception);
+
+            if (g_type_is_a(G_VALUE_TYPE(value), G_TYPE_STRV)) {
+                auto** strv = static_cast<char**>(ptr);
+                auto strvLength = g_strv_length(strv);
+                GRefPtr<GPtrArray> gArray = adoptGRef(g_ptr_array_new_full(strvLength, g_object_unref));
+                for (unsigned i = 0; i < strvLength; i++)
+                    g_ptr_array_add(gArray.get(), jsc_value_new_string(context, strv[i]));
+                return jscContextGArrayToJSArray(context, gArray.get(), exception);
+            }
         } else
             return JSValueMakeNull(priv->jsContext.get());
 
@@ -460,6 +511,13 @@ void jscContextJSValueToGValue(JSCContext* context, JSValueRef jsValue, GType ty
                     auto gArray = jscContextJSArrayToGArray(context, jsValue, exception);
                     if (!*exception)
                         g_value_take_boxed(value, gArray.leakRef());
+                    return;
+                }
+
+                if (g_type_is_a(G_VALUE_TYPE(value), G_TYPE_STRV)) {
+                    auto strv = jscContextJSArrayToGStrv(context, jsValue, exception);
+                    if (!*exception)
+                        g_value_take_boxed(value, strv.release());
                     return;
                 }
 
