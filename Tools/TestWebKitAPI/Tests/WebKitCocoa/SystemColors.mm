@@ -32,6 +32,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC)
+#import <pal/spi/cocoa/NSColorSPI.h>
+#endif
+
 namespace TestWebKitAPI {
 
 TEST(WebKit, LinkColor)
@@ -52,8 +56,16 @@ TEST(WebKit, LinkColorWithSystemAppearance)
 
     [webView synchronouslyLoadHTMLString:@"<a href>Test</a>"];
 
-    NSString *linkColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.links[0]).color"];
-    EXPECT_WK_STREQ("rgb(0, 104, 218)", linkColor);
+    NSColor *linkColor = [NSColor.linkColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+
+    CGFloat red = linkColor.redComponent * 255;
+    CGFloat green = linkColor.greenComponent * 255;
+    CGFloat blue = linkColor.blueComponent * 255;
+
+    NSString *expectedString = [NSString stringWithFormat:@"rgb(%.0f, %.0f, %.0f)", red, green, blue];
+
+    NSString *cssLinkColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.links[0]).color"];
+    EXPECT_WK_STREQ(expectedString.UTF8String, cssLinkColor);
 }
 #endif
 
