@@ -1,3 +1,16 @@
+2018-07-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        UTF-16 XHTML files need svn:mime-type to be handled correctly by Windows SVN
+        https://bugs.webkit.org/show_bug.cgi?id=187571
+
+        Reviewed by Alex Christensen.
+
+        * dom/xhtml/level3/core/documentgetinputencoding03.xhtml:
+        * dom/xhtml/level3/core/entitygetinputencoding02.xhtml:
+        * dom/xhtml/level3/core/entitygetxmlversion02.xhtml:
+        * dom/xhtml/level3/core/external_foo.ent:
+        Added property svn:mime-type and removed property svn:eol-style (to align with documentgetxmlencoding03.xhtml).
+
 2018-07-12  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ and WPE gardening after r233765.
