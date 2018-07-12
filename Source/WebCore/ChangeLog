@@ -1,3 +1,23 @@
+2018-07-12  Zalan Bujtas  <zalan@apple.com>
+
+        Newly added float should trigger full layout on the block.
+        https://bugs.webkit.org/show_bug.cgi?id=187251
+        <rdar://problem/41726137>
+
+        Reviewed by David Kilzer.
+
+        RenderBlockFlow::determineStartPosition() is one of the places where we decide the extent of the line layout for the current block.
+        In here we try to figure out the first line in the block that requires layout. In certain cases when floats are present,
+        (due to their intrusive behavior) we just trigger a full layout on the entire block.
+        One of the special cases is when a new float is added to the block. determineStartPosition() checks for such floats (floats inserted
+        after the "last known float") and marks the block for full layout. However it missed the case when other, unrelated mutations happened
+        in addition to this newly inserted float. This patch fixes this case by checking if the floats after the "last know float" actually need layout.
+
+        Test: fast/inline/new-float-needs-layout-when-line-is-dirty.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::determineStartPosition):
+
 2018-07-12  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Add pads to the GstFlowCombiner in MediaStreamSrc

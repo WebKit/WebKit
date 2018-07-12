@@ -1834,8 +1834,19 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
             }
         }
         // Check if a new float has been inserted after the last known float.
-        if (!currentLine && floatsIterator != end)
-            layoutState.markForFullLayout();
+        if (floatsIterator != end) {
+            if (!currentLine)
+                layoutState.markForFullLayout();
+            else {
+                for (; floatsIterator != end; ++floatsIterator) {
+                    auto& floatWithRect = *floatsIterator;
+                    if (!floatWithRect->renderer().needsLayout())
+                        continue;
+                    layoutState.markForFullLayout();
+                    break;
+                }
+            }
+        }
     }
 
     if (layoutState.isFullLayout()) {
