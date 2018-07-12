@@ -197,10 +197,8 @@ static long writeURLForTypes(const Vector<String>& types, const String& pasteboa
     }
 
     if (types.contains(WebURLsWithTitlesPboardType)) {
-        Vector<String> paths;
-        paths.append([cocoaURL absoluteString]);
-        paths.append(String(title).stripWhiteSpace());
-        newChangeCount = platformStrategies()->pasteboardStrategy()->setPathnamesForType(paths, WebURLsWithTitlesPboardType, pasteboardName);
+        PasteboardURL url = { pasteboardURL.url, String(title).stripWhiteSpace(), emptyString() };
+        newChangeCount = platformStrategies()->pasteboardStrategy()->setURL(url, pasteboardName);
     }
     if (types.contains(String(legacyURLPasteboardType())))
         newChangeCount = platformStrategies()->pasteboardStrategy()->setStringForType([cocoaURL absoluteString], legacyURLPasteboardType(), pasteboardName);
@@ -221,9 +219,8 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL& pasteboardURL)
 {
-    NSURL *cocoaURL = pasteboardURL.url;
-    Vector<String> paths = { [cocoaURL absoluteString], pasteboardURL.title.stripWhiteSpace() };
-    m_changeCount = platformStrategies()->pasteboardStrategy()->setPathnamesForType(paths, WebURLsWithTitlesPboardType, m_pasteboardName);
+    PasteboardURL url = { pasteboardURL.url, pasteboardURL.title.stripWhiteSpace(), emptyString() };
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setURL(url, m_pasteboardName);
 }
 
 static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)

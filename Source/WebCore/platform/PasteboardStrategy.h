@@ -70,7 +70,7 @@ public:
     virtual long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;
     virtual long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;
     virtual long setBufferForType(SharedBuffer*, const String& pasteboardType, const String& pasteboardName) = 0;
-    virtual long setPathnamesForType(const Vector<String>&, const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual long setURL(const PasteboardURL&, const String& pasteboardName) = 0;
     virtual long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) = 0;
 #endif
 

@@ -413,11 +413,6 @@ template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
     static bool decode(Decoder&, WebCore::PasteboardWebContent&);
 };
 
-template<> struct ArgumentCoder<WebCore::PasteboardURL> {
-    static void encode(Encoder&, const WebCore::PasteboardURL&);
-    static bool decode(Decoder&, WebCore::PasteboardURL&);
-};
-
 template<> struct ArgumentCoder<WebCore::PasteboardImage> {
     static void encode(Encoder&, const WebCore::PasteboardImage&);
     static bool decode(Decoder&, WebCore::PasteboardImage&);
@@ -427,6 +422,11 @@ template<> struct ArgumentCoder<WebCore::PasteboardImage> {
 template<> struct ArgumentCoder<WebCore::PasteboardCustomData> {
     static void encode(Encoder&, const WebCore::PasteboardCustomData&);
     static bool decode(Decoder&, WebCore::PasteboardCustomData&);
+};
+
+template<> struct ArgumentCoder<WebCore::PasteboardURL> {
+    static void encode(Encoder&, const WebCore::PasteboardURL&);
+    static bool decode(Decoder&, WebCore::PasteboardURL&);
 };
 
 #if USE(SOUP)

@@ -84,7 +84,7 @@ public:
     // These methods will return 0 if pasteboard ownership has been taken from us.
     WEBCORE_EXPORT long copy(const String& fromPasteboard);
     WEBCORE_EXPORT long setBufferForType(SharedBuffer*, const String& pasteboardType);
-    WEBCORE_EXPORT long setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType);
+    WEBCORE_EXPORT long setURL(const PasteboardURL&);
     WEBCORE_EXPORT long setStringForType(const String&, const String& pasteboardType);
     WEBCORE_EXPORT void write(const PasteboardWebContent&);
     WEBCORE_EXPORT void write(const PasteboardImage&);

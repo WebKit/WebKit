@@ -249,7 +249,7 @@ long PlatformPasteboard::setBufferForType(SharedBuffer*, const String&)
     return 0;
 }
 
-long PlatformPasteboard::setPathnamesForType(const Vector<String>&, const String&)
+long PlatformPasteboard::setURL(const PasteboardURL&)
 {
     return 0;
 }

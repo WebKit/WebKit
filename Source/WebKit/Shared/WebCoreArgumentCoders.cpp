@@ -1656,6 +1656,38 @@ bool ArgumentCoder<PasteboardCustomData>::decode(Decoder& decoder, PasteboardCus
     return true;
 }
 
+void ArgumentCoder<PasteboardURL>::encode(Encoder& encoder, const PasteboardURL& content)
+{
+    encoder << content.url;
+    encoder << content.title;
+#if PLATFORM(MAC)
+    encoder << content.userVisibleForm;
+#endif
+#if PLATFORM(GTK)
+    encoder << content.markup;
+#endif
+}
+
+bool ArgumentCoder<PasteboardURL>::decode(Decoder& decoder, PasteboardURL& content)
+{
+    if (!decoder.decode(content.url))
+        return false;
+
+    if (!decoder.decode(content.title))
+        return false;
+
+#if PLATFORM(MAC)
+    if (!decoder.decode(content.userVisibleForm))
+        return false;
+#endif
+#if PLATFORM(GTK)
+    if (!decoder.decode(content.markup))
+        return false;
+#endif
+
+    return true;
+}
+
 #if PLATFORM(IOS)
 
 void ArgumentCoder<Highlight>::encode(Encoder& encoder, const Highlight& highlight)
@@ -1691,23 +1723,6 @@ bool ArgumentCoder<Highlight>::decode(Decoder& decoder, Highlight& highlight)
         return false;
     if (!decoder.decode(highlight.quads))
         return false;
-    return true;
-}
-
-void ArgumentCoder<PasteboardURL>::encode(Encoder& encoder, const PasteboardURL& content)
-{
-    encoder << content.url;
-    encoder << content.title;
-}
-
-bool ArgumentCoder<PasteboardURL>::decode(Decoder& decoder, PasteboardURL& content)
-{
-    if (!decoder.decode(content.url))
-        return false;
-
-    if (!decoder.decode(content.title))
-        return false;
-
     return true;
 }
 

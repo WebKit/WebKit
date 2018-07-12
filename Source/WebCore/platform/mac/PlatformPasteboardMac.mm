@@ -262,14 +262,15 @@ long PlatformPasteboard::setBufferForType(SharedBuffer* buffer, const String& pa
     return changeCount();
 }
 
-long PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType)
+long PlatformPasteboard::setURL(const PasteboardURL& pasteboardURL)
 {
-    RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);
-    for (size_t i = 0; i < pathnames.size(); ++i)
-        [paths.get() addObject:[NSArray arrayWithObject:pathnames[i]]];
-    BOOL didWriteData = [m_pasteboard.get() setPropertyList:paths.get() forType:pasteboardType];
+    NSURL *cocoaURL = pasteboardURL.url;
+    NSArray *urlWithTitle = @[ @[ cocoaURL.absoluteString ], @[ pasteboardURL.title ] ];
+    NSString *pasteboardType = [NSString stringWithUTF8String:WebURLsWithTitlesPboardType];
+    BOOL didWriteData = [m_pasteboard.get() setPropertyList:urlWithTitle forType:pasteboardType];
     if (!didWriteData)
         return 0;
+
     return changeCount();
 }
 

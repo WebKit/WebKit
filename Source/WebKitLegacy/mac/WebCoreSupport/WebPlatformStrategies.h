@@ -87,7 +87,7 @@ private:
     long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
     long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
     long setBufferForType(WebCore::SharedBuffer*, const String& pasteboardType, const String& pasteboardName) override;
-    long setPathnamesForType(const Vector<String>&, const String& pasteboardType, const String& pasteboardName) override;
+    long setURL(const WebCore::PasteboardURL&, const String& pasteboardName) override;
     long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) override;
 };
 

@@ -29,6 +29,7 @@
 #import "SandboxExtension.h"
 #import "WebProcessProxy.h"
 #import <WebCore/Color.h>
+#import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardItemInfo.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
@@ -120,19 +121,18 @@ void WebPasteboardProxy::setPasteboardTypes(const String& pasteboardName, const 
     newChangeCount = PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-void WebPasteboardProxy::setPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount)
+void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const PasteboardURL& pasteboardURL, const String& pasteboardName, uint64_t& newChangeCount)
 {
     for (auto* webProcessProxy : m_webProcessProxyList) {
         if (!webProcessProxy->hasConnection(connection))
             continue;
-        
-        for (const auto& pathname : pathnames) {
-            if (!webProcessProxy->checkURLReceivedFromWebProcess(pathname)) {
-                newChangeCount = 0;
-                return;
-            }
+
+        if (!webProcessProxy->checkURLReceivedFromWebProcess(pasteboardURL.url.string())) {
+            newChangeCount = 0;
+            return;
         }
-        newChangeCount = PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
+
+        newChangeCount = PlatformPasteboard(pasteboardName).setURL(pasteboardURL);
         return;
     }
     newChangeCount = 0;

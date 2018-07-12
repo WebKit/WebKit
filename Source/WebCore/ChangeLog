@@ -1,3 +1,25 @@
+2018-07-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (231276): Attempting to copy an image fails
+        https://bugs.webkit.org/show_bug.cgi?id=187212
+        <rdar://problem/41540074>
+
+        Reviewed by Ryosuke Niwa.
+
+        Renamed methods to make it clear that one URL and one title are being passed in.
+
+        Test: editing/mac/pasteboard/can-copy-url-without-title.html
+
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::setURL):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeURLForTypes):
+        (WebCore::Pasteboard::writeTrustworthyWebURLsPboardType):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::setURL):
+
 2018-07-11  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for immediate injection of user scripts

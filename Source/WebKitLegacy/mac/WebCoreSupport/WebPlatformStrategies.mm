@@ -164,9 +164,9 @@ long WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String&
     return PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
-long WebPlatformStrategies::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
+long WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const String& pasteboardName)
 {
-    return PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
+    return PlatformPasteboard(pasteboardName).setURL(pasteboardURL);
 }
 
 long WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)

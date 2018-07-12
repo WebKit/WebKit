@@ -1,3 +1,18 @@
+2018-07-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (231276): Attempting to copy an image fails
+        https://bugs.webkit.org/show_bug.cgi?id=187212
+
+        Reviewed by Ryosuke Niwa.
+        <rdar://problem/41540074>
+
+        Augmented test to include a URL where the lastPathComponent looks similar to a
+        file URL.
+
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.html:
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.mm:
+        (TestWebKitAPI::TEST):
+
 2018-07-11  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for immediate injection of user scripts

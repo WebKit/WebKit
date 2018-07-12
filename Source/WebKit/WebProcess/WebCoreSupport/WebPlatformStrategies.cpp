@@ -268,10 +268,10 @@ long WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String&
     return newChangeCount;
 }
 
-long WebPlatformStrategies::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
+long WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const String& pasteboardName)
 {
-    uint64_t newChangeCount { 0 };
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardPathnamesForType(pasteboardName, pasteboardType, pathnames), Messages::WebPasteboardProxy::SetPasteboardPathnamesForType::Reply(newChangeCount), 0);
+    uint64_t newChangeCount;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardURL(pasteboardURL, pasteboardName), Messages::WebPasteboardProxy::SetPasteboardURL::Reply(newChangeCount), 0);
     return newChangeCount;
 }
 
