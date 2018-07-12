@@ -190,6 +190,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID + 1);
     m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
+    m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
 
     if (layerTreeTransaction.hasEditorState())
         m_webPageProxy.editorStateChanged(layerTreeTransaction.editorState());
@@ -429,8 +430,10 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     m_webPageProxy.didUpdateActivityState();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState()
+void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityStateChangeID)
 {
+    ASSERT(activityStateChangeID != ActivityStateChangeAsynchronous);
+
     // We must send the didUpdate message before blocking on the next commit, otherwise
     // we can be guaranteed that the next commit won't come until after the waitForAndDispatchImmediately times out.
     if (m_didUpdateMessageState != DoesNotNeedDidUpdate)
@@ -446,7 +449,12 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState()
         return Seconds::fromMilliseconds(250);
 #endif
     }();
-    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_webPageProxy.pageID(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+
+    auto startTime = MonotonicTime::now();
+    while (m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_webPageProxy.pageID(), activityStateUpdateTimeout - (MonotonicTime::now() - startTime), IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
+        if (activityStateChangeID == ActivityStateChangeAsynchronous || activityStateChangeID <= m_activityStateChangeID)
+            return;
+    }
 }
 
 void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callbackFunction)

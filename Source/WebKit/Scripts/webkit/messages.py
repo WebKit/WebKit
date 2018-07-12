@@ -196,6 +196,7 @@ def forward_declarations_and_headers(receiver):
         'WebCore::ServiceWorkerOrClientIdentifier',
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SWServerConnectionIdentifier',
+        'WebKit::ActivityStateChangeID',
         'WebKit::UserContentControllerIdentifier',
     ])
 
@@ -416,6 +417,7 @@ def headers_for_type(type):
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
         'WebCore::SelectionRect': ['"EditorState.h"'],
+        'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
         'WebKit::LayerHostingMode': ['"LayerTreeContext.h"'],
         'WebKit::PageState': ['"SessionState.h"'],

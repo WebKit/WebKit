@@ -505,7 +505,7 @@ public:
     enum class ActivityStateChangeDispatchMode { Deferrable, Immediate };
     void activityStateDidChange(WebCore::ActivityState::Flags mayHaveChanged, bool wantsSynchronousReply = false, ActivityStateChangeDispatchMode = ActivityStateChangeDispatchMode::Deferrable);
     bool isInWindow() const { return m_activityState & WebCore::ActivityState::IsInWindow; }
-    void waitForDidUpdateActivityState();
+    void waitForDidUpdateActivityState(ActivityStateChangeID);
     void didUpdateActivityState() { m_waitingForDidUpdateActivityState = false; }
 
     void layerHostingModeDidChange();
@@ -1126,6 +1126,11 @@ public:
 
     void setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle>);
     std::optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const { return m_scrollbarOverlayStyle; }
+
+    // When the state of the window changes such that the WebPage needs immediate update, the UIProcess sends a new
+    // ActivityStateChangeID to the WebProcess through the SetActivityState message. The UIProcess will wait till it
+    // receives a CommitLayerTree which has an ActivityStateChangeID equal to or greater than the one it sent.
+    ActivityStateChangeID takeNextActivityStateChangeID() { return ++m_currentActivityStateChangeID; }
 
     bool shouldRecordNavigationSnapshots() const { return m_shouldRecordNavigationSnapshots; }
     void setShouldRecordNavigationSnapshots(bool shouldRecordSnapshots) { m_shouldRecordNavigationSnapshots = shouldRecordSnapshots; }
@@ -2141,6 +2146,7 @@ private:
     std::optional<WebCore::ScrollbarOverlayStyle> m_scrollbarOverlayStyle;
 
     uint64_t m_navigationID { 0 };
+    ActivityStateChangeID m_currentActivityStateChangeID { ActivityStateChangeAsynchronous };
 
     WebPreferencesStore::ValueMap m_configurationPreferenceValues;
     WebCore::ActivityState::Flags m_potentiallyChangedActivityStateFlags { WebCore::ActivityState::NoFlags };
@@ -2193,7 +2199,6 @@ private:
 
     RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };
-
 };
 
 } // namespace WebKit

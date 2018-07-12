@@ -1590,8 +1590,10 @@ void WebPageProxy::dispatchActivityStateChange()
     if (!(m_activityState & ActivityState::IsVisible))
         m_activityStateChangeWantsSynchronousReply = false;
 
-    if (changed || m_activityStateChangeWantsSynchronousReply || !m_nextActivityStateChangeCallbacks.isEmpty())
-        m_process->send(Messages::WebPage::SetActivityState(m_activityState, m_activityStateChangeWantsSynchronousReply, m_nextActivityStateChangeCallbacks), m_pageID);
+    auto activityStateChangeID = m_activityStateChangeWantsSynchronousReply ? takeNextActivityStateChangeID() : ActivityStateChangeAsynchronous;
+
+    if (changed || activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbacks.isEmpty())
+        m_process->send(Messages::WebPage::SetActivityState(m_activityState, activityStateChangeID, m_nextActivityStateChangeCallbacks), m_pageID);
 
     m_nextActivityStateChangeCallbacks.clear();
 
@@ -1626,8 +1628,8 @@ void WebPageProxy::dispatchActivityStateChange()
 
     updateBackingStoreDiscardableState();
 
-    if (m_activityStateChangeWantsSynchronousReply)
-        waitForDidUpdateActivityState();
+    if (activityStateChangeID != ActivityStateChangeAsynchronous)
+        waitForDidUpdateActivityState(activityStateChangeID);
 
     m_potentiallyChangedActivityStateFlags = ActivityState::NoFlags;
     m_activityStateChangeWantsSynchronousReply = false;
@@ -1697,7 +1699,7 @@ void WebPageProxy::layerHostingModeDidChange()
     m_process->send(Messages::WebPage::SetLayerHostingMode(layerHostingMode), m_pageID);
 }
 
-void WebPageProxy::waitForDidUpdateActivityState()
+void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityStateChangeID)
 {
     if (!isValid())
         return;
@@ -1720,7 +1722,7 @@ void WebPageProxy::waitForDidUpdateActivityState()
 
     m_waitingForDidUpdateActivityState = true;
 
-    m_drawingArea->waitForDidUpdateActivityState();
+    m_drawingArea->waitForDidUpdateActivityState(activityStateChangeID);
 }
 
 IntSize WebPageProxy::viewSize() const

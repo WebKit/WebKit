@@ -372,6 +372,9 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     layerTransaction.setNewlyReachedLayoutMilestones(m_pendingNewlyReachedLayoutMilestones);
     m_pendingNewlyReachedLayoutMilestones = 0;
 
+    layerTransaction.setActivityStateChangeID(m_activityStateChangeID);
+    m_activityStateChangeID = ActivityStateChangeAsynchronous;
+
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
     if (m_webPage.scrollingCoordinator())
@@ -482,12 +485,13 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
     m_connection->sendMessage(WTFMove(m_commitEncoder), { });
 }
 
-void RemoteLayerTreeDrawingArea::activityStateDidChange(ActivityState::Flags, bool wantsDidUpdateActivityState, const Vector<CallbackID>&)
+void RemoteLayerTreeDrawingArea::activityStateDidChange(ActivityState::Flags, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>&)
 {
     // FIXME: Should we suspend painting while not visible, like TiledCoreAnimationDrawingArea? Probably.
 
-    if (wantsDidUpdateActivityState) {
+    if (activityStateChangeID != ActivityStateChangeAsynchronous) {
         m_nextFlushIsForImmediatePaint = true;
+        m_activityStateChangeID = activityStateChangeID;
         scheduleCompositingLayerFlushImmediately();
     }
 }

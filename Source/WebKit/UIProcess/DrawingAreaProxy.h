@@ -84,7 +84,7 @@ public:
 
     virtual void updateDebugIndicator() { }
 
-    virtual void waitForDidUpdateActivityState() { }
+    virtual void waitForDidUpdateActivityState(ActivityStateChangeID) { }
     
     virtual void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) { ASSERT_NOT_REACHED(); }
 

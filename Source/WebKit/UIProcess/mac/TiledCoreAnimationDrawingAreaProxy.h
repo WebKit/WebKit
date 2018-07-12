@@ -50,7 +50,7 @@ private:
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
-    void waitForDidUpdateActivityState() override;
+    void waitForDidUpdateActivityState(ActivityStateChangeID) override;
     void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
     void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) final;
 

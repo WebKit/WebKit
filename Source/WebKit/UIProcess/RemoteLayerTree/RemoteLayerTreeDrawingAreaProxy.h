@@ -82,7 +82,7 @@ private:
     void updateDebugIndicatorPosition();
     void initializeDebugIndicator();
 
-    void waitForDidUpdateActivityState() override;
+    void waitForDidUpdateActivityState(ActivityStateChangeID) override;
     void hideContentUntilPendingUpdate() override;
     void hideContentUntilAnyUpdate() override;
     bool hasVisibleContent() const override;
@@ -115,6 +115,7 @@ private:
     uint64_t m_lastVisibleTransactionID { 0 };
     uint64_t m_transactionIDForPendingCACommit { 0 };
     uint64_t m_transactionIDForUnhidingContent { 0 };
+    ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
     CallbackMap m_callbacks;
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DrawingAreaInfo.h"
 #include "DynamicViewportSizeUpdate.h"
 #include "EditorState.h"
 #include "GenericCallback.h"
@@ -261,6 +262,9 @@ public:
     uint64_t transactionID() const { return m_transactionID; }
     void setTransactionID(uint64_t transactionID) { m_transactionID = transactionID; }
 
+    ActivityStateChangeID activityStateChangeID() const { return m_activityStateChangeID; }
+    void setActivityStateChangeID(ActivityStateChangeID activityStateChangeID) { m_activityStateChangeID = activityStateChangeID; }
+
     typedef CallbackID TransactionCallbackID;
     const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
     void setCallbackIDs(Vector<TransactionCallbackID>&& callbackIDs) { m_callbackIDs = WTFMove(callbackIDs); }
@@ -301,6 +305,7 @@ private:
     double m_viewportMetaTagWidth { -1 };
     uint64_t m_renderTreeSize { 0 };
     uint64_t m_transactionID { 0 };
+    ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
     WebCore::LayoutMilestones m_newlyReachedLayoutMilestones { 0 };
     bool m_scaleWasSetByUIProcess { false };
     bool m_allowsUserScaling { false };

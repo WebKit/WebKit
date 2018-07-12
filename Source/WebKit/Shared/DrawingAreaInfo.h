@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaType_h
-#define DrawingAreaType_h
+#pragma once
 
 namespace WebKit {
 
@@ -38,7 +37,10 @@ enum DrawingAreaType {
     DrawingAreaTypeImpl
 #endif
 };
+    
+enum {
+    ActivityStateChangeAsynchronous = 0
+};
+typedef uint64_t ActivityStateChangeID;
 
 } // namespace WebKit
-
-#endif // DrawingAreaType_h

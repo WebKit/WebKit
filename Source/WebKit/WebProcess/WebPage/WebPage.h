@@ -33,6 +33,7 @@
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "CallbackID.h"
+#include "DrawingAreaInfo.h"
 #include "EditingRange.h"
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
@@ -1167,7 +1168,7 @@ private:
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CallbackID);
     void updateIsInWindow(bool isInitialState = false);
     void visibilityDidChange();
-    void setActivityState(WebCore::ActivityState::Flags, bool wantsDidUpdateActivityState, const Vector<CallbackID>& callbackIDs);
+    void setActivityState(WebCore::ActivityState::Flags, ActivityStateChangeID, const Vector<CallbackID>& callbackIDs);
     void validateCommand(const String&, CallbackID);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);

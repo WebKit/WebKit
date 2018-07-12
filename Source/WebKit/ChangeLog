@@ -1,3 +1,93 @@
+2018-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] When bringing MobileSafari to the foreground, images are drawn asynchronously after removing a snapshot that included them
+        https://bugs.webkit.org/show_bug.cgi?id=187374
+        <rdar://problem/41249545>
+
+        Reviewed by Tim Horton.
+
+        UIProcess should block committing all the layer tree transactions for 
+        immediate update until it receives a one whose activityStateChangeID is
+        greater than or equal to the one it sends with SetActivityState message.
+
+        * Scripts/webkit/messages.py:
+        Fix the messages code generator to include DrawingAreaInfo.h for the WebKit
+        typedef ActivityStateChangeID.
+
+        * Shared/DrawingAreaInfo.h:
+        Define ActivityStateChangeID to be uint64_t. Add a definition for the case
+        when the UIProcess won't be blocked for a reply back from the WebProcess.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::activityStateChangeID const):
+        (WebKit::RemoteLayerTreeTransaction::setActivityStateChangeID):
+        Add a member for activityStateChangeID in the LayerTreeTransaction.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode const):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        Make LayerTreeTransaction know how to encode and decode activityStateChangeID.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::waitForDidUpdateActivityState):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState):
+        Make the DrawingArea in the UIProcess wait the layer tree with a certain
+        activityStateChangeID.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::waitForDidUpdateActivityState):
+        If m_activityStateChangeWantsSynchronousReply is true, generate a new 
+        activityStateChangeID and send it in the SetActivityState message.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::takeNextActivityStateChangeID):
+        A simple way to generate a new activityStateChangeID.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState):
+        Fix the UIProcess functions' prototype for Mac.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::activityStateDidChange):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        Fix the UIProcess functions' prototype for GTK.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::activityStateDidChange):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        Replace wantsDidUpdateActivityState with activityStateChangeID. Treat
+        activityStateChangeID == ActivityStateChangeAsynchronous as if 
+        wantsDidUpdateActivityState == false.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        Make the WebPrcess pass the activityStateChangeID which it receives from
+        the SetActivityState message to the LayerTreeTransaction.
+
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        When receiving the SetActivityState, treat activityStateChangeID !=
+        ActivityStateChangeAsynchronous as if wantsDidUpdateActivityState == true.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::setActivityState):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Replace the boolean wantsDidUpdateActivityState with activityStateChangeID
+        in the SetActivityState message.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired):
+        Fix the WebProcess functions' prototype for Mac.
+
 2018-07-12  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r232356): After zooming a page in and out, it's possible to temporarily have missing tiles (google.com, apple.com)

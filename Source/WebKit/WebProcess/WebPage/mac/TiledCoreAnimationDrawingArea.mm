@@ -80,7 +80,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
     , m_transientZoomScale(1)
     , m_sendDidUpdateActivityStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired)
-    , m_wantsDidUpdateActivityState(false)
     , m_viewOverlayRootLayer(nullptr)
 {
     m_webPage.corePage()->settings().setForceCompositingMode(true);
@@ -469,10 +468,10 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     }
 }
 
-void TiledCoreAnimationDrawingArea::activityStateDidChange(ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<CallbackID>& nextActivityStateChangeCallbackIDs)
+void TiledCoreAnimationDrawingArea::activityStateDidChange(ActivityState::Flags changed, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& nextActivityStateChangeCallbackIDs)
 {
     m_nextActivityStateChangeCallbackIDs.appendVector(nextActivityStateChangeCallbackIDs);
-    m_wantsDidUpdateActivityState |= wantsDidUpdateActivityState;
+    m_activityStateChangeID = std::max(m_activityStateChangeID, activityStateChangeID);
 
     if (changed & ActivityState::IsVisible) {
         if (m_webPage.isVisible())
@@ -481,7 +480,7 @@ void TiledCoreAnimationDrawingArea::activityStateDidChange(ActivityState::Flags 
             suspendPainting();
     }
 
-    if (m_wantsDidUpdateActivityState || !m_nextActivityStateChangeCallbackIDs.isEmpty())
+    if (m_activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbackIDs.isEmpty())
         m_sendDidUpdateActivityStateTimer.startOneShot(0_s);
 }
 
@@ -489,14 +488,14 @@ void TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired()
 {
     [CATransaction flush];
 
-    if (m_wantsDidUpdateActivityState)
+    if (m_activityStateChangeID != ActivityStateChangeAsynchronous)
         m_webPage.send(Messages::WebPageProxy::DidUpdateActivityState());
 
     for (auto callbackID : m_nextActivityStateChangeCallbackIDs)
         m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
 
     m_nextActivityStateChangeCallbackIDs.clear();
-    m_wantsDidUpdateActivityState = false;
+    m_activityStateChangeID = ActivityStateChangeAsynchronous;
 }
 
 void TiledCoreAnimationDrawingArea::suspendPainting()

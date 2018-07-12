@@ -544,6 +544,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
     encoder << m_renderTreeSize;
     encoder << m_transactionID;
+    encoder << m_activityStateChangeID;
 
     encoder << m_newlyReachedLayoutMilestones;
 
@@ -651,6 +652,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
 
     if (!decoder.decode(result.m_transactionID))
+        return false;
+
+    if (!decoder.decode(result.m_activityStateChangeID))
         return false;
 
     if (!decoder.decode(result.m_newlyReachedLayoutMilestones))
