@@ -280,4 +280,13 @@ void TestController::getAllStorageAccessEntries()
 #endif
 }
 
+void TestController::injectUserScript(WKStringRef script)
+{
+#if WK_API_ENABLED
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource: toWTFString(script) injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
+
+    [[globalWebViewConfiguration userContentController] addUserScript: userScript.get()];
+#endif
+}
+
 } // namespace WTR

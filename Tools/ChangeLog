@@ -1,3 +1,34 @@
+2018-07-12  Youenn Fablet  <youenn@apple.com>
+
+        Add a FrameLoaderClient willInjectUserScriptForFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=187565
+
+        Reviewed by Alex Christensen.
+
+        Added new test runner API to check for willInjectUserScriptForFrame callback.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::resetUserScriptInjectedCount):
+        (WTR::InjectedBundle::increaseUserScriptInjectedCount):
+        (WTR::InjectedBundle::userScriptInjectedCount const):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::resetAfterTest):
+        (WTR::InjectedBundlePage::willInjectUserScriptForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::userScriptInjectedCount const):
+        (WTR::TestRunner::injectUserScript):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::injectUserScript):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::injectUserScript):
+
 2018-07-12  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: database file of subframe cannot be removed

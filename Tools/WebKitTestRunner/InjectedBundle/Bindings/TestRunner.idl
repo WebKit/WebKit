@@ -343,4 +343,7 @@ interface TestRunner {
     void clearMockMediaDevices();
     void removeMockMediaDevice(DOMString persistentId);
     void resetMockMediaDevices();
+
+    void injectUserScript(DOMString string);
+    readonly attribute unsigned long userScriptInjectedCount;
 };

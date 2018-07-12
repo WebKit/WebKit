@@ -232,7 +232,7 @@ static WKStringRef userAgentForURL(WKBundleFrameRef frame, WKURLRef url, const v
 
 static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
 {
-    WKBundlePageLoaderClientV8 client;
+    WKBundlePageLoaderClientV9 client;
     memset(&client, 0, sizeof(client));
 
     client.base.version = 8;

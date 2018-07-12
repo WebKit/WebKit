@@ -303,9 +303,18 @@ void InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame(WebPage& pa
 {
     if (!m_client.globalObjectIsAvailableForFrame)
         return;
-    
+
     RefPtr<InjectedBundleScriptWorld> injectedWorld = InjectedBundleScriptWorld::getOrCreate(world);
     m_client.globalObjectIsAvailableForFrame(toAPI(&page), toAPI(&frame), toAPI(injectedWorld.get()), m_client.base.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::willInjectUserScriptForFrame(WebPage& page, WebFrame& frame, DOMWrapperWorld& world)
+{
+    if (!m_client.willInjectUserScriptForFrame)
+        return;
+
+    RefPtr<InjectedBundleScriptWorld> injectedWorld = InjectedBundleScriptWorld::getOrCreate(world);
+    m_client.willInjectUserScriptForFrame(toAPI(&page), toAPI(&frame), toAPI(injectedWorld.get()), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::willDisconnectDOMWindowExtensionFromGlobalObject(WebPage& page, DOMWindowExtension* coreExtension)

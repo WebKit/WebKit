@@ -454,6 +454,9 @@ public:
     void removeMockMediaDevice(JSStringRef persistentId);
     void resetMockMediaDevices();
 
+    size_t userScriptInjectedCount() const;
+    void injectUserScript(JSStringRef);
+
 private:
     TestRunner();
 

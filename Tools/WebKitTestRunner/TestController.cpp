@@ -2912,6 +2912,11 @@ void TestController::resetMockMediaDevices()
 void TestController::platformAddTestOptions(TestOptions&) const
 {
 }
+
+void TestController::injectUserScript(WKStringRef)
+{
+}
+
 #endif
 
 } // namespace WTR

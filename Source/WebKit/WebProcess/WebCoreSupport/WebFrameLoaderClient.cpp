@@ -1691,7 +1691,6 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& 
 #endif
 }
 
-
 void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld& world)
 {
     WebPage* webPage = m_frame->page();
@@ -1699,6 +1698,15 @@ void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld& world)
         return;
     
     webPage->injectedBundleLoaderClient().globalObjectIsAvailableForFrame(*webPage, *m_frame, world);
+}
+
+void WebFrameLoaderClient::willInjectUserScript(DOMWrapperWorld& world)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->injectedBundleLoaderClient().willInjectUserScriptForFrame(*webPage, *m_frame, world);
 }
 
 void WebFrameLoaderClient::dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(WebCore::DOMWindowExtension* extension)

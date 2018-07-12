@@ -140,6 +140,10 @@ public:
     void textFieldDidBeginEditing();
     void textFieldDidEndEditing();
 
+    void resetUserScriptInjectedCount() { m_userScriptInjectedCount = 0; }
+    void increaseUserScriptInjectedCount() { ++m_userScriptInjectedCount; }
+    size_t userScriptInjectedCount() const { return m_userScriptInjectedCount; }
+
 private:
     InjectedBundle();
     ~InjectedBundle();
@@ -199,6 +203,8 @@ private:
     WKRetainPtr<WKArrayRef> m_repaintRects;
 
     Vector<String> m_allowedHosts;
+
+    size_t m_userScriptInjectedCount { 0 };
 };
 
 } // namespace WTR

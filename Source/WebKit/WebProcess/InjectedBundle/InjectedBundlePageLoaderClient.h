@@ -37,7 +37,7 @@ class String;
 class URL;
 
 template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
-    typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7, WKBundlePageLoaderClientV8> Versions;
+    typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7, WKBundlePageLoaderClientV8, WKBundlePageLoaderClientV9> Versions;
 };
 }
 
@@ -80,6 +80,8 @@ public:
     void willDisconnectDOMWindowExtensionFromGlobalObject(WebPage&, WebCore::DOMWindowExtension*) override;
     void didReconnectDOMWindowExtensionToGlobalObject(WebPage&, WebCore::DOMWindowExtension*) override;
     void willDestroyGlobalObjectForDOMWindowExtension(WebPage&, WebCore::DOMWindowExtension*) override;
+
+    void willInjectUserScriptForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) final;
 
     bool shouldForceUniversalAccessFromLocalURL(WebPage&, const WTF::String&) override;
 

@@ -89,6 +89,8 @@ public:
     virtual void didReconnectDOMWindowExtensionToGlobalObject(WebKit::WebPage&, WebCore::DOMWindowExtension*) { }
     virtual void willDestroyGlobalObjectForDOMWindowExtension(WebKit::WebPage&, WebCore::DOMWindowExtension*) { }
 
+    virtual void willInjectUserScriptForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::DOMWrapperWorld&) { }
+
     virtual bool shouldForceUniversalAccessFromLocalURL(WebKit::WebPage&, const WTF::String&) { return false; }
 
     virtual void featuresUsedInPage(WebKit::WebPage&, const Vector<WTF::String>&) { }

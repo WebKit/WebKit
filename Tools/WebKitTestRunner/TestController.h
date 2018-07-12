@@ -218,6 +218,8 @@ public:
     void removeMockMediaDevice(WKStringRef persistentID);
     void resetMockMediaDevices();
 
+    void injectUserScript(WKStringRef);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;

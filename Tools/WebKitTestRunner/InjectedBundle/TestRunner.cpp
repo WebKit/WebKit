@@ -2267,4 +2267,17 @@ void TestRunner::didGetApplicationManifest()
     callTestRunnerCallback(GetApplicationManifestCallbackID);
 }
 
+size_t TestRunner::userScriptInjectedCount() const
+{
+    return InjectedBundle::singleton().userScriptInjectedCount();
+}
+
+void TestRunner::injectUserScript(JSStringRef script)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("InjectUserScript"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(script));
+    WKTypeRef returnData = 0;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
+}
+
 } // namespace WTR

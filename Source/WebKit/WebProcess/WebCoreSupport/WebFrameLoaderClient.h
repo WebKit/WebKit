@@ -232,7 +232,9 @@ private:
     void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(WebCore::DOMWindowExtension*) final;
     void dispatchDidReconnectDOMWindowExtensionToGlobalObject(WebCore::DOMWindowExtension*) final;
     void dispatchWillDestroyGlobalObjectForDOMWindowExtension(WebCore::DOMWindowExtension*) final;
-    
+
+    void willInjectUserScript(WebCore::DOMWrapperWorld&) final;
+
 #if PLATFORM(COCOA)
     RemoteAXObjectRef accessibilityRemoteObject() final;
     

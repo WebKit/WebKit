@@ -1,3 +1,26 @@
+2018-07-12  Youenn Fablet  <youenn@apple.com>
+
+        Add a FrameLoaderClient willInjectUserScriptForFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=187565
+
+        Reviewed by Alex Christensen.
+
+        Introduce a new WKBundlePageLoaderClient callback that is called everytime a user script is injected.
+        Implement WebFrameLoaderClient::willInjectUserScript by calling this new callback.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        (API::InjectedBundle::PageLoaderClient::willInjectUserScriptForFrame):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (setUpPageLoaderClient):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willInjectUserScriptForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::willInjectUserScript):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] When bringing MobileSafari to the foreground, images are drawn asynchronously after removing a snapshot that included them

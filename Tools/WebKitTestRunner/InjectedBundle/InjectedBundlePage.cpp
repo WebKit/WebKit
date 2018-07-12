@@ -274,8 +274,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
     , m_world(AdoptWK, WKBundleScriptWorldCreateWorld())
 {
-    WKBundlePageLoaderClientV8 loaderClient = {
-        { 8, this },
+    WKBundlePageLoaderClientV9 loaderClient = {
+        { 9, this },
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
@@ -312,6 +312,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // willLoadDataRequest
         0, // willDestroyFrame_unavailable
         0, // userAgentForURL
+        willInjectUserScriptForFrame
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient.base);
 
@@ -443,6 +444,8 @@ void InjectedBundlePage::resetAfterTest()
     WKBundlePageRemoveAllUserContent(m_page);
 
     uninstallFakeHelvetica();
+
+    InjectedBundle::singleton().resetUserScriptInjectedCount();
 }
 
 // Loader Client Callbacks
@@ -590,6 +593,11 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundlePageRef page, WKBundleFra
 void InjectedBundlePage::didFinishProgress(WKBundlePageRef, const void *clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishProgress();
+}
+
+void InjectedBundlePage::willInjectUserScriptForFrame(WKBundlePageRef, WKBundleFrameRef, WKBundleScriptWorldRef, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willInjectUserScriptForFrame();
 }
 
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
@@ -757,6 +765,11 @@ void InjectedBundlePage::didFinishProgress()
         return;
 
     injectedBundle.outputText("postProgressFinishedNotification\n");
+}
+
+void InjectedBundlePage::willInjectUserScriptForFrame()
+{
+    InjectedBundle::singleton().increaseUserScriptInjectedCount();
 }
 
 enum FrameNamePolicy { ShouldNotIncludeFrameName, ShouldIncludeFrameName };

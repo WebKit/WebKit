@@ -1414,6 +1414,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "InjectUserScript")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef script = static_cast<WKStringRef>(messageBody);
+
+        TestController::singleton().injectUserScript(script);
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "GetApplicationManifest")) {
 #ifdef __BLOCKS__
         WKPageGetApplicationManifest_b(TestController::singleton().mainWebView()->page(), ^{

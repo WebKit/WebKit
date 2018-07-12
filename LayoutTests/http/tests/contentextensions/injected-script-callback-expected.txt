@@ -1,0 +1,4 @@
+  
+
+PASS Test willInjectUserScript callback being called 
+

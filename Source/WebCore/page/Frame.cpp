@@ -751,6 +751,7 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
         return;
     if (m_page)
         m_page->setAsRunningUserScripts();
+    loader().client().willInjectUserScript(world);
     m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
 }
 
