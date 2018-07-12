@@ -507,7 +507,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         WKArrayAppendItem(overrideLanguages.get(), adoptWK(WKStringCreateWithUTF8CString(language.utf8().data())).get());
     WKContextConfigurationSetOverrideLanguages(contextConfiguration.get(), overrideLanguages.get());
 
-    if (options.enableProcessSwapOnNavigation || options.enableProcessSwapOnWindowOpen) {
+    if (options.shouldEnableProcessSwapOnNavigation()) {
         WKContextConfigurationSetProcessSwapsOnNavigation(contextConfiguration.get(), true);
         if (options.enableProcessSwapOnWindowOpen)
             WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(contextConfiguration.get(), true);
@@ -679,6 +679,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesRef preferences = platformPreferences();
     WKPreferencesResetTestRunnerOverrides(preferences);
     WKPreferencesEnableAllExperimentalFeatures(preferences);
+    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
     WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, false);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);

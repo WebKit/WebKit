@@ -101,6 +101,11 @@ struct TestOptions {
 
         return true;
     }
+    
+    bool shouldEnableProcessSwapOnNavigation() const
+    {
+        return enableProcessSwapOnNavigation || enableProcessSwapOnWindowOpen;
+    }
 };
 
 }

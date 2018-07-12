@@ -1283,3 +1283,12 @@ EncryptedMediaAPIEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
   condition: ENABLE(ENCRYPTED_MEDIA)
+
+ProcessSwapOnNavigationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Swap Processes on Navigation"
+  humanReadableDescription: "Swap WebContent processes on cross-origin navigations"
+  category: experimental
+  webcoreBinding: none
+

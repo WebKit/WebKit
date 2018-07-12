@@ -2023,3 +2023,13 @@ bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->colorFilterEnabled();
 }
+
+void WKPreferencesSetProcessSwapOnNavigationEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setProcessSwapOnNavigationEnabled(flag);
+}
+
+bool WKPreferencesGetProcessSwapOnNavigationEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->processSwapOnNavigationEnabled();
+}

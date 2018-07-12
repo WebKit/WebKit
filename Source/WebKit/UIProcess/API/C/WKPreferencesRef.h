@@ -327,6 +327,10 @@ WK_EXPORT void WKPreferencesSetCrossOriginResourcePolicyEnabled(WKPreferencesRef
 WK_EXPORT bool WKPreferencesGetCrossOriginWindowPolicyEnabled(WKPreferencesRef preferencesRef);
 WK_EXPORT void WKPreferencesSetCrossOriginWindowPolicyEnabled(WKPreferencesRef preferencesRef, bool enabled);
 
+// Defaults to false.
+WK_EXPORT bool WKPreferencesGetProcessSwapOnNavigationEnabled(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetProcessSwapOnNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled);
+
 #ifdef __cplusplus
 }
 #endif

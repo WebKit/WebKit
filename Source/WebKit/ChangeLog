@@ -1,3 +1,24 @@
+2018-07-12  Brady Eidson  <beidson@apple.com>
+
+        Make process-swap-on-navigation an experimental feature.
+        <rdar://problem/41995053> and https://bugs.webkit.org/show_bug.cgi?id=187558
+
+        Reviewed by Chris Dumez.
+
+        * Shared/WebPreferences.yaml:
+        
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetProcessSwapOnNavigationEnabled):
+        (WKPreferencesGetProcessSwapOnNavigationEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateBoolValueForExperimentalFeatureKey):
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage): If the new web page has PSON enabled via WebPreferences,
+          absorb that setting into this process pool's configuration.
+
 2018-07-12  Chris Dumez  <cdumez@apple.com>
 
         Simplify code in NetworkConnectionToWebProcess::didReceiveMessage()
