@@ -1,3 +1,16 @@
+2018-07-11  Dean Jackson  <dino@apple.com>
+
+        Force WKTR to use the light appearance
+        https://bugs.webkit.org/show_bug.cgi?id=187572
+        <rdar://problem/42097805>
+
+        Reviewed by Simon Fraser.
+
+        Set the NSAppearance on the NSWindow to light mode.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView): Use the Aqua appearance.
+
 2018-07-11  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of WebCore::URL
