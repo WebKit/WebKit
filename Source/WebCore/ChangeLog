@@ -1,3 +1,14 @@
+2018-07-11  Youenn Fablet  <youenn@apple.com>
+
+        MediaDevices should derive from EventTarget in its IDL
+        https://bugs.webkit.org/show_bug.cgi?id=187575
+
+        Reviewed by Chris Dumez.
+
+        Test: fast/mediastream/MediaDevices-addEventListener.html
+
+        * Modules/mediastream/MediaDevices.idl:
+
 2018-07-11  Jon Lee  <jonlee@apple.com>
 
         Update iOS fullscreen alert text

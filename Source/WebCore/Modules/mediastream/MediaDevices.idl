@@ -33,7 +33,7 @@
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
     NoInterfaceObject,
-] interface MediaDevices {
+] interface MediaDevices : EventTarget {
     attribute EventHandler ondevicechange;
     Promise<sequence<MediaDeviceInfo>> enumerateDevices();
 
