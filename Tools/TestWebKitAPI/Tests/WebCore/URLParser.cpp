@@ -1179,9 +1179,6 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("file://:0/path",
         {"", "", "", "", 0, "", "", "", "file://:0/path"},
         {"file", "", "", "", 0, "/path", "", "", "file://:0/path"});
-    
-    checkURL("http://example.com:0000000000000077", {"http", "", "", "example.com", 77, "/", "", "", "http://example.com:77/"});
-    checkURL("http://example.com:0000000000000080", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
 }
 
 TEST_F(URLParserTest, ParserFailures)

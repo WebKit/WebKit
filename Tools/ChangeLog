@@ -1,3 +1,17 @@
+2018-07-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r233742.
+        https://bugs.webkit.org/show_bug.cgi?id=187577
+
+        Binary incompatible change with respect to Service Worker
+        registration map (Requested by dydz on #webkit).
+
+        Reverted changeset:
+
+        "Reduce size of WebCore::URL"
+        https://bugs.webkit.org/show_bug.cgi?id=186820
+        https://trac.webkit.org/changeset/233742
+
 2018-07-11  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (231276): Attempting to copy an image fails
