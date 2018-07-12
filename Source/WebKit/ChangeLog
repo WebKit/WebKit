@@ -1,3 +1,30 @@
+2018-07-12  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r230163): Videos cannot be seen full screen in Complete Anatomy app
+        https://bugs.webkit.org/show_bug.cgi?id=187527
+        <rdar://problem/40511527>
+
+        Reviewed by Ryosuke Niwa.
+
+        Do not enable element fullscreen mode unless apps specifically opt-in. The Fullscreen API is
+        an experimental feature on iOS, but not on Mac, but we can't simply not return the ExperimentalFeature
+        object from the list of experimental features, as this keeps Safari from being able to apply a
+        NSUserDefault value for that feature. Instead, add a property to API::ExperimentalFeature and
+        _WKExperimentalFeature called "hidden", which signals to clients whether to display the feature
+        in their UI.
+
+        * Scripts/GeneratePreferences.rb:
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/API/APIExperimentalFeature.cpp:
+        (API::ExperimentalFeature::create):
+        (API::ExperimentalFeature::ExperimentalFeature):
+        * UIProcess/API/APIExperimentalFeature.h:
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.h:
+        * UIProcess/API/Cocoa/_WKExperimentalFeature.mm:
+        (-[_WKExperimentalFeature isHidden]):
+
 2018-07-12  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Run Unlock Keychain more reliably

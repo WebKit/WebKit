@@ -70,7 +70,7 @@ class Preference
   attr_accessor :category
   attr_accessor :webcoreBinding
   attr_accessor :condition
-  attr_accessor :visibleCondition
+  attr_accessor :hidden
 
   def initialize(name, opts)
     @name = name
@@ -83,7 +83,7 @@ class Preference
     @webcoreBinding = opts["webcoreBinding"]
     @webcoreName = opts["webcoreName"]
     @condition = opts["condition"]
-    @visibleCondition = opts["visibleCondition"]
+    @hidden = opts["hidden"] || false
   end
 
   def nameLower

@@ -62,6 +62,11 @@
     return _experimentalFeature->defaultValue();
 }
 
+- (BOOL)isHidden
+{
+    return _experimentalFeature->isHidden();
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
