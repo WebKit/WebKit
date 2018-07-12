@@ -1,3 +1,19 @@
+2018-07-12  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: database file of subframe cannot be removed
+        https://bugs.webkit.org/show_bug.cgi?id=187564
+
+        Reviewed by Youenn Fablet.
+
+        For IndexedDB, if openingOrigin is different from mainFrameOrigin, there will be another 
+        layer in the database file path. 
+        IDBServer should delete database files recursively to make sure all files are removed.
+
+        Covered by modified test: WebKit.WebsiteDataStoreCustomPaths.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::removeAllDatabasesForOriginPath):
+
 2018-07-12  Per Arne Vollan  <pvollan@apple.com>
 
         Add compile guard for enabling NSRunLoop in the WebContent process.

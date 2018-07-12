@@ -178,6 +178,18 @@ TEST(WebKit, WebsiteDataStoreCustomPaths)
     RetainPtr<WKWebsiteDataStore> dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()];
     RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
 
+    // Subframe of different origins may also create IndexedDB files.
+    RetainPtr<NSURL> url1 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> url2 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-shm" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> url3 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-wal" subdirectory:@"TestWebKitAPI.resources"];
+    
+    RetainPtr<NSURL> frameIDBPath = [[fileIDBPath URLByAppendingPathComponent:@"https_apple.com_0"] URLByAppendingPathComponent:@"WebsiteDataStoreCustomPaths"];
+    [[NSFileManager defaultManager] createDirectoryAtURL:frameIDBPath.get() withIntermediateDirectories:YES attributes:nil error:nil];
+    
+    [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
+    
     receivedScriptMessage = false;
     [dataStore removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:[]() {
         receivedScriptMessage = true;

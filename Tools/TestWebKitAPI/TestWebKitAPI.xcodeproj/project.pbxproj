@@ -584,6 +584,9 @@
 		9329AA291DE3F81E003ABD07 /* TextBreakIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9329AA281DE3F81E003ABD07 /* TextBreakIterator.cpp */; };
 		932AE53D1D371047005DFFAF /* focus-inputs.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93575C551D30366E000D604D /* focus-inputs.html */; };
 		933D631D1FCB76200032ECD6 /* Hasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933D631B1FCB76180032ECD6 /* Hasher.cpp */; };
+		935786CC20F6A2700000CDFC /* IndexedDB.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */; };
+		935786CD20F6A2910000CDFC /* IndexedDB.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */; };
+		935786CE20F6A2A10000CDFC /* IndexedDB.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 934FA5C620F69FED0040DC1B /* IndexedDB.sqlite3-shm */; };
 		9361002914DC95A70061379D /* lots-of-iframes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9361002814DC957B0061379D /* lots-of-iframes.html */; };
 		93625D271CD9741C006DC1F1 /* large-video-without-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93625D261CD973AF006DC1F1 /* large-video-without-audio.html */; };
 		936F72801CD7D9EC0068A0FB /* large-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 936F727E1CD7D9D00068A0FB /* large-video-with-audio.html */; };
@@ -1010,6 +1013,9 @@
 				F41AB9A51EF4696B0083FA08 /* image-and-textarea.html in Copy Resources */,
 				F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */,
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
+				935786CD20F6A2910000CDFC /* IndexedDB.sqlite3 in Copy Resources */,
+				935786CE20F6A2A10000CDFC /* IndexedDB.sqlite3-shm in Copy Resources */,
+				935786CC20F6A2700000CDFC /* IndexedDB.sqlite3-wal in Copy Resources */,
 				51A587851D2739E3004BA9AF /* IndexedDBDatabaseProcessKill-1.html in Copy Resources */,
 				51BCEE4E1C84F53B0042C82E /* IndexedDBMultiProcess-1.html in Copy Resources */,
 				51BCEE4F1C84F53B0042C82E /* IndexedDBMultiProcess-2.html in Copy Resources */,
@@ -1651,6 +1657,9 @@
 		9329AA281DE3F81E003ABD07 /* TextBreakIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIterator.cpp; sourceTree = "<group>"; };
 		9331407B17B4419000F083B1 /* DidNotHandleKeyDown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DidNotHandleKeyDown.cpp; sourceTree = "<group>"; };
 		933D631B1FCB76180032ECD6 /* Hasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hasher.cpp; sourceTree = "<group>"; };
+		934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IndexedDB.sqlite3-wal"; sourceTree = "<group>"; };
+		934FA5C620F69FED0040DC1B /* IndexedDB.sqlite3-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IndexedDB.sqlite3-shm"; sourceTree = "<group>"; };
+		934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IndexedDB.sqlite3; sourceTree = "<group>"; };
 		93575C551D30366E000D604D /* focus-inputs.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "focus-inputs.html"; sourceTree = "<group>"; };
 		9361002814DC957B0061379D /* lots-of-iframes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "lots-of-iframes.html"; sourceTree = "<group>"; };
 		93625D261CD973AF006DC1F1 /* large-video-without-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-without-audio.html"; sourceTree = "<group>"; };
@@ -2562,6 +2571,9 @@
 				F41AB9931EF4692C0083FA08 /* image-and-textarea.html */,
 				F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */,
 				F45B63FA1F197F33009D38B9 /* image-map.html */,
+				934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */,
+				934FA5C620F69FED0040DC1B /* IndexedDB.sqlite3-shm */,
+				934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */,
 				51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */,
 				51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */,
 				51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */,
