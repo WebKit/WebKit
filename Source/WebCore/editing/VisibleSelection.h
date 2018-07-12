@@ -105,6 +105,9 @@ public:
     Node* nonBoundaryShadowTreeRootNode() const;
 
     WEBCORE_EXPORT bool isInPasswordField() const;
+    
+    WEBCORE_EXPORT static Position adjustPositionForEnd(const Position& currentPosition, Node* startContainerNode);
+    WEBCORE_EXPORT static Position adjustPositionForStart(const Position& currentPosition, Node* startContainerNode);
 
 #if ENABLE(TREE_DEBUGGING)
     void debugPosition() const;

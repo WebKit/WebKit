@@ -468,7 +468,7 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
     m_selectionType = base == extent ? CaretSelection : RangeSelection;
 }
 
-static Position adjustPositionForEnd(const Position& currentPosition, Node* startContainerNode)
+Position VisibleSelection::adjustPositionForEnd(const Position& currentPosition, Node* startContainerNode)
 {
     TreeScope& treeScope = startContainerNode->treeScope();
 
@@ -486,7 +486,7 @@ static Position adjustPositionForEnd(const Position& currentPosition, Node* star
     return Position();
 }
 
-static Position adjustPositionForStart(const Position& currentPosition, Node* endContainerNode)
+Position VisibleSelection::adjustPositionForStart(const Position& currentPosition, Node* endContainerNode)
 {
     TreeScope& treeScope = endContainerNode->treeScope();
 

@@ -76,7 +76,7 @@ public:
     // https://dom.spec.whatwg.org/#retarget
     Node& retargetToScope(Node&) const;
 
-    Node* ancestorNodeInThisScope(Node*) const;
+    WEBCORE_EXPORT Node* ancestorNodeInThisScope(Node*) const;
     WEBCORE_EXPORT Element* ancestorElementInThisScope(Element*) const;
 
     void addImageMap(HTMLMapElement&);

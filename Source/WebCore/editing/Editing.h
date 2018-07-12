@@ -121,7 +121,7 @@ Position lastPositionInOrAfterNode(Node*);
 Position firstEditablePositionAfterPositionInRoot(const Position&, ContainerNode* root);
 Position lastEditablePositionBeforePositionInRoot(const Position&, ContainerNode* root);
 
-int comparePositions(const Position&, const Position&);
+WEBCORE_EXPORT int comparePositions(const Position&, const Position&);
 
 WEBCORE_EXPORT bool isEditablePosition(const Position&, EditableType = ContentIsEditable);
 bool isRichlyEditablePosition(const Position&);
