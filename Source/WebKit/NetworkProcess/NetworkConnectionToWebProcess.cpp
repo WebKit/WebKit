@@ -263,20 +263,12 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadPa
 
 void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loadParameters)
 {
-    auto completionHandler = [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] (const ResourceError& error, const ResourceResponse& response) {
-        didFinishPingLoad(identifier, error, response);
+    auto completionHandler = [connection = m_connection.copyRef(), identifier = loadParameters.identifier] (const ResourceError& error, const ResourceResponse& response) {
+        connection->send(Messages::NetworkProcessConnection::DidFinishPingLoad(identifier, error, response), 0);
     };
 
     // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
     new PingLoad(WTFMove(loadParameters), WTFMove(completionHandler));
-}
-
-void NetworkConnectionToWebProcess::didFinishPingLoad(uint64_t pingLoadIdentifier, const ResourceError& error, const ResourceResponse& response)
-{
-    if (!m_connection->isValid())
-        return;
-
-    m_connection->send(Messages::NetworkProcessConnection::DidFinishPingLoad(pingLoadIdentifier, error, response), 0);
 }
 
 void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)

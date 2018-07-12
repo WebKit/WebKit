@@ -1,3 +1,19 @@
+2018-07-12  Chris Dumez  <cdumez@apple.com>
+
+        PingLoad does not need to ref the NetworkConnectionToWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=187624
+
+        Reviewed by Youenn Fablet.
+
+        PingLoad does not need to ref the NetworkConnectionToWebProcess and keep it alive longer than it needs to be.
+        Instead, ref the IPC::Connection which is lighter weight and gets invalidated when the NetworkConnectionToWebProcess
+        is destroyed.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::didFinishPingLoad): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+
 2018-07-12  Brady Eidson  <beidson@apple.com>
 
         Make process-swap-on-navigation an experimental feature.
