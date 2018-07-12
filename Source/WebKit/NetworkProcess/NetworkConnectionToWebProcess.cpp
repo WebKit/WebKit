@@ -105,20 +105,16 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
         RELEASE_ASSERT(RunLoop::isMain());
         RELEASE_ASSERT(decoder.destinationID());
-        auto loaderIterator = m_networkResourceLoaders.find(decoder.destinationID());
-        if (loaderIterator != m_networkResourceLoaders.end()) {
-            RELEASE_ASSERT(loaderIterator->value);
-            loaderIterator->value->didReceiveNetworkResourceLoaderMessage(connection, decoder);
-        }
+        if (auto* loader = m_networkResourceLoaders.get(decoder.destinationID()))
+            loader->didReceiveNetworkResourceLoaderMessage(connection, decoder);
         return;
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkSocketStream::messageReceiverName()) {
-        auto socketIterator = m_networkSocketStreams.find(decoder.destinationID());
-        if (socketIterator != m_networkSocketStreams.end()) {
-            socketIterator->value->didReceiveMessage(connection, decoder);
+        if (auto* socketStream = m_networkSocketStreams.get(decoder.destinationID())) {
+            socketStream->didReceiveMessage(connection, decoder);
             if (decoder.messageName() == Messages::NetworkSocketStream::Close::name())
-                m_networkSocketStreams.remove(socketIterator);
+                m_networkSocketStreams.remove(decoder.destinationID());
         }
         return;
     }

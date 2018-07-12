@@ -1,5 +1,18 @@
 2018-07-12  Chris Dumez  <cdumez@apple.com>
 
+        Simplify code in NetworkConnectionToWebProcess::didReceiveMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=187621
+
+        Reviewed by Youenn Fablet.
+
+        Simplify code in NetworkConnectionToWebProcess::didReceiveMessage() by not using HashMap iterators and
+        calling get() directly.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+
+2018-07-12  Chris Dumez  <cdumez@apple.com>
+
         Make sure WebProcess::ensureNetworkProcessConnection() is always called on the main thread
         https://bugs.webkit.org/show_bug.cgi?id=187607
 
