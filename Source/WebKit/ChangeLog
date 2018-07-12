@@ -1,3 +1,16 @@
+2018-07-12  Chris Dumez  <cdumez@apple.com>
+
+        Assert that the IPC::Connection is valid in Connection::dispatchMessage(Decoder&)
+        https://bugs.webkit.org/show_bug.cgi?id=187617
+
+        Reviewed by Youenn Fablet.
+
+        Assert that the IPC::Connection is valid in Connection::dispatchMessage(Decoder&) as
+        m_client would be stale otherwise.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchMessage):
+
 2018-07-12  Youenn Fablet  <youenn@apple.com>
 
         Add a FrameLoaderClient willInjectUserScriptForFrame callback
