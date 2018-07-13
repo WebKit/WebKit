@@ -1,3 +1,14 @@
+2018-07-13  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Enable WebGL when Accelerated Compositing is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=187664
+
+        Reviewed by Fujii Hironori.
+
+        AC was disabled for WinCairo in r233725 but it can still run WebGL without AC.
+
+        * html/HTMLCanvasElement.cpp:
+
 2018-07-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under ApplicationCacheGroup::didFailLoadingEntry()

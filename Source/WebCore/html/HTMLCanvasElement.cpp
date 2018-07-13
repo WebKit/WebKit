@@ -373,7 +373,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type)
 
 static bool requiresAcceleratedCompositingForWebGL()
 {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WIN_CAIRO)
     return false;
 #else
     return true;
