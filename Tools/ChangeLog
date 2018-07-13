@@ -1,5 +1,13 @@
 2018-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Change my status to be a WebKit reviewer.
+
+        Unreviewed status update.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2018-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Unreviewed contributors.json update
 
         Just run "validate-committer-lists -c" to canonicalize the style.
