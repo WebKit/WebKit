@@ -23,6 +23,7 @@ extern const double kRTCAudioSessionLowComplexityIOBufferDuration;
 
 // Struct to hold configuration values.
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCAudioSessionConfiguration")))
 @interface RTCAudioSessionConfiguration : NSObject
 
 @property(nonatomic, strong) NSString *category;

@@ -15,11 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 @class RTCVideoCapturer;
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoCapturerDelegate")))
 @protocol RTCVideoCapturerDelegate <NSObject>
 - (void)capturer:(RTCVideoCapturer *)capturer didCaptureVideoFrame:(RTCVideoFrame *)frame;
 @end
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoCapturer")))
 @interface RTCVideoCapturer : NSObject
 
 @property(nonatomic, readonly, weak) id<RTCVideoCapturerDelegate> delegate;

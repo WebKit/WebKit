@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, RTCTlsCertPolicy) {
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCIceServer")))
 @interface RTCIceServer : NSObject
 
 /** URI(s) for this server represented as NSStrings. */

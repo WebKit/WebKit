@@ -69,6 +69,7 @@ typedef NS_ENUM(NSInteger, RTCStatsOutputLevel) {
 @class RTCPeerConnection;
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCPeerConnectionDelegate")))
 @protocol RTCPeerConnectionDelegate <NSObject>
 
 /** Called when the SignalingState changed. */
@@ -109,6 +110,7 @@ RTC_EXPORT
 @end
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCPeerConnection")))
 @interface RTCPeerConnection : NSObject
 
 /** The object that will be notifed about events such as state changes and

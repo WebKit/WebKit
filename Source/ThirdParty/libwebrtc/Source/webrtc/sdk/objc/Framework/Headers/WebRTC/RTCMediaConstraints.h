@@ -40,6 +40,7 @@ RTC_EXTERN NSString * const kRTCMediaConstraintsValueTrue;
 RTC_EXTERN NSString * const kRTCMediaConstraintsValueFalse;
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCMediaConstraints")))
 @interface RTCMediaConstraints : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

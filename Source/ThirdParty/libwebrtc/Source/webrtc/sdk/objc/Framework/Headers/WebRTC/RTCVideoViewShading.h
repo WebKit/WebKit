@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  * rendering for the RTCEAGLVideoView/RTCNSGLVideoView.
  */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoViewShading")))
 @protocol RTCVideoViewShading <NSObject>
 
 /** Callback for I420 frames. Each plane is given as a texture. */

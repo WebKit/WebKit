@@ -13,6 +13,7 @@
 #import "RTCMTLRenderer.h"
 
 NS_AVAILABLE(10_11, 9_0)
+__attribute__((objc_runtime_name("WK_RTCMTLNV12Renderer")))
 @interface RTCMTLNV12Renderer : RTCMTLRenderer
 
 @end

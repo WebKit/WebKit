@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** RTCVideoEncoderFactory is an Objective-C version of webrtc::VideoEncoderFactory. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
 @protocol RTCVideoEncoderFactory <NSObject>
 
 - (nullable id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
@@ -26,6 +27,7 @@ RTC_EXPORT
 
 /** RTCVideoDecoderFactory is an Objective-C version of webrtc::VideoDecoderFactory. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactory")))
 @protocol RTCVideoDecoderFactory <NSObject>
 
 - (nullable id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info;
@@ -39,6 +41,7 @@ RTC_EXPORT
  *  codecs, create custom implementations of RTCVideoEncoderFactory and RTCVideoDecoderFactory.
  */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCDefaultVideoEncoderFactory")))
 @interface RTCDefaultVideoEncoderFactory : NSObject <RTCVideoEncoderFactory>
 
 @property(nonatomic, retain) RTCVideoCodecInfo *preferredCodec;
@@ -48,6 +51,7 @@ RTC_EXPORT
 @end
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCDefaultVideoDecoderFactory")))
 @interface RTCDefaultVideoDecoderFactory : NSObject <RTCVideoDecoderFactory>
 @end
 

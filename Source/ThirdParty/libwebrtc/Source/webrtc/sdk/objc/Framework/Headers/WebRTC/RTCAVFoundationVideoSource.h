@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  * counted video source interface.
  */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCAVFoundationVideoSource")))
 @interface RTCAVFoundationVideoSource : RTCVideoSource
 
 - (instancetype)init NS_UNAVAILABLE;

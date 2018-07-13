@@ -14,6 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+__attribute__((objc_runtime_name("WK_RTCNV12TextureCache")))
 @interface RTCNV12TextureCache : NSObject
 
 @property(nonatomic, readonly) GLuint yTexture;

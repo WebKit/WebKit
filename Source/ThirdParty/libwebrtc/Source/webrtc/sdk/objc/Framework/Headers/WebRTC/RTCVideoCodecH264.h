@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, RTCH264PacketizationMode) {
 };
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCCodecSpecificInfoH264")))
 @interface RTCCodecSpecificInfoH264 : NSObject <RTCCodecSpecificInfo>
 
 @property(nonatomic, assign) RTCH264PacketizationMode packetizationMode;
@@ -28,6 +29,7 @@ RTC_EXPORT
 
 /** Encoder. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderH264")))
 @interface RTCVideoEncoderH264 : NSObject<RTCVideoEncoder>
 
 - (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo;
@@ -36,15 +38,18 @@ RTC_EXPORT
 
 /** Decoder. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoDecoderH264")))
 @interface RTCVideoDecoderH264 : NSObject<RTCVideoDecoder>
 @end
 
 /** Encoder factory. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactoryH264")))
 @interface RTCVideoEncoderFactoryH264 : NSObject<RTCVideoEncoderFactory>
 @end
 
 /** Decoder factory. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactoryH264")))
 @interface RTCVideoDecoderFactoryH264 : NSObject<RTCVideoDecoderFactory>
 @end

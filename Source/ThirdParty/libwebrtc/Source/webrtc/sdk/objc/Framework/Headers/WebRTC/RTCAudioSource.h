@@ -16,6 +16,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCAudioSource")))
 @interface RTCAudioSource : RTCMediaSource
 
 - (instancetype)init NS_UNAVAILABLE;

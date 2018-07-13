@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Protocol defining ability to render RTCVideoFrame in Metal enabled views.
  */
+__attribute__((objc_runtime_name("WK_RTCMTLRenderer")))
 @protocol RTCMTLRenderer<NSObject>
 
 /**
@@ -49,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Implementation of RTCMTLRenderer protocol for rendering native nv12 video frames.
  */
 NS_AVAILABLE(10_11, 9_0)
+__attribute__((objc_runtime_name("WK_RTCMTLRenderer")))
 @interface RTCMTLRenderer : NSObject<RTCMTLRenderer>
 @end
 

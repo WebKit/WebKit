@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RTCVideoTrack;
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCMediaStream")))
 @interface RTCMediaStream : NSObject
 
 /** The audio tracks in this stream. */

@@ -18,6 +18,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCRtpSender")))
 @protocol RTCRtpSender <NSObject>
 
 /** A unique identifier for this sender. */
@@ -41,6 +42,7 @@ RTC_EXPORT
 @end
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCRtpSender")))
 @interface RTCRtpSender : NSObject <RTCRtpSender>
 
 - (instancetype)init NS_UNAVAILABLE;

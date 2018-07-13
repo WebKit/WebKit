@@ -25,6 +25,7 @@ typedef NS_ENUM(NSInteger, RTCSdpType) {
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCSessionDescription")))
 @interface RTCSessionDescription : NSObject
 
 /** The type of session description. */

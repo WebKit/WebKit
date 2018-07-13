@@ -11,6 +11,7 @@
 #import "RTCOpenGLDefines.h"
 #import "WebRTC/RTCVideoFrame.h"
 
+__attribute__((objc_runtime_name("WK_RTCI420TextureCache")))
 @interface RTCI420TextureCache : NSObject
 
 @property(nonatomic, readonly) GLuint yTexture;

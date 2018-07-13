@@ -12,6 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+__attribute__((objc_runtime_name("WK_RTCIntervalRange")))
 @interface RTCIntervalRange : NSObject
 
 @property(nonatomic, readonly) NSInteger min;

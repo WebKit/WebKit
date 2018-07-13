@@ -23,6 +23,7 @@
 // refreshes, which should be 30fps. We wrap the display link in order to avoid
 // a retain cycle since CADisplayLink takes a strong reference onto its target.
 // The timer is paused by default.
+__attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
 @interface RTCDisplayLinkTimer : NSObject
 
 @property(nonatomic) BOOL isPaused;

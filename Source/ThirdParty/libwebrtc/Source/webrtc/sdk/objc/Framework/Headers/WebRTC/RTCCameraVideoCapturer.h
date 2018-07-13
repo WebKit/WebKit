@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 RTC_EXPORT
 // Camera capture that implements RTCVideoCapturer. Delivers frames to a RTCVideoCapturerDelegate
 // (usually RTCVideoSource).
+__attribute__((objc_runtime_name("WK_RTCCameraVideoCapturer")))
 @interface RTCCameraVideoCapturer : RTCVideoCapturer
 
 // Capture session that is used for capturing. Valid from initialization to dealloc.

@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, RTCVideoContentType) {
 
 /** Represents an encoded frame. Corresponds to webrtc::EncodedImage. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCEncodedImage")))
 @interface RTCEncodedImage : NSObject
 
 @property(nonatomic, strong) NSData *buffer;
@@ -58,6 +59,7 @@ RTC_EXPORT
 
 /** Information for header. Corresponds to webrtc::RTPFragmentationHeader. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCRtpFragmentationHeader")))
 @interface RTCRtpFragmentationHeader : NSObject
 
 @property(nonatomic, strong) NSArray<NSNumber *> *fragmentationOffset;
@@ -71,6 +73,7 @@ RTC_EXPORT
  *  Corresponds to webrtc::CodecSpecificInfo.
  */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCCodecSpecificInfo")))
 @protocol RTCCodecSpecificInfo <NSObject>
 
 @end
@@ -90,6 +93,7 @@ typedef NS_ENUM(NSUInteger, RTCVideoCodecMode) {
 
 /** Holds information to identify a codec. Corresponds to cricket::VideoCodec. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoCodecInfo")))
 @interface RTCVideoCodecInfo : NSObject <NSCoding>
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -109,6 +113,7 @@ RTC_EXPORT
 
 /** Settings for encoder. Corresponds to webrtc::VideoCodec. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderSettings")))
 @interface RTCVideoEncoderSettings : NSObject
 
 @property(nonatomic, strong) NSString *name;
@@ -130,6 +135,7 @@ RTC_EXPORT
 
 /** QP thresholds for encoder. Corresponds to webrtc::VideoEncoder::QpThresholds. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderQpThresholds")))
 @interface RTCVideoEncoderQpThresholds : NSObject
 
 - (instancetype)initWithThresholdsLow:(NSInteger)low high:(NSInteger)high;
@@ -141,6 +147,7 @@ RTC_EXPORT
 
 /** Protocol for encoder implementations. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoEncoder")))
 @protocol RTCVideoEncoder <NSObject>
 
 - (void)setCallback:(RTCVideoEncoderCallback)callback;
@@ -162,6 +169,7 @@ RTC_EXPORT
 
 /** Protocol for decoder implementations. */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoDecoder")))
 @protocol RTCVideoDecoder <NSObject>
 
 - (void)setCallback:(RTCVideoDecoderCallback)callback;

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RTCEAGLVideoView;
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCEAGLVideoViewDelegate")))
 @protocol RTCEAGLVideoViewDelegate
 
 - (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size;
@@ -30,6 +31,7 @@ RTC_EXPORT
  * bounds using OpenGLES 2.0 or OpenGLES 3.0.
  */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCEAGLVideoView")))
 @interface RTCEAGLVideoView : UIView <RTCVideoRenderer>
 
 @property(nonatomic, weak) id<RTCEAGLVideoViewDelegate> delegate;

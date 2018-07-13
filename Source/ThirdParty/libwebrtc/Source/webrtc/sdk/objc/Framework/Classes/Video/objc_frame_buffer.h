@@ -15,6 +15,7 @@
 
 #include "common_video/include/video_frame_buffer.h"
 
+__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
 @protocol RTCVideoFrameBuffer;
 
 namespace webrtc {

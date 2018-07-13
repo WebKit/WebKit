@@ -22,6 +22,7 @@ typedef NS_ENUM(NSInteger, RTCSourceState) {
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCMediaSource")))
 @interface RTCMediaSource : NSObject
 
 /** The current state of the RTCMediaSource. */

@@ -20,6 +20,7 @@
  *  AVCaptureSession.
  */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCCameraPreviewView")))
 @interface RTCCameraPreviewView : UIView
 
 /** The capture session being rendered in the view. Capture session

@@ -20,12 +20,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RTCNSGLVideoView;
+__attribute__((objc_runtime_name("WK_RTCNSGLVideoViewDelegate")))
 @protocol RTCNSGLVideoViewDelegate
 
 - (void)videoView:(RTCNSGLVideoView *)videoView didChangeVideoSize:(CGSize)size;
 
 @end
 
+__attribute__((objc_runtime_name("WK_RTCNSGLVideoView")))
 @interface RTCNSGLVideoView : NSOpenGLView <RTCVideoRenderer>
 
 @property(nonatomic, weak) id<RTCNSGLVideoViewDelegate> delegate;

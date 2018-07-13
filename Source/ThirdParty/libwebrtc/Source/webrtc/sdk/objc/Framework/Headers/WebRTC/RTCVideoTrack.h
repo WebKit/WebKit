@@ -14,11 +14,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+__attribute__((objc_runtime_name("WK_RTCVideoRenderer")))
 @protocol RTCVideoRenderer;
 @class RTCPeerConnectionFactory;
 @class RTCVideoSource;
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoTrack")))
 @interface RTCVideoTrack : RTCMediaStreamTrack
 
 /** The video source for this video track. */

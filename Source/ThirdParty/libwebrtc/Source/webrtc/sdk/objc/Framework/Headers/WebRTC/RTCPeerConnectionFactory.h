@@ -24,11 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
 @class RTCVideoSource;
 @class RTCVideoTrack;
 @class RTCPeerConnectionFactoryOptions;
+__attribute__((objc_runtime_name("WK_RTCPeerConnectionDelegate")))
 @protocol RTCPeerConnectionDelegate;
+__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactory")))
 @protocol RTCVideoDecoderFactory;
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
 @protocol RTCVideoEncoderFactory;
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCPeerConnectionFactory")))
 @interface RTCPeerConnectionFactory : NSObject
 
 /* Initialize object with default H264 video encoder/decoder factories */

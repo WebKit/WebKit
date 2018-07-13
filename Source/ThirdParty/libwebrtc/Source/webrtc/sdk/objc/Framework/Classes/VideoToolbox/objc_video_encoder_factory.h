@@ -16,6 +16,7 @@
 #include "api/video_codecs/video_encoder_factory.h"
 #include "media/engine/webrtcvideoencoderfactory.h"
 
+__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
 @protocol RTCVideoEncoderFactory;
 
 namespace webrtc {

@@ -66,6 +66,7 @@ typedef NS_ENUM(NSInteger, RTCEncryptionKeyType) {
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCConfiguration")))
 @interface RTCConfiguration : NSObject
 
 /** An array of Ice Servers available to be used by ICE. */

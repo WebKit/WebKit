@@ -1,5 +1,86 @@
 2018-07-13  David Kilzer  <ddkilzer@apple.com>
 
+        libwebrtc.dylib Objective-C classes conflict with third-party frameworks
+        <https://webkit.org/b/187653>
+
+        Reviewed by Alex Christensen.
+
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        - Manually add an attribute to change the class name.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/Common/RTCUIApplicationStatusObserver.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLI420Renderer.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLNV12Renderer.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLRenderer.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDtmfSender+Private.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoRendererAdapter.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoDecoder.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoEncoder.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/UI/RTCEAGLVideoView.m:
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/RTCAVFoundationVideoCapturerInternal.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/RTCDefaultShader.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/RTCI420TextureCache.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/RTCNV12TextureCache.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/objc_frame_buffer.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_decoder_factory.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_encoder_factory.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSession.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioTrack.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraVideoCapturer.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCConfiguration.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannel.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDispatcher.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDtmfSender.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCEAGLVideoView.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileLogger.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileVideoCapturer.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceCandidate.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceServer.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIntervalRange.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLNSVideoView.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLVideoView.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaConstraints.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStream.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCNSGLVideoView.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnection.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactoryOptions.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpParameters.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpReceiver.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpSender.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCSessionDescription.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCapturer.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodec.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecH264.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP8.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP9.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP8.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP9.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoRenderer.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoTrack.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoViewShading.h:
+        - Apply two shell scripts (see bug) to add an attribute to
+          change the name of all classes and protocols.
+
+        * WebKit/0012-Add-WK-prefix-to-Objective-C-classes-and-protocols.patch: Add.
+
+2018-07-13  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r233155): Remove last references to click_annotate.cc and rtpcat.cc
 
         * libwebrtc.xcodeproj/project.pbxproj: Let Xcode have its way

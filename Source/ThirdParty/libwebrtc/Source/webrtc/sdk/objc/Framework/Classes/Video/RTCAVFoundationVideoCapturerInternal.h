@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 // It is meant to be owned by an instance of AVFoundationVideoCapturer.
 // The reason for this is because other webrtc objects own cricket::VideoCapturer, which is not
 // ref counted. To prevent bad behavior we do not expose this class directly.
+__attribute__((objc_runtime_name("WK_RTCAVFoundationVideoCapturerInternal")))
 @interface RTCAVFoundationVideoCapturerInternal
     : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 

@@ -13,10 +13,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
 @protocol RTCI420Buffer;
 
 // RTCVideoFrameBuffer is an ObjectiveC version of webrtc::VideoFrameBuffer.
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
 @protocol RTCVideoFrameBuffer <NSObject>
 
 @property(nonatomic, readonly) int width;
@@ -27,6 +29,7 @@ RTC_EXPORT
 @end
 
 /** Protocol for RTCVideoFrameBuffers containing YUV planar data. */
+__attribute__((objc_runtime_name("WK_RTCYUVPlanarBuffer")))
 @protocol RTCYUVPlanarBuffer <RTCVideoFrameBuffer>
 
 @property(nonatomic, readonly) int chromaWidth;
@@ -48,6 +51,7 @@ RTC_EXPORT
 @end
 
 /** Extension of the YUV planar data buffer with mutable data access */
+__attribute__((objc_runtime_name("WK_RTCMutableYUVPlanarBuffer")))
 @protocol RTCMutableYUVPlanarBuffer <RTCYUVPlanarBuffer>
 
 @property(nonatomic, readonly) uint8_t *mutableDataY;
@@ -57,15 +61,18 @@ RTC_EXPORT
 @end
 
 /** Protocol for RTCYUVPlanarBuffers containing I420 data */
+__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
 @protocol RTCI420Buffer <RTCYUVPlanarBuffer>
 @end
 
 /** Extension of the I420 buffer with mutable data access */
+__attribute__((objc_runtime_name("WK_RTCMutableI420Buffer")))
 @protocol RTCMutableI420Buffer <RTCI420Buffer, RTCMutableYUVPlanarBuffer>
 @end
 
 /** RTCVideoFrameBuffer containing a CVPixelBufferRef */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCCVPixelBuffer")))
 @interface RTCCVPixelBuffer : NSObject <RTCVideoFrameBuffer>
 
 @property(nonatomic, readonly) CVPixelBufferRef pixelBuffer;
@@ -95,11 +102,13 @@ RTC_EXPORT
 
 /** RTCI420Buffer implements the RTCI420Buffer protocol */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
 @interface RTCI420Buffer : NSObject <RTCI420Buffer>
 @end
 
 /** Mutable version of RTCI420Buffer */
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCMutableI420Buffer")))
 @interface RTCMutableI420Buffer : RTCI420Buffer <RTCMutableI420Buffer>
 @end
 

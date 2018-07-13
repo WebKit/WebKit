@@ -26,6 +26,7 @@ RTC_EXTERN NSString * const kRTCMediaStreamTrackKindAudio;
 RTC_EXTERN NSString * const kRTCMediaStreamTrackKindVideo;
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCMediaStreamTrack")))
 @interface RTCMediaStreamTrack : NSObject
 
 /**

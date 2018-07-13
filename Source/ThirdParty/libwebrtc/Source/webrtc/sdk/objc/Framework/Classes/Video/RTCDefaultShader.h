@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  RTCEAGLVideoView if no external shader is specified. This shader will render
  *  the video in a rectangle without any color or geometric transformations.
  */
+__attribute__((objc_runtime_name("WK_RTCDefaultShader")))
 @interface RTCDefaultShader : NSObject<RTCVideoViewShading>
 
 @end

@@ -16,6 +16,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCDataBuffer")))
 @interface RTCDataBuffer : NSObject
 
 /** NSData representation of the underlying buffer. */
@@ -37,6 +38,7 @@ RTC_EXPORT
 
 @class RTCDataChannel;
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCDataChannelDelegate")))
 @protocol RTCDataChannelDelegate <NSObject>
 
 /** The data channel state changed. */
@@ -63,6 +65,7 @@ typedef NS_ENUM(NSInteger, RTCDataChannelState) {
 };
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCDataChannel")))
 @interface RTCDataChannel : NSObject
 
 /**

@@ -33,6 +33,7 @@
 #include <webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h>
 
 #if !defined(WEBRTC_IOS)
+__attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
 @interface RTCUIApplicationStatusObserver : NSObject
 
 + (instancetype)sharedInstance;

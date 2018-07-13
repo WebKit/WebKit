@@ -1,0 +1,1076 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.mm
+index 1490c89ac5f..5e65230f321 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.mm
+@@ -33,6 +33,7 @@
+ #include <webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h>
+ 
+ #if !defined(WEBRTC_IOS)
++__attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
+ @interface RTCUIApplicationStatusObserver : NSObject
+ 
+ + (instancetype)sharedInstance;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Common/RTCUIApplicationStatusObserver.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Common/RTCUIApplicationStatusObserver.h
+index a2064df5db9..8ee12b62499 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Common/RTCUIApplicationStatusObserver.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Common/RTCUIApplicationStatusObserver.h
+@@ -12,6 +12,7 @@
+ 
+ #import <Foundation/Foundation.h>
+ 
++__attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
+ @interface RTCUIApplicationStatusObserver : NSObject
+ 
+ + (instancetype)sharedInstance;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLI420Renderer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLI420Renderer.h
+index e5987fe22a2..315b1f5a8da 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLI420Renderer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLI420Renderer.h
+@@ -13,5 +13,6 @@
+ #import "RTCMTLRenderer.h"
+ 
+ NS_AVAILABLE(10_11, 9_0)
++__attribute__((objc_runtime_name("WK_RTCMTLI420Renderer")))
+ @interface RTCMTLI420Renderer : RTCMTLRenderer
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLNV12Renderer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLNV12Renderer.h
+index 866b7ea17ee..8bbcb204d25 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLNV12Renderer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLNV12Renderer.h
+@@ -13,6 +13,7 @@
+ #import "RTCMTLRenderer.h"
+ 
+ NS_AVAILABLE(10_11, 9_0)
++__attribute__((objc_runtime_name("WK_RTCMTLNV12Renderer")))
+ @interface RTCMTLNV12Renderer : RTCMTLRenderer
+ 
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLRenderer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLRenderer.h
+index e279b098b55..110e2124656 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLRenderer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Metal/RTCMTLRenderer.h
+@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
+ /**
+  * Protocol defining ability to render RTCVideoFrame in Metal enabled views.
+  */
++__attribute__((objc_runtime_name("WK_RTCMTLRenderer")))
+ @protocol RTCMTLRenderer<NSObject>
+ 
+ /**
+@@ -49,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
+  * Implementation of RTCMTLRenderer protocol for rendering native nv12 video frames.
+  */
+ NS_AVAILABLE(10_11, 9_0)
++__attribute__((objc_runtime_name("WK_RTCMTLRenderer")))
+ @interface RTCMTLRenderer : NSObject<RTCMTLRenderer>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDtmfSender+Private.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDtmfSender+Private.h
+index 197aeb83a42..04f10e8b399 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDtmfSender+Private.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCDtmfSender+Private.h
+@@ -14,6 +14,7 @@
+ 
+ NS_ASSUME_NONNULL_BEGIN
+ 
++__attribute__((objc_runtime_name("WK_RTCDtmfSender")))
+ @interface RTCDtmfSender : NSObject <RTCDtmfSender>
+ 
+ @property(nonatomic, readonly) rtc::scoped_refptr<webrtc::DtmfSenderInterface> nativeDtmfSender;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoRendererAdapter.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoRendererAdapter.h
+index b0b6f044884..5b4570310d4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoRendererAdapter.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoRendererAdapter.h
+@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
+  * adapter adapts calls made to that interface to the RTCVideoRenderer supplied
+  * during construction.
+  */
++__attribute__((objc_runtime_name("WK_RTCVideoRendererAdapter")))
+ @interface RTCVideoRendererAdapter : NSObject
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoDecoder.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoDecoder.h
+index 74cfaeb861f..cb29b692640 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoDecoder.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoDecoder.h
+@@ -14,6 +14,7 @@
+ #include "api/video_codecs/video_decoder.h"
+ #include "media/base/codec.h"
+ 
++__attribute__((objc_runtime_name("WK_RTCWrappedNativeVideoDecoder")))
+ @interface RTCWrappedNativeVideoDecoder : NSObject <RTCVideoDecoder>
+ 
+ - (instancetype)initWithNativeDecoder:(std::unique_ptr<webrtc::VideoDecoder>)decoder;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoEncoder.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoEncoder.h
+index 5b95d33eba9..29eff125a54 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoEncoder.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCWrappedNativeVideoEncoder.h
+@@ -15,6 +15,7 @@
+ #include "api/video_codecs/video_encoder.h"
+ #include "media/base/codec.h"
+ 
++__attribute__((objc_runtime_name("WK_RTCWrappedNativeVideoEncoder")))
+ @interface RTCWrappedNativeVideoEncoder : NSObject <RTCVideoEncoder>
+ 
+ - (instancetype)initWithNativeEncoder:(std::unique_ptr<webrtc::VideoEncoder>)encoder;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/UI/RTCEAGLVideoView.m b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/UI/RTCEAGLVideoView.m
+index 8f379c864ae..8f4da302fab 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/UI/RTCEAGLVideoView.m
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/UI/RTCEAGLVideoView.m
+@@ -23,6 +23,7 @@
+ // refreshes, which should be 30fps. We wrap the display link in order to avoid
+ // a retain cycle since CADisplayLink takes a strong reference onto its target.
+ // The timer is paused by default.
++__attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
+ @interface RTCDisplayLinkTimer : NSObject
+ 
+ @property(nonatomic) BOOL isPaused;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCAVFoundationVideoCapturerInternal.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCAVFoundationVideoCapturerInternal.h
+index 8b73a808639..217437aff2d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCAVFoundationVideoCapturerInternal.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCAVFoundationVideoCapturerInternal.h
+@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
+ // It is meant to be owned by an instance of AVFoundationVideoCapturer.
+ // The reason for this is because other webrtc objects own cricket::VideoCapturer, which is not
+ // ref counted. To prevent bad behavior we do not expose this class directly.
++__attribute__((objc_runtime_name("WK_RTCAVFoundationVideoCapturerInternal")))
+ @interface RTCAVFoundationVideoCapturerInternal
+     : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCDefaultShader.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCDefaultShader.h
+index ed5125e2e8e..cc2ff4e46be 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCDefaultShader.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCDefaultShader.h
+@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
+  *  RTCEAGLVideoView if no external shader is specified. This shader will render
+  *  the video in a rectangle without any color or geometric transformations.
+  */
++__attribute__((objc_runtime_name("WK_RTCDefaultShader")))
+ @interface RTCDefaultShader : NSObject<RTCVideoViewShading>
+ 
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCI420TextureCache.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCI420TextureCache.h
+index 19f1bc99934..6726a8842b7 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCI420TextureCache.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCI420TextureCache.h
+@@ -11,6 +11,7 @@
+ #import "RTCOpenGLDefines.h"
+ #import "WebRTC/RTCVideoFrame.h"
+ 
++__attribute__((objc_runtime_name("WK_RTCI420TextureCache")))
+ @interface RTCI420TextureCache : NSObject
+ 
+ @property(nonatomic, readonly) GLuint yTexture;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCNV12TextureCache.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCNV12TextureCache.h
+index 9cba8232714..d59b73c9a93 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCNV12TextureCache.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCNV12TextureCache.h
+@@ -14,6 +14,7 @@
+ 
+ NS_ASSUME_NONNULL_BEGIN
+ 
++__attribute__((objc_runtime_name("WK_RTCNV12TextureCache")))
+ @interface RTCNV12TextureCache : NSObject
+ 
+ @property(nonatomic, readonly) GLuint yTexture;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/objc_frame_buffer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/objc_frame_buffer.h
+index 85a89e6dd9a..163028eb29d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/objc_frame_buffer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/objc_frame_buffer.h
+@@ -15,6 +15,7 @@
+ 
+ #include "common_video/include/video_frame_buffer.h"
+ 
++__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
+ @protocol RTCVideoFrameBuffer;
+ 
+ namespace webrtc {
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_decoder_factory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_decoder_factory.h
+index a0106ff83fe..13467e3898e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_decoder_factory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_decoder_factory.h
+@@ -15,6 +15,7 @@
+ #include "media/base/codec.h"
+ #include "media/engine/webrtcvideodecoderfactory.h"
+ 
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactory")))
+ @protocol RTCVideoDecoderFactory;
+ 
+ namespace webrtc {
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_encoder_factory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_encoder_factory.h
+index 6cdfc56f548..727922bfe4e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_encoder_factory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/objc_video_encoder_factory.h
+@@ -16,6 +16,7 @@
+ #include "api/video_codecs/video_encoder_factory.h"
+ #include "media/engine/webrtcvideoencoderfactory.h"
+ 
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
+ @protocol RTCVideoEncoderFactory;
+ 
+ namespace webrtc {
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h
+index 6d369b34034..de73b477099 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h
+@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
+  * counted video source interface.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCAVFoundationVideoSource")))
+ @interface RTCAVFoundationVideoSource : RTCVideoSource
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSession.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSession.h
+index 354634ec39f..e44aa39ae55 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSession.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSession.h
+@@ -28,6 +28,7 @@ extern NSInteger const kRTCAudioSessionErrorConfiguration;
+ // from AVAudioSession and handle them before calling these delegate methods,
+ // at which point applications can perform additional processing if required.
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCAudioSessionDelegate")))
+ @protocol RTCAudioSessionDelegate <NSObject>
+ 
+ @optional
+@@ -91,6 +92,7 @@ RTC_EXPORT
+  *  case of this is when CallKit activates the audio session for the application
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCAudioSessionActivationDelegate")))
+ @protocol RTCAudioSessionActivationDelegate <NSObject>
+ 
+ /** Called when the audio session is activated outside of the app by iOS. */
+@@ -109,6 +111,7 @@ RTC_EXPORT
+  *  activated only once. See |setActive:error:|.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCAudioSession")))
+ @interface RTCAudioSession : NSObject <RTCAudioSessionActivationDelegate>
+ 
+ /** Convenience property to access the AVAudioSession singleton. Callers should
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h
+index 6a02751d294..0097246e7c8 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h
+@@ -23,6 +23,7 @@ extern const double kRTCAudioSessionLowComplexityIOBufferDuration;
+ 
+ // Struct to hold configuration values.
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCAudioSessionConfiguration")))
+ @interface RTCAudioSessionConfiguration : NSObject
+ 
+ @property(nonatomic, strong) NSString *category;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSource.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSource.h
+index 3db31573cb8..7287c31a738 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSource.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSource.h
+@@ -16,6 +16,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCAudioSource")))
+ @interface RTCAudioSource : RTCMediaSource
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioTrack.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioTrack.h
+index b83eede528c..bab1b1a0020 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioTrack.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioTrack.h
+@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
+ @class RTCAudioSource;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCAudioTrack")))
+ @interface RTCAudioTrack : RTCMediaStreamTrack
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h
+index 9018aec3d18..9f9a59fc87d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraPreviewView.h
+@@ -20,6 +20,7 @@
+  *  AVCaptureSession.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCCameraPreviewView")))
+ @interface RTCCameraPreviewView : UIView
+ 
+ /** The capture session being rendered in the view. Capture session
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraVideoCapturer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraVideoCapturer.h
+index 31b405c5426..b2e012778f3 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraVideoCapturer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCCameraVideoCapturer.h
+@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
+ RTC_EXPORT
+ // Camera capture that implements RTCVideoCapturer. Delivers frames to a RTCVideoCapturerDelegate
+ // (usually RTCVideoSource).
++__attribute__((objc_runtime_name("WK_RTCCameraVideoCapturer")))
+ @interface RTCCameraVideoCapturer : RTCVideoCapturer
+ 
+ // Capture session that is used for capturing. Valid from initialization to dealloc.
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCConfiguration.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCConfiguration.h
+index fcb62b94168..bf8e50c0504 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCConfiguration.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCConfiguration.h
+@@ -66,6 +66,7 @@ typedef NS_ENUM(NSInteger, RTCEncryptionKeyType) {
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCConfiguration")))
+ @interface RTCConfiguration : NSObject
+ 
+ /** An array of Ice Servers available to be used by ICE. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannel.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannel.h
+index 893bd0a3365..1785513753a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannel.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannel.h
+@@ -16,6 +16,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDataBuffer")))
+ @interface RTCDataBuffer : NSObject
+ 
+ /** NSData representation of the underlying buffer. */
+@@ -37,6 +38,7 @@ RTC_EXPORT
+ 
+ @class RTCDataChannel;
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDataChannelDelegate")))
+ @protocol RTCDataChannelDelegate <NSObject>
+ 
+ /** The data channel state changed. */
+@@ -63,6 +65,7 @@ typedef NS_ENUM(NSInteger, RTCDataChannelState) {
+ };
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDataChannel")))
+ @interface RTCDataChannel : NSObject
+ 
+ /**
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h
+index 65f59318447..0b8913ce549 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h
+@@ -16,6 +16,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDataChannelConfiguration")))
+ @interface RTCDataChannelConfiguration : NSObject
+ 
+ /** Set to YES if ordered delivery is required. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDispatcher.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDispatcher.h
+index 3dddead60ef..2166277bc17 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDispatcher.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDispatcher.h
+@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, RTCDispatcherQueueType) {
+  *  shared dispatch queue.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDispatcher")))
+ @interface RTCDispatcher : NSObject
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDtmfSender.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDtmfSender.h
+index c69af026b7c..b4b6c6cf7d6 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDtmfSender.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDtmfSender.h
+@@ -15,6 +15,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDtmfSender")))
+ @protocol RTCDtmfSender <NSObject>
+ 
+ /**
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCEAGLVideoView.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCEAGLVideoView.h
+index 60c624e0d25..d4d3b54fee7 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCEAGLVideoView.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCEAGLVideoView.h
+@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ @class RTCEAGLVideoView;
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCEAGLVideoViewDelegate")))
+ @protocol RTCEAGLVideoViewDelegate
+ 
+ - (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size;
+@@ -30,6 +31,7 @@ RTC_EXPORT
+  * bounds using OpenGLES 2.0 or OpenGLES 3.0.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCEAGLVideoView")))
+ @interface RTCEAGLVideoView : UIView <RTCVideoRenderer>
+ 
+ @property(nonatomic, weak) id<RTCEAGLVideoViewDelegate> delegate;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileLogger.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileLogger.h
+index 1e8a591b73f..33df4efcf0f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileLogger.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileLogger.h
+@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
+ // For kRTCFileLoggerTypeApp, the oldest log is overwritten.
+ // This class is not threadsafe.
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCFileLogger")))
+ @interface RTCFileLogger : NSObject
+ 
+ // The severity level to capture. The default is kRTCFileLoggerSeverityInfo.
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileVideoCapturer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileVideoCapturer.h
+index 7b898e494cf..70f482e35c7 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileVideoCapturer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileVideoCapturer.h
+@@ -26,6 +26,7 @@ typedef void (^RTCFileVideoCapturerErrorBlock)(NSError *error);
+ RTC_EXPORT
+ 
+ NS_CLASS_AVAILABLE_IOS(10)
++__attribute__((objc_runtime_name("WK_RTCFileVideoCapturer")))
+ @interface RTCFileVideoCapturer : RTCVideoCapturer
+ 
+ /**
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceCandidate.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceCandidate.h
+index 3b7f3e26e5a..902925203ea 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceCandidate.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceCandidate.h
+@@ -15,6 +15,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCIceCandidate")))
+ @interface RTCIceCandidate : NSObject
+ 
+ /**
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceServer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceServer.h
+index 727da8acbeb..d1feda40fe7 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceServer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceServer.h
+@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, RTCTlsCertPolicy) {
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCIceServer")))
+ @interface RTCIceServer : NSObject
+ 
+ /** URI(s) for this server represented as NSStrings. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIntervalRange.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIntervalRange.h
+index 9384b153683..11eb4dc6233 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIntervalRange.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIntervalRange.h
+@@ -12,6 +12,7 @@
+ 
+ NS_ASSUME_NONNULL_BEGIN
+ 
++__attribute__((objc_runtime_name("WK_RTCIntervalRange")))
+ @interface RTCIntervalRange : NSObject
+ 
+ @property(nonatomic, readonly) NSInteger min;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h
+index 14d996c1cec..bbc4c035f78 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h
+@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** This does not currently conform to the spec. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCLegacyStatsReport")))
+ @interface RTCLegacyStatsReport : NSObject
+ 
+ /** Time since 1970-01-01T00:00:00Z in milliseconds. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLNSVideoView.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLNSVideoView.h
+index 4990e2529ef..b18fc777402 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLNSVideoView.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLNSVideoView.h
+@@ -12,6 +12,7 @@
+ #import "WebRTC/RTCVideoRenderer.h"
+ 
+ NS_AVAILABLE_MAC(10.11)
++__attribute__((objc_runtime_name("WK_RTCMTLNSVideoView")))
+ @interface RTCMTLNSVideoView : NSView<RTCVideoRenderer>
+ + (BOOL)isMetalAvailable;
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLVideoView.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLVideoView.h
+index 226c62a6a17..b62d0889b06 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLVideoView.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMTLVideoView.h
+@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
+ NS_CLASS_AVAILABLE_IOS(9)
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMTLVideoView")))
+ @interface RTCMTLVideoView : UIView <RTCVideoRenderer>
+ 
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaConstraints.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaConstraints.h
+index 26a116888a4..e6321940c44 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaConstraints.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaConstraints.h
+@@ -40,6 +40,7 @@ RTC_EXTERN NSString * const kRTCMediaConstraintsValueTrue;
+ RTC_EXTERN NSString * const kRTCMediaConstraintsValueFalse;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMediaConstraints")))
+ @interface RTCMediaConstraints : NSObject
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaSource.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaSource.h
+index 6cfcb7d2ce8..1a4003b5283 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaSource.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaSource.h
+@@ -22,6 +22,7 @@ typedef NS_ENUM(NSInteger, RTCSourceState) {
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMediaSource")))
+ @interface RTCMediaSource : NSObject
+ 
+ /** The current state of the RTCMediaSource. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStream.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStream.h
+index b97960d436c..9cefde13c5f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStream.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStream.h
+@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
+ @class RTCVideoTrack;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMediaStream")))
+ @interface RTCMediaStream : NSObject
+ 
+ /** The audio tracks in this stream. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h
+index c42f0cfb1a0..a1161c2ac2c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h
+@@ -26,6 +26,7 @@ RTC_EXTERN NSString * const kRTCMediaStreamTrackKindAudio;
+ RTC_EXTERN NSString * const kRTCMediaStreamTrackKindVideo;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMediaStreamTrack")))
+ @interface RTCMediaStreamTrack : NSObject
+ 
+ /**
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h
+index f01bea9b71b..28b71d1f9e4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h
+@@ -15,6 +15,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMetricsSampleInfo")))
+ @interface RTCMetricsSampleInfo : NSObject
+ 
+ /**
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCNSGLVideoView.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCNSGLVideoView.h
+index 9e6a9ce9483..e29ec9f3c9d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCNSGLVideoView.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCNSGLVideoView.h
+@@ -20,12 +20,14 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ @class RTCNSGLVideoView;
++__attribute__((objc_runtime_name("WK_RTCNSGLVideoViewDelegate")))
+ @protocol RTCNSGLVideoViewDelegate
+ 
+ - (void)videoView:(RTCNSGLVideoView *)videoView didChangeVideoSize:(CGSize)size;
+ 
+ @end
+ 
++__attribute__((objc_runtime_name("WK_RTCNSGLVideoView")))
+ @interface RTCNSGLVideoView : NSOpenGLView <RTCVideoRenderer>
+ 
+ @property(nonatomic, weak) id<RTCNSGLVideoViewDelegate> delegate;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnection.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnection.h
+index a4c113b1d65..041232e341b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnection.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnection.h
+@@ -69,6 +69,7 @@ typedef NS_ENUM(NSInteger, RTCStatsOutputLevel) {
+ @class RTCPeerConnection;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCPeerConnectionDelegate")))
+ @protocol RTCPeerConnectionDelegate <NSObject>
+ 
+ /** Called when the SignalingState changed. */
+@@ -109,6 +110,7 @@ RTC_EXPORT
+ @end
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCPeerConnection")))
+ @interface RTCPeerConnection : NSObject
+ 
+ /** The object that will be notifed about events such as state changes and
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h
+index 56c399e27a8..8acaf43ce26 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h
+@@ -24,11 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
+ @class RTCVideoSource;
+ @class RTCVideoTrack;
+ @class RTCPeerConnectionFactoryOptions;
++__attribute__((objc_runtime_name("WK_RTCPeerConnectionDelegate")))
+ @protocol RTCPeerConnectionDelegate;
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactory")))
+ @protocol RTCVideoDecoderFactory;
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
+ @protocol RTCVideoEncoderFactory;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCPeerConnectionFactory")))
+ @interface RTCPeerConnectionFactory : NSObject
+ 
+ /* Initialize object with default H264 video encoder/decoder factories */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactoryOptions.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactoryOptions.h
+index a65abc6c8b5..9a91ae218ae 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactoryOptions.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactoryOptions.h
+@@ -15,6 +15,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCPeerConnectionFactoryOptions")))
+ @interface RTCPeerConnectionFactoryOptions : NSObject
+ 
+ @property(nonatomic, assign) BOOL disableEncryption;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h
+index c7ca2f59c00..2725e53d31e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h
+@@ -33,6 +33,7 @@ RTC_EXTERN const NSString * const kRTCH264CodecName;
+ 
+ /** Defined in http://w3c.github.io/webrtc-pc/#idl-def-RTCRtpCodecParameters */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpCodecParameters")))
+ @interface RTCRtpCodecParameters : NSObject
+ 
+ /** The RTP payload type. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h
+index a956f0d4c37..4d2e1e67152 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h
+@@ -15,6 +15,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpEncodingParameters")))
+ @interface RTCRtpEncodingParameters : NSObject
+ 
+ /** Controls whether the encoding is currently transmitted. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpParameters.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpParameters.h
+index bdebf84884c..1972749d9a1 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpParameters.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpParameters.h
+@@ -17,6 +17,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpParameters")))
+ @interface RTCRtpParameters : NSObject
+ 
+ /** The currently active encodings in the order of preference. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpReceiver.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpReceiver.h
+index 6156db9f932..324271876b7 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpReceiver.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpReceiver.h
+@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, RTCRtpMediaType) {
+ @class RTCRtpReceiver;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpReceiverDelegate")))
+ @protocol RTCRtpReceiverDelegate <NSObject>
+ 
+ /** Called when the first RTP packet is received.
+@@ -46,6 +47,7 @@ RTC_EXPORT
+ @end
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpReceiver")))
+ @protocol RTCRtpReceiver <NSObject>
+ 
+ /** A unique identifier for this receiver. */
+@@ -73,6 +75,7 @@ RTC_EXPORT
+ @end
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpReceiver")))
+ @interface RTCRtpReceiver : NSObject <RTCRtpReceiver>
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpSender.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpSender.h
+index f6e91250267..bf2fbc6ac51 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpSender.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpSender.h
+@@ -18,6 +18,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpSender")))
+ @protocol RTCRtpSender <NSObject>
+ 
+ /** A unique identifier for this sender. */
+@@ -41,6 +42,7 @@ RTC_EXPORT
+ @end
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpSender")))
+ @interface RTCRtpSender : NSObject <RTCRtpSender>
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCSessionDescription.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCSessionDescription.h
+index 41439804a8a..ba05e22066f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCSessionDescription.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCSessionDescription.h
+@@ -25,6 +25,7 @@ typedef NS_ENUM(NSInteger, RTCSdpType) {
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCSessionDescription")))
+ @interface RTCSessionDescription : NSObject
+ 
+ /** The type of session description. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCapturer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCapturer.h
+index 3addec83b1d..72215872bb9 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCapturer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCapturer.h
+@@ -15,11 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
+ @class RTCVideoCapturer;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoCapturerDelegate")))
+ @protocol RTCVideoCapturerDelegate <NSObject>
+ - (void)capturer:(RTCVideoCapturer *)capturer didCaptureVideoFrame:(RTCVideoFrame *)frame;
+ @end
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoCapturer")))
+ @interface RTCVideoCapturer : NSObject
+ 
+ @property(nonatomic, readonly, weak) id<RTCVideoCapturerDelegate> delegate;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodec.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodec.h
+index 470eb023260..345c22e53c2 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodec.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodec.h
+@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, RTCVideoContentType) {
+ 
+ /** Represents an encoded frame. Corresponds to webrtc::EncodedImage. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCEncodedImage")))
+ @interface RTCEncodedImage : NSObject
+ 
+ @property(nonatomic, strong) NSData *buffer;
+@@ -58,6 +59,7 @@ RTC_EXPORT
+ 
+ /** Information for header. Corresponds to webrtc::RTPFragmentationHeader. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpFragmentationHeader")))
+ @interface RTCRtpFragmentationHeader : NSObject
+ 
+ @property(nonatomic, strong) NSArray<NSNumber *> *fragmentationOffset;
+@@ -71,6 +73,7 @@ RTC_EXPORT
+  *  Corresponds to webrtc::CodecSpecificInfo.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCCodecSpecificInfo")))
+ @protocol RTCCodecSpecificInfo <NSObject>
+ 
+ @end
+@@ -90,6 +93,7 @@ typedef NS_ENUM(NSUInteger, RTCVideoCodecMode) {
+ 
+ /** Holds information to identify a codec. Corresponds to cricket::VideoCodec. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoCodecInfo")))
+ @interface RTCVideoCodecInfo : NSObject <NSCoding>
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+@@ -109,6 +113,7 @@ RTC_EXPORT
+ 
+ /** Settings for encoder. Corresponds to webrtc::VideoCodec. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderSettings")))
+ @interface RTCVideoEncoderSettings : NSObject
+ 
+ @property(nonatomic, strong) NSString *name;
+@@ -130,6 +135,7 @@ RTC_EXPORT
+ 
+ /** QP thresholds for encoder. Corresponds to webrtc::VideoEncoder::QpThresholds. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderQpThresholds")))
+ @interface RTCVideoEncoderQpThresholds : NSObject
+ 
+ - (instancetype)initWithThresholdsLow:(NSInteger)low high:(NSInteger)high;
+@@ -141,6 +147,7 @@ RTC_EXPORT
+ 
+ /** Protocol for encoder implementations. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoder")))
+ @protocol RTCVideoEncoder <NSObject>
+ 
+ - (void)setCallback:(RTCVideoEncoderCallback)callback;
+@@ -162,6 +169,7 @@ RTC_EXPORT
+ 
+ /** Protocol for decoder implementations. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoder")))
+ @protocol RTCVideoDecoder <NSObject>
+ 
+ - (void)setCallback:(RTCVideoDecoderCallback)callback;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h
+index 0ef2c8a655c..9fb1cb71d99 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecFactory.h
+@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** RTCVideoEncoderFactory is an Objective-C version of webrtc::VideoEncoderFactory. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
+ @protocol RTCVideoEncoderFactory <NSObject>
+ 
+ - (nullable id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
+@@ -26,6 +27,7 @@ RTC_EXPORT
+ 
+ /** RTCVideoDecoderFactory is an Objective-C version of webrtc::VideoDecoderFactory. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactory")))
+ @protocol RTCVideoDecoderFactory <NSObject>
+ 
+ - (nullable id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info;
+@@ -39,6 +41,7 @@ RTC_EXPORT
+  *  codecs, create custom implementations of RTCVideoEncoderFactory and RTCVideoDecoderFactory.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDefaultVideoEncoderFactory")))
+ @interface RTCDefaultVideoEncoderFactory : NSObject <RTCVideoEncoderFactory>
+ 
+ @property(nonatomic, retain) RTCVideoCodecInfo *preferredCodec;
+@@ -48,6 +51,7 @@ RTC_EXPORT
+ @end
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDefaultVideoDecoderFactory")))
+ @interface RTCDefaultVideoDecoderFactory : NSObject <RTCVideoDecoderFactory>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecH264.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecH264.h
+index 1c307ebe84a..c8d7fc007f1 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecH264.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoCodecH264.h
+@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, RTCH264PacketizationMode) {
+ };
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCCodecSpecificInfoH264")))
+ @interface RTCCodecSpecificInfoH264 : NSObject <RTCCodecSpecificInfo>
+ 
+ @property(nonatomic, assign) RTCH264PacketizationMode packetizationMode;
+@@ -28,6 +29,7 @@ RTC_EXPORT
+ 
+ /** Encoder. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderH264")))
+ @interface RTCVideoEncoderH264 : NSObject<RTCVideoEncoder>
+ 
+ - (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo;
+@@ -36,15 +38,18 @@ RTC_EXPORT
+ 
+ /** Decoder. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderH264")))
+ @interface RTCVideoDecoderH264 : NSObject<RTCVideoDecoder>
+ @end
+ 
+ /** Encoder factory. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactoryH264")))
+ @interface RTCVideoEncoderFactoryH264 : NSObject<RTCVideoEncoderFactory>
+ @end
+ 
+ /** Decoder factory. */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactoryH264")))
+ @interface RTCVideoDecoderFactoryH264 : NSObject<RTCVideoDecoderFactory>
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP8.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP8.h
+index 962b6312f7f..3e19ef8909c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP8.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP8.h
+@@ -14,6 +14,7 @@
+ #import <WebRTC/RTCVideoCodec.h>
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderVP8")))
+ @interface RTCVideoDecoderVP8 : NSObject
+ 
+ /* This returns a VP8 decoder that can be returned from a RTCVideoDecoderFactory injected into
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP9.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP9.h
+index faf66ef065b..3fe79bc4a52 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP9.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoDecoderVP9.h
+@@ -14,6 +14,7 @@
+ #import <WebRTC/RTCVideoCodec.h>
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderVP9")))
+ @interface RTCVideoDecoderVP9 : NSObject
+ 
+ /* This returns a VP9 decoder that can be returned from a RTCVideoDecoderFactory injected into
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP8.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP8.h
+index e63b24dde75..52155b52551 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP8.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP8.h
+@@ -14,6 +14,7 @@
+ #import <WebRTC/RTCVideoCodec.h>
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderVP8")))
+ @interface RTCVideoEncoderVP8 : NSObject
+ 
+ /* This returns a VP8 encoder that can be returned from a RTCVideoEncoderFactory injected into
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP9.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP9.h
+index cef8c82e96f..866e626a05e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP9.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoEncoderVP9.h
+@@ -14,6 +14,7 @@
+ #import <WebRTC/RTCVideoCodec.h>
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderVP9")))
+ @interface RTCVideoEncoderVP9 : NSObject
+ 
+ /* This returns a VP9 encoder that can be returned from a RTCVideoEncoderFactory injected into
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h
+index dcc4c6e7b5b..5b8fba602df 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h
+@@ -22,10 +22,12 @@ typedef NS_ENUM(NSInteger, RTCVideoRotation) {
+   RTCVideoRotation_270 = 270,
+ };
+ 
++__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
+ @protocol RTCVideoFrameBuffer;
+ 
+ // RTCVideoFrame is an ObjectiveC version of webrtc::VideoFrame.
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoFrame")))
+ @interface RTCVideoFrame : NSObject
+ 
+ /** Width without rotation applied. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h
+index 4a683b0c926..8b825d8050c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h
+@@ -13,10 +13,12 @@
+ 
+ NS_ASSUME_NONNULL_BEGIN
+ 
++__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
+ @protocol RTCI420Buffer;
+ 
+ // RTCVideoFrameBuffer is an ObjectiveC version of webrtc::VideoFrameBuffer.
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
+ @protocol RTCVideoFrameBuffer <NSObject>
+ 
+ @property(nonatomic, readonly) int width;
+@@ -27,6 +29,7 @@ RTC_EXPORT
+ @end
+ 
+ /** Protocol for RTCVideoFrameBuffers containing YUV planar data. */
++__attribute__((objc_runtime_name("WK_RTCYUVPlanarBuffer")))
+ @protocol RTCYUVPlanarBuffer <RTCVideoFrameBuffer>
+ 
+ @property(nonatomic, readonly) int chromaWidth;
+@@ -48,6 +51,7 @@ RTC_EXPORT
+ @end
+ 
+ /** Extension of the YUV planar data buffer with mutable data access */
++__attribute__((objc_runtime_name("WK_RTCMutableYUVPlanarBuffer")))
+ @protocol RTCMutableYUVPlanarBuffer <RTCYUVPlanarBuffer>
+ 
+ @property(nonatomic, readonly) uint8_t *mutableDataY;
+@@ -57,15 +61,18 @@ RTC_EXPORT
+ @end
+ 
+ /** Protocol for RTCYUVPlanarBuffers containing I420 data */
++__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
+ @protocol RTCI420Buffer <RTCYUVPlanarBuffer>
+ @end
+ 
+ /** Extension of the I420 buffer with mutable data access */
++__attribute__((objc_runtime_name("WK_RTCMutableI420Buffer")))
+ @protocol RTCMutableI420Buffer <RTCI420Buffer, RTCMutableYUVPlanarBuffer>
+ @end
+ 
+ /** RTCVideoFrameBuffer containing a CVPixelBufferRef */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCCVPixelBuffer")))
+ @interface RTCCVPixelBuffer : NSObject <RTCVideoFrameBuffer>
+ 
+ @property(nonatomic, readonly) CVPixelBufferRef pixelBuffer;
+@@ -95,11 +102,13 @@ RTC_EXPORT
+ 
+ /** RTCI420Buffer implements the RTCI420Buffer protocol */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
+ @interface RTCI420Buffer : NSObject <RTCI420Buffer>
+ @end
+ 
+ /** Mutable version of RTCI420Buffer */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMutableI420Buffer")))
+ @interface RTCMutableI420Buffer : RTCI420Buffer <RTCMutableI420Buffer>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoRenderer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoRenderer.h
+index 5e2e820918a..c821a1e3008 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoRenderer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoRenderer.h
+@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
+ @class RTCVideoFrame;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoRenderer")))
+ @protocol RTCVideoRenderer <NSObject>
+ 
+ /** The size of the frame. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoSource.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoSource.h
+index a9ebc06c88e..60075e3435a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoSource.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoSource.h
+@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_EXPORT
+ 
++__attribute__((objc_runtime_name("WK_RTCVideoSource")))
+ @interface RTCVideoSource : RTCMediaSource <RTCVideoCapturerDelegate>
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoTrack.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoTrack.h
+index 899d7c34780..ecbdbb93c68 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoTrack.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoTrack.h
+@@ -14,11 +14,13 @@
+ 
+ NS_ASSUME_NONNULL_BEGIN
+ 
++__attribute__((objc_runtime_name("WK_RTCVideoRenderer")))
+ @protocol RTCVideoRenderer;
+ @class RTCPeerConnectionFactory;
+ @class RTCVideoSource;
+ 
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoTrack")))
+ @interface RTCVideoTrack : RTCMediaStreamTrack
+ 
+ /** The video source for this video track. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoViewShading.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoViewShading.h
+index 6f3ece94a1f..5e33ff235ca 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoViewShading.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoViewShading.h
+@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
+  * rendering for the RTCEAGLVideoView/RTCNSGLVideoView.
+  */
+ RTC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoViewShading")))
+ @protocol RTCVideoViewShading <NSObject>
+ 
+ /** Callback for I420 frames. Each plane is given as a texture. */

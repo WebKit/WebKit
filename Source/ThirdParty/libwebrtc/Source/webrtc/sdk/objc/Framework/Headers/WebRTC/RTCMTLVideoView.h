@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_CLASS_AVAILABLE_IOS(9)
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCMTLVideoView")))
 @interface RTCMTLVideoView : UIView <RTCVideoRenderer>
 
 @end

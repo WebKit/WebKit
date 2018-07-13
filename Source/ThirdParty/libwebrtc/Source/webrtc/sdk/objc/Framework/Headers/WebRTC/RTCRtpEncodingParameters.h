@@ -15,6 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
+__attribute__((objc_runtime_name("WK_RTCRtpEncodingParameters")))
 @interface RTCRtpEncodingParameters : NSObject
 
 /** Controls whether the encoding is currently transmitted. */
