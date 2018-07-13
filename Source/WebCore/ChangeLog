@@ -1,3 +1,44 @@
+2018-07-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Move HTTP Setup logic from CurlRequest to CurlHandle for reuse.
+        https://bugs.webkit.org/show_bug.cgi?id=187427
+
+        Reviewed by Fujii Hironori.
+
+        CurlContext will be used by Secure WebSocket client, but HTTP setup code is
+        in CurlRequest, which is only for regular HTTP/HTTPS transaction. This patch
+        allows wss client to setup CurlHandle for HTTPS communication, such as TLS,
+        proxy or authentication.
+
+        No new tests because there's no behavior change.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::CurlHandle):
+        (WebCore::CurlHandle::enableSSLForHost):
+        (WebCore::CurlHandle::willSetupSslCtx):
+        (WebCore::CurlHandle::willSetupSslCtxCallback):
+        (WebCore::CurlHandle::sslErrors const):
+        (WebCore::CurlHandle::setUrl):
+        (WebCore::CurlHandle::enableHttp):
+        (WebCore::CurlHandle::enableConnectionOnly):
+        (WebCore::CurlHandle::certificateInfo const):
+        (WebCore::CurlHandle::enableStdErrIfUsed):
+        (WebCore::CurlHandle::initialize): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlHandle::url const):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::finalizeTransfer):
+        (WebCore::CurlRequest::willSetupSslCtx): Deleted.
+        (WebCore::CurlRequest::willSetupSslCtxCallback): Deleted.
+        * platform/network/curl/CurlRequest.h:
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::CurlSSLVerifier):
+        (WebCore::CurlSSLVerifier::verify):
+        * platform/network/curl/CurlSSLVerifier.h:
+
 2018-07-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][MSE] Add GstFlowCombiner to handle non-linked inactive branches

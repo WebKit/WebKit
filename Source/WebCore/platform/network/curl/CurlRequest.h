@@ -64,7 +64,7 @@ public:
 
     virtual ~CurlRequest() = default;
 
-    void invalidateClient() { m_client = nullptr;  }
+    void invalidateClient();
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
 
     void start(bool isSyncRequest = false);
@@ -113,7 +113,6 @@ private:
     // Transfer processing of Request body, Response header/body
     // Called by worker thread in case of async, main thread in case of sync.
     CURL* setupTransfer() override;
-    CURLcode willSetupSslCtx(void*);
     size_t willSendData(char*, size_t, size_t);
     size_t didReceiveHeader(String&&);
     size_t didReceiveData(Ref<SharedBuffer>&&);
@@ -148,13 +147,12 @@ private:
     void cleanupDownloadFile();
 
     // Callback functions for curl
-    static CURLcode willSetupSslCtxCallback(CURL*, void*, void*);
     static size_t willSendDataCallback(char*, size_t, size_t, void*);
     static size_t didReceiveHeaderCallback(char*, size_t, size_t, void*);
     static size_t didReceiveDataCallback(char*, size_t, size_t, void*);
 
 
-    std::atomic<CurlRequestClient*> m_client { };
+    CurlRequestClient* m_client { };
     bool m_isSyncRequest { false };
     bool m_cancelled { false };
 
@@ -167,7 +165,6 @@ private:
 
     std::unique_ptr<CurlHandle> m_curlHandle;
     CurlFormDataStream m_formDataStream;
-    std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
     std::unique_ptr<CurlMultipartHandle> m_multipartHandle;
 
     CurlResponse m_response;

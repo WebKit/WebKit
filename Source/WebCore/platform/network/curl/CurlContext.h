@@ -194,6 +194,8 @@ private:
 
 // CurlHandle -------------------------------------------------
 
+class CertificateInfo;
+class CurlSSLVerifier;
 class HTTPHeaderMap;
 class NetworkLoadMetrics;
 
@@ -215,8 +217,7 @@ public:
     virtual ~CurlHandle();
 
     CURL* handle() const { return m_handle; }
-
-    void initialize();
+    const URL& url() const { return m_url; }
 
     CURLcode perform();
     CURLcode pause(int);
@@ -226,6 +227,7 @@ public:
     void enableShareHandle();
 
     void setUrl(const URL&);
+    void enableSSLForHost(const String&);
 
     void appendRequestHeaders(const HTTPHeaderMap&);
     void appendRequestHeader(const String& name, const String& value);
@@ -241,6 +243,8 @@ public:
     void enableHttpPutRequest();
     void setInFileSizeLarge(curl_off_t);
     void setHttpCustomRequest(const String&);
+
+    void enableConnectionOnly();
 
     void enableAcceptEncoding();
     void enableAllowedProtocols();
@@ -278,6 +282,9 @@ public:
     std::optional<long> getHttpVersion();
     std::optional<NetworkLoadMetrics> getNetworkLoadMetrics();
 
+    int sslErrors() const;
+    std::optional<CertificateInfo> certificateInfo() const;
+
     static long long maxCurlOffT();
 
 #ifndef NDEBUG
@@ -289,10 +296,15 @@ private:
     void enableRequestHeaders();
     static int expectedSizeOfCurlOffT();
 
+    static CURLcode willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData);
+    CURLcode willSetupSslCtx(void* sslCtx);
+
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
 
+    URL m_url;
     CurlSList m_requestHeaders;
+    std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
 };
 
 } // namespace WebCore

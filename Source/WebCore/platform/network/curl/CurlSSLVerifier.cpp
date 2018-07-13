@@ -34,12 +34,11 @@
 
 namespace WebCore {
 
-static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_CTX*);
+static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509StoreCTX*);
 static CurlSSLVerifier::SSLCertificateFlags convertToSSLCertificateFlags(unsigned);
 
-CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName, void* sslCtx)
+CurlSSLVerifier::CurlSSLVerifier(CurlHandle& curlHandle, void* sslCtx)
     : m_curlHandle(curlHandle)
-    , m_hostName(hostName)
 {
     auto* ctx = static_cast<SSL_CTX*>(sslCtx);
     const auto& sslHandle = CurlContext::singleton().sslHandle();
@@ -48,7 +47,7 @@ CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName,
     SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), verifyCallback);
 
 #if defined(LIBRESSL_VERSION_NUMBER)
-    if (auto data = WTF::get_if<Vector<char>>(sslHandle.getCACertInfo()))
+    if (auto* data = WTF::get_if<Vector<char>>(sslHandle.getCACertInfo()))
         SSL_CTX_load_verify_mem(ctx, static_cast<void*>(const_cast<char*>(data->data())), data->size());
 #endif
 
@@ -63,7 +62,7 @@ CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName,
         SSL_CTX_set1_curves_list(ctx, curvesList.utf8().data());
 }
 
-bool CurlSSLVerifier::verify(X509_STORE_CTX* ctx)
+bool CurlSSLVerifier::verify(X509StoreCTX* ctx)
 {
     // whether the verification of the certificate in question was passed (preverify_ok=1) or not (preverify_ok=0)
     m_certificateInfo = CertificateInfo { X509_STORE_CTX_get_error(ctx), pemDataFromCtx(ctx) };
@@ -75,22 +74,21 @@ bool CurlSSLVerifier::verify(X509_STORE_CTX* ctx)
     m_sslErrors = static_cast<int>(convertToSSLCertificateFlags(error));
 
 #if PLATFORM(WIN)
-    bool ok = CurlContext::singleton().sslHandle().isAllowedHTTPSCertificateHost(m_hostName);
+    bool ok = CurlContext::singleton().sslHandle().isAllowedHTTPSCertificateHost(m_curlHandle.url().host().toString());
 #else
-    bool ok = CurlContext::singleton().sslHandle().canIgnoredHTTPSCertificate(m_hostName, m_certificateInfo.certificateChain());
+    bool ok = CurlContext::singleton().sslHandle().canIgnoredHTTPSCertificate(m_curlHandle.url().host().toString(), m_certificateInfo.certificateChain());
 #endif
 
     if (ok) {
         // if the host and the certificate are stored for the current handle that means is enabled,
         // so don't need to curl verifies the authenticity of the peer's certificate
-        if (m_curlHandle)
-            m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
+        m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
     }
 
     return ok;
 }
 
-int CurlSSLVerifier::verifyCallback(int ok, X509_STORE_CTX* ctx)
+int CurlSSLVerifier::verifyCallback(int ok, X509StoreCTX* ctx)
 {
     auto ssl = static_cast<SSL*>(X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx()));
     auto sslCtx = SSL_get_SSL_CTX(ssl);
@@ -102,7 +100,7 @@ int CurlSSLVerifier::verifyCallback(int ok, X509_STORE_CTX* ctx)
 
 class StackOfX509 {
 public:
-    explicit StackOfX509(X509_STORE_CTX* ctx)
+    explicit StackOfX509(X509StoreCTX* ctx)
         : m_certs { X509_STORE_CTX_get1_chain(ctx) }
     {
     }
@@ -149,7 +147,7 @@ private:
     BIO* m_bio { nullptr };
 };
 
-static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_CTX* ctx)
+static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509StoreCTX* ctx)
 {
     Vector<CertificateInfo::Certificate> result;
     StackOfX509 certs { ctx };

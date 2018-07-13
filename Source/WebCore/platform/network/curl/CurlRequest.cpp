@@ -50,6 +50,13 @@ CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* clien
     ASSERT(isMainThread());
 }
 
+void CurlRequest::invalidateClient()
+{
+    ASSERT(isMainThread());
+
+    m_client = nullptr;
+}
+
 void CurlRequest::setUserPass(const String& user, const String& password)
 {
     ASSERT(isMainThread());
@@ -146,9 +153,8 @@ void CurlRequest::resume()
 void CurlRequest::callClient(Function<void(CurlRequest&, CurlRequestClient&)>&& task)
 {
     runOnMainThread([this, protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
-        if (CurlRequestClient* client = m_client) {
-            task(*this, makeRef(*client));
-        }
+        if (m_client)
+            task(*this, makeRef(*m_client));
     });
 }
 
@@ -177,8 +183,8 @@ CURL* CurlRequest::setupTransfer()
 
     m_curlHandle = std::make_unique<CurlHandle>();
 
-    m_curlHandle->initialize();
     m_curlHandle->setUrl(m_request.url());
+
     m_curlHandle->appendRequestHeaders(httpHeaderFields);
 
     const auto& method = m_request.httpMethod();
@@ -200,61 +206,15 @@ CURL* CurlRequest::setupTransfer()
         m_curlHandle->setHttpAuthUserPass(m_user, m_password);
     }
 
-    m_curlHandle->setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
     m_curlHandle->setHeaderCallbackFunction(didReceiveHeaderCallback, this);
     m_curlHandle->setWriteCallbackFunction(didReceiveDataCallback, this);
 
-    m_curlHandle->enableShareHandle();
-    m_curlHandle->enableAllowedProtocols();
-    m_curlHandle->enableAcceptEncoding();
-
     m_curlHandle->setTimeout(Seconds(m_request.timeoutInterval()));
-    m_curlHandle->setDnsCacheTimeout(CurlContext::singleton().dnsCacheTimeout());
-    m_curlHandle->setConnectTimeout(CurlContext::singleton().connectTimeout());
-
-    m_curlHandle->enableProxyIfExists();
-
-    if (sslHandle.shouldIgnoreSSLErrors()) {
-        m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
-        m_curlHandle->setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
-    } else {
-        m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Enable);
-        m_curlHandle->setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
-    }
-
-    auto cipherList = sslHandle.getCipherList();
-    if (!cipherList.isEmpty())
-        m_curlHandle->setSslCipherList(cipherList.utf8().data());
-
-    auto sslClientCertificate = sslHandle.getSSLClientCertificate(m_request.url().host().toString());
-    if (sslClientCertificate) {
-        m_curlHandle->setSslCert(sslClientCertificate->first.utf8().data());
-        m_curlHandle->setSslCertType("P12");
-        m_curlHandle->setSslKeyPassword(sslClientCertificate->second.utf8().data());
-    }
-
-    if (auto path = WTF::get_if<String>(sslHandle.getCACertInfo()))
-        m_curlHandle->setCACertPath(path->utf8().data());
 
     if (m_shouldSuspend)
         setRequestPaused(true);
 
-#ifndef NDEBUG
-    m_curlHandle->enableVerboseIfUsed();
-    m_curlHandle->enableStdErrIfUsed();
-#endif
-
     return m_curlHandle->handle();
-}
-
-CURLcode CurlRequest::willSetupSslCtx(void* sslCtx)
-{
-    if (!sslCtx)
-        return CURLE_ABORTED_BY_CALLBACK;
-
-    if (!m_sslVerifier)
-        m_sslVerifier = std::make_unique<CurlSSLVerifier>(m_curlHandle.get(), m_request.url().host().toString(), sslCtx);
-    return CURLE_OK;
 }
 
 // This is called to obtain HTTP POST or PUT data.
@@ -352,8 +312,8 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (m_response.availableProxyAuth)
         CurlContext::singleton().setProxyAuthMethod(m_response.availableProxyAuth);
 
-    if (m_sslVerifier)
-        m_certificateInfo = m_sslVerifier->certificateInfo();
+    if (auto info = m_curlHandle->certificateInfo())
+        m_certificateInfo = *info;
 
     if (m_enableMultipart)
         m_multipartHandle = CurlMultipartHandle::createIfNeeded(*this, m_response);
@@ -463,11 +423,10 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     } else {
         auto type = (result == CURLE_OPERATION_TIMEDOUT && m_request.timeoutInterval() > 0.0) ? ResourceError::Type::Timeout : ResourceError::Type::General;
         auto resourceError = ResourceError::httpError(result, m_request.url(), type);
-        if (m_sslVerifier) {
-            resourceError.setSslErrors(m_sslVerifier->sslErrors());
-
-            m_certificateInfo = m_sslVerifier->certificateInfo();
-        }
+        if (auto sslErrors = m_curlHandle->sslErrors())
+            resourceError.setSslErrors(sslErrors);
+        if (auto info = m_curlHandle->certificateInfo())
+            m_certificateInfo = *info;
 
         finalizeTransfer();
         callClient([error = resourceError.isolatedCopy()](CurlRequest& request, CurlRequestClient& client) {
@@ -486,7 +445,6 @@ void CurlRequest::finalizeTransfer()
 {
     closeDownloadFile();
     m_formDataStream.clean();
-    m_sslVerifier = nullptr;
     m_multipartHandle = nullptr;
     m_curlHandle = nullptr;
 }
@@ -741,11 +699,6 @@ void CurlRequest::cleanupDownloadFile()
         FileSystem::deleteFile(m_downloadFilePath);
         m_downloadFilePath = String();
     }
-}
-
-CURLcode CurlRequest::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData)
-{
-    return static_cast<CurlRequest*>(userData)->willSetupSslCtx(sslCtx);
 }
 
 size_t CurlRequest::willSendDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)

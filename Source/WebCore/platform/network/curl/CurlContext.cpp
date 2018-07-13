@@ -28,7 +28,10 @@
 #include "CurlContext.h"
 
 #if USE(CURL)
+#include "CertificateInfo.h"
 #include "CurlRequestScheduler.h"
+#include "CurlSSLHandle.h"
+#include "CurlSSLVerifier.h"
 #include "HTTPHeaderMap.h"
 #include <NetworkLoadMetrics.h>
 #include <mutex>
@@ -261,6 +264,21 @@ CURLMsg* CurlMultiHandle::readInfo(int& messagesInQueue)
 CurlHandle::CurlHandle()
 {
     m_handle = curl_easy_init();
+    curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_errorBuffer);
+
+    enableShareHandle();
+    enableAllowedProtocols();
+    enableAcceptEncoding();
+
+    setDnsCacheTimeout(CurlContext::singleton().dnsCacheTimeout());
+    setConnectTimeout(CurlContext::singleton().connectTimeout());
+
+    enableProxyIfExists();
+
+#ifndef NDEBUG
+    enableVerboseIfUsed();
+    enableStdErrIfUsed();
+#endif
 }
 
 CurlHandle::~CurlHandle()
@@ -274,9 +292,52 @@ const String CurlHandle::errorDescription(CURLcode errorCode)
     return String(curl_easy_strerror(errorCode));
 }
 
-void CurlHandle::initialize()
+void CurlHandle::enableSSLForHost(const String& host)
 {
-    curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_errorBuffer);
+    auto& sslHandle = CurlContext::singleton().sslHandle();
+    if (auto sslClientCertificate = sslHandle.getSSLClientCertificate(host)) {
+        setSslCert(sslClientCertificate->first.utf8().data());
+        setSslCertType("P12");
+        setSslKeyPassword(sslClientCertificate->second.utf8().data());
+    }
+
+    if (sslHandle.shouldIgnoreSSLErrors()) {
+        setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
+        setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
+    } else {
+        setSslVerifyPeer(CurlHandle::VerifyPeer::Enable);
+        setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
+    }
+
+    const auto& cipherList = sslHandle.getCipherList();
+    if (!cipherList.isEmpty())
+        setSslCipherList(cipherList.utf8().data());
+
+    setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
+
+    if (auto* path = WTF::get_if<String>(sslHandle.getCACertInfo()))
+        setCACertPath(path->utf8().data());
+}
+
+CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
+{
+    if (!sslCtx)
+        return CURLE_ABORTED_BY_CALLBACK;
+
+    if (!m_sslVerifier)
+        m_sslVerifier = std::make_unique<CurlSSLVerifier>(*this, sslCtx);
+
+    return CURLE_OK;
+}
+
+CURLcode CurlHandle::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData)
+{
+    return static_cast<CurlHandle*>(userData)->willSetupSslCtx(sslCtx);
+}
+
+int CurlHandle::sslErrors() const
+{
+    return m_sslVerifier ? m_sslVerifier->sslErrors() : 0;
 }
 
 CURLcode CurlHandle::perform()
@@ -296,6 +357,8 @@ void CurlHandle::enableShareHandle()
 
 void CurlHandle::setUrl(const URL& url)
 {
+    m_url = url.isolatedCopy();
+
     URL curlUrl = url;
 
     // Remove any fragment part, otherwise curl will send it as part of the request.
@@ -310,6 +373,9 @@ void CurlHandle::setUrl(const URL& url)
 
     // url is in ASCII so latin1() will only convert it to char* without character translation.
     curl_easy_setopt(m_handle, CURLOPT_URL, curlUrl.string().latin1().data());
+
+    if (url.protocolIs("https"))
+        enableSSLForHost(m_url.host().toString());
 }
 
 void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)
@@ -367,7 +433,7 @@ void CurlHandle::enableRequestHeaders()
 
 void CurlHandle::enableHttp()
 {
-    if (CurlContext::singleton().isHttp2Enabled()) {
+    if (m_url.protocolIs("https") && CurlContext::singleton().isHttp2Enabled()) {
         curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS);
         curl_easy_setopt(m_handle, CURLOPT_PIPEWAIT, 1L);
         curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_ALPN, 1L);
@@ -560,6 +626,11 @@ void CurlHandle::setSslCtxCallbackFunction(curl_ssl_ctx_callback callbackFunc, v
     curl_easy_setopt(m_handle, CURLOPT_SSL_CTX_FUNCTION, callbackFunc);
 }
 
+void CurlHandle::enableConnectionOnly()
+{
+    curl_easy_setopt(m_handle, CURLOPT_CONNECT_ONLY, 1L);
+}
+
 std::optional<String> CurlHandle::getProxyUrl()
 {
     auto& proxy = CurlContext::singleton().proxySettings();
@@ -692,6 +763,14 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
     return networkLoadMetrics;
 }
 
+std::optional<CertificateInfo> CurlHandle::certificateInfo() const
+{
+    if (!m_sslVerifier)
+        return std::nullopt;
+
+    return m_sslVerifier->certificateInfo();
+}
+
 long long CurlHandle::maxCurlOffT()
 {
     static const long long maxCurlOffT = (1LL << (expectedSizeOfCurlOffT() * 8 - 1)) - 1;
@@ -725,8 +804,8 @@ void CurlHandle::enableVerboseIfUsed()
 
 void CurlHandle::enableStdErrIfUsed()
 {
-    if (CurlContext::singleton().getLogFile())
-        curl_easy_setopt(m_handle, CURLOPT_VERBOSE, 1);
+    if (auto log = CurlContext::singleton().getLogFile())
+        curl_easy_setopt(m_handle, CURLOPT_STDERR, log);
 }
 
 #endif
