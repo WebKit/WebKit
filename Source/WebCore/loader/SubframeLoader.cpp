@@ -36,6 +36,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -85,11 +86,16 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const Str
     if (shouldConvertInvalidURLsToBlank() && !url.isValid())
         url = blankURL();
 
+    bool hasExistingFrame = ownerElement.contentFrame();
     Frame* frame = loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
     if (!frame)
         return false;
 
-    if (!scriptURL.isEmpty() && ownerElement.isURLAllowed(scriptURL))
+    // If we create a new subframe then an empty document is loaded into it synchronously and may
+    // cause script execution (say, via a DOM load event handler) that can do anything, including
+    // navigating the subframe. We only want to evaluate scriptURL if the frame has not been navigated.
+    bool canExecuteScript = hasExistingFrame || (frame->loader().documentLoader() && frame->loader().documentLoader()->originalURL() == blankURL());
+    if (!scriptURL.isEmpty() && canExecuteScript && ownerElement.isURLAllowed(scriptURL))
         frame->script().executeIfJavaScriptURL(scriptURL);
 
     return true;

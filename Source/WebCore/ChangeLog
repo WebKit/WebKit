@@ -1,3 +1,14 @@
+2018-07-12  Daniel Bates  <dabates@apple.com>
+
+        JavaScript URL gives incorrect result when frame is navigated
+        https://bugs.webkit.org/show_bug.cgi?id=187203
+        <rdar://problem/41438443>
+
+        Reviewed by David Kilzer.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame):
+
 2018-07-12  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of WebCore::URL
