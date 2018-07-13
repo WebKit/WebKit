@@ -720,6 +720,35 @@ WI.TextEditor = class TextEditor extends WI.View
         return {startOffset, endOffset};
     }
 
+    visibleRangePositions()
+    {
+        let visibleRange = this._codeMirror.getViewport();
+        let startLine;
+        let endLine;
+
+        if (this._formatterSourceMap) {
+            startLine = this._formatterSourceMap.formattedToOriginal(Math.max(visibleRange.from - 1, 0), 0).lineNumber;
+            endLine = this._formatterSourceMap.formattedToOriginal(visibleRange.to - 1, 0).lineNumber;
+        } else {
+            startLine = visibleRange.from;
+            endLine = visibleRange.to;
+        }
+
+        return {
+            startPosition: new WI.SourceCodePosition(startLine, 0),
+            endPosition: new WI.SourceCodePosition(endLine, 0)
+        };
+    }
+
+    originalPositionToCurrentPosition(position)
+    {
+        if (!this._formatterSourceMap)
+            return position;
+
+        let {lineNumber, columnNumber} = this._formatterSourceMap.originalToFormatted(position.lineNumber, position.columnNumber);
+        return new WI.SourceCodePosition(lineNumber, columnNumber);
+    }
+
     originalOffsetToCurrentPosition(offset)
     {
         var position = null;
@@ -734,7 +763,8 @@ WI.TextEditor = class TextEditor extends WI.View
 
     currentOffsetToCurrentPosition(offset)
     {
-        return this._codeMirror.getDoc().posFromIndex(offset);
+        let pos = this._codeMirror.getDoc().posFromIndex(offset);
+        return new WI.SourceCodePosition(pos.line, pos.ch);
     }
 
     currentPositionToOriginalOffset(position)
@@ -760,12 +790,12 @@ WI.TextEditor = class TextEditor extends WI.View
 
     currentPositionToCurrentOffset(position)
     {
-        return this._codeMirror.getDoc().indexFromPos(position);
+        return this._codeMirror.getDoc().indexFromPos(position.toCodeMirror());
     }
 
     setInlineWidget(position, inlineElement)
     {
-        return this._codeMirror.setUniqueBookmark(position, {widget: inlineElement});
+        return this._codeMirror.setUniqueBookmark(position.toCodeMirror(), {widget: inlineElement});
     }
 
     addScrollHandler(handler)

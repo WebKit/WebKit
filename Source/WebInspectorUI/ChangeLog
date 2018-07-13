@@ -1,3 +1,51 @@
+2018-07-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Type token positioning should use line/column locations from Esprima instead of offsets
+        https://bugs.webkit.org/show_bug.cgi?id=187612
+        <rdar://problem/42131910>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WI.TypeTokenAnnotator.prototype.insertAnnotations):
+        (WI.TypeTokenAnnotator.prototype._insertTypeToken):
+        (WI.TypeTokenAnnotator.prototype._insertToken):
+        Use line/column locations, instead of offsets, from the AST when calculating
+        token positions for CodeMirror. Once in CodeMirror's string space, we
+        can safely convert to/from offsets.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        Retrieve line/column locations for AST nodes, in addition to offsets.
+        Offsets into the original file are still needed for getting type information
+        from the profiler in the backend.
+
+        (WI.ScriptSyntaxTree):
+        (WI.ScriptSyntaxTree.prototype.filterByRange):
+        Filter by positions, which can be safely used from CodeMirror, instead of offsets.
+
+        (WI.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WI.ScriptSyntaxTree.prototype.filterByRange.filterForNodesInRange): Deleted.
+
+        * UserInterface/Models/SourceCodePosition.js:
+        Add convenience methods for comparing line/column positions, and for
+        converting to the format expected by CodeMirror. SourceCodePosition could
+        be made to interoperate with CodeMirror by exposing properties `line`
+        and `ch`, but making the conversion explicit improves code readability.
+
+        (WI.SourceCodePosition.prototype.equals):
+        (WI.SourceCodePosition.prototype.isBefore):
+        (WI.SourceCodePosition.prototype.isAfter):
+        (WI.SourceCodePosition.prototype.isWithin):
+        (WI.SourceCodePosition.prototype.toCodeMirror):
+        (WI.SourceCodePosition):
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.visibleRangePositions):
+        (WI.TextEditor.prototype.originalPositionToCurrentPosition):
+        (WI.TextEditor.prototype.currentOffsetToCurrentPosition):
+        (WI.TextEditor.prototype.currentPositionToCurrentOffset):
+        (WI.TextEditor.prototype.setInlineWidget):
+
 2018-07-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r229932) Use of uninitialized value in subroutine entry at copy-user-interface-resources.pl

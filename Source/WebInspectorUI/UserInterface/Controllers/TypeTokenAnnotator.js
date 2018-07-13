@@ -55,10 +55,10 @@ WI.TypeTokenAnnotator = class TypeTokenAnnotator extends WI.Annotator
         if (!scriptSyntaxTree.parsedSuccessfully)
             return;
 
-        var {startOffset, endOffset} = this.sourceCodeTextEditor.visibleRangeOffsets();
+        let {startPosition, endPosition} = this.sourceCodeTextEditor.visibleRangePositions();
 
-        var startTime = Date.now();
-        var allNodesInRange = scriptSyntaxTree.filterByRange(startOffset, endOffset);
+        let startTime = Date.now();
+        let allNodesInRange = scriptSyntaxTree.filterByRange(startPosition, endPosition);
         scriptSyntaxTree.updateTypes(allNodesInRange, (nodesWithUpdatedTypes) => {
             // Because this is an asynchronous call, we could have been deactivated before the callback function is called.
             if (!this.isActive())
@@ -86,7 +86,7 @@ WI.TypeTokenAnnotator = class TypeTokenAnnotator extends WI.Annotator
     {
         if (node.type === WI.ScriptSyntaxTree.NodeType.Identifier) {
             if (!node.attachments.__typeToken && node.attachments.types && node.attachments.types.valid)
-                this._insertToken(node.range[0], node, false, WI.TypeTokenView.TitleType.Variable, node.name);
+                this._insertToken(node, false, WI.TypeTokenView.TitleType.Variable, node.name);
 
             if (node.attachments.__typeToken)
                 node.attachments.__typeToken.update(node.attachments.types);
@@ -105,18 +105,18 @@ WI.TypeTokenAnnotator = class TypeTokenAnnotator extends WI.Annotator
         var scriptSyntaxTree = this._script._scriptSyntaxTree;
         if (!node.attachments.__typeToken && (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || !functionReturnType.typeSet.isContainedIn(WI.TypeSet.TypeBit.Undefined))) {
             var functionName = node.id ? node.id.name : null;
-            this._insertToken(node.typeProfilingReturnDivot, node, true, WI.TypeTokenView.TitleType.ReturnStatement, functionName);
+            this._insertToken(node, true, WI.TypeTokenView.TitleType.ReturnStatement, functionName);
         }
 
         if (node.attachments.__typeToken)
             node.attachments.__typeToken.update(node.attachments.returnTypes);
     }
 
-    _insertToken(originalOffset, node, shouldTranslateOffsetToAfterParameterList, typeTokenTitleType, functionOrVariableName)
+    _insertToken(node, shouldTranslateOffsetToAfterParameterList, typeTokenTitleType, functionOrVariableName)
     {
-        var tokenPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(originalOffset);
-        var currentOffset = this.sourceCodeTextEditor.currentPositionToCurrentOffset(tokenPosition);
-        var sourceString = this.sourceCodeTextEditor.string;
+        let tokenPosition = this.sourceCodeTextEditor.originalPositionToCurrentPosition(node.startPosition);
+        let currentOffset = this.sourceCodeTextEditor.currentPositionToCurrentOffset(tokenPosition);
+        let sourceString = this.sourceCodeTextEditor.string;
 
         if (shouldTranslateOffsetToAfterParameterList) {
             // Translate the position to the closing parenthesis of the function arguments:

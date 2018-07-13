@@ -33,7 +33,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
         try {
             let sourceType = this._script.sourceType === WI.Script.SourceType.Module ? "module" : "script";
-            let esprimaSyntaxTree = esprima.parse(sourceText, {range: true, sourceType});
+            let esprimaSyntaxTree = esprima.parse(sourceText, {loc: true, range: true, sourceType});
             this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
             this._parsedSuccessfully = true;
         } catch (error) {
@@ -101,15 +101,13 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         return allNodes;
     }
 
-    filterByRange(startOffset, endOffset)
+    filterByRange(startPosition, endPosition)
     {
         console.assert(this._parsedSuccessfully);
         if (!this._parsedSuccessfully)
             return [];
 
         var allNodes = [];
-        var start = 0;
-        var end = 1;
         function filterForNodesInRange(node, state)
         {
             // program start        range            program end
@@ -118,17 +116,21 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
             // If a node's range ends before the range we're interested in starts, we don't need to search any of its
             // enclosing ranges, because, by definition, those enclosing ranges are contained within this node's range.
-            if (node.range[end] < startOffset)
+            if (node.endPosition.isBefore(startPosition)) {
                 state.skipChildNodes = true;
+                return;
+            }
 
             // We are only interested in nodes whose start position is within our range.
-            if (startOffset <= node.range[start] && node.range[start] <= endOffset)
+            if (node.startPosition.isWithin(startPosition, endPosition)) {
                 allNodes.push(node);
+                return;
+            }
 
             // Once we see nodes that start beyond our range, we can quit traversing the AST. We can do this safely
             // because we know the AST is traversed using depth first search, so it will traverse into enclosing ranges
             // before it traverses into adjacent ranges.
-            if (node.range[start] > endOffset)
+            if (node.startPosition.isAfter(endPosition))
                 state.shouldStopEarly = true;
         }
 
@@ -1057,6 +1059,10 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             console.error("Unsupported Syntax Tree Node: " + node.type, node);
             return null;
         }
+
+        let {start, end} = node.loc;
+        result.startPosition = new WI.SourceCodePosition(start.line - 1, start.column);
+        result.endPosition = new WI.SourceCodePosition(end.line - 1, end.column);
 
         result.range = node.range;
         // This is an object for which you can add fields to an AST node without worrying about polluting the syntax-related fields of the node.

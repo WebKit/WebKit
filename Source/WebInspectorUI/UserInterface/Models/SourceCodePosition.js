@@ -35,4 +35,46 @@ WI.SourceCodePosition = class SourceCodePosition
 
     get lineNumber() { return this._lineNumber; }
     get columnNumber() { return this._columnNumber; }
+
+    equals(position)
+    {
+        return this._lineNumber === position.lineNumber && this._columnNumber === position.columnNumber;
+    }
+
+    isBefore(position)
+    {
+        if (this._lineNumber < position.lineNumber)
+            return true;
+        if (this._lineNumber === position.lineNumber && this._columnNumber < position.columnNumber)
+            return true;
+
+        return false;
+    }
+
+    isAfter(position)
+    {
+        if (this._lineNumber > position.lineNumber)
+            return true;
+        if (this._lineNumber === position.lineNumber && this._columnNumber > position.columnNumber)
+            return true;
+
+        return false;
+    }
+
+    isWithin(startPosition, endPosition)
+    {
+        console.assert(startPosition.isBefore(endPosition) || startPosition.equals(endPosition));
+
+        if (this.equals(startPosition) || this.equals(endPosition))
+            return true;
+        if (this.isAfter(startPosition) && this.isBefore(endPosition))
+            return true;
+
+        return false;
+    }
+
+    toCodeMirror()
+    {
+        return {line: this._lineNumber, ch: this._columnNumber};
+    }
 };
