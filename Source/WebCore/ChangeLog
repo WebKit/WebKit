@@ -1,3 +1,17 @@
+2018-07-13  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Use smart pointers for GstByteReader
+        https://bugs.webkit.org/show_bug.cgi?id=187638
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/GUniquePtrGStreamer.h: Add
+        specialisation for GstByteReader.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        Use the new smart pointer class to avoid needing to remember where
+        to call gst_byte_reader_free.
+        (webKitMediaClearKeyDecryptorDecrypt):
+
 2018-07-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Move HTTP Setup logic from CurlRequest to CurlHandle for reuse.

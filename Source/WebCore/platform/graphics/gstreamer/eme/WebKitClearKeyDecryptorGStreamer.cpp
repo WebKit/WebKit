@@ -241,7 +241,6 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
         return false;
     }
 
-    GstByteReader* reader;
     unsigned position = 0;
     unsigned sampleIndex = 0;
 
@@ -273,7 +272,7 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
         return false;
     }
 
-    reader = gst_byte_reader_new(mappedSubSamplesBuffer.data(), mappedSubSamplesBuffer.size());
+    GUniquePtr<GstByteReader> reader(gst_byte_reader_new(mappedSubSamplesBuffer.data(), mappedSubSamplesBuffer.size()));
     GST_DEBUG_OBJECT(self, "position: %d, size: %zu", position, mappedBuffer.size());
 
     while (position < mappedBuffer.size()) {
@@ -281,10 +280,9 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
         guint32 nBytesEncrypted = 0;
 
         if (sampleIndex < subSampleCount) {
-            if (!gst_byte_reader_get_uint16_be(reader, &nBytesClear)
-                || !gst_byte_reader_get_uint32_be(reader, &nBytesEncrypted)) {
+            if (!gst_byte_reader_get_uint16_be(reader.get(), &nBytesClear)
+                || !gst_byte_reader_get_uint32_be(reader.get(), &nBytesEncrypted)) {
                 GST_DEBUG_OBJECT(self, "unsupported");
-                gst_byte_reader_free(reader);
                 return false;
             }
             sampleIndex++;
@@ -300,14 +298,12 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
             cipherError = gcry_cipher_decrypt(priv->handle, mappedBuffer.data() + position, nBytesEncrypted, 0, 0);
             if (cipherError) {
                 GST_ERROR_OBJECT(self, "sub sample index %u decryption failed: %s", sampleIndex, gpg_strerror(cipherError));
-                gst_byte_reader_free(reader);
                 return false;
             }
             position += nBytesEncrypted;
         }
     }
 
-    gst_byte_reader_free(reader);
     return true;
 }
 
