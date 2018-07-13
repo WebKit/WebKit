@@ -1,3 +1,54 @@
+2018-07-13  Antoine Quint  <graouts@apple.com>
+
+        Dark Mode: document markers are difficult to see
+        https://bugs.webkit.org/show_bug.cgi?id=187632
+        <rdar://problem/41099719>
+
+        Reviewed by Simon Fraser.
+
+        We update the way we draw the document markers for macOS and use more constrasting colors in dark mode.
+        Paving the way for future improvements, we move the drawLineForDocumentMarker() method from GraphicsContext
+        to RenderTheme and implement a first version in RenderThemeMac. The circles used for the underline are now
+        drawn directly with Core Graphics and we no longer use an image resource. To allow both GraphicsContext
+        and RenderTheme to have different versions of the drawLineForDocumentMarker() method, the DocumentMarkerLineStyle
+        enum is now an "enum class".
+
+        No new test due to webkit.org/b/105616, webkit.org/b/187655 was raised to track the creation of new tests
+        when it becomes possible again.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawLineForDocumentMarker):
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::drawLineForDocumentMarker):
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawLineForDocumentMarker::create):
+        (WebCore::DisplayList::DrawLineForDocumentMarker::DrawLineForDocumentMarker):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawLineForDocumentMarker):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::drawLineForDocumentMarker):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker): Call drawLineForDocumentMarker() on the RenderTheme on
+        macOS and on GraphicsContext in all other cases.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::drawLineForDocumentMarker):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::colorForStyle): Provide different colors for light and dark modes.
+        (WebCore::RenderThemeMac::drawLineForDocumentMarker): A new macOS-specific version of drawLineForDocumentMarker()
+        where we paint circles using Core Graphics directly.
+
 2018-07-13  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Use smart pointers for GstByteReader

@@ -25,6 +25,7 @@
 #import "BitmapImage.h"
 #import "CSSValueKeywords.h"
 #import "CSSValueList.h"
+#import "Color.h"
 #import "ColorMac.h"
 #import "Document.h"
 #import "Element.h"
@@ -35,6 +36,7 @@
 #import "FrameSelection.h"
 #import "FrameView.h"
 #import "GeometryUtilities.h"
+#import "GraphicsContext.h"
 #import "GraphicsContextCG.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLInputElement.h"
@@ -2775,6 +2777,50 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+static CGColorRef colorForStyle(DocumentMarkerLineStyle style, bool useDarkMode)
+{
+    switch (style) {
+    // Red.
+    case DocumentMarkerLineStyle::Spelling:
+        return cachedCGColor(useDarkMode ? Color { 255, 140, 140, 217 } : Color { 255, 59, 48, 191 });
+    // Blue.
+    case DocumentMarkerLineStyle::DictationAlternatives:
+    case DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyle::AutocorrectionReplacement:
+        return cachedCGColor(useDarkMode ? Color { 40, 145, 255, 217 } : Color { 0, 122, 255, 191 });
+    // Green.
+    case DocumentMarkerLineStyle::Grammar:
+        return cachedCGColor(useDarkMode ? Color { 50, 215, 75, 217 } : Color { 25, 175, 50, 191 });
+    }
+}
+
+void RenderThemeMac::drawLineForDocumentMarker(const RenderText& renderer, GraphicsContext& context, const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
+{
+    if (context.paintingDisabled())
+        return;
+
+    auto circleColor = colorForStyle(style, renderer.page().useSystemAppearance() && renderer.page().useDarkAppearance());
+
+    // Center the underline and ensure we only draw entires dots.
+    FloatPoint offsetPoint = origin;
+    float widthMod = fmodf(width, cMisspellingLinePatternWidth);
+    if (cMisspellingLinePatternWidth - widthMod > cMisspellingLinePatternGapWidth) {
+        float gapIncludeWidth = 0;
+        if (width > cMisspellingLinePatternWidth)
+            gapIncludeWidth = cMisspellingLinePatternGapWidth;
+        offsetPoint.move(floor((widthMod + gapIncludeWidth) / 2), 0);
+        width -= widthMod;
+    }
+
+    CGContextRef ctx = context.platformContext();
+    CGContextStateSaver stateSaver { ctx };
+    CGContextSetFillColorWithColor(ctx, circleColor);
+    for (int x = 0; x < width; x += cMisspellingLinePatternWidth)
+        CGContextAddEllipseInRect(ctx, CGRectMake(offsetPoint.x() + x, offsetPoint.y(), cMisspellingLineThickness, cMisspellingLineThickness));
+    CGContextSetCompositeOperation(ctx, kCGCompositeSover);
+    CGContextFillPath(ctx);
+}
 
 } // namespace WebCore
 

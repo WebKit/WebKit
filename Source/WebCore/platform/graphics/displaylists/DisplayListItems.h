@@ -830,7 +830,7 @@ private:
 
 class DrawLineForDocumentMarker : public DrawingItem {
 public:
-    static Ref<DrawLineForDocumentMarker> create(const FloatPoint& point, float width, GraphicsContext::DocumentMarkerLineStyle style)
+    static Ref<DrawLineForDocumentMarker> create(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
     {
         return adoptRef(*new DrawLineForDocumentMarker(point, width, style));
     }
@@ -839,7 +839,7 @@ public:
     float width() const { return m_width; }
 
 private:
-    DrawLineForDocumentMarker(const FloatPoint& point, float width, GraphicsContext::DocumentMarkerLineStyle style)
+    DrawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
         : DrawingItem(ItemType::DrawLineForDocumentMarker)
         , m_point(point)
         , m_width(width)
@@ -853,7 +853,7 @@ private:
 
     FloatPoint m_point;
     float m_width;
-    GraphicsContext::DocumentMarkerLineStyle m_style;
+    DocumentMarkerLineStyle m_style;
 };
 
 class DrawEllipse : public DrawingItem {

@@ -109,6 +109,14 @@ enum StrokeStyle {
     WavyStroke,
 };
 
+enum class DocumentMarkerLineStyle : uint8_t {
+    TextCheckingDictationPhraseWithAlternatives,
+    Spelling,
+    Grammar,
+    AutocorrectionReplacement,
+    DictationAlternatives
+};
+
 namespace DisplayList {
 class Recorder;
 }
@@ -411,15 +419,6 @@ public:
     FloatRect computeUnderlineBoundsForText(const FloatPoint&, float width, bool printing);
     WEBCORE_EXPORT void drawLineForText(const FloatPoint&, float width, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke);
     void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke);
-    enum DocumentMarkerLineStyle {
-#if PLATFORM(IOS)
-        TextCheckingDictationPhraseWithAlternativesLineStyle,
-#endif
-        DocumentMarkerSpellingLineStyle,
-        DocumentMarkerGrammarLineStyle,
-        DocumentMarkerAutocorrectionReplacementLineStyle,
-        DocumentMarkerDictationAlternativesLineStyle
-    };
     static void updateDocumentMarkerResources();
     void drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle);
 

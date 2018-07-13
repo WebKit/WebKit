@@ -689,21 +689,21 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
     auto lineStyleForMarkedTextType = [] (MarkedText::Type type) {
         switch (type) {
         case MarkedText::SpellingError:
-            return GraphicsContext::DocumentMarkerSpellingLineStyle;
+            return DocumentMarkerLineStyle::Spelling;
         case MarkedText::GrammarError:
-            return GraphicsContext::DocumentMarkerGrammarLineStyle;
+            return DocumentMarkerLineStyle::Grammar;
         case MarkedText::Correction:
-            return GraphicsContext::DocumentMarkerAutocorrectionReplacementLineStyle;
+            return DocumentMarkerLineStyle::AutocorrectionReplacement;
         case MarkedText::DictationAlternatives:
-            return GraphicsContext::DocumentMarkerDictationAlternativesLineStyle;
+            return DocumentMarkerLineStyle::DictationAlternatives;
 #if PLATFORM(IOS)
         case MarkedText::DictationPhraseWithAlternatives:
-            // FIXME: Rename TextCheckingDictationPhraseWithAlternativesLineStyle and remove the PLATFORM(IOS)-guard.
-            return GraphicsContext::TextCheckingDictationPhraseWithAlternativesLineStyle;
+            // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS)-guard.
+            return DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives;
 #endif
         default:
             ASSERT_NOT_REACHED();
-            return GraphicsContext::DocumentMarkerSpellingLineStyle;
+            return DocumentMarkerLineStyle::Spelling;
         }
     };
 
@@ -724,7 +724,12 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
         // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
         underlineOffset = baseline + 2;
     }
+
+#if PLATFORM(MAC)
+    RenderTheme::singleton().drawLineForDocumentMarker(renderer(), context, FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkedTextType(markedText.type));
+#else
     context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkedTextType(markedText.type));
+#endif
 }
 
 auto InlineTextBox::computeStyleForUnmarkedMarkedText(const PaintInfo& paintInfo) const -> MarkedTextStyle

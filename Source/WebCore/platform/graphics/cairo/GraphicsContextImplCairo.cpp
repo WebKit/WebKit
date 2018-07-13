@@ -301,7 +301,7 @@ void GraphicsContextImplCairo::drawLinesForText(const FloatPoint& point, const D
     Cairo::drawLinesForText(m_platformContext, point, widths, printing, doubleUnderlines, state.strokeColor, state.strokeThickness);
 }
 
-void GraphicsContextImplCairo::drawLineForDocumentMarker(const FloatPoint& origin, float width, GraphicsContext::DocumentMarkerLineStyle style)
+void GraphicsContextImplCairo::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     Cairo::drawLineForDocumentMarker(m_platformContext, origin, width, style);
 }

@@ -652,9 +652,9 @@ void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, const Das
     append(createCommand<DrawLinesForText>(point, widths, printing, doubleUnderlines, state.strokeColor, state.strokeThickness));
 }
 
-void CairoOperationRecorder::drawLineForDocumentMarker(const FloatPoint& origin, float width, GraphicsContext::DocumentMarkerLineStyle style)
+void CairoOperationRecorder::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
-    struct DrawLineForDocumentMarker final : PaintingOperation, OperationData<FloatPoint, float, GraphicsContext::DocumentMarkerLineStyle> {
+    struct DrawLineForDocumentMarker final : PaintingOperation, OperationData<FloatPoint, float, DocumentMarkerLineStyle> {
         virtual ~DrawLineForDocumentMarker() = default;
 
         void execute(PaintingOperationReplay& replayer) override

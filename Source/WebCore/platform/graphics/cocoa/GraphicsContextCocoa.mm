@@ -245,7 +245,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     CGPatternRef dotPattern;
 #endif
     switch (style) {
-    case DocumentMarkerSpellingLineStyle: {
+    case DocumentMarkerLineStyle::Spelling: {
         // Constants for spelling pattern color.
         static bool usingDotForSpelling = false;
 #if !PLATFORM(IOS)
@@ -260,7 +260,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
         usingDot = usingDotForSpelling;
         break;
     }
-    case DocumentMarkerGrammarLineStyle: {
+    case DocumentMarkerLineStyle::Grammar: {
 #if !PLATFORM(IOS)
         // Constants for grammar pattern color.
         static bool usingDotForGrammar = false;
@@ -277,8 +277,8 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     }
 #if PLATFORM(MAC)
     // To support correction panel.
-    case DocumentMarkerAutocorrectionReplacementLineStyle:
-    case DocumentMarkerDictationAlternativesLineStyle: {
+    case DocumentMarkerLineStyle::AutocorrectionReplacement:
+    case DocumentMarkerLineStyle::DictationAlternatives: {
         // Constants for spelling pattern color.
         static bool usingDotForSpelling = false;
         if (!correctionImage)
@@ -290,7 +290,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     }
 #endif
 #if PLATFORM(IOS)
-    case TextCheckingDictationPhraseWithAlternativesLineStyle: {
+    case DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives: {
         static bool usingDotForDictationPhraseWithAlternatives = false;
         static CGPatternRef dictationPhraseWithAlternativesPattern = createDotPattern(usingDotForDictationPhraseWithAlternatives, "DictationPhraseWithAlternativesDot").leakRef();
         dotPattern = dictationPhraseWithAlternativesPattern;

@@ -1412,4 +1412,8 @@ Color RenderTheme::platformTapHighlightColor() const
 
 #endif
 
+void RenderTheme::drawLineForDocumentMarker(const RenderText&, GraphicsContext&, const FloatPoint&, float, DocumentMarkerLineStyle)
+{
+}
+
 } // namespace WebCore

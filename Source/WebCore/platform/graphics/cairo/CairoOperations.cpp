@@ -1049,18 +1049,18 @@ void drawLinesForText(PlatformContextCairo& platformContext, const FloatPoint& p
     cairo_restore(cr);
 }
 
-void drawLineForDocumentMarker(PlatformContextCairo& platformContext, const FloatPoint& origin, float width, GraphicsContext::DocumentMarkerLineStyle style)
+void drawLineForDocumentMarker(PlatformContextCairo& platformContext, const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
-    if (style != GraphicsContext::DocumentMarkerSpellingLineStyle
-        && style != GraphicsContext::DocumentMarkerGrammarLineStyle)
+    if (style != DocumentMarkerLineStyle::Spelling
+        && style != DocumentMarkerLineStyle::Grammar)
         return;
 
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
 
-    if (style == GraphicsContext::DocumentMarkerSpellingLineStyle)
+    if (style == DocumentMarkerLineStyle::Spelling)
         cairo_set_source_rgb(cr, 1, 0, 0);
-    else if (style == GraphicsContext::DocumentMarkerGrammarLineStyle)
+    else if (style == DocumentMarkerLineStyle::Grammar)
         cairo_set_source_rgb(cr, 0, 1, 0);
 
     drawErrorUnderline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
