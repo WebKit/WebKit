@@ -357,7 +357,7 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
-    ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_wasDeleted);
 
     if (m_unalignedNextFireTime != newTime)

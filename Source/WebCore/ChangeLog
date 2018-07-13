@@ -1,3 +1,15 @@
+2018-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add release assertion to check thread in TimerBase::setNextFireTime
+        https://bugs.webkit.org/show_bug.cgi?id=187666
+
+        Reviewed by Ryosuke Niwa.
+
+        This should give us insight into what is causing <rdar://problem/33352721>
+        
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::setNextFireTime):
+
 2018-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] [WK1] Crash inside IOSurfacePool::platformGarbageCollectNow() in WebThread
