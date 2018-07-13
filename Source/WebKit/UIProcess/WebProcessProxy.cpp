@@ -128,6 +128,8 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& 
 #endif
     , m_isInPrewarmedPool(isInPrewarmedPool == IsInPrewarmedPool::Yes)
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+
     auto result = allProcesses().add(coreProcessIdentifier(), this);
     ASSERT_UNUSED(result, result.isNewEntry);
 
@@ -136,6 +138,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& 
 
 WebProcessProxy::~WebProcessProxy()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(m_pageURLRetainCountMap.isEmpty());
 
     auto result = allProcesses().remove(coreProcessIdentifier());
@@ -207,6 +210,8 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void WebProcessProxy::shutDown()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+
     shutDownProcess();
 
     if (m_webConnection) {
@@ -751,6 +756,8 @@ bool WebProcessProxy::mayBecomeUnresponsive()
 
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
@@ -764,6 +771,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         page->processDidFinishLaunching();
     }
 
+    RELEASE_ASSERT(!m_webConnection);
     m_webConnection = WebConnectionToWebProcess::create(this);
 
     m_processPool->processDidFinishLaunching(this);

@@ -74,11 +74,14 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Id
     , m_mdnsRegister(*this)
 #endif
 {
+    RELEASE_ASSERT(RunLoop::isMain());
     m_connection->open();
 }
 
 NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 {
+    RELEASE_ASSERT(RunLoop::isMain());
+
     m_connection->invalidate();
 #if USE(LIBWEBRTC)
     if (m_rtcProvider)

@@ -936,7 +936,7 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
 
 void Connection::dispatchMessage(Decoder& decoder)
 {
-    ASSERT(isValid());
+    RELEASE_ASSERT(isValid());
     m_client.didReceiveMessage(*this, decoder);
 }
 

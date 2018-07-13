@@ -1,3 +1,21 @@
+2018-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Add more threading release assertions
+        https://bugs.webkit.org/show_bug.cgi?id=187647
+
+        Reviewed by Alex Christensen.
+
+        Add more threading release assertions to help debug <rdar://problem/39265927>.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::m_isInPrewarmedPool):
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+
 2018-07-13  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] Add windows storage process connection implementation
