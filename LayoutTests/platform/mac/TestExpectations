@@ -1122,6 +1122,8 @@ webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeo
 webkit.org/b/158948 inspector/timeline [ Pass Timeout ]
 webkit.org/b/168091 inspector/worker/resources-in-worker.html [ Pass Failure ]
 
+webkit.org/b/187622 [ Debug ] inspector/view/asynchronous-layout.html [ Pass Timeout ]
+
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # Touch events is not enabled on Mac
