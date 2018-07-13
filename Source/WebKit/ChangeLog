@@ -1,5 +1,20 @@
 2018-07-12  Chris Dumez  <cdumez@apple.com>
 
+        [Cocoa] Make sure NetworkProcess::createNetworkConnectionToWebProcess() returns a valid mach port
+        https://bugs.webkit.org/show_bug.cgi?id=187625
+
+        Reviewed by Youenn Fablet.
+
+        Make sure NetworkProcess::createNetworkConnectionToWebProcess() returns a valid mach port to help
+        debug <rdar://problem/41995022>.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess):
+
+2018-07-12  Chris Dumez  <cdumez@apple.com>
+
         PingLoad does not need to ref the NetworkConnectionToWebProcess
         https://bugs.webkit.org/show_bug.cgi?id=187624
 

@@ -284,6 +284,7 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Atta
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
     reply(connectionIdentifier);
 #elif OS(DARWIN)
+    MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier.port()));
     reply(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
 #else
     notImplemented();

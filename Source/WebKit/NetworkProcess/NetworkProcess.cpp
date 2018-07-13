@@ -323,7 +323,11 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
     mach_port_t listeningPort = MACH_PORT_NULL;
     auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
     if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Could not allocate mach port, error %x", kr);
+        RELEASE_LOG_ERROR(Process, "NetworkProcess::createNetworkConnectionToWebProcess: Could not allocate mach port, error %x", kr);
+        CRASH();
+    }
+    if (!MACH_PORT_VALID(listeningPort)) {
+        RELEASE_LOG_ERROR(Process, "NetworkProcess::createNetworkConnectionToWebProcess: Could not allocate mach port, returned port was invalid");
         CRASH();
     }
 
