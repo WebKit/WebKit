@@ -1,5 +1,38 @@
 2018-07-13  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Execution highlighting in the frontend should be line/column-based
+        https://bugs.webkit.org/show_bug.cgi?id=187532
+        <rdar://problem/42035580>
+
+        Reviewed by Joseph Pecoraro.
+
+        Source code offsets from Esprima should not be used to calculate ranges
+        in CodeMirror for expression highlighting.
+
+        This also fixes a long standing bug when adjusting for the starting
+        position of an inline script. Previously the start offset from the script
+        TextRange was used for this purpose, but the value is often incorrect (see
+        https://bugs.webkit.org/show_bug.cgi?id=187532#c5). By using the starting
+        line/column instead, we avoid the problem.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WI.ScriptSyntaxTree.prototype.containersOfPosition):
+        (WI.ScriptSyntaxTree.prototype.containersOfOffset): Deleted.
+
+        * UserInterface/Models/SourceCodePosition.js:
+        (WI.SourceCodePosition.prototype.offsetColumn):
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange.toInlineScriptPosition):
+        (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange.fromInlineScriptPosition):
+        (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange.convertRangeOffsetsToSourceCodeOffsets): Deleted.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype._updateExecutionRangeHighlight):
+
+2018-07-13  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: SourceCodePosition.js missing from Test.html
         https://bugs.webkit.org/show_bug.cgi?id=187644
 

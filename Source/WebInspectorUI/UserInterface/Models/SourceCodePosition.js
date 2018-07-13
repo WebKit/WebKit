@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,12 @@ WI.SourceCodePosition = class SourceCodePosition
 
     get lineNumber() { return this._lineNumber; }
     get columnNumber() { return this._columnNumber; }
+
+    offsetColumn(delta)
+    {
+        console.assert(this._columnNumber + delta >= 0);
+        return new WI.SourceCodePosition(this._lineNumber, this._columnNumber + delta);
+    }
 
     equals(position)
     {

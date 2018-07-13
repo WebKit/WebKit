@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1411,25 +1411,40 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         this._reinsertAllThreadIndicators();
     }
 
-    textEditorExecutionHighlightRange(offset, position, characterAtOffset, callback)
+    textEditorExecutionHighlightRange(currentPosition, callback)
     {
+        let {line, ch} = this.currentPositionToOriginalPosition(currentPosition);
+        let position = new WI.SourceCodePosition(line, ch);
+
         let script = this._getAssociatedScript(position);
         if (!script) {
             callback(null);
             return;
         }
 
-        // If this is an inline script, then convert to offset within the inline script.
-        let adjustment = script.range.startOffset || 0;
-        offset = offset - adjustment;
+        let {startLine, startColumn} = script.range;
+
+        function toInlineScriptPosition(position) {
+            let columnNumber = position.lineNumber === startLine ? position.columnNumber - startColumn : position.columnNumber;
+            return new WI.SourceCodePosition(position.lineNumber - startLine, columnNumber);
+        }
+
+        function fromInlineScriptPosition(position) {
+            let columnNumber = position.lineNumber ? position.columnNumber : position.columnNumber + startColumn;
+            return new WI.SourceCodePosition(position.lineNumber + startLine, columnNumber);
+        }
 
         // When returning offsets, convert to offsets within the SourceCode being viewed.
-        function convertRangeOffsetsToSourceCodeOffsets(range) {
-            return range.map((offset) => offset + adjustment);
+        let highlightSourceCodeRange = (startPosition, endPosition) => {
+            startPosition = fromInlineScriptPosition(startPosition).toCodeMirror();
+            endPosition = fromInlineScriptPosition(endPosition).toCodeMirror();
+            callback({startPosition, endPosition});
         }
 
         script.requestScriptSyntaxTree((syntaxTree) => {
-            let nodes = syntaxTree.containersOfOffset(offset);
+            // Convert to the position within the inline script before querying the AST.
+            position = toInlineScriptPosition(position);
+            let nodes = syntaxTree.containersOfPosition(position);
             if (!nodes.length) {
                 callback(null);
                 return;
@@ -1439,18 +1454,17 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             // Avoid highlighting the entire program if this is the start of the first statement.
             // Special case the assignment expression inside of a for..of and for..in to highlight a larger range.
             for (let node of nodes) {
-                let startOffset = node.range[0];
-                if (startOffset === offset && node.type !== WI.ScriptSyntaxTree.NodeType.Program) {
-                    callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
+                if (node.startPosition.equals(position) && node.type !== WI.ScriptSyntaxTree.NodeType.Program) {
+                    highlightSourceCodeRange(node.startPosition, node.endPosition);
                     return;
                 }
                 if (node.type === WI.ScriptSyntaxTree.NodeType.ForInStatement || node.type === WI.ScriptSyntaxTree.NodeType.ForOfStatement) {
-                    if (node.left.range[0] === offset) {
-                        callback(convertRangeOffsetsToSourceCodeOffsets([node.left.range[0], node.right.range[1]]));
+                    if (node.left.startPosition.equals(position)) {
+                        highlightSourceCodeRange(node.left.startPosition, node.right.endPosition);
                         return;
                     }
                 }
-                if (startOffset > offset)
+                if (node.startPosition.isAfter(position))
                     break;
             }
 
@@ -1458,16 +1472,14 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             // We check this after ensuring nothing starts with this offset,
             // as that would be more important.
             for (let node of nodes) {
-                let startOffset = node.range[0];
-                let endOffset = node.range[1];
-                if (endOffset === offset) {
+                if (node.endPosition.equals(position)) {
                     if (node.type === WI.ScriptSyntaxTree.NodeType.BlockStatement) {
                         // Closing brace of a block, only highlight the closing brace character.
-                        callback(convertRangeOffsetsToSourceCodeOffsets([offset - 1, offset]));
+                        highlightSourceCodeRange(position.offsetColumn(-1), position);
                         return;
                     }
                 }
-                if (startOffset > offset)
+                if (node.startPosition.isAfter(position))
                     break;
             }
 
@@ -1479,7 +1491,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 return aLength - bLength;
             });
 
-            let characterAtOffsetIsDotOrBracket = characterAtOffset === "." || characterAtOffset === "[";
+            let characterAtPosition = this.getTextInRange(currentPosition, {line: currentPosition.line, ch: currentPosition.ch + 1});
+            let characterAtPositionIsDotOrBracket = characterAtPosition === "." || characterAtPosition === "[";
 
             for (let i = 0; i < nodes.length; ++i) {
                 let node = nodes[i];
@@ -1488,7 +1501,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 if (node.type === WI.ScriptSyntaxTree.NodeType.CallExpression
                     || node.type === WI.ScriptSyntaxTree.NodeType.NewExpression
                     || node.type === WI.ScriptSyntaxTree.NodeType.ThrowStatement) {
-                    callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
+                    highlightSourceCodeRange(node.startPosition, node.endPosition);
                     return;
                 }
 
@@ -1507,24 +1520,24 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 //     foo["x"]*["y"]["z"] => inside y looking at parent call frame => |foo["x"]["y"]|["z"]
                 //
                 if (node.type === WI.ScriptSyntaxTree.NodeType.ThisExpression
-                    || (characterAtOffsetIsDotOrBracket && (node.type === WI.ScriptSyntaxTree.NodeType.Identifier || node.type === WI.ScriptSyntaxTree.NodeType.MemberExpression))) {
+                    || (characterAtPositionIsDotOrBracket && (node.type === WI.ScriptSyntaxTree.NodeType.Identifier || node.type === WI.ScriptSyntaxTree.NodeType.MemberExpression))) {
                     let memberExpressionNode = null;
                     for (let j = i + 1; j < nodes.length; ++j) {
                         let nextNode = nodes[j];
                         if (nextNode.type === WI.ScriptSyntaxTree.NodeType.MemberExpression) {
                             memberExpressionNode = nextNode;
-                            if (offset === memberExpressionNode.range[1])
+                            if (position.equals(memberExpressionNode.endPosition))
                                 continue;
                         }
                         break;
                     }
 
                     if (memberExpressionNode) {
-                        callback(convertRangeOffsetsToSourceCodeOffsets(memberExpressionNode.range));
+                        highlightSourceCodeRange(memberExpressionNode.startPosition, memberExpressionNode.endPosition);
                         return;
                     }
 
-                    callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
+                    highlightSourceCodeRange(node.startPosition, node.endPosition);
                     return;
                 }
             }

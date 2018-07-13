@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,22 +79,20 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         return nodes;
     }
 
-    containersOfOffset(offset)
+    containersOfPosition(position)
     {
         console.assert(this._parsedSuccessfully);
         if (!this._parsedSuccessfully)
             return [];
 
         let allNodes = [];
-        const start = 0;
-        const end = 1;
 
         this.forEachNode((node, state) => {
-            if (node.range[end] < offset)
+            if (node.endPosition.isBefore(position))
                 state.skipChildNodes = true;
-            if (node.range[start] > offset)
+            else if (node.startPosition.isAfter(position))
                 state.shouldStopEarly = true;
-            if (node.range[start] <= offset && node.range[end] >= offset)
+            else
                 allNodes.push(node);
         });
 

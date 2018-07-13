@@ -1324,12 +1324,8 @@ WI.TextEditor = class TextEditor extends WI.View
             return;
 
         let currentPosition = {line: this._executionLineNumber, ch: this._executionColumnNumber};
-        let originalOffset = this.currentPositionToOriginalOffset(currentPosition);
-        let originalCodeMirrorPosition = this.currentPositionToOriginalPosition(currentPosition);
-        let originalPosition = new WI.SourceCodePosition(originalCodeMirrorPosition.line, originalCodeMirrorPosition.ch);
-        let characterAtOffset = this._codeMirror.getRange(currentPosition, {line: this._executionLineNumber, ch: this._executionColumnNumber + 1});
 
-        this._delegate.textEditorExecutionHighlightRange(originalOffset, originalPosition, characterAtOffset, (range) => {
+        this._delegate.textEditorExecutionHighlightRange(currentPosition, (range) => {
             let start, end;
             if (!range) {
                 // Highlight the rest of the line.
@@ -1337,8 +1333,8 @@ WI.TextEditor = class TextEditor extends WI.View
                 end = {line: this._executionLineNumber};
             } else {
                 // Highlight the range.
-                start = this.originalOffsetToCurrentPosition(range[0]);
-                end = this.originalOffsetToCurrentPosition(range[1]);
+                start = range.startPosition;
+                end = range.endPosition;
             }
 
             // Ensure the marker is cleared in case there were multiple updates very quickly.
