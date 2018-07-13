@@ -1,3 +1,18 @@
+2018-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Reduce size of WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=186820
+        <rdar://problem/42087508>
+
+        Unreviewed, re-generates Service worker registrations database used by API tests after r233789.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-2.sqlite3: Removed.
+        * TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-2.sqlite3-shm: Removed.
+        * TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-3.sqlite3: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/SimpleServiceWorkerRegistrations-2.sqlite3-wal.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2018-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make it easier to hit the significant rendered text layout milestone on pages with main article elements
