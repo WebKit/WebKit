@@ -79,4 +79,14 @@ void NetworkProcess::platformProcessDidResume()
     notImplemented();
 }
 
+void NetworkProcess::platformProcessDidTransitionToForeground()
+{
+    notImplemented();
+}
+
+void NetworkProcess::platformProcessDidTransitionToBackground()
+{
+    notImplemented();
+}
+
 } // namespace WebKit

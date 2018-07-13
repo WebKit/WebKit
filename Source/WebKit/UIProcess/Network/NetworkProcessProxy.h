@@ -88,6 +88,9 @@ public:
     void writeBlobToFilePath(const WebCore::URL&, const String& path, CompletionHandler<void(bool)>&& callback);
 
     void processReadyToSuspend();
+    
+    void sendProcessDidTransitionToForeground();
+    void sendProcessDidTransitionToBackground();
 
     void setIsHoldingLockedFiles(bool);
     

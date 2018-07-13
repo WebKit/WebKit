@@ -214,11 +214,25 @@ void NetworkProcess::syncAllCookies()
 void NetworkProcess::platformPrepareToSuspend()
 {
 #if ENABLE(WIFI_ASSERTIONS)
-    suspendWiFiAssertions();
+    suspendWiFiAssertions(SuspensionReason::ProcessSuspending);
 #endif
 }
 
 void NetworkProcess::platformProcessDidResume()
+{
+#if ENABLE(WIFI_ASSERTIONS)
+    resumeWiFiAssertions();
+#endif
+}
+
+void NetworkProcess::platformProcessDidTransitionToBackground()
+{
+#if ENABLE(WIFI_ASSERTIONS)
+    suspendWiFiAssertions(SuspensionReason::ProcessBackgrounding);
+#endif
+}
+    
+void NetworkProcess::platformProcessDidTransitionToForeground()
 {
 #if ENABLE(WIFI_ASSERTIONS)
     resumeWiFiAssertions();

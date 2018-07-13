@@ -646,5 +646,15 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
     m_webUserContentControllerProxies.remove(&proxy);
 }
 #endif
+    
+void NetworkProcessProxy::sendProcessDidTransitionToForeground()
+{
+    send(Messages::NetworkProcess::ProcessDidTransitionToForeground(), 0);
+}
+
+void NetworkProcessProxy::sendProcessDidTransitionToBackground()
+{
+    send(Messages::NetworkProcess::ProcessDidTransitionToBackground(), 0);
+}
 
 } // namespace WebKit

@@ -798,6 +798,16 @@ void NetworkProcess::terminate()
     ChildProcess::terminate();
 }
 
+void NetworkProcess::processDidTransitionToForeground()
+{
+    platformProcessDidTransitionToForeground();
+}
+
+void NetworkProcess::processDidTransitionToBackground()
+{
+    platformProcessDidTransitionToBackground();
+}
+
 // FIXME: We can remove this one by adapting RefCounter.
 class TaskCounter : public RefCounted<TaskCounter> {
 public:

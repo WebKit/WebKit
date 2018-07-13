@@ -170,6 +170,11 @@ private:
     void platformTerminate();
 
     void lowMemoryHandler(Critical);
+    
+    void processDidTransitionToForeground();
+    void processDidTransitionToBackground();
+    void platformProcessDidTransitionToForeground();
+    void platformProcessDidTransitionToBackground();
 
     enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
     void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);

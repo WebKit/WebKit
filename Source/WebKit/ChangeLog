@@ -1,5 +1,44 @@
 2018-07-13  Tim Horton  <timothy_horton@apple.com>
 
+        WebKit sometimes holds WiFi/BT assertions while the Networking process is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=187662
+        <rdar://problem/41999448>
+
+        Reviewed by Chris Dumez.
+
+        Inform WiFiAssertions when the Networking process is first going into the background,
+        so it has a chance of dropping its assertions even in cases where the system
+        suspends the process before we receive prepareToSuspend.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processDidTransitionToForeground):
+        (WebKit::NetworkProcess::processDidTransitionToBackground):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendProcessDidTransitionToForeground):
+        (WebKit::NetworkProcessProxy::sendProcessDidTransitionToBackground):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        Plumb the foreground/background transition to NetworkProcess.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformPrepareToSuspend):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+        Make use of SuspensionReason to explain to WiFiAssertions the
+        difference between prepareToSuspend and didTransitionToBackground,
+        so that it can adjust the timing of dropping the assertion.
+
+2018-07-13  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r231676): watchOS WebKit usually doesn't load in the background
         https://bugs.webkit.org/show_bug.cgi?id=187663
         <rdar://problem/42181185>
