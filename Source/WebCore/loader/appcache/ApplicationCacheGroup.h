@@ -104,7 +104,7 @@ private:
     void didFinishLoadingManifest();
     void didFailLoadingManifest(ApplicationCacheResourceLoader::Error);
 
-    void didFailLoadingEntry(ApplicationCacheResourceLoader::Error, const URL&);
+    void didFailLoadingEntry(ApplicationCacheResourceLoader::Error, const URL&, unsigned type);
     void didFinishLoadingEntry(const URL&);
 
     void didReachMaxAppCacheSize();

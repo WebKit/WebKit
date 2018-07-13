@@ -1,3 +1,21 @@
+2018-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Crash under ApplicationCacheGroup::didFailLoadingEntry()
+        https://bugs.webkit.org/show_bug.cgi?id=187661
+        <rdar://problem/42179755>
+
+        Reviewed by Youenn Fablet.
+
+        If ApplicationCacheResourceLoader::create() fails synchronously with
+        ApplicationCacheResourceLoader::Error::CannotCreateResource error, then
+        m_entryLoader will be null when didFailLoadingEntry() is called. However,
+        didFailLoadingEntry() fails to null check m_entryLoader before using it.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFailLoadingEntry):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        * loader/appcache/ApplicationCacheGroup.h:
+
 2018-07-13  Alex Christensen  <achristensen@webkit.org>
 
         Add release assertion to check thread in TimerBase::setNextFireTime

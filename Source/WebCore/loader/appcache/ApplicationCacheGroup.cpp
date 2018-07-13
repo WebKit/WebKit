@@ -538,14 +538,13 @@ void ApplicationCacheGroup::didFinishLoadingEntry(const URL& entryURL)
     startLoadingEntry();
 }
 
-void ApplicationCacheGroup::didFailLoadingEntry(ApplicationCacheResourceLoader::Error error, const URL& entryURL)
+void ApplicationCacheGroup::didFailLoadingEntry(ApplicationCacheResourceLoader::Error error, const URL& entryURL, unsigned type)
 {
     // FIXME: We should get back the error from ApplicationCacheResourceLoader level.
     ResourceError resourceError { error == ApplicationCacheResourceLoader::Error::CannotCreateResource ? ResourceError::Type::AccessControl : ResourceError::Type::General };
 
     InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, resourceError);
 
-    unsigned type = m_entryLoader->type();
     URL url(entryURL);
     url.removeFragmentIdentifier();
 
@@ -554,7 +553,7 @@ void ApplicationCacheGroup::didFailLoadingEntry(ApplicationCacheResourceLoader::
     m_pendingEntries.remove(url);
 
     if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
-        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, "Application Cache update failed, because " + url.stringCenterEllipsizedToLength() + (m_entryLoader->hasRedirection() ? " was redirected." : " could not be fetched."));
+        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache update failed, because ", url.stringCenterEllipsizedToLength(), (m_entryLoader && m_entryLoader->hasRedirection() ? " was redirected." : " could not be fetched.")));
         // Note that cacheUpdateFailed() can cause the cache group to be deleted.
         cacheUpdateFailed();
         return;
@@ -904,12 +903,13 @@ void ApplicationCacheGroup::startLoadingEntry()
 
     auto& documentLoader = *m_frame->loader().documentLoader();
     auto requestURL = request.url();
-    m_entryLoader = ApplicationCacheResourceLoader::create(m_pendingEntries.begin()->value, documentLoader.cachedResourceLoader(), WTFMove(request), [this, requestURL = WTFMove(requestURL)] (auto&& resourceOrError) {
+    unsigned type = m_pendingEntries.begin()->value;
+    m_entryLoader = ApplicationCacheResourceLoader::create(type, documentLoader.cachedResourceLoader(), WTFMove(request), [this, requestURL = WTFMove(requestURL), type] (auto&& resourceOrError) {
         if (!resourceOrError.has_value()) {
             auto error = resourceOrError.error();
             if (error == ApplicationCacheResourceLoader::Error::Abort)
                 return;
-            this->didFailLoadingEntry(error, requestURL);
+            this->didFailLoadingEntry(error, requestURL, type);
             return;
         }
 
