@@ -1,5 +1,14 @@
 2018-07-13  Truitt Savell  <tsavell@apple.com>
 
+        [ WK2 ] Layout Test editing/selection/update-selection-by-style-change.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187649
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-07-13  Truitt Savell  <tsavell@apple.com>
+
         [ MacOS Debug ] Layout Test inspector/view/asynchronous-layout.html is a Flaky Timeout
         https://bugs.webkit.org/show_bug.cgi?id=187622
 

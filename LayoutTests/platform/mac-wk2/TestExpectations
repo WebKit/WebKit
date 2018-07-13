@@ -221,6 +221,8 @@ fast/events/input-events-insert-by-drop.html [ Failure ]
 
 webkit.org/b/81833 fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
 
+webkit.org/b/187649 editing/selection/update-selection-by-style-change.html [ Pass ImageOnlyFailure ]
+
 # Missing functionality of textInputController
 # https://bugs.webkit.org/show_bug.cgi?id=89401
 editing/mac/input/insert-dictated-text.html
