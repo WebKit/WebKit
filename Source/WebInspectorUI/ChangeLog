@@ -1,3 +1,12 @@
+2018-07-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: SourceCodePosition.js missing from Test.html
+        https://bugs.webkit.org/show_bug.cgi?id=187644
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Test.html:
+
 2018-07-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Type token positioning should use line/column locations from Esprima instead of offsets
