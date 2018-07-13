@@ -163,6 +163,8 @@ void StorageProcessProxy::didClose(IPC::Connection&)
         reply(IPC::Attachment());
 #elif OS(DARWIN)
         reply(IPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
+#elif OS(WINDOWS)
+        reply(IPC::Attachment());
 #else
         notImplemented();
 #endif
@@ -195,6 +197,8 @@ void StorageProcessProxy::didCreateStorageToWebProcessConnection(const IPC::Atta
     reply(connectionIdentifier);
 #elif OS(DARWIN)
     reply(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+#elif OS(WINDOWS)
+    reply(connectionIdentifier.handle());
 #else
     notImplemented();
 #endif

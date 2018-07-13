@@ -1,3 +1,15 @@
+2018-07-13  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Add windows storage process connection implementation
+        https://bugs.webkit.org/show_bug.cgi?id=187531
+
+        Reviewed by Fujii Hironori.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        * Platform/IPC/Attachment.h:
+        * StorageProcess/StorageProcess.cpp:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+
 2018-07-13  Dan Bernstein  <mitz@apple.com>
 
         [macOS] REGRESSION (r233536): Development WebContent service got opted back into Library Validation

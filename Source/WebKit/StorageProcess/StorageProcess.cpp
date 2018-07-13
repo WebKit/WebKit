@@ -262,6 +262,18 @@ void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerPro
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateStorageToWebProcessConnection(clientPort), 0);
+#elif OS(WINDOWS)
+    IPC::Connection::Identifier serverIdentifier, clientIdentifier;
+    if (!IPC::Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
+        LOG_ERROR("Failed to create server and client identifiers");
+        CRASH();
+    }
+
+    auto connection = StorageToWebProcessConnection::create(serverIdentifier);
+    m_storageToWebProcessConnections.append(WTFMove(connection));
+
+    IPC::Attachment clientSocket(clientIdentifier);
+    parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateStorageToWebProcessConnection(clientSocket), 0);
 #else
     notImplemented();
 #endif

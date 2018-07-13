@@ -339,8 +339,10 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort), 0);
 #elif OS(WINDOWS)
     IPC::Connection::Identifier serverIdentifier, clientIdentifier;
-    if (!IPC::Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier))
-        return;
+    if (!IPC::Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
+        LOG_ERROR("Failed to create server and client identifiers");
+        CRASH();
+    }
 
     auto connection = NetworkConnectionToWebProcess::create(serverIdentifier);
     m_webProcessConnections.append(WTFMove(connection));
