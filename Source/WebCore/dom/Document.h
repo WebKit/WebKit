@@ -1446,6 +1446,11 @@ public:
 
     void consumeTemporaryTimeUserGesture();
 
+    void registerArticleElement(Element&);
+    void unregisterArticleElement(Element&);
+    void updateMainArticleElementAfterLayout();
+    bool hasMainArticleElement() const { return !!m_mainArticleElement; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1686,6 +1691,9 @@ private:
 #if ENABLE(VIDEO_TRACK)
     HashSet<Element*> m_captionPreferencesChangedElements;
 #endif
+
+    Element* m_mainArticleElement { nullptr };
+    HashSet<Element*> m_articleElements;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     HashSet<HTMLMediaElement*> m_pageScaleFactorChangedElements;

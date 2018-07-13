@@ -1753,6 +1753,9 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
 
+    if (UNLIKELY(hasTagName(articleTag) && newDocument))
+        newDocument->registerArticleElement(*this);
+
     return InsertedIntoAncestorResult::Done;
 }
 
@@ -1800,6 +1803,8 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         if (oldDocument) {
             if (oldDocument->cssTarget() == this)
                 oldDocument->setCSSTarget(nullptr);
+            if (UNLIKELY(hasTagName(articleTag)))
+                oldDocument->unregisterArticleElement(*this);
         }
 
         if (removalType.disconnectedFromDocument && UNLIKELY(isDefinedCustomElement()))

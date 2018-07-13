@@ -1,3 +1,21 @@
+2018-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make it easier to hit the significant rendered text layout milestone on pages with main article elements
+        https://bugs.webkit.org/show_bug.cgi?id=187578
+        <rdar://problem/42104637>
+
+        Reviewed by Ryosuke Niwa.
+
+        Tweak an existing layout test to additionally check that the significant text layout milestone is fired on a
+        page with an article element that is clearly the "main" content on the page (i.e. much taller than all other
+        articles).
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/significant-text-milestone-article.html: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/significant-text-milestone.html.
+        * TestWebKitAPI/Tests/WebKitCocoa/significant-text-milestone.html:
+        * TestWebKitAPI/Tests/ios/RenderingProgressTests.mm:
+        (TEST):
+
 2018-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Change my status to be a WebKit reviewer.

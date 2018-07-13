@@ -65,6 +65,10 @@ TEST(RenderingProgressTests, DidRenderSignificantAmountOfText)
     [webView setNavigationDelegate:navigationDelegate.get()];
     [webView loadTestPageNamed:@"significant-text-milestone"];
     TestWebKitAPI::Util::run(&observedSignificantRenderedText);
+
+    observedSignificantRenderedText = false;
+    [webView loadTestPageNamed:@"significant-text-milestone-article"];
+    TestWebKitAPI::Util::run(&observedSignificantRenderedText);
 }
 
 #endif // PLATFORM(IOS)

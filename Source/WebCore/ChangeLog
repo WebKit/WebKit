@@ -1,3 +1,48 @@
+2018-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make it easier to hit the significant rendered text layout milestone on pages with main article elements
+        https://bugs.webkit.org/show_bug.cgi?id=187578
+        <rdar://problem/42104637>
+
+        Reviewed by Ryosuke Niwa.
+
+        Our current heuristics for triggering the significant rendered text layout milestone are very conservative, with
+        the intention of avoiding false positives. In practice, we can relax some of these constraints when we've
+        detected the presence of a main article element on the page. (e.g. in New York Times articles). See per-method
+        changes below for more detail.
+
+        Test: RenderingProgressTests.DidRenderSignificantAmountOfText
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerArticleElement):
+        (WebCore::Document::unregisterArticleElement):
+        (WebCore::Document::updateMainArticleElementAfterLayout):
+
+        As a post layout task, update the main article element by looping through the articles (up to a maximum limit of
+        10) in search of an article element that is several times larger than the second largest article element.
+
+        * dom/Document.h:
+
+        Store a set containing the article elements in the document, as well as the current main article on the page.
+
+        (WebCore::Document::hasMainArticleElement const):
+        * html/Element.cpp:
+        (WebCore::Element::insertedIntoAncestor):
+        (WebCore::Element::removedFromAncestor):
+
+        Keep track of the article elements that exist in the document whenever elements with the article tag are added
+        to or removed from the document.
+
+        * page/FrameView.cpp:
+
+        Add new minimum thresholds for firing the significant rendered text milestone when there exists a main article.
+
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::updateSignificantRenderedTextMilestoneIfNeeded):
+
+        Take the main article element into consideration when determining whether to fire the significant text
+        layout milestone.
+
 2018-07-12  Daniel Bates  <dabates@apple.com>
 
         JavaScript URL gives incorrect result when frame is navigated

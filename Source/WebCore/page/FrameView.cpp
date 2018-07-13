@@ -129,8 +129,10 @@ MonotonicTime FrameView::sCurrentPaintTimeStamp { };
 // The maximum number of updateEmbeddedObjects iterations that should be done before returning.
 static const unsigned maxUpdateEmbeddedObjectsIterations = 2;
 
-static constexpr unsigned significantRenderedTextCharacterThreshold = 3000;
-static constexpr float significantRenderedTextMeanLength = 50;
+static constexpr unsigned defaultSignificantRenderedTextCharacterThreshold = 3000;
+static constexpr float defaultSignificantRenderedTextMeanLength = 50;
+static constexpr unsigned mainArticleSignificantRenderedTextCharacterThreshold = 1500;
+static constexpr float mainArticleSignificantRenderedTextMeanLength = 25;
 
 static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
 {
@@ -3219,6 +3221,7 @@ void FrameView::performPostLayoutTasks()
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "FrameView %p performPostLayoutTasks", this);
 
+    frame().document()->updateMainArticleElementAfterLayout();
     frame().selection().updateAppearanceAfterLayout();
 
     flushPostLayoutTasksQueue();
@@ -4358,10 +4361,13 @@ void FrameView::updateSignificantRenderedTextMilestoneIfNeeded()
     if (!documentElement || !elementOverflowRectIsLargerThanThreshold(*documentElement))
         return;
 
-    if (m_visuallyNonEmptyCharacterCount < significantRenderedTextCharacterThreshold)
+    auto characterThreshold = document->hasMainArticleElement() ? mainArticleSignificantRenderedTextCharacterThreshold : defaultSignificantRenderedTextCharacterThreshold;
+    auto meanLength = document->hasMainArticleElement() ? mainArticleSignificantRenderedTextMeanLength : defaultSignificantRenderedTextMeanLength;
+
+    if (m_visuallyNonEmptyCharacterCount < characterThreshold)
         return;
 
-    if (!m_renderTextCountForVisuallyNonEmptyCharacters || m_visuallyNonEmptyCharacterCount / static_cast<float>(m_renderTextCountForVisuallyNonEmptyCharacters) < significantRenderedTextMeanLength)
+    if (!m_renderTextCountForVisuallyNonEmptyCharacters || m_visuallyNonEmptyCharacterCount / static_cast<float>(m_renderTextCountForVisuallyNonEmptyCharacters) < meanLength)
         return;
 
     m_renderedSignificantAmountOfText = true;
