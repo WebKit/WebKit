@@ -1,3 +1,14 @@
+2018-07-13  Zach Li  <zachli@apple.com>
+
+        Allow BOCOM and ABC plug-ins to run unsandboxed
+        https://bugs.webkit.org/show_bug.cgi?id=187652
+        rdar://problem/42149182
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldAllowPluginToRunUnsandboxed):
+
 2018-07-13  Chris Dumez  <cdumez@apple.com>
 
         Add more threading release assertions

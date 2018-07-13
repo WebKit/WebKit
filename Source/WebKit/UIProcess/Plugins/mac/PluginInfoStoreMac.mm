@@ -91,7 +91,10 @@ bool PluginInfoStore::shouldAllowPluginToRunUnsandboxed(const String& pluginBund
 
     return pluginBundleIdentifier == "com.cisco.webex.plugin.gpc64"_s
         || pluginBundleIdentifier == "com.google.googletalkbrowserplugin"_s
-        || pluginBundleIdentifier == "com.google.o1dbrowserplugin"_s;
+        || pluginBundleIdentifier == "com.google.o1dbrowserplugin"_s
+        || pluginBundleIdentifier == "com.apple.NPSafeInput"_s
+        || pluginBundleIdentifier == "com.apple.BocomSubmitCtrl"_s
+        || pluginBundleIdentifier == "com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier"_s;
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
