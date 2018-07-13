@@ -1,3 +1,36 @@
+2018-07-13  Chris Dumez  <cdumez@apple.com>
+
+        WebResourceLoader may try to send a IPC with a destination ID that is 0
+        https://bugs.webkit.org/show_bug.cgi?id=187654
+        <rdar://problem/39265927>
+
+        Reviewed by Brady Eidson.
+
+        WebResourceLoader may try to send a IPC with a destination ID that is 0 according to release
+        assertion hits we see in the wild. This can lead to HashMap corruption on recipient side when
+        trying to lookup a key that is 0.
+
+        As per the crash traces, we see it starts from WebLoaderStrategy::internallyFailedLoadTimerFired()
+        which is likely due to the Network process crashing. WebLoaderStrategy::networkProcessCrashed()
+        calls scheduleInternallyFailedLoad() on each ResourceLoader and clears the WebResourceLoaders in
+        m_webResourceLoaders. When a ResourceLoader is cancelled (marked as failed), we clear its identifier
+        and we normally null out the WebLoaderStrategy's coreLoader. However, if we cannot find the
+        WebResourceLoader in m_webResourceLoaders (because that map was already cleared) then the
+        WebResourceLoader's coreLoader may not get nulled out, even if the coreLoader's identifier has
+        been reset. We have 2 lambdas in WebResourceLoader which keep the WebResourceLoader alive and
+        try to send IPC and are merely doing a null check on the coreLoader before trying to send the
+        IPC.
+
+        To address the issue, we now clear the WebResourceLoader's coreLoader in
+        WebLoaderStrategy::networkProcessCrashed(). For robustness, we also check that a coreLoader's
+        identifier is not 0 before trying to send IPC.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::networkProcessCrashed):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+
 2018-07-13  Zach Li  <zachli@apple.com>
 
         Allow BOCOM and ABC plug-ins to run unsandboxed
