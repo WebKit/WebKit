@@ -1,5 +1,21 @@
 2018-07-13  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION (r195723): Improve support for resources with '\r' and '\r\n' line endings
+        https://bugs.webkit.org/show_bug.cgi?id=186453
+        <rdar://problem/39689180>
+
+        Reviewed by Joseph Pecoraro.
+
+        Now that the frontend no longer uses offsets from the original source
+        file to calculate positions within CodeMirror, it is possible to support
+        resources with '\r' and '\r\n' line endings in the editor.
+
+        * UserInterface/Views/CodeMirrorEditor.js:
+        (WI.CodeMirrorEditor.create):
+        (WI.CodeMirrorEditor):
+
+2018-07-13  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Basic blocks highlighting should use line/column locations instead of offsets
         https://bugs.webkit.org/show_bug.cgi?id=187613
         <rdar://problem/42131808>

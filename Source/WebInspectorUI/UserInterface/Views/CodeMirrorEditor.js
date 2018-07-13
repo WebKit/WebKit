@@ -27,8 +27,9 @@ WI.CodeMirrorEditor = class CodeMirrorEditor
 {
     static create(element, options)
     {
+        // Default line endings match typical expected line endings for JavaScript (at least those supported by JavaScriptCore).
         if (options.lineSeparator === undefined)
-            options.lineSeparator = "\n";
+            options.lineSeparator = /\r\n?|\n/;
 
         // CodeMirror's manual scrollbar positioning results in double scrollbars,
         // nor does it handle braces and brackets well, so default to using LTR.
