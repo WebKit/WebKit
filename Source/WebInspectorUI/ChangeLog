@@ -1,5 +1,38 @@
 2018-07-13  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Basic blocks highlighting should use line/column locations instead of offsets
+        https://bugs.webkit.org/show_bug.cgi?id=187613
+        <rdar://problem/42131808>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/BasicBlockAnnotator.js:
+        Basic blocks sent from the backend include offsets into the original
+        file, rather than line/column locations. In order to translate to positions
+        within CodeMirror, we need to calculate the original line and column
+        for each block.
+
+        (WI.BasicBlockAnnotator.prototype.insertAnnotations):
+        (WI.BasicBlockAnnotator.prototype._calculateBasicBlockPositions.offsetToPosition):
+        (WI.BasicBlockAnnotator.prototype._calculateBasicBlockPositions):
+        (WI.BasicBlockAnnotator.prototype._annotateBasicBlockExecutionRanges.):
+        (WI.BasicBlockAnnotator.prototype._annotateBasicBlockExecutionRanges):
+        (WI.BasicBlockAnnotator.prototype._highlightTextForBasicBlock):
+
+        * UserInterface/Models/SourceCodePosition.js:
+        (WI.SourceCodePosition.prototype.offsetColumn):
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.getTextInRange):
+        (WI.TextEditor.prototype.addStyleToTextRange):
+        Better encapsulation for CodeMirror positions.
+
+        * UserInterface/Workers/Formatter/FormatterUtilities.js:
+        (get if):
+        Update String.prototype.lineEndings to support additional line separators.
+
+2018-07-13  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Execution highlighting in the frontend should be line/column-based
         https://bugs.webkit.org/show_bug.cgi?id=187532
         <rdar://problem/42035580>

@@ -46,13 +46,49 @@ WI.BasicBlockAnnotator = class BasicBlockAnnotator extends WI.Annotator
     {
         if (!this.isActive())
             return;
-        this._annotateBasicBlockExecutionRanges();
+        this._script.requestContent().then(this._annotateBasicBlockExecutionRanges.bind(this));
     }
 
     // Private
 
+    _calculateBasicBlockPositions(basicBlocks, content)
+    {
+        if (!basicBlocks || !basicBlocks.length)
+            return;
+
+        let lineEndings = [];
+        let lineEndingLengths = [];
+        let pattern = /\r\n?|\n/g;
+        let match = pattern.exec(content);
+        while (match) {
+            lineEndings.push(match.index);
+            lineEndingLengths.push(match[0].length);
+            match = pattern.exec(content)
+        }
+
+        function offsetToPosition(offset) {
+            let lineNumber = lineEndings.upperBound(offset - 1);
+            if (lineNumber) {
+                let previousLine = lineNumber - 1;
+                var columnNumber = offset - lineEndings[previousLine] - lineEndingLengths[previousLine];
+            } else
+                var columnNumber = offset;
+            return new WI.SourceCodePosition(lineNumber, columnNumber);
+        }
+
+        for (let block of basicBlocks) {
+            block.startPosition = offsetToPosition(block.startOffset);
+            block.endPosition = offsetToPosition(block.endOffset);
+        }
+    }
+
     _annotateBasicBlockExecutionRanges()
     {
+        let content = this._script.content;
+        console.assert(content, "Missing script content for basic block annotations.");
+        if (!content)
+            return;
+
         var sourceID = this._script.id;
         var startTime = Date.now();
 
@@ -65,16 +101,18 @@ WI.BasicBlockAnnotator = class BasicBlockAnnotator extends WI.Annotator
             if (!this.isActive())
                 return;
 
-            var {startOffset, endOffset} = this.sourceCodeTextEditor.visibleRangeOffsets();
+            this._calculateBasicBlockPositions(basicBlocks, content);
+
+            let {startPosition, endPosition} = this.sourceCodeTextEditor.visibleRangePositions();
             basicBlocks = basicBlocks.filter(function(block) {
                 // Viewport: [--]
                 // Block:         [--]
-                if (block.startOffset > endOffset)
+                if (block.startPosition.isAfter(endPosition))
                     return false;
 
                 // Viewport:      [--]
                 // Block:    [--]
-                if (block.endOffset < startOffset)
+                if (block.endPosition.isBefore(startPosition))
                     return false;
 
                 return true;
@@ -103,13 +141,12 @@ WI.BasicBlockAnnotator = class BasicBlockAnnotator extends WI.Annotator
         console.assert(basicBlock.startOffset <= basicBlock.endOffset && basicBlock.startOffset >= 0 && basicBlock.endOffset >= 0, "" + basicBlock.startOffset + ":" + basicBlock.endOffset);
         console.assert(!basicBlock.hasExecuted);
 
-        var startPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(basicBlock.startOffset);
-        var endPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(basicBlock.endOffset);
+        let startPosition = this.sourceCodeTextEditor.originalPositionToCurrentPosition(basicBlock.startPosition);
+        let endPosition = this.sourceCodeTextEditor.originalPositionToCurrentPosition(basicBlock.endPosition);
         if (this._isTextRangeOnlyClosingBrace(startPosition, endPosition))
             return null;
 
-        var marker = this.sourceCodeTextEditor.addStyleToTextRange(startPosition, endPosition, WI.BasicBlockAnnotator.HasNotExecutedClassName);
-        return marker;
+        return this.sourceCodeTextEditor.addStyleToTextRange(startPosition, endPosition, WI.BasicBlockAnnotator.HasNotExecutedClassName);
     }
 
     _isTextRangeOnlyClosingBrace(startPosition, endPosition)

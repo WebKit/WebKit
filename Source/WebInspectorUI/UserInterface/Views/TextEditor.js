@@ -467,13 +467,13 @@ WI.TextEditor = class TextEditor extends WI.View
 
     getTextInRange(startPosition, endPosition)
     {
-        return this._codeMirror.getRange(startPosition, endPosition);
+        return this._codeMirror.getRange(startPosition.toCodeMirror(), endPosition.toCodeMirror());
     }
 
     addStyleToTextRange(startPosition, endPosition, styleClassName)
     {
-        endPosition.ch += 1;
-        return this._codeMirror.getDoc().markText(startPosition, endPosition, {className: styleClassName, inclusiveLeft: true, inclusiveRight: true});
+        endPosition = endPosition.offsetColumn(1);
+        return this._codeMirror.getDoc().markText(startPosition.toCodeMirror(), endPosition.toCodeMirror(), {className: styleClassName, inclusiveLeft: true, inclusiveRight: true});
     }
 
     revealPosition(position, textRangeToSelect, forceUnformatted, noHighlight)

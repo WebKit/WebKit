@@ -38,11 +38,11 @@ Object.defineProperty(String.prototype, "lineEndings",
     value()
     {
         let lineEndings = [];
-
-        let index = this.indexOf("\n");
-        while (index !== -1) {
-            lineEndings.push(index);
-            index = this.indexOf("\n", index + 1);
+        let pattern = /\r\n?|\n/g;
+        let match = pattern.exec(this);
+        while (match) {
+            lineEndings.push(match.index);
+            match = pattern.exec(this)
         }
 
         lineEndings.push(this.length);
