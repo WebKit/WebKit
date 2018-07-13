@@ -1,3 +1,11 @@
+2018-07-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed contributors.json update
+
+        Just run "validate-committer-lists -c" to canonicalize the style.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-07-12  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of WebCore::URL

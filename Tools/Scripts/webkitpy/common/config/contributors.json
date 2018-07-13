@@ -5909,15 +5909,6 @@
       ],
       "status" : "committer"
    },
-   "Yousuke Kimoto" : {
-      "emails" : [
-         "yousuke.kimoto@sony.com"
-      ],
-      "nicks" : [
-         "ykimoto"
-      ],
-      "status" : "committer"
-   },
    "Youenn Fablet" : {
       "emails" : [
          "youennf@gmail.com",
@@ -5928,6 +5919,15 @@
          "youenn"
       ],
       "status" : "reviewer"
+   },
+   "Yousuke Kimoto" : {
+      "emails" : [
+         "yousuke.kimoto@sony.com"
+      ],
+      "nicks" : [
+         "ykimoto"
+      ],
+      "status" : "committer"
    },
    "Yuqiang Xian" : {
       "emails" : [
