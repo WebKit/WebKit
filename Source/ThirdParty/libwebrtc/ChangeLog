@@ -1,3 +1,10 @@
+2018-07-13  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r222476): Add missing semi-colons to EXPORTED_SYMBOLS_FILE variables
+
+        * Configurations/libwebrtc.xcconfig:
+        (EXPORTED_SYMBOLS_FILE): Add missing semi-colons.
+
 2018-07-06  Youenn Fablet  <youenn@apple.com>
 
         libWebRTC GetThreadCpuTimeNanos() leaks mach_ports

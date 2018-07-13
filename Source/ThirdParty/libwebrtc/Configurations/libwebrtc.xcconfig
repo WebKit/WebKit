@@ -2,9 +2,9 @@
 
 PRODUCT_NAME = libwebrtc;
 
-EXPORTED_SYMBOLS_FILE[sdk=macosx*] = Configurations/libwebrtc.mac.exp
-EXPORTED_SYMBOLS_FILE[sdk=iphoneos*] = Configurations/libwebrtc.iOS.exp
-EXPORTED_SYMBOLS_FILE[sdk=iphonesimulator*] = Configurations/libwebrtc.iOSsim.exp
+EXPORTED_SYMBOLS_FILE[sdk=macosx*] = Configurations/libwebrtc.mac.exp;
+EXPORTED_SYMBOLS_FILE[sdk=iphoneos*] = Configurations/libwebrtc.iOS.exp;
+EXPORTED_SYMBOLS_FILE[sdk=iphonesimulator*] = Configurations/libwebrtc.iOSsim.exp;
 
 INSTALL_PATH = $(NORMAL_WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks;
 INSTALL_PATH[sdk=macosx*] = $(INSTALL_PATH_USE_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
