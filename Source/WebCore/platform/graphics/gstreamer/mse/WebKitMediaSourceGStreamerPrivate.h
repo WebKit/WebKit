@@ -23,6 +23,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
 #include "AudioTrackPrivateGStreamer.h"
+#include "GUniquePtrGStreamer.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
@@ -121,6 +122,8 @@ struct _WebKitMediaSrcPrivate {
 
     GRefPtr<GstBus> bus;
     WebCore::MediaPlayerPrivateGStreamerMSE* mediaPlayerPrivate;
+
+    GUniquePtr<GstFlowCombiner> flowCombiner;
 };
 
 extern guint webKitMediaSrcSignals[LAST_SIGNAL];

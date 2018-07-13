@@ -48,7 +48,6 @@
 #include <gst/video/video.h>
 #include <wtf/Condition.h>
 #include <wtf/MainThread.h>
-#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_src_debug);
@@ -249,6 +248,13 @@ static void webkit_media_src_class_init(WebKitMediaSrcClass* klass)
     g_type_class_add_private(klass, sizeof(WebKitMediaSrcPrivate));
 }
 
+static GstFlowReturn webkitMediaSrcChain(GstPad* pad, GstObject* parent, GstBuffer* buffer)
+{
+    GRefPtr<WebKitMediaSrc> self = adoptGRef(WEBKIT_MEDIA_SRC(gst_object_get_parent(parent)));
+
+    return gst_flow_combiner_update_pad_flow(self->priv->flowCombiner.get(), pad, gst_proxy_pad_chain_default(pad, GST_OBJECT(self.get()), buffer));
+}
+
 static void webkit_media_src_init(WebKitMediaSrc* source)
 {
     source->priv = WEBKIT_MEDIA_SRC_GET_PRIVATE(source);
@@ -257,6 +263,7 @@ static void webkit_media_src_init(WebKitMediaSrc* source)
     source->priv->appsrcSeekDataCount = 0;
     source->priv->appsrcNeedDataCount = 0;
     source->priv->appsrcSeekDataNextAction = Nothing;
+    source->priv->flowCombiner = GUniquePtr<GstFlowCombiner>(gst_flow_combiner_new());
 
     // No need to reset Stream.appsrcNeedDataFlag because there are no Streams at this point yet.
 }
@@ -474,6 +481,9 @@ void webKitMediaSrcLinkStreamToSrcPad(GstPad* sourcePad, Stream* stream)
     GUniquePtr<gchar> padName(g_strdup_printf("src_%u", padId));
     GstPad* ghostpad = WebCore::webkitGstGhostPadFromStaticTemplate(&srcTemplate, padName.get(), sourcePad);
 
+    auto proxypad = adoptGRef(GST_PAD(gst_proxy_pad_get_internal(GST_PROXY_PAD(ghostpad))));
+    gst_flow_combiner_add_pad(stream->parent->priv->flowCombiner.get(), proxypad.get());
+    gst_pad_set_chain_function(proxypad.get(), static_cast<GstPadChainFunction>(webkitMediaSrcChain));
     gst_pad_set_query_function(ghostpad, webKitMediaSrcQueryWithParent);
 
     gst_pad_set_active(ghostpad, TRUE);

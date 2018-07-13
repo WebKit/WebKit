@@ -1,3 +1,23 @@
+2018-07-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][MSE] Add GstFlowCombiner to handle non-linked inactive branches
+        https://bugs.webkit.org/show_bug.cgi?id=187636
+
+        Reviewed by Carlos Garcia Campos.
+
+        When we have more than one source buffer, only one will be
+        rendered and the inactive branch will report linking errors that
+        we have to deal with.
+
+        * platform/graphics/gstreamer/GUniquePtrGStreamer.h: Added GstFlowCombiner.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webkitMediaSrcChain): Combine the flow in the flow combiner.
+        (webkit_media_src_init): Initialize the flow combiner.
+        (webKitMediaSrcLinkStreamToSrcPad): Add the proxypad to the
+        combiner and set the chain function.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h:
+        Declare the flow combiner.
+
 2018-07-13  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Add GstBufferMapped abstraction
