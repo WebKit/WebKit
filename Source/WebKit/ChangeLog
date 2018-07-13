@@ -1,3 +1,17 @@
+2018-07-13  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r231676): watchOS WebKit usually doesn't load in the background
+        https://bugs.webkit.org/show_bug.cgi?id=187663
+        <rdar://problem/42181185>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidEnterBackground):
+        "Screen lock" is very aggressive on watchOS; we want to do our usual
+        30 seconds of loading in the background when you drop your wrist,
+        so disable this power optimization on that platform.
+
 2018-07-13  Chris Dumez  <cdumez@apple.com>
 
         WebResourceLoader may try to send a IPC with a destination ID that is 0
