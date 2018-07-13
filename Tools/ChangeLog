@@ -1,5 +1,16 @@
 2018-07-13  Chris Dumez  <cdumez@apple.com>
 
+        Add a FrameLoaderClient willInjectUserScriptForFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=187565
+        <rdar://problem/42095701>
+
+        Unreviewed WKTR fix after r233782.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
+2018-07-13  Chris Dumez  <cdumez@apple.com>
+
         Reduce size of WebCore::URL
         https://bugs.webkit.org/show_bug.cgi?id=186820
         <rdar://problem/42087508>

@@ -1419,6 +1419,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKStringRef script = static_cast<WKStringRef>(messageBody);
 
         TestController::singleton().injectUserScript(script);
+        return nullptr;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "GetApplicationManifest")) {
