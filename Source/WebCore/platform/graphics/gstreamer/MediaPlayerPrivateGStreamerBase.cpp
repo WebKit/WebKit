@@ -403,21 +403,20 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
             GstBuffer* data = nullptr;
             gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
 
-            GstMapInfo mapInfo;
-            if (!gst_buffer_map(data, &mapInfo, GST_MAP_READ)) {
+            GstMappedBuffer dataMapped(data, GST_MAP_READ);
+            if (!dataMapped) {
                 GST_WARNING("cannot map %s protection data", eventKeySystemId);
                 break;
             }
-            GST_TRACE("appending init data for %s of size %" G_GSIZE_FORMAT, eventKeySystemId, mapInfo.size);
-            GST_MEMDUMP("init data", reinterpret_cast<const unsigned char*>(mapInfo.data), mapInfo.size);
-            concatenatedInitDataChunks.append(mapInfo.data, mapInfo.size);
+            GST_TRACE("appending init data for %s of size %" G_GSIZE_FORMAT, eventKeySystemId, dataMapped.size());
+            GST_MEMDUMP("init data", reinterpret_cast<const unsigned char*>(dataMapped.data()), dataMapped.size());
+            concatenatedInitDataChunks.append(dataMapped.data(), dataMapped.size());
             ++concatenatedInitDataChunksNumber;
             eventKeySystemIdString = eventKeySystemId;
             if (streamEncryptionInformation.second.contains(eventKeySystemId)) {
                 GST_TRACE("considering init data handled for %s", eventKeySystemId);
                 m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
             }
-            gst_buffer_unmap(data, &mapInfo);
         }
 
         if (!concatenatedInitDataChunksNumber)
@@ -1230,16 +1229,15 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(GstEvent* ev
         return;
     }
 
-    GstMapInfo mapInfo;
-    if (!gst_buffer_map(data, &mapInfo, GST_MAP_READ)) {
+    GstMappedBuffer dataMapped(data, GST_MAP_READ);
+    if (!dataMapped) {
         GST_WARNING("cannot map %s protection data", eventKeySystemUUID);
         return;
     }
 
-    GST_TRACE("init data encountered for %s of size %" G_GSIZE_FORMAT, eventKeySystemUUID, mapInfo.size);
-    GST_MEMDUMP("init data", reinterpret_cast<const uint8_t*>(mapInfo.data), mapInfo.size);
-    InitData initData(reinterpret_cast<const uint8_t*>(mapInfo.data), mapInfo.size);
-    gst_buffer_unmap(data, &mapInfo);
+    GST_TRACE("init data encountered for %s of size %" G_GSIZE_FORMAT, eventKeySystemUUID, dataMapped.size());
+    GST_MEMDUMP("init data", reinterpret_cast<const uint8_t*>(dataMapped.data()), dataMapped.size());
+    InitData initData(reinterpret_cast<const uint8_t*>(dataMapped.data()), dataMapped.size());
 
     String eventKeySystemUUIDString = eventKeySystemUUID;
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), eventKeySystemUUID = eventKeySystemUUIDString, initData] {

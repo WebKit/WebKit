@@ -1,3 +1,36 @@
+2018-07-13  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Add GstBufferMapped abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=187600
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        There is a similar abstraction called `mapGstBuffer` and friends,
+        which have a slightly different use-case: wanting a buffer that is
+        mapped for a longer lifetime without have to keep track of the map
+        infos separately. They could be subsumed by this abstraction, but
+        everytime they need to write to the buffer, they'd have to remap
+        the memory blocks.
+
+        This abstraction is more for one-short reads and writes saving the user
+        from remembering to unmap the buffer and having to manage to
+        auxiliary GstMapInfo structures.
+
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (WebCore::GstMappedBuffer::GstMappedBuffer):
+        (WebCore::GstMappedBuffer::~GstMappedBuffer):
+        (WebCore::GstMappedBuffer::data):
+        (WebCore::GstMappedBuffer::size const):
+        (WebCore::GstMappedBuffer::operator bool const):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfSample):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorSetupCipher):
+        (webKitMediaClearKeyDecryptorDecrypt):
+
 2018-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make it easier to hit the significant rendered text layout milestone on pages with main article elements

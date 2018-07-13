@@ -81,6 +81,35 @@ inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
     return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
 }
 
+class GstMappedBuffer {
+    WTF_MAKE_NONCOPYABLE(GstMappedBuffer);
+public:
+    GstMappedBuffer(GstBuffer* buffer, GstMapFlags flags)
+        : m_buffer(buffer)
+    {
+        m_isValid = gst_buffer_map(m_buffer, &m_info, flags);
+    }
+    // Unfortunately, GST_MAP_READWRITE is defined out of line from the MapFlags
+    // enum as an int, and C++ is careful to not implicity convert it to an enum.
+    GstMappedBuffer(GstBuffer* buffer, int flags)
+        : GstMappedBuffer(buffer, static_cast<GstMapFlags>(flags)) { }
+
+    ~GstMappedBuffer()
+    {
+        if (m_isValid)
+            gst_buffer_unmap(m_buffer, &m_info);
+    }
+
+    uint8_t* data() { ASSERT(m_isValid); return static_cast<uint8_t*>(m_info.data); }
+    size_t size() const { ASSERT(m_isValid); return static_cast<size_t>(m_info.size); }
+
+    explicit operator bool() const { return m_isValid; }
+private:
+    GstBuffer* m_buffer;
+    GstMapInfo m_info;
+    bool m_isValid { false };
+};
+
 bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* capsString);
 void connectSimpleBusMessageCallback(GstElement *pipeline);
 void disconnectSimpleBusMessageCallback(GstElement *pipeline);
