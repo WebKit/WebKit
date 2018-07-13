@@ -178,9 +178,8 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection&)
     // Protect ourself as we might be otherwise be deleted during this function.
     Ref<NetworkConnectionToWebProcess> protector(*this);
 
-    for (auto& loader : copyToVector(m_networkResourceLoaders.values()))
-        loader->abort();
-    ASSERT(m_networkResourceLoaders.isEmpty());
+    while (!m_networkResourceLoaders.isEmpty())
+        m_networkResourceLoaders.begin()->value->abort();
 
     // All trackers of resources that were in the middle of being loaded were
     // stopped with the abort() calls above, but we still need to sweep up the
@@ -245,7 +244,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
     ASSERT(!m_networkResourceLoaders.contains(identifier));
 
     auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this);
-    m_networkResourceLoaders.add(identifier, loader.ptr());
+    m_networkResourceLoaders.add(identifier, loader.copyRef());
     loader->start();
 }
 
@@ -257,7 +256,7 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadPa
     ASSERT(!m_networkResourceLoaders.contains(identifier));
 
     auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this, WTFMove(reply));
-    m_networkResourceLoaders.add(identifier, loader.ptr());
+    m_networkResourceLoaders.add(identifier, loader.copyRef());
     loader->start();
 }
 

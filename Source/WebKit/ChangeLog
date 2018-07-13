@@ -1,3 +1,19 @@
+2018-07-13  Chris Dumez  <cdumez@apple.com>
+
+        NetworkConnectionToWebProcess::m_networkResourceLoaders should use Ref<> for its values
+        https://bugs.webkit.org/show_bug.cgi?id=187629
+
+        Reviewed by Youenn Fablet.
+
+        NetworkConnectionToWebProcess::m_networkResourceLoaders should use Ref<> for its values
+        since they cannot be null.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+
 2018-07-12  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of WebCore::URL
