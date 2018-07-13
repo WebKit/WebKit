@@ -1,3 +1,13 @@
+2018-07-12  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce size of WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=186820
+
+        Reviewed by Yusuke Suzuki and Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2018-07-12  Brady Eidson  <beidson@apple.com>
 
         Make process-swap-on-navigation an experimental feature.

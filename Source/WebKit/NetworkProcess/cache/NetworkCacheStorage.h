@@ -108,7 +108,7 @@ public:
     size_t approximateSize() const;
 
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
-    static const unsigned version = 12;
+    static const unsigned version = 13;
 #if PLATFORM(MAC)
     /// Allow the last stable version of the cache to co-exist with the latest development one.
     static const unsigned lastStableVersion = 12;

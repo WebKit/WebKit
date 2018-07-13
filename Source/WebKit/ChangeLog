@@ -1,3 +1,13 @@
+2018-07-12  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce size of WebCore::URL
+        https://bugs.webkit.org/show_bug.cgi?id=186820
+
+        Reviewed by Yusuke Suzuki and Youenn Fablet.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        Increment cache version because of URL encoding change.
+
 2018-07-12  Chris Dumez  <cdumez@apple.com>
 
         [Cocoa] Make sure NetworkProcess::createNetworkConnectionToWebProcess() returns a valid mach port

@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static const uint64_t schemaVersion = 2;
+static const uint64_t schemaVersion = 3;
 
 static const String recordsTableSchema(const String& tableName)
 {
