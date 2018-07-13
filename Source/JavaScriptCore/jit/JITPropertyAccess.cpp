@@ -218,7 +218,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     PatchableJump badType;
     JumpList slowCases;
 
-    // TODO: Maybe we should do this inline?
+    // FIXME: Maybe we should do this inline?
     addSlowCase(branchTest32(NonZero, regT2, TrustedImm32(CopyOnWrite)));
     and32(TrustedImm32(IndexingShapeMask), regT2);
 

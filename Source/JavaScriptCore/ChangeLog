@@ -1,3 +1,24 @@
+2018-07-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [32bit JSC tests]  stress/cow-convert-double-to-contiguous.js and stress/cow-convert-int32-to-contiguous.js are failing
+        https://bugs.webkit.org/show_bug.cgi?id=187561
+
+        Reviewed by Darin Adler.
+
+        This patch fixes the issue that CoW array handling is not introduced in 32bit put_by_val code.
+        We clean up 32bit put_by_val code.
+
+        1. We remove inline out-of-bounds recording code since it is done in C operation code. This change
+        aligns 32bit implementation to 64bit implementation.
+
+        2. We add CoW array checking, which is done in 64bit implementation.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+
 2018-07-12  Mark Lam  <mark.lam@apple.com>
 
         Need to handle CodeBlock::replacement() being null.

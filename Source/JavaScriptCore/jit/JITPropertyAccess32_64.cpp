@@ -262,10 +262,13 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     PatchableJump notIndex = patchableBranch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag));
     addSlowCase(notIndex);
     emitArrayProfilingSiteWithCell(regT0, regT1, profile);
-    and32(TrustedImm32(IndexingShapeMask), regT1);
     
     PatchableJump badType;
     JumpList slowCases;
+
+    // FIXME: Maybe we should do this inline?
+    addSlowCase(branchTest32(NonZero, regT1, TrustedImm32(CopyOnWrite)));
+    and32(TrustedImm32(IndexingShapeMask), regT1);
     
     JITArrayMode mode = chooseArrayMode(profile);
     switch (mode) {
@@ -431,28 +434,9 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
     int value = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
     
-    linkSlowCaseIfNotJSCell(iter, base); // base cell check
-    linkSlowCase(iter); // property int32 check
-    linkSlowCase(iter); // base not array check
-    
-    JITArrayMode mode = chooseArrayMode(profile);
-    switch (mode) {
-    case JITInt32:
-    case JITDouble:
-        linkSlowCase(iter); // value type check
-        break;
-    default:
-        break;
-    }
-    
-    Jump skipProfiling = jump();
-    linkSlowCase(iter); // out of bounds
-    emitArrayProfileOutOfBoundsSpecialCase(profile);
-    skipProfiling.link(this);
-
+    linkAllSlowCases(iter);
     Label slowPath = label();
     
     bool isDirect = Interpreter::getOpcodeID(currentInstruction->u.opcode) == op_put_by_val_direct;
