@@ -1,3 +1,14 @@
+2018-07-13  Youenn Fablet  <youenn@apple.com>
+
+        Support connecting a MediaStreamAudioDestinationNode to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=187627
+        <rdar://problem/35334400>
+
+        Reviewed by Jer Noble.
+
+        * webrtc/peer-connection-createMediaStreamDestination-expected.txt: Added.
+        * webrtc/peer-connection-createMediaStreamDestination.html: Added.
+
 2018-07-13  Truitt Savell  <tsavell@apple.com>
 
         [ MacOS WK1 ] Layout Tests in media/media-fragments/ are flaky

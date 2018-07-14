@@ -65,6 +65,7 @@ public:
         virtual void didRemoveTrack(MediaStreamTrackPrivate&) { }
     };
 
+    static Ref<MediaStreamPrivate> create(Ref<RealtimeMediaSource>&&);
     static Ref<MediaStreamPrivate> create(const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources);
     static Ref<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector& tracks, String&& id = createCanonicalUUIDString()) { return adoptRef(*new MediaStreamPrivate(tracks, WTFMove(id))); }
 

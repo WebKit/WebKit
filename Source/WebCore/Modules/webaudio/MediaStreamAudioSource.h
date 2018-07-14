@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioDestinationConsumer.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
@@ -40,7 +39,7 @@ class RealtimeMediaSourceCapabilities;
 
 class MediaStreamAudioSource final : public RealtimeMediaSource {
 public:
-    static Ref<MediaStreamAudioSource> create();
+    static Ref<MediaStreamAudioSource> create(float sampleRate) { return adoptRef(*new MediaStreamAudioSource { sampleRate }); }
 
     ~MediaStreamAudioSource() = default;
 
@@ -50,22 +49,16 @@ public:
     const String& deviceId() const { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
 
-    void setAudioFormat(size_t numberOfChannels, float sampleRate);
-    void consumeAudio(AudioBus*, size_t numberOfFrames);
-
-    void addAudioConsumer(AudioDestinationConsumer*);
-    bool removeAudioConsumer(AudioDestinationConsumer*);
-    const Vector<RefPtr<AudioDestinationConsumer>>& audioConsumers() const { return m_audioConsumers; }
+    void consumeAudio(AudioBus&, size_t numberOfFrames);
 
 private:
-    MediaStreamAudioSource();
+    explicit MediaStreamAudioSource(float sampleRate);
 
-    bool isCaptureSource() const final { return true; }
+    bool isCaptureSource() const final { return false; }
 
     String m_deviceId;
-    Lock m_audioConsumersLock;
-    Vector<RefPtr<AudioDestinationConsumer>> m_audioConsumers;
     RealtimeMediaSourceSettings m_currentSettings;
+    size_t m_numberOfFrames { 0 };
 };
 
 } // namespace WebCore

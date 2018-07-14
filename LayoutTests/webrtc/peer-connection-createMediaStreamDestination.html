@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing createMediaStreamDestination piped to peer connection</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src ="routines.js"></script>
+    <script>
+    const noiseContext = new webkitAudioContext();
+    const oscillator = noiseContext.createOscillator();
+    const audioStreamDestination = noiseContext.createMediaStreamDestination();
+    const audioStream = audioStreamDestination.stream;
+    oscillator.connect(audioStreamDestination);
+    oscillator.start();
+    const audioTrack = audioStream.getAudioTracks()[0];
+
+    var context = new webkitAudioContext();
+    var remoteStream;
+
+    async function checkForHumBipBop(stream, previousResults, counter)
+    {
+        if (!previousResults)
+            previousResults = { heardHum : false, heardBip : false, heardBop : false };
+        if (!counter)
+            counter = 1;
+        if (++counter > 20)
+            return Promise.resolve(false);
+
+        results = await analyseAudio(stream, 500, context);
+        previousResults.heardHum |= results.heardHum;
+        previousResults.heardBip |= results.heardBip;
+        previousResults.heardBop |= results.heardBop;
+        if (previousResults.heardHum || previousResults.heardBip || previousResults.heardBop)
+            return Promise.resolve(true);
+
+        return await checkForHumBipBop(stream, previousResults, counter);
+    }
+
+    promise_test(async (test) => {
+        const stream = await new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                firstConnection.addTrack(audioTrack, audioStream);
+            }, (secondConnection) => {
+                secondConnection.ontrack = (event) => { resolve(event.streams[0]); };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+        const results = await checkForHumBipBop(stream);
+        await  context.close();
+        await  noiseContext.close();
+        assert_true(results, "heard hum bip bop");
+    }, "Web audio generated content through a peer connection");
+    </script>
+</head>
+<body>
+</body>
+</html>

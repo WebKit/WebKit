@@ -1,3 +1,37 @@
+2018-07-13  Youenn Fablet  <youenn@apple.com>
+
+        Support connecting a MediaStreamAudioDestinationNode to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=187627
+        <rdar://problem/35334400>
+
+        Reviewed by Jer Noble.
+
+        When MediaStreamAudioSource is called to read new audio samples,
+        convert these samples to a WebAudioBufferList and call RealtimeMediaSource::audioSamplesAvailable.
+        This makes its observers to get the audio data.
+
+        Test: webrtc/peer-connection-createMediaStreamDestination.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create): Minor refactoring.
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::createMediaStream):
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        (WebCore::MediaStreamAudioDestinationNode::process):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        (WebCore::MediaStreamAudioSource::MediaStreamAudioSource):
+        (WebCore::MediaStreamAudioSource::consumeAudio):
+        * Modules/webaudio/MediaStreamAudioSource.h:
+        * Modules/webaudio/MediaStreamAudioSourceCocoa.cpp: Added.
+        (WebCore::streamDescription):
+        (WebCore::MediaStreamAudioSource::consumeAudio):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/AudioDestinationConsumer.h: Removed.
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::create):
+        * platform/mediastream/MediaStreamPrivate.h:
+
 2018-07-13  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] Enable WebGL when Accelerated Compositing is disabled

@@ -44,6 +44,11 @@
 
 namespace WebCore {
 
+Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<RealtimeMediaSource>&& source)
+{
+    return MediaStreamPrivate::create(MediaStreamTrackPrivateVector::from(MediaStreamTrackPrivate::create(WTFMove(source))));
+}
+
 Ref<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources)
 {
     MediaStreamTrackPrivateVector tracks;
