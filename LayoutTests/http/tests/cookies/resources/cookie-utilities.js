@@ -228,3 +228,12 @@ function shouldHaveDOMCookieWithValue(name, expectedValue)
     else
         testFailed(`DOM cookie "${name}" should have value ${expectedValue}. Was ${value}.`);
 }
+
+function setCookieUsingWebSocketFromHost(host)
+{
+    var promise = new Promise(resolve => {
+        var websocket = new WebSocket(`ws://${host}:8880/websocket/tests/hybi/cookie?set`);
+        websocket.onclose = () => resolve();
+    });
+    return promise;
+}

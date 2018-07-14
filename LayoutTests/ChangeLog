@@ -1,3 +1,27 @@
+2018-07-13  John Wilander  <wilander@apple.com>
+
+        Flesh out WebSocket cookie tests to cover cookie policy for third-party resources
+        https://bugs.webkit.org/show_bug.cgi?id=187541
+        <rdar://problem/42048729>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/cookies/resources/cookie-utilities.js:
+            Added a function for setting a cookie in a WebSocket handshake.
+        * http/tests/websocket/tests/hybi/cookie_wsh.py:
+        (web_socket_do_extra_handshake):
+            Now sets the root path for new cookies so that they can be seen by
+            for example cookies/resources/echo-cookies.php.
+        * http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html: Added.
+        * http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html: Added.
+        * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior-expected.txt:
+        * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html:
+            Now tests under the condition where localhost as third-party is
+            allowed to set a new cookie as third party. It also makes sure to use
+            cookies with the path set to the root so that all cookies are visible.
+
 2018-07-13  Youenn Fablet  <youenn@apple.com>
 
         Support connecting a MediaStreamAudioDestinationNode to RTCPeerConnection

@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../../js-test-resources/js-test.js"></script>
+<script src="../../../cookies/resources/cookie-utilities.js"></script>
 <script>
 window.jsTestIsAsync = true;
 
@@ -9,16 +10,7 @@ var cookieValue;
 
 function clearCookie()
 {
-    document.cookie = "foo=0; Max-Age=0"; // The key "foo" must match the key used in the WebSocket Set-Cookie header.
-}
-
-function setCookieFromHost(host)
-{
-    var promise = new Promise(resolve => {
-        var websocket = new WebSocket(`ws://${host}:8880/websocket/tests/hybi/cookie?set`);
-        websocket.onclose = () => resolve();
-    });
-    return promise;
+    document.cookie = "foo=0; Max-Age=0; path=/"; // The key "foo" must match the key used in the WebSocket Set-Cookie header.
 }
 
 function echoCookie()
@@ -29,8 +21,8 @@ function echoCookie()
 async function testSameOriginCookie()
 {
     clearCookie();
-    document.cookie = "foo=should_be_overwritten_by_websocket_set_cookie";
-    await setCookieFromHost("127.0.0.1");
+    document.cookie = "foo=should_be_overwritten_by_websocket_set_cookie; path=/";
+    await setCookieUsingWebSocketFromHost("127.0.0.1");
     cookieValue = echoCookie();
     shouldBeEqualToString("cookieValue", "foo=bar");
 }
@@ -38,18 +30,38 @@ async function testSameOriginCookie()
 async function testCrossOriginCookie()
 {
     clearCookie();
-    await setCookieFromHost("localhost");
+    await setCookieUsingWebSocketFromHost("localhost");
     cookieValue = echoCookie();
     shouldBeEmptyString("cookieValue");
 }
 
 async function runTests()
 {
-    debug("Same origin WebSocket:");
-    await testSameOriginCookie();
-    debug("<br>Cross origin WebSocket:");
-    await testCrossOriginCookie();
-    finishJSTest();
+    switch (document.location.hash) {
+        case "":
+            await testSameOriginCookie();
+            // Test that a third-party without pre-existing cookies does not write first-party cookies.
+            await testCrossOriginCookie();
+            // Navigate to localhost to set first-party cookie 'setAsFirstParty'.
+            document.location.href = "http://localhost:8000/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html#setCookieAsFirstParty";
+            break;
+        case "#setCookieAsFirstParty":
+            await setCookie("setAsFirstParty", "value");
+            // Navigate back to 127.0.0.1 to test third-party cookie.
+            document.location.href = "http://127.0.0.1:8000/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html#didSetCookieAsFirstParty";
+            break;
+        case "#didSetCookieAsFirstParty":
+            testRunner.dumpChildFramesAsText();
+            // Test that a third-party with a pre-existing cookie does not write first-party cookies.
+            debug("Setting third-party cookie 'foo' through cross-origin WebSocket handshake and checking that it doesn't write first-party cookies.");
+            await testCrossOriginCookie();
+            let iframeElement = document.createElement("iframe");
+            iframeElement.src = "http://localhost:8000/cookies/resources/echo-cookies.php";
+            iframeElement.onload = finishJSTest;
+            debug("<br>Opening localhost third-party iframe to check its cookies.");
+            document.body.appendChild(iframeElement);
+            break;
+    }
 }
 </script>
 </head>

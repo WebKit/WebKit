@@ -1,4 +1,5 @@
 # Copyright (C) 2014 Google Inc. All rights reserved.
+# Copyright (C) 2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -38,12 +39,13 @@ def web_socket_do_extra_handshake(request):
     command = components[4]
 
     ONE_DAY_LIFE = 'Max-Age=86400'
+    ROOT_PATH = 'path=/'
 
     if command == 'set':
-        _add_set_cookie(request, '; '.join(['foo=bar', ONE_DAY_LIFE]))
+        _add_set_cookie(request, '; '.join(['foo=bar', ONE_DAY_LIFE, ROOT_PATH]))
     elif command == 'set_httponly':
         _add_set_cookie(request,
-            '; '.join(['httpOnlyFoo=bar', ONE_DAY_LIFE, 'httpOnly']))
+            '; '.join(['httpOnlyFoo=bar', ONE_DAY_LIFE, ROOT_PATH, 'httpOnly']))
     elif command == 'clear':
         _add_set_cookie(request, 'foo=0; Max-Age=0')
         _add_set_cookie(request, 'httpOnlyFoo=0; Max-Age=0')
