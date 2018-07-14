@@ -93,11 +93,13 @@ RetainPtr<NSDictionary> Editor::fontAttributesForSelectionStart() const
 
     // FIXME: Why would we not want to retrieve these attributes on iOS?
 #if PLATFORM(MAC)
-    if (style->visitedDependentColor(CSSPropertyBackgroundColor).isVisible())
-        [attributes setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
+    Color backgroundColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (backgroundColor.isVisible())
+        [attributes setObject:nsColor(backgroundColor) forKey:NSBackgroundColorAttributeName];
 
-    if (style->visitedDependentColor(CSSPropertyColor).isValid() && !Color::isBlackColor(style->visitedDependentColor(CSSPropertyColor)))
-        [attributes setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
+    Color foregroundColor = style->visitedDependentColor(CSSPropertyColor);
+    if (foregroundColor.isValid() && !Color::isBlackColor(foregroundColor))
+        [attributes setObject:nsColor(foregroundColor) forKey:NSForegroundColorAttributeName];
 
     const ShadowData* shadowData = style->textShadow();
     if (shadowData) {

@@ -1,3 +1,21 @@
+2018-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid fetching visitedDependentColor() so many times in editing code
+        https://bugs.webkit.org/show_bug.cgi?id=187676
+
+        Reviewed by Zalan Bujtas.
+        
+        editingAttributedStringFromRange called style.visitedDependentColor() twice for each property,
+        and fontAttributesForSelectionStart() called it two or three times. Use a local Color variable
+        to avoid so many calls. Also replace a call to alpha() with isVisible() which makes the usage more clear.
+
+        No behavior change.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart const):
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedStringFromRange):
+
 2018-07-13  Youenn Fablet  <youenn@apple.com>
 
         Support connecting a MediaStreamAudioDestinationNode to RTCPeerConnection

@@ -2513,12 +2513,16 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
             [attrs.get() setObject:toNSFont(font) forKey:NSFontAttributeName];
         else
             [attrs.get() setObject:[fontManager convertFont:WebDefaultFont() toSize:style.fontCascade().primaryFont().platformData().size()] forKey:NSFontAttributeName];
-        if (style.visitedDependentColor(CSSPropertyColor).alpha())
-            [attrs.get() setObject:nsColor(style.visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
+
+        Color foregroundColor = style.visitedDependentColor(CSSPropertyColor);
+        if (foregroundColor.isVisible())
+            [attrs.get() setObject:nsColor(foregroundColor) forKey:NSForegroundColorAttributeName];
         else
             [attrs.get() removeObjectForKey:NSForegroundColorAttributeName];
-        if (style.visitedDependentColor(CSSPropertyBackgroundColor).alpha())
-            [attrs.get() setObject:nsColor(style.visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
+
+        Color backgroundColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
+        if (backgroundColor.isVisible())
+            [attrs.get() setObject:nsColor(backgroundColor) forKey:NSBackgroundColorAttributeName];
         else
             [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
 
