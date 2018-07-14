@@ -1,3 +1,34 @@
+2018-07-14  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Fully support -webkit-clip-path on SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=185829
+
+        Reviewed by Simon Fraser.
+
+        -webkit-clip-path contributes to SVG elements with boxes, shapes and now with
+        element references to <clipPath> elements as well. Make sure that all types
+        contribute to hit-testing of the SVG element as well as they should.
+
+        Tests: svg/clip-path/webkit-clip-path-after-expected.svg
+               svg/clip-path/webkit-clip-path-after.svg
+               svg/clip-path/webkit-clip-path-before-expected.svg
+               svg/clip-path/webkit-clip-path-before.svg
+               svg/dynamic-updates/SVGClipPath-prefixed-influences-hitTesting.html
+               svg/dynamic-updates/SVGClipPath-prefixed-path-influences-hitTesting.html
+               svg/dynamic-updates/SVGClipPathElement-prefixed-css-transform-influences-hitTesting.html
+               svg/dynamic-updates/SVGClipPathElement-prefixed-transform-influences-hitTesting.html
+
+        * rendering/svg/SVGRenderSupport.cpp: Share code as much as possible.
+        (WebCore::clipPathReferenceBox):
+        (WebCore::isPointInCSSClippingArea): Take -webkit-clip-path into account.
+        (WebCore::SVGRenderSupport::clipContextToCSSClippingArea):
+        (WebCore::SVGRenderSupport::pointInClippingArea):
+        * rendering/svg/SVGRenderSupport.h:
+        * rendering/svg/SVGRenderingContext.cpp: Clip to -webkit-clip-path boxes, shapes and references.
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * rendering/svg/SVGResources.cpp: Add -webkit-clip-path references to cached resources. Mimic SVG clip-path.
+        (WebCore::SVGResources::buildCachedResources):
+
 2018-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid fetching visitedDependentColor() so many times in editing code

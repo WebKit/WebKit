@@ -251,6 +251,10 @@ svg/dynamic-updates/SVGAElement-svgdom-href-prop.html
 svg/dynamic-updates/SVGAElement-svgdom-target-prop.html
 svg/dynamic-updates/SVGClipPath-influences-hitTesting.html
 svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html
+svg/dynamic-updates/SVGClipPathElement-prefixed-css-transform-influences-hitTesting.html
+svg/dynamic-updates/SVGClipPathElement-prefixed-transform-influences-hitTesting.html
+svg/dynamic-updates/SVGClipPath-prefixed-influences-hitTesting.html
+svg/dynamic-updates/SVGClipPath-prefixed-path-influences-hitTesting.html
 svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting.html
 svg/custom/linking-a-03-b-all.svg
 

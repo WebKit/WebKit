@@ -80,6 +80,8 @@ public:
     // Determines if any ancestor's transform has changed.
     static bool transformToRootChanged(RenderElement*);
 
+    static void clipContextToCSSClippingArea(GraphicsContext&, const RenderElement& renderer);
+
     // Helper functions to keep track of whether a renderer has an SVG shadow applied.
     static bool rendererHasSVGShadow(const RenderObject&);
     static void setRendererHasSVGShadow(RenderObject&, bool hasShadow);

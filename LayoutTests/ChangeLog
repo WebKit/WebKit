@@ -1,3 +1,26 @@
+2018-07-14  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Fully support -webkit-clip-path on SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=185829
+
+        Reviewed by Simon Fraser.
+
+        Test -webkit-clip-path element references on SVG elements. Make sure, -webkit-clip-path
+        contributes to hit testing for element references and basic shapes.
+
+        * svg/clip-path/webkit-clip-path-after-expected.svg: Added.
+        * svg/clip-path/webkit-clip-path-after.svg: Added.
+        * svg/clip-path/webkit-clip-path-before-expected.svg: Added.
+        * svg/clip-path/webkit-clip-path-before.svg: Added.
+        * svg/dynamic-updates/SVGClipPath-prefixed-influences-hitTesting-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPath-prefixed-influences-hitTesting.html: Added.
+        * svg/dynamic-updates/SVGClipPath-prefixed-path-influences-hitTesting-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPath-prefixed-path-influences-hitTesting.html: Added.
+        * svg/dynamic-updates/SVGClipPathElement-prefixed-css-transform-influences-hitTesting-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPathElement-prefixed-css-transform-influences-hitTesting.html: Added.
+        * svg/dynamic-updates/SVGClipPathElement-prefixed-transform-influences-hitTesting-expected.txt: Added.
+        * svg/dynamic-updates/SVGClipPathElement-prefixed-transform-influences-hitTesting.html: Added.
+
 2018-07-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add TestExpectations and baselines for iOS 12

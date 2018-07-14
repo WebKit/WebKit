@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<h1>SVG 1.1 dynamic update tests</h1>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+// [Name] SVGClipPathElement-svgdom-clipPathUnits-prop.js
+// [Expected rendering result] green circle - and a series of PASS messages
+
+description("Tests hitTesting on clipped Elements. Clipped areas shouldn't throw a hit.")
+createSVGTestCase();
+
+var backgroundRect = createSVGElement("rect");
+backgroundRect.setAttribute("width", "100");
+backgroundRect.setAttribute("height", "100");
+backgroundRect.setAttribute("fill", "green");
+backgroundRect.setAttribute("onclick", "testPassed('Hit thrown on not clipped area of rect.'); completeTest()");
+rootSVGElement.appendChild(backgroundRect);
+
+var foregroundRect = createSVGElement("rect");
+foregroundRect.setAttribute("width", "100");
+foregroundRect.setAttribute("height", "100");
+foregroundRect.setAttribute("fill", "green");
+foregroundRect.setAttribute("style", "-webkit-clip-path: path('M0,0L50,0L50,100L0,100z')");
+foregroundRect.setAttribute("onclick", "testFailed('Clipped are of rect throw a hit'); completeTest();");
+rootSVGElement.appendChild(foregroundRect);
+
+// Two rects are drawn. One in the background and one in the foreground. The rect
+// in the foreground gets clipped, so on hittesting, the background rect should
+// throw a hit.
+function repaintTest() {
+    clickAt(75, 50);
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

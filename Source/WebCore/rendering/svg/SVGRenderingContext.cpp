@@ -5,6 +5,7 @@
  * Copyright (C) 2009 Google, Inc.  All rights reserved.
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -134,23 +135,9 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     }
 
     ClipPathOperation* clipPathOperation = style.clipPath();
-    if (is<ShapeClipPathOperation>(clipPathOperation)) {
-        auto& clipPath = downcast<ShapeClipPathOperation>(*clipPathOperation);
-        FloatRect referenceBox;
-        if (clipPath.referenceBox() == CSSBoxType::StrokeBox || clipPath.referenceBox() == CSSBoxType::MarginBox
-            || clipPath.referenceBox() == CSSBoxType::BorderBox)
-        {
-            // FIXME: strokeBoundingBox() takes dasharray into account but shouldn't.
-            referenceBox = renderer.strokeBoundingBox();
-        } else if (clipPath.referenceBox() == CSSBoxType::ViewBox && renderer.element()) {
-            FloatSize viewportSize;
-            SVGLengthContext(downcast<SVGElement>(renderer.element())).determineViewport(viewportSize);
-            referenceBox.setWidth(viewportSize.width());
-            referenceBox.setHeight(viewportSize.height());
-        } else
-            referenceBox = renderer.objectBoundingBox();
-        m_paintInfo->context().clipPath(clipPath.pathForReferenceRect(referenceBox), clipPath.windRule());
-    }
+    bool hasCSSClipping = is<ShapeClipPathOperation>(clipPathOperation) || is<BoxClipPathOperation>(clipPathOperation);
+    if (hasCSSClipping)
+        SVGRenderSupport::clipContextToCSSClippingArea(m_paintInfo->context(), renderer);
 
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*m_renderer);
     if (!resources) {
@@ -172,7 +159,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     }
 
     RenderSVGResourceClipper* clipper = resources->clipper();
-    if (!clipPathOperation && clipper) {
+    if (!hasCSSClipping && clipper) {
         GraphicsContext* contextPtr = &m_paintInfo->context();
         bool result = clipper->applyResource(*m_renderer, style, contextPtr, RenderSVGResourceMode::ApplyToDefault);
         m_paintInfo->setContext(*contextPtr);
