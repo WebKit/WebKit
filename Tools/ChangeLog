@@ -1,3 +1,18 @@
+2018-07-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] run-api-tests is timing out for almost all test cases
+        https://bugs.webkit.org/show_bug.cgi?id=187547
+
+        Reviewed by Fujii Hironori.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._wait_for_data_and_update_buffers_using_win32_apis):
+        Still attempt to read from stdout/stderr even if the process has exited, as long as it's before the deadline.
+
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TestServerProcess.test_read_after_process_exits):
+        Add test case.
+
 2018-07-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add TestExpectations and baselines for iOS 12

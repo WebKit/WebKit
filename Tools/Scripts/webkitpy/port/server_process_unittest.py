@@ -127,6 +127,24 @@ class TestServerProcess(unittest.TestCase):
         proc.write('End\n')
         proc.stop(0)
 
+    def test_read_after_process_exits(self):
+        cmd = [sys.executable, '-c', 'import sys; print "stdout"; print >>sys.stderr, "stderr";']
+        host = SystemHost()
+        factory = PortFactory(host)
+        port = factory.get()
+        now = time.time()
+        proc = server_process.ServerProcess(port, 'python', cmd)
+        proc.write('')
+        time.sleep(0.1)  # Give process a moment to close.
+
+        line = proc.read_stdout_line(now + 1.0)
+        self.assertEqual(line.strip(), "stdout")
+
+        line = proc.read_stderr_line(now + 1.0)
+        self.assertEqual(line.strip(), "stderr")
+
+        proc.stop(0)
+
     def test_process_crashing(self):
         cmd = [sys.executable, '-c', 'import sys; print "stdout 1"; print "stdout 2"; print "stdout 3"; sys.stdout.flush(); sys.stdin.readline(); sys.exit(1);']
         host = SystemHost()
