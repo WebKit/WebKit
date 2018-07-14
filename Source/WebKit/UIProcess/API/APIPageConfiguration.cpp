@@ -73,8 +73,10 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
 #endif
     copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;
-    copy->m_cpuLimit = this->m_cpuLimit;
+    copy->m_waitsForPaintAfterViewDidMoveToWindow = this->m_waitsForPaintAfterViewDidMoveToWindow;
+    copy->m_drawsBackground = this->m_drawsBackground;
     copy->m_controlledByAutomation = this->m_controlledByAutomation;
+    copy->m_cpuLimit = this->m_cpuLimit;
     copy->m_overrideContentSecurityPolicy = this->m_overrideContentSecurityPolicy;
 #if ENABLE(APPLICATION_MANIFEST)
     copy->m_applicationManifest = this->m_applicationManifest;

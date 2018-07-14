@@ -1,3 +1,14 @@
+2018-07-13  Timothy Hatcher  <timothy@apple.com>
+
+        Add _drawsBackground to WKWebViewConfiguration.
+        https://bugs.webkit.org/show_bug.cgi?id=187665
+        rdar://problem/42182268
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Configuration.mm:
+        (TestWebKitAPI.WebKit.ConfigurationDrawsBackground): Added.
+
 2018-07-13  Chris Dumez  <cdumez@apple.com>
 
         Add a FrameLoaderClient willInjectUserScriptForFrame callback

@@ -164,6 +164,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback;
     BOOL _colorFilterEnabled;
     BOOL _incompleteImageBorderEnabled;
+    BOOL _drawsBackground;
 
     RetainPtr<NSString> _overrideContentSecurityPolicy;
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
@@ -249,6 +250,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     _colorFilterEnabled = NO;
     _incompleteImageBorderEnabled = NO;
+    _drawsBackground = YES;
 
     return self;
 }
@@ -263,8 +265,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     return YES;
 }
 
-// FIXME: Encode the process pool, user content controller and website data store.
-
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [coder encodeObject:self.processPool forKey:@"processPool"];
@@ -275,6 +275,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
     [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
     [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];
+
+    [coder encodeBool:self._drawsBackground forKey:@"drawsBackground"];
 
 #if PLATFORM(IOS)
     [coder encodeInteger:self.dataDetectorTypes forKey:@"dataDetectorTypes"];
@@ -306,6 +308,9 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
     self.applicationNameForUserAgent = decodeObjectOfClassForKeyFromCoder([NSString class], @"applicationNameForUserAgent", coder);
     self.allowsAirPlayForMediaPlayback = [coder decodeBoolForKey:@"allowsAirPlayForMediaPlayback"];
+
+    if ([coder containsValueForKey:@"drawsBackground"])
+        self._drawsBackground = [coder decodeBoolForKey:@"drawsBackground"];
 
 #if PLATFORM(IOS)
     self.dataDetectorTypes = [coder decodeIntegerForKey:@"dataDetectorTypes"];
@@ -409,6 +414,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_groupIdentifier = adoptNS([self->_groupIdentifier copyWithZone:zone]);
     configuration->_colorFilterEnabled = self->_colorFilterEnabled;
     configuration->_incompleteImageBorderEnabled = self->_incompleteImageBorderEnabled;
+    configuration->_drawsBackground = self->_drawsBackground;
 
     return configuration;
 }
@@ -776,6 +782,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setIncompleteImageBorderEnabled:(BOOL)incompleteImageBorderEnabled
 {
     _incompleteImageBorderEnabled = incompleteImageBorderEnabled;
+}
+
+- (BOOL)_drawsBackground
+{
+    return _drawsBackground;
+}
+
+- (void)_setDrawsBackground:(BOOL)drawsBackground
+{
+    _drawsBackground = drawsBackground;
 }
 
 - (BOOL)_requiresUserActionForVideoPlayback

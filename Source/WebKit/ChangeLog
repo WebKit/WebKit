@@ -1,3 +1,28 @@
+2018-07-13  Timothy Hatcher  <timothy@apple.com>
+
+        Add _drawsBackground to WKWebViewConfiguration.
+        https://bugs.webkit.org/show_bug.cgi?id=187665
+        rdar://problem/42182268
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const): Copy m_drawsBackground, and some missing values.
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::drawsBackground const): Added.
+        (API::PageConfiguration::setDrawsBackground): Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Transfer _drawsBackground to page config.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Set _drawsBackground to YES.
+        (-[WKWebViewConfiguration encodeWithCoder:]): Encode _drawsBackground.
+        (-[WKWebViewConfiguration initWithCoder:]): Decode _drawsBackground.
+        (-[WKWebViewConfiguration copyWithZone:]): Copy _drawsBackground.
+        (-[WKWebViewConfiguration _drawsBackground]): Added.
+        (-[WKWebViewConfiguration _setDrawsBackground:]): Added.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp: Set m_drawsBackground based on configuration.
+
 2018-07-13  Tim Horton  <timothy_horton@apple.com>
 
         WebKit sometimes holds WiFi/BT assertions while the Networking process is suspended

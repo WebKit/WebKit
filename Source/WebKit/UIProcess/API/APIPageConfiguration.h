@@ -101,6 +101,9 @@ public:
     bool waitsForPaintAfterViewDidMoveToWindow() const { return m_waitsForPaintAfterViewDidMoveToWindow; }
     void setWaitsForPaintAfterViewDidMoveToWindow(bool shouldSynchronize) { m_waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize; }
 
+    bool drawsBackground() const { return m_drawsBackground; }
+    void setDrawsBackground(bool drawsBackground) { m_drawsBackground = drawsBackground; }
+
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool controlledByAutomation) { m_controlledByAutomation = controlledByAutomation; }
 
@@ -133,6 +136,7 @@ private:
 #endif
     bool m_initialCapitalizationEnabled = true;
     bool m_waitsForPaintAfterViewDidMoveToWindow = true;
+    bool m_drawsBackground = true;
     bool m_controlledByAutomation = false;
     std::optional<double> m_cpuLimit;
 

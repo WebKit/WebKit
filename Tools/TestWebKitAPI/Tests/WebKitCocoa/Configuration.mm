@@ -29,6 +29,7 @@
 
 #import "Test.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WebKit, ConfigurationCPULimit)
@@ -39,6 +40,23 @@ TEST(WebKit, ConfigurationCPULimit)
     EXPECT_EQ([configuration _cpuLimit], 0.75);
     auto other = adoptNS([configuration copy]);
     EXPECT_EQ([other _cpuLimit], 0.75);
+}
+
+TEST(WebKit, ConfigurationDrawsBackground)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    EXPECT_EQ([configuration _drawsBackground], YES);
+    [configuration _setDrawsBackground:NO];
+    EXPECT_EQ([configuration _drawsBackground], NO);
+
+    auto other = adoptNS([configuration copy]);
+    EXPECT_EQ([other _drawsBackground], NO);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect]);
+    EXPECT_EQ([webView _drawsBackground], YES);
+
+    auto configedWebView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    EXPECT_EQ([configedWebView _drawsBackground], NO);
 }
 
 #endif
