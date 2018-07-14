@@ -1,3 +1,18 @@
+2018-07-14  David Kilzer  <ddkilzer@apple.com>
+
+        Replace TR2_OPTIONAL_ASSERTED_EXPRESSION macro in <wtf/Optional.h>
+        <https://webkit.org/b/187672>
+
+        Reviewed by Frédéric Wang.
+
+        * wtf/Optional.h:
+        (std::optional::operator -> const):
+        (std::optional::operator * const):
+        (std::optional<T::operator-> const):
+        (std::optional<T::operator* const):
+        - Replace TR2_OPTIONAL_ASSERTED_EXPRESSION macro with
+          ASSERT_UNDER_CONSTEXPR_CONTEXT macro and return statement.
+
 2018-07-13  Mark Lam  <mark.lam@apple.com>
 
         Signal.cpp's activeThreads() should only create its ThreadGroup once.

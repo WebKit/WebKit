@@ -235,12 +235,6 @@ template <class T> inline constexpr typename std::remove_reference<T>::type&& co
     return static_cast<typename std::remove_reference<T>::type&&>(t);
 }
 
-#if defined NDEBUG
-# define TR2_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) (EXPR)
-#else
-# define TR2_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) ((CHECK) ? (EXPR) : ([]{assert(!#CHECK);}(), (EXPR)))
-#endif
-
 
 // static_addressof: a constexpr version of addressof
 template <typename T>
@@ -526,7 +520,8 @@ public:
   constexpr bool has_value() const __NOEXCEPT { return initialized(); }
 
   constexpr T const* operator ->() const {
-    return TR2_OPTIONAL_ASSERTED_EXPRESSION(initialized(), dataptr());
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    return dataptr();
   }
 
   OPTIONAL_MUTABLE_CONSTEXPR T* operator ->() {
@@ -535,7 +530,8 @@ public:
   }
 
   constexpr T const& operator *() const& {
-    return TR2_OPTIONAL_ASSERTED_EXPRESSION(initialized(), contained_val());
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    return contained_val();
   }
 
   OPTIONAL_MUTABLE_CONSTEXPR T& operator *() & {
@@ -669,11 +665,13 @@ public:
 
   // 20.5.5.3, observers
   constexpr T* operator->() const {
-    return TR2_OPTIONAL_ASSERTED_EXPRESSION(ref, ref);
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(ref);
+    return ref;
   }
 
   constexpr T& operator*() const {
-    return TR2_OPTIONAL_ASSERTED_EXPRESSION(ref, *ref);
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(ref);
+    return *ref;
   }
 
   constexpr T& value() const {
@@ -1035,7 +1033,6 @@ namespace std
 }
 
 # undef TR2_OPTIONAL_REQUIRES
-# undef TR2_OPTIONAL_ASSERTED_EXPRESSION
 
 #endif // defined(__cpp_lib_optional)
 
