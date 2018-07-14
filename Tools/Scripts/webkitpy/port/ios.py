@@ -37,7 +37,7 @@ _log = logging.getLogger(__name__)
 class IOSPort(DarwinPort):
     port_name = "ios"
 
-    CURRENT_VERSION = Version(11)
+    CURRENT_VERSION = Version(12)
 
     def __init__(self, host, port_name, **kwargs):
         super(IOSPort, self).__init__(host, port_name, **kwargs)

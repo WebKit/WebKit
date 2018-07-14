@@ -1,5 +1,14 @@
 2018-07-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Add TestExpectations and baselines for iOS 12
+        https://bugs.webkit.org/show_bug.cgi?id=187628
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/ios-12/TestExpectations: Added.
+
+2018-07-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Add TestExpectations and baselines for Mojave.
         https://bugs.webkit.org/show_bug.cgi?id=187620
 

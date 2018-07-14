@@ -15,7 +15,7 @@ iframe {
     height: 100vh;
 }
 &lt;/style&gt;
-&lt;/head&gt;&lt;body&gt;&lt;iframe src="resources/word-legacy.doc"&gt;&lt;/iframe&gt;
+&lt;/head&gt;&lt;body&gt;&lt;iframe src="resources/powerpoint-legacy.ppt"&gt;&lt;/iframe&gt;
 &lt;/body&gt;&lt;/html&gt;</string>
 		<key>WebResourceFrameName</key>
 		<string></string>
@@ -24,7 +24,7 @@ iframe {
 		<key>WebResourceTextEncodingName</key>
 		<string>UTF-8</string>
 		<key>WebResourceURL</key>
-		<string>file:///LayoutTests/quicklook/word-legacy.html</string>
+		<string>file:///LayoutTests/quicklook/powerpoint-legacy.html</string>
 	</dict>
 	<key>WebSubframeArchives</key>
 	<array>
@@ -32,62 +32,66 @@ iframe {
 			<key>WebMainResource</key>
 			<dict>
 				<key>WebResourceData</key>
-				<string>&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;meta name="viewport" content="width=612, maximum-scale=4.0"&gt;&lt;title&gt;word-legacy.doc&lt;/title&gt;&lt;style type="text/css"&gt;body
+				<string>&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;meta name="viewport" content="width=1024, maximum-scale=4.0"&gt;&lt;style type="text/css"&gt;body
 {
 -webkit-text-size-adjust: none;
-font-size:18;
+}
+@media screen {
+body {
+background: #ACB2BB;
+}
+}
+@media print {
+div.loading-slide {
+display: none;
+}
 }
 div
 {
 margin-top: 0;
 margin-bottom: 0;
+font-family:Arial, sans-serif;
 }
  p
 {
 margin-top: 0;
 margin-bottom: 0;
-line-height: 120%
-}
- span
-{
-line-height: 120%
+word-wrap:break-word;
 }
 table
 {
 border-collapse: collapse;
 border-color: black;
-font-size:12;
+border-style: solid;
+border-width: thin;
 }
 td
 {
-word-wrap:break-word
+word-wrap:break-word;
+font-family:Arial;
+vertical-align:top;
+border-style: solid;
+border-width: thin;
 }
-&lt;/style&gt;&lt;style type="text/css" media="screen"&gt;.bumpedFont15
+div.slide
 {
-font-size:1.5em;
-}
-.bumpedFont17
+position:relative;
+}div.slide, div.loading-slide
 {
-font-size:1.7em;
+overflow:hidden;
+page-break-inside: avoid;
+margin-top: 5px;
 }
-.bumpedFont20
+div.loading-slide
 {
-font-size:2.0em;
+position: absolute;
+background:#BBBBBB;
 }
-&lt;/style&gt;&lt;style type="text/css"&gt;
-.s0.s0.s0 {margin-left: 0; margin-top: 0;}
-.s1.s1.s1 {overflow:hidden; position:relative; word-wrap:break-word; width: 468; padding-left: 72; padding-right: 72; min-height: 844; padding-top: 36; padding-bottom: 72;}
-&lt;/style&gt;&lt;/head&gt;&lt;body class="s0"&gt;&lt;div class="s1"&gt;&lt;style type="text/css"&gt;
-.s2.s2.s2 {width:215; height:174;}
-.s3.s3.s3 {direction:ltr; margin-bottom:0; text-align:left; margin-left:0; line-height:1.200000; margin-right:0; text-indent:0; margin-top:0;}
-&lt;/style&gt;&lt;div&gt;&lt;p class="s3"&gt;&lt;span style="padding-left:36;"&gt;​&lt;/span&gt;&lt;img src="x-apple-ql-id://resource.png" class="s2"&gt;&lt;/p&gt;&lt;/div&gt;&lt;style type="text/css"&gt;
-.s4.s4.s4 {font-weight:bold; font-family:"Lucida Grande"; color:#003300; font-size:16;}
-&lt;/style&gt;&lt;p class="s3"&gt;&lt;span class="s4"&gt;&lt;span class="bumpedFont15"&gt;Welcome to the website for the WebKit Open Source Project!&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;&lt;style type="text/css"&gt;
-.s5.s5.s5 {font-weight:normal; font-family:"Lucida Grande"; color:#323232; font-size:12;}
-.s6.s6.s6 {font-weight:normal; font-family:"Lucida Grande"; color:#228711; font-size:12;}
-&lt;/style&gt;&lt;p class="s3"&gt;&lt;span class="s5"&gt;&lt;span class="bumpedFont15"&gt;WebKit is an open source web browser engine. WebKit is also the name of the OS X system framework version of the engine that's used by &lt;/span&gt;&lt;/span&gt;&lt;a href="http://www.apple.com/safari/"&gt;&lt;span class="s6"&gt;&lt;span class="bumpedFont15"&gt;Safari&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;span class="s5"&gt;&lt;span class="bumpedFont15"&gt;, Dashboard, Mail, and many other OS X applications. WebKit's HTML and JavaScript code began as a branch of the &lt;/span&gt;&lt;/span&gt;&lt;a href="http://konqueror.kde.org/features/browser.php"&gt;&lt;span class="s6"&gt;&lt;span class="bumpedFont15"&gt;KHTML&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;span class="s5"&gt;&lt;span class="bumpedFont15"&gt; and KJS libraries from &lt;/span&gt;&lt;/span&gt;&lt;a href="http://kde.org/"&gt;&lt;span class="s6"&gt;&lt;span class="bumpedFont15"&gt;KDE&lt;/span&gt;&lt;/span&gt;&lt;/a&gt;&lt;span class="s5"&gt;&lt;span class="bumpedFont15"&gt;.&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;&lt;style type="text/css"&gt;
-.s7.s7.s7 {direction:ltr;}
-&lt;/style&gt;&lt;p class="s7"&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;style type="text/css"&gt;div.slide, div.loading-slide { width: 1024; height: 768;}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;style type="text/css"&gt;
+.s0.s0.s0 {background-color:#ffffff; top:0; left:0; width:1024; height:768; position:absolute;}
+.s1.s1.s1 {display:table-cell; vertical-align:middle;}
+.s2.s2.s2 {margin-top:4px; margin-left:4px; margin-bottom:4px; margin-right:4px; display:table; width:1022; height:56;}
+&lt;/style&gt;&lt;div class="slide" style="top:0; left:0;"&gt;&lt;div class="s0"&gt;&lt;/div&gt;&lt;div style="position:absolute; top:355; left:0; width:1022; height:56;"&gt;&lt;div class="s2"&gt;&lt;div class="s1"&gt;&lt;p style="padding-bottom:0px; font-family:'Lucida Grande'; font-size:16;"&gt;&lt;span style="color:#003400; font-weight:bold; font-size:16; font-family:'Lucida Grande';"&gt;Welcome to the website for the WebKit Open Source Project!&lt;/span&gt;&lt;/p&gt;&lt;p style="padding-top:0px; padding-bottom:0px; font-family:'Helvetica Light'; font-size:18;"&gt;&lt;span style="color:#323333; font-size:12; font-family:'Lucida Grande';"&gt;WebKit is an open source web browser engine. WebKit is also the name of the OS X system framework version of the engine that's used by &lt;/span&gt;&lt;a href="http://www.apple.com/safari/" style="color:#228811; font-size:12; font-family:'Lucida Grande';"&gt;Safari&lt;/a&gt;&lt;span style="color:#323333; font-size:12; font-family:'Lucida Grande';"&gt;, Dashboard, Mail, and many other OS X applications. WebKit's HTML and JavaScript code began as a branch of the &lt;/span&gt;&lt;a href="http://konqueror.kde.org/features/browser.php" style="color:#228811; font-size:12; font-family:'Lucida Grande';"&gt;KHTML&lt;/a&gt;&lt;span style="color:#323333; font-size:12; font-family:'Lucida Grande';"&gt; and KJS libraries from &lt;/span&gt;&lt;a href="http://kde.org/" style="color:#228811; font-size:12; font-family:'Lucida Grande';"&gt;KDE&lt;/a&gt;&lt;span style="color:#323333; font-size:12; font-family:'Lucida Grande';"&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;img src="x-apple-ql-id://resource.png" style="position:absolute; top:116; left:404; width:215; height:174;"&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</string>
 				<key>WebResourceFrameName</key>
 				<string>&lt;!--frame1--&gt;</string>
 				<key>WebResourceMIMEType</key>
@@ -95,7 +99,7 @@ font-size:2.0em;
 				<key>WebResourceTextEncodingName</key>
 				<string>UTF-8</string>
 				<key>WebResourceURL</key>
-				<string>x-apple-ql-id://resource.doc</string>
+				<string>x-apple-ql-id://resource.ppt</string>
 			</dict>
 			<key>WebSubresources</key>
 			<array>
