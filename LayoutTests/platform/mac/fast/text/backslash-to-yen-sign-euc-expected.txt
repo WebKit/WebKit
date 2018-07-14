@@ -282,11 +282,11 @@ layer at (0,0) size 785x734
               text run at (291,1) width 9: "\x{A5}"
       RenderBlock {DIV} at (0,430) size 769x18
         RenderInline {SPAN} at (0,0) size 308x16
-          RenderText {#text} at (0,1) size 292x16
-            text run at (0,1) width 292: "Using font \"menu\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 9x16
-            RenderText {#text} at (291,1) size 9x16
-              text run at (291,1) width 9: "\x{A5}"
+          RenderText {#text} at (0,1) size 291x16
+            text run at (0,1) width 291: "Using font \"menu\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 10x16
+            RenderText {#text} at (290,1) size 10x16
+              text run at (290,1) width 10: "\x{A5}"
           RenderInline {SPAN} at (0,0) size 9x16
             RenderText {#text} at (299,1) size 9x16
               text run at (299,1) width 9: "\x{A5}"

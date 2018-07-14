@@ -1787,3 +1787,23 @@ fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 
 webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html [ Pass Failure ]
+
+[ Mojave+ ] http/tests/cookies/same-site [ Pass ]
+
+# <rdar://problem/39118706> REGRESSION (Mojave): LayoutTest fast/css/test-setting-canvas-color.html is failing
+[ Mojave+ ] fast/css/test-setting-canvas-color.html [ Failure ]
+
+# <rdar://problem/36639117> REGRESSION (Mojave): LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
+[ Mojave+ ] svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
+
+# <rdar://problem/40498290> REGRESSION (Mojave): HTMLMeterElement LayoutTests failing
+[ Mojave+ ] fast/dom/HTMLMeterElement/meter-boundary-values.html [ Failure ]
+[ Mojave+ ] fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ Failure ]
+[ Mojave+ ] fast/dom/HTMLMeterElement/meter-element.html [ Failure ]
+[ Mojave+ ] fast/dom/HTMLMeterElement/meter-optimums.html [ Failure ]
+[ Mojave+ ] fast/dom/HTMLMeterElement/meter-styles.html [ Failure ]
+
+# <rdar://problem/41103260> REGRESSION (Mojave): Three text tests failing with small antialiasing(?) diffs
+[ Mojave+ ] fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
+[ Mojave+ ] imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
+[ Mojave+ ] imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]

@@ -20,14 +20,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,1) size 310x18
           text run at (0,1) width 310 LTR override: "The text on both buttons should like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,105) size 784x44
-        RenderButton {BUTTON} at (2,2) size 46x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,2) size 46x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 30x13
             RenderText {#text} at (0,0) size 30x13
               text run at (0,0) width 30 LTR override: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
         RenderText {#text} at (49,1) size 5x18
           text run at (49,1) width 5 LTR override: " "
         RenderBR {BR} at (53,15) size 1x0
-        RenderButton {INPUT} at (2,24) size 46x18 [bgcolor=#C0C0C0]
+        RenderButton {INPUT} at (2,24) size 46x18 [color=#000000D8] [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (8,2) size 30x13
             RenderText at (0,0) size 30x13
               text run at (0,0) width 30 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"

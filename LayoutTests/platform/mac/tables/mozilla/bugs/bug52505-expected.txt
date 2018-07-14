@@ -4,11 +4,11 @@ layer at (0,0) size 800x110
   RenderBlock {HTML} at (0,0) size 800x110
     RenderBody {BODY} at (8,8) size 784x94
       RenderBlock {FORM} at (0,0) size 784x38
-        RenderButton {INPUT} at (2,0) size 255x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 239x13
-            RenderText at (0,0) size 239x13
-              text run at (0,0) width 239: "[Step 1] Set cell width to 60px (nothing seen)"
-        RenderButton {INPUT} at (2,20) size 259x18 [bgcolor=#C0C0C0]
+        RenderButton {INPUT} at (2,0) size 254x18 [color=#000000D8] [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 238x13
+            RenderText at (0,0) size 238x13
+              text run at (0,0) width 238: "[Step 1] Set cell width to 60px (nothing seen)"
+        RenderButton {INPUT} at (2,20) size 259x18 [color=#000000D8] [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (8,2) size 243x13
             RenderText at (0,0) size 243x13
               text run at (0,0) width 243: "[Step 2] Set cell width to 20px (garbage seen)"

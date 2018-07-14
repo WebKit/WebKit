@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 286x18
           text run at (0,0) width 286: "1) direction: rtl; -webkit-rtl-ordering: logical"
         RenderBR {BR} at (285,14) size 1x0
-        RenderMenuList {SELECT} at (0,20) size 100x18 [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (0,20) size 100x18 [color=#000000D8] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 100x18
             RenderText at (31,2) size 61x13
               text run at (31,2) width 42 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,18) size 118x18
           text run at (0,18) width 118: "2) text-align: right"
         RenderBR {BR} at (117,32) size 1x0
-        RenderMenuList {SELECT} at (0,38) size 200x18 [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (0,38) size 200x18 [color=#000000D8] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 200x18
             RenderText at (8,2) size 61x13
               text run at (8,2) width 20: "abc"
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,18) size 72x18
           text run at (0,18) width 72: "3) No style"
         RenderBR {BR} at (71,32) size 1x0
-        RenderMenuList {SELECT} at (0,38) size 100x18 [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (0,38) size 100x18 [color=#000000D8] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 100x18
             RenderText at (8,2) size 61x13
               text run at (8,2) width 20: "abc"

@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
         text run at (0,18) width 107: "TEST FAILED: "
         text run at (106,18) width 320: "If the popup menu says \"document.write('Text')\". "
       RenderBR {BR} at (425,32) size 1x0
-      RenderMenuList {SELECT} at (2,38) size 53x18 [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,38) size 53x18 [color=#000000D8] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 53x18
           RenderText at (8,2) size 22x13
             text run at (8,2) width 22: "Text"

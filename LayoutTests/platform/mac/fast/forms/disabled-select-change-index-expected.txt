@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderMenuList {SELECT} at (2,2) size 60x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,2) size 60x18 [color=#0000003F] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 60x18
           RenderText at (8,2) size 29x13
             text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (64,15) size 0x0
-      RenderMenuList {SELECT} at (2,24) size 60x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,24) size 60x18 [color=#0000003F] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 60x18
           RenderText at (8,2) size 29x13
             text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (64,37) size 0x0
-      RenderMenuList {SELECT} at (2,46) size 60x18 [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,46) size 60x18 [color=#000000D8] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 60x18
           RenderText at (8,2) size 29x13
             text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (64,59) size 0x0
-      RenderMenuList {SELECT} at (2,68) size 60x18 [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,68) size 60x18 [color=#000000D8] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 60x18
           RenderText at (8,2) size 29x13
             text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (64,81) size 0x0
-      RenderListBox {SELECT} at (2,90) size 46x57 [color=#7F7F7F] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,90) size 46x57 [color=#0000003F] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (50,142) size 0x0
-      RenderListBox {SELECT} at (2,151) size 46x57 [color=#7F7F7F] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,151) size 46x57 [color=#0000003F] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (50,203) size 0x0
       RenderListBox {SELECT} at (2,212) size 46x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (50,264) size 0x0

@@ -22,12 +22,12 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (0,222) size 0x37
               RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
               RenderBlock {FORM} at (0,293) size 769x428
-                RenderButton {INPUT} at (2,2) size 111x18 [bgcolor=#C0C0C0]
+                RenderButton {INPUT} at (2,2) size 111x18 [color=#000000D8] [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 95x13
                     RenderText at (0,0) size 95x13
                       text run at (0,0) width 95: "Submit with POST"
                 RenderBR {BR} at (114,15) size 1x0
-                RenderButton {INPUT} at (2,24) size 228x18 [bgcolor=#C0C0C0]
+                RenderButton {INPUT} at (2,24) size 228x18 [color=#000000D8] [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 212x13
                     RenderText at (0,0) size 212x13
                       text run at (0,0) width 212: "Submit with POST followed by a redirect"
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (16,229) size 130x37
                   text run at (16,229) width 130: " option #2"
                 RenderBR {BR} at (145,258) size 1x0
-                RenderMenuList {SELECT} at (2,268) size 252x18 [bgcolor=#FFFFFF]
+                RenderMenuList {SELECT} at (2,268) size 252x18 [color=#000000D8] [bgcolor=#FFFFFF]
                   RenderBlock (anonymous) at (0,0) size 252x18
                     RenderText at (8,2) size 60x13
                       text run at (8,2) width 60: "Initial Value"

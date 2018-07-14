@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 398x42
             RenderTableCell {TD} at (2,2) size 394x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (2,2) size 390x22
-                RenderMenuList {SELECT} at (2,2) size 54x18 [bgcolor=#FFFFFF]
+                RenderMenuList {SELECT} at (2,2) size 54x18 [color=#000000D8] [bgcolor=#FFFFFF]
                   RenderBlock (anonymous) at (0,0) size 54x18
                     RenderText at (8,2) size 23x13
                       text run at (8,2) width 23: "Test"

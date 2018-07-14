@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x26
           RenderTableRow {TR} at (0,1) size 784x24
             RenderTableCell {TD} at (1,1) size 66x24 [r=0 c=0 rs=1 cs=1]
-              RenderButton {INPUT} at (1,3) size 64x18 [bgcolor=#C0C0C0]
+              RenderButton {INPUT} at (1,3) size 64x18 [color=#000000D8] [bgcolor=#C0C0C0]
                 RenderBlock (anonymous) at (8,2) size 48x13
                   RenderText at (0,0) size 48x13
                     text run at (0,0) width 48: "New Mail"
             RenderTableCell {TD} at (67,1) size 48x24 [r=0 c=1 rs=1 cs=1]
-              RenderButton {INPUT} at (1,3) size 46x18 [bgcolor=#C0C0C0]
+              RenderButton {INPUT} at (1,3) size 46x18 [color=#000000D8] [bgcolor=#C0C0C0]
                 RenderBlock (anonymous) at (8,2) size 30x13
                   RenderText at (0,0) size 30x13
                     text run at (0,0) width 30: "Reply"
             RenderTableCell {TD} at (115,1) size 65x24 [r=0 c=2 rs=1 cs=1]
-              RenderButton {INPUT} at (1,3) size 62x18 [bgcolor=#C0C0C0]
+              RenderButton {INPUT} at (1,3) size 62x18 [color=#000000D8] [bgcolor=#C0C0C0]
                 RenderBlock (anonymous) at (8,2) size 46x13
                   RenderText at (0,0) size 46x13
                     text run at (0,0) width 46: "Reply All"
@@ -34,17 +34,17 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x26
           RenderTableRow {TR} at (0,1) size 784x24
             RenderTableCell {TD} at (1,1) size 66x24 [r=0 c=0 rs=1 cs=1]
-              RenderButton {INPUT} at (1,3) size 64x18 [bgcolor=#C0C0C0]
+              RenderButton {INPUT} at (1,3) size 64x18 [color=#000000D8] [bgcolor=#C0C0C0]
                 RenderBlock (anonymous) at (8,2) size 48x13
                   RenderText at (0,0) size 48x13
                     text run at (0,0) width 48: "New Mail"
             RenderTableCell {TD} at (67,1) size 48x24 [r=0 c=1 rs=1 cs=1]
-              RenderButton {INPUT} at (1,3) size 46x18 [bgcolor=#C0C0C0]
+              RenderButton {INPUT} at (1,3) size 46x18 [color=#000000D8] [bgcolor=#C0C0C0]
                 RenderBlock (anonymous) at (8,2) size 30x13
                   RenderText at (0,0) size 30x13
                     text run at (0,0) width 30: "Reply"
             RenderTableCell {TD} at (115,1) size 65x24 [r=0 c=2 rs=1 cs=1]
-              RenderButton {INPUT} at (1,3) size 62x18 [bgcolor=#C0C0C0]
+              RenderButton {INPUT} at (1,3) size 62x18 [color=#000000D8] [bgcolor=#C0C0C0]
                 RenderBlock (anonymous) at (8,2) size 46x13
                   RenderText at (0,0) size 46x13
                     text run at (0,0) width 46: "Reply All"

@@ -45,7 +45,7 @@ _log = logging.getLogger(__name__)
 class MacPort(DarwinPort):
     port_name = "mac"
 
-    CURRENT_VERSION = Version(10, 13)
+    CURRENT_VERSION = Version(10, 14)
 
     SDK = 'macosx'
 

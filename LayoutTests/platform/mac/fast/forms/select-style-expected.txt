@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (540,54) size 1x0
       RenderInline {SPAN} at (0,0) size 70x28 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,60) size 52x18 [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (7,60) size 52x18 [color=#000000D8] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 52x18
             RenderText at (8,2) size 21x13
               text run at (8,2) width 21: "test"
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,160) size 508x18
         text run at (0,160) width 508: "This tests that background is white if only background-image:none is specified."
       RenderBR {BR} at (507,174) size 1x0
-      RenderMenuList {SELECT} at (2,180) size 52x18 [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,180) size 52x18 [color=#000000D8] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 52x18
           RenderText at (8,2) size 21x13
             text run at (8,2) width 21: "test"

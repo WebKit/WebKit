@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,66) size 25x18
           text run at (0,66) width 25: "file "
         RenderFileUploadControl {INPUT} at (26,67) size 239x18 "no file selected"
-          RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
+          RenderButton {INPUT} at (0,0) size 78x18 [color=#000000D8] [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 62x13
               RenderText at (0,0) size 62x13
                 text run at (0,0) width 62: "Choose File"
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (176,141) size 1x0
         RenderText {#text} at (0,146) size 35x18
           text run at (0,146) width 35: "reset "
-        RenderButton {INPUT} at (36,147) size 46x18 [bgcolor=#C0C0C0]
+        RenderButton {INPUT} at (36,147) size 46x18 [color=#000000D8] [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (8,2) size 30x13
             RenderText at (0,0) size 30x13
               text run at (0,0) width 30: "Reset"
@@ -67,7 +67,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (87,160) size 1x0
         RenderText {#text} at (0,168) size 48x18
           text run at (0,168) width 48: "submit "
-        RenderButton {INPUT} at (49,169) size 54x18 [bgcolor=#C0C0C0]
+        RenderButton {INPUT} at (49,169) size 54x18 [color=#000000D8] [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (8,2) size 37x13
             RenderText at (0,0) size 37x13
               text run at (0,0) width 37: "Submit"
