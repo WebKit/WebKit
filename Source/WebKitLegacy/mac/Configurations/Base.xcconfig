@@ -23,6 +23,8 @@
 
 #include? "../../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 
+CODE_SIGN_IDENTITY = -;
+
 USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
 USE_INTERNAL_SDK_Production = YES;
 USE_INTERNAL_SDK_Debug = $(HAVE_INTERNAL_SDK);
