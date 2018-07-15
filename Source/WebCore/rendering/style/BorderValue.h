@@ -76,8 +76,9 @@ public:
     float boxModelWidth() const;
 
 protected:
-    float m_width { 3 };
     Color m_color;
+
+    float m_width { 3 };
 
     unsigned m_style : 4; // BorderStyle
 

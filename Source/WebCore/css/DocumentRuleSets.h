@@ -81,22 +81,25 @@ private:
     void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, RuleSet& userStyle, const MediaQueryEvaluator&, StyleResolver&);
     void updateUserAgentMediaQueryStyleIfNeeded() const;
 
-    bool m_isForShadowScope { false };
-    bool m_isAuthorStyleDefined { false };
     std::unique_ptr<RuleSet> m_authorStyle;
     mutable std::unique_ptr<RuleSet> m_userAgentMediaQueryStyle;
     std::unique_ptr<RuleSet> m_userStyle;
-    bool m_usesSharedUserStyle { false };
 
     StyleResolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
-    mutable unsigned m_defaultStyleVersionOnFeatureCollection { 0 };
-    mutable unsigned m_userAgentMediaQueryRuleCountOnUpdate { 0 };
     mutable std::unique_ptr<RuleSet> m_siblingRuleSet;
     mutable std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;
     mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
+
     mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
+
+    mutable unsigned m_defaultStyleVersionOnFeatureCollection { 0 };
+    mutable unsigned m_userAgentMediaQueryRuleCountOnUpdate { 0 };
+
+    bool m_usesSharedUserStyle { false };
+    bool m_isForShadowScope { false };
+    bool m_isAuthorStyleDefined { false };
 };
 
 inline const RuleFeatureSet& DocumentRuleSets::features() const

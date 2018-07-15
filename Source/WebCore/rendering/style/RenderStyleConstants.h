@@ -34,7 +34,7 @@ class TextStream;
 namespace WebCore {
 
 static const size_t PrintColorAdjustBits = 1;
-enum class PrintColorAdjust {
+enum class PrintColorAdjust : uint8_t {
     Economy,
     Exact
 };
@@ -77,7 +77,7 @@ enum class StyleDifferenceContextSensitiveProperty {
 };
 
 // Static pseudo styles. Dynamic ones are produced on the fly.
-enum class PseudoId : unsigned char {
+enum class PseudoId : uint8_t {
     // The order must be None, public IDs, and then internal IDs.
     None,
 
@@ -169,24 +169,24 @@ private:
     unsigned m_data;
 };
 
-enum class ColumnFill {
+enum class ColumnFill : uint8_t {
     Balance,
     Auto
 };
 
-enum class ColumnSpan {
+enum class ColumnSpan : uint8_t {
     None = 0,
     All
 };
 
-enum class BorderCollapse {
+enum class BorderCollapse : uint8_t {
     Separate = 0,
     Collapse
 };
 
 // These have been defined in the order of their precedence for border-collapsing. Do
 // not change this order! This order also must match the order in CSSValueKeywords.in.
-enum class BorderStyle {
+enum class BorderStyle : uint8_t {
     None,
     Hidden,
     Inset,
@@ -199,7 +199,7 @@ enum class BorderStyle {
     Double
 };
 
-enum class BorderPrecedence {
+enum class BorderPrecedence : uint8_t {
     Off,
     Table,
     ColumnGroup,
@@ -209,12 +209,12 @@ enum class BorderPrecedence {
     Cell
 };
 
-enum class OutlineIsAuto {
+enum class OutlineIsAuto : uint8_t {
     Off = 0,
     On
 };
 
-enum class PositionType {
+enum class PositionType : uint8_t {
     Static = 0,
     Relative = 1,
     Absolute = 2,
@@ -223,13 +223,13 @@ enum class PositionType {
     Fixed = 6
 };
 
-enum class Float {
+enum class Float : uint8_t {
     No,
     Left,
     Right
 };
 
-enum class MarginCollapse {
+enum class MarginCollapse : uint8_t {
     Collapse,
     Separate,
     Discard
@@ -237,21 +237,21 @@ enum class MarginCollapse {
 
 // Box decoration attributes. Not inherited.
 
-enum class BoxDecorationBreak {
+enum class BoxDecorationBreak : uint8_t {
     Slice,
     Clone
 };
 
 // Box attributes. Not inherited.
 
-enum class BoxSizing {
+enum class BoxSizing : uint8_t {
     ContentBox,
     BorderBox
 };
 
 // Random visual rendering model attributes. Not inherited.
 
-enum class Overflow {
+enum class Overflow : uint8_t {
     Visible,
     Hidden,
     Scroll,
@@ -261,7 +261,7 @@ enum class Overflow {
     PagedY
 };
 
-enum class VerticalAlign {
+enum class VerticalAlign : uint8_t {
     Baseline,
     Middle,
     Sub,
@@ -274,50 +274,50 @@ enum class VerticalAlign {
     Length
 };
 
-enum class Clear {
+enum class Clear : uint8_t {
     None = 0,
     Left = 1,
     Right = 2,
     Both = 3
 };
 
-enum class TableLayoutType {
+enum class TableLayoutType : uint8_t {
     Auto,
     Fixed
 };
 
-enum class TextCombine {
+enum class TextCombine : uint8_t {
     None,
     Horizontal
 };
 
-enum class FillAttachment {
+enum class FillAttachment : uint8_t {
     ScrollBackground,
     LocalBackground,
     FixedBackground
 };
 
-enum class FillBox {
+enum class FillBox : uint8_t {
     Border,
     Padding,
     Content,
     Text
 };
 
-enum class FillRepeat {
+enum class FillRepeat : uint8_t {
     Repeat,
     NoRepeat,
     Round,
     Space
 };
 
-enum class FillLayerType {
+enum class FillLayerType : uint8_t {
     Background,
     Mask
 };
 
 // CSS3 Background Values
-enum class FillSizeType {
+enum class FillSizeType : uint8_t {
     Contain,
     Cover,
     Size,
@@ -325,7 +325,7 @@ enum class FillSizeType {
 };
 
 // CSS3 <position>
-enum class Edge {
+enum class Edge : uint8_t {
     Top,
     Right,
     Bottom,
@@ -334,21 +334,21 @@ enum class Edge {
 
 // CSS3 Mask Source Types
 
-enum class MaskSourceType {
+enum class MaskSourceType : uint8_t {
     Alpha,
     Luminance
 };
 
 // CSS3 Marquee Properties
 
-enum class MarqueeBehavior {
+enum class MarqueeBehavior : uint8_t {
     None,
     Scroll,
     Slide,
     Alternate
 };
 
-enum class MarqueeDirection {
+enum class MarqueeDirection : uint8_t {
     Auto,
     Left,
     Right,
@@ -360,14 +360,14 @@ enum class MarqueeDirection {
 
 // Deprecated Flexible Box Properties
 
-enum class BoxPack {
+enum class BoxPack : uint8_t {
     Start,
     Center,
     End,
     Justify
 };
 
-enum class BoxAlignment {
+enum class BoxAlignment : uint8_t {
     Stretch,
     Start,
     Center,
@@ -375,24 +375,24 @@ enum class BoxAlignment {
     Baseline
 };
 
-enum class BoxOrient {
+enum class BoxOrient : uint8_t {
     Horizontal,
     Vertical
 };
 
-enum class BoxLines {
+enum class BoxLines : uint8_t {
     Single,
     Multiple
 };
 
-enum class BoxDirection {
+enum class BoxDirection : uint8_t {
     Normal,
     Reverse
 };
 
 // CSS3 Flexbox Properties
 
-enum class AlignContent {
+enum class AlignContent : uint8_t {
     FlexStart,
     FlexEnd,
     Center,
@@ -401,20 +401,20 @@ enum class AlignContent {
     Stretch
 };
 
-enum class FlexDirection {
+enum class FlexDirection : uint8_t {
     Row,
     RowReverse,
     Column,
     ColumnReverse
 };
 
-enum class FlexWrap {
+enum class FlexWrap : uint8_t {
     NoWrap,
     Wrap,
     Reverse
 };
 
-enum class ItemPosition {
+enum class ItemPosition : uint8_t {
     Legacy,
     Auto,
     Normal,
@@ -432,18 +432,18 @@ enum class ItemPosition {
     Right
 };
 
-enum class OverflowAlignment {
+enum class OverflowAlignment : uint8_t {
     Default,
     Unsafe,
     Safe
 };
 
-enum class ItemPositionType {
+enum class ItemPositionType : uint8_t {
     NonLegacy,
     Legacy
 };
 
-enum class ContentPosition {
+enum class ContentPosition : uint8_t {
     Normal,
     Baseline,
     LastBaseline,
@@ -456,7 +456,7 @@ enum class ContentPosition {
     Right
 };
 
-enum class ContentDistribution {
+enum class ContentDistribution : uint8_t {
     Default,
     SpaceBetween,
     SpaceAround,
@@ -465,7 +465,7 @@ enum class ContentDistribution {
 };
 
 
-enum class TextSecurity {
+enum class TextSecurity : uint8_t {
     None,
     Disc,
     Circle,
@@ -474,7 +474,7 @@ enum class TextSecurity {
 
 // CSS3 User Modify Properties
 
-enum class UserModify {
+enum class UserModify : uint8_t {
     ReadOnly,
     ReadWrite,
     ReadWritePlaintextOnly
@@ -482,7 +482,7 @@ enum class UserModify {
 
 // CSS3 User Drag Values
 
-enum class UserDrag {
+enum class UserDrag : uint8_t {
     Auto,
     None,
     Element
@@ -490,14 +490,14 @@ enum class UserDrag {
 
 // CSS3 User Select Values
 
-enum class UserSelect {
+enum class UserSelect : uint8_t {
     None,
     Text,
     All
 };
 
 // CSS3 Image Values
-enum class ObjectFit {
+enum class ObjectFit : uint8_t {
     Fill,
     Contain,
     Cover,
@@ -505,31 +505,31 @@ enum class ObjectFit {
     ScaleDown
 };
 
-enum class AspectRatioType {
+enum class AspectRatioType : uint8_t {
     Auto,
     FromIntrinsic,
     FromDimensions,
     Specified
 };
 
-enum class WordBreak {
+enum class WordBreak : uint8_t {
     Normal,
     BreakAll,
     KeepAll,
     Break
 };
 
-enum class OverflowWrap {
+enum class OverflowWrap : uint8_t {
     Normal,
     Break
 };
 
-enum class NBSPMode {
+enum class NBSPMode : uint8_t {
     Normal,
     Space
 };
 
-enum class LineBreak {
+enum class LineBreak : uint8_t {
     Auto,
     Loose,
     Normal,
@@ -537,7 +537,7 @@ enum class LineBreak {
     AfterWhiteSpace
 };
 
-enum class Resize {
+enum class Resize : uint8_t {
     None,
     Both,
     Horizontal,
@@ -545,7 +545,7 @@ enum class Resize {
 };
 
 // The order of this enum must match the order of the list style types in CSSValueKeywords.in.
-enum class ListStyleType {
+enum class ListStyleType : uint8_t {
     Disc,
     Circle,
     Square,
@@ -629,31 +629,31 @@ enum class ListStyleType {
     None
 };
 
-enum class QuoteType {
+enum class QuoteType : uint8_t {
     OpenQuote,
     CloseQuote,
     NoOpenQuote,
     NoCloseQuote
 };
 
-enum class BorderFit {
+enum class BorderFit : uint8_t {
     Border,
     Lines
 };
 
-enum class AnimationFillMode {
+enum class AnimationFillMode : uint8_t {
     None,
     Forwards,
     Backwards,
     Both
 };
 
-enum class AnimationPlayState {
+enum class AnimationPlayState : uint8_t {
     Playing = 0x0,
     Paused = 0x1
 };
 
-enum class WhiteSpace {
+enum class WhiteSpace : uint8_t {
     Normal,
     Pre,
     PreWrap,
@@ -663,7 +663,7 @@ enum class WhiteSpace {
 };
 
 // The order of this enum must match the order of the text align values in CSSValueKeywords.in.
-enum class TextAlignMode {
+enum class TextAlignMode : uint8_t {
     Left,
     Right,
     Center,
@@ -675,7 +675,7 @@ enum class TextAlignMode {
     End,
 };
 
-enum class TextTransform {
+enum class TextTransform : uint8_t {
     Capitalize,
     Uppercase,
     Lowercase,
@@ -687,7 +687,7 @@ static const size_t TextDecorationBits = 5;
 #else
 static const size_t TextDecorationBits = 4;
 #endif
-enum class TextDecoration {
+enum class TextDecoration : uint8_t {
     None          = 0,
     Underline     = 1 << 0,
     Overline      = 1 << 1,
@@ -698,7 +698,7 @@ enum class TextDecoration {
 #endif
 };
 
-enum class TextDecorationStyle {
+enum class TextDecorationStyle : uint8_t {
     Solid,
     Double,
     Dotted,
@@ -707,7 +707,7 @@ enum class TextDecorationStyle {
 };
 
 #if ENABLE(CSS3_TEXT)
-enum class TextAlignLast {
+enum class TextAlignLast : uint8_t {
     Auto,
     Start,
     End,
@@ -717,7 +717,7 @@ enum class TextAlignLast {
     Justify
 };
 
-enum class TextJustify {
+enum class TextJustify : uint8_t {
     Auto,
     None,
     InterWord,
@@ -725,7 +725,7 @@ enum class TextJustify {
 };
 #endif // CSS3_TEXT
 
-enum class TextDecorationSkip {
+enum class TextDecorationSkip : uint8_t {
     None      = 0,
     Ink       = 1 << 0,
     Objects   = 1 << 1,
@@ -733,19 +733,19 @@ enum class TextDecorationSkip {
 };
 
 // FIXME: There is no reason for the values in the enum to be powers of two.
-enum class TextUnderlinePosition {
+enum class TextUnderlinePosition : uint8_t {
     // FIXME: Implement support for 'under left' and 'under right' values.
     Auto       = 1 << 0,
     Alphabetic = 1 << 1,
     Under      = 1 << 2
 };
 
-enum class TextZoom {
+enum class TextZoom : uint8_t {
     Normal,
     Reset
 };
 
-enum class BreakBetween {
+enum class BreakBetween : uint8_t {
     Auto,
     Avoid,
     AvoidColumn,
@@ -759,14 +759,14 @@ enum class BreakBetween {
 };
 bool alwaysPageBreak(BreakBetween);
     
-enum class BreakInside {
+enum class BreakInside : uint8_t {
     Auto,
     Avoid,
     AvoidColumn,
     AvoidPage
 };
 
-enum class HangingPunctuation {
+enum class HangingPunctuation : uint8_t {
     None      = 0,
     First     = 1 << 0,
     Last      = 1 << 1,
@@ -774,24 +774,24 @@ enum class HangingPunctuation {
     ForceEnd  = 1 << 3
 };
 
-enum class EmptyCell {
+enum class EmptyCell : uint8_t {
     Show,
     Hide
 };
 
-enum class CaptionSide {
+enum class CaptionSide : uint8_t {
     Top,
     Bottom,
     Left,
     Right
 };
 
-enum class ListStylePosition {
+enum class ListStylePosition : uint8_t {
     Outside,
     Inside
 };
 
-enum class Visibility {
+enum class Visibility : uint8_t {
     Visible,
     Hidden,
     Collapse
@@ -799,7 +799,7 @@ enum class Visibility {
 
 WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
 
-enum class CursorType {
+enum class CursorType : uint8_t {
     // The following must match the order in CSSValueKeywords.in.
     Auto,
     Default,
@@ -844,14 +844,14 @@ enum class CursorType {
 };
 
 #if ENABLE(CURSOR_VISIBILITY)
-enum class CursorVisibility {
+enum class CursorVisibility : uint8_t {
     Auto,
     AutoHide,
 };
 #endif
 
 // The order of this enum must match the order of the display values in CSSValueKeywords.in.
-enum class DisplayType {
+enum class DisplayType : uint8_t {
     Inline,
     Block,
     ListItem,
@@ -879,13 +879,13 @@ enum class DisplayType {
     None
 };
 
-enum class InsideLink {
+enum class InsideLink : uint8_t {
     NotInside,
     InsideUnvisited,
     InsideVisited
 };
     
-enum class PointerEvents {
+enum class PointerEvents : uint8_t {
     None,
     Auto,
     Stroke,
@@ -898,34 +898,34 @@ enum class PointerEvents {
     All
 };
 
-enum class TransformStyle3D {
+enum class TransformStyle3D : uint8_t {
     Flat,
     Preserve3D
 };
 
-enum class BackfaceVisibility {
+enum class BackfaceVisibility : uint8_t {
     Visible,
     Hidden
 };
 
-enum class TransformBox {
+enum class TransformBox : uint8_t {
     BorderBox,
     FillBox,
     ViewBox
 };
 
-enum class LineClamp {
+enum class LineClamp : uint8_t {
     LineCount,
     Percentage
 };
 
-enum class Hyphens {
+enum class Hyphens : uint8_t {
     None,
     Manual,
     Auto
 };
 
-enum class SpeakAs {
+enum class SpeakAs : uint8_t {
     Normal             = 0,
     SpellOut           = 1 << 0,
     Digits             = 1 << 1,
@@ -933,12 +933,12 @@ enum class SpeakAs {
     NoPunctuation      = 1 << 3
 };
 
-enum class TextEmphasisFill {
+enum class TextEmphasisFill : uint8_t {
     Filled,
     Open
 };
 
-enum class TextEmphasisMark {
+enum class TextEmphasisMark : uint8_t {
     None,
     Auto,
     Dot,
@@ -949,25 +949,25 @@ enum class TextEmphasisMark {
     Custom
 };
 
-enum class TextEmphasisPosition {
+enum class TextEmphasisPosition : uint8_t {
     Over  = 1 << 0,
     Under = 1 << 1,
     Left  = 1 << 2,
     Right = 1 << 3
 };
 
-enum class TextOrientation {
+enum class TextOrientation : uint8_t {
     Mixed,
     Upright,
     Sideways
 };
 
-enum class TextOverflow {
+enum class TextOverflow : uint8_t {
     Clip = 0,
     Ellipsis
 };
 
-enum class ImageRendering {
+enum class ImageRendering : uint8_t {
     Auto = 0,
     OptimizeSpeed,
     OptimizeQuality,
@@ -977,44 +977,44 @@ enum class ImageRendering {
 
 WTF::TextStream& operator<<(WTF::TextStream&, ImageRendering);
 
-enum class ImageResolutionSource {
+enum class ImageResolutionSource : uint8_t {
     Specified = 0,
     FromImage
 };
 
-enum class ImageResolutionSnap {
+enum class ImageResolutionSnap : uint8_t {
     None = 0,
     Pixels
 };
 
-enum class Order {
+enum class Order : uint8_t {
     Logical = 0,
     Visual
 };
 
-enum class ColumnAxis {
+enum class ColumnAxis : uint8_t {
     Horizontal,
     Vertical,
     Auto
 };
 
-enum class ColumnProgression {
+enum class ColumnProgression : uint8_t {
     Normal,
     Reverse
 };
 
-enum class LineSnap {
+enum class LineSnap : uint8_t {
     None,
     Baseline,
     Contain
 };
 
-enum class LineAlign {
+enum class LineAlign : uint8_t {
     None,
     Edges
 };
 
-enum class RubyPosition {
+enum class RubyPosition : uint8_t {
     Before,
     After,
     InterCharacter
@@ -1038,7 +1038,7 @@ enum GridAutoFlow {
     AutoFlowColumnDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionColumn
 };
 
-enum class AutoRepeatType {
+enum class AutoRepeatType : uint8_t {
     None,
     Fill,
     Fit
@@ -1049,25 +1049,25 @@ static const float maximumAllowedFontSize = 1000000.0f;
 
 #if ENABLE(CSS3_TEXT)
 
-enum class TextIndentLine {
+enum class TextIndentLine : uint8_t {
     FirstLine,
     EachLine
 };
 
-enum class TextIndentType {
+enum class TextIndentType : uint8_t {
     Normal,
     Hanging
 };
 
 #endif
 
-enum class Isolation {
+enum class Isolation : uint8_t {
     Auto,
     Isolate
 };
 
 // Fill, Stroke, ViewBox are just used for SVG.
-enum class CSSBoxType {
+enum class CSSBoxType : uint8_t {
     BoxMissing = 0,
     MarginBox,
     BorderBox,
@@ -1079,20 +1079,20 @@ enum class CSSBoxType {
 };
 
 #if ENABLE(TOUCH_EVENTS)
-enum class TouchAction {
+enum class TouchAction : uint8_t {
     Auto,
     Manipulation
 };
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-enum class ScrollSnapStrictness {
+enum class ScrollSnapStrictness : uint8_t {
     None,
     Proximity,
     Mandatory
 };
 
-enum class ScrollSnapAxis {
+enum class ScrollSnapAxis : uint8_t {
     XAxis,
     YAxis,
     Block,
@@ -1100,7 +1100,7 @@ enum class ScrollSnapAxis {
     Both
 };
 
-enum class ScrollSnapAxisAlignType {
+enum class ScrollSnapAxisAlignType : uint8_t {
     None,
     Start,
     Center,
@@ -1109,20 +1109,20 @@ enum class ScrollSnapAxisAlignType {
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)
-enum class TrailingWord {
+enum class TrailingWord : uint8_t {
     Auto,
     PartiallyBalanced
 };
 #endif
 
 #if ENABLE(APPLE_PAY)
-enum class ApplePayButtonStyle {
+enum class ApplePayButtonStyle : uint8_t {
     White,
     WhiteOutline,
     Black,
 };
 
-enum class ApplePayButtonType {
+enum class ApplePayButtonType : uint8_t {
     Plain,
     Buy,
     SetUp,
@@ -1138,7 +1138,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, MaskSourceType);
 WTF::TextStream& operator<<(WTF::TextStream&, Edge);
 
 // These are all minimized combinations of paint-order.
-enum class PaintOrder {
+enum class PaintOrder : uint8_t {
     Normal,
     Fill,
     FillMarkers,
@@ -1148,7 +1148,7 @@ enum class PaintOrder {
     MarkersStroke
 };
 
-enum class PaintType {
+enum class PaintType : uint8_t {
     Fill,
     Stroke,
     Markers

@@ -86,13 +86,13 @@ struct ResourceLoaderOptions;
 // are interpreted according to the document root element style, and styled only
 // from the User Agent Stylesheet rules.
 
-enum RuleMatchingBehavior {
+enum class RuleMatchingBehavior: uint8_t {
     MatchAllRules,
     MatchAllRulesExcludingSMIL,
     MatchOnlyUserAgentRules,
 };
 
-enum CascadeLevel {
+enum class CascadeLevel: uint8_t {
     UserAgentLevel,
     AuthorLevel,
     UserLevel
@@ -129,7 +129,7 @@ public:
     StyleResolver(Document&);
     ~StyleResolver();
 
-    ElementStyle styleForElement(const Element&, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle = nullptr, RuleMatchingBehavior = MatchAllRules, const SelectorFilter* = nullptr);
+    ElementStyle styleForElement(const Element&, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle = nullptr, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules, const SelectorFilter* = nullptr);
 
     void keyframeStylesForAnimation(const Element&, const RenderStyle*, KeyframeList&);
 
@@ -408,27 +408,27 @@ public:
         const RenderStyle* m_parentStyle { nullptr };
         std::unique_ptr<RenderStyle> m_ownedParentStyle;
         const RenderStyle* m_rootElementStyle { nullptr };
+        std::unique_ptr<CascadedProperties> m_authorRollback;
+        std::unique_ptr<CascadedProperties> m_userRollback;
 
-        InsideLink m_elementLinkState { InsideLink::NotInside };
-
-        bool m_applyPropertyToRegularStyle { true };
-        bool m_applyPropertyToVisitedLinkStyle { false };
-        bool m_fontDirty { false };
-        bool m_fontSizeHasViewportUnits { false };
-        bool m_hasUAAppearance { false };
+        const SelectorFilter* m_selectorFilter { nullptr };
 
         BorderData m_borderData;
         FillLayer m_backgroundData { FillLayerType::Background };
         Color m_backgroundColor;
 
         CSSToLengthConversionData m_cssToLengthConversionData;
-        
-        CascadeLevel m_cascadeLevel { UserAgentLevel };
-        Style::ScopeOrdinal m_styleScopeOrdinal { Style::ScopeOrdinal::Element };
-        std::unique_ptr<CascadedProperties> m_authorRollback;
-        std::unique_ptr<CascadedProperties> m_userRollback;
 
-        const SelectorFilter* m_selectorFilter { nullptr };
+        Style::ScopeOrdinal m_styleScopeOrdinal { Style::ScopeOrdinal::Element };
+
+        InsideLink m_elementLinkState { InsideLink::NotInside };
+        CascadeLevel m_cascadeLevel { CascadeLevel::UserAgentLevel };
+
+        bool m_applyPropertyToRegularStyle { true };
+        bool m_applyPropertyToVisitedLinkStyle { false };
+        bool m_fontDirty { false };
+        bool m_fontSizeHasViewportUnits { false };
+        bool m_hasUAAppearance { false };
     };
 
     State& state() { return m_state; }
@@ -486,8 +486,6 @@ private:
     // the last reference to a style declaration are garbage collected.
     void sweepMatchedPropertiesCache();
 
-    unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep;
-
     typedef HashMap<unsigned, MatchedPropertiesCacheItem> MatchedPropertiesCache;
     MatchedPropertiesCache m_matchedPropertiesCache;
 
@@ -497,8 +495,6 @@ private:
     std::unique_ptr<RenderStyle> m_rootDefaultStyle;
 
     Document& m_document;
-
-    bool m_matchAuthorAndUserStyles;
 
     RenderStyle* m_overrideDocumentElementStyle { nullptr };
 
@@ -514,6 +510,9 @@ private:
 
     State m_state;
 
+    unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep { 0 };
+
+    bool m_matchAuthorAndUserStyles { true };
     // See if we still have crashes where StyleResolver gets deleted early.
     bool m_isDeleted { false };
 

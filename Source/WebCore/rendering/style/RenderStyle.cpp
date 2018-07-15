@@ -58,8 +58,8 @@
 namespace WebCore {
 
 struct SameSizeAsBorderValue {
-    float m_width;
     Color m_color;
+    float m_width;
     int m_restBits;
 };
 

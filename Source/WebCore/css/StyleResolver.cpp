@@ -193,14 +193,13 @@ void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& pro
 
 StyleResolver::StyleResolver(Document& document)
     : m_ruleSets(*this)
-    , m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
     , m_matchedPropertiesCacheSweepTimer(*this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
-    , m_matchAuthorAndUserStyles(m_document.settings().authorAndUserStylesEnabled())
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(&document))
 #endif
     , m_styleMap(this)
+    , m_matchAuthorAndUserStyles(m_document.settings().authorAndUserStylesEnabled())
 {
     Element* root = m_document.documentElement();
 
@@ -219,7 +218,7 @@ StyleResolver::StyleResolver(Document& document)
         m_mediaQueryEvaluator = MediaQueryEvaluator { "all" };
 
     if (root) {
-        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), nullptr, MatchOnlyUserAgentRules).renderStyle;
+        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), nullptr, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         m_document.fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
@@ -300,8 +299,8 @@ void StyleResolver::sweepMatchedPropertiesCache()
 StyleResolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle, const SelectorFilter* selectorFilter)
     : m_element(&element)
     , m_parentStyle(parentStyle)
-    , m_elementLinkState(element.document().visitedLinkState().determineLinkState(element))
     , m_selectorFilter(selectorFilter)
+    , m_elementLinkState(element.document().visitedLinkState().determineLinkState(element))
 {
     bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
     if (resetStyleInheritance)
@@ -379,10 +378,10 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
     ElementRuleCollector collector(element, m_ruleSets, m_state.selectorFilter());
     collector.setMedium(&m_mediaQueryEvaluator);
 
-    if (matchingBehavior == MatchOnlyUserAgentRules)
+    if (matchingBehavior == RuleMatchingBehavior::MatchOnlyUserAgentRules)
         collector.matchUARules();
     else
-        collector.matchAllRules(m_matchAuthorAndUserStyles, matchingBehavior != MatchAllRulesExcludingSMIL);
+        collector.matchAllRules(m_matchAuthorAndUserStyles, matchingBehavior != RuleMatchingBehavior::MatchAllRulesExcludingSMIL);
 
     if (collector.matchedPseudoElementIds())
         style.setHasPseudoStyles(collector.matchedPseudoElementIds());
@@ -1564,13 +1563,13 @@ bool StyleResolver::useSVGZoomRulesForLength()
 
 StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(const MatchResult& matchResult)
 {
-    ASSERT(cascadeLevel() != UserAgentLevel);
+    ASSERT(cascadeLevel() != CascadeLevel::UserAgentLevel);
 
     TextDirection direction;
     WritingMode writingMode;
     extractDirectionAndWritingMode(*state().style(), matchResult, direction, writingMode);
 
-    if (cascadeLevel() == AuthorLevel) {
+    if (cascadeLevel() == CascadeLevel::AuthorLevel) {
         CascadedProperties* authorRollback = state().authorRollback();
         if (authorRollback)
             return authorRollback;
@@ -1587,7 +1586,7 @@ StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(
         return state().authorRollback();
     }
 
-    if (cascadeLevel() == UserLevel) {
+    if (cascadeLevel() == CascadeLevel::UserLevel) {
         CascadedProperties* userRollback = state().userRollback();
         if (userRollback)
             return userRollback;
@@ -1644,7 +1643,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
     bool isRevert = valueToCheckForInheritInitial->isRevertValue() || customPropertyValueID == CSSValueRevert;
 
     if (isRevert) {
-        if (cascadeLevel() == UserAgentLevel || !matchResult)
+        if (cascadeLevel() == CascadeLevel::UserAgentLevel || !matchResult)
             isUnset = true;
         else {
             // Fetch the correct rollback object from the state, building it if necessary.
@@ -2124,10 +2123,10 @@ void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& 
 static CascadeLevel cascadeLevelForIndex(const StyleResolver::MatchResult& matchResult, int index)
 {
     if (index >= matchResult.ranges.firstUARule && index <= matchResult.ranges.lastUARule)
-        return UserAgentLevel;
+        return CascadeLevel::UserAgentLevel;
     if (index >= matchResult.ranges.firstUserRule && index <= matchResult.ranges.lastUserRule)
-        return UserLevel;
-    return AuthorLevel;
+        return CascadeLevel::UserLevel;
+    return CascadeLevel::AuthorLevel;
 }
 
 void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult, unsigned index, bool isImportant, bool inheritedOnly)
