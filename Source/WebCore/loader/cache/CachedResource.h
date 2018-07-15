@@ -291,17 +291,6 @@ protected:
 
     virtual void setBodyDataFrom(const CachedResource&);
 
-    // FIXME: Make the rest of these data members private and use functions in derived classes instead.
-    HashCountedSet<CachedResourceClient*> m_clients;
-    ResourceRequest m_resourceRequest;
-    std::unique_ptr<ResourceRequest> m_originalRequest; // Needed by Ping loads.
-    RefPtr<SubresourceLoader> m_loader;
-    ResourceLoaderOptions m_options;
-    ResourceResponse m_response;
-    ResourceResponse::Tainting m_responseTainting { ResourceResponse::Tainting::Basic };
-    RefPtr<SharedBuffer> m_data;
-    DeferrableOneShotTimer m_decodedDataDeletionTimer;
-
 private:
     class Callback;
 
@@ -317,43 +306,31 @@ private:
     void addAdditionalRequestHeaders(CachedResourceLoader&);
     void failBeforeStarting();
 
-    HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
-    PAL::SessionID m_sessionID;
-    ResourceLoadPriority m_loadPriority;
-    WallTime m_responseTimestamp;
+protected:
+    ResourceLoaderOptions m_options;
+    ResourceRequest m_resourceRequest;
+    ResourceResponse m_response;
 
-    String m_fragmentIdentifierForRequest;
+    DeferrableOneShotTimer m_decodedDataDeletionTimer;
 
-    ResourceError m_error;
-    RefPtr<SecurityOrigin> m_origin;
-    AtomicString m_initiatorName;
+    // FIXME: Make the rest of these data members private and use functions in derived classes instead.
+    HashCountedSet<CachedResourceClient*> m_clients;
+    std::unique_ptr<ResourceRequest> m_originalRequest; // Needed by Ping loads.
+    RefPtr<SubresourceLoader> m_loader;
+    RefPtr<SharedBuffer> m_data;
 
+private:
     MonotonicTime m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
+    PAL::SessionID m_sessionID;
+    WallTime m_responseTimestamp;
+    unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
 
-    unsigned m_encodedSize { 0 };
-    unsigned m_decodedSize { 0 };
-    unsigned m_accessCount { 0 };
-    unsigned m_handleCount { 0 };
-    unsigned m_preloadCount { 0 };
+    HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
 
-    PreloadResult m_preloadResult { PreloadResult::PreloadNotReferenced };
+    // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
+    HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
 
-    bool m_requestedFromNetworkingLayer { false };
-
-    bool m_inCache { false };
-    bool m_loading { false };
-    bool m_isLinkPreload { false };
-    bool m_hasUnknownEncoding { false };
-
-    bool m_switchingClientsToRevalidatedResource { false };
-
-    Type m_type; // Type
-    unsigned m_status { Pending }; // Status
-
-#ifndef NDEBUG
-    bool m_deleted { false };
-    unsigned m_lruIndex { 0 };
-#endif
+    Vector<std::pair<String, String>> m_varyingHeaderValues;
 
     CachedResourceLoader* m_owningCachedResourceLoader { nullptr }; // only non-null for resources that are not in the cache
 
@@ -366,15 +343,41 @@ private:
     // If this field is non-null, the resource has a proxy for checking whether it is still up to date (see m_resourceToRevalidate).
     CachedResource* m_proxyResource { nullptr };
 
-    // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
-    HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
+    String m_fragmentIdentifierForRequest;
+
+    ResourceError m_error;
+    RefPtr<SecurityOrigin> m_origin;
+    AtomicString m_initiatorName;
 
     RedirectChainCacheStatus m_redirectChainCacheStatus;
 
-    Vector<std::pair<String, String>> m_varyingHeaderValues;
+    unsigned m_encodedSize { 0 };
+    unsigned m_decodedSize { 0 };
+    unsigned m_accessCount { 0 };
+    unsigned m_handleCount { 0 };
+    unsigned m_preloadCount { 0 };
 
-    unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
+    unsigned m_status { Pending }; // Status
+
+    PreloadResult m_preloadResult { PreloadResult::PreloadNotReferenced };
+
+    ResourceResponse::Tainting m_responseTainting { ResourceResponse::Tainting::Basic };
+    ResourceLoadPriority m_loadPriority;
+
+    Type m_type; // Type
+
+    bool m_requestedFromNetworkingLayer { false };
+    bool m_inCache { false };
+    bool m_loading { false };
+    bool m_isLinkPreload { false };
+    bool m_hasUnknownEncoding { false };
+    bool m_switchingClientsToRevalidatedResource { false };
     bool m_ignoreForRequestCount { false };
+
+#ifndef NDEBUG
+    bool m_deleted { false };
+    unsigned m_lruIndex { 0 };
+#endif
 };
 
 class CachedResource::Callback {

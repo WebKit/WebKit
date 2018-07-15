@@ -174,10 +174,11 @@ private:
 
     RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;
-    MonotonicTime m_lastUpdateImageDataTime;
-    unsigned m_updateImageDataCount { 0 };
-
     std::unique_ptr<SVGImageCache> m_svgImageCache;
+
+    MonotonicTime m_lastUpdateImageDataTime;
+
+    unsigned m_updateImageDataCount { 0 };
     bool m_isManuallyCached { false };
     bool m_shouldPaintBrokenImage { true };
     bool m_forceUpdateImageDataEnabledForTesting { false };

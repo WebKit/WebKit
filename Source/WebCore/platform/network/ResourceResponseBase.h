@@ -226,15 +226,6 @@ private:
     mutable CacheControlDirectives m_cacheControlDirectives;
     std::optional<SHA1::Digest> m_cacheBodyKey;
 
-    Source m_source { Source::Unknown };
-    Type m_type { Type::Default };
-    Tainting m_tainting { Tainting::Basic };
-
-protected:
-    int m_httpStatusCode { 0 };
-    bool m_isNull { true };
-
-private:
     mutable bool m_haveParsedCacheControlHeader { false };
     mutable bool m_haveParsedAgeHeader { false };
     mutable bool m_haveParsedDateHeader { false };
@@ -242,6 +233,14 @@ private:
     mutable bool m_haveParsedLastModifiedHeader { false };
     mutable bool m_haveParsedContentRangeHeader { false };
     bool m_isRedirected { false };
+
+    Source m_source { Source::Unknown };
+    Type m_type { Type::Default };
+    Tainting m_tainting { Tainting::Basic };
+
+protected:
+    bool m_isNull { true };
+    int m_httpStatusCode { 0 };
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }

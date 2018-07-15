@@ -83,7 +83,7 @@ public:
     // and <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-5.2>.
     // FIXME: For some reason the main resource request may be updated more than once. We start off as Unspecified
     // to detect if we need to compute the same-site and top-site state or not. See FIXME in DocumentLoader::startLoadingMainResource().
-    enum class SameSiteDisposition { Unspecified, SameSite, CrossSite };
+    enum class SameSiteDisposition : uint8_t { Unspecified, SameSite, CrossSite };
     bool isSameSiteUnspecified() const { return m_sameSiteDisposition == SameSiteDisposition::Unspecified; }
     WEBCORE_EXPORT bool isSameSite() const; // Whether this request's registrable domain matches the request's initiator's "site for cookies".
     WEBCORE_EXPORT void setIsSameSite(bool);
@@ -164,7 +164,7 @@ public:
     bool hiddenFromInspector() const { return m_hiddenFromInspector; }
     void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
-    enum class Requester { Unspecified, Main, XHR, Fetch, Media, ImportScripts };
+    enum class Requester : uint8_t { Unspecified, Main, XHR, Fetch, Media, ImportScripts };
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
 

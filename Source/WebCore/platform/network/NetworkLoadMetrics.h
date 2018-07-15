@@ -39,7 +39,7 @@ OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
-enum class NetworkLoadPriority {
+enum class NetworkLoadPriority : uint8_t {
     Low,
     Medium,
     High,
@@ -166,15 +166,16 @@ public:
     Seconds responseStart;
     Seconds responseEnd;
 
-    // Whether or not all of the properties (0 or otherwise) have been set.
-    bool complete { false };
-
     // ALPN Protocol ID: https://w3c.github.io/resource-timing/#bib-RFC7301
     String protocol;
 
     std::optional<String> remoteAddress;
     std::optional<String> connectionIdentifier;
     std::optional<NetworkLoadPriority> priority;
+
+    // Whether or not all of the properties (0 or otherwise) have been set.
+    bool complete { false };
+
     std::optional<HTTPHeaderMap> requestHeaders;
 
     std::optional<uint64_t> requestHeaderBytesSent;

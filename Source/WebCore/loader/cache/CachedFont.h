@@ -76,9 +76,10 @@ private:
 
     void allClientsRemoved() override;
 
-    std::unique_ptr<FontCustomPlatformData> m_fontCustomPlatformData;
     bool m_loadInitiated;
     bool m_hasCreatedFontDataWrappingResource;
+
+    std::unique_ptr<FontCustomPlatformData> m_fontCustomPlatformData;
 
     friend class MemoryCache;
 };

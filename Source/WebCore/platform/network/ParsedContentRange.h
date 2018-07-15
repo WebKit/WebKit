@@ -48,10 +48,10 @@ public:
 private:
     template<typename T> static bool isPositive(T);
 
-    bool m_isValid { false };
     int64_t m_firstBytePosition { 0 };
     int64_t m_lastBytePosition { 0 };
     int64_t m_instanceLength { UnknownLength };
+    bool m_isValid { false };
 };
 
 }

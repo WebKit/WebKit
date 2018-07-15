@@ -139,6 +139,14 @@ struct ResourceLoaderOptions : public FetchOptions {
         this->mode = mode;
     }
 
+#if ENABLE(SERVICE_WORKER)
+    std::optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+#endif
+    HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>> httpHeadersToKeep;
+    Vector<String> derivedCachedDataTypesToRetrieve;
+    std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    unsigned maxRedirectCount { 20 };
+
     SendCallbackPolicy sendLoadCallbacks { SendCallbackPolicy::DoNotSendCallbacks };
     ContentSniffingPolicy sniffContent { ContentSniffingPolicy::DoNotSniffContent };
     ContentEncodingSniffingPolicy sniffContentEncoding { ContentEncodingSniffingPolicy::Sniff };
@@ -153,18 +161,8 @@ struct ResourceLoaderOptions : public FetchOptions {
     InitiatorContext initiatorContext { InitiatorContext::Document };
     ServiceWorkersMode serviceWorkersMode { ServiceWorkersMode::All };
     ApplicationCacheMode applicationCacheMode { ApplicationCacheMode::Use };
-#if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
-#endif
-    HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>> httpHeadersToKeep;
-
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
-    unsigned maxRedirectCount { 20 };
-
-    Vector<String> derivedCachedDataTypesToRetrieve;
-
     PreflightPolicy preflightPolicy { PreflightPolicy::Consider };
-    std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 
 } // namespace WebCore

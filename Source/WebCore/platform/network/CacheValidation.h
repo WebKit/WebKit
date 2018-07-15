@@ -44,11 +44,11 @@ struct RedirectChainCacheStatus {
         CachedRedirection
     };
     RedirectChainCacheStatus()
-        : status(Status::NoRedirection)
-        , endOfValidity(WallTime::infinity())
+        : endOfValidity(WallTime::infinity())
+        , status(Status::NoRedirection)
     { }
-    Status status;
     WallTime endOfValidity;
+    Status status;
 };
 
 WEBCORE_EXPORT Seconds computeCurrentAge(const ResourceResponse&, WallTime responseTimestamp);

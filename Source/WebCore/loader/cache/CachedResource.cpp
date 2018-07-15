@@ -117,18 +117,18 @@ static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Ty
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID)
-    : m_resourceRequest(request.releaseResourceRequest())
-    , m_options(request.options())
+    : m_options(request.options())
+    , m_resourceRequest(request.releaseResourceRequest())
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
-    , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(WallTime::now())
     , m_fragmentIdentifierForRequest(request.releaseFragmentIdentifier())
     , m_origin(request.releaseOrigin())
     , m_initiatorName(request.initiatorName())
+    , m_loadPriority(defaultPriorityForResourceType(type))
+    , m_type(type)
     , m_isLinkPreload(request.isLinkPreload())
     , m_hasUnknownEncoding(request.isLinkPreload())
-    , m_type(type)
     , m_ignoreForRequestCount(request.ignoreForRequestCount())
 {
     ASSERT(sessionID.isValid());
@@ -152,8 +152,8 @@ CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID session
     , m_sessionID(sessionID)
     , m_responseTimestamp(WallTime::now())
     , m_fragmentIdentifierForRequest(CachedResourceRequest::splitFragmentIdentifierFromRequestURL(m_resourceRequest))
-    , m_type(type)
     , m_status(Cached)
+    , m_type(type)
 {
     ASSERT(sessionID.isValid());
 #ifndef NDEBUG
