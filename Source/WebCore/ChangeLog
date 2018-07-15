@@ -1,5 +1,25 @@
 2018-07-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Shrink StyleFillData, StyleStrokeData and StyleMiscData
+        https://bugs.webkit.org/show_bug.cgi?id=187681
+
+        Reviewed by Anders Carlsson.
+
+        Shrink these data structures by making more enum classes one byte in size, and
+        re-ordering. StyleFillData goes from 56 to 48, StyleStrokeData from 80 to 72,
+        StyleMiscData from 40 to 32 bytes.
+
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleFillData::StyleFillData):
+        (WebCore::StyleFillData::operator== const):
+        (WebCore::StyleStrokeData::StyleStrokeData):
+        (WebCore::StyleStrokeData::operator== const):
+        (WebCore::StyleStopData::operator== const):
+        (WebCore::StyleMiscData::StyleMiscData):
+        * rendering/style/SVGRenderStyleDefs.h:
+
+2018-07-14  Simon Fraser  <simon.fraser@apple.com>
+
         Shrink CachedResource and subclasses
         https://bugs.webkit.org/show_bug.cgi?id=187546
 

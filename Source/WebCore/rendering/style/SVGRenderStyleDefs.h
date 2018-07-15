@@ -40,7 +40,7 @@ class CSSValue;
 class CSSValueList;
 class SVGPaint;
 
-enum class SVGPaintType {
+enum class SVGPaintType : uint8_t {
     RGBColor,
     None,
     CurrentColor,
@@ -50,38 +50,39 @@ enum class SVGPaintType {
     URI
 };
 
-enum class BaselineShift {
+enum class BaselineShift : uint8_t {
     Baseline,
     Sub,
     Super,
     Length
 };
 
-enum class TextAnchor {
+enum class TextAnchor : uint8_t {
     Start,
     Middle,
     End
 };
 
-enum class ColorInterpolation {
+enum class ColorInterpolation : uint8_t {
     Auto,
     SRGB,
     LinearRGB
 };
 
-enum class ColorRendering {
+enum class ColorRendering : uint8_t {
     Auto,
     OptimizeSpeed,
     OptimizeQuality
 };
-enum class ShapeRendering {
+
+enum class ShapeRendering : uint8_t {
     Auto,
     OptimizeSpeed,
     CrispEdges,
     GeometricPrecision
 };
 
-enum class GlyphOrientation {
+enum class GlyphOrientation : uint8_t {
     Degrees0,
     Degrees90,
     Degrees180,
@@ -89,7 +90,7 @@ enum class GlyphOrientation {
     Auto
 };
 
-enum class AlignmentBaseline {
+enum class AlignmentBaseline : uint8_t {
     Auto,
     Baseline,
     BeforeEdge,
@@ -104,7 +105,7 @@ enum class AlignmentBaseline {
     Mathematical
 };
 
-enum class DominantBaseline {
+enum class DominantBaseline : uint8_t {
     Auto,
     UseScript,
     NoChange,
@@ -119,18 +120,18 @@ enum class DominantBaseline {
     TextBeforeEdge
 };
 
-enum class VectorEffect {
+enum class VectorEffect : uint8_t {
     None,
     NonScalingStroke
 };
 
-enum class BufferedRendering {
+enum class BufferedRendering : uint8_t {
     Auto,
     Dynamic,
     Static
 };
 
-enum class MaskType {
+enum class MaskType : uint8_t {
     Luminance,
     Alpha
 };
@@ -148,12 +149,12 @@ public:
     }
 
     float opacity;
-    SVGPaintType paintType;
     Color paintColor;
-    String paintUri;
-    SVGPaintType visitedLinkPaintType;
     Color visitedLinkPaintColor;
+    String paintUri;
     String visitedLinkPaintUri;
+    SVGPaintType paintType;
+    SVGPaintType visitedLinkPaintType;
 
 private:
     StyleFillData();
@@ -173,15 +174,17 @@ public:
 
     float opacity;
 
+    Color paintColor;
+    Color visitedLinkPaintColor;
+
+    String paintUri;
+    String visitedLinkPaintUri;
+
     Length dashOffset;
     Vector<SVGLengthValue> dashArray;
 
     SVGPaintType paintType;
-    Color paintColor;
-    String paintUri;
     SVGPaintType visitedLinkPaintType;
-    Color visitedLinkPaintColor;
-    String visitedLinkPaintUri;
 
 private:
     StyleStrokeData();
@@ -237,8 +240,8 @@ public:
         return !(*this == other);
     }
 
-    Color floodColor;
     float floodOpacity;
+    Color floodColor;
     Color lightingColor;
 
     // non-inherited text stuff lives here not in StyleTextData.
