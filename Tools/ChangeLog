@@ -1,3 +1,25 @@
+2018-07-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add --target-path option to dump-class-layout
+        https://bugs.webkit.org/show_bug.cgi?id=187687
+
+        Reviewed by Simon Fraser.
+
+        We add an escape hatch to dump-class-layout for specifying target path directly.
+        This `--target-path` allows us to use dump-class-layout in the other ports
+        like JSCOnly.
+
+        We can dump class layout if we build the target with clang by using the following command.
+
+        Tools/Scripts/dump-class-layout \
+            --architecture=x86_64 \
+            --target-path=path/to/libJavaScriptCore.so \
+            JavaScriptCore \
+            ScopeNode
+
+        * Scripts/dump-class-layout:
+        (main):
+
 2018-07-16  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: closeAndDeleteDatabasesForOrigins should remove all databases for those origins

@@ -39,6 +39,7 @@ from lldb_dump_class_layout import LLDBDebuggerInstance, ClassLayout
 
 framework = "WebCore"
 build_directory = ""
+target_path = ""
 config = "Release"
 arch = None
 
@@ -62,16 +63,22 @@ def main():
     parser.add_argument('-a', '--architecture', dest='arch', action='store',
         help='Architecture (i386, x86_64, armv7, armv7s, arm64). Uses the first architecture listed by \'file\' by default')
 
+    parser.add_argument('-t', '--target-path', dest='target_path', action='store',
+        help='Path to the target')
+
     args = parser.parse_args()
     build_dir = webkit_build_dir()
 
-    if args.config == None:
+    if args.config is None:
         args.config = "Release"
 
-    if not args.build_directory == None:
+    if args.build_directory is not None:
         build_dir = args.build_directory
 
-    target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
+    if args.target_path is not None:
+        target_path = args.target_path
+    else:
+        target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
     
     lldb_instance = LLDBDebuggerInstance(target_path, args.arch)
     class_layout = lldb_instance.layout_for_classname(args.classname)
