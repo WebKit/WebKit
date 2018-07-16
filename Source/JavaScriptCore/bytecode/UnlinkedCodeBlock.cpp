@@ -381,13 +381,14 @@ void UnlinkedCodeBlock::shrinkToFit()
     auto locker = holdLock(cellLock());
     
     m_jumpTargets.shrinkToFit();
+    m_propertyAccessInstructions.shrinkToFit();
     m_identifiers.shrinkToFit();
     m_bitVectors.shrinkToFit();
     m_constantRegisters.shrinkToFit();
+    m_constantIdentifierSets.shrinkToFit();
     m_constantsSourceCodeRepresentation.shrinkToFit();
     m_functionDecls.shrinkToFit();
     m_functionExprs.shrinkToFit();
-    m_propertyAccessInstructions.shrinkToFit();
     m_expressionInfo.shrinkToFit();
 
     if (m_rareData) {
