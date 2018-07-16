@@ -1,3 +1,20 @@
+2018-07-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Make SourceParseMode small
+        https://bugs.webkit.org/show_bug.cgi?id=187705
+
+        Reviewed by Mark Lam.
+
+        Each SourceParseMode is distinct. So we do not need to make it a set-style (power of 2 style).
+        Originally, this is done to make SourceParseModeSet faster because it is critical in our parser.
+        But we can keep SourceParseModeSet fast by `1U << mode | set`. And we can make SourceParseMode
+        within 5 bits. This reduces the size of UnlinkedCodeBlock from 288 to 280.
+
+        * parser/ParserModes.h:
+        (JSC::SourceParseModeSet::SourceParseModeSet):
+        (JSC::SourceParseModeSet::contains):
+        (JSC::SourceParseModeSet::mergeSourceParseModes):
+
 2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Generator and AsyncGeneratorMethod's prototype is incorrect

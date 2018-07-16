@@ -42,51 +42,52 @@ enum DebuggerMode { DebuggerOff, DebuggerOn };
 
 enum class FunctionMode { FunctionExpression, FunctionDeclaration, MethodDefinition };
 
-enum class SourceParseMode : uint32_t {
-    NormalFunctionMode                = 0b00000000000000000000000000000001,
-    GeneratorBodyMode                 = 0b00000000000000000000000000000010,
-    GeneratorWrapperFunctionMode      = 0b00000000000000000000000000000100,
-    GetterMode                        = 0b00000000000000000000000000001000,
-    SetterMode                        = 0b00000000000000000000000000010000,
-    MethodMode                        = 0b00000000000000000000000000100000,
-    ArrowFunctionMode                 = 0b00000000000000000000000001000000,
-    AsyncFunctionBodyMode             = 0b00000000000000000000000010000000,
-    AsyncArrowFunctionBodyMode        = 0b00000000000000000000000100000000,
-    AsyncFunctionMode                 = 0b00000000000000000000001000000000,
-    AsyncMethodMode                   = 0b00000000000000000000010000000000,
-    AsyncArrowFunctionMode            = 0b00000000000000000000100000000000,
-    ProgramMode                       = 0b00000000000000000001000000000000,
-    ModuleAnalyzeMode                 = 0b00000000000000000010000000000000,
-    ModuleEvaluateMode                = 0b00000000000000000100000000000000,
-    AsyncGeneratorBodyMode            = 0b00000000000000001000000000000000,
-    AsyncGeneratorWrapperFunctionMode = 0b00000000000000010000000000000000,
-    AsyncGeneratorWrapperMethodMode   = 0b00000000000000100000000000000000,
-    GeneratorWrapperMethodMode        = 0b00000000000001000000000000000000,
+// Keep it less than 32, it means this should be within 5 bits.
+enum class SourceParseMode : uint8_t {
+    NormalFunctionMode                = 0,
+    GeneratorBodyMode                 = 1,
+    GeneratorWrapperFunctionMode      = 2,
+    GetterMode                        = 3,
+    SetterMode                        = 4,
+    MethodMode                        = 5,
+    ArrowFunctionMode                 = 6,
+    AsyncFunctionBodyMode             = 7,
+    AsyncArrowFunctionBodyMode        = 8,
+    AsyncFunctionMode                 = 9,
+    AsyncMethodMode                   = 10,
+    AsyncArrowFunctionMode            = 11,
+    ProgramMode                       = 12,
+    ModuleAnalyzeMode                 = 13,
+    ModuleEvaluateMode                = 14,
+    AsyncGeneratorBodyMode            = 15,
+    AsyncGeneratorWrapperFunctionMode = 16,
+    AsyncGeneratorWrapperMethodMode   = 17,
+    GeneratorWrapperMethodMode        = 18,
 };
 
 class SourceParseModeSet { 
 public: 
     template<typename... Modes> 
-    SourceParseModeSet(Modes... args) 
+    constexpr SourceParseModeSet(Modes... args)
         : m_mask(mergeSourceParseModes(args...)) 
     { 
     } 
 
-    ALWAYS_INLINE bool contains(SourceParseMode mode) 
+    ALWAYS_INLINE constexpr bool contains(SourceParseMode mode)
     { 
-        return static_cast<unsigned>(mode) & m_mask; 
+        return (1U << static_cast<unsigned>(mode)) & m_mask;
     } 
 
 private: 
-    ALWAYS_INLINE static unsigned mergeSourceParseModes(SourceParseMode mode) 
+    ALWAYS_INLINE static constexpr unsigned mergeSourceParseModes(SourceParseMode mode)
     { 
-        return static_cast<unsigned>(mode); 
+        return (1U << static_cast<unsigned>(mode));
     } 
 
     template<typename... Rest> 
-    ALWAYS_INLINE static unsigned mergeSourceParseModes(SourceParseMode mode, Rest... rest) 
+    ALWAYS_INLINE static constexpr unsigned mergeSourceParseModes(SourceParseMode mode, Rest... rest)
     { 
-        return static_cast<unsigned>(mode) | mergeSourceParseModes(rest...); 
+        return (1U << static_cast<unsigned>(mode)) | mergeSourceParseModes(rest...);
     } 
 
     const unsigned m_mask; 
