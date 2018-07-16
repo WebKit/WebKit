@@ -626,6 +626,11 @@ void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOr
         for (const auto& origin : origins) {
             String originPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, origin.databaseIdentifier());
             removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
+
+            for (const auto& topOriginPath : FileSystem::listDirectory(m_databaseDirectoryPath, "*")) {
+                originPath = FileSystem::pathByAppendingComponent(topOriginPath, origin.databaseIdentifier());
+                removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
+            }
         }
     }
 

@@ -1,3 +1,14 @@
+2018-07-16  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: closeAndDeleteDatabasesForOrigins should remove all databases for those origins
+        https://bugs.webkit.org/show_bug.cgi?id=187631
+        <rdar://problem/42164227>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2018-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to evaluate code using a given object to store global symbols

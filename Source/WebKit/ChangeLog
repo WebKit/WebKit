@@ -1,3 +1,19 @@
+2018-07-16  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: closeAndDeleteDatabasesForOrigins should remove all databases for those origins
+        https://bugs.webkit.org/show_bug.cgi?id=187631
+        <rdar://problem/42164227>
+
+        Reviewed by Brady Eidson.
+
+        We need to return all origins, both openingOrigin and mainFrameOrigin, of IndexedDB so users
+        could be better aware of which origins are using databases and decide what they want to 
+        remove.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::indexedDatabaseOrigins):
+        * StorageProcess/StorageProcess.h:
+
 2018-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] http/tests/misc/bubble-drag-events.html crashes

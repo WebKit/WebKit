@@ -1,3 +1,20 @@
+2018-07-16  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: closeAndDeleteDatabasesForOrigins should remove all databases for those origins
+        https://bugs.webkit.org/show_bug.cgi?id=187631
+        <rdar://problem/42164227>
+
+        Reviewed by Brady Eidson.
+
+        When asked to delete database for an origin, we deleted the databases whose mainFrameOrigin 
+        is that origin. Given that the origin may create IndexedDB from subframes, we should delete 
+        databases whose openingOrigin is that origin too.
+
+        Covered by modified API test: WebKit.WebsiteDataStoreCustomPaths. 
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesForOrigins):
+
 2018-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink some font-related classes and enums
