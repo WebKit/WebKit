@@ -410,6 +410,8 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._visualViewportEnabled = settings.visualViewportEnabled;
     preferences._largeImageAsyncDecodingEnabled = settings.largeImageAsyncDecodingEnabled;
     preferences._animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
+    preferences._colorFilterEnabled = settings.appleColorFilterEnabled;
+    preferences._punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
 
     _webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = settings.resourceLoadStatisticsEnabled;
 

@@ -1084,6 +1084,10 @@ ColorFilterEnabled:
   type: bool
   defaultValue: false
 
+PunchOutWhiteBackgroundsInDarkMode:
+  type: bool
+  defaultValue: false
+
 IncompleteImageBorderEnabled:
   type: bool
   defaultValue: false

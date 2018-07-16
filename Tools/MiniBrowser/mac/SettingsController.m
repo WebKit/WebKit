@@ -65,6 +65,7 @@ static NSString * const VisualViewportEnabledPreferenceKey = @"VisualViewportEna
 static NSString * const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
 static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
 static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
+static NSString * const PunchOutWhiteBackgroundsInDarkModePreferenceKey = @"PunchOutWhiteBackgroundsInDarkMode";
 static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
@@ -172,7 +173,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Enable Resource Load Statistics" action:@selector(toggleResourceLoadStatisticsEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Large Image Async Decoding" action:@selector(toggleLargeImageAsyncDecodingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Animated Image Async Decoding" action:@selector(toggleAnimatedImageAsyncDecodingEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable -apple-color-filter" action:@selector(toggleAppleColorFilterEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Enable color-filter" action:@selector(toggleAppleColorFilterEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Punch Out White Backgrounds in Dark Mode" action:@selector(togglePunchOutWhiteBackgroundsInDarkMode:) indented:NO];
     [self _addItemWithTitle:@"Use System Appearance" action:@selector(toggleUseSystemAppearance:) indented:NO];
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
@@ -265,6 +267,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self animatedImageAsyncDecodingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAppleColorFilterEnabled:))
         [menuItem setState:[self appleColorFilterEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(togglePunchOutWhiteBackgroundsInDarkMode:))
+        [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
         [menuItem setState:[self useSystemAppearance] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleVisualViewportEnabled:))
@@ -583,6 +587,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)appleColorFilterEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:AppleColorFilterEnabledPreferenceKey];
+}
+
+- (void)togglePunchOutWhiteBackgroundsInDarkMode:(id)sender
+{
+    [self _toggleBooleanDefault:PunchOutWhiteBackgroundsInDarkModePreferenceKey];
+}
+
+- (BOOL)punchOutWhiteBackgroundsInDarkMode
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:PunchOutWhiteBackgroundsInDarkModePreferenceKey];
 }
 
 - (void)toggleUseSystemAppearance:(id)sender

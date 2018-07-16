@@ -678,6 +678,7 @@ public:
         @YES, WebKitViewportFitEnabledPreferenceKey,
         @YES, WebKitConstantPropertiesEnabledPreferenceKey,
         @NO, WebKitColorFilterEnabledPreferenceKey,
+        @NO, WebKitPunchOutWhiteBackgroundsInDarkModePreferenceKey,
         @YES, WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey,
         @NO, WebKitInspectorAdditionsEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
@@ -3281,6 +3282,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setColorFilterEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitColorFilterEnabledPreferenceKey];
+}
+
+- (BOOL)punchOutWhiteBackgroundsInDarkMode
+{
+    return [self _boolValueForKey:WebKitPunchOutWhiteBackgroundsInDarkModePreferenceKey];
+}
+
+- (void)setPunchOutWhiteBackgroundsInDarkMode:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitPunchOutWhiteBackgroundsInDarkModePreferenceKey];
 }
 
 - (BOOL)allowMediaContentTypesRequiringHardwareSupportAsFallback

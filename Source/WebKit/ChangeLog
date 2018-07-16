@@ -1,3 +1,27 @@
+2018-07-11  Dean Jackson  <dino@apple.com>
+
+        Allow removal of white backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=187574
+        <rdar://problem/41146792>
+
+        Reviewed by Simon Fraser.
+
+        Add a new WebPreference for punching out white backgrounds.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode):
+        (WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _punchOutWhiteBackgroundsInDarkMode]):
+        (-[WKWebViewConfiguration _setPunchOutWhiteBackgroundsInDarkMode:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2018-07-16  Aditya Keerthi  <akeerthi@apple.com>
 
         [Datalist][macOS] Add suggestions UI for TextFieldInputTypes

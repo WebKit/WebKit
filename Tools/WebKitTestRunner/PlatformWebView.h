@@ -93,7 +93,10 @@ public:
     void makeWebViewFirstResponder();
     void setWindowIsKey(bool);
     bool windowIsKey() const { return m_windowIsKey; }
-    
+
+    bool drawsBackground() const;
+    void setDrawsBackground(bool);
+
     void removeFromWindow();
     void addToWindow();
 

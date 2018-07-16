@@ -170,6 +170,8 @@ private:
 
     void drawLineForDocumentMarker(const RenderText&, GraphicsContext&, const FloatPoint& origin, float width, DocumentMarkerLineStyle) final;
 
+    bool usingDarkAppearance(const RenderObject&) const final;
+
 private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 

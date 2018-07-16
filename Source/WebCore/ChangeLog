@@ -1,3 +1,31 @@
+2018-07-11  Dean Jackson  <dino@apple.com>
+
+        Allow removal of white backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=187574
+        <rdar://problem/41146792>
+
+        Reviewed by Simon Fraser.
+
+        Add a drawing mode that turns white backgrounds into transparent
+        regions, such that a hosting app can see through to its window.
+
+        Test: css3/color-filters/punch-out-white-backgrounds.html
+
+        * page/Settings.yaml: New Setting.
+
+        * rendering/InlineFlowBox.cpp: Draw with a destination out blend mode
+        if the background is white and we are punching out backgrounds, which means
+        that it will erase the destination.
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackground): Ditto.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell): Ditto.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Save and restore
+        the composition mode if necessary.
+
 2018-07-16  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233867.

@@ -168,6 +168,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     }
 
     m_mainWebView = std::make_unique<PlatformWebView>(copiedConfiguration.get(), options);
+
+    if (options.punchOutWhiteBackgroundsInDarkMode)
+        m_mainWebView->setDrawsBackground(false);
 #else
     m_mainWebView = std::make_unique<PlatformWebView>(globalWebViewConfiguration, options);
 #endif

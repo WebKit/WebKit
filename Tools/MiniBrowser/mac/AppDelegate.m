@@ -116,7 +116,6 @@ static WKWebViewConfiguration *defaultConfiguration()
 
     configuration.suppressesIncrementalRendering = [SettingsController shared].incrementalRenderingSuppressed;
     configuration.websiteDataStore._resourceLoadStatisticsEnabled = [SettingsController shared].resourceLoadStatisticsEnabled;
-    configuration._colorFilterEnabled = [SettingsController shared].appleColorFilterEnabled;
     return configuration;
 }
 

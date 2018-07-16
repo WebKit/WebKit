@@ -1,3 +1,22 @@
+2018-07-11  Dean Jackson  <dino@apple.com>
+
+        Allow removal of white backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=187574
+        <rdar://problem/41146792>
+
+        Reviewed by Simon Fraser.
+
+        Add a new WebPreference for punching out white backgrounds.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences punchOutWhiteBackgroundsInDarkMode]):
+        (-[WebPreferences setPunchOutWhiteBackgroundsInDarkMode:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2018-07-14  Kocsen Chung  <kocsen_chung@apple.com>
 
         Ensure WebKit stack is ad-hoc signed

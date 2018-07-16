@@ -36,8 +36,10 @@
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 #include "RenderTableCell.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "RootInlineBox.h"
+#include "Settings.h"
 #include "Text.h"
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
@@ -1358,8 +1360,15 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, this))
         paintBoxShadow(paintInfo, lineStyle, Normal, paintRect);
 
-    const Color& color = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-    paintFillLayers(paintInfo, color, lineStyle.backgroundLayers(), paintRect);
+    Color color = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+
+    CompositeOperator compositeOp = CompositeSourceOver;
+    if (renderer().document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(color) && renderer().theme().usingDarkAppearance(renderer()))
+        compositeOp = CompositeDestinationOut;
+
+    color = lineStyle.colorByApplyingColorFilter(color);
+
+    paintFillLayers(paintInfo, color, lineStyle.backgroundLayers(), paintRect, compositeOp);
     paintBoxShadow(paintInfo, lineStyle, Inset, paintRect);
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our

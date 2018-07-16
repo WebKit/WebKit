@@ -294,6 +294,15 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
     // Retina only surface.
 }
 
+bool PlatformWebView::drawsBackground() const
+{
+    return false;
+}
+
+void PlatformWebView::setDrawsBackground(bool)
+{
+}
+
 #if !HAVE(IOSURFACE)
 static void releaseDataProviderData(void* info, const void*, size_t)
 {

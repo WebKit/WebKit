@@ -312,6 +312,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     [[WebPreferences standardPreferences] setLargeImageAsyncDecodingEnabled:settings.largeImageAsyncDecodingEnabled];
     [[WebPreferences standardPreferences] setAnimatedImageAsyncDecodingEnabled:settings.animatedImageAsyncDecodingEnabled];
     [[WebPreferences standardPreferences] setColorFilterEnabled:settings.appleColorFilterEnabled];
+    [[WebPreferences standardPreferences] setPunchOutWhiteBackgroundsInDarkMode:settings.punchOutWhiteBackgroundsInDarkMode];
 
     _webView._useSystemAppearance = settings.useSystemAppearance;
 

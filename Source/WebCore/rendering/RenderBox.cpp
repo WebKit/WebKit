@@ -56,6 +56,7 @@
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderGeometryMap.h"
+#include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -67,18 +68,13 @@
 #include "RuntimeApplicationChecks.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
+#include "Settings.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformState.h"
 #include <algorithm>
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
-
-#include "RenderGrid.h"
-
-#if PLATFORM(IOS)
-#include "Settings.h"
-#endif
 
 namespace WebCore {
 
@@ -1195,8 +1191,14 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
         return;
 
     auto& style = rootBackgroundRenderer->style();
-    auto color = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-    paintFillLayers(paintInfo, color, style.backgroundLayers(), view().backgroundRect(), BackgroundBleedNone, CompositeSourceOver, rootBackgroundRenderer);
+
+    auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
+
+    CompositeOperator compositeOp = CompositeSourceOver;
+    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(color) && theme().usingDarkAppearance(*this))
+        compositeOp = CompositeDestinationOut;
+
+    paintFillLayers(paintInfo, style.colorByApplyingColorFilter(color), style.backgroundLayers(), view().backgroundRect(), BackgroundBleedNone, compositeOp, rootBackgroundRenderer);
 }
 
 BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext& context) const
@@ -1324,7 +1326,13 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
     if (backgroundIsKnownToBeObscured(paintRect.location()) && !boxShadowShouldBeAppliedToBackground(paintRect.location(), bleedAvoidance))
         return;
 
-    paintFillLayers(paintInfo, style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), style().backgroundLayers(), paintRect, bleedAvoidance);
+    Color backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
+
+    CompositeOperator compositeOp = CompositeSourceOver;
+    if (document().settings().punchOutWhiteBackgroundsInDarkMode() && Color::isWhiteColor(backgroundColor) && theme().usingDarkAppearance(*this))
+        compositeOp = CompositeDestinationOut;
+
+    paintFillLayers(paintInfo, style().colorByApplyingColorFilter(backgroundColor), style().backgroundLayers(), paintRect, bleedAvoidance, compositeOp);
 }
 
 bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect& paintedExtent) const

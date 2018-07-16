@@ -2,10 +2,12 @@ recorded:
 (translate
   (x 0.00)
   (y 0.00))
-(fill-rect-with-color
+(fill-composited-rect
   (extent at (412,0) size 100x100)
   (rect at (412,0) size 100x100)
-  (color #0000FF))
+  (color #0000FF)
+  (composite-operation source-over)
+  (blend-mode normal))
 
 replayed: 
 (

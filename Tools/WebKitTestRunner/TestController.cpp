@@ -719,6 +719,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials);
     WKPreferencesSetWebAnimationsCSSIntegrationEnabled(preferences, options.enableWebAnimationsCSSIntegration);
     WKPreferencesSetColorFilterEnabled(preferences, options.enableColorFilter);
+    WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(preferences, options.punchOutWhiteBackgroundsInDarkMode);
 
     static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
     WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
@@ -1134,6 +1135,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableProcessSwapOnWindowOpen = parseBooleanTestHeaderValue(value);
         else if (key == "enableColorFilter")
             testOptions.enableColorFilter = parseBooleanTestHeaderValue(value);
+        else if (key == "punchOutWhiteBackgroundsInDarkMode")
+            testOptions.punchOutWhiteBackgroundsInDarkMode = parseBooleanTestHeaderValue(value);
         else if (key == "jscOptions")
             testOptions.jscOptions = value;
         else if (key == "runSingly")

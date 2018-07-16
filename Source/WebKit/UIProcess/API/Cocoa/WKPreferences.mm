@@ -761,6 +761,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->colorFilterEnabled();
 }
 
+- (void)_setPunchOutWhiteBackgroundsInDarkMode:(BOOL)punches
+{
+    _preferences->setPunchOutWhiteBackgroundsInDarkMode(punches);
+}
+
+- (BOOL)_punchOutWhiteBackgroundsInDarkMode
+{
+    return _preferences->punchOutWhiteBackgroundsInDarkMode();
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {
