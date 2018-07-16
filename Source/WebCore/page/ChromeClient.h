@@ -487,6 +487,8 @@ public:
 
     virtual String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&) const { return emptyString(); }
 
+    virtual bool isViewVisible() { return true; }
+
 protected:
     virtual ~ChromeClient() = default;
 };

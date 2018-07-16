@@ -61,6 +61,7 @@ messages -> WebPageProxy {
     GetWindowFrame() -> (WebCore::FloatRect windowFrame) Delayed
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Delayed
     RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Delayed
+    GetIsViewVisible() -> (bool result)
 
 #if PLATFORM(COCOA)
     ShowValidationMessage(WebCore::IntRect anchorRect, String message)

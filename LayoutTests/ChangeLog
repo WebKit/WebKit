@@ -1,3 +1,28 @@
+2018-07-16  Jeremy Jones  <jeremyj@apple.com>
+
+        Fullscreen requires active document.
+        https://bugs.webkit.org/show_bug.cgi?id=186226
+        rdar://problem/36187413
+
+        Reviewed by Jer Noble.
+
+        This change guarantees the document to be visible for both element fullscreen and video fullscreen.
+
+        User gesture is not enough to guarantee that the document is visible when fullscreen is initiated
+        because JavaScript can spin wait before initiating fullscreen. During that spin the page or window might
+        be hidden.
+
+        Document::hidden() can't be relied upon because it won't update while JavaScript spins.
+
+        This change adds a sync call to the UI process to get the current UI visibility state.
+
+        * media/no-fullscreen-when-hidden.html: Added.
+        * media/video-test.js:
+        (eventName.string_appeared_here.thunk):
+        (runWithKeyDown):
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2018-07-16  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Audit Tab should have an Audit Manager
