@@ -1,3 +1,69 @@
+2018-07-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add Nicosia::PlatformLayer, Nicosia::CompositionLayer classes
+        https://bugs.webkit.org/show_bug.cgi?id=187693
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the Nicosia::PlatformLayer class. This will be the base platform
+        layer class from which different derivatives will be created, addressing
+        different use cases. The generic PlatformLayer type alias will point to
+        this class in the future.
+
+        First class deriving from Nicosia::PlatformLayer is
+        Nicosia::CompositionLayer, purpose of which will be to mirror the state
+        that's stored in the platform-specific GraphicsLayer derivative. It will
+        also allow making thread-safe updates to that state.
+
+        CoordinatedGraphicsLayer implementation now spawns a CompositionLayer
+        object and tracks state changes in a separate
+        CompositionLayer::LayerState::Delta object. During flushing, the changed
+        state is applied to the layer's pending state before the delta is nulled
+        out. The updated state isn't used anywhere yet, but future changes will
+        implement committing this state into the rendering pipeline.
+
+        There's bits of state not yet being managed by CompositionLayer, e.g.
+        debug visuals, filters and animations. These will be addressed later.
+
+        The m_solidColor member variable is added to CoordinatedGraphicsLayer in
+        order to properly store the solid color value. Normally this would be
+        contained by the parent GraphicsLayer class, but no such member variable
+        exists there.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/NicosiaPlatformLayer.cpp: Added.
+        (Nicosia::PlatformLayer::PlatformLayer):
+        (Nicosia::CompositionLayer::CompositionLayer):
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h: Added.
+        (Nicosia::PlatformLayer::isCompositionLayer const):
+        (Nicosia::PlatformLayer::id const):
+        (Nicosia::CompositionLayer::create):
+        (Nicosia::CompositionLayer::LayerState::Flags::Flags):
+        (Nicosia::CompositionLayer::updateState):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setPosition):
+        (WebCore::CoordinatedGraphicsLayer::setAnchorPoint):
+        (WebCore::CoordinatedGraphicsLayer::setSize):
+        (WebCore::CoordinatedGraphicsLayer::setTransform):
+        (WebCore::CoordinatedGraphicsLayer::setChildrenTransform):
+        (WebCore::CoordinatedGraphicsLayer::setPreserves3D):
+        (WebCore::CoordinatedGraphicsLayer::setMasksToBounds):
+        (WebCore::CoordinatedGraphicsLayer::setDrawsContent):
+        (WebCore::CoordinatedGraphicsLayer::setContentsVisible):
+        (WebCore::CoordinatedGraphicsLayer::setContentsOpaque):
+        (WebCore::CoordinatedGraphicsLayer::setBackfaceVisibility):
+        (WebCore::CoordinatedGraphicsLayer::setOpacity):
+        (WebCore::CoordinatedGraphicsLayer::setContentsRect):
+        (WebCore::CoordinatedGraphicsLayer::setContentsTileSize):
+        (WebCore::CoordinatedGraphicsLayer::setContentsTilePhase):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToSolidColor):
+        (WebCore::CoordinatedGraphicsLayer::setMaskLayer):
+        (WebCore::CoordinatedGraphicsLayer::setReplicatedByLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncChildren):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2018-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS apps on macOS] Playing embedded Twitter videos in the News app crashes the web process

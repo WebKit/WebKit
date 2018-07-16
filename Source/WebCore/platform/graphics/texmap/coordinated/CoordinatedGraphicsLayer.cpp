@@ -143,6 +143,8 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
 {
     static CoordinatedLayerID nextLayerID = 1;
     m_id = nextLayerID++;
+
+    m_nicosia.layer = Nicosia::CompositionLayer::create(m_id);
 }
 
 CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
@@ -217,6 +219,7 @@ void CoordinatedGraphicsLayer::setPosition(const FloatPoint& p)
 
     GraphicsLayer::setPosition(p);
     m_layerState.positionChanged = true;
+    m_nicosia.delta.positionChanged = true;
     didChangeGeometry();
 }
 
@@ -227,6 +230,7 @@ void CoordinatedGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
 
     GraphicsLayer::setAnchorPoint(p);
     m_layerState.anchorPointChanged = true;
+    m_nicosia.delta.anchorPointChanged = true;
     didChangeGeometry();
 }
 
@@ -237,6 +241,7 @@ void CoordinatedGraphicsLayer::setSize(const FloatSize& size)
 
     GraphicsLayer::setSize(size);
     m_layerState.sizeChanged = true;
+    m_nicosia.delta.sizeChanged = true;
 
     if (maskLayer())
         maskLayer()->setSize(size);
@@ -250,6 +255,7 @@ void CoordinatedGraphicsLayer::setTransform(const TransformationMatrix& t)
 
     GraphicsLayer::setTransform(t);
     m_layerState.transformChanged = true;
+    m_nicosia.delta.transformChanged = true;
 
     didChangeGeometry();
 }
@@ -261,6 +267,7 @@ void CoordinatedGraphicsLayer::setChildrenTransform(const TransformationMatrix& 
 
     GraphicsLayer::setChildrenTransform(t);
     m_layerState.childrenTransformChanged = true;
+    m_nicosia.delta.childrenTransformChanged = true;
 
     didChangeGeometry();
 }
@@ -273,6 +280,7 @@ void CoordinatedGraphicsLayer::setPreserves3D(bool b)
     GraphicsLayer::setPreserves3D(b);
     m_layerState.preserves3D = b;
     m_layerState.flagsChanged = true;
+    m_nicosia.delta.flagsChanged = true;
 
     didChangeGeometry();
 }
@@ -284,6 +292,7 @@ void CoordinatedGraphicsLayer::setMasksToBounds(bool b)
     GraphicsLayer::setMasksToBounds(b);
     m_layerState.masksToBounds = b;
     m_layerState.flagsChanged = true;
+    m_nicosia.delta.flagsChanged = true;
 
     didChangeGeometry();
 }
@@ -295,6 +304,7 @@ void CoordinatedGraphicsLayer::setDrawsContent(bool b)
     GraphicsLayer::setDrawsContent(b);
     m_layerState.drawsContent = b;
     m_layerState.flagsChanged = true;
+    m_nicosia.delta.flagsChanged = true;
 
     didChangeLayerState();
 }
@@ -306,6 +316,7 @@ void CoordinatedGraphicsLayer::setContentsVisible(bool b)
     GraphicsLayer::setContentsVisible(b);
     m_layerState.contentsVisible = b;
     m_layerState.flagsChanged = true;
+    m_nicosia.delta.flagsChanged = true;
 
     if (maskLayer())
         maskLayer()->setContentsVisible(b);
@@ -321,6 +332,7 @@ void CoordinatedGraphicsLayer::setContentsOpaque(bool b)
     GraphicsLayer::setContentsOpaque(b);
     m_layerState.contentsOpaque = b;
     m_layerState.flagsChanged = true;
+    m_nicosia.delta.flagsChanged = true;
 
     // Demand a repaint of the whole layer.
     if (!m_needsDisplay.completeLayer) {
@@ -341,6 +353,7 @@ void CoordinatedGraphicsLayer::setBackfaceVisibility(bool b)
     GraphicsLayer::setBackfaceVisibility(b);
     m_layerState.backfaceVisible = b;
     m_layerState.flagsChanged = true;
+    m_nicosia.delta.flagsChanged = true;
 
     didChangeLayerState();
 }
@@ -353,6 +366,7 @@ void CoordinatedGraphicsLayer::setOpacity(float opacity)
     GraphicsLayer::setOpacity(opacity);
     m_layerState.opacity = opacity;
     m_layerState.opacityChanged = true;
+    m_nicosia.delta.opacityChanged = true;
 
     didChangeLayerState();
 }
@@ -365,6 +379,7 @@ void CoordinatedGraphicsLayer::setContentsRect(const FloatRect& r)
     GraphicsLayer::setContentsRect(r);
     m_layerState.contentsRect = r;
     m_layerState.contentsRectChanged = true;
+    m_nicosia.delta.contentsRectChanged = true;
 
     didChangeLayerState();
 }
@@ -377,6 +392,7 @@ void CoordinatedGraphicsLayer::setContentsTileSize(const FloatSize& s)
     GraphicsLayer::setContentsTileSize(s);
     m_layerState.contentsTileSize = s;
     m_layerState.contentsTilingChanged = true;
+    m_nicosia.delta.contentsTilingChanged = true;
     didChangeLayerState();
 }
 
@@ -388,6 +404,7 @@ void CoordinatedGraphicsLayer::setContentsTilePhase(const FloatSize& p)
     GraphicsLayer::setContentsTilePhase(p);
     m_layerState.contentsTilePhase = p;
     m_layerState.contentsTilingChanged = true;
+    m_nicosia.delta.contentsTilingChanged = true;
     didChangeLayerState();
 }
 
@@ -453,11 +470,13 @@ bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 
 void CoordinatedGraphicsLayer::setContentsToSolidColor(const Color& color)
 {
-    if (m_layerState.solidColor == color)
+    if (m_solidColor == color)
         return;
 
+    m_solidColor = color;
     m_layerState.solidColor = color;
     m_layerState.solidColorChanged = true;
+    m_nicosia.delta.solidColorChanged = true;
 
     didChangeLayerState();
 }
@@ -516,6 +535,7 @@ void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
 
     m_layerState.mask = coordinatedLayer.id();
     m_layerState.maskChanged = true;
+    m_nicosia.delta.maskChanged = true;
 
     didChangeLayerState();
 }
@@ -540,6 +560,7 @@ void CoordinatedGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
     GraphicsLayer::setReplicatedByLayer(layer);
     m_layerState.replica = toCoordinatedLayerID(layer);
     m_layerState.replicaChanged = true;
+    m_nicosia.delta.replicaChanged = true;
     didChangeLayerState();
 }
 
@@ -602,6 +623,8 @@ void CoordinatedGraphicsLayer::syncChildren()
         return;
     m_shouldSyncChildren = false;
     m_layerState.childrenChanged = true;
+    m_nicosia.delta.childrenChanged = true;
+
     m_layerState.children.clear();
     for (auto& child : children())
         m_layerState.children.append(toCoordinatedLayerID(child));
@@ -750,6 +773,69 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
     if (!hasActiveTransformAnimation)
         m_movingVisibleRect = false;
+
+    {
+        m_nicosia.layer->updateState(
+            [this](Nicosia::CompositionLayer::LayerState& state)
+            {
+                // OR the local delta value into the layer's pending state delta. After that,
+                // go through each local change and update the pending state accordingly.
+                auto& localDelta = m_nicosia.delta;
+                state.delta.value |= localDelta.value;
+
+                if (localDelta.positionChanged)
+                    state.position = position();
+                if (localDelta.anchorPointChanged)
+                    state.anchorPoint = anchorPoint();
+                if (localDelta.sizeChanged)
+                    state.size = size();
+
+                if (localDelta.transformChanged)
+                    state.transform = transform();
+                if (localDelta.childrenTransformChanged)
+                    state.childrenTransform = childrenTransform();
+
+                if (localDelta.contentsRectChanged)
+                    state.contentsRect = contentsRect();
+                if (localDelta.contentsTilingChanged) {
+                    state.contentsTilePhase = contentsTilePhase();
+                    state.contentsTileSize = contentsTileSize();
+                }
+
+                if (localDelta.opacityChanged)
+                    state.opacity = opacity();
+                if (localDelta.solidColorChanged)
+                    state.solidColor = m_solidColor;
+
+                if (localDelta.childrenChanged) {
+                    state.children = WTF::map(children(),
+                        [](auto* child)
+                        {
+                            return downcast<CoordinatedGraphicsLayer>(child)->m_nicosia.layer;
+                        });
+                }
+
+                if (localDelta.maskChanged) {
+                    auto* mask = downcast<CoordinatedGraphicsLayer>(maskLayer());
+                    state.mask = mask ? mask->m_nicosia.layer : nullptr;
+                }
+
+                if (localDelta.replicaChanged) {
+                    auto* replica = downcast<CoordinatedGraphicsLayer>(replicaLayer());
+                    state.replica = replica ? replica->m_nicosia.layer : nullptr;
+                }
+
+                if (localDelta.flagsChanged) {
+                    state.flags.contentsOpaque = contentsOpaque();
+                    state.flags.drawsContent = drawsContent();
+                    state.flags.contentsVisible = contentsAreVisible();
+                    state.flags.backfaceVisible = backfaceVisibility();
+                    state.flags.masksToBounds = masksToBounds();
+                    state.flags.preserves3D = preserves3D();
+                }
+            });
+        m_nicosia.delta = { };
+    }
 }
 
 void CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers()

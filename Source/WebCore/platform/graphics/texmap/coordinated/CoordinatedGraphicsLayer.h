@@ -31,6 +31,7 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "NicosiaBuffer.h"
+#include "NicosiaPlatformLayer.h"
 #include "TextureMapperAnimation.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
@@ -186,6 +187,8 @@ private:
     FloatPoint m_adjustedPosition;
     FloatPoint3D m_adjustedAnchorPoint;
 
+    Color m_solidColor;
+
 #ifndef NDEBUG
     bool m_isPurging;
 #endif
@@ -220,6 +223,11 @@ private:
     Timer m_animationStartedTimer;
     TextureMapperAnimations m_animations;
     MonotonicTime m_lastAnimationStartTime;
+
+    struct {
+        RefPtr<Nicosia::CompositionLayer> layer;
+        Nicosia::CompositionLayer::LayerState::Delta delta;
+    } m_nicosia;
 };
 
 } // namespace WebCore
