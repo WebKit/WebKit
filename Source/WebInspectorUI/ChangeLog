@@ -1,3 +1,17 @@
+2018-07-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Fix execution highlighting after r233820
+        https://bugs.webkit.org/show_bug.cgi?id=187703
+        <rdar://problem/42246167>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.currentPositionToOriginalPosition):
+        (WI.TextEditor.prototype._updateExecutionRangeHighlight):
+
 2018-07-16  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Audit Tab should have an Audit Manager
