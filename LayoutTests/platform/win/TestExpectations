@@ -2979,7 +2979,7 @@ fast/text/han-generic-font-families.html [ WontFix ]
 fast/text/hangul-generic-font-families.html [ WontFix ]
 
 # New test for Bug 144830 (r186388) always fails.
-http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Failure ]
+webkit.org/b/187700 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 
 # <rdar://problem/21816197> large-js-program.php crashes (crashes slower on Debug)
 http/tests/misc/large-js-program.php [ Crash Timeout ]

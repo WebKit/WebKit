@@ -1,3 +1,12 @@
+2018-07-16  Truitt Savell  <tsavell@apple.com>
+
+        [ EWS ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html is Crashing on Win-EWS
+        https://bugs.webkit.org/show_bug.cgi?id=187700
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-07-14  Dirk Schulze  <krit@webkit.org>
 
         [css-masking] Fully support -webkit-clip-path on SVG elements
