@@ -1,3 +1,23 @@
+2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Generator and AsyncGeneratorMethod's prototype is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=187585
+
+        Reviewed by Darin Adler.
+
+        * stress/default-proto-for-async-generator.js: Added.
+        (shouldBe):
+        (async.asyncGenerator):
+        * stress/default-proto-for-generator.js: Added.
+        (shouldBe):
+        (generator):
+        * stress/prototype-for-async-generator.js: Added.
+        (shouldBe):
+        (async.asyncGenerator):
+        (A.prototype.async.asyncGenerator):
+        (A):
+        * test262/expectations.yaml:
+
 2018-07-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip JSC test stress/keep-checks-when-converting-to-lazy-js-constant-in-strength-reduction.js

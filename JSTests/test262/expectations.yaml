@@ -2686,12 +2686,6 @@ test/language/expressions/function/scope-param-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/function/scope-param-rest-elem-var-close.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
-test/language/expressions/generators/default-proto.js:
-  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Generator]Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Generator]Â») to be true'
-test/language/expressions/generators/eval-body-proto-realm.js:
-  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Generator]Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Generator]Â») to be true'
 test/language/expressions/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(Â«[object Generator]Â», Â«[object Generator]Â») to be false'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Generator]Â», Â«[object Generator]Â») to be false'
@@ -3742,9 +3736,6 @@ test/language/statements/function/scope-param-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/statements/function/scope-param-rest-elem-var-close.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
-test/language/statements/generators/default-proto.js:
-  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Generator]Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Generator]Â») to be true'
 test/language/statements/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(Â«[object Generator]Â», Â«[object Generator]Â») to be false'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Generator]Â», Â«[object Generator]Â») to be false'

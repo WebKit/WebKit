@@ -3790,7 +3790,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         if (isGeneratorWrapperParseMode(generator.parseMode()))
             generator.emitPutGeneratorFields(next.get());
         else {
-            ASSERT(isAsyncGeneratorFunctionParseMode(generator.parseMode()));
+            ASSERT(isAsyncGeneratorWrapperParseMode(generator.parseMode()));
             generator.emitPutAsyncGeneratorFields(next.get());
         }
         

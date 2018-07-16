@@ -2878,7 +2878,7 @@ void BytecodeGenerator::emitPutGeneratorFields(RegisterID* nextFunction)
 
 void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction)
 {
-    ASSERT(isAsyncGeneratorFunctionParseMode(parseMode()));
+    ASSERT(isAsyncGeneratorWrapperParseMode(parseMode()));
 
     emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorNextPrivateName(), nextFunction, PropertyNode::KnownDirect);
         
@@ -3359,7 +3359,7 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadata
         emitOpcode(op_new_generator_func);
     else if (function->parseMode() == SourceParseMode::AsyncFunctionMode)
         emitOpcode(op_new_async_func);
-    else if (function->parseMode() == SourceParseMode::AsyncGeneratorWrapperFunctionMode) {
+    else if (isAsyncGeneratorWrapperParseMode(function->parseMode())) {
         ASSERT(Options::useAsyncIterator());
         emitOpcode(op_new_async_generator_func);
     } else

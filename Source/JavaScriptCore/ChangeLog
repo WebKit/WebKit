@@ -1,3 +1,39 @@
+2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Generator and AsyncGeneratorMethod's prototype is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=187585
+
+        Reviewed by Darin Adler.
+
+        This patch fixes Generator and AsyncGenerator's prototype issues.
+
+        1. Generator's default prototype is incorrect when `generator.prototype = null` is performed.
+        We fix this by changing JSFunction::prototypeForConstruction.
+
+        2. AsyncGeneratorMethod is not handled. We change the name isAsyncGeneratorFunctionParseMode
+        to isAsyncGeneratorWrapperParseMode since it is aligned to Generator's code. And use it well
+        to fix `prototype` issues for AsyncGeneratorMethod.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutAsyncGeneratorFields):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        * parser/Parser.cpp:
+        (JSC::getAsynFunctionBodyParseMode):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseAsyncGeneratorFunctionSourceElements):
+        * parser/ParserModes.h:
+        (JSC::isAsyncGeneratorParseMode):
+        (JSC::isAsyncGeneratorWrapperParseMode):
+        (JSC::isAsyncGeneratorFunctionParseMode): Deleted.
+        * runtime/FunctionExecutable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::prototypeForConstruction):
+        (JSC::JSFunction::getOwnPropertySlot):
+
 2018-07-16  Mark Lam  <mark.lam@apple.com>
 
         jsc shell's noFTL utility test function should be more robust.
