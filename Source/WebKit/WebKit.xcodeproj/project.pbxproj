@@ -2185,6 +2185,10 @@
 		E4E864931B16750700C82F40 /* VersionChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8648E1B1673FB00C82F40 /* VersionChecks.h */; };
 		E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */; };
 		E52CF55320A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E52CF55120A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp */; };
+		E54A14CF20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E54A14CE20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp */; };
+		E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */; };
+		E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */; };
+		E568B92320A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */; };
 		ECA680D81E690E2500731D20 /* WebProcessCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680D71E690DF800731D20 /* WebProcessCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
@@ -4824,6 +4828,10 @@
 		E4E8648F1B1673FB00C82F40 /* VersionChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VersionChecks.mm; sourceTree = "<group>"; };
 		E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionPicker.h; sourceTree = "<group>"; };
 		E52CF55120A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionPicker.cpp; sourceTree = "<group>"; };
+		E54A14CE20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionsDropdown.cpp; sourceTree = "<group>"; };
+		E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdown.h; sourceTree = "<group>"; };
+		E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdownMac.h; sourceTree = "<group>"; };
+		E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = WebDataListSuggestionsDropdownMac.mm; sourceTree = "<group>"; };
 		ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraPrivateSymbolsForTAPI.h; sourceTree = "<group>"; };
 		ECA680D71E690DF800731D20 /* WebProcessCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebProcessCocoa.h; sourceTree = "<group>"; };
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
@@ -7479,6 +7487,8 @@
 				330934541315B9750097A7BC /* WebCookieManagerProxy.messages.in */,
 				33AA1064131F060000D4A575 /* WebCookieManagerProxyClient.cpp */,
 				33AA1065131F060000D4A575 /* WebCookieManagerProxyClient.h */,
+				E54A14CE20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp */,
+				E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */,
 				BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */,
 				BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */,
 				BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */,
@@ -8257,6 +8267,8 @@
 				51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */,
 				51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */,
 				F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */,
+				E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */,
+				E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */,
 				1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */,
 				BC857E8512B71EBB00EDEB2E /* WebPageProxyMac.mm */,
 				BC5750951268F3C6006F0F12 /* WebPopupMenuProxyMac.h */,
@@ -9445,6 +9457,8 @@
 				5760829F202D2C4600116678 /* WebCredentialsMessengerProxyMessages.h in Headers */,
 				1AA83F6D1A5B63FF00026EC6 /* WebDatabaseProvider.h in Headers */,
 				E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */,
+				E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */,
+				E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */,
 				CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */,
 				1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */,
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
@@ -11253,6 +11267,8 @@
 				5760829E202D2C4300116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp in Sources */,
 				1AA83F6C1A5B63FF00026EC6 /* WebDatabaseProvider.cpp in Sources */,
 				E52CF55320A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp in Sources */,
+				E54A14CF20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp in Sources */,
+				E568B92320A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm in Sources */,
 				CD19A26D1A13E82A008D650E /* WebDiagnosticLoggingClient.cpp in Sources */,
 				1A5B1C5418987EDF004FCF9B /* WebDocumentLoader.cpp in Sources */,
 				BC111A5D112F4FBB00337BAB /* WebDragClient.cpp in Sources */,

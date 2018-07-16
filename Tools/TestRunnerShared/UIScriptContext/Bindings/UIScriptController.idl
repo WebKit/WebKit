@@ -195,6 +195,9 @@ interface UIScriptController {
 
     void setTimePickerValue(long hour, long minute);
 
+    // <datalist>
+    readonly attribute boolean isShowingDataListSuggestions;
+
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
 

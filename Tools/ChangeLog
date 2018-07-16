@@ -1,3 +1,22 @@
+2018-07-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][macOS] Add suggestions UI for TextFieldInputTypes
+        https://bugs.webkit.org/show_bug.cgi?id=186531
+
+        Reviewed by Tim Horton.
+
+        Added isShowingDatalistSuggestions testing hook in order to enable testing of the
+        visibility of the suggestions view.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::isShowingDataListSuggestions const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::isShowingDataListSuggestions const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::isShowingDataListSuggestions const):
+
 2018-07-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add --target-path option to dump-class-layout

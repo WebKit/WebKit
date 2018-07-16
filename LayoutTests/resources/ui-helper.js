@@ -229,6 +229,15 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isShowingDataListSuggestions()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.isShowingDataListSuggestions);
+            })()`, resolve);
+        });
+    }
+
     static zoomScale()
     {
         return new Promise(resolve => {

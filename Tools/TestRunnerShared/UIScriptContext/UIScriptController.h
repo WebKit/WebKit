@@ -102,7 +102,9 @@ public:
     JSRetainPtr<JSStringRef> selectFormPopoverTitle() const;
     JSRetainPtr<JSStringRef> formInputLabel() const;
     void setTimePickerValue(long hour, long minute);
-    
+
+    bool isShowingDataListSuggestions() const;
+
     JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const;
     void overridePreference(JSStringRef preference, JSStringRef value);
     

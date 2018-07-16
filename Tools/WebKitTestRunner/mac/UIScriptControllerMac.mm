@@ -168,6 +168,18 @@ void UIScriptController::findString(JSStringRef, unsigned long options, unsigned
 {
 }
 
+bool UIScriptController::isShowingDataListSuggestions() const
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    for (NSWindow *childWindow in webView.window.childWindows) {
+        if ([childWindow isKindOfClass:NSClassFromString(@"WKDataListSuggestionWindow")])
+            return true;
+    }
+#endif
+    return false;
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
 #if WK_API_ENABLED

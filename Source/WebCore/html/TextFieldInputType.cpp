@@ -184,8 +184,10 @@ void TextFieldInputType::handleKeydownEvent(KeyboardEvent& event)
         return;
 #if ENABLE(DATALIST_ELEMENT)
     const String& key = event.keyIdentifier();
-    if (m_suggestionPicker && (key == "Enter" || key == "Up" || key == "Down"))
+    if (m_suggestionPicker && (key == "Enter" || key == "Up" || key == "Down")) {
         m_suggestionPicker->handleKeydownWithIdentifier(key);
+        event.setDefaultHandled();
+    }
 #endif
     RefPtr<Frame> frame = element()->document().frame();
     if (!frame || !frame->editor().doTextFieldCommandFromEvent(element(), &event))
@@ -198,6 +200,10 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent& event)
     ASSERT(element());
     if (element()->isDisabledOrReadOnly())
         return;
+#if ENABLE(DATALIST_ELEMENT)
+    if (m_suggestionPicker)
+        return;
+#endif
     const String& key = event.keyIdentifier();
     if (key == "Up")
         spinButtonStepUp();

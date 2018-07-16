@@ -180,6 +180,11 @@ bool UIScriptController::isWindowContentViewFirstResponder() const
     return false;
 }
 
+bool UIScriptController::isShowingDataListSuggestions() const
+{
+    return false;
+}
+
 }
 
 #endif // PLATFORM(MAC)

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<head>
+<body onload="runTest()">
+<input id="fruit" list="fruits" type="text"/>
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Orange</option>
+    <option>Pear</option>
+</datalist>
+</body>
+<script>
+jsTestIsAsync = true;
+
+async function runTest() {
+    let input = document.getElementById("fruit");
+
+    await UIHelper.activateElement(input);
+    UIHelper.isShowingDataListSuggestions().then(async (value) => {
+        showingList = value;
+        debug("CLICK");
+        shouldBe("showingList", '"true"');
+
+        await UIHelper.activateAt(0, 0);
+        UIHelper.isShowingDataListSuggestions().then((value) => {
+            showingList = value;
+            debug("BLUR");
+            shouldBe("showingList", '"false"');
+            finishJSTest();
+        });
+    });
+}
+
+</script>
+</html>

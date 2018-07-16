@@ -28,31 +28,34 @@
 #if ENABLE(DATALIST_ELEMENT)
 
 #include <WebCore/DataListSuggestionPicker.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class DataListSuggestionsClient;
-}
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class WebPage;
-
-class WebDataListSuggestionPicker : public WebCore::DataListSuggestionPicker {
+class WebDataListSuggestionsDropdown : public RefCounted<WebDataListSuggestionsDropdown> {
 public:
-    WebDataListSuggestionPicker(WebPage*, WebCore::DataListSuggestionsClient*);
-    virtual ~WebDataListSuggestionPicker();
+    class Client {
+    protected:
+        virtual ~Client() { }
 
-    void handleKeydownWithIdentifier(const String&) override;
-    void didSelectOption(const String&);
-    void didCloseSuggestions();
-    void close() override;
-    void displayWithActivationType(WebCore::DataListSuggestionActivationType) override;
-private:
-    WebCore::DataListSuggestionsClient* m_dataListSuggestionsClient;
-    WebPage* m_page;
+    public:
+        virtual void didSelectOption(String&) = 0;
+        virtual void didCloseSuggestions() = 0;
+    };
+
+    virtual ~WebDataListSuggestionsDropdown();
+
+    virtual void show(WebCore::DataListSuggestionInformation&&) = 0;
+    virtual void handleKeydownWithIdentifier(const String&) = 0;
+    virtual void close();
+
+protected:
+    explicit WebDataListSuggestionsDropdown(Client&);
+
+    Client* m_client;
 };
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(DATALIST_ELEMENT)

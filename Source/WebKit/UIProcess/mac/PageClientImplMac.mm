@@ -48,6 +48,7 @@
 #import "WKWebViewInternal.h"
 #import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
+#import "WebDataListSuggestionsDropdownMac.h"
 #import "WebEditCommandProxy.h"
 #import "WebPopupMenuProxyMac.h"
 #import "WebViewImpl.h"
@@ -455,6 +456,13 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor,  const WebCore::IntRect& rect)
 {
     return WebColorPickerMac::create(page, initialColor, rect, m_view);
+}
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
+{
+    return WebDataListSuggestionsDropdownMac::create(page, m_view);
 }
 #endif
 

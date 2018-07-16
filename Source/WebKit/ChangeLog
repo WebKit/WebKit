@@ -1,3 +1,103 @@
+2018-07-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][macOS] Add suggestions UI for TextFieldInputTypes
+        https://bugs.webkit.org/show_bug.cgi?id=186531
+
+        Reviewed by Tim Horton.
+
+        Created WebDataListSuggestionsDropdownMac as a wrapper around the suggestions
+        view. The suggestions for TextFieldInputTypes are displayed using an NSTableView
+        in it's own child window. This is done so that suggestions can be presented
+        outside of the page if the parent window's size is too small. The maximum number
+        of suggestions that are visible at one time is 6, with additional suggestions made
+        available by scrolling.
+
+        Suggestions in the view can be selected via click or by using arrow keys. If the
+        input element associated with the suggestions is blurred, or the page is moved in
+        any way, the suggestions view is hidden.
+
+        Added IPC messages to the UIProcess to enable the display of the suggestions view.
+        This required a new ArgumentCoder for DataListSuggestionInformation.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DataListSuggestionInformation>::encode):
+        (IPC::ArgumentCoder<DataListSuggestionInformation>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebDataListSuggestionsDropdown.cpp: Copied from Source/WebKit/WebProcess/WebCoreSupport/WebDataListSuggestionPicker.h.
+        (WebKit::WebDataListSuggestionsDropdown::WebDataListSuggestionsDropdown):
+        (WebKit::WebDataListSuggestionsDropdown::~WebDataListSuggestionsDropdown):
+        (WebKit::WebDataListSuggestionsDropdown::close):
+        * UIProcess/WebDataListSuggestionsDropdown.h: Copied from Source/WebKit/WebProcess/WebCoreSupport/WebDataListSuggestionPicker.h.
+        (WebKit::WebDataListSuggestionsDropdown::Client::~Client):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewWillStartLiveResize):
+        (WebKit::WebPageProxy::viewDidLeaveWindow):
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::setPageZoomFactor):
+        (WebKit::WebPageProxy::setPageAndTextZoomFactors):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::pageDidScroll):
+        (WebKit::WebPageProxy::showDataListSuggestions):
+        (WebKit::WebPageProxy::handleKeydownInDataList):
+        (WebKit::WebPageProxy::endDataListSuggestions):
+        (WebKit::WebPageProxy::didCloseSuggestions):
+        (WebKit::WebPageProxy::didSelectOption):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::closeOverlayedViews):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createDataListSuggestionsDropdown):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::createDataListSuggestionsDropdown):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.h: Copied from Source/WebKit/WebProcess/WebCoreSupport/WebDataListSuggestionPicker.h.
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm: Added.
+        (WebKit::WebDataListSuggestionsDropdownMac::create):
+        (WebKit::WebDataListSuggestionsDropdownMac::~WebDataListSuggestionsDropdownMac):
+        (WebKit::WebDataListSuggestionsDropdownMac::WebDataListSuggestionsDropdownMac):
+        (WebKit::WebDataListSuggestionsDropdownMac::show):
+        (WebKit::WebDataListSuggestionsDropdownMac::didSelectOption):
+        (WebKit::WebDataListSuggestionsDropdownMac::selectOption):
+        (WebKit::WebDataListSuggestionsDropdownMac::handleKeydownWithIdentifier):
+        (WebKit::WebDataListSuggestionsDropdownMac::close):
+        (-[WKDataListSuggestionCell initWithFrame:]):
+        (-[WKDataListSuggestionCell setText:]):
+        (-[WKDataListSuggestionCell setActive:]):
+        (-[WKDataListSuggestionCell drawRect:]):
+        (-[WKDataListSuggestionCell mouseEntered:]):
+        (-[WKDataListSuggestionCell mouseExited:]):
+        (-[WKDataListSuggestionCell acceptsFirstResponder]):
+        (-[WKDataListSuggestionTable initWithElementRect:]):
+        (-[WKDataListSuggestionTable setVisibleRect:]):
+        (-[WKDataListSuggestionTable currentActiveRow]):
+        (-[WKDataListSuggestionTable setActiveRow:]):
+        (-[WKDataListSuggestionTable reload]):
+        (-[WKDataListSuggestionTable acceptsFirstResponder]):
+        (-[WKDataListSuggestionTable enclosingScrollView]):
+        (-[WKDataListSuggestionTable removeFromSuperviewWithoutNeedingDisplay]):
+        (-[WKDataListSuggestionsView initWithInformation:inView:]):
+        (-[WKDataListSuggestionsView currentSelectedString]):
+        (-[WKDataListSuggestionsView updateWithInformation:]):
+        (-[WKDataListSuggestionsView moveSelectionByDirection:]):
+        (-[WKDataListSuggestionsView invalidate]):
+        (-[WKDataListSuggestionsView dropdownRectForElementRect:]):
+        (-[WKDataListSuggestionsView showSuggestionsDropdown:]):
+        (-[WKDataListSuggestionsView selectedRow:]):
+        (-[WKDataListSuggestionsView numberOfRowsInTableView:]):
+        (-[WKDataListSuggestionsView tableView:heightOfRow:]):
+        (-[WKDataListSuggestionsView tableView:viewForTableColumn:row:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp:
+        (WebKit::WebDataListSuggestionPicker::handleKeydownWithIdentifier):
+        (WebKit::WebDataListSuggestionPicker::didSelectOption):
+        (WebKit::WebDataListSuggestionPicker::didCloseSuggestions):
+        (WebKit::WebDataListSuggestionPicker::close):
+        (WebKit::WebDataListSuggestionPicker::displayWithActivationType):
+        * WebProcess/WebCoreSupport/WebDataListSuggestionPicker.h:
+
 2018-07-16  Jeremy Jones  <jeremyj@apple.com>
 
         Fullscreen requires active document.

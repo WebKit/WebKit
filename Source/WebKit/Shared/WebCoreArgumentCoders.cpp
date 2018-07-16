@@ -36,6 +36,7 @@
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/DataListSuggestionPicker.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -1630,6 +1631,29 @@ bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& d
     details = DatabaseDetails(name, displayName, expectedUsage, currentUsage, creationTime, modificationTime);
     return true;
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+void ArgumentCoder<DataListSuggestionInformation>::encode(Encoder& encoder, const WebCore::DataListSuggestionInformation& info)
+{
+    encoder.encodeEnum(info.activationType);
+    encoder << info.suggestions;
+    encoder << info.elementRect;
+}
+
+bool ArgumentCoder<DataListSuggestionInformation>::decode(Decoder& decoder, WebCore::DataListSuggestionInformation& info)
+{
+    if (!decoder.decodeEnum(info.activationType))
+        return false;
+
+    if (!decoder.decode(info.suggestions))
+        return false;
+
+    if (!decoder.decode(info.elementRect))
+        return false;
+
+    return true;
+}
+#endif
 
 void ArgumentCoder<PasteboardCustomData>::encode(Encoder& encoder, const PasteboardCustomData& data)
 {

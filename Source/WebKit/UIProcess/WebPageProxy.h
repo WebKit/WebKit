@@ -54,6 +54,7 @@
 #include "WebColorPicker.h"
 #include "WebContextMenuItemData.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDataListSuggestionsDropdown.h"
 #include "WebFrameProxy.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageDiagnosticLoggingClient.h"
@@ -177,6 +178,7 @@ enum class ShouldTreatAsContinuingLoad;
 
 struct ApplicationManifest;
 struct BackForwardItemIdentifier;
+struct DataListSuggestionInformation;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
 struct FileChooserSettings;
@@ -321,6 +323,9 @@ typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlaying
 class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
+#endif
+#if ENABLE(DATALIST_ELEMENT)
+    , public WebDataListSuggestionsDropdown::Client
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     , public WebCore::WebMediaSessionManagerClient
@@ -1515,6 +1520,16 @@ private:
     void didEndColorPicker() override;
 #endif
 
+#if ENABLE(DATALIST_ELEMENT)
+    void showDataListSuggestions(WebCore::DataListSuggestionInformation&&);
+    void handleKeydownInDataList(const String&);
+    void endDataListSuggestions();
+    void didSelectOption(String&) final;
+    void didCloseSuggestions() final;
+#endif
+
+    void closeOverlayedViews();
+
     void compositionWasCanceled();
     void setHasHadSelectionChangesFromUserInteraction(bool);
     void setNeedsHiddenContentEditableQuirk(bool);
@@ -2030,6 +2045,9 @@ private:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;
+#endif
+#if ENABLE(DATALIST_ELEMENT)
+    RefPtr<WebDataListSuggestionsDropdown> m_dataListSuggestionsDropdown;
 #endif
 #if PLATFORM(COCOA)
     RefPtr<WebCore::ValidationBubble> m_validationBubble;

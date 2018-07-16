@@ -25,34 +25,35 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
+#if ENABLE(DATALIST_ELEMENT) && USE(APPKIT)
 
-#include <WebCore/DataListSuggestionPicker.h>
-#include <wtf/text/WTFString.h>
+#import "WebDataListSuggestionsDropdown.h"
+#import <wtf/RetainPtr.h>
 
-namespace WebCore {
-class DataListSuggestionsClient;
-}
+OBJC_CLASS WKDataListSuggestionsView;
 
 namespace WebKit {
 
-class WebPage;
-
-class WebDataListSuggestionPicker : public WebCore::DataListSuggestionPicker {
+class WebDataListSuggestionsDropdownMac final : public WebDataListSuggestionsDropdown {
 public:
-    WebDataListSuggestionPicker(WebPage*, WebCore::DataListSuggestionsClient*);
-    virtual ~WebDataListSuggestionPicker();
+    static Ref<WebDataListSuggestionsDropdownMac> create(WebDataListSuggestionsDropdown::Client&, NSView *);
+    ~WebDataListSuggestionsDropdownMac();
 
-    void handleKeydownWithIdentifier(const String&) override;
-    void didSelectOption(const String&);
-    void didCloseSuggestions();
-    void close() override;
-    void displayWithActivationType(WebCore::DataListSuggestionActivationType) override;
+    void didSelectOption(String&);
+
 private:
-    WebCore::DataListSuggestionsClient* m_dataListSuggestionsClient;
-    WebPage* m_page;
+    WebDataListSuggestionsDropdownMac(WebDataListSuggestionsDropdown::Client&, NSView *);
+
+    void show(WebCore::DataListSuggestionInformation&&) final;
+    void handleKeydownWithIdentifier(const String&) final;
+    void close() final;
+
+    void selectOption();
+
+    NSView *m_view;
+    RetainPtr<WKDataListSuggestionsView> m_dropdownUI;
 };
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(DATALIST_ELEMENT) && USE(APPKIT)

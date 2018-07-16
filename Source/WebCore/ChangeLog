@@ -1,3 +1,17 @@
+2018-07-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][macOS] Add suggestions UI for TextFieldInputTypes
+        https://bugs.webkit.org/show_bug.cgi?id=186531
+
+        Reviewed by Tim Horton.
+
+        Tests: fast/forms/datalist/datalist-show-hide.html
+               fast/forms/datalist/datalist-textinput-keydown.html
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleKeydownEvent):
+        (WebCore::TextFieldInputType::handleKeydownEventForSpinButton): The suggestions view takes precedence when handling arrow key events.
+
 2018-07-16  Jeremy Jones  <jeremyj@apple.com>
 
         Fullscreen requires active document.

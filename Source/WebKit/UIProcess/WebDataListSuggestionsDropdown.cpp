@@ -23,36 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebDataListSuggestionsDropdown.h"
 
 #if ENABLE(DATALIST_ELEMENT)
 
-#include <WebCore/DataListSuggestionPicker.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class DataListSuggestionsClient;
-}
-
 namespace WebKit {
 
-class WebPage;
+WebDataListSuggestionsDropdown::WebDataListSuggestionsDropdown(Client& client)
+    : m_client(&client)
+{
+}
 
-class WebDataListSuggestionPicker : public WebCore::DataListSuggestionPicker {
-public:
-    WebDataListSuggestionPicker(WebPage*, WebCore::DataListSuggestionsClient*);
-    virtual ~WebDataListSuggestionPicker();
+WebDataListSuggestionsDropdown::~WebDataListSuggestionsDropdown()
+{
+}
 
-    void handleKeydownWithIdentifier(const String&) override;
-    void didSelectOption(const String&);
-    void didCloseSuggestions();
-    void close() override;
-    void displayWithActivationType(WebCore::DataListSuggestionActivationType) override;
-private:
-    WebCore::DataListSuggestionsClient* m_dataListSuggestionsClient;
-    WebPage* m_page;
-};
+void WebDataListSuggestionsDropdown::close()
+{
+    m_client->didCloseSuggestions();
+    m_client = nullptr;
+}
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(DATALIST_ELEMENT)

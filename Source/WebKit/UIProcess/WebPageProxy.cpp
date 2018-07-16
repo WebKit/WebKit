@@ -1446,10 +1446,8 @@ void WebPageProxy::viewWillStartLiveResize()
 {
     if (!isValid())
         return;
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER) && ENABLE(INPUT_TYPE_COLOR)
-    if (m_colorPicker)
-        endColorPicker();
-#endif
+
+    closeOverlayedViews();
     m_process->send(Messages::WebPage::ViewWillStartLiveResize(), m_pageID);
 }
 
@@ -1536,11 +1534,7 @@ void WebPageProxy::activityStateDidChange(ActivityState::Flags mayHaveChanged, b
 
 void WebPageProxy::viewDidLeaveWindow()
 {
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER) && ENABLE(INPUT_TYPE_COLOR)
-    // When leaving the current page, close the popover color well.
-    if (m_colorPicker)
-        endColorPicker();
-#endif
+    closeOverlayedViews();
 #if PLATFORM(IOS) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     // When leaving the current page, close the video fullscreen.
     if (m_videoFullscreenManager)
@@ -2062,7 +2056,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
     if (!isValid())
         return;
 
-    hideValidationMessage();
+    closeOverlayedViews();
 
     if (!m_currentlyProcessedWheelEvents.isEmpty()) {
         m_wheelEventQueue.append(event);
@@ -2692,7 +2686,7 @@ void WebPageProxy::setPageZoomFactor(double zoomFactor)
     if (m_pageZoomFactor == zoomFactor)
         return;
 
-    hideValidationMessage();
+    closeOverlayedViews();
 
     m_pageZoomFactor = zoomFactor;
     m_process->send(Messages::WebPage::SetPageZoomFactor(m_pageZoomFactor), m_pageID); 
@@ -2706,7 +2700,7 @@ void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZ
     if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
         return;
 
-    hideValidationMessage();
+    closeOverlayedViews();
 
     m_pageZoomFactor = pageZoomFactor;
     m_textZoomFactor = textZoomFactor;
@@ -3464,7 +3458,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
         m_pageLoadStart = MonotonicTime::now();
         m_pageLoadState.didStartProvisionalLoad(transaction, url, unreachableURL);
         m_pageClient.didStartProvisionalLoadForMainFrame();
-        hideValidationMessage();
+        closeOverlayedViews();
     }
 
     frame->setUnreachableURL(unreachableURL);
@@ -4555,7 +4549,7 @@ void WebPageProxy::pageDidScroll()
     if (m_isKeyboardAnimatingIn)
         return;
 #endif
-    hideValidationMessage();
+    closeOverlayedViews();
 }
 
 void WebPageProxy::runOpenPanel(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, const FileChooserSettings& settings)
@@ -4749,6 +4743,49 @@ void WebPageProxy::didEndColorPicker()
 
     m_process->send(Messages::WebPage::DidEndColorPicker(), m_pageID);
 }
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+
+void WebPageProxy::showDataListSuggestions(WebCore::DataListSuggestionInformation&& info)
+{
+    if (!m_dataListSuggestionsDropdown)
+        m_dataListSuggestionsDropdown = m_pageClient.createDataListSuggestionsDropdown(*this);
+
+    m_dataListSuggestionsDropdown->show(WTFMove(info));
+}
+
+void WebPageProxy::handleKeydownInDataList(const String& key)
+{
+    if (!m_dataListSuggestionsDropdown)
+        return;
+
+    m_dataListSuggestionsDropdown->handleKeydownWithIdentifier(key);
+}
+
+void WebPageProxy::endDataListSuggestions()
+{
+    if (m_dataListSuggestionsDropdown)
+        m_dataListSuggestionsDropdown->close();
+}
+
+void WebPageProxy::didCloseSuggestions()
+{
+    if (!m_dataListSuggestionsDropdown)
+        return;
+
+    m_dataListSuggestionsDropdown = nullptr;
+    m_process->send(Messages::WebPage::DidCloseSuggestions(), m_pageID);
+}
+
+void WebPageProxy::didSelectOption(String& selectedOption)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::DidSelectDataListOption(selectedOption), m_pageID);
+}
+
 #endif
 
 WebInspectorProxy* WebPageProxy::inspector() const
@@ -5977,7 +6014,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_scrollingPerformanceData = nullptr;
 #endif
     m_drawingArea = nullptr;
-    hideValidationMessage();
+    closeOverlayedViews();
 
     if (m_inspector) {
         m_inspector->invalidate();
@@ -7532,7 +7569,22 @@ void WebPageProxy::hideValidationMessage()
     m_validationBubble = nullptr;
 #endif
 }
-    
+
+// FIXME: Consolidate with dismissContentRelativeChildWindows
+void WebPageProxy::closeOverlayedViews()
+{
+    hideValidationMessage();
+
+#if ENABLE(DATALIST_ELEMENT)
+    endDataListSuggestions();
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER) && ENABLE(INPUT_TYPE_COLOR)
+    if (m_colorPicker)
+        endColorPicker();
+#endif
+}
+
 #if ENABLE(POINTER_LOCK)
 void WebPageProxy::requestPointerLock()
 {

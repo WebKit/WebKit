@@ -764,6 +764,13 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
     return ValidationBubble::create(m_contentView, message, settings);
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
+{
+    return nullptr;
+}
+#endif
+
 #if ENABLE(DATA_INTERACTION)
 void PageClientImpl::didPerformDataInteractionControllerOperation(bool handled)
 {

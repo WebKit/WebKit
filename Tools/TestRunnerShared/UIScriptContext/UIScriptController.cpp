@@ -517,6 +517,11 @@ bool UIScriptController::isWindowContentViewFirstResponder() const
     return false;
 }
 
+bool UIScriptController::isShowingDataListSuggestions() const
+{
+    return false;
+}
+
 #endif
 
 void UIScriptController::uiScriptComplete(JSStringRef result)

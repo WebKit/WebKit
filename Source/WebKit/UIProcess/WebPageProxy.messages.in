@@ -98,6 +98,12 @@ messages -> WebPageProxy {
     EndColorPicker();
 #endif
 
+#if ENABLE(DATALIST_ELEMENT)
+    ShowDataListSuggestions(struct WebCore::DataListSuggestionInformation suggestionInformation);
+    HandleKeydownInDataList(String key);
+    EndDataListSuggestions();
+#endif
+
     # Policy messages
     DecidePolicyForResponse(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, uint64_t listenerID, WebKit::UserData userData)
     DecidePolicyForNavigationAction(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, uint64_t originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse, uint64_t listenerID, WebKit::UserData userData)

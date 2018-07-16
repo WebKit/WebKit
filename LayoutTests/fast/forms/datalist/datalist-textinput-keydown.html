@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="fruit" list="fruits" type="text"/>
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Orange</option>
+    <option>Pear</option>
+</datalist>
+
+<script>
+
+description('Test for keyboard operations for &lt;input type=text&gt; with list attribute');
+
+var input = document.getElementById("fruit");
+
+UIHelper.activateElement(input);
+eventSender.keyDown("downArrow");
+eventSender.keyDown("\r");
+
+shouldBe('input.value', '"Apple"');
+
+input.value = "";
+
+UIHelper.activateElement(input);
+eventSender.keyDown("upArrow");
+eventSender.keyDown("\r");
+
+shouldBe('input.value', '"Pear"');
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

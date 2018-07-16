@@ -27,6 +27,7 @@
 
 #include "ShareableBitmap.h"
 #include "WebColorPicker.h"
+#include "WebDataListSuggestionsDropdown.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxy.h"
 #include <WebCore/AlternativeTextClient.h>
@@ -79,6 +80,10 @@ class NativeWebTouchEvent;
 
 #if ENABLE(INPUT_TYPE_COLOR)
 class WebColorPicker;
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+class WebDataListSuggestionsDropdown;
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -220,6 +225,10 @@ public:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    virtual RefPtr<WebDataListSuggestionsDropdown> createDataListSuggestionsDropdown(WebPageProxy&) = 0;
 #endif
 
 #if PLATFORM(COCOA)

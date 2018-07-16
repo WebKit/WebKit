@@ -1,0 +1,8 @@
+CLICK
+PASS showingList is "true"
+BLUR
+PASS showingList is "false"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
