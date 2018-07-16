@@ -1,3 +1,12 @@
+2018-07-16  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce size of NetworkLoadMetrics and therefore ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=187671
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.h:
+
 2018-07-16  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: closeAndDeleteDatabasesForOrigins should remove all databases for those origins

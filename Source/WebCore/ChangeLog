@@ -1,3 +1,18 @@
+2018-07-16  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce size of NetworkLoadMetrics and therefore ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=187671
+
+        Reviewed by Darin Adler.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::toProtocol):
+        (WebCore::InspectorNetworkAgent::buildObjectForMetrics):
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::NetworkLoadMetrics::isolatedCopy const):
+        (WebCore::NetworkLoadMetrics::reset):
+        (WebCore::NetworkLoadMetrics::clearNonTimingData):
+
 2018-07-16  Chris Dumez  <cdumez@apple.com>
 
         Make sure LibWebRTCMediaEndpoint is always destroyed on the main thread

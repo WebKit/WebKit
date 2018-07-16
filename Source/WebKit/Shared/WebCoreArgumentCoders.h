@@ -749,7 +749,8 @@ template<> struct EnumTraits<WebCore::NetworkLoadPriority> {
         WebCore::NetworkLoadPriority,
         WebCore::NetworkLoadPriority::Low,
         WebCore::NetworkLoadPriority::Medium,
-        WebCore::NetworkLoadPriority::High
+        WebCore::NetworkLoadPriority::High,
+        WebCore::NetworkLoadPriority::Unknown
     >;
 };
 

@@ -220,6 +220,8 @@ static Inspector::Protocol::Network::Metrics::Priority toProtocol(NetworkLoadPri
         return Inspector::Protocol::Network::Metrics::Priority::Medium;
     case NetworkLoadPriority::High:
         return Inspector::Protocol::Network::Metrics::Priority::High;
+    case NetworkLoadPriority::Unknown:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -232,25 +234,25 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
 
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
-    if (networkLoadMetrics.priority)
-        metrics->setPriority(toProtocol(*networkLoadMetrics.priority));
-    if (networkLoadMetrics.remoteAddress)
-        metrics->setRemoteAddress(*networkLoadMetrics.remoteAddress);
-    if (networkLoadMetrics.connectionIdentifier)
-        metrics->setConnectionIdentifier(*networkLoadMetrics.connectionIdentifier);
-    if (networkLoadMetrics.requestHeaders)
-        metrics->setRequestHeaders(buildObjectForHeaders(*networkLoadMetrics.requestHeaders));
+    if (networkLoadMetrics.priority != NetworkLoadPriority::Unknown)
+        metrics->setPriority(toProtocol(networkLoadMetrics.priority));
+    if (!networkLoadMetrics.remoteAddress.isNull())
+        metrics->setRemoteAddress(networkLoadMetrics.remoteAddress);
+    if (!networkLoadMetrics.connectionIdentifier.isNull())
+        metrics->setConnectionIdentifier(networkLoadMetrics.connectionIdentifier);
+    if (!networkLoadMetrics.requestHeaders.isEmpty())
+        metrics->setRequestHeaders(buildObjectForHeaders(networkLoadMetrics.requestHeaders));
 
-    if (networkLoadMetrics.requestHeaderBytesSent)
-        metrics->setRequestHeaderBytesSent(*networkLoadMetrics.requestHeaderBytesSent);
-    if (networkLoadMetrics.requestBodyBytesSent)
-        metrics->setRequestBodyBytesSent(*networkLoadMetrics.requestBodyBytesSent);
-    if (networkLoadMetrics.responseHeaderBytesReceived)
-        metrics->setResponseHeaderBytesReceived(*networkLoadMetrics.responseHeaderBytesReceived);
-    if (networkLoadMetrics.responseBodyBytesReceived)
-        metrics->setResponseBodyBytesReceived(*networkLoadMetrics.responseBodyBytesReceived);
-    if (networkLoadMetrics.responseBodyDecodedSize)
-        metrics->setResponseBodyDecodedSize(*networkLoadMetrics.responseBodyDecodedSize);
+    if (networkLoadMetrics.requestHeaderBytesSent != std::numeric_limits<uint32_t>::max())
+        metrics->setRequestHeaderBytesSent(networkLoadMetrics.requestHeaderBytesSent);
+    if (networkLoadMetrics.requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
+        metrics->setRequestBodyBytesSent(networkLoadMetrics.requestBodyBytesSent);
+    if (networkLoadMetrics.responseHeaderBytesReceived != std::numeric_limits<uint32_t>::max())
+        metrics->setResponseHeaderBytesReceived(networkLoadMetrics.responseHeaderBytesReceived);
+    if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
+    if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
 
     return metrics;
 }
