@@ -114,14 +114,20 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
 void PingLoad::didReceiveChallenge(const AuthenticationChallenge&, ChallengeCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
+    auto weakThis = makeWeakPtr(*this);
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
+    if (!weakThis)
+        return;
     didFinish(ResourceError { String(), 0, currentURL(), "Failed HTTP authentication"_s, ResourceError::Type::AccessControl });
 }
 
 void PingLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession - httpStatusCode: %d", response.httpStatusCode());
+    auto weakThis = makeWeakPtr(*this);
     completionHandler(PolicyAction::Ignore);
+    if (!weakThis)
+        return;
     didFinish({ }, response);
 }
 

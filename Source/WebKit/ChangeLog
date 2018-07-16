@@ -1,3 +1,22 @@
+2018-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] http/tests/misc/bubble-drag-events.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=182352
+
+        Reviewed by Youenn Fablet.
+
+        PingLoad is not refcounted and deletes itself when the load finishes. The problem is that the network data
+        task can also finish the load, causing the PingLoad to be deleted early. We tried to fix it in r233032 in the
+        network data task soup implementation, but it caused regressions.
+
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::didReceiveChallenge): Create a weak ref for the ping load before calling the operation completion
+        handler and return early after the completion handler if it was deleted.
+        (WebKit::PingLoad::didReceiveResponseNetworkSession): Ditto.
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueAuthenticate): Revert r233032.
+
 2018-07-13  Timothy Hatcher  <timothy@apple.com>
 
         Add _drawsBackground to WKWebViewConfiguration.

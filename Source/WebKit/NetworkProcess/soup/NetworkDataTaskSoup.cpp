@@ -527,7 +527,8 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
         }
 
         if (disposition == AuthenticationChallengeDisposition::Cancel) {
-            invalidateAndCancel();
+            cancel();
+            didFail(cancelledError(m_soupRequest.get()));
             return;
         }
 
