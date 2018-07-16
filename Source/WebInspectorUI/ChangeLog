@@ -1,5 +1,18 @@
 2018-07-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: Console filter field buttons should be darker
+        https://bugs.webkit.org/show_bug.cgi?id=187626
+        <rdar://problem/42142744>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/FindBanner.css:
+        (@media (prefers-dark-interface)):
+        (.find-banner > button.segmented):
+        (.find-banner > button.segmented > .glyph):
+
+2018-07-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Dark Mode: selected item background color is too light
         https://bugs.webkit.org/show_bug.cgi?id=187691
         <rdar://problem/42225308>
