@@ -2778,7 +2778,6 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-<<<<<<< HEAD
 static CGColorRef colorForStyle(DocumentMarkerLineStyle style, bool useDarkMode)
 {
     switch (style) {

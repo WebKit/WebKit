@@ -1,3 +1,9 @@
+2018-07-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed attempt to fix the build.
+
+        * rendering/RenderThemeMac.mm:
+
 2018-07-11  Dean Jackson  <dino@apple.com>
 
         Allow removal of white backgrounds
