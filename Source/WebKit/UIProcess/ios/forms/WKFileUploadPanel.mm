@@ -165,7 +165,6 @@ static inline UIImage *cameraIcon()
     RetainPtr<UIPopoverController> _presentationPopover; // iPad for action sheet and Photo Library.
 #pragma clang diagnostic pop
     RetainPtr<UIDocumentMenuViewController> _documentMenuController;
-    RetainPtr<UIAlertController> _actionSheetController;
     WebCore::MediaCaptureType _mediaCaptureType;
 }
 
@@ -263,7 +262,7 @@ static inline UIImage *cameraIcon()
 - (void)dismiss
 {
     // Dismiss any view controller that is being presented. This works for all types of view controllers, popovers, etc.
-    // If there is any kind of view controller presented on this view, it will be removed. 
+    // If there is any kind of view controller presented on this view, it will be removed.
     
     [[UIViewController _viewControllerForFullScreenPresentationFromView:_view] dismissViewControllerAnimated:NO completion:nil];
     
@@ -284,8 +283,8 @@ static inline UIImage *cameraIcon()
 
     if (_presentationViewController) {
         UIViewController *currentPresentedViewController = [_presentationViewController presentedViewController];
-        if (currentPresentedViewController == self) {
-            [currentPresentedViewController dismissViewControllerAnimated:YES completion:^{
+        if (currentPresentedViewController == self || currentPresentedViewController == _imagePicker.get()) {
+            [currentPresentedViewController dismissViewControllerAnimated:animated completion:^{
                 _presentationViewController = nil;
             }];
         }

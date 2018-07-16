@@ -1,3 +1,17 @@
+2018-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r233502): Camera in <input type=file> becomes unresponsive after attempting to dismiss it
+        https://bugs.webkit.org/show_bug.cgi?id=187706
+        <rdar://problem/42137088>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        Remove an unused member.
+
+        (-[WKFileUploadPanel _dismissDisplayAnimated:]):
+        Allow us to dismiss the camera view controller in addition to the menu.
+
 2018-07-16  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of NetworkLoadMetrics and therefore ResourceResponse
