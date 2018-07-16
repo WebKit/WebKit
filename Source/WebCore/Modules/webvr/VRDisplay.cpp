@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L. All rights reserved.
+ * Copyright (C) 2017-2018 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,12 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "DOMException.h"
+#include "EventNames.h"
 #include "Page.h"
 #include "ScriptedAnimationController.h"
 #include "UserGestureIndicator.h"
 #include "VRDisplayCapabilities.h"
+#include "VRDisplayEvent.h"
 #include "VREyeParameters.h"
 #include "VRFrameData.h"
 #include "VRLayerInit.h"
@@ -44,9 +46,7 @@ namespace WebCore {
 
 Ref<VRDisplay> VRDisplay::create(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>&& platformDisplay)
 {
-    auto display = adoptRef(*new VRDisplay(context, WTFMove(platformDisplay)));
-    display->suspendIfNeeded();
-    return display;
+    return adoptRef(*new VRDisplay(context, WTFMove(platformDisplay)));
 }
 
 VRDisplay::VRDisplay(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>&& platformDisplay)
@@ -59,9 +59,15 @@ VRDisplay::VRDisplay(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>
     m_rightEyeParameters = VREyeParameters::create(displayInfo.eyeTranslation(VRPlatformDisplayInfo::EyeRight), displayInfo.eyeFieldOfView(VRPlatformDisplayInfo::EyeRight), displayInfo.renderSize());
     m_displayId = displayInfo.displayIdentifier();
     m_displayName = displayInfo.displayName();
+
+    m_display->setClient(this);
+    suspendIfNeeded();
 }
 
-VRDisplay::~VRDisplay() = default;
+VRDisplay::~VRDisplay()
+{
+    m_display->setClient(nullptr);
+}
 
 bool VRDisplay::isConnected() const
 {
@@ -196,6 +202,26 @@ Vector<VRLayerInit> VRDisplay::getLayers() const
 
 void VRDisplay::submitFrame()
 {
+}
+
+void VRDisplay::platformDisplayConnected()
+{
+    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplayconnectEvent, makeRefPtr(this), std::nullopt));
+}
+
+void VRDisplay::platformDisplayDisconnected()
+{
+    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplaydisconnectEvent, makeRefPtr(this), std::nullopt));
+}
+
+void VRDisplay::platformDisplayMounted()
+{
+    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplayactivateEvent, makeRefPtr(this), VRDisplayEventReason::Mounted));
+}
+
+void VRDisplay::platformDisplayUnmounted()
+{
+    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplaydeactivateEvent, makeRefPtr(this), VRDisplayEventReason::Unmounted));
 }
 
 bool VRDisplay::hasPendingActivity() const

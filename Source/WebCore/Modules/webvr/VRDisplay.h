@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L. All rights reserved.
+ * Copyright (C) 2017-2018 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "VREye.h"
 #include "VRLayerInit.h"
+#include "VRPlatformDisplayClient.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -44,7 +45,7 @@ class VRPlatformDisplay;
 class VRPose;
 class VRStageParameters;
 
-class VRDisplay : public RefCounted<VRDisplay>, public EventTargetWithInlineData, public ActiveDOMObject {
+class VRDisplay : public RefCounted<VRDisplay>, public VRPlatformDisplayClient, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static Ref<VRDisplay> create(ScriptExecutionContext&, WeakPtr<VRPlatformDisplay>&&);
 
@@ -84,6 +85,12 @@ public:
 
     void submitFrame();
 
+    // VRPlatformDisplayClient
+    void platformDisplayConnected() override;
+    void platformDisplayDisconnected() override;
+    void platformDisplayMounted() override;
+    void platformDisplayUnmounted() override;
+
 private:
     VRDisplay(ScriptExecutionContext&, WeakPtr<VRPlatformDisplay>&&);
 
@@ -100,6 +107,8 @@ private:
     void stop() override;
 
     void stopPresenting();
+
+    Document* document() { return downcast<Document>(scriptExecutionContext()); }
 
     WeakPtr<VRPlatformDisplay> m_display;
 

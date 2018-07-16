@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L. All rights reserved.
+ * Copyright (C) 2017-2018 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,27 +32,50 @@
 #include "RuntimeEnabledFeatures.h"
 #include "VRDisplay.h"
 #include "VRManager.h"
+#include "VRPlatformDisplay.h"
 
 namespace WebCore {
 
-void NavigatorWebVR::getVRDisplays(Navigator&, Document& document, GetVRDisplaysPromise&& promise)
+void NavigatorWebVR::getVRDisplays(Navigator& navigator, Document& document, GetVRDisplaysPromise&& promise)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webVREnabled()) {
         promise.reject();
         return;
     }
+    NavigatorWebVR::from(&navigator)->getVRDisplays(document, WTFMove(promise));
+}
 
-    document.postTask([promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
+void NavigatorWebVR::getVRDisplays(Document& document, GetVRDisplaysPromise&& promise)
+{
+    document.postTask([this, promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
         std::optional<VRManager::VRDisplaysVector> platformDisplays = VRManager::singleton().getVRDisplays();
         if (!platformDisplays) {
             promise.reject();
+            m_displays.clear();
             return;
         }
 
-        Vector<Ref<VRDisplay>> displays;
-        for (auto& platformDisplay : platformDisplays.value())
-            displays.append(VRDisplay::create(context, WTFMove(platformDisplay)));
-        promise.resolve(displays);
+        Vector<Ref<VRDisplay>> oldDisplays = WTFMove(m_displays);
+
+        // Update the vector of displays. Note that although this is O(n^2) the amount of expected
+        // VRDisplays is so reduced that it'll run fast enough.
+        for (auto& platformDisplay : platformDisplays.value()) {
+            bool newDisplay = true;
+            for (auto& oldDisplay : oldDisplays) {
+                if (platformDisplay->getDisplayInfo().displayIdentifier() == oldDisplay->displayId()) {
+                    newDisplay = false;
+                    m_displays.append(oldDisplay.copyRef());
+                    break;
+                }
+            }
+            if (newDisplay) {
+                m_displays.append(VRDisplay::create(context, WTFMove(platformDisplay)));
+                m_displays.last()->platformDisplayConnected();
+            }
+        }
+        promise.resolve(WTF::map(m_displays, [](const Ref<VRDisplay>& display) {
+            return display.copyRef();
+        }));
     });
 }
 
@@ -60,6 +83,22 @@ const Vector<RefPtr<VRDisplay>>& NavigatorWebVR::activeVRDisplays(Navigator&)
 {
     static auto mockVector = makeNeverDestroyed(Vector<RefPtr<VRDisplay>> { });
     return mockVector;
+}
+
+const char* NavigatorWebVR::supplementName()
+{
+    return "NavigatorWebVR";
+}
+
+NavigatorWebVR* NavigatorWebVR::from(Navigator* navigator)
+{
+    NavigatorWebVR* supplement = static_cast<NavigatorWebVR*>(Supplement<Navigator>::from(navigator, supplementName()));
+    if (!supplement) {
+        auto newSupplement = std::make_unique<NavigatorWebVR>();
+        supplement = newSupplement.get();
+        provideTo(navigator, supplementName(), WTFMove(newSupplement));
+    }
+    return supplement;
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Igalia, S.L. All right reserved.
+ * Copyright (C) 2018 Igalia, S.L. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,33 +20,16 @@
 
 #pragma once
 
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
-
 namespace WebCore {
 
-class VRPlatformDisplay;
-class VRPlatformManager;
-
-class VRManager final {
-    friend class WTF::NeverDestroyed<VRManager>;
+class VRPlatformDisplayClient {
 public:
-    using VRDisplaysVector = Vector<WeakPtr<VRPlatformDisplay>>;
+    virtual ~VRPlatformDisplayClient() { }
 
-    ~VRManager();
-
-    WEBCORE_EXPORT static VRManager& singleton();
-
-    std::optional<VRDisplaysVector> getVRDisplays();
-
-private:
-    VRManager();
-
-    using VRDisplaysHashMap = HashMap<uint32_t, WeakPtr<VRPlatformDisplay>>;
-    VRDisplaysHashMap m_displays;
-    std::unique_ptr<VRPlatformManager> m_platformManager;
+    virtual void platformDisplayConnected() { }
+    virtual void platformDisplayDisconnected() { }
+    virtual void platformDisplayMounted() { }
+    virtual void platformDisplayUnmounted() { }
 };
 
 }; // namespace WebCore

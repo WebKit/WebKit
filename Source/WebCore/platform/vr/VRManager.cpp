@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia, S.L. All right reserved.
+ * Copyright (C) 2017-2018 Igalia, S.L. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,7 +53,33 @@ std::optional<VRManager::VRDisplaysVector> VRManager::getVRDisplays()
     if (!m_platformManager)
         return std::nullopt;
 
-    return m_platformManager->getVRDisplays();
+    auto displays = m_platformManager->getVRDisplays();
+    VRDisplaysHashMap newDisplays;
+    for (auto& display : displays) {
+        ASSERT(display);
+        newDisplays.add(display->getDisplayInfo().displayIdentifier(), display);
+
+        VRPlatformDisplayInfo info = display->getDisplayInfo();
+        auto iterator = m_displays.find(info.displayIdentifier());
+        if (iterator == m_displays.end())
+            continue;
+
+        display->updateDisplayInfo();
+        VRPlatformDisplayInfo newInfo = display->getDisplayInfo();
+        if (info.isConnected() != newInfo.isConnected())
+            display->notifyVRPlatformDisplayEvent(newInfo.isConnected() ? VRPlatformDisplay::Event::Connected : VRPlatformDisplay::Event::Disconnected);
+        if (info.isMounted() != newInfo.isMounted())
+            display->notifyVRPlatformDisplayEvent(newInfo.isMounted() ? VRPlatformDisplay::Event::Mounted : VRPlatformDisplay::Event::Unmounted);
+    }
+
+    for (auto& iter : m_displays) {
+        ASSERT(iter.value);
+        if (!newDisplays.contains(iter.key))
+            iter.value->notifyVRPlatformDisplayEvent(VRPlatformDisplay::Event::Disconnected);
+    }
+
+    m_displays = WTFMove(newDisplays);
+    return displays;
 }
 
 }; // namespace WebCore

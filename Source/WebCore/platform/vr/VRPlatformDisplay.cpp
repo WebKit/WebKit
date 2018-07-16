@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Igalia, S.L. All right reserved.
+ * Copyright (C) 2018 Igalia, S.L. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,35 +18,38 @@
  *
  */
 
-#pragma once
-
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
+#include "config.h"
+#include "VRPlatformDisplay.h"
 
 namespace WebCore {
 
-class VRPlatformDisplay;
-class VRPlatformManager;
+void VRPlatformDisplay::setClient(VRPlatformDisplayClient* client)
+{
+    ASSERT(!client || !m_client);
+    m_client = client;
+}
 
-class VRManager final {
-    friend class WTF::NeverDestroyed<VRManager>;
-public:
-    using VRDisplaysVector = Vector<WeakPtr<VRPlatformDisplay>>;
+void VRPlatformDisplay::notifyVRPlatformDisplayEvent(Event event)
+{
+    if (!m_client)
+        return;
 
-    ~VRManager();
+    switch (event) {
+    case Event::Connected:
+        m_client->platformDisplayConnected();
+        break;
+    case Event::Disconnected:
+        m_client->platformDisplayDisconnected();
+        break;
+    case Event::Mounted:
+        m_client->platformDisplayMounted();
+        break;
+    case Event::Unmounted:
+        m_client->platformDisplayUnmounted();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    };
+}
 
-    WEBCORE_EXPORT static VRManager& singleton();
-
-    std::optional<VRDisplaysVector> getVRDisplays();
-
-private:
-    VRManager();
-
-    using VRDisplaysHashMap = HashMap<uint32_t, WeakPtr<VRPlatformDisplay>>;
-    VRDisplaysHashMap m_displays;
-    std::unique_ptr<VRPlatformManager> m_platformManager;
-};
-
-}; // namespace WebCore
+} // namespace WebCore

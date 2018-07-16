@@ -2501,6 +2501,7 @@
 		8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */; };
 		8BD37A68201BB39C0011734A /* ReadableStreamChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BD37A67201BB39C0011734A /* ReadableStreamChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8E4C96DD1AD4483500365A50 /* JSFetchResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E4C96D91AD4483500365A50 /* JSFetchResponse.h */; };
+		8E620E8120EE6024007BC5EF /* VRPlatformDisplayClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E620E8020EE5FFC007BC5EF /* VRPlatformDisplayClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8EC6C963201A251600FBFA53 /* GapLength.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC6C961201A250100FBFA53 /* GapLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6756191288B17B0047ACA3 /* EventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001773D12E0347800648462 /* OESStandardDerivatives.cpp */; };
@@ -10202,6 +10203,8 @@
 		8E33CD93201A29C100E39093 /* GapLength.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GapLength.cpp; sourceTree = "<group>"; };
 		8E4C96D81AD4483500365A50 /* JSFetchResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchResponse.cpp; sourceTree = "<group>"; };
 		8E4C96D91AD4483500365A50 /* JSFetchResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFetchResponse.h; sourceTree = "<group>"; };
+		8E620E7E20EE5FE2007BC5EF /* VRPlatformDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRPlatformDisplay.cpp; sourceTree = "<group>"; };
+		8E620E8020EE5FFC007BC5EF /* VRPlatformDisplayClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRPlatformDisplayClient.h; sourceTree = "<group>"; };
 		8EC6C961201A250100FBFA53 /* GapLength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GapLength.h; sourceTree = "<group>"; };
 		8F6756191288B17B0047ACA3 /* EventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventQueue.h; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
@@ -25040,7 +25043,9 @@
 			children = (
 				E18823622031F55C00B42DF3 /* VRManager.cpp */,
 				E18823632031F55D00B42DF3 /* VRManager.h */,
+				8E620E7E20EE5FE2007BC5EF /* VRPlatformDisplay.cpp */,
 				E18823602031F55A00B42DF3 /* VRPlatformDisplay.h */,
+				8E620E8020EE5FFC007BC5EF /* VRPlatformDisplayClient.h */,
 				E18823612031F55B00B42DF3 /* VRPlatformManager.h */,
 			);
 			path = vr;
@@ -30797,6 +30802,7 @@
 				E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */,
 				E18823642031F57100B42DF3 /* VRManager.h in Headers */,
 				E18823652031F57F00B42DF3 /* VRPlatformDisplay.h in Headers */,
+				8E620E8120EE6024007BC5EF /* VRPlatformDisplayClient.h in Headers */,
 				E18823662031F59400B42DF3 /* VRPlatformManager.h in Headers */,
 				BE20507A18A4586B0080647E /* VTTCue.h in Headers */,
 				7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */,

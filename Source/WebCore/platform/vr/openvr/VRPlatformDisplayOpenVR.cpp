@@ -158,6 +158,36 @@ VRPlatformTrackingInfo VRPlatformDisplayOpenVR::getTrackingInfo()
     return m_trackingInfo;
 }
 
+void VRPlatformDisplayOpenVR::updateDisplayInfo()
+{
+    if (!vr::VR_IsHmdPresent())
+        return;
+
+    vr::VREvent_t event;
+    while (m_system && m_system->PollNextEvent(&event, sizeof(event))) {
+        switch (event.eventType) {
+        case vr::VREvent_TrackedDeviceUserInteractionStarted:
+        case vr::VREvent_TrackedDeviceUserInteractionEnded:
+            if (event.trackedDeviceIndex == vr::k_unTrackedDeviceIndex_Hmd)
+                m_displayInfo.setIsMounted(event.eventType == vr::VREvent_TrackedDeviceUserInteractionStarted ? true : false);
+            break;
+        case vr::EVREventType::VREvent_TrackedDeviceActivated:
+        case vr::EVREventType::VREvent_TrackedDeviceDeactivated:
+            if (event.trackedDeviceIndex == vr::k_unTrackedDeviceIndex_Hmd)
+                m_displayInfo.setIsConnected(event.eventType == vr::VREvent_TrackedDeviceActivated ? true : false);
+            break;
+        case vr::EVREventType::VREvent_DriverRequestedQuit:
+        case vr::EVREventType::VREvent_Quit:
+        case vr::EVREventType::VREvent_ProcessQuit:
+        case vr::EVREventType::VREvent_QuitAcknowledged:
+        case vr::EVREventType::VREvent_QuitAborted_UserPrompt:
+            // FIXME: should we notify the platform manager about this and call VR_Shutdown().
+        default:
+            break;
+        }
+    }
+}
+
 }; // namespace WebCore
 
 #endif // USE(OPENVR)

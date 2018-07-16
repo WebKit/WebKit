@@ -1808,6 +1808,7 @@ platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
 
 platform/vr/VRManager.cpp
+platform/vr/VRPlatformDisplay.cpp
 platform/vr/openvr/VRPlatformDisplayOpenVR.cpp
 platform/vr/openvr/VRPlatformManagerOpenVR.cpp
 

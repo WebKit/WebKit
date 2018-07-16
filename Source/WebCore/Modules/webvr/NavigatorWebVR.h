@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L. All rights reserved.
+ * Copyright (C) 2017-2018 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,13 +36,21 @@ class Navigator;
 class Page;
 class VRDisplay;
 
-class NavigatorWebVR final : public Supplement<Page> {
+class NavigatorWebVR final : public Supplement<Navigator> {
 public:
     using GetVRDisplaysPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<VRDisplay>>>;
 
     static void getVRDisplays(Navigator&, Document&, GetVRDisplaysPromise&&);
     static const Vector<RefPtr<VRDisplay>>& activeVRDisplays(Navigator&);
     static bool vrEnabled(Navigator&);
+
+    void getVRDisplays(Document&, GetVRDisplaysPromise&&);
+
+private:
+    static NavigatorWebVR* from(Navigator*);
+    static const char* supplementName();
+
+    Vector<Ref<VRDisplay>> m_displays;
 };
 
 } // namespace WebCore

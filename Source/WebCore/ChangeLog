@@ -1,3 +1,65 @@
+2018-07-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add support for connect/disconnect and mount/unmount device events
+        https://bugs.webkit.org/show_bug.cgi?id=187343
+
+        Reviewed by Žan Doberšek.
+
+        WebVR specs define a series of events as part of the Window Interface Extension. We're
+        adding support for the connect/disconnect and mount/unmount events both at the module level
+        and the platform level using OpenVR.
+
+        In order to do that we need to keep lists of VRPlatformDisplays at platform level and
+        VRDisplays at bindings level. We then update those lists accordingly to detect potential
+        additions/removals, and emit the corresponding signals. A new client interface
+        VRPlatformDisplayClient was also defined so that VRPlatformDisplay implementations could
+        notify their clients (typically a VRDisplay).
+
+        Last but not least, NavigatorWebVR was updated so it supplements Navigator instead of
+        supplementing Page.
+
+        * Modules/webvr/NavigatorWebVR.cpp: Supplement Navigator not Page.
+        (WebCore::NavigatorWebVR::getVRDisplays): Keep a list of VRDisplays and update them
+        conveniently, also emitting the required events under certain conditions (like device
+        disconnection).
+        (WebCore::NavigatorWebVR::supplementName): New method.
+        (WebCore::NavigatorWebVR::from): Ditto.
+        * Modules/webvr/NavigatorWebVR.h: Supplement Navigator not Page.
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::create): Moved suspendIfNeeded() to constructor.
+        (WebCore::VRDisplay::VRDisplay): Set itself as VRPlatformDisplay client.
+        (WebCore::VRDisplay::~VRDisplay): Unset as  VRPlatformDisplay client.
+        (WebCore::VRDisplay::VRPlatformDisplayConnected): Dispatch event on DOM window.
+        (WebCore::VRDisplay::VRPlatformDisplayDisconnected): Ditto.
+        (WebCore::VRDisplay::VRPlatformDisplayMounted): Ditto.
+        (WebCore::VRDisplay::VRPlatformDisplayUnmounted): Ditto.
+        * Modules/webvr/VRDisplay.h: Extend from VRPlatformDisplayClient.
+        (WebCore::VRDisplay::document):
+        * Modules/webvr/VRDisplayEvent.cpp: Updated Copyright.
+        * Modules/webvr/VRDisplayEvent.h: Ditto.
+        * Sources.txt: Added the two new files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/vr/VRManager.cpp:
+        (WebCore::VRManager::getVRDisplays): Keep a list of VRPlatformDisplays and update them conveniently,
+        also emitting the required events under certain conditions (like device disconnection).
+        * platform/vr/VRManager.h:
+        * platform/vr/VRPlatformDisplay.cpp: New file with common implementations for VRPlatformDisplays.
+        (WebCore::VRPlatformDisplay::setClient):
+        (WebCore::VRPlatformDisplay::notifyVRPlatformDisplayEvent):
+        * platform/vr/VRPlatformDisplay.h: Added a generic method to notify about different
+        events. Added the client pointer.
+        * platform/vr/VRPlatformDisplayClient.h: New file. VRPlatformDisplay implementations will
+        call the client methods in the event of some circumstances happening.
+        (WebCore::VRPlatformDisplayClient::VRPlatformDisplayConnected):
+        (WebCore::VRPlatformDisplayClient::VRPlatformDisplayDisconnected):
+        (WebCore::VRPlatformDisplayClient::VRPlatformDisplayMounted):
+        (WebCore::VRPlatformDisplayClient::VRPlatformDisplayUnmounted):
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.cpp:
+        (WebCore::VRPlatformDisplayOpenVR::updateDisplayInfo): Poll the device for new events to
+        detect connection/disconnections or device activations/deactivations (HMD
+        mounted/unmounted).
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.h:
+
 2018-07-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add Nicosia::PlatformLayer, Nicosia::CompositionLayer classes
