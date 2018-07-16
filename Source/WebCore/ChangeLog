@@ -1,3 +1,18 @@
+2018-07-16  Chris Dumez  <cdumez@apple.com>
+
+        Make sure LibWebRTCMediaEndpoint is always destroyed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=187702
+
+        Reviewed by Youenn Fablet.
+
+        Make sure LibWebRTCMediaEndpoint is always constructed and destructed on the main thread since
+        it has a Timer data member and it would not be safe otherwise. LibWebRTCMediaEndpoint is
+        ThreadSafeRefCounted and frequently passed to other threads.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+
 2018-07-16  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: closeAndDeleteDatabasesForOrigins should remove all databases for those origins
