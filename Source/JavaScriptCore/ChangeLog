@@ -1,3 +1,26 @@
+2018-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add API to evaluate code using a given object to store global symbols
+        https://bugs.webkit.org/show_bug.cgi?id=187639
+
+        Reviewed by Michael Catanzaro.
+
+        Add jsc_context_evaluate_in_object(). It returns a new object as an out parameter. Global symbols in the
+        evaluated script are added as properties to the new object instead of to the context global object. This is
+        similar to JS::Evaluate in spider monkey when a scopeChain parameter is passed, but JSC doesn't support using a
+        scope for assignments, so we have to create a new context and get its global object. This patch also updates
+        jsc_context_evaluate_with_source_uri() to receive the starting line number for consistency with the new
+        jsc_context_evaluate_in_object().
+
+        * API/glib/JSCContext.cpp:
+        (jsc_context_evaluate): Pass 0 as line number to jsc_context_evaluate_with_source_uri().
+        (evaluateScriptInContext): Helper function to evaluate a script in a JSGlobalContextRef.
+        (jsc_context_evaluate_with_source_uri): Use evaluateScriptInContext().
+        (jsc_context_evaluate_in_object): Create a new context and set the main context global object as extension
+        scope of it. Evaluate the script in the new context and get its global object to be returned as parameter.
+        * API/glib/JSCContext.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2018-07-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [32bit JSC tests]  stress/cow-convert-double-to-contiguous.js and stress/cow-convert-int32-to-contiguous.js are failing
