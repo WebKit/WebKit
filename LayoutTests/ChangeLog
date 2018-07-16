@@ -1,3 +1,28 @@
+2018-07-16  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Audit Tab should have an Audit Manager
+        https://bugs.webkit.org/show_bug.cgi?id=184071
+        <rdar://problem/38946364>
+
+        Reviewed by Brian Burg.
+
+        Test cases for AuditManager, AuditTestCase, AuditTestSuite, AuditResult and AuditReport.
+
+        * inspector/audit/audit-manager-expected.txt: Added.
+        * inspector/audit/audit-manager.html: Added.
+        * inspector/audit/audit-report-expected.txt: Added.
+        * inspector/audit/audit-report.html: Added.
+        * inspector/audit/audit-test-case-expected.txt: Added.
+        * inspector/audit/audit-test-case.html: Added.
+        * inspector/audit/audit-test-suite-expected.txt: Added.
+        * inspector/audit/audit-test-suite.html: Added.
+        * inspector/audit/resources/audit-test-fixtures.js: Added.
+        (TestPage.registerInitializer.window.testSuiteFixture1):
+        (TestPage.registerInitializer.window.testSuiteFixture1.testCaseDescriptors):
+        (TestPage.registerInitializer.window.testSuiteFixture2):
+        (TestPage.registerInitializer.window.testSuiteFixture2.testCaseDescriptors):
+        (TestPage.registerInitializer):
+
 2018-07-16  Truitt Savell  <tsavell@apple.com>
 
         [ iOS ] Layout Test fast/forms/submit-change-fragment.html is a flaky Timeout

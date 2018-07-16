@@ -1,3 +1,62 @@
+2018-07-16  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Audit Tab should have an Audit Manager
+        https://bugs.webkit.org/show_bug.cgi?id=184071
+        <rdar://problem/38946364>
+
+        Reviewed by Brian Burg.
+
+        This implements the AuditManager for the audit feature. This patch revolves
+        around building out an AuditManager that facilitates an audit. The AuditManager
+        is responsible for managing and storing AuditReports and AuditTestSuites. It is
+        also tasked to decide how to run a test -- whether as a test case or as a test
+        suite. This patch also includes 4 models with which the AuditManager works to
+        perform an audit and to generate a report. These models include AuditTestCase,
+        which as a collection is stored inside an AuditTestSuite; and AuditResult,
+        which, as a collection is stored inside an AuditReport.
+
+        * UserInterface/Controllers/AuditManager.js: Added.
+        (WI.AuditManager):
+        (WI.AuditManager.prototype.get testSuites):
+        (WI.AuditManager.prototype.get reports):
+        (WI.AuditManager.prototype.async.runAuditTestByRepresentedObject):
+        (WI.AuditManager.prototype.reportForId):
+        (WI.AuditManager.prototype.removeAllReports):
+        (WI.AuditManager.prototype.async._runTestCase):
+        * UserInterface/Main.html:
+        * UserInterface/Models/AuditReport.js: Added.
+        (WI.AuditReport):
+        (WI.AuditReport.prototype.get representedTestCases):
+        (WI.AuditReport.prototype.get representedTestSuite):
+        (WI.AuditReport.prototype.get resultsData):
+        (WI.AuditReport.prototype.get isWritable):
+        (WI.AuditReport.prototype.get failedCount):
+        (WI.AuditReport.prototype.addResult):
+        (WI.AuditReport.prototype.close):
+        * UserInterface/Models/AuditResult.js: Added.
+        (WI.AuditResult):
+        (WI.AuditResult.prototype.get testResult):
+        (WI.AuditResult.prototype.get name):
+        (WI.AuditResult.prototype.get logLevel):
+        (WI.AuditResult.prototype.get failed):
+        * UserInterface/Models/AuditTestCase.js: Added.
+        (WI.AuditTestCase.prototype.get id):
+        (WI.AuditTestCase.prototype.get name):
+        (WI.AuditTestCase.prototype.get suite):
+        (WI.AuditTestCase.prototype.get test):
+        (WI.AuditTestCase.prototype.get setup):
+        (WI.AuditTestCase.prototype.get tearDown):
+        (WI.AuditTestCase.prototype.get errorDetails):
+        (WI.AuditTestCase):
+        * UserInterface/Models/AuditTestSuite.js: Added.
+        (WI.AuditTestSuite):
+        (WI.AuditTestSuite.testCaseDescriptors):
+        (WI.AuditTestSuite.prototype.get id):
+        (WI.AuditTestSuite.prototype.get name):
+        (WI.AuditTestSuite.prototype.get testCases):
+        (WI.AuditTestSuite.prototype._buildTestCasesFromDescriptors):
+        * UserInterface/Test.html:
+
 2018-07-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: Console filter field buttons should be darker
