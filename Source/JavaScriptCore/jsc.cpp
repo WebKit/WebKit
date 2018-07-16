@@ -1440,12 +1440,11 @@ EncodedJSValue JSC_HOST_CALL functionNoDFG(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionNoFTL(ExecState* exec)
 {
-    VM& vm = exec->vm();
-    if (JSFunction* function = jsDynamicCast<JSFunction*>(vm, exec->argument(0))) {
-        FunctionExecutable* executable = function->jsExecutable();
-        executable->setNeverFTLOptimize(true);
+    if (exec->argumentCount()) {
+        FunctionExecutable* executable = getExecutableForFunction(exec->argument(0));
+        if (executable)
+            executable->setNeverFTLOptimize(true);
     }
-
     return JSValue::encode(jsUndefined());
 }
 

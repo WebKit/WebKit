@@ -1,3 +1,15 @@
+2018-07-16  Mark Lam  <mark.lam@apple.com>
+
+        jsc shell's noFTL utility test function should be more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=187704
+        <rdar://problem/42231988>
+
+        Reviewed by Michael Saboff and Keith Miller.
+
+        * jsc.cpp:
+        (functionNoFTL):
+        - only setNeverFTLOptimize() if the function is actually a JS function.
+
 2018-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to evaluate code using a given object to store global symbols
