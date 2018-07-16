@@ -1,3 +1,12 @@
+2018-07-16  Truitt Savell  <tsavell@apple.com>
+
+        [ MacOS WK1 Debug ] Layout Test svg/custom/linking-uri-01-b.svg is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=187711
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-07-16  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233867.
