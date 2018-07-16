@@ -43,7 +43,7 @@ public:
     Variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
-    const Vector<uint8_t>& saltVector()
+    const Vector<uint8_t>& saltVector() const
     {
         if (!m_saltVector.isEmpty() || !salt.length())
             return m_saltVector;
@@ -54,8 +54,19 @@ public:
 
     Class parametersClass() const final { return Class::Pbkdf2Params; }
 
+    CryptoAlgorithmPbkdf2Params isolatedCopy() const
+    {
+        CryptoAlgorithmPbkdf2Params result;
+        result.identifier = identifier;
+        result.m_saltVector = saltVector();
+        result.iterations = iterations;
+        result.hashIdentifier = hashIdentifier;
+
+        return result;
+    }
+
 private:
-    Vector<uint8_t> m_saltVector;
+    mutable Vector<uint8_t> m_saltVector;
 };
 
 } // namespace WebCore

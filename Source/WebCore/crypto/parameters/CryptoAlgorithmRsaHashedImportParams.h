@@ -41,6 +41,15 @@ public:
     CryptoAlgorithmIdentifier hashIdentifier;
 
     Class parametersClass() const final { return Class::RsaHashedImportParams; }
+
+    CryptoAlgorithmRsaHashedImportParams isolatedCopy() const
+    {
+        CryptoAlgorithmRsaHashedImportParams result;
+        result.identifier = identifier;
+        result.hashIdentifier = hashIdentifier;
+
+        return result;
+    }
 };
 
 } // namespace WebCore
