@@ -542,7 +542,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     const auto& variations = fontDescription.variationSettings();
     auto textRenderingMode = fontDescription.textRenderingMode();
 
-    if (!originalFont || (!features.size() && (!alwaysAddVariations && variations.isEmpty()) && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
+    if (!originalFont || (!features.size() && (!alwaysAddVariations && variations.isEmpty()) && (textRenderingMode == TextRenderingMode::AutoTextRendering) && variantSettings.isAllNormal()
         && (!fontFaceFeatures || !fontFaceFeatures->size()) && (!fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal())))
         return originalFont;
 
@@ -566,7 +566,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         featuresToBeApplied.set(newFeature.key, newFeature.value);
 
     // Step 5: Other properties (text-rendering)
-    if (textRenderingMode == OptimizeSpeed) {
+    if (textRenderingMode == TextRenderingMode::OptimizeSpeed) {
         featuresToBeApplied.set(fontFeatureTag("liga"), 0);
         featuresToBeApplied.set(fontFeatureTag("clig"), 0);
         featuresToBeApplied.set(fontFeatureTag("dlig"), 0);
@@ -653,7 +653,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     }
 #endif
 
-    if (textRenderingMode == OptimizeLegibility) {
+    if (textRenderingMode == TextRenderingMode::OptimizeLegibility) {
         CGFloat size = CTFontGetSize(originalFont);
         auto sizeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &size));
         CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, sizeNumber.get());

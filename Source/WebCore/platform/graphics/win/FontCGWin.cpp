@@ -133,22 +133,22 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     bool shouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
 
     switch (smoothingMode) {
-    case Antialiased: {
+    case FontSmoothingMode::Antialiased: {
         graphicsContext.setShouldAntialias(true);
         shouldUseFontSmoothing = false;
         break;
     }
-    case SubpixelAntialiased: {
+    case FontSmoothingMode::SubpixelAntialiased: {
         graphicsContext.setShouldAntialias(true);
         shouldUseFontSmoothing = true;
         break;
     }
-    case NoSmoothing: {
+    case FontSmoothingMode::NoSmoothing: {
         graphicsContext.setShouldAntialias(false);
         shouldUseFontSmoothing = false;
         break;
     }
-    case AutoSmoothing: {
+    case FontSmoothingMode::AutoSmoothing: {
         // For the AutoSmooth case, don't do anything! Keep the default settings.
         break; 
     }

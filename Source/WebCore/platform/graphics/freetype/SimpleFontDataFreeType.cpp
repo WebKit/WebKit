@@ -110,7 +110,7 @@ void Font::platformInit()
     if (!xHeight) {
         cairo_text_extents_t textExtents;
         cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &textExtents);
-        xHeight = narrowPrecisionToFloat((platformData().orientation() == Horizontal) ? textExtents.height : textExtents.width);
+        xHeight = narrowPrecisionToFloat((platformData().orientation() == FontOrientation::Horizontal) ? textExtents.height : textExtents.width);
     }
 
     m_fontMetrics.setAscent(ascent);
@@ -122,9 +122,9 @@ void Font::platformInit()
 
     cairo_text_extents_t textExtents;
     cairo_scaled_font_text_extents(m_platformData.scaledFont(), " ", &textExtents);
-    m_spaceWidth = narrowPrecisionToFloat((platformData().orientation() == Horizontal) ? textExtents.x_advance : -textExtents.y_advance);
+    m_spaceWidth = narrowPrecisionToFloat((platformData().orientation() == FontOrientation::Horizontal) ? textExtents.x_advance : -textExtents.y_advance);
 
-    if ((platformData().orientation() == Vertical) && !isTextOrientationFallback()) {
+    if ((platformData().orientation() == FontOrientation::Vertical) && !isTextOrientationFallback()) {
         CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
         FT_Face freeTypeFace = cairoFtFaceLocker.ftFace();
         m_fontMetrics.setUnitsPerEm(freeTypeFace->units_per_EM);
@@ -183,7 +183,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     cairo_glyph_t cairoGlyph = { glyph, 0, 0 };
     cairo_text_extents_t extents;
     cairo_scaled_font_glyph_extents(m_platformData.scaledFont(), &cairoGlyph, 1, &extents);
-    float width = platformData().orientation() == Horizontal ? extents.x_advance : -extents.y_advance;
+    float width = platformData().orientation() == FontOrientation::Horizontal ? extents.x_advance : -extents.y_advance;
     return width ? width : m_spaceWidth;
 }
 

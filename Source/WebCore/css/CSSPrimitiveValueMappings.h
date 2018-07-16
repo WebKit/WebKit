@@ -3605,16 +3605,16 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmoothingMode smoothi
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (smoothing) {
-    case AutoSmoothing:
+    case FontSmoothingMode::AutoSmoothing:
         m_value.valueID = CSSValueAuto;
         return;
-    case NoSmoothing:
+    case FontSmoothingMode::NoSmoothing:
         m_value.valueID = CSSValueNone;
         return;
-    case Antialiased:
+    case FontSmoothingMode::Antialiased:
         m_value.valueID = CSSValueAntialiased;
         return;
-    case SubpixelAntialiased:
+    case FontSmoothingMode::SubpixelAntialiased:
         m_value.valueID = CSSValueSubpixelAntialiased;
         return;
     }
@@ -3629,19 +3629,19 @@ template<> inline CSSPrimitiveValue::operator FontSmoothingMode() const
 
     switch (m_value.valueID) {
     case CSSValueAuto:
-        return AutoSmoothing;
+        return FontSmoothingMode::AutoSmoothing;
     case CSSValueNone:
-        return NoSmoothing;
+        return FontSmoothingMode::NoSmoothing;
     case CSSValueAntialiased:
-        return Antialiased;
+        return FontSmoothingMode::Antialiased;
     case CSSValueSubpixelAntialiased:
-        return SubpixelAntialiased;
+        return FontSmoothingMode::SubpixelAntialiased;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return AutoSmoothing;
+    return FontSmoothingMode::AutoSmoothing;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmallCaps smallCaps)
@@ -3649,10 +3649,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmallCaps smallCaps)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (smallCaps) {
-    case FontSmallCapsOff:
+    case FontSmallCaps::Off:
         m_value.valueID = CSSValueNormal;
         return;
-    case FontSmallCapsOn:
+    case FontSmallCaps::On:
         m_value.valueID = CSSValueSmallCaps;
         return;
     }
@@ -3667,14 +3667,14 @@ template<> inline CSSPrimitiveValue::operator FontSmallCaps() const
 
     switch (m_value.valueID) {
     case CSSValueSmallCaps:
-        return FontSmallCapsOn;
+        return FontSmallCaps::On;
     case CSSValueNormal:
-        return FontSmallCapsOff;
+        return FontSmallCaps::Off;
     default:
         break;
     }
     ASSERT_NOT_REACHED();
-    return FontSmallCapsOff;
+    return FontSmallCaps::Off;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextRenderingMode e)
@@ -3682,16 +3682,16 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextRenderingMode e)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (e) {
-    case AutoTextRendering:
+    case TextRenderingMode::AutoTextRendering:
         m_value.valueID = CSSValueAuto;
         break;
-    case OptimizeSpeed:
+    case TextRenderingMode::OptimizeSpeed:
         m_value.valueID = CSSValueOptimizeSpeed;
         break;
-    case OptimizeLegibility:
+    case TextRenderingMode::OptimizeLegibility:
         m_value.valueID = CSSValueOptimizeLegibility;
         break;
-    case GeometricPrecision:
+    case TextRenderingMode::GeometricPrecision:
         m_value.valueID = CSSValueGeometricPrecision;
         break;
     }
@@ -3703,19 +3703,19 @@ template<> inline CSSPrimitiveValue::operator TextRenderingMode() const
 
     switch (m_value.valueID) {
     case CSSValueAuto:
-        return AutoTextRendering;
+        return TextRenderingMode::AutoTextRendering;
     case CSSValueOptimizeSpeed:
-        return OptimizeSpeed;
+        return TextRenderingMode::OptimizeSpeed;
     case CSSValueOptimizeLegibility:
-        return OptimizeLegibility;
+        return TextRenderingMode::OptimizeLegibility;
     case CSSValueGeometricPrecision:
-        return GeometricPrecision;
+        return TextRenderingMode::GeometricPrecision;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return AutoTextRendering;
+    return TextRenderingMode::AutoTextRendering;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Hyphens hyphens)

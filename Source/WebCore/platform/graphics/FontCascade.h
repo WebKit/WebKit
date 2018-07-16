@@ -103,7 +103,7 @@ public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, float letterSpacing = 0, float wordSpacing = 0);
     // This constructor is only used if the platform wants to start with a native font.
-    WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = AutoSmoothing);
+    WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = FontSmoothingMode::AutoSmoothing);
 
     FontCascade(const FontCascade&);
     WEBCORE_EXPORT FontCascade& operator=(const FontCascade&);
@@ -275,9 +275,9 @@ private:
     bool advancedTextRenderingMode() const
     {
         auto textRenderingMode = m_fontDescription.textRenderingMode();
-        if (textRenderingMode == GeometricPrecision || textRenderingMode == OptimizeLegibility)
+        if (textRenderingMode == TextRenderingMode::GeometricPrecision || textRenderingMode == TextRenderingMode::OptimizeLegibility)
             return true;
-        if (textRenderingMode == OptimizeSpeed)
+        if (textRenderingMode == TextRenderingMode::OptimizeSpeed)
             return false;
 #if PLATFORM(COCOA) || USE(FREETYPE)
         return true;

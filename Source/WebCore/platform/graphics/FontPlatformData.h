@@ -76,10 +76,10 @@ public:
     FontPlatformData();
 
     FontPlatformData(const FontDescription&, const AtomicString& family);
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, TextRenderingMode = AutoTextRendering);
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, TextRenderingMode = AutoTextRendering);
+    WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering);
 #endif
 
     static FontPlatformData cloneWithOrientation(const FontPlatformData&, FontOrientation);
@@ -155,7 +155,7 @@ public:
     FontOrientation orientation() const { return m_orientation; }
     FontWidthVariant widthVariant() const { return m_widthVariant; }
     TextRenderingMode textRenderingMode() const { return m_textRenderingMode; }
-    bool isForTextCombine() const { return widthVariant() != RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
+    bool isForTextCombine() const { return widthVariant() != FontWidthVariant::RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
 
 #if USE(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont.get(); }
@@ -248,9 +248,9 @@ private:
     // FIXME: If they're common to all ports, they should move to Font
     float m_size { 0 };
 
-    FontOrientation m_orientation { Horizontal };
-    FontWidthVariant m_widthVariant { RegularWidth };
-    TextRenderingMode m_textRenderingMode { AutoTextRendering };
+    FontOrientation m_orientation { FontOrientation::Horizontal };
+    FontWidthVariant m_widthVariant { FontWidthVariant::RegularWidth };
+    TextRenderingMode m_textRenderingMode { TextRenderingMode::AutoTextRendering };
 
     bool m_syntheticBold { false };
     bool m_syntheticOblique { false };

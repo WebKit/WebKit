@@ -122,10 +122,10 @@ public:
     void setIsItalic(bool i) { setItalic(i ? italicValue() : normalItalicValue()); }
     void setWeight(FontSelectionValue weight) { m_fontSelectionRequest.weight = weight; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
-    void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
-    void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
+    void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = static_cast<unsigned>(rendering); }
+    void setOrientation(FontOrientation orientation) { m_orientation = static_cast<unsigned>(orientation); }
     void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = static_cast<unsigned>(orientation); }
-    void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
+    void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = static_cast<unsigned>(widthVariant); } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
     void setLocale(const AtomicString&);
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTFMove(settings); }
 #if ENABLE(VARIATION_FONTS)
@@ -282,7 +282,7 @@ public:
         static_assert(CSSValueWebkitXxxLarge - CSSValueXxSmall + 1 == 8, "Maximum keyword size should be 8.");
         setKeywordSize(identifier ? identifier - CSSValueXxSmall + 1 : 0);
     }
-    void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = smoothing; }
+    void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = static_cast<unsigned>(smoothing); }
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -302,10 +302,10 @@ public:
     static FontStyleAxis initialFontStyleAxis() { return FontStyleAxis::slnt; }
     static FontSelectionValue initialWeight() { return normalWeightValue(); }
     static FontSelectionValue initialStretch() { return normalStretchValue(); }
-    static FontSmallCaps initialSmallCaps() { return FontSmallCapsOff; }
+    static FontSmallCaps initialSmallCaps() { return FontSmallCaps::Off; }
     static Kerning initialKerning() { return Kerning::Auto; }
-    static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }
-    static TextRenderingMode initialTextRenderingMode() { return AutoTextRendering; }
+    static FontSmoothingMode initialFontSmoothing() { return FontSmoothingMode::AutoSmoothing; }
+    static TextRenderingMode initialTextRenderingMode() { return TextRenderingMode::AutoTextRendering; }
     static FontSynthesis initialFontSynthesis() { return FontSynthesisWeight | FontSynthesisStyle | FontSynthesisSmallCaps; }
     static FontVariantPosition initialVariantPosition() { return FontVariantPosition::Normal; }
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }

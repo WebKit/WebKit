@@ -27,17 +27,36 @@
 
 namespace WebCore {
 
-enum TextRenderingMode { AutoTextRendering, OptimizeSpeed, OptimizeLegibility, GeometricPrecision };
+enum class TextRenderingMode : uint8_t {
+    AutoTextRendering,
+    OptimizeSpeed,
+    OptimizeLegibility,
+    GeometricPrecision
+};
 
-enum FontSmoothingMode { AutoSmoothing, NoSmoothing, Antialiased, SubpixelAntialiased };
+enum class FontSmoothingMode : uint8_t {
+    AutoSmoothing,
+    NoSmoothing,
+    Antialiased,
+    SubpixelAntialiased
+};
 
 // This setting is used to provide ways of switching between multiple rendering modes that may have different
 // metrics. It is used to switch between CG and GDI text on Windows.
-enum class FontRenderingMode { Normal, Alternate };
+enum class FontRenderingMode : uint8_t {
+    Normal,
+    Alternate
+};
 
-enum FontOrientation { Horizontal, Vertical };
+enum class FontOrientation : uint8_t {
+    Horizontal,
+    Vertical
+};
 
-enum class NonCJKGlyphOrientation { Mixed, Upright };
+enum class NonCJKGlyphOrientation : uint8_t {
+    Mixed,
+    Upright
+};
 
 // Here, "Leading" and "Trailing" are relevant after the line has been rearranged for bidi.
 // ("Leading" means "left" and "Trailing" means "right.")
@@ -329,7 +348,7 @@ struct FontVariantEastAsianValues {
     FontVariantEastAsianRuby ruby;
 };
 
-enum FontWidthVariant {
+enum class FontWidthVariant : uint8_t {
     RegularWidth,
     HalfWidth,
     ThirdWidth,
@@ -339,11 +358,11 @@ enum FontWidthVariant {
 
 const unsigned FontWidthVariantWidth = 2;
 
-COMPILE_ASSERT(!(LastFontWidthVariant >> FontWidthVariantWidth), FontWidthVariantWidth_is_correct);
+COMPILE_ASSERT(!(static_cast<unsigned>(FontWidthVariant::LastFontWidthVariant) >> FontWidthVariantWidth), FontWidthVariantWidth_is_correct);
 
-enum FontSmallCaps {
-    FontSmallCapsOff = 0,
-    FontSmallCapsOn = 1
+enum class FontSmallCaps : uint8_t {
+    Off = 0,
+    On = 1
 };
 
 enum class Kerning : uint8_t {

@@ -1,3 +1,92 @@
+2018-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink some font-related classes and enums
+        https://bugs.webkit.org/show_bug.cgi?id=187686
+
+        Reviewed by Myles Maxfield.
+        
+        Use enum class for enums in TextFlags.h and make them one byte big.
+
+        Re-order members of Font to shrink it from 360 to 328 bytes.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator FontSmoothingMode const):
+        (WebCore::CSSPrimitiveValue::operator FontSmallCaps const):
+        (WebCore::CSSPrimitiveValue::operator TextRenderingMode const):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::verticalRightOrientationFont const):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::offsetToMiddleOfGlyph):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::advancedTextRenderingMode const):
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback):
+        (WebCore::FontCascadeFonts::glyphDataForVariant):
+        (WebCore::glyphPageFromFontRanges):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontCascadeDescription::FontCascadeDescription):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::setTextRenderingMode):
+        (WebCore::FontDescription::setOrientation):
+        (WebCore::FontDescription::setWidthVariant):
+        (WebCore::FontCascadeDescription::setFontSmoothing):
+        (WebCore::FontCascadeDescription::initialSmallCaps):
+        (WebCore::FontCascadeDescription::initialFontSmoothing):
+        (WebCore::FontCascadeDescription::initialTextRenderingMode):
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::isForTextCombine const):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::showLetterpressedGlyphsWithAdvances):
+        (WebCore::showGlyphsWithAdvances):
+        (WebCore::FontCascade::drawGlyphs):
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit):
+        (WebCore::Font::platformBoundsForGlyph const):
+        (WebCore::Font::platformWidthForGlyph const):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::hash const):
+        (WebCore::mapFontWidthVariantToCTFeatureSelector):
+        (WebCore::FontPlatformData::ctFont const):
+        (WebCore::FontPlatformData::description const):
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::buildScaledFont):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformInit):
+        (WebCore::Font::platformWidthForGlyph const):
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::fontFeatures):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes const):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/win/FontCascadeDirect2D.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/win/GlyphPageTreeNodeDirect2D.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/win/SimpleFontDataDirect2D.cpp:
+        (WebCore::Font::platformInit):
+        (WebCore::Font::platformBoundsForGlyph const):
+        (WebCore::Font::platformWidthForGlyph const):
+        * platform/text/TextFlags.h:
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::combineTextIfNeeded):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextWithShadows):
+        * rendering/TextPainter.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::fontAndGlyphOrientation):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+
 2018-07-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR] Add support for connect/disconnect and mount/unmount device events

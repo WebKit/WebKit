@@ -163,7 +163,7 @@ void Font::platformInit()
     }
 #endif
     
-    if (platformData().orientation() == Vertical && !isTextOrientationFallback())
+    if (platformData().orientation() == FontOrientation::Vertical && !isTextOrientationFallback())
         m_hasVerticalGlyphs = fontHasVerticalGlyphs(m_platformData.ctFont());
 
 #if PLATFORM(IOS)
@@ -179,7 +179,7 @@ void Font::platformInit()
 
     CGFloat xHeight = 0;
     if (m_platformData.size()) {
-        if (platformData().orientation() == Horizontal) {
+        if (platformData().orientation() == FontOrientation::Horizontal) {
             // Measure the actual character "x", since it's possible for it to extend below the baseline, and we need the
             // reported x-height to only include the portion of the glyph that is above the baseline.
             Glyph xGlyph = glyphForCharacter('x');
@@ -572,7 +572,7 @@ void Font::determinePitch()
 FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 {
     FloatRect boundingBox;
-    boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(), platformData().orientation() == Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, &glyph, 0, 1);
+    boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(), platformData().orientation() == FontOrientation::Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, &glyph, 0, 1);
     boundingBox.setY(-boundingBox.maxY());
     if (m_syntheticBoldOffset)
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
@@ -583,7 +583,7 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 float Font::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance = CGSizeZero;
-    bool horizontal = platformData().orientation() == Horizontal;
+    bool horizontal = platformData().orientation() == FontOrientation::Horizontal;
     CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
 
     if (platformData().size()) {

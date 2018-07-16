@@ -64,7 +64,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     Vector<DWRITE_SHAPING_TEXT_PROPERTIES> textProperties(GlyphPage::size);
     Vector<DWRITE_SHAPING_GLYPH_PROPERTIES> glyphProperties(GlyphPage::size);
 
-    hr = analyzer->GetGlyphs(buffer, bufferLength, fontPlatformData.dwFontFace(), fontPlatformData.orientation() == Vertical, false,
+    hr = analyzer->GetGlyphs(buffer, bufferLength, fontPlatformData.dwFontFace(), fontPlatformData.orientation() == FontOrientation::Vertical, false,
         &helper.m_analysis, nullptr, nullptr, nullptr, nullptr, 0, GlyphPage::size, clusterMap, textProperties.data(),
         localGlyphBuffer, glyphProperties.data(), &returnedCount);
     if (!SUCCEEDED(hr))

@@ -6405,7 +6405,7 @@ static bool hasVisibleBoxDecorationsOrBackground(const RenderElement& renderer)
 static bool styleHasSmoothingTextMode(const RenderStyle& style)
 {
     FontSmoothingMode smoothingMode = style.fontDescription().fontSmoothing();
-    return smoothingMode == AutoSmoothing || smoothingMode == SubpixelAntialiased;
+    return smoothingMode == FontSmoothingMode::AutoSmoothing || smoothingMode == FontSmoothingMode::SubpixelAntialiased;
 }
 
 // Constrain the depth and breadth of the search for performance.

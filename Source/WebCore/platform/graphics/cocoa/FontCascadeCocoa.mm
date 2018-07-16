@@ -95,7 +95,7 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const F
         return;
 
     const FontPlatformData& platformData = font.platformData();
-    if (platformData.orientation() == Vertical) {
+    if (platformData.orientation() == FontOrientation::Vertical) {
         // FIXME: Implement support for vertical text. See <rdar://problem/13737298>.
         return;
     }
@@ -143,7 +143,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
 
     const FontPlatformData& platformData = font.platformData();
     Vector<CGPoint, 256> positions(count);
-    if (platformData.orientation() == Vertical) {
+    if (platformData.orientation() == FontOrientation::Vertical) {
         CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
         CGAffineTransform textMatrix = CGContextGetTextMatrix(context);
         CGAffineTransform runMatrix = CGAffineTransformConcat(textMatrix, rotateLeftTransform);
@@ -194,25 +194,25 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     bool changeFontSmoothing;
     
     switch (smoothingMode) {
-    case Antialiased: {
+    case FontSmoothingMode::Antialiased: {
         context.setShouldAntialias(true);
         shouldSmoothFonts = false;
         changeFontSmoothing = true;
         break;
     }
-    case SubpixelAntialiased: {
+    case FontSmoothingMode::SubpixelAntialiased: {
         context.setShouldAntialias(true);
         shouldSmoothFonts = true;
         changeFontSmoothing = true;
         break;
     }
-    case NoSmoothing: {
+    case FontSmoothingMode::NoSmoothing: {
         context.setShouldAntialias(false);
         shouldSmoothFonts = false;
         changeFontSmoothing = true;
         break;
     }
-    case AutoSmoothing: {
+    case FontSmoothingMode::AutoSmoothing: {
         shouldSmoothFonts = true;
         changeFontSmoothing = false;
         break;
@@ -242,7 +242,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     matrix.d = -matrix.d;
     if (platformData.syntheticOblique()) {
         static float obliqueSkew = tanf(syntheticObliqueAngle() * piFloat / 180);
-        if (platformData.orientation() == Vertical) {
+        if (platformData.orientation() == FontOrientation::Vertical) {
             if (font.isTextOrientationFallback())
                 matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));
             else
@@ -515,7 +515,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
         if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && font->shouldNotBeUsedForArabic())
             continue;
 #endif
-        if (font->platformData().orientation() == Vertical) {
+        if (font->platformData().orientation() == FontOrientation::Vertical) {
             if (isCJKIdeographOrSymbol(baseCharacter) && !font->hasVerticalGlyphs())
                 font = &font->brokenIdeographFont();
             else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Mixed) {

@@ -46,8 +46,8 @@ ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow,
         return;
     }
 
-    int shadowX = orientation == Horizontal ? shadow->x() : shadow->y();
-    int shadowY = orientation == Horizontal ? shadow->y() : -shadow->x();
+    int shadowX = orientation == FontOrientation::Horizontal ? shadow->x() : shadow->y();
+    int shadowY = orientation == FontOrientation::Horizontal ? shadow->y() : -shadow->x();
     FloatSize shadowOffset(shadowX, shadowY);
     int shadowRadius = shadow->radius();
     Color shadowColor = shadow->color();
@@ -130,7 +130,7 @@ void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FilterOpe
     if (!opaque)
         m_context.setFillColor(Color::black);
     while (shadow) {
-        ShadowApplier shadowApplier(m_context, shadow, colorFilter, boxRect, lastShadowIterationShouldDrawText, opaque, m_textBoxIsHorizontal ? Horizontal : Vertical);
+        ShadowApplier shadowApplier(m_context, shadow, colorFilter, boxRect, lastShadowIterationShouldDrawText, opaque, m_textBoxIsHorizontal ? FontOrientation::Horizontal : FontOrientation::Vertical);
         if (!shadowApplier.nothingToDraw())
             paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + shadowApplier.extraOffset(), startOffset, endOffset);
         shadow = shadow->next();

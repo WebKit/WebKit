@@ -122,7 +122,7 @@ void RenderCombineText::combineTextIfNeeded()
 
     FontSelector* fontSelector = style().fontCascade().fontSelector();
 
-    description.setOrientation(Horizontal); // We are going to draw combined text horizontally.
+    description.setOrientation(FontOrientation::Horizontal); // We are going to draw combined text horizontally.
 
     FontCascade horizontalFont(FontCascadeDescription { description }, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
     horizontalFont.update(fontSelector);
@@ -140,7 +140,7 @@ void RenderCombineText::combineTextIfNeeded()
         shouldUpdateFont = m_combineFontStyle->setFontDescription(WTFMove(description)); // Need to change font orientation to horizontal.
     else {
         // Need to try compressed glyphs.
-        static const FontWidthVariant widthVariants[] = { HalfWidth, ThirdWidth, QuarterWidth };
+        static const FontWidthVariant widthVariants[] = { FontWidthVariant::HalfWidth, FontWidthVariant::ThirdWidth, FontWidthVariant::QuarterWidth };
         for (auto widthVariant : widthVariants) {
             description.setWidthVariant(widthVariant); // When modifying this, make sure to keep it in sync with FontPlatformData::isForTextCombine()!
 

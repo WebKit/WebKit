@@ -231,7 +231,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
 {
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
-    if (!scalingFactor || style.fontDescription().textRenderingMode() == GeometricPrecision) {
+    if (!scalingFactor || style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision) {
         scalingFactor = 1;
         scaledFont = style.fontCascade();
         return;

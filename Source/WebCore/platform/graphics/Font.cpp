@@ -56,10 +56,7 @@ const float smallCapsFontSizeMultiplier = 0.7f;
 const float emphasisMarkFontSizeMultiplier = 0.5f;
 
 Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback)
-    : m_maxCharWidth(-1)
-    , m_avgCharWidth(-1)
-    , m_platformData(platformData)
-    , m_mathData(nullptr)
+    : m_platformData(platformData)
     , m_origin(origin)
     , m_visibility(visibility)
     , m_treatAsFixedPitch(false)
@@ -76,7 +73,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial int
     platformGlyphInit();
     platformCharWidthInit();
 #if ENABLE(OPENTYPE_VERTICAL)
-    if (platformData.orientation() == Vertical && orientationFallback == OrientationFallback::No) {
+    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == OrientationFallback::No) {
         m_verticalData = FontCache::singleton().verticalData(platformData);
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
@@ -390,7 +387,7 @@ const Font& Font::verticalRightOrientationFont() const
 {
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.verticalRightOrientationFont) {
-        auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, Horizontal);
+        auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, FontOrientation::Horizontal);
         derivedFontData.verticalRightOrientationFont = create(verticalRightPlatformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
     }
     ASSERT(derivedFontData.verticalRightOrientationFont != this);

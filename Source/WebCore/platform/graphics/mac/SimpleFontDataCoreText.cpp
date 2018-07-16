@@ -47,7 +47,7 @@ CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation 
         CFDictionarySetValue(attributesDictionary.get(), kCTKernAttributeName, zeroKerningValue);
     }
 
-    if (orientation == Vertical)
+    if (orientation == FontOrientation::Vertical)
         CFDictionarySetValue(attributesDictionary.get(), kCTVerticalFormsAttributeName, kCFBooleanTrue);
 
     return attributesDictionary.get();

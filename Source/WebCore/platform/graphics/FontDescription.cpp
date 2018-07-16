@@ -56,11 +56,11 @@ COMPILE_ASSERT(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDes
 
 FontDescription::FontDescription()
     : m_fontSelectionRequest { FontCascadeDescription::initialWeight(), FontCascadeDescription::initialStretch(), FontCascadeDescription::initialItalic() }
-    , m_orientation(Horizontal)
+    , m_orientation(static_cast<unsigned>(FontOrientation::Horizontal))
     , m_nonCJKGlyphOrientation(static_cast<unsigned>(NonCJKGlyphOrientation::Mixed))
-    , m_widthVariant(RegularWidth)
+    , m_widthVariant(static_cast<unsigned>(FontWidthVariant::RegularWidth))
     , m_renderingMode(static_cast<unsigned>(FontRenderingMode::Normal))
-    , m_textRendering(AutoTextRendering)
+    , m_textRendering(static_cast<unsigned>(TextRenderingMode::AutoTextRendering))
     , m_script(USCRIPT_COMMON)
     , m_fontSynthesis(FontSynthesisWeight | FontSynthesisStyle | FontSynthesisSmallCaps)
     , m_variantCommonLigatures(static_cast<unsigned>(FontVariantLigatures::Normal))
@@ -94,7 +94,7 @@ FontCascadeDescription::FontCascadeDescription()
     : m_isAbsoluteSize(false)
     , m_kerning(static_cast<unsigned>(Kerning::Auto))
     , m_keywordSize(0)
-    , m_fontSmoothing(AutoSmoothing)
+    , m_fontSmoothing(static_cast<unsigned>(FontSmoothingMode::AutoSmoothing))
     , m_isSpecifiedFont(false)
 {
 }
