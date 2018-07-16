@@ -60,7 +60,7 @@
         --selected-foreground-color: var(--text-color-active);
         --selected-secondary-text-color: hsla(0, 0%, var(--foreground-lightness), 0.7);
         --selected-secondary-text-color-active: hsla(0, 0%, var(--foreground-lightness), 0.85);
-        --selected-background-color: hsl(210, 96%, 43%);
+        --selected-background-color: hsl(219, 80%, 43%);
         --selected-background-color-unfocused: hsla(0, 0%, var(--foreground-lightness), 0.15);
         --selected-background-color-active: hsl(218, 85%, 62%);
         --selected-background-color-hover: hsla(212, 92%, 54%, 0.5);
@@ -721,6 +721,14 @@
     /* DOMTreeOutline.css */
     .tree-outline.dom {
         color: var(--text-color);
+    }
+
+    .tree-outline.dom li.elements-drag-over .selection-area {
+        border-top-color: var(--selected-background-color);
+    }
+
+    .tree-outline.dom:focus li.selected .selection-area {
+        background-color: var(--selected-background-color);
     }
 
     .tree-outline.dom li.selected + ol.children.expanded {

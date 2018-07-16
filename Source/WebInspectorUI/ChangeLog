@@ -1,3 +1,17 @@
+2018-07-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: selected item background color is too light
+        https://bugs.webkit.org/show_bug.cgi?id=187691
+        <rdar://problem/42225308>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (:root):
+        (.tree-outline.dom li.elements-drag-over .selection-area):
+        (.tree-outline.dom:focus li.selected .selection-area):
+
 2018-07-14  Kocsen Chung  <kocsen_chung@apple.com>
 
         Ensure WebKit stack is ad-hoc signed
