@@ -35,7 +35,9 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if !PLATFORM(IOSMAC)
 SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
+#endif
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 #endif
@@ -92,7 +94,13 @@ bool AVFoundationMIMETypeCache::canDecodeType(const String& mimeType)
 bool AVFoundationMIMETypeCache::isAvailable() const
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#if PLATFORM(IOSMAC)
+    // FIXME: This should be using AVFoundationLibraryIsAvailable() instead, but doing so causes soft-linking
+    // to subsequently fail on certain symbols. See <rdar://problem/42224780> for more details.
+    return AVFoundationLibrary();
+#else
     return AVFoundationLibraryIsAvailable();
+#endif
 #else
     return false;
 #endif

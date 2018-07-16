@@ -1,3 +1,22 @@
+2018-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS apps on macOS] Playing embedded Twitter videos in the News app crashes the web process
+        https://bugs.webkit.org/show_bug.cgi?id=187690
+        <rdar://problem/41869703>
+
+        Reviewed by Tim Horton.
+
+        Work around unexpected behavior when soft-linking AVFoundation. After using `dlopen_preflight` to check for the
+        existence of a library prior to loading the library using `dlopen`, `dlsym` subsequently returns null for some
+        symbols that would otherwise be available. This causes us to RELEASE_ASSERT later down the road when we try to
+        load AVAudioSessionModeDefault in AudioSessionIOS.mm.
+
+        To fix this for now, simply check for the library directly instead of using the more lightweight preflight
+        check. See clone: <rdar://problem/42224780> for more detail.
+
+        * platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm:
+        (WebCore::AVFoundationMIMETypeCache::isAvailable const):
+
 2018-07-14  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink StyleFillData, StyleStrokeData and StyleMiscData
