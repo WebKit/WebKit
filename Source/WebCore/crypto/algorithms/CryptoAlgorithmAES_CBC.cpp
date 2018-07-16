@@ -31,7 +31,6 @@
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
-#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
@@ -57,35 +56,35 @@ CryptoAlgorithmIdentifier CryptoAlgorithmAES_CBC::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmAES_CBC::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     using namespace CryptoAlgorithmAES_CBCInternal;
-
-    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
+    ASSERT(parameters);
+    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
         exceptionCallback(OperationError);
         return;
     }
 
-    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
-            return platformEncrypt(parameters, downcast<CryptoKeyAES>(key.get()), plainText);
+    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
+            return platformEncrypt(downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters), downcast<CryptoKeyAES>(key.get()), plainText);
         });
 }
 
-void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmAES_CBC::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     using namespace CryptoAlgorithmAES_CBCInternal;
-
-    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
+    ASSERT(parameters);
+    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
         exceptionCallback(OperationError);
         return;
     }
 
-    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(aesParameters), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
-            return platformDecrypt(parameters, downcast<CryptoKeyAES>(key.get()), cipherText);
+    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
+            return platformDecrypt(downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters), downcast<CryptoKeyAES>(key.get()), cipherText);
         });
 }
 
@@ -107,10 +106,10 @@ void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parame
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAES_CBC::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAES_CBC::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmAES_CBCInternal;
-
+    ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_CBC(usages)) {
         exceptionCallback(SyntaxError);
         return;
@@ -119,7 +118,7 @@ void CryptoAlgorithmAES_CBC::importKey(CryptoKeyFormat format, KeyData&& data, c
     RefPtr<CryptoKeyAES> result;
     switch (format) {
     case CryptoKeyFormat::Raw:
-        result = CryptoKeyAES::importRaw(parameters.identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyAES::importRaw(parameters->identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Jwk: {
         auto checkAlgCallback = [](size_t length, const String& alg) -> bool {
@@ -133,7 +132,7 @@ void CryptoAlgorithmAES_CBC::importKey(CryptoKeyFormat format, KeyData&& data, c
             }
             return false;
         };
-        result = CryptoKeyAES::importJwk(parameters.identifier, WTFMove(WTF::get<JsonWebKey>(data)), extractable, usages, WTFMove(checkAlgCallback));
+        result = CryptoKeyAES::importJwk(parameters->identifier, WTFMove(WTF::get<JsonWebKey>(data)), extractable, usages, WTFMove(checkAlgCallback));
         break;
     }
     default:

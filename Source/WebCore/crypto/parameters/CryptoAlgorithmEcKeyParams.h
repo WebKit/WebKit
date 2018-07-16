@@ -36,15 +36,6 @@ public:
     String namedCurve;
 
     Class parametersClass() const final { return Class::EcKeyParams; }
-
-    CryptoAlgorithmEcKeyParams isolatedCopy() const
-    {
-        CryptoAlgorithmEcKeyParams result;
-        result.identifier = identifier;
-        result.namedCurve = namedCurve.isolatedCopy();
-
-        return result;
-    }
 };
 
 } // namespace WebCore

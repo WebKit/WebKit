@@ -32,22 +32,22 @@
 
 namespace WebCore {
 
-void CryptoAlgorithm::encrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithm::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
 {
     exceptionCallback(NotSupportedError);
 }
 
-void CryptoAlgorithm::decrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithm::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
 {
     exceptionCallback(NotSupportedError);
 }
 
-void CryptoAlgorithm::sign(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithm::sign(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
 {
     exceptionCallback(NotSupportedError);
 }
 
-void CryptoAlgorithm::verify(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, Vector<uint8_t>&&, BoolCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithm::verify(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, Vector<uint8_t>&&, BoolCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
 {
     exceptionCallback(NotSupportedError);
 }
@@ -62,12 +62,12 @@ void CryptoAlgorithm::generateKey(const CryptoAlgorithmParameters&, bool, Crypto
     exceptionCallback(NotSupportedError);
 }
 
-void CryptoAlgorithm::deriveBits(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, size_t, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithm::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, size_t, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
 {
     exceptionCallback(NotSupportedError);
 }
 
-void CryptoAlgorithm::importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithm::importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(NotSupportedError);
 }
@@ -95,6 +95,7 @@ ExceptionOr<size_t> CryptoAlgorithm::getKeyLength(const CryptoAlgorithmParameter
 template<typename ResultCallbackType, typename OperationType>
 static void dispatchAlgorithmOperation(WorkQueue& workQueue, ScriptExecutionContext& context, ResultCallbackType&& callback, CryptoAlgorithm::ExceptionCallback&& exceptionCallback, OperationType&& operation)
 {
+    // There is no guarantee that callback and exceptionCallback will be destroyed in the thread in which they were created.
     workQueue.dispatch(
         [operation = WTFMove(operation), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), contextIdentifier = context.contextIdentifier()]() mutable {
             auto result = operation();
@@ -108,12 +109,12 @@ static void dispatchAlgorithmOperation(WorkQueue& workQueue, ScriptExecutionCont
         });
 }
 
-void CryptoAlgorithm::dispatchOperationInWorkQueue(WorkQueue& workQueue, ScriptExecutionContext& context, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, WTF::Function<ExceptionOr<Vector<uint8_t>>()>&& operation)
+void CryptoAlgorithm::dispatchOperation(WorkQueue& workQueue, ScriptExecutionContext& context, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, WTF::Function<ExceptionOr<Vector<uint8_t>>()>&& operation)
 {
     dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
 }
 
-void CryptoAlgorithm::dispatchOperationInWorkQueue(WorkQueue& workQueue, ScriptExecutionContext& context, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, WTF::Function<ExceptionOr<bool>()>&& operation)
+void CryptoAlgorithm::dispatchOperation(WorkQueue& workQueue, ScriptExecutionContext& context, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, WTF::Function<ExceptionOr<bool>()>&& operation)
 {
     dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
 }

@@ -135,7 +135,7 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
     return { error == GPG_ERR_NO_ERROR };
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(const CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& data)
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!(key.keySizeInBits() % 8));
     auto output = gcryptSign(key.platformKey(), data, key.hashAlgorithmIdentifier(), parameters.saltLength, key.keySizeInBits() / 8);
@@ -144,7 +144,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(const CryptoAl
     return WTFMove(*output);
 }
 
-ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(const CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
     auto output = gcryptVerify(key.platformKey(), signature, data, key.hashAlgorithmIdentifier(), parameters.saltLength);
     if (!output)

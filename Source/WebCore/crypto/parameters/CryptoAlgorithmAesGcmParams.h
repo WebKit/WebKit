@@ -37,12 +37,12 @@ class CryptoAlgorithmAesGcmParams final : public CryptoAlgorithmParameters {
 public:
     BufferSource iv;
     // Use additionalDataVector() instead of additionalData. The label will be gone once additionalDataVector() is called.
-    mutable std::optional<BufferSource::VariantType> additionalData;
-    mutable std::optional<uint8_t> tagLength;
+    std::optional<BufferSource::VariantType> additionalData;
+    std::optional<uint8_t> tagLength;
 
     Class parametersClass() const final { return Class::AesGcmParams; }
 
-    const Vector<uint8_t>& ivVector() const
+    const Vector<uint8_t>& ivVector()
     {
         if (!m_ivVector.isEmpty() || !iv.length())
             return m_ivVector;
@@ -51,34 +51,24 @@ public:
         return m_ivVector;
     }
 
-    const Vector<uint8_t>& additionalDataVector() const
+    const Vector<uint8_t>& additionalDataVector()
     {
         if (!m_additionalDataVector.isEmpty() || !additionalData)
             return m_additionalDataVector;
 
-        BufferSource additionalDataBuffer = WTFMove(*additionalData);
+        m_additionalDataBuffer = WTFMove(*additionalData);
         additionalData = std::nullopt;
-        if (!additionalDataBuffer.length())
+        if (!m_additionalDataBuffer.length())
             return m_additionalDataVector;
 
-        m_additionalDataVector.append(additionalDataBuffer.data(), additionalDataBuffer.length());
+        m_additionalDataVector.append(m_additionalDataBuffer.data(), m_additionalDataBuffer.length());
         return m_additionalDataVector;
     }
-
-    CryptoAlgorithmAesGcmParams isolatedCopy() const
-    {
-        CryptoAlgorithmAesGcmParams result;
-        result.identifier = identifier;
-        result.m_ivVector = ivVector();
-        result.m_additionalDataVector = additionalDataVector();
-        result.tagLength = tagLength;
-
-        return result;
-    }
-
+    
 private:
-    mutable Vector<uint8_t> m_ivVector;
-    mutable Vector<uint8_t> m_additionalDataVector;
+    Vector<uint8_t> m_ivVector;
+    Vector<uint8_t> m_additionalDataVector;
+    BufferSource m_additionalDataBuffer;
 };
 
 } // namespace WebCore

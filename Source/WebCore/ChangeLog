@@ -1,3 +1,16 @@
+2018-07-16  David Fenton  <david_fenton@apple.com>
+
+        Unreviewed, rolling out r233867.
+
+        caused build failures on High Sierra, Sierra and iOS
+
+        Reverted changeset:
+
+        "[WebCrypto] Crypto operations should copy their parameters
+        before hoping to another thread"
+        https://bugs.webkit.org/show_bug.cgi?id=187501
+        https://trac.webkit.org/changeset/233867
+
 2018-07-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Crypto operations should copy their parameters before hoping to another thread
