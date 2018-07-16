@@ -233,24 +233,27 @@ class WPTRunnerTest(unittest.TestCase):
         # arguments. Custom WPT checkout and child process count are specified. Note that the
         # WPT checkout doesn't have an impact on the resulting WPT argument list, as intended.
         specified_wpt_checkout = "/mock-path/web-platform-tests"
+        specified_wpt_metadata = "/mock-path/wpt-metadata"
         specified_child_processes = 16
 
         spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self, specified_wpt_checkout,
             ["run", "--webkit-port=MockPort", "--processes=16",
-                "--metadata=/mock-path/mock-wpt-tests-metadata",
-                "--manifest=/mock-path/mock-wpt-manifest.json",
-                "--include-manifest=/mock-checkout/WebPlatformTests/MockPort/TestManifest.ini",
+                "--metadata=/mock-path/wpt-metadata",
+                "--manifest=/mock-path/wpt-metadata/MANIFEST.json",
+                "--include-manifest=/mock-path/wpt-metadata/MockPort/TestManifest.ini",
                 "--webdriver-binary=/mock-webdriver/bin/webdriver",
                 "--binary=/mock-webdriver/bin/browser",
                 "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"])
 
         options, _ = parse_args(["--wpt-checkout", specified_wpt_checkout,
+            "--wpt-metadata", specified_wpt_metadata,
             "--child-processes", specified_child_processes])
         instance = WPTRunnerTest.TestInstance(options, spawn_wpt_func)
         instance.prepare_mock_files_for_run()
 
-        # Also create the mock WPT checkout directory.
+        # Also create the mock WPT checkout and metadata directories.
         instance.host.filesystem.maybe_make_directory(specified_wpt_checkout)
+        instance.host.filesystem.maybe_make_directory(specified_wpt_metadata)
 
         self.assertTrue(instance.runner.run([]))
 

@@ -1,3 +1,35 @@
+2018-07-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [webkitpy] run-web-platform-tests should allow specifying custom WPT metadata directories
+        https://bugs.webkit.org/show_bug.cgi?id=187353
+
+        Reviewed by Youenn Fablet.
+
+        When using run-web-platform-tests, allow specifying custom WPT metadata
+        directory. This will avoid generating such metadata-filled directory
+        from the port-specific JSON expectations file, and instead will search
+        for the metadata files and the include manifest inside the specified
+        directory. The MANIFEST.json file will also be generated under there.
+
+        Rationale for this change is prototyping using custom metadata
+        directories and avoiding generating all this content from a JSON file.
+        Using this by default in the future would avoid sporradic changes in how
+        WPT handles metadata .ini files and releases us from the obligation of
+        adjusting the generator for every such change. This would also allow
+        managing this metadata content in a separate repository, avoiding
+        polluting the main webkit.org repository with thousands of .ini files.
+
+        If this turns out to be the preferable way of managing the metadata
+        content, the JSON files under WebPlatformTests/ and the related code in
+        wpt_runner.py would be removed.
+
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (parse_args):
+        (WPTRunner._wpt_run_paths):
+        (WPTRunner.run):
+        * Scripts/webkitpy/w3c/wpt_runner_unittest.py:
+        (WPTRunnerTest.test_run_with_specified_options):
+
 2018-07-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] run-api-tests is timing out for almost all test cases

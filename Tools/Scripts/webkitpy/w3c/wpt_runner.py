@@ -104,6 +104,8 @@ def parse_args(args):
                              help='Number of tests to run in parallel'),
     option_parser.add_option('--wpt-checkout', default=None,
                              help='web-platform-tests repository location')
+    option_parser.add_option('--wpt-metadata', default=None,
+                             help='web-platform-tests metadata location')
     option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
                              help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                                   '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.')
@@ -187,29 +189,46 @@ class WPTRunner(object):
 
         return True
 
+    def _wpt_run_paths(self):
+        test_manifest_file = (self._port.name(), "TestManifest.ini")
+        if not self._options.wpt_metadata:
+            return {'metadata_path': self._port.wpt_metadata_directory(),
+                'include_manifest_path': self._finder.path_from_webkit_base("WebPlatformTests", *test_manifest_file),
+                'manifest_path': self._port.wpt_manifest_file()}
+
+        metadata_path = self._host.filesystem.abspath(self._options.wpt_metadata)
+        return {'metadata_path': metadata_path,
+            'include_manifest_path': self._host.filesystem.join(metadata_path, *test_manifest_file),
+            'manifest_path': self._host.filesystem.join(metadata_path, "MANIFEST.json")}
+
     def run(self, args):
         if not self.prepare_wpt_checkout():
             return False
 
-        # Parse the test expectations JSON and construct corresponding metadata files.
-        metadata_path = self._port.wpt_metadata_directory()
-        if not self._generate_metadata_directory(metadata_path):
-            return False
+        wpt_run_paths = self._wpt_run_paths()
+        if not self._options.wpt_metadata:
+            # Parse the test expectations JSON and construct corresponding metadata files.
+            if not self._generate_metadata_directory(wpt_run_paths["metadata_path"]):
+                return False
 
-        include_manifest_path = self._finder.path_from_webkit_base("WebPlatformTests", self._port.name(), "TestManifest.ini")
-        if not self._host.filesystem.exists(include_manifest_path):
-            _log.error("Port-specific manifest .ini file does not exist")
-            return False
+            # Bail if the include manifest file is not found.
+            if not self._host.filesystem.exists(wpt_run_paths["include_manifest_path"]):
+                _log.error("Port-specific manifest .ini file does not exist")
+                return False
+        else:
+            # Bail if the specified metadata directory is not found.
+            if not self._host.filesystem.exists(wpt_run_paths["metadata_path"]):
+                _log.error("Existing wpt metadata directory has to be specified")
+                return False
 
         # Construct the WebDriver instance and run WPT tests via the 'webkit' product.
-        manifest_path = self._port.wpt_manifest_file()
         webdriver = self._create_webdriver_func(self._port)
 
         wpt_args = ["run", "--webkit-port={}".format(self._port.name()),
             "--processes={}".format(self._options.child_processes),
-            "--metadata={}".format(metadata_path),
-            "--manifest={}".format(manifest_path),
-            "--include-manifest={}".format(include_manifest_path),
+            "--metadata={}".format(wpt_run_paths["metadata_path"]),
+            "--manifest={}".format(wpt_run_paths["manifest_path"]),
+            "--include-manifest={}".format(wpt_run_paths["include_manifest_path"]),
             "--webdriver-binary={}".format(webdriver.binary_path()),
             "--binary={}".format(webdriver.browser_path())]
         wpt_args += ["--binary-arg={}".format(arg) for arg in webdriver.browser_args()]
