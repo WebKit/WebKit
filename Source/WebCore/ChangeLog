@@ -1,3 +1,151 @@
+2018-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Roll out r233873 and r233875 since they caused 8 new layout test crashes.
+
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::encrypt):
+        (WebCore::CryptoAlgorithm::decrypt):
+        (WebCore::CryptoAlgorithm::sign):
+        (WebCore::CryptoAlgorithm::verify):
+        (WebCore::CryptoAlgorithm::deriveBits):
+        (WebCore::CryptoAlgorithm::importKey):
+        (WebCore::dispatchAlgorithmOperation):
+        (WebCore::CryptoAlgorithm::dispatchOperation):
+        (WebCore::CryptoAlgorithm::dispatchOperationInWorkQueue): Deleted.
+        * crypto/CryptoAlgorithm.h:
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::encrypt):
+        (WebCore::SubtleCrypto::decrypt):
+        (WebCore::SubtleCrypto::sign):
+        (WebCore::SubtleCrypto::verify):
+        (WebCore::SubtleCrypto::deriveKey):
+        (WebCore::SubtleCrypto::deriveBits):
+        (WebCore::SubtleCrypto::importKey):
+        (WebCore::SubtleCrypto::wrapKey):
+        (WebCore::SubtleCrypto::unwrapKey):
+        (WebCore::crossThreadCopyImportParams): Deleted.
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.cpp:
+        (WebCore::CryptoAlgorithmAES_CFB::encrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::decrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.cpp:
+        (WebCore::parametersAreValid):
+        (WebCore::CryptoAlgorithmAES_CTR::encrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::decrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.h:
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::encrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::decrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmECDH.cpp:
+        (WebCore::CryptoAlgorithmECDH::deriveBits):
+        (WebCore::CryptoAlgorithmECDH::importKey):
+        * crypto/algorithms/CryptoAlgorithmECDH.h:
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp:
+        (WebCore::CryptoAlgorithmECDSA::sign):
+        (WebCore::CryptoAlgorithmECDSA::verify):
+        (WebCore::CryptoAlgorithmECDSA::importKey):
+        * crypto/algorithms/CryptoAlgorithmECDSA.h:
+        * crypto/algorithms/CryptoAlgorithmHKDF.cpp:
+        (WebCore::CryptoAlgorithmHKDF::deriveBits):
+        (WebCore::CryptoAlgorithmHKDF::importKey):
+        * crypto/algorithms/CryptoAlgorithmHKDF.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmPBKDF2.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::deriveBits):
+        (WebCore::CryptoAlgorithmPBKDF2::importKey):
+        * crypto/algorithms/CryptoAlgorithmPBKDF2.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::encrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::decrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp:
+        (WebCore::CryptoAlgorithmRSA_PSS::sign):
+        (WebCore::CryptoAlgorithmRSA_PSS::verify):
+        (WebCore::CryptoAlgorithmRSA_PSS::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.h:
+        * crypto/gcrypt/CryptoAlgorithmAES_CBCGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_CFBGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_CFB::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_CTRGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_CTR::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp:
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+        * crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+        * crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformVerify):
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_CFBMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CFB::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_CTRMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CTR::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmHKDFMac.cpp:
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRSA_PSSMac.cpp:
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformVerify):
+        * crypto/parameters/CryptoAlgorithmAesCbcCfbParams.h:
+        * crypto/parameters/CryptoAlgorithmAesCtrParams.h:
+        * crypto/parameters/CryptoAlgorithmAesGcmParams.h:
+        * crypto/parameters/CryptoAlgorithmEcKeyParams.h:
+        * crypto/parameters/CryptoAlgorithmEcdsaParams.h:
+        * crypto/parameters/CryptoAlgorithmHkdfParams.h:
+        * crypto/parameters/CryptoAlgorithmHmacKeyParams.h:
+        * crypto/parameters/CryptoAlgorithmPbkdf2Params.h:
+        * crypto/parameters/CryptoAlgorithmRsaHashedImportParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaOaepParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaPssParams.h:
+
 2018-07-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in ~TimerBase is getting hit in WK1 apps which uses JSC API directly

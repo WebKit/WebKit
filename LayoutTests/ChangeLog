@@ -1,3 +1,67 @@
+2018-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Roll out r233873 and r233875 since they caused 8 new layout test crashes.
+
+        * TestExpectations:
+        * crypto/subtle/aes-gcm-import-key-unwrap-ec-raw-key-expected.txt: Removed.
+        * crypto/subtle/aes-gcm-import-key-unwrap-ec-raw-key.html: Removed.
+        * http/wpt/crypto/aes-cbc-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/aes-cbc-crash.any.html: Removed.
+        * http/wpt/crypto/aes-cbc-crash.any.js: Removed.
+        * http/wpt/crypto/aes-cbc-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/aes-cbc-crash.any.worker.html: Removed.
+        * http/wpt/crypto/aes-ctr-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/aes-ctr-crash.any.html: Removed.
+        * http/wpt/crypto/aes-ctr-crash.any.js: Removed.
+        * http/wpt/crypto/aes-ctr-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/aes-ctr-crash.any.worker.html: Removed.
+        * http/wpt/crypto/aes-gcm-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/aes-gcm-crash.any.html: Removed.
+        * http/wpt/crypto/aes-gcm-crash.any.js: Removed.
+        * http/wpt/crypto/aes-gcm-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/aes-gcm-crash.any.worker.html: Removed.
+        * http/wpt/crypto/derive-hmac-key-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/derive-hmac-key-crash.any.html: Removed.
+        * http/wpt/crypto/derive-hmac-key-crash.any.js: Removed.
+        * http/wpt/crypto/derive-hmac-key-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/derive-hmac-key-crash.any.worker.html: Removed.
+        * http/wpt/crypto/ecdsa-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/ecdsa-crash.any.html: Removed.
+        * http/wpt/crypto/ecdsa-crash.any.js: Removed.
+        * http/wpt/crypto/ecdsa-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/ecdsa-crash.any.worker.html: Removed.
+        * http/wpt/crypto/hkdf-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/hkdf-crash.any.html: Removed.
+        * http/wpt/crypto/hkdf-crash.any.js: Removed.
+        * http/wpt/crypto/hkdf-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/hkdf-crash.any.worker.html: Removed.
+        * http/wpt/crypto/pbkdf2-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/pbkdf2-crash.any.html: Removed.
+        * http/wpt/crypto/pbkdf2-crash.any.js: Removed.
+        * http/wpt/crypto/pbkdf2-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/pbkdf2-crash.any.worker.html: Removed.
+        * http/wpt/crypto/resources/common.js: Removed.
+        * http/wpt/crypto/rsa-oaep-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/rsa-oaep-crash.any.html: Removed.
+        * http/wpt/crypto/rsa-oaep-crash.any.js: Removed.
+        * http/wpt/crypto/rsa-oaep-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/rsa-oaep-crash.any.worker.html: Removed.
+        * http/wpt/crypto/rsa-pss-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/rsa-pss-crash.any.html: Removed.
+        * http/wpt/crypto/rsa-pss-crash.any.js: Removed.
+        * http/wpt/crypto/rsa-pss-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/rsa-pss-crash.any.worker.html: Removed.
+        * http/wpt/crypto/unwrap-ec-key-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.html: Removed.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.js: Removed.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.worker.html: Removed.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any-expected.txt: Removed.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.html: Removed.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.js: Removed.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.worker-expected.txt: Removed.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html: Removed.
+
 2018-07-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         [ WK2 ] Layout Test editing/selection/update-selection-by-style-change.html is flaky
