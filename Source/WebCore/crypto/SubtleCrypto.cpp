@@ -520,7 +520,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> crossThreadCopyImportParams(co
 {
     switch (importParams.parametersClass()) {
     case CryptoAlgorithmParameters::Class::None: {
-        auto result = std::make_unique<CryptoAlgorithmRsaHashedImportParams>();
+        auto result = std::make_unique<CryptoAlgorithmParameters>();
         result->identifier = importParams.identifier;
         return result;
     }

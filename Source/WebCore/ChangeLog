@@ -1,3 +1,10 @@
+2018-07-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix for r233873.
+
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::crossThreadCopyImportParams):
+
 2018-07-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Crypto operations should copy their parameters before hoping to another thread
