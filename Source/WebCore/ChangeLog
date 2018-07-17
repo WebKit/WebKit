@@ -1,3 +1,19 @@
+2018-07-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Correctly adjust scroll offsets when a page is zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=187673
+        <rdar://problem/41712829>
+
+        Reviewed by Wenson Hsieh.
+
+        Will add test later.
+
+        Make sure that distance is scaled by the pageScaleFactor, to 
+        make sure that we scroll correctly when we are zoomed in.
+
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::autoscrollAdjustmentFactorForScreenBoundaries):
+        
 2018-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Roll out r233873 and r233875 since they caused 8 new layout test crashes.

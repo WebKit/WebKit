@@ -578,7 +578,7 @@ void EventHandler::cancelSelectionAutoscroll()
     m_autoscrollController->stopAutoscrollTimer();
 }
 
-static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& screenPoint, const FloatRect& screenRect)
+static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& contentPosition, const FloatRect& unobscuredContentRect, float zoomFactor)
 {
     // If the window is at the edge of the screen, and the touch position is also at that edge of the screen,
     // we need to adjust the autoscroll amount in order for the user to be able to autoscroll in that direction.
@@ -590,33 +590,35 @@ static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& scr
     
 #define EDGE_DISTANCE_THRESHOLD 100
 
-    float screenLeftEdge = screenRect.x();
-    float insetScreenLeftEdge = screenLeftEdge + EDGE_DISTANCE_THRESHOLD;
-    float screenRightEdge = screenRect.maxX();
-    float insetScreenRightEdge = screenRightEdge - EDGE_DISTANCE_THRESHOLD;
-    if (screenPoint.x() >= screenLeftEdge && screenPoint.x() < insetScreenLeftEdge) {
-        float distanceFromEdge = screenPoint.x() - screenLeftEdge - EDGE_DISTANCE_THRESHOLD;
+    CGSize edgeDistanceThreshold = CGSizeMake(EDGE_DISTANCE_THRESHOLD / zoomFactor, EDGE_DISTANCE_THRESHOLD / zoomFactor);
+    
+    float screenLeftEdge = unobscuredContentRect.x();
+    float insetScreenLeftEdge = screenLeftEdge + edgeDistanceThreshold.width;
+    float screenRightEdge = unobscuredContentRect.maxX();
+    float insetScreenRightEdge = screenRightEdge - edgeDistanceThreshold.width;
+    if (contentPosition.x() >= screenLeftEdge && contentPosition.x() < insetScreenLeftEdge) {
+        float distanceFromEdge = contentPosition.x() - screenLeftEdge - edgeDistanceThreshold.width;
         if (distanceFromEdge < 0)
-            adjustmentFactor.setWidth(-EDGE_DISTANCE_THRESHOLD);
-    } else if (screenPoint.x() >= insetScreenRightEdge && screenPoint.x() < screenRightEdge) {
-        float distanceFromEdge = EDGE_DISTANCE_THRESHOLD - (screenRightEdge - screenPoint.x());
+            adjustmentFactor.setWidth(-edgeDistanceThreshold.width);
+    } else if (contentPosition.x() >= insetScreenRightEdge && contentPosition.x() < screenRightEdge) {
+        float distanceFromEdge = edgeDistanceThreshold.width - (screenRightEdge - contentPosition.x());
         if (distanceFromEdge > 0)
-            adjustmentFactor.setWidth(EDGE_DISTANCE_THRESHOLD);
+            adjustmentFactor.setWidth(edgeDistanceThreshold.width);
     }
     
-    float screenTopEdge = screenRect.y();
-    float insetScreenTopEdge = screenTopEdge + EDGE_DISTANCE_THRESHOLD;
-    float screenBottomEdge = screenRect.maxY();
-    float insetScreenBottomEdge = screenBottomEdge - EDGE_DISTANCE_THRESHOLD;
+    float screenTopEdge = unobscuredContentRect.y();
+    float insetScreenTopEdge = screenTopEdge + edgeDistanceThreshold.height;
+    float screenBottomEdge = unobscuredContentRect.maxY();
+    float insetScreenBottomEdge = screenBottomEdge - edgeDistanceThreshold.height;
     
-    if (screenPoint.y() >= screenTopEdge && screenPoint.y() < insetScreenTopEdge) {
-        float distanceFromEdge = screenPoint.y() - screenTopEdge - EDGE_DISTANCE_THRESHOLD;
+    if (contentPosition.y() >= screenTopEdge && contentPosition.y() < insetScreenTopEdge) {
+        float distanceFromEdge = contentPosition.y() - screenTopEdge - edgeDistanceThreshold.height;
         if (distanceFromEdge < 0)
-            adjustmentFactor.setHeight(-EDGE_DISTANCE_THRESHOLD);
-    } else if (screenPoint.y() >= insetScreenBottomEdge && screenPoint.y() < screenBottomEdge) {
-        float distanceFromEdge = EDGE_DISTANCE_THRESHOLD - (screenBottomEdge - screenPoint.y());
+            adjustmentFactor.setHeight(-edgeDistanceThreshold.height);
+    } else if (contentPosition.y() >= insetScreenBottomEdge && contentPosition.y() < screenBottomEdge) {
+        float distanceFromEdge = edgeDistanceThreshold.height - (screenBottomEdge - contentPosition.y());
         if (distanceFromEdge > 0)
-            adjustmentFactor.setHeight(EDGE_DISTANCE_THRESHOLD);
+            adjustmentFactor.setHeight(edgeDistanceThreshold.height);
     }
     
     return adjustmentFactor;
@@ -630,7 +632,7 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
     
     // Manually need to convert viewToContents, as it will be skipped because delegatedScrolling is on iOS
     IntPoint contentPosition = protectedFrame->view()->viewToContents(protectedFrame->view()->convertFromContainingWindow(m_targetAutoscrollPositionInWindow));
-    IntSize adjustPosition = autoscrollAdjustmentFactorForScreenBoundaries(contentPosition, unobscuredContentRect);
+    IntSize adjustPosition = autoscrollAdjustmentFactorForScreenBoundaries(contentPosition, unobscuredContentRect, protectedFrame->page()->pageScaleFactor());
     return contentPosition + adjustPosition;
 }
     
