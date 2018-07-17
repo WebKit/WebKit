@@ -1,3 +1,11 @@
+2018-07-17  Truitt Savell  <tsavell@apple.com>
+
+        Adding myself to Contributors.json
+
+        Unreviewed
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-07-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] TestWebKitAPI.PictureInPicture.WKUIDelegate is timing out
