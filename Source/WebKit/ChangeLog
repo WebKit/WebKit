@@ -1,3 +1,25 @@
+2018-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        Black flash in content area when returning to Mail
+        https://bugs.webkit.org/show_bug.cgi?id=187719
+        <rdar://problem/42165340>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground):
+        This still reproduces sometimes even after r233723, because:
+
+        If a pending commit arrives after ApplicationDidEnterBackground (when we
+        ask the web content process to freeze the layer tree), and after
+        ApplicationDidFinishSnapshottingAfterEnteringBackground (when we hide
+        WKContentView), but before the process sleeps, it will cause WKContentView
+        to be unhidden (potentially including layers with empty surfaces as contents).
+        Nothing will re-hide WKContentView. Instead, we should wait for the next
+        *pending* commit, which will necessarily not come until after the application
+        returns to the foreground because of the strict IPC ordering between
+        the message that freezes the layer tree and the "next commit" mechanism.
+
 2018-07-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] When bringing MobileSafari to the foreground, images, which are pending decoding, won't be drawn into the immediate-paint transaction
