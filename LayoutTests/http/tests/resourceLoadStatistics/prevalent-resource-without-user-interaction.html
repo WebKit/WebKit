@@ -29,20 +29,22 @@
         if (document.cookie !== cookie)
             testFailed("document.cookie did not get set.");
 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
-        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host did not get set as prevalent resource.");
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as prevalent resource.");
 
-        testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false);
-        if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-            testFailed("Host did not get cleared of user interaction.");
+            testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, function() {
+                if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                    testFailed("Host did not get cleared of user interaction.");
 
-        testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-            setTimeout("finishTest()", 1000);
+                testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
+                    setTimeout("finishTest()", 1000);
+                });
+                testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+                testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
+                testRunner.statisticsProcessStatisticsAndDataRecords();
+            });
         });
-        testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
-        testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

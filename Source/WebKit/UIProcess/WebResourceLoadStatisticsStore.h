@@ -87,18 +87,18 @@ public:
     void applicationWillTerminate();
 
     void logFrameNavigation(const WebFrameProxy&, const WebCore::URL& pageURL, const WebCore::ResourceRequest&, const WebCore::URL& redirectURL);
-    void logUserInteraction(const WebCore::URL&);
-    void logNonRecentUserInteraction(const WebCore::URL&);
-    void clearUserInteraction(const WebCore::URL&);
+    void logUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
+    void logNonRecentUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
+    void clearUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
     void hasHadUserInteraction(const WebCore::URL&, CompletionHandler<void(bool)>&&);
-    void setLastSeen(const WebCore::URL&, Seconds);
-    void setPrevalentResource(const WebCore::URL&);
-    void setVeryPrevalentResource(const WebCore::URL&);
+    void setLastSeen(const WebCore::URL&, Seconds, CompletionHandler<void()>&&);
+    void setPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
+    void setVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
     void isPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubFrameUnder(const WebCore::URL& subFrame, const WebCore::URL& topFrame, CompletionHandler<void(bool)>&&);
     void isRegisteredAsRedirectingTo(const WebCore::URL& hostRedirectedFrom, const WebCore::URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
-    void clearPrevalentResource(const WebCore::URL&);
+    void clearPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
     void setGrandfathered(const WebCore::URL&, bool);
     void isGrandfathered(const WebCore::URL&, CompletionHandler<void(bool)>&&);
     void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);

@@ -1,3 +1,39 @@
+2018-07-17  John Wilander  <wilander@apple.com>
+
+        Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()
+        https://bugs.webkit.org/show_bug.cgi?id=187710
+        <rdar://problem/42252757>
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsLastSeen):
+        (WTR::TestRunner::statisticsCallDidSetLastSeenCallback):
+        (WTR::TestRunner::setStatisticsPrevalentResource):
+        (WTR::TestRunner::statisticsCallDidSetPrevalentResourceCallback):
+        (WTR::TestRunner::setStatisticsVeryPrevalentResource):
+        (WTR::TestRunner::statisticsCallDidSetVeryPrevalentResourceCallback):
+        (WTR::TestRunner::setStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::setStatisticsHasHadNonRecentUserInteraction):
+        (WTR::TestRunner::statisticsCallDidSetHasHadUserInteractionCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsLastSeen):
+        (WTR::TestController::setStatisticsPrevalentResource):
+        (WTR::TestController::setStatisticsVeryPrevalentResource):
+        (WTR::TestController::setStatisticsHasHadUserInteraction):
+        (WTR::TestController::setStatisticsHasHadNonRecentUserInteraction):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didSetLastSeen):
+        (WTR::TestInvocation::didSetPrevalentResource):
+        (WTR::TestInvocation::didSetVeryPrevalentResource):
+        (WTR::TestInvocation::didSetHasHadUserInteraction):
+        (WTR::TestInvocation::didSetHasHadNonRecentUserInteraction):
+        * WebKitTestRunner/TestInvocation.h:
+
 2018-07-16  Jeremy Jones  <jeremyj@apple.com>
 
         Fix API Test failures introduced by r233865

@@ -43,69 +43,60 @@
     }
 
     function fireShouldPartitionCookiesHandlerAndContinue() {
-        console.log("fireShouldPartitionCookiesHandlerAndContinue().");
         testRunner.statisticsUpdateCookiePartitioning(runTest);
     }
 
     function setShortCookiePartitioningTimeOutPlusFireShouldPartitionCookiesHandlerAndContinue() {
-        console.log("setShortCookiePartitioningTimeOutPlusFireShouldPartitionCookiesHandlerAndContinue().");
         testRunner.setStatisticsTimeToLiveCookiePartitionFree(1);
         setTimeout(fireShouldPartitionCookiesHandlerAndContinue, 2000);
     }
 
     function setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue() {
-        console.log("setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue().");
         testRunner.setStatisticsTimeToLiveCookiePartitionFree(86400);
-        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true);
-        if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
-            testFailed("Third party did not get logged for user interaction.");
-        runTest();
+        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
+            if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+                testFailed("Third party did not get logged for user interaction.");
+            runTest();
+        });
     }
 
     function runTest() {
         switch (document.location.hash) {
             case "#step1":
-                console.log("Step 1.");
                 // Set first-party cookie for http://localhost:8000
                 document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "#" + fragmentWithReturnUrl + "#step2";
                 break;
             case "#step2":
-                console.log("Step 2.");
                 // Check that the first-party cookie is not sent in partition 127.0.0.1:8000
                 document.location.hash = "step3";
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive no cookies.",
                     runTest);
                 break;
             case "#step3":
-                console.log("Step 3.");
                 // Set third-party cookie for http://localhost:8000 in partition 127.0.0.1:8000
                 document.location.hash = "step4";
                 openIframe(thirdPartyBaseUrl + subPathToSetThirdPartyCookie + "&message=Setting partitioned, third-party cookie.",
                     runTest);
                 break;
             case "#step4":
-                console.log("Step 4.");
                 // Check that only partitioned cookie get sent in partition 127.0.0.1:8000
                 document.location.hash = "step5";
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should only receive partitioned, third-party cookie.",
                     setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue);
                 break;
             case "#step5":
-                console.log("Step 5.");
                 // http://localhost:8000 now has user interaction, check that un-partitioned cookie is sent for third-party
                 document.location.hash = "step6";
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After first user interaction, should still only receive a partitioned, third-party cookie.",
                     setShortCookiePartitioningTimeOutPlusFireShouldPartitionCookiesHandlerAndContinue);
                 break;
             case "#step6":
-                console.log("Step 6.");
                 // Cookie partitioning should be applied again
                 document.location.hash = "step7";
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should only receive partitioned, third-party cookie.",
                     setNormalCookiePartitioningTimeOutPlusUserInteractionAndContinue);
                 break;
             case "#step7":
-                console.log("Step 7.");
                 // http://localhost:8000 now has fresh user interaction, check that un-partitioned cookie is sent for third-party
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After second user interaction, should still only receive a partitioned, third-party cookie.",
                     finishTest);
@@ -114,21 +105,21 @@
     }
 
     if (document.location.hash === "" && window.testRunner && window.internals) {
-        console.log("Bootstrapping test.");
+        testRunner.waitUntilDone();
+        testRunner.dumpChildFramesAsText();
         setEnableFeature(true, function() {
             // Set localhost as prevalent and with non-recent user interaction to put it in the partitioning category.
-            testRunner.setStatisticsPrevalentResource("http://localhost", true);
-            if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
-                testFailed("Host did not get set as prevalent resource.");
-            testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
+            testRunner.setStatisticsPrevalentResource("http://localhost", true, function() {
+                if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
+                    testFailed("Host did not get set as prevalent resource.");
+                testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
 
-            testRunner.statisticsUpdateCookiePartitioning();
+                testRunner.statisticsUpdateCookiePartitioning();
 
-            testRunner.waitUntilDone();
-            testRunner.dumpChildFramesAsText();
-            document.location.hash = "step1";
+                document.location.hash = "step1";
 
-            runTest();
+                runTest();
+            });
         });
     } else
         runTest();

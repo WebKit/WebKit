@@ -1,3 +1,36 @@
+2018-07-17  John Wilander  <wilander@apple.com>
+
+        Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()
+        https://bugs.webkit.org/show_bug.cgi?id=187710
+        <rdar://problem/42252757>
+
+        Reviewed by Chris Dumez.
+
+        These changes are to back the completion handler functionality of
+        TestRunner functions:
+        - setStatisticsLastSeen(),
+        - setStatisticsPrevalentResource(),
+        - setStatisticsVeryPrevalentResource(),
+        - setStatisticsHasHadUserInteraction(), and
+        - setStatisticsHasHadNonRecentUserInteraction().
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsLastSeen):
+        (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+        (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreSetStatisticsHasHadNonRecentUserInteraction):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add color filter for transforming colors in Dark Mode

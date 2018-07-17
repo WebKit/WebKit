@@ -16,44 +16,46 @@ onload = function() {
         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
     }
 
-    testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
-    if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-        testFailed("Host did not get set as prevalent resource.");
+    testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host did not get set as prevalent resource.");
 
-    testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false);
-    if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-        testFailed("Host did not get cleared of user interaction.");
+        testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false, function() {
+            if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                testFailed("Host did not get cleared of user interaction.");
 
-    testInput = document.getElementById("testInput");
+            testInput = document.getElementById("testInput");
 
-    testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-        shouldBeEqualToString("testInput.value", "a");
+            testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
+                shouldBeEqualToString("testInput.value", "a");
 
-        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-            testFailed("Origin did not get user interaction credit.");
-        else
-            testPassed("Origin was granted user interaction.");
+                if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                    testFailed("Origin did not get user interaction credit.");
+                else
+                    testPassed("Origin was granted user interaction.");
 
-        setTimeout(function() {
-            testFrame.src = "about:blank";
-            setTimeout(function() {
-                testRunner.statisticsResetToConsistentState(function() {
-                    finishJSTest();
-                });
-            }, 0);
-        }, 0);
+                setTimeout(function() {
+                    testFrame.src = "about:blank";
+                    setTimeout(function() {
+                        testRunner.statisticsResetToConsistentState(function() {
+                            finishJSTest();
+                        });
+                    }, 0);
+                }, 0);
+            });
+            testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+            testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
+            testRunner.statisticsProcessStatisticsAndDataRecords();
+
+            debug("Simulate user typing letter 'a' into the field.");
+            testInput.focus();
+            if (window.eventSender)
+                eventSender.keyDown("a");
+        });
     });
-    testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
-    testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-    testRunner.statisticsProcessStatisticsAndDataRecords();
-
-    debug("Simulate user typing letter 'a' into the field.");
-    testInput.focus();
-    if (window.eventSender)
-        eventSender.keyDown("a");    
 }
 </script>
 <iframe id="testFrame" src="resources/onclick.html"></iframe>
-<input id="testInput" type="text"></input>
+<input id="testInput" type="text">
 </body>
 </html>

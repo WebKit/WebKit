@@ -37,7 +37,7 @@
     function runTestRunnerTest() {
         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {});
         if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
             testFailed("Host did not get set as non-prevalent resource.");
 
