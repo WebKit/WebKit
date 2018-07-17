@@ -67,6 +67,10 @@ testColorFilterParsing("sepia(5.3)", "sepia(1)", "sepia(): values of amount over
 testColorFilterParsing("grayscale(50%) hue-rotate(45deg) opacity(0.5)", "grayscale(0.5) hue-rotate(45deg) opacity(0.5)", "Parse filter list");
 testColorFilterParsing("grayscale(50%) blur(10px) opacity(0.5)", "none", "Filter list with blur is invalid");
 
+// apple-invert-lightness
+testColorFilterParsing("apple-invert-lightness()", "apple-invert-lightness()", "Parse apple-invert-lightness()");
+testColorFilterParsing("apple-invert-lightness(0.5)", "none", "apple-invert-lightness() takes no arguments");
+
 </script>
 </body>
 </html>

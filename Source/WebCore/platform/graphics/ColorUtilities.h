@@ -155,6 +155,13 @@ float linearToSRGBColorComponent(float);
 float sRGBToLinearColorComponent(float);
 
 FloatComponents sRGBColorToLinearComponents(const Color&);
+FloatComponents sRGBToLinearComponents(const FloatComponents&);
+FloatComponents linearToSRGBComponents(const FloatComponents&);
+
+FloatComponents sRGBToHSL(const FloatComponents&);
+FloatComponents HSLToSRGB(const FloatComponents&);
+
+float luminance(const FloatComponents& sRGBCompontents);
 
 class ColorMatrix {
 public:
@@ -164,6 +171,7 @@ public:
     static ColorMatrix sepiaMatrix(float);
 
     ColorMatrix();
+    ColorMatrix(float[20]);
     
     void transformColorComponents(FloatComponents&) const;
 

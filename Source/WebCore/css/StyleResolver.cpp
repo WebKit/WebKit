@@ -1885,6 +1885,8 @@ static FilterOperation::OperationType filterOperationForType(CSSValueID type)
         return FilterOperation::HUE_ROTATE;
     case CSSValueInvert:
         return FilterOperation::INVERT;
+    case CSSValueAppleInvertLightness:
+        return FilterOperation::APPLE_INVERT_LIGHTNESS;
     case CSSValueOpacity:
         return FilterOperation::OPACITY;
     case CSSValueBrightness:
@@ -1989,6 +1991,10 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
             }
 
             operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
+            break;
+        }
+        case FilterOperation::APPLE_INVERT_LIGHTNESS: {
+            operations.operations().append(InvertLightnessFilterOperation::create());
             break;
         }
         case FilterOperation::BLUR: {

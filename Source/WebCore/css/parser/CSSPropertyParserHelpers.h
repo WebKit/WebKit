@@ -94,11 +94,11 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, CSSParserContext, ConsumeGen
 RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, CSSParserContext);
 
 enum class AllowedFilterFunctions {
-    All,
-    Color
+    PixelFilters,
+    ColorFilters
 };
 
-RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions = AllowedFilterFunctions::All);
+RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, CSSParserMode, bool allowInset, bool allowSpread);
 
 // Template implementations are at the bottom of the file for readability.

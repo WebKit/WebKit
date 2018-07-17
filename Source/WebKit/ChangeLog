@@ -1,3 +1,14 @@
+2018-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add color filter for transforming colors in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=187717
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FilterOperation>::encode):
+        (IPC::decodeFilterOperation):
+
 2018-07-16  Tim Horton  <timothy_horton@apple.com>
 
         Black flash in content area when returning to Mail

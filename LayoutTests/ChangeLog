@@ -1,3 +1,16 @@
+2018-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add color filter for transforming colors in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=187717
+        rdar://problem/41146650
+
+        Reviewed by Dean Jackson.
+
+        * css3/color-filters/color-filter-apple-invert-lightness-expected.html: Added.
+        * css3/color-filters/color-filter-apple-invert-lightness.html: Added.
+        * css3/color-filters/color-filter-parsing-expected.txt:
+        * css3/color-filters/color-filter-parsing.html:
+
 2018-07-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Crypto operations should copy their parameters before hoping to another thread

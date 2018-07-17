@@ -1,3 +1,60 @@
+2018-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add color filter for transforming colors in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=187717
+        rdar://problem/41146650
+
+        Reviewed by Dean Jackson.
+        
+        Add a new filter function for use in -apple-color-filter for transforming colors
+        when in Dark Mode. The filter is called apple-invert-lightness(), and takes no parameters.
+        It's based on a lightness invert in HSL space, with some adjustments to improve the contrast
+        of some colors on dark backgrounds, so does a much better job that using invert() with hue-rotate().
+
+        Test: css3/color-filters/color-filter-apple-invert-lightness.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::filterOperationForType):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeFilterImage):
+        (WebCore::CSSPropertyParserHelpers::isPixelFilterFunction):
+        (WebCore::CSSPropertyParserHelpers::isColorFilterFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeFilterFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeFilter):
+        (WebCore::CSSPropertyParserHelpers::isValidPrimitiveFilterFunction): Deleted.
+        * css/parser/CSSPropertyParserHelpers.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * platform/graphics/Color.cpp:
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::sRGBToLinearComponents):
+        (WebCore::linearToSRGBComponents):
+        (WebCore::sRGBToLinearColorComponentForLuminance):
+        (WebCore::luminance):
+        (WebCore::sRGBToHSL):
+        (WebCore::calcHue):
+        (WebCore::HSLToSRGB):
+        (WebCore::ColorMatrix::ColorMatrix):
+        * platform/graphics/ColorUtilities.h:
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        (PlatformCAFilters::filterValueForOperation):
+        (PlatformCAFilters::colorMatrixValueForFilter):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::InvertLightnessFilterOperation::operator== const):
+        (WebCore::InvertLightnessFilterOperation::blend):
+        (WebCore::InvertLightnessFilterOperation::transformColor const):
+        (WebCore::operator<<):
+        * platform/graphics/filters/FilterOperation.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+
 2018-07-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, build fix for r233873.

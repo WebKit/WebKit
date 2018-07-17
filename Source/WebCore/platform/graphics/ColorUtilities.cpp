@@ -73,10 +73,165 @@ FloatComponents sRGBColorToLinearComponents(const Color& color)
     };
 }
 
+FloatComponents sRGBToLinearComponents(const FloatComponents& sRGBColor)
+{
+    return {
+        sRGBToLinearColorComponent(sRGBColor.components[0]),
+        sRGBToLinearColorComponent(sRGBColor.components[1]),
+        sRGBToLinearColorComponent(sRGBColor.components[2]),
+        sRGBColor.components[3]
+    };
+}
+
+FloatComponents linearToSRGBComponents(const FloatComponents& linearRGB)
+{
+    return {
+        linearToSRGBColorComponent(linearRGB.components[0]),
+        linearToSRGBColorComponent(linearRGB.components[1]),
+        linearToSRGBColorComponent(linearRGB.components[2]),
+        linearRGB.components[3]
+    };
+}
+
+// This is similar to sRGBToLinearColorComponent but for some reason
+// https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+// doesn't use the standard sRGB -> linearRGB threshold of 0.04045.
+static float sRGBToLinearColorComponentForLuminance(float c)
+{
+    if (c <= 0.03928f)
+        return c / 12.92f;
+
+    return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
+}
+
+float luminance(const FloatComponents& sRGBCompontents)
+{
+    // Values from https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+    return 0.2126f * sRGBToLinearColorComponentForLuminance(sRGBCompontents.components[0])
+        + 0.7152f * sRGBToLinearColorComponentForLuminance(sRGBCompontents.components[1])
+        + 0.0722f * sRGBToLinearColorComponentForLuminance(sRGBCompontents.components[2]);
+}
+
+FloatComponents sRGBToHSL(const FloatComponents& sRGBColor)
+{
+    // http://en.wikipedia.org/wiki/HSL_color_space.
+    float r = sRGBColor.components[0];
+    float g = sRGBColor.components[1];
+    float b = sRGBColor.components[2];
+
+    float max = std::max(std::max(r, g), b);
+    float min = std::min(std::min(r, g), b);
+    float chroma = max - min;
+
+    float hue;
+    if (!chroma)
+        hue = 0;
+    else if (max == r)
+        hue = (60.0f * ((g - b) / chroma)) + 360.0f;
+    else if (max == g)
+        hue = (60.0f * ((b - r) / chroma)) + 120.0f;
+    else
+        hue = (60.0f * ((r - g) / chroma)) + 240.0f;
+
+    if (hue >= 360.0f)
+        hue -= 360.0f;
+
+    hue /= 360.0f;
+
+    float lightness = 0.5f * (max + min);
+    float saturation;
+    if (!chroma)
+        saturation = 0;
+    else if (lightness <= 0.5f)
+        saturation = (chroma / (max + min));
+    else
+        saturation = (chroma / (2.0f - (max + min)));
+
+    return {
+        hue,
+        saturation,
+        lightness,
+        sRGBColor.components[3]
+    };
+}
+
+// Hue is in the range 0-6, other args in 0-1.
+static float calcHue(float temp1, float temp2, float hueVal)
+{
+    if (hueVal < 0.0f)
+        hueVal += 6.0f;
+    else if (hueVal >= 6.0f)
+        hueVal -= 6.0f;
+    if (hueVal < 1.0f)
+        return temp1 + (temp2 - temp1) * hueVal;
+    if (hueVal < 3.0f)
+        return temp2;
+    if (hueVal < 4.0f)
+        return temp1 + (temp2 - temp1) * (4.0f - hueVal);
+    return temp1;
+}
+
+// Explanation of this algorithm can be found in the CSS Color 4 Module
+// specification at https://drafts.csswg.org/css-color-4/#hsl-to-rgb with
+// further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
+FloatComponents HSLToSRGB(const FloatComponents& hslColor)
+{
+    float hue = hslColor.components[0];
+    float saturation = hslColor.components[1];
+    float lightness = hslColor.components[2];
+
+    // Convert back to RGB.
+    if (!saturation) {
+        return {
+            lightness,
+            lightness,
+            lightness,
+            hslColor.components[3]
+        };
+    }
+    
+    float temp2 = lightness <= 0.5f ? lightness * (1.0f + saturation) : lightness + saturation - lightness * saturation;
+    float temp1 = 2.0f * lightness - temp2;
+    
+    hue *= 6.0f; // calcHue() wants hue in the 0-6 range.
+    return {
+        calcHue(temp1, temp2, hue + 2.0f),
+        calcHue(temp1, temp2, hue),
+        calcHue(temp1, temp2, hue - 2.0f),
+        hslColor.components[3]
+    };
+}
 
 ColorMatrix::ColorMatrix()
 {
     makeIdentity();
+}
+
+ColorMatrix::ColorMatrix(float values[20])
+{
+    m_matrix[0][0] = values[0];
+    m_matrix[0][1] = values[1];
+    m_matrix[0][2] = values[2];
+    m_matrix[0][3] = values[3];
+    m_matrix[0][4] = values[4];
+
+    m_matrix[1][0] = values[5];
+    m_matrix[1][1] = values[6];
+    m_matrix[1][2] = values[7];
+    m_matrix[1][3] = values[8];
+    m_matrix[1][4] = values[9];
+
+    m_matrix[2][0] = values[10];
+    m_matrix[2][1] = values[11];
+    m_matrix[2][2] = values[12];
+    m_matrix[2][3] = values[13];
+    m_matrix[2][4] = values[14];
+
+    m_matrix[3][0] = values[15];
+    m_matrix[3][1] = values[16];
+    m_matrix[3][2] = values[17];
+    m_matrix[3][3] = values[18];
+    m_matrix[3][4] = values[19];
 }
 
 void ColorMatrix::makeIdentity()
