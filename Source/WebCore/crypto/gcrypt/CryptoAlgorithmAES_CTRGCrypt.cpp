@@ -195,7 +195,7 @@ static std::optional<Vector<uint8_t>> gcryptAES_CTR(PAL::GCrypt::CipherOperation
     return output;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
     auto output = gcryptAES_CTR(gcry_cipher_encrypt, key.key(), parameters.counterVector(), parameters.length, plainText);
     if (!output)
@@ -203,7 +203,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(CryptoAlgor
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
     auto output = gcryptAES_CTR(gcry_cipher_decrypt, key.key(), parameters.counterVector(), parameters.length, cipherText);
     if (!output)

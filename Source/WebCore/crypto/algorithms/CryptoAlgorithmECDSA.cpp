@@ -31,6 +31,8 @@
 #include "CryptoAlgorithmEcKeyParams.h"
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoKeyEC.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
@@ -51,29 +53,29 @@ CryptoAlgorithmIdentifier CryptoAlgorithmECDSA::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmECDSA::sign(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmECDSA::sign(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Private) {
         exceptionCallback(InvalidAccessError);
         return;
     }
 
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = WTFMove(parameters), key = WTFMove(key), data = WTFMove(data)] {
-            return platformSign(downcast<CryptoAlgorithmEcdsaParams>(*parameters), downcast<CryptoKeyEC>(key.get()), data);
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = crossThreadCopy(downcast<CryptoAlgorithmEcdsaParams>(parameters)), key = WTFMove(key), data = WTFMove(data)] {
+            return platformSign(parameters, downcast<CryptoKeyEC>(key.get()), data);
         });
 }
 
-void CryptoAlgorithmECDSA::verify(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmECDSA::verify(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Public) {
         exceptionCallback(InvalidAccessError);
         return;
     }
 
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = WTFMove(parameters), key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
-            return platformVerify(downcast<CryptoAlgorithmEcdsaParams>(*parameters), downcast<CryptoKeyEC>(key.get()), signature, data);
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = crossThreadCopy(downcast<CryptoAlgorithmEcdsaParams>(parameters)), key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
+            return platformVerify(parameters, downcast<CryptoKeyEC>(key.get()), signature, data);
         });
 }
 
@@ -98,10 +100,9 @@ void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& paramete
     callback(WTFMove(pair));
 }
 
-void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    ASSERT(parameters);
-    const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(*parameters);
+    const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(parameters);
 
     RefPtr<CryptoKeyEC> result;
     switch (format) {

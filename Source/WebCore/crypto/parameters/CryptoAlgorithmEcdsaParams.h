@@ -41,6 +41,15 @@ public:
     CryptoAlgorithmIdentifier hashIdentifier;
 
     Class parametersClass() const final { return Class::EcdsaParams; }
+
+    CryptoAlgorithmEcdsaParams isolatedCopy() const
+    {
+        CryptoAlgorithmEcdsaParams result;
+        result.identifier = identifier;
+        result.hashIdentifier = hashIdentifier;
+
+        return result;
+    }
 };
 
 } // namespace WebCore

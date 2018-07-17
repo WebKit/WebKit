@@ -1,3 +1,75 @@
+2018-07-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Crypto operations should copy their parameters before hoping to another thread
+        https://bugs.webkit.org/show_bug.cgi?id=187501
+        <rdar://problem/41438160>
+
+        Reviewed by Youenn Fablet.
+
+        crypto/subtle/aes-gcm-import-key-unwrap-ec-raw-key.html is an exception of this series of tests as
+        it only aims to test the correct behavoir of suggested algorithms. This patch aslo does some test
+        gardening.
+
+        * TestExpectations:
+        * crypto/subtle/aes-gcm-import-key-unwrap-ec-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-gcm-import-key-unwrap-ec-raw-key.html: Added.
+        * http/wpt/crypto/aes-cbc-crash.any-expected.txt: Added.
+        * http/wpt/crypto/aes-cbc-crash.any.html: Added.
+        * http/wpt/crypto/aes-cbc-crash.any.js: Added.
+        * http/wpt/crypto/aes-cbc-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/aes-cbc-crash.any.worker.html: Added.
+        * http/wpt/crypto/aes-ctr-crash.any-expected.txt: Added.
+        * http/wpt/crypto/aes-ctr-crash.any.html: Added.
+        * http/wpt/crypto/aes-ctr-crash.any.js: Added.
+        * http/wpt/crypto/aes-ctr-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/aes-ctr-crash.any.worker.html: Added.
+        * http/wpt/crypto/aes-gcm-crash.any-expected.txt: Added.
+        * http/wpt/crypto/aes-gcm-crash.any.html: Added.
+        * http/wpt/crypto/aes-gcm-crash.any.js: Added.
+        * http/wpt/crypto/aes-gcm-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/aes-gcm-crash.any.worker.html: Added.
+        * http/wpt/crypto/derive-hmac-key-crash.any-expected.txt: Added.
+        * http/wpt/crypto/derive-hmac-key-crash.any.html: Added.
+        * http/wpt/crypto/derive-hmac-key-crash.any.js: Added.
+        * http/wpt/crypto/derive-hmac-key-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/derive-hmac-key-crash.any.worker.html: Added.
+        * http/wpt/crypto/ecdsa-crash.any-expected.txt: Added.
+        * http/wpt/crypto/ecdsa-crash.any.html: Added.
+        * http/wpt/crypto/ecdsa-crash.any.js: Added.
+        * http/wpt/crypto/ecdsa-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/ecdsa-crash.any.worker.html: Added.
+        * http/wpt/crypto/hkdf-crash.any-expected.txt: Added.
+        * http/wpt/crypto/hkdf-crash.any.html: Added.
+        * http/wpt/crypto/hkdf-crash.any.js: Added.
+        * http/wpt/crypto/hkdf-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/hkdf-crash.any.worker.html: Added.
+        * http/wpt/crypto/pbkdf2-crash.any-expected.txt: Added.
+        * http/wpt/crypto/pbkdf2-crash.any.html: Added.
+        * http/wpt/crypto/pbkdf2-crash.any.js: Added.
+        * http/wpt/crypto/pbkdf2-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/pbkdf2-crash.any.worker.html: Added.
+        * http/wpt/crypto/resources/common.js: Added.
+        * http/wpt/crypto/rsa-oaep-crash.any-expected.txt: Added.
+        * http/wpt/crypto/rsa-oaep-crash.any.html: Added.
+        * http/wpt/crypto/rsa-oaep-crash.any.js: Added.
+        * http/wpt/crypto/rsa-oaep-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/rsa-oaep-crash.any.worker.html: Added.
+        * http/wpt/crypto/rsa-pss-crash.any-expected.txt: Added.
+        * http/wpt/crypto/rsa-pss-crash.any.html: Added.
+        * http/wpt/crypto/rsa-pss-crash.any.js: Added.
+        * http/wpt/crypto/rsa-pss-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/rsa-pss-crash.any.worker.html: Added.
+        * http/wpt/crypto/unwrap-ec-key-crash.any-expected.txt: Added.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.html: Added.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.js: Added.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.worker-expected.txt: Added.
+        * http/wpt/crypto/unwrap-ec-key-crash.any.worker.html: Added.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any-expected.txt: Added.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.html: Added.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.js: Added.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html: Added.
+        * http/wpt/crypto/unwrap-rsa-key-crash.any.worker-expected.txt: Added.
+
 2018-07-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unskip LayoutTest imported/w3c/web-platform-tests/css/css-display/display-contents-first-letter-002.html.
