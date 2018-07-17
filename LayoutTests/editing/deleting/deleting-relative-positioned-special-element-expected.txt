@@ -14,8 +14,10 @@ BeforeDeletion:
 AfterDeletion:
 | <p>
 |   "1"
-| <#selection-caret>
-| <br>
+| <p>
+|   id="paragraphToDelete"
+|   <#selection-caret>
+|   <br>
 | <p>
 |   "3"
 | <p>

@@ -1,3 +1,33 @@
+2018-07-17  Javier Fernandez  <jfernandez@igalia.com>
+
+        Delete content of a single cell table should not delete the whole table
+        https://bugs.webkit.org/show_bug.cgi?id=173117
+
+        Reviewed by Ryosuke Niwa.
+
+        We should not extend selection looking for special elements if the
+        delete operation has been triggered by a caret based selection.
+
+        This change is based on a recent [1] resolution of the Editing TF,
+        which acknowledges that behavior of single-cell tables must be the
+        same that multi-cell tables and even if the last character is
+        deleted, we should not delete the whole table structure.
+
+        A different case would be when the user actively selects the whole
+        content of a table; in this case, as we do in multi-cell tables,
+        the structure of single-cell tables should be deleted together
+        with the content.
+
+        [1] https://github.com/w3c/editing/issues/163
+
+        Tests: editing/deleting/backspace-delete-last-char-in-table.html
+               editing/deleting/forward-delete-last-char-in-table.html
+               editing/deleting/select-and-delete-last-char-in-table.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+
 2018-07-16  Megan Gardner  <megan_gardner@apple.com>
 
         Correctly adjust scroll offsets when a page is zoomed

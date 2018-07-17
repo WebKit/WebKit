@@ -649,6 +649,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
     VisibleSelection selectionToDelete;
     VisibleSelection selectionAfterUndo;
+    bool expandForSpecialElements = !endingSelection().isCaret();
 
     switch (endingSelection().selectionType()) {
     case VisibleSelection::RangeSelection:
@@ -760,7 +761,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
     // more text than you insert.  In that case all of the text that was around originally should be selected.
     if (m_openedByBackwardDelete)
         setStartingSelection(selectionAfterUndo);
-    CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
+    CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete, /* mergeBlocksAfterDelete*/ true, /* replace*/ false, expandForSpecialElements, /*sanitizeMarkup*/ true);
     setSmartDelete(false);
     typingAddedToOpenCommand(DeleteKey);
 }
@@ -774,6 +775,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
 
     VisibleSelection selectionToDelete;
     VisibleSelection selectionAfterUndo;
+    bool expandForSpecialElements = !endingSelection().isCaret();
 
     switch (endingSelection().selectionType()) {
     case VisibleSelection::RangeSelection:
@@ -862,7 +864,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
         frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::AppendText);
     // make undo select what was deleted
     setStartingSelection(selectionAfterUndo);
-    CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
+    CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete, /* mergeBlocksAfterDelete*/ true, /* replace*/ false, expandForSpecialElements, /*sanitizeMarkup*/ true);
     setSmartDelete(false);
     typingAddedToOpenCommand(ForwardDeleteKey);
 }

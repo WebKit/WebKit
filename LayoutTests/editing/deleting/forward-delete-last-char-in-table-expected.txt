@@ -1,0 +1,23 @@
+In this test the last character of a single-cell table is deleted, just using the forwardDelete key. Only the table cell's content should be deleted, and not the table itself.
+
+BeforeDeletion:
+| "First"
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         id="test"
+|         "1<#selection-caret>"
+| "Second"
+
+AfterDeletion:
+| "First"
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         id="test"
+|         "1<#selection-caret>"
+| "Second"

@@ -1,3 +1,25 @@
+2018-07-17  Javier Fernandez  <jfernandez@igalia.com>
+
+        Delete content of a single cell table should not delete the whole table
+        https://bugs.webkit.org/show_bug.cgi?id=173117
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests to verify that single-cell tables are not deleted when their
+        last character is deleted, unless it was previously selected by
+        the user.
+
+        Changes two expected files to adapt them to the new logic.
+
+        * LayoutTests/editing/deleting/deleting-relative-positioned-special-element-expected.txt: The paragraph is not deleted, even if it's empty. The paragraphs above are not merged, which was the goal of the test.
+        * editing/deleting/delete-last-char-in-table-expected.txt: The table is not removed, even if it's empty. The formatted elements are deleted, which was the goal of the test.
+        * editing/deleting/backspace-delete-last-char-in-table-expected.txt: Added.
+        * editing/deleting/backspace-delete-last-char-in-table.html: Added.
+        * editing/deleting/forward-delete-last-char-in-table-expected.txt: Added.
+        * editing/deleting/forward-delete-last-char-in-table.html: Added.
+        * editing/deleting/select-and-delete-last-char-in-table-expected.txt: Added.
+        * editing/deleting/select-and-delete-last-char-in-table.html: Added.
+
 2018-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Roll out r233873 and r233875 since they caused 8 new layout test crashes.
