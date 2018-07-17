@@ -1,3 +1,20 @@
+2018-07-17  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION: [macOS Sierra] TestWebKitAPI.WebKit.WebsiteDataStoreCustomPaths is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=187066
+        <rdar://problem/41609065>
+
+        Reviewed by Chris Dumez.
+
+        In r232668 we started to do reload if web process crashes by default. As we killed the web 
+        process explicitly in this test, if web page got reloaded, messages would be sent again, 
+        and flag set in message handler could keep the test continue to evaluate the expectation 
+        without waiting for removeDataOfTypes to finish.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (-[WebsiteDataStoreCustomPathsMessageHandler webViewWebContentProcessDidTerminate:]):
+        (TEST):
+
 2018-07-17  Chris Dumez  <cdumez@apple.com>
 
         Turn on PSON in WebKitTestRunner

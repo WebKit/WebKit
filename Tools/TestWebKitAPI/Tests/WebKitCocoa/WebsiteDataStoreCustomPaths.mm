@@ -45,7 +45,7 @@
 static bool receivedScriptMessage;
 static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
-@interface WebsiteDataStoreCustomPathsMessageHandler : NSObject <WKScriptMessageHandler>
+@interface WebsiteDataStoreCustomPathsMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
 @end
 
 @implementation WebsiteDataStoreCustomPathsMessageHandler
@@ -54,6 +54,11 @@ static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 {
     receivedScriptMessage = true;
     scriptMessages.append(message);
+}
+
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+{
+    // Overwrite the default policy which launches a new web process and reload page on crash.
 }
 
 @end
@@ -115,6 +120,7 @@ TEST(WebKit, WebsiteDataStoreCustomPaths)
     configuration.get().websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:handler.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
