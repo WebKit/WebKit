@@ -199,8 +199,6 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 
-webkit.org/b/186901 imported/w3c/web-platform-tests/css/css-display/display-contents-first-letter-002.html [ Skip ]
-
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
