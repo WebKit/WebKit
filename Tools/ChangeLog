@@ -1,3 +1,16 @@
+2018-07-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] TestWebKitAPI.PictureInPicture.WKUIDelegate is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=187730
+
+        Reviewed by Jer Noble.
+
+        This regression was introduced by r233865. PIP can now only be initiated from a
+        window that is on screen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+        (TestWebKitAPI::TEST):
+
 2018-07-17  John Wilander  <wilander@apple.com>
 
         Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()
