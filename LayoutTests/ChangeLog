@@ -1,3 +1,19 @@
+2018-07-17  Dirk Schulze  <krit@webkit.org>
+
+        [clip-path] Implement support for margin-box as reference box and box shape
+        https://bugs.webkit.org/show_bug.cgi?id=127984
+
+        Reviewed by Simon Fraser.
+
+        Compute the margin-box rectangle as needed for clip-path based on the actual
+        computed values for the margin-top, *-left, *-bottom, *-right properties.
+
+        * css3/masking/clip-path-circle-margin-box-expected.html: Added.
+        * css3/masking/clip-path-margin-box-expected.html: Added.
+        * css3/masking/clip-path-margin-box.html: Added.
+        * platform/mac/css3/masking/clip-path-circle-margin-box-expected.png: Removed.
+        * platform/mac/css3/masking/clip-path-circle-margin-box-expected.txt: Removed.
+
 2018-07-17  Javier Fernandez  <jfernandez@igalia.com>
 
         Delete content of a single cell table should not delete the whole table

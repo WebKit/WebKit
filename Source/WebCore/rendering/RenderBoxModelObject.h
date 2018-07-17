@@ -296,10 +296,11 @@ public:
 
     ContinuationChainNode* continuationChainNode() const;
 
+protected:
+    LayoutUnit computedCSSPadding(const Length&) const;
+
 private:
     ContinuationChainNode& ensureContinuationChainNode();
-
-    LayoutUnit computedCSSPadding(const Length&) const;
     
     virtual LayoutRect frameRectForStickyPositioning() const = 0;
 

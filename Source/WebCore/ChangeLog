@@ -1,3 +1,21 @@
+2018-07-17  Dirk Schulze  <krit@webkit.org>
+
+        [clip-path] Implement support for margin-box as reference box and box shape
+        https://bugs.webkit.org/show_bug.cgi?id=127984
+
+        Reviewed by Simon Fraser.
+
+        Compute the margin-box rectangle as needed for clip-path based on the actual
+        computed values for the margin-top, *-left, *-bottom, *-right properties.
+
+        Test: css3/masking/clip-path-margin-box.html
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::marginBoxRect const):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox):
+
 2018-07-17  Javier Fernandez  <jfernandez@igalia.com>
 
         Delete content of a single cell table should not delete the whole table

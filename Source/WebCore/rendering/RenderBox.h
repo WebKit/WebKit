@@ -144,9 +144,11 @@ public:
 
     LayoutRect marginBoxRect() const
     {
-        LayoutRect box = borderBoxRect();
-        box.expand(m_marginBox);
-        return box;
+        auto marginLeft = computedCSSPadding(style().marginLeft());
+        auto marginRight = computedCSSPadding(style().marginRight());
+        auto marginTop = computedCSSPadding(style().marginTop());
+        auto marginBottom = computedCSSPadding(style().marginBottom());
+        return LayoutRect(-marginLeft, -marginTop, size().width() + marginLeft + marginRight, size().height() + marginTop + marginBottom);
     }
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
     LayoutRect paddingBoxRect() const { return LayoutRect(borderLeft(), borderTop(), contentWidth() + paddingLeft() + paddingRight(), contentHeight() + paddingTop() + paddingBottom()); }
