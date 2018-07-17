@@ -18,6 +18,8 @@ setTimeout(function () {
     inputs[1].style.color = 'red';
     inputs[0].select();
 
+    if (window.internals)
+        internals.updateEditorUINowIfScheduled();
     if (window.testRunner)
         testRunner.notifyDone();
 }, 50);
