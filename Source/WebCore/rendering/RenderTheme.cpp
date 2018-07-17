@@ -275,7 +275,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
     // for that control.
-    if (paintInfo.context().updatingControlTints()) {
+    if (paintInfo.context().invalidatingControlTints()) {
         if (controlSupportsTints(box))
             box.repaint();
         return false;

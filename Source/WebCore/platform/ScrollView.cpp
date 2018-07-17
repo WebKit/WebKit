@@ -1167,7 +1167,7 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
         return;
     }
 
-    if (context.paintingDisabled() && !context.updatingControlTints())
+    if (context.paintingDisabled() && !context.performingPaintInvalidation())
         return;
 
     notifyPageThatContentAreaWillPaint();

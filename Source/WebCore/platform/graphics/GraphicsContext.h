@@ -267,17 +267,20 @@ public:
     GraphicsContext() = default;
     WEBCORE_EXPORT ~GraphicsContext();
     
-    enum class NonPaintingReasons {
-        NoReasons,
-        UpdatingControlTints
+    enum class PaintInvalidationReasons : uint8_t {
+        None,
+        InvalidatingControlTints,
+        InvalidatingImagesWithAsyncDecodes
     };
-    GraphicsContext(NonPaintingReasons);
+    GraphicsContext(PaintInvalidationReasons);
 
     WEBCORE_EXPORT bool hasPlatformContext() const;
     WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
 
     bool paintingDisabled() const { return !m_data && !m_impl; }
-    bool updatingControlTints() const { return m_nonPaintingReasons == NonPaintingReasons::UpdatingControlTints; }
+    bool performingPaintInvalidation() const { return m_paintInvalidationReasons != PaintInvalidationReasons::None; }
+    bool invalidatingControlTints() const { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingControlTints; }
+    bool invalidatingImagesWithAsyncDecodes() const { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes; }
 
     void setStrokeThickness(float);
     float strokeThickness() const { return m_state.strokeThickness; }
@@ -638,7 +641,7 @@ private:
     GraphicsContextState m_state;
     Vector<GraphicsContextState, 1> m_stack;
 
-    const NonPaintingReasons m_nonPaintingReasons { NonPaintingReasons::NoReasons };
+    const PaintInvalidationReasons m_paintInvalidationReasons { PaintInvalidationReasons::None };
     unsigned m_transparencyCount { 0 };
 };
 

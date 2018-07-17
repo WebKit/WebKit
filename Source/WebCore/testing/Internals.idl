@@ -237,7 +237,7 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] DOMString autofillFieldName(Element formControlElement);
 
-    [MayThrowException] void paintControlTints();
+    [MayThrowException] void invalidateControlTints();
 
     [MayThrowException] void scrollElementToRect(Element element, long x, long y, long w, long h);
 

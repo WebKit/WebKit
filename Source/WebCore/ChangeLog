@@ -1,3 +1,72 @@
+2018-07-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] When bringing MobileSafari to the foreground, images, which are pending decoding, won't be drawn into the flush immediate transaction
+        https://bugs.webkit.org/show_bug.cgi?id=187375
+
+        Reviewed by Simon Fraser.
+
+        An immediate-paint transaction should force all the images which are pending
+        decoding to be repainted.
+
+        To do that, FrameView::paintControlTints() will be re-factored to a new
+        generic function such that it takes PaintInvalidationReasons. The new function
+        which is named 'traverseForPaintInvalidation' will traverse the render tree
+        for a specific PaintInvalidationReasons.
+
+        invalidateImagesWithAsyncDecodes() will stop the asynchronous decoding for
+        the underlying image and repaint all the clients which are waiting for the
+        decoding to finish.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didRemoveClient):
+        (WebCore::CachedImage::isClientWaitingForAsyncDecoding const):
+        (WebCore::CachedImage::addClientWaitingForAsyncDecoding):
+        (WebCore::CachedImage::removeAllClientsWaitingForAsyncDecoding):
+        (WebCore::CachedImage::allClientsRemoved):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::createImage):
+        (WebCore::CachedImage::imageFrameAvailable):
+        (WebCore::CachedImage::addPendingImageDrawingClient): Deleted.
+        * loader/cache/CachedImage.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintScrollCorner):
+        (WebCore::FrameView::updateControlTints):
+        (WebCore::FrameView::traverseForPaintInvalidation):
+        (WebCore::FrameView::adjustPageHeightDeprecated):
+        (WebCore::FrameView::paintControlTints): Deleted.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paint):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::paint):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::performingPaintInvalidation const):
+        (WebCore::GraphicsContext::invalidatingControlTints const):
+        (WebCore::GraphicsContext::invalidatingImagesWithAsyncDecodes const):
+        (WebCore::GraphicsContext::updatingControlTints const): Deleted.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::paint):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        * testing/Internals.cpp:
+        (WebCore::Internals::invalidateControlTints):
+        (WebCore::Internals::paintControlTints): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-07-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed attempt to fix the build.

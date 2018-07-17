@@ -28,6 +28,7 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "FrameViewLayoutContext.h"
+#include "GraphicsContext.h"
 #include "LayoutMilestones.h"
 #include "LayoutRect.h"
 #include "Pagination.h"
@@ -639,6 +640,10 @@ public:
 
     WEBCORE_EXPORT FrameFlattening effectiveFrameFlattening() const;
 
+    WEBCORE_EXPORT void traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons);
+    void invalidateControlTints() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingControlTints); }
+    void invalidateImagesWithAsyncDecodes() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes); }
+
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
@@ -681,8 +686,6 @@ private:
     void applyPaginationToViewport();
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
-
-    WEBCORE_EXPORT void paintControlTints();
 
     void forceLayoutParentViewIfNeeded();
     void flushPostLayoutTasksQueue();

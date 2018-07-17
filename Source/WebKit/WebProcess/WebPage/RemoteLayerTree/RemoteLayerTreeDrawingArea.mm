@@ -351,6 +351,9 @@ void RemoteLayerTreeDrawingArea::flushLayers()
         }
     } forPhase:kCATransactionPhasePostCommit];
 
+    if (m_nextFlushIsForImmediatePaint)
+        m_webPage.mainFrameView()->invalidateImagesWithAsyncDecodes();
+
     m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.

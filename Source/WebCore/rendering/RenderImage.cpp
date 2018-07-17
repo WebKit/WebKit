@@ -400,9 +400,14 @@ void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint 
 
 void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    auto contentSize = this->contentSize();
-
     GraphicsContext& context = paintInfo.context();
+    if (context.invalidatingImagesWithAsyncDecodes()) {
+        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(*this))
+            cachedImage()->removeAllClientsWaitingForAsyncDecoding();
+        return;
+    }
+
+    auto contentSize = this->contentSize();
     float deviceScaleFactor = document().deviceScaleFactor();
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
@@ -532,7 +537,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (document().printing() || !frame().selection().isFocusedAndActive())
         return;
     
-    if (paintInfo.context().paintingDisabled() && !paintInfo.context().updatingControlTints())
+    if (paintInfo.context().paintingDisabled() && !paintInfo.context().performingPaintInvalidation())
         return;
 
     Element* focusedElement = document().focusedElement();
@@ -614,7 +619,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
     auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingMode, orientationDescription, interpolation));
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        imageResource().cachedImage()->addPendingImageDrawingClient(*this);
+        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
 
 #if USE(SYSTEM_PREVIEW)
     if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())

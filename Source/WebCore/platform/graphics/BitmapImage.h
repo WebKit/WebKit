@@ -109,6 +109,7 @@ public:
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
     void setLargeImageAsyncDecodingEnabledForTesting(bool enabled) { m_largeImageAsyncDecodingEnabledForTesting = enabled; }
     bool isLargeImageAsyncDecodingEnabledForTesting() const { return m_largeImageAsyncDecodingEnabledForTesting; }
+    void stopAsyncDecodingQueue() { m_source->stopAsyncDecodingQueue(); }
 
     WEBCORE_EXPORT unsigned decodeCountForTesting() const;
 

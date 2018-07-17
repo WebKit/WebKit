@@ -253,7 +253,7 @@ public:
 
     ExceptionOr<String> autofillFieldName(Element&);
 
-    ExceptionOr<void> paintControlTints();
+    ExceptionOr<void> invalidateControlTints();
 
     RefPtr<Range> rangeFromLocationAndLength(Element& scope, int rangeLocation, int rangeLength);
     unsigned locationFromRange(Element& scope, const Range&);

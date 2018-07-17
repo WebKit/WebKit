@@ -102,7 +102,7 @@ void RenderScrollbar::styleChanged()
 
 void RenderScrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy)
 {
-    if (context.updatingControlTints()) {
+    if (context.invalidatingControlTints()) {
         updateScrollbarParts();
         return;
     }

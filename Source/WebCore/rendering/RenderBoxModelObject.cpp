@@ -757,6 +757,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     StyleImage* bgImage = bgLayer.image();
     bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(this, style().effectiveZoom());
     
+    if (context.invalidatingImagesWithAsyncDecodes()) {
+        if (shouldPaintBackgroundImage && bgImage->cachedImage()->isClientWaitingForAsyncDecoding(*this))
+            bgImage->cachedImage()->removeAllClientsWaitingForAsyncDecoding();
+        return;
+    }
+    
     bool forceBackgroundToWhite = false;
     if (document().printing()) {
         if (style().printColorAdjust() == PrintColorAdjust::Economy)
@@ -978,7 +984,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), decodingMode, ImageOrientationDescription(), interpolation));
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->isCachedImage());
-                bgImage->cachedImage()->addPendingImageDrawingClient(*this);
+                bgImage->cachedImage()->addClientWaitingForAsyncDecoding(*this);
             }
         }
     }

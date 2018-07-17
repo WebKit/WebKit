@@ -158,7 +158,7 @@ void Scrollbar::updateThumbProportion()
 
 void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy)
 {
-    if (context.updatingControlTints() && theme().supportsControlTints()) {
+    if (context.invalidatingControlTints() && theme().supportsControlTints()) {
         invalidate();
         return;
     }
