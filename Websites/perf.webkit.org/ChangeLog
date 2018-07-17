@@ -1,3 +1,17 @@
+2018-07-13  Dewei Zhu  <dewei_zhu@apple.com>
+
+        CustomConfigurationTestGroupForm should dispatch different arguments based on whether analysis task is created.
+        https://bugs.webkit.org/show_bug.cgi?id=187675
+
+        Reviewed by Ryosuke Niwa.
+
+        This change will fix the bug that no notification will be sent for any test groups except the
+        first one in any custom perf-try A/B task.
+
+        * public/v3/components/custom-configuration-test-group-form.js:
+        (CustomConfigurationTestGroupForm.prototype.startTesting): Conditionally includes taskName based on
+        whether or not analysis task is created.
+
 2018-07-03  Dewei Zhu  <dewei_zhu@apple.com>
 
         MeasurementSet should merge last four segments into two if values are identical.

@@ -38,7 +38,11 @@ class CustomConfigurationTestGroupForm extends TestGroupForm {
         const commitSets = configurator.commitSets();
         const platform = configurator.platform();
         const test = configurator.tests()[0]; // FIXME: Add the support for specifying multiple tests.
-        this.dispatchAction('startTesting', this._repetitionCount, testGroupName, commitSets, platform, test, taskName, this._notifyOnCompletion);
+        console.assert(!!this._hasTask === !taskName);
+        if (!this._hasTask)
+            this.dispatchAction('startTesting', this._repetitionCount, testGroupName, commitSets, platform, test, taskName, this._notifyOnCompletion);
+        else
+            this.dispatchAction('startTesting', this._repetitionCount, testGroupName, commitSets, platform, test, this._notifyOnCompletion);
     }
 
     didConstructShadowTree()
