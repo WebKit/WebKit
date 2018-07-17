@@ -1,3 +1,18 @@
+2018-07-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in ~TimerBase is getting hit in WK1 apps which uses JSC API directly
+        https://bugs.webkit.org/show_bug.cgi?id=187713
+        <rdar://problem/41759548>
+
+        Reviewed by Simon Fraser.
+
+        Turn this into a debug assertion in WebKit1 on iOS since JSC API doesn't grab the web thread lock,
+        which means that Timer can get destroyed without the web thread lock in the main thread.
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::~TimerBase):
+        (WebCore::TimerBase::setNextFireTime):
+
 2018-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add color filter for transforming colors in Dark Mode

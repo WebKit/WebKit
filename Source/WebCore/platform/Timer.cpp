@@ -190,7 +190,12 @@ TimerBase::TimerBase()
 
 TimerBase::~TimerBase()
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(canAccessThreadLocalDataForThread(m_thread.get()));
+#if USE(WEB_THREAD)
+    ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    RELEASE_ASSERT(WebThreadIsEnabled() || canAccessThreadLocalDataForThread(m_thread.get()));
+#else
+    RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+#endif
     stop();
     ASSERT(!inHeap());
     m_wasDeleted = true;
@@ -357,7 +362,12 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
+#if USE(WEB_THREAD)
+    ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    RELEASE_ASSERT(WebThreadIsEnabled() || canAccessThreadLocalDataForThread(m_thread.get()));
+#else
     RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+#endif
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_wasDeleted);
 
     if (m_unalignedNextFireTime != newTime)
