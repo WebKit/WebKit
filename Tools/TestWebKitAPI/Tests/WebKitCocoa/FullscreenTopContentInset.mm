@@ -65,6 +65,7 @@ TEST(Fullscreen, TopContentInset)
 
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"FullscreenTopContentInset" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
