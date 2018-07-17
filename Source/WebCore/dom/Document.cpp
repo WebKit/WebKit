@@ -2686,6 +2686,10 @@ void Document::implicitOpen()
 
     cancelParsing();
     m_parser = createParser();
+
+    if (hasActiveParserYieldToken())
+        m_parser->didBeginYieldingParser();
+
     setParsing(true);
     setReadyState(Loading);
 }
@@ -6899,6 +6903,31 @@ void Document::decrementActiveParserCount()
     // but it seems to cause http/tests/security/feed-urls-from-remote.html
     // to timeout on Mac WK1; see http://webkit.org/b/110554 and http://webkit.org/b/110401.
     frame()->loader().checkLoadComplete();
+}
+
+DocumentParserYieldToken::DocumentParserYieldToken(Document& document)
+    : m_document(makeWeakPtr(document))
+{
+    if (++document.m_parserYieldTokenCount != 1)
+        return;
+
+    document.scriptRunner()->didBeginYieldingParser();
+    if (auto* parser = document.parser())
+        parser->didBeginYieldingParser();
+}
+
+DocumentParserYieldToken::~DocumentParserYieldToken()
+{
+    if (!m_document)
+        return;
+
+    ASSERT(m_document->m_parserYieldTokenCount);
+    if (--m_document->m_parserYieldTokenCount)
+        return;
+
+    m_document->scriptRunner()->didEndYieldingParser();
+    if (auto* parser = m_document->parser())
+        parser->didEndYieldingParser();
 }
 
 static RenderElement* nearestCommonHoverAncestor(RenderElement* obj1, RenderElement* obj2)

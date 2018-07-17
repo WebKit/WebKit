@@ -69,6 +69,9 @@ public:
         if (WebThreadShouldYield())
             return true;
 #endif
+        if (UNLIKELY(m_documentHasActiveParserYieldTokens))
+            return true;
+
         if (UNLIKELY(session.processedTokens > numberOfTokensBeforeCheckingForYield || session.didSeeScript))
             return checkForYield(session);
 
@@ -78,10 +81,25 @@ public:
     bool shouldYieldBeforeExecutingScript(PumpSession&);
 
     void scheduleForResume();
-    bool isScheduledForResume() const { return m_isSuspendedWithActiveTimer || m_continueNextChunkTimer.isActive(); }
+    bool isScheduledForResume() const { return m_isSuspendedWithActiveTimer || m_continueNextChunkTimer.isActive() || m_documentHasActiveParserYieldTokens; }
 
     void suspend();
     void resume();
+
+    void didBeginYieldingParser()
+    {
+        ASSERT(!m_documentHasActiveParserYieldTokens);
+        m_documentHasActiveParserYieldTokens = true;
+    }
+
+    void didEndYieldingParser()
+    {
+        ASSERT(m_documentHasActiveParserYieldTokens);
+        m_documentHasActiveParserYieldTokens = false;
+
+        if (!isScheduledForResume())
+            scheduleForResume();
+    }
 
 private:
     static const unsigned numberOfTokensBeforeCheckingForYield = 4096; // Performance optimization
@@ -112,6 +130,7 @@ private:
 #if !ASSERT_DISABLED
     bool m_suspended;
 #endif
+    bool m_documentHasActiveParserYieldTokens { false };
 };
 
 } // namespace WebCore

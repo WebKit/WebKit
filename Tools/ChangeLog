@@ -1,3 +1,53 @@
+2018-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an SPI hook to allow clients to yield document parsing and script execution
+        https://bugs.webkit.org/show_bug.cgi?id=187682
+        <rdar://problem/42207453>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a few tests to exercise the new document yield token SPI, verifying that clients can use the SPI to defer
+        document load, and that doing so doesn't cause deferred `script` to execute in the wrong order (i.e. before
+        synchronous script, or after "DOMContentLoaded").
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ParserYieldTokenPlugIn.mm: Added.
+        (-[ParserYieldTokenPlugIn takeDocumentParserTokenAfterCommittingLoad]):
+        (-[ParserYieldTokenPlugIn releaseDocumentParserToken]):
+        (-[ParserYieldTokenPlugIn webProcessPlugInBrowserContextController:didCommitLoadForFrame:]):
+        (-[ParserYieldTokenPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[ParserYieldTokenPlugIn webProcessPlugInBrowserContextController:didFinishDocumentLoadForFrame:]):
+        (-[ParserYieldTokenPlugIn webProcessPlugInBrowserContextController:didFinishLoadForFrame:]):
+
+        Add an injected bundle object that knows how to take and release multiple document parser yield tokens.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ParserYieldTokenTests.h: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/ParserYieldTokenTests.mm: Added.
+        (+[ParserYieldTokenTestWebView webView]):
+        (-[ParserYieldTokenTestWebView bundle]):
+        (-[ParserYieldTokenTestWebView schemeHandler]):
+        (-[ParserYieldTokenTestWebView didFinishDocumentLoad]):
+        (-[ParserYieldTokenTestWebView didFinishLoad]):
+        (waitForDelay):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TestURLSchemeHandler.h: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/TestURLSchemeHandler.mm: Added.
+        (-[TestURLSchemeHandler webView:startURLSchemeTask:]):
+        (-[TestURLSchemeHandler webView:stopURLSchemeTask:]):
+        (-[TestURLSchemeHandler setStartURLSchemeTaskHandler:]):
+        (-[TestURLSchemeHandler startURLSchemeTaskHandler]):
+        (-[TestURLSchemeHandler setStopURLSchemeTaskHandler:]):
+        (-[TestURLSchemeHandler stopURLSchemeTaskHandler]):
+
+        Add a new test helper class to handle custom schemes via a block-based API.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/text-with-async-script.html: Added.
+
+        New test HTML page that contains a deferred script element, a synchronous script element, another deferred
+        script element, and then some text, images, and links.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/text-with-deferred-script.html: Added.
+
 2018-07-17  Truitt Savell  <tsavell@apple.com>
 
         Adding myself to Contributors.json

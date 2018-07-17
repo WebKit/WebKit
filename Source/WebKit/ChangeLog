@@ -1,3 +1,19 @@
+2018-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an SPI hook to allow clients to yield document parsing and script execution
+        https://bugs.webkit.org/show_bug.cgi?id=187682
+        <rdar://problem/42207453>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add hooks to WKDOMDocument to create and return an internal WKDOMDocumentParserYieldToken object, whose lifetime
+        is tied to a document parser yield token. See WebCore ChangeLog for more detail.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (-[WKDOMDocumentParserYieldToken initWithDocument:]):
+        (-[WKDOMDocument parserYieldToken]):
+
 2018-07-17  John Wilander  <wilander@apple.com>
 
         Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()

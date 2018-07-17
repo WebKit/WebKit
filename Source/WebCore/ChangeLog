@@ -1,3 +1,97 @@
+2018-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an SPI hook to allow clients to yield document parsing and script execution
+        https://bugs.webkit.org/show_bug.cgi?id=187682
+        <rdar://problem/42207453>
+
+        Reviewed by Ryosuke Niwa.
+
+        Using a single web process for both the Reader page and original web page on watchOS has multiple benefits,
+        including: (1) allowing the user to bail out of Reader and view the original web page without having to load it
+        again, and (2) improving the bringup time of the Reader page, since subresources are already cached in process
+        and we don't eat the additional cost of a web process launch if prewarming fails.
+
+        However, this has some drawbacks as well, one of which is that main thread work being done on behalf of the
+        original page may contend with work being done to load and render the Reader page. This is especially bad when
+        the page is in the middle of executing heavy script after Safari has already detected that the Reader version of
+        the page is available, but before it has finished loading the Reader page. The result is that script on the
+        original page may block the first paint of the Reader page (on New York Times articles, this often leads to an
+        apparent page load time of 25-35 seconds before the user sees anything besides a blank screen).
+
+        To mitigate this, we introduce a way for injected bundle clients to yield parsing and async script execution on
+        a document. This capability is surfaced in the form of an opaque token which clients may request from a
+        WKDOMDocument. Construction of the token causes the document to begin yielding and defer execution of previously
+        scheduled scripts, only if there were no active tokens on the document already. Similarly, destruction of all
+        active tokens on the document causes it to stop yielding and resume execution of scripts if needed.
+
+        Tests:  ParserYieldTokenTests.PreventDocumentLoadByTakingParserYieldToken
+                ParserYieldTokenTests.TakeMultipleParserYieldTokens
+                ParserYieldTokenTests.DeferredScriptExecutesBeforeDocumentLoadWhenTakingParserYieldToken
+                ParserYieldTokenTests.AsyncScriptRunsWhenFetched
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitOpen):
+
+        If the parser yield token was taken before the document's parser was created, tell the parser's scheduler to
+        start yielding immediately after creation.
+
+        (WebCore::DocumentParserYieldToken::DocumentParserYieldToken):
+        (WebCore::DocumentParserYieldToken::~DocumentParserYieldToken):
+        * dom/Document.h:
+
+        Introduce a parser yield count to Document; as long as this count is greater than 0, we consider the Document to
+        have active yield tokens. When constructing or destroying a ParserYieldToken, we increment and decrement the
+        parser yield count (respectively).
+
+        (WebCore::Document::createParserYieldToken):
+        (WebCore::Document::hasActiveParserYieldToken const):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::didBeginYieldingParser):
+        (WebCore::DocumentParser::didEndYieldingParser):
+
+        Hooks for Document to tell its parser that we've started or finished yielding. This updates a flag on the
+        parser's scheduler which is consulted when we determine whether to yield before a pumping token or executing
+        script.
+
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::resume):
+        (WebCore::ScriptRunner::notifyFinished):
+        * dom/ScriptRunner.h:
+        (WebCore::ScriptRunner::didBeginYieldingParser):
+        (WebCore::ScriptRunner::didEndYieldingParser):
+
+        Hooks for Document to tell its ScriptRunner that we've started or finished yielding. These wrap calls to suspend
+        and resume.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::didBeginYieldingParser):
+        (WebCore::HTMLDocumentParser::didEndYieldingParser):
+
+        Plumb to didBegin/didEnd calls to the HTMLParserScheduler.
+
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::shouldYieldBeforeExecutingScript):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::shouldYieldBeforeToken):
+
+        Consult a flag when determining whether to yield. This flag is set to true only while the document has an active
+        parser yield token.
+
+        (WebCore::HTMLParserScheduler::isScheduledForResume const):
+
+        Consider the parser scheduler to be scheduled for resume if there are active tokens. Without this change, we
+        incorrectly consider the document to be finished loading when we have yield tokens, since it appears that the
+        parser is no longer scheduled to pump its tokenizer.
+
+        (WebCore::HTMLParserScheduler::didBeginYieldingParser):
+        (WebCore::HTMLParserScheduler::didEndYieldingParser):
+
+        When the Document begins yielding due to the documet having active tokens or ends yielding after the document
+        loses all of its yield tokens, update a flag on the parser scheduler. After we finish yielding, additionally
+        reschedule the parser if needed to ensure that we continue parsing the document; without this additional change
+        to resume, we'll never get the document load or load events after relinquishing the yield token.
+
 2018-07-17  Dirk Schulze  <krit@webkit.org>
 
         [clip-path] Implement support for margin-box as reference box and box shape

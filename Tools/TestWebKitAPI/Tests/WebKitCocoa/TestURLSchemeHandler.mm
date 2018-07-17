@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#include "config.h"
+#include "TestURLSchemeHandler.h"
+
+#import <wtf/BlockPtr.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit/WKDOMNode.h>
+@implementation TestURLSchemeHandler {
+    BlockPtr<void(WKWebView *, id <WKURLSchemeTask>)> _startURLSchemeTaskHandler;
+    BlockPtr<void(WKWebView *, id <WKURLSchemeTask>)> _stopURLSchemeTaskHandler;
+}
 
-@class WKDOMElement;
-@class WKDOMText;
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+{
+    if (_startURLSchemeTaskHandler)
+        _startURLSchemeTaskHandler(webView, urlSchemeTask);
+}
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface WKDOMDocument : WKDOMNode
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+{
+    if (_stopURLSchemeTaskHandler)
+        _stopURLSchemeTaskHandler(webView, urlSchemeTask);
+}
 
-- (WKDOMElement *)createElement:(NSString *)tagName;
-- (WKDOMText *)createTextNode:(NSString *)data;
-- (WKDOMNode *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-- (WKDOMNode *)createDocumentFragmentWithText:(NSString *)text WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+- (void)setStartURLSchemeTaskHandler:(void (^)(WKWebView *, id <WKURLSchemeTask>))block
+{
+    _startURLSchemeTaskHandler = makeBlockPtr(block);
+}
 
-@property(readonly) WKDOMElement *body;
+- (void (^)(WKWebView *, id <WKURLSchemeTask>))startURLSchemeTaskHandler
+{
+    return _startURLSchemeTaskHandler.get();
+}
 
-- (id)parserYieldToken WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)setStopURLSchemeTaskHandler:(void (^)(WKWebView *, id <WKURLSchemeTask>))block
+{
+    _startURLSchemeTaskHandler = makeBlockPtr(block);
+}
+
+- (void (^)(WKWebView *, id <WKURLSchemeTask>))stopURLSchemeTaskHandler
+{
+    return _stopURLSchemeTaskHandler.get();
+}
 
 @end
 

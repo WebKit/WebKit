@@ -35,6 +35,23 @@
 #import <WebCore/Text.h>
 #import <WebCore/markup.h>
 
+@interface WKDOMDocumentParserYieldToken : NSObject
+
+@end
+
+@implementation WKDOMDocumentParserYieldToken {
+    std::unique_ptr<WebCore::DocumentParserYieldToken> _token;
+}
+
+- (instancetype)initWithDocument:(WebCore::Document&)document
+{
+    if (self = [super init])
+        _token = document.createParserYieldToken();
+    return self;
+}
+
+@end
+
 @implementation WKDOMDocument
 
 - (WKDOMElement *)createElement:(NSString *)tagName
@@ -64,6 +81,11 @@
 - (WKDOMNode *)createDocumentFragmentWithText:(NSString *)text
 {
     return WebKit::toWKDOMNode(createFragmentFromText(downcast<WebCore::Document>(*_impl).createRange().get(), text).ptr());
+}
+
+- (id)parserYieldToken
+{
+    return [[[WKDOMDocumentParserYieldToken alloc] initWithDocument:downcast<WebCore::Document>(*_impl)] autorelease];
 }
 
 @end
