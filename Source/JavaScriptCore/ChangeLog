@@ -1,3 +1,19 @@
+2018-07-17  Mark Lam  <mark.lam@apple.com>
+
+        CodeBlock::baselineVersion() should account for executables with purged codeBlocks.
+        https://bugs.webkit.org/show_bug.cgi?id=187736
+        <rdar://problem/42114371>
+
+        Reviewed by Michael Saboff.
+
+        CodeBlock::baselineVersion() currently checks for a null replacement but does not
+        account for the fact that that the replacement can also be null due to the
+        executable having being purged of its codeBlocks due to a memory event (see
+        ExecutableBase::clearCode()).  This patch adds code to account for this.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::baselineVersion):
+
 2018-07-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] UnlinkedCodeBlock::shrinkToFit miss m_constantIdentifierSets
