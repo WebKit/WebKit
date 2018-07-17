@@ -1,3 +1,13 @@
+2018-07-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline displaylists/extent-includes-* tests for mac-wk1 after r233869.
+        https://bugs.webkit.org/show_bug.cgi?id=187574
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/displaylists/extent-includes-shadow-expected.txt:
+        * platform/mac-wk1/displaylists/extent-includes-transforms-expected.txt:
+
 2018-07-17  Dirk Schulze  <krit@webkit.org>
 
         [clip-path] Implement support for margin-box as reference box and box shape

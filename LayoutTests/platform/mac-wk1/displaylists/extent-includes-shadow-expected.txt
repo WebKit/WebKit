@@ -10,8 +10,10 @@
   (shadow-offset width=10 height=20)
   (shadows-use-legacy-radius 0)
   (should-subpixel-quantize-fonts 0))
-(fill-rect-with-color
+(fill-composited-rect
   (extent at (43,50) size 134x137)
   (rect at (50,50) size 100x100)
-  (color #0000FF))
+  (color #0000FF)
+  (composite-operation source-over)
+  (blend-mode normal))
 (restore)
