@@ -1,3 +1,26 @@
+2018-07-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Interpolation between lengths with an "auto" value should be discrete
+        https://bugs.webkit.org/show_bug.cgi?id=187721
+
+        Reviewed by Dean Jackson.
+
+        When interpolating between two Length values, if one is "auto", we should use the from-value
+        from 0 and up to (but excluding) 0.5, and use the to-value from 0.5 to 1.
+
+        This change caused a regression in the legacy animation engine since it would create a CSS
+        transition even when the underlying and target values were non-interpolable. As such, the
+        underlying value would be used until the transition's mid-point and the tests at 
+        legacy-animation-engine/imported/blink/transitions/transition-not-interpolable.html and
+        legacy-animation-engine/fast/animation/height-auto-transition-computed-value.html would fail
+        expecting the target value to be used immediately. We now ensure that no transition is actually
+        started if two values for a given property cannot be interpolated.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        * platform/Length.cpp:
+        (WebCore::blend):
+
 2018-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an SPI hook to allow clients to yield document parsing and script execution

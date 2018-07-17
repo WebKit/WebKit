@@ -313,7 +313,10 @@ static Length blendMixedTypes(const Length& from, const Length& to, double progr
 
 Length blend(const Length& from, const Length& to, double progress)
 {
-    if (from.isAuto() || from.isUndefined() || to.isAuto() || to.isUndefined())
+    if (from.isAuto() || to.isAuto())
+        return progress < 0.5 ? from : to;
+
+    if (from.isUndefined() || to.isUndefined())
         return to;
 
     if (from.type() == Calculated || to.type() == Calculated)

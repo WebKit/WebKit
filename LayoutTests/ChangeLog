@@ -1,3 +1,17 @@
+2018-07-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Interpolation between lengths with an "auto" value should be discrete
+        https://bugs.webkit.org/show_bug.cgi?id=187721
+
+        Reviewed by Dean Jackson.
+
+        Make two more tests opt into the new animation engine since they pass and they're not in the legacy-animation-engine directory.
+        A third test now has some logging due to transitions not actually running, which is expected and correct.
+
+        * fast/animation/height-auto-transition-computed-value.html:
+        * imported/blink/transitions/transition-not-interpolable.html:
+        * legacy-animation-engine/transitions/transition-to-from-auto-expected.txt:
+
 2018-07-17  John Wilander  <wilander@apple.com>
 
         Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()

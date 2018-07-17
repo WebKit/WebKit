@@ -1,3 +1,14 @@
+2018-07-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Interpolation between lengths with an "auto" value should be discrete
+        https://bugs.webkit.org/show_bug.cgi?id=187721
+
+        Reviewed by Dean Jackson.
+
+        Mark 2 new WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/discrete-expected.txt:
+
 2018-07-11  Youenn Fablet  <youenn@apple.com>
 
         Fix remaining Cross-Origin-Resource-Policy failures, if any
