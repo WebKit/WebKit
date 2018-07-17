@@ -333,6 +333,18 @@ WebProcessPool::~WebProcessPool()
     if (!m_processesUsingGamepads.isEmpty())
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 #endif
+
+    // Only remaining processes should be pre-warmed ones as other keep the process pool alive.
+    while (!m_processes.isEmpty()) {
+        auto& process = m_processes.first();
+
+        ASSERT(process->isInPrewarmedPool());
+        // We need to be the only one holding a reference to the pre-warmed process so that it gets destroyed.
+        // WebProcessProxies currently always expect to have a WebProcessPool.
+        ASSERT(process->hasOneRef());
+
+        process->shutDown();
+    }
 }
 
 void WebProcessPool::initializeClient(const WKContextClientBase* client)
@@ -784,7 +796,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     for (const auto& process : m_processes) {
         if (process->isInPrewarmedPool()) {
             --m_prewarmedProcessCount;
-            process->setIsInPrewarmedPool(false);
+            process->markIsNoLongerInPrewarmedPool();
             if (&process->websiteDataStore() != &websiteDataStore)
                 process->send(Messages::WebProcess::AddWebsiteDataStore(websiteDataStore.parameters()), 0);
             return process.get();

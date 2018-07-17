@@ -56,7 +56,7 @@ struct TestOptions {
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
     bool enableWebAnimationsCSSIntegration { false };
-    bool enableProcessSwapOnNavigation { false };
+    bool enableProcessSwapOnNavigation { true };
     bool enableProcessSwapOnWindowOpen { false };
     bool enableColorFilter { false };
     bool punchOutWhiteBackgroundsInDarkMode { false };

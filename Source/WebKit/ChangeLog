@@ -1,3 +1,42 @@
+2018-07-17  Chris Dumez  <cdumez@apple.com>
+
+        Turn on PSON in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=186542
+
+        Reviewed by Brady Eidson.
+
+        Fix leaking of pre-warmed WebContent processes which became obvious when turning
+        on process-swap-on-navigation by default in WebKitTestRunner. The issue was that
+        the WebProcessPool holds a strong reference to its WebProcessProxy objects via
+        m_processes data members. In turn, WebProcessProxy objects hold a strong reference
+        to their WebProcessPool via their m_processPool data member. This reference cycle
+        normally gets broken by calling WebProcessProxy::shutDown() which removes the
+        WebProcessProxy objects from its WebProcessPool's m_processes container.
+        WebProcessProxy::shutDown() normally gets called when a WebProcessProxy no longer
+        has any WebPageProxy objects. However, in the case of unused pre-warmed
+        WebProcessProxy objects, those never get any page and therefore we'd never break
+        the reference cycle. To address the issue, pre-warmed WebProcessProxy objects
+        now only hold a Weak reference to their process pool, only regular WebProcessProxy
+        objects hold a strong reference to their pool.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        (WebKit::WebProcessProxy::markIsNoLongerInPrewarmedPool):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::processPool):
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::WeakOrStrongPtr):
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::setIsWeak):
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::get const):
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::operator-> const):
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::operator* const):
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::operator bool const):
+        (WebKit::WebProcessProxy::WeakOrStrongPtr::updateStrongReference):
+
 2018-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an SPI hook to allow clients to yield document parsing and script execution

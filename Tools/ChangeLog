@@ -1,3 +1,14 @@
+2018-07-17  Chris Dumez  <cdumez@apple.com>
+
+        Turn on PSON in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=186542
+
+        Reviewed by Brady Eidson.
+
+        Turn on PSON by default in WebKitTestRunner.
+
+        * WebKitTestRunner/TestOptions.h:
+
 2018-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an SPI hook to allow clients to yield document parsing and script execution

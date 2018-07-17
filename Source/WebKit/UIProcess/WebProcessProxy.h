@@ -107,7 +107,7 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
-    WebProcessPool& processPool() { return m_processPool; }
+    WebProcessPool& processPool() { ASSERT(m_processPool); return *m_processPool.get(); }
 
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2
     WebsiteDataStore& websiteDataStore() const { return m_websiteDataStore.get(); }
@@ -219,12 +219,16 @@ public:
 #endif
 
     bool isInPrewarmedPool() const { return m_isInPrewarmedPool; }
-    void setIsInPrewarmedPool(bool isInPrewarmedPool) { m_isInPrewarmedPool = isInPrewarmedPool; }
+    void markIsNoLongerInPrewarmedPool();
 
 #if PLATFORM(COCOA)
     Vector<String> mediaMIMETypes();
     void cacheMediaMIMETypes(const Vector<String>&);
 #endif
+
+    // Called when the web process has crashed or we know that it will terminate soon.
+    // Will potentially cause the WebProcessProxy object to be freed.
+    void shutDown();
 
 protected:
     static uint64_t generatePageID();
@@ -243,9 +247,6 @@ protected:
 #endif
 
 private:
-    // Called when the web process has crashed or we know that it will terminate soon.
-    // Will potentially cause the WebProcessProxy object to be freed.
-    void shutDown();
     void maybeShutDown();
 
     // IPC message handlers.
@@ -313,11 +314,43 @@ private:
 
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
 
+    enum class IsWeak { No, Yes };
+    template<typename T> class WeakOrStrongPtr {
+    public:
+        WeakOrStrongPtr(T& object, IsWeak isWeak)
+            : m_isWeak(isWeak)
+            , m_weakObject(makeWeakPtr(object))
+        {
+            updateStrongReference();
+        }
+
+        void setIsWeak(IsWeak isWeak)
+        {
+            m_isWeak = isWeak;
+            updateStrongReference();
+        }
+
+        T* get() const { return m_weakObject.get(); }
+        T* operator->() const { return m_weakObject.get(); }
+        T& operator*() const { return *m_weakObject; }
+        explicit operator bool() const { return !!m_weakObject; }
+
+    private:
+        void updateStrongReference()
+        {
+            m_strongObject = m_isWeak == IsWeak::Yes ? nullptr : m_weakObject.get();
+        }
+
+        IsWeak m_isWeak;
+        WeakPtr<T> m_weakObject;
+        RefPtr<T> m_strongObject;
+    };
+
     ResponsivenessTimer m_responsivenessTimer;
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
-    Ref<WebProcessPool> m_processPool;
+    WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed processes do not hold a strong reference to their pool.
 
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;
