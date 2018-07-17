@@ -36,6 +36,15 @@ public:
     size_t saltLength;
 
     Class parametersClass() const final { return Class::RsaPssParams; }
+
+    CryptoAlgorithmRsaPssParams isolatedCopy() const
+    {
+        CryptoAlgorithmRsaPssParams result;
+        result.identifier = identifier;
+        result.saltLength = saltLength;
+
+        return result;
+    }
 };
 
 } // namespace WebCore

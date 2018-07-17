@@ -42,6 +42,16 @@ public:
     std::optional<size_t> length;
 
     Class parametersClass() const final { return Class::HmacKeyParams; }
+
+    CryptoAlgorithmHmacKeyParams isolatedCopy() const
+    {
+        CryptoAlgorithmHmacKeyParams result;
+        result.identifier = identifier;
+        result.hashIdentifier = hashIdentifier;
+        result.length = length;
+
+        return result;
+    }
 };
 
 } // namespace WebCore

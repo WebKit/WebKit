@@ -66,7 +66,7 @@ void CryptoAlgorithmECDH::generateKey(const CryptoAlgorithmParameters& parameter
     callback(WTFMove(pair));
 }
 
-void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     // We only accept length that is a multiple of 8.
     if (length % 8) {
@@ -74,8 +74,7 @@ void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&
         return;
     }
 
-    ASSERT(parameters);
-    auto& ecParameters = downcast<CryptoAlgorithmEcdhKeyDeriveParams>(*parameters);
+    auto& ecParameters = downcast<CryptoAlgorithmEcdhKeyDeriveParams>(parameters);
 
     if (baseKey->type() != CryptoKey::Type::Private) {
         exceptionCallback(InvalidAccessError);
@@ -117,18 +116,17 @@ void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&
     // This is a special case that can't use dispatchOperation() because it bundles
     // the result validation and callback dispatch into unifiedCallback.
     workQueue.dispatch(
-        [baseKey = WTFMove(baseKey), publicKey = ecParameters.publicKey.releaseNonNull(), length, unifiedCallback = WTFMove(unifiedCallback), contextIdentifier = context.contextIdentifier()]() mutable {
-            auto derivedKey = platformDeriveBits(downcast<CryptoKeyEC>(baseKey.get()), downcast<CryptoKeyEC>(publicKey.get()));
+        [baseKey = WTFMove(baseKey), publicKey = ecParameters.publicKey, length, unifiedCallback = WTFMove(unifiedCallback), contextIdentifier = context.contextIdentifier()]() mutable {
+            auto derivedKey = platformDeriveBits(downcast<CryptoKeyEC>(baseKey.get()), downcast<CryptoKeyEC>(*publicKey));
             ScriptExecutionContext::postTaskTo(contextIdentifier, [derivedKey = WTFMove(derivedKey), length, unifiedCallback = WTFMove(unifiedCallback)](auto&) mutable {
                 unifiedCallback(WTFMove(derivedKey), length);
             });
         });
 }
 
-void CryptoAlgorithmECDH::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDH::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    ASSERT(parameters);
-    const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(*parameters);
+    const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(parameters);
 
     RefPtr<CryptoKeyEC> result;
     switch (format) {
