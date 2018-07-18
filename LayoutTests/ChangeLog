@@ -1,3 +1,11 @@
+2018-07-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/css/apple-system-colors.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac/fast/css/apple-system-colors-expected.txt:
+
 2018-07-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Interpolation between font-styles with a keyword value should be discrete
