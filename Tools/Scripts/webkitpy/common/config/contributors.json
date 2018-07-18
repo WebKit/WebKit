@@ -5206,6 +5206,15 @@
       ],
       "status" : "committer"
    },
+   "Stephan Szabo" : {
+      "emails" : [
+         "stephan.szabo@sony.com"
+      ],
+      "nicks" : [
+         "szabos1"
+      ],
+      "status" : "reviewer"
+   },
    "Stephanie Lewis" : {
       "emails" : [
          "slewis@apple.com"

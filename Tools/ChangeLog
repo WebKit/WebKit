@@ -1,3 +1,11 @@
+2018-07-18  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Adding myself to contributors.json
+
+        Unreviewed contributors.json change.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
         -_beginAnimatedResizeWithUpdates: can leave view in bad state if called during an existing animation
