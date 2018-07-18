@@ -1044,7 +1044,7 @@ webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
-webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass ]
+webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]
 webkit.org/b/181661 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
 
 Bug(WPE) contentfiltering/ [ Skip ]

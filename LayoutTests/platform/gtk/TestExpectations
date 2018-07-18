@@ -2009,6 +2009,12 @@ webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/
 
 webkit.org/b/187591 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure Crash ]
 
+webkit.org/b/187761 http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Pass Failure ]
+
+webkit.org/b/187760 fast/mediastream/get-user-media-on-loadedmetadata.html [ Pass Failure ]
+
+webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3481,6 +3487,8 @@ webkit.org/b/187268 compositing/backing/backing-store-attachment-outside-viewpor
 
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 
+webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3542,8 +3550,6 @@ transitions/svg-text-shadow-transition.html [ Pass ]
 legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Pass ]
 
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
-
-webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
