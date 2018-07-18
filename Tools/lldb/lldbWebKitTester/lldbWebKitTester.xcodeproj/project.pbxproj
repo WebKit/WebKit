@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0FC1C35420E5391E001E9FB0 /* DumpClassLayoutTesting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */; };
+		3156A19320FEEE3200CA3BA3 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3156A19220FEEE3200CA3BA3 /* WebKit.framework */; };
 		7CB6844B1AFA7978002B305C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6844A1AFA7978002B305C /* main.cpp */; };
 		CE6C3AFF20C0B17B003E33D8 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3AFE20C0B17B003E33D8 /* libWTF.a */; };
 		CE6C3B0120C0C444003E33D8 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3B0020C0C443003E33D8 /* libicucore.dylib */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DumpClassLayoutTesting.cpp; sourceTree = "<group>"; };
 		0FC1C35520E53932001E9FB0 /* DumpClassLayoutTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DumpClassLayoutTesting.h; sourceTree = "<group>"; };
+		3156A19220FEEE3200CA3BA3 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = WebKit.framework; sourceTree = "<group>"; };
 		7C2227511AFC4D9C008C3338 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		7C2227521AFC4D9C008C3338 /* lldbWebKitTester.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = lldbWebKitTester.xcconfig; sourceTree = "<group>"; };
 		7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -44,6 +46,7 @@
 			files = (
 				CE6C3B0120C0C444003E33D8 /* libicucore.dylib in Frameworks */,
 				CE6C3AFF20C0B17B003E33D8 /* libWTF.a in Frameworks */,
+				3156A19320FEEE3200CA3BA3 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +96,7 @@
 			children = (
 				CE6C3B0020C0C443003E33D8 /* libicucore.dylib */,
 				CE6C3AFE20C0B17B003E33D8 /* libWTF.a */,
+				3156A19220FEEE3200CA3BA3 /* WebKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
