@@ -1,3 +1,20 @@
+2018-07-18  Jer Noble  <jer.noble@apple.com>
+
+        CRASH at WebKit: WebKit::WebFullScreenManagerProxy::saveScrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=187769
+        <rdar://problem/42160666>
+
+        Reviewed by Tim Horton.
+
+        Null-check all uses of _page and _manager in WKFullScreenWindowControllerIOS.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (WebKit::WKWebViewState::applyTo):
+        (WebKit::WKWebViewState::store):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+
 2018-07-18  Chris Dumez  <cdumez@apple.com>
 
         WebContent crash in WebProcess::ensureNetworkProcessConnection
