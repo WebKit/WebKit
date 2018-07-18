@@ -1,3 +1,73 @@
+2018-07-18  Jer Noble  <jer.noble@apple.com>
+
+        PiP from Element Fullscreen should match AVKit's behavior
+        https://bugs.webkit.org/show_bug.cgi?id=187623
+
+        Reviewed by Jon Lee.
+
+        PiP behavior should be defined at the WebKit2 level, and not in HTMLMediaElement:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+
+        Add an accessor for pictureInPictureWasStartedWhenEnteringBackground():
+
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (VideoFullscreenInterfaceAVKit::pictureInPictureWasStartedWhenEnteringBackground const):
+
+        Add VideoFullscreenModelClient virutal methods for PiP change notifications:
+
+        * platform/cocoa/VideoFullscreenModel.h:
+        (WebCore::VideoFullscreenModelClient::hasVideoChanged):
+        (WebCore::VideoFullscreenModelClient::videoDimensionsChanged):
+        (WebCore::VideoFullscreenModelClient::willEnterPictureInPicture):
+        (WebCore::VideoFullscreenModelClient::didEnterPictureInPicture):
+        (WebCore::VideoFullscreenModelClient::failedToEnterPictureInPicture):
+        (WebCore::VideoFullscreenModelClient::willExitPictureInPicture):
+        (WebCore::VideoFullscreenModelClient::didExitPictureInPicture):
+        (WebCore::VideoFullscreenModelClient::failedToExitPictureInPicture):
+        * platform/cocoa/VideoFullscreenModelVideoElement.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (VideoFullscreenModelVideoElement::willEnterPictureInPicture):
+        (VideoFullscreenModelVideoElement::didEnterPictureInPicture):
+        (VideoFullscreenModelVideoElement::failedToEnterPictureInPicture):
+        (VideoFullscreenModelVideoElement::willExitPictureInPicture):
+        (VideoFullscreenModelVideoElement::didExitPictureInPicture):
+        (VideoFullscreenModelVideoElement::failedToExitPictureInPicture):
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (-[WebAVPlayerLayer resolveBounds]):
+        (-[WebAVPlayerLayer setVideoGravity:]):
+        (VideoFullscreenInterfaceAVKit::setupFullscreen):
+        (VideoFullscreenInterfaceAVKit::presentingViewController):
+        (VideoFullscreenInterfaceAVKit::willStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::failedToStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::willStopPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::didStopPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+        (VideoFullscreenInterfaceAVKit::doSetup):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::willEnterPictureInPicture):
+        (VideoFullscreenControllerContext::didEnterPictureInPicture):
+        (VideoFullscreenControllerContext::failedToEnterPictureInPicture):
+        (VideoFullscreenControllerContext::willExitPictureInPicture):
+        (VideoFullscreenControllerContext::didExitPictureInPicture):
+        (VideoFullscreenControllerContext::failedToExitPictureInPicture):
+        * platform/mac/VideoFullscreenInterfaceMac.h:
+        (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen): Deleted.
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC invalidateFullscreenState]):
+        (-[WebVideoFullscreenInterfaceMacObjC exitPIP]):
+        (-[WebVideoFullscreenInterfaceMacObjC exitPIPAnimatingToRect:inWindow:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipShouldClose:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipDidClose:]):
+        (WebCore::VideoFullscreenInterfaceMac::enterFullscreen):
+        (WebCore::VideoFullscreenInterfaceMac::exitFullscreen):
+        (WebCore::VideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode):
+        (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen):
+
 2018-07-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Disable CURLOPT_SSL_VERIFYPEER and CURLOPT_SSL_VERIFYHOST specified by setAllowsAnyHTTPSCertificate.

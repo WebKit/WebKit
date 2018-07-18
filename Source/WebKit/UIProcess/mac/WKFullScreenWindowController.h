@@ -31,6 +31,7 @@
 namespace WebKit { 
 class LayerTreeContext;
 class WebPageProxy;
+class WKFullScreenWindowControllerVideoFullscreenModelClient;
 }
 
 namespace WebCore {
@@ -59,6 +60,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 
     double _savedScale;
     RefPtr<WebKit::VoidCallback> _repaintCallback;
+    std::unique_ptr<WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient> _videoFullscreenClient;
     float _savedTopContentInset;
 }
 
@@ -78,6 +80,9 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 - (void)close;
 - (void)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame;
 - (void)beganExitFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame;
+
+- (void)videoControlsManagerDidChange;
+- (void)didEnterPictureInPicture;
 
 @end
 

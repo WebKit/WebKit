@@ -107,7 +107,6 @@ enum class PIPState {
     RetainPtr<NSWindow> _returningWindow;
     NSRect _returningRect;
     BOOL _playing;
-    BOOL _didRequestExitingPIP;
     BOOL _exitingToStandardFullscreen;
 }
 
@@ -121,7 +120,6 @@ enum class PIPState {
 - (void)updateIsPlaying:(BOOL)isPlaying newPlaybackRate:(float)playbackRate;
 
 // Handling PIP transitions
-@property (nonatomic, readonly) BOOL didRequestExitingPIP;
 @property (nonatomic, getter=isExitingToStandardFullscreen) BOOL exitingToStandardFullscreen;
 
 - (void)setUpPIPForVideoView:(NSView *)videoView withFrame:(NSRect)frame inWindow:(NSWindow *)window;
@@ -135,7 +133,6 @@ enum class PIPState {
 
 @synthesize playing=_playing;
 @synthesize videoDimensions=_videoDimensions;
-@synthesize didRequestExitingPIP=_didRequestExitingPIP;
 @synthesize exitingToStandardFullscreen=_exitingToStandardFullscreen;
 
 - (instancetype)initWithVideoFullscreenInterfaceMac:(WebCore::VideoFullscreenInterfaceMac*)videoFullscreenInterfaceMac
@@ -158,7 +155,6 @@ enum class PIPState {
     _videoViewContainer = nil;
     _videoViewContainerController = nil;
     _pipState = PIPState::NotInPIP;
-    _didRequestExitingPIP = NO;
     _exitingToStandardFullscreen = NO;
     _returningWindow = nil;
     _returningRect = NSZeroRect;
@@ -225,7 +221,6 @@ enum class PIPState {
     if (_pipState != PIPState::InPIP || !_pipViewController || !_videoViewContainerController)
         return;
 
-    _didRequestExitingPIP = YES;
     [_videoViewContainerController view].layer.backgroundColor = CGColorGetConstantColor(kCGColorClear);
     [_pipViewController dismissViewController:_videoViewContainerController.get()];
     _pipState = PIPState::ExitingPIP;
@@ -235,7 +230,7 @@ enum class PIPState {
 {
     _returningWindow = window;
     _returningRect = rect;
-    
+
     [_pipViewController setReplacementRect:rect];
     [_pipViewController setReplacementWindow:window];
 
@@ -279,8 +274,7 @@ enum class PIPState {
     if (!_videoFullscreenInterfaceMac || !_videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
         return YES;
 
-    _didRequestExitingPIP = YES;
-    _videoFullscreenInterfaceMac->videoFullscreenChangeObserver()->fullscreenMayReturnToInline();
+    _videoFullscreenInterfaceMac->requestHideAndExitFullscreen();
 
     return NO;
 }
@@ -303,12 +297,10 @@ enum class PIPState {
     if (_videoFullscreenInterfaceMac) {
         if (!self.isExitingToStandardFullscreen) {
             if (VideoFullscreenModel* videoFullscreenModel = _videoFullscreenInterfaceMac->videoFullscreenModel()) {
-                videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+                videoFullscreenModel->didExitPictureInPicture();
                 videoFullscreenModel->setVideoLayerGravity(VideoFullscreenModel::VideoGravityResizeAspect);
             }
         }
-
-        _videoFullscreenInterfaceMac->clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 
         if (VideoFullscreenChangeObserver* fullscreenChangeObserver = _videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
             fullscreenChangeObserver->didExitFullscreen();
@@ -443,12 +435,15 @@ void VideoFullscreenInterfaceMac::enterFullscreen()
     LOG(Fullscreen, "VideoFullscreenInterfaceMac::enterFullscreen(%p)", this);
 
     if (mode() == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
+        m_videoFullscreenModel->willEnterPictureInPicture();
         [m_webVideoFullscreenInterfaceObjC enterPIP];
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
         [m_playbackSessionInterface->playBackControlsManager() setPictureInPictureActive:YES];
 #endif
 
+        // FIXME(rdar://problem/42250952): Move this call into a completion handler or delegate callback.
+        m_videoFullscreenModel->didEnterPictureInPicture();
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didEnterFullscreen();
     }
@@ -461,9 +456,6 @@ void VideoFullscreenInterfaceMac::exitFullscreen(const IntRect& finalRect, NSWin
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [m_playbackSessionInterface->playBackControlsManager() setPictureInPictureActive:NO];
 #endif
-
-    if ([m_webVideoFullscreenInterfaceObjC didRequestExitingPIP])
-        return;
 
     if (finalRect.isEmpty())
         [m_webVideoFullscreenInterfaceObjC exitPIP];
@@ -478,9 +470,6 @@ void VideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(HTMLMedia
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [m_playbackSessionInterface->playBackControlsManager() setPictureInPictureActive:NO];
 #endif
-
-    if ([m_webVideoFullscreenInterfaceObjC didRequestExitingPIP])
-        return;
 
     bool isExitingToStandardFullscreen = mode == HTMLMediaElementEnums::VideoFullscreenModeStandard;
     // On Mac, standard fullscreen is handled by the Fullscreen API and not by VideoFullscreenManager.
@@ -515,6 +504,15 @@ void VideoFullscreenInterfaceMac::invalidate()
 
     [m_webVideoFullscreenInterfaceObjC invalidate];
     m_webVideoFullscreenInterfaceObjC = nil;
+}
+
+void VideoFullscreenInterfaceMac::requestHideAndExitFullscreen()
+{
+    if (!m_videoFullscreenModel)
+        return;
+
+    m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+    m_videoFullscreenModel->willExitPictureInPicture();
 }
 
 #if !LOG_DISABLED

@@ -1,3 +1,17 @@
+2018-07-18  Jer Noble  <jer.noble@apple.com>
+
+        PiP from Element Fullscreen should match AVKit's behavior
+        https://bugs.webkit.org/show_bug.cgi?id=187623
+
+        Reviewed by Jon Lee.
+
+        * TestExpectations:
+        * media/fullscreen-video-going-into-pip-expected.txt: Removed.
+        * media/fullscreen-video-going-into-pip.html: Removed.
+        * media/video-contained-in-fullscreen-element-going-into-pip-expected.txt: Removed.
+        * media/video-contained-in-fullscreen-element-going-into-pip.html: Removed.
+        * platform/mac-wk2/TestExpectations:
+
 2018-07-18  Truitt Savell  <tsavell@apple.com>
 
        [ WK2 ] Layout Test http/wpt/service-workers/update-service-worker.https.html is a flaky Timeout

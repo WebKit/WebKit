@@ -31,6 +31,7 @@
 #import "FullscreenTouchSecheuristic.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "UIKitSPI.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebViewInternal.h"
 #import "WebFullScreenManagerProxy.h"
@@ -43,10 +44,17 @@ using namespace WebCore;
 using namespace WebKit;
 
 static const NSTimeInterval showHideAnimationDuration = 0.1;
+static const NSTimeInterval pipHideAnimationDuration = 0.2;
 static const NSTimeInterval autoHideDelay = 4.0;
 static const double requiredScore = 0.1;
 
 @class WKFullscreenStackView;
+
+@interface WKFullScreenViewController (VideoFullscreenClientCallbacks)
+- (void)willEnterPictureInPicture;
+- (void)didEnterPictureInPicture;
+- (void)failedToEnterPictureInPicture;
+@end
 
 class WKFullScreenViewControllerPlaybackSessionModelClient : PlaybackSessionModelClient {
 public:
@@ -79,6 +87,44 @@ private:
     RefPtr<PlaybackSessionInterfaceAVKit> m_interface;
 };
 
+class WKFullScreenViewControllerVideoFullscreenModelClient : VideoFullscreenModelClient {
+public:
+    void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
+
+    void setInterface(VideoFullscreenInterfaceAVKit* interface)
+    {
+        if (m_interface == interface)
+            return;
+
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->removeClient(*this);
+        m_interface = interface;
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->addClient(*this);
+    }
+
+    VideoFullscreenInterfaceAVKit* interface() const { return m_interface.get(); }
+
+    void willEnterPictureInPicture() final
+    {
+        [m_parent willEnterPictureInPicture];
+    }
+
+    void didEnterPictureInPicture() final
+    {
+        [m_parent didEnterPictureInPicture];
+    }
+
+    void failedToEnterPictureInPicture() final
+    {
+        [m_parent failedToEnterPictureInPicture];
+    }
+
+private:
+    WKFullScreenViewController *m_parent { nullptr };
+    RefPtr<VideoFullscreenInterfaceAVKit> m_interface;
+};
+
 #pragma mark - _WKExtrinsicButton
 
 @interface _WKExtrinsicButton : UIButton
@@ -108,6 +154,7 @@ private:
 
 @implementation WKFullScreenViewController {
     RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
+    RetainPtr<UIView> _animatingView;
     RetainPtr<WKFullscreenStackView> _stackView;
     RetainPtr<_WKExtrinsicButton> _cancelButton;
     RetainPtr<_WKExtrinsicButton> _pipButton;
@@ -116,6 +163,7 @@ private:
     RetainPtr<NSLayoutConstraint> _topConstraint;
     WebKit::FullscreenTouchSecheuristic _secheuristic;
     WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
+    WKFullScreenViewControllerVideoFullscreenModelClient _videoFullscreenClient;
     CGFloat _nonZeroStatusBarHeight;
 }
 
@@ -141,6 +189,7 @@ private:
     self._webView = webView;
 
     _playbackClient.setParent(self);
+    _videoFullscreenClient.setParent(self);
 
     return self;
 }
@@ -151,6 +200,8 @@ private:
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     _playbackClient.setInterface(nullptr);
+    _videoFullscreenClient.setParent(nullptr);
+    _videoFullscreenClient.setInterface(nullptr);
 
     [_target release];
     [_location release];
@@ -205,9 +256,12 @@ private:
 - (void)videoControlsManagerDidChange
 {
     WebPageProxy* page = [self._webView _page];
-    PlaybackSessionManagerProxy* playbackSessionManager = page ? page->playbackSessionManager() : nullptr;
-    PlatformPlaybackSessionInterface* playbackSessionInterface = playbackSessionManager ? playbackSessionManager->controlsManagerInterface() : nullptr;
+    auto* videoFullscreenManager = page ? page->videoFullscreenManager() : nullptr;
+    auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
+    auto* playbackSessionInterface = videoFullscreenInterface ? &videoFullscreenInterface->playbackSessionInterface() : nullptr;
+
     _playbackClient.setInterface(playbackSessionInterface);
+    _videoFullscreenClient.setInterface(videoFullscreenInterface);
 
     PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
@@ -264,12 +318,44 @@ private:
         [self showUI];
 }
 
+- (void)willEnterPictureInPicture
+{
+    auto* interface = _videoFullscreenClient.interface();
+    if (!interface || !interface->pictureInPictureWasStartedWhenEnteringBackground())
+        return;
+
+    [UIView animateWithDuration:pipHideAnimationDuration animations:^{
+        _animatingView.get().alpha = 0;
+    }];
+}
+
+- (void)didEnterPictureInPicture
+{
+    [self _cancelAction:self];
+}
+
+- (void)failedToEnterPictureInPicture
+{
+    auto* interface = _videoFullscreenClient.interface();
+    if (!interface || !interface->pictureInPictureWasStartedWhenEnteringBackground())
+        return;
+
+    [UIView animateWithDuration:pipHideAnimationDuration animations:^{
+        _animatingView.get().alpha = 1;
+    }];
+}
+
 #pragma mark - UIViewController Overrides
 
 - (void)loadView
 {
     [self setView:adoptNS([[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]).get()];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.view.backgroundColor = [UIColor blackColor];
+
+    _animatingView = adoptNS([[UIView alloc] initWithFrame:self.view.bounds]);
+    _animatingView.get().autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:_animatingView.get()];
 
     _cancelButton = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
     [_cancelButton setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -298,7 +384,7 @@ private:
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
     [_stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
-    [[self view] addSubview:_stackView.get()];
+    [_animatingView addSubview:_stackView.get()];
 
     UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
     UILayoutGuide *margins = self.view.layoutMarginsGuide;
@@ -328,7 +414,7 @@ private:
 {
     self._webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self._webView.frame = self.view.bounds;
-    [self.view insertSubview:self._webView atIndex:0];
+    [_animatingView insertSubview:self._webView atIndex:0];
 
     if (auto* manager = self._manager)
         manager->setFullscreenAutoHideDuration(Seconds(showHideAnimationDuration));

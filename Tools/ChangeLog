@@ -1,3 +1,19 @@
+2018-07-18  Jer Noble  <jer.noble@apple.com>
+
+        PiP from Element Fullscreen should match AVKit's behavior
+        https://bugs.webkit.org/show_bug.cgi?id=187623
+        <rdar://problem/41212379>
+
+        Reviewed by Jon Lee.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm: Added.
+        (-[ExitFullscreenOnEnterPiPUIDelegate _webView:hasVideoInPictureInPictureDidChange:]):
+        (-[ExitFullscreenOnEnterPiPUIDelegate _webViewDidEnterFullscreen:]):
+        (-[ExitFullscreenOnEnterPiPUIDelegate _webViewDidExitFullscreen:]):
+        (TestWebKitAPI::TEST):
+
 2018-07-18  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add build step to run layout-test

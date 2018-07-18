@@ -1,5 +1,48 @@
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
+        PiP from Element Fullscreen should match AVKit's behavior
+        https://bugs.webkit.org/show_bug.cgi?id=187623
+
+        Reviewed by Jon Lee.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        (WebKit::PlaybackSessionManagerProxy::controlsManagerContextId const):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::willEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::failedToEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::willExitPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didExitPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::failedToExitPictureInPicture):
+        (WebKit::VideoFullscreenManagerProxy::controlsManagerInterface):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (WKFullScreenViewControllerVideoFullscreenModelClient::setParent):
+        (WKFullScreenViewControllerVideoFullscreenModelClient::setInterface):
+        (WKFullScreenViewControllerVideoFullscreenModelClient::interface const):
+        (-[WKFullScreenViewController initWithWebView:]):
+        (-[WKFullScreenViewController dealloc]):
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+        (-[WKFullScreenViewController ensurePiPAnimator]):
+        (-[WKFullScreenViewController willEnterPictureInPicture]):
+        (-[WKFullScreenViewController didEnterPictureInPicture]):
+        (-[WKFullScreenViewController failedToEnterPictureInPicture]):
+        (-[WKFullScreenViewController loadView]):
+        (-[WKFullScreenViewController viewWillAppear:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::videoControlsManagerDidChange):
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::setParent):
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::setInterface):
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::interface const):
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        (-[WKFullScreenWindowController dealloc]):
+        (-[WKFullScreenWindowController videoControlsManagerDidChange]):
+        (-[WKFullScreenWindowController willEnterPictureInPicture]):
+
+2018-07-18  Jer Noble  <jer.noble@apple.com>
+
         Dissociate the VideoFullscreenInterface from its VideoFullscreenModel before removing it from the manager
         https://bugs.webkit.org/show_bug.cgi?id=187775
         <rdar://problem/42343229>

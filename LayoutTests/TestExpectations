@@ -1446,10 +1446,8 @@ media/controls/picture-in-picture.html [ WontFix ]
 media/controls/pip-placeholder-without-video-controls.html [ WontFix ]
 media/element-containing-pip-video-going-into-fullscreen.html [ WontFix ]
 media/fullscreen-api-enabled-media-with-presentation-mode.html [ WontFix ]
-media/fullscreen-video-going-into-pip.html [ WontFix ]
 media/navigate-with-pip-should-not-crash.html [ WontFix ]
 media/pip-video-going-into-fullscreen.html [ WontFix ]
-media/video-contained-in-fullscreen-element-going-into-pip.html [ WontFix ]
 
 webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Skip ]
 
