@@ -854,6 +854,11 @@ bool InjectedBundle::shouldProcessWorkQueue() const
     WKBundlePagePostSynchronousMessageForTesting(page()->page(), messageName.get(), 0, &resultToPass);
     WKRetainPtr<WKBooleanRef> isEmpty(AdoptWK, static_cast<WKBooleanRef>(resultToPass));
 
+    // The IPC failed. This happens when swapping processes on navigation because the WebPageProxy unregisters itself
+    // as a MessageReceiver from the old WebProcessProxy and register itself with the new WebProcessProxy instead.
+    if (!isEmpty)
+        return false;
+
     return !WKBooleanGetValue(isEmpty.get());
 }
 

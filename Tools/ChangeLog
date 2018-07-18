@@ -1,3 +1,24 @@
+2018-07-18  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r233897): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebKit: WKBooleanGetValue + 9
+        https://bugs.webkit.org/show_bug.cgi?id=187784
+        <rdar://problem/42329230>
+
+        Reviewed by Brady Eidson.
+
+        When process swapping on navigation, WebPageProxy::reattachToWebProcess() unregisters the page as a MessageReceiver
+        from the old WebProcessProxy and registers itself as a MessageReceiver for the new WebProcessProxy instead. This
+        means that after this point, IPC sent by the previous WebProcess to its WebPageProxy will fail.
+
+        When we process swap, we also navigate the page in the old WebProcess to about:blank, when the navigation to
+        about:blank would complete, the WebKitTestRunner's injected bundle would try and send IPC to the WebPageProxy
+        which would fail and would cause WKBundlePagePostSynchronousMessageForTesting() to return a null result. WKTR
+        would crash when dereferencing this null result. This patch addresses this by dealing with the potential null
+        result.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::shouldProcessWorkQueue const):
+
 2018-07-18  Dean Jackson  <dino@apple.com>
 
         Provide an lldb type summary for WebCore::Color
