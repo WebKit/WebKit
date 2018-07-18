@@ -1,3 +1,12 @@
+2018-07-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html for Sierra after r233898.
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Added.
+
 2018-07-17  Truitt Savell  <tsavell@apple.com>
 
         Layout Test compositing/iframes/display-none-subframe.html is a flaky failure
