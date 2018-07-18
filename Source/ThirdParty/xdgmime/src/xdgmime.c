@@ -793,7 +793,8 @@ _xdg_mime_mime_type_subclass (const char *mime,
       strncmp (umime, "text/", 5) == 0)
     return 1;
 
-  if (strcmp (ubase, "application/octet-stream") == 0)
+  if (strcmp (ubase, "application/octet-stream") == 0 &&
+      strncmp (umime, "inode/", 6) != 0)
     return 1;
   
   parents = _xdg_mime_parent_list_lookup (parent_list, umime);

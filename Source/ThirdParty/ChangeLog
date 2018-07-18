@@ -1,3 +1,19 @@
+2018-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Update xdgmime
+        https://bugs.webkit.org/show_bug.cgi?id=187727
+
+        Reviewed by Carlos Garcia Campos.
+
+        * xdgmime/README:
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmime.c:
+        (_xdg_mime_mime_type_subclass):
+        * xdgmime/src/xdgmimecache.c:
+        (_xdg_mime_cache_new_from_file):
+        (_xdg_mime_cache_get_mime_type_for_file):
+        (_xdg_mime_cache_mime_type_subclass):
+
 2018-07-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Another memory issue in xdgmime

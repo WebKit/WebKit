@@ -4,21 +4,10 @@ https://cgit.freedesktop.org/xdg/xdgmime/
 xdgmime is the reference implementation of the Freedesktop.org MIME specification:
 https://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec/
 
-Current version is based on revision 9c5802b8da56187c5c6abaf70042d14b12d832a9
+Current version is based on revision e70017739ff7643bf2dbbfc8524562cb6ee450ed
 cloned from git://anongit.freedesktop.org/xdg/xdgmime.
 
 Changes for the WebKit project:
 
  - Add xdg_mime_get_simple_globs
  - s/^#include <config.h>/#include "cmakeconfig.h"/g
- - Fix invalid pointer arithmetic: https://bugs.webkit.org/show_bug.cgi?id=171026
-
-Changes included from GLib sources:
-
- - 2542b6f60492fadfb21f2c4a29976c3494c7e6c5 xdgmime: Handle EINTR in open()
- - 83d34f630939aa13539e03895bef87da738c4127 Don't forget to free resources in an early return
- - be7f40185fb2ce884112c1f8a4b196ea65350466 xdgmime: Fix an invalid read
-
-Changes included from Chromium:
-
- - c432cac0a0beb77c63081536fc9d53b40e642cbf small patch that fixes potential crash in xdg_mime_get_mime_type_for_file() - use of pointer after being freed.

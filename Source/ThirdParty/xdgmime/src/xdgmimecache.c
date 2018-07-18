@@ -121,9 +121,9 @@ _xdg_mime_cache_new_from_file (const char *file_name)
   int minor;
 
   /* Open the file and map it into memory */
-  do
+  do {
     fd = open (file_name, O_RDONLY|_O_BINARY, 0);
-  while (fd == -1 && errno == EINTR);
+  } while (fd == -1 && errno == EINTR);
 
   if (fd < 0)
     return NULL;
@@ -788,7 +788,7 @@ _xdg_mime_cache_get_mime_type_for_file (const char  *file_name,
 					    mime_types, n);
 
   if (!mime_type)
-    mime_type = _xdg_binary_or_text_fallback(data, bytes_read);
+    mime_type = _xdg_binary_or_text_fallback (data, bytes_read);
 
   free (data);
   fclose (file);
@@ -870,7 +870,8 @@ _xdg_mime_cache_mime_type_subclass (const char *mime,
       strncmp (umime, "text/", 5) == 0)
     return 1;
 
-  if (strcmp (ubase, "application/octet-stream") == 0)
+  if (strcmp (ubase, "application/octet-stream") == 0 &&
+      strncmp (umime, "inode/", 6) != 0)
     return 1;
  
   for (i = 0; _caches[i]; i++)
