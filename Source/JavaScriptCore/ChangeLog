@@ -1,5 +1,32 @@
 2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        JSON.stringify should emit non own properties if second array argument includes
+        https://bugs.webkit.org/show_bug.cgi?id=187724
+
+        Reviewed by Mark Lam.
+
+        According to the spec[1], JSON.stringify needs to retrieve properties by using [[Get]],
+        instead of [[GetOwnProperty]]. It means that we would look up a properties defined
+        in [[Prototype]] or upper objects in the prototype chain. While enumeration is done
+        by using EnumerableOwnPropertyNames typically, we can pass replacer array including
+        property names which does not reside in the own properties. Or we can modify the
+        own properties by deleting properties while JSON.stringify is calling a getter. So,
+        using [[Get]] instead of [[GetOwnProperty]] is user-visible.
+
+        This patch changes getOwnPropertySlot to getPropertySlot to align the behavior to the spec.
+        The performance of Kraken/json-stringify-tinderbox is neutral.
+
+        [1]: https://tc39.github.io/ecma262/#sec-serializejsonproperty
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::toJSONImpl):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::Holder::Holder):
+        (JSC::Stringifier::Holder::appendNextProperty):
+
+2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] JSON.stringify's replacer should use `isArray` instead of JSArray checks
         https://bugs.webkit.org/show_bug.cgi?id=187755
 

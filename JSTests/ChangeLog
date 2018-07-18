@@ -1,5 +1,19 @@
 2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        JSON.stringify should emit non own properties if second array argument includes
+        https://bugs.webkit.org/show_bug.cgi?id=187724
+
+        Reviewed by Mark Lam.
+
+        * stress/json-stringify-getter-call.js: Added.
+        (shouldBe):
+        (A.prototype.get cocoa):
+        (A.prototype.get cappuccino):
+        (A):
+        (shouldBe.JSON.stringify):
+
+2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] JSON.stringify's replacer should use `isArray` instead of JSArray checks
         https://bugs.webkit.org/show_bug.cgi?id=187755
 
