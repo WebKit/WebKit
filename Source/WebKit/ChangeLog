@@ -1,3 +1,20 @@
+2018-07-18  Chris Dumez  <cdumez@apple.com>
+
+        WebContent crash in WebProcess::ensureNetworkProcessConnection
+        https://bugs.webkit.org/show_bug.cgi?id=187791
+        <rdar://problem/41995022>
+
+        Reviewed by Ryosuke Niwa.
+
+        If the WebProcessProxy::GetNetworkProcessConnection synchronous IPC between the WebProcess
+        and the UIProcess succeeded but we received an invalid connection identifier, then try
+        once more. This may indicate the network process has crashed, in which case it will be
+        relaunched.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getNetworkProcessConnection):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2018-07-18  Per Arne Vollan  <pvollan@apple.com>
 
         The WebContent process does not suspend when MiniBrowser is minimized.
