@@ -315,6 +315,12 @@ typedef enum {
 @property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
 @end
 
+typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
+    UIScrollViewIndicatorInsetAdjustmentAutomatic,
+    UIScrollViewIndicatorInsetAdjustmentAlways,
+    UIScrollViewIndicatorInsetAdjustmentNever
+};
+
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
@@ -326,6 +332,7 @@ typedef enum {
 @property (nonatomic) CGFloat verticalScrollDecelerationFactor;
 @property (nonatomic, readonly) BOOL _isInterruptingDeceleration;
 @property (nonatomic, getter=_contentScrollInset, setter=_setContentScrollInset:) UIEdgeInsets contentScrollInset;
+@property (nonatomic, getter=_indicatorInsetAdjustmentBehavior, setter=_setIndicatorInsetAdjustmentBehavior:) UIScrollViewIndicatorInsetAdjustmentBehavior indicatorInsetAdjustmentBehavior;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
 #endif
@@ -976,10 +983,18 @@ typedef NSInteger UICompositingMode;
 - (UIRectEdge)_edgesApplyingSafeAreaInsetsToContentInset;
 @end
 
+@interface UIScrollView (IPI)
+- (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;
+- (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
+- (BOOL)_isScrollingToTop;
+- (CGPoint)_animatedTargetOffset;
+@end
+
 @interface UIPeripheralHost (IPI)
 - (void)_beginIgnoringReloadInputViews;
 - (int)_endIgnoringReloadInputViews;
 - (void)forceReloadInputViews;
+- (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
 @end
 
 #if __has_include(<UIKit/UITextInputMultiDocument.h>)

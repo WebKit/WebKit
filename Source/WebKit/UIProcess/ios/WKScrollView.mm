@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS)
 
+#import "UIKitSPI.h"
+#import "VersionChecks.h"
 #import "WKWebViewInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
@@ -37,10 +39,6 @@
 #endif
 
 using namespace WebKit;
-
-@interface UIScrollView (UIScrollViewInternalHack)
-- (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;
-@end
 
 @interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
 
@@ -133,6 +131,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 #endif
+    CGFloat _keyboardBottomInsetAdjustment;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -144,6 +143,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
     self.alwaysBounceVertical = YES;
     self.directionalLockEnabled = YES;
+    [self _setIndicatorInsetAdjustmentBehavior:UIScrollViewIndicatorInsetAdjustmentAlways];
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
@@ -328,6 +328,32 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
     if (!CGSizeEqualToSize(rubberbandAmount, CGSizeZero))
         [self _restoreContentOffsetWithRubberbandAmount:rubberbandAmount];
+}
+
+- (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment
+{
+    [super _adjustForAutomaticKeyboardInfo:info animated:animated lastAdjustment:lastAdjustment];
+
+    _keyboardBottomInsetAdjustment = [[UIPeripheralHost sharedInstance] getVerticalOverlapForView:self usingKeyboardInfo:info];
+}
+
+- (UIEdgeInsets)_systemContentInset
+{
+    UIEdgeInsets systemContentInset = [super _systemContentInset];
+
+    // Internal clients who use setObscuredInsets include the keyboard height in their
+    // manually overriden insets, so we don't need to re-add it here.
+    if (_internalDelegate._haveSetObscuredInsets)
+        return systemContentInset;
+
+    // Match the inverse of the condition that UIScrollView uses to decide whether
+    // to include keyboard insets in the systemContentInset. We always want
+    // keyboard insets applied, even when web content has chosen to disable automatic
+    // safe area inset adjustment.
+    if (linkedOnOrAfter(SDKVersion::FirstWhereUIScrollViewDoesNotApplyKeyboardInsetsUnconditionally) && self.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever)
+        systemContentInset.bottom += _keyboardBottomInsetAdjustment;
+
+    return systemContentInset;
 }
 
 #if PLATFORM(WATCHOS)

@@ -1,3 +1,46 @@
+2018-07-17  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (iOS 12): Can't scroll to the bottom of the page in WKWebView while keyboard is up on pages with viewport-fit=cover
+        https://bugs.webkit.org/show_bug.cgi?id=187743
+        <rdar://problem/41651546>
+
+        Reviewed by Simon Fraser.
+
+        UIScrollView's _systemContentInset no longer includes keyboard insets
+        in apps linked on iOS 12+ when contentInsetAdjustmentBehavior is None.
+
+        We use contentInsetAdjustmentBehavior to control adjustment of other
+        sources of insets, but expect the keyboard inset to always be applied.
+
+        For now, barring a more comprehensive way to separate insets, re-add
+        the keyboard inset in cases where UIKit does not.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Move some IPI to the SPI header.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _haveSetObscuredInsets]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Make it possible for WKScrollView to check whether the client is overriding insets.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        Add a linkedOnOrAfter() version for this new UIScrollView behavior.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]):
+        Force WKScrollView's scroll indicator to always respect insets. We always
+        want the scroll bars in a sensible place, even if the page sets
+        viewport-fit=cover.
+
+        (-[WKScrollView _adjustForAutomaticKeyboardInfo:animated:lastAdjustment:]):
+        Store the bottom inset due to the keyboard.
+
+        (-[WKScrollView _systemContentInset]):
+        Add the bottom inset due to the keyboard to the systemContentInset 
+        in all cases where UIKit does not. Also avoid adding it if the client takes
+        full control of the insets, because the only client that does (MobileSafari)
+        includes insets-due-to-keyboard in their custom insets.
+
 2018-07-17  Chris Dumez  <cdumez@apple.com>
 
         RELEASE_ASSERT() under IPC::Connection::sendSync() from PluginProxy::supportsSnapshotting()

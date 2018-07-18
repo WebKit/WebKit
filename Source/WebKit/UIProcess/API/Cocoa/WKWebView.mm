@@ -154,16 +154,6 @@
 
 #define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(_page && _page->isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
 
-@interface UIScrollView (UIScrollViewInternal)
-- (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
-- (BOOL)_isScrollingToTop;
-- (CGPoint)_animatedTargetOffset;
-@end
-
-@interface UIPeripheralHost(UIKitInternal)
-- (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
-@end
-
 @interface UIView (UIViewInternal)
 - (UIViewController *)_viewControllerForAncestor;
 @end
@@ -3174,6 +3164,11 @@ static int32_t activeOrientation(WKWebView *webView)
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
     if ([uiDelegate respondsToSelector:@selector(_webView:didChangeSafeAreaShouldAffectObscuredInsets:)])
         [uiDelegate _webView:self didChangeSafeAreaShouldAffectObscuredInsets:avoidsUnsafeArea];
+}
+
+- (BOOL)_haveSetObscuredInsets
+{
+    return _haveSetObscuredInsets;
 }
 
 #endif // PLATFORM(IOS)
