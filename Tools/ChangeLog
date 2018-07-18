@@ -1,5 +1,16 @@
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
+        -_beginAnimatedResizeWithUpdates: can leave view in bad state if called during an existing animation
+        https://bugs.webkit.org/show_bug.cgi?id=187739
+        <rdar://problem/42304518>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+        (TEST):
+
+2018-07-18  Jer Noble  <jer.noble@apple.com>
+
         PiP from Element Fullscreen should match AVKit's behavior
         https://bugs.webkit.org/show_bug.cgi?id=187623
         <rdar://problem/41212379>

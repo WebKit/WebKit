@@ -347,6 +347,50 @@ TEST(WebKit, ResizeWithContentHiddenCompletes)
     EXPECT_FALSE(contentView.hidden);
 }
 
+TEST(WebKit, ResizeWithContentHiddenWithSubsequentNoOpResizeCompletes)
+{
+    auto webView = createAnimatedResizeWebView();
+    [webView setUIDelegate:webView.get()];
+
+    [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _resizeWhileHidingContentWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, 100, 200)];
+    }];
+
+    [webView _beginAnimatedResizeWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, 100, 200)];
+    }];
+
+    __block bool didReadLayoutSize = false;
+    [webView _doAfterNextPresentationUpdate:^{
+        [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
+            CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
+            CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
+
+            EXPECT_EQ(innerWidth, 100);
+            EXPECT_EQ(innerHeight, 200);
+
+            didReadLayoutSize = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&didReadLayoutSize);
+
+    UIView *scrollView = immediateSubviewOfClass(webView.get(), NSClassFromString(@"WKScrollView"));
+    UIView *contentView = immediateSubviewOfClass(scrollView, NSClassFromString(@"WKContentView"));
+
+    // Make sure that we've put the view hierarchy back together after the resize completed.
+    EXPECT_NOT_NULL(scrollView);
+    EXPECT_NOT_NULL(contentView);
+    EXPECT_FALSE(contentView.hidden);
+}
 
 TEST(WebKit, AnimatedResizeBlocksDoAfterNextPresentationUpdate)
 {
