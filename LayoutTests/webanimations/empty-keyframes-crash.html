@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableWebAnimationsCSSIntegration=true ] -->
+<html>
+<head>
+<style>
+#hr1 {
+    transition: 1s;
+    background: url(data:image/gif;base64,);
+}
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function crash() {
+    var hr1 = document.getElementById("hr1");
+    var hr2 = document.getElementById("hr2");
+    document.all[2].appendChild(hr2);
+    var animation = document.createElement("hr3").animate({  }, 1);
+    var hr1_animation_effect = hr1.getAnimations()[0].effect;
+    animation.effect = hr1_animation_effect;
+}
+
+</script>
+</head>
+<body onload="crash()">
+<hr id="hr1"></hr>
+<hr id="hr2"></hr>
+</body>
+</html>

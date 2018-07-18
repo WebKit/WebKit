@@ -1162,7 +1162,8 @@ void KeyframeEffectReadOnly::setAnimatedPropertiesInStyle(RenderStyle& targetSty
         if (startKeyframeIndex) {
             if (auto iterationDuration = timing()->iterationDuration()) {
                 auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
-                transformedDistance = timingFunctionForKeyframeAtIndex(startKeyframeIndex.value())->transformTime(intervalDistance, rangeDuration);
+                if (auto* timingFunction = timingFunctionForKeyframeAtIndex(startKeyframeIndex.value()))
+                    transformedDistance = timingFunction->transformTime(intervalDistance, rangeDuration);
             }
         }
 
@@ -1181,19 +1182,18 @@ TimingFunction* KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex(size_t 
         return m_parsedKeyframes[index].timingFunction.get();
 
     auto effectAnimation = animation();
+    if (is<DeclarativeAnimation>(effectAnimation)) {
+        // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself.
+        if (is<CSSAnimation>(effectAnimation)) {
+            if (auto* timingFunction = m_blendingKeyframes[index].timingFunction())
+                return timingFunction;
+        }
 
-    // If we didn't have parsed keyframes, we must be dealing with a declarative animation.
-    ASSERT(is<DeclarativeAnimation>(effectAnimation));
-
-    // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself,
-    // or failing that on the backing Animation object which defines the default for all keyframes.
-    if (is<CSSAnimation>(effectAnimation)) {
-        if (auto* timingFunction = m_blendingKeyframes[index].timingFunction())
-            return timingFunction;
+        // Failing that, or for a CSS Transition, the timing function is inherited from the backing Animation object.
+        return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation().timingFunction();
     }
 
-    // Failing that, or for a CSS Transition, the timing function is inherited from the backing Animation object. 
-    return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation().timingFunction();
+    return nullptr;
 }
 
 void KeyframeEffectReadOnly::updateAcceleratedAnimationState()
