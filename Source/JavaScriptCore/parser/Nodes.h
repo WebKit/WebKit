@@ -55,7 +55,7 @@ namespace JSC {
 
     typedef SmallPtrSet<UniquedStringImpl*> UniquedStringImplPtrSet;
 
-    enum Operator {
+    enum Operator : uint8_t {
         OpEqual,
         OpPlusEq,
         OpMinusEq,
@@ -73,12 +73,12 @@ namespace JSC {
         OpURShift
     };
     
-    enum LogicalOperator {
+    enum LogicalOperator : uint8_t {
         OpLogicalAnd,
         OpLogicalOr
     };
 
-    enum FallThroughMode {
+    enum FallThroughMode : uint8_t {
         FallThroughMeansTrue = 0,
         FallThroughMeansFalse = 1
     };
@@ -89,12 +89,12 @@ namespace JSC {
     }
 
     struct SwitchInfo {
-        enum SwitchType { SwitchNone, SwitchImmediate, SwitchCharacter, SwitchString };
+        enum SwitchType : uint8_t { SwitchNone, SwitchImmediate, SwitchCharacter, SwitchString };
         uint32_t bytecodeOffset;
         SwitchType switchType;
     };
 
-    enum class AssignmentContext { 
+    enum class AssignmentContext : uint8_t { 
         DeclarationStatement, 
         ConstDeclarationStatement, 
         AssignmentExpression 
@@ -161,7 +161,7 @@ namespace JSC {
 
     protected:
         JSTextPosition m_position;
-        int m_endOffset;
+        int m_endOffset { -1 };
         bool m_needsDebugHook { false };
     };
 
@@ -245,8 +245,8 @@ namespace JSC {
         virtual bool isForOfNode() const { return false; }
 
     protected:
-        StatementNode* m_next;
-        int m_lastLine;
+        int m_lastLine { -1 };
+        StatementNode* m_next { nullptr };
     };
 
     class VariableEnvironmentNode : public ParserArenaDeletable {
@@ -280,7 +280,7 @@ namespace JSC {
         void emitBytecodeInConditionContext(BytecodeGenerator&, Label& trueTarget, Label& falseTarget, FallThroughMode) override;
     };
 
-    class NullNode : public ConstantNode {
+    class NullNode final : public ConstantNode {
     public:
         NullNode(const JSTokenLocation&);
 
@@ -289,7 +289,7 @@ namespace JSC {
         JSValue jsValue(BytecodeGenerator&) const override { return jsNull(); }
     };
 
-    class BooleanNode : public ConstantNode {
+    class BooleanNode final : public ConstantNode {
     public:
         BooleanNode(const JSTokenLocation&, bool value);
         bool value() { return m_value; }
@@ -324,13 +324,13 @@ namespace JSC {
     };
 
     // An integer node represent a number represented as an integer (e.g. 42 instead of 42., 42.0, 42e0)
-    class IntegerNode : public DoubleNode {
+    class IntegerNode final : public DoubleNode {
     public:
         IntegerNode(const JSTokenLocation&, double value);
         bool isIntegerNode() const final { return true; }
     };
 
-    class StringNode : public ConstantNode {
+    class StringNode final : public ConstantNode {
     public:
         StringNode(const JSTokenLocation&, const Identifier&);
         const Identifier& value() { return m_value; }
@@ -513,7 +513,7 @@ namespace JSC {
         uint16_t m_subexpressionLineStartOffset;
     };
 
-    class TemplateExpressionListNode : public ParserArenaFreeable {
+    class TemplateExpressionListNode final : public ParserArenaFreeable {
     public:
         TemplateExpressionListNode(ExpressionNode*);
         TemplateExpressionListNode(TemplateExpressionListNode*, ExpressionNode*);
@@ -526,7 +526,7 @@ namespace JSC {
         ExpressionNode* m_node { nullptr };
     };
 
-    class TemplateStringNode : public ExpressionNode {
+    class TemplateStringNode final : public ExpressionNode {
     public:
         TemplateStringNode(const JSTokenLocation&, const Identifier* cooked, const Identifier* raw);
 
@@ -540,7 +540,7 @@ namespace JSC {
         const Identifier* m_raw;
     };
 
-    class TemplateStringListNode : public ParserArenaFreeable {
+    class TemplateStringListNode final : public ParserArenaFreeable {
     public:
         TemplateStringListNode(TemplateStringNode*);
         TemplateStringListNode(TemplateStringListNode*, TemplateStringNode*);
@@ -553,7 +553,7 @@ namespace JSC {
         TemplateStringNode* m_node { nullptr };
     };
 
-    class TemplateLiteralNode : public ExpressionNode {
+    class TemplateLiteralNode final : public ExpressionNode {
     public:
         TemplateLiteralNode(const JSTokenLocation&, TemplateStringListNode*);
         TemplateLiteralNode(const JSTokenLocation&, TemplateStringListNode*, TemplateExpressionListNode*);
@@ -568,7 +568,7 @@ namespace JSC {
         TemplateExpressionListNode* m_templateExpressions;
     };
 
-    class TaggedTemplateNode : public ExpressionNode, public ThrowableExpressionData {
+    class TaggedTemplateNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         TaggedTemplateNode(const JSTokenLocation&, ExpressionNode*, TemplateLiteralNode*);
 
@@ -581,7 +581,7 @@ namespace JSC {
         TemplateLiteralNode* m_templateLiteral;
     };
 
-    class RegExpNode : public ExpressionNode, public ThrowableExpressionData {
+    class RegExpNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         RegExpNode(const JSTokenLocation&, const Identifier& pattern, const Identifier& flags);
 
@@ -592,7 +592,7 @@ namespace JSC {
         const Identifier& m_flags;
     };
 
-    class ThisNode : public ExpressionNode {
+    class ThisNode final : public ExpressionNode {
     public:
         ThisNode(const JSTokenLocation&);
 
@@ -609,7 +609,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
-    class ImportNode : public ExpressionNode, public ThrowableExpressionData {
+    class ImportNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         ImportNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -648,7 +648,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class ResolveNode : public ExpressionNode {
+    class ResolveNode final : public ExpressionNode {
     public:
         ResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& start);
 
@@ -665,7 +665,7 @@ namespace JSC {
         JSTextPosition m_start;
     };
 
-    class ElementNode : public ParserArenaFreeable {
+    class ElementNode final : public ParserArenaFreeable {
     public:
         ElementNode(int elision, ExpressionNode*);
         ElementNode(ElementNode*, int elision, ExpressionNode*);
@@ -675,12 +675,12 @@ namespace JSC {
         ElementNode* next() { return m_next; }
 
     private:
-        ElementNode* m_next;
-        int m_elision;
+        ElementNode* m_next { nullptr };
         ExpressionNode* m_node;
+        int m_elision;
     };
 
-    class ArrayNode : public ExpressionNode {
+    class ArrayNode final : public ExpressionNode {
     public:
         ArrayNode(const JSTokenLocation&, int elision);
         ArrayNode(const JSTokenLocation&, ElementNode*);
@@ -701,11 +701,11 @@ namespace JSC {
         bool m_optional;
     };
 
-    enum class ClassElementTag { No, Instance, Static, LastTag };
-    class PropertyNode : public ParserArenaFreeable {
+    enum class ClassElementTag : uint8_t { No, Instance, Static, LastTag };
+    class PropertyNode final : public ParserArenaFreeable {
     public:
-        enum Type { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32 };
-        enum PutType { Unknown, KnownDirect };
+        enum Type : uint8_t { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32 };
+        enum PutType : uint8_t { Unknown, KnownDirect };
 
         PropertyNode(const Identifier&, ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
         PropertyNode(ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
@@ -736,7 +736,7 @@ namespace JSC {
         unsigned m_isOverriddenByDuplicate: 1;
     };
 
-    class PropertyListNode : public ExpressionNode {
+    class PropertyListNode final : public ExpressionNode {
     public:
         PropertyListNode(const JSTokenLocation&, PropertyNode*);
         PropertyListNode(const JSTokenLocation&, PropertyNode*, PropertyListNode*);
@@ -753,10 +753,10 @@ namespace JSC {
         void emitPutConstantProperty(BytecodeGenerator&, RegisterID*, PropertyNode&);
 
         PropertyNode* m_node;
-        PropertyListNode* m_next;
+        PropertyListNode* m_next { nullptr };
     };
 
-    class ObjectLiteralNode : public ExpressionNode {
+    class ObjectLiteralNode final : public ExpressionNode {
     public:
         ObjectLiteralNode(const JSTokenLocation&);
         ObjectLiteralNode(const JSTokenLocation&, PropertyListNode*);
@@ -768,7 +768,7 @@ namespace JSC {
         PropertyListNode* m_list;
     };
     
-    class BracketAccessorNode : public ExpressionNode, public ThrowableExpressionData {
+    class BracketAccessorNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         BracketAccessorNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments);
 
@@ -788,7 +788,7 @@ namespace JSC {
         bool m_subscriptHasAssignments;
     };
 
-    class DotAccessorNode : public ExpressionNode, public ThrowableExpressionData {
+    class DotAccessorNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         DotAccessorNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&);
 
@@ -805,7 +805,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class SpreadExpressionNode : public ExpressionNode, public ThrowableExpressionData {
+    class SpreadExpressionNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         SpreadExpressionNode(const JSTokenLocation&, ExpressionNode*);
         
@@ -818,7 +818,7 @@ namespace JSC {
         ExpressionNode* m_expression;
     };
     
-    class ObjectSpreadExpressionNode : public ExpressionNode, public ThrowableExpressionData {
+    class ObjectSpreadExpressionNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         ObjectSpreadExpressionNode(const JSTokenLocation&, ExpressionNode*);
         
@@ -830,19 +830,19 @@ namespace JSC {
         ExpressionNode* m_expression;
     };
 
-    class ArgumentListNode : public ExpressionNode {
+    class ArgumentListNode final : public ExpressionNode {
     public:
         ArgumentListNode(const JSTokenLocation&, ExpressionNode*);
         ArgumentListNode(const JSTokenLocation&, ArgumentListNode*, ExpressionNode*);
 
-        ArgumentListNode* m_next;
+        ArgumentListNode* m_next { nullptr };
         ExpressionNode* m_expr;
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
-    class ArgumentsNode : public ParserArenaFreeable {
+    class ArgumentsNode final : public ParserArenaFreeable {
     public:
         ArgumentsNode();
         ArgumentsNode(ArgumentListNode*);
@@ -850,7 +850,7 @@ namespace JSC {
         ArgumentListNode* m_listNode;
     };
 
-    class NewExprNode : public ExpressionNode, public ThrowableExpressionData {
+    class NewExprNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         NewExprNode(const JSTokenLocation&, ExpressionNode*);
         NewExprNode(const JSTokenLocation&, ExpressionNode*, ArgumentsNode*);
@@ -862,7 +862,7 @@ namespace JSC {
         ArgumentsNode* m_args;
     };
 
-    class EvalFunctionCallNode : public ExpressionNode, public ThrowableExpressionData {
+    class EvalFunctionCallNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         EvalFunctionCallNode(const JSTokenLocation&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -872,7 +872,7 @@ namespace JSC {
         ArgumentsNode* m_args;
     };
 
-    class FunctionCallValueNode : public ExpressionNode, public ThrowableExpressionData {
+    class FunctionCallValueNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         FunctionCallValueNode(const JSTokenLocation&, ExpressionNode*, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -883,7 +883,7 @@ namespace JSC {
         ArgumentsNode* m_args;
     };
 
-    class FunctionCallResolveNode : public ExpressionNode, public ThrowableExpressionData {
+    class FunctionCallResolveNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         FunctionCallResolveNode(const JSTokenLocation&, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -894,7 +894,7 @@ namespace JSC {
         ArgumentsNode* m_args;
     };
     
-    class FunctionCallBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
+    class FunctionCallBracketNode final : public ExpressionNode, public ThrowableSubExpressionData {
     public:
         FunctionCallBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -920,9 +920,9 @@ namespace JSC {
         ArgumentsNode* m_args;
     };
 
-    class BytecodeIntrinsicNode : public ExpressionNode, public ThrowableExpressionData {
+    class BytecodeIntrinsicNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
-        enum class Type {
+        enum class Type : uint8_t {
             Constant,
             Function
         };
@@ -945,13 +945,13 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
-        Type m_type;
         EmitterType m_emitter;
         const Identifier& m_ident;
         ArgumentsNode* m_args;
+        Type m_type;
     };
 
-    class CallFunctionCallDotNode : public FunctionCallDotNode {
+    class CallFunctionCallDotNode final : public FunctionCallDotNode {
     public:
         CallFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t distanceToInnermostCallOrApply);
 
@@ -960,7 +960,7 @@ namespace JSC {
         size_t m_distanceToInnermostCallOrApply;
     };
     
-    class ApplyFunctionCallDotNode : public FunctionCallDotNode {
+    class ApplyFunctionCallDotNode final : public FunctionCallDotNode {
     public:
         ApplyFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t distanceToInnermostCallOrApply);
 
@@ -969,7 +969,7 @@ namespace JSC {
         size_t m_distanceToInnermostCallOrApply;
     };
 
-    class DeleteResolveNode : public ExpressionNode, public ThrowableExpressionData {
+    class DeleteResolveNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         DeleteResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -979,7 +979,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class DeleteBracketNode : public ExpressionNode, public ThrowableExpressionData {
+    class DeleteBracketNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         DeleteBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -990,7 +990,7 @@ namespace JSC {
         ExpressionNode* m_subscript;
     };
 
-    class DeleteDotNode : public ExpressionNode, public ThrowableExpressionData {
+    class DeleteDotNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         DeleteDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1001,7 +1001,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class DeleteValueNode : public ExpressionNode {
+    class DeleteValueNode final : public ExpressionNode {
     public:
         DeleteValueNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -1011,7 +1011,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class VoidNode : public ExpressionNode {
+    class VoidNode final : public ExpressionNode {
     public:
         VoidNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -1021,7 +1021,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class TypeOfResolveNode : public ExpressionNode {
+    class TypeOfResolveNode final : public ExpressionNode {
     public:
         TypeOfResolveNode(const JSTokenLocation&, const Identifier&);
 
@@ -1033,7 +1033,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class TypeOfValueNode : public ExpressionNode {
+    class TypeOfValueNode final : public ExpressionNode {
     public:
         TypeOfValueNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -1057,7 +1057,7 @@ namespace JSC {
         Operator m_operator;
     };
 
-    class PostfixNode : public PrefixNode {
+    class PostfixNode final : public PrefixNode {
     public:
         PostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1084,7 +1084,7 @@ namespace JSC {
         OpcodeID m_opcodeID;
     };
 
-    class UnaryPlusNode : public UnaryOpNode {
+    class UnaryPlusNode final : public UnaryOpNode {
     public:
         UnaryPlusNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -1094,12 +1094,12 @@ namespace JSC {
         ExpressionNode* stripUnaryPlus() override { return expr(); }
     };
 
-    class NegateNode : public UnaryOpNode {
+    class NegateNode final : public UnaryOpNode {
     public:
         NegateNode(const JSTokenLocation&, ExpressionNode*);
     };
 
-    class BitwiseNotNode : public ExpressionNode {
+    class BitwiseNotNode final : public ExpressionNode {
     public:
         BitwiseNotNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -1113,7 +1113,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
  
-    class LogicalNotNode : public UnaryOpNode {
+    class LogicalNotNode final : public UnaryOpNode {
     public:
         LogicalNotNode(const JSTokenLocation&, ExpressionNode*);
     private:
@@ -1134,7 +1134,7 @@ namespace JSC {
         bool isBinaryOpNode() const override { return true; }
 
     private:
-        enum class UInt32Result { UInt32, Constant, };
+        enum class UInt32Result : uint8_t { UInt32, Constant, };
 
         void tryFoldToBranch(BytecodeGenerator&, TriState& branchCondition, ExpressionNode*& branchExpression);
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -1143,80 +1143,80 @@ namespace JSC {
         OpcodeID opcodeID() const { return m_opcodeID; }
 
     protected:
-        ExpressionNode* m_expr1;
-        ExpressionNode* m_expr2;
+        bool m_rightHasAssignments;
+        bool m_shouldToUnsignedResult { true };
     private:
         OpcodeID m_opcodeID;
     protected:
-        bool m_rightHasAssignments;
-        bool m_shouldToUnsignedResult { true };
+        ExpressionNode* m_expr1;
+        ExpressionNode* m_expr2;
     };
 
-    class PowNode : public BinaryOpNode {
+    class PowNode final : public BinaryOpNode {
     public:
         PowNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class MultNode : public BinaryOpNode {
+    class MultNode final : public BinaryOpNode {
     public:
         MultNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class DivNode : public BinaryOpNode {
+    class DivNode final : public BinaryOpNode {
     public:
         DivNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class ModNode : public BinaryOpNode {
+    class ModNode final : public BinaryOpNode {
     public:
         ModNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class AddNode : public BinaryOpNode {
+    class AddNode final : public BinaryOpNode {
     public:
         AddNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
         bool isAdd() const override { return true; }
     };
 
-    class SubNode : public BinaryOpNode {
+    class SubNode final : public BinaryOpNode {
     public:
         SubNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
         bool isSubtract() const override { return true; }
     };
 
-    class LeftShiftNode : public BinaryOpNode {
+    class LeftShiftNode final : public BinaryOpNode {
     public:
         LeftShiftNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class RightShiftNode : public BinaryOpNode {
+    class RightShiftNode final : public BinaryOpNode {
     public:
         RightShiftNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class UnsignedRightShiftNode : public BinaryOpNode {
+    class UnsignedRightShiftNode final : public BinaryOpNode {
     public:
         UnsignedRightShiftNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class LessNode : public BinaryOpNode {
+    class LessNode final : public BinaryOpNode {
     public:
         LessNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class GreaterNode : public BinaryOpNode {
+    class GreaterNode final : public BinaryOpNode {
     public:
         GreaterNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class LessEqNode : public BinaryOpNode {
+    class LessEqNode final : public BinaryOpNode {
     public:
         LessEqNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class GreaterEqNode : public BinaryOpNode {
+    class GreaterEqNode final : public BinaryOpNode {
     public:
         GreaterEqNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
@@ -1230,7 +1230,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
     
-    class InstanceOfNode : public ThrowableBinaryOpNode {
+    class InstanceOfNode final : public ThrowableBinaryOpNode {
     public:
         InstanceOfNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
@@ -1238,7 +1238,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
-    class InNode : public ThrowableBinaryOpNode {
+    class InNode final : public ThrowableBinaryOpNode {
     public:
         InNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
@@ -1246,7 +1246,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
-    class EqualNode : public BinaryOpNode {
+    class EqualNode final : public BinaryOpNode {
     public:
         EqualNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
@@ -1254,12 +1254,12 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
-    class NotEqualNode : public BinaryOpNode {
+    class NotEqualNode final : public BinaryOpNode {
     public:
         NotEqualNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class StrictEqualNode : public BinaryOpNode {
+    class StrictEqualNode final : public BinaryOpNode {
     public:
         StrictEqualNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
 
@@ -1267,28 +1267,28 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
-    class NotStrictEqualNode : public BinaryOpNode {
+    class NotStrictEqualNode final : public BinaryOpNode {
     public:
         NotStrictEqualNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class BitAndNode : public BinaryOpNode {
+    class BitAndNode final : public BinaryOpNode {
     public:
         BitAndNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class BitOrNode : public BinaryOpNode {
+    class BitOrNode final : public BinaryOpNode {
     public:
         BitOrNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class BitXOrNode : public BinaryOpNode {
+    class BitXOrNode final : public BinaryOpNode {
     public:
         BitXOrNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
     // m_expr1 && m_expr2, m_expr1 || m_expr2
-    class LogicalOpNode : public ExpressionNode {
+    class LogicalOpNode final : public ExpressionNode {
     public:
         LogicalOpNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator);
 
@@ -1296,13 +1296,13 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
         void emitBytecodeInConditionContext(BytecodeGenerator&, Label& trueTarget, Label& falseTarget, FallThroughMode) override;
 
+        LogicalOperator m_operator;
         ExpressionNode* m_expr1;
         ExpressionNode* m_expr2;
-        LogicalOperator m_operator;
     };
 
     // The ternary operator, "m_logical ? m_expr1 : m_expr2"
-    class ConditionalNode : public ExpressionNode {
+    class ConditionalNode final : public ExpressionNode {
     public:
         ConditionalNode(const JSTokenLocation&, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2);
 
@@ -1314,7 +1314,7 @@ namespace JSC {
         ExpressionNode* m_expr2;
     };
 
-    class ReadModifyResolveNode : public ExpressionNode, public ThrowableExpressionData {
+    class ReadModifyResolveNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         ReadModifyResolveNode(const JSTokenLocation&, const Identifier&, Operator, ExpressionNode*  right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1327,7 +1327,7 @@ namespace JSC {
         bool m_rightHasAssignments;
     };
 
-    class AssignResolveNode : public ExpressionNode, public ThrowableExpressionData {
+    class AssignResolveNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         AssignResolveNode(const JSTokenLocation&, const Identifier&, ExpressionNode* right, AssignmentContext);
         bool isAssignResolveNode() const override { return true; }
@@ -1341,7 +1341,7 @@ namespace JSC {
         AssignmentContext m_assignmentContext;
     };
 
-    class ReadModifyBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
+    class ReadModifyBracketNode final : public ExpressionNode, public ThrowableSubExpressionData {
     public:
         ReadModifyBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, Operator, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1356,7 +1356,7 @@ namespace JSC {
         bool m_rightHasAssignments : 1;
     };
 
-    class AssignBracketNode : public ExpressionNode, public ThrowableExpressionData {
+    class AssignBracketNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         AssignBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1370,7 +1370,7 @@ namespace JSC {
         bool m_rightHasAssignments : 1;
     };
 
-    class AssignDotNode : public ExpressionNode, public ThrowableExpressionData {
+    class AssignDotNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         AssignDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1383,7 +1383,7 @@ namespace JSC {
         bool m_rightHasAssignments;
     };
 
-    class ReadModifyDotNode : public ExpressionNode, public ThrowableSubExpressionData {
+    class ReadModifyDotNode final : public ExpressionNode, public ThrowableSubExpressionData {
     public:
         ReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1397,7 +1397,7 @@ namespace JSC {
         bool m_rightHasAssignments : 1;
     };
 
-    class AssignErrorNode : public ExpressionNode, public ThrowableExpressionData {
+    class AssignErrorNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         AssignErrorNode(const JSTokenLocation&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
@@ -1417,7 +1417,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         ExpressionNode* m_expr;
-        CommaNode* m_next;
+        CommaNode* m_next { nullptr };
     };
     
     class SourceElements final : public ParserArenaFreeable {
@@ -1436,11 +1436,11 @@ namespace JSC {
         void analyzeModule(ModuleAnalyzer&);
 
     private:
-        StatementNode* m_head;
-        StatementNode* m_tail;
+        StatementNode* m_head { nullptr };
+        StatementNode* m_tail { nullptr };
     };
 
-    class BlockNode : public StatementNode, public VariableEnvironmentNode {
+    class BlockNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(BlockNode);
     public:
         BlockNode(const JSTokenLocation&, SourceElements*, VariableEnvironment&, FunctionStack&&);
@@ -1459,7 +1459,7 @@ namespace JSC {
         SourceElements* m_statements;
     };
 
-    class EmptyStatementNode : public StatementNode {
+    class EmptyStatementNode final : public StatementNode {
     public:
         EmptyStatementNode(const JSTokenLocation&);
 
@@ -1470,7 +1470,7 @@ namespace JSC {
         bool isEmptyStatement() const override { return true; }
     };
     
-    class DebuggerStatementNode : public StatementNode {
+    class DebuggerStatementNode final : public StatementNode {
     public:
         DebuggerStatementNode(const JSTokenLocation&);
 
@@ -1481,7 +1481,7 @@ namespace JSC {
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
-    class ExprStatementNode : public StatementNode {
+    class ExprStatementNode final : public StatementNode {
     public:
         ExprStatementNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -1495,7 +1495,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class DeclarationStatement : public StatementNode {
+    class DeclarationStatement final : public StatementNode {
     public:
         DeclarationStatement(const JSTokenLocation&, ExpressionNode*);
     private:
@@ -1506,7 +1506,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class EmptyVarExpression : public ExpressionNode {
+    class EmptyVarExpression final : public ExpressionNode {
     public:
         EmptyVarExpression(const JSTokenLocation&, const Identifier&);
 
@@ -1516,7 +1516,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class EmptyLetExpression : public ExpressionNode {
+    class EmptyLetExpression final : public ExpressionNode {
     public:
         EmptyLetExpression(const JSTokenLocation&, const Identifier&);
 
@@ -1526,7 +1526,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class IfElseNode : public StatementNode {
+    class IfElseNode final : public StatementNode {
     public:
         IfElseNode(const JSTokenLocation&, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock);
 
@@ -1540,7 +1540,7 @@ namespace JSC {
         StatementNode* m_elseBlock;
     };
 
-    class DoWhileNode : public StatementNode {
+    class DoWhileNode final : public StatementNode {
     public:
         DoWhileNode(const JSTokenLocation&, StatementNode*, ExpressionNode*);
 
@@ -1551,7 +1551,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class WhileNode : public StatementNode {
+    class WhileNode final : public StatementNode {
     public:
         WhileNode(const JSTokenLocation&, ExpressionNode*, StatementNode*);
 
@@ -1562,7 +1562,7 @@ namespace JSC {
         StatementNode* m_statement;
     };
 
-    class ForNode : public StatementNode, public VariableEnvironmentNode {
+    class ForNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ForNode);
     public:
         ForNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode*, VariableEnvironment&);
@@ -1592,7 +1592,7 @@ namespace JSC {
         StatementNode* m_statement;
     };
     
-    class ForInNode : public EnumerationNode {
+    class ForInNode final : public EnumerationNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ForInNode);
     public:
         ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
@@ -1604,7 +1604,7 @@ namespace JSC {
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
     
-    class ForOfNode : public EnumerationNode {
+    class ForOfNode final : public EnumerationNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ForOfNode);
     public:
         ForOfNode(bool, const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
@@ -1617,7 +1617,7 @@ namespace JSC {
         const bool m_isForAwait;
     };
 
-    class ContinueNode : public StatementNode, public ThrowableExpressionData {
+    class ContinueNode final : public StatementNode, public ThrowableExpressionData {
     public:
         ContinueNode(const JSTokenLocation&, const Identifier&);
         Label* trivialTarget(BytecodeGenerator&);
@@ -1630,7 +1630,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class BreakNode : public StatementNode, public ThrowableExpressionData {
+    class BreakNode final : public StatementNode, public ThrowableExpressionData {
     public:
         BreakNode(const JSTokenLocation&, const Identifier&);
         Label* trivialTarget(BytecodeGenerator&);
@@ -1643,7 +1643,7 @@ namespace JSC {
         const Identifier& m_ident;
     };
 
-    class ReturnNode : public StatementNode, public ThrowableExpressionData {
+    class ReturnNode final : public StatementNode, public ThrowableExpressionData {
     public:
         ReturnNode(const JSTokenLocation&, ExpressionNode* value);
 
@@ -1657,7 +1657,7 @@ namespace JSC {
         ExpressionNode* m_value;
     };
 
-    class WithNode : public StatementNode {
+    class WithNode final : public StatementNode {
     public:
         WithNode(const JSTokenLocation&, ExpressionNode*, StatementNode*, const JSTextPosition& divot, uint32_t expressionLength);
 
@@ -1670,7 +1670,7 @@ namespace JSC {
         uint32_t m_expressionLength;
     };
 
-    class LabelNode : public StatementNode, public ThrowableExpressionData {
+    class LabelNode final : public StatementNode, public ThrowableExpressionData {
     public:
         LabelNode(const JSTokenLocation&, const Identifier& name, StatementNode*);
 
@@ -1684,7 +1684,7 @@ namespace JSC {
         StatementNode* m_statement;
     };
 
-    class ThrowNode : public StatementNode, public ThrowableExpressionData {
+    class ThrowNode final : public StatementNode, public ThrowableExpressionData {
     public:
         ThrowNode(const JSTokenLocation&, ExpressionNode*);
 
@@ -1694,7 +1694,7 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class TryNode : public StatementNode, public VariableEnvironmentNode {
+    class TryNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(TryNode);
     public:
         TryNode(const JSTokenLocation&, StatementNode* tryBlock, DestructuringPatternNode* catchPattern, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock);
@@ -1786,7 +1786,7 @@ namespace JSC {
         SourceElements* m_statements;
     };
 
-    class ProgramNode : public ScopeNode {
+    class ProgramNode final : public ScopeNode {
     public:
         ProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
@@ -1801,7 +1801,7 @@ namespace JSC {
         unsigned m_endColumn;
     };
 
-    class EvalNode : public ScopeNode {
+    class EvalNode final : public ScopeNode {
     public:
         EvalNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
@@ -1816,7 +1816,7 @@ namespace JSC {
         unsigned m_endColumn;
     };
 
-    class ModuleProgramNode : public ScopeNode {
+    class ModuleProgramNode final : public ScopeNode {
     public:
         ModuleProgramNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, unsigned startColumn, unsigned endColumn, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, FunctionParameters*, const SourceCode&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&);
 
@@ -1837,7 +1837,7 @@ namespace JSC {
         Ref<ModuleScopeData> m_moduleScopeData;
     };
 
-    class ModuleNameNode : public Node {
+    class ModuleNameNode final : public Node {
     public:
         ModuleNameNode(const JSTokenLocation&, const Identifier& moduleName);
 
@@ -1847,7 +1847,7 @@ namespace JSC {
         const Identifier& m_moduleName;
     };
 
-    class ImportSpecifierNode : public Node {
+    class ImportSpecifierNode final : public Node {
     public:
         ImportSpecifierNode(const JSTokenLocation&, const Identifier& importedName, const Identifier& localName);
 
@@ -1859,7 +1859,7 @@ namespace JSC {
         const Identifier& m_localName;
     };
 
-    class ImportSpecifierListNode : public ParserArenaDeletable {
+    class ImportSpecifierListNode final : public ParserArenaDeletable {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ImportSpecifierListNode);
     public:
         typedef Vector<ImportSpecifierNode*, 3> Specifiers;
@@ -1884,7 +1884,7 @@ namespace JSC {
         ModuleDeclarationNode(const JSTokenLocation&);
     };
 
-    class ImportDeclarationNode : public ModuleDeclarationNode {
+    class ImportDeclarationNode final : public ModuleDeclarationNode {
     public:
         ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleNameNode*);
 
@@ -1899,7 +1899,7 @@ namespace JSC {
         ModuleNameNode* m_moduleName;
     };
 
-    class ExportAllDeclarationNode : public ModuleDeclarationNode {
+    class ExportAllDeclarationNode final : public ModuleDeclarationNode {
     public:
         ExportAllDeclarationNode(const JSTokenLocation&, ModuleNameNode*);
 
@@ -1912,7 +1912,7 @@ namespace JSC {
         ModuleNameNode* m_moduleName;
     };
 
-    class ExportDefaultDeclarationNode : public ModuleDeclarationNode {
+    class ExportDefaultDeclarationNode final : public ModuleDeclarationNode {
     public:
         ExportDefaultDeclarationNode(const JSTokenLocation&, StatementNode*, const Identifier& localName);
 
@@ -1926,7 +1926,7 @@ namespace JSC {
         const Identifier& m_localName;
     };
 
-    class ExportLocalDeclarationNode : public ModuleDeclarationNode {
+    class ExportLocalDeclarationNode final : public ModuleDeclarationNode {
     public:
         ExportLocalDeclarationNode(const JSTokenLocation&, StatementNode*);
 
@@ -1938,7 +1938,7 @@ namespace JSC {
         StatementNode* m_declaration;
     };
 
-    class ExportSpecifierNode : public Node {
+    class ExportSpecifierNode final : public Node {
     public:
         ExportSpecifierNode(const JSTokenLocation&, const Identifier& localName, const Identifier& exportedName);
 
@@ -1950,7 +1950,7 @@ namespace JSC {
         const Identifier& m_exportedName;
     };
 
-    class ExportSpecifierListNode : public ParserArenaDeletable {
+    class ExportSpecifierListNode final : public ParserArenaDeletable {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ExportSpecifierListNode);
     public:
         typedef Vector<ExportSpecifierNode*, 3> Specifiers;
@@ -1965,7 +1965,7 @@ namespace JSC {
         Specifiers m_specifiers;
     };
 
-    class ExportNamedDeclarationNode : public ModuleDeclarationNode {
+    class ExportNamedDeclarationNode final : public ModuleDeclarationNode {
     public:
         ExportNamedDeclarationNode(const JSTokenLocation&, ExportSpecifierListNode*, ModuleNameNode*);
 
@@ -1979,7 +1979,7 @@ namespace JSC {
         ModuleNameNode* m_moduleName { nullptr };
     };
 
-    class FunctionMetadataNode final : public Node, public ParserArenaDeletable {
+    class FunctionMetadataNode final : public ParserArenaDeletable, public Node {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(FunctionMetadataNode);
     public:
         FunctionMetadataNode(
@@ -2043,6 +2043,11 @@ namespace JSC {
         }
 
     public:
+        unsigned m_isInStrictContext : 1;
+        unsigned m_superBinding : 1;
+        unsigned m_constructorKind : 2;
+        unsigned m_isArrowFunctionBodyExpression : 1;
+        SourceParseMode m_parseMode;
         Identifier m_ident;
         Identifier m_ecmaName;
         Identifier m_inferredName;
@@ -2057,11 +2062,6 @@ namespace JSC {
         int m_startStartOffset;
         unsigned m_parameterCount;
         int m_lastLine;
-        SourceParseMode m_parseMode;
-        unsigned m_isInStrictContext : 1;
-        unsigned m_superBinding : 1;
-        unsigned m_constructorKind : 2;
-        unsigned m_isArrowFunctionBodyExpression : 1;
     };
 
     class FunctionNode final : public ScopeNode {
@@ -2119,7 +2119,7 @@ namespace JSC {
         bool isFuncExprNode() const override { return true; }
     };
 
-    class ArrowFuncExprNode : public BaseFuncExprNode {
+    class ArrowFuncExprNode final : public BaseFuncExprNode {
     public:
         ArrowFuncExprNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
 
@@ -2129,7 +2129,7 @@ namespace JSC {
         bool isArrowFuncExprNode() const override { return true; }
     };
 
-    class MethodDefinitionNode : public FuncExprNode {
+    class MethodDefinitionNode final : public FuncExprNode {
     public:
         MethodDefinitionNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
         
@@ -2205,11 +2205,11 @@ namespace JSC {
         DestructuringPatternNode();
     };
 
-    class ArrayPatternNode : public DestructuringPatternNode, public ThrowableExpressionData, public ParserArenaDeletable {
+    class ArrayPatternNode final : public DestructuringPatternNode, public ParserArenaDeletable, public ThrowableExpressionData {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ArrayPatternNode);
     public:
         ArrayPatternNode();
-        enum class BindingType {
+        enum class BindingType : uint8_t {
             Elision,
             Element,
             RestElement
@@ -2234,11 +2234,11 @@ namespace JSC {
         Vector<Entry> m_targetPatterns;
     };
     
-    class ObjectPatternNode : public DestructuringPatternNode, public ThrowableExpressionData, public ParserArenaDeletable {
+    class ObjectPatternNode final : public DestructuringPatternNode, public ParserArenaDeletable, public ThrowableExpressionData {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ObjectPatternNode);
     public:
         ObjectPatternNode();
-        enum class BindingType {
+        enum class BindingType : uint8_t {
             Element,
             RestElement
         };
@@ -2337,7 +2337,7 @@ namespace JSC {
         ExpressionNode* m_assignmentTarget;
     };
 
-    class DestructuringAssignmentNode : public ExpressionNode {
+    class DestructuringAssignmentNode final : public ExpressionNode {
     public:
         DestructuringAssignmentNode(const JSTokenLocation&, DestructuringPatternNode*, ExpressionNode*);
         DestructuringPatternNode* bindings() { return m_bindings; }
@@ -2351,7 +2351,7 @@ namespace JSC {
         ExpressionNode* m_initializer;
     };
 
-    class FunctionParameters : public ParserArenaDeletable {
+    class FunctionParameters final : public ParserArenaDeletable {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(FunctionParameters);
     public:
         FunctionParameters();
@@ -2382,7 +2382,7 @@ namespace JSC {
         bool m_isSimpleParameterList { true };
     };
 
-    class FuncDeclNode : public StatementNode {
+    class FuncDeclNode final : public StatementNode {
     public:
         FuncDeclNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
 
@@ -2408,7 +2408,7 @@ namespace JSC {
         ExpressionNode* m_classDeclaration;
     };
 
-    class CaseClauseNode : public ParserArenaFreeable {
+    class CaseClauseNode final : public ParserArenaFreeable {
     public:
         CaseClauseNode(ExpressionNode*, SourceElements* = 0);
 
@@ -2423,7 +2423,7 @@ namespace JSC {
         int m_startOffset;
     };
 
-    class ClauseListNode : public ParserArenaFreeable {
+    class ClauseListNode final : public ParserArenaFreeable {
     public:
         ClauseListNode(CaseClauseNode*);
         ClauseListNode(ClauseListNode*, CaseClauseNode*);
@@ -2433,10 +2433,10 @@ namespace JSC {
 
     private:
         CaseClauseNode* m_clause;
-        ClauseListNode* m_next;
+        ClauseListNode* m_next { nullptr };
     };
 
-    class CaseBlockNode : public ParserArenaFreeable {
+    class CaseBlockNode final : public ParserArenaFreeable {
     public:
         CaseBlockNode(ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2);
 
@@ -2450,7 +2450,7 @@ namespace JSC {
         ClauseListNode* m_list2;
     };
 
-    class SwitchNode : public StatementNode, public VariableEnvironmentNode {
+    class SwitchNode final : public StatementNode, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(SwitchNode);
     public:
         SwitchNode(const JSTokenLocation&, ExpressionNode*, CaseBlockNode*, VariableEnvironment&, FunctionStack&&);

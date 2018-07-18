@@ -197,6 +197,11 @@ FunctionMetadataNode::FunctionMetadataNode(
     int functionKeywordStart, int functionNameStart, int parametersStart, bool isInStrictContext, 
     ConstructorKind constructorKind, SuperBinding superBinding, unsigned parameterCount, SourceParseMode mode, bool isArrowFunctionBodyExpression)
         : Node(endLocation)
+        , m_isInStrictContext(isInStrictContext)
+        , m_superBinding(static_cast<unsigned>(superBinding))
+        , m_constructorKind(static_cast<unsigned>(constructorKind))
+        , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
+        , m_parseMode(mode)
         , m_startColumn(startColumn)
         , m_endColumn(endColumn)
         , m_functionKeywordStart(functionKeywordStart)
@@ -204,11 +209,6 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_parametersStart(parametersStart)
         , m_startStartOffset(startLocation.startOffset)
         , m_parameterCount(parameterCount)
-        , m_parseMode(mode)
-        , m_isInStrictContext(isInStrictContext)
-        , m_superBinding(static_cast<unsigned>(superBinding))
-        , m_constructorKind(static_cast<unsigned>(constructorKind))
-        , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
 {
     ASSERT(m_superBinding == static_cast<unsigned>(superBinding));
     ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
@@ -220,6 +220,11 @@ FunctionMetadataNode::FunctionMetadataNode(
     int functionKeywordStart, int functionNameStart, int parametersStart, bool isInStrictContext, 
     ConstructorKind constructorKind, SuperBinding superBinding, unsigned parameterCount, SourceParseMode mode, bool isArrowFunctionBodyExpression)
         : Node(endLocation)
+        , m_isInStrictContext(isInStrictContext)
+        , m_superBinding(static_cast<unsigned>(superBinding))
+        , m_constructorKind(static_cast<unsigned>(constructorKind))
+        , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
+        , m_parseMode(mode)
         , m_startColumn(startColumn)
         , m_endColumn(endColumn)
         , m_functionKeywordStart(functionKeywordStart)
@@ -227,11 +232,6 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_parametersStart(parametersStart)
         , m_startStartOffset(startLocation.startOffset)
         , m_parameterCount(parameterCount)
-        , m_parseMode(mode)
-        , m_isInStrictContext(isInStrictContext)
-        , m_superBinding(static_cast<unsigned>(superBinding))
-        , m_constructorKind(static_cast<unsigned>(constructorKind))
-        , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
 {
     ASSERT(m_superBinding == static_cast<unsigned>(superBinding));
     ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
@@ -252,7 +252,12 @@ void FunctionMetadataNode::setEndPosition(JSTextPosition position)
 
 bool FunctionMetadataNode::operator==(const FunctionMetadataNode& other) const
 {
-    return m_ident == other.m_ident
+    return m_parseMode== other.m_parseMode
+        && m_isInStrictContext == other.m_isInStrictContext
+        && m_superBinding == other.m_superBinding
+        && m_constructorKind == other.m_constructorKind
+        && m_isArrowFunctionBodyExpression == other.m_isArrowFunctionBodyExpression
+        && m_ident == other.m_ident
         && m_ecmaName == other.m_ecmaName
         && m_inferredName == other.m_inferredName
         && m_functionMode== other.m_functionMode
@@ -266,16 +271,16 @@ bool FunctionMetadataNode::operator==(const FunctionMetadataNode& other) const
         && m_startStartOffset== other.m_startStartOffset
         && m_parameterCount== other.m_parameterCount
         && m_lastLine== other.m_lastLine
-        && m_parseMode== other.m_parseMode
-        && m_isInStrictContext == other.m_isInStrictContext 
-        && m_superBinding == other.m_superBinding 
-        && m_constructorKind == other.m_constructorKind 
-        && m_isArrowFunctionBodyExpression == other.m_isArrowFunctionBodyExpression
         && m_position == other.m_position;
 }
 
 void FunctionMetadataNode::dump(PrintStream& stream) const
 {
+    stream.println("m_parseMode ", static_cast<uint32_t>(m_parseMode));
+    stream.println("m_isInStrictContext ", m_isInStrictContext);
+    stream.println("m_superBinding ", m_superBinding);
+    stream.println("m_constructorKind ", m_constructorKind);
+    stream.println("m_isArrowFunctionBodyExpression ", m_isArrowFunctionBodyExpression);
     stream.println("m_ident ", m_ident);
     stream.println("m_ecmaName ", m_ecmaName);
     stream.println("m_inferredName ", m_inferredName);
@@ -289,11 +294,6 @@ void FunctionMetadataNode::dump(PrintStream& stream) const
     stream.println("m_startStartOffset ", m_startStartOffset);
     stream.println("m_parameterCount ", m_parameterCount);
     stream.println("m_lastLine ", m_lastLine);
-    stream.println("m_parseMode ", static_cast<uint32_t>(m_parseMode));
-    stream.println("m_isInStrictContext ", m_isInStrictContext);
-    stream.println("m_superBinding ", m_superBinding);
-    stream.println("m_constructorKind ", m_constructorKind);
-    stream.println("m_isArrowFunctionBodyExpression ", m_isArrowFunctionBodyExpression);
     stream.println("position().line ", position().line);
     stream.println("position().offset ", position().offset);
     stream.println("position().lineStartOffset ", position().lineStartOffset);

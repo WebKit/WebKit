@@ -1,5 +1,130 @@
 2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Reduce size of AST nodes
+        https://bugs.webkit.org/show_bug.cgi?id=187689
+
+        Reviewed by Mark Lam.
+
+        We clean up AST nodes to reduce size. By doing so, we can reduce the memory consumption
+        of ParserArena at peak state.
+
+        1. Annotate `final` to AST nodes to make them solid. And it allows the compiler to
+        devirtualize a call to the function which are implemented in a final class.
+
+        2. Use default member initializers more.
+
+        3. And use `nullptr` instead of `0`.
+
+        4. Arrange the layout of AST nodes to reduce the size. It includes changing the order
+        of classes in multiple inheritance. In particular, StatementNode is decreased from 48
+        to 40. This decreases the sizes of all the derived Statement nodes.
+
+        * parser/NodeConstructors.h:
+        (JSC::Node::Node):
+        (JSC::StatementNode::StatementNode):
+        (JSC::ElementNode::ElementNode):
+        (JSC::ArrayNode::ArrayNode):
+        (JSC::PropertyListNode::PropertyListNode):
+        (JSC::ObjectLiteralNode::ObjectLiteralNode):
+        (JSC::ArgumentListNode::ArgumentListNode):
+        (JSC::ArgumentsNode::ArgumentsNode):
+        (JSC::NewExprNode::NewExprNode):
+        (JSC::BytecodeIntrinsicNode::BytecodeIntrinsicNode):
+        (JSC::BinaryOpNode::BinaryOpNode):
+        (JSC::LogicalOpNode::LogicalOpNode):
+        (JSC::CommaNode::CommaNode):
+        (JSC::SourceElements::SourceElements):
+        (JSC::ClauseListNode::ClauseListNode):
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        (JSC::FunctionMetadataNode::operator== const):
+        (JSC::FunctionMetadataNode::dump const):
+        * parser/Nodes.h:
+        (JSC::BooleanNode::value): Deleted.
+        (JSC::StringNode::value): Deleted.
+        (JSC::TemplateExpressionListNode::value): Deleted.
+        (JSC::TemplateExpressionListNode::next): Deleted.
+        (JSC::TemplateStringNode::cooked): Deleted.
+        (JSC::TemplateStringNode::raw): Deleted.
+        (JSC::TemplateStringListNode::value): Deleted.
+        (JSC::TemplateStringListNode::next): Deleted.
+        (JSC::TemplateLiteralNode::templateStrings const): Deleted.
+        (JSC::TemplateLiteralNode::templateExpressions const): Deleted.
+        (JSC::TaggedTemplateNode::templateLiteral const): Deleted.
+        (JSC::ResolveNode::identifier const): Deleted.
+        (JSC::ElementNode::elision const): Deleted.
+        (JSC::ElementNode::value): Deleted.
+        (JSC::ElementNode::next): Deleted.
+        (JSC::ArrayNode::elements const): Deleted.
+        (JSC::PropertyNode::expressionName const): Deleted.
+        (JSC::PropertyNode::name const): Deleted.
+        (JSC::PropertyNode::type const): Deleted.
+        (JSC::PropertyNode::needsSuperBinding const): Deleted.
+        (JSC::PropertyNode::isClassProperty const): Deleted.
+        (JSC::PropertyNode::isStaticClassProperty const): Deleted.
+        (JSC::PropertyNode::isInstanceClassProperty const): Deleted.
+        (JSC::PropertyNode::isOverriddenByDuplicate const): Deleted.
+        (JSC::PropertyNode::setIsOverriddenByDuplicate): Deleted.
+        (JSC::PropertyNode::putType const): Deleted.
+        (JSC::BracketAccessorNode::base const): Deleted.
+        (JSC::BracketAccessorNode::subscript const): Deleted.
+        (JSC::BracketAccessorNode::subscriptHasAssignments const): Deleted.
+        (JSC::DotAccessorNode::base const): Deleted.
+        (JSC::DotAccessorNode::identifier const): Deleted.
+        (JSC::SpreadExpressionNode::expression const): Deleted.
+        (JSC::ObjectSpreadExpressionNode::expression const): Deleted.
+        (JSC::BytecodeIntrinsicNode::type const): Deleted.
+        (JSC::BytecodeIntrinsicNode::emitter const): Deleted.
+        (JSC::BytecodeIntrinsicNode::identifier const): Deleted.
+        (JSC::TypeOfResolveNode::identifier const): Deleted.
+        (JSC::BitwiseNotNode::expr): Deleted.
+        (JSC::BitwiseNotNode::expr const): Deleted.
+        (JSC::AssignResolveNode::identifier const): Deleted.
+        (JSC::ExprStatementNode::expr const): Deleted.
+        (JSC::ForOfNode::isForAwait const): Deleted.
+        (JSC::ReturnNode::value): Deleted.
+        (JSC::ProgramNode::startColumn const): Deleted.
+        (JSC::ProgramNode::endColumn const): Deleted.
+        (JSC::EvalNode::startColumn const): Deleted.
+        (JSC::EvalNode::endColumn const): Deleted.
+        (JSC::ModuleProgramNode::startColumn const): Deleted.
+        (JSC::ModuleProgramNode::endColumn const): Deleted.
+        (JSC::ModuleProgramNode::moduleScopeData): Deleted.
+        (JSC::ModuleNameNode::moduleName): Deleted.
+        (JSC::ImportSpecifierNode::importedName): Deleted.
+        (JSC::ImportSpecifierNode::localName): Deleted.
+        (JSC::ImportSpecifierListNode::specifiers const): Deleted.
+        (JSC::ImportSpecifierListNode::append): Deleted.
+        (JSC::ImportDeclarationNode::specifierList const): Deleted.
+        (JSC::ImportDeclarationNode::moduleName const): Deleted.
+        (JSC::ExportAllDeclarationNode::moduleName const): Deleted.
+        (JSC::ExportDefaultDeclarationNode::declaration const): Deleted.
+        (JSC::ExportDefaultDeclarationNode::localName const): Deleted.
+        (JSC::ExportLocalDeclarationNode::declaration const): Deleted.
+        (JSC::ExportSpecifierNode::exportedName): Deleted.
+        (JSC::ExportSpecifierNode::localName): Deleted.
+        (JSC::ExportSpecifierListNode::specifiers const): Deleted.
+        (JSC::ExportSpecifierListNode::append): Deleted.
+        (JSC::ExportNamedDeclarationNode::specifierList const): Deleted.
+        (JSC::ExportNamedDeclarationNode::moduleName const): Deleted.
+        (JSC::ArrayPatternNode::appendIndex): Deleted.
+        (JSC::ObjectPatternNode::appendEntry): Deleted.
+        (JSC::ObjectPatternNode::setContainsRestElement): Deleted.
+        (JSC::ObjectPatternNode::setContainsComputedProperty): Deleted.
+        (JSC::DestructuringAssignmentNode::bindings): Deleted.
+        (JSC::FunctionParameters::size const): Deleted.
+        (JSC::FunctionParameters::append): Deleted.
+        (JSC::FunctionParameters::isSimpleParameterList const): Deleted.
+        (JSC::FuncDeclNode::metadata): Deleted.
+        (JSC::CaseClauseNode::expr const): Deleted.
+        (JSC::CaseClauseNode::setStartOffset): Deleted.
+        (JSC::ClauseListNode::getClause const): Deleted.
+        (JSC::ClauseListNode::getNext const): Deleted.
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/JSObject.cpp:
+
+2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         JSON.stringify should emit non own properties if second array argument includes
         https://bugs.webkit.org/show_bug.cgi?id=187724
 

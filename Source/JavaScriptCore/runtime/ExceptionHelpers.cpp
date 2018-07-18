@@ -37,7 +37,6 @@
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
-#include "Nodes.h"
 #include "RuntimeType.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
