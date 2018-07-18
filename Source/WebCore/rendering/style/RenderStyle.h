@@ -2044,7 +2044,7 @@ inline bool RenderStyle::breakOnlyAfterWhiteSpace() const
 
 inline bool RenderStyle::breakWords() const
 {
-    return wordBreak() == WordBreak::Break || overflowWrap() == OverflowWrap::Break;
+    return wordBreak() == WordBreak::BreakWord || overflowWrap() == OverflowWrap::Break;
 }
 
 inline bool RenderStyle::hasInlineColumnAxis() const

@@ -3087,7 +3087,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WordBreak e)
     case WordBreak::KeepAll:
         m_value.valueID = CSSValueKeepAll;
         break;
-    case WordBreak::Break:
+    case WordBreak::BreakWord:
         m_value.valueID = CSSValueBreakWord;
         break;
     }
@@ -3103,7 +3103,7 @@ template<> inline CSSPrimitiveValue::operator WordBreak() const
     case CSSValueKeepAll:
         return WordBreak::KeepAll;
     case CSSValueBreakWord:
-        return WordBreak::Break;
+        return WordBreak::BreakWord;
     case CSSValueNormal:
         return WordBreak::Normal;
     default:

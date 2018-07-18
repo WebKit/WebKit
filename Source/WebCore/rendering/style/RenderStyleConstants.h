@@ -516,7 +516,7 @@ enum class WordBreak : uint8_t {
     Normal,
     BreakAll,
     KeepAll,
-    Break
+    BreakWord
 };
 
 enum class OverflowWrap : uint8_t {

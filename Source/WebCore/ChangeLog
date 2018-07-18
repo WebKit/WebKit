@@ -1,3 +1,37 @@
+2018-07-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename WordBreak::Break to WordBreak::BreakWord
+        https://bugs.webkit.org/show_bug.cgi?id=187767
+
+        Reviewed by Simon Fraser.
+
+        These breaking properties are very confusing. There are:
+
+        1. word-break: break-all, a standard value that allows breaking after every
+        character.
+        2. word-break: break-word, a non-standard value which allows for breaking after
+        every character, but only if the word is too long for the available width (otherwise
+        it works the same as word-break: normal). This affects the min-content-size of the
+        text (and makes it equal to what it would be if word-break: break-all was
+        specified).
+        3. word-wrap: break-word, which is the same as word-break: break-word, but doesn't
+        affect the min-content-size of the text.
+        4. overflow-wrap: break-word, which is the same as word-wrap: break-word.
+
+        Because this is so confusing it's valuable for our internal enums to match the names
+        of the official CSS properties/values.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator WordBreak const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::breakWords const):
+        * rendering/style/RenderStyleConstants.h:
+
 2018-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add SPI to defer running async script until after document load
