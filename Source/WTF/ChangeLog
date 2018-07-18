@@ -1,3 +1,12 @@
+2018-07-17  Keith Miller  <keith_miller@apple.com>
+
+        Revert r233630 since it broke internal wasm benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=187746
+
+        Unreviewed revert.
+
+        * wtf/TriState.h:
+
 2018-07-14  Kocsen Chung  <kocsen_chung@apple.com>
 
         Ensure WebKit stack is ad-hoc signed

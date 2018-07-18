@@ -54,6 +54,7 @@ const ClassInfo UnlinkedCodeBlock::s_info = { "UnlinkedCodeBlock", nullptr, null
 
 UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
     : Base(*vm, structure)
+    , m_globalObjectRegister(VirtualRegister())
     , m_usesEval(info.usesEval())
     , m_isStrictMode(info.isStrictMode())
     , m_isConstructor(info.isConstructor())
@@ -68,14 +69,18 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_derivedContextType(static_cast<unsigned>(info.derivedContextType()))
     , m_evalContextType(static_cast<unsigned>(info.evalContextType()))
     , m_hasTailCalls(false)
-    , m_codeType(codeType)
+    , m_features(0)
     , m_didOptimize(MixedTriState)
     , m_parseMode(info.parseMode())
+    , m_codeType(codeType)
+    , m_arrayProfileCount(0)
+    , m_arrayAllocationProfileCount(0)
+    , m_objectAllocationProfileCount(0)
+    , m_valueProfileCount(0)
+    , m_llintCallLinkInfoCount(0)
 {
     for (auto& constantRegisterIndex : m_linkTimeConstants)
         constantRegisterIndex = 0;
-    ASSERT(codeType == this->codeType());
-    ASSERT(MixedTriState == this->didOptimize());
     ASSERT(m_constructorKind == static_cast<unsigned>(info.constructorKind()));
 }
 

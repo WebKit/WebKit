@@ -27,13 +27,7 @@
 
 namespace JSC {
 
-// CodeType should be within 2 bits (0b00 - 0b11).
-enum CodeType : uint8_t {
-    GlobalCode,
-    EvalCode,
-    FunctionCode,
-    ModuleCode
-};
+enum CodeType { GlobalCode, EvalCode, FunctionCode, ModuleCode };
 
 } // namespace JSC
 

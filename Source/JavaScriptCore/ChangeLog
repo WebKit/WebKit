@@ -1,3 +1,25 @@
+2018-07-17  Keith Miller  <keith_miller@apple.com>
+
+        Revert r233630 since it broke internal wasm benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=187746
+
+        Unreviewed revert.
+
+        This patch seems to have broken internal Wasm benchmarks. This
+        issue is likely due to an underlying bug but let's rollout while
+        we investigate.
+
+        * bytecode/CodeType.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::codeType const):
+        (JSC::UnlinkedCodeBlock::didOptimize const):
+        (JSC::UnlinkedCodeBlock::setDidOptimize):
+        * bytecode/VirtualRegister.h:
+        (JSC::VirtualRegister::VirtualRegister):
+        (): Deleted.
+
 2018-07-17  Mark Lam  <mark.lam@apple.com>
 
         CodeBlock::baselineVersion() should account for executables with purged codeBlocks.

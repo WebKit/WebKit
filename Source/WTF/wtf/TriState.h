@@ -28,8 +28,7 @@
 
 namespace WTF {
 
-// TriState should be within 2 bits (0b00 - 0b10).
-enum TriState : uint8_t {
+enum TriState {
     FalseTriState,
     TrueTriState,
     MixedTriState
