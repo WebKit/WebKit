@@ -120,12 +120,13 @@ private:
     void indent();
     void unindent();
     void startNewLine(StringBuilder&) const;
+    bool isCallableReplacer() const { return m_replacerCallType != CallType::None; }
 
     ExecState* const m_exec;
     JSValue m_replacer;
-    bool m_usingArrayReplacer;
+    bool m_usingArrayReplacer { false };
     PropertyNameArray m_arrayReplacerPropertyNames;
-    CallType m_replacerCallType;
+    CallType m_replacerCallType { CallType::None };
     CallData m_replacerCallData;
     String m_gap;
 
@@ -220,9 +221,7 @@ JSValue PropertyNameForFunctionCall::value(ExecState* exec) const
 Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
     : m_exec(exec)
     , m_replacer(replacer)
-    , m_usingArrayReplacer(false)
     , m_arrayReplacerPropertyNames(&exec->vm(), PropertyNameMode::Strings, PrivateSymbolMode::Exclude)
-    , m_replacerCallType(CallType::None)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -264,11 +263,17 @@ JSValue Stringifier::stringify(JSValue value)
 {
     VM& vm = m_exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = constructEmptyObject(m_exec);
-    RETURN_IF_EXCEPTION(scope, jsNull());
 
     PropertyNameForFunctionCall emptyPropertyName(vm.propertyNames->emptyIdentifier);
-    object->putDirect(vm, vm.propertyNames->emptyIdentifier, value);
+
+    // If the replacer is not callable, root object wrapper is non-user-observable.
+    // We can skip creating this wrapper object.
+    JSObject* object = nullptr;
+    if (isCallableReplacer()) {
+        object = constructEmptyObject(m_exec);
+        RETURN_IF_EXCEPTION(scope, jsNull());
+        object->putDirect(vm, vm.propertyNames->emptyIdentifier, value);
+    }
 
     StringBuilder result;
     Holder root(Holder::RootHolder, object);
@@ -325,11 +330,12 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     RETURN_IF_EXCEPTION(scope, StringifyFailed);
 
     // Call the replacer function.
-    if (m_replacerCallType != CallType::None) {
+    if (isCallableReplacer()) {
         MarkedArgumentBuffer args;
         args.append(propertyName.value(m_exec));
         args.append(value);
         ASSERT(!args.hasOverflowed());
+        ASSERT(holder.object());
         value = call(m_exec, m_replacer, m_replacerCallType, m_replacerCallData, holder.object(), args);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
     }

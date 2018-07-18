@@ -1,3 +1,27 @@
+2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Root wrapper object in JSON.stringify is not necessary if replacer is not callable
+        https://bugs.webkit.org/show_bug.cgi?id=187752
+
+        Reviewed by Mark Lam.
+
+        JSON.stringify has an implicit root wrapper object since we would like to call replacer
+        with a wrapper object and a property name. While we always create this wrapper object,
+        it is unnecessary if the given replacer is not callable.
+
+        This patch removes wrapper object creation when a replacer is not callable to avoid unnecessary
+        allocations. This change slightly improves the performance of Kraken/json-stringify-tinderbox.
+
+                                           baseline                  patched
+
+        json-stringify-tinderbox        39.730+-0.590      ^      38.853+-0.266         ^ definitely 1.0226x faster
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::isCallableReplacer const):
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::appendStringifiedValue):
+
 2018-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add jsc_context_check_syntax() to GLib API
