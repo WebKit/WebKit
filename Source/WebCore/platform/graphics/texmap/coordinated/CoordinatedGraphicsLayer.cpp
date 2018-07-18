@@ -99,8 +99,11 @@ void CoordinatedGraphicsLayer::didUpdateTileBuffers()
     if (!isShowingRepaintCounter())
         return;
 
-    m_layerState.repaintCount = incrementRepaintCount();
+    auto repaintCount = incrementRepaintCount();
+    m_layerState.repaintCount = repaintCount;
     m_layerState.repaintCountChanged = true;
+    m_nicosia.repaintCounter.count = repaintCount;
+    m_nicosia.delta.repaintCounterChanged = true;
 }
 
 void CoordinatedGraphicsLayer::setShouldUpdateVisibleRect()
@@ -489,6 +492,8 @@ void CoordinatedGraphicsLayer::setShowDebugBorder(bool show)
     GraphicsLayer::setShowDebugBorder(show);
     m_layerState.debugVisuals.showDebugBorders = show;
     m_layerState.debugVisualsChanged = true;
+    m_nicosia.debugBorder.visible = show;
+    m_nicosia.delta.debugBorderChanged = true;
 
     didChangeLayerState();
 }
@@ -501,6 +506,8 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
     GraphicsLayer::setShowRepaintCounter(show);
     m_layerState.debugVisuals.showRepaintCounter = show;
     m_layerState.debugVisualsChanged = true;
+    m_nicosia.repaintCounter.visible = show;
+    m_nicosia.delta.repaintCounterChanged = true;
 
     didChangeLayerState();
 }
@@ -707,11 +714,15 @@ void CoordinatedGraphicsLayer::setDebugBorder(const Color& color, float width)
     if (m_layerState.debugVisuals.debugBorderColor != color) {
         m_layerState.debugVisuals.debugBorderColor = color;
         m_layerState.debugVisualsChanged = true;
+        m_nicosia.debugBorder.color = color;
+        m_nicosia.delta.debugBorderChanged = true;
     }
 
     if (m_layerState.debugVisuals.debugBorderWidth != width) {
         m_layerState.debugVisuals.debugBorderWidth = width;
         m_layerState.debugVisualsChanged = true;
+        m_nicosia.debugBorder.width = width;
+        m_nicosia.delta.debugBorderChanged = true;
     }
 }
 
@@ -833,6 +844,11 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     state.flags.masksToBounds = masksToBounds();
                     state.flags.preserves3D = preserves3D();
                 }
+
+                if (localDelta.repaintCounterChanged)
+                    state.repaintCounter = m_nicosia.repaintCounter;
+                if (localDelta.debugBorderChanged)
+                    state.debugBorder = m_nicosia.debugBorder;
             });
         m_nicosia.delta = { };
     }

@@ -229,6 +229,8 @@ private:
     struct {
         RefPtr<Nicosia::CompositionLayer> layer;
         Nicosia::CompositionLayer::LayerState::Delta delta;
+        Nicosia::CompositionLayer::LayerState::RepaintCounter repaintCounter;
+        Nicosia::CompositionLayer::LayerState::DebugBorder debugBorder;
     } m_nicosia;
 };
 

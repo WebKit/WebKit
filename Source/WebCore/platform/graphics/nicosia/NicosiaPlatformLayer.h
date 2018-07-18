@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 Metrological Group B.V.
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +87,8 @@ public:
                     bool maskChanged : 1;
                     bool replicaChanged : 1;
                     bool flagsChanged : 1;
+                    bool repaintCounterChanged : 1;
+                    bool debugBorderChanged : 1;
                 };
                 uint32_t value { 0 };
             };
@@ -128,6 +130,16 @@ public:
         Vector<RefPtr<CompositionLayer>> children;
         RefPtr<CompositionLayer> replica;
         RefPtr<CompositionLayer> mask;
+
+        struct RepaintCounter {
+            unsigned count { 0 };
+            bool visible { false };
+        } repaintCounter;
+        struct DebugBorder {
+            WebCore::Color color;
+            float width { 0 };
+            bool visible { false };
+        } debugBorder;
     };
 
     template<typename T>
