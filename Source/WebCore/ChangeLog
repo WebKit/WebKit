@@ -1,3 +1,15 @@
+2018-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink CompositeAnimation and AnimationBase
+        https://bugs.webkit.org/show_bug.cgi?id=187683
+
+        Reviewed by Daniel Bates.
+
+        Reduce the size of CompositeAnimation and AnimationBase.
+
+        * page/animation/AnimationBase.h:
+        * page/animation/CompositeAnimation.h:
+
 2018-07-17  Antoine Quint  <graouts@apple.com>
 
         Ensure timingFunctionForKeyframeAtIndex() can be used from setAnimatedPropertiesInStyle().

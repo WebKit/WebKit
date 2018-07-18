@@ -95,15 +95,16 @@ private:
     typedef HashMap<int, RefPtr<ImplicitAnimation>> CSSPropertyTransitionsMap;
     typedef HashMap<AtomicStringImpl*, RefPtr<KeyframeAnimation>> AnimationNameMap;
 
-    CSSAnimationControllerPrivate& m_animationController;
-    CSSPropertyTransitionsMap m_transitions;
-    AnimationNameMap m_keyframeAnimations;
-    Vector<AtomicStringImpl*> m_keyframeAnimationOrderMap;
-    bool m_suspended;
+    bool m_suspended { false };
     bool m_hasAnimationThatDependsOnLayout { false };
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     bool m_hasScrollTriggeredAnimation { false };
 #endif
+
+    CSSAnimationControllerPrivate& m_animationController;
+    CSSPropertyTransitionsMap m_transitions;
+    AnimationNameMap m_keyframeAnimations;
+    Vector<AtomicStringImpl*> m_keyframeAnimationOrderMap;
 };
 
 } // namespace WebCore
