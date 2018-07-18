@@ -226,37 +226,35 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    m_gap = gap(exec, space);
-    if (UNLIKELY(scope.exception()))
-        return;
+    if (m_replacer.isObject()) {
+        JSObject* replacerObject = asObject(m_replacer);
 
-    if (!m_replacer.isObject())
-        return;
-
-    JSObject* replacerObject = asObject(m_replacer);
-    if (replacerObject->inherits<JSArray>(vm)) {
-        m_usingArrayReplacer = true;
-        JSArray* array = jsCast<JSArray*>(replacerObject);
-        unsigned length = array->get(exec, vm.propertyNames->length).toUInt32(exec);
-        if (UNLIKELY(scope.exception()))
-            return;
-        for (unsigned i = 0; i < length; ++i) {
-            JSValue name = array->get(exec, i);
-            if (UNLIKELY(scope.exception()))
-                break;
-
-            if (auto* nameObject = jsDynamicCast<JSObject*>(vm, name)) {
-                if (!nameObject->inherits<NumberObject>(vm) && !nameObject->inherits<StringObject>(vm))
-                    continue;
-            } else if (!name.isNumber() && !name.isString())
-                continue;
-
-            m_arrayReplacerPropertyNames.add(name.toString(exec)->toIdentifier(exec));
+        m_replacerCallType = CallType::None;
+        if (!replacerObject->isCallable(vm, m_replacerCallType, m_replacerCallData)) {
+            bool isArrayReplacer = JSC::isArray(exec, replacerObject);
+            RETURN_IF_EXCEPTION(scope, );
+            if (isArrayReplacer) {
+                m_usingArrayReplacer = true;
+                unsigned length = replacerObject->get(exec, vm.propertyNames->length).toUInt32(exec);
+                RETURN_IF_EXCEPTION(scope, );
+                for (unsigned i = 0; i < length; ++i) {
+                    JSValue name = replacerObject->get(exec, i);
+                    RETURN_IF_EXCEPTION(scope, );
+                    if (name.isObject()) {
+                        auto* nameObject = jsCast<JSObject*>(name);
+                        if (!nameObject->inherits<NumberObject>(vm) && !nameObject->inherits<StringObject>(vm))
+                            continue;
+                    } else if (!name.isNumber() && !name.isString())
+                        continue;
+                    m_arrayReplacerPropertyNames.add(name.toString(exec)->toIdentifier(exec));
+                    RETURN_IF_EXCEPTION(scope, );
+                }
+            }
         }
-        return;
     }
 
-    m_replacerCallType = replacerObject->methodTable(vm)->getCallData(replacerObject, m_replacerCallData);
+    scope.release();
+    m_gap = gap(exec, space);
 }
 
 JSValue Stringifier::stringify(JSValue value)

@@ -1,5 +1,24 @@
 2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] JSON.stringify's replacer should use `isArray` instead of JSArray checks
+        https://bugs.webkit.org/show_bug.cgi?id=187755
+
+        Reviewed by Mark Lam.
+
+        JSON.stringify used `inherits<JSArray>(vm)` to determine whether the given replacer is an array replacer.
+        But this is wrong. According to the spec, we should use `isArray`[1], which accepts Proxies. This difference
+        makes one test262 test failed.
+
+        This patch changes the code to using `isArray()`. And we reorder the evaluations of replacer check and ident space check
+        to align these checks to the spec's order.
+
+        [1]: https://tc39.github.io/ecma262/#sec-json.stringify
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+
+2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Root wrapper object in JSON.stringify is not necessary if replacer is not callable
         https://bugs.webkit.org/show_bug.cgi?id=187752
 

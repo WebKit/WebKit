@@ -1,3 +1,15 @@
+2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] JSON.stringify's replacer should use `isArray` instead of JSArray checks
+        https://bugs.webkit.org/show_bug.cgi?id=187755
+
+        Reviewed by Mark Lam.
+
+        * stress/json-stringify-gap-calculation-should-be-after-replacer-check.js: Added.
+        (shouldThrow):
+        (shouldThrow.string.toString):
+        * test262/expectations.yaml:
+
 2018-07-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Generator and AsyncGeneratorMethod's prototype is incorrect

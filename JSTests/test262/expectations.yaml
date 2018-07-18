@@ -1034,9 +1034,6 @@ test/built-ins/JSON/parse/reviver-array-length-coerce-err.js:
 test/built-ins/JSON/parse/reviver-array-length-get-err.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-test/built-ins/JSON/stringify/replacer-proxy-revoked.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
