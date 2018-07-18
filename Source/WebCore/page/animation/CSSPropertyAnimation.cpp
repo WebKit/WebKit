@@ -42,6 +42,7 @@
 #include "CalculationValue.h"
 #include "ClipPathOperation.h"
 #include "FloatConversion.h"
+#include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "GapLength.h"
@@ -412,6 +413,11 @@ static inline FontVariationSettings blendFunc(const CSSPropertyBlendingClient* a
 static inline FontSelectionValue blendFunc(const CSSPropertyBlendingClient* anim, FontSelectionValue from, FontSelectionValue to, double progress)
 {
     return FontSelectionValue(blendFunc(anim, static_cast<float>(from), static_cast<float>(to), progress));
+}
+
+static inline std::optional<FontSelectionValue> blendFunc(const CSSPropertyBlendingClient* anim, std::optional<FontSelectionValue> from, std::optional<FontSelectionValue> to, double progress)
+{
+    return FontSelectionValue(blendFunc(anim, static_cast<float>(from.value()), static_cast<float>(to.value()), progress));
 }
 
 class AnimationPropertyWrapperBase {
@@ -1439,6 +1445,42 @@ private:
     void (RenderStyle::*m_setter)(const Color&);
 };
 
+class PropertyWrapperFontStyle : public PropertyWrapper<std::optional<FontSelectionValue>> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PropertyWrapperFontStyle()
+        : PropertyWrapper<std::optional<FontSelectionValue>>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic)
+    {
+    }
+
+    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const override
+    {
+        return from->fontItalic() && to->fontItalic() && from->fontDescription().fontStyleAxis() == FontStyleAxis::slnt && to->fontDescription().fontStyleAxis() == FontStyleAxis::slnt;
+    }
+
+    void blend(const CSSPropertyBlendingClient* anim, RenderStyle* dst, const RenderStyle* from, const RenderStyle* to, double progress) const override
+    {
+        auto discrete = !canInterpolate(from, to);
+
+        auto blendedStyleAxis = FontStyleAxis::slnt;
+        if (discrete)
+            blendedStyleAxis = (progress < 0.5 ? from : to)->fontDescription().fontStyleAxis();
+
+        auto fromFontItalic = from->fontItalic();
+        auto toFontItalic = to->fontItalic();
+        auto blendedFontItalic = progress < 0.5 ? fromFontItalic : toFontItalic;
+        if (!discrete)
+            blendedFontItalic = blendFunc(anim, fromFontItalic, toFontItalic, progress);
+
+        FontSelector* currentFontSelector = dst->fontCascade().fontSelector();
+        auto description = dst->fontDescription();
+        description.setItalic(blendedFontItalic);
+        description.setFontStyleAxis(blendedStyleAxis);
+        dst->setFontDescription(WTFMove(description));
+        dst->fontCascade().update(currentFontSelector);
+    }
+};
+
 class CSSPropertyAnimationWrapperMap {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -1642,7 +1684,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontWeight, &RenderStyle::fontWeight, &RenderStyle::setFontWeight),
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
-        new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic),
+        new PropertyWrapperFontStyle(),
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

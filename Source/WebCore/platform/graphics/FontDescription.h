@@ -64,7 +64,7 @@ public:
 
     float computedSize() const { return m_computedSize; }
     unsigned computedPixelSize() const { return unsigned(m_computedSize + 0.5f); }
-    FontSelectionValue italic() const { return m_fontSelectionRequest.slope; }
+    std::optional<FontSelectionValue> italic() const { return m_fontSelectionRequest.slope; }
     FontSelectionValue stretch() const { return m_fontSelectionRequest.width; }
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
     FontSelectionRequest fontSelectionRequest() const { return m_fontSelectionRequest; }
@@ -117,9 +117,9 @@ public:
     AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
-    void setItalic(FontSelectionValue italic) { m_fontSelectionRequest.slope = italic; }
+    void setItalic(std::optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
     void setStretch(FontSelectionValue stretch) { m_fontSelectionRequest.width = stretch; }
-    void setIsItalic(bool i) { setItalic(i ? italicValue() : normalItalicValue()); }
+    void setIsItalic(bool isItalic) { setItalic(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
     void setWeight(FontSelectionValue weight) { m_fontSelectionRequest.weight = weight; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = static_cast<unsigned>(rendering); }
@@ -298,7 +298,7 @@ public:
 #endif
 
     // Initial values for font properties.
-    static FontSelectionValue initialItalic() { return normalItalicValue(); }
+    static std::optional<FontSelectionValue> initialItalic() { return std::nullopt; }
     static FontStyleAxis initialFontStyleAxis() { return FontStyleAxis::slnt; }
     static FontSelectionValue initialWeight() { return normalWeightValue(); }
     static FontSelectionValue initialStretch() { return normalStretchValue(); }

@@ -3598,7 +3598,7 @@ bool AccessibilityRenderObject::hasPlainText() const
 
     const RenderStyle& style = m_renderer->style();
     return style.fontDescription().weight() == normalWeightValue()
-        && style.fontDescription().italic() == normalItalicValue()
+        && !isItalic(style.fontDescription().italic())
         && style.textDecorationsInEffect().isEmpty();
 }
 

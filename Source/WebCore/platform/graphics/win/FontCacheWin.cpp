@@ -623,7 +623,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't
     // look as nice. That may be solvable though.
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
-    auto hfont = createGDIFont(family, weight, fontDescription.italic(),
+    auto hfont = createGDIFont(family, weight, isItalic(fontDescription.italic()),
         fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI);
 
     if (!hfont)
@@ -636,7 +636,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     GetObject(hfont.get(), sizeof(LOGFONT), &logFont);
 
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
-    bool synthesizeItalic = fontDescription.italic() && !logFont.lfItalic;
+    bool synthesizeItalic = isItalic(fontDescription.italic()) && !logFont.lfItalic;
 
     auto result = std::make_unique<FontPlatformData>(WTFMove(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
 

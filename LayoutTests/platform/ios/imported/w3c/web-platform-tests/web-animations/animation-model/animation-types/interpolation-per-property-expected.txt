@@ -157,9 +157,9 @@ PASS font-stretch (type: fontStretch) has testInterpolation function
 FAIL font-stretch supports animating as a font-stretch (adjacent values) assert_equals: The value should be ultra-condensed at 499ms expected "ultra-condensed" but got "56%"
 PASS font-stretch supports animating as a font-stretch (between value) 
 PASS font-style (type: discrete) has testInterpolation function 
-FAIL font-style uses discrete animation when animating between "italic" and "oblique" with linear easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
-FAIL font-style uses discrete animation when animating between "italic" and "oblique" with effect easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
-FAIL font-style uses discrete animation when animating between "italic" and "oblique" with keyframe easing assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with linear easing 
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with effect easing 
+PASS font-style uses discrete animation when animating between "italic" and "oblique" with keyframe easing 
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function 
 PASS font-variation-settings supports animation as float 
 PASS font-variation-settings supports animation as float with multiple tags 

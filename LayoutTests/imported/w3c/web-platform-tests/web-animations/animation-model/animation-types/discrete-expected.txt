@@ -1,7 +1,7 @@
 
-FAIL Test animating discrete values assert_equals: Animation produces 'from' value just before the middle of the interval expected "normal" but got "oblique 9.75deg"
+PASS Test animating discrete values 
 PASS Test discrete animation is used when interpolation fails 
 PASS Test discrete animation is used only for pairs of values that cannot be interpolated 
-FAIL Test the 50% switch point for discrete animation is based on the effect easing assert_equals: Animation produces 'from' value at 94% of the iteration time expected "normal" but got "oblique 8.5deg"
-FAIL Test the 50% switch point for discrete animation is based on the keyframe easing assert_equals: Animation produces 'from' value at 94% of the iteration time expected "normal" but got "oblique 8.5deg"
+PASS Test the 50% switch point for discrete animation is based on the effect easing 
+PASS Test the 50% switch point for discrete animation is based on the keyframe easing 
 

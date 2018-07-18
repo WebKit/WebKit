@@ -134,7 +134,7 @@ PASS font-stretch (type: fontStretch) has testAccumulation function
 FAIL font-stretch uses font-stretch behavior for composite type accumulate assert_equals: The value should be normal at 0ms expected "normal" but got "expanded"
 PASS font-style (type: discrete) has testAccumulation function 
 PASS font-style: "oblique" onto "italic" 
-FAIL font-style: "italic" onto "oblique" assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
+PASS font-style: "italic" onto "oblique" 
 PASS letter-spacing (type: length) has testAccumulation function 
 FAIL letter-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL letter-spacing: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"

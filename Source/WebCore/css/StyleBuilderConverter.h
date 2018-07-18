@@ -118,7 +118,7 @@ public:
     static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, const CSSValue&);
     static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
     static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
-    static FontSelectionValue convertFontStyleFromValue(const CSSValue&);
+    static std::optional<FontSelectionValue> convertFontStyleFromValue(const CSSValue&);
     static FontSelectionValue convertFontWeight(StyleResolver&, const CSSValue&);
     static FontSelectionValue convertFontStretch(StyleResolver&, const CSSValue&);
     static FontSelectionValue convertFontStyle(StyleResolver&, const CSSValue&);
@@ -1202,14 +1202,15 @@ inline FontSelectionValue StyleBuilderConverter::convertFontStretchFromValue(con
     return normalStretchValue();
 }
 
-inline FontSelectionValue StyleBuilderConverter::convertFontStyleFromValue(const CSSValue& value)
+// The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
+inline std::optional<FontSelectionValue> StyleBuilderConverter::convertFontStyleFromValue(const CSSValue& value)
 {
     ASSERT(is<CSSFontStyleValue>(value));
     const auto& fontStyleValue = downcast<CSSFontStyleValue>(value);
 
     auto valueID = fontStyleValue.fontStyleValue->valueID();
     if (valueID == CSSValueNormal)
-        return normalItalicValue();
+        return std::nullopt;
     if (valueID == CSSValueItalic)
         return italicValue();
     ASSERT(valueID == CSSValueOblique);

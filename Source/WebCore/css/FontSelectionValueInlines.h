@@ -121,26 +121,13 @@ inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
     }
 }
 
-inline std::optional<CSSValueID> fontStyleKeyword(FontSelectionValue style, FontStyleAxis axis)
+inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
 {
-    if (style == normalItalicValue())
+    if (!style || style.value() == normalItalicValue())
         return CSSValueNormal;
-    if (style == italicValue())
+    if (style.value() == italicValue())
         return axis == FontStyleAxis::ital ? CSSValueItalic : CSSValueOblique;
     return std::nullopt;
-}
-
-inline std::optional<FontSelectionValue> fontStyleValue(CSSValueID value)
-{
-    switch (value) {
-    case CSSValueNormal:
-        return normalItalicValue();
-    case CSSValueOblique:
-    case CSSValueItalic:
-        return italicValue();
-    default:
-        return std::nullopt;
-    }
 }
 
 }

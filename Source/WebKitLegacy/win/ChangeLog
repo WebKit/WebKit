@@ -1,3 +1,15 @@
+2018-07-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Interpolation between font-styles with a keyword value should be discrete
+        https://bugs.webkit.org/show_bug.cgi?id=187722
+
+        Reviewed by Myles Maxfield.
+
+        Use isItalic() since that function knows how to handle an std::optional<FontSelectionValue>.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::font):
+
 2018-07-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable cross-origin-window-policy by default

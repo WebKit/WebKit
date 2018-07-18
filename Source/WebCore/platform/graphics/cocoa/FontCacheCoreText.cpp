@@ -597,7 +597,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     if (applyWeightWidthSlopeVariations && !fontIsSystemFont(originalFont)) {
         float weight = fontSelectionRequest.weight;
         float width = fontSelectionRequest.width;
-        float slope = fontSelectionRequest.slope;
+        float slope = fontSelectionRequest.slope.value_or(normalItalicValue());
         if (auto weightValue = fontFaceCapabilities.weight)
             weight = std::max(std::min(weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
         if (auto widthValue = fontFaceCapabilities.width)

@@ -152,7 +152,8 @@ public:
     unsigned familyCount() const { return m_fontDescription.familyCount(); }
     const AtomicString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
 
-    FontSelectionValue italic() const { return m_fontDescription.italic(); }
+    // A std::nullopt return value indicates "font-style: normal".
+    std::optional<FontSelectionValue> italic() const { return m_fontDescription.italic(); }
     FontSelectionValue weight() const { return m_fontDescription.weight(); }
     FontWidthVariant widthVariant() const { return m_fontDescription.widthVariant(); }
 

@@ -134,7 +134,7 @@ PASS font-stretch (type: fontStretch) has testAccumulation function
 FAIL font-stretch uses font-stretch behavior for composite type accumulate assert_equals: The value should be normal at 0ms expected "normal" but got "expanded"
 PASS font-style (type: discrete) has testAccumulation function 
 PASS font-style: "oblique" onto "italic" 
-FAIL font-style: "italic" onto "oblique" assert_equals: The value should be italic at 0ms expected "italic" but got "oblique"
+PASS font-style: "italic" onto "oblique" 
 PASS font-variation-settings (type: fontVariationSettings) has testAccumulation function 
 FAIL font-variation-settings with composite type accumulate assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 1.2"
 PASS font-variation-settings (type: discrete) has testAccumulation function 

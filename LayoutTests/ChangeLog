@@ -1,3 +1,19 @@
+2018-07-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Interpolation between font-styles with a keyword value should be discrete
+        https://bugs.webkit.org/show_bug.cgi?id=187722
+
+        Reviewed by Myles Maxfield.
+
+        Mark some WPT progressions.
+
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
         PiP from Element Fullscreen should match AVKit's behavior

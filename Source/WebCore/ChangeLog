@@ -1,3 +1,65 @@
+2018-07-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Interpolation between font-styles with a keyword value should be discrete
+        https://bugs.webkit.org/show_bug.cgi?id=187722
+
+        Reviewed by Myles Maxfield.
+
+        Animating between "font-style: normal" or "font-style: oblique" and any another value should yield a discrete
+        interpolation where the from-value is used from 0 and up to (but excluding) 0.5, and the to-value from 0.5 to 1.
+
+        In order to be able to detect the "normal" value, we make the "slope" of a FontSelectionRequest an optional type
+        where the std::nullopt value indicates "normal" and other values an "oblique" value. Since we also need to
+        distinguish the "italic" value from an "oblique" value, we implement a custom PropertyWrapper for the "font-style"
+        property where we ensure the fontStyleAxis property of the font description matches the value we're blending to.
+        Indeed, in the case where we may animate from "normal" to "italic", the fontStyleAxis on the blended style would
+        remain "slnt" since it is the base value for "normal".
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hasPlainText const):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::fontStyleFromStyleValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFontFace.cpp:
+        (WebCore::calculateItalicRange):
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::computeFontSelectionRequest):
+        * css/FontSelectionValueInlines.h:
+        (WebCore::fontStyleKeyword):
+        (WebCore::fontStyleValue): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontStyleFromValue):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperFontStyle::PropertyWrapperFontStyle):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::computeHash const):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::italic const):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::italic const):
+        (WebCore::FontDescription::setItalic):
+        (WebCore::FontDescription::setIsItalic):
+        (WebCore::FontCascadeDescription::initialItalic):
+        * platform/graphics/FontSelectionAlgorithm.cpp:
+        (WebCore::FontSelectionAlgorithm::styleDistance const):
+        * platform/graphics/FontSelectionAlgorithm.h:
+        (WebCore::isItalic):
+        (WebCore::FontSelectionRequest::tied const):
+        (WebCore::operator<<): Implement the required stream operator.
+        (WebCore::operator==): Mark this function as inline instead of constexpr since tied() is no longer constexpr
+        due to taking an std::optional<>.
+        (WebCore::operator!=):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontItalic):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontItalic const):
+
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r233926; BOOL !== bool.

@@ -1295,7 +1295,7 @@ HRESULT DOMElement::font(_Out_ WebFontDescription* webFontDescription)
     webFontDescription->familyLength = family.length();
     webFontDescription->size = fontDescription.computedSize();
     webFontDescription->bold = isFontWeightBold(fontDescription.weight());
-    webFontDescription->italic = fontDescription.italic();
+    webFontDescription->italic = isItalic(fontDescription.italic());
 
     return S_OK;
 }

@@ -66,42 +66,43 @@ auto FontSelectionAlgorithm::stretchDistance(Capabilities capabilities) const ->
 auto FontSelectionAlgorithm::styleDistance(Capabilities capabilities) const -> DistanceResult
 {
     auto slope = capabilities.slope;
+    auto requestSlope = m_request.slope.value_or(normalItalicValue());
     ASSERT(slope.isValid());
-    if (slope.includes(m_request.slope))
-        return { FontSelectionValue(), m_request.slope };
+    if (slope.includes(requestSlope))
+        return { FontSelectionValue(), requestSlope };
 
-    if (m_request.slope >= italicThreshold()) {
-        if (slope.minimum > m_request.slope)
-            return { slope.minimum - m_request.slope, slope.minimum };
-        ASSERT(m_request.slope > slope.maximum);
-        auto threshold = std::max(m_request.slope, m_capabilitiesBounds.slope.maximum);
+    if (requestSlope >= italicThreshold()) {
+        if (slope.minimum > requestSlope)
+            return { slope.minimum - requestSlope, slope.minimum };
+        ASSERT(requestSlope > slope.maximum);
+        auto threshold = std::max(requestSlope, m_capabilitiesBounds.slope.maximum);
         return { threshold - slope.maximum, slope.maximum };
     }
 
-    if (m_request.slope >= FontSelectionValue()) {
-        if (slope.maximum >= FontSelectionValue() && slope.maximum < m_request.slope)
-            return { m_request.slope - slope.maximum, slope.maximum };
-        if (slope.minimum > m_request.slope)
+    if (requestSlope >= FontSelectionValue()) {
+        if (slope.maximum >= FontSelectionValue() && slope.maximum < requestSlope)
+            return { requestSlope - slope.maximum, slope.maximum };
+        if (slope.minimum > requestSlope)
             return { slope.minimum, slope.minimum };
         ASSERT(slope.maximum < FontSelectionValue());
-        auto threshold = std::max(m_request.slope, m_capabilitiesBounds.slope.maximum);
+        auto threshold = std::max(requestSlope, m_capabilitiesBounds.slope.maximum);
         return { threshold - slope.maximum, slope.maximum };
     }
 
-    if (m_request.slope > -italicThreshold()) {
-        if (slope.minimum > m_request.slope && slope.minimum <= FontSelectionValue())
-            return { slope.minimum - m_request.slope, slope.minimum };
-        if (slope.maximum < m_request.slope)
+    if (requestSlope > -italicThreshold()) {
+        if (slope.minimum > requestSlope && slope.minimum <= FontSelectionValue())
+            return { slope.minimum - requestSlope, slope.minimum };
+        if (slope.maximum < requestSlope)
             return { -slope.maximum, slope.maximum };
         ASSERT(slope.minimum > FontSelectionValue());
-        auto threshold = std::min(m_request.slope, m_capabilitiesBounds.slope.minimum);
+        auto threshold = std::min(requestSlope, m_capabilitiesBounds.slope.minimum);
         return { slope.minimum - threshold, slope.minimum };
     }
 
-    if (slope.maximum < m_request.slope)
-        return { m_request.slope - slope.maximum, slope.maximum };
-    ASSERT(slope.minimum > m_request.slope);
-    auto threshold = std::min(m_request.slope, m_capabilitiesBounds.slope.minimum);
+    if (slope.maximum < requestSlope)
+        return { requestSlope - slope.maximum, slope.maximum };
+    ASSERT(slope.minimum > requestSlope);
+    auto threshold = std::min(requestSlope, m_capabilitiesBounds.slope.minimum);
     return { slope.minimum - threshold, slope.minimum };
 }
 
