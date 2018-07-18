@@ -1,3 +1,37 @@
+2018-07-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Start tracking Nicosia layers in CoordinatedGraphicsState
+        https://bugs.webkit.org/show_bug.cgi?id=187751
+
+        Reviewed by Carlos Garcia Campos.
+
+        Start including the Nicosia::CompositionLayer objects in the
+        CoordinatedGraphicsState struct, under a separate NicosiaState struct.
+        References to all the layers in a given scene are kept in a HashSet,
+        and a separate reference to the root layer kept in a separate member
+        variable.
+
+        CompositingCoordinator now takes care of adding or removing the
+        Nicosia::CompositionLayer objects to the NicosiaState's HashSet, as well
+        as setting the root layer object when it's being initialized. Additions
+        and removals of Nicosia::CompositionLayer correspond to the additions
+        and removals of CoordinatedGraphicsLayer objects to the coordinator's
+        m_registeredLayers HashMap.
+
+        Upon each state commit that's done in CoordinatedGraphicsScene, the
+        NicosiaState object will be copied into the member variable. Nothing is
+        done yet with that state object, but in the near future it will be used
+        to finally commit all the state details into the TextureMapper layers.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::initializeRootCompositingLayerIfNeeded):
+        (WebKit::CompositingCoordinator::createGraphicsLayer):
+        (WebKit::CompositingCoordinator::detachLayer):
+        (WebKit::CompositingCoordinator::attachLayer):
+
 2018-07-17  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (iOS 12): Can't scroll to the bottom of the page in WKWebView while keyboard is up on pages with viewport-fit=cover

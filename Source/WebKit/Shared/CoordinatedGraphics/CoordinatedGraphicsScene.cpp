@@ -431,6 +431,9 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
     if (!m_client)
         return;
 
+    m_nicosia = state.nicosia;
+    // FIXME: Start using the Nicosia layer state for updates.
+
     CommitScope commitScope;
 
     createLayers(state.layersToCreate);

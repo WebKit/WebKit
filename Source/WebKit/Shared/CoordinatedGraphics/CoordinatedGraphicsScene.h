@@ -142,6 +142,8 @@ private:
     void onNewBufferAvailable() override;
 #endif
 
+    WebCore::CoordinatedGraphicsState::NicosiaState m_nicosia;
+
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 
     HashMap<WebCore::CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore>> m_imageBackings;

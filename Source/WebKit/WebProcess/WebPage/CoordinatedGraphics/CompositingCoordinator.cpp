@@ -171,7 +171,9 @@ void CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
     if (m_didInitializeRootCompositingLayer)
         return;
 
-    m_state.rootCompositingLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer).id();
+    auto& rootLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
+    m_state.nicosia.rootLayer = rootLayer.compositionLayer();
+    m_state.rootCompositingLayer = rootLayer.id();
     m_didInitializeRootCompositingLayer = true;
     m_shouldSyncFrame = true;
 }
@@ -261,6 +263,7 @@ std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(Graph
 {
     CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(layerType, client);
     layer->setCoordinator(this);
+    m_state.nicosia.layers.add(layer->compositionLayer());
     m_registeredLayers.add(layer->id(), layer);
     m_state.layersToCreate.append(layer->id());
     layer->setNeedsVisibleRectAdjustment();
@@ -301,6 +304,7 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
     if (m_isPurging)
         return;
 
+    m_state.nicosia.layers.remove(layer->compositionLayer());
     m_registeredLayers.remove(layer->id());
 
     size_t index = m_state.layersToCreate.find(layer->id());
@@ -316,6 +320,7 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
 {
     layer->setCoordinator(this);
+    m_state.nicosia.layers.add(layer->compositionLayer());
     m_registeredLayers.add(layer->id(), layer);
     m_state.layersToCreate.append(layer->id());
     layer->setNeedsVisibleRectAdjustment();

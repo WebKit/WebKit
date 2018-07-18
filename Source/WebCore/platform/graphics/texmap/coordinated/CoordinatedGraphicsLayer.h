@@ -134,6 +134,8 @@ public:
     void setNeedsVisibleRectAdjustment();
     void purgeBackingStores();
 
+    const RefPtr<Nicosia::CompositionLayer>& compositionLayer() const;
+
 private:
     bool isCoordinatedGraphicsLayer() const override { return true; }
 

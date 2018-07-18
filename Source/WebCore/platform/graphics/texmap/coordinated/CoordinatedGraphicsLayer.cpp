@@ -1111,6 +1111,11 @@ void CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded(Coordina
         downcast<CoordinatedGraphicsLayer>(*child).setCoordinatorIncludingSubLayersIfNeeded(coordinator);
 }
 
+const RefPtr<Nicosia::CompositionLayer>& CoordinatedGraphicsLayer::compositionLayer() const
+{
+    return m_nicosia.layer;
+}
+
 void CoordinatedGraphicsLayer::setNeedsVisibleRectAdjustment()
 {
     if (shouldHaveBackingStore())

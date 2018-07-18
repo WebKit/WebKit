@@ -1,3 +1,24 @@
+2018-07-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Start tracking Nicosia layers in CoordinatedGraphicsState
+        https://bugs.webkit.org/show_bug.cgi?id=187751
+
+        Reviewed by Carlos Garcia Campos.
+
+        Start including the Nicosia::CompositionLayer objects in the
+        CoordinatedGraphicsState struct, under a separate NicosiaState struct.
+        References to all the layers in a given scene are kept in a HashSet,
+        and a separate reference to the root layer kept in a separate member
+        variable.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::compositionLayer const):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        Add the getter method that returns internal Nicosia::CompositionLayer
+        object. This can't be defined in the class definition because of
+        WEBCORE_EXPORT used on the CoordinatedGraphicsLayer class.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+
 2018-07-18  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink CompositeAnimation and AnimationBase
