@@ -63,7 +63,7 @@ private:
     int m_sslErrors { 0 };
     CertificateInfo m_certificateInfo;
 
-    bool verify(X509StoreCTX*);
+    void collectInfo(X509StoreCTX*);
 };
 
 } // namespace WebCore

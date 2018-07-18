@@ -301,7 +301,7 @@ void CurlHandle::enableSSLForHost(const String& host)
         setSslKeyPassword(sslClientCertificate->second.utf8().data());
     }
 
-    if (sslHandle.shouldIgnoreSSLErrors()) {
+    if (sslHandle.canIgnoreAnyHTTPSCertificatesForHost(host) || sslHandle.shouldIgnoreSSLErrors()) {
         setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
         setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
     } else {

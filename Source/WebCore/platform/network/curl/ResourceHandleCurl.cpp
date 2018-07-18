@@ -169,7 +169,7 @@ void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     ASSERT(isMainThread());
 
-    CurlContext::singleton().sslHandle().setHostAllowsAnyHTTPSCertificate(host);
+    CurlContext::singleton().sslHandle().allowAnyHTTPSCertificatesForHost(host);
 }
 
 void ResourceHandle::setClientCertificateInfo(const String& host, const String& certificate, const String& key)

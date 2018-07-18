@@ -47,8 +47,8 @@ CurlSSLVerifier::CurlSSLVerifier(CurlHandle& curlHandle, void* sslCtx)
     SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), verifyCallback);
 
 #if defined(LIBRESSL_VERSION_NUMBER)
-    if (auto* data = WTF::get_if<Vector<char>>(sslHandle.getCACertInfo()))
-        SSL_CTX_load_verify_mem(ctx, static_cast<void*>(const_cast<char*>(data->data())), data->size());
+    if (auto data = WTF::get_if<CertificateInfo::Certificate>(sslHandle.getCACertInfo()))
+        SSL_CTX_load_verify_mem(ctx, static_cast<void*>(const_cast<uint8_t*>(data->data())), data->size());
 #endif
 
 #if (!defined(LIBRESSL_VERSION_NUMBER))
@@ -62,40 +62,23 @@ CurlSSLVerifier::CurlSSLVerifier(CurlHandle& curlHandle, void* sslCtx)
         SSL_CTX_set1_curves_list(ctx, curvesList.utf8().data());
 }
 
-bool CurlSSLVerifier::verify(X509StoreCTX* ctx)
+void CurlSSLVerifier::collectInfo(X509StoreCTX* ctx)
 {
-    // whether the verification of the certificate in question was passed (preverify_ok=1) or not (preverify_ok=0)
     m_certificateInfo = CertificateInfo { X509_STORE_CTX_get_error(ctx), pemDataFromCtx(ctx) };
 
-    auto error = m_certificateInfo.verificationError();
-    if (!error)
-        return 1;
-
-    m_sslErrors = static_cast<int>(convertToSSLCertificateFlags(error));
-
-#if PLATFORM(WIN)
-    bool ok = CurlContext::singleton().sslHandle().isAllowedHTTPSCertificateHost(m_curlHandle.url().host().toString());
-#else
-    bool ok = CurlContext::singleton().sslHandle().canIgnoredHTTPSCertificate(m_curlHandle.url().host().toString(), m_certificateInfo.certificateChain());
-#endif
-
-    if (ok) {
-        // if the host and the certificate are stored for the current handle that means is enabled,
-        // so don't need to curl verifies the authenticity of the peer's certificate
-        m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
-    }
-
-    return ok;
+    if (auto error = m_certificateInfo.verificationError())
+        m_sslErrors = static_cast<int>(convertToSSLCertificateFlags(error));
 }
 
-int CurlSSLVerifier::verifyCallback(int ok, X509StoreCTX* ctx)
+int CurlSSLVerifier::verifyCallback(int preverified, X509StoreCTX* ctx)
 {
     auto ssl = static_cast<SSL*>(X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx()));
     auto sslCtx = SSL_get_SSL_CTX(ssl);
     auto verifier = static_cast<CurlSSLVerifier*>(SSL_CTX_get_app_data(sslCtx));
 
-    // whether the verification of the certificate in question was passed (preverify_ok=1) or not (preverify_ok=0)
-    return verifier->verify(ctx);
+    verifier->collectInfo(ctx);
+    // whether the verification of the certificate in question was passed (preverified=1) or not (preverified=0)
+    return preverified;
 }
 
 class StackOfX509 {

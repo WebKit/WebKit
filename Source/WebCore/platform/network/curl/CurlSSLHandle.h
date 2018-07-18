@@ -29,8 +29,8 @@
 #include "CertificateInfo.h"
 #include <openssl/crypto.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 
@@ -69,12 +69,11 @@ public:
     WEBCORE_EXPORT void setCACertData(CertificateInfo::Certificate&&);
     WEBCORE_EXPORT void clearCACertInfo();
 
-    WEBCORE_EXPORT void setHostAllowsAnyHTTPSCertificate(const String&);
-    bool isAllowedHTTPSCertificateHost(const String&);
-    bool canIgnoredHTTPSCertificate(const String&, const Vector<CertificateInfo::Certificate>&);
+    WEBCORE_EXPORT void allowAnyHTTPSCertificatesForHost(const String& host);
+    bool canIgnoreAnyHTTPSCertificatesForHost(const String&) const;
 
     WEBCORE_EXPORT void setClientCertificateInfo(const String&, const String&, const String&);
-    std::optional<ClientCertificate> getSSLClientCertificate(const String&);
+    std::optional<ClientCertificate> getSSLClientCertificate(const String&) const;
 
 private:
 #if NEED_OPENSSL_THREAD_SUPPORT
@@ -113,8 +112,9 @@ private:
 
     bool m_ignoreSSLErrors { false };
 
-    Lock m_mutex;
-    HashMap<String, Vector<CertificateInfo::Certificate>, ASCIICaseInsensitiveHash> m_allowedHosts;
+    mutable Lock m_allowedHostsLock;
+    mutable Lock m_allowedClientHostsLock;
+    HashSet<String, ASCIICaseInsensitiveHash> m_allowedHosts;
     HashMap<String, ClientCertificate, ASCIICaseInsensitiveHash> m_allowedClientHosts;
 };
 

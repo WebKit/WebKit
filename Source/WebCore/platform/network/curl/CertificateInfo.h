@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CertificateInfo {
 public:
-    using Certificate = Vector<char>;
+    using Certificate = Vector<uint8_t>;
 
     CertificateInfo() = default;
     WEBCORE_EXPORT CertificateInfo(int verificationError, Vector<Certificate>&&);
