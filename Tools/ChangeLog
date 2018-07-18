@@ -1,3 +1,16 @@
+2018-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add jsc_context_check_syntax() to GLib API
+        https://bugs.webkit.org/show_bug.cgi?id=187694
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a new test case.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCCheckSyntax):
+        (main):
+
 2018-07-17  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION: [macOS Sierra] TestWebKitAPI.WebKit.WebsiteDataStoreCustomPaths is a flaky failure

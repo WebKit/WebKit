@@ -1,3 +1,17 @@
+2018-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add jsc_context_check_syntax() to GLib API
+        https://bugs.webkit.org/show_bug.cgi?id=187694
+
+        Reviewed by Yusuke Suzuki.
+
+        A new function to be able to check for syntax errors without actually evaluating the code.
+
+        * API/glib/JSCContext.cpp:
+        (jsc_context_check_syntax):
+        * API/glib/JSCContext.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2018-07-17  Keith Miller  <keith_miller@apple.com>
 
         Revert r233630 since it broke internal wasm benchmarks

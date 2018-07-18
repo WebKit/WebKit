@@ -26,6 +26,8 @@ JSC_DEPRECATED_FOR
 <TITLE>JSCContext</TITLE>
 JSCContext
 JSCExceptionHandler
+JSCCheckSyntaxMode
+JSCCheckSyntaxResult
 jsc_context_new
 jsc_context_new_with_virtual_machine
 jsc_context_get_virtual_machine
@@ -39,6 +41,7 @@ jsc_context_get_current
 jsc_context_evaluate
 jsc_context_evaluate_with_source_uri
 jsc_context_evaluate_in_object
+jsc_context_check_syntax
 jsc_context_get_global_object
 jsc_context_set_value
 jsc_context_get_value

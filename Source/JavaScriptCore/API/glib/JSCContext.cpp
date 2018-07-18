@@ -30,6 +30,7 @@
 #include "JSRetainPtr.h"
 #include "JSWithScope.h"
 #include "OpaqueJSString.h"
+#include "Parser.h"
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -825,6 +826,114 @@ JSCValue* jsc_context_evaluate_in_object(JSCContext* context, const char* code, 
     *object = jscContextGetOrCreateValue(context, JSContextGetGlobalObject(objectContext.get())).leakRef();
 
     return jscContextGetOrCreateValue(context, result).leakRef();
+}
+
+/**
+ * JSCCheckSyntaxMode:
+ * @JSC_CHECK_SYNTAX_MODE_SCRIPT: mode to check syntax of a script
+ * @JSC_CHECK_SYNTAX_MODE_MODULE: mode to check syntax of a module
+ *
+ * Enum values to specify a mode to check for syntax errors in jsc_context_check_syntax().
+ */
+
+/**
+ * JSCCheckSyntaxResult:
+ * @JSC_CHECK_SYNTAX_RESULT_SUCCESS: no errors
+ * @JSC_CHECK_SYNTAX_RESULT_RECOVERABLE_ERROR: recoverable syntax error
+ * @JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR: irrecoverable syntax error
+ * @JSC_CHECK_SYNTAX_RESULT_UNTERMINATED_LITERAL_ERROR: unterminated literal error
+ * @JSC_CHECK_SYNTAX_RESULT_OUT_OF_MEMORY_ERROR: out of memory error
+ * @JSC_CHECK_SYNTAX_RESULT_STACK_OVERFLOW_ERROR: stack overflow error
+ *
+ * Enum values to specify the result of jsc_context_check_syntax().
+ */
+
+/**
+ * jsc_context_check_syntax:
+ * @context: a #JSCContext
+ * @code: a JavaScript script to check
+ * @length: length of @code, or -1 if @code is a nul-terminated string
+ * @mode: a #JSCCheckSyntaxMode
+ * @uri: the source URI
+ * @line_number: the starting line number
+ * @exception: (out) (optional) (transfer full): return location for a #JSCException, or %NULL to ignore
+ *
+ * Check the given @code in @context for syntax errors. The @line_number is the starting line number in @uri;
+ * the value is one-based so the first line is 1. @uri and @line_number are only used to fill the @exception.
+ * In case of errors @exception will be set to a new #JSCException with the details. You can pass %NULL to
+ * @exception to ignore the error details.
+ *
+ * Returns: a #JSCCheckSyntaxResult
+ */
+JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* code, gssize length, JSCCheckSyntaxMode mode, const char* uri, unsigned lineNumber, JSCException **exception)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
+    g_return_val_if_fail(code, JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
+    g_return_val_if_fail(!exception || !*exception, JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
+
+    lineNumber = std::max<unsigned>(1, lineNumber);
+
+    auto* jsContext = context->priv->jsContext.get();
+    JSC::ExecState* exec = toJS(jsContext);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+
+    String sourceURLString = uri ? String::fromUTF8(uri) : String();
+    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURLString },
+        sourceURLString, TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
+    bool success = false;
+    JSC::ParserError error;
+    switch (mode) {
+    case JSC_CHECK_SYNTAX_MODE_SCRIPT:
+        success = !!JSC::parse<JSC::ProgramNode>(&vm, source, JSC::Identifier(), JSC::JSParserBuiltinMode::NotBuiltin,
+            JSC::JSParserStrictMode::NotStrict, JSC::JSParserScriptMode::Classic, JSC::SourceParseMode::ProgramMode, JSC::SuperBinding::NotNeeded, error);
+        break;
+    case JSC_CHECK_SYNTAX_MODE_MODULE:
+        success = !!JSC::parse<JSC::ModuleProgramNode>(&vm, source, JSC::Identifier(), JSC::JSParserBuiltinMode::NotBuiltin,
+            JSC::JSParserStrictMode::Strict, JSC::JSParserScriptMode::Module, JSC::SourceParseMode::ModuleAnalyzeMode, JSC::SuperBinding::NotNeeded, error);
+        break;
+    }
+
+    JSCCheckSyntaxResult result = JSC_CHECK_SYNTAX_RESULT_SUCCESS;
+    if (success)
+        return result;
+
+    switch (error.type()) {
+    case JSC::ParserError::ErrorType::SyntaxError: {
+        switch (error.syntaxErrorType()) {
+        case JSC::ParserError::SyntaxErrorType::SyntaxErrorIrrecoverable:
+            result = JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR;
+            break;
+        case JSC::ParserError::SyntaxErrorType::SyntaxErrorUnterminatedLiteral:
+            result = JSC_CHECK_SYNTAX_RESULT_UNTERMINATED_LITERAL_ERROR;
+            break;
+        case JSC::ParserError::SyntaxErrorType::SyntaxErrorRecoverable:
+            result = JSC_CHECK_SYNTAX_RESULT_RECOVERABLE_ERROR;
+            break;
+        case JSC::ParserError::SyntaxErrorType::SyntaxErrorNone:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case JSC::ParserError::ErrorType::StackOverflow:
+        result = JSC_CHECK_SYNTAX_RESULT_STACK_OVERFLOW_ERROR;
+        break;
+    case JSC::ParserError::ErrorType::OutOfMemory:
+        result = JSC_CHECK_SYNTAX_RESULT_OUT_OF_MEMORY_ERROR;
+        break;
+    case JSC::ParserError::ErrorType::EvalError:
+    case JSC::ParserError::ErrorType::ErrorNone:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    if (exception) {
+        auto* jsError = error.toErrorObject(exec->lexicalGlobalObject(), source);
+        *exception = jscExceptionCreate(context, toRef(exec, jsError)).leakRef();
+    }
+
+    return result;
 }
 
 /**

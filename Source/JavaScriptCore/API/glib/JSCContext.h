@@ -48,6 +48,20 @@ typedef void (* JSCExceptionHandler) (JSCContext   *context,
                                       JSCException *exception,
                                       gpointer      user_data);
 
+typedef enum {
+    JSC_CHECK_SYNTAX_MODE_SCRIPT,
+    JSC_CHECK_SYNTAX_MODE_MODULE
+} JSCCheckSyntaxMode;
+
+typedef enum {
+    JSC_CHECK_SYNTAX_RESULT_SUCCESS,
+    JSC_CHECK_SYNTAX_RESULT_RECOVERABLE_ERROR,
+    JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR,
+    JSC_CHECK_SYNTAX_RESULT_UNTERMINATED_LITERAL_ERROR,
+    JSC_CHECK_SYNTAX_RESULT_OUT_OF_MEMORY_ERROR,
+    JSC_CHECK_SYNTAX_RESULT_STACK_OVERFLOW_ERROR,
+} JSCCheckSyntaxResult;
+
 struct _JSCContext {
     GObject parent;
 
@@ -122,6 +136,15 @@ jsc_context_evaluate_in_object       (JSCContext         *context,
                                       const char         *uri,
                                       guint               line_number,
                                       JSCValue          **object);
+
+JSC_API JSCCheckSyntaxResult
+jsc_context_check_syntax             (JSCContext         *context,
+                                      const char         *code,
+                                      gssize              length,
+                                      JSCCheckSyntaxMode  mode,
+                                      const char         *uri,
+                                      unsigned            line_number,
+                                      JSCException      **exception);
 
 JSC_API JSCValue *
 jsc_context_get_global_object        (JSCContext         *context);

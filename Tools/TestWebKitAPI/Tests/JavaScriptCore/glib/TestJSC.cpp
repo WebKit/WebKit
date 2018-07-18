@@ -719,6 +719,52 @@ static void testJSCEvaluateInObject()
     g_assert_true(jsc_value_is_undefined(moduleInWk.get()));
 }
 
+static void testJSCCheckSyntax()
+{
+    LeakChecker checker;
+    GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+    checker.watch(context.get());
+    ExceptionHandler exceptionHandler(context.get());
+
+    GRefPtr<JSCException> exception;
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f = 42", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, &exception.outPtr()), ==, JSC_CHECK_SYNTAX_RESULT_SUCCESS);
+    g_assert_null(exception.get());
+
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f = 42; b =", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, &exception.outPtr()), ==, JSC_CHECK_SYNTAX_RESULT_RECOVERABLE_ERROR);
+    checker.watch(exception.get());
+    g_assert_true(JSC_IS_EXCEPTION(exception.get()));
+    g_assert_cmpstr(jsc_exception_get_message(exception.get()), ==, "Unexpected end of script");
+    g_assert_cmpuint(jsc_exception_get_line_number(exception.get()), ==, 1);
+    g_assert_false(jsc_exception_get_source_uri(exception.get()));
+    GRefPtr<JSCValue> globalObject = adoptGRef(jsc_context_get_global_object(context.get()));
+    checker.watch(globalObject.get());
+    g_assert_false(jsc_value_object_has_property(globalObject.get(), "f"));
+    exception = nullptr;
+
+    // Only syntax errors are checked.
+    bool didThrow = false;
+    g_assert_throw_begin(exceptionHandler, didThrow);
+    GRefPtr<JSCValue> value = adoptGRef(jsc_context_evaluate(context.get(), "f", -1));
+    checker.watch(value.get());
+    g_assert_true(jsc_value_is_undefined(value.get()));
+    g_assert_did_throw(exceptionHandler, didThrow);
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, &exception.outPtr()), ==, JSC_CHECK_SYNTAX_RESULT_SUCCESS);
+    g_assert_null(exception.get());
+
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f ==== 42", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, "file:///foo/script.js", 2, &exception.outPtr()), ==, JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
+    checker.watch(exception.get());
+    g_assert_true(JSC_IS_EXCEPTION(exception.get()));
+    g_assert_cmpstr(jsc_exception_get_message(exception.get()), ==, "Unexpected token '='");
+    g_assert_cmpuint(jsc_exception_get_line_number(exception.get()), ==, 2);
+    g_assert_cmpstr(jsc_exception_get_source_uri(exception.get()), ==, "file:///foo/script.js");
+
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f := 42", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, nullptr), ==, JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f '42;", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, nullptr), ==, JSC_CHECK_SYNTAX_RESULT_UNTERMINATED_LITERAL_ERROR);
+
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "import foo from '/foo.js'", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, nullptr), ==, JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
+    g_assert_cmpuint(jsc_context_check_syntax(context.get(), "import foo from '/foo.js'", -1, JSC_CHECK_SYNTAX_MODE_MODULE, nullptr, 0, nullptr), ==, JSC_CHECK_SYNTAX_RESULT_SUCCESS);
+}
+
 static int foo(int n)
 {
     return n * 2;
@@ -2998,6 +3044,7 @@ int main(int argc, char** argv)
     g_test_add_func("/jsc/types", testJSCTypes);
     g_test_add_func("/jsc/global-object", testJSCGlobalObject);
     g_test_add_func("/jsc/evaluate-in-object", testJSCEvaluateInObject);
+    g_test_add_func("/jsc/check-syntax", testJSCCheckSyntax);
     g_test_add_func("/jsc/function", testJSCFunction);
     g_test_add_func("/jsc/object", testJSCObject);
     g_test_add_func("/jsc/class", testJSCClass);
