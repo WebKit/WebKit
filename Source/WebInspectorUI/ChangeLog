@@ -1,3 +1,25 @@
+2018-07-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION(r232591): CodeMirrorEditor should not use a RegExp lineSeparator option
+        https://bugs.webkit.org/show_bug.cgi?id=187772
+        <rdar://problem/42331640>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CodeMirrorEditor.js:
+        (WI.CodeMirrorEditor.create):
+        (WI.CodeMirrorEditor):
+        CodeMirror should be left to auto-detect line separators. By default
+        it detects \n, \r\n, and \r. By specifying a regular expression we
+        merely cause problems when CodeMirror uses the supplied lineSeparator
+        when joining its array of lines together.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.set string.update):
+        (WI.TextEditor.prototype.set string):
+        This assertion was only true when we forced "\n" line endings everywhere.
+        It no longer holds for source text with "\r\n" (Windows-style) line endings.
+
 2018-07-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Fix execution highlighting after r233820

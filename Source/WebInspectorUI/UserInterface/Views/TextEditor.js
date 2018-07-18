@@ -118,10 +118,9 @@ WI.TextEditor = class TextEditor extends WI.View
             if (this._initialStringNotSet)
                 this._codeMirror.removeLineClass(0, "wrap");
 
-            if (this._codeMirror.getValue() !== newString) {
+            if (this._codeMirror.getValue() !== newString)
                 this._codeMirror.setValue(newString);
-                console.assert(this.string.length === newString.length, "A lot of our code depends on precise text offsets, so the string should remain the same.");
-            } else {
+            else {
                 // Ensure we at display content even if the value did not change. This often happens when auto formatting.
                 this.layout();
             }
