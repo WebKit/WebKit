@@ -1,3 +1,15 @@
+2018-07-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Switch CMake ports back to C++ 14
+        https://bugs.webkit.org/show_bug.cgi?id=187744
+
+        Reviewed by Ryosuke Niwa.
+
+        Always use WTF's internal std::optional implementation, since std::optional is not part of
+        C++ 14.
+
+        * wtf/Optional.h:
+
 2018-07-17  Keith Miller  <keith_miller@apple.com>
 
         Revert r233630 since it broke internal wasm benchmarks

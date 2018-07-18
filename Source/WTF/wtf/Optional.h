@@ -47,10 +47,6 @@
 # include <wtf/Compiler.h>
 # include <wtf/StdLibExtras.h>
 
-#if !COMPILER(MSVC) && !PLATFORM(COCOA) && __has_include(<optional>)
-# include <optional>
-#else
-
 # define TR2_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
 
 # if defined __GNUC__ // NOTE: GNUC is also defined for Clang
@@ -1033,8 +1029,6 @@ namespace std
 }
 
 # undef TR2_OPTIONAL_REQUIRES
-
-#endif // defined(__cpp_lib_optional)
 
 namespace WTF {
 

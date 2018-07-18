@@ -1,3 +1,18 @@
+2018-07-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Switch CMake ports back to C++ 14
+        https://bugs.webkit.org/show_bug.cgi?id=187744
+
+        Reviewed by Ryosuke Niwa.
+
+        The XCode build is still not using C++ 17, it's been several months since CMake ports
+        switched, everything builds fine without changes if we switch back, and there have been some
+        unfixed problems. Let's go back to C++ 14 for now. We can switch back to C++ 17 whenever we
+        are ready to switch over XCode at the same time, to ensure we don't wind up with divergent
+        behavior for std::optional.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2018-07-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update ReadMe.md line 68
