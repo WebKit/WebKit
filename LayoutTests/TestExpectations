@@ -1519,6 +1519,8 @@ crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Skip ]
 crypto/subtle/rsa-pss-import-spki-key.html [ Skip ]
 crypto/workers/subtle/rsa-pss-import-key-sign.html [ Skip ]
 crypto/workers/subtle/rsa-pss-import-key-verify.html [ Skip ]
+http/wpt/crypto/rsa-pss-crash.any.html [ Skip ]
+http/wpt/crypto/rsa-pss-crash.any.worker.html [ Skip ]
 
 editing/deleting/delete-emoji.html [ Slow ]
 
