@@ -1,3 +1,18 @@
+2018-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add SPI to defer running async script until after document load
+        https://bugs.webkit.org/show_bug.cgi?id=187748
+        <rdar://problem/42317378>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Add an API test to verify that when the deferred async script configuration is set, async scripts will be
+        executed after the DOMContentLoaded event.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/RunScriptAfterDocumentLoad.mm: Added.
+        (TEST):
+
 2018-07-18  Charlie Turner  <cturner@igalia.com>
 
         [WPE] Update WPEBackend in flatpak

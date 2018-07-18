@@ -1,3 +1,46 @@
+2018-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add SPI to defer running async script until after document load
+        https://bugs.webkit.org/show_bug.cgi?id=187748
+        <rdar://problem/42317378>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        On watchOS, we currently observe that time-consuming async scripts can block the first paint of Reader, leaving
+        the user with a blank screen for tens of seconds. One way to mitigate this is to defer async script execution
+        until after document load (i.e. the same timing as DOMContentLoaded).
+
+        This patch introduces an SPI configuration allowing internal clients to defer execution of asynchronous script
+        until after document load; this, in combination with the parser yielding token introduced in r233891, allows
+        Safari on watchOS to avoid being blocked on slow script execution before the first paint of the Reader page on
+        most article-like pages. See below for more details.
+
+        Test: RunScriptAfterDocumentLoad.ExecutionOrderOfScriptsInDocument
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldDeferAsynchronousScriptsUntilParsingFinishes const):
+        (WebCore::Document::finishedParsing):
+
+        Notify ScriptRunner when the Document has finished parsing, and is about to fire DOMContentLoaded.
+
+        * dom/Document.h:
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::documentFinishedParsing):
+
+        When the document is finished parsing, kick off the script execution timer if needed to run any async script
+        that has been deferred.
+
+        (WebCore::ScriptRunner::notifyFinished):
+        (WebCore::ScriptRunner::timerFired):
+
+        Instead of always taking from the list of async scripts to execute, check our document to see whether we should
+        defer this until after document load. If so, ignore `m_scriptsToExecuteSoon`.
+
+        * dom/ScriptRunner.h:
+        * page/Settings.yaml:
+
+        Add a WebCore setting for this behavior.
+
 2018-07-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add debug border, repaint counter state tracking to Nicosia::CompositionLayer

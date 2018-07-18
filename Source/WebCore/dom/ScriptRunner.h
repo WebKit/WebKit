@@ -53,6 +53,8 @@ public:
     void didBeginYieldingParser() { suspend(); }
     void didEndYieldingParser() { resume(); }
 
+    void documentFinishedParsing();
+
 private:
     void timerFired();
 

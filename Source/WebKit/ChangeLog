@@ -1,3 +1,25 @@
+2018-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add SPI to defer running async script until after document load
+        https://bugs.webkit.org/show_bug.cgi?id=187748
+        <rdar://problem/42317378>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Add plumbing for a new ShouldDeferAsynchronousScriptsUntilAfterDocumentLoad configuration that determines
+        whether async script execution should be deferred until document load (i.e. DOMContentLoaded). This
+        configuration defaults to NO on all platforms. See WebCore ChangeLog for more detail.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad]):
+        (-[WKWebViewConfiguration _setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2018-07-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Start tracking Nicosia layers in CoordinatedGraphicsState

@@ -1092,6 +1092,10 @@ IncompleteImageBorderEnabled:
   type: bool
   defaultValue: false
 
+ShouldDeferAsynchronousScriptsUntilAfterDocumentLoad:
+  type: bool
+  defaultValue: false
+
 StorageAccessAPIEnabled:
   type: bool
   defaultValue: true
