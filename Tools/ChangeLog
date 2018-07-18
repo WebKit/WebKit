@@ -1,3 +1,15 @@
+2018-07-18  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to run layout-test
+        https://bugs.webkit.org/show_bug.cgi?id=187674
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests): Added build step to run layout-tests. This is similar to current EWS.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/factories.py: Added build-step to run layout-test in iOSSimulatorFactory.
+
 2018-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add SPI to defer running async script until after document load

@@ -88,7 +88,9 @@ class iOSFactory(BuildFactory):
 
 
 class iOSSimulatorFactory(BuildFactory):
-    pass
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        BuildFactory.__init__(self, platform, configuration, architectures, additionalArguments)
+        self.addStep(RunWebKitTests())
 
 
 class MacWK1Factory(BuildFactory):

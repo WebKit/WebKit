@@ -258,3 +258,29 @@ class KillOldProcesses(shell.Compile):
 
     def __init__(self, **kwargs):
         super(KillOldProcesses, self).__init__(timeout=60, **kwargs)
+
+
+class RunWebKitTests(shell.Test):
+    name = 'layout-tests'
+    description = ['layout-tests running']
+    descriptionDone = ['layout-tests']
+    resultDirectory = 'layout-test-results'
+    command = ['python', 'Tools/Scripts/run-webkit-tests',
+               '--no-build',
+               '--no-new-test-results',
+               '--no-show-results',
+               '--exit-after-n-failures', '30',
+               '--skip-failing-tests',
+               WithProperties('--%(configuration)s')]
+
+    def start(self):
+        platform = self.getProperty('platform')
+        appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
+        additionalArguments = self.getProperty('additionalArguments')
+
+        self.setCommand(self.command + ['--results-directory', self.resultDirectory])
+        self.setCommand(self.command + ['--debug-rwt-logging'])
+
+        if additionalArguments:
+            self.setCommand(self.command + additionalArguments)
+        return shell.Test.start(self)
