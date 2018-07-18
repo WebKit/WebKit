@@ -38,6 +38,10 @@ typedef CF_ENUM(CFIndex, CFSystemVersion) {
     CFSystemVersionMountainLion = 8,
 };
 
+typedef CF_OPTIONS(uint64_t, __CFRunLoopOptions) {
+    __CFRunLoopOptionsEnableAppNap = 0x3b000000
+};
+
 #endif
 
 WTF_EXTERN_C_BEGIN
@@ -51,5 +55,7 @@ Boolean _CFAppVersionCheckLessThan(CFStringRef bundleID, int linkedOnAnOlderSyst
 Boolean _CFExecutableLinkedOnOrAfter(CFSystemVersion);
 CFDictionaryRef _CFCopySystemVersionDictionary();
 CFDictionaryRef _CFWebServicesCopyProviderInfo(CFStringRef serviceType, Boolean* outIsUserSelection);
+
+void __CFRunLoopSetOptionsReason(__CFRunLoopOptions opts, CFStringRef reason);
 
 WTF_EXTERN_C_END

@@ -1,3 +1,25 @@
+2018-07-18  Per Arne Vollan  <pvollan@apple.com>
+
+        The WebContent process does not suspend when MiniBrowser is minimized.
+        https://bugs.webkit.org/show_bug.cgi?id=187708
+
+        Reviewed by Chris Dumez.
+
+        Using the NSRunLoop runloop type prevents the WebContent process from suspending. Instead, use the new
+        _WebKit runloop type. Also do not leak a boost to the WebContent process, since this also prevents the
+        WebContent process from going to sleep. Calling SetApplicationIsDaemon prevents the WebContent process
+        from being assigned the application process priority level. To block WindowServer connections, call
+        CGSSetDenyWindowServerConnections(true) instead. Finally, App nap must be manually enabled, since the
+        WebContent process is no longer a NSApplication.
+
+        * Configurations/WebContentService.xcconfig:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::shouldLeakBoost):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateThrottleState):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-07-18  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit::SuspendedPageProxy::webProcessDidClose(WebKit::WebProcessProxy&)

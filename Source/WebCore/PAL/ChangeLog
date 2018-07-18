@@ -1,3 +1,14 @@
+2018-07-18  Per Arne Vollan  <pvollan@apple.com>
+
+        The WebContent process does not suspend when MiniBrowser is minimized.
+        https://bugs.webkit.org/show_bug.cgi?id=187708
+
+        Reviewed by Chris Dumez.
+
+        Add function for enabling App nap.
+
+        * pal/spi/cf/CFUtilitiesSPI.h:
+
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
         PiP from Element Fullscreen should match AVKit's behavior

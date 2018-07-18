@@ -316,7 +316,7 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // Deny the WebContent process access to the WindowServer.
     // This call will not succeed if there are open WindowServer connections at this point.
-    setApplicationIsDaemon();
+    CGSSetDenyWindowServerConnections(true);
     // Make sure that we close any WindowServer connections after checking in with Launch Services.
     CGSShutdownServerConnections();
 #else
