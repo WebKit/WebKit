@@ -99,6 +99,7 @@ void SuspendedPageProxy::webProcessDidClose(WebProcessProxy& process)
 {
     ASSERT_UNUSED(process, &process == m_process);
 
+    auto protectedThis = makeRef(*this);
     m_process->processPool().unregisterSuspendedPageProxy(*this);
     m_process = nullptr;
 

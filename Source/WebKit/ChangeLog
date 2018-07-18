@@ -1,3 +1,17 @@
+2018-07-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebKit::SuspendedPageProxy::webProcessDidClose(WebKit::WebProcessProxy&)
+        https://bugs.webkit.org/show_bug.cgi?id=187780
+
+        Reviewed by Brady Eidson.
+
+        Protect |this| in SuspendedPageProxy::webProcessDidClose() since the call to
+        WebPageProxy::suspendedPageClosed() may destroy us before the method is done
+        executing.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::webProcessDidClose):
+
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
         -_beginAnimatedResizeWithUpdates: can leave view in bad state if called during an existing animation
