@@ -24,16 +24,16 @@ Alignment 4
     TighteningForTruncation: YES
     HeaderLevel: 0
 [webkit.org]
-    NSColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSColor: #0000ee (sRGB)
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
     NSLink: https://webkit.org/
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0.933333 1
+    NSStrokeColor: #0000ee (sRGB)
     NSStrokeWidth: 0
     NSUnderline: true
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 

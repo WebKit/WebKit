@@ -35,51 +35,51 @@ Alignment 4
 [bold]
     NSFont: Times-Bold 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [ font weight 100 font weight 200 font weight 300 font weight 400 font weight 500 ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [font weight 600]
     NSFont: Times-Bold 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [font weight 700]
     NSFont: Times-Bold 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [font weight 800]
     NSFont: Times-Bold 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [font weight 900]
     NSFont: Times-Bold 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 

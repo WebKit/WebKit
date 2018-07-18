@@ -30,45 +30,45 @@ Alignment 4
 [sup element]
     NSFont: Times-Roman 13.33 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
     NSSuperScript: 1
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [sub element]
     NSFont: Times-Roman 13.33 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
     NSSuperScript: -1
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [vertical align super]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
     NSSuperScript: 1
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 [vertical align sub]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
     NSSuperScript: -1
 [ vertical align 50% ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (NSCustomColorSpace)
     NSStrokeWidth: 0
 

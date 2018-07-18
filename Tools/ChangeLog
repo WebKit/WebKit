@@ -1,3 +1,21 @@
+2018-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the parsing of colors in attributed string tests, and make it possible to dump the typing attributes
+        https://bugs.webkit.org/show_bug.cgi?id=187747
+
+        Reviewed by Ryosuke Niwa.
+        
+        Add textInputController.attributedStringForTyping(), which returns a one-character
+        attributed string whose attributes are the typing attributes, making it possible to
+        test -[WebView typingAttributes].
+        
+        Sadly WebCore's convertObjcValueToValue() doesn't know how to convert NSDictionary,
+        so we can't return -typingAttributes directly.
+
+        * DumpRenderTree/mac/TextInputControllerMac.m:
+        (+[TextInputController isSelectorExcludedFromWebScript:]):
+        (-[TextInputController attributedStringForTyping]):
+
 2018-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add jsc_context_check_syntax() to GLib API

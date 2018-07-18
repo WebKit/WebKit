@@ -1,3 +1,54 @@
+2018-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the parsing of colors in attributed string tests, and make it possible to dump the typing attributes
+        https://bugs.webkit.org/show_bug.cgi?id=187747
+
+        Reviewed by Ryosuke Niwa.
+        
+        Fix the parsing of color properties in dump-attributed-string.js, and treat NSStrokeColor as
+        a color. Rebase all the affected tests. Give macOS Sierra its own expectations with the legacy NSCustomColorSpace.
+        
+        Add attributed-string-for-typing.html which tests typingAttributes.
+
+        * editing/mac/attributed-string/anchor-element-expected.txt:
+        * editing/mac/attributed-string/attributed-string-for-typing-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-for-typing.html: Added.
+        * editing/mac/attributed-string/basic-expected.txt:
+        * editing/mac/attributed-string/comment-cdata-section-expected.txt:
+        * editing/mac/attributed-string/font-size-expected.txt:
+        * editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * editing/mac/attributed-string/font-weight-expected.txt:
+        * editing/mac/attributed-string/letter-spacing-expected.txt:
+        * editing/mac/attributed-string/resources/dump-attributed-string.js:
+        (dumpAttributedString):
+        (formatNonParagraphAttributeValue):
+        (parseNSColorDescription):
+        (window.onload):
+        (serializeAttributedString.log): Deleted.
+        (serializeAttributedString.): Deleted.
+        (serializeAttributedString): Deleted.
+        * editing/mac/attributed-string/text-decorations-expected.txt:
+        * editing/mac/attributed-string/vertical-align-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/anchor-element-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-for-typing-expected.txt: Added.
+        * platform/mac-sierra/editing/mac/attributed-string/basic-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/comment-cdata-section-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/font-size-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/font-weight-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/letter-spacing-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/text-decorations-expected.txt:
+        * platform/mac-sierra/editing/mac/attributed-string/vertical-align-expected.txt:
+        * platform/mac/editing/mac/attributed-string/anchor-element-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/basic-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/comment-cdata-section-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/font-size-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/font-weight-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/letter-spacing-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/text-decorations-expected.txt: Removed.
+        * platform/mac/editing/mac/attributed-string/vertical-align-expected.txt: Removed.
+
 2018-07-17  Antoine Quint  <graouts@apple.com>
 
         Ensure timingFunctionForKeyframeAtIndex() can be used from setAnimatedPropertiesInStyle().

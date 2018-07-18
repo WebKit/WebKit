@@ -1,0 +1,9 @@
+Some text here
+Input:
+<div id="editor" style="color: rgba(23, 45, 56, 0.4);" contenteditable="">Some text here</div>
+
+Output:
+[ ]
+    NSColor: rgba(23, 45, 56, 0.4) (NSCustomColorSpace)
+    NSFont: Times-Roman 16.00 pt.
+

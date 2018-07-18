@@ -50,6 +50,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 #import <WebKit/WebScriptObject.h>
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @interface TextInputController (DumpRenderTreeInputMethodHandler)
@@ -235,6 +236,7 @@ NSString *NSTextInsertionUndoableAttributeName;
         || aSelector == @selector(firstRectForCharactersFrom:length:)
         || aSelector == @selector(characterIndexForPointX:Y:)
         || aSelector == @selector(validAttributesForMarkedText)
+        || aSelector == @selector(attributedStringForTyping)
         || aSelector == @selector(attributedStringWithString:)
         || aSelector == @selector(setInputMethodHandler:)
         || aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:)
@@ -452,6 +454,12 @@ NSString *NSTextInsertionUndoableAttributeName;
         return [textInput validAttributesForMarkedText];
 
     return nil;
+}
+
+- (NSMutableAttributedString *)attributedStringForTyping
+{
+    // The string has to be non-empty.
+    return [[[NSMutableAttributedString alloc] initWithString:@" " attributes:[webView typingAttributes]] autorelease];
 }
 
 - (NSMutableAttributedString *)attributedStringWithString:(NSString *)aString

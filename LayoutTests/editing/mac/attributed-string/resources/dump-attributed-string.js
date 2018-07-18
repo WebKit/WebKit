@@ -1,10 +1,11 @@
+var shouldAutoDump = true;
+
 (function () {
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    var called = false;
     function dumpAttributedString(container) {
-        called = true;
+        shouldAutoDump = false;
 
         var body = document.body;
         if (!container)
@@ -20,7 +21,7 @@
         body.appendChild(pre);
     }
 
-    function serializeAttributedString(attributedString) {
+    window.serializeAttributedString = function (attributedString) {
         var string = attributedString.string();
         var output = '';
         function log(text) {
@@ -67,6 +68,7 @@
         case 'NSFont':
             return value.match(/(.+?)\s+P \[\]/)[1];
         case 'NSColor':
+        case 'NSStrokeColor':
         case 'NSBackgroundColor':
             var parsed = parseNSColorDescription(value);
             return serializeColor(parsed.rgb, parsed.alpha) + ' (' + parsed.colorSpace + ')';
@@ -86,7 +88,7 @@
     }
 
     function parseNSColorDescription(value) {
-        var match = value.match(/\s*(\w+)\s*([0-9\.]+)\s*([0-9\.]+)\s*([0-9\.]+)\s*([0-9\.]+)/);
+        var match = value.match(/^\s*(\w+).+\s([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s*$/);
         return {
             colorSpace: match[1],
             rgb: match.slice(2, 5).map(function (string) { return Math.round(string * 255); }),
@@ -126,7 +128,7 @@
     }
 
     window.onload = function () {
-        (!called)
+        if (shouldAutoDump)
             dumpAttributedString();
     }
 })();
