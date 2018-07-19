@@ -261,6 +261,7 @@
 
 #if PLATFORM(MAC)
 #include <WebCore/LocalDefaultSystemAppearance.h>
+#include <pal/spi/cf/CFUtilitiesSPI.h>
 #endif
 
 #ifndef NDEBUG
@@ -671,6 +672,15 @@ void WebPage::updateThrottleState()
     bool windowIsActive = m_activityState & ActivityState::WindowIsActive;
     bool pageSuppressed = !windowIsActive && !isLoading && !isPlayingAudio && !isCapturingMedia && m_processSuppressionEnabled && isVisuallyIdle;
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    if (!pageSuppressed) {
+        // App nap must be manually enabled when not running the NSApplication run loop.
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [] {
+            __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
+        });
+    }
+#endif
     // The UserActivity keeps the processes runnable. So if the page should be suppressed, stop the activity.
     // If the page should not be supressed, start it.
     if (pageSuppressed)
