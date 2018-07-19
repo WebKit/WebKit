@@ -5,7 +5,8 @@ import urllib.parse  # pylint: disable=E0611
 
 DAYS_TO_KEEP = 910
 EPOCH_DAY = 86400
-TABLE_NAME = 'minified-archives.webkit.org'
+ARCHIVE_TABLE_NAME = 'minified-archives.webkit.org'
+PLATFORM_TABLE_NAME = 'minified-platforms.webkit.org'
 URL_PREFIX = 'https://s3-us-west-2.amazonaws.com'
 
 dynamodb_client = boto3.client('dynamodb')
@@ -40,7 +41,16 @@ def lambda_handler(event, context):
             'expirationTime': {'N': expiration_time},
         }
         print('Item: {}'.format(item))
-        dynamodb_client.put_item(TableName=TABLE_NAME, Item=item)
+        dynamodb_client.put_item(TableName=ARCHIVE_TABLE_NAME, Item=item)
+
+        platform = {
+            'identifier': {'S': identifier},
+            'creationTime': {'N': creation_time},
+            'expirationTime': {'N': expiration_time},
+        }
+        print('Item: {}'.format(platform))
+        dynamodb_client.put_item(TableName=PLATFORM_TABLE_NAME, Item=platform)
+
         return s3_url
     except Exception as e:
         print(e)

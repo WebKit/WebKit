@@ -1,3 +1,15 @@
+2018-07-19  Lucas Forschler  <lforschler@apple.com>
+
+        Teach the AWS Lambda to use the [minified]-platforms database
+        https://bugs.webkit.org/show_bug.cgi?id=187817
+        
+        Reviewed by David Kilzer.
+
+        * WebKitArchiveSupport/lambda/register-archive-in-dynamodb.py:
+        (lambda_handler): Add support for the platforms.webkit.org database
+        * WebKitArchiveSupport/lambda/register-minified-s3-archive-in-dynamodb.py:
+        (lambda_handler): Add support for the minified-platforms.webkit.org database
+
 2018-07-19  Dean Jackson  <dino@apple.com>
 
         Provide an lldb type summary for WebCore::Color
