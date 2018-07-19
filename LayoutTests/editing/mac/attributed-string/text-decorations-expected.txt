@@ -28,23 +28,23 @@ Alignment 4
 [underline]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
     NSUnderline: true
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [strike]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
     NSStrikethrough: true
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [ underline and strike ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 

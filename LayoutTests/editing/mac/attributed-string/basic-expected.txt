@@ -27,74 +27,74 @@ Alignment 4
 [hello ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [world]
-    NSBackgroundColor: rgba(255, 2295, 1530, 6) (IEC6)
-    NSColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSBackgroundColor: #0000ff (sRGB)
+    NSColor: #ffffff (sRGB)
     NSFont: Times-Bold 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 1 1 1 1
+    NSStrokeColor: #ffffff (sRGB)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [WebKit]
-    NSColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSColor: #0000ee (sRGB)
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
     NSLink: https://webkit.org/
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0.933333 1
+    NSStrokeColor: #0000ee (sRGB)
     NSStrokeWidth: 0
     NSUnderline: true
 [.\n]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [this is a ]
-    NSBackgroundColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSBackgroundColor: #ffff00 (sRGB)
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [t]
-    NSBackgroundColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSBackgroundColor: #ffff00 (sRGB)
     NSFont: Times-Italic 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
     NSUnderline: true
 [est]
-    NSBackgroundColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSBackgroundColor: #ffff00 (sRGB)
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
     NSUnderline: true
 [ of ]
-    NSBackgroundColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSBackgroundColor: #ffff00 (sRGB)
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [attributed]
-    NSBackgroundColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSBackgroundColor: #ffff00 (sRGB)
     NSFont: Times-Italic 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [ string.]
-    NSBackgroundColor: rgba(255, 2295, 1530, 6) (IEC6)
+    NSBackgroundColor: #ffff00 (sRGB)
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 

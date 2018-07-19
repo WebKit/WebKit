@@ -30,31 +30,31 @@ Alignment 4
 [italic]
     NSFont: Times-Italic 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [oblique]
     NSFont: Times-Italic 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [ ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [small-caps]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 [ outline emboss ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
+    NSStrokeColor: #000000 (sRGB)
     NSStrokeWidth: 0
 
