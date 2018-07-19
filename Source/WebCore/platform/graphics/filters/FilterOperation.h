@@ -80,6 +80,7 @@ public:
     }
     
     virtual bool transformColor(FloatComponents&) const { return false; }
+    virtual bool inverseTransformColor(FloatComponents&) const { return false; }
 
     OperationType type() const { return m_type; }
 
@@ -278,7 +279,7 @@ public:
         return adoptRef(*new InvertLightnessFilterOperation());
     }
 
-    Ref<FilterOperation> clone() const override
+    Ref<FilterOperation> clone() const final
     {
         return adoptRef(*new InvertLightnessFilterOperation());
     }
@@ -286,14 +287,15 @@ public:
     RefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false) override;
 
 private:
-    bool operator==(const FilterOperation&) const override;
+    bool operator==(const FilterOperation&) const final;
 
     InvertLightnessFilterOperation()
         : FilterOperation(APPLE_INVERT_LIGHTNESS)
     {
     }
 
-    bool transformColor(FloatComponents&) const override;
+    bool transformColor(FloatComponents&) const final;
+    bool inverseTransformColor(FloatComponents&) const final;
 };
 
 class WEBCORE_EXPORT BlurFilterOperation : public FilterOperation {

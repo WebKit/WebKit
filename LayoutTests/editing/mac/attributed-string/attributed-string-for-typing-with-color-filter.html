@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+<head>
+<script src="resources/dump-attributed-string.js"></script>
+<script>
+    shouldAutoDump = false;
+</script>
+</head>
+<body>
+
+<div id="editor" style="-apple-color-filter: apple-invert-lightness(); color: rgba(20, 20, 20, 0.4);" contenteditable>Some text here</div>
+<pre id="result">This test requires DumpRenderTree</pre>
+<script type="text/javascript">
+    
+document.getElementById("editor").focus();
+getSelection().setPosition(editor, 0);
+
+if (window.testRunner) {
+    var attribString = textInputController.attributedStringForTyping()
+    var serialized = serializeAttributedString(attribString);
+ 
+    result.textContent = 'Input:\n' + editor.outerHTML.trim() + '\n\nOutput:\n' + serialized;
+
+    document.body.appendChild(pre);
+}
+</script>
+
+</body>
+</html>

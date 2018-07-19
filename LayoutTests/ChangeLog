@@ -1,3 +1,19 @@
+2018-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Setting foreground color when editing should take color-filter into account, and report the correct foreground color for collapsed selections
+        https://bugs.webkit.org/show_bug.cgi?id=187778
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/mac/attributed-string/attrib-string-colors-with-color-filter-expected.txt: Added.
+        * editing/mac/attributed-string/attrib-string-colors-with-color-filter.html: Added.
+        * editing/mac/attributed-string/attrib-string-range-with-color-filter-expected.txt: Added.
+        * editing/mac/attributed-string/attrib-string-range-with-color-filter.html: Added.
+        * editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html: Added.
+        * editing/style/exec-command-foreColor-with-color-filter-expected.txt: Added.
+        * editing/style/exec-command-foreColor-with-color-filter.html: Added.
+
 2018-07-19  Truitt Savell  <tsavell@apple.com>
 
         [ win-ews ] http/tests/preload/onload_event.html is flakey crash on win-ews

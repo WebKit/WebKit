@@ -222,7 +222,7 @@ public:
         return !(*this == other);
     }
 private:
-    void extractTextStyles(Document*, MutableStyleProperties&, bool shouldUseFixedFontDefaultSize);
+    void extractTextStyles(Document*, Node& startNode, MutableStyleProperties&, bool shouldUseFixedFontDefaultSize);
 
     RefPtr<MutableStyleProperties> m_cssStyle;
     bool m_applyBold = false;

@@ -1,3 +1,41 @@
+2018-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Setting foreground color when editing should take color-filter into account, and report the correct foreground color for collapsed selections
+        https://bugs.webkit.org/show_bug.cgi?id=187778
+
+        Reviewed by Ryosuke Niwa.
+        
+        Fix two aspects of editing with color-filter:
+
+        1. When setting foreground color, inverse-transform the color through -apple-color-filter so that the user gets the color
+           they chose when in Dark Mode. Tested by editing/style/exec-command-foreColor-with-color-filter.html.
+
+        2. When retrieving the style of the collapsed selection, take color filter into account so that color picker
+           reflects the color the users sees, instead of the content color. Tested by editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html
+
+        Add two additional tests that ensure that -apple-color-filter does not impact the NSAttributedString code
+        path, since -apple-color-filter should not affect the behavior of Copy.
+
+        Tests: editing/mac/attributed-string/attrib-string-colors-with-color-filter.html
+               editing/mac/attributed-string/attrib-string-range-with-color-filter.html
+               editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html
+               editing/style/exec-command-foreColor-with-color-filter.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::StyleChange::extractTextStyles):
+        * editing/EditingStyle.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart const):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::InvertLightnessFilterOperation::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        (WebCore::FilterOperations::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperations.h:
+
 2018-07-19  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233994.
