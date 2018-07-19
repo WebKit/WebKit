@@ -31,23 +31,24 @@
     function runTestRunnerTest() {
         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
  
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
-        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host did not get set as non-prevalent resource.");
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+            if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as non-prevalent resource.");
 
-        testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin1);
-        testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin4);
+            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin1);
+            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin4);
 
-        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin2);
-        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin3);
-        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin4);
+            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin2);
+            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin3);
+            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin4);
 
-        testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
-        testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
+            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
+            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
 
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+            testRunner.statisticsProcessStatisticsAndDataRecords();
+        });
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

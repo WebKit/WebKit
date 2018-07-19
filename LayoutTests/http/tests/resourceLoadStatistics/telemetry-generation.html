@@ -90,11 +90,11 @@
         makeUrlPrevalent(prevalentResourceUrl3);
         makeUrlPrevalent(prevalentResourceUrl4);
 
-        testRunner.setStatisticsHasHadUserInteraction(prevalentResourceUrl4, true);
-
-        testRunner.installStatisticsDidScanDataRecordsCallback(checkSufficientClassificationAndContinue);
-        testRunner.installStatisticsDidRunTelemetryCallback(checkSufficientTelemetry);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        testRunner.setStatisticsHasHadUserInteraction(prevalentResourceUrl4, true, function() {
+            testRunner.installStatisticsDidScanDataRecordsCallback(checkSufficientClassificationAndContinue);
+            testRunner.installStatisticsDidRunTelemetryCallback(checkSufficientTelemetry);
+            testRunner.statisticsProcessStatisticsAndDataRecords();
+        });
     }
 
     function runTelemetryAndContinue() {

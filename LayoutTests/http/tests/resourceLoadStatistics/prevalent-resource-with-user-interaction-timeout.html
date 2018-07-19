@@ -17,28 +17,32 @@
         if (document.cookie !== cookie)
             testFailed("document.cookie did not get set.");
 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
-        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host did not get set as prevalent resource.");
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as prevalent resource.");
 
-        testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true);
-        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-            testFailed("Host did not get logged for user interaction.");
+            testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                    testFailed("Host did not get logged for user interaction.");
 
-        testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-            if (document.cookie !== "")
-                testFailed("Cookie not deleted: " + document.cookie);
-            else
-                testPassed("Cookie deleted.");
-            internals.setResourceLoadStatisticsEnabled(false);
-            testRunner.statisticsResetToConsistentState(function() {
-                testRunner.notifyDone();
+                testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
+                    if (document.cookie !== "")
+                        testFailed("Cookie not deleted: " + document.cookie);
+                    else
+                        testPassed("Cookie deleted.");
+                    internals.setResourceLoadStatisticsEnabled(false);
+                    testRunner.statisticsResetToConsistentState(function() {
+                        testRunner.notifyDone();
+                    });
+                });
+                testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+                testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
+                testRunner.setStatisticsTimeToLiveUserInteraction(0);
+
+                // This is to ensure the timeout we're testing.
+                setTimeout("testRunner.statisticsProcessStatisticsAndDataRecords()", 1000);
             });
         });
-        testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
-        testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-        testRunner.setStatisticsTimeToLiveUserInteraction(0);
-        setTimeout("testRunner.statisticsProcessStatisticsAndDataRecords()", 1000);
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

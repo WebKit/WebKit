@@ -55,34 +55,65 @@
         }
     }
 
-    function initializeStatistics() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
-
-        // Non-prevalent without user interaction to be pruned first.
-        testRunner.setStatisticsLastSeen(urlsToBePruned[0].url, olderTimestamp);
-        testRunner.setStatisticsLastSeen(urlsToBePruned[1].url, newerTimestamp);
-
-        // Prevalent without user interaction to be pruned second.
-        testRunner.setStatisticsPrevalentResource(urlsToBePruned[2].url, true);
-        testRunner.setStatisticsLastSeen(urlsToBePruned[2].url, olderTimestamp);
-        testRunner.setStatisticsPrevalentResource(urlsToBePruned[3].url, true);
-        testRunner.setStatisticsLastSeen(urlsToBePruned[3].url, newerTimestamp);
-
-        // Non-prevalent with user interaction to be pruned third.
-        testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[4].url, true);
-        testRunner.setStatisticsLastSeen(urlsToBePruned[4].url, olderTimestamp);
-        testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[5].url, true);
-        testRunner.setStatisticsLastSeen(urlsToBePruned[5].url, newerTimestamp);
-
-        // Prevalent with user interaction to be pruned last.
-        testRunner.setStatisticsPrevalentResource(urlsToBePruned[6].url, true);
-        testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[6].url, true);
-        testRunner.setStatisticsLastSeen(urlsToBePruned[6].url, olderTimestamp);
-        testRunner.setStatisticsPrevalentResource(urlsToBePruned[7].url, true);
-        testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[7].url, true);
-        testRunner.setStatisticsLastSeen(urlsToBePruned[7].url, newerTimestamp);
-
-        checkIfPrevalentAccordingToInitialExpectation(0, urlsToBePruned.length);
+    function initializeStatisticsAndRunTests(step) {
+        switch (step) {
+            // Non-prevalent without user interaction to be pruned first.
+            case 1:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[0].url, olderTimestamp, function() { initializeStatisticsAndRunTests(2); });
+                break;
+            case 2:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[1].url, newerTimestamp, function() { initializeStatisticsAndRunTests(3); });
+                break;
+            // Prevalent without user interaction to be pruned second.
+            case 3:
+                testRunner.setStatisticsPrevalentResource(urlsToBePruned[2].url, true, function() { initializeStatisticsAndRunTests(4); });
+                break;
+            case 4:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[2].url, olderTimestamp, function() { initializeStatisticsAndRunTests(5); });
+                break;
+            case 5:
+                testRunner.setStatisticsPrevalentResource(urlsToBePruned[3].url, true, function() { initializeStatisticsAndRunTests(6); });
+                break;
+            case 6:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[3].url, newerTimestamp, function() { initializeStatisticsAndRunTests(7); });
+                break;
+            // Non-prevalent with user interaction to be pruned third.
+            case 7:
+                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[4].url, true, function() { initializeStatisticsAndRunTests(8); });
+                break;
+            case 8:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[4].url, olderTimestamp, function() { initializeStatisticsAndRunTests(9); });
+                break;
+            case 9:
+                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[5].url, true, function() { initializeStatisticsAndRunTests(10); });
+                break;
+            case 10:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[5].url, newerTimestamp, function() { initializeStatisticsAndRunTests(11); });
+                break;
+            // Prevalent with user interaction to be pruned last.
+            case 11:
+                testRunner.setStatisticsPrevalentResource(urlsToBePruned[6].url, true, function() { initializeStatisticsAndRunTests(12); });
+                break;
+            case 12:
+                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[6].url, true, function() { initializeStatisticsAndRunTests(13); });
+                break;
+            case 13:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[6].url, olderTimestamp, function() { initializeStatisticsAndRunTests(14); });
+                break;
+            case 14:
+                testRunner.setStatisticsPrevalentResource(urlsToBePruned[7].url, true, function() { initializeStatisticsAndRunTests(15); });
+                break;
+            case 15:
+                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[7].url, true, function() { initializeStatisticsAndRunTests(16); });
+                break;
+            case 16:
+                testRunner.setStatisticsLastSeen(urlsToBePruned[7].url, newerTimestamp, function() { initializeStatisticsAndRunTests(17); });
+                break;
+            case 17:
+                checkIfPrevalentAccordingToInitialExpectation(0, urlsToBePruned.length);
+                runTest();
+                break;
+        }
     }
 
     var currentTest;
@@ -94,7 +125,8 @@
         testPassed("Test iteration " + currentTest + " passed.");
         if (currentTest < urlsToBePruned.length) {
             ++currentTest;
-            runTest();
+            testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
+            initializeStatisticsAndRunTests(1);
         } else {
             testRunner.statisticsResetToConsistentState(function() {
                 finishJSTest();
@@ -102,14 +134,16 @@
         }
     }
 
+    let fillerUrl;
     function runTest() {
-        initializeStatistics();
-
-        var fillerUrl = "http://127.0." + currentTest + ".1:8000/temp";
-        testRunner.setStatisticsPrevalentResource(fillerUrl, true);
-        testRunner.setStatisticsHasHadUserInteraction(fillerUrl, true);
-        testRunner.setStatisticsLastSeen(fillerUrl, newestTimestamp);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+        fillerUrl = "http://127.0." + currentTest + ".1:8000/temp";
+        testRunner.setStatisticsPrevalentResource(fillerUrl, true, function() {
+            testRunner.setStatisticsHasHadUserInteraction(fillerUrl, true, function() {
+                testRunner.setStatisticsLastSeen(fillerUrl, newestTimestamp, function() {
+                    testRunner.statisticsProcessStatisticsAndDataRecords();
+                });
+            });
+        });
     }
 
     if (window.testRunner) {
@@ -120,7 +154,8 @@
         testRunner.setStatisticsPruneEntriesDownTo(urlsToBePruned.length);
 
         currentTest = 1;
-        runTest();
+        testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
+        initializeStatisticsAndRunTests(1);
     }
 </script>
 </body>

@@ -68,10 +68,11 @@
             case "#step4":
                 document.location.hash = "step5";
                 // Set localhost as prevalent resource.
-                testRunner.setStatisticsPrevalentResource("http://localhost", true);
-                if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
-                    testFailed("Localhost did not get set as prevalent resource.");
-                runTest();
+                testRunner.setStatisticsPrevalentResource("http://localhost", true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
+                        testFailed("Localhost did not get set as prevalent resource.");
+                    runTest();
+                });
                 break;
             case "#step5":
                 // Set a first-party cookie for 127.0.0.1.
@@ -80,10 +81,11 @@
             case "#step6":
                 document.location.hash = "step7";
                 // Set 127.0.0.1 as prevalent resource
-                testRunner.setStatisticsPrevalentResource("http://127.0.0.1", true);
-                if (!testRunner.isStatisticsPrevalentResource("http://127.0.0.1"))
-                    testFailed("127.0.0.1 did not get set as prevalent resource.");
-                runTest();
+                testRunner.setStatisticsPrevalentResource("http://127.0.0.1", true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource("http://127.0.0.1"))
+                        testFailed("127.0.0.1 did not get set as prevalent resource.");
+                    runTest();
+                });
                 break;
             case "#step7":
                 document.location.hash = "step8";

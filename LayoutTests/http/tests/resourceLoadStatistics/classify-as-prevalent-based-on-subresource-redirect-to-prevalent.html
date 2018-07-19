@@ -34,21 +34,23 @@
     }
 
     function runTest() {
-        testRunner.setStatisticsPrevalentResource(topFrameOrigin1, true);
-        testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
+        testRunner.setStatisticsPrevalentResource(topFrameOrigin1, true, function() {
+            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+            testRunner.statisticsProcessStatisticsAndDataRecords();
+        });
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         setEnableFeature(true, function() {
             testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
 
-            testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
-            if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                testFailed("Host did not get set as non-prevalent resource.");
-            runTest();
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+                if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                    testFailed("Host did not get set as non-prevalent resource.");
+                runTest();
+            });
         });
     }
 </script>

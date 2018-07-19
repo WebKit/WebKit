@@ -315,6 +315,31 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetLastSeen")) {
+        m_testRunner->statisticsCallDidSetLastSeenCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPrevalentResource")) {
+        m_testRunner->statisticsCallDidSetPrevalentResourceCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetVeryPrevalentResource")) {
+        m_testRunner->statisticsCallDidSetVeryPrevalentResourceCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetHasHadUserInteraction")) {
+        m_testRunner->statisticsCallDidSetHasHadUserInteractionCallback();
+        return;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetHasHadNonRecentUserInteraction")) {
+        m_testRunner->statisticsCallDidSetHasHadUserInteractionCallback();
+        return;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveAllStorageAccessEntries")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());

@@ -43,10 +43,11 @@
     }
 
     function setUserInteractionAndContinue() {
-        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true);
-        if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
-            testFailed("Third party did not get logged for user interaction.");
-        runTest();
+        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
+            if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+                testFailed("Third party did not get logged for user interaction.");
+            runTest();
+        });
     }
 
     function runTest() {

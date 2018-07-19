@@ -44,10 +44,11 @@
     }
 
     function setUserInteractionAndContinue() {
-        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true);
-        if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
-            testFailed("Third party did not get logged for user interaction.");
-        runTest();
+        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
+            if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+                testFailed("Third party did not get logged for user interaction.");
+            runTest();
+        });
     }
 
     function runTest() {
@@ -77,21 +78,23 @@
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive one partitioned, third party cookie.", setUserInteractionAndContinue);
                 break;
             case "#step6":
-                // Load localhost under 127.0.0.1 and check that it gets its non-partitioned cookie after user interaction.
+                // Load localhost under 127.0.0.1 and check that it still gets partitioned cookie after user interaction.
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should still only receive one partitioned, third party cookie.", finishTest);
                 break;
         }
     }
 
     if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
+        testRunner.dumpChildFramesAsText();
         setEnableFeature(true, function() {
-            testRunner.setStatisticsPrevalentResource(thirdPartyHostname, false);
-            testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, false);
-            testRunner.waitUntilDone();
-            testRunner.dumpChildFramesAsText();
-            document.location.hash = "step1";
+            testRunner.setStatisticsPrevalentResource(thirdPartyHostname, false, function() {
+                testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, false, function() {
+                    document.location.hash = "step1";
 
-            testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, false, runTest);
+                    testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, false, runTest);
+                });
+            });
         });
     } else {
         runTest();

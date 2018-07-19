@@ -45,10 +45,11 @@
     }
 
     function setUserInteractionAndContinue() {
-        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true);
-        if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
-            testFailed("Third party did not get logged for user interaction.");
-        runTest();
+        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
+            if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+                testFailed("Third party did not get logged for user interaction.");
+            runTest();
+        });
     }
 
     function runTest() {
@@ -94,9 +95,11 @@
             document.location.hash = "step1";
 
             // Start test with third party as non-prevalent
-            testRunner.setStatisticsPrevalentResource(thirdPartyHostname, false);
-            testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, false);
-            testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, false, runTest);
+            testRunner.setStatisticsPrevalentResource(thirdPartyHostname, false, function() {
+                testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, false, function() {
+                    testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, false, runTest);
+                });
+            });
         });
     } else {
         runTest();

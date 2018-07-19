@@ -28,33 +28,36 @@
         if (document.cookie !== cookie)
             testFailed("document.cookie did not get set.");
 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
-        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host did not get set as non-prevalent resource.");
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+            if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as non-prevalent resource.");
 
-        // This is done to not have an empty set of prevalent resources.
-        // Otherwise data records are never scanned.
-        testRunner.setStatisticsPrevalentResource(otherPrevalentUrl, true);
-        if (!testRunner.isStatisticsPrevalentResource(otherPrevalentUrl))
-            testFailed("Other host did not get set as prevalent resource.");
+            // This is done to not have an empty set of prevalent resources.
+            // Otherwise data records are never scanned.
+            testRunner.setStatisticsPrevalentResource(otherPrevalentUrl, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(otherPrevalentUrl))
+                    testFailed("Other host did not get set as prevalent resource.");
 
-        testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true);
-        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-            testFailed("Host did not get logged for user interaction.");
+                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                    if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                        testFailed("Host did not get logged for user interaction.");
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(function() {
-            if (document.cookie === cookie)
-                testPassed("Cookie not deleted.");
-            else
-                testFailed("Cookie deleted or document.cookie contains other cookies: " + document.cookie);
+                    testRunner.installStatisticsDidScanDataRecordsCallback(function() {
+                        if (document.cookie === cookie)
+                            testPassed("Cookie not deleted.");
+                        else
+                            testFailed("Cookie deleted or document.cookie contains other cookies: " + document.cookie);
 
-            setEnableFeature(false, function() {
-                testRunner.notifyDone();
+                        setEnableFeature(false, function() {
+                            testRunner.notifyDone();
+                        });
+                    });
+                    testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+                    testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
+                    testRunner.statisticsProcessStatisticsAndDataRecords();
+                });
             });
         });
-        testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
-        testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

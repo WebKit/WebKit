@@ -736,6 +736,10 @@ enum {
     WillEndSwipeCallbackID,
     DidEndSwipeCallbackID,
     DidRemoveSwipeSnapshotCallbackID,
+    SetStatisticsLastSeenCallbackID,
+    SetStatisticsPrevalentResourceCallbackID,
+    SetStatisticsVeryPrevalentResourceCallbackID,
+    SetStatisticsHasHadUserInteractionCallbackID,
     StatisticsDidModifyDataRecordsCallbackID,
     StatisticsDidScanDataRecordsCallbackID,
     StatisticsDidRunTelemetryCallbackID,
@@ -1327,8 +1331,10 @@ void TestRunner::callDidRemoveSwipeSnapshotCallback()
     callTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID);
 }
 
-void TestRunner::setStatisticsLastSeen(JSStringRef hostName, double seconds)
+void TestRunner::setStatisticsLastSeen(JSStringRef hostName, double seconds, JSValueRef completionHandler)
 {
+    cacheTestRunnerCallback(SetStatisticsLastSeenCallbackID, completionHandler);
+
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
     
@@ -1351,9 +1357,17 @@ void TestRunner::setStatisticsLastSeen(JSStringRef hostName, double seconds)
     
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
-    
-void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value)
+
+void TestRunner::statisticsCallDidSetLastSeenCallback()
 {
+    callTestRunnerCallback(SetStatisticsLastSeenCallbackID);
+}
+
+
+void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(SetStatisticsPrevalentResourceCallbackID, completionHandler);
+
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
 
@@ -1379,8 +1393,15 @@ void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::setStatisticsVeryPrevalentResource(JSStringRef hostName, bool value)
+void TestRunner::statisticsCallDidSetPrevalentResourceCallback()
 {
+    callTestRunnerCallback(SetStatisticsPrevalentResourceCallbackID);
+}
+
+void TestRunner::setStatisticsVeryPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(SetStatisticsVeryPrevalentResourceCallbackID, completionHandler);
+
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
     
@@ -1404,6 +1425,11 @@ void TestRunner::setStatisticsVeryPrevalentResource(JSStringRef hostName, bool v
     WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
     
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::statisticsCallDidSetVeryPrevalentResourceCallback()
+{
+    callTestRunnerCallback(SetStatisticsVeryPrevalentResourceCallbackID);
 }
 
 bool TestRunner::isStatisticsPrevalentResource(JSStringRef hostName)
@@ -1476,8 +1502,10 @@ bool TestRunner::isStatisticsRegisteredAsRedirectingTo(JSStringRef hostRedirecte
     return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
 }
 
-void TestRunner::setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value)
+void TestRunner::setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value, JSValueRef completionHandler)
 {
+    cacheTestRunnerCallback(SetStatisticsHasHadUserInteractionCallbackID, completionHandler);
+
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
     
@@ -1503,11 +1531,18 @@ void TestRunner::setStatisticsHasHadUserInteraction(JSStringRef hostName, bool v
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::setStatisticsHasHadNonRecentUserInteraction(JSStringRef hostName)
+void TestRunner::setStatisticsHasHadNonRecentUserInteraction(JSStringRef hostName, JSValueRef completionHandler)
 {
+    cacheTestRunnerCallback(SetStatisticsHasHadUserInteractionCallbackID, completionHandler);
+
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsHasHadNonRecentUserInteraction"));
     WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(hostName));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::statisticsCallDidSetHasHadUserInteractionCallback()
+{
+    callTestRunnerCallback(SetStatisticsHasHadUserInteractionCallbackID);
 }
 
 bool TestRunner::isStatisticsHasHadUserInteraction(JSStringRef hostName)

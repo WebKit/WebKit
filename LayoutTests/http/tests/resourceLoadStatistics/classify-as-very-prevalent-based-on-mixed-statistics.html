@@ -40,28 +40,29 @@
     function runTestRunnerTest() {
         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
  
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
-        if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host started out as prevalent resource.");
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+            if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host started out as prevalent resource.");
 
-        var i = 0;
-        while (i < numberOfSubresourceDomains) {
-            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i]);
-            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i]);
-            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i]);
+            var i = 0;
+            while (i < numberOfSubresourceDomains) {
+                testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i]);
+                testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i]);
+                testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i]);
 
-            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+1]);
-            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+1]);
-            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i+1]);
+                testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+1]);
+                testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+1]);
+                testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i+1]);
 
-            testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+2]);
-            testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+2]);
-            testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i+2]);
-            i += 3;
-        }
+                testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+2]);
+                testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigins[i+2]);
+                testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigins[i+2]);
+                i += 3;
+            }
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-        testRunner.statisticsProcessStatisticsAndDataRecords();
+            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+            testRunner.statisticsProcessStatisticsAndDataRecords();
+        });
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

@@ -44,12 +44,13 @@
         shouldBeTrue("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
         shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
 
-        if (testRunner)
-            testRunner.setStatisticsHasHadUserInteraction(topFrameOrigin, false);
+        if (testRunner) {
+            testRunner.setStatisticsHasHadUserInteraction(topFrameOrigin, false, function() {
+                shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
 
-        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
-
-        activateElement("testElement", finishTest);
+                activateElement("testElement", finishTest);
+            });
+        }
     }
 
     function finishTest() {

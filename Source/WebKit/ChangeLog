@@ -1,5 +1,159 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233888. rdar://problem/42345191
+
+    Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()
+    https://bugs.webkit.org/show_bug.cgi?id=187710
+    <rdar://problem/42252757>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    These changes are to back the completion handler functionality of
+    TestRunner functions:
+    - setStatisticsLastSeen(),
+    - setStatisticsPrevalentResource(),
+    - setStatisticsVeryPrevalentResource(),
+    - setStatisticsHasHadUserInteraction(), and
+    - setStatisticsHasHadNonRecentUserInteraction().
+    
+    * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+    (WKWebsiteDataStoreSetStatisticsLastSeen):
+    (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+    (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+    (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+    (WKWebsiteDataStoreSetStatisticsHasHadNonRecentUserInteraction):
+    * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+    * UIProcess/WebResourceLoadStatisticsStore.cpp:
+    (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+    (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction):
+    (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+    (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+    (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+    (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+    (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+    * UIProcess/WebResourceLoadStatisticsStore.h:
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+    (WTR::InjectedBundle::didReceiveMessageToPage):
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setStatisticsLastSeen):
+    (WTR::TestRunner::statisticsCallDidSetLastSeenCallback):
+    (WTR::TestRunner::setStatisticsPrevalentResource):
+    (WTR::TestRunner::statisticsCallDidSetPrevalentResourceCallback):
+    (WTR::TestRunner::setStatisticsVeryPrevalentResource):
+    (WTR::TestRunner::statisticsCallDidSetVeryPrevalentResourceCallback):
+    (WTR::TestRunner::setStatisticsHasHadUserInteraction):
+    (WTR::TestRunner::setStatisticsHasHadNonRecentUserInteraction):
+    (WTR::TestRunner::statisticsCallDidSetHasHadUserInteractionCallback):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::setStatisticsLastSeen):
+    (WTR::TestController::setStatisticsPrevalentResource):
+    (WTR::TestController::setStatisticsVeryPrevalentResource):
+    (WTR::TestController::setStatisticsHasHadUserInteraction):
+    (WTR::TestController::setStatisticsHasHadNonRecentUserInteraction):
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didSetLastSeen):
+    (WTR::TestInvocation::didSetPrevalentResource):
+    (WTR::TestInvocation::didSetVeryPrevalentResource):
+    (WTR::TestInvocation::didSetHasHadUserInteraction):
+    (WTR::TestInvocation::didSetHasHadNonRecentUserInteraction):
+    * WebKitTestRunner/TestInvocation.h:
+    
+    LayoutTests:
+    
+    These changes are to update all test cases that make use of
+    TestRunner functions:
+    - setStatisticsLastSeen(),
+    - setStatisticsPrevalentResource(),
+    - setStatisticsVeryPrevalentResource(),
+    - setStatisticsHasHadUserInteraction(), and
+    - setStatisticsHasHadNonRecentUserInteraction().
+    
+    * http/tests/resourceLoadStatistics/add-blocking-to-redirect.html:
+    * http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html:
+    * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics.html:
+    * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins.html:
+    * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins.html:
+    * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent.html:
+    * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html:
+    * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics.html:
+    * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html:
+    * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html:
+    * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html:
+    * http/tests/resourceLoadStatistics/grandfathering.html:
+    * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html:
+    * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html:
+    * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html:
+    * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html:
+    * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout-expected.txt:
+    * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html:
+    * http/tests/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html:
+    * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html:
+    * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html:
+    * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html:
+    * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html:
+    * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html:
+    * http/tests/resourceLoadStatistics/prune-statistics.html:
+    * http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html:
+    * http/tests/resourceLoadStatistics/remove-partitioning-in-redirect.html:
+    * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects.html:
+    * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html:
+    * http/tests/resourceLoadStatistics/telemetry-generation.html:
+    * http/tests/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction.html:
+    * http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233888 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-17  John Wilander  <wilander@apple.com>
+
+            Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()
+            https://bugs.webkit.org/show_bug.cgi?id=187710
+            <rdar://problem/42252757>
+
+            Reviewed by Chris Dumez.
+
+            These changes are to back the completion handler functionality of
+            TestRunner functions:
+            - setStatisticsLastSeen(),
+            - setStatisticsPrevalentResource(),
+            - setStatisticsVeryPrevalentResource(),
+            - setStatisticsHasHadUserInteraction(), and
+            - setStatisticsHasHadNonRecentUserInteraction().
+
+            * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+            (WKWebsiteDataStoreSetStatisticsLastSeen):
+            (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+            (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+            (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+            (WKWebsiteDataStoreSetStatisticsHasHadNonRecentUserInteraction):
+            * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+            * UIProcess/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+            (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction):
+            (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+            (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+            (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+            (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+            (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+            * UIProcess/WebResourceLoadStatisticsStore.h:
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233877. rdar://problem/42344047
 
     Add color filter for transforming colors in Dark Mode

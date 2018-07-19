@@ -33,42 +33,46 @@
         testRunner.setStatisticsSubresourceUniqueRedirectFrom(subresourceOrigin2, subresourceOrigin3);
         testRunner.setStatisticsSubresourceUniqueRedirectFrom(subresourceOrigin3, subresourceOrigin4);
 
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
-        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-            testFailed("Host explicity set did not get set as prevalent resource.");
-        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin1))
-            testPassed("Colluding host 1 got set as prevalent resource.");
-        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin1))
-            testFailed("Colluding host 1 got classified as very prevalent resource.");
-        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin2))
-            testPassed("Colluding host 2 got set as prevalent resource.");
-        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin2))
-            testFailed("Colluding host 2 got classified as very prevalent resource.");
-        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin3))
-            testPassed("Colluding host 3 got set as prevalent resource.");
-        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin3))
-            testFailed("Colluding host 3 got classified as very prevalent resource.");
-        if (testRunner.isStatisticsPrevalentResource(subresourceOrigin4))
-            testPassed("Colluding host 4 got set as prevalent resource.");
-        if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin4))
-            testFailed("Colluding host 4 got classified as very prevalent resource.");
-        if (testRunner.isStatisticsPrevalentResource("http://localhost:8000"))
-            testPassed("Colluding localhost got set as prevalent resource after actual sub frame redirect.");
-        if (testRunner.isStatisticsVeryPrevalentResource("http://localhost:8000"))
-            testFailed("Colluding localhost got classified as very prevalent resource.");
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host explicity set did not get set as prevalent resource.");
+            if (testRunner.isStatisticsPrevalentResource(subresourceOrigin1))
+                testPassed("Colluding host 1 got set as prevalent resource.");
+            if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin1))
+                testFailed("Colluding host 1 got classified as very prevalent resource.");
+            if (testRunner.isStatisticsPrevalentResource(subresourceOrigin2))
+                testPassed("Colluding host 2 got set as prevalent resource.");
+            if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin2))
+                testFailed("Colluding host 2 got classified as very prevalent resource.");
+            if (testRunner.isStatisticsPrevalentResource(subresourceOrigin3))
+                testPassed("Colluding host 3 got set as prevalent resource.");
+            if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin3))
+                testFailed("Colluding host 3 got classified as very prevalent resource.");
+            if (testRunner.isStatisticsPrevalentResource(subresourceOrigin4))
+                testPassed("Colluding host 4 got set as prevalent resource.");
+            if (testRunner.isStatisticsVeryPrevalentResource(subresourceOrigin4))
+                testFailed("Colluding host 4 got classified as very prevalent resource.");
+            if (testRunner.isStatisticsPrevalentResource("http://localhost:8000"))
+                testPassed("Colluding localhost got set as prevalent resource after actual sub frame redirect.");
+            if (testRunner.isStatisticsVeryPrevalentResource("http://localhost:8000"))
+                testFailed("Colluding localhost got classified as very prevalent resource.");
 
-        setEnableFeature(false, finishJSTest);
+            setEnableFeature(false, finishJSTest);
+        });
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         setEnableFeature(true, function () {
-            testRunner.setStatisticsPrevalentResource(statisticsUrl, false);
-            if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                testFailed("Host did not get set as non-prevalent resource.");
-
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
+                if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                    testFailed("Host did not get set as non-prevalent resource.");
+                let iframeElement = document.createElement("iframe");
+                iframeElement.onload = runTest;
+                iframeElement.src = "http://localhost:8000/resourceLoadStatistics/resources/redirect.php?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/onclick.html";
+                document.body.appendChild(iframeElement);
+            });
         });
     }
 </script>
-<iframe onload="runTest()" src="http://localhost:8000/resourceLoadStatistics/resources/redirect.php?redirectTo=http://127.0.0.1:8000/resourceLoadStatistics/onclick.html"></iframe>
 </body>
 </html>
