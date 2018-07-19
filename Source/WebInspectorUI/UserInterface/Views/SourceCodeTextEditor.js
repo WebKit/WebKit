@@ -1413,8 +1413,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     textEditorExecutionHighlightRange(currentPosition, callback)
     {
-        let {line, ch} = this.currentPositionToOriginalPosition(currentPosition);
-        let position = new WI.SourceCodePosition(line, ch);
+        let position = this.currentPositionToOriginalPosition(currentPosition);
 
         let script = this._getAssociatedScript(position);
         if (!script) {
@@ -1491,7 +1490,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 return aLength - bLength;
             });
 
-            let characterAtPosition = this.getTextInRange(currentPosition, {line: currentPosition.line, ch: currentPosition.ch + 1});
+            let characterAtPosition = this.getTextInRange(currentPosition, currentPosition.offsetColumn(1));
             let characterAtPositionIsDotOrBracket = characterAtPosition === "." || characterAtPosition === "[";
 
             for (let i = 0; i < nodes.length; ++i) {

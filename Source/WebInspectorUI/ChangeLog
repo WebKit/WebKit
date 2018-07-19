@@ -1,3 +1,36 @@
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r233861. rdar://problem/42345123
+
+    Web Inspector: Fix execution highlighting after r233820
+    https://bugs.webkit.org/show_bug.cgi?id=187703
+    <rdar://problem/42246167>
+    
+    Reviewed by Joseph Pecoraro.
+    
+    * UserInterface/Views/SourceCodeTextEditor.js:
+    (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+    * UserInterface/Views/TextEditor.js:
+    (WI.TextEditor.prototype.currentPositionToOriginalPosition):
+    (WI.TextEditor.prototype._updateExecutionRangeHighlight):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233861 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-16  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Fix execution highlighting after r233820
+            https://bugs.webkit.org/show_bug.cgi?id=187703
+            <rdar://problem/42246167>
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/SourceCodeTextEditor.js:
+            (WI.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+            * UserInterface/Views/TextEditor.js:
+            (WI.TextEditor.prototype.currentPositionToOriginalPosition):
+            (WI.TextEditor.prototype._updateExecutionRangeHighlight):
+
 2018-07-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: Console filter field buttons should be darker
