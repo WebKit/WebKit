@@ -202,6 +202,11 @@ private:
     bool isMuted() const override;
     double volume() const override;
     bool isPictureInPictureActive() const override;
+    void willEnterPictureInPicture() final;
+    void didEnterPictureInPicture() final;
+    void failedToEnterPictureInPicture() final;
+    void willExitPictureInPicture() final;
+    void didExitPictureInPicture() final;
 
     HashSet<PlaybackSessionModelClient*> m_playbackClients;
     HashSet<VideoFullscreenModelClient*> m_fullscreenClients;
@@ -625,6 +630,41 @@ bool VideoFullscreenControllerContext::isPictureInPictureActive() const
 {
     ASSERT(isUIThread());
     return m_playbackModel ? m_playbackModel->isPictureInPictureActive() : false;
+}
+
+void VideoFullscreenControllerContext::willEnterPictureInPicture()
+{
+    ASSERT(isUIThread());
+    for (auto* client : m_fullscreenClients)
+        client->willEnterPictureInPicture();
+}
+
+void VideoFullscreenControllerContext::didEnterPictureInPicture()
+{
+    ASSERT(isUIThread());
+    for (auto* client : m_fullscreenClients)
+        client->didEnterPictureInPicture();
+}
+
+void VideoFullscreenControllerContext::failedToEnterPictureInPicture()
+{
+    ASSERT(isUIThread());
+    for (auto* client : m_fullscreenClients)
+        client->failedToEnterPictureInPicture();
+}
+
+void VideoFullscreenControllerContext::willExitPictureInPicture()
+{
+    ASSERT(isUIThread());
+    for (auto* client : m_fullscreenClients)
+        client->willExitPictureInPicture();
+}
+
+void VideoFullscreenControllerContext::didExitPictureInPicture()
+{
+    ASSERT(isUIThread());
+    for (auto* client : m_fullscreenClients)
+        client->didExitPictureInPicture();
 }
 
 FloatSize VideoFullscreenControllerContext::videoDimensions() const

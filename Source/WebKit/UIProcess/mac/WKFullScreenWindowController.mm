@@ -30,6 +30,7 @@
 #import "WKFullScreenWindowController.h"
 
 #import "LayerTreeContext.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "WKAPICast.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
@@ -40,15 +41,50 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/VideoFullscreenInterfaceMac.h>
+#import <WebCore/VideoFullscreenModel.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <pal/system/SleepDisabler.h>
 #import <wtf/BlockObjCExceptions.h>
 
-using namespace WebKit;
 using namespace WebCore;
 
 static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
+
+namespace WebKit {
+
+class WKFullScreenWindowControllerVideoFullscreenModelClient : VideoFullscreenModelClient {
+public:
+    void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
+
+    void setInterface(VideoFullscreenInterfaceMac* interface)
+    {
+        if (m_interface == interface)
+            return;
+
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->removeClient(*this);
+        m_interface = interface;
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->addClient(*this);
+    }
+
+    VideoFullscreenInterfaceMac* interface() const { return m_interface.get(); }
+
+    void didEnterPictureInPicture() final
+    {
+        [m_parent didEnterPictureInPicture];
+    }
+
+private:
+    WKFullScreenWindowController *m_parent { nullptr };
+    RefPtr<VideoFullscreenInterfaceMac> m_interface;
+};
+
+}
+
+using namespace WebKit;
 
 enum FullScreenState : NSInteger {
     NotInFullScreen,
@@ -113,7 +149,12 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [window displayIfNeeded];
     _webView = webView;
     _page = &page;
-    
+
+    _videoFullscreenClient = std::make_unique<WKFullScreenWindowControllerVideoFullscreenModelClient>();
+    _videoFullscreenClient->setParent(self);
+
+    [self videoControlsManagerDidChange];
+
     return self;
 }
 
@@ -131,6 +172,9 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
         // clears _repaintCallback.
         ASSERT(!_repaintCallback);
     }
+
+    _videoFullscreenClient->setParent(nil);
+    _videoFullscreenClient->setInterface(nullptr);
 
     [super dealloc];
 }
@@ -504,6 +548,19 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     _webView = nil;
 
     [super close];
+}
+
+- (void)videoControlsManagerDidChange
+{
+    auto* videoFullscreenManager = _page ? _page->videoFullscreenManager() : nullptr;
+    auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
+
+    _videoFullscreenClient->setInterface(videoFullscreenInterface);
+}
+
+- (void)didEnterPictureInPicture
+{
+    [self requestExitFullScreen];
 }
 
 #pragma mark -

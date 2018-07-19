@@ -57,6 +57,12 @@ public:
     virtual FloatSize videoDimensions() const = 0;
     virtual bool hasVideo() const = 0;
 
+    virtual void willEnterPictureInPicture() = 0;
+    virtual void didEnterPictureInPicture() = 0;
+    virtual void failedToEnterPictureInPicture() = 0;
+    virtual void willExitPictureInPicture() = 0;
+    virtual void didExitPictureInPicture() = 0;
+
 #if PLATFORM(IOS)
     virtual UIViewController *presentingViewController() { return nullptr; }
     virtual UIViewController *createVideoFullscreenViewController(AVPlayerViewController *) { return nullptr; }
@@ -66,8 +72,13 @@ public:
 class VideoFullscreenModelClient {
 public:
     virtual ~VideoFullscreenModelClient() = default;
-    virtual void hasVideoChanged(bool) = 0;
-    virtual void videoDimensionsChanged(const FloatSize&) = 0;
+    virtual void hasVideoChanged(bool) { };
+    virtual void videoDimensionsChanged(const FloatSize&) { };
+    virtual void willEnterPictureInPicture() { }
+    virtual void didEnterPictureInPicture() { }
+    virtual void failedToEnterPictureInPicture() { }
+    virtual void willExitPictureInPicture() { }
+    virtual void didExitPictureInPicture() { }
 };
 
 WEBCORE_EXPORT bool supportsPictureInPicture();

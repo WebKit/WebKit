@@ -5918,22 +5918,10 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
     m_waitingToEnterFullscreen = true;
 
-#if ENABLE(FULLSCREEN_API)
-    if (document().settings().fullScreenEnabled()) {
-#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-        if (mode == VideoFullscreenModeStandard) {
-            document().requestFullScreenForElement(this, Document::ExemptIFrameAllowFullScreenRequirement);
-            return;
-        }
-#endif
-
-        // If this media element is not going to standard fullscreen mode but there's
-        // an element that's currently in full screen in the document, exit full screen
-        // if it contains this media element.
-        if (RefPtr<Element> fullscreenElement = document().webkitCurrentFullScreenElement()) {
-            if (fullscreenElement->contains(this))
-                document().webkitCancelFullScreen();
-        }
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
+    if (document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
+        document().requestFullScreenForElement(this, Document::ExemptIFrameAllowFullScreenRequirement);
+        return;
     }
 #endif
 
