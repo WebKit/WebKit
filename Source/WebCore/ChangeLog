@@ -1,5 +1,58 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233903. rdar://problem/42345392
+
+    Ensure timingFunctionForKeyframeAtIndex() can be used from setAnimatedPropertiesInStyle().
+    https://bugs.webkit.org/show_bug.cgi?id=187637
+    <rdar://problem/42157915>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Test: webanimations/empty-keyframes-crash.html
+    
+    Unlike what we assumed, it is possible to have a non-declarative animation without any parsed keyframes.
+    This can happen as a result of calling `Element.animate({}, …)`. In this case, we want to return a null
+    value in timingFunctionForKeyframeAtIndex() so we update the call site in setAnimatedPropertiesInStyle()
+    which is the only place where we didn't check for a null value and didn't know for sure that there would
+    be parsed keyframes to rely on in the case of a WebAnimation instance.
+    
+    * animation/KeyframeEffectReadOnly.cpp:
+    (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle):
+    (WebCore::KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex):
+    
+    LayoutTests:
+    
+    Add a new test that would crash prior to this change.
+    
+    * webanimations/empty-keyframes-crash-expected.txt: Added.
+    * webanimations/empty-keyframes-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233903 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-17  Antoine Quint  <graouts@apple.com>
+
+            Ensure timingFunctionForKeyframeAtIndex() can be used from setAnimatedPropertiesInStyle().
+            https://bugs.webkit.org/show_bug.cgi?id=187637
+            <rdar://problem/42157915>
+
+            Reviewed by Dean Jackson.
+
+            Test: webanimations/empty-keyframes-crash.html
+
+            Unlike what we assumed, it is possible to have a non-declarative animation without any parsed keyframes.
+            This can happen as a result of calling `Element.animate({}, …)`. In this case, we want to return a null
+            value in timingFunctionForKeyframeAtIndex() so we update the call site in setAnimatedPropertiesInStyle()
+            which is the only place where we didn't check for a null value and didn't know for sure that there would
+            be parsed keyframes to rely on in the case of a WebAnimation instance.
+
+            * animation/KeyframeEffectReadOnly.cpp:
+            (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle):
+            (WebCore::KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex):
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233883. rdar://problem/42345112
 
     Correctly adjust scroll offsets when a page is zoomed
