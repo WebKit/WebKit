@@ -1,3 +1,99 @@
+2018-07-19  Ben Richards  <benton_richards@apple.com>
+
+        Add benchmark for WebKit process launch times
+        https://bugs.webkit.org/show_bug.cgi?id=186414
+
+        Reviewed by Ryosuke Niwa.
+
+        Added two benchmarks, one for measuring browser new tab launch time and one for browser startup time.
+
+        * LaunchTime/.gitignore: Added.
+        * LaunchTime/feedback_client.html: Added.
+        Displays benchmark progress in browser
+        * LaunchTime/feedback_server.py: Added.
+        (FeedbackServer): Sends data to feedback_client via websocket
+        (FeedbackServer.__init__):
+        (FeedbackServer._create_app):
+        (FeedbackServer._start_server):
+        (FeedbackServer._send_all_messages):
+        (FeedbackServer.start):
+        (FeedbackServer.stop):
+        (FeedbackServer.send_message): Send a message to the feedback_client
+        (FeedbackServer.wait_until_client_has_loaded): Wait until the feedback_client has opened a websocket connection to the feedback_server
+        (FeedbackServer.MainHandler): Handler factory to create handler that serves feedback_client.html
+        (FeedbackServer.MainHandler.Handler):
+        (FeedbackServer.MainHandler.Handler.get):
+        (FeedbackServer.WSHandler): Handler factory to create handler that sends data to feedback client
+        (FeedbackServer.WSHandler.Handler):
+        (FeedbackServer.WSHandler.Handler.open): On websocket connection opened
+        (FeedbackServer.WSHandler.Handler.on_close): On websocket connection closed
+        * LaunchTime/launch_time.py: Added.
+        (DefaultLaunchTimeHandler): Abstract HTTP request handler for launch time benchmarks
+        (DefaultLaunchTimeHandler.get_test_page): Default test page to be overridden by benchmarks
+        (DefaultLaunchTimeHandler.get_blank_page):
+        (DefaultLaunchTimeHandler.on_receive_stop_time):
+        (DefaultLaunchTimeHandler.do_HEAD):
+        (DefaultLaunchTimeHandler.do_GET):
+        (DefaultLaunchTimeHandler.do_POST):
+        (DefaultLaunchTimeHandler.log_message): Suppresses HTTP logs from SimpleHTTPRequestHandler
+        (LaunchTimeBenchmark): Abstract class which launch time benchmarks inherit from and override methods desired to customize
+        (LaunchTimeBenchmark.__init__):
+        (LaunchTimeBenchmark._parse_browser_bundle_path): Parser for bundle path option
+        (LaunchTimeBenchmark._parse_args):
+        (LaunchTimeBenchmark._run_server): Target function for main server thread
+        (LaunchTimeBenchmark._setup_servers):
+        (LaunchTimeBenchmark._clean_up):
+        (LaunchTimeBenchmark._exit_due_to_exception):
+        (LaunchTimeBenchmark._geometric_mean):
+        (LaunchTimeBenchmark._standard_deviation):
+        (LaunchTimeBenchmark._compute_results): Returns mean and std dev of list of results and pretty prints if should_print=True is specified
+        (LaunchTimeBenchmark._wait_times): Mimic numpy.linspace
+        (LaunchTimeBenchmark.open_tab): Open a browser tab with the html given by self.response_handler.get_test_page
+        (LaunchTimeBenchmark.launch_browser): Open a broser to either the feedback client (if option is set) or a blank page
+        (LaunchTimeBenchmark.quit_browser):
+        (LaunchTimeBenchmark.quit_browser.quit_app):
+        (LaunchTimeBenchmark.quit_browser.is_app_closed):
+        (LaunchTimeBenchmark.close_tab):
+        (LaunchTimeBenchmark.wait):
+        (LaunchTimeBenchmark.log): Print to console and send to feedback client if --feedback-in-browser flag is used
+        (LaunchTimeBenchmark.log_verbose): Only logs if --verbose flag is used
+        (LaunchTimeBenchmark.run):
+        (LaunchTimeBenchmark.group_init): Initialization done before each round of iterations
+        (LaunchTimeBenchmark.run_iteration):
+        (LaunchTimeBenchmark.initialize): Convenience method to be overriden by subclasses which is called at the end of __init__
+        (LaunchTimeBenchmark.will_parse_arguments): Called before argparse.parse_args to let subclasses add new command line arguments
+        (LaunchTimeBenchmark.did_parse_arguments): Called after argparse.parse_args to let subclass initialize based on command line arguments
+        * LaunchTime/new_tab.py: Added
+        (NewTabBenchmark):
+        (NewTabBenchmark._parse_wait_time): Parser for wait time option
+        (NewTabBenchmark.initialize):
+        (NewTabBenchmark.run_iteration):
+        (NewTabBenchmark.group_init):
+        (NewTabBenchmark.will_parse_arguments):
+        (NewTabBenchmark.did_parse_arguments):
+        (NewTabBenchmark.ResponseHandler):
+        (NewTabBenchmark.ResponseHandler.Handler):
+        (NewTabBenchmark.ResponseHandler.Handler.get_test_page):
+        * LaunchTime/startup.py: Added
+        (StartupBenchmark): This benchmark measures browser startup time and initial page load time
+        (StartupBenchmark.initialize):
+        (StartupBenchmark.run_iteration):
+        (StartupBenchmark.ResponseHandler):
+        (StartupBenchmark.ResponseHandler.Handler):
+        (StartupBenchmark.ResponseHandler.Handler.get_test_page):
+        * LaunchTime/thirdparty/__init__.py: Added.
+        (AutoinstallImportHook): Auto installs tornado package for feedback server
+        (AutoinstallImportHook.__init__):
+        (AutoinstallImportHook._ensure_autoinstalled_dir_is_in_sys_path):
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_tornado):
+        (AutoinstallImportHook.greater_than_equal_to_version):
+        (AutoinstallImportHook._install):
+        (AutoinstallImportHook.get_latest_pypi_url):
+        (AutoinstallImportHook.install_binary):
+        (autoinstall_everything):
+        (get_os_info):
+
 2018-06-25  Jon Lee  <jonlee@apple.com>
 
         [MotionMark] Add support for version numbers
