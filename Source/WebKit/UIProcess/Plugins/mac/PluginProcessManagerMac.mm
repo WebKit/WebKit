@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "PluginProcessProxy.h"
+#import <WebCore/RuntimeEnabledFeatures.h>
 
 namespace WebKit {
 
@@ -45,6 +46,12 @@ void PluginProcessManager::updateProcessSuppressionDisabled(RefCounterEvent even
     bool enabled = !disableCount;
     for (auto& pluginProcess : m_pluginProcesses)
         pluginProcess->setProcessSuppressionEnabled(enabled);
+}
+
+void PluginProcessManager::setExperimentalPlugInSandboxProfilesEnabled(bool enabled)
+{
+    m_experimentalPlugInSandboxProfilesEnabled = enabled;
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setExperimentalPlugInSandboxProfilesEnabled(enabled);
 }
 
 } // namespace WebKit

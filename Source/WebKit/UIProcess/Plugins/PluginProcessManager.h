@@ -76,6 +76,11 @@ public:
 
     const Vector<RefPtr<PluginProcessProxy>>& pluginProcesses() const { return m_pluginProcesses; }
 
+#if PLATFORM(MAC)
+    void setExperimentalPlugInSandboxProfilesEnabled(bool);
+    bool experimentalPlugInSandboxProfilesEnabled() const { return m_experimentalPlugInSandboxProfilesEnabled; }
+#endif
+
 private:
     PluginProcessManager();
 
@@ -89,6 +94,9 @@ private:
 
 #if PLATFORM(COCOA)
     ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;
+#endif
+#if PLATFORM(MAC)
+    bool m_experimentalPlugInSandboxProfilesEnabled { false };
 #endif
 };
 

@@ -159,6 +159,7 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 @property (nonatomic, setter=_setSuppressesIncrementalRendering:) BOOL _suppressesIncrementalRendering WK_API_AVAILABLE(macosx(10.13.4));
 @property (nonatomic, setter=_setAsynchronousPluginInitializationEnabled:) BOOL _asynchronousPluginInitializationEnabled WK_API_AVAILABLE(macosx(10.13.4));
 @property (nonatomic, setter=_setArtificialPluginInitializationDelayEnabled:) BOOL _artificialPluginInitializationDelayEnabled WK_API_AVAILABLE(macosx(10.13.4));
+@property (nonatomic, setter=_setExperimentalPlugInSandboxProfilesEnabled:) BOOL _experimentalPlugInSandboxProfilesEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setCookieEnabled:) BOOL _cookieEnabled WK_API_AVAILABLE(macosx(10.13.4));
 @property (nonatomic, setter=_setPlugInSnapshottingEnabled:) BOOL _plugInSnapshottingEnabled WK_API_AVAILABLE(macosx(10.13.4));
 @property (nonatomic, setter=_setSubpixelCSSOMElementMetricsEnabled:) BOOL _subpixelCSSOMElementMetricsEnabled WK_API_AVAILABLE(macosx(10.13.4));

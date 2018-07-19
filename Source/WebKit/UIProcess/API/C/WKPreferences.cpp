@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "PluginProcessManager.h"
 #include "WKPreferencesRef.h"
 #include "WKPreferencesRefPrivate.h"
 #include "WKAPICast.h"
@@ -1151,6 +1152,19 @@ void WKPreferencesSetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef, 
 bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->plugInSnapshottingEnabled();
+}
+
+void WKPreferencesSetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef preferencesRef, bool enabled)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
+    WebKit::PluginProcessManager::singleton().setExperimentalPlugInSandboxProfilesEnabled(enabled);
+#endif
+    toImpl(preferencesRef)->setExperimentalPlugInSandboxProfilesEnabled(enabled);
+}
+
+bool WKPreferencesGetPluginSandboxProfilesEnabledForAllPlugins(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->experimentalPlugInSandboxProfilesEnabled();
 }
 
 void WKPreferencesSetSnapshotAllPlugIns(WKPreferencesRef preferencesRef, bool enabled)

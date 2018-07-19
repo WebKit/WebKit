@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "PluginProcessCreationParameters.h"
+#import "PluginProcessManager.h"
 #import "PluginProcessMessages.h"
 #import "SandboxUtilities.h"
 #import <QuartzCore/CARemoteLayerServer.h>
@@ -67,6 +68,9 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
         launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
 
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
+
+    if (PluginProcessManager::singleton().experimentalPlugInSandboxProfilesEnabled())
+        launchOptions.extraInitializationData.add("experimental-sandbox-plugin", "1");
 
     if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed) {
         if (!currentProcessIsSandboxed())

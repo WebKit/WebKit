@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "APIArray.h"
+#import "PluginProcessManager.h"
 #import "WKNSArray.h"
 #import "WebPreferences.h"
 #import "_WKExperimentalFeature.h"
@@ -940,6 +941,19 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_artificialPluginInitializationDelayEnabled
 {
     return _preferences->artificialPluginInitializationDelayEnabled();
+}
+
+- (void)_setExperimentalPlugInSandboxProfilesEnabled:(BOOL)enabled
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    WebKit::PluginProcessManager::singleton().setExperimentalPlugInSandboxProfilesEnabled(enabled);
+#endif
+    _preferences->setExperimentalPlugInSandboxProfilesEnabled(enabled);
+}
+
+- (BOOL)_experimentalPlugInSandboxProfilesEnabled
+{
+    return _preferences->experimentalPlugInSandboxProfilesEnabled();
 }
 
 - (void)_setCookieEnabled:(BOOL)enabled

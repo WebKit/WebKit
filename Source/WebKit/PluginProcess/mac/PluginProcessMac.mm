@@ -40,6 +40,7 @@
 #import "SandboxUtilities.h"
 #import <CoreAudio/AudioHardware.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/RuntimeEnabledFeatures.h>
 #import <dlfcn.h>
 #import <mach-o/dyld.h>
 #import <mach-o/getsect.h>
@@ -527,6 +528,9 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
     initializeShim();
 
     initializeCocoaOverrides();
+
+    bool experimentalPlugInSandboxProfilesEnabled = parameters.extraInitializationData.get("experimental-sandbox-plugin") == "1";
+    RuntimeEnabledFeatures::sharedFeatures().setExperimentalPlugInSandboxProfilesEnabled(experimentalPlugInSandboxProfilesEnabled);
 
     // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of
     // allowing plug-ins to change the mouse cursor at any time.
