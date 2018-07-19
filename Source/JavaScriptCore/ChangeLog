@@ -1,3 +1,16 @@
+2018-07-19  Mark Lam  <mark.lam@apple.com>
+
+        Temporarily mitigate a bug where a source provider is null when it shouldn't be.
+        https://bugs.webkit.org/show_bug.cgi?id=187812
+        <rdar://problem/41192691>
+
+        Reviewed by Michael Saboff.
+
+        Adding a null check to temporarily mitigate https://bugs.webkit.org/show_bug.cgi?id=187811.
+
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+
 2018-07-19  Keith Rollin  <krollin@apple.com>
 
         Adjust WEBCORE_EXPORT annotations for LTO
