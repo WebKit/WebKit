@@ -272,6 +272,24 @@ void PlatformWebView::makeWebViewFirstResponder()
     [m_window makeFirstResponder:platformView()];
 }
 
+bool PlatformWebView::drawsBackground() const
+{
+#if WK_API_ENABLED
+    return [m_view _drawsBackground];
+#else
+    return false;
+#endif
+}
+
+void PlatformWebView::setDrawsBackground(bool drawsBackground)
+{
+#if WK_API_ENABLED
+    [m_view _setDrawsBackground:drawsBackground];
+#else
+    UNUSED_PARAM(drawsBackground);
+#endif
+}
+
 RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
     [platformView() display];

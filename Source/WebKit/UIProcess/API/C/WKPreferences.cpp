@@ -2033,3 +2033,13 @@ bool WKPreferencesGetProcessSwapOnNavigationEnabled(WKPreferencesRef preferences
 {
     return toImpl(preferencesRef)->processSwapOnNavigationEnabled();
 }
+
+void WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setPunchOutWhiteBackgroundsInDarkMode(flag);
+}
+
+bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->punchOutWhiteBackgroundsInDarkMode();
+}

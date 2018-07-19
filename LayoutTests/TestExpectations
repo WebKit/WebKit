@@ -272,6 +272,9 @@ imported/w3c/web-platform-tests/css/css-ui/caret-color-018.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui/caret-color-019.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui/caret-color-020.html [ Skip ]
 
+# Only relevant on macOS
+css3/color-filters/punch-out-white-backgrounds.html [ Skip ]
+
 # This test tests a feature that only exists on iOS.
 fast/text/accessibility-bold-system-font-2.html [ Skip ]
 

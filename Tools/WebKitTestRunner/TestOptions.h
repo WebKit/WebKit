@@ -59,6 +59,7 @@ struct TestOptions {
     bool enableProcessSwapOnNavigation { false };
     bool enableProcessSwapOnWindowOpen { false };
     bool enableColorFilter { false };
+    bool punchOutWhiteBackgroundsInDarkMode { false };
     bool runSingly { false };
 
     float deviceScaleFactor { 1 };
@@ -95,6 +96,7 @@ struct TestOptions {
             || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
             || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
             || enableColorFilter != options.enableColorFilter
+            || punchOutWhiteBackgroundsInDarkMode != options.punchOutWhiteBackgroundsInDarkMode
             || jscOptions != options.jscOptions
             || runSingly != options.runSingly)
             return false;

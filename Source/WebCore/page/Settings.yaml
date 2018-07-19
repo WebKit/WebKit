@@ -530,6 +530,11 @@ conicGradientsEnabled:
 
 colorFilterEnabled:
   initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
+punchOutWhiteBackgroundsInDarkMode:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
 
 treatIPAddressAsDomain:
   initial: false

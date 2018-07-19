@@ -11,8 +11,10 @@
   (shadow-blur 12.00)
   (shadow-offset width=10 height=20)
   (shadows-use-legacy-radius 0))
-(fill-rect-with-color
+(fill-composited-rect
   (extent at (7.14,0.20) size 184.55x185.65)
   (rect at (0,0) size 100x100)
-  (color #0000FF))
+  (color #0000FF)
+  (composite-operation source-over)
+  (blend-mode normal))
 (restore)

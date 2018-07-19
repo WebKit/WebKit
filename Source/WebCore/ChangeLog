@@ -1,5 +1,142 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233869. rdar://problem/42344023
+
+    Allow removal of white backgrounds
+    https://bugs.webkit.org/show_bug.cgi?id=187574
+    <rdar://problem/41146792>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Add a drawing mode that turns white backgrounds into transparent
+    regions, such that a hosting app can see through to its window.
+    
+    Test: css3/color-filters/punch-out-white-backgrounds.html
+    
+    * page/Settings.yaml: New Setting.
+    
+    * rendering/InlineFlowBox.cpp: Draw with a destination out blend mode
+    if the background is white and we are punching out backgrounds, which means
+    that it will erase the destination.
+    (WebCore::InlineFlowBox::paintBoxDecorations):
+    * rendering/RenderBox.cpp:
+    (WebCore::RenderBox::paintBackground): Ditto.
+    * rendering/RenderTableCell.cpp:
+    (WebCore::RenderTableCell::paintBackgroundsBehindCell): Ditto.
+    
+    * rendering/RenderBoxModelObject.cpp:
+    (WebCore::RenderBoxModelObject::paintFillLayerExtended): Save and restore
+    the composition mode if necessary.
+    
+    Source/WebKit:
+    
+    Add a new WebPreference for punching out white backgrounds.
+    
+    * Shared/WebPreferences.yaml:
+    * UIProcess/API/C/WKPreferences.cpp:
+    (WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode):
+    (WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode):
+    * UIProcess/API/C/WKPreferencesRefPrivate.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _initializeWithConfiguration:]):
+    * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+    (-[WKWebViewConfiguration init]):
+    (-[WKWebViewConfiguration copyWithZone:]):
+    (-[WKWebViewConfiguration _punchOutWhiteBackgroundsInDarkMode]):
+    (-[WKWebViewConfiguration _setPunchOutWhiteBackgroundsInDarkMode:]):
+    * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    Add a new WebPreference for punching out white backgrounds.
+    
+    * WebView/WebPreferenceKeysPrivate.h:
+    * WebView/WebPreferences.mm:
+    (+[WebPreferences initialize]):
+    (-[WebPreferences punchOutWhiteBackgroundsInDarkMode]):
+    (-[WebPreferences setPunchOutWhiteBackgroundsInDarkMode:]):
+    * WebView/WebPreferencesPrivate.h:
+    * WebView/WebView.mm:
+    (-[WebView _preferencesChanged:]):
+    
+    Tools:
+    
+    Add a new menu item for punching out white backgrounds in MiniBrowser.
+    In WebKitTestRunner, expose the new setting and hook that up to
+    drawing a background in the WebView.
+    
+    * MiniBrowser/mac/AppDelegate.m:
+    (defaultConfiguration): Add _punchOutWhiteBackgroundsInDarkMode.
+    
+    * MiniBrowser/mac/SettingsController.h: Ditto.
+    * MiniBrowser/mac/SettingsController.m:
+    (-[SettingsController _populateMenu]):
+    (-[SettingsController validateMenuItem:]):
+    (-[SettingsController togglePunchOutWhiteBackgroundsInDarkMode:]):
+    (-[SettingsController punchOutWhiteBackgroundsInDarkMode]):
+    
+    * MiniBrowser/mac/WK1BrowserWindowController.m:
+    (-[WK1BrowserWindowController didChangeSettings]): Set the new preference.
+    
+    * WebKitTestRunner/PlatformWebView.h: Expose a drawsBackground property.
+    * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp: Null implementation.
+    (WTR::PlatformWebView::drawsBackground const):
+    (WTR::PlatformWebView::setDrawsBackground):
+    * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp: Ditto.
+    (WTR::PlatformWebView::drawsBackground const):
+    (WTR::PlatformWebView::setDrawsBackground):
+    * WebKitTestRunner/ios/PlatformWebViewIOS.mm: Call into the WKWebView and
+    set its SPI.
+    (WTR::PlatformWebView::drawsBackground const):
+    (WTR::PlatformWebView::setDrawsBackground):
+    * WebKitTestRunner/mac/PlatformWebViewMac.mm: Ditto.
+    (WTR::PlatformWebView::drawsBackground const):
+    (WTR::PlatformWebView::setDrawsBackground):
+    
+    * WebKitTestRunner/TestController.cpp: Reset and copy the new preference.
+    (WTR::TestController::resetPreferencesToConsistentValues):
+    (WTR::updateTestOptionsFromTestHeader):
+    * WebKitTestRunner/TestOptions.h:
+    (WTR::TestOptions::hasSameInitializationOptions const):
+    
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::platformCreateWebView): If the option for punching
+    out the background was set, tell the WebView to not draw its background.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233869 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-11  Dean Jackson  <dino@apple.com>
+
+            Allow removal of white backgrounds
+            https://bugs.webkit.org/show_bug.cgi?id=187574
+            <rdar://problem/41146792>
+
+            Reviewed by Simon Fraser.
+
+            Add a drawing mode that turns white backgrounds into transparent
+            regions, such that a hosting app can see through to its window.
+
+            Test: css3/color-filters/punch-out-white-backgrounds.html
+
+            * page/Settings.yaml: New Setting.
+
+            * rendering/InlineFlowBox.cpp: Draw with a destination out blend mode
+            if the background is white and we are punching out backgrounds, which means
+            that it will erase the destination.
+            (WebCore::InlineFlowBox::paintBoxDecorations):
+            * rendering/RenderBox.cpp:
+            (WebCore::RenderBox::paintBackground): Ditto.
+            * rendering/RenderTableCell.cpp:
+            (WebCore::RenderTableCell::paintBackgroundsBehindCell): Ditto.
+
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::paintFillLayerExtended): Save and restore
+            the composition mode if necessary.
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233865. rdar://problem/42343023
 
     Fullscreen requires active document.

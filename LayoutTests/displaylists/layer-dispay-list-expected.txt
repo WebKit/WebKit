@@ -2,10 +2,12 @@
 (translate
   (x 0.00)
   (y 0.00))
-(fill-rect-with-color
+(fill-composited-rect
   (extent at (0,0) size 104x104)
   (rect at (0,0) size 104x104)
-  (color #008000))
+  (color #008000)
+  (composite-operation source-over)
+  (blend-mode normal))
 (set-state
   (change-flags 131456)
   (fill-color #0000FF)

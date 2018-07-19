@@ -2778,6 +2778,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+<<<<<<< HEAD
 static CGColorRef colorForStyle(DocumentMarkerLineStyle style, bool useDarkMode)
 {
     switch (style) {
@@ -2820,6 +2821,16 @@ void RenderThemeMac::drawLineForDocumentMarker(const RenderText& renderer, Graph
         CGContextAddEllipseInRect(ctx, CGRectMake(offsetPoint.x() + x, offsetPoint.y(), cMisspellingLineThickness, cMisspellingLineThickness));
     CGContextSetCompositeOperation(ctx, kCGCompositeSover);
     CGContextFillPath(ctx);
+}
+
+bool RenderThemeMac::usingDarkAppearance(const RenderObject& o) const
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    return o.page().useSystemAppearance() && o.page().useDarkAppearance();
+#else
+    UNUSED_PARAM(o);
+    return false;
+#endif
 }
 
 } // namespace WebCore

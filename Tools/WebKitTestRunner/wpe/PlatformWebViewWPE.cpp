@@ -132,4 +132,13 @@ void PlatformWebView::forceWindowFramesChanged()
 {
 }
 
+bool PlatformWebView::drawsBackground() const
+{
+    return false;
+}
+
+void PlatformWebView::setDrawsBackground(bool)
+{
+}
+
 } // namespace WTR

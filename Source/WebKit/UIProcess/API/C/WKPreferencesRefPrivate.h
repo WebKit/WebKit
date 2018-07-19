@@ -569,6 +569,10 @@ WK_EXPORT bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetColorFilterEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

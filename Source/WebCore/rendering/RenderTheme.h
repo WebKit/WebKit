@@ -38,6 +38,7 @@ class FileList;
 class FillLayer;
 class HTMLInputElement;
 class Icon;
+class Page;
 class RenderAttachment;
 class RenderBox;
 class RenderMeter;
@@ -254,6 +255,8 @@ public:
 #endif
 
     virtual void drawLineForDocumentMarker(const RenderText&, GraphicsContext&, const FloatPoint& origin, float width, DocumentMarkerLineStyle);
+
+    virtual bool usingDarkAppearance(const RenderObject&) const { return false; }
 
 protected:
     virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
