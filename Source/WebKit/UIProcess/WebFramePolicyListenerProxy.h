@@ -25,15 +25,25 @@
 
 #pragma once
 
-#include "WebFrameListenerProxy.h"
+#include "APIObject.h"
 
 #if PLATFORM(COCOA)
 #include "WKFoundation.h"
 #endif
 
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
+namespace API {
+class Navigation;
+}
+
+namespace WebCore {
+enum class PolicyAction;
+}
 
 namespace WebKit {
+
+class WebsiteDataStore;
+class WebFrameProxy;
+struct WebsitePoliciesData;
 
 enum class PolicyListenerType {
     NavigationAction,
@@ -41,9 +51,8 @@ enum class PolicyListenerType {
     Response,
 };
 
-class WebFramePolicyListenerProxy : public WebFrameListenerProxy {
+class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
-    static const Type APIType = Type::FramePolicyListener;
 
     static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID, PolicyListenerType policyType)
     {
@@ -56,18 +65,27 @@ public:
 
     PolicyListenerType policyListenerType() const { return m_policyType; }
 
+    uint64_t listenerID() const { return m_listenerID; }
+    
+    void setNavigation(Ref<API::Navigation>&&);
+    void invalidate();
+    
+    void changeWebsiteDataStore(WebsiteDataStore&);
+    bool isMainFrame() const;
+
+    void setApplyPolicyInNewProcessIfPossible(bool applyPolicyInNewProcessIfPossible) { m_applyPolicyInNewProcessIfPossible = applyPolicyInNewProcessIfPossible; }
+    bool applyPolicyInNewProcessIfPossible() const { return m_applyPolicyInNewProcessIfPossible; }
+
 private:
     WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID, PolicyListenerType);
 
-    Type type() const override { return APIType; }
-
-#if DELEGATE_REF_COUNTING_TO_COCOA
-    void* operator new(size_t size) { return newObject(size, APIType); }
-#endif
+    void receivedPolicyDecision(WebCore::PolicyAction, std::optional<WebsitePoliciesData>&&);
 
     PolicyListenerType m_policyType;
+    RefPtr<WebFrameProxy> m_frame;
+    uint64_t m_listenerID { 0 };
+    RefPtr<API::Navigation> m_navigation;
+    bool m_applyPolicyInNewProcessIfPossible { false };
 };
 
 } // namespace WebKit
-
-#undef DELEGATE_REF_COUNTING_TO_COCOA

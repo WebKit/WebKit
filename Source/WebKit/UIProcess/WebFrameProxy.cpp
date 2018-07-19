@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebFrameProxy.h"
 
+#include "APINavigation.h"
 #include "WebCertificateInfo.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
@@ -197,10 +198,7 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t li
 
 WebFramePolicyListenerProxy* WebFrameProxy::activePolicyListenerProxy()
 {
-    if (!m_activeListener || m_activeListener->type() != WebFramePolicyListenerProxy::APIType)
-        return nullptr;
-
-    return static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
+    return m_activeListener.get();
 }
 
 void WebFrameProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)

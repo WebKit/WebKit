@@ -24,6 +24,7 @@
 #include "WebKitWebView.h"
 
 #include "APIData.h"
+#include "APINavigation.h"
 #include "APISerializedScriptValue.h"
 #include "ImageOptions.h"
 #include "WebCertificateInfo.h"

@@ -335,7 +335,6 @@ set(WebKit_SOURCES
     UIProcess/WebEditCommandProxy.cpp
     UIProcess/WebFormClient.cpp
     UIProcess/WebFormSubmissionListenerProxy.cpp
-    UIProcess/WebFrameListenerProxy.cpp
     UIProcess/WebFramePolicyListenerProxy.cpp
     UIProcess/WebFrameProxy.cpp
     UIProcess/WebFullScreenManagerProxy.cpp

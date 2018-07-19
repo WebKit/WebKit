@@ -28,7 +28,7 @@
 #include "APIObject.h"
 #include "FrameLoadState.h"
 #include "GenericCallback.h"
-#include "WebFrameListenerProxy.h"
+#include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -144,7 +144,7 @@ private:
     bool m_isFrameSet;
     bool m_containsPluginDocument { false };
     RefPtr<WebCertificateInfo> m_certificateInfo;
-    RefPtr<WebFrameListenerProxy> m_activeListener;
+    RefPtr<WebFramePolicyListenerProxy> m_activeListener;
     uint64_t m_frameID;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;

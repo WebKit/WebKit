@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebFramePolicyListenerProxy.h"
 
+#include "APINavigation.h"
 #include "WebFrameProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
@@ -33,11 +34,47 @@
 namespace WebKit {
 
 WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, uint64_t listenerID, PolicyListenerType policyType)
-    : WebFrameListenerProxy(frame, listenerID)
-    , m_policyType(policyType)
+    : m_policyType(policyType)
+    , m_frame(frame)
+    , m_listenerID(listenerID)
 {
 }
 
+void WebFramePolicyListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action, std::optional<WebsitePoliciesData>&& data)
+{
+    if (!m_frame)
+        return;
+    
+    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get(), WTFMove(data));
+    m_frame = nullptr;
+}
+
+void WebFramePolicyListenerProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)
+{
+    if (!m_frame)
+        return;
+    
+    m_frame->changeWebsiteDataStore(websiteDataStore);
+}
+
+void WebFramePolicyListenerProxy::invalidate()
+{
+    m_frame = nullptr;
+}
+
+bool WebFramePolicyListenerProxy::isMainFrame() const
+{
+    if (!m_frame)
+        return false;
+    
+    return m_frame->isMainFrame();
+}
+
+void WebFramePolicyListenerProxy::setNavigation(Ref<API::Navigation>&& navigation)
+{
+    m_navigation = WTFMove(navigation);
+}
+    
 void WebFramePolicyListenerProxy::use(std::optional<WebsitePoliciesData>&& data)
 {
     receivedPolicyDecision(WebCore::PolicyAction::Use, WTFMove(data));

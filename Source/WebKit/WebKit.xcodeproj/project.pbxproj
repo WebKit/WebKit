@@ -1980,8 +1980,6 @@
 		BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */; };
 		BCE469591214EDF4000B98EB /* WKFormSubmissionListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */; };
 		BCE4695A1214EDF4000B98EB /* WKFormSubmissionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCE469771214F27B000B98EB /* WebFrameListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */; };
-		BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */; };
 		BCE81D8C1319F7EF00241910 /* FontInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE81D8A1319F7EF00241910 /* FontInfo.cpp */; };
 		BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE81D8B1319F7EF00241910 /* FontInfo.h */; };
 		BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE7ACC12817988009827DA /* WebProcessProxyMessageReceiver.cpp */; };
@@ -4598,8 +4596,6 @@
 		BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFormSubmissionListenerProxy.h; sourceTree = "<group>"; };
 		BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFormSubmissionListener.cpp; sourceTree = "<group>"; };
 		BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFormSubmissionListener.h; sourceTree = "<group>"; };
-		BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameListenerProxy.h; sourceTree = "<group>"; };
-		BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameListenerProxy.cpp; sourceTree = "<group>"; };
 		BCE81D8A1319F7EF00241910 /* FontInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontInfo.cpp; sourceTree = "<group>"; };
 		BCE81D8B1319F7EF00241910 /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontInfo.h; sourceTree = "<group>"; };
 		BCE9C0CF1485965D00E33D61 /* WebConnectionToUIProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConnectionToUIProcess.cpp; sourceTree = "<group>"; };
@@ -7495,8 +7491,6 @@
 				BCE469501214E6CB000B98EB /* WebFormClient.h */,
 				BCE469511214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp */,
 				BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */,
-				BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */,
-				BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */,
 				BCB9F69F1123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp */,
 				BCB9F69E1123A84B00A137E0 /* WebFramePolicyListenerProxy.h */,
 				BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */,
@@ -9472,7 +9466,6 @@
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
 				BC032D8D10F437A00058C15A /* WebFrame.h in Headers */,
-				BCE469771214F27B000B98EB /* WebFrameListenerProxy.h in Headers */,
 				BC032D7F10F4378D0058C15A /* WebFrameLoaderClient.h in Headers */,
 				9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
 				BCB9F6A01123A84B00A137E0 /* WebFramePolicyListenerProxy.h in Headers */,
@@ -11285,7 +11278,6 @@
 				BCE469531214E6CB000B98EB /* WebFormClient.cpp in Sources */,
 				BCE469551214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp in Sources */,
 				BC111ADD112F5B9300337BAB /* WebFrame.cpp in Sources */,
-				BCE469791214F2B4000B98EB /* WebFrameListenerProxy.cpp in Sources */,
 				BC111A5F112F4FBB00337BAB /* WebFrameLoaderClient.cpp in Sources */,
 				2D28F3E71885CCC1004B9EAE /* WebFrameLoaderClientIOS.mm in Sources */,
 				9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,

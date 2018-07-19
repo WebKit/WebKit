@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) && WK_API_ENABLED
 
+#import "APINavigation.h"
 #import "VersionChecks.h"
 #import "WKFrameInfo.h"
 #import "WKInspectorWKWebView.h"

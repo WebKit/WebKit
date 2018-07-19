@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
+#include "APINavigation.h"
 #include "APIProcessPoolConfiguration.h"
 #include "WebAutomationSession.h"
 #include "WebFrameProxy.h"

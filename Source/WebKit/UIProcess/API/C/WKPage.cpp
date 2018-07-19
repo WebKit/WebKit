@@ -38,6 +38,7 @@
 #include "APIGeometry.h"
 #include "APIHitTestResult.h"
 #include "APILoaderClient.h"
+#include "APINavigation.h"
 #include "APINavigationAction.h"
 #include "APINavigationClient.h"
 #include "APINavigationResponse.h"

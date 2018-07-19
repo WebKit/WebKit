@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APILegacyContextHistoryClient.h"
+#import "APINavigation.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "FullscreenClient.h"

@@ -33,6 +33,7 @@
 #include "APIHTTPCookieStore.h"
 #include "APIInjectedBundleClient.h"
 #include "APILegacyContextHistoryClient.h"
+#include "APINavigation.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "ChildProcessMessages.h"
