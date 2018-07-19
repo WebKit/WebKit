@@ -511,7 +511,7 @@ void webKitMediaSrcLinkParser(GstPad* sourcePad, GstCaps* caps, Stream* stream)
 
 void webKitMediaSrcFreeStream(WebKitMediaSrc* source, Stream* stream)
 {
-    if (stream->appsrc) {
+    if (GST_IS_APP_SRC(stream->appsrc)) {
         // Don't trigger callbacks from this appsrc to avoid using the stream anymore.
         gst_app_src_set_callbacks(GST_APP_SRC(stream->appsrc), &disabledAppsrcCallbacks, nullptr, nullptr);
         gst_app_src_end_of_stream(GST_APP_SRC(stream->appsrc));
