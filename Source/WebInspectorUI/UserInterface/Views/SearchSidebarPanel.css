@@ -78,3 +78,10 @@ body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {
 .sidebar > .panel.navigation.search.changed > :matches(.content, .message-text-view) {
     top: calc(var(--navigation-bar-height) + 40px - 1px);
 }
+
+@media (prefers-dark-interface) {
+    .sidebar > .panel.navigation.search.changed > .banner {
+        background-color: var(--yellow-highlight-background-color);
+        color: var(--yellow-highlight-text-color);
+    }
+}

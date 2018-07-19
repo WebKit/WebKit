@@ -93,7 +93,7 @@
         --green-highlight-background-color: hsl(120, 15%, 28%);
         --green-highlight-text-color: hsl(80, 75%, 80%);
 
-        --yellow-highlight-background-color: hsl(3, 20%, 26%);
+        --yellow-highlight-background-color: hsl(13, 20%, 26%);
         --yellow-highlight-text-color: hsl(50, 96%, 87%);
 
         --value-changed-highlight: var(--green-highlight-background-color);
