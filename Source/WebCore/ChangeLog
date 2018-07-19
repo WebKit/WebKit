@@ -1,3 +1,24 @@
+2018-07-19  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Return a valid time values in unprerolled states
+        https://bugs.webkit.org/show_bug.cgi?id=187111
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        After r230584 in bug 180253, asserts were added in
+        PlatformTimeRanges::add to check that both ends of the range were
+        valid times. In the non-MSE GStreamer player, this assert was
+        firing on https://www.w3.org/2010/05/video/mediaevents.html due to
+        seekable being called in nonprerolled states. In this case
+        MediaPlayerPrivateInterface::seekable was calling GStreamer's
+        maxTimeSeekable, which calls in durationMediaTime. The guard
+        against calling gst_element_query_duration when not prerolled was
+        returning a different time value than when the duration query
+        itself failed. Hence the assert firing.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::durationMediaTime const):
+
 2018-07-19  Antoine Quint  <graouts@apple.com>
 
         Hitting RELEASE_ASSERT(!m_activeDOMObjectAdditionForbidden) under HTMLMediaElement::resume()

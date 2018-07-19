@@ -455,7 +455,7 @@ MediaTime MediaPlayerPrivateGStreamer::durationMediaTime() const
 
     // The duration query would fail on a not-prerolled pipeline.
     if (GST_STATE(m_pipeline.get()) < GST_STATE_PAUSED)
-        return MediaTime::invalidTime();
+        return MediaTime::positiveInfiniteTime();
 
     gint64 timeLength = 0;
 
