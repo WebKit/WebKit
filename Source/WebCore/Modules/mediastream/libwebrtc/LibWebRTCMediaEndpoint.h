@@ -57,7 +57,7 @@ class MediaStreamTrack;
 class RTCSessionDescription;
 
 class LibWebRTCMediaEndpoint
-    : public ThreadSafeRefCounted<LibWebRTCMediaEndpoint>
+    : public ThreadSafeRefCounted<LibWebRTCMediaEndpoint, WTF::DestructionThread::Main>
     , private webrtc::PeerConnectionObserver
     , private webrtc::RTCStatsCollectorCallback
 #if !RELEASE_LOG_DISABLED

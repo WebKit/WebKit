@@ -74,6 +74,7 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     , m_logIdentifier(peerConnection.logIdentifier())
 #endif
 {
+    ASSERT(isMainThread());
     ASSERT(client.factory());
 }
 
