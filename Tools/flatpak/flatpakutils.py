@@ -20,11 +20,13 @@ try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
+from contextlib import contextmanager
 import errno
 import json
 import os
 import shlex
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -444,6 +446,20 @@ class FlatpakPackage(FlatpakObject):
                     *extra_args, comment=comment)
 
 
+@contextmanager
+def disable_signals(signals=[signal.SIGINT]):
+    old_signal_handlers = []
+
+    for disabled_signal in signals:
+        old_signal_handlers.append((disabled_signal, signal.getsignal(disabled_signal)))
+        signal.signal(disabled_signal, signal.SIG_IGN)
+
+    yield
+
+    for disabled_signal, previous_handler in old_signal_handlers:
+        signal.signal(disabled_signal, previous_handler)
+
+
 class WebkitFlatpak:
 
     @staticmethod
@@ -517,7 +533,7 @@ class WebkitFlatpak:
         self.sdk_debug = None
         self.app = None
 
-        self.verbose = True
+        self.verbose = False
         self.quiet = False
         self.packs = []
         self.update = False
@@ -704,11 +720,12 @@ class WebkitFlatpak:
             _log.debug('Running in sandbox: "%s" %s\n' % ('" "'.join(flatpak_command), shell_string))
             flatpak_command.extend(['sh', "/run/host/" + tmpscript.name])
 
-            try:
-                subprocess.check_call(flatpak_command, stdout=stdout)
-            except subprocess.CalledProcessError as e:
-                sys.stderr.write(str(e) + "\n")
-                return e.returncode
+            with disable_signals():
+                try:
+                    subprocess.check_call(flatpak_command, stdout=stdout)
+                except subprocess.CalledProcessError as e:
+                    sys.stderr.write(str(e) + "\n")
+                    return e.returncode
 
         return 0
 
@@ -794,11 +811,12 @@ class WebkitFlatpak:
                 package.install()
 
     def run_gdb(self):
-        try:
-            subprocess.check_output(['which', 'coredumpctl'])
-        except subprocess.CalledProcessError as e:
-            sys.stderr.write("'coredumpctl' not present on the system, can't run. (%s)\n" % e)
-            return e.returncode
+        with disable_signals():
+            try:
+                subprocess.check_output(['which', 'coredumpctl'])
+            except subprocess.CalledProcessError as e:
+                sys.stderr.write("'coredumpctl' not present on the system, can't run. (%s)\n" % e)
+                return e.returncode
 
         # We need access to the host from the sandbox to run.
         with tempfile.NamedTemporaryFile() as coredump:
