@@ -1232,6 +1232,9 @@ layout/displaytree/DisplayBox.cpp
 layout/inlineformatting/InlineFormattingContext.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
+layout/inlineformatting/textlayout/TextContentProvider.cpp
+layout/inlineformatting/textlayout/simple/SimpleTextRunGenerator.cpp
+layout/inlineformatting/textlayout/simple/SimpleLineBreaker.cpp
 layout/layouttree/LayoutBlockContainer.cpp
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainer.cpp

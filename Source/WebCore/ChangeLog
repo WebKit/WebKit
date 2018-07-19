@@ -1,3 +1,123 @@
+2018-07-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Introduce simple line breaker.
+        https://bugs.webkit.org/show_bug.cgi?id=187688
+
+        Reviewed by Antti Koivisto.
+
+        This patch takes the simple line layout implementation and refactors it in a way it is no longer requires a RenderBlockFlow object to run on.
+        Also this patch decouples text run generation and line breaking (and this implementation is going to replace the current simple line layout codebase)
+
+        TextContentProvider: Acts both as the container for all the text content (including hard line breaks) and as an iterator for the generated text runs.
+        SimpleTextRunGenerator: TextContentProvider uses it as the text run generator for simple content (in the future we'll have a ComplexTextRunGenerator).
+        SimpleLineBreaker: Input -> text runs + line constraints; Output -> layout runs after line breaking.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/textlayout/ContentProvider.cpp: Added.
+        (WebCore::Layout::TextContentProvider::TextItem::Style::Style):
+        (WebCore::Layout::TextContentProvider::ContentProvider):
+        (WebCore::Layout::TextContentProvider::~ContentProvider):
+        (WebCore::Layout::TextContentProvider::appendText):
+        (WebCore::Layout::TextContentProvider::appendLineBreak):
+        (WebCore::Layout::TextContentProvider::width const):
+        (WebCore::Layout::TextContentProvider::textWidth const):
+        (WebCore::Layout::TextContentProvider::fixedPitchWidth const):
+        (WebCore::Layout::TextContentProvider::toTextItemIndex const):
+        (WebCore::Layout::TextContentProvider::length const):
+        (WebCore::Layout::TextContentProvider::iterator):
+        (WebCore::Layout::TextContentProvider::findNextRun):
+        (WebCore::Layout::TextContentProvider::current const):
+        * layout/inlineformatting/textlayout/ContentProvider.h: Added.
+        (WebCore::Layout::TextContentProvider::textContent const):
+        (WebCore::Layout::TextContentProvider::hardLineBreaks const):
+        (WebCore::Layout::TextContentProvider::Iterator::current const):
+        (WebCore::Layout::TextContentProvider::contains const):
+        (WebCore::Layout::TextContentProvider::Iterator::Iterator):
+        (WebCore::Layout::TextContentProvider::Iterator::operator++):
+        * layout/inlineformatting/textlayout/Runs.h: Added.
+        (WebCore::Layout::TextRun::isWhitespace const):
+        (WebCore::Layout::TextRun::isNonWhitespace const):
+        (WebCore::Layout::TextRun::isLineBreak const):
+        (WebCore::Layout::TextRun::isSoftLineBreak const):
+        (WebCore::Layout::TextRun::isHardLineBreak const):
+        (WebCore::Layout::TextRun::isValid const):
+        (WebCore::Layout::TextRun::isCollapsed const):
+        (WebCore::Layout::TextRun::type const):
+        (WebCore::Layout::TextRun::setIsCollapsed):
+        (WebCore::Layout::TextRun::setWidth):
+        (WebCore::Layout::LayoutRun::start const):
+        (WebCore::Layout::LayoutRun::end const):
+        (WebCore::Layout::LayoutRun::length const):
+        (WebCore::Layout::LayoutRun::left const):
+        (WebCore::Layout::LayoutRun::right const):
+        (WebCore::Layout::LayoutRun::width const):
+        (WebCore::Layout::LayoutRun::isEndOfLine const):
+        (WebCore::Layout::LayoutRun::setEnd):
+        (WebCore::Layout::LayoutRun::setRight):
+        (WebCore::Layout::LayoutRun::setIsEndOfLine):
+        (WebCore::Layout::LayoutRun::LayoutRun):
+        (WebCore::Layout::TextRun::createWhitespaceRun):
+        (WebCore::Layout::TextRun::createNonWhitespaceRun):
+        (WebCore::Layout::TextRun::createSoftLineBreakRun):
+        (WebCore::Layout::TextRun::createHardLineBreakRun):
+        (WebCore::Layout::TextRun::TextRun):
+        (WebCore::Layout::TextRun::start const):
+        (WebCore::Layout::TextRun::end const):
+        (WebCore::Layout::TextRun::length const):
+        (WebCore::Layout::TextRun::width const):
+        * layout/inlineformatting/textlayout/simple/SimpleContentProvider.cpp: Added.
+        (WebCore::Layout::SimpleContentProvider::SimpleContentProvider):
+        (WebCore::Layout::SimpleContentProvider::current const):
+        (WebCore::Layout::SimpleContentProvider::reset):
+        (WebCore::Layout::SimpleContentProvider::findNextRun):
+        (WebCore::Layout::SimpleContentProvider::moveToNextBreakablePosition):
+        (WebCore::Layout::SimpleContentProvider::moveToNextNonWhitespacePosition):
+        (WebCore::Layout::SimpleContentProvider::isAtLineBreak const):
+        (WebCore::Layout::SimpleContentProvider::isAtSoftLineBreak const):
+        * layout/inlineformatting/textlayout/simple/SimpleContentProvider.h: Added.
+        (WebCore::Layout::SimpleContentProvider::Iterator::reset):
+        (WebCore::Layout::SimpleContentProvider::Position::operator== const):
+        (WebCore::Layout::SimpleContentProvider::Position::operator< const):
+        (WebCore::Layout::SimpleContentProvider::Position::operator ContentPosition const):
+        (WebCore::Layout::SimpleContentProvider::Position::resetItemPosition):
+        (WebCore::Layout::SimpleContentProvider::Position::contentPosition const):
+        (WebCore::Layout::SimpleContentProvider::Position::itemPosition const):
+        (WebCore::Layout::SimpleContentProvider::Iterator<T>::Iterator):
+        (WebCore::Layout::SimpleContentProvider::Iterator<T>::current const):
+        (WebCore::Layout::SimpleContentProvider::Iterator<T>::operator):
+        (WebCore::Layout::SimpleContentProvider::Position::operator++):
+        (WebCore::Layout::SimpleContentProvider::Position::operator+=):
+        * layout/inlineformatting/textlayout/simple/SimpleLineBreaker.cpp: Added.
+        (WebCore::Layout::SimpleLineBreaker::TextRunList::TextRunList):
+        (WebCore::Layout::SimpleLineBreaker::Line::Line):
+        (WebCore::Layout::adjustedEndPosition):
+        (WebCore::Layout::SimpleLineBreaker::Line::append):
+        (WebCore::Layout::SimpleLineBreaker::Line::collapseTrailingWhitespace):
+        (WebCore::Layout::SimpleLineBreaker::Line::reset):
+        (WebCore::Layout::SimpleLineBreaker::Style::Style):
+        (WebCore::Layout::SimpleLineBreaker::SimpleLineBreaker):
+        (WebCore::Layout::SimpleLineBreaker::runs):
+        (WebCore::Layout::SimpleLineBreaker::createRunsForLine):
+        (WebCore::Layout::SimpleLineBreaker::handleOverflownRun):
+        (WebCore::Layout::SimpleLineBreaker::collapseLeadingWhitespace):
+        (WebCore::Layout::SimpleLineBreaker::collapseTrailingWhitespace):
+        (WebCore::Layout::SimpleLineBreaker::splitTextRun):
+        (WebCore::Layout::SimpleLineBreaker::split const):
+        (WebCore::Layout::SimpleLineBreaker::availableWidth const):
+        (WebCore::Layout::SimpleLineBreaker::verticalPosition const):
+        * layout/inlineformatting/textlayout/simple/SimpleLineBreaker.h: Added.
+        (WebCore::Layout::SimpleLineBreaker::TextRunList::overrideCurrent):
+        (WebCore::Layout::SimpleLineBreaker::TextRunList::isCurrentOverridden const):
+        (WebCore::Layout::SimpleLineBreaker::Line::availableWidth const):
+        (WebCore::Layout::SimpleLineBreaker::Line::hasContent const):
+        (WebCore::Layout::SimpleLineBreaker::Line::setAvailableWidth):
+        (WebCore::Layout::SimpleLineBreaker::Line::hasTrailingWhitespace const):
+        (WebCore::Layout::SimpleLineBreaker::Line::isWhitespaceOnly const):
+        (WebCore::Layout::SimpleLineBreaker::wrapContentOnOverflow const):
+        (WebCore::Layout::SimpleLineBreaker::TextRunList::current const):
+        (WebCore::Layout::SimpleLineBreaker::TextRunList::operator++):
+
 2018-07-19  Keith Rollin  <krollin@apple.com>
 
         Remove duplicate compilation of WebKitNSImageExtras.mm
