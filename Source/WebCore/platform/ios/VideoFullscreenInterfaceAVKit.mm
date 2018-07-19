@@ -797,7 +797,7 @@ void VideoFullscreenInterfaceAVKit::externalPlaybackChanged(bool enabled, Playba
     [m_playerLayerView setHidden:enabled];
 }
 
-BOOL VideoFullscreenInterfaceAVKit::pictureInPictureWasStartedWhenEnteringBackground() const
+bool VideoFullscreenInterfaceAVKit::pictureInPictureWasStartedWhenEnteringBackground() const
 {
     return [m_playerViewController pictureInPictureWasStartedWhenEnteringBackground];
 }
