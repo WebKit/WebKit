@@ -1,3 +1,19 @@
+2018-07-19  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r233926): media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html is a TIMEOUT failure
+        https://bugs.webkit.org/show_bug.cgi?id=187813
+
+        Reviewed by Jon Lee.
+
+        In r233926, we changed the behavior of entering PiP to exit fullscreen only after entering PiP completes. The
+        test in question will immediately request "inline" presentation mode once the PiP animation begins, and thus
+        it's asking to "exit fullscreen" when both in standard fullscreen and also in PiP. The fix is not to bail out
+        early if we're in standard (element) fullscreen, but to allow the remaining steps to complete and exit PiP as
+        well.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::exitFullscreen):
+
 2018-07-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Introduce simple line breaker.
