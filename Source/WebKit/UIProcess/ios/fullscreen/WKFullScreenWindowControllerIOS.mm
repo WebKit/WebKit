@@ -115,8 +115,10 @@ struct WKWebViewState {
         [[webView scrollView] setContentInset:_savedEdgeInset];
         [[webView scrollView] setContentOffset:_savedContentOffset];
         [[webView scrollView] setScrollIndicatorInsets:_savedScrollIndicatorInsets];
-        [webView _page]->setTopContentInset(_savedTopContentInset);
-        [webView _page]->setForceAlwaysUserScalable(_savedForceAlwaysUserScalable);
+        if (auto* page = webView._page) {
+            page->setTopContentInset(_savedTopContentInset);
+            page->setForceAlwaysUserScalable(_savedForceAlwaysUserScalable);
+        }
         [webView _setViewScale:_savedViewScale];
         [[webView scrollView] setZoomScale:_savedZoomScale];
         webView.scrollView.minimumZoomScale = _savedMinimumZoomScale;
@@ -131,8 +133,10 @@ struct WKWebViewState {
         _savedEdgeInset = [[webView scrollView] contentInset];
         _savedContentOffset = [[webView scrollView] contentOffset];
         _savedScrollIndicatorInsets = [[webView scrollView] scrollIndicatorInsets];
-        _savedTopContentInset = [webView _page]->topContentInset();
-        _savedForceAlwaysUserScalable = [webView _page]->forceAlwaysUserScalable();
+        if (auto* page = webView._page) {
+            _savedTopContentInset = page->topContentInset();
+            _savedForceAlwaysUserScalable = page->forceAlwaysUserScalable();
+        }
         _savedViewScale = [webView _viewScale];
         _savedZoomScale = [[webView scrollView] zoomScale];
         _savedMinimumZoomScale = webView.scrollView.minimumZoomScale;
@@ -488,6 +492,12 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     if ([self isFullScreen])
         return;
 
+    RetainPtr<WKWebView> webView = self._webView;
+    auto* page = [webView _page];
+    auto* manager = self._manager;
+    if (!page || !manager)
+        return;
+
     [self _invalidateEVOrganizationName];
 
     _fullScreenState = WaitingToEnterFullScreen;
@@ -505,8 +515,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_rootViewController setTransitioningDelegate:self];
 
     _window.get().rootViewController = _rootViewController.get();
-
-    RetainPtr<WKWebView> webView = self._webView;
 
     _fullscreenViewController = adoptNS([[WKFullScreenViewController alloc] initWithWebView:webView.get()]);
     [_fullscreenViewController setModalPresentationStyle:UIModalPresentationCustom];
@@ -534,9 +542,9 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_interactivePinchDismissGestureRecognizer setCancelsTouchesInView:NO];
     [_fullscreenViewController.get().view addGestureRecognizer:_interactivePinchDismissGestureRecognizer.get()];
 
-    [self _manager]->saveScrollPosition();
+    manager->saveScrollPosition();
 
-    [webView _page]->setSuppressVisibilityUpdates(true);
+    page->setSuppressVisibilityUpdates(true);
 
     _viewState.store(webView.get());
 
@@ -547,7 +555,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     WKSnapshotConfiguration* config = nil;
     [webView takeSnapshotWithConfiguration:config completionHandler:^(UIImage * snapshotImage, NSError * error) {
         RetainPtr<WKWebView> webView = self._webView;
-        if (![webView _page])
+        auto* page = [self._webView _page];
+        if (!page)
             return;
 
         [CATransaction begin];
@@ -565,14 +574,15 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         [webView setNeedsLayout];
         [webView layoutIfNeeded];
         
-        [self _manager]->setAnimatingFullScreen(true);
+        if (auto* manager = self._manager)
+            manager->setAnimatingFullScreen(true);
 
         ViewportArguments arguments { ViewportArguments::CSSDeviceAdaptation };
         arguments.zoom = 1;
         arguments.minZoom = 1;
         arguments.maxZoom = 1;
         arguments.userZoom = 1;
-        [webView _page]->setOverrideViewportArguments(arguments);
+        page->setOverrideViewportArguments(arguments);
 
         _repaintCallback = VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
             _repaintCallback = nullptr;
@@ -584,7 +594,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             ASSERT_NOT_REACHED();
             [self _exitFullscreenImmediately];
         });
-        [webView _page]->forceRepaint(_repaintCallback.copyRef());
+        page->forceRepaint(_repaintCallback.copyRef());
 
         [CATransaction commit];
     }];
@@ -674,7 +684,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     _finalFrame.size = sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
     _finalFrame = safeInlineRect(_finalFrame, [_rootViewController view].frame.size);
 
-    [self._webView _page]->setSuppressVisibilityUpdates(true);
+    if (auto* page = [self._webView _page])
+        page->setSuppressVisibilityUpdates(true);
 
     [_fullscreenViewController setPrefersStatusBarHidden:NO];
 
@@ -705,7 +716,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [webView becomeFirstResponder];
 
     _viewState.applyTo(webView.get());
-    [webView _page]->setOverrideViewportArguments(std::nullopt);
+    if (auto* page = [webView _page])
+        page->setOverrideViewportArguments(std::nullopt);
 
     [webView setNeedsLayout];
     [webView layoutIfNeeded];
