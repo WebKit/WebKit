@@ -225,8 +225,12 @@ void FetchResponse::BodyLoader::didSucceed()
     m_response.m_body->loadingSucceeded();
 
 #if ENABLE(STREAMS_API)
-    if (m_response.m_readableStreamSource && !m_response.body().consumer().hasData())
+    if (m_response.m_readableStreamSource) {
+        if (m_response.body().consumer().hasData())
+            m_response.m_readableStreamSource->enqueue(m_response.body().consumer().takeAsArrayBuffer());
+
         m_response.closeStream();
+    }
 #endif
     if (auto consumeDataCallback = WTFMove(m_consumeDataCallback))
         consumeDataCallback(nullptr);
@@ -252,7 +256,7 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
 #if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource) {
         if (!m_response.m_readableStreamSource->isCancelling())
-            m_response.m_readableStreamSource->error("Loading failed"_s);
+            m_response.m_readableStreamSource->error(makeString("Loading failed: "_s, error.localizedDescription()));
         m_response.m_readableStreamSource = nullptr;
     }
 #endif

@@ -34,44 +34,59 @@
 namespace WebCore {
 
 FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner)
-    : m_bodyOwner(bodyOwner)
+    : m_bodyOwner(&bodyOwner)
 {
 }
 
 void FetchBodySource::setActive()
 {
-    m_bodyOwner.setPendingActivity(&m_bodyOwner);
+    ASSERT(m_bodyOwner);
+    if (m_bodyOwner)
+        m_bodyOwner->setPendingActivity(m_bodyOwner);
 }
 
 void FetchBodySource::setInactive()
 {
-    m_bodyOwner.unsetPendingActivity(&m_bodyOwner);
+    ASSERT(m_bodyOwner);
+    if (m_bodyOwner)
+        m_bodyOwner->unsetPendingActivity(m_bodyOwner);
 }
 
 void FetchBodySource::doStart()
 {
-    m_bodyOwner.consumeBodyAsStream();
+    ASSERT(m_bodyOwner);
+    if (m_bodyOwner)
+        m_bodyOwner->consumeBodyAsStream();
 }
 
 void FetchBodySource::doPull()
 {
-    m_bodyOwner.feedStream();
+    ASSERT(m_bodyOwner);
+    if (m_bodyOwner)
+        m_bodyOwner->feedStream();
 }
 
 void FetchBodySource::doCancel()
 {
     m_isCancelling = true;
-    m_bodyOwner.cancel();
+    ASSERT(m_bodyOwner);
+    if (!m_bodyOwner)
+        return;
+
+    m_bodyOwner->cancel();
+    m_bodyOwner = nullptr;
 }
 
 void FetchBodySource::close()
 {
+    m_bodyOwner = nullptr;
     controller().close();
     clean();
 }
 
 void FetchBodySource::error(const String& value)
 {
+    m_bodyOwner = nullptr;
     controller().error(value);
     clean();
 }
