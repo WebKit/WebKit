@@ -1,3 +1,14 @@
+2018-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, check scope after performing getPropertySlot in JSON.stringify
+        https://bugs.webkit.org/show_bug.cgi?id=187807
+
+        Properly putting EXCEPTION_ASSERT to tell our exception checker mechanism
+        that we know that exception occurrence and handle it well.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+
 2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Reduce size of AST nodes

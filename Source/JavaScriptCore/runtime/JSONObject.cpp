@@ -514,7 +514,9 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             value = asArray(m_object)->getIndexQuickly(index);
         else {
             PropertySlot slot(m_object, PropertySlot::InternalMethodType::Get);
-            if (m_object->getPropertySlot(exec, index, slot))
+            bool hasProperty = m_object->getPropertySlot(exec, index, slot);
+            EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+            if (hasProperty)
                 value = slot.getValue(exec, index);
             else
                 value = jsUndefined();
@@ -533,7 +535,9 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         // Get the value.
         PropertySlot slot(m_object, PropertySlot::InternalMethodType::Get);
         Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
-        if (!m_object->getPropertySlot(exec, propertyName, slot))
+        bool hasProperty = m_object->getPropertySlot(exec, propertyName, slot);
+        EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+        if (!hasProperty)
             return true;
         JSValue value = slot.getValue(exec, propertyName);
         RETURN_IF_EXCEPTION(scope, false);
