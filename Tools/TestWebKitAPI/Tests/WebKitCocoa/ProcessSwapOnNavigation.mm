@@ -28,7 +28,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKInspector.h>
-#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -85,10 +85,19 @@ static HashSet<pid_t> seenPIDs;
 }
 @end
 
-@interface PSONNavigationDelegate : NSObject <WKNavigationDelegate>
+@interface PSONNavigationDelegate : NSObject <WKNavigationDelegate> {
+    @public WKNavigationActionPolicy navigationActionPolicyToUse;
+}
 @end
 
 @implementation PSONNavigationDelegate
+
+- (instancetype) init
+{
+    self = [super init];
+    navigationActionPolicyToUse = WKNavigationActionPolicyAllow;
+    return self;
+}
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
@@ -106,7 +115,7 @@ static HashSet<pid_t> seenPIDs;
 {
     ++numberOfDecidePolicyCalls;
     seenPIDs.add([webView _webProcessIdentifier]);
-    decisionHandler(WKNavigationActionPolicyAllow);
+    decisionHandler(navigationActionPolicyToUse);
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
@@ -1432,6 +1441,44 @@ TEST(ProcessSwap, NavigateToDataURLThenBack)
     EXPECT_EQ(1u, seenPIDs.size());
     EXPECT_EQ(pid1, pid2);
     EXPECT_EQ(pid2, pid3);
+}
+
+TEST(ProcessSwap, APIControlledProcessSwapping)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:"Hello World!"]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/1"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid1 = [webView _webProcessIdentifier];
+
+    // Navigating from the above URL to this URL normally should not process swap.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/2"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid2 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(1u, seenPIDs.size());
+    EXPECT_EQ(pid1, pid2);
+
+    // Navigating from the above URL to this URL normally should not process swap,
+    // but we'll explicitly ask for a swap.
+    navigationDelegate->navigationActionPolicyToUse = _WKNavigationActionPolicyAllowInNewProcess;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/3"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid3 = [webView _webProcessIdentifier];
+    
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+    EXPECT_EQ(2u, seenPIDs.size());
+    EXPECT_NE(pid1, pid3);
 }
 
 #endif // WK_API_ENABLED

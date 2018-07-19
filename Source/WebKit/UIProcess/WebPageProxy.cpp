@@ -2438,7 +2438,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
         ASSERT(activePolicyListener->listenerID() == listenerID);
 
         if (action == PolicyAction::Use && navigation && frame.isMainFrame()) {
-            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, action);
+            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, activePolicyListener->applyPolicyInNewProcessIfPossible(), action);
 
             if (proposedProcess.ptr() != &process()) {
                 LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), proposedProcess->processIdentifier(), navigation->navigationID(), navigation->loggingString());

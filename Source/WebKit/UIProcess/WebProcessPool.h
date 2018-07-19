@@ -452,7 +452,7 @@ public:
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
 #endif
 
-    Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, WebCore::PolicyAction&);
+    Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, bool shouldProcessSwapIfPossible, WebCore::PolicyAction&);
     void registerSuspendedPageProxy(SuspendedPageProxy&);
     void unregisterSuspendedPageProxy(SuspendedPageProxy&);
     void didReachGoodTimeToPrewarm();
@@ -470,7 +470,7 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    Ref<WebProcessProxy> processForNavigationInternal(WebPageProxy&, const API::Navigation&, WebCore::PolicyAction&);
+    Ref<WebProcessProxy> processForNavigationInternal(WebPageProxy&, const API::Navigation&, bool shouldProcessSwapIfPossible, WebCore::PolicyAction&);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 

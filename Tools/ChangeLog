@@ -1,3 +1,14 @@
+2018-07-19  Brady Eidson  <beidson@apple.com>
+
+        Add an SPI policy action to allow clients to explicitly ask for a new process on a navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=187789
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate init]):
+        (-[PSONNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+
 2018-07-19  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] Let flatpak process handle SIGINT

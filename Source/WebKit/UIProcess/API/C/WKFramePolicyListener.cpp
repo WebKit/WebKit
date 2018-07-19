@@ -45,6 +45,12 @@ void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
     toImpl(policyListenerRef)->use(std::nullopt);
 }
 
+void WKFramePolicyListenerUseInNewProcess(WKFramePolicyListenerRef policyListenerRef)
+{
+    toImpl(policyListenerRef)->setApplyPolicyInNewProcessIfPossible(true);
+    toImpl(policyListenerRef)->use(std::nullopt);
+}
+
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
     auto data = toImpl(websitePolicies)->data();
@@ -58,6 +64,12 @@ void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListene
     }
 
     toImpl(policyListenerRef)->use(WTFMove(data));
+}
+
+void WKFramePolicyListenerUseInNewProcessWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
+{
+    toImpl(policyListenerRef)->setApplyPolicyInNewProcessIfPossible(true);
+    WKFramePolicyListenerUseWithPolicies(policyListenerRef, websitePolicies);
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)

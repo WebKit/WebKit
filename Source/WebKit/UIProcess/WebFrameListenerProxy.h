@@ -47,6 +47,10 @@ public:
     void setNavigation(Ref<API::Navigation>&& navigation) { m_navigation = WTFMove(navigation); }
 
     void changeWebsiteDataStore(WebsiteDataStore&);
+
+    void setApplyPolicyInNewProcessIfPossible(bool applyPolicyInNewProcessIfPossible) { m_applyPolicyInNewProcessIfPossible = applyPolicyInNewProcessIfPossible; }
+    bool applyPolicyInNewProcessIfPossible() const { return m_applyPolicyInNewProcessIfPossible; }
+
     bool isMainFrame() const;
 
 protected:
@@ -58,6 +62,7 @@ private:
     RefPtr<WebFrameProxy> m_frame;
     uint64_t m_listenerID;
     RefPtr<API::Navigation> m_navigation;
+    bool m_applyPolicyInNewProcessIfPossible { false };
 };
 
 } // namespace WebKit

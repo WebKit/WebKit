@@ -56,7 +56,8 @@ typedef NS_ENUM(NSInteger, _WKProcessTerminationReason) {
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
-static const WKNavigationActionPolicy WK_API_AVAILABLE(macosx(10.11), ios(9.0)) _WKNavigationActionPolicyAllowWithoutTryingAppLink = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 2);
+static const WKNavigationActionPolicy WK_API_AVAILABLE(macosx(10.11), ios(9.0)) _WKNavigationActionPolicyAllowWithoutTryingAppLink = (WKNavigationActionPolicy)(_WKNavigationActionPolicyDownload + 1);
+static const WKNavigationActionPolicy WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)) _WKNavigationActionPolicyAllowInNewProcess = (WKNavigationActionPolicy)(_WKNavigationActionPolicyAllowWithoutTryingAppLink + 1);
 
 static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
 

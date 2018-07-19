@@ -545,7 +545,13 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-            tryAppLink(WTFMove(navigationAction), mainFrameURLString, [localListener = WTFMove(localListener), data = WTFMove(data)](bool followedLinkToApp) mutable {
+// FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wswitch"
+        case _WKNavigationActionPolicyAllowInNewProcess:
+#pragma clang diagnostic pop
+            tryAppLink(WTFMove(navigationAction), mainFrameURLString, [actionPolicy, localListener = WTFMove(localListener), data = WTFMove(data)](bool followedLinkToApp) mutable {
+                localListener->setApplyPolicyInNewProcessIfPossible(actionPolicy == _WKNavigationActionPolicyAllowInNewProcess);
                 if (followedLinkToApp) {
                     localListener->ignore();
                     return;

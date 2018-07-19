@@ -2106,9 +2106,9 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
         m_swappedProcesses.remove(origin);
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, PolicyAction& action)
+Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, bool shouldProcessSwapIfPossible, PolicyAction& action)
 {
-    auto process = processForNavigationInternal(page, navigation, action);
+    auto process = processForNavigationInternal(page, navigation, shouldProcessSwapIfPossible, action);
 
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != &page.process()) {
         static std::once_flag onceFlag;
@@ -2124,9 +2124,9 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     return process;
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, PolicyAction& action)
+Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, bool shouldProcessSwapIfPossible, PolicyAction& action)
 {
-    if (!m_configuration->processSwapsOnNavigation())
+    if (!m_configuration->processSwapsOnNavigation() && !shouldProcessSwapIfPossible)
         return page.process();
 
     if (page.inspectorFrontendCount() > 0)
@@ -2169,14 +2169,16 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         }
     }
 
-    if (navigation.treatAsSameOriginNavigation())
-        return page.process();
-
     auto targetURL = navigation.currentRequest().url();
-    auto url = URL { ParsedURLString, page.pageLoadState().url() };
-    if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
-        return page.process();
+    if (!shouldProcessSwapIfPossible) {
+        if (navigation.treatAsSameOriginNavigation())
+            return page.process();
 
+        auto url = URL { ParsedURLString, page.pageLoadState().url() };
+        if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
+            return page.process();
+    }
+    
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
         auto origin = SecurityOriginData::fromURL(targetURL);
         LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process to URL %s", origin.debugString().utf8().data());
