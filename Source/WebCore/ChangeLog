@@ -1,5 +1,21 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233870. rdar://problem/42344023
+
+    Unreviewed attempt to fix the build.
+    
+    * rendering/RenderThemeMac.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233870 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed attempt to fix the build.
+
+            * rendering/RenderThemeMac.mm:
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233869. rdar://problem/42344023
 
     Allow removal of white backgrounds
