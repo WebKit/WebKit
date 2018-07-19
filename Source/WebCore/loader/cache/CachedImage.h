@@ -85,7 +85,9 @@ public:
 
     bool isOriginClean(SecurityOrigin*);
 
-    void addPendingImageDrawingClient(CachedImageClient&);
+    bool isClientWaitingForAsyncDecoding(CachedImageClient&) const;
+    void addClientWaitingForAsyncDecoding(CachedImageClient&);
+    void removeAllClientsWaitingForAsyncDecoding();
 
     void setForceUpdateImageDataEnabledForTesting(bool enabled) { m_forceUpdateImageDataEnabledForTesting =  enabled; }
     
@@ -170,7 +172,7 @@ private:
     using ContainerContextRequests = HashMap<const CachedImageClient*, ContainerContext>;
     ContainerContextRequests m_pendingContainerContextRequests;
 
-    HashSet<CachedImageClient*> m_pendingImageDrawingClients;
+    HashSet<CachedImageClient*> m_clienstWaitingForAsyncDecoding;
 
     RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;

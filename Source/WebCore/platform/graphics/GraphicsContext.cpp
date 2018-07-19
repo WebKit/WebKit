@@ -326,8 +326,8 @@ TextStream& operator<<(TextStream& ts, const GraphicsContextStateChange& stateCh
     return ts;
 }
 
-GraphicsContext::GraphicsContext(NonPaintingReasons nonPaintingReasons)
-    : m_nonPaintingReasons(nonPaintingReasons)
+GraphicsContext::GraphicsContext(PaintInvalidationReasons paintInvalidationReasons)
+    : m_paintInvalidationReasons(paintInvalidationReasons)
 {
 }
 
