@@ -1,3 +1,16 @@
+2018-07-18  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r233934.
+
+        Revision caused 5 webkitpy failures on Mac and broke webkitpy
+        testing on iOS simulator
+
+        Reverted changeset:
+
+        "Provide an lldb type summary for WebCore::Color"
+        https://bugs.webkit.org/show_bug.cgi?id=187776
+        https://trac.webkit.org/changeset/233934
+
 2018-07-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r233897): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebKit: WKBooleanGetValue + 9
