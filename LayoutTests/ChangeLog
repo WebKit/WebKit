@@ -1,3 +1,9 @@
+2018-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the test.
+
+        * editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html:
+
 2018-07-18  Simon Fraser  <simon.fraser@apple.com>
 
         Setting foreground color when editing should take color-filter into account, and report the correct foreground color for collapsed selections
