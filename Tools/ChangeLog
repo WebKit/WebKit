@@ -1,5 +1,36 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233889. rdar://problem/42343023
+
+    [macOS] TestWebKitAPI.PictureInPicture.WKUIDelegate is timing out
+    https://bugs.webkit.org/show_bug.cgi?id=187730
+    
+    Patch by Aditya Keerthi <akeerthi@apple.com> on 2018-07-17
+    Reviewed by Jer Noble.
+    
+    This regression was introduced by r233865. PIP can now only be initiated from a
+    window that is on screen.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233889 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-17  Aditya Keerthi  <akeerthi@apple.com>
+
+            [macOS] TestWebKitAPI.PictureInPicture.WKUIDelegate is timing out
+            https://bugs.webkit.org/show_bug.cgi?id=187730
+
+            Reviewed by Jer Noble.
+
+            This regression was introduced by r233865. PIP can now only be initiated from a
+            window that is on screen.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+            (TestWebKitAPI::TEST):
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233888. rdar://problem/42345191
 
     Add completion handlers to TestRunner functions setStatisticsLastSeen(), setStatisticsPrevalentResource(), setStatisticsVeryPrevalentResource(), setStatisticsHasHadUserInteraction(), and setStatisticsHasHadNonRecentUserInteraction()

@@ -122,6 +122,7 @@ TEST(PictureInPicture, WKUIDelegate)
     
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"PictureInPictureDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     
