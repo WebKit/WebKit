@@ -929,6 +929,7 @@ private:
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
+    GenericTaskQueue<Timer> m_resumeTaskQueue;
     GenericTaskQueue<Timer> m_seekTaskQueue;
     GenericTaskQueue<Timer> m_shadowDOMTaskQueue;
     GenericTaskQueue<Timer> m_promiseTaskQueue;
