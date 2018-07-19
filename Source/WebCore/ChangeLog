@@ -1,3 +1,20 @@
+2018-07-19  Frederic Wang  <fwang@igalia.com>
+
+        Fix message of NotSupportedError exception thrown during custom element creation
+        https://bugs.webkit.org/show_bug.cgi?id=187757
+
+        Reviewed by Yusuke Suzuki.
+
+        In bug 161528, some new exceptions were introduced for custom element creation [1] but the
+        actual text has some issues. This patch fixes one typo and one wrong message.
+
+        [1] https://dom.spec.whatwg.org/#concept-create-element
+
+        Test: fast/custom-elements/exceptions-for-synchronous-custom-element-creation.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::constructCustomElementSynchronously):
+
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed API Test fix; restored a line inadventantly removed in r233926.

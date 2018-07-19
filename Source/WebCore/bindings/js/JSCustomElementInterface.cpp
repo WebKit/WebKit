@@ -151,12 +151,12 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
         return nullptr;
     }
     if (&wrappedElement->document() != &document) {
-        throwNotSupportedError(state, scope, "A newly constructed custom element belongs to a wrong docuemnt"_s);
+        throwNotSupportedError(state, scope, "A newly constructed custom element belongs to a wrong document"_s);
         return nullptr;
     }
     ASSERT(wrappedElement->namespaceURI() == HTMLNames::xhtmlNamespaceURI);
     if (wrappedElement->localName() != localName) {
-        throwNotSupportedError(state, scope, "A newly constructed custom element belongs to a wrong docuemnt"_s);
+        throwNotSupportedError(state, scope, "A newly constructed custom element has incorrect local name"_s);
         return nullptr;
     }
 
