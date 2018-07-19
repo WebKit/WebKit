@@ -111,6 +111,10 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(PumpSession& session)
     RefPtr<Document> document = m_parser.document();
     bool needsFirstPaint = document->view() && !document->view()->hasEverPainted();
     session.didSeeScript = true;
+
+    if (UNLIKELY(m_documentHasActiveParserYieldTokens))
+        return true;
+
     return needsFirstPaint && document->isLayoutTimerActive();
 }
 

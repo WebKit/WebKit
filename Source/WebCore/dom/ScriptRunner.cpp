@@ -82,7 +82,7 @@ void ScriptRunner::suspend()
 
 void ScriptRunner::resume()
 {
-    if (hasPendingScripts())
+    if (hasPendingScripts() && !m_document.hasActiveParserYieldToken())
         m_timer.startOneShot(0_s);
 }
 
@@ -95,7 +95,9 @@ void ScriptRunner::notifyFinished(PendingScript& pendingScript)
         m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(pendingScript)->ptr());
     }
     pendingScript.clearClient();
-    m_timer.startOneShot(0_s);
+
+    if (!m_document.hasActiveParserYieldToken())
+        m_timer.startOneShot(0_s);
 }
 
 void ScriptRunner::timerFired()

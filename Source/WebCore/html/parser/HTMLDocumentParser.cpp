@@ -148,6 +148,16 @@ inline bool HTMLDocumentParser::shouldDelayEnd() const
     return inPumpSession() || isWaitingForScripts() || isScheduledForResume() || isExecutingScript();
 }
 
+void HTMLDocumentParser::didBeginYieldingParser()
+{
+    m_parserScheduler->didBeginYieldingParser();
+}
+
+void HTMLDocumentParser::didEndYieldingParser()
+{
+    m_parserScheduler->didEndYieldingParser();
+}
+
 bool HTMLDocumentParser::isParsingFragment() const
 {
     return m_treeBuilder->isParsingFragment();
