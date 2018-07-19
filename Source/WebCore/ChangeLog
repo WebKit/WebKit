@@ -1,5 +1,42 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233883. rdar://problem/42345112
+
+    Correctly adjust scroll offsets when a page is zoomed
+    https://bugs.webkit.org/show_bug.cgi?id=187673
+    <rdar://problem/41712829>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Will add test later.
+    
+    Make sure that distance is scaled by the pageScaleFactor, to
+    make sure that we scroll correctly when we are zoomed in.
+    
+    * page/ios/EventHandlerIOS.mm:
+    (WebCore::autoscrollAdjustmentFactorForScreenBoundaries):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233883 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-16  Megan Gardner  <megan_gardner@apple.com>
+
+            Correctly adjust scroll offsets when a page is zoomed
+            https://bugs.webkit.org/show_bug.cgi?id=187673
+            <rdar://problem/41712829>
+
+            Reviewed by Wenson Hsieh.
+
+            Will add test later.
+
+            Make sure that distance is scaled by the pageScaleFactor, to
+            make sure that we scroll correctly when we are zoomed in.
+
+            * page/ios/EventHandlerIOS.mm:
+            (WebCore::autoscrollAdjustmentFactorForScreenBoundaries):
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233879. rdar://problem/42345389
 
     Release assert in ~TimerBase is getting hit in WK1 apps which uses JSC API directly
