@@ -758,3 +758,6 @@ accessibilityEventsEnabled:
 
 incompleteImageBorderEnabled:
   initial: false
+
+shouldDeferAsynchronousScriptsUntilAfterDocumentLoad:
+  initial: false

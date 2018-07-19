@@ -164,6 +164,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback;
     BOOL _colorFilterEnabled;
     BOOL _incompleteImageBorderEnabled;
+    BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     BOOL _drawsBackground;
 
     RetainPtr<NSString> _overrideContentSecurityPolicy;
@@ -250,6 +251,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     _colorFilterEnabled = NO;
     _incompleteImageBorderEnabled = NO;
+    _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = NO;
     _drawsBackground = YES;
 
     return self;
@@ -414,6 +416,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_groupIdentifier = adoptNS([self->_groupIdentifier copyWithZone:zone]);
     configuration->_colorFilterEnabled = self->_colorFilterEnabled;
     configuration->_incompleteImageBorderEnabled = self->_incompleteImageBorderEnabled;
+    configuration->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = self->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     configuration->_drawsBackground = self->_drawsBackground;
 
     return configuration;
@@ -782,6 +785,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setIncompleteImageBorderEnabled:(BOOL)incompleteImageBorderEnabled
 {
     _incompleteImageBorderEnabled = incompleteImageBorderEnabled;
+}
+
+- (BOOL)_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad
+{
+    return _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
+}
+
+- (void)_setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad:(BOOL)shouldDeferAsynchronousScriptsUntilAfterDocumentLoad
+{
+    _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
 }
 
 - (BOOL)_drawsBackground

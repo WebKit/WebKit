@@ -86,6 +86,12 @@ void ScriptRunner::resume()
         m_timer.startOneShot(0_s);
 }
 
+void ScriptRunner::documentFinishedParsing()
+{
+    if (!m_scriptsToExecuteSoon.isEmpty() && !m_timer.isActive())
+        resume();
+}
+
 void ScriptRunner::notifyFinished(PendingScript& pendingScript)
 {
     if (pendingScript.element().willExecuteInOrder())
@@ -105,7 +111,9 @@ void ScriptRunner::timerFired()
     Ref<Document> protect(m_document);
 
     Vector<RefPtr<PendingScript>> scripts;
-    scripts.swap(m_scriptsToExecuteSoon);
+
+    if (!m_document.shouldDeferAsynchronousScriptsUntilParsingFinishes())
+        scripts.swap(m_scriptsToExecuteSoon);
 
     size_t numInOrderScriptsToExecute = 0;
     for (; numInOrderScriptsToExecute < m_scriptsToExecuteInOrder.size() && m_scriptsToExecuteInOrder[numInOrderScriptsToExecute]->isLoaded(); ++numInOrderScriptsToExecute)

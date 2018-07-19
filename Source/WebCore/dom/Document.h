@@ -991,6 +991,8 @@ public:
     void pushCurrentScript(HTMLScriptElement*);
     void popCurrentScript();
 
+    bool shouldDeferAsynchronousScriptsUntilParsingFinishes() const;
+
 #if ENABLE(XSLT)
     void scheduleToApplyXSLTransforms();
     void applyPendingXSLTransformsNowIfScheduled();
