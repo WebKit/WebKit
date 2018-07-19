@@ -1,3 +1,13 @@
+2018-07-19  Dean Jackson  <dino@apple.com>
+
+        Provide an lldb type summary for WebCore::Color
+        https://bugs.webkit.org/show_bug.cgi?id=187776
+
+        Another attempted build fix for Debug.
+
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig:
+        * lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj/project.pbxproj:
+
 2018-07-19  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] The interpreter doesn't support boolean short-circuiting
