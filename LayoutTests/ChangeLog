@@ -1,3 +1,12 @@
+2018-07-19  Truitt Savell  <tsavell@apple.com>
+
+        [ win-ews ] http/tests/preload/onload_event.html is flakey crash on win-ews
+        https://bugs.webkit.org/show_bug.cgi?id=187809
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-07-19  Frederic Wang  <fwang@igalia.com>
 
         Fix message of NotSupportedError exception thrown during custom element creation

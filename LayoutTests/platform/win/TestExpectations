@@ -3928,6 +3928,8 @@ webkit.org/b/179297 http/tests/preload/download_resources.html [ Crash Pass ]
 webkit.org/b/179297 http/tests/preload/onerror_event.html [ Crash Pass ]
 webkit.org/b/179297 http/wpt/resource-timing/rt-initiatorType-media.html [ Crash Failure ]
 
+webkit.org/b/187809 http/tests/preload/onload_event.html [ Skip ]
+
 webkit.org/b/179301 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Pass Failure ]
 
 webkit.org/b/179613 editing/execCommand/underline-selection-containing-image.html [ Failure ]
