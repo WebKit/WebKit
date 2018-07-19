@@ -57,6 +57,8 @@ using namespace WebKit;
     BOOL _snapshotWasDeferred;
     CGFloat _lastSnapshotScale;
     CGSize _lastSnapshotMaximumSize;
+
+    RetainPtr<NSColor *> _overrideBackgroundColor;
 }
 
 @synthesize snapshotSize=_snapshotSize;
@@ -111,7 +113,8 @@ using namespace WebKit;
 {
     [super updateLayer];
 
-    self.layer.backgroundColor = [NSColor quaternaryLabelColor].CGColor;
+    NSColor *backgroundColor = self.overrideBackgroundColor ?: [NSColor quaternaryLabelColor];
+    self.layer.backgroundColor = backgroundColor.CGColor;
 }
 
 - (void)requestSnapshot
@@ -145,6 +148,20 @@ using namespace WebKit;
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         [thumbnailView _didTakeSnapshot:cgImage.get()];
     });
+}
+
+- (void)setOverrideBackgroundColor:(NSColor *)overrideBackgroundColor
+{
+    if ([_overrideBackgroundColor isEqual:overrideBackgroundColor])
+        return;
+
+    _overrideBackgroundColor = overrideBackgroundColor;
+    [self setNeedsDisplay:YES];
+}
+
+- (NSColor *)overrideBackgroundColor
+{
+    return _overrideBackgroundColor.get();
 }
 
 - (void)_viewWasUnparented

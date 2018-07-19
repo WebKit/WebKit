@@ -1,3 +1,17 @@
+2018-07-18  Ricky Mondello  <rmondello@apple.com>
+
+        Let clients override _WKThumbnailView's background color
+
+        https://bugs.webkit.org/show_bug.cgi?id=187788
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.h: Declare a property.
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm: Define an ivar.
+        (-[_WKThumbnailView updateLayer]): Consult the background color.
+        (-[_WKThumbnailView setOverrideBackgroundColor:]): Notably, call -updateLayer.
+        (-[_WKThumbnailView overrideBackgroundColor]): Added.
+
 2018-07-18  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebKit: WebKit::WebFullScreenManagerProxy::saveScrollPosition
