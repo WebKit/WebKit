@@ -21,6 +21,9 @@ imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
 fast/events/constructors/media-stream-event-constructor.html
 
+# Not supported on WK1
+media/no-fullscreen-when-hidden.html [ Skip ]
+
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
 editing/deleting/4922367.html
 editing/deleting/5126166.html

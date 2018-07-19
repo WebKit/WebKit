@@ -5910,6 +5910,11 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (m_videoFullscreenMode == mode)
         return;
 
+    if (!document().page() || !document().page()->chrome().client().isViewVisible()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "  returning because document is hidden");
+        return;
+    }
+
     m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
     m_waitingToEnterFullscreen = true;
 
@@ -5936,7 +5941,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     configureMediaControls();
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
-    if (document().page() && is<HTMLVideoElement>(*this)) {
+    if (is<HTMLVideoElement>(*this)) {
         HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
         if (document().page()->chrome().client().supportsVideoFullscreen(m_videoFullscreenMode)) {
             document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);

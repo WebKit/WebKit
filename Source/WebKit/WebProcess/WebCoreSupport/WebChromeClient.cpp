@@ -1311,4 +1311,11 @@ void WebChromeClient::requestStorageAccess(String&& subFrameHost, String&& topFr
 }
 #endif
 
+bool WebChromeClient::isViewVisible()
+{
+    bool isVisible = false;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetIsViewVisible(), Messages::WebPageProxy::GetIsViewVisible::Reply(isVisible), m_page.pageID());
+    return isVisible;
+}
+
 } // namespace WebKit

@@ -6019,6 +6019,10 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
         // an event named fullscreenerror with its bubbles attribute set to true on the context object's 
         // node document:
 
+        // Don't allow fullscreen if document is hidden.
+        if (!page() || !page()->chrome().client().isViewVisible())
+            break;
+
         // The context object is not in a document.
         if (!element->isConnected())
             break;

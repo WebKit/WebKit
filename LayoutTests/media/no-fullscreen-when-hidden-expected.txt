@@ -1,0 +1,7 @@
+Fullscreen should be prevented when page is not visible.
+
+RUN(video.play())
+Attempting to go into Full Screen
+RUN(video.webkitEnterFullscreen())
+END OF TEST
+

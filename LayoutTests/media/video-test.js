@@ -441,12 +441,9 @@ function setCaptionDisplayMode(mode)
 
 function runWithKeyDown(fn, preventDefault) 
 {
-    // FIXME: WKTR does not yet support the keyDown() message.  Do a mouseDown here
-    // instead until keyDown support is added.
-    var eventName = !window.testRunner || eventSender.keyDown ? 'keypress' : 'mousedown'
-
+    var eventName = 'keypress'
     function thunk(event) {
-        if (preventDefault)
+        if (preventDefault && event !== undefined)
             event.preventDefault();
 
         document.removeEventListener(eventName, thunk, false);
@@ -457,12 +454,8 @@ function runWithKeyDown(fn, preventDefault)
     }
     document.addEventListener(eventName, thunk, false);
 
-    if (window.testRunner) {
-        if (eventSender.keyDown)
-            eventSender.keyDown("a", []);
-        else
-            eventSender.mouseDown();
-    }
+    if (window.internals)
+        internals.withUserGesture(thunk);
 }
 
 function shouldResolve(promise) {

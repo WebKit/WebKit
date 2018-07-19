@@ -7829,4 +7829,9 @@ void WebPageProxy::setDefersLoadingForTesting(bool defersLoading)
     m_process->send(Messages::WebPage::SetDefersLoading(defersLoading), m_pageID);
 }
 
+void WebPageProxy::getIsViewVisible(bool& result)
+{
+    result = isViewVisible();
+}
+
 } // namespace WebKit
