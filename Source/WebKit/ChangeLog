@@ -1,5 +1,56 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233927. rdar://problem/42354954
+
+    -_beginAnimatedResizeWithUpdates: can leave view in bad state if called during an existing animation
+    https://bugs.webkit.org/show_bug.cgi?id=187739
+    Source/WebKit:
+    
+    Reviewed by Tim Horton.
+    
+    It's not enough to reset _dynamicViewportUpdateMode to NotResizing; other parts of the code
+    check whether _resizeAnimationView is non-nil, the contentView may be hidden, etc. Add a new
+    internal method _cancelAnimatedResize that cleans up state when a call to
+    _beginAnimatedResizeWithUpdates: fails.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _processDidExit]):
+    (-[WKWebView _cancelAnimatedResize]):
+    (-[WKWebView _didCompleteAnimatedResize]):
+    (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+    
+    Tools:
+    
+    <rdar://problem/42304518>
+    
+    Reviewed by Tim Horton.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233927 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-18  Jer Noble  <jer.noble@apple.com>
+
+            -_beginAnimatedResizeWithUpdates: can leave view in bad state if called during an existing animation
+            https://bugs.webkit.org/show_bug.cgi?id=187739
+
+            Reviewed by Tim Horton.
+
+            It's not enough to reset _dynamicViewportUpdateMode to NotResizing; other parts of the code
+            check whether _resizeAnimationView is non-nil, the contentView may be hidden, etc. Add a new
+            internal method _cancelAnimatedResize that cleans up state when a call to
+            _beginAnimatedResizeWithUpdates: fails.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _processDidExit]):
+            (-[WKWebView _cancelAnimatedResize]):
+            (-[WKWebView _didCompleteAnimatedResize]):
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233926. rdar://problem/42354941
 
     PiP from Element Fullscreen should match AVKit's behavior
