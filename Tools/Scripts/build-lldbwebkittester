@@ -64,6 +64,8 @@ my @xcodeOptions = XcodeOptions();
 
 buildProjectOrDie("Source/bmalloc", "bmalloc");
 buildProjectOrDie("Source/WTF", "WTF");
+buildProjectOrDie("Source/WebCore", "WebCore");
+buildProjectOrDie("Source/WebKit", "WebKit");
 buildProjectOrDie("Tools/lldb/lldbWebKitTester", "lldbWebKitTester");
 
 sub buildProjectOrDie($$)
