@@ -33,4 +33,6 @@ PASS saturate(): values of amount over 100% are allowed, providing super-saturat
 PASS sepia(): values of amount over 100% are allowed but UAs must clamp the values to 1 
 PASS Parse filter list 
 PASS Filter list with blur is invalid 
+PASS Parse apple-invert-lightness() 
+PASS apple-invert-lightness() takes no arguments 
 

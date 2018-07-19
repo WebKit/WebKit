@@ -229,6 +229,9 @@ bool FilterEffectRenderer::build(RenderElement& renderer, const FilterOperations
             effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
             break;
         }
+        case FilterOperation::APPLE_INVERT_LIGHTNESS:
+            ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+            break;
         case FilterOperation::OPACITY: {
             auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
             ComponentTransferFunction transferFunction;

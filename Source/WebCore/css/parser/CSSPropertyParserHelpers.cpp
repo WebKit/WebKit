@@ -1286,7 +1286,7 @@ static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSP
     if (!imageValue || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto filterValue = consumeFilter(args, context);
+    auto filterValue = consumeFilter(args, context, AllowedFilterFunctions::PixelFilters);
 
     if (!filterValue)
         return nullptr;
@@ -1390,7 +1390,7 @@ static bool isGeneratedImage(CSSValueID id)
         || id == CSSValueFilter;
 }
     
-static bool isValidPrimitiveFilterFunction(CSSValueID filterFunction)
+static bool isPixelFilterFunction(CSSValueID filterFunction)
 {
     switch (filterFunction) {
     case CSSValueBlur:
@@ -1420,6 +1420,7 @@ static bool isColorFilterFunction(CSSValueID filterFunction)
     case CSSValueOpacity:
     case CSSValueSaturate:
     case CSSValueSepia:
+    case CSSValueAppleInvertLightness:
         return true;
     default:
         return false;
@@ -1441,14 +1442,26 @@ static bool allowsValuesGreaterThanOne(CSSValueID filterFunction)
 static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
 {
     CSSValueID filterType = range.peek().functionId();
-    if (!isValidPrimitiveFilterFunction(filterType))
-        return nullptr;
-
-    if (allowedFunctions == AllowedFilterFunctions::Color && !isColorFilterFunction(filterType))
-        return nullptr;
+    switch (allowedFunctions) {
+    case AllowedFilterFunctions::PixelFilters:
+        if (!isPixelFilterFunction(filterType))
+            return nullptr;
+        break;
+    case AllowedFilterFunctions::ColorFilters:
+        if (!isColorFilterFunction(filterType))
+            return nullptr;
+        break;
+    }
 
     CSSParserTokenRange args = consumeFunction(range);
     RefPtr<CSSFunctionValue> filterValue = CSSFunctionValue::create(filterType);
+
+    if (filterType == CSSValueAppleInvertLightness) {
+        if (!args.atEnd())
+            return nullptr;
+        return filterValue;
+    }
+
     RefPtr<CSSValue> parsedValue;
 
     if (filterType == CSSValueDropShadow)
@@ -1484,7 +1497,7 @@ RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContex
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
-    bool referenceFiltersAllowed = allowedFunctions == AllowedFilterFunctions::All;
+    bool referenceFiltersAllowed = allowedFunctions == AllowedFilterFunctions::PixelFilters;
     auto list = CSSValueList::createSpaceSeparated();
     do {
         RefPtr<CSSValue> filterValue = referenceFiltersAllowed ? consumeUrl(range) : nullptr;

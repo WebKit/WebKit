@@ -1013,6 +1013,10 @@ Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, c
                 filterValue->append(cssValuePool.createValue(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount(), CSSPrimitiveValue::CSS_NUMBER));
                 break;
             }
+            case FilterOperation::APPLE_INVERT_LIGHTNESS: {
+                filterValue = CSSFunctionValue::create(CSSValueAppleInvertLightness);
+                break;
+            }
             case FilterOperation::OPACITY: {
                 filterValue = CSSFunctionValue::create(CSSValueOpacity);
                 filterValue->append(cssValuePool.createValue(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount(), CSSPrimitiveValue::CSS_NUMBER));

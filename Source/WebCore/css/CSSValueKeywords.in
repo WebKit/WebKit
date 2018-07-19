@@ -1232,6 +1232,7 @@ cubic-bezier
 spring
 steps
 frames
+apple-invert-lightness
 
 // colors
 rgb

@@ -117,6 +117,7 @@ static double calcHue(double temp1, double temp2, double hueVal)
 // further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
 
 // Hue is in the range of 0 to 6.0, the remainder are in the range 0 to 1.0
+// FIXME: Use HSLToSRGB().
 RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double alpha)
 {
     const double scaleFactor = nextafter(256.0, 0.0);
@@ -533,6 +534,7 @@ void Color::getRGBA(double& r, double& g, double& b, double& a) const
     a = alpha() / 255.0;
 }
 
+// FIXME: Use sRGBToHSL().
 void Color::getHSL(double& hue, double& saturation, double& lightness) const
 {
     // http://en.wikipedia.org/wiki/HSL_color_space. This is a direct copy of

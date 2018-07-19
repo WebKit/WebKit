@@ -129,6 +129,9 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             [array.get() addObject:filter];
             break;
         }
+        case FilterOperation::APPLE_INVERT_LIGHTNESS:
+            ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+            break;
         case FilterOperation::OPACITY: {
             RetainPtr<NSValue> colorMatrixValue = PlatformCAFilters::colorMatrixValueForFilter(filterOperation.type(), &filterOperation);
             CAFilter *filter = [CAFilter filterWithType:kCAFilterColorMatrix];
@@ -233,6 +236,9 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             [array.get() addObject:filter];
             break;
         }
+        case FilterOperation::APPLE_INVERT_LIGHTNESS:
+            ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+            break;
         case FilterOperation::OPACITY: {
             const auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
             CIFilter* filter = [CIFilter filterWithName:@"CIColorMatrix"];
@@ -397,6 +403,9 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
 #endif
         break;
     }
+    case FilterOperation::APPLE_INVERT_LIGHTNESS:
+            ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+        break;
     case FilterOperation::OPACITY: {
 #if USE_CA_FILTERS
         // Opacity CAFilter: inputColorMatrix
@@ -498,6 +507,9 @@ RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(FilterOperation:
         };
         return [NSValue valueWithCAColorMatrix:colorMatrix];
     }
+    case FilterOperation::APPLE_INVERT_LIGHTNESS:
+        ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
+        return nullptr;
     case FilterOperation::OPACITY: {
         float amount = filterOperation ? downcast<BasicComponentTransferFilterOperation>(filterOperation)->amount() : 1;
         CAColorMatrix colorMatrix = {
