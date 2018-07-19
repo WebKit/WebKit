@@ -1,3 +1,23 @@
+2018-07-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r233938. rdar://problem/42387347
+
+    Rebaseline fast/css/apple-system-colors.html.
+    
+    Unreviewed test gardening.
+    
+    * platform/mac/fast/css/apple-system-colors-expected.txt:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@233938 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline fast/css/apple-system-colors.html.
+
+            Unreviewed test gardening.
+
+            * platform/mac/fast/css/apple-system-colors-expected.txt:
+
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r233926. rdar://problem/42354941
