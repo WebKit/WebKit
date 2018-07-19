@@ -1097,38 +1097,50 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
     injectedBundle->setBundleParameters(value);
 }
 
+static IPC::Connection::Identifier getNetworkProcessConnection(IPC::Connection& connection)
+{
+    IPC::Attachment encodedConnectionIdentifier;
+    if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)) {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        // GTK+ and WPE ports don't exit on send sync message failure.
+        // In this particular case, the network process can be terminated by the UI process while the
+        // Web process is still initializing, so we always want to exit instead of crashing. This can
+        // happen when the WebView is created and then destroyed quickly.
+        // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+        exit(0);
+#else
+        CRASH();
+#endif
+    }
+
+#if USE(UNIX_DOMAIN_SOCKETS)
+    return encodedConnectionIdentifier.releaseFileDescriptor();
+#elif OS(DARWIN)
+    return encodedConnectionIdentifier.port();
+#elif OS(WINDOWS)
+    return encodedConnectionIdentifier.handle();
+#else
+    ASSERT_NOT_REACHED();
+    return IPC::Connection::Identifier();
+#endif
+}
+
 NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
     // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
     if (!m_networkProcessConnection) {
-        IPC::Attachment encodedConnectionIdentifier;
+        IPC::Connection::Identifier connectionIdentifier = getNetworkProcessConnection(*parentProcessConnection());
 
-        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)) {
-#if PLATFORM(GTK) || PLATFORM(WPE)
-            // GTK+ and WPE ports don't exit on send sync message failure.
-            // In this particular case, the network process can be terminated by the UI process while the
-            // Web process is still initializing, so we always want to exit instead of crashing. This can
-            // happen when the WebView is created and then destroyed quickly.
-            // See https://bugs.webkit.org/show_bug.cgi?id=183348.
-            exit(0);
-#else
-            CRASH();
-#endif
-        }
+        // Retry once if the IPC to get the connectionIdentifier succeeded but the connectionIdentifier we received
+        // is invalid. This may indicate that the network process has crashed.
+        if (!IPC::Connection::identifierIsValid(connectionIdentifier))
+            connectionIdentifier = getNetworkProcessConnection(*parentProcessConnection());
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-        IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
-#elif OS(DARWIN)
-        IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-#elif OS(WINDOWS)
-        IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.handle());
-#else
-        ASSERT_NOT_REACHED();
-#endif
         if (!IPC::Connection::identifierIsValid(connectionIdentifier))
             CRASH();
+
         m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
     }
     
