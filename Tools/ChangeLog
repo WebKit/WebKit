@@ -1,5 +1,39 @@
 2018-07-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233878. rdar://problem/42343023
+
+    Fix API Test failures introduced by r233865
+    https://bugs.webkit.org/show_bug.cgi?id=187720
+    
+    Unreviewed APITest fix after r233865.
+    
+    Fullscreen can now only be initiated from a window that is on screen.
+    
+    Patch by Jeremy Jones <jeremyj@apple.com> on 2018-07-16
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/FullscreenTopContentInset.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233878 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-16  Jeremy Jones  <jeremyj@apple.com>
+
+            Fix API Test failures introduced by r233865
+            https://bugs.webkit.org/show_bug.cgi?id=187720
+
+            Unreviewed APITest fix after r233865.
+
+            Fullscreen can now only be initiated from a window that is on screen.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/FullscreenTopContentInset.mm:
+            (TestWebKitAPI::TEST):
+
+2018-07-18  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233869. rdar://problem/42344023
 
     Allow removal of white backgrounds
