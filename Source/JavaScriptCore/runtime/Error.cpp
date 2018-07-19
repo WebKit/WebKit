@@ -239,6 +239,7 @@ void addErrorInfo(ExecState* exec, JSObject* obj, bool useCurrentFrame)
 JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const SourceCode& source)
 {
     VM& vm = callFrame->vm();
+    const String& sourceURL = source.provider()->url();
     
     // The putDirect() calls below should really be put() so that they trigger materialization of
     // the line/sourceURL properties. Otherwise, what we set here will just be overwritten later.
@@ -255,15 +256,8 @@ JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const So
     // https://bugs.webkit.org/show_bug.cgi?id=176673
     if (line != -1)
         error->putDirect(vm, vm.propertyNames->line, jsNumber(line));
-
-    SourceProvider* provider = source.provider();
-    // FIXME: Remove this ASSERT and null check when https://webkit.org/b/187811 is fixed.
-    ASSERT(provider);
-    if (LIKELY(provider)) {
-        const String& sourceURL = provider->url();
-        if (!sourceURL.isNull())
-            error->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, sourceURL));
-    }
+    if (!sourceURL.isNull())
+        error->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, sourceURL));
     return error;
 }
 
