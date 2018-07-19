@@ -124,6 +124,8 @@ bool PluginData::supportsWebVisibleMimeTypeForURL(const String& mimeType, const 
 {
     if (!protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, url))
         m_cachedVisiblePlugins = { url, m_page.pluginInfoProvider().webVisiblePluginInfo(m_page, url) };
+    if (!m_cachedVisiblePlugins.pluginList)
+        return false;
     return supportsWebVisibleMimeType(mimeType, allowedPluginTypes, *m_cachedVisiblePlugins.pluginList);
 }
 
