@@ -41,7 +41,6 @@ namespace WebCore {
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:
     FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
-    ~FetchBodyOwner();
 
     bool bodyUsed() const { return isDisturbed(); }
     void arrayBuffer(Ref<DeferredPromise>&&);

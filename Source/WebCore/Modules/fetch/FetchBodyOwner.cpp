@@ -45,12 +45,6 @@ FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<Fe
     suspendIfNeeded();
 }
 
-FetchBodyOwner::~FetchBodyOwner()
-{
-    if (m_readableStreamSource)
-        m_readableStreamSource->detach();
-}
-
 void FetchBodyOwner::stop()
 {
     if (m_body)

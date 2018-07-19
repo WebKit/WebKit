@@ -49,7 +49,6 @@ public:
     bool isCancelling() const { return m_isCancelling; }
 
     void resolvePullPromise() { pullFinished(); }
-    void detach() { m_bodyOwner = nullptr; }
 
 private:
     void doStart() final;
@@ -58,7 +57,7 @@ private:
     void setActive() final;
     void setInactive() final;
 
-    FetchBodyOwner* m_bodyOwner;
+    FetchBodyOwner& m_bodyOwner;
     bool m_isCancelling { false };
 };
 
