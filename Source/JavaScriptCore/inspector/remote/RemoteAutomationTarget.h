@@ -36,7 +36,7 @@ class FrontendChannel;
 
 class JS_EXPORT_PRIVATE RemoteAutomationTarget : public RemoteControllableTarget {
 public:
-    virtual ~RemoteAutomationTarget() { }
+    virtual ~RemoteAutomationTarget();
 
     bool isPaired() const { return m_paired; }
     void setIsPaired(bool);

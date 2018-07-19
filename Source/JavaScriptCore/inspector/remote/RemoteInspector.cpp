@@ -240,6 +240,10 @@ void RemoteInspector::updateHasActiveDebugSession()
     // Legacy iOS WebKit 1 had a notification. This will need to be smarter with WebKit2.
 }
 
+RemoteInspector::Client::~Client()
+{
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(REMOTE_INSPECTOR)

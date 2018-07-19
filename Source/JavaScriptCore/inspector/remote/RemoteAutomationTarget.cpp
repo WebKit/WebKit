@@ -32,6 +32,10 @@
 
 namespace Inspector {
 
+RemoteAutomationTarget::~RemoteAutomationTarget()
+{
+}
+
 void RemoteAutomationTarget::setIsPaired(bool paired)
 {
     if (m_paired == paired)

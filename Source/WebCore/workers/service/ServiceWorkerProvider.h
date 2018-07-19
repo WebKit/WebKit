@@ -39,7 +39,7 @@ class ServiceWorkerJob;
 
 class WEBCORE_EXPORT ServiceWorkerProvider {
 public:
-    virtual ~ServiceWorkerProvider() = default;
+    virtual ~ServiceWorkerProvider();
 
     WEBCORE_EXPORT static ServiceWorkerProvider& singleton();
     WEBCORE_EXPORT static void setSharedProvider(ServiceWorkerProvider&);

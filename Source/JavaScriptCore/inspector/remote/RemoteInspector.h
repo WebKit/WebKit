@@ -84,7 +84,7 @@ public:
 #endif
         };
 
-        virtual ~Client() { }
+        virtual ~Client();
         virtual bool remoteAutomationAllowed() const = 0;
         virtual String browserName() const { return { }; }
         virtual String browserVersion() const { return { }; }

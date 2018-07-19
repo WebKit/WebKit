@@ -66,7 +66,7 @@ class WEBCORE_EXPORT RealtimeMediaSource : public ThreadSafeRefCounted<RealtimeM
 public:
     class Observer {
     public:
-        virtual ~Observer() = default;
+        virtual ~Observer();
 
         // Source state changes.
         virtual void sourceStarted() { }
@@ -112,7 +112,7 @@ public:
 #endif
     {
     public:
-        virtual ~AudioCaptureFactory() = default;
+        virtual ~AudioCaptureFactory();
         virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
 
     protected:
@@ -125,7 +125,7 @@ public:
 #endif
     {
     public:
-        virtual ~VideoCaptureFactory() = default;
+        virtual ~VideoCaptureFactory();
         virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
         virtual void setVideoCapturePageState(bool, bool) { }
 

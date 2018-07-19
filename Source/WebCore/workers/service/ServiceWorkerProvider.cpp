@@ -34,6 +34,10 @@ namespace WebCore {
 
 static ServiceWorkerProvider* sharedProvider;
 
+ServiceWorkerProvider::~ServiceWorkerProvider()
+{
+}
+
 ServiceWorkerProvider& ServiceWorkerProvider::singleton()
 {
     RELEASE_ASSERT(sharedProvider);

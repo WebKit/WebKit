@@ -1,3 +1,54 @@
+2018-07-19  Keith Rollin  <krollin@apple.com>
+
+        Adjust WEBCORE_EXPORT annotations for LTO
+        https://bugs.webkit.org/show_bug.cgi?id=187781
+        <rdar://problem/42351124>
+
+        Reviewed by Alex Christensen.
+
+        Continuation of Bug 186944. This bug addresses issues not caught
+        during the first pass of adjustments. The initial work focussed on
+        macOS; this one addresses issues found when building for iOS. From
+        186944:
+
+        Adjust a number of places that result in WebKit's
+        'check-for-weak-vtables-and-externals' script reporting weak external
+        symbols:
+
+            ERROR: WebCore has a weak external symbol in it (/Volumes/Data/dev/webkit/OpenSource/WebKitBuild/Release/WebCore.framework/Versions/A/WebCore)
+            ERROR: A weak external symbol is generated when a symbol is defined in multiple compilation units and is also marked as being exported from the library.
+            ERROR: A common cause of weak external symbols is when an inline function is listed in the linker export file.
+            ...
+
+        These cases are caused by inline methods being marked with WTF_EXPORT
+        (or related macro) or with an inline function being in a class marked
+        as such, and when enabling LTO builds.
+
+        For the most part, address these by removing the WEBCORE_EXPORT
+        annotation from inline methods. In some cases, move the implementation
+        out-of-line because it's the class that has the WEBCORE_EXPORT on it
+        and removing the annotation from the class would be too disruptive.
+        Finally, in other cases, move the implementation out-of-line because
+        check-for-weak-vtables-and-externals still complains when keeping the
+        implementation inline and removing the annotation; this seems to
+        typically (but not always) happen with destructors.
+
+        No new tests. There is no changed functionality. Only the annotation
+        and treatment of inline methods are altered.
+
+        * platform/graphics/FourCC.h:
+        (WebCore::FourCC::FourCC):
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::IntPoint):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::Observer::~Observer):
+        (WebCore::RealtimeMediaSource::AudioCaptureFactory::~AudioCaptureFactory):
+        (WebCore::RealtimeMediaSource::VideoCaptureFactory::~VideoCaptureFactory):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * workers/service/ServiceWorkerProvider.cpp:
+        (WebCore::ServiceWorkerProvider::~ServiceWorkerProvider):
+        * workers/service/ServiceWorkerProvider.h:
+
 2018-07-19  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Return a valid time values in unprerolled states

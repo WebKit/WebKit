@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct FourCC {
-    WEBCORE_EXPORT FourCC(uint32_t value) : value(value) { }
+    FourCC(uint32_t value) : value(value) { }
 
     template<std::size_t N>
     constexpr FourCC(const char (&data)[N])
