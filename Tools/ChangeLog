@@ -1,3 +1,14 @@
+2018-07-19  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Support DEVELOPER_MODE for allowing inspection of web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=187786
+
+        Reviewed by Fujii Hironori.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject): Turn on DEVELOPER_MODE
+        for WinCairo builds.
+
 2018-07-19  Dean Jackson  <dino@apple.com>
 
         Provide an lldb type summary for WebCore::Color

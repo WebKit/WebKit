@@ -2269,7 +2269,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);
 
     # Some ports have production mode, but build-webkit should always use developer mode.
-    push @args, "-DDEVELOPER_MODE=ON" if isGtk() || isJSCOnly() || isWPE();
+    push @args, "-DDEVELOPER_MODE=ON" if isGtk() || isJSCOnly() || isWPE() || isWinCairo();
 
     push @args, @cmakeArgs if @cmakeArgs;
 

@@ -1,3 +1,13 @@
+2018-07-19  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Support DEVELOPER_MODE for allowing inspection of web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=187786
+
+        Reviewed by Fujii Hironori.
+
+        * Source/cmake/OptionsWinCairo.cmake: Add ENABLE_DEVELOPER_MODE
+        to build when DEVELOPER_MODE is turned on at cmake time.
+
 2018-07-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Switch CMake ports back to C++ 14
