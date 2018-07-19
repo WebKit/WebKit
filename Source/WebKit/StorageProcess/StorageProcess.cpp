@@ -406,17 +406,22 @@ void StorageProcess::accessToTemporaryFileComplete(const String& path)
         extension->revoke();
 }
 
-Vector<WebCore::SecurityOriginData> StorageProcess::indexedDatabaseOrigins(const String& path)
+HashSet<WebCore::SecurityOriginData> StorageProcess::indexedDatabaseOrigins(const String& path)
 {
     if (path.isEmpty())
         return { };
 
-    Vector<WebCore::SecurityOriginData> securityOrigins;
-    for (auto& originPath : FileSystem::listDirectory(path, "*")) {
-        String databaseIdentifier = FileSystem::pathGetFileName(originPath);
-
+    HashSet<WebCore::SecurityOriginData> securityOrigins;
+    for (auto& topOriginPath : FileSystem::listDirectory(path, "*")) {
+        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-            securityOrigins.append(WTFMove(*securityOrigin));
+            securityOrigins.add(WTFMove(*securityOrigin));
+        
+        for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
+            databaseIdentifier = FileSystem::pathGetFileName(originPath);
+            if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
+                securityOrigins.add(WTFMove(*securityOrigin));
+        }
     }
 
     return securityOrigins;
