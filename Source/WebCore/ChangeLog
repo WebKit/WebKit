@@ -1,3 +1,13 @@
+2018-07-19  Jon Lee  <jonlee@apple.com>
+
+        Update iOS fullscreen alert text again
+        https://bugs.webkit.org/show_bug.cgi?id=187797
+        rdar://problem/42373783
+
+        Reviewed by Jer Noble.
+
+        * English.lproj/Localizable.strings:
+
 2018-07-19  Keith Rollin  <krollin@apple.com>
 
         Adjust WEBCORE_EXPORT annotations for LTO

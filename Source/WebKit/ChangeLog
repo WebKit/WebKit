@@ -1,3 +1,14 @@
+2018-07-19  Jon Lee  <jonlee@apple.com>
+
+        Update iOS fullscreen alert text again
+        https://bugs.webkit.org/show_bug.cgi?id=187797
+        rdar://problem/42373783
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]):
+
 2018-07-19  Brady Eidson  <beidson@apple.com>
 
         Add an SPI policy action to allow clients to explicitly ask for a new process on a navigation.
