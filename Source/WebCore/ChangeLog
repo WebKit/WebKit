@@ -1,3 +1,27 @@
+2018-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::DocumentWriter::addData()
+        https://bugs.webkit.org/show_bug.cgi?id=187819
+        <rdar://problem/41328743>
+
+        Reviewed by Brady Eidson.
+
+        When AppCache is used a DocumentLoader may start a NetworkLoad even though it has substitute data.
+        In DocumentLoader::continueAfterContentPolicy(), if we have substitute data we commit this data
+        and call finishLoad(). However, if the case where there was a NetworkLoad started, we'll send the
+        ContinueDidReceiveResponse IPC back to the network process and it will start sending us data for
+        the load. This could lead to crashes such as <rdar://problem/41328743> since the DocumentLoader
+        has already committed data and finished loading when it gets the data from the network process.
+
+        To address the issue, we now call clearMainResource() in continueAfterContentPolicy(), after we've
+        decided to commit the substitute data. This effectively removes the DocumentLoader as a client of
+        the CachedResource so that its will not be notified of following load progress. We do not cancel
+        the load as other CachedResourceClients may be interested in the load (ApplicationCacheResourceLoader
+        in particular, in order to update its cached data).
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+
 2018-07-19  Dean Jackson  <dino@apple.com>
 
         CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebCore: std::optional<WTF::Vector<WebCore::PluginInfo, 0ul, WTF::CrashOnOverflow, 16ul> >::operator* & + 73
