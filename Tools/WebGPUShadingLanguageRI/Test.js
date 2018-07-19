@@ -3824,6 +3824,50 @@ tests.booleanMath = function()
     checkBool(program, callFunction(program, "foo8", [], []), false);
 }
 
+tests.booleanShortcircuiting = function()
+{
+    let program = doPrep(`
+        bool set(thread int* ptr, int value, bool retValue) 
+        { 
+            *ptr = value; 
+            return retValue; 
+        }
+        
+        int andTrue()
+        {
+            int x;
+            bool y = set(&x, 1, true) && set(&x, 2, false);
+            return x; 
+        }
+        
+        int andFalse()
+        {
+            int x;
+            bool y = set(&x, 1, false) && set(&x, 2, false);
+            return x; 
+        }
+        
+        int orTrue()
+        {
+            int x;
+            bool y = set(&x, 1, true) || set(&x, 2, false);
+            return x; 
+        }
+        
+        int orFalse()
+        {
+            int x;
+            bool y = set(&x, 1, false) || set(&x, 2, false);
+            return x; 
+        }
+    `);
+
+    checkInt(program, callFunction(program, "andTrue", [], []), 2);
+    checkInt(program, callFunction(program, "andFalse", [], []), 1);
+    checkInt(program, callFunction(program, "orTrue", [], []), 1);
+    checkInt(program, callFunction(program, "orFalse", [], []), 2);
+}
+
 tests.typedefArray = function()
 {
     let program = doPrep(`

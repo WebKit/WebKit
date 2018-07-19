@@ -1,3 +1,15 @@
+2018-07-19  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] The interpreter doesn't support boolean short-circuiting
+        https://bugs.webkit.org/show_bug.cgi?id=187779
+
+        Reviewed by Alex Christensen.
+
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitLogicalExpression): RHS is only evaluated when necessary
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.booleanShortcircuiting): Adds 4 tests for the evaluation of logical expresions
+
 2018-07-19  Dean Jackson  <dino@apple.com>
 
         Provide an lldb type summary for WebCore::Color

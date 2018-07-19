@@ -177,14 +177,13 @@ class Evaluator extends Visitor {
     visitLogicalExpression(node)
     {
         let lhs = node.left.visit(this).loadValue();
-        let rhs = node.right.visit(this).loadValue();
         let result;
         switch (node.text) {
         case "&&":
-            result = lhs && rhs;
+            result = lhs && node.right.visit(this).loadValue();
             break;
         case "||":
-            result = lhs || rhs;
+            result = lhs || node.right.visit(this).loadValue();
             break;
         default:
             throw new Error("Unknown type of logical expression");
