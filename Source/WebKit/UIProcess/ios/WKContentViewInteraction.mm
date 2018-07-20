@@ -899,7 +899,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 
 - (id <UITextInputDelegate>)inputDelegate
 {
-    return _inputDelegate;
+    return _inputDelegate.getAutoreleased();
 }
 
 - (CGPoint)lastInteractionLocation
