@@ -1,3 +1,10 @@
+2018-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.5 release.
+
+        * gtk/NEWS: Add release notes for 2.21.5.
+        * webkitglib-symbols.map: Remove symbols.
+
 2018-07-19  Chris Dumez  <cdumez@apple.com>
 
         Null pointer dereference under WebPage::autofillLoginCredentials()

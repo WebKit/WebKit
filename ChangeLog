@@ -1,3 +1,9 @@
+2018-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.5 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2018-07-19  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Support DEVELOPER_MODE for allowing inspection of web inspector

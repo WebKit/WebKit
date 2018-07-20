@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 2.21.5
+=================
+
+What's new in WebKitGTK+ 2.21.5?
+
+  - Add API to evaluate code in a new object to JavaScriptCore GLib API.
+  - Add API to check for syntax errors in given code to JavaScriptCore GLib API.
+  - Update jsc_context_evaluate_with_source_uri() to receive also a starting line number.
+  - Add API to allow creating variadic functions to JavaScriptCore GLib API.
+  - Add --host option to WebDriver process.
+  - Handle acceptInsecureCertificates capability in WebDriver.
+  - Fix video freezes when GStreamerGL is not installed.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Ukrainian.
+
+=================
 WebKitGTK+ 2.21.4
 =================
 

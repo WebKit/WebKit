@@ -13,8 +13,6 @@ global:
     "bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_didInitialize";
     "bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_key";
     "bmalloc::vmPageSize()::cached";
-    "guard variable for bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_object";
-    "guard variable for bmalloc::PerProcess<bmalloc::Scavenger>::s_object";
     "WebKit::WebKitExtensionManager::singleton()";
     "WebKit::WebKitExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
   };
