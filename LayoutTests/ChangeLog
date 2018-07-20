@@ -1,3 +1,11 @@
+2018-07-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html for Sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt: Added.
+
 2018-07-20  Frederic Wang  <fwang@igalia.com>
 
         Import new WPT tests for custom elements
