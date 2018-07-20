@@ -6860,13 +6860,13 @@ private:
             return;
         }
 
-        if (m_node->child1().useKind() == OtherUse) {
+        if (m_node->child1().useKind() == KnownOtherUse) {
             ASSERT(!m_interpreter.needsTypeCheck(m_node->child1(), SpecOther));
             setBoolean(equalNullOrUndefined(m_node->child2(), AllCellsAreFalse, EqualNullOrUndefined, ManualOperandSpeculation));
             return;
         }
 
-        if (m_node->child2().useKind() == OtherUse) {
+        if (m_node->child2().useKind() == KnownOtherUse) {
             ASSERT(!m_interpreter.needsTypeCheck(m_node->child2(), SpecOther));
             setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualNullOrUndefined, ManualOperandSpeculation));
             return;
@@ -14839,6 +14839,7 @@ private:
         case KnownInt32Use:
         case KnownStringUse:
         case KnownPrimitiveUse:
+        case KnownOtherUse:
         case DoubleRepUse:
         case Int52RepUse:
             ASSERT(!m_interpreter.needsTypeCheck(edge));

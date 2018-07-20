@@ -447,6 +447,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case DerivedArrayUse:
                 case NotCellUse:
                 case OtherUse:
+                case KnownOtherUse:
                 case MiscUse:
                 case StringIdentUse:
                 case NotStringVarUse:

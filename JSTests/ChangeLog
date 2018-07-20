@@ -1,3 +1,15 @@
+2018-07-20  Saam Barati  <sbarati@apple.com>
+
+        CompareEq should be using KnownOtherUse instead of OtherUse
+        https://bugs.webkit.org/show_bug.cgi?id=186814
+        <rdar://problem/39720030>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/compare-eq-should-use-known-other-use.js: Added.
+        (bar):
+        (i.func):
+
 2018-07-20  David Fenton  <david_fenton@apple.com>
 
         stress/spread-forward-varargs-stack-overflow.js is timing out in 32 bit JSC tests.

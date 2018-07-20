@@ -154,6 +154,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case NotCellUse:
         out.print("NotCell");
         return;
+    case KnownOtherUse:
+        out.print("KnownOther");
+        return;
     case OtherUse:
         out.print("Other");
         return;

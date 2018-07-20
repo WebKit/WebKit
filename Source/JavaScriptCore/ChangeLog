@@ -1,3 +1,45 @@
+2018-07-20  Saam Barati  <sbarati@apple.com>
+
+        CompareEq should be using KnownOtherUse instead of OtherUse
+        https://bugs.webkit.org/show_bug.cgi?id=186814
+        <rdar://problem/39720030>
+
+        Reviewed by Filip Pizlo.
+
+        CompareEq in fixup phase was doing this:
+        insertCheck(child, OtherUse)
+        setUseKind(child, OtherUse)
+        And in the DFG/FTL backend, it would not emit a check for OtherUse. This could
+        lead to edge verification crashing because a phase may optimize the check out
+        by removing the node. However, AI may not be privy to that optimization, and
+        AI may think the incoming value may not be Other. AI is expecting the DFG/FTL
+        backend to actually emit a check here, but it does not.
+        
+        This exact pattern is why we have KnownXYZ use kinds. This patch introduces
+        KnownOtherUse and changes the above pattern to be:
+        insertCheck(child, OtherUse)
+        setUseKind(child, KnownOtherUse)
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::shouldNotHaveTypeCheck):
+        (JSC::DFG::checkMayCrashIfInputIsEmpty):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareEq):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+
 2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] A bit performance improvement for Object.assign by cleaning up code

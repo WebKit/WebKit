@@ -106,6 +106,11 @@ public:
             if (m_state.forNode(edge).m_type & ~(SpecHeapTop & ~SpecObject))
                 m_result = false;
             return;
+
+        case KnownOtherUse:
+            if (m_state.forNode(edge).m_type & ~SpecOther)
+                m_result = false;
+            return;
             
         case LastUseKind:
             RELEASE_ASSERT_NOT_REACHED();

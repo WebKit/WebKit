@@ -10290,6 +10290,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case NotCellUse:
         speculateNotCell(edge);
         break;
+    case KnownOtherUse:
+        ASSERT(!needsTypeCheck(edge, SpecOther));
+        break;
     case OtherUse:
         speculateOther(edge);
         break;
