@@ -1,3 +1,56 @@
+2018-07-19  Jer Noble  <jer.noble@apple.com>
+
+        HLS resources with remote subresources will not taint canvasses.
+        https://bugs.webkit.org/show_bug.cgi?id=187731
+        <rdar://problem/42290703>
+
+        Reviewed by Brady Eidson.
+
+        Test: http/tests/security/canvas-remote-read-remote-video-hls.html
+
+        Most media sources are single-resource; they are accessed from a single origin. HLS manifests can contain many
+        subresources from arbitrary origins, and canvases should be tainted when painted from media elements whose
+        subresources were retrieved from tainting origins.
+
+        Add a new method to HTMLMediaElement, wouldTaintOrigin(), taking a SecurityOrigin, and returning whether the
+        media element would taint that origin. This gets piped all the way down to MediaPlayerPrivateAVFoundationObjC
+        which uses WebCoreNSURLSession to track all the origins of all the responses which resulted from the media
+        element's load.
+
+        Drive-by fix: also fix this issue for media elements which render to an AudioContext.
+
+        Drive-by fix #2: CanvasRenderingContext2DBase::createPattern() needs to check the return value of
+        ImageBuffer::create() before using it.
+
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::wouldTaintOrigin):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didAttachRenderers):
+        (WebCore::HTMLMediaElement::didDetachRenderers):
+        (WebCore::HTMLMediaElement::scheduleUpdateShouldAutoplay):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::wouldTaintOrigin const):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::wouldTaintOrigin const):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::hasSingleSecurityOrigin const):
+        (WebCore::MediaPlayerPrivateInterface::wouldTaintOrigin const):
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::update):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wouldTaintOrigin const):
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession task:didReceiveResponseFromOrigin:]):
+        (-[WebCoreNSURLSession wouldTaintOrigin:]):
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:]):
+
 2018-07-20  Zalan Bujtas  <zalan@apple.com>
 
         Update FrameView::paintContents to use release logging.

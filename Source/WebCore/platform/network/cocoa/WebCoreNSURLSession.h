@@ -26,6 +26,7 @@
 #ifndef WebCoreNSURLSession_h
 #define WebCoreNSURLSession_h
 
+#import "SecurityOrigin.h"
 #import <Foundation/NSURLSession.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
@@ -62,6 +63,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RetainPtr<NSOperationQueue> _queue;
     NSString *_sessionDescription;
     HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks;
+    HashSet<RefPtr<WebCore::SecurityOrigin>> _origins;
     Lock _dataTasksLock;
     BOOL _invalidated;
     NSUInteger _nextTaskIdentifier;
@@ -76,6 +78,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @property (readonly) BOOL didPassCORSAccessChecks;
 - (void)finishTasksAndInvalidate;
 - (void)invalidateAndCancel;
+- (BOOL)wouldTaintOrigin:(const WebCore::SecurityOrigin&)origin;
 
 - (void)resetWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)flushWithCompletionHandler:(void (^)(void))completionHandler;

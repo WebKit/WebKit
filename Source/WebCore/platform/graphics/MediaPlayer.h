@@ -461,8 +461,8 @@ public:
 #endif
 
     bool hasSingleSecurityOrigin() const;
-
     bool didPassCORSAccessCheck() const;
+    bool wouldTaintOrigin(const SecurityOrigin&) const;
 
     MediaTime mediaTimeForTimeValue(const MediaTime&) const;
 

@@ -227,6 +227,8 @@ private:
     void updateVideoLayerGravity() override;
 
     bool didPassCORSAccessCheck() const override;
+    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+
 
     MediaTime getStartDate() const override;
 

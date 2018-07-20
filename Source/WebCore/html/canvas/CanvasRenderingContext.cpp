@@ -109,7 +109,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLVideoElement* video)
     if (!video->hasSingleSecurityOrigin())
         return true;
 
-    if (!(video->player() && video->player()->didPassCORSAccessCheck()) && wouldTaintOrigin(video->currentSrc()))
+    if (!(video->player() && video->player()->didPassCORSAccessCheck()) && video->wouldTaintOrigin(*m_canvas.securityOrigin()))
         return true;
 
 #else

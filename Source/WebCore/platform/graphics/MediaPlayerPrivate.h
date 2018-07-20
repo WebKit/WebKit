@@ -189,8 +189,8 @@ public:
     virtual void setShouldMaintainAspectRatio(bool) { }
 
     virtual bool hasSingleSecurityOrigin() const { return false; }
-
     virtual bool didPassCORSAccessCheck() const { return false; }
+    virtual std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const { return std::nullopt; }
 
     virtual MediaPlayer::MovieLoadType movieLoadType() const { return MediaPlayer::Unknown; }
 
