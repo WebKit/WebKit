@@ -1,3 +1,14 @@
+2018-07-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        TestWTF.WTF.StringConcatenate_Unsigned fails for unsigned short on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=187712
+
+        Reviewed by Fujii Hironori.
+
+        * TestWebKitAPI/Tests/WTF/StringConcatenate.cpp:
+        Mark result of unsigned short test case as platform-specific,
+        since Windows' behavior is actually *less* surprising here.
+
 2018-07-19  Lucas Forschler  <lforschler@apple.com>
 
         Teach the AWS Lambda to use the [minified]-platforms database

@@ -81,7 +81,11 @@ TEST(WTF, StringConcatenate_Unsigned)
     EXPECT_EQ("hello 0 world", makeString("hello ", 0u , " world"));
 
     EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<unsigned char>(42) , " world"));
+#if PLATFORM(WIN)
+    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<unsigned short>(42) , " world"));
+#else
     EXPECT_EQ("hello * world", makeString("hello ", static_cast<unsigned short>(42) , " world")); // Treated as a character.
+#endif
     EXPECT_EQ("hello 4 world", makeString("hello ", sizeof(int) , " world")); // size_t
     EXPECT_EQ("hello 4 world", makeString("hello ", offsetof(S, i) , " world")); // size_t
     EXPECT_EQ("hello 3235839742 world", makeString("hello ", static_cast<size_t>(0xc0defefe), " world"));
