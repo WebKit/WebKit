@@ -1,3 +1,16 @@
+2018-07-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Relax WebKit sandbox to permit proper App Store behavior
+        https://bugs.webkit.org/show_bug.cgi?id=187831
+        <rdar://problem/42047455>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The Mac App Store is unable to perform some gift card redemption tasks on macOS due to missing sandbox permissions.
+        This patch adds those permissions.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
 2018-07-20  Brady Eidson  <beidson@apple.com>
 
         Add WKNavigation/WKNavigationAction related SPI.
