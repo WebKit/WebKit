@@ -42,9 +42,10 @@ public:
     InlineBox(std::optional<ElementAttributes>, RenderStyle&&);
 
     void setTextContent(String text) { m_textContent = text; }
+    std::optional<String> textContent() const { return m_textContent; }
 
 private:
-    String m_textContent;
+    std::optional<String> m_textContent;
 };
 
 }

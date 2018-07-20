@@ -209,6 +209,18 @@ TextContentProvider::Iterator TextContentProvider::iterator()
     return Iterator(*this);
 }
 
+TextContentProvider::TextRunList TextContentProvider::textRuns()
+{
+    TextRunList textRunList;
+
+    auto textRunIterator = iterator();
+    while (auto textRum = textRunIterator.current()) {
+        textRunList.append(*textRum);
+        ++textRunIterator;
+    }
+    return textRunList;
+}
+
 void TextContentProvider::findNextRun()
 {
     m_simpleTextRunGenerator->findNextRun();

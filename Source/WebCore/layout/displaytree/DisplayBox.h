@@ -146,6 +146,8 @@ public:
 
     LayoutUnit contentBoxTop() const { return borderTop() + paddingTop(); }
     LayoutUnit contentBoxLeft() const { return borderLeft() + paddingLeft(); }
+    LayoutUnit contentBoxBottom() const { return contentBoxTop() + contentBoxHeight(); }
+    LayoutUnit contentBoxRight() const { return contentBoxLeft() + contentBoxWidth(); }
     LayoutUnit contentBoxHeight() const;
     LayoutUnit contentBoxWidth() const;
 

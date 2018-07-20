@@ -89,8 +89,10 @@ public:
 
         TextContentProvider& m_contentProvider;
     };
-
     Iterator iterator();
+
+    using TextRunList = Vector<TextRun>;
+    TextRunList textRuns();
 
 private:
     friend class Iterator;

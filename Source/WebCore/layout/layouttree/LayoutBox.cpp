@@ -141,7 +141,7 @@ const Container& Box::formattingContextRoot() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool Box::isDescendantOf(Container& container) const
+bool Box::isDescendantOf(const Container& container) const
 { 
     for (auto* ancestor = containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
         if (ancestor == &container)

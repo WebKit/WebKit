@@ -1,3 +1,29 @@
+2018-07-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Inline formatting context] Add basic text content handling.
+        https://bugs.webkit.org/show_bug.cgi?id=187860
+
+        Reviewed by Antti Koivisto.
+
+        InlineFormattingContext::layout() walks through the formatting root's descendant list in a post-order fashion and
+        feeds the TextContentProvider.
+        Eventually this would turn into a more generic loop where we stop and process the text content when finding a non-text content box (float, inline-box etc), but right now
+        this is about text content only.
+
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::contentBoxBottom const):
+        (WebCore::Display::Box::contentBoxRight const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        * layout/inlineformatting/textlayout/TextContentProvider.cpp:
+        (WebCore::Layout::TextContentProvider::textRuns): Add a helper function to support the case when all we need is just the run list in one go.
+        * layout/inlineformatting/textlayout/TextContentProvider.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isDescendantOf const):
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutInlineBox.h:
+        (WebCore::Layout::InlineBox::textContent const):
+
 2018-07-20  Youenn Fablet  <youenn@apple.com>
 
         FetchResponse should close its stream when loading finishes
