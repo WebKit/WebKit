@@ -1,3 +1,20 @@
+2018-07-20  Ryosuke Niwa  <rniwa@apple.com>
+
+        Picking a color from the color panel for typing attributes needs to inverse transform through color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=187846
+
+        Reviewed by Simon Fraser.
+
+        Fixed the bug that testRunner.execCommand was using the second argument as the value.
+
+        The second argument, aShowDefaultUI, should always be ignored in testRunner.execCommand,
+        and the third argument should be used as the value. DumpRenderTree's implementation does this already.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::execCommand):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2018-07-20  Dean Jackson  <dino@apple.com>
 
         Accidentally checked in the wrong version of these files.

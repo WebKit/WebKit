@@ -97,7 +97,7 @@ interface TestRunner {
 
     // Special DOM functions.
     void clearBackForwardList();
-    void execCommand(DOMString name, DOMString argument);
+    void execCommand(DOMString name, DOMString showUI, DOMString value);
     boolean isCommandEnabled(DOMString name);
     unsigned long windowCount();
 

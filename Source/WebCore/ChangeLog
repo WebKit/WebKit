@@ -1,3 +1,51 @@
+2018-07-20  Ryosuke Niwa  <rniwa@apple.com>
+
+        Picking a color from the color panel for typing attributes needs to inverse transform through color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=187846
+
+        Reviewed by Simon Fraser.
+
+        This patch refines the color inversion for editing introduced in r234005 so that font panels and WebKit embedders
+        can get and set inverted colors using attributed strings for a selected text in an editable region.
+
+        More specifically, when font panels or WebKit embedders set a font color or a background color via WebView's
+        _applyStyleToSelection and _applyEditingStyleToSelection, WebKit would automatically invert the color before inserting
+        into DOM so that the color visible to the user matches that's given to WebKit. Conversely,
+        [WebView attributedSubstringFromRange:nsRange] now return the color visible to the user, i.e. the color after
+        the color filter had been applied, so that some WebKit embedders can present the visually identical color to the user.
+
+        Because DOM never sees the color filter's effect in the computed style, etc... this patch reverts the change made to
+        StyleChange in r234005 to avoid inverting the color passed to execCommand. This makes editing apps which is unaware
+        of the dark mode or -apple-color-filter continue to function (because the color picker implemented in DOM will be
+        applied of the same color filter before being presented to the user).
+
+        Finally, this patch introduces a testing hook in applyCommandToFrame so that executing foreColor or backColor with
+        the soruce of CommandFromMenuOrKeyBinding would trigger the same code path as the one taken by Objective-C 
+
+        Tests: editing/execCommand/set-backColor-with-color-filter-from-scripts.html
+               editing/execCommand/set-foreColor-with-color-filter-from-scripts.html
+               editing/mac/attributed-string/attribute-string-for-copy-with-color-filter.html
+               editing/style/set-backColor-with-color-filter.html
+               editing/style/set-foreColor-with-color-filter.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::inverseTransformColorIfNeeded): Added.
+        (WebCore::StyleChange::StyleChange): Revert the change made in r234005 since this code is also used by execCommand
+        which is not desirable, and won't work for background color.
+        (WebCore::StyleChange::extractTextStyles): Ditto.
+        * editing/EditingStyle.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyStyleToSelection): Call EditingStyle::inverseTransformColorIfNeeded when ColorFilterMode is
+        set to InvertColor.
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame): Added the aforementioned testing hook.
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedStringFromRange): Take the color filtr into account. Some WebKit embedders use this
+        function to compute the font color in the selected text. Note that this function is mostly used for input methods
+        so the color doesn't really matter, and its implementation is distinct from that of HTMLConverter.
+
 2018-07-19  Jer Noble  <jer.noble@apple.com>
 
         HLS resources with remote subresources will not taint canvasses.

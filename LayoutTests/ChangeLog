@@ -1,3 +1,39 @@
+2018-07-20  Ryosuke Niwa  <rniwa@apple.com>
+
+        Picking a color from the color panel for typing attributes needs to inverse transform through color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=187846
+
+        Reviewed by Simon Fraser.
+
+        Added tests to make sure foreground or background colors specified in execCommand don't get inverted.
+
+        Fixed the test which was asserting that textInputController.attributedSubstringFromRange doesn't invert the color
+        since that's exactly what WebKit embedders uses to compute the style for color pickers.
+
+        Added new tests for copy & paste case using textInputController.legacyAttributedString.
+
+        * editing/execCommand/set-backColor-with-color-filter-from-scripts-expected.txt: Added.
+        * editing/execCommand/set-backColor-with-color-filter-from-scripts.html: Added.
+        * editing/execCommand/set-foreColor-with-color-filter-from-scripts-expected.txt: Added.
+        * editing/execCommand/set-foreColor-with-color-filter-from-scripts.html: Added.
+        * editing/mac/attributed-string/attrib-string-range-with-color-filter-expected.txt:
+        * editing/mac/attributed-string/attrib-string-range-with-color-filter.html: This test uses attributedSubstringFromRange,
+        which implemented using editingAttributedStringFromRange in WebCore. Since this is exactly what WebKit embedders uses
+        to compute the current style of the selected text, we need to invert the color here. This API's main clinet is input methods
+        so this shouldn't affect other editing operations, in particular, copy and paste, which uses HTMLConverter.
+        * editing/mac/attributed-string/attribute-string-for-copy-with-color-filter-expected.txt: Added.
+        * editing/mac/attributed-string/attribute-string-for-copy-with-color-filter.html: Added. Make sure the attributed string
+        generated for copy & paste does not invert foreground or background colors via textInputController.legacyAttributedString.
+        This is testing HTMLConverter, not editingAttributedStringFromRange, used by WebKit embedders and input methods.
+        * editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt:
+        * editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html: Added background color in the test.
+        * editing/style/set-backColor-with-color-filter-expected.txt: Added.
+        * editing/style/set-backColor-with-color-filter.html: Added.
+        * editing/style/set-foreColor-with-color-filter-expected.txt: Renamed from exec-command-foreColor-with-color-filter-expected.txt.
+        * editing/style/set-foreColor-with-color-filter.html: Renamed from exec-command-foreColor-with-color-filter.html.
+        Updated the test to use testRunner.execCommand which uses CommandFromMenuOrKeyBinding in applyCommandToFrame since we're
+        trying to test the code path taken by WebKit embedders and font panel here.
+
 2018-07-20  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(PSON?): [ WK2 ] http/tests/workers/service/client-*-page-cache.html LayoutTests are flaky

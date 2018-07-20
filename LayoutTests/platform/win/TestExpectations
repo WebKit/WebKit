@@ -98,7 +98,8 @@ webkit.org/b/173281 http/tests/security/mixedContent/insecure-image-redirects-to
 webkit.org/b/173281 http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html [ Skip ]
 webkit.org/b/173281 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html [ Skip ]
 webkit.org/b/173281 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.https.html [ Skip ]
-webkit.org/b/173281 editing/style/exec-command-foreColor-with-color-filter.html [ Skip ]
+webkit.org/b/173281 editing/style/set-foreColor-with-color-filter.html [ Skip ]
+webkit.org/b/173281 editing/style/set-backColor-with-color-filter.html [ Skip ]
 
 # TODO HW filters not yet supported on Windows
 webkit.org/b/74716 css3/filters/effect-blur-hw.html [ Skip ]

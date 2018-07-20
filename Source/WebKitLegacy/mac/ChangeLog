@@ -1,3 +1,16 @@
+2018-07-20  Ryosuke Niwa  <rniwa@apple.com>
+
+        Picking a color from the color panel for typing attributes needs to inverse transform through color-filter
+        https://bugs.webkit.org/show_bug.cgi?id=187846
+
+        Reviewed by Simon Fraser.
+
+        Invert the filtered font and background colors when using font panels, font pasteboard, and other Objective-C APIs.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _applyStyleToSelection:withUndoAction:]): Share code with _applyEditingStyleToSelection.
+        (-[WebHTMLView _applyEditingStyleToSelection:withUndoAction:]):
+
 2018-07-11  Dean Jackson  <dino@apple.com>
 
         Allow removal of white backgrounds
