@@ -174,7 +174,7 @@ std::optional<Seconds> DocumentTimeline::currentTime()
         // fire syncronously if no JS is running.
         scheduleInvalidationTaskIfNeeded();
         m_waitingOnVMIdle = true;
-        m_document->vm().whenIdle([this]() {
+        m_document->vm().whenIdle([this, protectedThis = makeRefPtr(this)]() {
             m_waitingOnVMIdle = false;
             maybeClearCachedCurrentTime();
         });
