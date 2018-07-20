@@ -1,5 +1,27 @@
 2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Fold GetByVal if Array is CoW
+        https://bugs.webkit.org/show_bug.cgi?id=186459
+
+        Reviewed by Saam Barati.
+
+        CoW indexing type means that we now tracks the changes in CoW Array by structure. So DFG has a chance to
+        fold GetByVal if the given array is CoW. This patch folds GetByVal onto the CoW Array. If the structure
+        is watched and the butterfly is JSImmutableButterfly, we can load the value from this butterfly.
+
+        This can be useful since these CoW arrays are used for a storage for constants. Constant-indexed access
+        to these constant arrays can be folded into an actual constant by this patch.
+
+                                           baseline                  patched
+
+        template_string.es6          4993.9853+-147.5308   ^    824.1685+-44.1839       ^ definitely 6.0594x faster
+        template_string_tag.es5        67.0822+-2.0100     ^      9.3540+-0.5376        ^ definitely 7.1715x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Remove cellLock in JSObject::convertContiguousToArrayStorage
         https://bugs.webkit.org/show_bug.cgi?id=186602
 

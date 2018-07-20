@@ -1,3 +1,39 @@
+2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Fold GetByVal if Array is CoW
+        https://bugs.webkit.org/show_bug.cgi?id=186459
+
+        Reviewed by Saam Barati.
+
+        * stress/folding-get-by-val-with-immutable-butterfly-out-of-bounds-foldable.js: Added.
+        (shouldBe):
+        (test0):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+        * stress/folding-get-by-val-with-immutable-butterfly-out-of-bounds.js: Added.
+        (shouldBe):
+        (test0):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+        * stress/folding-get-by-val-with-immutable-butterfly-with-types.js: Added.
+        (shouldBe):
+        (test0):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+        * stress/folding-get-by-val-with-immutable-butterfly.js: Added.
+        (shouldBe):
+        (checking):
+        (test):
+
 2018-07-20  Saam Barati  <sbarati@apple.com>
 
         CompareEq should be using KnownOtherUse instead of OtherUse
