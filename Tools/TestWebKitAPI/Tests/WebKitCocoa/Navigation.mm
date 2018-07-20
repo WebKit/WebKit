@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import <WebKit/WKBackForwardListPrivate.h>
+#import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
@@ -215,6 +216,42 @@ TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
     TestWebKitAPI::Util::run(&isDone);
 
     ASSERT_TRUE([delegate decidedPolicyForBackForwardNavigation]);
+}
+
+@interface NavigationActionHasNavigationDelegate : NSObject <WKNavigationDelegate> {
+@public
+    WKNavigation *navigation;
+}
+@end
+
+@implementation NavigationActionHasNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    isDone = true;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    EXPECT_TRUE(!!navigationAction._mainFrameNavigation);
+    EXPECT_EQ(navigationAction._mainFrameNavigation, navigation);
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+@end
+
+TEST(WKNavigation, NavigationActionHasNavigation)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr<NavigationActionHasNavigationDelegate> delegate = adoptNS([[NavigationActionHasNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,1"]];
+
+    isDone = false;
+    delegate->navigation = [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
 }
 
 @interface ClientRedirectNavigationDelegate : NSObject<WKNavigationDelegatePrivate>

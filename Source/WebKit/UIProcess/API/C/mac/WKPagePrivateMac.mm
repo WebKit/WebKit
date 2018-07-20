@@ -30,6 +30,7 @@
 #import "PageLoadStateObserver.h"
 #import "WKAPICast.h"
 #import "WKNSURLExtras.h"
+#import "WKNavigationInternal.h"
 #import "WKViewInternal.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
@@ -137,6 +138,19 @@ bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 
     return webPageProxy->process().processPool().isURLKnownHSTSHost(toImpl(url)->string(), privateBrowsingEnabled);
 }
+
+#if !TARGET_OS_IPHONE && (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
+WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef pageRef, WKURLRequestRef urlRequestRef)
+{
+    auto resourceRequest = toImpl(urlRequestRef)->resourceRequest();
+    auto navigation = toImpl(pageRef)->loadRequest(WTFMove(resourceRequest));
+
+    if (!navigation)
+        return nil;
+
+    return [API::wrapper(*navigation.leakRef()) autorelease];
+}
+#endif
 
 #if PLATFORM(MAC)
 bool WKPageIsPlayingVideoInEnhancedFullscreen(WKPageRef pageRef)

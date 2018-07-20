@@ -59,7 +59,12 @@ WK_EXPORT _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef page);
 WK_EXPORT void WKPageSetFullscreenDelegate(WKPageRef page, id <_WKFullscreenDelegate>);
 WK_EXPORT id <_WKFullscreenDelegate> WKPageGetFullscreenDelegate(WKPageRef page);
 
+#if !TARGET_OS_IPHONE && (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
+@class WKNavigation;
+WK_EXPORT WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef page, WKURLRequestRef request);
 #endif
+
+#endif // __OBJC__
 
 WK_EXPORT bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url);
 

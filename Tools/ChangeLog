@@ -1,3 +1,15 @@
+2018-07-20  Brady Eidson  <beidson@apple.com>
+
+        Add WKNavigation/WKNavigationAction related SPI.
+        https://bugs.webkit.org/show_bug.cgi?id=187826
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (-[NavigationActionHasNavigationDelegate webView:didFinishNavigation:]):
+        (-[NavigationActionHasNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+
 2018-07-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233943, r233988, r234004, and

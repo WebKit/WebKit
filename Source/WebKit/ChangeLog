@@ -1,3 +1,26 @@
+2018-07-20  Brady Eidson  <beidson@apple.com>
+
+        Add WKNavigation/WKNavigationAction related SPI.
+        https://bugs.webkit.org/show_bug.cgi?id=187826
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/APINavigationAction.h:
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageLoadURLRequestReturningNavigation):
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction _mainFrameNavigation]):
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+
 2018-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] enable-media-capabilities websetting

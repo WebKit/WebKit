@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIFrameInfo.h"
+#include "APINavigation.h"
 #include "APIObject.h"
 #include "APIUserInitiatedAction.h"
 #include "NavigationActionData.h"
@@ -36,9 +37,9 @@ namespace API {
 
 class NavigationAction final : public ObjectImpl<Object::Type::NavigationAction> {
 public:
-    static Ref<NavigationAction> create(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
+    template<typename... Args> static Ref<NavigationAction> create(Args&&... args)
     {
-        return adoptRef(*new NavigationAction(WTFMove(navigationActionData), sourceFrame, targetFrame, targetFrameName, WTFMove(request), originalURL, shouldOpenAppLinks, WTFMove(userInitiatedAction)));
+        return adoptRef(*new NavigationAction(std::forward<Args>(args)...));
     }
 
     FrameInfo* sourceFrame() const { return m_sourceFrame.get(); }
@@ -62,8 +63,10 @@ public:
     bool isProcessingUserGesture() const { return m_userInitiatedAction; }
     UserInitiatedAction* userInitiatedAction() const { return m_userInitiatedAction.get(); }
 
+    Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }
+
 private:
-NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
+    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction, API::Navigation* mainFrameNavigation)
         : m_sourceFrame(sourceFrame)
         , m_targetFrame(targetFrame)
         , m_targetFrameName(targetFrameName)
@@ -72,6 +75,12 @@ NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::Frame
         , m_shouldOpenAppLinks(shouldOpenAppLinks)
         , m_userInitiatedAction(WTFMove(userInitiatedAction))
         , m_navigationActionData(WTFMove(navigationActionData))
+        , m_mainFrameNavigation(mainFrameNavigation)
+    {
+    }
+
+    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
+        : NavigationAction(WTFMove(navigationActionData), sourceFrame, targetFrame, targetFrameName, WTFMove(request), originalURL, shouldOpenAppLinks, WTFMove(userInitiatedAction), nullptr)
     {
     }
 
@@ -87,6 +96,7 @@ NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::Frame
     RefPtr<UserInitiatedAction> m_userInitiatedAction;
 
     WebKit::NavigationActionData m_navigationActionData;
+    RefPtr<Navigation> m_mainFrameNavigation;
 };
 
 } // namespace API
