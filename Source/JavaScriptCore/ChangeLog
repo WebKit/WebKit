@@ -1,3 +1,17 @@
+2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove cellLock in JSObject::convertContiguousToArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=186602
+
+        Reviewed by Saam Barati.
+
+        JSObject::convertContiguousToArrayStorage's cellLock() is not necessary since we do not
+        change the part of the butterfly, length etc. We prove that our procedure is safe, and
+        drop the cellLock() here.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertContiguousToArrayStorage):
+
 2018-07-20  Saam Barati  <sbarati@apple.com>
 
         CompareEq should be using KnownOtherUse instead of OtherUse
