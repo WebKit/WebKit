@@ -1,3 +1,7 @@
+2018-07-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Revert r233926. rdar://problem/42446531
+
 2018-07-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r234041. rdar://problem/42417113

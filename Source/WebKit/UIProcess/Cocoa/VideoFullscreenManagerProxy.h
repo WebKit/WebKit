@@ -89,11 +89,6 @@ private:
     UIViewController *presentingViewController() final;
     UIViewController *createVideoFullscreenViewController(AVPlayerViewController*) final;
 #endif
-    void willEnterPictureInPicture() final;
-    void didEnterPictureInPicture() final;
-    void failedToEnterPictureInPicture() final;
-    void willExitPictureInPicture() final;
-    void didExitPictureInPicture() final;
 
     // VideoFullscreenChangeObserver
     void requestUpdateInlineRect() final;
@@ -131,8 +126,6 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool isPlayingVideoInEnhancedFullscreen() const;
 #endif
-
-    PlatformVideoFullscreenInterface* controlsManagerInterface();
 
 private:
     friend class VideoFullscreenModelContext;

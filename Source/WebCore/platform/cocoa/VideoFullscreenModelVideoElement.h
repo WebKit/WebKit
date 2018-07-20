@@ -80,12 +80,6 @@ private:
     void setHasVideo(bool);
     void setVideoDimensions(const FloatSize&);
 
-    void willEnterPictureInPicture() override;
-    void didEnterPictureInPicture() override;
-    void failedToEnterPictureInPicture() override;
-    void willExitPictureInPicture() override;
-    void didExitPictureInPicture() override;
-
     static const Vector<WTF::AtomicString>& observedEventNames();
     const WTF::AtomicString& eventNameAll();
 

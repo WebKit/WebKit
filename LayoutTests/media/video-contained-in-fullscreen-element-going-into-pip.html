@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Test video contained in fullscreen element going into pip should exit fullscreen</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+        if (window.internals)
+            window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+        function init()
+        {
+            findMediaElement();
+            video.addEventListener('canplaythrough', oncanplaythrough);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function oncanplaythrough()
+        {
+            if (!('webkitSupportsPresentationMode' in video && 'webkitPresentationMode' in video)) {
+                failTest("Presentation mode is not supported in this video element.")
+                return;
+            }
+
+            consoleWrite("Container div going into Full Screen");
+            videoContainer.addEventListener('webkitfullscreenchange', onfullscreenchange);
+            runWithKeyDown(function(){ videoContainer.webkitRequestFullscreen(); });
+        }
+
+        function onfullscreenchange()
+        {
+            testExpected("document.webkitCurrentFullScreenElement", videoContainer);
+            testExpected("video.webkitPresentationMode", "inline")
+
+            videoContainer.removeEventListener('webkitfullscreenchange', onfullscreenchange);
+
+            consoleWrite("Video going into Picture-in-Picture");
+            video.addEventListener('webkitpresentationmodechanged', onpresentationmodechanged);
+            runWithKeyDown(function() { video.webkitSetPresentationMode("picture-in-picture"); });
+        }
+
+        function onpresentationmodechanged()
+        {
+            consoleWrite("Entered Picture-in-Picture from Full Screen");
+            testExpected("document.webkitCurrentFullScreenElement", null);
+            testExpected("video.webkitPresentationMode", "picture-in-picture");
+
+            endTest();
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    Tests video contained in fullscreen element going into pip should exit fullscreen<br>
+    <div id="videoContainer">
+        <video controls></video>
+    </div>
+</body>
+</html>
+
