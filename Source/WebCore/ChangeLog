@@ -1,3 +1,20 @@
+2018-07-20  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r233969): ASSERT in -[WebAVPlayerLayer setVideoGravity:]
+        https://bugs.webkit.org/show_bug.cgi?id=187814
+        <rdar://problem/42391869>
+
+        Reviewed by Eric Carlson.
+
+        After r233969 caused models to disassociate themselves from interfaces, it is now possible that an
+        VideoFullscreenInterfaceAVKit can have a nil model. We should null-check, not ASSERT, now that the
+        assertion no longer holds true.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]):
+        (-[WebAVPlayerLayer resolveBounds]):
+        (-[WebAVPlayerLayer setVideoGravity:]):
+
 2018-07-19  Antoine Quint  <graouts@apple.com>
 
         Flaky crash in AnimationTimeline::cancelOrRemoveDeclarativeAnimation
