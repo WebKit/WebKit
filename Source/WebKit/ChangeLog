@@ -1,5 +1,31 @@
 2018-07-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233925. rdar://problem/42354959
+
+    Dissociate the VideoFullscreenInterface from its VideoFullscreenModel before removing it from the manager
+    https://bugs.webkit.org/show_bug.cgi?id=187775
+    <rdar://problem/42343229>
+    
+    Reviewed by Jon Lee.
+    
+    * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+    (WebKit::VideoFullscreenManagerProxy::didCleanupFullscreen):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233925 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-18  Jer Noble  <jer.noble@apple.com>
+
+            Dissociate the VideoFullscreenInterface from its VideoFullscreenModel before removing it from the manager
+            https://bugs.webkit.org/show_bug.cgi?id=187775
+            <rdar://problem/42343229>
+
+            Reviewed by Jon Lee.
+
+            * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+            (WebKit::VideoFullscreenManagerProxy::didCleanupFullscreen):
+
+2018-07-20  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234020. rdar://problem/42417121
 
     [ITP] Crash under ResourceLoadStatisticsMemoryStore::removeDataRecords()
