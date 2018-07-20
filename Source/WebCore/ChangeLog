@@ -1,3 +1,33 @@
+2018-07-20  Youenn Fablet  <youenn@apple.com>
+
+        FetchResponse should close its stream when loading finishes
+        https://bugs.webkit.org/show_bug.cgi?id=187790
+
+        Reviewed by Chris Dumez.
+
+        It simplifies for a FetchResponse to push all its data into its stream if already created at end of load time.
+        Did some refactoring in FetchBodyOwner to have a cleaner relationship with the stream source.
+        Did a minor refactoring to expose the error description when loading fails as part of the rejected promise.
+        This is consistent to errors sent back through callbacks.
+
+        Covered by existing tests.
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::~FetchBodyOwner):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchBodySource.cpp:
+        (WebCore::FetchBodySource::FetchBodySource):
+        (WebCore::FetchBodySource::setActive):
+        (WebCore::FetchBodySource::setInactive):
+        (WebCore::FetchBodySource::doStart):
+        (WebCore::FetchBodySource::doPull):
+        (WebCore::FetchBodySource::doCancel):
+        (WebCore::FetchBodySource::cleanBodyOwner):
+        * Modules/fetch/FetchBodySource.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::BodyLoader::didFail):
+
 2018-07-20  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r233969): ASSERT in -[WebAVPlayerLayer setVideoGravity:]
