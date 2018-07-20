@@ -1,3 +1,24 @@
+2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] A bit performance improvement for Object.assign by cleaning up code
+        https://bugs.webkit.org/show_bug.cgi?id=187852
+
+        Reviewed by Saam Barati.
+
+        We clean up Object.assign code a bit.
+
+        1. Vector and MarkedArgumentBuffer are extracted out from the loop since repeatedly creating MarkedArgumentBuffer is costly.
+        2. canDoFastPath is not necessary. Restructuring the code to clean up things.
+
+        It improves the performance a bit.
+
+                                    baseline                  patched
+
+        object-assign.es6      237.7719+-5.5175          231.2856+-4.6907          might be 1.0280x faster
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+
 2018-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] jsc_context_evaluate_in_object() should receive an instance when a JSCClass is given

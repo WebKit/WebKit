@@ -304,6 +304,8 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
     // https://bugs.webkit.org/show_bug.cgi?id=185358
     bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(vm, target) && target->canPerformFastPutInlineExcludingProto(vm);
 
+    Vector<RefPtr<UniquedStringImpl>, 8> properties;
+    MarkedArgumentBuffer values;
     unsigned argsCount = exec->argumentCount();
     for (unsigned i = 1; i < argsCount; ++i) {
         JSValue sourceValue = exec->uncheckedArgument(i);
@@ -318,66 +320,59 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
-            bool canDoFastPath;
-            Vector<RefPtr<UniquedStringImpl>, 8> properties;
-            MarkedArgumentBuffer values;
-            {
-                auto canPerformFastPropertyEnumerationForObjectAssign = [] (Structure* structure) {
-                    if (structure->typeInfo().overridesGetOwnPropertySlot())
-                        return false;
-                    if (structure->typeInfo().overridesGetPropertyNames())
-                        return false;
-                    // FIXME: Indexed properties can be handled.
-                    // https://bugs.webkit.org/show_bug.cgi?id=185358
-                    if (hasIndexedProperties(structure->indexingType()))
-                        return false;
-                    if (structure->hasGetterSetterProperties())
-                        return false;
-                    if (structure->isUncacheableDictionary())
-                        return false;
-                    // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
-                    if (structure->hasUnderscoreProtoPropertyExcludingOriginalProto())
-                        return false;
-                    return true;
-                };
+            auto canPerformFastPropertyEnumerationForObjectAssign = [] (Structure* structure) {
+                if (structure->typeInfo().overridesGetOwnPropertySlot())
+                    return false;
+                if (structure->typeInfo().overridesGetPropertyNames())
+                    return false;
+                // FIXME: Indexed properties can be handled.
+                // https://bugs.webkit.org/show_bug.cgi?id=185358
+                if (hasIndexedProperties(structure->indexingType()))
+                    return false;
+                if (structure->hasGetterSetterProperties())
+                    return false;
+                if (structure->isUncacheableDictionary())
+                    return false;
+                // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
+                if (structure->hasUnderscoreProtoPropertyExcludingOriginalProto())
+                    return false;
+                return true;
+            };
 
-                Structure* structure = source->structure(vm);
-                canDoFastPath = canPerformFastPropertyEnumerationForObjectAssign(structure);
-                if (canDoFastPath) {
-                    // |source| Structure does not have any getters. And target can perform fast put.
-                    // So enumerating properties and putting properties are non observable.
+            if (canPerformFastPropertyEnumerationForObjectAssign(source->structure(vm))) {
+                // |source| Structure does not have any getters. And target can perform fast put.
+                // So enumerating properties and putting properties are non observable.
 
-                    // FIXME: It doesn't seem like we should have to do this in two phases, but
-                    // we're running into crashes where it appears that source is transitioning
-                    // under us, and even ends up in a state where it has a null butterfly. My
-                    // leading hypothesis here is that we fire some value replacement watchpoint
-                    // that ends up transitioning the structure underneath us.
-                    // https://bugs.webkit.org/show_bug.cgi?id=187837
+                // FIXME: It doesn't seem like we should have to do this in two phases, but
+                // we're running into crashes where it appears that source is transitioning
+                // under us, and even ends up in a state where it has a null butterfly. My
+                // leading hypothesis here is that we fire some value replacement watchpoint
+                // that ends up transitioning the structure underneath us.
+                // https://bugs.webkit.org/show_bug.cgi?id=187837
 
-                    structure->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
-                        if (entry.attributes & PropertyAttribute::DontEnum)
-                            return true;
-
-                        PropertyName propertyName(entry.key);
-                        if (propertyName.isPrivateName())
-                            return true;
-                        
-                        properties.append(entry.key);
-                        values.appendWithCrashOnOverflow(source->getDirect(entry.offset));
-
+                // Do not clear since Vector::clear shrinks the backing store.
+                properties.resize(0);
+                values.clear();
+                source->structure(vm)->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
+                    if (entry.attributes & PropertyAttribute::DontEnum)
                         return true;
-                    });
-                }
-            }
 
-            if (canDoFastPath) {
+                    PropertyName propertyName(entry.key);
+                    if (propertyName.isPrivateName())
+                        return true;
+
+                    properties.append(entry.key);
+                    values.appendWithCrashOnOverflow(source->getDirect(entry.offset));
+
+                    return true;
+                });
+
                 for (size_t i = 0; i < properties.size(); ++i) {
                     // FIXME: We could put properties in a batching manner to accelerate Object.assign more.
                     // https://bugs.webkit.org/show_bug.cgi?id=185358
                     PutPropertySlot putPropertySlot(target, true);
                     target->putOwnDataProperty(vm, properties[i].get(), values.at(i), putPropertySlot);
                 }
-
                 continue;
             }
         }
