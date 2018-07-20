@@ -100,6 +100,8 @@ JSBench
 ARES-6
 RexBench
 
+LaunchTime
+
 # Used for iOS testing
 Animation/css-animation.html
 Animation/css-accelerated-animation.html
