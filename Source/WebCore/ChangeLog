@@ -1,3 +1,16 @@
+2018-07-20  Zalan Bujtas  <zalan@apple.com>
+
+        Update FrameView::paintContents to use release logging.
+        https://bugs.webkit.org/show_bug.cgi?id=187854
+        <rdar://problem/42432371>
+
+        Reviewed by Simon Fraser.
+
+        Adding release logging helps identifying blank content cases. 
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
 2018-07-20  Jer Noble  <jer.noble@apple.com>
 
         First Auto-PiP from Fullscreen too small & animation blocks
