@@ -152,31 +152,3 @@ class TestSummaryProviders(unittest.TestCase):
         self.assertIsNotNone(variable)
         summary = lldb_webkit.WTFVector_SummaryProvider(variable, {})
         self.assertEqual(summary, "{ size = 1, capacity = 16 }")
-
-    # MARK: WebCoreColor_SummaryProvider test cases
-
-    def serial_test_WebCoreColorProvider_invalid_color(self):
-        variable = self._sbFrame.FindVariable('invalidColor');
-        summary = lldb_webkit.WebCoreColor_SummaryProvider(variable, {})
-        self.assertEqual(summary, "{ invalid }")
-
-    def serial_test_WebCoreColorProvider_extended_color(self):
-        variable = self._sbFrame.FindVariable('extendedColor');
-        summary = lldb_webkit.WebCoreColor_SummaryProvider(variable, {})
-        self.assertEqual(summary, "{ color(display-p3 0.10 0.20 0.30 / 0.40) }")
-
-    def serial_test_WebCoreColorProvider_rgb_color(self):
-        variable = self._sbFrame.FindVariable('rgbColor');
-        summary = lldb_webkit.WebCoreColor_SummaryProvider(variable, {})
-        self.assertEqual(summary, "{ rgba(255, 128, 64, 1.00) }")
-
-    def serial_test_WebCoreColorProvider_rgba_color(self):
-        variable = self._sbFrame.FindVariable('rgbaColor');
-        summary = lldb_webkit.WebCoreColor_SummaryProvider(variable, {})
-        self.assertEqual(summary, "{ rgba(255, 128, 64, 0.50) }")
-
-    def serial_test_WebCoreColorProvider_semantic_color(self):
-        variable = self._sbFrame.FindVariable('semanticColor');
-        summary = lldb_webkit.WebCoreColor_SummaryProvider(variable, {})
-        self.assertEqual(summary, "{ rgba(255, 255, 255, 1.00) semantic }")
-

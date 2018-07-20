@@ -44,7 +44,6 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFMediaTime_SummaryProvider WTF::MediaTime')
     debugger.HandleCommand('type synthetic add -x "WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
     debugger.HandleCommand('type synthetic add -x "WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
-    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreColor_SummaryProvider WebCore::Color')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutUnit_SummaryProvider WebCore::LayoutUnit')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutSize_SummaryProvider WebCore::LayoutSize')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutPoint_SummaryProvider WebCore::LayoutPoint')
@@ -95,11 +94,6 @@ def WTFMediaTime_SummaryProvider(valobj, dict):
     if provider.hasDoubleValue():
         return "{ %f }" % (provider.timeValueAsDouble())
     return "{ %d/%d, %f }" % (provider.timeValue(), provider.timeScale(), float(provider.timeValue()) / provider.timeScale())
-
-
-def WebCoreColor_SummaryProvider(valobj, dict):
-    provider = WebCoreColorProvider(valobj, dict)
-    return "{ %s }" % provider.to_string()
 
 
 def WebCoreURL_SummaryProvider(valobj, dict):
@@ -313,58 +307,6 @@ class WTFStringProvider:
         if not impl:
             return u""
         return impl.to_string()
-
-
-class WebCoreColorProvider:
-    "Print a WebCore::Color"
-    def __init__(self, valobj, dict):
-        self.valobj = valobj
-
-    def _is_extended(self, rgba_and_flags):
-        return not bool(rgba_and_flags & 0x1)
-
-    def _is_valid(self, rgba_and_flags):
-        # Assumes not extended.
-        return bool(rgba_and_flags & 0x2)
-
-    def _is_semantic(self, rgba_and_flags):
-        # Assumes not extended.
-        return bool(rgba_and_flags & 0x4)
-
-    def _to_string_extended(self):
-        extended_color = self.valobj.GetChildMemberWithName('m_colorData').GetChildMemberWithName('extendedColor').Dereference()
-        profile = extended_color.GetChildMemberWithName('m_colorSpace').GetValue()
-        if profile == 'ColorSpaceSRGB':
-            profile = 'srgb'
-        elif profile == 'ColorSpaceDisplayP3':
-            profile = 'display-p3'
-        else:
-            profile = 'unknown'
-        red = float(extended_color.GetChildMemberWithName('m_red').GetValue())
-        green = float(extended_color.GetChildMemberWithName('m_green').GetValue())
-        blue = float(extended_color.GetChildMemberWithName('m_blue').GetValue())
-        alpha = float(extended_color.GetChildMemberWithName('m_alpha').GetValue())
-        return "color(%s %1.2f %1.2f %1.2f / %1.2f)" % (profile, red, green, blue, alpha)
-
-    def to_string(self):
-        rgba_and_flags = self.valobj.GetChildMemberWithName('m_colorData').GetChildMemberWithName('rgbaAndFlags').GetValueAsUnsigned(0)
-
-        if self._is_extended(rgba_and_flags):
-            return self._to_string_extended()
-
-        if not self._is_valid(rgba_and_flags):
-            return 'invalid'
-
-        color = rgba_and_flags >> 32
-        red = (color >> 16) & 0xFF
-        green = (color >> 8) & 0xFF
-        blue = color & 0xFF
-        alpha = ((color >> 24) & 0xFF) / 255.0
-
-        semantic = ' semantic' if self._is_semantic(rgba_and_flags) else ""
-
-        result = 'rgba(%d, %d, %d, %1.2f)%s' % (red, green, blue, alpha, semantic)
-        return result
 
 
 class WebCoreLayoutUnitProvider:

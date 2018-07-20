@@ -23,11 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WEBCORE_EXPORT
-
 #include "DumpClassLayoutTesting.h"
 #include <stdio.h>
-#include <WebCore/Color.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,12 +60,6 @@ static void testSummaryProviders()
     Vector<int> aVectorWithOneItem;
     aVectorWithOneItem.reserveCapacity(16);
     aVectorWithOneItem.append(1);
-
-    auto invalidColor = WebCore::Color { };
-    auto rgbColor = WebCore::Color { 255, 128, 64 };
-    auto rgbaColor = WebCore::Color { 255, 128, 64, 128 };
-    auto extendedColor = WebCore::Color { 0.1, 0.2, 0.3, 0.4, WebCore::ColorSpaceDisplayP3 };
-    auto semanticColor = WebCore::Color { WebCore::makeRGBA(255, 255, 255, 255), WebCore::Color::Semantic };
 
     breakForTestingSummaryProviders();
 }
