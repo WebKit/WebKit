@@ -1,3 +1,17 @@
+2018-07-19  Antoine Quint  <graouts@apple.com>
+
+        Flaky crash in AnimationTimeline::cancelOrRemoveDeclarativeAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=187530
+        <rdar://problem/42095186>
+
+        Reviewed by Dean Jackson.
+
+        Adjust an existing test which assumes an animation might be running when it's not really, so we test the animation is
+        not running using an alternate method.
+
+        * animations/keyframes-dynamic-expected.txt:
+        * animations/keyframes-dynamic.html:
+
 2018-07-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark storage/indexeddb/modern/opendatabase-after-storage-crash.html as flaky.

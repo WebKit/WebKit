@@ -27,8 +27,6 @@
       ["anim1", 0.7, "box1", "left", 200, 1],
       ["anim2", 0.3, "box2", "left", 100, 1],
       ["anim2", 0.7, "box2", "left", 200, 1],
-      ["anim3", 0.3, "box3", "left", 0, 0],
-      ["anim3", 0.7, "box3", "left", 0, 0],
     ];
 
     function addKeyframes() {
@@ -64,7 +62,11 @@
 
         style.sheet.removeRule(box3Index);
 
-        runAnimationTest(expectedValues);
+        runAnimationTest(expectedValues, () => {
+            setTimeout(() => {
+                document.getElementById("result").appendChild(document.createTextNode(`${!box3.getAnimations().length ? "PASS" : "FAIL"} - Animation is not running on box3.`));
+            })
+        });
     }
     
     window.addEventListener('DOMContentLoaded', addKeyframes, false);

@@ -460,6 +460,11 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     return state.takeStyle();
 }
 
+bool StyleResolver::isAnimationNameValid(const String& name)
+{
+    return m_keyframesRuleMap.find(AtomicString(name).impl()) != m_keyframesRuleMap.end();
+}
+
 void StyleResolver::keyframeStylesForAnimation(const Element& element, const RenderStyle* elementStyle, KeyframeList& list)
 {
     list.clear();

@@ -3,6 +3,4 @@ PASS - "left" property for "box1" element at 0.3s saw something close to: 100
 PASS - "left" property for "box1" element at 0.7s saw something close to: 200
 PASS - "left" property for "box2" element at 0.3s saw something close to: 100
 PASS - "left" property for "box2" element at 0.7s saw something close to: 200
-PASS - "left" property for "box3" element at 0.3s saw something close to: 0
-PASS - "left" property for "box3" element at 0.7s saw something close to: 0
 

@@ -161,6 +161,7 @@ public:
 
     void setNewStateWithElement(const Element&);
     std::unique_ptr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleRuleKeyframe*, KeyframeValue&);
+    bool isAnimationNameValid(const String&);
 
 public:
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).

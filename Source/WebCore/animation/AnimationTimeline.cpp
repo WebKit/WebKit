@@ -39,6 +39,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "StylePropertyShorthand.h"
+#include "StyleResolver.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
@@ -195,6 +196,23 @@ void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
         cssAnimation->cancel();
 }
 
+static bool shouldConsiderAnimation(Element& element, const Animation& animation)
+{
+    if (!animation.isValidAnimation())
+        return false;
+
+    static NeverDestroyed<const String> animationNameNone(MAKE_STATIC_STRING_IMPL("none"));
+
+    auto& name = animation.name();
+    if (name == animationNameNone || name.isEmpty())
+        return false;
+
+    if (auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal()))
+        return styleScope->resolver().isAnimationNameValid(name);
+
+    return false;
+}
+
 void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle)
 {
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
@@ -209,15 +227,13 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
     if (currentStyle && currentStyle->hasAnimations() && afterChangeStyle.hasAnimations() && *(currentStyle->animations()) == *(afterChangeStyle.animations()))
         return;
 
-    static NeverDestroyed<const String> animationNameNone(MAKE_STATIC_STRING_IMPL("none"));
-
     // First, compile the list of animation names that were applied to this element up to this point.
     HashSet<String> namesOfPreviousAnimations;
     if (currentStyle && currentStyle->hasAnimations()) {
         auto* previousAnimations = currentStyle->animations();
         for (size_t i = 0; i < previousAnimations->size(); ++i) {
             auto& previousAnimation = previousAnimations->animation(i);
-            if (previousAnimation.isValidAnimation() && previousAnimation.name() != animationNameNone)
+            if (shouldConsiderAnimation(element, previousAnimation))
                 namesOfPreviousAnimations.add(previousAnimation.name());
         }
     }
@@ -236,7 +252,7 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
                 // created a CSSAnimation object for it and need to ensure that this CSSAnimation is backed by the current
                 // animation object for this animation name.
                 cssAnimationsByName.get(name)->setBackingAnimation(currentAnimation);
-            } else if (currentAnimation.isValidAnimation() && name != animationNameNone) {
+            } else if (shouldConsiderAnimation(element, currentAnimation)) {
                 // Otherwise we are dealing with a new animation name and must create a CSSAnimation for it.
                 cssAnimationsByName.set(name, CSSAnimation::create(element, currentAnimation, currentStyle, afterChangeStyle));
             }

@@ -871,8 +871,6 @@ void KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes()
 
     auto cssAnimation = downcast<CSSAnimation>(animation());
     auto& backingAnimation = cssAnimation->backingAnimation();
-    if (backingAnimation.name().isEmpty())
-        return;
 
     KeyframeList keyframeList(backingAnimation.name());
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
