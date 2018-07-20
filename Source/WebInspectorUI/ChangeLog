@@ -1,3 +1,18 @@
+2018-07-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Layers visualization shouldn't select on mousedown
+        https://bugs.webkit.org/show_bug.cgi?id=187488
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.initialLayout):
+        (WI.Layers3DContentView.prototype._canvasMouseDown):
+        (WI.Layers3DContentView.prototype._canvasMouseUp):
+        Don't update selection on mousedown, update on mouseup!
+        Specifically, only update when mousedown & mouseup targets are the same and mousemove hasn't been triggered.
+
 2018-07-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: poor contrast for Search Tab's "the page's content has changed" message

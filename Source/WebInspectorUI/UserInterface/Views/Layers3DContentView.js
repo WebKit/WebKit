@@ -45,6 +45,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._layers = [];
         this._layerGroupsById = new Map;
         this._selectedLayerGroup = null;
+        this._candidateSelection = null;
         this._nodeToSelect = null;
 
         this._renderer = null;
@@ -53,7 +54,6 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._scene = null;
         this._boundingBox = null;
         this._raycaster = null;
-        this._mouse = null;
         this._animationFrameRequestId = null;
         this._documentNode = null;
 
@@ -164,8 +164,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._boundingBox = new THREE.Box3;
 
         this._raycaster = new THREE.Raycaster;
-        this._mouse = new THREE.Vector2;
         this._renderer.domElement.addEventListener("mousedown", this._canvasMouseDown.bind(this));
+        this._renderer.domElement.addEventListener("mouseup", this._canvasMouseUp.bind(this));
 
         this.element.appendChild(this._renderer.domElement);
 
@@ -310,13 +310,29 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     _canvasMouseDown(event)
     {
-        this._mouse.x = (event.offsetX / event.target.width) * 2 - 1;
-        this._mouse.y = -(event.offsetY / event.target.height) * 2 + 1;
-        this._raycaster.setFromCamera(this._mouse, this._camera);
+        let x = (event.offsetX / event.target.offsetWidth) * 2 - 1;
+        let y = -(event.offsetY / event.target.offsetHeight) * 2 + 1;
+        this._raycaster.setFromCamera(new THREE.Vector2(x, y), this._camera);
 
         const recursive = true;
         let intersects = this._raycaster.intersectObjects(this._scene.children, recursive);
-        let selection = intersects.length ? intersects[0].object.parent : null;
+        let layerGroup = intersects.length ? intersects[0].object.parent : null;
+        this._candidateSelection = {layerGroup};
+
+        let canvasMouseMove = (event) => {
+            this._candidateSelection = null;
+            this._renderer.domElement.removeEventListener("mousemove", canvasMouseMove);
+        };
+
+        this._renderer.domElement.addEventListener("mousemove", canvasMouseMove);
+    }
+
+    _canvasMouseUp(event)
+    {
+        if (!this._candidateSelection)
+            return;
+
+        let selection = this._candidateSelection.layerGroup;
         if (selection && selection === this._selectedLayerGroup) {
             if (!event.metaKey)
                 return;
