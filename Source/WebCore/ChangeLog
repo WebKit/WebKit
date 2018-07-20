@@ -1,3 +1,25 @@
+2018-07-20  Jer Noble  <jer.noble@apple.com>
+
+        First Auto-PiP from Fullscreen too small & animation blocks
+        https://bugs.webkit.org/show_bug.cgi?id=187745
+        <rdar://problem/42316583>
+
+        Reviewed by Jon Lee.
+
+        1) When Auto-PiPing, we don't have the luxury of setting up the fullscreen state
+        ahead of time; we get notified that PiP has already started. The area of the code
+        which does this just-in-time setup needs to set the video layer's frame so that the
+        transform within the PiP window is correct.
+
+        2) We generate a placeholder image when going into fullscreen, but we need to do
+        so synchronously. Create the AVPlayerItemVideoOutput up front at AVPlayerItem creation
+        time wherever AVPIVO is available.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::doSetup):
+
 2018-07-20  Antoine Quint  <graouts@apple.com>
 
         DeclarativeAnimation should suspend, resume, & stop m_eventQueue

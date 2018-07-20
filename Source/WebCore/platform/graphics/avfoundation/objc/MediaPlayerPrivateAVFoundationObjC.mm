@@ -1096,7 +1096,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     }
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     createVideoOutput();
 #endif
 
