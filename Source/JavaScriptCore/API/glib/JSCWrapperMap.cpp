@@ -21,6 +21,7 @@
 #include "JSCWrapperMap.h"
 
 #include "APICast.h"
+#include "JSAPIWrapperGlobalObject.h"
 #include "JSAPIWrapperObject.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextPrivate.h"
@@ -91,6 +92,26 @@ JSObject* WrapperMap::createJSWrappper(JSGlobalContextRef jsContext, JSClassRef 
     return object;
 }
 
+JSGlobalContextRef WrapperMap::createContextWithJSWrappper(JSContextGroupRef jsGroup, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
+{
+    Ref<VM> vm(*toJS(jsGroup));
+    JSLockHolder locker(vm.ptr());
+    auto* globalObject = JSCallbackObject<JSAPIWrapperGlobalObject>::create(vm.get(), jsClass, JSCallbackObject<JSAPIWrapperGlobalObject>::createStructure(vm.get(), nullptr, jsNull()));
+    if (wrappedObject) {
+        globalObject->setWrappedObject(new JSC::JSCGLibWrapperObject(wrappedObject, destroyFunction));
+        m_cachedJSWrappers->set(wrappedObject, globalObject);
+    }
+    ExecState* exec = globalObject->globalExec();
+    if (prototype)
+        globalObject->resetPrototype(vm.get(), toJS(exec, prototype));
+    else if (auto jsPrototype = jsClass->prototype(exec))
+        globalObject->resetPrototype(vm.get(), jsPrototype);
+    else
+        globalObject->resetPrototype(vm.get(), jsNull());
+
+    return JSGlobalContextRetain(toGlobalRef(exec));
+}
+
 JSObject* WrapperMap::jsWrapper(gpointer wrappedObject) const
 {
     if (!wrappedObject)
@@ -107,6 +128,10 @@ gpointer WrapperMap::wrappedObject(JSGlobalContextRef jsContext, JSObjectRef jsO
     if (object->inherits(vm, JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::info())) {
         if (auto* wrapper = JSC::jsCast<JSC::JSAPIWrapperObject*>(object)->wrappedObject())
             return static_cast<JSC::JSCGLibWrapperObject*>(wrapper)->object();
+    }
+    if (object->inherits(vm, JSC::JSCallbackObject<JSC::JSAPIWrapperGlobalObject>::info())) {
+        if (auto* wrapper = JSC::jsCast<JSC::JSAPIWrapperGlobalObject*>(object)->wrappedObject())
+            return wrapper->object();
     }
     return nullptr;
 }

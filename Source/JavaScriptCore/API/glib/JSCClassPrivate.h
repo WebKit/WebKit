@@ -28,4 +28,5 @@
 GRefPtr<JSCClass> jscClassCreate(JSCContext*, const char*, JSCClass*, JSCClassVTable*, GDestroyNotify);
 JSClassRef jscClassGetJSClass(JSCClass*);
 JSC::JSObject* jscClassGetOrCreateJSWrapper(JSCClass*, gpointer);
+JSGlobalContextRef jscClassCreateContextWithJSWrapper(JSCClass*, gpointer);
 void jscClassInvalidate(JSCClass*);

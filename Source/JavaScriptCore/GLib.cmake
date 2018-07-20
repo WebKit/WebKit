@@ -2,6 +2,7 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR})
 
 list(APPEND JavaScriptCore_SOURCES
+    API/glib/JSAPIWrapperGlobalObject.cpp
     API/glib/JSAPIWrapperObjectGLib.cpp
     API/glib/JSCCallbackFunction.cpp
     API/glib/JSCClass.cpp

@@ -1,3 +1,50 @@
+2018-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] jsc_context_evaluate_in_object() should receive an instance when a JSCClass is given
+        https://bugs.webkit.org/show_bug.cgi?id=187798
+
+        Reviewed by Michael Catanzaro.
+
+        Because a JSCClass is pretty much useless without an instance in this case. It should be similar to
+        jsc_value_new_object() because indeed we are creating a new object. This makes destroy function and vtable
+        functions to work. We can't use JSAPIWrapperObject to wrap this object, because it's a global object, so this
+        patch adds JSAPIWrapperGlobalObject or that.
+
+        * API/glib/JSAPIWrapperGlobalObject.cpp: Added.
+        (jsAPIWrapperGlobalObjectHandleOwner):
+        (JSAPIWrapperGlobalObjectHandleOwner::finalize):
+        (JSC::JSCallbackObject<JSAPIWrapperGlobalObject>::createStructure):
+        (JSC::JSCallbackObject<JSAPIWrapperGlobalObject>::create):
+        (JSC::JSAPIWrapperGlobalObject::JSAPIWrapperGlobalObject):
+        (JSC::JSAPIWrapperGlobalObject::finishCreation):
+        (JSC::JSAPIWrapperGlobalObject::visitChildren):
+        * API/glib/JSAPIWrapperGlobalObject.h: Added.
+        (JSC::JSAPIWrapperGlobalObject::wrappedObject const):
+        (JSC::JSAPIWrapperGlobalObject::setWrappedObject):
+        * API/glib/JSCClass.cpp:
+        (isWrappedObject): Helper to check if the given object is a JSAPIWrapperObject or JSAPIWrapperGlobalObject.
+        (wrappedObjectClass): Return the class of a wrapped object.
+        (jscContextForObject): Get the execution context of an object. If the object is a JSAPIWrapperGlobalObject, the
+        scope extension global object is used instead.
+        (getProperty): Use isWrappedObject, wrappedObjectClass and jscContextForObject.
+        (setProperty): Ditto.
+        (hasProperty): Ditto.
+        (deleteProperty): Ditto.
+        (getPropertyNames): Ditto.
+        (jscClassCreateContextWithJSWrapper): Call jscContextCreateContextWithJSWrapper().
+        * API/glib/JSCClassPrivate.h:
+        * API/glib/JSCContext.cpp:
+        (jscContextCreateContextWithJSWrapper): Call WrapperMap::createContextWithJSWrappper().
+        (jsc_context_evaluate_in_object): Use jscClassCreateContextWithJSWrapper() when a JSCClass is given.
+        * API/glib/JSCContext.h:
+        * API/glib/JSCContextPrivate.h:
+        * API/glib/JSCWrapperMap.cpp:
+        (JSC::WrapperMap::createContextWithJSWrappper): Create the new context for jsc_context_evaluate_in_object() here
+        when a JSCClass is used to create the JSAPIWrapperGlobalObject.
+        (JSC::WrapperMap::wrappedObject const): Return the wrapped object also in case of JSAPIWrapperGlobalObject.
+        * API/glib/JSCWrapperMap.h:
+        * GLib.cmake:
+
 2018-07-19  Saam Barati  <sbarati@apple.com>
 
         Conservatively make Object.assign's fast path do a two phase protocol of loading everything then storing everything to try to prevent a crash

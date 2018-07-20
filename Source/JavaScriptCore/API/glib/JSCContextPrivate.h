@@ -31,6 +31,7 @@ GRefPtr<JSCValue> jscContextGetOrCreateValue(JSCContext*, JSValueRef);
 void jscContextValueDestroyed(JSCContext*, JSValueRef);
 JSC::JSObject* jscContextGetJSWrapper(JSCContext*, gpointer);
 JSC::JSObject* jscContextGetOrCreateJSWrapper(JSCContext*, JSClassRef, JSValueRef prototype = nullptr, gpointer = nullptr, GDestroyNotify = nullptr);
+JSGlobalContextRef jscContextCreateContextWithJSWrapper(JSCContext*, JSClassRef, JSValueRef prototype = nullptr, gpointer = nullptr, GDestroyNotify = nullptr);
 gpointer jscContextWrappedObject(JSCContext*, JSObjectRef);
 JSCClass* jscContextGetRegisteredClass(JSCContext*, JSClassRef);
 

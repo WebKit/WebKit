@@ -1,3 +1,16 @@
+2018-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] jsc_context_evaluate_in_object() should receive an instance when a JSCClass is given
+        https://bugs.webkit.org/show_bug.cgi?id=187798
+
+        Reviewed by Michael Catanzaro.
+
+        Update test cases to the new API and use a destroy function and vtable in the test case of calling
+        jsc_context_evaluate_in_object() with a JSCClass.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCEvaluateInObject):
+
 2018-07-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         TestWTF.WTF.StringConcatenate_Unsigned fails for unsigned short on Windows

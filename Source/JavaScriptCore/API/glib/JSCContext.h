@@ -132,6 +132,7 @@ JSC_API JSCValue *
 jsc_context_evaluate_in_object       (JSCContext         *context,
                                       const char         *code,
                                       gssize              length,
+                                      gpointer            object_instance,
                                       JSCClass           *object_class,
                                       const char         *uri,
                                       guint               line_number,
