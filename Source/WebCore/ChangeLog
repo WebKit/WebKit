@@ -1,3 +1,76 @@
+2018-07-20  Justin Fan  <justin_fan@apple.com>
+
+        Safari WebGL does not consistently provide correct GPU context on eGPU systems
+        https://bugs.webkit.org/show_bug.cgi?id=187750
+        <rdar://problem/39531436>
+
+        Reviewed by Dean Jackson.
+
+        Move GraphicsContext3DManager into its own class, and notify it when page/Chrome receives a 
+        windowScreenDidChange message. Add a private data struct to track which hostWindow created each context.
+        Upon notification, Manager updates the contexts that match the hostWindow with the
+        provided displayID. Each context matches displayID to rendererID (set during process creation 
+        if window server is blocked), which is matched to a virtual screen, and updates its GPU accordingly.
+
+        No new tests. This requires multiple GPUs or eGPUs, each with attached display(s), to test.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::windowScreenDidChange): Now calls GraphicsContext3DManager::screenDidChange().
+        * platform/PlatformScreen.h:
+        * platform/ScreenProperties.h: Add rendererID to struct.
+        (WebCore::ScreenData::encode const):
+        (WebCore::ScreenData::decode):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DManager.cpp: Added (copied out of GraphicsContext3DCocoa.mm).
+        (WebCore::attachToAppleGraphicsControl):
+        (WebCore::hasMuxCapability):
+        (WebCore::hasMuxableGPU):
+        (WebCore::GraphicsContext3DManager::sharedManager):
+        (WebCore::displayWasReconfigured):
+        (WebCore::GraphicsContext3DManager::updateAllContexts):
+        (WebCore::GraphicsContext3DManager::screenDidChange):
+        (WebCore::GraphicsContext3DManager::addContext):
+        (WebCore::GraphicsContext3DManager::removeContext):
+        (WebCore::GraphicsContext3DManager::hostWindowForContext const):
+        (WebCore::GraphicsContext3DManager::addContextRequiringHighPerformance):
+        (WebCore::GraphicsContext3DManager::removeContextRequiringHighPerformance):
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState):
+        (WebCore::GraphicsContext3DManager::disableHighPerformanceGPUTimerFired):
+        (WebCore::GraphicsContext3DManager::recycleContextIfNecessary):
+        * platform/graphics/GraphicsContext3DManager.h: Added (copied out of GraphicsContext3DCocoa.mm).
+        (WebCore::GraphicsContext3DManager::hasTooManyContexts const):
+        (WebCore::GraphicsContext3DManager::GraphicsContext3DManager):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::createShared):
+        (WebCore::identifyAndSetCurrentGPU): Now matches rendererIDs to determine virtual screen. 
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::setContextVisibility):
+        (WebCore::GraphicsContext3D::simulateContextChanged):
+        (WebCore::GraphicsContext3D::screenDidChange):
+        (WebCore::attachToAppleGraphicsControl): Deleted.
+        (WebCore::hasMuxCapability): Deleted.
+        (WebCore::hasMuxableGPU): Deleted.
+        (WebCore::GraphicsContext3DManager::GraphicsContext3DManager): Deleted.
+        (WebCore::GraphicsContext3DManager::hasTooManyContexts const): Deleted.
+        (WebCore::manager): Deleted.
+        (WebCore::displayWasReconfigured): Deleted.
+        (WebCore::GraphicsContext3DManager::updateAllContexts): Deleted.
+        (WebCore::GraphicsContext3DManager::addContext): Deleted.
+        (WebCore::GraphicsContext3DManager::removeContext): Deleted.
+        (WebCore::GraphicsContext3DManager::addContextRequiringHighPerformance): Deleted.
+        (WebCore::GraphicsContext3DManager::removeContextRequiringHighPerformance): Deleted.
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState): Deleted.
+        (WebCore::GraphicsContext3DManager::disableHighPerformanceGPUTimerFired): Deleted.
+        (WebCore::GraphicsContext3DManager::recycleContextIfNecessary): Deleted.
+        * platform/mac/PlatformScreenMac.mm: Provide a display's rendererID.
+        (WebCore::rendererIDForDisplayMask):
+        (WebCore::collectScreenProperties):
+        (WebCore::rendererIDForDisplay):
+        (WebCore::primaryRendererID):
+
 2018-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Remove completed animations from GraphicsLayer, thus avoiding excessive backing store allocation

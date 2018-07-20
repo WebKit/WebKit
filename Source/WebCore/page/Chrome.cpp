@@ -60,6 +60,10 @@
 #include "DataListSuggestionPicker.h"
 #endif
 
+#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_3D)
+#include "GraphicsContext3DManager.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -510,6 +514,11 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
         if (frame->document())
             frame->document()->windowScreenDidChange(displayID);
     }
+
+#if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_3D)
+    GraphicsContext3DManager::sharedManager().screenDidChange(displayID, this);
+#endif
+
 }
 
 // --------

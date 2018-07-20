@@ -100,6 +100,8 @@ WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
 
 uint32_t primaryOpenGLDisplayMask();
 uint32_t displayMaskForDisplay(PlatformDisplayID);
+int32_t rendererIDForDisplay(PlatformDisplayID);
+int32_t primaryRendererID();
 #endif
 
 #if PLATFORM(IOS)

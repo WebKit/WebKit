@@ -1282,6 +1282,11 @@ public:
     GC3Denum currentBoundTarget() const { return m_state.currentBoundTarget(); }
     unsigned textureSeed(GC3Duint texture) { return m_state.textureSeedCount.count(texture); }
 
+#if PLATFORM(MAC)
+    using PlatformDisplayID = uint32_t;
+    void screenDidChange(PlatformDisplayID);
+#endif
+
 private:
     GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen, GraphicsContext3D* sharedContext = nullptr);
 
