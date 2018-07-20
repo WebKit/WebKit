@@ -302,8 +302,6 @@ enum class PIPState {
             }
         }
 
-        _videoFullscreenInterfaceMac->clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-
         if (VideoFullscreenChangeObserver* fullscreenChangeObserver = _videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
             fullscreenChangeObserver->didExitFullscreen();
     }
