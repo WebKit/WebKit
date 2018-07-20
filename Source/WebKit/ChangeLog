@@ -1,3 +1,36 @@
+2018-07-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r233992. rdar://problem/42417109
+
+    Update iOS fullscreen alert text again
+    https://bugs.webkit.org/show_bug.cgi?id=187797
+    rdar://problem/42373783
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    * English.lproj/Localizable.strings:
+    
+    Source/WebKit:
+    
+    * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+    (-[WKFullScreenViewController _showPhishingAlert]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233992 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-19  Jon Lee  <jonlee@apple.com>
+
+            Update iOS fullscreen alert text again
+            https://bugs.webkit.org/show_bug.cgi?id=187797
+            rdar://problem/42373783
+
+            Reviewed by Jer Noble.
+
+            * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+            (-[WKFullScreenViewController _showPhishingAlert]):
+
 2018-07-19  Babak Shafiei  <bshafiei@apple.com>
 
         Revert r233925. rdar://problem/42354959
