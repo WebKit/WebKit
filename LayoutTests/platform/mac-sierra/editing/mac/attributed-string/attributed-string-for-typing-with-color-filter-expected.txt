@@ -1,0 +1,9 @@
+Some text here
+Input:
+<div id="editor" style="-apple-color-filter: apple-invert-lightness(); color: rgba(20, 20, 20, 0.4);" contenteditable="">Some text here</div>
+
+Output:
+[ ]
+    NSColor: rgba(239, 239, 239, 0.4) (NSCustomColorSpace)
+    NSFont: Times-Roman 16.00 pt.
+

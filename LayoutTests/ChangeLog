@@ -1,3 +1,23 @@
+2018-07-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r234041. rdar://problem/42417113
+
+    Rebaseline editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html for Sierra.
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-sierra/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt: Added.
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@234041 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html for Sierra.
+
+            Unreviewed test gardening.
+
+            * platform/mac-sierra/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt: Added.
+
 2018-07-20  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234014. rdar://problem/42417113
