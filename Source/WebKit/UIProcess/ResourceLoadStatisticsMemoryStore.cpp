@@ -245,8 +245,8 @@ void ResourceLoadStatisticsMemoryStore::removeDataRecords(CompletionHandler<void
     setDataRecordsBeingRemoved(true);
 
     RunLoop::main().dispatch([prevalentResourceDomains = crossThreadCopy(prevalentResourceDomains), callback = WTFMove(callback), this, weakThis = makeWeakPtr(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [callback = WTFMove(callback), this, weakThis = WTFMove(weakThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
-            m_workQueue->dispatch([topDomains = crossThreadCopy(domainsWithDeletedWebsiteData), callback = WTFMove(callback), this, weakThis = WTFMove(weakThis)] () mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [callback = WTFMove(callback), this, weakThis = WTFMove(weakThis), workQueue = m_workQueue.copyRef()](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
+            workQueue->dispatch([topDomains = crossThreadCopy(domainsWithDeletedWebsiteData), callback = WTFMove(callback), this, weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
                     callback();
                     return;
@@ -486,8 +486,8 @@ void ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData(Completio
     RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] () mutable {
         // FIXME: This method being a static call on WebProcessProxy is wrong.
         // It should be on the data store that this object belongs to.
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, weakThis = WTFMove(weakThis), callback = WTFMove(callback)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
-            m_workQueue->dispatch([this, weakThis = WTFMove(weakThis), topDomains = crossThreadCopy(topPrivatelyControlledDomainsWithWebsiteData), callback = WTFMove(callback)] () mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue = m_workQueue.copyRef()] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+            workQueue->dispatch([this, weakThis = WTFMove(weakThis), topDomains = crossThreadCopy(topPrivatelyControlledDomainsWithWebsiteData), callback = WTFMove(callback)] () mutable {
                 if (!weakThis) {
                     callback();
                     return;
