@@ -1,3 +1,12 @@
+2018-07-20  David Fenton  <david_fenton@apple.com>
+
+        stress/spread-forward-varargs-stack-overflow.js is timing out in 32 bit JSC tests.
+        https://bugs.webkit.org/show_bug.cgi?id=187698
+
+        Unreviewed test gardening, skipped test in 32 Bit JSC.
+
+        * stress/spread-forward-varargs-stack-overflow.js:
+
 2018-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JSON.stringify should emit non own properties if second array argument includes
