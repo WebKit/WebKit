@@ -678,6 +678,7 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
     m_seekTaskQueue.close();
+    m_resumeTaskQueue.close();
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
     m_playbackControlsManagerBehaviorRestrictionsQueue.close();
@@ -5583,6 +5584,7 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 void HTMLMediaElement::contextDestroyed()
 {
     m_seekTaskQueue.close();
+    m_resumeTaskQueue.close();
     m_shadowDOMTaskQueue.close();
     m_promiseTaskQueue.close();
     m_pauseAfterDetachedTaskQueue.close();
@@ -5605,6 +5607,7 @@ void HTMLMediaElement::stop()
     m_asyncEventQueue.close();
     m_promiseTaskQueue.close();
     m_resourceSelectionTaskQueue.close();
+    m_resumeTaskQueue.cancelAllTasks();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
     // the media player now. Note that userCancelledLoad will already called clearMediaPlayer
@@ -5619,6 +5622,8 @@ void HTMLMediaElement::suspend(ReasonForSuspension reason)
 {
     INFO_LOG(LOGIDENTIFIER);
     Ref<HTMLMediaElement> protectedThis(*this);
+
+    m_resumeTaskQueue.cancelAllTasks();
 
     switch (reason) {
     case ReasonForSuspension::PageCache:
@@ -5662,13 +5667,13 @@ void HTMLMediaElement::resume()
 
     m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
 
-    if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED) {
+    if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED && !m_resumeTaskQueue.hasPendingTasks()) {
         // Restart the load if it was aborted in the middle by moving the document to the page cache.
         // m_error is only left at MEDIA_ERR_ABORTED when the document becomes inactive (it is set to
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
         // As it is not safe to immedately start loading now, let's schedule a load.
-        prepareForLoad();
+        m_resumeTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::prepareForLoad, this));
     }
 
     updateRenderer();

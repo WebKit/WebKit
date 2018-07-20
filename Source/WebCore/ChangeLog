@@ -1,3 +1,44 @@
+2018-07-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r233982. rdar://problem/42389208
+
+    Hitting RELEASE_ASSERT(!m_activeDOMObjectAdditionForbidden) under HTMLMediaElement::resume()
+    https://bugs.webkit.org/show_bug.cgi?id=187793
+    <rdar://problem/42308469>
+    
+    Patch by Antoine Quint <graouts@apple.com> on 2018-07-19
+    Reviewed by Chris Dumez.
+    
+    Ensure we do not call JS under resume(), which would happen as a result of calling configureMediaControls() in prepareForLoad().
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::~HTMLMediaElement):
+    (WebCore::HTMLMediaElement::contextDestroyed):
+    (WebCore::HTMLMediaElement::stop):
+    (WebCore::HTMLMediaElement::suspend):
+    (WebCore::HTMLMediaElement::resume):
+    * html/HTMLMediaElement.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233982 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-19  Antoine Quint  <graouts@apple.com>
+
+            Hitting RELEASE_ASSERT(!m_activeDOMObjectAdditionForbidden) under HTMLMediaElement::resume()
+            https://bugs.webkit.org/show_bug.cgi?id=187793
+            <rdar://problem/42308469>
+
+            Reviewed by Chris Dumez.
+
+            Ensure we do not call JS under resume(), which would happen as a result of calling configureMediaControls() in prepareForLoad().
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::~HTMLMediaElement):
+            (WebCore::HTMLMediaElement::contextDestroyed):
+            (WebCore::HTMLMediaElement::stop):
+            (WebCore::HTMLMediaElement::suspend):
+            (WebCore::HTMLMediaElement::resume):
+            * html/HTMLMediaElement.h:
+
 2018-07-19  Babak Shafiei  <bshafiei@apple.com>
 
         Revert r233982. rdar://problem/42389208
