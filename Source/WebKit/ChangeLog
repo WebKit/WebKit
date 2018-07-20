@@ -1,5 +1,56 @@
 2018-07-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234020. rdar://problem/42417121
+
+    [ITP] Crash under ResourceLoadStatisticsMemoryStore::removeDataRecords()
+    https://bugs.webkit.org/show_bug.cgi?id=187821
+    <rdar://problem/42112693>
+    
+    Reviewed by David Kilzer.
+    
+    In two cases, ResourceLoadStatisticsMemoryStore (which lives on a background queue) needs to call WebPageProxy
+    operations on the main thread and then dispatch back on the background queue when the operation completes.
+    However, it is possible for the ResourceLoadStatisticsMemoryStore to get destroyed on the background queue
+    during this time and we would then crash when trying to use m_workQueue to re-dispatch. To address the issue,
+    I now ref the work queue in the lambda so that we're guaranteed to be able to re-dispatch to the background
+    queue. When we're back on the background queue, we'll realize that weakThis in gone and we'll call the callback
+    and return early.
+    
+    Note that I am not checking weakThis on the main thread as this would not be safe. weakThis should only be
+    used on the background queue.
+    
+    * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+    (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords):
+    (WebKit::ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234020 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-19  Chris Dumez  <cdumez@apple.com>
+
+            [ITP] Crash under ResourceLoadStatisticsMemoryStore::removeDataRecords()
+            https://bugs.webkit.org/show_bug.cgi?id=187821
+            <rdar://problem/42112693>
+
+            Reviewed by David Kilzer.
+
+            In two cases, ResourceLoadStatisticsMemoryStore (which lives on a background queue) needs to call WebPageProxy
+            operations on the main thread and then dispatch back on the background queue when the operation completes.
+            However, it is possible for the ResourceLoadStatisticsMemoryStore to get destroyed on the background queue
+            during this time and we would then crash when trying to use m_workQueue to re-dispatch. To address the issue,
+            I now ref the work queue in the lambda so that we're guaranteed to be able to re-dispatch to the background
+            queue. When we're back on the background queue, we'll realize that weakThis in gone and we'll call the callback
+            and return early.
+
+            Note that I am not checking weakThis on the main thread as this would not be safe. weakThis should only be
+            used on the background queue.
+
+            * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+            (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords):
+            (WebKit::ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData):
+
+2018-07-20  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233992. rdar://problem/42417109
 
     Update iOS fullscreen alert text again
