@@ -129,6 +129,7 @@ protected:
     explicit WebAnimation(Document&);
 
     bool isEffectInvalidationSuspended() { return m_suspendCount; }
+    void stop() override;
 
 private:
     enum class DidSeek { Yes, No };
@@ -180,7 +181,6 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
-    void stop() final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }

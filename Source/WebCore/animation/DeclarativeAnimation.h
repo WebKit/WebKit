@@ -60,6 +60,11 @@ private:
     void enqueueDOMEvent(const AtomicString&, Seconds);
     void remove() final;
 
+    // ActiveDOMObject.
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+    void stop() final;
+
     Element& m_target;
     Ref<Animation> m_backingAnimation;
     bool m_wasPending { false };

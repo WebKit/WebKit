@@ -1,3 +1,20 @@
+2018-07-20  Antoine Quint  <graouts@apple.com>
+
+        DeclarativeAnimation should suspend, resume, & stop m_eventQueue
+        https://bugs.webkit.org/show_bug.cgi?id=187216
+        <rdar://problem/41669739>
+
+        Reviewed by Ryosuke Niwa.
+
+        Suspend, resume and close the GenericEventQueue for DeclarativeAnimation as instructed through the DOMActiveObject protocol.
+
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::stop):
+        (WebCore::DeclarativeAnimation::suspend):
+        (WebCore::DeclarativeAnimation::resume):
+        * animation/DeclarativeAnimation.h:
+        * animation/WebAnimation.h:
+
 2018-07-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Inline formatting context] Add basic text content handling.
