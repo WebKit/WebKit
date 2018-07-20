@@ -5958,7 +5958,9 @@ void HTMLMediaElement::exitFullscreen()
     if (document().settings().fullScreenEnabled() && document().webkitCurrentFullScreenElement() == this) {
         if (document().webkitIsFullScreen())
             document().webkitCancelFullScreen();
-        return;
+
+        if (m_videoFullscreenMode == VideoFullscreenModeStandard)
+            return;
     }
 #endif
 
