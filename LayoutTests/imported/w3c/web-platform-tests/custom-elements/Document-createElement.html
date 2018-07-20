@@ -263,7 +263,7 @@ document_types().forEach(function (entry, testNumber) {
         return;
 
     var getDocument = entry.create;
-    var docuemntName = entry.name;
+    var documentName = entry.name;
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -282,7 +282,7 @@ document_types().forEach(function (entry, testNumber) {
             assert_equals(instance.localName, name);
             assert_true(instance instanceof HTMLUnknownElement);
         });
-    }, 'document.createElement must report a NotSupportedError when the element is adopted into a ' + docuemntName + ' during construction');
+    }, `document.createElement must report a NotSupportedError when the element is adopted into a ${documentName} during construction`);
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -301,7 +301,7 @@ document_types().forEach(function (entry, testNumber) {
             assert_equals(instance.localName, name);
             assert_true(instance instanceof HTMLUnknownElement);
         });
-    }, 'document.createElement must report a NotSupportedError when the element is inserted into a ' + docuemntName + ' during construction');
+    }, `document.createElement must report a NotSupportedError when the element is inserted into a ${documentName} during construction`);
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -319,7 +319,7 @@ document_types().forEach(function (entry, testNumber) {
             assert_not_reports(function () { instance = document.createElement(name); });
             assert_true(instance instanceof ElementThatGetAdoptedBack);
         });
-    }, 'document.createElement must not report a NotSupportedError when the element is adopted back from a ' + docuemntName + ' during construction');
+    }, `document.createElement must not report a NotSupportedError when the element is adopted back from a ${documentName} during construction`);
 });
 
 test(function () {
@@ -363,6 +363,31 @@ test(function () {
 
 }, 'document.createElement must report an exception thrown by a custom element constructor');
 
+test(function () {
+    var exceptionToThrow = {name: 'exception thrown by a custom constructor'};
+    class ThrowCustomBuiltinElement extends HTMLDivElement {
+        constructor()
+        {
+            super();
+            if (exceptionToThrow)
+                throw exceptionToThrow;
+        }
+    };
+    customElements.define('throw-custom-builtin-element', ThrowCustomBuiltinElement, { extends: 'div' });
+
+    assert_throws(exceptionToThrow, function () { new ThrowCustomBuiltinElement; });
+    var instance;
+    assert_reports(exceptionToThrow, function () { instance = document.createElement('div', { is: 'throw-custom-builtin-element' }); });
+    assert_equals(instance.localName, 'div');
+    assert_true(instance instanceof HTMLDivElement);
+
+    exceptionToThrow = false;
+    var instance = document.createElement('div', { is: 'throw-custom-builtin-element' });
+    assert_true(instance instanceof ThrowCustomBuiltinElement);
+    assert_equals(instance.localName, 'div');
+
+}, 'document.createElement must report an exception thrown by a custom built-in element constructor');
+
 test(() => {
   class MyElement extends HTMLDivElement {}
 
@@ -376,6 +401,19 @@ test(() => {
   document.body.appendChild(div);
   assert_true(div instanceof MyElement, 'Undefined element is upgraded on connecting to a document');
 }, 'document.createElement with unknown "is" value should create "undefined" state element');
+
+test(() => {
+  class MyElement extends HTMLElement {
+      constructor() {
+          super();
+          this.foo = true;
+      }
+  }
+  customElements.define("my-element", MyElement);
+
+  const instance = document.createElement('my-element', undefined);
+  assert_true(instance.foo);
+}, 'document.createElement with undefined options value should be upgraded.');
 </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -19,10 +19,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-constructor.html
-/LayoutTests/imported/w3c/web-platform-tests/custom-elements/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/adopted-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/attribute-changed-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/builtin-coverage.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/custom-element-reaction-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/disconnected-callbacks.html

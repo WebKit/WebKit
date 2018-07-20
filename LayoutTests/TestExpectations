@@ -568,6 +568,11 @@ imported/w3c/web-platform-tests/IndexedDB/bindings-inject-key.html [ Pass Failur
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-1.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-2.html [ Pass Failure ]
 
+# WPT tests for custom elements
+webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg [ Skip ]
+webkit.org/b/187802 imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg [ Skip ]
+webkit.org/b/187805 imported/w3c/web-platform-tests/custom-elements/reactions/with-exceptions.html [ Skip ]
+
 # selectors
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-rtl-001.html [ ImageOnlyFailure ]

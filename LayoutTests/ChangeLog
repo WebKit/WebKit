@@ -1,3 +1,16 @@
+2018-07-20  Frederic Wang  <fwang@igalia.com>
+
+        Import new WPT tests for custom elements
+        https://bugs.webkit.org/show_bug.cgi?id=187806
+
+        Reviewed by Javier Fernandez.
+
+        Some tests crashing or timing out are skipped. Also, one test depending on the availability
+        of the @capture attribute of the HTMLInputElement element has a specific expectation on iOS.
+
+        * TestExpectations: Skip some tests crashing or timing out.
+        * platform/ios/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLInputElement-expected.txt: Added.
+
 2018-07-19  Antoine Quint  <graouts@apple.com>
 
         Flaky crash in AnimationTimeline::cancelOrRemoveDeclarativeAnimation

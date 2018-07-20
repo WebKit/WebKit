@@ -36,5 +36,7 @@ PASS document.createElement must report a NotSupportedError when the element is 
 PASS document.createElement must not report a NotSupportedError when the element is adopted back from a an HTML document fetched by XHR during construction 
 PASS document.createElement must report a NotSupportedError when the local name of the element does not match that of the custom element 
 PASS document.createElement must report an exception thrown by a custom element constructor 
+FAIL document.createElement must report an exception thrown by a custom built-in element constructor assert_throws: function "function () { new ThrowCustomBuiltinElement; }" threw object "TypeError: function is not a constructor (evaluating 'super()')" ("TypeError") expected object "[object Object]" ("exception thrown by a custom constructor")
 FAIL document.createElement with unknown "is" value should create "undefined" state element assert_true: Undefined element is upgraded on connecting to a document expected true got false
+PASS document.createElement with undefined options value should be upgraded. 
 
