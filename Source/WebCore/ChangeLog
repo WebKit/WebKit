@@ -1,3 +1,43 @@
+2018-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove completed animations from GraphicsLayer, thus avoiding excessive backing store allocation
+        https://bugs.webkit.org/show_bug.cgi?id=187844
+        rdar://problem/40387294
+
+        Reviewed by Dean Jackson.
+        
+        A keyframe animation which animates 3D transforms, and is fill-forwards, currently
+        leaves the GraphicsLayer in a state where it has a "running" animation. However, the
+        logic that computes animation extent in RenderLayerBacking::updateGeometry() only does
+        so for running or paused animations. GraphicsLayer then thinks that it has an active
+        transform animation with unknown extent, and refuses to detach its backing store.
+        
+        This triggers excessive layer creation on some sites (e.g. https://www.kqed.org).
+        
+        Fix by always removing animations from the GraphicsLayer when they finish, whether
+        or not they fill forwards. This is done by having KeyframeAnimation::onAnimationEnd()
+        always call endAnimation().
+        
+        This change only fixes the non-Web Animation code path. webkit.org/b/187845 exists
+        to fix the other code path.
+        
+        Also improve some logging that would have revealed this problem sooner.
+
+        Test: compositing/backing/backing-store-attachment-fill-forwards-animation.html
+
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::endAnimation):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::endAnimation):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::onAnimationEnd):
+        * page/animation/KeyframeAnimation.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::updateCoverage):
+
 2018-07-20  Ryosuke Niwa  <rniwa@apple.com>
 
         Picking a color from the color panel for typing attributes needs to inverse transform through color-filter

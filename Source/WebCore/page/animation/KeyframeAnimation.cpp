@@ -297,7 +297,7 @@ void KeyframeAnimation::pauseAnimation(double timeOffset)
         setNeedsStyleRecalc(element());
 }
 
-void KeyframeAnimation::endAnimation()
+void KeyframeAnimation::endAnimation(bool fillingForwards)
 {
     if (!element())
         return;
@@ -306,7 +306,7 @@ void KeyframeAnimation::endAnimation()
         renderer->animationFinished(m_keyframes.animationName());
 
     // Restore the original (unanimated) style
-    if (!paused())
+    if (!fillingForwards && !paused())
         setNeedsStyleRecalc(element());
 }
 
@@ -328,10 +328,7 @@ void KeyframeAnimation::onAnimationIteration(double elapsedTime)
 void KeyframeAnimation::onAnimationEnd(double elapsedTime)
 {
     sendAnimationEvent(eventNames().animationendEvent, elapsedTime);
-    // End the animation if we don't fill forwards. Forward filling
-    // animations are ended properly in the class destructor.
-    if (!m_animation->fillsForwards())
-        endAnimation();
+    endAnimation(m_animation->fillsForwards());
 }
 
 bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double elapsedTime)

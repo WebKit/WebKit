@@ -1,3 +1,14 @@
+2018-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove completed animations from GraphicsLayer, thus avoiding excessive backing store allocation
+        https://bugs.webkit.org/show_bug.cgi?id=187844
+        rdar://problem/40387294
+
+        Reviewed by Dean Jackson.
+
+        * compositing/backing/backing-store-attachment-fill-forwards-animation-expected.txt: Added.
+        * compositing/backing/backing-store-attachment-fill-forwards-animation.html: Added.
+
 2018-07-20  Ryosuke Niwa  <rniwa@apple.com>
 
         Picking a color from the color panel for typing attributes needs to inverse transform through color-filter
