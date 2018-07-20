@@ -1,5 +1,9 @@
 2018-07-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Revert r234044. rdar://problem/42433225
+
+2018-07-20  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234045. rdar://problem/42434024
 
     FetchResponse should close its stream when loading finishes
