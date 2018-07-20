@@ -1,3 +1,15 @@
+2018-07-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Move WebFrameListenerProxy to WebFramePolicyListenerProxy, its only subclass
+        https://bugs.webkit.org/show_bug.cgi?id=187825
+        <rdar://problem/42405081>
+
+        Unreviewed build fix for Windows port.
+
+        RefPtr.h(45): error C2027: use of undefined type 'API::Navigation'
+
+        * UIProcess/win/WebInspectorProxyWin.cpp: Include "APINavigation.h".
+
 2018-07-19  Alex Christensen  <achristensen@webkit.org>
 
         Move WebFrameListenerProxy to WebFramePolicyListenerProxy, its only subclass

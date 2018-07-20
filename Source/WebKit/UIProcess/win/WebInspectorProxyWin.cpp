@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
+#include "APINavigation.h"
 #include "APINavigationAction.h"
 #include "APIPageConfiguration.h"
 #include "CFURLExtras.h"
