@@ -842,6 +842,21 @@ fast/dom/focus-shift-crash.html [ Pass Timeout ]
 fast/dom/Range/detach-range-during-deletecontents.html [ Pass Timeout ]
 imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Pass Timeout ]
 
+# WebSocket
+http/tests/websocket [ Pass ]
+http/tests/websocket/tests/hybi/contentextensions [ Failure ]
+http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php [ Pass ]
+http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
+http/tests/websocket/tests/hybi/httponly-cookie.pl [ Failure ]
+http/tests/websocket/tests/hybi/inspector [ Skip ]
+http/tests/websocket/tests/hybi/network-process-crash-error.html [ Failure ]
+http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl [ Failure ]
+http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Failure ]
+http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Failure ]
+http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
+
+http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Timeout ]
+
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
 #///////////////////////////////////////////////////////////////////////////////
