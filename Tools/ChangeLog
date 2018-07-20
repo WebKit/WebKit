@@ -1,3 +1,13 @@
+2018-07-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] enable-media-capabilities websetting
+        https://bugs.webkit.org/show_bug.cgi?id=187847
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings): Unit test for the new enable-media-capabilities setting.
+
 2018-07-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] jsc_context_evaluate_in_object() should receive an instance when a JSCClass is given
