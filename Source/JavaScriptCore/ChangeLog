@@ -1,3 +1,20 @@
+2018-07-20  Michael Saboff  <msaboff@apple.com>
+
+        DFG AbstractInterpreter: CheckArray filters array modes for DirectArguments/ScopedArguments using only NonArray
+        https://bugs.webkit.org/show_bug.cgi?id=187827
+        rdar://problem/42146858
+
+        Reviewed by Saam Barati.
+
+        When filtering array modes for DirectArguments or ScopedArguments, we need to allow for the possibility
+        that they can either be NonArray or NonArrayWithArrayStorage (aka ArrayStorageShape).
+        We can't end up with other shapes, Int32, Double, etc because GenericArguments sets 
+        InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero which will cause us to go down a
+        putByIndex() path that doesn't change the shape.
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+
 2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Fold GetByVal if Array is CoW

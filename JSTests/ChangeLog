@@ -1,3 +1,27 @@
+2018-07-20  Michael Saboff  <msaboff@apple.com>
+
+        DFG AbstractInterpreter: CheckArray filters array modes for DirectArguments/ScopedArguments using only NonArray
+        https://bugs.webkit.org/show_bug.cgi?id=187827
+        rdar://problem/42146858
+
+        Reviewed by Saam Barati.
+
+        New regression tests.
+
+        * stress/direct-arguments-check-array.js: Added.
+        (setup.f2):
+        (setup):
+        (forOfArray):
+        (forOfArgs):
+        (callEveryOnArgs):
+        * stress/scoped-arguments-check-array.js: Added.
+        (setup.foo):
+        (setup.f2):
+        (setup):
+        (forOfArray):
+        (forOfArgs):
+        (callEveryOnArgs):
+
 2018-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Fold GetByVal if Array is CoW
