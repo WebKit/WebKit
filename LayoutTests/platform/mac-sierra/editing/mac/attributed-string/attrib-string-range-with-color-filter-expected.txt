@@ -1,0 +1,7 @@
+Test that an NSAttributedString from a range doesn't convert colors through -apple-color-filter.
+
+[is t]
+    NSColor: #cccccc (NSCustomColorSpace)
+    NSFont: Times-Roman 16.00 pt.
+
+

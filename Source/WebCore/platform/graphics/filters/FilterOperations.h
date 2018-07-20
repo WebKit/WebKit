@@ -61,6 +61,7 @@ public:
     bool hasReferenceFilter() const;
 
     bool transformColor(Color&) const;
+    bool inverseTransformColor(Color&) const;
 
 private:
     Vector<RefPtr<FilterOperation>> m_operations;

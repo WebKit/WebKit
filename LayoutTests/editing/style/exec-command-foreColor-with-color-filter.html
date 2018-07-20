@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+<head>
+<title>Setting the foreground color should invert the color through -apple-color-filter</title>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" style="-apple-color-filter: apple-invert-lightness()" contenteditable>hello world</div>
+<script>
+window.getSelection().setPosition(test, 0);
+window.getSelection().modify('extend', 'forward', 'word');
+window.getSelection().modify('extend', 'forward', 'word');
+document.execCommand('foreColor', false, '#224433');
+Markup.dump('test', '"world" should be #ecfffd');
+
+</script>
+</body>
+</html>

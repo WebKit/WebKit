@@ -253,6 +253,29 @@ bool InvertLightnessFilterOperation::transformColor(FloatComponents& sRGBColorCo
     return true;
 }
 
+bool InvertLightnessFilterOperation::inverseTransformColor(FloatComponents& sRGBColorComponents) const
+{
+    FloatComponents rgbComponents = sRGBColorComponents;
+    // Apply the matrix.
+    float matrixValues[20] = {
+        -1.124858, -0.244747, 0.119605, 0, 1.25,
+        -0.124506, -1.244758, 0.119264, 0, 1.25,
+        -0.12445, -0.244568, -0.880982, 0, 1.25,
+        0, 0, 0, 1, 0
+
+    };
+    ColorMatrix toLightModeMatrix(matrixValues);
+    toLightModeMatrix.transformColorComponents(rgbComponents);
+
+    // Convert to HSL.
+    FloatComponents hslComponents = sRGBToHSL(rgbComponents);
+    // Hue rotate by 180deg.
+    hslComponents.components[0] = fmod(hslComponents.components[0] + 0.5f, 1.0f);
+    // And return RGB.
+    sRGBColorComponents = HSLToSRGB(hslComponents);
+    return true;
+}
+
 bool BlurFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))

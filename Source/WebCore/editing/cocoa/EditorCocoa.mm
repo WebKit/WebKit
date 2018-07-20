@@ -93,11 +93,14 @@ RetainPtr<NSDictionary> Editor::fontAttributesForSelectionStart() const
 
     // FIXME: Why would we not want to retrieve these attributes on iOS?
 #if PLATFORM(MAC)
-    Color backgroundColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
+    // FIXME: for now, always report the colors after applying -apple-color-filter. In future not all clients
+    // may want this, so we may have to add a setting to control it. See also editingAttributedStringFromRange().
+    Color backgroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     if (backgroundColor.isVisible())
         [attributes setObject:nsColor(backgroundColor) forKey:NSBackgroundColorAttributeName];
 
-    Color foregroundColor = style->visitedDependentColor(CSSPropertyColor);
+    Color foregroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyColor);
+    // FIXME: isBlackColor not suitable for dark mode.
     if (foregroundColor.isValid() && !Color::isBlackColor(foregroundColor))
         [attributes setObject:nsColor(foregroundColor) forKey:NSForegroundColorAttributeName];
 

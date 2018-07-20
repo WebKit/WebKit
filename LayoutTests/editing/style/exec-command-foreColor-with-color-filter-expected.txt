@@ -1,0 +1,5 @@
+
+"world" should be #ecfffd:
+| <font>
+|   color="#ecfffd"
+|   "<#selection-anchor>hello world<#selection-focus>"

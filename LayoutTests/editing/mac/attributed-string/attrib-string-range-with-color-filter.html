@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<div id="target" style="color: #CCC; -apple-color-filter: apple-invert-lightness();"contenteditable>This text is light gray</div>
+<p>
+    Test that an NSAttributedString from a range doesn't convert colors through -apple-color-filter.
+</p>
+<script src="resources/dump-attributed-string.js"></script>
+<script>
+    var shouldAutoDump = false;
+</script>
+<pre id="console"></pre>
+<script>
+    function log(message)
+    {
+        document.getElementById("console").append(message + "\n");
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        var target = document.getElementById("target");
+        target.focus();
+
+        var attributedString = textInputController.attributedSubstringFromRange(2, 4);
+        var serializedString = serializeAttributedString(attributedString);
+        log(serializedString);
+
+        target.parentNode.removeChild(target);
+    } else
+        log("This test can only run in DumpRenderTree.");
+</script>
