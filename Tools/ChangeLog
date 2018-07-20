@@ -1,3 +1,24 @@
+2018-07-20  Dean Jackson  <dino@apple.com>
+
+        Provide an lldb type summary for WebCore::Color
+        https://bugs.webkit.org/show_bug.cgi?id=187776
+
+        Reviewed by Dan Bates.
+
+        This time without the tests because we don't want to build
+        all of WebKit just for python tests.
+
+        * lldb/lldb_webkit.py: Add a Color summary provider.
+        (__lldb_init_module):
+        (WebCoreColor_SummaryProvider):
+        (WebCoreColorProvider):
+        (WebCoreColorProvider.__init__):
+        (WebCoreColorProvider._is_extended):
+        (WebCoreColorProvider._is_valid):
+        (WebCoreColorProvider._is_semantic):
+        (WebCoreColorProvider._to_string_extended):
+        (WebCoreColorProvider.to_string):
+
 2018-07-20  Brady Eidson  <beidson@apple.com>
 
         Add WKNavigation/WKNavigationAction related SPI.
