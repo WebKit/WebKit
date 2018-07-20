@@ -11,11 +11,17 @@ if (window.testRunner) {
   testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
+let tries = 0;
+
 navigator.serviceWorker.addEventListener("message", function(event) {
   if (step == "BothClientsInitiallyActive") {
     if (event.data != 2) {
-      log("FAIL: Wrong initial number of clients: " + event.data);
-      finishSWTest();
+      if (++tries > 20) {
+          log("FAIL: Wrong initial number of clients: " + event.data);
+          finishSWTest();
+          return;
+      }
+      worker.postMessage("getClientCount");
       return;
     }
     log("PASS: service worker has initially 2 clients");

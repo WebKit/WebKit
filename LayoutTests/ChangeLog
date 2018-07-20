@@ -1,3 +1,19 @@
+2018-07-20  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(PSON?): [ WK2 ] http/tests/workers/service/client-*-page-cache.html LayoutTests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=183705
+
+        Reviewed by Youenn Fablet.
+
+        At the beginning of the tests, wait for the client count to reach the expected value instead of
+        expecting it to be the right value right away. Clients unregister themselves asynchronously so
+        it is flaky otherwise.
+
+        * http/tests/workers/service/client-added-to-clients-when-restored-from-page-cache.html:
+        * http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html:
+        * http/tests/workers/service/serviceworkerclients-matchAll-worker.js:
+        (async.doTestAfterMessage):
+
 2018-07-20  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening
