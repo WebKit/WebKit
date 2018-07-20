@@ -1,5 +1,21 @@
 2018-07-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234014. rdar://problem/42417113
+
+    Fix the test.
+    
+    * editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234014 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix the test.
+
+            * editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html:
+
+2018-07-20  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234005. rdar://problem/42417113
 
     Setting foreground color when editing should take color-filter into account, and report the correct foreground color for collapsed selections
