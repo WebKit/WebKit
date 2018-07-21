@@ -132,8 +132,9 @@ public:
 
     void resetParametersToDefaultValues(CompletionHandler<void()>&&);
 
-    void setResourceLoadStatisticsDebugMode(bool);
-
+    void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
+    void setPrevalentResourceForDebugMode(const WebCore::URL&, CompletionHandler<void()>&&);
+    
     void setStatisticsTestingCallback(WTF::Function<void(const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
     void logTestingEvent(const String&);
     void callGrantStorageAccessHandler(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);

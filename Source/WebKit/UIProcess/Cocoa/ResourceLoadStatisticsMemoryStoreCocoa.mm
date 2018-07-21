@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "ResourceLoadStatisticsMemoryStore.h"
+#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -51,6 +52,9 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
 
         setDebugLogggingEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ResourceLoadStatisticsDebugLoggingEnabled"]);
         setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalResourceLoadStatisticsDebugMode"]);
+        auto* debugManualPrevalentResource = [[NSUserDefaults standardUserDefaults] stringForKey:@"ResourceLoadStatisticsManualPrevalentResource"];
+        if (debugManualPrevalentResource)
+            setPrevalentResourceForDebugMode(debugManualPrevalentResource);
         setStorageAccessPromptsEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalStorageAccessPromptsEnabled"]);
     });
 }

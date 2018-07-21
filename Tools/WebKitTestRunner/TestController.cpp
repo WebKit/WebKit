@@ -2645,7 +2645,25 @@ static void resourceStatisticsBooleanResultCallback(bool result, void* userData)
     context->done = true;
     context->testController.notifyDone();
 }
-    
+
+void TestController::setStatisticsDebugMode(bool value)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(dataStore, value, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetStatisticsDebugMode();
+}
+
+void TestController::setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode(dataStore, hostName, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetPrevalentResourceForDebugMode();
+}
+
 void TestController::setStatisticsLastSeen(WKStringRef host, double seconds)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());

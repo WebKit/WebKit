@@ -1,3 +1,63 @@
+2018-07-20  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Enable basic functionality in experimental debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=187835
+        <rdar://problem/42408590>
+
+        Reviewed by Chris Dumez.
+
+        This patch makes the experimental ITP Debug Mode feature work, at least
+        to a basic level. This means:
+        - Debug logging on the INFO level.
+        - Permanently treat 3rdpartytestwebkit.org as a prevalent resource.
+        - Support manual setting of a custom permanently prevalent resource through user
+          defaults on Cocoa platforms.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode):
+            Test infrastructure.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Cocoa/ResourceLoadStatisticsMemoryStoreCocoa.mm:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded):
+            Used to pick up custom set prevalent resource on Cocoa platforms (for debug mode).
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::isPrevalentDueToDebugMode):
+        (WebKit::ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords):
+            Now skips processing of debug mode prevalent resources so that they
+            stay prevalent.
+        (WebKit::ResourceLoadStatisticsMemoryStore::ensurePrevalentResourcesForDebugMode):
+            Convenience function to make 3rdpartytestwebkit.org and any custom domain
+            set through ResourceLoadStatisticsMemoryStore::setPrevalentResourceForDebugMode()
+            be prevalent resources.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPrevalentResourceForDebugMode):
+            Sets a custom domain to always be treated as prevalent in debug mode.
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+            Now makes sure 3rdpartytestwebkit.org and any custom domain set through
+            ResourceLoadStatisticsMemoryStore::setPrevalentResourceForDebugMode()
+            are prevalent resources even after a clear of the store.
+        (WebKit::debugLogDomainsInBatches):
+            We may have too many domain names to fit in a single log statement.
+            This function logs them in batches of 50, if we have more than 50.
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookiePartitioning):
+            Now makes use of debugLogDomainsInBatches() in debug mode.
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        (WebKit::ResourceLoadStatisticsMemoryStore::isDebugModeEnabled const):
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+            Now accepts a non-empty memory store in debug mode. This is to support a
+            pre-populated store with 3rdpartytestwebkit.org and any custom domain already
+            set as prevalent.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::setResourceLoadStatisticsDebugMode):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-07-20  Tim Horton  <timothy_horton@apple.com>
 
         Occasional crash under -[WKFormInputSession setSuggestions:]

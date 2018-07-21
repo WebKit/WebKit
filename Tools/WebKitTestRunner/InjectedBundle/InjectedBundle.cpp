@@ -315,6 +315,16 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetStatisticsDebugMode")) {
+        m_testRunner->statisticsCallDidSetDebugModeCallback();
+        return;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPrevalentResourceForDebugMode")) {
+        m_testRunner->statisticsCallDidSetPrevalentResourceForDebugModeCallback();
+        return;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetLastSeen")) {
         m_testRunner->statisticsCallDidSetLastSeenCallback();
         return;

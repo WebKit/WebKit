@@ -1036,6 +1036,20 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setStatisticsDebugMode(WKBooleanGetValue(value));
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResourceForDebugMode")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef hostName = static_cast<WKStringRef>(messageBody);
+        TestController::singleton().setStatisticsPrevalentResourceForDebugMode(hostName);
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsLastSeen")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         
@@ -1524,6 +1538,18 @@ void TestInvocation::didResetStatisticsToConsistentState()
 void TestInvocation::didSetPartitionOrBlockCookiesForHost()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetPartitionOrBlockCookiesForHost"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::didSetStatisticsDebugMode()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetStatisticsDebugMode"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::didSetPrevalentResourceForDebugMode()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetPrevalentResourceForDebugMode"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 

@@ -1,3 +1,34 @@
+2018-07-20  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Enable basic functionality in experimental debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=187835
+        <rdar://problem/42408590>
+
+        Reviewed by Chris Dumez.
+
+        This patch makes the experimental ITP Debug Mode feature work, at least
+        to a basic level. All of the changes to TestRunner are to support the
+        layout tests for the functionality.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsDebugMode):
+        (WTR::TestRunner::statisticsCallDidSetDebugModeCallback):
+        (WTR::TestRunner::setStatisticsPrevalentResourceForDebugMode):
+        (WTR::TestRunner::statisticsCallDidSetPrevalentResourceForDebugModeCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsDebugMode):
+        (WTR::TestController::setStatisticsPrevalentResourceForDebugMode):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didSetStatisticsDebugMode):
+        (WTR::TestInvocation::didSetPrevalentResourceForDebugMode):
+        * WebKitTestRunner/TestInvocation.h:
+
 2018-07-20  Ryosuke Niwa  <rniwa@apple.com>
 
         Picking a color from the color panel for typing attributes needs to inverse transform through color-filter

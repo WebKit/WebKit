@@ -169,13 +169,29 @@ void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
     semaphore.wait(WallTime::infinity());
 }
 
-void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool value)
+void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool value, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, value] {
+    postTask([this, value, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setResourceLoadStatisticsDebugMode(value);
+        postTaskReply([completionHandler = WTFMove(completionHandler)] {
+            completionHandler();
+        });
+    });
+}
+
+void WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode(const WebCore::URL& url, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, primaryDomain = isolatedPrimaryDomain(url), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_memoryStore)
+            m_memoryStore->setPrevalentResourceForDebugMode(primaryDomain);
+        postTaskReply([completionHandler = WTFMove(completionHandler)] {
+            completionHandler();
+        });
     });
 }
 

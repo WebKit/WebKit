@@ -40,6 +40,9 @@ WK_EXPORT WKWebsiteDataStoreRef WKWebsiteDataStoreCreateNonPersistentDataStore()
 WK_EXPORT bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef dataStoreRef, bool enable);
+typedef void (*WKWebsiteDataStoreStatisticsDebugModeFunction)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(WKWebsiteDataStoreRef dataStoreRef, bool enable, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler);
+WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler);    
 typedef void (*WKWebsiteDataStoreStatisticsLastSeenFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsLastSeen(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, double seconds, void* context, WKWebsiteDataStoreStatisticsLastSeenFunction completionHandler);
 typedef void (*WKWebsiteDataStoreStatisticsPrevalentResourceFunction)(void* functionContext);

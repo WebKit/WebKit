@@ -51,6 +51,7 @@ constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
 constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
 constexpr unsigned operatingDatesWindow { 30 };
 constexpr unsigned maxImportance { 3 };
+static const char* debugStaticPrevalentResource { "3rdpartytestwebkit.org" };
 
 #if !RELEASE_LOG_DISABLED
 static String domainsToString(const Vector<String>& domains)
@@ -319,13 +320,23 @@ void ResourceLoadStatisticsMemoryStore::markAsPrevalentIfHasRedirectedToPrevalen
     }
 }
 
+bool ResourceLoadStatisticsMemoryStore::isPrevalentDueToDebugMode(ResourceLoadStatistics& resourceStatistic)
+{
+    if (!m_debugModeEnabled)
+        return false;
+
+    return resourceStatistic.highLevelDomain == debugStaticPrevalentResource || resourceStatistic.highLevelDomain == m_debugManualPrevalentResource;
+}
+
 void ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords()
 {
     ASSERT(!RunLoop::isMain());
 
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval) {
         for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-            if (!resourceStatistic.isVeryPrevalentResource) {
+            if (isPrevalentDueToDebugMode(resourceStatistic))
+                setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
+            else if (!resourceStatistic.isVeryPrevalentResource) {
                 markAsPrevalentIfHasRedirectedToPrevalent(resourceStatistic);
                 auto currentPrevalence = resourceStatistic.isPrevalentResource ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low;
                 auto newPrevalence = m_resourceLoadStatisticsClassifier.calculateResourcePrevalence(resourceStatistic, currentPrevalence);
@@ -507,13 +518,48 @@ void ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData(Completio
     });
 }
 
+Vector<String> ResourceLoadStatisticsMemoryStore::ensurePrevalentResourcesForDebugMode()
+{
+    if (!m_debugModeEnabled)
+        return { };
+
+    Vector<String> primaryDomainsToBlock;
+    primaryDomainsToBlock.reserveInitialCapacity(2);
+
+    auto& staticSesourceStatistic = ensureResourceStatisticsForPrimaryDomain(debugStaticPrevalentResource);
+    setPrevalentResource(staticSesourceStatistic, ResourceLoadPrevalence::High);
+    primaryDomainsToBlock.uncheckedAppend(debugStaticPrevalentResource);
+
+    if (!m_debugManualPrevalentResource.isEmpty()) {
+        auto& manualResourceStatistic = ensureResourceStatisticsForPrimaryDomain(m_debugManualPrevalentResource);
+        setPrevalentResource(manualResourceStatistic, ResourceLoadPrevalence::High);
+        primaryDomainsToBlock.uncheckedAppend(m_debugManualPrevalentResource);
+    }
+    
+    return primaryDomainsToBlock;
+}
+
 void ResourceLoadStatisticsMemoryStore::setResourceLoadStatisticsDebugMode(bool enable)
 {
     ASSERT(!RunLoop::isMain());
 
     m_debugModeEnabled = enable;
+    m_debugLoggingEnabled = enable;
+
+    ensurePrevalentResourcesForDebugMode();
+}
+
+void ResourceLoadStatisticsMemoryStore::setPrevalentResourceForDebugMode(const String& domain)
+{
+    if (!m_debugModeEnabled)
+        return;
+
+    m_debugManualPrevalentResource = domain;
+    auto& resourceStatistic = ensureResourceStatisticsForPrimaryDomain(domain);
+    setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
+
 #if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "ITP Debug Mode %{public}s.", (m_debugModeEnabled ? "enabled" : "disabled"));
+    RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "Did set %{public}s as prevalent resource for the purposes of ITP Debug Mode.", domain.utf8().data());
 #endif
 }
 
@@ -891,7 +937,9 @@ void ResourceLoadStatisticsMemoryStore::clear()
     m_operatingDates.clear();
 
     removeAllStorageAccess();
-    updateCookiePartitioningForDomains({ }, { }, { }, ShouldClearFirst::Yes, []() { });
+
+    auto primaryDomainsToBlock = ensurePrevalentResourcesForDebugMode();
+    updateCookiePartitioningForDomains({ }, primaryDomainsToBlock, { }, ShouldClearFirst::Yes, []() { });
 }
 
 bool ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const
@@ -935,6 +983,39 @@ bool ResourceLoadStatisticsMemoryStore::hasUserGrantedStorageAccessThroughPrompt
     return statistic.storageAccessUnderTopFrameOrigins.contains(firstPartyPrimaryDomain);
 }
 
+static void debugLogDomainsInBatches(const char* action, const Vector<String>& domains)
+{
+#if !RELEASE_LOG_DISABLED
+    static const auto maxNumberOfDomainsInOneLogStatement = 50;
+    if (domains.isEmpty())
+        return;
+
+    if (domains.size() <= maxNumberOfDomainsInOneLogStatement) {
+        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to %{public}s cookies in third-party contexts for: %{public}s.", action, domainsToString(domains).utf8().data());
+        return;
+    }
+    
+    Vector<String> batch;
+    batch.reserveInitialCapacity(maxNumberOfDomainsInOneLogStatement);
+    auto batchNumber = 1;
+    unsigned numberOfBatches = std::ceil(domains.size() / static_cast<float>(maxNumberOfDomainsInOneLogStatement));
+
+    for (auto& domain : domains) {
+        if (batch.size() == maxNumberOfDomainsInOneLogStatement) {
+            RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+            batch.shrink(0);
+            ++batchNumber;
+        }
+        batch.append(domain);
+    }
+    if (!batch.isEmpty())
+        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+#else
+    UNUSED_PARAM(action);
+    UNUSED_PARAM(domains);
+#endif
+}
+
 void ResourceLoadStatisticsMemoryStore::updateCookiePartitioning(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
@@ -965,16 +1046,14 @@ void ResourceLoadStatisticsMemoryStore::updateCookiePartitioning(CompletionHandl
         return;
     }
 
-#if !RELEASE_LOG_DISABLED
     if (m_debugLoggingEnabled) {
         if (!domainsToPartition.isEmpty())
-            RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to partition cookies in third-party contexts for %{public}s.", domainsToString(domainsToPartition).utf8().data());
+            debugLogDomainsInBatches("partition", domainsToPartition);
         if (!domainsToBlock.isEmpty())
-            RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to block cookies in third-party contexts for %{public}s.", domainsToString(domainsToBlock).utf8().data());
+            debugLogDomainsInBatches("block", domainsToBlock);
         if (!domainsToNeitherPartitionNorBlock.isEmpty())
-            RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to neither partition nor block cookies in third-party contexts for %{public}s.", domainsToString(domainsToNeitherPartitionNorBlock).utf8().data());
+            debugLogDomainsInBatches("neither partition nor block", domainsToNeitherPartitionNorBlock);
     }
-#endif
 
     RunLoop::main().dispatch([this, store = makeRef(m_store), domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock), completionHandler = WTFMove(completionHandler)] () mutable {
         store->callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, ShouldClearFirst::No, [this, store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {

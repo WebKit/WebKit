@@ -272,6 +272,8 @@ interface TestRunner {
     void installStatisticsDidModifyDataRecordsCallback(object callback);
     void installStatisticsDidScanDataRecordsCallback(object callback);
     void installStatisticsDidRunTelemetryCallback(object callback);
+    void setStatisticsDebugMode(boolean value, object completionHandler);
+    void setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
     void setStatisticsLastSeen(DOMString hostName, double seconds, object completionHandler);
     void setStatisticsPrevalentResource(DOMString hostName, boolean value, object completionHandler);
     void setStatisticsVeryPrevalentResource(DOMString hostName, boolean value, object completionHandler);

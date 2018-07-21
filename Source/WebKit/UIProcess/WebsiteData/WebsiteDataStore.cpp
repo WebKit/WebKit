@@ -1508,9 +1508,16 @@ bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
 
 void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
 {
+    setResourceLoadStatisticsDebugMode(enabled, []() { });
+}
+
+void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
     m_resourceLoadStatisticsDebugMode = enabled;
     if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(enabled);
+        m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(enabled, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback)

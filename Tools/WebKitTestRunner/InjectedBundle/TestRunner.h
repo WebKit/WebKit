@@ -382,6 +382,10 @@ public:
     void statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value, JSValueRef callback);
     void statisticsCallDidSetPartitionOrBlockCookiesForHostCallback();
     void statisticsSubmitTelemetry();
+    void setStatisticsDebugMode(bool value, JSValueRef completionHandler);
+    void statisticsCallDidSetDebugModeCallback();
+    void setStatisticsPrevalentResourceForDebugMode(JSStringRef hostName, JSValueRef completionHandler);
+    void statisticsCallDidSetPrevalentResourceForDebugModeCallback();
     void setStatisticsLastSeen(JSStringRef hostName, double seconds, JSValueRef completionHandler);
     void statisticsCallDidSetLastSeenCallback();
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler);

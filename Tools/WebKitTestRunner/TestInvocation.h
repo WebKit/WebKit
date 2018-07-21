@@ -74,6 +74,8 @@ public:
     void didClearStatisticsThroughWebsiteDataRemoval();
     void didResetStatisticsToConsistentState();
     void didSetPartitionOrBlockCookiesForHost();
+    void didSetStatisticsDebugMode();
+    void didSetPrevalentResourceForDebugMode();
     void didSetLastSeen();
     void didSetPrevalentResource();
     void didSetVeryPrevalentResource();

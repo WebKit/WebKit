@@ -1,3 +1,19 @@
+2018-07-20  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Enable basic functionality in experimental debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=187835
+        <rdar://problem/42408590>
+
+        Reviewed by Chris Dumez.
+
+        This patch makes the experimental ITP Debug Mode feature work, at least
+        to a basic level.
+
+        * http/tests/resourceLoadStatistics/enable-debug-mode-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/enable-debug-mode.html: Added.
+        * http/tests/resourceLoadStatistics/set-custom-prevalent-resource-in-debug-mode-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/set-custom-prevalent-resource-in-debug-mode.html: Added.
+
 2018-07-20  Sihui Liu  <sihui_liu@apple.com>
 
         [ MacOS iOS ] Layout Test storage/indexeddb/modern/opendatabase-after-storage-crash.html is flaky

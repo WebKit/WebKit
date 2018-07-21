@@ -113,6 +113,8 @@ public:
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
     void setResourceLoadStatisticsDebugMode(bool);
+    bool isDebugModeEnabled() const { return m_debugModeEnabled; };
+    void setPrevalentResourceForDebugMode(const String& domain);
 
     void hasStorageAccess(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(String&& subFramePrimaryDomain, String&& topFramePrimaryDomain, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
@@ -143,6 +145,8 @@ private:
     void scheduleStatisticsProcessingRequestIfNecessary();
     void grantStorageAccessInternal(String&& subFrameHost, String&& topFrameHost, std::optional<uint64_t> frameID, uint64_t pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
     void markAsPrevalentIfHasRedirectedToPrevalent(WebCore::ResourceLoadStatistics&);
+    bool isPrevalentDueToDebugMode(WebCore::ResourceLoadStatistics&);
+    Vector<String> ensurePrevalentResourcesForDebugMode();
     void removeDataRecords(CompletionHandler<void()>&&);
     void pruneStatisticsIfNeeded();
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
@@ -181,6 +185,7 @@ private:
     WallTime m_endOfGrandfatheringTimestamp;
     bool m_debugLoggingEnabled { false };
     bool m_debugModeEnabled { false };
+    String m_debugManualPrevalentResource;
     bool m_storageAccessPromptsEnabled { false };
     bool m_dataRecordsBeingRemoved { false };
     MonotonicTime m_lastTimeDataRecordsWereRemoved;

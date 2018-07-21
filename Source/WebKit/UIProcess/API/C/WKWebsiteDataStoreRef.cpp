@@ -69,6 +69,31 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef 
     WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsDebugMode(enable);
 }
 
+void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(WKWebsiteDataStoreRef dataStoreRef, bool enable, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler)
+{
+    auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        completionHandler(context);
+        return;
+    }
+    
+    store->setResourceLoadStatisticsDebugMode(enable, [context, completionHandler] {
+        completionHandler(context);
+    });
+}
+
+void WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler)
+{
+    auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        completionHandler(context);
+        return;
+    }
+    
+    store->setPrevalentResourceForDebugMode(WebCore::URL(WebCore::URL(), WebKit::toImpl(host)->string()), [context, completionHandler] {
+        completionHandler(context);
+    });
+}
 void WKWebsiteDataStoreSetStatisticsLastSeen(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, double seconds, void* context, WKWebsiteDataStoreStatisticsLastSeenFunction completionHandler)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();

@@ -156,6 +156,8 @@ public:
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
 
+    void setStatisticsDebugMode(bool value);
+    void setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName);
     void setStatisticsLastSeen(WKStringRef hostName, double seconds);
     void setStatisticsPrevalentResource(WKStringRef hostName, bool value);
     void setStatisticsVeryPrevalentResource(WKStringRef hostName, bool value);

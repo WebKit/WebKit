@@ -736,6 +736,8 @@ enum {
     WillEndSwipeCallbackID,
     DidEndSwipeCallbackID,
     DidRemoveSwipeSnapshotCallbackID,
+    SetStatisticsDebugModeCallbackID,
+    SetStatisticsPrevalentResourceForDebugModeCallbackID,
     SetStatisticsLastSeenCallbackID,
     SetStatisticsPrevalentResourceCallbackID,
     SetStatisticsVeryPrevalentResourceCallbackID,
@@ -1331,6 +1333,35 @@ void TestRunner::callDidRemoveSwipeSnapshotCallback()
     callTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID);
 }
 
+void TestRunner::setStatisticsDebugMode(bool value, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(SetStatisticsDebugModeCallbackID, completionHandler);
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsDebugMode"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+
+}
+
+void TestRunner::statisticsCallDidSetDebugModeCallback()
+{
+    callTestRunnerCallback(SetStatisticsDebugModeCallbackID);
+}
+
+void TestRunner::setStatisticsPrevalentResourceForDebugMode(JSStringRef hostName, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(SetStatisticsPrevalentResourceForDebugModeCallbackID, completionHandler);
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsPrevalentResourceForDebugMode"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(hostName));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::statisticsCallDidSetPrevalentResourceForDebugModeCallback()
+{
+    callTestRunnerCallback(SetStatisticsPrevalentResourceForDebugModeCallbackID);
+}
+
 void TestRunner::setStatisticsLastSeen(JSStringRef hostName, double seconds, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(SetStatisticsLastSeenCallbackID, completionHandler);
@@ -1362,7 +1393,6 @@ void TestRunner::statisticsCallDidSetLastSeenCallback()
 {
     callTestRunnerCallback(SetStatisticsLastSeenCallbackID);
 }
-
 
 void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler)
 {

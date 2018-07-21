@@ -109,6 +109,7 @@ public:
     void setResourceLoadStatisticsEnabled(bool);
     bool resourceLoadStatisticsDebugMode() const;
     void setResourceLoadStatisticsDebugMode(bool);
+    void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
 
     uint64_t cacheStoragePerOriginQuota() const { return m_resolvedConfiguration.cacheStoragePerOriginQuota; }
     void setCacheStoragePerOriginQuota(uint64_t quota) { m_resolvedConfiguration.cacheStoragePerOriginQuota = quota; }
