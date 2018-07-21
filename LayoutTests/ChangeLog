@@ -1,3 +1,16 @@
+2018-07-20  Sihui Liu  <sihui_liu@apple.com>
+
+        [ MacOS iOS ] Layout Test storage/indexeddb/modern/opendatabase-after-storage-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187648
+        <rdar://problem/42405935>
+
+        Reviewed by Brady Eidson.
+
+        Make test wait until requests finish to get correct result, because indexedDB operations are asynchronous.
+
+        * storage/indexeddb/modern/opendatabase-after-storage-crash-expected.txt:
+        * storage/indexeddb/modern/opendatabase-after-storage-crash.html:
+
 2018-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Remove completed animations from GraphicsLayer, thus avoiding excessive backing store allocation

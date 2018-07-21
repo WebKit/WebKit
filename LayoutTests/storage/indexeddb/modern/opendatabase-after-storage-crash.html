@@ -1,7 +1,7 @@
 <script src="../../../resources/js-test.js"></script>
 <script src="../resources/shared.js"></script>
 <body>
-If this test completes quickly instead of hanging indefinitely, it has passed.
+This test verifies when storage process crashes, indexedDB operation should not hang indefinitely.
 </body>
 <script>
 
@@ -12,66 +12,65 @@ function continueTest()
 {
 	var request = window.indexedDB.open(dbname, 2);
 	request.onupgradeneeded = function(e) {
-		document.body.innerHTML = "openDatabase call after storage process termination should not have resulted in upgradeneeded";
+		document.body.innerHTML = "Unexpected upgradeneeded after storage process termination. Database: name " + dbname + ", version 2.";
 		if (window.testRunner)
 			testRunner.notifyDone();
-
 	}
-	
+
 	request.onerror = function(e) {
 		// Good, we received an expected error.
 		// Now reload to see if a new document connects successfully
 		if (sessionStorage[storageKey]) {
-			document.body.innerHTML = "Should not have reached this code twice!";
+			document.body.innerHTML = "Received error more than once unexpectedly. Database: name " + dbname + ", version 2.";
 			if (window.testRunner)
 				testRunner.notifyDone();
 			return;
 		}
-		
+
 		sessionStorage[storageKey] = "Made it";
 		location.reload();
 	}
 
 	request.onsuccess = function(e) {
-		document.body.innerHTML = "Unexpected success during the second database open after document load. SessionStorage value: " + sessionStorage[storageKey];
+		document.body.innerHTML = "Unexpected upgradeneeded after storage process termination. Database: name " + dbname + ", version 2. SessionStorage value: " + sessionStorage[storageKey] + ".";
 		if (window.testRunner)
 			testRunner.notifyDone();
 	}
 }
 
-var versionToOpen = sessionStorage.finishedFirstOpen ? 3 : 1;
+var versionToOpen = sessionStorage.doneFirstLoad ? 3 : 1;
 var request = window.indexedDB.open(dbname, versionToOpen);
+
 request.onupgradeneeded = function(e) {
-	if (sessionStorage.finishedFirstOpen) {
-		document.body.innerHTML = "";
-		if (sessionStorage[storageKey] != "Made it")
-			document.body.innerHTML += "Expected error in the first pass of the test was NOT logged<br>";
-		document.body.innerHTML += "Successfully opened the database in a new document"
+	if (sessionStorage.doneFirstLoad) {
+		document.body.innerHTML = "Successfully opened database with version " + versionToOpen + ".";
+		shouldBeEqualToString('sessionStorage[storageKey]', 'Made it');
+
 		if (window.testRunner)
 			testRunner.notifyDone();
 	}
 	
-	sessionStorage.finishedFirstOpen = true;
-	
-	if (window.testRunner)
-		testRunner.terminateStorageProcess();
+	sessionStorage.doneFirstLoad = true;
 
 	// Set an error handler on the database connection so once the storage process terminates we know to continue the test
 	e.target.result.onerror = function(e) {
 		setTimeout(continueTest, 0);
 	}
+
+	if (window.testRunner) {
+		testRunner.waitUntilDone();
+		testRunner.terminateStorageProcess();
+	}
 }
 
 request.onerror = function(e) {
-	document.body.innerHTML = "Unexpected error during the first database open on document load. Message: " + e.message + ". DB opening: " + dbname + ". Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
-	if (window.testRunner)
-		testRunner.notifyDone();
+	if (versionToOpen == 1)
+		document.body.innerHTML = "Error on opening reuqest for database version 1. (FAIL: test should stop at opening version 3.)"; 
 }
 
 request.onsuccess = function(e) {
-	document.body.innerHTML = "Unexpected success during the first database open on document load. DB opening: " + dbname + ". Version opening: " + versionToOpen + ". SessionStorage value: " + sessionStorage[storageKey];
-	if (window.testRunner)
-		testRunner.notifyDone();
+	if (versionToOpen == 1)
+		document.body.innerHTML = "Success on opening reuqest for database version 1. (FAIL: test should stop at opening version 3.)";
 }
 
 </script>

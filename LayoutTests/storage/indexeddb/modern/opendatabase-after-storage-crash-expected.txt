@@ -1,1 +1,2 @@
-Successfully opened the database in a new document
+PASS sessionStorage[storageKey] is "Made it"
+Successfully opened database with version 3.
