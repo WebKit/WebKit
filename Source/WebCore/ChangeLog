@@ -1,3 +1,18 @@
+2018-07-20  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r233974): Cannot close pip'd video; pops back into PiP.
+        https://bugs.webkit.org/show_bug.cgi?id=187873
+
+        Reviewed by Jon Lee.
+
+        When the PIP machinery on Mac wants to close the PIP window (due to the close button being clicked), it does
+        not consult our -shouldClosePiP handler; it just tells us that we're going to close. So we never setup the 
+        necessary state on the WebProcess side and still think that our "targetIsFullscreen". When we get the "stop"
+        action, just request exit fullscreen, but set up the _pipState to think we're already exiting (because we are).
+
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC pipActionStop:]):
+
 2018-07-20  Justin Fan  <justin_fan@apple.com>
 
         Safari WebGL does not consistently provide correct GPU context on eGPU systems

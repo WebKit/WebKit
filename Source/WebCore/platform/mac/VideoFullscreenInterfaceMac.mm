@@ -335,8 +335,8 @@ enum class PIPState {
     if (PlaybackSessionModel* playbackSessionModel = _videoFullscreenInterfaceMac->playbackSessionModel())
         playbackSessionModel->pause();
 
-    // FIXME 25096170: Should animate only if the page with the video is unobscured. For now, always close without animation.
-    [self exitPIP];
+    _videoFullscreenInterfaceMac->requestHideAndExitFullscreen();
+    _pipState = PIPState::ExitingPIP;
 }
 
 @end
