@@ -753,14 +753,14 @@ void VM::resetDateCache()
     dateInstanceCache.reset();
 }
 
-void VM::whenIdle(std::function<void()> callback)
+void VM::whenIdle(Function<void()>&& callback)
 {
     if (!entryScope) {
         callback();
         return;
     }
 
-    entryScope->addDidPopListener(callback);
+    entryScope->addDidPopListener(WTFMove(callback));
 }
 
 void VM::deleteAllLinkedCode(DeleteAllCodeEffort effort)
@@ -1023,7 +1023,8 @@ void VM::addImpureProperty(const String& propertyName)
         watchpointSet->fireAll(*this, "Impure property added");
 }
 
-static bool enableProfilerWithRespectToCount(unsigned& counter, std::function<void()> doEnableWork)
+template<typename Func>
+static bool enableProfilerWithRespectToCount(unsigned& counter, const Func& doEnableWork)
 {
     bool needsToRecompile = false;
     if (!counter) {
@@ -1035,7 +1036,8 @@ static bool enableProfilerWithRespectToCount(unsigned& counter, std::function<vo
     return needsToRecompile;
 }
 
-static bool disableProfilerWithRespectToCount(unsigned& counter, std::function<void()> doDisableWork)
+template<typename Func>
+static bool disableProfilerWithRespectToCount(unsigned& counter, const Func& doDisableWork)
 {
     RELEASE_ASSERT(counter > 0);
     bool needsToRecompile = false;

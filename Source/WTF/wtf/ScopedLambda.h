@@ -26,6 +26,8 @@
 #ifndef ScopedLambda_h
 #define ScopedLambda_h
 
+#include <wtf/ForbidHeapAllocation.h>
+
 namespace WTF {
 
 // You can use ScopedLambda to efficiently pass lambdas without allocating memory or requiring
@@ -43,6 +45,7 @@ namespace WTF {
 template<typename FunctionType> class ScopedLambda;
 template<typename ResultType, typename... ArgumentTypes>
 class ScopedLambda<ResultType (ArgumentTypes...)> {
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     ScopedLambda(ResultType (*impl)(void* arg, ArgumentTypes...) = nullptr, void* arg = nullptr)
         : m_impl(impl)

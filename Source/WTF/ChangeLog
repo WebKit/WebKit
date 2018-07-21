@@ -1,3 +1,13 @@
+2018-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use Function / ScopedLambda / RecursableLambda instead of std::function
+        https://bugs.webkit.org/show_bug.cgi?id=187472
+
+        Reviewed by Mark Lam.
+
+        * wtf/ScopedLambda.h:
+        (WTF::ScopedLambda<ResultType):
+
 2018-07-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Switch CMake ports back to C++ 14

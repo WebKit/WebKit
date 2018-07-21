@@ -199,7 +199,7 @@ String HeapSnapshotBuilder::json()
     return json([] (const HeapSnapshotNode&) { return true; });
 }
 
-String HeapSnapshotBuilder::json(std::function<bool (const HeapSnapshotNode&)> allowNodeCallback)
+String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback)
 {
     VM& vm = m_profiler.vm();
     DeferGCForAWhile deferGC(vm.heap);

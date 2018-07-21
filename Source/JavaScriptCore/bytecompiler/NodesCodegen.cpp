@@ -457,11 +457,11 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     
 handleSpread:
     RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(length));
-    auto spreader = [array, index](BytecodeGenerator& generator, RegisterID* value)
+    auto spreader = scopedLambda<void(BytecodeGenerator&, RegisterID*)>([array, index](BytecodeGenerator& generator, RegisterID* value)
     {
         generator.emitDirectPutByVal(array.get(), index.get(), value);
         generator.emitInc(index.get());
-    };
+    });
     for (; n; n = n->next()) {
         if (n->elision())
             generator.emitBinaryOp(op_add, index.get(), index.get(), generator.emitLoad(0, jsNumber(n->elision())), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
@@ -1455,7 +1455,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                 RefPtr<RegisterID> thisRegister = generator.emitLoad(generator.newTemporary(), jsUndefined());
                 RefPtr<RegisterID> argumentsRegister = generator.emitLoad(generator.newTemporary(), jsUndefined());
                 
-                auto extractor = [&thisRegister, &argumentsRegister, &index](BytecodeGenerator& generator, RegisterID* value)
+                auto extractor = scopedLambda<void(BytecodeGenerator&, RegisterID*)>([&thisRegister, &argumentsRegister, &index](BytecodeGenerator& generator, RegisterID* value)
                 {
                     Ref<Label> haveThis = generator.newLabel();
                     Ref<Label> end = generator.newLabel();
@@ -1471,7 +1471,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                     generator.move(argumentsRegister.get(), value);
                     generator.emitLoad(index.get(), jsNumber(2));
                     generator.emitLabel(end.get());
-                };
+                });
                 generator.emitEnumeration(this, spread->expression(), extractor);
                 generator.emitCallVarargsInTailPosition(returnValue.get(), realFunction.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
             } else if (m_args->m_listNode->m_next) {
@@ -3216,7 +3216,7 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     RegisterID* forLoopSymbolTable = nullptr;
     generator.pushLexicalScope(this, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
-    auto extractor = [this, dst](BytecodeGenerator& generator, RegisterID* value)
+    auto extractor = scopedLambda<void(BytecodeGenerator&, RegisterID*)>([this, dst](BytecodeGenerator& generator, RegisterID* value)
     {
         if (m_lexpr->isResolveNode()) {
             const Identifier& ident = static_cast<ResolveNode*>(m_lexpr)->identifier();
@@ -3267,7 +3267,7 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         }
         generator.emitProfileControlFlow(m_statement->startOffset());
         generator.emitNode(dst, m_statement);
-    };
+    });
     generator.emitEnumeration(this, m_expr, extractor, this, forLoopSymbolTable);
     generator.popLexicalScope(this);
     generator.emitProfileControlFlow(m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0));

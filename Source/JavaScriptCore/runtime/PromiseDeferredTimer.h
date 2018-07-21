@@ -52,7 +52,7 @@ public:
     // JSPromiseDeferred should handle canceling when the promise is resolved or rejected.
     bool cancelPendingPromise(JSPromiseDeferred*);
 
-    typedef std::function<void()> Task;
+    using Task = Function<void()>;
     void scheduleWorkSoon(JSPromiseDeferred*, Task&&);
 
     void stopRunningTasks() { m_runTasks = false; }

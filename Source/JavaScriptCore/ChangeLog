@@ -1,3 +1,64 @@
+2018-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use Function / ScopedLambda / RecursableLambda instead of std::function
+        https://bugs.webkit.org/show_bug.cgi?id=187472
+
+        Reviewed by Mark Lam.
+
+        std::function allocates memory from standard malloc instead of bmalloc. Instead of
+        using that, we should use WTF::{Function,ScopedLambda,RecursableLambda}.
+
+        This patch attempts to replace std::function with the above WTF function types.
+        If the function's lifetime can be the same to the stack, we can use ScopedLambda, which
+        is really efficient. Otherwise, we should use WTF::Function.
+        For recurring use cases, we can use RecursableLambda.
+
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssembler.h:
+        * b3/air/AirDisassembler.cpp:
+        (JSC::B3::Air::Disassembler::dump):
+        * b3/air/AirDisassembler.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::addSlowPathGeneratorLambda):
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * heap/HeapSnapshotBuilder.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::dump const):
+        * interpreter/StackVisitor.h:
+        * runtime/PromiseDeferredTimer.h:
+        * runtime/VM.cpp:
+        (JSC::VM::whenIdle):
+        (JSC::enableProfilerWithRespectToCount):
+        (JSC::disableProfilerWithRespectToCount):
+        * runtime/VM.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::addDidPopListener):
+        * runtime/VMEntryScope.h:
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::verifyCellList):
+        (JSC::HeapVerifier::validateCell):
+        (JSC::HeapVerifier::validateJSCell):
+        * tools/HeapVerifier.h:
+
 2018-07-20  Michael Saboff  <msaboff@apple.com>
 
         DFG AbstractInterpreter: CheckArray filters array modes for DirectArguments/ScopedArguments using only NonArray

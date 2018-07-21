@@ -69,7 +69,7 @@ void Disassembler::addInst(Inst* inst, CCallHelpers::Label start, CCallHelpers::
     RELEASE_ASSERT(addResult.isNewEntry);
 }
 
-void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, std::function<void(Inst&)> doToEachInst)
+void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, const char* airPrefix, const char* asmPrefix, const ScopedLambda<void(Inst&)>& doToEachInst)
 {
     auto dumpAsmRange = [&] (CCallHelpers::Label startLabel, CCallHelpers::Label endLabel) {
         RELEASE_ASSERT(startLabel.isSet());

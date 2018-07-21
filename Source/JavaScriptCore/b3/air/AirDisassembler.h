@@ -50,7 +50,7 @@ public:
     void startBlock(BasicBlock*, CCallHelpers&);
     void addInst(Inst*, CCallHelpers::Label, CCallHelpers::Label);
 
-    void dump(Code&, PrintStream&, LinkBuffer&, const char* airPrefix, const char* asmPrefix, std::function<void(Inst&)> doToEachInst);
+    void dump(Code&, PrintStream&, LinkBuffer&, const char* airPrefix, const char* asmPrefix, const ScopedLambda<void(Inst&)>& doToEachInst);
 
 private:
     HashMap<Inst*, std::pair<CCallHelpers::Label, CCallHelpers::Label>> m_instToRange;

@@ -64,9 +64,9 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     vm.clearLastException();
 }
 
-void VMEntryScope::addDidPopListener(std::function<void ()> listener)
+void VMEntryScope::addDidPopListener(Function<void ()>&& listener)
 {
-    m_didPopListeners.append(listener);
+    m_didPopListeners.append(WTFMove(listener));
 }
 
 VMEntryScope::~VMEntryScope()

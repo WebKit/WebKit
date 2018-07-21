@@ -388,9 +388,9 @@ void SpeculativeJIT::addSlowPathGenerator(std::unique_ptr<SlowPathGenerator> slo
     m_slowPathGenerators.append(WTFMove(slowPathGenerator));
 }
 
-void SpeculativeJIT::addSlowPathGenerator(std::function<void()> lambda)
+void SpeculativeJIT::addSlowPathGeneratorLambda(Function<void()>&& lambda)
 {
-    m_slowPathLambdas.append(SlowPathLambda{ lambda, m_currentNode, static_cast<unsigned>(m_stream->size()) });
+    m_slowPathLambdas.append(SlowPathLambda{ WTFMove(lambda), m_currentNode, static_cast<unsigned>(m_stream->size()) });
 }
 
 void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
@@ -3900,7 +3900,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
 
         auto done = m_jit.label();
 
-        addSlowPathGenerator([=, savePlans = WTFMove(savePlans)] () {
+        addSlowPathGeneratorLambda([=, savePlans = WTFMove(savePlans)] () {
             addICGenerationState->slowPathJumps.link(&m_jit);
             addICGenerationState->slowPathStart = m_jit.label();
 #if ENABLE(MATH_IC_STATS)
@@ -4608,7 +4608,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
 
         auto done = m_jit.label();
 
-        addSlowPathGenerator([=, savePlans = WTFMove(savePlans)] () {
+        addSlowPathGeneratorLambda([=, savePlans = WTFMove(savePlans)] () {
             icGenerationState->slowPathJumps.link(&m_jit);
             icGenerationState->slowPathStart = m_jit.label();
 #if ENABLE(MATH_IC_STATS)

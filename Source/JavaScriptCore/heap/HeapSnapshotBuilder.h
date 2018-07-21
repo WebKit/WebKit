@@ -121,7 +121,7 @@ public:
     void appendIndexEdge(JSCell* from, JSCell* to, uint32_t index);
 
     String json();
-    String json(std::function<bool (const HeapSnapshotNode&)> allowNodeCallback);
+    String json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback);
 
 private:
     // Finalized snapshots are not modified during building. So searching them

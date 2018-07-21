@@ -426,7 +426,7 @@ void StackVisitor::Frame::dump(PrintStream& out, Indenter indent) const
     dump(out, indent, [] (PrintStream&) { });
 }
 
-void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, std::function<void(PrintStream&)> prefix) const
+void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, WTF::Function<void(PrintStream&)> prefix) const
 {
     if (!this->callFrame()) {
         out.print(indent, "frame 0x0\n");

@@ -356,7 +356,7 @@ public:
     GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
     void addSlowPathGenerator(std::unique_ptr<SlowPathGenerator>);
-    void addSlowPathGenerator(std::function<void()>);
+    void addSlowPathGeneratorLambda(Function<void()>&&);
     void runSlowPathGenerators(PCToCodeOriginMapBuilder&);
     
     void compile(Node*);
@@ -1720,7 +1720,7 @@ public:
     
     Vector<std::unique_ptr<SlowPathGenerator>, 8> m_slowPathGenerators;
     struct SlowPathLambda {
-        std::function<void()> generator;
+        Function<void()> generator;
         Node* currentNode;
         unsigned streamIndex;
     };

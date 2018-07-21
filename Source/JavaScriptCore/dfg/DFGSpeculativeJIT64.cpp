@@ -4565,7 +4565,7 @@ void SpeculativeJIT::compile(Node* node)
         silentSpillAllRegistersImpl(false, savePlans, InvalidGPRReg);
         unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
 
-        addSlowPathGenerator([=]() {
+        addSlowPathGeneratorLambda([=]() {
             callTierUp.link(&m_jit);
 
             silentSpill(savePlans);
@@ -4617,7 +4617,7 @@ void SpeculativeJIT::compile(Node* node)
         unsigned streamIndex = m_stream->size();
         m_jit.jitCode()->bytecodeIndexToStreamIndex.add(bytecodeIndex, streamIndex);
 
-        addSlowPathGenerator([=]() {
+        addSlowPathGeneratorLambda([=]() {
             forceOSREntry.link(&m_jit);
             overflowedCounter.link(&m_jit);
 

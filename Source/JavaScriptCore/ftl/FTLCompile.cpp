@@ -48,7 +48,7 @@
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
 #include "ScratchRegisterAllocator.h"
-#include <wtf/Function.h>
+#include <wtf/RecursableLambda.h>
 
 namespace JSC { namespace FTL {
 
@@ -215,25 +215,25 @@ void compile(State& state, Safepoint::Result& safepointResult)
             printDFGNode(bitwise_cast<Node*>(value->origin().data()));
 
             HashSet<B3::Value*> localPrintedValues;
-            WTF::Function<void(B3::Value*)> printValueRecursive = [&] (B3::Value* value) {
+            auto printValueRecursive = recursableLambda([&] (auto self, B3::Value* value) -> void {
                 if (printedValues.contains(value) || localPrintedValues.contains(value))
                     return;
 
                 localPrintedValues.add(value);
                 for (unsigned i = 0; i < value->numChildren(); i++)
-                    printValueRecursive(value->child(i));
+                    self(value->child(i));
                 out.print(b3Prefix);
                 value->deepDump(state.proc.get(), out);
                 out.print("\n");
-            };
+            });
 
             printValueRecursive(currentB3Value);
             printedValues.add(value);
         };
 
-        auto forEachInst = [&] (B3::Air::Inst& inst) {
+        auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
             printB3Value(inst.origin);
-        };
+        });
 
         disassembler->dump(state.proc->code(), out, linkBuffer, airPrefix, asmPrefix, forEachInst);
         linkBuffer.didAlreadyDisassemble();

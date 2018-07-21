@@ -796,7 +796,7 @@ public:
     JSLock& apiLock() { return *m_apiLock; }
     CodeCache* codeCache() { return m_codeCache.get(); }
 
-    JS_EXPORT_PRIVATE void whenIdle(std::function<void()>);
+    JS_EXPORT_PRIVATE void whenIdle(Function<void()>&&);
 
     JS_EXPORT_PRIVATE void deleteAllCode(DeleteAllCodeEffort);
     JS_EXPORT_PRIVATE void deleteAllLinkedCode(DeleteAllCodeEffort);

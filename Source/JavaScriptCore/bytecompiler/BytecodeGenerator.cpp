@@ -340,7 +340,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (shouldCaptureAllOfTheThings)
         functionNode->varDeclarations().markAllVariablesAsCaptured();
     
-    auto captures = [&] (UniquedStringImpl* uid) -> bool {
+    auto captures = scopedLambda<bool (UniquedStringImpl*)>([&] (UniquedStringImpl* uid) -> bool {
         if (!shouldCaptureSomeOfTheThings)
             return false;
         if (needsArguments && uid == propertyNames().arguments.impl()) {
@@ -351,7 +351,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             return true;
         }
         return functionNode->captures(uid);
-    };
+    });
     auto varKind = [&] (UniquedStringImpl* uid) -> VarKind {
         return captures(uid) ? VarKind::Scope : VarKind::Stack;
     };
@@ -975,7 +975,7 @@ BytecodeGenerator::~BytecodeGenerator()
 
 void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack(
     FunctionParameters& parameters, bool isSimpleParameterList, FunctionNode* functionNode, SymbolTable* functionSymbolTable, 
-    int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures, bool shouldCreateArgumentsVariableInParameterScope)
+    int symbolTableConstantIndex, const ScopedLambda<bool (UniquedStringImpl*)>& captures, bool shouldCreateArgumentsVariableInParameterScope)
 {
     Vector<std::pair<Identifier, RefPtr<RegisterID>>> valuesToMoveIntoVars;
     ASSERT(!(isSimpleParameterList && shouldCreateArgumentsVariableInParameterScope));
@@ -4289,7 +4289,7 @@ bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
     return false;
 }
 
-void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
+void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
 {
     bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
     ASSERT(!isForAwait || (isForAwait && isAsyncFunctionParseMode(parseMode())));

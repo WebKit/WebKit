@@ -28,6 +28,7 @@
 #include "CellList.h"
 #include "Heap.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/UniqueArray.h>
 
 namespace JSC {
@@ -99,7 +100,7 @@ private:
 
     CellList* cellListForGathering(Phase);
     bool verifyCellList(Phase, CellList&);
-    static bool validateJSCell(VM* expectedVM, JSCell*, CellProfile*, CellList*, std::function<void()> printHeaderIfNeeded, const char* prefix = "");
+    static bool validateJSCell(VM* expectedVM, JSCell*, CellProfile*, CellList*, const ScopedLambda<void()>& printHeaderIfNeeded, const char* prefix = "");
 
     void printVerificationHeader();
 

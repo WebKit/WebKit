@@ -28,7 +28,7 @@
 #include "CalleeBits.h"
 #include "VMEntryRecord.h"
 #include "WasmIndexOrName.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/Indenter.h>
 #include <wtf/text/WTFString.h>
 
@@ -100,7 +100,7 @@ public:
         CallFrame* callFrame() const { return m_callFrame; }
         
         void dump(PrintStream&, Indenter = Indenter()) const;
-        void dump(PrintStream&, Indenter, std::function<void(PrintStream&)> prefix) const;
+        void dump(PrintStream&, Indenter, WTF::Function<void(PrintStream&)> prefix) const;
 
     private:
         Frame() { }

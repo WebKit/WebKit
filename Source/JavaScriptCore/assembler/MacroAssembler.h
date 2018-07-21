@@ -1954,7 +1954,7 @@ public:
     // MacroAssembler.
     void probe(Probe::Function, void* arg);
 
-    JS_EXPORT_PRIVATE void probe(std::function<void(Probe::Context&)>);
+    JS_EXPORT_PRIVATE void probe(Function<void(Probe::Context&)>);
 
     // Let's you print from your JIT generated code.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
