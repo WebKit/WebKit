@@ -1,3 +1,16 @@
+2018-07-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: Layers tab background should be dark
+        https://bugs.webkit.org/show_bug.cgi?id=187660
+        <rdar://problem/42179616>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView.prototype.initialLayout):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2018-07-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layers visualization shouldn't select on mousedown

@@ -143,7 +143,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         super.initialLayout();
 
         this._renderer = new THREE.WebGLRenderer({antialias: true});
-        this._renderer.setClearColor("white");
+        const backgroundColor = window.getComputedStyle(document.documentElement).getPropertyValue("--background-color-content").trim();
+        this._renderer.setClearColor(backgroundColor);
         this._renderer.setSize(this.element.offsetWidth, this.element.offsetHeight);
 
         this._camera = new THREE.PerspectiveCamera(45, this.element.offsetWidth / this.element.offsetHeight, 1, 100000);
