@@ -1,3 +1,21 @@
+2018-07-20  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r233925): Can't go into PiP twice
+        https://bugs.webkit.org/show_bug.cgi?id=187876
+        <rdar://problem/42444520>
+
+        Reviewed by Jon Lee.
+
+        We fail to enter PiP the second time because the video fullscreen interface no longer has a
+        model, and so gives a contentSize of 0x0. This happens because we disassociate the
+        interface from the model in didCleanupFullscreen. However, the interface and model can still
+        be re-used if they're kept alive by another client. We should delay disassociating the model
+        from the interface until just before the model is destroyed in removeClientForContext.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::removeClientForContext):
+        (WebKit::VideoFullscreenManagerProxy::didCleanupFullscreen):
+
 2018-07-20  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Enable basic functionality in experimental debug mode
