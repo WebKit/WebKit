@@ -1,3 +1,31 @@
+2018-07-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Do not collapse top/bottom margin with first/last inflow child from a non-block formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=187867
+
+        Reviewed by Antti Koivisto.
+
+        The box's top/bottom margin never collapses with a non-block inflow child.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isMarginTopCollapsedWithSibling):
+        (WebCore::Layout::isMarginBottomCollapsedWithSibling):
+        (WebCore::Layout::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::isMarginBottomCollapsedThrough):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBottom):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginTop):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBottom):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginBottom):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesBlockFormattingContextOnly const): <div style="overflow: hidden">foobar</div> establishes both inline and block formatting context (inline wins though).
+        * layout/layouttree/LayoutBox.h: establishesBlockFormattingContext() does not need to be virtual since we can determine it by looking at the box's style. -while in case
+        of inline formatting context, it is about the content.
+
 2018-07-20  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r233974): Cannot close pip'd video; pops back into PiP.

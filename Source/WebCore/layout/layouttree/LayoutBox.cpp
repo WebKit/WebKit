@@ -70,6 +70,11 @@ bool Box::establishesBlockFormattingContext() const
     return false;
 }
 
+bool Box::establishesBlockFormattingContextOnly() const
+{
+    return establishesBlockFormattingContext() && !establishesInlineFormattingContext();
+}
+
 bool Box::isRelativelyPositioned() const
 {
     return m_style.position() == PositionType::Relative;

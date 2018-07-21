@@ -47,7 +47,8 @@ public:
     virtual ~Box();
 
     bool establishesFormattingContext() const;
-    virtual bool establishesBlockFormattingContext() const;
+    bool establishesBlockFormattingContext() const;
+    bool establishesBlockFormattingContextOnly() const;
     virtual bool establishesInlineFormattingContext() const { return false; }
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
