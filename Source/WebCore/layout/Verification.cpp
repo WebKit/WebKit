@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "InlineTextBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutTreeBuilder.h"
@@ -39,7 +40,73 @@
 namespace WebCore {
 namespace Layout {
 
-static bool outputMismatchingBoxInformationIfNeeded(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
+static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, const LayoutContext& layoutContext, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
+{
+    auto* lineLayoutData = blockFlow.simpleLineLayout();
+    if (!lineLayoutData) {
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+
+    auto& inlineFormattingState = const_cast<LayoutContext&>(layoutContext).establishedFormattingState(inlineFormattingRoot);
+    ASSERT(is<InlineFormattingState>(inlineFormattingState));
+    auto& layoutRuns = downcast<InlineFormattingState>(inlineFormattingState).layoutRuns();
+
+    if (layoutRuns.size() != lineLayoutData->runCount()) {
+        stream << "Mismatching number of runs: simple runs(" << lineLayoutData->runCount() << ") layout runs(" << layoutRuns.size() << ")";
+        stream.nextLine();
+        return true;
+    }
+
+    auto mismatched = false;
+    for (unsigned i = 0; i < lineLayoutData->runCount(); ++i) {
+        auto& simpleRun = lineLayoutData->runAt(i);
+        auto& layoutRun = layoutRuns[i];
+
+        if (simpleRun.start == layoutRun.start() && simpleRun.end == layoutRun.end() && simpleRun.logicalLeft == layoutRun.left() && simpleRun.logicalRight == layoutRun.right())
+            continue;
+
+        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ") layout run(" << layoutRun.start() << ", " << layoutRun.end() << ") (" << layoutRun.left() << ", " << layoutRun.right() << ")";
+        stream.nextLine();
+        mismatched = true;
+    }
+    return mismatched;
+}
+
+static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutContext& layoutContext, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
+{
+    auto& inlineFormattingState = const_cast<LayoutContext&>(layoutContext).establishedFormattingState(inlineFormattingRoot);
+    ASSERT(is<InlineFormattingState>(inlineFormattingState));
+    auto& layoutRuns = downcast<InlineFormattingState>(inlineFormattingState).layoutRuns();
+
+    auto mismatched = false;
+    unsigned layoutRunIndex = 0;
+    for (auto* rootLine = blockFlow.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
+        for (auto* lineBox = rootLine->firstChild(); lineBox; lineBox = lineBox->nextOnLine()) {
+            if (!is<InlineTextBox>(lineBox))
+                continue;
+
+            if (layoutRunIndex >= layoutRuns.size()) {
+                // FIXME: <span>foobar</span>foobar generates 2 inline text boxes while we only generate one layout run (which is much better, since it enables us to do kerning across inline elements).
+                stream << "Mismatching number of runs: layout runs(" << layoutRuns.size() << ")";
+                stream.nextLine();
+                return true;
+            }
+
+            auto& layoutRun = layoutRuns[layoutRunIndex];
+            auto& inlineTextBox = downcast<InlineTextBox>(*lineBox);
+            if (inlineTextBox.start() == layoutRun.start() && inlineTextBox.end() == layoutRun.end() && inlineTextBox.logicalLeft() == layoutRun.left() && inlineTextBox.logicalRight() == layoutRun.right()) {
+                stream << "Mismatching: simple run(" << inlineTextBox.start() << ", " << inlineTextBox.end() << ") (" << inlineTextBox.logicalLeft() << ", " << inlineTextBox.logicalRight() << ") layout run(" << layoutRun.start() << ", " << layoutRun.end() << ") (" << layoutRun.left() << ", " << layoutRun.right() << ")";
+                stream.nextLine();
+                mismatched = true;
+            }
+            ++layoutRunIndex;
+        }
+    }
+    return mismatched;
+}
+
+static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
 {
     bool firstMismatchingRect = true;
     auto outputRect = [&] (const String& prefix, const LayoutRect& rendererRect, const LayoutRect& layoutRect) {
@@ -92,7 +159,7 @@ static bool outputMismatchingBoxInformationIfNeeded(TextStream& stream, const La
 
 static bool verifyAndOutputSubtree(TextStream& stream, const LayoutContext& context, const RenderBox& renderer, const Box& layoutBox)
 {
-    auto mismtachingGeometry = outputMismatchingBoxInformationIfNeeded(stream, context, renderer, layoutBox);
+    auto mismtachingGeometry = outputMismatchingBlockBoxInformationIfNeeded(stream, context, renderer, layoutBox);
 
     if (!is<Container>(layoutBox))
         return mismtachingGeometry;
@@ -107,8 +174,15 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutContext& cont
             continue;
         }
 
-        auto mismatchingSubtreeGeometry = verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childBox);
-        mismtachingGeometry |= mismatchingSubtreeGeometry;
+        if (is<RenderBlockFlow>(*childRenderer) && childBox->establishesInlineFormattingContext()) {
+            ASSERT(childRenderer->childrenInline());
+            auto& blockFlow = downcast<RenderBlockFlow>(*childRenderer);
+            auto& formattingRoot = downcast<Container>(*childBox);
+            mismtachingGeometry |= blockFlow.lineLayoutPath() == RenderBlockFlow::SimpleLinesPath ? outputMismatchingSimpleLineInformationIfNeeded(stream, context, blockFlow, formattingRoot) : outputMismatchingComplexLineInformationIfNeeded(stream, context, blockFlow, formattingRoot);
+        } else {
+            auto mismatchingSubtreeGeometry = verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childBox);
+            mismtachingGeometry |= mismatchingSubtreeGeometry;
+        }
 
         childBox = childBox->nextSibling();
         childRenderer = childRenderer->nextSibling();

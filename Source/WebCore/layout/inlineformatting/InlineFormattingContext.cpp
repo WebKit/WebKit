@@ -51,7 +51,7 @@ InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoo
 {
 }
 
-void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingState&) const
+void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingState& inlineFormattingState) const
 {
     if (!is<Container>(root()))
         return;
@@ -90,11 +90,14 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
     auto lineLeft = formattingRootDisplayBox.contentBoxLeft();
     auto lineRight = formattingRootDisplayBox.contentBoxRight();
 
-    auto textRuns = textContentProvider.textRuns();
     SimpleLineBreaker::LineConstraintList constraints;
     constraints.append({ { }, lineLeft, lineRight });
-    SimpleLineBreaker simpleLineBreaker(textRuns, textContentProvider, WTFMove(constraints), formattingRoot.style());
-    auto layoutRuns = simpleLineBreaker.runs();
+    auto textRunList = textContentProvider.textRuns();
+    SimpleLineBreaker simpleLineBreaker(textRunList, textContentProvider, WTFMove(constraints), formattingRoot.style());
+
+    // Since we don't yet have a display tree context for inline boxes, let's just cache the runs on the state so that they can be verified against the sll/inline tree runs later.
+    ASSERT(is<InlineFormattingState>(inlineFormattingState));
+    downcast<InlineFormattingState>(inlineFormattingState).addLayoutRuns(simpleLineBreaker.runs());
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
 }

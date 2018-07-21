@@ -1,5 +1,28 @@
 2018-07-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add verification for inline text runs.
+        https://bugs.webkit.org/show_bug.cgi?id=187879
+
+        Reviewed by Antti Koivisto.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        (WebCore::Layout::verifyAndOutputSubtree):
+        (WebCore::Layout::outputMismatchingBoxInformationIfNeeded): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::addLayoutRuns):
+        (WebCore::Layout::InlineFormattingState::layoutRuns const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+        (WebCore::Layout::outputLayoutTree):
+        (WebCore::Layout::TreeBuilder::showLayoutTree):
+
+2018-07-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Do not use virtual methods to construct floating/formatting states.
         https://bugs.webkit.org/show_bug.cgi?id=187875
 

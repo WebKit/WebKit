@@ -118,7 +118,7 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
 }
 
 #if ENABLE(TREE_DEBUGGING)
-static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Display::Box& displayBox, unsigned depth)
+static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Display::Box* displayBox, unsigned depth)
 {
     unsigned printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
@@ -134,7 +134,9 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         stream << "block container";
     } else
         stream << "box";
-    stream << " at [" << displayBox.left() << " " << displayBox.top() << "] size [" << displayBox.width() << " " << displayBox.height() << "]";
+    // FIXME: Inline text runs don't create display boxes yet.
+    if (displayBox)
+        stream << " at [" << displayBox->left() << " " << displayBox->top() << "] size [" << displayBox->width() << " " << displayBox->height() << "]";
     stream << " object [" << &layoutBox << "]";
 
     stream.nextLine();
@@ -143,7 +145,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
 static void outputLayoutTree(const LayoutContext& layoutContext, TextStream& stream, const Container& rootContainer, unsigned depth)
 {
     for (auto& child : childrenOfType<Box>(rootContainer)) {
-        outputLayoutBox(stream, child, *layoutContext.displayBoxForLayoutBox(child), depth);
+        outputLayoutBox(stream, child, layoutContext.displayBoxForLayoutBox(child), depth);
         if (is<Container>(child))
             outputLayoutTree(layoutContext, stream, downcast<Container>(child), depth + 1);
     }
@@ -152,7 +154,7 @@ static void outputLayoutTree(const LayoutContext& layoutContext, TextStream& str
 void TreeBuilder::showLayoutTree(const LayoutContext& layoutContext, const Container& layoutBox)
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
-    outputLayoutBox(stream, layoutBox, *layoutContext.displayBoxForLayoutBox(layoutBox), 0);
+    outputLayoutBox(stream, layoutBox, layoutContext.displayBoxForLayoutBox(layoutBox), 0);
     outputLayoutTree(layoutContext, stream, layoutBox, 1);
     WTFLogAlways("%s", stream.release().utf8().data());
 }
