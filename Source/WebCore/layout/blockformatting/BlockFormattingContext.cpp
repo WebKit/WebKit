@@ -141,8 +141,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
 
     // Swich over to the new formatting context (the one that the root creates).
     auto formattingContext = layoutContext.formattingContext(layoutBox);
-    auto& establishedFormattingState = layoutContext.establishedFormattingState(layoutBox, *formattingContext);
-    formattingContext->layout(layoutContext, establishedFormattingState);
+    formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox));
 
     // Come back and finalize the root's geometry.
     FloatingContext(formattingState.floatingState()).computePosition(layoutBox, displayBox);
@@ -150,17 +149,6 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     computeHeightAndMargin(layoutContext, layoutBox, displayBox);
     // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
     formattingContext->layoutOutOfFlowDescendants(layoutContext, layoutBox);
-}
-
-std::unique_ptr<FormattingState> BlockFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState, const LayoutContext& layoutContext) const
-{
-    return std::make_unique<BlockFormattingState>(WTFMove(floatingState), layoutContext);
-}
-
-Ref<FloatingState> BlockFormattingContext::createOrFindFloatingState(LayoutContext&) const
-{
-    // Block formatting context always establishes a new floating state.
-    return FloatingState::create();
 }
 
 void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
@@ -237,7 +225,7 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
     if (auto* firstChild = downcast<Container>(layoutBox).firstInFlowOrFloatingChild())
         queue.append(firstChild);
 
-    auto& formattingStateForChildren = layoutBox.establishesFormattingContext() ? layoutContext.establishedFormattingState(layoutBox, *this) : formattingState;
+    auto& formattingStateForChildren = layoutBox.establishesFormattingContext() ? layoutContext.establishedFormattingState(layoutBox) : formattingState;
     while (!queue.isEmpty()) {
         while (true) {
             auto& childBox = *queue.last(); 

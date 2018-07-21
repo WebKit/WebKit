@@ -52,8 +52,6 @@ public:
 
     virtual void layout(LayoutContext&, FormattingState&) const = 0;
     void layoutOutOfFlowDescendants(LayoutContext&, const Box&) const;
-    virtual std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&, const LayoutContext&) const = 0;
-    virtual Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const = 0;
 
     struct InstrinsicWidthConstraints {
         LayoutUnit minimum;

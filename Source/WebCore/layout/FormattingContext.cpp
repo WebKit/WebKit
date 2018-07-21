@@ -130,12 +130,11 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext,
 
         ASSERT(layoutBox.establishesFormattingContext());
         auto formattingContext = layoutContext.formattingContext(layoutBox);
-        auto& establishedFormattingState = layoutContext.establishedFormattingState(layoutBox, *formattingContext);
 
         computeBorderAndPadding(layoutContext, layoutBox, displayBox);
         computeOutOfFlowHorizontalGeometry(layoutContext, layoutBox, displayBox);
 
-        formattingContext->layout(layoutContext, establishedFormattingState);
+        formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox));
 
         computeOutOfFlowVerticalGeometry(layoutContext, layoutBox, displayBox);
         layoutOutOfFlowDescendants(layoutContext, layoutBox);

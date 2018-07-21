@@ -81,8 +81,7 @@ void LayoutContext::layoutFormattingContextSubtree(const Box& layoutRoot)
 {
     RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
     auto formattingContext = this->formattingContext(layoutRoot);
-    auto& formattingState = establishedFormattingState(layoutRoot, *formattingContext);
-    formattingContext->layout(*this, formattingState);
+    formattingContext->layout(*this, establishedFormattingState(layoutRoot));
     formattingContext->layoutOutOfFlowDescendants(*this, layoutRoot);
 }
 
@@ -119,11 +118,31 @@ FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) cons
     return *m_formattingStates.get(&root);
 }
 
-FormattingState& LayoutContext::establishedFormattingState(const Box& formattingContextRoot, const FormattingContext& context)
+FormattingState& LayoutContext::establishedFormattingState(const Box& formattingRoot)
 {
-    return *m_formattingStates.ensure(&formattingContextRoot, [this, &context] {
-        return context.createFormattingState(context.createOrFindFloatingState(*this), *this);
-    }).iterator->value;
+    if (formattingRoot.establishesInlineFormattingContext()) {
+        return *m_formattingStates.ensure(&formattingRoot, [&] {
+
+            // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
+            // should not interfere with the content inside.
+            // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
+            if (formattingRoot.establishesBlockFormattingContext())
+                return std::make_unique<InlineFormattingState>(FloatingState::create(), *this);
+
+            // Otherwise, the formatting context inherits the floats from the parent formatting context.
+            // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
+            return std::make_unique<InlineFormattingState>(formattingStateForBox(formattingRoot).floatingState(), *this);
+        }).iterator->value;
+    }
+
+    if (formattingRoot.establishesBlockFormattingContext()) {
+        return *m_formattingStates.ensure(&formattingRoot, [&] {
+
+            // Block formatting context always establishes a new floating state.
+            return std::make_unique<BlockFormattingState>(FloatingState::create(), *this);
+        }).iterator->value;
+    }
+    CRASH();
 }
 
 std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot)

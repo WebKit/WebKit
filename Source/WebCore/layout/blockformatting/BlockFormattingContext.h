@@ -47,8 +47,6 @@ public:
     BlockFormattingContext(const Box& formattingContextRoot);
 
     void layout(LayoutContext&, FormattingState&) const override;
-    std::unique_ptr<FormattingState> createFormattingState(Ref<FloatingState>&&, const LayoutContext&) const override;
-    Ref<FloatingState> createOrFindFloatingState(LayoutContext&) const override;
 
 private:
     void layoutFormattingContextRoot(LayoutContext&, FormattingState&, const Box&, Display::Box&) const;

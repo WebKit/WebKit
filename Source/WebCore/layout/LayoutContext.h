@@ -74,9 +74,10 @@ public:
     void markNeedsUpdate(const Box&, OptionSet<UpdateType>);
     bool needsUpdate(const Box&) const;
 
-    FormattingState& formattingStateForBox(const Box&) const;
-    FormattingState& establishedFormattingState(const Box& formattingContextRoot, const FormattingContext&);
     std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot);
+
+    FormattingState& formattingStateForBox(const Box&) const;
+    FormattingState& establishedFormattingState(const Box& formattingRoot);
 
     Display::Box& createDisplayBox(const Box&);
     Display::Box* displayBoxForLayoutBox(const Box& layoutBox) const { return m_layoutToDisplayBox.get(&layoutBox); }

@@ -99,24 +99,6 @@ void InlineFormattingContext::layout(LayoutContext& layoutContext, FormattingSta
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
 }
 
-std::unique_ptr<FormattingState> InlineFormattingContext::createFormattingState(Ref<FloatingState>&& floatingState, const LayoutContext& layoutContext) const
-{
-    return std::make_unique<InlineFormattingState>(WTFMove(floatingState), layoutContext);
-}
-
-Ref<FloatingState> InlineFormattingContext::createOrFindFloatingState(LayoutContext& layoutContext) const
-{
-    // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
-    // should not interfere with the content inside.
-    // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
-    if (root().establishesBlockFormattingContext())
-        return FloatingState::create();
-    // Otherwise, the formatting context inherits the floats from the parent formatting context.
-    // Find the formatting state in which this formatting root lives, not the one it creates (this) and use its floating state.
-    auto& formattingState = layoutContext.formattingStateForBox(root());
-    return formattingState.floatingState();
-}
-
 void InlineFormattingContext::computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const
 {
 }

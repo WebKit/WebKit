@@ -1,5 +1,33 @@
 2018-07-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Do not use virtual methods to construct floating/formatting states.
+        https://bugs.webkit.org/show_bug.cgi?id=187875
+
+        Reviewed by Antti Koivisto.
+
+        LayoutContext::establishedFormattingState() does not require FormattingContext anymore only the root of the context.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/FormattingContext.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        (WebCore::Layout::LayoutContext::formattingStateForBox const):
+        (WebCore::Layout::LayoutContext::establishedFormattingState):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::instrinsicWidthConstraints const):
+        (WebCore::Layout::BlockFormattingContext::createFormattingState const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::createOrFindFloatingState const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::createFormattingState const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::createOrFindFloatingState const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
+2018-07-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Do not collapse top/bottom margin with first/last inflow child from a non-block formatting context.
         https://bugs.webkit.org/show_bug.cgi?id=187867
 
