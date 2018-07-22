@@ -44,11 +44,23 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFMediaTime_SummaryProvider WTF::MediaTime')
     debugger.HandleCommand('type synthetic add -x "WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
     debugger.HandleCommand('type synthetic add -x "WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
+
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreURL_SummaryProvider WebCore::URL')
+
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreColor_SummaryProvider WebCore::Color')
+
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutUnit_SummaryProvider WebCore::LayoutUnit')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutSize_SummaryProvider WebCore::LayoutSize')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutPoint_SummaryProvider WebCore::LayoutPoint')
-    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreURL_SummaryProvider WebCore::URL')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutRect_SummaryProvider WebCore::LayoutRect')
+
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreIntSize_SummaryProvider WebCore::IntSize')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreIntPoint_SummaryProvider WebCore::IntPoint')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreIntRect_SummaryProvider WebCore::IntRect')
+
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatSize_SummaryProvider WebCore::FloatSize')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatPoint_SummaryProvider WebCore::FloatPoint')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatRect_SummaryProvider WebCore::FloatRect')
 
 
 def WTFString_SummaryProvider(valobj, dict):
@@ -120,6 +132,43 @@ def WebCoreLayoutSize_SummaryProvider(valobj, dict):
 def WebCoreLayoutPoint_SummaryProvider(valobj, dict):
     provider = WebCoreLayoutPointProvider(valobj, dict)
     return "{ x = %s, y = %s }" % (provider.get_x(), provider.get_y())
+
+
+def WebCoreLayoutRect_SummaryProvider(valobj, dict):
+    provider = WebCoreLayoutRectProvider(valobj, dict)
+    return "{ x = %s, y = %s, width = %s, height = %s }" % (provider.get_x(), provider.get_y(), provider.get_width(), provider.get_height())
+
+
+def WebCoreIntSize_SummaryProvider(valobj, dict):
+    provider = WebCoreIntSizeProvider(valobj, dict)
+    return "{ width = %s, height = %s }" % (provider.get_width(), provider.get_height())
+
+
+def WebCoreIntPoint_SummaryProvider(valobj, dict):
+    provider = WebCoreIntPointProvider(valobj, dict)
+    return "{ x = %s, y = %s }" % (provider.get_x(), provider.get_y())
+
+
+def WebCoreFloatSize_SummaryProvider(valobj, dict):
+    provider = WebCoreFloatSizeProvider(valobj, dict)
+    return "{ width = %s, height = %s }" % (provider.get_width(), provider.get_height())
+
+
+def WebCoreFloatPoint_SummaryProvider(valobj, dict):
+    provider = WebCoreFloatPointProvider(valobj, dict)
+    return "{ x = %s, y = %s }" % (provider.get_x(), provider.get_y())
+
+
+def WebCoreIntRect_SummaryProvider(valobj, dict):
+    provider = WebCoreIntRectProvider(valobj, dict)
+    return "{ x = %s, y = %s, width = %s, height = %s }" % (provider.get_x(), provider.get_y(), provider.get_width(), provider.get_height())
+
+
+def WebCoreFloatRect_SummaryProvider(valobj, dict):
+    provider = WebCoreFloatRectProvider(valobj, dict)
+    return "{ x = %s, y = %s, width = %s, height = %s }" % (provider.get_x(), provider.get_y(), provider.get_width(), provider.get_height())
+
+
 
 
 def btjs(debugger, command, result, internal_dict):
@@ -399,6 +448,108 @@ class WebCoreLayoutPointProvider:
 
     def get_y(self):
         return WebCoreLayoutUnitProvider(self.valobj.GetChildMemberWithName('m_y'), dict).to_string()
+
+
+class WebCoreLayoutRectProvider:
+    "Print a WebCore::LayoutRect"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_x(self):
+        return WebCoreLayoutPointProvider(self.valobj.GetChildMemberWithName('m_location'), dict).get_x()
+
+    def get_y(self):
+        return WebCoreLayoutPointProvider(self.valobj.GetChildMemberWithName('m_location'), dict).get_y()
+
+    def get_width(self):
+        return WebCoreLayoutSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_width()
+
+    def get_height(self):
+        return WebCoreLayoutSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_height()
+
+
+class WebCoreIntPointProvider:
+    "Print a WebCore::IntPoint"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_x(self):
+        return self.valobj.GetChildMemberWithName('m_x').GetValueAsSigned()
+
+    def get_y(self):
+        return self.valobj.GetChildMemberWithName('m_y').GetValueAsSigned()
+
+
+class WebCoreIntSizeProvider:
+    "Print a WebCore::IntSize"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_width(self):
+        return self.valobj.GetChildMemberWithName('m_width').GetValueAsSigned()
+
+    def get_height(self):
+        return self.valobj.GetChildMemberWithName('m_height').GetValueAsSigned()
+
+
+class WebCoreIntRectProvider:
+    "Print a WebCore::IntRect"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_x(self):
+        return WebCoreIntPointProvider(self.valobj.GetChildMemberWithName('m_location'), dict).get_x()
+
+    def get_y(self):
+        return WebCoreIntPointProvider(self.valobj.GetChildMemberWithName('m_location'), dict).get_y()
+
+    def get_width(self):
+        return WebCoreIntSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_width()
+
+    def get_height(self):
+        return WebCoreIntSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_height()
+
+
+class WebCoreFloatPointProvider:
+    "Print a WebCore::FloatPoint"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_x(self):
+        return float(self.valobj.GetChildMemberWithName('m_x').GetValue())
+
+    def get_y(self):
+        return float(self.valobj.GetChildMemberWithName('m_y').GetValue())
+
+
+class WebCoreFloatSizeProvider:
+    "Print a WebCore::FloatSize"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_width(self):
+        return float(self.valobj.GetChildMemberWithName('m_width').GetValue())
+
+    def get_height(self):
+        return float(self.valobj.GetChildMemberWithName('m_height').GetValue())
+
+
+class WebCoreFloatRectProvider:
+    "Print a WebCore::FloatRect"
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_x(self):
+        return WebCoreFloatPointProvider(self.valobj.GetChildMemberWithName('m_location'), dict).get_x()
+
+    def get_y(self):
+        return WebCoreFloatPointProvider(self.valobj.GetChildMemberWithName('m_location'), dict).get_y()
+
+    def get_width(self):
+        return WebCoreFloatSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_width()
+
+    def get_height(self):
+        return WebCoreFloatSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_height()
 
 
 class WebCoreURLProvider:

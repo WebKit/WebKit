@@ -1,3 +1,62 @@
+2018-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add lldb formatters for WebCore geometry types
+        https://bugs.webkit.org/show_bug.cgi?id=187884
+
+        Reviewed by Daniel Bates.
+        
+        Add lldb formatters for IntPoint, IntSize, IntRect, FloatPoint, FloatSize, FloatRect
+        and LayoutRect.
+        
+        Testing is blocked by webkit.org/b/187872.
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module.lldb_webkit):
+        (__lldb_init_module):
+        (WebCoreLayoutRect_SummaryProvider):
+        (WebCoreIntSize_SummaryProvider):
+        (WebCoreIntPoint_SummaryProvider):
+        (WebCoreFloatSize_SummaryProvider):
+        (WebCoreFloatPoint_SummaryProvider):
+        (WebCoreIntRect_SummaryProvider):
+        (WebCoreFloatRect_SummaryProvider):
+        (WebCoreLayoutRectProvider):
+        (WebCoreLayoutRectProvider.__init__):
+        (WebCoreLayoutRectProvider.get_x):
+        (WebCoreLayoutRectProvider.get_y):
+        (WebCoreLayoutRectProvider.get_width):
+        (WebCoreLayoutRectProvider.get_height):
+        (WebCoreIntPointProvider):
+        (WebCoreIntPointProvider.__init__):
+        (WebCoreIntPointProvider.get_x):
+        (WebCoreIntPointProvider.get_y):
+        (WebCoreIntSizeProvider):
+        (WebCoreIntSizeProvider.__init__):
+        (WebCoreIntSizeProvider.get_width):
+        (WebCoreIntSizeProvider.get_height):
+        (WebCoreIntRectProvider):
+        (WebCoreIntRectProvider.__init__):
+        (WebCoreIntRectProvider.get_x):
+        (WebCoreIntRectProvider.get_y):
+        (WebCoreIntRectProvider.get_width):
+        (WebCoreIntRectProvider.get_height):
+        (WebCoreFloatPointProvider):
+        (WebCoreFloatPointProvider.__init__):
+        (WebCoreFloatPointProvider.get_x):
+        (WebCoreFloatPointProvider.get_y):
+        (WebCoreFloatSizeProvider):
+        (WebCoreFloatSizeProvider.__init__):
+        (WebCoreFloatSizeProvider.get_width):
+        (WebCoreFloatSizeProvider.get_height):
+        (WebCoreFloatRectProvider):
+        (WebCoreFloatRectProvider.__init__):
+        (WebCoreFloatRectProvider.get_x):
+        (WebCoreFloatRectProvider.get_y):
+        (WebCoreFloatRectProvider.get_width):
+        (WebCoreFloatRectProvider.get_height):
+
 2018-07-20  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Enable basic functionality in experimental debug mode
