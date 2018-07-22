@@ -128,7 +128,10 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     ObjectPropertyConditionSet mergedConditionSet;
     if (!m_conditionSet.isEmpty()) {
         mergedConditionSet = m_conditionSet.mergedWith(other.m_conditionSet);
-        if (!mergedConditionSet.isValid() || !mergedConditionSet.hasOneSlotBaseCondition())
+        if (!mergedConditionSet.isValid())
+            return false;
+        // If this is a hit variant, one slot base should exist. If this is not a hit variant, the slot base is not necessary.
+        if (!isPropertyUnset() && !mergedConditionSet.hasOneSlotBaseCondition())
             return false;
     }
     m_conditionSet = mergedConditionSet;
