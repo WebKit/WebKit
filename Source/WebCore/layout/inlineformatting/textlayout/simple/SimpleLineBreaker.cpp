@@ -31,7 +31,6 @@
 #include "FontCascade.h"
 #include "InlineFormattingContext.h"
 #include "LayoutContext.h"
-#include "LayoutUnit.h"
 #include "RenderStyle.h"
 #include "TextContentProvider.h"
 #include <wtf/IsoMallocInlines.h>
@@ -53,6 +52,7 @@ SimpleLineBreaker::TextRunList::TextRunList(const Vector<TextRun>& textRuns)
 
 SimpleLineBreaker::Line::Line(Vector<LayoutRun>& layoutRuns)
     : m_layoutRuns(layoutRuns)
+    , m_firstRunIndex(m_layoutRuns.size())
 {
 }
 
@@ -63,11 +63,145 @@ static inline unsigned adjustedEndPosition(const TextRun& textRun)
     return textRun.end();
 }
 
+void SimpleLineBreaker::Line::setTextAlign(TextAlignMode textAlign)
+{
+    m_style.textAlign = textAlign;
+    m_collectExpansionOpportunities = textAlign == TextAlignMode::Justify; 
+}
+
+float SimpleLineBreaker::Line::adjustedLeftForTextAlign(TextAlignMode textAlign) const
+{
+    float remainingWidth = availableWidth();
+    float left = m_left;
+    switch (textAlign) {
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+    case TextAlignMode::Start:
+        return left;
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
+    case TextAlignMode::End:
+        return left + std::max<float>(remainingWidth, 0);
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
+        return left + std::max<float>(remainingWidth / 2, 0);
+    case TextAlignMode::Justify:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return left;
+}
+
+void SimpleLineBreaker::Line::justifyRuns()
+{
+    auto widthToDistribute = availableWidth();
+    if (widthToDistribute <= 0)
+        return;
+
+    unsigned expansionOpportunities = 0;
+    for (auto& expansionEntry : m_expansionOpportunityList)
+        expansionOpportunities += expansionEntry.count;
+
+    if (!expansionOpportunities)
+        return;
+
+    auto expansion = widthToDistribute / expansionOpportunities;
+    float accumulatedExpansion = 0;
+    unsigned runIndex = m_firstRunIndex;
+    for (auto& expansionEntry : m_expansionOpportunityList) {
+        if (runIndex >= m_layoutRuns.size()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        auto& layoutRun = m_layoutRuns.at(runIndex++);
+        auto expansionForRun = expansionEntry.count * expansion; 
+
+        layoutRun.setExpansion(expansionEntry.behavior, expansionForRun);
+        layoutRun.setLeft(layoutRun.left() + accumulatedExpansion);
+        layoutRun.setRight(layoutRun.right() + accumulatedExpansion + expansionForRun);
+        accumulatedExpansion += expansionForRun;
+    }
+}
+
+void SimpleLineBreaker::Line::adjustRunsForTextAlign(bool lastLine)
+{
+    // Fallback to TextAlignMode::Left (START) alignment for non-collapsable content or for the last line before a forced break/the end of the block.
+    auto textAlign = m_style.textAlign;
+    if (textAlign == TextAlignMode::Justify && (!m_style.collapseWhitespace || lastLine))
+        textAlign = TextAlignMode::Left;
+
+    if (textAlign == TextAlignMode::Justify) {
+        justifyRuns();
+        return;
+    }
+    auto adjustedLeft = adjustedLeftForTextAlign(textAlign);
+    if (adjustedLeft == m_left)
+        return;
+
+    for (auto i = m_firstRunIndex; i < m_layoutRuns.size(); ++i) {
+        auto& layoutRun = m_layoutRuns.at(i);
+        layoutRun.setLeft(layoutRun.left() + adjustedLeft);
+        layoutRun.setRight(layoutRun.right() + adjustedLeft);
+    }
+}
+
+static bool expansionOpportunity(TextRun::Type current, TextRun::Type previous)
+{
+    return current == TextRun::Type::Whitespace || (current == TextRun::Type::NonWhitespace && previous == TextRun::Type::NonWhitespace);
+}
+
+static ExpansionBehavior expansionBehavior(bool isAtExpansionOpportunity)
+{
+    ExpansionBehavior expansionBehavior = AllowTrailingExpansion;
+    expansionBehavior |= isAtExpansionOpportunity ? ForbidLeadingExpansion : AllowLeadingExpansion;
+    return expansionBehavior;
+}
+
+void SimpleLineBreaker::Line::collectExpansionOpportunities(const TextRun& textRun, bool textRunCreatesNewLayoutRun)
+{
+    if (textRunCreatesNewLayoutRun) {
+        // Create an entry for this new layout run.
+        m_expansionOpportunityList.append({ });
+    }
+    
+    if (!textRun.length())
+        return;
+
+    auto isAtExpansionOpportunity = expansionOpportunity(textRun.type(), m_lastTextRun ? m_lastTextRun->type() : TextRun::Type::Invalid);
+    m_expansionOpportunityList.last().behavior = expansionBehavior(isAtExpansionOpportunity);
+    if (isAtExpansionOpportunity)
+        ++m_expansionOpportunityList.last().count;
+
+    if (textRun.isNonWhitespace())
+        m_lastNonWhitespaceExpansionOppportunity = m_expansionOpportunityList.last(); 
+}
+
+void SimpleLineBreaker::Line::closeLastRun()
+{
+    if (!m_layoutRuns.size())
+        return;
+
+    m_layoutRuns.last().setIsEndOfLine();
+    
+    // Forbid trailing expansion for the last run on line.
+    if (!m_collectExpansionOpportunities || m_expansionOpportunityList.isEmpty())
+        return;
+    
+    auto& lastExpansionEntry = m_expansionOpportunityList.last(); 
+    auto expansionBehavior = lastExpansionEntry.behavior;
+    // Remove allow and add forbid.
+    expansionBehavior ^= AllowTrailingExpansion;
+    expansionBehavior |= ForbidTrailingExpansion;
+    lastExpansionEntry.behavior = expansionBehavior;
+}
+
 void SimpleLineBreaker::Line::append(const TextRun& textRun)
 {
     auto start = textRun.start();
     auto end = adjustedEndPosition(textRun);
     auto previousLogicalRight = m_left + m_runsWidth;
+    bool textRunCreatesNewLayoutRun = !m_lastTextRun || m_lastTextRun->isCollapsed();
 
     m_runsWidth += textRun.width();
     if (textRun.isNonWhitespace()) {
@@ -76,8 +210,11 @@ void SimpleLineBreaker::Line::append(const TextRun& textRun)
     } else if (textRun.isWhitespace())
         m_trailingWhitespaceWidth += textRun.width();
 
+    if (m_collectExpansionOpportunities)
+        collectExpansionOpportunities(textRun, textRunCreatesNewLayoutRun);
+
     // New line needs new run.
-    if (!m_lastTextRun || m_lastTextRun->isCollapsed())
+    if (textRunCreatesNewLayoutRun)
         m_layoutRuns.append({ start, end, previousLogicalRight, previousLogicalRight + textRun.width() });
     else {
         auto& lastRun = m_layoutRuns.last();
@@ -94,6 +231,7 @@ void SimpleLineBreaker::Line::collapseTrailingWhitespace()
         return;
 
     if (!m_lastNonWhitespaceTextRun) {
+        // This essentially becomes an empty line.
         reset();
         return;
     }
@@ -118,13 +256,22 @@ void SimpleLineBreaker::Line::collapseTrailingWhitespace()
         lastLayoutRun.setEnd(m_lastNonWhitespaceTextRun->end());
         m_trailingWhitespaceWidth = 0;
     }
+
+    if (m_collectExpansionOpportunities) {
+        ASSERT(m_lastNonWhitespaceExpansionOppportunity);
+        ASSERT(!m_expansionOpportunityList.isEmpty());
+        m_expansionOpportunityList.last() = *m_lastNonWhitespaceExpansionOppportunity;
+    }
 }
 
 void SimpleLineBreaker::Line::reset()
 {
     m_runsWidth = 0;
+    m_firstRunIndex = m_layoutRuns.size(); 
     m_availableWidth = 0;
     m_trailingWhitespaceWidth  = 0;
+    m_expansionOpportunityList.clear();
+    m_lastNonWhitespaceExpansionOppportunity = { };
     m_lastTextRun = std::nullopt;
     m_lastNonWhitespaceTextRun = std::nullopt;
 }
@@ -137,7 +284,7 @@ SimpleLineBreaker::Style::Style(const RenderStyle& style)
     , collapseWhitespace(style.collapseWhiteSpace())
     , preWrap(wrapLines && !collapseWhitespace)
     , preserveNewline(style.preserveNewline())
-    , textAlignIsRight(style.textAlign() == TextAlignMode::Right || style.textAlign() == TextAlignMode::WebKitRight)
+    , textAlign(style.textAlign())
 {
 }
 
@@ -167,10 +314,16 @@ Vector<LayoutRun> SimpleLineBreaker::runs()
 
 void SimpleLineBreaker::handleLineEnd()
 {
-    if (!m_layoutRuns.isEmpty())
-        m_layoutRuns.last().setIsEndOfLine();
-    ++m_numberOfLines;
-    m_previousLineHasNonForcedContent = m_currentLine.hasContent() && m_currentLine.availableWidth() >= 0;
+    auto lineHasContent = m_currentLine.hasContent(); 
+    if (lineHasContent) {
+        ASSERT(m_layoutRuns.size());
+        ++m_numberOfLines;
+        m_currentLine.closeLastRun();
+
+        auto lastLine = !m_textRunList.current(); 
+        m_currentLine.adjustRunsForTextAlign(lastLine);
+    }
+    m_previousLineHasNonForcedContent = lineHasContent && m_currentLine.availableWidth() >= 0;
     m_currentLine.reset();
 }
 
@@ -178,7 +331,14 @@ void SimpleLineBreaker::handleLineStart()
 {
     auto lineConstraint = this->lineConstraint(verticalPosition());
     m_currentLine.setLeft(lineConstraint.left);
+    m_currentLine.setTextAlign(m_style.textAlign);
+    m_currentLine.setCollapseWhitespace(m_style.collapseWhitespace);
     m_currentLine.setAvailableWidth(lineConstraint.right - lineConstraint.left);
+}
+
+static bool isTextAlignRight(TextAlignMode textAlign)
+{
+    return textAlign == TextAlignMode::Right || textAlign == TextAlignMode::WebKitRight;
 }
 
 void SimpleLineBreaker::createRunsForLine()
@@ -197,7 +357,7 @@ void SimpleLineBreaker::createRunsForLine()
         if (textRun->isLineBreak()) {
             // Add the new line only if there's nothing on the line. (otherwise the extra new line character would show up at the end of the content.)
             if (textRun->isHardLineBreak() || !m_currentLine.hasContent()) {
-                if (m_style.textAlignIsRight)
+                if (isTextAlignRight(m_style.textAlign))
                     m_currentLine.collapseTrailingWhitespace();
                 m_currentLine.append(*textRun);
             }

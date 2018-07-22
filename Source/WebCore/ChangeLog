@@ -1,3 +1,39 @@
+2018-07-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add center/right/justify line alignment support.
+        https://bugs.webkit.org/show_bug.cgi?id=187890
+
+        Reviewed by Antti Koivisto.
+
+        Move over some more code from simple line layout.
+        (though text-align: justify is more preformant as now expansion opportunities are added as we process the text runs
+        -as opposed to iterting through the runs again when we reach the end of the line.) 
+
+        * layout/inlineformatting/textlayout/Runs.h:
+        (WebCore::Layout::LayoutRun::setLeft):
+        (WebCore::Layout::LayoutRun::setExpansion):
+        * layout/inlineformatting/textlayout/simple/SimpleLineBreaker.cpp:
+        (WebCore::Layout::SimpleLineBreaker::Line::Line):
+        (WebCore::Layout::SimpleLineBreaker::Line::setTextAlign):
+        (WebCore::Layout::SimpleLineBreaker::Line::adjustedLeftForTextAlign const):
+        (WebCore::Layout::SimpleLineBreaker::Line::justifyRuns):
+        (WebCore::Layout::SimpleLineBreaker::Line::adjustRunsForTextAlign):
+        (WebCore::Layout::expansionOpportunity):
+        (WebCore::Layout::expansionBehavior):
+        (WebCore::Layout::SimpleLineBreaker::Line::collectExpansionOpportunities):
+        (WebCore::Layout::SimpleLineBreaker::Line::closeLastRun):
+        (WebCore::Layout::SimpleLineBreaker::Line::append):
+        (WebCore::Layout::SimpleLineBreaker::Line::collapseTrailingWhitespace):
+        (WebCore::Layout::SimpleLineBreaker::Line::reset):
+        (WebCore::Layout::SimpleLineBreaker::Style::Style):
+        (WebCore::Layout::SimpleLineBreaker::handleLineEnd):
+        (WebCore::Layout::SimpleLineBreaker::handleLineStart):
+        (WebCore::Layout::isTextAlignRight):
+        (WebCore::Layout::SimpleLineBreaker::createRunsForLine):
+        * layout/inlineformatting/textlayout/simple/SimpleLineBreaker.h:
+        (WebCore::Layout::SimpleLineBreaker::Line::setAvailableWidth):
+        (WebCore::Layout::SimpleLineBreaker::Line::setCollapseWhitespace):
+
 2018-07-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add verification for inline text runs.

@@ -27,6 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "TextFlags.h"
+
 namespace WebCore {
 namespace Layout {
 
@@ -91,8 +93,11 @@ public:
     bool isEndOfLine() const { return m_isEndOfLine; }
 
     void setEnd(ContentPosition end) { m_end = end; }
+    void setLeft(float left) { m_left = left; }
     void setRight(float right) { m_right = right; }
     void setIsEndOfLine() { m_isEndOfLine = true; }
+
+    void setExpansion(ExpansionBehavior, float expansion);
 
 private:
     ContentPosition m_start { 0 };
@@ -100,6 +105,8 @@ private:
     float m_left { 0 };
     float m_right { 0 };
     bool m_isEndOfLine { false };
+    float m_expansion { 0 };
+    ExpansionBehavior m_expansionBehavior { ForbidLeadingExpansion | ForbidTrailingExpansion };
 };
 
 template<typename T>
@@ -143,6 +150,12 @@ inline LayoutRun::LayoutRun(ContentPosition start, ContentPosition end, float le
     , m_left(left)
     , m_right(right)
 {
+}
+
+inline void LayoutRun::setExpansion(ExpansionBehavior expansionBehavior, float expansion)
+{
+    m_expansionBehavior = expansionBehavior;
+    m_expansion = expansion;
 }
 
 inline TextRun TextRun::createWhitespaceRun(ContentPosition start, ContentPosition end, float width, bool isCollapsed)
