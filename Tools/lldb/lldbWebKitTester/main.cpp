@@ -25,6 +25,9 @@
 
 #include "DumpClassLayoutTesting.h"
 #include <stdio.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,11 +58,20 @@ static void testSummaryProviders()
     String a16BitString = utf16String(u"\u1680Cappuccino\u1680");
     StringImpl* a16BitStringImpl = a16BitString.impl();
 
-
     Vector<int> anEmptyVector;
     Vector<int> aVectorWithOneItem;
     aVectorWithOneItem.reserveCapacity(16);
     aVectorWithOneItem.append(1);
+
+    HashMap<unsigned, int> hashMapOfInts;
+    hashMapOfInts.add(12, 23);
+    hashMapOfInts.add(34, 45);
+
+    HashSet<unsigned> hashSetOfInts;
+    hashSetOfInts.add(42);
+
+    HashMap<unsigned, Vector<int>> hashMapOfVectors;
+    hashMapOfVectors.add(1, Vector<int>({2, 3}));
 
     breakForTestingSummaryProviders();
 }

@@ -39,14 +39,13 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringImpl_SummaryProvider WTF::StringImpl')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringView_SummaryProvider WTF::StringView')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFAtomicString_SummaryProvider WTF::AtomicString')
-    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFVector_SummaryProvider -x "WTF::Vector<.+>$"')
-    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashTable_SummaryProvider -x "WTF::HashTable<.+>$"')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFVector_SummaryProvider -x "^WTF::Vector<.+>$"')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashTable_SummaryProvider -x "^WTF::HashTable<.+>$"')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashMap_SummaryProvider -x "^WTF::HashMap<.+>$"')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashSet_SummaryProvider -x "^WTF::HashSet<.+>$"')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFMediaTime_SummaryProvider WTF::MediaTime')
-    debugger.HandleCommand('type synthetic add -x "WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
-    debugger.HandleCommand('type synthetic add -x "WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreURL_SummaryProvider WebCore::URL')
-
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreColor_SummaryProvider WebCore::Color')
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutUnit_SummaryProvider WebCore::LayoutUnit')
@@ -61,6 +60,10 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatSize_SummaryProvider WebCore::FloatSize')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatPoint_SummaryProvider WebCore::FloatPoint')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatRect_SummaryProvider WebCore::FloatRect')
+
+    # synthetic types (see <https://lldb.llvm.org/varformats.html>)
+    debugger.HandleCommand('type synthetic add -x "^WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
+    debugger.HandleCommand('type synthetic add -x "^WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
 
 
 def WTFString_SummaryProvider(valobj, dict):
@@ -91,6 +94,16 @@ def WTFVector_SummaryProvider(valobj, dict):
 
 def WTFHashTable_SummaryProvider(valobj, dict):
     provider = WTFHashTableProvider(valobj, dict)
+    return "{ tableSize = %d, keyCount = %d }" % (provider.tableSize(), provider.keyCount())
+
+
+def WTFHashMap_SummaryProvider(valobj, dict):
+    provider = WTFHashMapProvider(valobj, dict)
+    return "{ tableSize = %d, keyCount = %d }" % (provider.tableSize(), provider.keyCount())
+
+
+def WTFHashSet_SummaryProvider(valobj, dict):
+    provider = WTFHashSetProvider(valobj, dict)
     return "{ tableSize = %d, keyCount = %d }" % (provider.tableSize(), provider.keyCount())
 
 
@@ -560,6 +573,7 @@ class WebCoreURLProvider:
     def to_string(self):
         return WTFStringProvider(self.valobj.GetChildMemberWithName('m_string'), dict).to_string()
 
+
 class WTFVectorProvider:
     def __init__(self, valobj, internal_dict):
         self.valobj = valobj
@@ -603,11 +617,44 @@ class WTFVectorProvider:
         return True
 
 
+class WTFHashMapProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+        impl_ptr = self.valobj.GetChildMemberWithName('m_impl')
+        self._hash_table_provider = WTFHashTableProvider(impl_ptr, dict)
+
+    def tableSize(self):
+        return self._hash_table_provider.tableSize()
+
+    def keyCount(self):
+        return self._hash_table_provider.keyCount()
+
+
+class WTFHashSetProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+        impl_ptr = self.valobj.GetChildMemberWithName('m_impl')
+        self._hash_table_provider = WTFHashTableProvider(impl_ptr, dict)
+
+    def tableSize(self):
+        return self._hash_table_provider.tableSize()
+
+    def keyCount(self):
+        return self._hash_table_provider.keyCount()
+
+
 class WTFHashTableProvider:
     def __init__(self, valobj, internal_dict):
         self.valobj = valobj
         self.update()
 
+    def tableSize(self):
+        return self.valobj.GetChildMemberWithName('m_tableSize').GetValueAsUnsigned(0)
+
+    def keyCount(self):
+        return self.valobj.GetChildMemberWithName('m_keyCount').GetValueAsUnsigned(0)
+
+    # Synthetic children provider methods.
     def num_children(self):
         return self.tableSize() + 5
 
@@ -642,14 +689,8 @@ class WTFHashTableProvider:
         else:
             return None
 
-    def tableSize(self):
-        return self.valobj.GetChildMemberWithName('m_tableSize').GetValueAsUnsigned(0)
-
-    def keyCount(self):
-        return self.valobj.GetChildMemberWithName('m_keyCount').GetValueAsUnsigned(0)
-
     def update(self):
-        self.data_type = self.valobj.GetType().GetTemplateArgumentType(0)
+        self.data_type = self.valobj.GetType().GetTemplateArgumentType(1)
         self.data_size = self.data_type.GetByteSize()
 
     def has_children(self):

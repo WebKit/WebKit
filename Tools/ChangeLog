@@ -1,5 +1,54 @@
 2018-07-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix lldb summarizers for HashMaps and HashSets
+        https://bugs.webkit.org/show_bug.cgi?id=187883
+
+        Reviewed by Dan Bates.
+        
+        HashMap and HashSet summarizers were broken in various ways.
+        
+        The 'type summary add -x' regexp needs to match at the start and end of the string
+        to avoid finding types nested inside other templates.
+        
+        The HashTable synthetic child code incorrectly used the type of the key, rather than
+        the value when synthesizing children.
+        
+        Add HashMap and HashSet summarizers.
+
+        I tried to get synthetic children working directly for HashMap and HashSet, but was unable.
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (__lldb_init_module.lldb_webkit):
+        (WTFHashMap_SummaryProvider):
+        (WTFHashSet_SummaryProvider):
+        (WebCoreColorProvider._to_string_extended):
+        (WebCoreURLProvider.to_string):
+        (WTFHashMapProvider):
+        (WTFHashMapProvider.__init__):
+        (WTFHashMapProvider.tableSize):
+        (WTFHashMapProvider.keyCount):
+        (WTFHashSetProvider):
+        (WTFHashSetProvider.__init__):
+        (WTFHashSetProvider.tableSize):
+        (WTFHashSetProvider.keyCount):
+        (WTFHashTableProvider.tableSize):
+        (WTFHashTableProvider):
+        (WTFHashTableProvider.keyCount):
+        (WTFHashTableProvider.get_child_at_index):
+        (WTFHashTableProvider.update):
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFVectorProvider_empty_vector):
+        (TestSummaryProviders.serial_test_WTFVectorProvider_vector_size_and_capacity):
+        (TestSummaryProviders):
+        (TestSummaryProviders.serial_test_WTFHashMap_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFHashMap_of_vectors_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFHashSet_tablesize_and_size):
+
+2018-07-21  Simon Fraser  <simon.fraser@apple.com>
+
         Add lldb formatters for WebCore geometry types
         https://bugs.webkit.org/show_bug.cgi?id=187884
 
