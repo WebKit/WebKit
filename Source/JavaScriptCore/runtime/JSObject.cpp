@@ -966,7 +966,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
         // This will always be a new entry in the map, so no need to check we can write,
         // and attributes are default so no need to set them.
         if (value)
-            map->add(this, i).iterator->value.set(vm, map, value);
+            map->add(this, i).iterator->value.forceSet(vm, map, value, 0);
     }
 
     DeferGC deferGC(vm.heap);
@@ -2025,7 +2025,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->notFound()) {
-                if (it->value.attributes & PropertyAttribute::DontDelete)
+                if (it->value.attributes() & PropertyAttribute::DontDelete)
                     return false;
                 map->remove(it);
             }
@@ -2350,7 +2350,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
                 
                 SparseArrayValueMap::const_iterator end = map->end();
                 for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                    if (mode.includeDontEnumProperties() || !(it->value.attributes & PropertyAttribute::DontEnum))
+                    if (mode.includeDontEnumProperties() || !(it->value.attributes() & PropertyAttribute::DontEnum))
                         keys.uncheckedAppend(static_cast<unsigned>(it->key));
                 }
                 
@@ -2491,17 +2491,18 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(VM& vm, PropertySlot& slot, J
     slot.setCacheableGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter), offset);
 }
 
-bool JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, const PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)
+static bool putIndexedDescriptor(ExecState* exec, SparseArrayValueMap* map, SparseArrayEntry* entryInMap, const PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)
 {
     VM& vm = exec->vm();
-    auto map = m_butterfly->arrayStorage()->m_sparseMap.get();
 
     if (descriptor.isDataDescriptor()) {
+        unsigned attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~PropertyAttribute::Accessor;
         if (descriptor.value())
-            entryInMap->set(vm, map, descriptor.value());
+            entryInMap->forceSet(vm, map, descriptor.value(), attributes);
         else if (oldDescriptor.isAccessorDescriptor())
-            entryInMap->set(vm, map, jsUndefined());
-        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~PropertyAttribute::Accessor;
+            entryInMap->forceSet(vm, map, jsUndefined(), attributes);
+        else
+            entryInMap->forceSet(attributes);
         return true;
     }
 
@@ -2518,14 +2519,12 @@ bool JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
             setter = oldDescriptor.setterObject();
 
         GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject(), getter, setter);
-
-        entryInMap->set(vm, map, accessor);
-        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~PropertyAttribute::ReadOnly;
+        entryInMap->forceSet(vm, map, accessor, descriptor.attributesOverridingCurrent(oldDescriptor) & ~PropertyAttribute::ReadOnly);
         return true;
     }
 
     ASSERT(descriptor.isGenericDescriptor());
-    entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor);
+    entryInMap->forceSet(descriptor.attributesOverridingCurrent(oldDescriptor));
     return true;
 }
 
@@ -2590,12 +2589,8 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
         // is set to its default value.
         // 4.c. Return true.
 
-        PropertyDescriptor defaults;
-        entryInMap->setWithoutWriteBarrier(jsUndefined());
-        entryInMap->attributes = PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
-        entryInMap->get(defaults);
-
-        putIndexedDescriptor(exec, entryInMap, descriptor, defaults);
+        PropertyDescriptor defaults(jsUndefined(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+        putIndexedDescriptor(exec, map, entryInMap, descriptor, defaults);
         Butterfly* butterfly = m_butterfly.get();
         if (index >= butterfly->arrayStorage()->length())
             butterfly->arrayStorage()->setLength(index + 1);
@@ -2663,7 +2658,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
     }
 
     // 12. For each attribute field of Desc that is present, set the correspondingly named attribute of the property named P of object O to the value of the field.
-    putIndexedDescriptor(exec, entryInMap, descriptor, current);
+    putIndexedDescriptor(exec, map, entryInMap, descriptor, current);
     // 13. Return true.
     return true;
 }
@@ -2693,7 +2688,7 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, J
         ArrayStorage* storage = current->arrayStorageOrNull();
         if (storage && storage->m_sparseMap) {
             SparseArrayValueMap::iterator iter = storage->m_sparseMap->find(i);
-            if (iter != storage->m_sparseMap->notFound() && (iter->value.attributes & (PropertyAttribute::Accessor | PropertyAttribute::ReadOnly))) {
+            if (iter != storage->m_sparseMap->notFound() && (iter->value.attributes() & (PropertyAttribute::Accessor | PropertyAttribute::ReadOnly))) {
                 putResult = iter->value.put(exec, thisValue, storage->m_sparseMap.get(), value, shouldThrow);
                 return true;
             }

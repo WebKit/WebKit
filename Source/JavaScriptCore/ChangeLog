@@ -1,3 +1,59 @@
+2018-07-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Fold GetByVal if the indexed value is non configurable and non writable
+        https://bugs.webkit.org/show_bug.cgi?id=186462
+
+        Reviewed by Saam Barati.
+
+        Non-special DontDelete | ReadOnly properties mean that it won't be changed. If DFG AI can retrieve this
+        property, AI can fold it into a constant. This type of property can be seen when we use ES6 tagged templates.
+        Tagged templates' callsite includes indexed properties whose attributes are DontDelete | ReadOnly.
+
+        This patch attempts to fold such properties into constant in DFG AI. The challenge is that DFG AI runs
+        concurrently with the mutator thread. In this patch, we insert WTF::storeStoreFence between value setting
+        and attributes setting. The attributes must be set after the corresponding value is set. If the loaded
+        attributes (with WTF::loadLoadFence) include DontDelete | ReadOnly, it means the given value won't be
+        changed and we can safely use it. We arrange our existing code to use this protocol.
+
+        Since GetByVal folding requires the correct Structure & Butterfly pairs, it is only enabled in x86 architecture
+        since it is TSO. So, our WTF::storeStoreFence in SparseArrayValueMap is also emitted only in x86.
+
+        This patch improves SixSpeed/template_string_tag.es6.
+
+                                          baseline                  patched
+
+        template_string_tag.es6      237.0301+-4.8374     ^      9.8779+-0.3628        ^ definitely 23.9960x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWithArrayStorage):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::putIndexedDescriptor):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::putIndexedDescriptor): Deleted.
+        * runtime/JSObject.h:
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::SparseArrayValueMap):
+        (JSC::SparseArrayValueMap::add):
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::SparseArrayValueMap::getConcurrently):
+        (JSC::SparseArrayEntry::get const):
+        (JSC::SparseArrayEntry::getConcurrently const):
+        (JSC::SparseArrayEntry::put):
+        (JSC::SparseArrayEntry::getNonSparseMode const):
+        (JSC::SparseArrayValueMap::visitChildren):
+        (JSC::SparseArrayValueMap::~SparseArrayValueMap): Deleted.
+        * runtime/SparseArrayValueMap.h:
+        (JSC::SparseArrayEntry::SparseArrayEntry):
+        (JSC::SparseArrayEntry::attributes const):
+        (JSC::SparseArrayEntry::forceSet):
+        (JSC::SparseArrayEntry::asValue):
+
 2018-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         We should support CreateThis in the FTL

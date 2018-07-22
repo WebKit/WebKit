@@ -36,17 +36,43 @@ namespace JSC {
 
 class SparseArrayValueMap;
 
-struct SparseArrayEntry : public WriteBarrier<Unknown> {
-    typedef WriteBarrier<Unknown> Base;
+class SparseArrayEntry : private WriteBarrier<Unknown> {
+public:
+    using Base = WriteBarrier<Unknown>;
 
-    SparseArrayEntry() : attributes(0) { }
+    SparseArrayEntry()
+    {
+        Base::setWithoutWriteBarrier(jsUndefined());
+    }
 
     void get(JSObject*, PropertySlot&) const;
     void get(PropertyDescriptor&) const;
     bool put(ExecState*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
     JSValue getNonSparseMode() const;
+    JSValue getConcurrently() const;
 
-    unsigned attributes;
+    unsigned attributes() const { return m_attributes; }
+
+    void forceSet(unsigned attributes)
+    {
+        // FIXME: We can expand this for non x86 environments. Currently, loading ReadOnly | DontDelete property
+        // from compiler thread is only supported in X86 architecture because of its TSO nature.
+        // https://bugs.webkit.org/show_bug.cgi?id=134641
+        if (isX86())
+            WTF::storeStoreFence();
+        m_attributes = attributes;
+    }
+
+    void forceSet(VM& vm, JSCell* map, JSValue value, unsigned attributes)
+    {
+        Base::set(vm, map, value);
+        forceSet(attributes);
+    }
+
+    WriteBarrier<Unknown>& asValue() { return *this; }
+
+private:
+    unsigned m_attributes { 0 };
 };
 
 class SparseArrayValueMap final : public JSCell {
@@ -64,7 +90,6 @@ private:
     };
 
     SparseArrayValueMap(VM&);
-    ~SparseArrayValueMap();
     
     void finishCreation(VM&);
 
@@ -113,6 +138,8 @@ public:
     void remove(iterator it);
     void remove(unsigned i);
 
+    JSValue getConcurrently(unsigned index);
+
     // These methods do not mutate the contents of the map.
     iterator notFound() { return m_map.end(); }
     bool isEmpty() const { return m_map.isEmpty(); }
@@ -124,8 +151,8 @@ public:
 
 private:
     Map m_map;
-    Flags m_flags;
-    size_t m_reportedCapacity;
+    Flags m_flags { Normal };
+    size_t m_reportedCapacity { 0 };
 };
 
 } // namespace JSC

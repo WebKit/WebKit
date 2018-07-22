@@ -485,7 +485,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
                     unsigned index = keys[--i];
                     SparseArrayValueMap::iterator it = map->find(index);
                     ASSERT(it != map->notFound());
-                    if (it->value.attributes & PropertyAttribute::DontDelete) {
+                    if (it->value.attributes() & PropertyAttribute::DontDelete) {
                         storage->setLength(index + 1);
                         return typeError(exec, scope, throwException, UnableToDeletePropertyError);
                     }

@@ -1044,8 +1044,6 @@ private:
     };
     std::optional<PropertyHashEntry> findPropertyHashEntry(VM&, PropertyName) const;
         
-    bool putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
-        
     bool putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     bool putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState*, unsigned propertyName, JSValue, unsigned attributes, PutDirectIndexMode, ArrayStorage*);
     JS_EXPORT_PRIVATE bool putDirectIndexSlowOrBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, unsigned attributes, PutDirectIndexMode);

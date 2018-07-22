@@ -1818,15 +1818,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case AtomicsSub:
     case AtomicsXor: {
         if (node->op() == GetByVal) {
-            auto foldGetByValOnCoWArray = [&] (Edge& arrayEdge, Edge& indexEdge) {
+            auto foldGetByValOnConstantProperty = [&] (Edge& arrayEdge, Edge& indexEdge) {
                 // FIXME: We can expand this for non x86 environments.
                 // https://bugs.webkit.org/show_bug.cgi?id=134641
                 if (!isX86())
                     return false;
 
                 AbstractValue& arrayValue = forNode(arrayEdge);
-                if (node->arrayMode().arrayClass() != Array::OriginalCopyOnWriteArray)
-                    return false;
 
                 // Check the structure set is finite. This means that this constant's structure is watched and guaranteed the one of this set.
                 // When the structure is changed, this code should be invalidated. This is important since the following code relies on the
@@ -1863,13 +1861,71 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 if (structureIDEarly != structureIDLate)
                     return false;
 
-                if (!isCopyOnWrite(m_vm.getStructure(structureIDLate)->indexingMode()))
-                    return false;
+                Structure* structure = m_vm.getStructure(structureIDLate);
+                if (node->arrayMode().arrayClass() == Array::OriginalCopyOnWriteArray) {
+                    if (!isCopyOnWrite(structure->indexingMode()))
+                        return false;
 
-                JSImmutableButterfly* immutableButterfly = JSImmutableButterfly::fromButterfly(butterfly);
-                if (index < immutableButterfly->length()) {
-                    JSValue value = immutableButterfly->get(index);
-                    ASSERT(value);
+                    JSImmutableButterfly* immutableButterfly = JSImmutableButterfly::fromButterfly(butterfly);
+                    if (index < immutableButterfly->length()) {
+                        JSValue value = immutableButterfly->get(index);
+                        ASSERT(value);
+                        if (value.isCell())
+                            setConstant(node, *m_graph.freeze(value.asCell()));
+                        else
+                            setConstant(node, value);
+                        return true;
+                    }
+
+                    if (node->arrayMode().isOutOfBounds()) {
+                        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(m_vm);
+                        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(m_vm);
+                        if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                            && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
+                            && globalObject->arrayPrototypeChainIsSane()) {
+                            m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
+                            m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+                            didFoldClobberWorld();
+                            // Note that Array::Double and Array::Int32 return JSValue if array mode is OutOfBounds.
+                            setConstant(node, jsUndefined());
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                if (node->arrayMode().type() == Array::ArrayStorage || node->arrayMode().type() == Array::SlowPutArrayStorage) {
+                    if (!hasAnyArrayStorage(structure->indexingMode()))
+                        return false;
+
+                    if (structure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
+                        return false;
+
+                    JSValue value;
+                    {
+                        // ArrayStorage's Butterfly can be half-broken state.
+                        auto locker = holdLock(array->cellLock());
+
+                        ArrayStorage* storage = butterfly->arrayStorage();
+                        if (index >= storage->length())
+                            return false;
+
+                        if (index < storage->vectorLength())
+                            return false;
+
+                        SparseArrayValueMap* map = storage->m_sparseMap.get();
+                        if (!map)
+                            return false;
+
+                        value = map->getConcurrently(index);
+                    }
+                    if (!value)
+                        return false;
+
+                    if (node->arrayMode().isOutOfBounds())
+                        didFoldClobberWorld();
+
                     if (value.isCell())
                         setConstant(node, *m_graph.freeze(value.asCell()));
                     else
@@ -1877,25 +1933,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     return true;
                 }
 
-                if (node->arrayMode().isOutOfBounds()) {
-                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                    Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(m_vm);
-                    Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(m_vm);
-                    if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
-                        && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
-                        && globalObject->arrayPrototypeChainIsSane()) {
-                        m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
-                        m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-                        didFoldClobberWorld();
-                        // Note that Array::Double and Array::Int32 return JSValue if array mode is OutOfBounds.
-                        setConstant(node, jsUndefined());
-                        return true;
-                    }
-                }
                 return false;
             };
 
-            if (foldGetByValOnCoWArray(m_graph.child(node, 0), m_graph.child(node, 1)))
+            if (foldGetByValOnConstantProperty(m_graph.child(node, 0), m_graph.child(node, 1)))
                 break;
         }
 

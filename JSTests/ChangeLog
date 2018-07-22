@@ -1,3 +1,30 @@
+2018-07-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Fold GetByVal if the indexed value is non configurable and non writable
+        https://bugs.webkit.org/show_bug.cgi?id=186462
+
+        Reviewed by Saam Barati.
+
+        * stress/folding-get-by-val-with-read-only-dont-delete-object.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+        * stress/folding-get-by-val-with-read-only-dont-delete-runtime-array.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        (test5):
+        * stress/folding-get-by-val-with-read-only-dont-delete.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        (test3):
+        (test4):
+        (test5):
+
 2018-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         We should support CreateThis in the FTL
