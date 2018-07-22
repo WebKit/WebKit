@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,21 @@
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
+
+void StructureSet::markIfCheap(SlotVisitor& visitor) const
+{
+    for (Structure* structure : *this)
+        structure->markIfCheap(visitor);
+}
+
+bool StructureSet::isStillAlive() const
+{
+    for (Structure* structure : *this) {
+        if (!Heap::isMarked(structure))
+            return false;
+    }
+    return true;
+}
 
 void StructureSet::dumpInContext(PrintStream& out, DumpContext* context) const
 {

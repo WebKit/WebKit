@@ -3613,6 +3613,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case LoopHint:
     case ZombieHint:
     case ExitOK:
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
     case ClearCatchLocals:
         break;
 
@@ -3731,6 +3735,42 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
     
     return m_state.isValid();
+}
+
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
+{
+    switch (node->op()) {
+    case FilterCallLinkStatus:
+        if (JSValue value = forNode(node->child1()).m_value)
+            node->callLinkStatus()->filter(m_vm, value);
+        break;
+        
+    case FilterGetByIdStatus: {
+        AbstractValue& value = forNode(node->child1());
+        if (value.m_structure.isFinite())
+            node->getByIdStatus()->filter(value.m_structure.toStructureSet());
+        break;
+    }
+        
+    case FilterInByIdStatus: {
+        AbstractValue& value = forNode(node->child1());
+        if (value.m_structure.isFinite())
+            node->inByIdStatus()->filter(value.m_structure.toStructureSet());
+        break;
+    }
+        
+    case FilterPutByIdStatus: {
+        AbstractValue& value = forNode(node->child1());
+        if (value.m_structure.isFinite())
+            node->putByIdStatus()->filter(value.m_structure.toStructureSet());
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 template<typename AbstractStateType>

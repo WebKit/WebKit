@@ -161,7 +161,7 @@ function runBenchmark()
 
     let before = currentTime();
 
-    let benchmark = new Benchmark();
+    let benchmark = new MLBenchmark();
 
     for (let iteration = 0; iteration < numIterations; ++iteration)
         benchmark.runIteration();

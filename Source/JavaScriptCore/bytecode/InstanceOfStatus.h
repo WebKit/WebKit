@@ -27,15 +27,15 @@
 
 #include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
+#include "ICStatusMap.h"
 #include "InstanceOfVariant.h"
+#include "StubInfoSummary.h"
 
 namespace JSC {
 
 class AccessCase;
 class CodeBlock;
 class StructureStubInfo;
-
-typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 class InstanceOfStatus {
 public:
@@ -61,7 +61,25 @@ public:
         ASSERT(state == NoInformation || state == TakesSlowPath);
     }
     
-    static InstanceOfStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex);
+    explicit InstanceOfStatus(StubInfoSummary summary)
+    {
+        switch (summary) {
+        case StubInfoSummary::NoInformation:
+            m_state = NoInformation;
+            return;
+        case StubInfoSummary::Simple:
+        case StubInfoSummary::MakesCalls:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        case StubInfoSummary::TakesSlowPath:
+        case StubInfoSummary::TakesSlowPathAndMakesCalls:
+            m_state = TakesSlowPath;
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    static InstanceOfStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex);
     
 #if ENABLE(DFG_JIT)
     static InstanceOfStatus computeForStubInfo(const ConcurrentJSLocker&, StructureStubInfo*);

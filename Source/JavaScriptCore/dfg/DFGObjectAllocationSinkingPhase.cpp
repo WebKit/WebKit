@@ -756,6 +756,7 @@ private:
         }
 
         promoteLocalHeap();
+        removeICStatusFilters();
 
         if (Options::validateGraphAtEachPhase())
             DFG::validate(m_graph, DumpGraph, graphBeforeSinking);
@@ -1087,6 +1088,12 @@ private:
         case MovHint:
         case PutHint:
             // Handled by OSR availability analysis
+            break;
+            
+        case FilterCallLinkStatus:
+        case FilterGetByIdStatus:
+        case FilterPutByIdStatus:
+        case FilterInByIdStatus:
             break;
 
         default:
@@ -2330,6 +2337,25 @@ private:
         }
 
         RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void removeICStatusFilters()
+    {
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                switch (node->op()) {
+                case FilterCallLinkStatus:
+                case FilterGetByIdStatus:
+                case FilterPutByIdStatus:
+                case FilterInByIdStatus:
+                    if (node->child1()->isPhantomAllocation())
+                        node->removeWithoutChecks();
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
     }
 
     // This is a great way of asking value->isStillValid() without having to worry about getting

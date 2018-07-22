@@ -212,6 +212,8 @@ public:
     
     PhiChildren* phiChildren() { return m_phiChildren.get(); }
     
+    void filterICStatus(Node*);
+    
 private:
     void clobberWorld();
     void didFoldClobberWorld();

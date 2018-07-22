@@ -4046,6 +4046,14 @@ void SpeculativeJIT::compile(Node* node)
     case CheckStructureOrEmpty:
         DFG_CRASH(m_jit.graph(), node, "CheckStructureOrEmpty only used in 64-bit DFG");
         break;
+        
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
+        m_interpreter.filterICStatus(node);
+        noResult(node);
+        break;
 
     case LastNodeType:
     case Phi:

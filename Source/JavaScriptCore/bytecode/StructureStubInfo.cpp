@@ -305,6 +305,39 @@ bool StructureStubInfo::propagateTransitions(SlotVisitor& visitor)
     return true;
 }
 
+StubInfoSummary StructureStubInfo::summary() const
+{
+    StubInfoSummary takesSlowPath = StubInfoSummary::TakesSlowPath;
+    StubInfoSummary simple = StubInfoSummary::Simple;
+    if (cacheType == CacheType::Stub) {
+        PolymorphicAccess* list = u.stub;
+        for (unsigned i = 0; i < list->size(); ++i) {
+            const AccessCase& access = list->at(i);
+            if (access.doesCalls()) {
+                takesSlowPath = StubInfoSummary::TakesSlowPathAndMakesCalls;
+                simple = StubInfoSummary::MakesCalls;
+                break;
+            }
+        }
+    }
+    
+    if (tookSlowPath || sawNonCell)
+        return takesSlowPath;
+    
+    if (!everConsidered)
+        return StubInfoSummary::NoInformation;
+    
+    return simple;
+}
+
+StubInfoSummary StructureStubInfo::summary(const StructureStubInfo* stubInfo)
+{
+    if (!stubInfo)
+        return StubInfoSummary::NoInformation;
+    
+    return stubInfo->summary();
+}
+
 bool StructureStubInfo::containsPC(void* pc) const
 {
     if (cacheType != CacheType::Stub)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -898,10 +898,14 @@ private:
         case TailCall: {
             ExecutableBase* executable = nullptr;
             Edge callee = m_graph.varArgChild(m_node, 0);
-            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>(vm()))
+            CallVariant callVariant;
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>(vm())) {
                 executable = function->executable();
-            else if (callee->isFunctionAllocation())
+                callVariant = CallVariant(function);
+            } else if (callee->isFunctionAllocation()) {
                 executable = callee->castOperand<FunctionExecutable*>();
+                callVariant = CallVariant(executable);
+            }
             
             if (!executable)
                 break;
@@ -918,6 +922,8 @@ private:
                         Graph::parameterSlotsForArgCount(numAllocatedArgs));
                 }
             }
+            
+            m_graph.m_plan.recordedStatuses.addCallLinkStatus(m_node->origin.semantic, CallLinkStatus(callVariant));
             
             m_node->convertToDirectCall(m_graph.freeze(executable));
             m_changed = true;

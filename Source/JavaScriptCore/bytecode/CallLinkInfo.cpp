@@ -59,6 +59,7 @@ CallLinkInfo::CallLinkInfo()
     : m_hasSeenShouldRepatch(false)
     , m_hasSeenClosure(false)
     , m_clearedByGC(false)
+    , m_clearedByVirtual(false)
     , m_allowStubs(true)
     , m_isLinked(false)
     , m_callType(None)
@@ -220,7 +221,7 @@ void CallLinkInfo::visitWeak(VM& vm)
             if (!stub()->visitWeak(vm)) {
                 if (Options::verboseOSR()) {
                     dataLog(
-                        "Clearing closure call to ",
+                        "At ", m_codeOrigin, ", ", RawPointer(this), ": clearing call stub to ",
                         listDump(stub()->variants()), ", stub routine ", RawPointer(stub()),
                         ".\n");
                 }

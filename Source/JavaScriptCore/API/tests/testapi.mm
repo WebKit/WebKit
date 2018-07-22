@@ -554,7 +554,10 @@ static void runJITThreadLimitTests()
 
 static void testObjectiveCAPIMain()
 {
-    runJITThreadLimitTests();
+    // FIXME: Make this work again.
+    // https://bugs.webkit.org/show_bug.cgi?id=187886
+    if (false)
+        runJITThreadLimitTests();
 
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];

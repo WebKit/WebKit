@@ -35,6 +35,7 @@
 #include "InlineCallFrameSet.h"
 #include "JSCast.h"
 #include "ProfilerCompilation.h"
+#include "RecordedStatuses.h"
 #include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
 
@@ -125,6 +126,7 @@ public:
     Bag<CodeBlockJettisoningWatchpoint> watchpoints;
     Bag<AdaptiveStructureWatchpoint> adaptiveStructureWatchpoints;
     Bag<AdaptiveInferredPropertyValueWatchpoint> adaptiveInferredPropertyValueWatchpoints;
+    RecordedStatuses recordedStatuses;
     Vector<JumpReplacement> jumpReplacements;
     
     ScratchBuffer* catchOSREntryBuffer;

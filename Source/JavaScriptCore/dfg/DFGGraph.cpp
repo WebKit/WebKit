@@ -356,6 +356,14 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "ignoreLastIndexIsWritable = ", node->ignoreLastIndexIsWritable());
     if (node->isConstant())
         out.print(comma, pointerDumpInContext(node->constant(), context));
+    if (node->hasCallLinkStatus())
+        out.print(comma, *node->callLinkStatus());
+    if (node->hasGetByIdStatus())
+        out.print(comma, *node->getByIdStatus());
+    if (node->hasInByIdStatus())
+        out.print(comma, *node->inByIdStatus());
+    if (node->hasPutByIdStatus())
+        out.print(comma, *node->putByIdStatus());
     if (node->isJump())
         out.print(comma, "T:", *node->targetBlock());
     if (node->isBranch())

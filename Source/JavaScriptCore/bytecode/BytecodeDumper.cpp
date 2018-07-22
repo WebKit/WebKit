@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -402,7 +402,7 @@ static void dumpChain(PrintStream& out, StructureChain* chain, const Identifier&
 }
 
 template<class Block>
-void BytecodeDumper<Block>::printGetByIdCacheStatus(PrintStream& out, int location, const StubInfoMap& map)
+void BytecodeDumper<Block>::printGetByIdCacheStatus(PrintStream& out, int location, const ICStatusMap& statusMap)
 {
     const auto* instruction = instructionsBegin() + location;
 
@@ -422,7 +422,7 @@ void BytecodeDumper<Block>::printGetByIdCacheStatus(PrintStream& out, int locati
     }
 
 #if ENABLE(JIT)
-    if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {
+    if (StructureStubInfo* stubPtr = statusMap.get(CodeOrigin(location)).stubInfo) {
         StructureStubInfo& stubInfo = *stubPtr;
         if (stubInfo.resetByGC)
             out.print(" (Reset By GC)");
@@ -463,12 +463,12 @@ void BytecodeDumper<Block>::printGetByIdCacheStatus(PrintStream& out, int locati
         out.printf(")");
     }
 #else
-    UNUSED_PARAM(map);
+    UNUSED_PARAM(statusMap);
 #endif
 }
 
 template<class Block>
-void BytecodeDumper<Block>::printPutByIdCacheStatus(PrintStream& out, int location, const StubInfoMap& map)
+void BytecodeDumper<Block>::printPutByIdCacheStatus(PrintStream& out, int location, const ICStatusMap& statusMap)
 {
     const auto* instruction = instructionsBegin() + location;
 
@@ -496,7 +496,7 @@ void BytecodeDumper<Block>::printPutByIdCacheStatus(PrintStream& out, int locati
     }
 
 #if ENABLE(JIT)
-    if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {
+    if (StructureStubInfo* stubPtr = statusMap.get(CodeOrigin(location)).stubInfo) {
         StructureStubInfo& stubInfo = *stubPtr;
         if (stubInfo.resetByGC)
             out.print(" (Reset By GC)");
@@ -522,12 +522,12 @@ void BytecodeDumper<Block>::printPutByIdCacheStatus(PrintStream& out, int locati
         out.printf(")");
     }
 #else
-    UNUSED_PARAM(map);
+    UNUSED_PARAM(statusMap);
 #endif
 }
 
 template<class Block>
-void BytecodeDumper<Block>::printInByIdCacheStatus(PrintStream& out, int location, const StubInfoMap& map)
+void BytecodeDumper<Block>::printInByIdCacheStatus(PrintStream& out, int location, const ICStatusMap& statusMap)
 {
     const auto* instruction = instructionsBegin() + location;
 
@@ -536,7 +536,7 @@ void BytecodeDumper<Block>::printInByIdCacheStatus(PrintStream& out, int locatio
     UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
 
 #if ENABLE(JIT)
-    if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {
+    if (StructureStubInfo* stubPtr = statusMap.get(CodeOrigin(location)).stubInfo) {
         StructureStubInfo& stubInfo = *stubPtr;
         if (stubInfo.resetByGC)
             out.print(" (Reset By GC)");
@@ -575,26 +575,26 @@ void BytecodeDumper<Block>::printInByIdCacheStatus(PrintStream& out, int locatio
     }
 #else
     UNUSED_PARAM(out);
-    UNUSED_PARAM(map);
+    UNUSED_PARAM(statusMap);
 #endif
 }
 
 #if ENABLE(JIT)
 template<typename Block>
-void BytecodeDumper<Block>::dumpCallLinkStatus(PrintStream&, unsigned, const CallLinkInfoMap&)
+void BytecodeDumper<Block>::dumpCallLinkStatus(PrintStream&, unsigned, const ICStatusMap&)
 {
 }
 
 template<>
-void BytecodeDumper<CodeBlock>::dumpCallLinkStatus(PrintStream& out, unsigned location, const CallLinkInfoMap& map)
+void BytecodeDumper<CodeBlock>::dumpCallLinkStatus(PrintStream& out, unsigned location, const ICStatusMap& statusMap)
 {
     if (block()->jitType() != JITCode::FTLJIT)
-        out.print(" status(", CallLinkStatus::computeFor(block(), location, map), ")");
+        out.print(" status(", CallLinkStatus::computeFor(block(), location, statusMap), ")");
 }
 #endif
 
 template<class Block>
-void BytecodeDumper<Block>::printCallOp(PrintStream& out, int location, const typename Block::Instruction*& it, const char* op, CacheDumpMode cacheDumpMode, bool& hasPrintedProfiling, const CallLinkInfoMap& map)
+void BytecodeDumper<Block>::printCallOp(PrintStream& out, int location, const typename Block::Instruction*& it, const char* op, CacheDumpMode cacheDumpMode, bool& hasPrintedProfiling, const ICStatusMap& statusMap)
 {
     int dst = (++it)->u.operand;
     int func = (++it)->u.operand;
@@ -613,7 +613,7 @@ void BytecodeDumper<Block>::printCallOp(PrintStream& out, int location, const ty
                 out.printf(" llint(%p)", object);
         }
 #if ENABLE(JIT)
-        if (CallLinkInfo* info = map.get(CodeOrigin(location))) {
+        if (CallLinkInfo* info = statusMap.get(CodeOrigin(location)).callLinkInfo) {
             if (info->haveLastSeenCallee()) {
                 JSObject* object = info->lastSeenCallee();
                 if (auto* function = jsDynamicCast<JSFunction*>(*vm(), object))
@@ -623,9 +623,9 @@ void BytecodeDumper<Block>::printCallOp(PrintStream& out, int location, const ty
             }
         }
 
-        dumpCallLinkStatus(out, location, map);
+        dumpCallLinkStatus(out, location, statusMap);
 #else
-        UNUSED_PARAM(map);
+        UNUSED_PARAM(statusMap);
 #endif
     }
     ++it;
@@ -653,7 +653,7 @@ void BytecodeDumper<Block>::printLocationOpAndRegisterOperand(PrintStream& out, 
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block::Instruction* begin, const typename Block::Instruction*& it, const StubInfoMap& stubInfos, const CallLinkInfoMap& callLinkInfos)
+void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block::Instruction* begin, const typename Block::Instruction*& it, const ICStatusMap& statusMap)
 {
     int location = it - begin;
     bool hasPrintedProfiling = false;
@@ -1042,7 +1042,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         int id0 = (++it)->u.operand;
         printLocationAndOp(out, location, it, "in_by_id");
         out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
-        printInByIdCacheStatus(out, location, stubInfos);
+        printInByIdCacheStatus(out, location, statusMap);
         break;
     }
     case op_in_by_val: {
@@ -1066,7 +1066,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         printLocationAndOp(out, location, it, "get_by_id_direct");
         out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
         it += 2; // Increment up to the value profiler.
-        printGetByIdCacheStatus(out, location, stubInfos);
+        printGetByIdCacheStatus(out, location, statusMap);
         dumpValueProfiling(out, it, hasPrintedProfiling);
         break;
     }
@@ -1075,7 +1075,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
     case op_get_by_id_unset:
     case op_get_array_length: {
         printGetByIdOp(out, location, it);
-        printGetByIdCacheStatus(out, location, stubInfos);
+        printGetByIdCacheStatus(out, location, statusMap);
         dumpValueProfiling(out, it, hasPrintedProfiling);
         break;
     }
@@ -1101,7 +1101,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
     }
     case op_put_by_id: {
         printPutByIdOp(out, location, it, "put_by_id");
-        printPutByIdCacheStatus(out, location, stubInfos);
+        printPutByIdCacheStatus(out, location, statusMap);
         break;
     }
     case op_put_by_id_with_this: {
@@ -1447,15 +1447,15 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         break;
     }
     case op_call: {
-        printCallOp(out, location, it, "call", DumpCaches, hasPrintedProfiling, callLinkInfos);
+        printCallOp(out, location, it, "call", DumpCaches, hasPrintedProfiling, statusMap);
         break;
     }
     case op_tail_call: {
-        printCallOp(out, location, it, "tail_call", DumpCaches, hasPrintedProfiling, callLinkInfos);
+        printCallOp(out, location, it, "tail_call", DumpCaches, hasPrintedProfiling, statusMap);
         break;
     }
     case op_call_eval: {
-        printCallOp(out, location, it, "call_eval", DontDumpCaches, hasPrintedProfiling, callLinkInfos);
+        printCallOp(out, location, it, "call_eval", DontDumpCaches, hasPrintedProfiling, statusMap);
         break;
     }
 
@@ -1494,7 +1494,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         break;
     }
     case op_construct: {
-        printCallOp(out, location, it, "construct", DumpCaches, hasPrintedProfiling, callLinkInfos);
+        printCallOp(out, location, it, "construct", DumpCaches, hasPrintedProfiling, statusMap);
         break;
     }
     case op_strcat: {
@@ -1749,10 +1749,10 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpBytecode(Block* block, PrintStream& out, const typename Block::Instruction* begin, const typename Block::Instruction*& it, const StubInfoMap& stubInfos, const CallLinkInfoMap& callLinkInfos)
+void BytecodeDumper<Block>::dumpBytecode(Block* block, PrintStream& out, const typename Block::Instruction* begin, const typename Block::Instruction*& it, const ICStatusMap& statusMap)
 {
     BytecodeDumper dumper(block, begin);
-    dumper.dumpBytecode(out, begin, it, stubInfos, callLinkInfos);
+    dumper.dumpBytecode(out, begin, it, statusMap);
 }
 
 template<class Block>
@@ -1848,7 +1848,7 @@ void BytecodeDumper<Block>::dumpStringSwitchJumpTables(PrintStream& out)
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpBlock(Block* block, const typename Block::UnpackedInstructions& instructions, PrintStream& out, const StubInfoMap& stubInfos, const CallLinkInfoMap& callLinkInfos)
+void BytecodeDumper<Block>::dumpBlock(Block* block, const typename Block::UnpackedInstructions& instructions, PrintStream& out, const ICStatusMap& statusMap)
 {
     size_t instructionCount = 0;
 
@@ -1868,7 +1868,7 @@ void BytecodeDumper<Block>::dumpBlock(Block* block, const typename Block::Unpack
     const auto* end = instructions.end();
     BytecodeDumper<Block> dumper(block, begin);
     for (const auto* it = begin; it != end; ++it)
-        dumper.dumpBytecode(out, begin, it, stubInfos, callLinkInfos);
+        dumper.dumpBytecode(out, begin, it, statusMap);
 
     dumper.dumpIdentifiers(out);
     dumper.dumpConstants(out);

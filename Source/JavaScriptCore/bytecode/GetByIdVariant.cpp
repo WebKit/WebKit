@@ -103,8 +103,11 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
 {
     if (m_offset != other.m_offset)
         return false;
-    if (m_callLinkStatus || other.m_callLinkStatus)
-        return false;
+    
+    if (m_callLinkStatus || other.m_callLinkStatus) {
+        if (!(m_callLinkStatus && other.m_callLinkStatus))
+            return false;
+    }
 
     if (!canMergeIntrinsicStructures(other))
         return false;
@@ -132,6 +135,27 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     
     m_structureSet.merge(other.m_structureSet);
     
+    if (m_callLinkStatus)
+        m_callLinkStatus->merge(*other.m_callLinkStatus);
+
+    return true;
+}
+
+void GetByIdVariant::markIfCheap(SlotVisitor& visitor)
+{
+    m_structureSet.markIfCheap(visitor);
+}
+
+bool GetByIdVariant::finalize()
+{
+    if (!m_structureSet.isStillAlive())
+        return false;
+    if (!m_conditionSet.areStillLive())
+        return false;
+    if (m_callLinkStatus && !m_callLinkStatus->finalize())
+        return false;
+    if (m_intrinsicFunction && !Heap::isMarked(m_intrinsicFunction))
+        return false;
     return true;
 }
 

@@ -29,6 +29,8 @@
 #include "CallVariant.h"
 #include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
+#include "ExitFlag.h"
+#include "ICStatusMap.h"
 #include "JSCJSValue.h"
 
 namespace JSC {
@@ -60,39 +62,33 @@ public:
     {
     }
     
-    static CallLinkStatus computeFor(
-        CodeBlock*, unsigned bytecodeIndex, const CallLinkInfoMap&);
-
     struct ExitSiteData {
-        bool takesSlowPath { false };
-        bool badFunction { false };
+        ExitFlag takesSlowPath;
+        ExitFlag badFunction;
     };
     static ExitSiteData computeExitSiteData(CodeBlock*, unsigned bytecodeIndex);
     
+    static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex, const ICStatusMap&, ExitSiteData);
+    static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex, const ICStatusMap&);
+
 #if ENABLE(JIT)
     // Computes the status assuming that we never took slow path and never previously
     // exited.
     static CallLinkStatus computeFor(const ConcurrentJSLocker&, CodeBlock*, CallLinkInfo&);
+    
+    // Computes the status accounting for exits.
     static CallLinkStatus computeFor(
-        const ConcurrentJSLocker&, CodeBlock*, CallLinkInfo&, ExitSiteData);
+        const ConcurrentJSLocker&, CodeBlock*, CallLinkInfo&, ExitSiteData, ExitingInlineKind = ExitFromAnyInlineKind);
 #endif
     
-    typedef HashMap<CodeOrigin, CallLinkStatus, CodeOriginApproximateHash> ContextMap;
-    
-    // Computes all of the statuses of the DFG code block. Doesn't include statuses that had
-    // no information. Currently we use this when compiling FTL code, to enable polyvariant
-    // inlining.
-    static void computeDFGStatuses(CodeBlock* dfgCodeBlock, ContextMap&);
-    
-    // Helper that first consults the ContextMap and then does computeFor().
     static CallLinkStatus computeFor(
-        CodeBlock*, CodeOrigin, const CallLinkInfoMap&, const ContextMap&);
+        CodeBlock*, CodeOrigin, const ICStatusMap&, const ICStatusContextStack&);
     
     void setProvenConstantCallee(CallVariant);
     
     bool isSet() const { return !m_variants.isEmpty() || m_couldTakeSlowPath; }
     
-    bool operator!() const { return !isSet(); }
+    explicit operator bool() const { return isSet(); }
     
     bool couldTakeSlowPath() const { return m_couldTakeSlowPath; }
     
@@ -110,6 +106,12 @@ public:
     
     unsigned maxNumArguments() const { return m_maxNumArguments; }
     
+    bool finalize();
+    
+    void merge(const CallLinkStatus&);
+    
+    void filter(VM&, JSValue);
+    
     void dump(PrintStream&) const;
     
 private:
@@ -120,6 +122,8 @@ private:
     static CallLinkStatus computeFromCallLinkInfo(
         const ConcurrentJSLocker&, CallLinkInfo&);
 #endif
+    
+    void accountForExits(ExitSiteData, ExitingInlineKind);
     
     CallVariantList m_variants;
     bool m_couldTakeSlowPath { false };

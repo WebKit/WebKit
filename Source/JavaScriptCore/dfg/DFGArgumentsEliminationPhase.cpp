@@ -400,6 +400,12 @@ private:
                     // butterfly's child and check if it's a candidate.
                     break;
                     
+                case FilterGetByIdStatus:
+                case FilterPutByIdStatus:
+                case FilterCallLinkStatus:
+                case FilterInByIdStatus:
+                    break;
+
                 case CheckArray:
                     escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
                     break;
@@ -1182,7 +1188,11 @@ private:
                 }
                     
                 case CheckArray:
-                case GetButterfly: {
+                case GetButterfly:
+                case FilterGetByIdStatus:
+                case FilterPutByIdStatus:
+                case FilterCallLinkStatus:
+                case FilterInByIdStatus: {
                     if (!isEliminatedAllocation(node->child1().node()))
                         break;
                     node->remove(m_graph);

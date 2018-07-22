@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 void FrequentExitSite::dump(PrintStream& out) const
 {
-    out.print("bc#", m_bytecodeOffset, ": ", m_kind, "/", m_jitType);
+    out.print("bc#", m_bytecodeOffset, ": ", m_kind, "/", m_jitType, "/", m_inlineKind);
 }
 
 ExitProfile::ExitProfile() { }
@@ -43,8 +43,10 @@ ExitProfile::~ExitProfile() { }
 
 bool ExitProfile::add(CodeBlock* owner, const FrequentExitSite& site)
 {
+    RELEASE_ASSERT(site.jitType() != ExitFromAnything);
+    RELEASE_ASSERT(site.inlineKind() != ExitFromAnyInlineKind);
+
     ConcurrentJSLocker locker(owner->unlinkedCodeBlock()->m_lock);
-    ASSERT(site.jitType() != ExitFromAnything);
 
     CODEBLOCK_LOG_EVENT(owner, "frequentExit", (site));
     

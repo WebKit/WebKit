@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "DeferredCompilationCallback.h"
 #include "Operands.h"
 #include "ProfilerCompilation.h"
+#include "RecordedStatuses.h"
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -72,6 +73,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     void iterateCodeBlocksForGC(const Func&);
     void checkLivenessAndVisitChildren(SlotVisitor&);
     bool isKnownToBeLiveDuringGC();
+    void finalizeInGC();
     void cancel();
 
     bool canTierUpAndOSREnter() const { return !tierUpAndOSREnterBytecodes.isEmpty(); }
@@ -104,6 +106,7 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     DesiredIdentifiers identifiers;
     DesiredWeakReferences weakReferences;
     DesiredTransitions transitions;
+    RecordedStatuses recordedStatuses;
     
     bool willTryToTierUp { false };
 

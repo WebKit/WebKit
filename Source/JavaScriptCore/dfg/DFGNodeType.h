@@ -399,11 +399,8 @@ namespace JSC { namespace DFG {
     macro(GetArgument, NodeResultJS) \
     \
     macro(NewFunction, NodeResultJS) \
-    \
     macro(NewGeneratorFunction, NodeResultJS) \
-    \
     macro(NewAsyncGeneratorFunction, NodeResultJS) \
-    \
     macro(NewAsyncFunction, NodeResultJS) \
     \
     /* Block terminals. */\
@@ -480,6 +477,12 @@ namespace JSC { namespace DFG {
     \
     /* Used for $vm performance debugging */ \
     macro(CPUIntrinsic, NodeResultJS | NodeMustGenerate) \
+    \
+    /* Used to provide feedback to the IC profiler. */ \
+    macro(FilterCallLinkStatus, NodeMustGenerate) \
+    macro(FilterGetByIdStatus, NodeMustGenerate) \
+    macro(FilterInByIdStatus, NodeMustGenerate) \
+    macro(FilterPutByIdStatus, NodeMustGenerate) \
 
 
 // This enum generates a monotonically increasing id for all Node types,

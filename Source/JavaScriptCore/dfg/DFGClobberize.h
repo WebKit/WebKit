@@ -453,6 +453,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ProfileControlFlow:
     case PutHint:
     case InitializeEntrypointArguments:
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
         write(SideState);
         return;
         

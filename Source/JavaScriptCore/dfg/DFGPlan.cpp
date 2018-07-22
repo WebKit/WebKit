@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -555,6 +555,7 @@ void Plan::reallyAdd(CommonData* commonData)
     identifiers.reallyAdd(*vm, commonData);
     weakReferences.reallyAdd(*vm, commonData);
     transitions.reallyAdd(*vm, commonData);
+    commonData->recordedStatuses = WTFMove(recordedStatuses);
 }
 
 void Plan::notifyCompiling()
@@ -633,6 +634,8 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
     cleanMustHandleValuesIfNecessary();
     for (unsigned i = mustHandleValues.size(); i--;)
         visitor.appendUnbarriered(mustHandleValues[i]);
+    
+    recordedStatuses.markIfCheap(visitor);
 
     visitor.appendUnbarriered(codeBlock);
     visitor.appendUnbarriered(codeBlock->alternative());
@@ -647,6 +650,11 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
 
     weakReferences.visitChildren(visitor);
     transitions.visitChildren(visitor);
+}
+
+void Plan::finalizeInGC()
+{
+    recordedStatuses.finalizeWithoutDeleting();
 }
 
 bool Plan::isKnownToBeLiveDuringGC()

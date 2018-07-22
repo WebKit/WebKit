@@ -203,3 +203,23 @@ void DeferredWatchpointFire::takeWatchpointsToFire(WatchpointSet* watchpointsToF
 
 } // namespace JSC
 
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::WatchpointState state)
+{
+    switch (state) {
+    case JSC::ClearWatchpoint:
+        out.print("ClearWatchpoint");
+        return;
+    case JSC::IsWatched:
+        out.print("IsWatched");
+        return;
+    case JSC::IsInvalidated:
+        out.print("IsInvalidated");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
+

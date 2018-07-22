@@ -266,12 +266,6 @@ inline unsigned getByValInfoBytecodeIndex(ByValInfo* info)
     return info->bytecodeIndex;
 }
 
-typedef HashMap<CodeOrigin, ByValInfo*, CodeOriginApproximateHash> ByValInfoMap;
-
-#else // ENABLE(JIT)
-
-typedef HashMap<int, void*> ByValInfoMap;
-
 #endif // ENABLE(JIT)
 
 } // namespace JSC

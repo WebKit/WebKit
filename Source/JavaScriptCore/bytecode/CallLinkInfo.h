@@ -264,7 +264,17 @@ public:
     {
         return m_clearedByGC;
     }
+    
+    bool clearedByVirtual()
+    {
+        return m_clearedByVirtual;
+    }
 
+    void setClearedByVirtual()
+    {
+        m_clearedByVirtual = true;
+    }
+    
     void setCallType(CallType callType)
     {
         m_callType = callType;
@@ -338,6 +348,7 @@ private:
     bool m_hasSeenShouldRepatch : 1;
     bool m_hasSeenClosure : 1;
     bool m_clearedByGC : 1;
+    bool m_clearedByVirtual : 1;
     bool m_allowStubs : 1;
     bool m_isLinked : 1;
     unsigned m_callType : 4; // CallType
@@ -351,12 +362,6 @@ inline CodeOrigin getCallLinkInfoCodeOrigin(CallLinkInfo& callLinkInfo)
 {
     return callLinkInfo.codeOrigin();
 }
-
-typedef HashMap<CodeOrigin, CallLinkInfo*, CodeOriginApproximateHash> CallLinkInfoMap;
-
-#else // ENABLE(JIT)
-
-typedef HashMap<int, void*> CallLinkInfoMap;
 
 #endif // ENABLE(JIT)
 

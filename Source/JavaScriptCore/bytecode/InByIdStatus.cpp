@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,16 +42,16 @@ bool InByIdStatus::appendVariant(const InByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
-InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
+InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
 
     InByIdStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfoWithoutExitSiteFeedback(locker, map.get(CodeOrigin(bytecodeIndex)), uid);
+    result = computeForStubInfoWithoutExitSiteFeedback(locker, map.get(CodeOrigin(bytecodeIndex)).stubInfo, uid);
 
-    if (!result.takesSlowPath() && hasExitSite(profiledBlock, bytecodeIndex))
+    if (!result.takesSlowPath() && didExit)
         return InByIdStatus(TakesSlowPath);
 #else
     UNUSED_PARAM(map);
@@ -61,68 +62,65 @@ InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map
     return result;
 }
 
+InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
+{
+    return computeFor(profiledBlock, map, bytecodeIndex, uid, hasBadCacheExitSite(profiledBlock, bytecodeIndex));
+}
+
 InByIdStatus InByIdStatus::computeFor(
-    CodeBlock* profiledBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap,
-    StubInfoMap& dfgMap, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+    CodeBlock* profiledBlock, ICStatusMap& baselineMap,
+    ICStatusContextStack& contextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-#if ENABLE(DFG_JIT)
-    if (dfgBlock) {
-        CallLinkStatus::ExitSiteData exitSiteData;
-        {
-            ConcurrentJSLocker locker(profiledBlock->m_lock);
-            exitSiteData = CallLinkStatus::computeExitSiteData(
-                profiledBlock, codeOrigin.bytecodeIndex);
-        }
-
-        InByIdStatus result;
-        {
-            ConcurrentJSLocker locker(dfgBlock->m_lock);
-            result = computeForStubInfoWithoutExitSiteFeedback(locker, dfgMap.get(codeOrigin), uid);
-        }
-
-        if (result.takesSlowPath())
+    ExitFlag didExit = hasBadCacheExitSite(profiledBlock, codeOrigin.bytecodeIndex);
+    
+    for (ICStatusContext* context : contextStack) {
+        ICStatus status = context->get(codeOrigin);
+        
+        auto bless = [&] (const InByIdStatus& result) -> InByIdStatus {
+            if (!context->isInlined(codeOrigin)) {
+                InByIdStatus baselineResult = computeFor(
+                    profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit);
+                baselineResult.merge(result);
+                return baselineResult;
+            }
+            if (didExit.isSet(ExitFromInlined))
+                return InByIdStatus(TakesSlowPath);
             return result;
-
-        if (hasExitSite(profiledBlock, codeOrigin.bytecodeIndex))
-            return InByIdStatus(TakesSlowPath);
-
-        if (result.isSet())
-            return result;
+        };
+        
+        if (status.stubInfo) {
+            InByIdStatus result;
+            {
+                ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
+                result = computeForStubInfoWithoutExitSiteFeedback(locker, status.stubInfo, uid);
+            }
+            if (result.isSet())
+                return bless(result);
+        }
+        
+        if (status.inStatus)
+            return bless(*status.inStatus);
     }
-#else
-    UNUSED_PARAM(dfgBlock);
-    UNUSED_PARAM(dfgMap);
-#endif
-
-    return computeFor(profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
+    
+    return computeFor(profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit);
 }
 
 #if ENABLE(DFG_JIT)
-bool InByIdStatus::hasExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex)
-{
-    UnlinkedCodeBlock* unlinkedCodeBlock = profiledBlock->unlinkedCodeBlock();
-    ConcurrentJSLocker locker(unlinkedCodeBlock->m_lock);
-    return unlinkedCodeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
-        || unlinkedCodeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
-}
-
 InByIdStatus InByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
     InByIdStatus result = InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(locker, stubInfo, uid);
 
-    if (!result.takesSlowPath() && InByIdStatus::hasExitSite(profiledBlock, codeOrigin.bytecodeIndex))
+    if (!result.takesSlowPath() && hasBadCacheExitSite(profiledBlock, codeOrigin.bytecodeIndex))
         return InByIdStatus(TakesSlowPath);
     return result;
 }
 
 InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, StructureStubInfo* stubInfo, UniquedStringImpl* uid)
 {
-    if (!stubInfo || !stubInfo->everConsidered)
-        return InByIdStatus(NoInformation);
-
-    if (stubInfo->tookSlowPath)
-        return InByIdStatus(TakesSlowPath);
-
+    StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
+    if (!isInlineable(summary))
+        return InByIdStatus(summary);
+    
     // Finally figure out if we can derive an access strategy.
     InByIdStatus result;
     result.m_state = Simple;
@@ -209,6 +207,36 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
 }
 #endif
 
+void InByIdStatus::merge(const InByIdStatus& other)
+{
+    if (other.m_state == NoInformation)
+        return;
+    
+    switch (m_state) {
+    case NoInformation:
+        *this = other;
+        return;
+        
+    case Simple:
+        if (other.m_state != Simple) {
+            *this = InByIdStatus(TakesSlowPath);
+            return;
+        }
+        for (const InByIdVariant& otherVariant : other.m_variants) {
+            if (!appendVariant(otherVariant)) {
+                *this = InByIdStatus(TakesSlowPath);
+                return;
+            }
+        }
+        return;
+        
+    case TakesSlowPath:
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void InByIdStatus::filter(const StructureSet& structureSet)
 {
     if (m_state != Simple)
@@ -216,6 +244,21 @@ void InByIdStatus::filter(const StructureSet& structureSet)
     filterICStatusVariants(m_variants, structureSet);
     if (m_variants.isEmpty())
         m_state = NoInformation;
+}
+
+void InByIdStatus::markIfCheap(SlotVisitor& visitor)
+{
+    for (InByIdVariant& variant : m_variants)
+        variant.markIfCheap(visitor);
+}
+
+bool InByIdStatus::finalize()
+{
+    for (InByIdVariant& variant : m_variants) {
+        if (!variant.finalize())
+            return false;
+    }
+    return true;
 }
 
 void InByIdStatus::dump(PrintStream& out) const

@@ -4646,6 +4646,14 @@ void SpeculativeJIT::compile(Node* node)
         break;
 #endif // ENABLE(FTL_JIT)
 
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
+        m_interpreter.filterICStatus(node);
+        noResult(node);
+        break;
+
     case LastNodeType:
     case EntrySwitch:
     case InitializeEntrypointArguments:

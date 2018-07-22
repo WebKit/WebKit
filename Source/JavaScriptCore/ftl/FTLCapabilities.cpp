@@ -354,6 +354,11 @@ inline CapabilityLevel canCompile(Node* node)
     case PutByValDirect:
     case PutByValWithThis:
     case MatchStructure:
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
+    case CreateThis:
         // These are OK.
         break;
 
@@ -365,7 +370,6 @@ inline CapabilityLevel canCompile(Node* node)
         break;
 
     case IdentityWithProfile:
-    case CreateThis:
     case CheckTierUpInLoop:
     case CheckTierUpAndOSREnter:
     case CheckTierUpAtReturn:

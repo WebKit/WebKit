@@ -102,6 +102,10 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case PutClosureVar:
     case RecordRegExpCachedResult:
     case NukeStructureAndSetButterfly:
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
         break;
 
     case StrCat:

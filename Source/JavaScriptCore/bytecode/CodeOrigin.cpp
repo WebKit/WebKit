@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ unsigned CodeOrigin::inlineDepth() const
     return inlineDepthForCallFrame(inlineCallFrame);
 }
 
-bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other) const
+bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other, InlineCallFrame* terminal) const
 {
     CodeOrigin a = *this;
     CodeOrigin b = other;
@@ -68,10 +68,12 @@ bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other) const
         if (a.bytecodeIndex != b.bytecodeIndex)
             return false;
         
-        if ((!!a.inlineCallFrame) != (!!b.inlineCallFrame))
+        bool aHasInlineCallFrame = !!a.inlineCallFrame && a.inlineCallFrame != terminal;
+        bool bHasInlineCallFrame = !!b.inlineCallFrame;
+        if (aHasInlineCallFrame != bHasInlineCallFrame)
             return false;
         
-        if (!a.inlineCallFrame)
+        if (!aHasInlineCallFrame)
             return true;
         
         if (a.inlineCallFrame->baselineCodeBlock.get() != b.inlineCallFrame->baselineCodeBlock.get())
@@ -82,7 +84,7 @@ bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other) const
     }
 }
 
-unsigned CodeOrigin::approximateHash() const
+unsigned CodeOrigin::approximateHash(InlineCallFrame* terminal) const
 {
     if (!isSet())
         return 0;
@@ -95,6 +97,9 @@ unsigned CodeOrigin::approximateHash() const
         result += codeOrigin.bytecodeIndex;
         
         if (!codeOrigin.inlineCallFrame)
+            return result;
+        
+        if (codeOrigin.inlineCallFrame == terminal)
             return result;
         
         result += WTF::PtrHash<JSCell*>::hash(codeOrigin.inlineCallFrame->baselineCodeBlock.get());

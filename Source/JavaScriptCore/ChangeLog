@@ -1,3 +1,327 @@
+2018-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        We should support CreateThis in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=164904
+
+        Reviewed by Yusuke Suzuki.
+        
+        This started with Saam's patch to implement CreateThis in the FTL, but turned into a type
+        inference adventure.
+        
+        CreateThis in the FTL was a massive regression in raytrace because it disturbed that
+        benchmark's extremely perverse way of winning at type inference:
+        
+        - The benchmark wanted polyvariant devirtualization of an object construction helper. But,
+          the polyvariant profiler wasn't powerful enough to reliably devirtualize that code. So, the
+          benchmark was falling back to other mechanisms...
+        
+        - The construction helper could not tier up into the FTL. When the DFG compiled it, it would
+          see that the IC had 4 cases. That's too polymorphic for the DFG. So, the DFG would emit a
+          GetById. Shortly after the DFG compile, that get_by_id would see many more cases, but now
+          that the helper was compiled by the DFG, the baseline get_by_id would not see those cases.
+          The DFG's GetById would "hide" those cases. The number of cases the DFG's GetById would see
+          is larger than our polymorphic list limit (limit = 8, case count = 13, I think).
+          
+          Note that if the FTL compiles that construction helper, it sees the 4 cases, turns them
+          into a MultiGetByOffset, then suffers from exits when the new cases hit, and then exits to
+          baseline, which then sees those cases. Luckily, the FTL was not compiling the construction
+          helper because it had a CreateThis.
+        
+        - Compilations that inlined the construction helper would have gotten super lucky with
+          parse-time constant folding, so they knew what structure the input to the get_by_id would
+          have at parse time. This is only profitable if the get_by_id parsing computed a
+          GetByIdStatus that had a finite number of cases. Because the 13 cases were being hidden by
+          the DFG GetById and GetByIdStatus would only look at the baseline get_by_id, which had 4
+          cases, we would indeed get a finite number of cases. The parser would then prune those
+          cases to just one - based on its knowledge of the structure - and that would result in that
+          get_by_id being folded at parse time to a constant.
+        
+        - The subsequent op_call would inline based on parse-time knowledge of that constant.
+        
+        This patch comprehensively fixes these issues, as well as other issues that come up along the
+        way. The short version is that raytrace was revealing sloppiness in our use of profiling for
+        type inference. This patch fixes the sloppiness by vastly expanding *polyvariant* profiling,
+        i.e. the profiling that considers call context. I was encouraged to do this by the fact that
+        even the old version of polyvariant profiling was a speed-up on JetStream, ARES-6, and
+        Speedometer 2 (it's easy to measure since it's a runtime flag). So, it seemed worthwhile to
+        attack raytrace's problem as a shortcoming of polyvariant profiling.
+        
+        - Polyvariant profiling now consults every DFG or FTL code block that participated in any
+          subset of the inline stack that includes the IC we're profiling. For example, if we have
+          an inline stack like foo->bar->baz, with baz on top, then we will consult DFG or FTL
+          compilations for foo, bar, and baz. In foo, we'll look up foo->bar->baz; in bar we'll look
+          up bar->baz; etc. This fixes two problems encountered in raytrace. First, it ensures that
+          a DFG GetById cannot hide anything from the profiling of that get_by_id, since the
+          polyvariant profiling code will always consult it. Second, it enables raytrace to benefit
+          from polyvariant profling. Previously, the polyvariant profiler would only look at the
+          previous DFG compilation of foo and look up foo->bar->baz. But that only works if DFG-foo
+          had inlined bar and then baz. It may not have done that, because those calls could have
+          required polyvariant profiling that was only available in the FTL.
+          
+        - A particularly interesting case is when some IC in foo-baseline is also available in
+          foo-DFG. This case is encountered by the polyvariant profiler as it walks the inline stack.
+          In the case of gathering profiling for foo-FTL, the polyvariant profiler finds foo-DFG via
+          the trivial case of no inline stack. This also means that if foo ever gets inlined, we will
+          find foo-DFG or foo-FTL in the final case of polyvariant profiling. In those cases, we now
+          merge the IC of foo-baseline and foo-DFG. This avoids lots of unnecessary recompilations,
+          because it warns us of historical polymorphism. Historical polymorphism usually means
+          future polymorphism. IC status code already had some merging functionality, but I needed to
+          beef it up a lot to make this work right.
+        
+        - Inlining an inline cache now preserves as much information as profiling. One challenge of
+          polyvariant profiling is that the FTL compile for bar (that includes bar->baz) could have
+          inlined an inline cache based on polyvariant profiling. So, when the FTL compile for foo
+          (that includes foo->bar->baz) asks bar what it knows about that IC inside bar->baz, it will
+          say "I don't have such an IC". At this point the DFG compilation that included that IC that
+          gave us the information that we used to inline the IC is no longer alive. To keep us from
+          losing the information we learned about the IC, there is now a RecordedStatuses data
+          structure that preserves the statuses we use for inlining ICs. We also filter those
+          statuses according to things we learn from AI. This further reduces the risk of information
+          about an IC being forgotten.
+        
+        - Exit profiling now considers whether or not an exit happened from inline code. This
+          protects us in the case where the not-inlined version of an IC exited a lot because of
+          polymorphism that doesn't exist in the inlined version. So, when using polyvariant
+          profiling data, we consider only inlined exits.
+        
+        - CallLinkInfo now records when it's repatched to the virtual call thunk. Previously, this
+          would clear the CallLinkInfo, so CallLinkStatus would fall back to the lastSeenCallee. It's
+          surprising that we've had this bug.
+        
+        Altogether this patch is performance-neutral in run-jsc-benchmarks, except for speed-ups in
+        microbenchmarks and a compile time regression. Octane/deltablue speeds up by ~5%.
+        Octane/raytrace is regressed by a minuscule amount, which we could make up by implementing
+        prototype access folding in the bytecode parser and constant folder. That would require some
+        significant new logic in GetByIdStatus. That would also require a new benchmark - we want to
+        have a test that captures raytrace's behavior in the case that the parser cannot fold the
+        get_by_id.
+        
+        This change is a 1.2% regression on V8Spider-CompileTime. That's a smaller regression than
+        recent compile time progressions, so I think that's an OK trade-off. Also, I would expect a
+        compile time regression anytime we fill in FTL coverage.
+        
+        This is neutral on JetStream, ARES-6, and Speedometer2. JetStream agrees that deltablue
+        speeds up and that raytrace slows down, but these changes balance out and don't affect the
+        overall score. In ARES-6, it looks like individual tests have some significant 1-2% speed-ups
+        or slow-downs. Air-steady is definitely ~1.5% faster. Basic-worst is probably 2% slower (p ~
+        0.1, so it's not very certain). The JetStream, ARES-6, and Speedometer2 overall scores don't
+        see a significant difference. In all three cases the difference is <0.5% with a high p value,
+        with JetStream and Speedometer2 being insignificant infinitesimal speed-ups and ARES-6 being
+        an insignificant infinitesimal slow-down.
+        
+        Oh, and this change means that the FTL now has 100% coverage of JavaScript. You could do an
+        eval in a for-in loop in a for-of loop inside a with block that uses try/catch for control
+        flow in a polymorphic constructor while having a bad time, and we'll still compile it.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/ByValInfo.h:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printGetByIdCacheStatus):
+        (JSC::BytecodeDumper<Block>::printPutByIdCacheStatus):
+        (JSC::BytecodeDumper<Block>::printInByIdCacheStatus):
+        (JSC::BytecodeDumper<Block>::dumpCallLinkStatus):
+        (JSC::BytecodeDumper<CodeBlock>::dumpCallLinkStatus):
+        (JSC::BytecodeDumper<Block>::printCallOp):
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        (JSC::BytecodeDumper<Block>::dumpBlock):
+        * bytecode/BytecodeDumper.h:
+        * bytecode/CallLinkInfo.h:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        (JSC::CallLinkStatus::accountForExits):
+        (JSC::CallLinkStatus::finalize):
+        (JSC::CallLinkStatus::filter):
+        (JSC::CallLinkStatus::computeDFGStatuses): Deleted.
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::operator bool const):
+        (JSC::CallLinkStatus::operator! const): Deleted.
+        * bytecode/CallVariant.cpp:
+        (JSC::CallVariant::finalize):
+        (JSC::CallVariant::filter):
+        * bytecode/CallVariant.h:
+        (JSC::CallVariant::operator bool const):
+        (JSC::CallVariant::operator! const): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::getICStatusMap):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::getStubInfoMap): Deleted.
+        (JSC::CodeBlock::getCallLinkInfoMap): Deleted.
+        (JSC::CodeBlock::getByValInfoMap): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::isApproximatelyEqualTo const):
+        (JSC::CodeOrigin::approximateHash const):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::exitingInlineKind const):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::FrequentExitSite::dump const):
+        (JSC::DFG::ExitProfile::add):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::FrequentExitSite::FrequentExitSite):
+        (JSC::DFG::FrequentExitSite::operator== const):
+        (JSC::DFG::FrequentExitSite::subsumes const):
+        (JSC::DFG::FrequentExitSite::hash const):
+        (JSC::DFG::FrequentExitSite::inlineKind const):
+        (JSC::DFG::FrequentExitSite::withInlineKind const):
+        (JSC::DFG::QueryableExitProfile::hasExitSite const):
+        (JSC::DFG::QueryableExitProfile::hasExitSiteWithSpecificJITType const):
+        (JSC::DFG::QueryableExitProfile::hasExitSiteWithSpecificInlineKind const):
+        * bytecode/ExitFlag.cpp: Added.
+        (JSC::ExitFlag::dump const):
+        * bytecode/ExitFlag.h: Added.
+        (JSC::ExitFlag::ExitFlag):
+        (JSC::ExitFlag::operator| const):
+        (JSC::ExitFlag::operator|=):
+        (JSC::ExitFlag::operator& const):
+        (JSC::ExitFlag::operator&=):
+        (JSC::ExitFlag::operator bool const):
+        (JSC::ExitFlag::isSet const):
+        * bytecode/ExitingInlineKind.cpp: Added.
+        (WTF::printInternal):
+        * bytecode/ExitingInlineKind.h: Added.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::slowVersion const):
+        (JSC::GetByIdStatus::markIfCheap):
+        (JSC::GetByIdStatus::finalize):
+        (JSC::GetByIdStatus::hasExitSite): Deleted.
+        * bytecode/GetByIdStatus.h:
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::markIfCheap):
+        (JSC::GetByIdVariant::finalize):
+        * bytecode/GetByIdVariant.h:
+        * bytecode/ICStatusMap.cpp: Added.
+        (JSC::ICStatusContext::get const):
+        (JSC::ICStatusContext::isInlined const):
+        (JSC::ICStatusContext::inlineKind const):
+        * bytecode/ICStatusMap.h: Added.
+        * bytecode/ICStatusUtils.cpp: Added.
+        (JSC::hasBadCacheExitSite):
+        * bytecode/ICStatusUtils.h:
+        * bytecode/InstanceOfStatus.cpp:
+        (JSC::InstanceOfStatus::computeFor):
+        * bytecode/InstanceOfStatus.h:
+        * bytecode/PolyProtoAccessChain.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::hasExitSite):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::slowVersion const):
+        (JSC::PutByIdStatus::markIfCheap):
+        (JSC::PutByIdStatus::finalize):
+        (JSC::PutByIdStatus::filter):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::markIfCheap):
+        (JSC::PutByIdVariant::finalize):
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::structureSet const):
+        * bytecode/RecordedStatuses.cpp: Added.
+        (JSC::RecordedStatuses::operator=):
+        (JSC::RecordedStatuses::RecordedStatuses):
+        (JSC::RecordedStatuses::addCallLinkStatus):
+        (JSC::RecordedStatuses::addGetByIdStatus):
+        (JSC::RecordedStatuses::addPutByIdStatus):
+        (JSC::RecordedStatuses::markIfCheap):
+        (JSC::RecordedStatuses::finalizeWithoutDeleting):
+        (JSC::RecordedStatuses::finalize):
+        (JSC::RecordedStatuses::shrinkToFit):
+        * bytecode/RecordedStatuses.h: Added.
+        (JSC::RecordedStatuses::RecordedStatuses):
+        (JSC::RecordedStatuses::forEachVector):
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::markIfCheap const):
+        (JSC::StructureSet::isStillAlive const):
+        * bytecode/StructureSet.h:
+        * bytecode/TerminatedCodeOrigin.h: Added.
+        (JSC::TerminatedCodeOrigin::TerminatedCodeOrigin):
+        (JSC::TerminatedCodeOriginHashTranslator::hash):
+        (JSC::TerminatedCodeOriginHashTranslator::equal):
+        * bytecode/Watchpoint.cpp:
+        (WTF::printInternal):
+        * bytecode/Watchpoint.h:
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterICStatus):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleModuleNamespaceLoad):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::~InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::SetPointerAdaptor::hasBeenInvalidated):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCallLinkStatus):
+        (JSC::DFG::Node::callLinkStatus):
+        (JSC::DFG::Node::hasGetByIdStatus):
+        (JSC::DFG::Node::getByIdStatus):
+        (JSC::DFG::Node::hasPutByIdStatus):
+        (JSC::DFG::Node::putByIdStatus):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitBase.cpp:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::finalizeInGC):
+        * dfg/DFGPlan.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::removeDeadPlans):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileFilterICStatus):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::hasEdges const):
+        (JSC::PolymorphicCallStubRoutine::edges const):
+        * jit/PolymorphicCallStubRoutine.h:
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::initializeObjectAllocationProfile):
+        * runtime/Options.h:
+
 2018-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use Function / ScopedLambda / RecursableLambda instead of std::function

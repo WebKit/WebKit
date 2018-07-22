@@ -295,6 +295,12 @@
 		0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A451460CBAB00131F8F /* ValueRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A461460CBAB00131F8F /* VirtualRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A4A1460CD6B00131F8F /* DataFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F44767020C5E2B4008B2C36 /* StubInfoSummary.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F44766F20C5E2B2008B2C36 /* StubInfoSummary.h */; };
+		0F44A7B020BF68620022B171 /* ExitFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F44A7AE20BF685F0022B171 /* ExitFlag.h */; };
+		0F44A7B120BF68C90022B171 /* ExitingInlineKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F44A7A720BF685D0022B171 /* ExitingInlineKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F44A7B220BF68CE0022B171 /* ICStatusMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F44A7AF20BF685F0022B171 /* ICStatusMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F44A7B320BF68D10022B171 /* RecordedStatuses.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F44A7AA20BF685E0022B171 /* RecordedStatuses.h */; };
+		0F44A7B420BF68D90022B171 /* TerminatedCodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F44A7A820BF685E0022B171 /* TerminatedCodeOrigin.h */; };
 		0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */; };
 		0F45703D1BE45F0A0062A629 /* AirReportUsedRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45703B1BE45F0A0062A629 /* AirReportUsedRegisters.h */; };
 		0F4570411BE584CA0062A629 /* B3TimingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45703F1BE584CA0062A629 /* B3TimingScope.h */; };
@@ -2284,6 +2290,17 @@
 		0F426A461460CBAB00131F8F /* VirtualRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualRegister.h; sourceTree = "<group>"; };
 		0F426A4A1460CD6B00131F8F /* DataFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFormat.h; sourceTree = "<group>"; };
 		0F42B3C0201EB50900357031 /* Allocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Allocator.cpp; sourceTree = "<group>"; };
+		0F44766F20C5E2B2008B2C36 /* StubInfoSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StubInfoSummary.h; sourceTree = "<group>"; };
+		0F44A7A720BF685D0022B171 /* ExitingInlineKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExitingInlineKind.h; sourceTree = "<group>"; };
+		0F44A7A820BF685E0022B171 /* TerminatedCodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TerminatedCodeOrigin.h; sourceTree = "<group>"; };
+		0F44A7A920BF685E0022B171 /* ExitFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExitFlag.cpp; sourceTree = "<group>"; };
+		0F44A7AA20BF685E0022B171 /* RecordedStatuses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordedStatuses.h; sourceTree = "<group>"; };
+		0F44A7AB20BF685E0022B171 /* ICStatusMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ICStatusMap.cpp; sourceTree = "<group>"; };
+		0F44A7AC20BF685F0022B171 /* ExitingInlineKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExitingInlineKind.cpp; sourceTree = "<group>"; };
+		0F44A7AD20BF685F0022B171 /* RecordedStatuses.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RecordedStatuses.cpp; sourceTree = "<group>"; };
+		0F44A7AE20BF685F0022B171 /* ExitFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExitFlag.h; sourceTree = "<group>"; };
+		0F44A7AF20BF685F0022B171 /* ICStatusMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICStatusMap.h; sourceTree = "<group>"; };
+		0F44A7B520C0BE3F0022B171 /* ICStatusUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ICStatusUtils.cpp; sourceTree = "<group>"; };
 		0F4570361BE44C910062A629 /* AirEliminateDeadCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirEliminateDeadCode.cpp; path = b3/air/AirEliminateDeadCode.cpp; sourceTree = "<group>"; };
 		0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirEliminateDeadCode.h; path = b3/air/AirEliminateDeadCode.h; sourceTree = "<group>"; };
 		0F45703A1BE45F0A0062A629 /* AirReportUsedRegisters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirReportUsedRegisters.cpp; path = b3/air/AirReportUsedRegisters.cpp; sourceTree = "<group>"; };
@@ -2580,6 +2597,7 @@
 		0F9FB4F217FCB91700CB67F8 /* DFGStackLayoutPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStackLayoutPhase.cpp; path = dfg/DFGStackLayoutPhase.cpp; sourceTree = "<group>"; };
 		0F9FB4F317FCB91700CB67F8 /* DFGStackLayoutPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStackLayoutPhase.h; path = dfg/DFGStackLayoutPhase.h; sourceTree = "<group>"; };
 		0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutKind.h; sourceTree = "<group>"; };
+		0FA1265320C8DB98004B0D11 /* StubInfoSummary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StubInfoSummary.cpp; sourceTree = "<group>"; };
 		0FA2C17917D7CF84009D015F /* TestRunnerUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunnerUtils.cpp; sourceTree = "<group>"; };
 		0FA2C17A17D7CF84009D015F /* TestRunnerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestRunnerUtils.h; sourceTree = "<group>"; };
 		0FA581B7150E952A00B9A2D9 /* DFGNodeFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNodeFlags.cpp; path = dfg/DFGNodeFlags.cpp; sourceTree = "<group>"; };
@@ -7611,6 +7629,10 @@
 				0F60FE8E1FFC36FD0003320A /* ExecutableToCodeBlockEdge.h */,
 				0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */,
 				0F56A1D115000F31002992B1 /* ExecutionCounter.h */,
+				0F44A7A920BF685E0022B171 /* ExitFlag.cpp */,
+				0F44A7AE20BF685F0022B171 /* ExitFlag.h */,
+				0F44A7AC20BF685F0022B171 /* ExitingInlineKind.cpp */,
+				0F44A7A720BF685D0022B171 /* ExitingInlineKind.h */,
 				0F0332BF18ADFAE1005F979A /* ExitingJITType.cpp */,
 				0F3AC753188E5EC80032029F /* ExitingJITType.h */,
 				0FB105821675480C00F8AB6E /* ExitKind.cpp */,
@@ -7627,6 +7649,9 @@
 				0F0332C218B01763005F979A /* GetByIdVariant.h */,
 				14AD91081DCA92940014F9FE /* GlobalCodeBlock.h */,
 				0F0B83A814BCF55E00885B4F /* HandlerInfo.h */,
+				0F44A7AB20BF685E0022B171 /* ICStatusMap.cpp */,
+				0F44A7AF20BF685F0022B171 /* ICStatusMap.h */,
+				0F44A7B520C0BE3F0022B171 /* ICStatusUtils.cpp */,
 				0FB399BD20AF6B380017E213 /* ICStatusUtils.h */,
 				E3305FB220B0F78800CEB82B /* InByIdStatus.cpp */,
 				E3305FAF20B0F78700CEB82B /* InByIdStatus.h */,
@@ -7687,6 +7712,8 @@
 				0F93B4A718B92C4D00178A3F /* PutByIdVariant.cpp */,
 				0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */,
 				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
+				0F44A7AD20BF685F0022B171 /* RecordedStatuses.cpp */,
+				0F44A7AA20BF685E0022B171 /* RecordedStatuses.h */,
 				0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */,
 				0FF60AC016740F8100029779 /* ReduceWhitespace.h */,
 				0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */,
@@ -7699,8 +7726,11 @@
 				0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */,
 				BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */,
 				BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */,
+				0FA1265320C8DB98004B0D11 /* StubInfoSummary.cpp */,
+				0F44766F20C5E2B2008B2C36 /* StubInfoSummary.h */,
 				0F4A38F71C8E13DF00190318 /* SuperSampler.cpp */,
 				0F4A38F81C8E13DF00190318 /* SuperSampler.h */,
+				0F44A7A820BF685E0022B171 /* TerminatedCodeOrigin.h */,
 				0F2D4DE519832DAC007D4B19 /* ToThisStatus.cpp */,
 				0F2D4DE619832DAC007D4B19 /* ToThisStatus.h */,
 				0F952ABA1B487A7700C367C5 /* TrackedReferences.cpp */,
@@ -8357,6 +8387,7 @@
 				53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */,
 				5341FC721DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h in Headers */,
 				0F2C63B21E60AE4700C13839 /* B3Width.h in Headers */,
+				0F44A7B220BF68CE0022B171 /* ICStatusMap.h in Headers */,
 				52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
 				86976E5F1FA3E8BC00E7C4E1 /* BigIntConstructor.h in Headers */,
@@ -8577,6 +8608,7 @@
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
 				0F2FCCFA18A60070001A27F8 /* DFGGraphSafepoint.h in Headers */,
+				0F44A7B120BF68C90022B171 /* ExitingInlineKind.h in Headers */,
 				0FB17661196B8F9E0091052A /* DFGHeapLocation.h in Headers */,
 				0FC841691BA8C3210061837D /* DFGInferredTypeCheck.h in Headers */,
 				0FB14E211812570B009B6B4D /* DFGInlineCacheWrapper.h in Headers */,
@@ -8727,6 +8759,7 @@
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
+				0F44A7B320BF68D10022B171 /* RecordedStatuses.h in Headers */,
 				E34EDBF71DB5FFC900DC87A5 /* FrameTracers.h in Headers */,
 				0F5513A61D5A682C00C32BD8 /* FreeList.h in Headers */,
 				0F6585E11EE0805A0095176D /* FreeListInlines.h in Headers */,
@@ -9076,6 +9109,7 @@
 				7013CA8C1B491A9400CAE613 /* JSJob.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSLexicalEnvironment.h in Headers */,
 				BC18C4230E16F5CD00B34460 /* JSLock.h in Headers */,
+				0F44A7B020BF68620022B171 /* ExitFlag.h in Headers */,
 				C25D709C16DE99F400FCA6BC /* JSManagedValue.h in Headers */,
 				2A4BB7F318A41179008A0FCD /* JSManagedValueInternal.h in Headers */,
 				A700874217CBE8EB00C3E643 /* JSMap.h in Headers */,
@@ -9391,6 +9425,7 @@
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
 				0FEE98411A8865B700754E93 /* SetupVarargsFrame.h in Headers */,
 				DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */,
+				0F44A7B420BF68D90022B171 /* TerminatedCodeOrigin.h in Headers */,
 				DC17E8191C9C91DB008A6AB3 /* ShadowChickenInlines.h in Headers */,
 				FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */,
 				0F4D8C781FCA3CFA001D32AC /* SimpleMarkingConstraint.h in Headers */,
@@ -9546,6 +9581,7 @@
 				AD5B416F1EBAFB77008EFA43 /* WasmName.h in Headers */,
 				AD7B4B2E1FA3E29800C9DF79 /* WasmNameSection.h in Headers */,
 				ADD8FA461EB3079700DF542F /* WasmNameSectionParser.h in Headers */,
+				0F44767020C5E2B4008B2C36 /* StubInfoSummary.h in Headers */,
 				5311BD4B1EA581E500525281 /* WasmOMGPlan.h in Headers */,
 				53C6FEEF1E8ADFA900B18425 /* WasmOpcodeOrigin.h in Headers */,
 				53B4BD121F68B32500D2BEA3 /* WasmOps.h in Headers */,

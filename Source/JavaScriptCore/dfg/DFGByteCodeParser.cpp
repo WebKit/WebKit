@@ -1083,9 +1083,8 @@ private:
         // code block had gathered.
         LazyOperandValueProfileParser m_lazyOperands;
         
-        CallLinkInfoMap m_callLinkInfos;
-        StubInfoMap m_stubInfos;
-        ByValInfoMap m_byValInfos;
+        ICStatusMap m_baselineMap;
+        ICStatusContext m_optimizedContext;
         
         // Pointers to the argument position trackers for this slice of code.
         Vector<ArgumentPosition*> m_argumentPositions;
@@ -1103,10 +1102,7 @@ private:
             InlineCallFrame::Kind,
             BasicBlock* continuationBlock);
         
-        ~InlineStackEntry()
-        {
-            m_byteCodeParser->m_inlineStackTop = m_caller;
-        }
+        ~InlineStackEntry();
         
         VirtualRegister remapOperand(VirtualRegister operand) const
         {
@@ -1120,6 +1116,8 @@ private:
     };
     
     InlineStackEntry* m_inlineStackTop;
+    
+    ICStatusContextStack m_icContextStack;
     
     struct DelayedSetLocal {
         CodeOrigin m_origin;
@@ -1147,10 +1145,6 @@ private:
     
     Vector<DelayedSetLocal, 2> m_setLocalQueue;
 
-    CodeBlock* m_dfgCodeBlock;
-    CallLinkStatus::ContextMap m_callContextMap;
-    StubInfoMap m_dfgStubInfos;
-    
     Instruction* m_currentInstruction;
     bool m_hasDebuggerEnabled;
     bool m_hasAnyForceOSRExits { false };
@@ -1216,7 +1210,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(Instruction* pc, NodeType
 
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, currentCodeOrigin(),
-        m_inlineStackTop->m_callLinkInfos, m_callContextMap);
+        m_inlineStackTop->m_baselineMap, m_icContextStack);
 
     InlineCallFrame::Kind kind = InlineCallFrame::kindFor(callMode);
 
@@ -1244,6 +1238,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     // If we have profiling information about this call, and it did not behave too polymorphically,
     // we may be able to inline it, or in the case of recursive tail calls turn it into a jump.
     if (callLinkStatus.canOptimize()) {
+        addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses.addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
+        
         VirtualRegister thisArgument = virtualRegisterForArgument(0, registerOffset);
         auto optimizationResult = handleInlining(callTarget, result, callLinkStatus, registerOffset, thisArgument,
             argumentCountIncludingThis, m_currentIndex + instructionSize, op, kind, prediction);
@@ -1281,12 +1277,14 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, N
     
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, currentCodeOrigin(),
-        m_inlineStackTop->m_callLinkInfos, m_callContextMap);
+        m_inlineStackTop->m_baselineMap, m_icContextStack);
     refineStatically(callLinkStatus, callTarget);
     
     VERBOSE_LOG("    Varargs call link status at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
     
     if (callLinkStatus.canOptimize()) {
+        addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses.addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
+        
         if (handleVarargsInlining(callTarget, result,
             callLinkStatus, firstFreeReg, VirtualRegister(thisReg), VirtualRegister(arguments),
             firstVarArgOffset, op,
@@ -3332,9 +3330,12 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
     if (!check(variant.conditionSet()))
         return false;
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), thisNode);
-
+    
     // We do not need to emit CheckCell thingy here. When the custom accessor is replaced to different one, Structure transition occurs.
     addToGraph(CheckSubClass, OpInfo(domAttribute.classInfo), thisNode);
+    
+    bool wasSeenInJIT = true;
+    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), GetByIdStatus(GetByIdStatus::Custom, wasSeenInJIT, variant))), thisNode);
 
     CallDOMGetterData* callDOMGetterData = m_graph.m_callDOMGetterData.add();
     callDOMGetterData->customAccessorGetter = variant.customAccessorGetter();
@@ -3366,6 +3367,8 @@ bool ByteCodeParser::handleModuleNamespaceLoad(int resultOperand, SpeculatedType
     if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
         return false;
     addToGraph(CheckCell, OpInfo(m_graph.freeze(getById.moduleNamespaceObject())), Edge(base, CellUse));
+    
+    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), getById)), base);
 
     // Ideally we wouldn't have to do this Phantom. But:
     //
@@ -4021,13 +4024,20 @@ void ByteCodeParser::handleGetById(
         return;
     }
     
+    // FIXME: If we use the GetByIdStatus for anything then we should record it and insert a node
+    // after everything else (like the GetByOffset or whatever) that will filter the recorded
+    // GetByIdStatus. That means that the constant folder also needs to do the same!
+    
     if (getByIdStatus.numVariants() > 1) {
         if (getByIdStatus.makesCalls() || !isFTL(m_graph.m_plan.mode)
-            || !Options::usePolymorphicAccessInlining()) {
+            || !Options::usePolymorphicAccessInlining()
+            || getByIdStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
             set(VirtualRegister(destinationOperand),
                 addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
             return;
         }
+        
+        addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
         
         Vector<MultiGetByOffsetCase, 2> cases;
         
@@ -4070,10 +4080,12 @@ void ByteCodeParser::handleGetById(
             addToGraph(MultiGetByOffset, OpInfo(data), OpInfo(prediction), base));
         return;
     }
+
+    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
     
     ASSERT(getByIdStatus.numVariants() == 1);
     GetByIdVariant variant = getByIdStatus[0];
-                
+    
     Node* loadedValue = load(prediction, base, identifierNumber, variant);
     if (!loadedValue) {
         set(VirtualRegister(destinationOperand),
@@ -4164,7 +4176,8 @@ void ByteCodeParser::handlePutById(
     
     if (putByIdStatus.numVariants() > 1) {
         if (!isFTL(m_graph.m_plan.mode) || putByIdStatus.makesCalls()
-            || !Options::usePolymorphicAccessInlining()) {
+            || !Options::usePolymorphicAccessInlining()
+            || putByIdStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
             emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
             return;
         }
@@ -4182,6 +4195,8 @@ void ByteCodeParser::handlePutById(
         
         if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedPutById();
+        
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
 
         for (const PutByIdVariant& variant : putByIdStatus.variants()) {
             m_graph.registerInferredType(variant.requiredType());
@@ -4203,6 +4218,8 @@ void ByteCodeParser::handlePutById(
     
     switch (variant.kind()) {
     case PutByIdVariant::Replace: {
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+        
         store(base, identifierNumber, variant, value);
         if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedPutById();
@@ -4210,6 +4227,8 @@ void ByteCodeParser::handlePutById(
     }
     
     case PutByIdVariant::Transition: {
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+        
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
         if (!check(variant.conditionSet())) {
             emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
@@ -4277,6 +4296,8 @@ void ByteCodeParser::handlePutById(
     }
         
     case PutByIdVariant::Setter: {
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+        
         Node* loadedValue = load(SpecCellOther, base, identifierNumber, variant);
         if (!loadedValue) {
             emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
@@ -4513,6 +4534,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                            
                             // The callee is still live up to this point.
                             addToGraph(Phantom, callee);
                             Node* object = addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure)));
@@ -4808,7 +4830,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto& bytecode = *reinterpret_cast<OpInstanceof*>(currentInstruction);
             
             InstanceOfStatus status = InstanceOfStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_stubInfos,
+                m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap,
                 m_currentIndex);
             
             Node* value = get(VirtualRegister(bytecode.value()));
@@ -5047,7 +5069,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifierNumber = 0;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
+                ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex)).byValInfo;
                 // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
                 // At that time, there is no information.
                 if (byValInfo
@@ -5116,7 +5138,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 PutByIdStatus putByIdStatus;
                 {
                     ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                    ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
+                    ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex)).byValInfo;
                     // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
                     // At that time, there is no information.
                     if (byValInfo 
@@ -5222,8 +5244,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
             GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
-                m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
+                m_inlineStackTop->m_profiledBlock,
+                m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin(), uid);
 
             AccessType type = AccessType::Get;
@@ -5266,8 +5288,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             bool direct = currentInstruction[8].u.putByIdFlags & PutByIdIsDirect;
 
             PutByIdStatus putByIdStatus = PutByIdStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
-                m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
+                m_inlineStackTop->m_profiledBlock,
+                m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin(), m_graph.identifiers()[identifierNumber]);
             
             handlePutById(base, identifierNumber, value, putByIdStatus, direct);
@@ -6451,8 +6473,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
             InByIdStatus status = InByIdStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
-                m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
+                m_inlineStackTop->m_profiledBlock,
+                m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin(), uid);
 
             if (status.isSimple()) {
@@ -6473,6 +6495,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 }
 
                 if (allOK) {
+                    addToGraph(FilterInByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addInByIdStatus(currentCodeOrigin(), status)), base);
+                    
                     Node* match = addToGraph(MatchStructure, OpInfo(data), base);
                     set(VirtualRegister(currentInstruction[1].u.operand), match);
                     NEXT_OPCODE(op_in_by_id);
@@ -6657,12 +6681,17 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // We do this while holding the lock because we want to encourage StructureStubInfo's
         // to be potentially added to operations and because the profiled block could be in the
         // middle of LLInt->JIT tier-up in which case we would be adding the info's right now.
-        if (m_profiledBlock->hasBaselineJITProfiling()) {
-            m_profiledBlock->getStubInfoMap(locker, m_stubInfos);
-            m_profiledBlock->getCallLinkInfoMap(locker, m_callLinkInfos);
-            m_profiledBlock->getByValInfoMap(locker, m_byValInfos);
-        }
+        if (m_profiledBlock->hasBaselineJITProfiling())
+            m_profiledBlock->getICStatusMap(locker, m_baselineMap);
     }
+    
+    CodeBlock* optimizedBlock = m_profiledBlock->replacement();
+    m_optimizedContext.optimizedCodeBlock = optimizedBlock;
+    if (Options::usePolyvariantDevirtualization() && optimizedBlock) {
+        ConcurrentJSLocker locker(optimizedBlock->m_lock);
+        optimizedBlock->getICStatusMap(locker, m_optimizedContext.map);
+    }
+    byteCodeParser->m_icContextStack.append(&m_optimizedContext);
     
     int argumentCountIncludingThisWithFixup = std::max<int>(argumentCountIncludingThis, codeBlock->numParameters());
 
@@ -6672,6 +6701,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(inlineCallFrameStart.isValid());
         
         m_inlineCallFrame = byteCodeParser->m_graph.m_plan.inlineCallFrames->add();
+        m_optimizedContext.inlineCallFrame = m_inlineCallFrame;
 
         // The owner is the machine code block, and we already have a barrier on that when the
         // plan finishes.
@@ -6725,6 +6755,13 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     byteCodeParser->m_inlineCallFrameToArgumentPositions.add(m_inlineCallFrame, m_argumentPositions);
     
     byteCodeParser->m_inlineStackTop = this;
+}
+
+ByteCodeParser::InlineStackEntry::~InlineStackEntry()
+{
+    m_byteCodeParser->m_inlineStackTop = m_caller;
+    RELEASE_ASSERT(m_byteCodeParser->m_icContextStack.last() == &m_optimizedContext);
+    m_byteCodeParser->m_icContextStack.removeLast();
 }
 
 void ByteCodeParser::parseCodeBlock()
@@ -6822,15 +6859,6 @@ void ByteCodeParser::parse()
     ASSERT(!m_currentIndex);
     
     VERBOSE_LOG("Parsing ", *m_codeBlock, "\n");
-    
-    m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock;
-    if (isFTL(m_graph.m_plan.mode) && m_dfgCodeBlock
-        && Options::usePolyvariantDevirtualization()) {
-        if (Options::usePolyvariantCallInlining())
-            CallLinkStatus::computeDFGStatuses(m_dfgCodeBlock, m_callContextMap);
-        if (Options::usePolyvariantByIdInlining())
-            m_dfgCodeBlock->getStubInfoMap(m_dfgStubInfos);
-    }
     
     InlineStackEntry inlineStackEntry(
         this, m_codeBlock, m_profiledBlock, 0, VirtualRegister(), VirtualRegister(),

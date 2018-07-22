@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +61,20 @@ bool InByIdVariant::attemptToMerge(const InByIdVariant& other)
 
     m_structureSet.merge(other.m_structureSet);
 
+    return true;
+}
+
+void InByIdVariant::markIfCheap(SlotVisitor& visitor)
+{
+    m_structureSet.markIfCheap(visitor);
+}
+
+bool InByIdVariant::finalize()
+{
+    if (!m_structureSet.isStillAlive())
+        return false;
+    if (!m_conditionSet.areStillLive())
+        return false;
     return true;
 }
 

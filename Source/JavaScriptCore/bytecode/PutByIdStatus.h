@@ -26,7 +26,10 @@
 #pragma once
 
 #include "CallLinkStatus.h"
+#include "ExitFlag.h"
+#include "ICStatusMap.h"
 #include "PutByIdVariant.h"
+#include "StubInfoSummary.h"
 
 namespace JSC {
 
@@ -63,16 +66,36 @@ public:
         ASSERT(m_state == NoInformation || m_state == TakesSlowPath || m_state == MakesCalls);
     }
     
+    explicit PutByIdStatus(StubInfoSummary summary)
+    {
+        switch (summary) {
+        case StubInfoSummary::NoInformation:
+            m_state = NoInformation;
+            return;
+        case StubInfoSummary::Simple:
+        case StubInfoSummary::MakesCalls:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        case StubInfoSummary::TakesSlowPath:
+            m_state = TakesSlowPath;
+            return;
+        case StubInfoSummary::TakesSlowPathAndMakesCalls:
+            m_state = MakesCalls;
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
     PutByIdStatus(const PutByIdVariant& variant)
         : m_state(Simple)
     {
         m_variants.append(variant);
     }
     
-    static PutByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, UniquedStringImpl* uid);
+    static PutByIdStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag, CallLinkStatus::ExitSiteData);
     static PutByIdStatus computeFor(JSGlobalObject*, const StructureSet&, UniquedStringImpl* uid, bool isDirect);
     
-    static PutByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, UniquedStringImpl* uid);
+    static PutByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin, UniquedStringImpl* uid);
 
 #if ENABLE(JIT)
     static PutByIdStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
@@ -85,17 +108,25 @@ public:
     bool isSimple() const { return m_state == Simple; }
     bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls; }
     bool makesCalls() const;
+    PutByIdStatus slowVersion() const;
     
     size_t numVariants() const { return m_variants.size(); }
     const Vector<PutByIdVariant, 1>& variants() const { return m_variants; }
     const PutByIdVariant& at(size_t index) const { return m_variants[index]; }
     const PutByIdVariant& operator[](size_t index) const { return at(index); }
     
+    void markIfCheap(SlotVisitor&);
+    bool finalize();
+    
+    void merge(const PutByIdStatus&);
+    
+    void filter(const StructureSet&);
+    
     void dump(PrintStream&) const;
     
 private:
 #if ENABLE(DFG_JIT)
-    static bool hasExitSite(CodeBlock*, unsigned bytecodeIndex);
+    static ExitFlag hasExitSite(CodeBlock*, unsigned bytecodeIndex);
 #endif
 #if ENABLE(JIT)
     static PutByIdStatus computeForStubInfo(

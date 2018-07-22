@@ -314,6 +314,10 @@ bool doesGC(Graph& graph, Node* node)
     case AtomicsXor:
     case AtomicsIsLockFree:
     case MatchStructure:
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
         return false;
 
     case PushWithScope:

@@ -473,3 +473,10 @@ private:
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::WatchpointState);
+
+} // namespace WTF
+

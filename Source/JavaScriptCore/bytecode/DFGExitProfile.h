@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "ConcurrentJSLock.h"
 #include "ExitKind.h"
+#include "ExitingInlineKind.h"
 #include "ExitingJITType.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -41,6 +42,7 @@ public:
         : m_bytecodeOffset(0) // 0 = empty value
         , m_kind(ExitKindUnset)
         , m_jitType(ExitFromAnything)
+        , m_inlineKind(ExitFromAnyInlineKind)
     {
     }
     
@@ -48,13 +50,15 @@ public:
         : m_bytecodeOffset(1) // 1 = deleted value
         , m_kind(ExitKindUnset)
         , m_jitType(ExitFromAnything)
+        , m_inlineKind(ExitFromAnyInlineKind)
     {
     }
     
-    explicit FrequentExitSite(unsigned bytecodeOffset, ExitKind kind, ExitingJITType jitType = ExitFromAnything)
+    explicit FrequentExitSite(unsigned bytecodeOffset, ExitKind kind, ExitingJITType jitType = ExitFromAnything, ExitingInlineKind inlineKind = ExitFromAnyInlineKind)
         : m_bytecodeOffset(bytecodeOffset)
         , m_kind(kind)
         , m_jitType(jitType)
+        , m_inlineKind(inlineKind)
     {
         if (m_kind == ArgumentsEscaped) {
             // Count this one globally. It doesn't matter where in the code block the arguments excaped;
@@ -65,10 +69,11 @@ public:
     
     // Use this constructor if you wish for the exit site to be counted globally within its
     // code block.
-    explicit FrequentExitSite(ExitKind kind, ExitingJITType jitType = ExitFromAnything)
+    explicit FrequentExitSite(ExitKind kind, ExitingJITType jitType = ExitFromAnything, ExitingInlineKind inlineKind = ExitFromAnyInlineKind)
         : m_bytecodeOffset(0)
         , m_kind(kind)
         , m_jitType(jitType)
+        , m_inlineKind(inlineKind)
     {
     }
     
@@ -81,7 +86,8 @@ public:
     {
         return m_bytecodeOffset == other.m_bytecodeOffset
             && m_kind == other.m_kind
-            && m_jitType == other.m_jitType;
+            && m_jitType == other.m_jitType
+            && m_inlineKind == other.m_inlineKind;
     }
     
     bool subsumes(const FrequentExitSite& other) const
@@ -90,24 +96,36 @@ public:
             return false;
         if (m_kind != other.m_kind)
             return false;
-        if (m_jitType == ExitFromAnything)
-            return true;
-        return m_jitType == other.m_jitType;
+        if (m_jitType != ExitFromAnything
+            && m_jitType != other.m_jitType)
+            return false;
+        if (m_inlineKind != ExitFromAnyInlineKind
+            && m_inlineKind != other.m_inlineKind)
+            return false;
+        return true;
     }
     
     unsigned hash() const
     {
-        return WTF::intHash(m_bytecodeOffset) + m_kind + static_cast<std::underlying_type_t<ExitingJITType>>(m_jitType) * 7;
+        return WTF::intHash(m_bytecodeOffset) + m_kind + static_cast<unsigned>(m_jitType) * 7 + static_cast<unsigned>(m_inlineKind) * 11;
     }
     
     unsigned bytecodeOffset() const { return m_bytecodeOffset; }
     ExitKind kind() const { return m_kind; }
     ExitingJITType jitType() const { return m_jitType; }
+    ExitingInlineKind inlineKind() const { return m_inlineKind; }
     
     FrequentExitSite withJITType(ExitingJITType jitType) const
     {
         FrequentExitSite result = *this;
         result.m_jitType = jitType;
+        return result;
+    }
+
+    FrequentExitSite withInlineKind(ExitingInlineKind inlineKind) const
+    {
+        FrequentExitSite result = *this;
+        result.m_inlineKind = inlineKind;
         return result;
     }
 
@@ -122,6 +140,7 @@ private:
     unsigned m_bytecodeOffset;
     ExitKind m_kind;
     ExitingJITType m_jitType;
+    ExitingInlineKind m_inlineKind;
 };
 
 struct FrequentExitSiteHash {
@@ -192,10 +211,10 @@ public:
     bool hasExitSite(const FrequentExitSite& site) const
     {
         if (site.jitType() == ExitFromAnything) {
-            return hasExitSite(site.withJITType(ExitFromDFG))
-                || hasExitSite(site.withJITType(ExitFromFTL));
+            return hasExitSiteWithSpecificJITType(site.withJITType(ExitFromDFG))
+                || hasExitSiteWithSpecificJITType(site.withJITType(ExitFromFTL));
         }
-        return m_frequentExitSites.find(site) != m_frequentExitSites.end();
+        return hasExitSiteWithSpecificJITType(site);
     }
     
     bool hasExitSite(ExitKind kind) const
@@ -208,6 +227,20 @@ public:
         return hasExitSite(FrequentExitSite(bytecodeIndex, kind));
     }
 private:
+    bool hasExitSiteWithSpecificJITType(const FrequentExitSite& site) const
+    {
+        if (site.inlineKind() == ExitFromAnyInlineKind) {
+            return hasExitSiteWithSpecificInlineKind(site.withInlineKind(ExitFromNotInlined))
+                || hasExitSiteWithSpecificInlineKind(site.withInlineKind(ExitFromInlined));
+        }
+        return hasExitSiteWithSpecificInlineKind(site);
+    }
+    
+    bool hasExitSiteWithSpecificInlineKind(const FrequentExitSite& site) const
+    {
+        return m_frequentExitSites.find(site) != m_frequentExitSites.end();
+    }
+    
     HashSet<FrequentExitSite> m_frequentExitSites;
 };
 

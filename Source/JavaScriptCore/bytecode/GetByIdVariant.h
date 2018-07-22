@@ -73,6 +73,9 @@ public:
 
     bool attemptToMerge(const GetByIdVariant& other);
     
+    void markIfCheap(SlotVisitor&);
+    bool finalize();
+    
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
     

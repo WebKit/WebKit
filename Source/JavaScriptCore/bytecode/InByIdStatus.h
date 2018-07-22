@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,15 +29,15 @@
 #include "CallLinkStatus.h"
 #include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
+#include "ICStatusMap.h"
 #include "InByIdVariant.h"
+#include "StubInfoSummary.h"
 
 namespace JSC {
 
 class AccessCase;
 class CodeBlock;
 class StructureStubInfo;
-
-typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 class InByIdStatus {
 public:
@@ -56,11 +57,31 @@ public:
         : m_state(state)
     {
         ASSERT((state == Simple) == variant.isSet());
-        m_variants.append(variant);
+        if (variant.isSet())
+            m_variants.append(variant);
     }
 
-    static InByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, UniquedStringImpl* uid);
-    static InByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, UniquedStringImpl* uid);
+    explicit InByIdStatus(StubInfoSummary summary)
+    {
+        switch (summary) {
+        case StubInfoSummary::NoInformation:
+            m_state = NoInformation;
+            return;
+        case StubInfoSummary::Simple:
+        case StubInfoSummary::MakesCalls:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        case StubInfoSummary::TakesSlowPath:
+        case StubInfoSummary::TakesSlowPathAndMakesCalls:
+            m_state = TakesSlowPath;
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex, UniquedStringImpl* uid);
+    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag);
+    static InByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin, UniquedStringImpl* uid);
 
 #if ENABLE(DFG_JIT)
     static InByIdStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
@@ -78,15 +99,19 @@ public:
     const InByIdVariant& operator[](size_t index) const { return at(index); }
 
     bool takesSlowPath() const { return m_state == TakesSlowPath; }
+    
+    void merge(const InByIdStatus&);
 
     // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
     void filter(const StructureSet&);
+    
+    void markIfCheap(SlotVisitor&);
+    bool finalize();
 
     void dump(PrintStream&) const;
 
 private:
 #if ENABLE(DFG_JIT)
-    static bool hasExitSite(CodeBlock*, unsigned bytecodeIndex);
     static InByIdStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, StructureStubInfo*, UniquedStringImpl* uid);
 #endif
     bool appendVariant(const InByIdVariant&);

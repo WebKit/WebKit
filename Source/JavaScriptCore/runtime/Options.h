@@ -275,6 +275,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, maxAccessVariantListSize, 8, Normal, nullptr) \
     v(bool, usePolyvariantDevirtualization, true, Normal, nullptr) \
     v(bool, usePolymorphicAccessInlining, true, Normal, nullptr) \
+    v(unsigned, maxPolymorphicAccessInliningListSize, 8, Normal, nullptr) \
     v(bool, usePolymorphicCallInlining, true, Normal, nullptr) \
     v(bool, usePolymorphicCallInliningForNonStubStatus, false, Normal, nullptr) \
     v(unsigned, maxPolymorphicCallVariantListSize, 15, Normal, nullptr) \
@@ -321,9 +322,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, maximumInliningCallerSize, 10000, Normal, nullptr) \
     \
     v(unsigned, maximumVarargsForInlining, 100, Normal, nullptr) \
-    \
-    v(bool, usePolyvariantCallInlining, true, Normal, nullptr) \
-    v(bool, usePolyvariantByIdInlining, true, Normal, nullptr) \
     \
     v(bool, useMaximalFlushInsertionPhase, false, Normal, "Setting to true allows the DFG's MaximalFlushInsertionPhase to run.") \
     \

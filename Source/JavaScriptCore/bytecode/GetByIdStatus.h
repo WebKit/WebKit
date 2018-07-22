@@ -28,8 +28,11 @@
 #include "CallLinkStatus.h"
 #include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
+#include "ExitFlag.h"
 #include "GetByIdVariant.h"
+#include "ICStatusMap.h"
 #include "ScopeOffset.h"
+#include "StubInfoSummary.h"
 
 namespace JSC {
 
@@ -39,8 +42,6 @@ class JSModuleEnvironment;
 class JSModuleNamespaceObject;
 class ModuleNamespaceAccessCase;
 class StructureStubInfo;
-
-typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 class GetByIdStatus {
 public:
@@ -70,7 +71,27 @@ public:
     {
         ASSERT(state == NoInformation || state == TakesSlowPath || state == MakesCalls);
     }
-
+    
+    explicit GetByIdStatus(StubInfoSummary summary)
+        : m_wasSeenInJIT(true)
+    {
+        switch (summary) {
+        case StubInfoSummary::NoInformation:
+            m_state = NoInformation;
+            return;
+        case StubInfoSummary::Simple:
+        case StubInfoSummary::MakesCalls:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        case StubInfoSummary::TakesSlowPath:
+            m_state = TakesSlowPath;
+            return;
+        case StubInfoSummary::TakesSlowPathAndMakesCalls:
+            m_state = MakesCalls;
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
     
     GetByIdStatus(
         State state, bool wasSeenInJIT, const GetByIdVariant& variant = GetByIdVariant())
@@ -81,10 +102,10 @@ public:
         m_variants.append(variant);
     }
     
-    static GetByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, UniquedStringImpl* uid);
+    static GetByIdStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag, CallLinkStatus::ExitSiteData);
     static GetByIdStatus computeFor(const StructureSet&, UniquedStringImpl* uid);
     
-    static GetByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, UniquedStringImpl* uid);
+    static GetByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin, UniquedStringImpl* uid);
 
 #if ENABLE(DFG_JIT)
     static GetByIdStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
@@ -106,7 +127,11 @@ public:
     bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls || m_state == Custom || m_state == ModuleNamespace; }
     bool makesCalls() const;
     
+    GetByIdStatus slowVersion() const;
+    
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
+    
+    void merge(const GetByIdStatus&);
     
     // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
     void filter(const StructureSet&);
@@ -115,12 +140,12 @@ public:
     JSModuleEnvironment* moduleEnvironment() const { return m_moduleEnvironment; }
     ScopeOffset scopeOffset() const { return m_scopeOffset; }
     
+    void markIfCheap(SlotVisitor&);
+    bool finalize(); // Return true if this gets to live.
+    
     void dump(PrintStream&) const;
     
 private:
-#if ENABLE(DFG_JIT)
-    static bool hasExitSite(CodeBlock*, unsigned bytecodeIndex);
-#endif
 #if ENABLE(JIT)
     GetByIdStatus(const ModuleNamespaceAccessCase&);
     static GetByIdStatus computeForStubInfoWithoutExitSiteFeedback(

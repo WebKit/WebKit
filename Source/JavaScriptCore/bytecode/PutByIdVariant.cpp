@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,8 +96,8 @@ PutByIdVariant PutByIdVariant::setter(
 
 Structure* PutByIdVariant::oldStructureForTransition() const
 {
-    ASSERT(kind() == Transition);
-    ASSERT(m_oldStructure.size() <= 2);
+    RELEASE_ASSERT(kind() == Transition);
+    RELEASE_ASSERT(m_oldStructure.size() <= 2);
     for (unsigned i = m_oldStructure.size(); i--;) {
         Structure* structure = m_oldStructure[i];
         if (structure != m_newStructure)
@@ -106,6 +106,24 @@ Structure* PutByIdVariant::oldStructureForTransition() const
     RELEASE_ASSERT_NOT_REACHED();
 
     return nullptr;
+}
+
+void PutByIdVariant::fixTransitionToReplaceIfNecessary()
+{
+    if (kind() != Transition)
+        return;
+    
+    RELEASE_ASSERT(m_oldStructure.size() <= 2);
+    for (unsigned i = m_oldStructure.size(); i--;) {
+        Structure* structure = m_oldStructure[i];
+        if (structure != m_newStructure)
+            return;
+    }
+    
+    m_newStructure = nullptr;
+    m_kind = Replace;
+    m_conditionSet = ObjectPropertyConditionSet();
+    RELEASE_ASSERT(!m_callLinkStatus);
 }
 
 bool PutByIdVariant::writesStructures() const
@@ -145,6 +163,10 @@ bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
         return false;
     
     switch (m_kind) {
+    case NotSet:
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+        
     case Replace: {
         switch (other.m_kind) {
         case Replace: {
@@ -174,13 +196,56 @@ bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
         case Replace:
             return attemptToMergeTransitionWithReplace(other);
             
+        case Transition: {
+            if (m_oldStructure != other.m_oldStructure)
+                return false;
+            
+            if (m_newStructure != other.m_newStructure)
+                return false;
+            
+            ObjectPropertyConditionSet mergedConditionSet;
+            if (!m_conditionSet.isEmpty()) {
+                mergedConditionSet = m_conditionSet.mergedWith(other.m_conditionSet);
+                if (!mergedConditionSet.isValid())
+                    return false;
+            }
+            m_conditionSet = mergedConditionSet;
+            return true;
+        }
+            
         default:
             return false;
         }
         
-    default:
-        return false;
-    }
+    case Setter: {
+        if (other.m_kind != Setter)
+            return false;
+        
+        if (m_callLinkStatus || other.m_callLinkStatus) {
+            if (!(m_callLinkStatus && other.m_callLinkStatus))
+                return false;
+        }
+        
+        if (m_conditionSet.isEmpty() != other.m_conditionSet.isEmpty())
+            return false;
+        
+        ObjectPropertyConditionSet mergedConditionSet;
+        if (!m_conditionSet.isEmpty()) {
+            mergedConditionSet = m_conditionSet.mergedWith(other.m_conditionSet);
+            if (!mergedConditionSet.isValid() || !mergedConditionSet.hasOneSlotBaseCondition())
+                return false;
+        }
+        m_conditionSet = mergedConditionSet;
+        
+        if (m_callLinkStatus)
+            m_callLinkStatus->merge(*other.m_callLinkStatus);
+        
+        m_oldStructure.merge(other.m_oldStructure);
+        return true;
+    } }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool PutByIdVariant::attemptToMergeTransitionWithReplace(const PutByIdVariant& replace)
@@ -206,6 +271,26 @@ bool PutByIdVariant::attemptToMergeTransitionWithReplace(const PutByIdVariant& r
     return true;
 }
 
+void PutByIdVariant::markIfCheap(SlotVisitor& visitor)
+{
+    m_oldStructure.markIfCheap(visitor);
+    if (m_newStructure)
+        m_newStructure->markIfCheap(visitor);
+}
+
+bool PutByIdVariant::finalize()
+{
+    if (!m_oldStructure.isStillAlive())
+        return false;
+    if (m_newStructure && !Heap::isMarked(m_newStructure))
+        return false;
+    if (!m_conditionSet.areStillLive())
+        return false;
+    if (m_callLinkStatus && !m_callLinkStatus->finalize())
+        return false;
+    return true;
+}
+
 void PutByIdVariant::dump(PrintStream& out) const
 {
     dumpInContext(out, 0);
@@ -226,7 +311,7 @@ void PutByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         
     case Transition:
         out.print(
-            "<Transition: ", inContext(oldStructure(), context), " -> ",
+            "<Transition: ", inContext(oldStructure(), context), " to ",
             pointerDumpInContext(newStructure(), context), ", [",
             inContext(m_conditionSet, context), "], offset = ", offset(), ", ",
             inContext(requiredType(), context), ">");

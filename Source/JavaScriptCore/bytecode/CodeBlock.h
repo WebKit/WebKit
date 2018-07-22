@@ -45,6 +45,7 @@
 #include "ExpressionRangeInfo.h"
 #include "FunctionExecutable.h"
 #include "HandlerInfo.h"
+#include "ICStatusMap.h"
 #include "Instruction.h"
 #include "JITCode.h"
 #include "JITCodeMap.h"
@@ -95,8 +96,6 @@ class StructureStubInfo;
 enum class AccessType : int8_t;
 
 struct ArithProfile;
-
-typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
@@ -198,8 +197,8 @@ public:
 
     void dumpBytecode();
     void dumpBytecode(PrintStream&);
-    void dumpBytecode(PrintStream& out, const Instruction* begin, const Instruction*& it, const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
-    void dumpBytecode(PrintStream& out, unsigned bytecodeOffset, const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
+    void dumpBytecode(PrintStream& out, const Instruction* begin, const Instruction*& it, const ICStatusMap& = ICStatusMap());
+    void dumpBytecode(PrintStream& out, unsigned bytecodeOffset, const ICStatusMap& = ICStatusMap());
 
     void dumpExceptionHandlers(PrintStream&);
     void printStructures(PrintStream&, const Instruction*);
@@ -239,14 +238,8 @@ public:
 
     std::optional<unsigned> bytecodeOffsetFromCallSiteIndex(CallSiteIndex);
 
-    void getStubInfoMap(const ConcurrentJSLocker&, StubInfoMap& result);
-    void getStubInfoMap(StubInfoMap& result);
-    
-    void getCallLinkInfoMap(const ConcurrentJSLocker&, CallLinkInfoMap& result);
-    void getCallLinkInfoMap(CallLinkInfoMap& result);
-
-    void getByValInfoMap(const ConcurrentJSLocker&, ByValInfoMap& result);
-    void getByValInfoMap(ByValInfoMap& result);
+    void getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result);
+    void getICStatusMap(ICStatusMap& result);
     
 #if ENABLE(JIT)
     JITAddIC* addJITAddIC(ArithProfile*, Instruction*);

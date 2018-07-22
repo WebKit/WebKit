@@ -90,6 +90,7 @@ public:
     virtual ~PolymorphicCallStubRoutine();
     
     CallVariantList variants() const;
+    bool hasEdges() const;
     CallEdgeList edges() const;
 
     void clearCallNodesFor(CallLinkInfo*);

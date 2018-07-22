@@ -75,6 +75,10 @@ bool clobbersExitState(Graph& graph, Node* node)
     case FencedStoreBarrier:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
+    case FilterCallLinkStatus:
+    case FilterGetByIdStatus:
+    case FilterPutByIdStatus:
+    case FilterInByIdStatus:
         // These do clobber memory, but nothing that is observable. It may be nice to separate the
         // heaps into those that are observable and those that aren't, but we don't do that right now.
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=148440

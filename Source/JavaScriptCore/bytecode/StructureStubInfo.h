@@ -35,6 +35,7 @@
 #include "Structure.h"
 #include "StructureSet.h"
 #include "StructureStubClearingWatchpoint.h"
+#include "StubInfoSummary.h"
 
 namespace JSC {
 
@@ -157,6 +158,10 @@ public:
         countdown--;
         return false;
     }
+
+    StubInfoSummary summary() const;
+    
+    static StubInfoSummary summary(const StructureStubInfo*);
 
     bool containsPC(void* pc) const;
 

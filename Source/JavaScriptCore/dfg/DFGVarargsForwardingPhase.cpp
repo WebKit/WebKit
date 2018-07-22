@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -193,7 +193,13 @@ private:
                     return;
                 break;
             }
-            
+                
+            case FilterGetByIdStatus:
+            case FilterPutByIdStatus:
+            case FilterCallLinkStatus:
+            case FilterInByIdStatus:
+                break;
+
             case GetByOffset: {
                 if (node->child1()->op() == GetButterfly
                     && candidateButterflies.contains(node->child1().node())
@@ -381,6 +387,14 @@ private:
                 }
                 break;
             }
+
+            case FilterGetByIdStatus:
+            case FilterPutByIdStatus:
+            case FilterCallLinkStatus:
+            case FilterInByIdStatus:
+                if (node->child1().node() == candidate)
+                    node->remove(m_graph);
+                break;
 
             case GetByOffset: {
                 if (node->child2() == candidate) {

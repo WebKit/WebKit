@@ -932,6 +932,7 @@ void linkVirtualFor(ExecState* exec, CallLinkInfo& callLinkInfo)
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(&vm, callLinkInfo);
     revertCall(&vm, callLinkInfo, virtualThunk);
     callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
+    callLinkInfo.setClearedByVirtual();
 }
 
 namespace {

@@ -1214,6 +1214,10 @@ private:
         case InitializeEntrypointArguments:
         case WeakSetAdd:
         case WeakMapSet:
+        case FilterCallLinkStatus:
+        case FilterGetByIdStatus:
+        case FilterPutByIdStatus:
+        case FilterInByIdStatus:
         case ClearCatchLocals:
             break;
             

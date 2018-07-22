@@ -403,8 +403,10 @@ void Worklist::removeDeadPlans(VM& vm)
             Plan* plan = iter->value.get();
             if (plan->vm != &vm)
                 continue;
-            if (plan->isKnownToBeLiveDuringGC())
+            if (plan->isKnownToBeLiveDuringGC()) {
+                plan->finalizeInGC();
                 continue;
+            }
             RELEASE_ASSERT(plan->stage != Plan::Cancelled); // Should not be cancelled, yet.
             ASSERT(!deadPlanKeys.contains(plan->key()));
             deadPlanKeys.add(plan->key());

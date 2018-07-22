@@ -27,6 +27,7 @@
 #include "InstanceOfStatus.h"
 
 #include "ICStatusUtils.h"
+#include "InstanceOfAccessCase.h"
 #include "JSCInlines.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
@@ -39,13 +40,13 @@ void InstanceOfStatus::appendVariant(const InstanceOfVariant& variant)
 }
 
 InstanceOfStatus InstanceOfStatus::computeFor(
-    CodeBlock* codeBlock, StubInfoMap& infoMap, unsigned bytecodeIndex)
+    CodeBlock* codeBlock, ICStatusMap& infoMap, unsigned bytecodeIndex)
 {
     ConcurrentJSLocker locker(codeBlock->m_lock);
     
     InstanceOfStatus result;
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfo(locker, infoMap.get(CodeOrigin(bytecodeIndex)));
+    result = computeForStubInfo(locker, infoMap.get(CodeOrigin(bytecodeIndex)).stubInfo);
 
     if (!result.takesSlowPath()) {
         UnlinkedCodeBlock* unlinkedCodeBlock = codeBlock->unlinkedCodeBlock();
@@ -67,14 +68,12 @@ InstanceOfStatus InstanceOfStatus::computeFor(
 #if ENABLE(DFG_JIT)
 InstanceOfStatus InstanceOfStatus::computeForStubInfo(const ConcurrentJSLocker&, StructureStubInfo* stubInfo)
 {
-    if (!stubInfo || !stubInfo->everConsidered)
-        return NoInformation;
-    
     // FIXME: We wouldn't have to bail for nonCell if we taught MatchStructure how to handle non
-    // cells.
+    // cells. If we fixed that then we wouldn't be able to use summary();
     // https://bugs.webkit.org/show_bug.cgi?id=185784
-    if (stubInfo->tookSlowPath || stubInfo->sawNonCell)
-        return TakesSlowPath;
+    StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
+    if (!isInlineable(summary))
+        return InstanceOfStatus(summary);
     
     if (stubInfo->cacheType != CacheType::Stub)
         return TakesSlowPath; // This is conservative. It could be that we have no information.

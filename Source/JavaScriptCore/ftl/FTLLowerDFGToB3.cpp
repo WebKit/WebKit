@@ -856,6 +856,9 @@ private:
         case NewArrayWithSpread:
             compileNewArrayWithSpread();
             break;
+        case CreateThis:
+            compileCreateThis();
+            break;
         case Spread:
             compileSpread();
             break;
@@ -1297,6 +1300,12 @@ private:
             break;
         case CallDOMGetter:
             compileCallDOMGetter();
+            break;
+        case FilterCallLinkStatus:
+        case FilterGetByIdStatus:
+        case FilterPutByIdStatus:
+        case FilterInByIdStatus:
+            compileFilterICStatus();
             break;
 
         case PhantomLocal:
@@ -5696,6 +5705,40 @@ private:
         LValue result = vmCall(Int64, m_out.operation(operationNewArrayWithSpreadSlow), m_callFrame, m_out.constIntPtr(buffer), m_out.constInt32(m_node->numChildren()));
         m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
 
+        setJSValue(result);
+    }
+    
+    void compileCreateThis()
+    {
+        LValue callee = lowCell(m_node->child1());
+
+        LBasicBlock isFunctionBlock = m_out.newBlock();
+        LBasicBlock hasRareData = m_out.newBlock();
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowPath));
+
+        LBasicBlock lastNext = m_out.appendTo(isFunctionBlock, hasRareData);
+        LValue rareData = m_out.loadPtr(callee, m_heaps.JSFunction_rareData);
+        m_out.branch(m_out.isZero64(rareData), rarely(slowPath), usually(hasRareData));
+
+        m_out.appendTo(hasRareData, slowPath);
+        LValue allocator = m_out.loadPtr(rareData, m_heaps.FunctionRareData_allocator);
+        LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_structure);
+        LValue butterfly = m_out.constIntPtr(0);
+        ValueFromBlock fastResult = m_out.anchor(allocateObject(allocator, structure, butterfly, slowPath));
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowPath, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(
+            Int64, m_out.operation(operationCreateThis), m_callFrame, callee, m_out.constInt32(m_node->inlineCapacity())));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        LValue result = m_out.phi(Int64, fastResult, slowResult);
+
+        mutatorFence();
         setJSValue(result);
     }
 
@@ -12189,6 +12232,11 @@ private:
             });
         patchpoint->effects = Effects::forCall();
         setJSValue(patchpoint);
+    }
+    
+    void compileFilterICStatus()
+    {
+        m_interpreter.filterICStatus(m_node);
     }
     
     void emitSwitchForMultiByOffset(LValue base, bool structuresChecked, Vector<SwitchCase, 2>& cases, LBasicBlock exit)

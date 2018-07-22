@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +27,7 @@
 #pragma once
 
 #include "CallLinkInfo.h"
+#include "ICStatusMap.h"
 #include "StructureStubInfo.h"
 
 namespace JSC {
@@ -37,8 +39,8 @@ class BytecodeDumper {
 public:
     typedef typename Block::Instruction Instruction;
 
-    static void dumpBytecode(Block*, PrintStream& out, const Instruction* begin, const Instruction*& it, const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
-    static void dumpBlock(Block*, const typename Block::UnpackedInstructions&, PrintStream& out, const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
+    static void dumpBytecode(Block*, PrintStream& out, const Instruction* begin, const Instruction*& it, const ICStatusMap& statusMap = ICStatusMap());
+    static void dumpBlock(Block*, const typename Block::UnpackedInstructions&, PrintStream& out, const ICStatusMap& statusMap = ICStatusMap());
 
 private:
     BytecodeDumper(Block* block, const Instruction* instructionsBegin)
@@ -68,14 +70,14 @@ private:
     void printConditionalJump(PrintStream& out, const Instruction*, const Instruction*& it, int location, const char* op);
     void printCompareJump(PrintStream& out, const Instruction*, const Instruction*& it, int location, const char* op);
     void printGetByIdOp(PrintStream& out, int location, const Instruction*& it);
-    void printGetByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);
-    void printPutByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);
-    void printInByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);
+    void printGetByIdCacheStatus(PrintStream& out, int location, const ICStatusMap&);
+    void printPutByIdCacheStatus(PrintStream& out, int location, const ICStatusMap&);
+    void printInByIdCacheStatus(PrintStream& out, int location, const ICStatusMap&);
     enum CacheDumpMode { DumpCaches, DontDumpCaches };
-    void printCallOp(PrintStream& out, int location, const Instruction*& it, const char* op, CacheDumpMode, bool& hasPrintedProfiling, const CallLinkInfoMap&);
+    void printCallOp(PrintStream& out, int location, const Instruction*& it, const char* op, CacheDumpMode, bool& hasPrintedProfiling, const ICStatusMap&);
     void printPutByIdOp(PrintStream& out, int location, const Instruction*& it, const char* op);
     void printLocationOpAndRegisterOperand(PrintStream& out, int location, const Instruction*& it, const char* op, int operand);
-    void dumpBytecode(PrintStream& out, const Instruction* begin, const Instruction*& it, const StubInfoMap&, const CallLinkInfoMap&);
+    void dumpBytecode(PrintStream& out, const Instruction* begin, const Instruction*& it, const ICStatusMap&);
 
     void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
@@ -84,7 +86,7 @@ private:
     void* actualPointerFor(Special::Pointer) const;
 
 #if ENABLE(JIT)
-    void dumpCallLinkStatus(PrintStream&, unsigned location, const CallLinkInfoMap&);
+    void dumpCallLinkStatus(PrintStream&, unsigned location, const ICStatusMap&);
 #endif
 
     Block* m_block;

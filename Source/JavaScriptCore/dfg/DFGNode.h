@@ -2769,6 +2769,50 @@ public:
         ASSERT(op() == ThrowStaticError);
         return m_opInfo.as<uint32_t>();
     }
+    
+    bool hasCallLinkStatus()
+    {
+        return op() == FilterCallLinkStatus;
+    }
+    
+    CallLinkStatus* callLinkStatus()
+    {
+        ASSERT(hasCallLinkStatus());
+        return m_opInfo.as<CallLinkStatus*>();
+    }
+    
+    bool hasGetByIdStatus()
+    {
+        return op() == FilterGetByIdStatus;
+    }
+    
+    GetByIdStatus* getByIdStatus()
+    {
+        ASSERT(hasGetByIdStatus());
+        return m_opInfo.as<GetByIdStatus*>();
+    }
+    
+    bool hasInByIdStatus()
+    {
+        return op() == FilterInByIdStatus;
+    }
+    
+    InByIdStatus* inByIdStatus()
+    {
+        ASSERT(hasInByIdStatus());
+        return m_opInfo.as<InByIdStatus*>();
+    }
+    
+    bool hasPutByIdStatus()
+    {
+        return op() == FilterPutByIdStatus;
+    }
+    
+    PutByIdStatus* putByIdStatus()
+    {
+        ASSERT(hasPutByIdStatus());
+        return m_opInfo.as<PutByIdStatus*>();
+    }
 
     void dumpChildren(PrintStream& out)
     {

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ExitFlag.h"
+
 namespace JSC {
 
 template<typename VariantVectorType, typename VariantType>
@@ -51,13 +53,14 @@ bool appendICStatusVariant(VariantVectorType& variants, const VariantType& varia
 template<typename VariantVectorType>
 void filterICStatusVariants(VariantVectorType& variants, const StructureSet& set)
 {
-    // FIXME: We could also filter the variants themselves.
-    
     variants.removeAllMatching(
         [&] (auto& variant) -> bool {
-            return !variant.structureSet().overlaps(set);
+            variant.structureSet().filter(set);
+            return variant.structureSet().isEmpty();
         });
 }
+
+ExitFlag hasBadCacheExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex);
 
 } // namespace JSC
 

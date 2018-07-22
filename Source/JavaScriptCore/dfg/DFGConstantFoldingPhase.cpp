@@ -557,7 +557,15 @@ private:
                     }
                 }
                 
+                auto addFilterStatus = [&] () {
+                    m_insertionSet.insertNode(
+                        indexInBlock, SpecNone, FilterGetByIdStatus, node->origin,
+                        OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(node->origin.semantic, status)),
+                        Edge(child));
+                };
+                
                 if (status.numVariants() == 1) {
+                    addFilterStatus();
                     emitGetByOffset(indexInBlock, node, baseValue, status[0], identifierNumber);
                     changed = true;
                     break;
@@ -566,6 +574,7 @@ private:
                 if (!isFTL(m_graph.m_plan.mode))
                     break;
                 
+                addFilterStatus();
                 MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
                 for (const GetByIdVariant& variant : status.variants()) {
                     data->cases.append(
@@ -638,6 +647,11 @@ private:
 
                 if (!allGood)
                     break;
+                
+                m_insertionSet.insertNode(
+                    indexInBlock, SpecNone, FilterPutByIdStatus, node->origin,
+                    OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(node->origin.semantic, status)),
+                    Edge(child));
                 
                 if (status.numVariants() == 1) {
                     emitPutByOffset(indexInBlock, node, baseValue, status[0], identifierNumber);

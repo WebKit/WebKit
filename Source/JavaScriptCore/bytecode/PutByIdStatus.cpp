@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
+#include "ICStatusUtils.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
@@ -42,25 +43,13 @@ namespace JSC {
 
 bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
 {
-    for (unsigned i = 0; i < m_variants.size(); ++i) {
-        if (m_variants[i].attemptToMerge(variant))
-            return true;
-    }
-    for (unsigned i = 0; i < m_variants.size(); ++i) {
-        if (m_variants[i].oldStructure().overlaps(variant.oldStructure()))
-            return false;
-    }
-    m_variants.append(variant);
-    return true;
+    return appendICStatusVariant(m_variants, variant);
 }
 
 #if ENABLE(DFG_JIT)
-bool PutByIdStatus::hasExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex)
+ExitFlag PutByIdStatus::hasExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
-    UnlinkedCodeBlock* unlinkedCodeBlock = profiledBlock->unlinkedCodeBlock();
-    ConcurrentJSLocker locker(unlinkedCodeBlock->m_lock);
-    return unlinkedCodeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
-        || unlinkedCodeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
+    return hasBadCacheExitSite(profiledBlock, bytecodeIndex);
 }
 #endif
 
@@ -110,7 +99,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         structure, newStructure, conditionSet, offset, newStructure->inferredTypeDescriptorFor(uid));
 }
 
-PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
     
@@ -118,13 +107,12 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(DFG_JIT)
-    if (hasExitSite(profiledBlock, bytecodeIndex))
+    if (didExit)
         return PutByIdStatus(TakesSlowPath);
     
-    StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
+    StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex)).stubInfo;
     PutByIdStatus result = computeForStubInfo(
-        locker, profiledBlock, stubInfo, uid,
-        CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex));
+        locker, profiledBlock, stubInfo, uid, callExitSiteData);
     if (!result)
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
@@ -147,16 +135,14 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
     const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
     UniquedStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
 {
-    if (!stubInfo || !stubInfo->everConsidered)
-        return PutByIdStatus();
-    
-    if (stubInfo->tookSlowPath)
-        return PutByIdStatus(TakesSlowPath);
+    StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
+    if (!isInlineable(summary))
+        return PutByIdStatus(summary);
     
     switch (stubInfo->cacheType) {
     case CacheType::Unset:
         // This means that we attempted to cache but failed for some reason.
-        return PutByIdStatus(TakesSlowPath);
+        return PutByIdStatus(JSC::slowVersion(summary));
         
     case CacheType::PutByIdReplace: {
         PropertyOffset offset =
@@ -165,7 +151,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
             return PutByIdVariant::replace(
                 stubInfo->u.byIdSelf.baseObjectStructure.get(), offset, InferredType::Top);
         }
-        return PutByIdStatus(TakesSlowPath);
+        return PutByIdStatus(JSC::slowVersion(summary));
     }
         
     case CacheType::Stub: {
@@ -174,19 +160,12 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
         PutByIdStatus result;
         result.m_state = Simple;
         
-        State slowPathState = TakesSlowPath;
-        for (unsigned i = 0; i < list->size(); ++i) {
-            const AccessCase& access = list->at(i);
-            if (access.doesCalls())
-                slowPathState = MakesCalls;
-        }
-        
         for (unsigned i = 0; i < list->size(); ++i) {
             const AccessCase& access = list->at(i);
             if (access.viaProxy())
-                return PutByIdStatus(slowPathState);
+                return PutByIdStatus(JSC::slowVersion(summary));
             if (access.usesPolyProto())
-                return PutByIdStatus(slowPathState);
+                return PutByIdStatus(JSC::slowVersion(summary));
             
             PutByIdVariant variant;
             
@@ -195,7 +174,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 Structure* structure = access.structure();
                 PropertyOffset offset = structure->getConcurrently(uid);
                 if (!isValidOffset(offset))
-                    return PutByIdStatus(slowPathState);
+                    return PutByIdStatus(JSC::slowVersion(summary));
                 variant = PutByIdVariant::replace(
                     structure, offset, structure->inferredTypeDescriptorFor(uid));
                 break;
@@ -205,10 +184,10 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 PropertyOffset offset =
                     access.newStructure()->getConcurrently(uid);
                 if (!isValidOffset(offset))
-                    return PutByIdStatus(slowPathState);
+                    return PutByIdStatus(JSC::slowVersion(summary));
                 ObjectPropertyConditionSet conditionSet = access.conditionSet();
                 if (!conditionSet.structuresEnsureValidity())
-                    return PutByIdStatus(slowPathState);
+                    return PutByIdStatus(JSC::slowVersion(summary));
                 variant = PutByIdVariant::transition(
                     access.structure(), access.newStructure(), conditionSet, offset,
                     access.newStructure()->inferredTypeDescriptorFor(uid));
@@ -226,7 +205,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                     continue;
                     
                 case ComplexGetStatus::TakesSlowPath:
-                    return PutByIdStatus(slowPathState);
+                    return PutByIdStatus(JSC::slowVersion(summary));
                     
                 case ComplexGetStatus::Inlineable: {
                     std::unique_ptr<CallLinkStatus> callLinkStatus =
@@ -248,54 +227,60 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 return PutByIdStatus(MakesCalls);
 
             default:
-                return PutByIdStatus(slowPathState);
+                return PutByIdStatus(JSC::slowVersion(summary));
             }
             
             if (!result.appendVariant(variant))
-                return PutByIdStatus(slowPathState);
+                return PutByIdStatus(JSC::slowVersion(summary));
         }
         
         return result;
     }
         
     default:
-        return PutByIdStatus(TakesSlowPath);
+        return PutByIdStatus(JSC::slowVersion(summary));
     }
 }
 #endif
 
-PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-#if ENABLE(DFG_JIT)
-    if (dfgBlock) {
-        if (hasExitSite(baselineBlock, codeOrigin.bytecodeIndex))
-            return PutByIdStatus(TakesSlowPath);
-        CallLinkStatus::ExitSiteData exitSiteData;
-        {
-            ConcurrentJSLocker locker(baselineBlock->m_lock);
-            exitSiteData = CallLinkStatus::computeExitSiteData(
-                baselineBlock, codeOrigin.bytecodeIndex);
-        }
-            
-        PutByIdStatus result;
-        {
-            ConcurrentJSLocker locker(dfgBlock->m_lock);
-            result = computeForStubInfo(
-                locker, dfgBlock, dfgMap.get(codeOrigin), uid, exitSiteData);
+    CallLinkStatus::ExitSiteData callExitSiteData =
+        CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex);
+    ExitFlag didExit = hasExitSite(baselineBlock, codeOrigin.bytecodeIndex);
+
+    for (ICStatusContext* context : contextStack) {
+        ICStatus status = context->get(codeOrigin);
+        
+        auto bless = [&] (const PutByIdStatus& result) -> PutByIdStatus {
+            if (!context->isInlined(codeOrigin)) {
+                PutByIdStatus baselineResult = computeFor(
+                    baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit,
+                    callExitSiteData);
+                baselineResult.merge(result);
+                return baselineResult;
+            }
+            if (didExit.isSet(ExitFromInlined))
+                return result.slowVersion();
+            return result;
+        };
+        
+        if (status.stubInfo) {
+            PutByIdStatus result;
+            {
+                ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
+                result = computeForStubInfo(
+                    locker, context->optimizedCodeBlock, status.stubInfo, uid, callExitSiteData);
+            }
+            if (result.isSet())
+                return bless(result);
         }
         
-        // We use TakesSlowPath in some cases where the stub was unset. That's weird and
-        // it would be better not to do that. But it means that we have to defend
-        // ourselves here.
-        if (result.isSimple())
-            return result;
+        if (status.putStatus)
+            return bless(*status.putStatus);
     }
-#else
-    UNUSED_PARAM(dfgBlock);
-    UNUSED_PARAM(dfgMap);
-#endif
-
-    return computeFor(baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
+    
+    return computeFor(baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit, callExitSiteData);
 }
 
 PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, UniquedStringImpl* uid, bool isDirect)
@@ -396,6 +381,69 @@ bool PutByIdStatus::makesCalls() const
     }
     
     return false;
+}
+
+PutByIdStatus PutByIdStatus::slowVersion() const
+{
+    return PutByIdStatus(makesCalls() ? MakesCalls : TakesSlowPath);
+}
+
+void PutByIdStatus::markIfCheap(SlotVisitor& visitor)
+{
+    for (PutByIdVariant& variant : m_variants)
+        variant.markIfCheap(visitor);
+}
+
+bool PutByIdStatus::finalize()
+{
+    for (PutByIdVariant& variant : m_variants) {
+        if (!variant.finalize())
+            return false;
+    }
+    return true;
+}
+
+void PutByIdStatus::merge(const PutByIdStatus& other)
+{
+    if (other.m_state == NoInformation)
+        return;
+    
+    auto mergeSlow = [&] () {
+        *this = PutByIdStatus((makesCalls() || other.makesCalls()) ? MakesCalls : TakesSlowPath);
+    };
+    
+    switch (m_state) {
+    case NoInformation:
+        *this = other;
+        return;
+        
+    case Simple:
+        if (other.m_state != Simple)
+            return mergeSlow();
+        
+        for (const PutByIdVariant& other : other.m_variants) {
+            if (!appendVariant(other))
+                return mergeSlow();
+        }
+        return;
+        
+    case TakesSlowPath:
+    case MakesCalls:
+        return mergeSlow();
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void PutByIdStatus::filter(const StructureSet& set)
+{
+    if (m_state != Simple)
+        return;
+    filterICStatusVariants(m_variants, set);
+    for (PutByIdVariant& variant : m_variants)
+        variant.fixTransitionToReplaceIfNecessary();
+    if (m_variants.isEmpty())
+        m_state = NoInformation;
 }
 
 void PutByIdStatus::dump(PrintStream& out) const

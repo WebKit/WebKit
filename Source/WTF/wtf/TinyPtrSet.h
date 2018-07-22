@@ -351,6 +351,11 @@ public:
         return isSubsetOf(other);
     }
     
+    bool operator!=(const TinyPtrSet& other) const
+    {
+        return !(*this == other);
+    }
+    
 private:
     friend class JSC::DFG::StructureAbstractValue;
 

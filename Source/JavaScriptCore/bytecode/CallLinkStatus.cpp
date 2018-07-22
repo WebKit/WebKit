@@ -77,7 +77,8 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker&, CodeB
 }
 
 CallLinkStatus CallLinkStatus::computeFor(
-    CodeBlock* profiledBlock, unsigned bytecodeIndex, const CallLinkInfoMap& map)
+    CodeBlock* profiledBlock, unsigned bytecodeIndex, const ICStatusMap& map,
+    ExitSiteData exitSiteData)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
     
@@ -85,9 +86,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(map);
 #if ENABLE(DFG_JIT)
-    ExitSiteData exitSiteData = computeExitSiteData(profiledBlock, bytecodeIndex);
-    
-    CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex));
+    CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex)).callLinkInfo;
     if (!callLinkInfo) {
         if (exitSiteData.takesSlowPath)
             return takesSlowPath();
@@ -100,6 +99,12 @@ CallLinkStatus CallLinkStatus::computeFor(
 #endif
 }
 
+CallLinkStatus CallLinkStatus::computeFor(
+    CodeBlock* profiledBlock, unsigned bytecodeIndex, const ICStatusMap& map)
+{
+    return computeFor(profiledBlock, bytecodeIndex, map, computeExitSiteData(profiledBlock, bytecodeIndex));
+}
+
 CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     ExitSiteData exitSiteData;
@@ -107,11 +112,21 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(CodeBlock* prof
     UnlinkedCodeBlock* codeBlock = profiledBlock->unlinkedCodeBlock();
     ConcurrentJSLocker locker(codeBlock->m_lock);
 
-    exitSiteData.takesSlowPath =
-        codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType))
-        || codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable));
-    exitSiteData.badFunction =
-        codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell));
+    auto takesSlowPath = [&] (ExitingInlineKind inlineKind) -> ExitFlag {
+        return ExitFlag(
+            codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType, ExitFromAnything, inlineKind))
+            || codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable, ExitFromAnything, inlineKind)),
+            inlineKind);
+    };
+    
+    auto badFunction = [&] (ExitingInlineKind inlineKind) -> ExitFlag {
+        return ExitFlag(codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell, ExitFromAnything, inlineKind)), inlineKind);
+    };
+    
+    exitSiteData.takesSlowPath |= takesSlowPath(ExitFromNotInlined);
+    exitSiteData.takesSlowPath |= takesSlowPath(ExitFromInlined);
+    exitSiteData.badFunction |= badFunction(ExitFromNotInlined);
+    exitSiteData.badFunction |= badFunction(ExitFromInlined);
 #else
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
@@ -135,7 +150,11 @@ CallLinkStatus CallLinkStatus::computeFor(
 CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     const ConcurrentJSLocker&, CallLinkInfo& callLinkInfo)
 {
-    if (callLinkInfo.clearedByGC())
+    // We cannot tell you anything about direct calls.
+    if (callLinkInfo.isDirect())
+        return CallLinkStatus();
+    
+    if (callLinkInfo.clearedByGC() || callLinkInfo.clearedByVirtual())
         return takesSlowPath();
     
     // Note that despite requiring that the locker is held, this code is racy with respect
@@ -157,6 +176,17 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     // fencing in place to make sure that we see the variants list after construction.
     if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub()) {
         WTF::loadLoadFence();
+        
+        if (!stub->hasEdges()) {
+            // This means we have an FTL profile, which has incomplete information.
+            //
+            // It's not clear if takesSlowPath() or CallLinkStatus() are appropriate here, but I
+            // think that takesSlowPath() is a narrow winner.
+            //
+            // Either way, this is telling us that the FTL had been led to believe that it's
+            // profitable not to inline anything.
+            return takesSlowPath();
+        }
         
         CallEdgeList edges = stub->edges();
         
@@ -227,83 +257,130 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
 
 CallLinkStatus CallLinkStatus::computeFor(
     const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, CallLinkInfo& callLinkInfo,
-    ExitSiteData exitSiteData)
+    ExitSiteData exitSiteData, ExitingInlineKind inlineKind)
 {
     CallLinkStatus result = computeFor(locker, profiledBlock, callLinkInfo);
-    if (exitSiteData.badFunction) {
-        if (result.isBasedOnStub()) {
-            // If we have a polymorphic stub, then having an exit site is not quite so useful. In
-            // most cases, the information in the stub has higher fidelity.
-            result.makeClosureCall();
-        } else {
-            // We might not have a polymorphic stub for any number of reasons. When this happens, we
-            // are in less certain territory, so exit sites mean a lot.
-            result.m_couldTakeSlowPath = true;
-        }
-    }
-    if (exitSiteData.takesSlowPath)
-        result.m_couldTakeSlowPath = true;
-    
+    result.accountForExits(exitSiteData, inlineKind);
     return result;
 }
 #endif
 
-void CallLinkStatus::computeDFGStatuses(
-    CodeBlock* dfgCodeBlock, CallLinkStatus::ContextMap& map)
+void CallLinkStatus::accountForExits(ExitSiteData exitSiteData, ExitingInlineKind inlineKind)
 {
-#if ENABLE(DFG_JIT)
-    RELEASE_ASSERT(dfgCodeBlock->jitType() == JITCode::DFGJIT);
-    CodeBlock* baselineCodeBlock = dfgCodeBlock->alternative();
-    for (auto iter = dfgCodeBlock->callLinkInfosBegin(); !!iter; ++iter) {
-        CallLinkInfo& info = **iter;
-        if (info.isDirect()) {
-            // If the DFG was able to get a direct call then probably so will we. However, there is
-            // a remote chance that it's bad news to lose information about what the DFG did. We'd
-            // ideally like to just know that the DFG had emitted a DirectCall.
-            continue;
-        }
-        CodeOrigin codeOrigin = info.codeOrigin();
-        
-        // Check if we had already previously made a terrible mistake in the FTL for this
-        // code origin. Note that this is approximate because we could have a monovariant
-        // inline in the FTL that ended up failing. We should fix that at some point by
-        // having data structures to track the context of frequent exits. This is currently
-        // challenging because it would require creating a CodeOrigin-based database in
-        // baseline CodeBlocks, but those CodeBlocks don't really have a place to put the
-        // InlineCallFrames.
-        CodeBlock* currentBaseline =
-            baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock);
-        ExitSiteData exitSiteData = computeExitSiteData(currentBaseline, codeOrigin.bytecodeIndex);
-        
-        {
-            ConcurrentJSLocker locker(dfgCodeBlock->m_lock);
-            map.add(info.codeOrigin(), computeFor(locker, dfgCodeBlock, info, exitSiteData));
+    if (exitSiteData.badFunction.isSet(inlineKind)) {
+        if (isBasedOnStub()) {
+            // If we have a polymorphic stub, then having an exit site is not quite so useful. In
+            // most cases, the information in the stub has higher fidelity.
+            makeClosureCall();
+        } else {
+            // We might not have a polymorphic stub for any number of reasons. When this happens, we
+            // are in less certain territory, so exit sites mean a lot.
+            m_couldTakeSlowPath = true;
         }
     }
-#else
-    UNUSED_PARAM(dfgCodeBlock);
-#endif // ENABLE(DFG_JIT)
     
-    if (CallLinkStatusInternal::verbose) {
-        dataLog("Context map:\n");
-        ContextMap::iterator iter = map.begin();
-        ContextMap::iterator end = map.end();
-        for (; iter != end; ++iter) {
-            dataLog("    ", iter->key, ":\n");
-            dataLog("        ", iter->value, "\n");
-        }
-    }
+    if (exitSiteData.takesSlowPath.isSet(inlineKind))
+        m_couldTakeSlowPath = true;
 }
 
 CallLinkStatus CallLinkStatus::computeFor(
     CodeBlock* profiledBlock, CodeOrigin codeOrigin,
-    const CallLinkInfoMap& baselineMap, const CallLinkStatus::ContextMap& dfgMap)
+    const ICStatusMap& baselineMap, const ICStatusContextStack& optimizedStack)
 {
-    auto iter = dfgMap.find(codeOrigin);
-    if (iter != dfgMap.end())
-        return iter->value;
+    if (CallLinkStatusInternal::verbose)
+        dataLog("Figuring out call profiling for ", codeOrigin, "\n");
+    ExitSiteData exitSiteData = computeExitSiteData(profiledBlock, codeOrigin.bytecodeIndex);
+    if (CallLinkStatusInternal::verbose) {
+        dataLog("takesSlowPath = ", exitSiteData.takesSlowPath, "\n");
+        dataLog("badFunction = ", exitSiteData.badFunction, "\n");
+    }
     
-    return computeFor(profiledBlock, codeOrigin.bytecodeIndex, baselineMap);
+    for (const ICStatusContext* context : optimizedStack) {
+        if (CallLinkStatusInternal::verbose)
+            dataLog("Examining status in ", pointerDump(context->optimizedCodeBlock), "\n");
+        ICStatus status = context->get(codeOrigin);
+        
+        // If we have both a CallLinkStatus and a callLinkInfo for the same origin, then it means
+        // one of two things:
+        //
+        // 1) We initially thought that we'd be able to inline this call so we recorded a status
+        //    but then we realized that it was pointless and gave up and emitted a normal call
+        //    anyway.
+        //
+        // 2) We did a polymorphic call inline that had a slow path case.
+        //
+        // In the first case, it's essential that we use the callLinkInfo, since the status may
+        // be polymorphic but the link info benefits from polyvariant profiling.
+        //
+        // In the second case, it's essential that we use the status, since the callLinkInfo
+        // corresponds to the slow case.
+        //
+        // It would be annoying to distinguish those two cases. However, we know that:
+        //
+        // If the first case happens in the FTL, then it means that even with polyvariant
+        // profiling, we failed to do anything useful. That suggests that in the FTL, it's OK to
+        // prioritize the status. That status will again tell us to not do anything useful.
+        //
+        // The second case only happens in the FTL.
+        //
+        // Therefore, we prefer the status in the FTL and the info in the DFG.
+        //
+        // Luckily, this case doesn't matter for the other ICStatuses, since they never do the
+        // fast-path-slow-path control-flow-diamond style of IC inlining. It's either all fast
+        // path or it's a full IC. So, for them, if there is an IC status then it means case (1).
+        
+        bool checkStatusFirst = context->optimizedCodeBlock->jitType() == JITCode::FTLJIT;
+        
+        auto bless = [&] (CallLinkStatus& result) {
+            if (!context->isInlined(codeOrigin))
+                result.merge(computeFor(profiledBlock, codeOrigin.bytecodeIndex, baselineMap, exitSiteData));
+        };
+        
+        auto checkInfo = [&] () -> CallLinkStatus {
+            if (!status.callLinkInfo)
+                return CallLinkStatus();
+            
+            if (CallLinkStatusInternal::verbose)
+                dataLog("Have CallLinkInfo with CodeOrigin = ", status.callLinkInfo->codeOrigin(), "\n");
+            CallLinkStatus result;
+            {
+                ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
+                result = computeFor(
+                    locker, context->optimizedCodeBlock, *status.callLinkInfo, exitSiteData,
+                    context->inlineKind(codeOrigin));
+                if (CallLinkStatusInternal::verbose)
+                    dataLog("Got result: ", result, "\n");
+            }
+            bless(result);
+            return result;
+        };
+        
+        auto checkStatus = [&] () -> CallLinkStatus {
+            if (!status.callStatus)
+                return CallLinkStatus();
+            CallLinkStatus result = *status.callStatus;
+            if (CallLinkStatusInternal::verbose)
+                dataLog("Have callStatus: ", result, "\n");
+            result.accountForExits(exitSiteData, context->inlineKind(codeOrigin));
+            bless(result);
+            return result;
+        };
+        
+        if (checkStatusFirst) {
+            if (CallLinkStatus result = checkStatus())
+                return result;
+            if (CallLinkStatus result = checkInfo())
+                return result;
+            continue;
+        }
+        
+        if (CallLinkStatus result = checkInfo())
+            return result;
+        if (CallLinkStatus result = checkStatus())
+            return result;
+    }
+    
+    return computeFor(profiledBlock, codeOrigin.bytecodeIndex, baselineMap, exitSiteData);
 }
 
 void CallLinkStatus::setProvenConstantCallee(CallVariant variant)
@@ -325,6 +402,41 @@ bool CallLinkStatus::isClosureCall() const
 void CallLinkStatus::makeClosureCall()
 {
     m_variants = despecifiedVariantList(m_variants);
+}
+
+bool CallLinkStatus::finalize()
+{
+    for (CallVariant& variant : m_variants) {
+        if (!variant.finalize())
+            return false;
+    }
+    return true;
+}
+
+void CallLinkStatus::merge(const CallLinkStatus& other)
+{
+    m_couldTakeSlowPath |= other.m_couldTakeSlowPath;
+    
+    for (const CallVariant& otherVariant : other.m_variants) {
+        bool found = false;
+        for (CallVariant& thisVariant : m_variants) {
+            if (thisVariant.merge(otherVariant)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            m_variants.append(otherVariant);
+    }
+}
+
+void CallLinkStatus::filter(VM& vm, JSValue value)
+{
+    m_variants.removeAllMatching(
+        [&] (CallVariant& variant) -> bool {
+            variant.filter(vm, value);
+            return !variant;
+        });
 }
 
 void CallLinkStatus::dump(PrintStream& out) const

@@ -1,3 +1,30 @@
+2018-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        We should support CreateThis in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=164904
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/polyvariant-get-by-id-shorter-tower.js: Added.
+        (polyvariant):
+        (Foo.prototype.func):
+        (Foo):
+        (foo):
+        (Bar.prototype.func):
+        (Bar):
+        (bar):
+        * microbenchmarks/polyvariant-get-by-id-tower.js: Added.
+        (polyvariant):
+        (Foo.prototype.func):
+        (Foo):
+        (foo):
+        (Bar.prototype.func):
+        (Bar):
+        (bar):
+        (Baz.prototype.func):
+        (Baz):
+        (baz):
+
 2018-07-20  Michael Saboff  <msaboff@apple.com>
 
         DFG AbstractInterpreter: CheckArray filters array modes for DirectArguments/ScopedArguments using only NonArray

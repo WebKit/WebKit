@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ public:
     {
     }
     
-    bool operator!() const { return !m_callee; }
+    explicit operator bool() const { return !!m_callee; }
     
     // If this variant refers to a function, change it to refer to its executable.
     ALWAYS_INLINE CallVariant despecifiedClosure() const
@@ -135,6 +135,12 @@ public:
             return nativeExecutable->signatureFor(kind);
         return nullptr;
     }
+    
+    bool finalize();
+    
+    bool merge(const CallVariant&);
+    
+    void filter(VM&, JSValue);
     
     void dump(PrintStream& out) const;
     

@@ -440,9 +440,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ExecutableToCodeBlockEdge.h
     bytecode/ExecutionCounter.h
     bytecode/ExitKind.h
+    bytecode/ExitingInlineKind.h
     bytecode/ExitingJITType.h
     bytecode/ExpressionRangeInfo.h
     bytecode/HandlerInfo.h
+    bytecode/ICStatusMap.h
     bytecode/InlineCallFrame.h
     bytecode/Instruction.h
     bytecode/InternalFunctionAllocationProfile.h
