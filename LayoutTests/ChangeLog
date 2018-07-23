@@ -1,3 +1,14 @@
+2018-07-23  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=187932
+
+        Unreviewed test gardening.
+
+        Enable Secure WebSocket tests.
+
+        * platform/wincairo/TestExpectations:
+
 2018-07-23  Justin Fan  <justin_fan@apple.com>
 
         Enable WebGL2 glsl3 tests with expected FAIL results
