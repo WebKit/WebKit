@@ -3746,6 +3746,7 @@ http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Skip ]
 
 # WebCrypto tests are failing.
 webkit.org/b/165090 imported/w3c/web-platform-tests/WebCryptoAPI [ Skip ]
+webkit.org/b/165090 http/wpt/crypto [ Skip ]
 
 # webglcontextchanged event not supported
 fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
