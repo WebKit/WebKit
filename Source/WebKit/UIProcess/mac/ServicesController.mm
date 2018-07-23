@@ -33,6 +33,7 @@
 #import <pal/spi/cocoa/NSExtensionSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -65,9 +66,20 @@ ServicesController::ServicesController()
 #endif // __LP64__
 }
 
-static bool hasCompatibleServicesForItems(NSArray *items)
+static void hasCompatibleServicesForItems(dispatch_group_t group, NSArray *items, WTF::Function<void(bool)>&& completionHandler)
 {
-    return [NSSharingService sharingServicesForItems:items mask:NSSharingServiceMaskViewer | NSSharingServiceMaskEditor].count;
+    NSSharingServiceMask servicesMask = NSSharingServiceMaskViewer | NSSharingServiceMaskEditor;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    dispatch_group_enter(group);
+    [NSSharingService sharingServicesForItems:items mask:servicesMask completion:BlockPtr<void(NSArray *)>::fromCallable([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
+        completionHandler(services.count);
+        dispatch_group_leave(group);
+    }).get()];
+#else
+    UNUSED_PARAM(group);
+    completionHandler([NSSharingService sharingServicesForItems:items mask:servicesMask].count);
+#endif
 }
 
 void ServicesController::refreshExistingServices(bool refreshImmediately)
@@ -79,11 +91,17 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
 
     auto refreshTime = dispatch_time(DISPATCH_TIME_NOW, refreshImmediately ? 0 : (int64_t)(1 * NSEC_PER_SEC));
     dispatch_after(refreshTime, m_refreshQueue, ^{
+        auto serviceLookupGroup = adoptOSObject(dispatch_group_create());
+
         static NeverDestroyed<NSImage *> image([[NSImage alloc] init]);
-        bool hasImageServices = hasCompatibleServicesForItems(@[ image ]);
+        hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ image ], [this] (bool hasServices) {
+            m_hasImageServices = hasServices;
+        });
 
         static NeverDestroyed<NSAttributedString *> attributedString([[NSAttributedString alloc] initWithString:@"a"]);
-        bool hasSelectionServices = hasCompatibleServicesForItems(@[ attributedString ]);
+        hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ attributedString ], [this] (bool hasServices) {
+            m_hasSelectionServices = hasServices;
+        });
 
         static NSAttributedString *attributedStringWithRichContent;
         if (!attributedStringWithRichContent) {
@@ -97,14 +115,16 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
             });
         }
 
-        bool hasRichContentServices = hasCompatibleServicesForItems(@[ attributedStringWithRichContent ]);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            bool availableServicesChanged = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices) || (hasRichContentServices != m_hasRichContentServices);
+        hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ attributedStringWithRichContent ], [this] (bool hasServices) {
+            m_hasRichContentServices = hasServices;
+        });
 
-            m_hasSelectionServices = hasSelectionServices;
-            m_hasImageServices = hasImageServices;
-            m_hasRichContentServices = hasRichContentServices;
+        dispatch_group_notify(serviceLookupGroup.get(), dispatch_get_main_queue(), BlockPtr<void(void)>::fromCallable([this] {
+            bool availableServicesChanged = (m_lastSentHasImageServices != m_hasImageServices) || (m_lastSentHasSelectionServices != m_hasSelectionServices) || (m_lastSentHasRichContentServices != m_hasRichContentServices);
+
+            m_lastSentHasSelectionServices = m_hasSelectionServices;
+            m_lastSentHasImageServices = m_hasImageServices;
+            m_lastSentHasRichContentServices = m_hasRichContentServices;
 
             if (availableServicesChanged) {
                 for (auto& processPool : WebProcessPool::allProcessPools())
@@ -112,7 +132,7 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
             }
 
             m_hasPendingRefresh = false;
-        });
+        }).get());
     });
 }
 

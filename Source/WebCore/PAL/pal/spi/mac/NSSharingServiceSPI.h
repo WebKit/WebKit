@@ -45,8 +45,9 @@ typedef NS_OPTIONS(NSUInteger, NSSharingServiceMask) {
     NSSharingServiceMaskAllTypes = 0xFFFF
 } NS_ENUM_AVAILABLE_MAC(10_10);
 
-@interface NSSharingService (Private)
+@interface NSSharingService ()
 + (NSArray *)sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)maskForFiltering;
++ (void)sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)maskForFiltering completion:(void(^)(NSArray *))completion;
 @property (readonly) NSSharingServiceType type;
 @property (readwrite, copy) NSString *name;
 @end

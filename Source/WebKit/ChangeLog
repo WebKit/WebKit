@@ -1,3 +1,19 @@
+2018-07-23  Tim Horton  <timothy_horton@apple.com>
+
+        Creating and loading content in a WKWebView triggers Main Thread Checker warnings under ServicesController
+        https://bugs.webkit.org/show_bug.cgi?id=186963
+        <rdar://problem/41393682>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/mac/ServicesController.h:
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::hasCompatibleServicesForItems):
+        (WebKit::ServicesController::refreshExistingServices):
+        Adopt async ShareKit SPI that is actually thread-safe instead of the not-quite-safe
+        synchronous API. Request all three sets of services immediately, and dispatch
+        to the Web Content processes when all three have returned.
+
 2018-07-23  Chris Dumez  <cdumez@apple.com>
 
         WebResourceLoadStatisticsStore fails to unregister itself as a MessageReceiver in its destructor
