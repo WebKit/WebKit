@@ -1164,49 +1164,6 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'config', key, value])
         self.assertEqual(self.scm.read_git_config(key), value)
 
-        value = 'true'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-
-        value = 'yes'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-        self.assertEqual(self.scm.read_git_config(key, bool), 'true')
-
-        value = 'oN'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-        self.assertEqual(self.scm.read_git_config(key, bool), 'true')
-
-        value = '1'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-        self.assertEqual(self.scm.read_git_config(key, bool), 'true')
-
-        value = 'false'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-
-        value = 'no'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-        self.assertEqual(self.scm.read_git_config(key, bool), 'false')
-
-        value = 'oFf'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-        self.assertEqual(self.scm.read_git_config(key, bool), 'false')
-
-        value = '0'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-        self.assertEqual(self.scm.read_git_config(key, bool), 'false')
-
-        value = '1k'
-        run_command(['git', 'config', key, value])
-        self.assertEqual(self.scm.read_git_config(key), value)
-        self.assertEqual(self.scm.read_git_config(key, int), '1024')
-
     def test_local_commits(self):
         test_file = os.path.join(self.git_checkout_path, 'test_file')
         write_into_file_at_path(test_file, 'foo')

@@ -1,3 +1,17 @@
+2018-07-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r233030.
+        https://bugs.webkit.org/show_bug.cgi?id=187904
+
+        Broke tarball builds (Requested by mcatanzaro on #webkit).
+
+        Reverted changeset:
+
+        "run-gtk-tests (glib/common.py) cannot determine build
+        directory when webKitBranchBuild=true"
+        https://bugs.webkit.org/show_bug.cgi?id=185643
+        https://trac.webkit.org/changeset/233030
+
 2018-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fix lldb summarizers for HashMaps and HashSets

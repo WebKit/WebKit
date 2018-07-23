@@ -21,15 +21,6 @@ import select
 import subprocess
 import sys
 
-tools_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Tools', 'Scripts'))
-if tools_dir not in sys.path:
-    sys.path.insert(0, tools_dir)
-
-from webkitpy.common.checkout.scm import Git
-from webkitpy.common.checkout.scm.detection import SCMDetector
-from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.filesystem import FileSystem
-
 top_level_dir = None
 build_dir = None
 library_build_dir = None
@@ -84,19 +75,9 @@ def get_build_path(fatal=True):
     if is_valid_build_directory(build_dir):
         return build_dir
 
-    base_build_dir = top_level_path('WebKitBuild')
-
-    scm = SCMDetector(FileSystem(), Executive()).default_scm()
-    if isinstance(scm, Git):
-        is_branch_build = scm.read_config('core.webKitBranchBuild', bool)
-        if is_branch_build and is_branch_build.lower() == 'true':
-            current_branch = scm._current_branch()
-            if current_branch != 'master':
-                base_build_dir = os.path.join(base_build_dir, scm._current_branch())
-
     global build_types
     for build_type in build_types:
-        build_dir = os.path.join(base_build_dir, build_type)
+        build_dir = top_level_path('WebKitBuild', build_type)
         if is_valid_build_directory(build_dir):
             return build_dir
 
@@ -109,7 +90,7 @@ def get_build_path(fatal=True):
     if is_valid_build_directory(build_dir):
         return build_dir
 
-    build_dir = base_build_dir
+    build_dir = top_level_path("WebKitBuild")
     if is_valid_build_directory(build_dir):
         return build_dir
 
