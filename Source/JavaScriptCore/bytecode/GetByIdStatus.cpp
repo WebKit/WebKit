@@ -110,6 +110,8 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& m
         return result.slowVersion();
 #else
     UNUSED_PARAM(map);
+    UNUSED_PARAM(didExit);
+    UNUSED_PARAM(callExitSiteData);
 #endif
 
     if (!result)
@@ -288,7 +290,6 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
     RELEASE_ASSERT_NOT_REACHED();
     return GetByIdStatus();
 }
-#endif // ENABLE(JIT)
 
 GetByIdStatus GetByIdStatus::computeFor(
     CodeBlock* profiledBlock, ICStatusMap& baselineMap,
@@ -375,6 +376,7 @@ GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, UniquedStringIm
     
     return result;
 }
+#endif // ENABLE(JIT)
 
 bool GetByIdStatus::makesCalls() const
 {

@@ -1,3 +1,18 @@
+2018-07-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix no-JIT build.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/InByIdStatus.cpp:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+
 2018-07-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] GetByIdVariant and InByIdVariant do not need slot base if they are not "hit" variants

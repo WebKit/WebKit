@@ -1415,10 +1415,12 @@ void CodeBlock::finalizeUnconditionally(VM&)
         finalizeBaselineJITInlineCaches();
 #endif
 
+#if ENABLE(DFG_JIT)
     if (JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
         dfgCommon->recordedStatuses.finalize();
     }
+#endif // ENABLE(DFG_JIT)
 
     VM::SpaceAndFinalizerSet::finalizerSetFor(*subspace()).remove(this);
 }

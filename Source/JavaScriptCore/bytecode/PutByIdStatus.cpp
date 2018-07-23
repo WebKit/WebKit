@@ -99,6 +99,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         structure, newStructure, conditionSet, offset, newStructure->inferredTypeDescriptorFor(uid));
 }
 
+#if ENABLE(JIT)
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
@@ -123,7 +124,6 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& m
 #endif // ENABLE(JIT)
 }
 
-#if ENABLE(JIT)
 PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* baselineBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
     return computeForStubInfo(
@@ -241,7 +241,6 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
         return PutByIdStatus(JSC::slowVersion(summary));
     }
 }
-#endif
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
@@ -366,6 +365,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
     
     return result;
 }
+#endif
 
 bool PutByIdStatus::makesCalls() const
 {

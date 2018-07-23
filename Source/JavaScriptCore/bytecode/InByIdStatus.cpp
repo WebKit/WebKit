@@ -42,6 +42,7 @@ bool InByIdStatus::appendVariant(const InByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
+#if ENABLE(JIT)
 InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
@@ -104,6 +105,7 @@ InByIdStatus InByIdStatus::computeFor(
     
     return computeFor(profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit);
 }
+#endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT)
 InByIdStatus InByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)

@@ -85,6 +85,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(map);
+    UNUSED_PARAM(exitSiteData);
 #if ENABLE(DFG_JIT)
     CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex)).callLinkInfo;
     if (!callLinkInfo) {
@@ -263,7 +264,6 @@ CallLinkStatus CallLinkStatus::computeFor(
     result.accountForExits(exitSiteData, inlineKind);
     return result;
 }
-#endif
 
 void CallLinkStatus::accountForExits(ExitSiteData exitSiteData, ExitingInlineKind inlineKind)
 {
@@ -382,6 +382,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     
     return computeFor(profiledBlock, codeOrigin.bytecodeIndex, baselineMap, exitSiteData);
 }
+#endif
 
 void CallLinkStatus::setProvenConstantCallee(CallVariant variant)
 {
