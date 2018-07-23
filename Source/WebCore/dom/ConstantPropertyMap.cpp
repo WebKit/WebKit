@@ -98,6 +98,7 @@ void ConstantPropertyMap::buildValues()
     m_values = Values { };
 
     updateConstantsForSafeAreaInsets();
+    updateConstantsForFullscreen();
 }
 
 static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
@@ -139,18 +140,21 @@ void ConstantPropertyMap::didChangeSafeAreaInsets()
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
-void ConstantPropertyMap::updateConstantsForFullscreenInsets()
+void ConstantPropertyMap::updateConstantsForFullscreen()
 {
     FloatBoxExtent fullscreenInsets = m_document.page() ? m_document.page()->fullscreenInsets() : FloatBoxExtent();
     setValueForProperty(ConstantProperty::FullscreenInsetTop, variableDataForPositivePixelLength(fullscreenInsets.top()));
     setValueForProperty(ConstantProperty::FullscreenInsetRight, variableDataForPositivePixelLength(fullscreenInsets.right()));
     setValueForProperty(ConstantProperty::FullscreenInsetBottom, variableDataForPositivePixelLength(fullscreenInsets.bottom()));
     setValueForProperty(ConstantProperty::FullscreenInsetLeft, variableDataForPositivePixelLength(fullscreenInsets.left()));
+
+    Seconds fullscreenAutoHideDuration = m_document.page() ? m_document.page()->fullscreenAutoHideDuration() : 0_s;
+    setValueForProperty(ConstantProperty::FullscreenAutoHideDuration, variableDataForPositiveDuration(fullscreenAutoHideDuration));
 }
 
 void ConstantPropertyMap::didChangeFullscreenInsets()
 {
-    updateConstantsForFullscreenInsets();
+    updateConstantsForFullscreen();
     m_document.invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 

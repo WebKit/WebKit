@@ -352,9 +352,10 @@ public:
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
 #endif
 
-    WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);
     const FloatBoxExtent& fullscreenInsets() const { return m_fullscreenInsets; }
+    WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);
 
+    const Seconds fullscreenAutoHideDuration() const { return m_fullscreenAutoHideDuration; }
     WEBCORE_EXPORT void setFullscreenAutoHideDuration(Seconds);
     WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
 
@@ -754,6 +755,7 @@ private:
     FloatBoxExtent m_obscuredInsets;
     FloatBoxExtent m_unobscuredSafeAreaInsets;
     FloatBoxExtent m_fullscreenInsets;
+    Seconds m_fullscreenAutoHideDuration { 0_s };
 
 #if PLATFORM(IOS)
     bool m_enclosedInScrollableAncestorView { false };

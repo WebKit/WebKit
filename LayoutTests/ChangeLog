@@ -1,3 +1,14 @@
+2018-07-22  Dean Jackson  <dino@apple.com>
+
+        fullscreen env() variables should have initial values
+        https://bugs.webkit.org/show_bug.cgi?id=187897
+        <rdar://problem/42485682>
+
+        Reviewed by Sam Weinig.
+
+        * fullscreen/fullscreen-env-initial-expected.html: Added.
+        * fullscreen/fullscreen-env-initial.html: Added.
+
 2018-07-20  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Enable basic functionality in experimental debug mode

@@ -1,3 +1,30 @@
+2018-07-22  Dean Jackson  <dino@apple.com>
+
+        fullscreen env() variables should have initial values
+        https://bugs.webkit.org/show_bug.cgi?id=187897
+        <rdar://problem/42485682>
+
+        Reviewed by Sam Weinig.
+
+        The env() values for fullscreen properties need to be
+        initialized, rather than wait for values to be set from WebKit.
+        Without this, feature detection doesn't work, and properties
+        won't parse correctly.
+
+        Test: fullscreen/fullscreen-env-initial.html
+
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::buildValues): Initialize the fullscreen values.
+        (WebCore::ConstantPropertyMap::updateConstantsForFullscreen): Renamed function, because it
+        also updates the duration value.
+        (WebCore::ConstantPropertyMap::didChangeFullscreenInsets): Call new name.
+        (WebCore::ConstantPropertyMap::updateConstantsForFullscreenInsets): Deleted.
+        * dom/ConstantPropertyMap.h:
+        * page/Page.cpp:
+        (WebCore::Page::setFullscreenAutoHideDuration): Don't change the value if it doesn't need it.
+        * page/Page.h: Add accessor for fullscreenAutoHideDuration. Also add a member variable.
+        (WebCore::Page::fullscreenAutoHideDuration const):
+
 2018-07-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add center/right/justify line alignment support.
