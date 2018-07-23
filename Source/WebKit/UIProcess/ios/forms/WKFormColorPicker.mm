@@ -1,0 +1,246 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WKFormColorPicker.h"
+
+#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)
+
+#import "AssistedNodeInformation.h"
+#import "UIKitSPI.h"
+#import "WKContentViewInteraction.h"
+#import "WKFormPopover.h"
+#import "WebPageProxy.h"
+
+#import <WebCore/Color.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(PencilKit)
+SOFT_LINK_CLASS(PencilKit, PKColorMatrixView)
+
+static const CGFloat additionalKeyboardAffordance = 80;
+static const CGFloat colorSelectionIndicatorBorderWidth = 2;
+static const CGFloat pickerWidthForPopover = 280;
+static const CGFloat topColorMatrixPadding = 8;
+
+using namespace WebKit;
+
+#pragma mark - PKColorMatrixView
+
+@interface PKColorMatrixView
++ (NSArray<NSArray<UIColor *> *> *)defaultColorMatrix;
+@end
+
+#pragma mark - WKColorButton
+
+@interface WKColorButton : UIButton
+@property (nonatomic, strong) UIColor *color;
+
++ (instancetype)colorButtonWithColor:(UIColor *)color;
+@end
+
+@implementation WKColorButton
+
++ (instancetype)colorButtonWithColor:(UIColor *)color
+{
+    WKColorButton *colorButton = [WKColorButton buttonWithType:UIButtonTypeCustom];
+    colorButton.color = color;
+    colorButton.backgroundColor = color;
+    return colorButton;
+}
+
+@end
+
+#pragma mark - WKColorMatrixView
+
+@interface WKColorMatrixView : UIView {
+    RetainPtr<NSArray<NSArray<UIColor *> *>> _colorMatrix;
+    RetainPtr<NSArray<NSArray<WKColorButton *> *>> _colorButtons;
+}
+
+@property (nonatomic, weak) id<WKColorMatrixViewDelegate> delegate;
+
+- (instancetype)initWithFrame:(CGRect)frame colorMatrix:(NSArray<NSArray<UIColor *> *> *)matrix;
+@end
+
+@implementation WKColorMatrixView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    return [self initWithFrame:frame colorMatrix:[getPKColorMatrixViewClass() defaultColorMatrix]];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame colorMatrix:(NSArray<NSArray<UIColor *> *> *)matrix
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    _colorMatrix = matrix;
+
+    NSMutableArray *colorButtons = [NSMutableArray array];
+    for (NSUInteger row = 0; row < [_colorMatrix count]; row++) {
+        NSMutableArray *buttons = [NSMutableArray array];
+        for (NSUInteger col = 0; col < [_colorMatrix.get()[0] count]; col++) {
+            WKColorButton *button = [WKColorButton colorButtonWithColor:_colorMatrix.get()[row][col]];
+            [button addTarget:self action:@selector(colorButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            [buttons addObject:button];
+            [self addSubview:button];
+        }
+        RetainPtr<NSArray> colorButtonsRow = buttons;
+        [colorButtons addObject:colorButtonsRow.get()];
+    }
+    _colorButtons = colorButtons;
+
+    return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+
+    CGSize matrixSize = self.bounds.size;
+    CGFloat numRows = [_colorMatrix count];
+    CGFloat numCols = [_colorMatrix.get()[0] count];
+    CGFloat buttonHeight = matrixSize.height / numRows;
+    CGFloat buttonWidth = matrixSize.width / numCols;
+
+    for (NSUInteger row = 0; row < numRows; row++) {
+        for (NSUInteger col = 0; col < numCols; col++) {
+            WKColorButton *button = _colorButtons.get()[row][col];
+            button.frame = CGRectMake(col * buttonWidth, row * buttonHeight, buttonWidth, buttonHeight);
+        }
+    }
+}
+
+- (void)colorButtonTapped:(WKColorButton *)colorButton
+{
+    [self.delegate colorMatrixView:self didTapColorButton:colorButton];
+}
+
+@end
+
+#pragma mark - WKFormColorPicker
+
+@implementation WKColorPicker {
+    WKContentView *_view;
+    RetainPtr<UIView> _colorPicker;
+
+    RetainPtr<UIView> _colorSelectionIndicator;
+    RetainPtr<WKColorMatrixView> _topColorMatrix;
+    RetainPtr<WKColorMatrixView> _mainColorMatrix;
+
+    RetainPtr<UIPanGestureRecognizer> _colorPanGR;
+}
+
++ (NSArray<NSArray<UIColor *> *> *)defaultTopColorMatrix
+{
+    return @[@[[UIColor redColor], [UIColor orangeColor], [UIColor yellowColor], [UIColor greenColor], [UIColor cyanColor], [UIColor blueColor], [UIColor magentaColor], [UIColor purpleColor], [UIColor brownColor], [UIColor whiteColor], [UIColor grayColor], [UIColor blackColor]]];
+}
+
+- (instancetype)initWithView:(WKContentView *)view
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _view = view;
+
+    CGSize colorPickerSize;
+    if (currentUserInterfaceIdiomIsPad())
+        colorPickerSize = CGSizeMake(pickerWidthForPopover, pickerWidthForPopover);
+    else {
+        CGSize keyboardSize = [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
+        colorPickerSize = CGSizeMake(keyboardSize.width, keyboardSize.height + additionalKeyboardAffordance);
+    }
+
+    _colorPicker = adoptNS([[UIView alloc] initWithSize:colorPickerSize]);
+
+    CGFloat totalRows = [[getPKColorMatrixViewClass() defaultColorMatrix] count] + 1;
+    CGFloat swatchHeight = (colorPickerSize.height - topColorMatrixPadding) / totalRows;
+
+    _mainColorMatrix = adoptNS([[WKColorMatrixView alloc] initWithFrame:CGRectMake(0, swatchHeight + topColorMatrixPadding, colorPickerSize.width, swatchHeight * (totalRows - 1))]);
+    [_mainColorMatrix setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+    [_mainColorMatrix setDelegate:self];
+    [_colorPicker addSubview:_mainColorMatrix.get()];
+
+    _topColorMatrix = adoptNS([[WKColorMatrixView alloc] initWithFrame:CGRectMake(0, 0, colorPickerSize.width, swatchHeight) colorMatrix:[[self class] defaultTopColorMatrix]]);
+    [_topColorMatrix setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+    [_topColorMatrix setDelegate:self];
+    [_colorPicker addSubview:_topColorMatrix.get()];
+
+    _colorSelectionIndicator = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
+    [[_colorSelectionIndicator layer] setBorderColor:[[UIColor whiteColor] CGColor]];
+    [[_colorSelectionIndicator layer] setBorderWidth:colorSelectionIndicatorBorderWidth];
+    [_colorPicker addSubview:_colorSelectionIndicator.get()];
+
+    _colorPanGR = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanColors:)]);
+    [_colorPicker addGestureRecognizer:_colorPanGR.get()];
+
+    return self;
+}
+
+- (void)setControlValueFromUIColor:(UIColor *)uiColor
+{
+    WebCore::Color color(uiColor.CGColor);
+    [_view page]->setAssistedNodeValue(color.serialized());
+}
+
+#pragma mark WKFormControl
+
+- (UIView *)controlView
+{
+    return _colorPicker.get();
+}
+
+- (void)controlBeginEditing
+{
+}
+
+- (void)controlEndEditing
+{
+}
+
+#pragma mark WKColorMatrixViewDelegate
+
+- (void)colorMatrixView:(WKColorMatrixView *)matrixView didTapColorButton:(WKColorButton *)colorButton
+{
+    [_colorSelectionIndicator setFrame:[_colorPicker convertRect:colorButton.bounds fromView:colorButton]];
+    [self setControlValueFromUIColor:colorButton.color];
+}
+
+#pragma mark UIPanGestureRecognizer
+
+- (void)didPanColors:(UIGestureRecognizer *)gestureRecognizer
+{
+    CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
+    UIView *view = [gestureRecognizer.view hitTest:location withEvent:nil];
+    if ([view isKindOfClass:[WKColorButton class]]) {
+        [_colorSelectionIndicator setFrame:[_colorPicker convertRect:[view bounds] fromView:view]];
+        [self setControlValueFromUIColor:[(WKColorButton *)view color]];
+    }
+}
+
+@end
+
+#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS)

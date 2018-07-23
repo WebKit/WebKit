@@ -2018,6 +2018,10 @@ static inline bool isAssistableElement(Element& node)
     if (is<HTMLInputElement>(node)) {
         HTMLInputElement& inputElement = downcast<HTMLInputElement>(node);
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
+#if ENABLE(INPUT_TYPE_COLOR)
+        if (inputElement.isColorControl())
+            return true;
+#endif
         return inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField();
     }
     return node.isContentEditable();
@@ -2444,6 +2448,10 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
                     information.elementType = InputType::Search;
             }
         }
+#if ENABLE(INPUT_TYPE_COLOR)
+        else if (element.isColorControl())
+            information.elementType = InputType::Color;
+#endif
 
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();

@@ -81,6 +81,24 @@ ColorInputType::~ColorInputType()
     endColorChooser();
 }
 
+bool ColorInputType::isMouseFocusable() const
+{
+    ASSERT(element());
+    return element()->isTextFormControlFocusable();
+}
+
+bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
+{
+    ASSERT(element());
+#if PLATFORM(IOS)
+    if (element()->isReadOnly())
+        return false;
+
+    return element()->isTextFormControlFocusable();
+#endif
+    return false;
+}
+
 bool ColorInputType::isColorControl() const
 {
     return true;

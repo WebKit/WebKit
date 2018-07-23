@@ -52,7 +52,8 @@ typedef NS_ENUM(NSInteger, WKInputType) {
     WKInputTypeMonth,
     WKInputTypeWeek,
     WKInputTypeTime,
-    WKInputTypeSelect
+    WKInputTypeSelect,
+    WKInputTypeColor
 };
 
 /**

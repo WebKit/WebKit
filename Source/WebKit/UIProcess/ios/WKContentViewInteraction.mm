@@ -111,6 +111,10 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+#import "WKFormColorControl.h"
+#endif
+
 @interface UIEvent(UIEventInternal)
 @property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
 @end
@@ -477,6 +481,11 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     case WebKit::InputType::Select:
         _type = WKInputTypeSelect;
         break;
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebKit::InputType::Color:
+        _type = WKInputTypeColor;
+        break;
+#endif
     case WebKit::InputType::None:
         _type = WKInputTypeNone;
         break;
@@ -1256,6 +1265,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     case InputType::None:
         return NO;
     case InputType::Select:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case InputType::Color:
+#endif
         return !currentUserInterfaceIdiomIsPad();
     case InputType::Date:
     case InputType::Month:
@@ -1296,9 +1308,21 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!hasAssistedNode(_assistedNodeInformation))
         return nil;
 
-    if (!_inputPeripheral)
-        _inputPeripheral = adoptNS(_assistedNodeInformation.elementType == InputType::Select ? [[WKFormSelectControl alloc] initWithView:self] : [[WKFormInputControl alloc] initWithView:self]);
-    else
+    if (!_inputPeripheral) {
+        switch (_assistedNodeInformation.elementType) {
+        case InputType::Select:
+            _inputPeripheral = adoptNS([[WKFormSelectControl alloc] initWithView:self]);
+            break;
+#if ENABLE(INPUT_TYPE_COLOR)
+        case InputType::Color:
+            _inputPeripheral = adoptNS([[WKFormColorControl alloc] initWithView:self]);
+            break;
+#endif
+        default:
+            _inputPeripheral = adoptNS([[WKFormInputControl alloc] initWithView:self]);
+            break;
+        }
+    } else
         [self _displayFormNodeInputView];
 
     return [_formInputSession customInputView] ?: [_inputPeripheral assistantView];
@@ -2034,6 +2058,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case InputType::Month:
     case InputType::Week:
     case InputType::Time:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case InputType::Color:
+#endif
         return !currentUserInterfaceIdiomIsPad();
     }
 }
@@ -4035,6 +4062,9 @@ static bool isAssistableInputType(InputType type)
     case InputType::Week:
     case InputType::Time:
     case InputType::Select:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case InputType::Color:
+#endif
         return true;
 
     case InputType::None:
@@ -4140,6 +4170,9 @@ static bool isAssistableInputType(InputType type)
     case InputType::Time:
     case InputType::Month:
     case InputType::Date:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case InputType::Color:
+#endif
         break;
     default:
         [self _startAssistingKeyboard];
@@ -4396,6 +4429,9 @@ static bool isAssistableInputType(InputType type)
     case InputType::Select:
     case InputType::Time:
     case InputType::Date:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case InputType::Color:
+#endif
         return nil;
     case InputType::Search:
         return formControlSearchButtonTitle();

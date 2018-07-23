@@ -1,3 +1,64 @@
+2018-07-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add support for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=187871
+
+        Reviewed by Tim Horton.
+
+        Created WKFormColorControl to display a color picker once a color input gains
+        focus. The control is presented as an inputView on iPhone and as a popover on
+        iPad. The picker itself consists of two color matrices. The first is a set of 12
+        default colors, displayed on the top row of the picker. In a subsequent patch,
+        this top row will be made customizable through the use of the datalist element.
+        The second matrix is a grid of 120 colors, provided by the system. Colors can be
+        selected from either matrix by tapping or with a pan gesture.
+
+        WKColorMatrixView represents a single color matrix and is comprised of
+        WKColorButtons that represent each color in the matrix.
+
+        * Shared/AssistedNodeInformation.h:
+        * UIProcess/API/Cocoa/_WKFocusedElementInfo.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFocusedElementInfo initWithAssistedNodeInformation:isUserInitiated:userObject:]):
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView inputView]):
+        (-[WKContentView requiresAccessoryView]):
+        (isAssistableInputType):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView actionNameForFocusedFormControlView:]):
+        * UIProcess/ios/forms/WKFormColorControl.h: Added.
+        * UIProcess/ios/forms/WKFormColorControl.mm: Added.
+        (-[WKColorPopover initWithView:]):
+        (-[WKColorPopover controlView]):
+        (-[WKColorPopover controlBeginEditing]):
+        (-[WKColorPopover controlEndEditing]):
+        (-[WKFormColorControl initWithView:]):
+        (-[WKFormColorControl assistantView]):
+        (-[WKFormColorControl beginEditing]):
+        (-[WKFormColorControl endEditing]):
+        * UIProcess/ios/forms/WKFormColorPicker.h: Added.
+        * UIProcess/ios/forms/WKFormColorPicker.mm: Added.
+        (+[WKColorButton colorButtonWithColor:]):
+        (-[WKColorMatrixView initWithFrame:]):
+        (-[WKColorMatrixView initWithFrame:colorMatrix:]):
+        (-[WKColorMatrixView layoutSubviews]):
+        (-[WKColorMatrixView colorButtonTapped:]):
+        (+[WKColorPicker defaultTopColorMatrix]):
+        (-[WKColorPicker initWithView:]):
+        (-[WKColorPicker setControlValueFromUIColor:]):
+        (-[WKColorPicker controlView]):
+        (-[WKColorPicker controlBeginEditing]):
+        (-[WKColorPicker controlEndEditing]):
+        (-[WKColorPicker colorMatrixView:didTapColorButton:]):
+        (-[WKColorPicker didPanColors:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isAssistableElement):
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-07-23  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Fix detection of held modifier keys for key events

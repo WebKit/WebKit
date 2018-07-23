@@ -52,7 +52,10 @@ enum class InputType {
     Month,
     Week,
     Time,
-    Select
+    Select,
+#if ENABLE(INPUT_TYPE_COLOR)
+    Color
+#endif
 };
 
 #if PLATFORM(IOS)

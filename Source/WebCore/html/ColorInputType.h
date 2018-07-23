@@ -51,6 +51,8 @@ private:
     Color currentColor() final;
     bool shouldShowSuggestions() const final;
     Vector<Color> suggestions() const final;
+    bool isMouseFocusable() const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isColorControl() const final;
     const AtomicString& formControlType() const final;
     bool supportsRequired() const final;

@@ -1,3 +1,19 @@
+2018-07-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add support for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=187871
+
+        Reviewed by Tim Horton.
+
+        * css/html.css: Remove unwanted styling for color inputs with a list attribute.
+        * html/ColorInputType.cpp: Make the element focusable.
+        (WebCore::ColorInputType::isMouseFocusable const):
+        (WebCore::ColorInputType::isKeyboardFocusable const):
+        * html/ColorInputType.h:
+        * html/HTMLInputElement.h: Expose isColorControl() to WebKit.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createColorChooser):
+
 2018-07-22  Dean Jackson  <dino@apple.com>
 
         fullscreen env() variables should have initial values

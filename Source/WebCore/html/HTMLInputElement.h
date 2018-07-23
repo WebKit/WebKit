@@ -107,7 +107,7 @@ public:
     bool isRangeControl() const;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    bool isColorControl() const;
+    WEBCORE_EXPORT bool isColorControl() const;
 #endif
 
     // FIXME: It's highly likely that any call site calling this function should instead

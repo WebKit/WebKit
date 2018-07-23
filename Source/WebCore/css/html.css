@@ -863,7 +863,9 @@ select:focus {
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 
 input[type="color"] {
+#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
     -webkit-appearance: square-button;
+#endif
     width: 44px;
     height: 23px;
 }
@@ -880,23 +882,6 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #000000;
     border: 1px solid #777777;
     flex: 1;
-}
-
-#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
-
-input[type="color"][list] {
-    -webkit-appearance: menulist;
-    width: 88px;
-    height: 23px;
-}
-
-input[type="color"][list]::-webkit-color-swatch-wrapper {
-    padding-left: 8px;
-    padding-right: 24px;
-}
-
-input[type="color"][list]::-webkit-color-swatch {
-    border-color: #000000;
 }
 
 #endif // defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
