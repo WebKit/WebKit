@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/accessibility-helper.js"></script>
+<style>
+    a {
+      outline-offset: -3px;
+    }
+    a:focus {
+      outline: 3px solid rgba(131,192,253,0.5);
+    }
+</style>
+</head>
+<body>
+<div id="content">
+<button id="button">start</button>
+<a href="#">Apple</a>
+<a href="#">Orange</a>
+<a href="#">Pear</a>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+description("This tests that tabbing focus onto elements will send out notifications");
+
+if (window.testRunner && window.accessibilityController) {
+
+    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+    accessibilityController.enableEnhancedAccessibility(true);
+
+    var count = 0;
+    accessibilityController.addNotificationListener(function(element, notification) {
+        if (notification != "AXFocusChanged")
+            return;
+        count++;
+        if (count == 3) {
+          finishJSTest();
+        }
+    });
+
+    // Tab 3 times we should be able to get same count of notificaitons
+    shouldBeTrue("count == 0");
+    for (var i = 1; i <= 3; i++) 
+        eventSender.keyDown("\t");
+
+    document.getElementById("content").style.visibility = "hidden";
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
