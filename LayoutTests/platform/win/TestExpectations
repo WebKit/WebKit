@@ -4139,3 +4139,5 @@ webkit.org/b/187041 webanimations/opacity-animation-yields-compositing-span.html
 
 webkit.org/b/187177 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/187177 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
+
+webkit.org/b/187912 webanimations/empty-keyframes-crash.html [ Failure ]
