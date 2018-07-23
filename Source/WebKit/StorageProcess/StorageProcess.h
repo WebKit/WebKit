@@ -71,6 +71,8 @@ class StorageProcess : public ChildProcess
     friend NeverDestroyed<StorageProcess>;
 public:
     static StorageProcess& singleton();
+    static constexpr ProcessType processType = ProcessType::Storage;
+
     ~StorageProcess();
 
     WorkQueue& queue() { return m_queue.get(); }
