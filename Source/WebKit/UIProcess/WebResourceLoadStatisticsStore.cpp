@@ -343,17 +343,6 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess()
 #endif
 }
 
-
-void WebResourceLoadStatisticsStore::processWillOpenConnection(WebProcessProxy& process, IPC::Connection&)
-{
-    process.addMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), *this);
-}
-
-void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy& process, IPC::Connection&)
-{
-    process.removeMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
-}
-
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
     flushAndDestroyPersistentStore();

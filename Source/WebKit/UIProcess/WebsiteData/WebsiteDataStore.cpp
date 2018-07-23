@@ -121,6 +121,8 @@ WebsiteDataStore::~WebsiteDataStore()
 
     platformDestroy();
 
+    unregisterWebResourceLoadStatisticsStoreAsMessageReceiver();
+
     if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
         ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
         nonDefaultDataStores().remove(m_sessionID);
@@ -1349,7 +1351,7 @@ void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessP
         m_storageManager->processWillOpenConnection(webProcessProxy, connection);
 
     if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->processWillOpenConnection(webProcessProxy, connection);
+        webProcessProxy.addMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), *m_resourceLoadStatistics);
 }
 
 void WebsiteDataStore::webPageWillOpenConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
@@ -1367,7 +1369,7 @@ void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC
 void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
     if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->processDidCloseConnection(webProcessProxy, connection);
+        webProcessProxy.removeMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
 
     if (m_storageManager)
         m_storageManager->processDidCloseConnection(webProcessProxy, connection);
@@ -1494,11 +1496,32 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         return;
     }
 
+
+    unregisterWebResourceLoadStatisticsStoreAsMessageReceiver();
     m_resourceLoadStatistics = nullptr;
 
     auto existingProcessPools = processPools(std::numeric_limits<size_t>::max(), false);
     for (auto& processPool : existingProcessPools)
         processPool->setResourceLoadStatisticsEnabled(false);
+}
+
+void WebsiteDataStore::unregisterWebResourceLoadStatisticsStoreAsMessageReceiver()
+{
+    if (!m_resourceLoadStatistics)
+        return;
+
+    for (auto* webProcessProxy : processes())
+        webProcessProxy->removeMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName());
+}
+
+void WebsiteDataStore::registerWebResourceLoadStatisticsStoreAsMessageReceiver()
+{
+    ASSERT(m_resourceLoadStatistics);
+    if (!m_resourceLoadStatistics)
+        return;
+
+    for (auto* webProcessProxy : processes())
+        webProcessProxy->addMessageReceiver(Messages::WebResourceLoadStatisticsStore::messageReceiverName(), *m_resourceLoadStatistics);
 }
 
 bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
@@ -1532,6 +1555,8 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
     resolveDirectoriesIfNecessary();
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this);
     m_resourceLoadStatistics->setStatisticsTestingCallback(WTFMove(callback));
+
+    registerWebResourceLoadStatisticsStoreAsMessageReceiver();
 
     for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false))
         processPool->setResourceLoadStatisticsEnabled(true);

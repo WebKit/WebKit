@@ -203,6 +203,9 @@ private:
     void platformDestroy();
     static void platformRemoveRecentSearches(WallTime);
 
+    void registerWebResourceLoadStatisticsStoreAsMessageReceiver();
+    void unregisterWebResourceLoadStatisticsStoreAsMessageReceiver();
+
     HashSet<RefPtr<WebProcessPool>> processPools(size_t count = std::numeric_limits<size_t>::max(), bool ensureAPoolExists = true) const;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -654,4 +654,6 @@ enum EventThrottlingBehavior {
     void setUseSystemAppearance(boolean value);
 
     unsigned long pluginCount();
+
+    void notifyResourceLoadObserver();
 };

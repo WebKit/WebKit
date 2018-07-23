@@ -1,3 +1,53 @@
+2018-07-23  Chris Dumez  <cdumez@apple.com>
+
+        WebResourceLoadStatisticsStore fails to unregister itself as a MessageReceiver in its destructor
+        https://bugs.webkit.org/show_bug.cgi?id=187910
+        <rdar://problem/42356526>
+
+        Reviewed by Brent Fulgham.
+
+        The WebResourceLoadStatisticsStore was only removing itself as a MessageReceiver from the WebProcessProxy
+        and that WebProcessProxy's connection was getting closed. However, it is possible for the
+        WebResourceLoadStatisticsStore to get destroyed before this happens. This would lead to crashes such as
+        the one in <rdar://problem/42356526>.
+
+        To address the issue, we let the WebsiteDataStore take care of registering / unregistering the
+        WebResourceLoadStatisticsStore as a MessageReceiver with the WebProcessProxy. This is more reliable since
+        the WebsiteDataStore is the one that subclasses WebProcessLifetimeObserver. Make sure the
+        WebResourceLoadStatisticsStore is removed as a MessageReceiver whenever the WebsiteDataStore is destroyed
+        or WebsiteDataStore::m_resourceLoadStatistics gets cleared.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        Drop logic to add / remove the WebResourceLoadStatisticsStore as a receiver now that the
+        WebsiteDataStore takes care of it.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        Make sure the WebResourceLoadStatisticsStore gets unregistered as a MessageReceiver from all associated
+        WebProcessProxy objects when the WebsiteDataStore gets destroyed.
+
+        (WebKit::WebsiteDataStore::webProcessWillOpenConnection):
+        (WebKit::WebsiteDataStore::webProcessDidCloseConnection):
+        Register / Unregister the WebResourceLoadStatisticsStore as a MessageReceiver with the WebProcessProxy.
+
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        Make sure we unregister the WebResourceLoadStatisticsStore as a MessageReceiver with all associated
+        WebProcessProxy objects before we clear m_resourceLoadStatistics as this will causes the
+        WebResourceLoadStatisticsStore to get destroyed.
+
+        (WebKit::WebsiteDataStore::unregisterWebResourceLoadStatisticsStoreAsMessageReceiver):
+        (WebKit::WebsiteDataStore::registerWebResourceLoadStatisticsStoreAsMessageReceiver):
+        Add utility functions to register / unregister WebResourceLoadStatisticsStore as a MessageReceiver with
+        all associated WebProcessProxy objects.
+
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        Register the new WebResourceLoadStatisticsStore as a MessageReceiver with all associated WebProcessProxy
+        objects in case setResourceLoadStatisticsEnabled(true) gets called *after* we've already started
+        WebProcesses.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-07-23  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add logging of Storage Access API use in experimental debug mode
