@@ -1,3 +1,21 @@
+2018-07-23  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(PSON?): [ WK2 ] http/tests/workers/service/client-*-page-cache.html LayoutTests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=183705
+        <rdar://problem/42440606>
+
+        Unreviewed, attempting a better fix for http/tests/workers/service/serviceworkerclients-matchAll.https.html.
+        If it fixes the flakiness I'll do the same for the 2 page cache tests.
+
+        * http/tests/workers/service/serviceworkerclients-matchAll-worker.js:
+        (waitFor):
+        (matchAllPromise2):
+        (async.doTestAfterMessage):
+        (matchAllPromise1): Deleted.
+        (then): Deleted.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-07-23  Per Arne Vollan  <pvollan@apple.com>
 
         Layout test webanimations/empty-keyframes-crash.html is failing on Windows.

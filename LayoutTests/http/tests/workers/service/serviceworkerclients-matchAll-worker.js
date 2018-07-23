@@ -1,3 +1,8 @@
+function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
 function matchAllPromise1()
 {
     return self.clients.matchAll().then((clients) => {
@@ -8,12 +13,15 @@ function matchAllPromise1()
 }
 
 var matchedClients;
-matchAllPromise2 = self.clients.matchAll({ includeUncontrolled : true }).then((c) => {
-    matchedClients = c;
-    return matchedClients.length === 1 ? "PASS" : "FAIL: expected one matched client, got " + matchedClients.length;
-}, (e) => {
-    return "FAIL: matchAll 2 rejected with " + e;
-});
+function matchAllPromise2()
+{
+    return self.clients.matchAll({ includeUncontrolled : true }).then((c) => {
+        matchedClients = c;
+        return matchedClients.length === 1 ? "PASS" : "FAIL: expected one matched client, got " + matchedClients.length;
+    }, (e) => {
+        return "FAIL: matchAll 2 rejected with " + e;
+    });
+}
 
 async function doTestAfterMessage(event)
 {
@@ -28,14 +36,20 @@ async function doTestAfterMessage(event)
             if (tries)
                 await waitFor(50);
             result = await matchAllPromise1();
-        } while (result !== "PASS" && ++tries <= 20);
+        } while (result !== "PASS" && ++tries <= 200);
 
         if (result !== "PASS") {
             event.source.postMessage(result);
             return;
         }
 
-        var result = await matchAllPromise2;
+        tries = 0;
+        do {
+            if (tries)
+                await waitFor(50);
+            result = await matchAllPromise2();
+        } while (result !== "PASS" && ++tries <= 200);
+
         if (result !== "PASS") {
             event.source.postMessage(result);
             return;
