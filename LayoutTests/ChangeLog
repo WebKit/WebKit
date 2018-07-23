@@ -1,3 +1,15 @@
+2018-07-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Querying the current time of a finished CSSAnimation after removing its target leads to a crash
+        https://bugs.webkit.org/show_bug.cgi?id=187906
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks the behavior of a CSSAnimation instance after its completion and removal of its target.
+
+        * webanimations/accessing-current-time-after-finished-css-animation-target-removal-expected.txt: Added.
+        * webanimations/accessing-current-time-after-finished-css-animation-target-removal.html: Added.
+
 2018-07-23  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(PSON?): [ WK2 ] http/tests/workers/service/client-*-page-cache.html LayoutTests are flaky

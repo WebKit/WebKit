@@ -509,6 +509,11 @@ Seconds WebAnimation::effectEndTime() const
 
 void WebAnimation::cancel()
 {
+    cancel(Silently::No);
+}
+
+void WebAnimation::cancel(Silently silently)
+{
     // 3.4.16. Canceling an animation
     // https://drafts.csswg.org/web-animations-1/#canceling-an-animation-section
     //
@@ -519,10 +524,10 @@ void WebAnimation::cancel()
     // 1. If animation's play state is not idle, perform the following steps:
     if (playState() != PlayState::Idle) {
         // 1. Run the procedure to reset an animation's pending tasks on animation.
-        resetPendingTasks();
+        resetPendingTasks(silently);
 
         // 2. Reject the current finished promise with a DOMException named "AbortError".
-        if (!m_finishedPromise->isFulfilled())
+        if (silently == Silently::No && !m_finishedPromise->isFulfilled())
             m_finishedPromise->reject(Exception { AbortError });
 
         // 3. Let current finished promise be a new (pending) Promise object.
@@ -539,7 +544,8 @@ void WebAnimation::cancel()
         //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
         //    scheduled event time is an unresolved time value.
         // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
-        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, m_timeline ? m_timeline->currentTime() : std::nullopt);
+        if (silently == Silently::No)
+            enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, m_timeline ? m_timeline->currentTime() : std::nullopt);
     }
 
     // 2. Make animation's hold time unresolved.
@@ -569,7 +575,7 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomicString& type, std::
     }
 }
 
-void WebAnimation::resetPendingTasks()
+void WebAnimation::resetPendingTasks(Silently silently)
 {
     // The procedure to reset an animation's pending tasks for animation is as follows:
     // https://drafts.csswg.org/web-animations-1/#reset-an-animations-pending-tasks
@@ -587,7 +593,8 @@ void WebAnimation::resetPendingTasks()
         setTimeToRunPendingPauseTask(TimeToRunPendingTask::NotScheduled);
 
     // 4. Reject animation's current ready promise with a DOMException named "AbortError".
-    m_readyPromise->reject(Exception { AbortError });
+    if (silently == Silently::No)
+        m_readyPromise->reject(Exception { AbortError });
 
     // 5. Let animation's current ready promise be the result of creating a new resolved Promise object.
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);

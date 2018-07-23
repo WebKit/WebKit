@@ -182,6 +182,15 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
     return animations;
 }
 
+void AnimationTimeline::elementWasRemoved(Element& element)
+{
+    for (auto& animation : animationsForElement(element)) {
+        animationWasRemovedFromElement(*animation, element);
+        removeAnimation(*animation);
+        animation->cancel(WebAnimation::Silently::Yes);
+    }
+}
+
 void AnimationTimeline::removeAnimationsForElement(Element& element)
 {
     for (auto& animation : animationsForElement(element))

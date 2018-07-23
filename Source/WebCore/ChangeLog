@@ -1,3 +1,46 @@
+2018-07-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Querying the current time of a finished CSSAnimation after removing its target leads to a crash
+        https://bugs.webkit.org/show_bug.cgi?id=187906
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/accessing-current-time-after-finished-css-animation-target-removal.html
+
+        Because we carelessly look at a CSSAnimation's effect's timing in DeclarativeAnimation::bindingsCurrentTime
+        without checking that the effect is non-null, we can crash in the case where the animation is finished and
+        its target element has been removed, which caused the effect to be set to null.
+
+        We do not actually fix the lack of a null check, which will be the scope of a different patch, but instead
+        ensure that we do _not_ set the animation's effect to null when its target is removed, which used to be
+        performed via a call to WebAnimation::remove(). Instead, we introduce AnimationTimeline::elementWasRemoved()
+        which notifies the timeline of an element being removed such that we may stop referencing any animation
+        targeting this element from the various data structures holding strong references to the animation in question,
+        and we then cancel the animation silently, which is a new option that ensures promises aren't resolved or
+        rejected as a result.
+
+        Finally, the WebAnimation and AnimationEffectReadOnly classes established a ref-cycle as WebAnimation has
+        `RefPtr<AnimationEffectReadOnly> m_effect` and AnimationEffectReadOnly has `RefPtr<WebAnimation> m_animation`.
+        While it is correct that WebAnimation owns its effect, which is established by the DOM API, the
+        reverse is not correct since we only hold the reverse internally for the benefit of our implementation.
+        As such, we change AnimationEffectReadOnly's m_animation to be a WeakPtr<WebAnimation>. This means not
+        calling WebAnimation::remove() and simply removing the animation from the animation maps on the timeline
+        is sufficient to guarantee that the document timeline will not leak (and with it the document).
+
+        * animation/AnimationEffectReadOnly.h:
+        (WebCore::AnimationEffectReadOnly::setAnimation):
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::elementWasRemoved):
+        * animation/AnimationTimeline.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::cancel):
+        (WebCore::WebAnimation::resetPendingTasks):
+        * animation/WebAnimation.h:
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2018-07-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for input[type=color]

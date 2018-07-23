@@ -60,6 +60,7 @@ public:
     enum class Ordering { Sorted, Unsorted };
     const ListHashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
     Vector<RefPtr<WebAnimation>> animationsForElement(Element&, Ordering ordering = Ordering::Unsorted) const;
+    void elementWasRemoved(Element&);
     void removeAnimationsForElement(Element&);
     void cancelDeclarativeAnimationsForElement(Element&);
     void animationWasAddedToElement(WebAnimation&, Element&);

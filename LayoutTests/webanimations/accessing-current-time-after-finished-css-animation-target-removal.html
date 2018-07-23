@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableWebAnimationsCSSIntegration=true ] -->
+<meta charset=utf-8>
+<title>Crash accessing a CSSAnimation's current time after removal of its target</title>
+<style>
+    @keyframes animation {
+        from {
+            margin-left: 0px;
+        }
+        to {
+            margin-left: 100px;
+        }
+    }
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+test(t => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.style.animation = "animation 100ms";
+
+    const animations = target.getAnimations();
+    assert_equals(animations.length, 1, "The target element has one animation.");
+
+    const animation = animations[0];
+    animation.finish();
+
+    assert_equals(animation.currentTime, 100, "The animation's current time is 100 after animation completes.");
+    target.remove();
+    assert_equals(animation.currentTime, null, "The animation's current time is null after removing its target element.");
+}, "Current time is null when removing an animation's target after completion.");
+
+</script>
+</body>
