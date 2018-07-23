@@ -1022,7 +1022,7 @@ void GraphicsLayerCA::addProcessingActionForAnimation(const String& animationNam
 
 bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
 {
-    LOG(Animations, "GraphicsLayerCA %p addAnimation %s (can be accelerated %d)", this, animationName.utf8().data(), animationCanBeAccelerated(valueList, anim));
+    LOG(Animations, "GraphicsLayerCA %p %llu addAnimation %s (can be accelerated %d)", this, primaryLayerID(), animationName.utf8().data(), animationCanBeAccelerated(valueList, anim));
 
     ASSERT(!animationName.isEmpty());
 
@@ -2351,7 +2351,20 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
             || commitState.ancestorWithTransformAnimationIntersectsCoverageRect // FIXME: Compute backing exactly for descendants of animating layers.
             || (isRunningTransformAnimation() && !animationExtent()); // Create backing if we don't know the animation extent.
 
-        LOG_WITH_STREAM(Compositing, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking);
+#if !LOG_DISABLED
+        if (requiresBacking) {
+            auto reasonForBacking = [&]() -> const char* {
+                if (m_intersectsCoverageRect)
+                    return "intersectsCoverageRect";
+                
+                if (commitState.ancestorWithTransformAnimationIntersectsCoverageRect)
+                    return "ancestor with transform";
+                
+                return "has transform animation with unknown extent";
+            };
+            LOG_WITH_STREAM(Compositing, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking << " (" << reasonForBacking() << ")");
+        }
+#endif
 
         m_layer->setBackingStoreAttached(requiresBacking);
         if (m_layerClones) {

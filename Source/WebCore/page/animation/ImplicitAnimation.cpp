@@ -147,7 +147,7 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
         setNeedsStyleRecalc(element());
 }
 
-void ImplicitAnimation::endAnimation()
+void ImplicitAnimation::endAnimation(bool)
 {
     if (auto* renderer = compositedRenderer())
         renderer->transitionFinished(m_animatingProperty);
