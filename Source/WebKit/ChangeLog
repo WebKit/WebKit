@@ -1,3 +1,13 @@
+2018-07-23  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Fix detection of held modifier keys for key events
+        https://bugs.webkit.org/show_bug.cgi?id=187862
+
+        Reviewed by Fujii Hironori.
+
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::IsKeyInDownState): Use requested modifier not VK_MENU
+
 2018-07-20  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r233925): Can't go into PiP twice

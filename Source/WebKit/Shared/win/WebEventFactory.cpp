@@ -102,7 +102,7 @@ static inline int clickCount(WebEvent::Type type, WebMouseEvent::Button button, 
 
 static inline bool IsKeyInDownState(int vk)
 {
-    return ::GetKeyState(VK_MENU) & 0x8000;
+    return ::GetKeyState(vk) & 0x8000;
 }
 
 static inline WebEvent::Modifiers modifiersForEvent(WPARAM wparam)
