@@ -1,3 +1,69 @@
+2018-07-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234075. rdar://problem/42451525
+
+    DFG AbstractInterpreter: CheckArray filters array modes for DirectArguments/ScopedArguments using only NonArray
+    https://bugs.webkit.org/show_bug.cgi?id=187827
+    rdar://problem/42146858
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    New regression tests.
+    
+    * stress/direct-arguments-check-array.js: Added.
+    (setup.f2):
+    (setup):
+    (forOfArray):
+    (forOfArgs):
+    (callEveryOnArgs):
+    * stress/scoped-arguments-check-array.js: Added.
+    (setup.foo):
+    (setup.f2):
+    (setup):
+    (forOfArray):
+    (forOfArgs):
+    (callEveryOnArgs):
+    
+    Source/JavaScriptCore:
+    
+    When filtering array modes for DirectArguments or ScopedArguments, we need to allow for the possibility
+    that they can either be NonArray or NonArrayWithArrayStorage (aka ArrayStorageShape).
+    We can't end up with other shapes, Int32, Double, etc because GenericArguments sets 
+    InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero which will cause us to go down a
+    putByIndex() path that doesn't change the shape.
+    
+    * dfg/DFGArrayMode.h:
+    (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234075 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-20  Michael Saboff  <msaboff@apple.com>
+
+            DFG AbstractInterpreter: CheckArray filters array modes for DirectArguments/ScopedArguments using only NonArray
+            https://bugs.webkit.org/show_bug.cgi?id=187827
+            rdar://problem/42146858
+
+            Reviewed by Saam Barati.
+
+            New regression tests.
+
+            * stress/direct-arguments-check-array.js: Added.
+            (setup.f2):
+            (setup):
+            (forOfArray):
+            (forOfArgs):
+            (callEveryOnArgs):
+            * stress/scoped-arguments-check-array.js: Added.
+            (setup.foo):
+            (setup.f2):
+            (setup):
+            (forOfArray):
+            (forOfArgs):
+            (callEveryOnArgs):
+
 2018-07-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip JSC test stress/keep-checks-when-converting-to-lazy-js-constant-in-strength-reduction.js

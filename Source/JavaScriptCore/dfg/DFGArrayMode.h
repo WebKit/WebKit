@@ -442,6 +442,9 @@ public:
             return arrayModesWithIndexingShape(ArrayStorageShape);
         case Array::SlowPutArrayStorage:
             return arrayModesWithIndexingShapes(SlowPutArrayStorageShape, ArrayStorageShape);
+        case Array::DirectArguments:
+        case Array::ScopedArguments:
+            return arrayModesWithIndexingShapes(ArrayStorageShape, NonArray);
         default:
             return asArrayModes(NonArray);
         }
