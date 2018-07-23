@@ -883,3 +883,7 @@ webkit.org/b/184937 transitions/opacity-transition-zindex.html [ Skip ]
 webkit.org/b/186362 [ Release ] http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Skip ]
 
 webkit.org/b/186425 [ Debug ] inspector/console/webcore-logging.html [ Pass Failure ]
+
+webkit.org/b/183705 http/tests/workers/service/client-added-to-clients-when-restored-from-page-cache.html [ Pass Failure ]
+webkit.org/b/183705 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Pass Failure ]
+webkit.org/b/183705 http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Pass Failure ]

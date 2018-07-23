@@ -1,3 +1,13 @@
+2018-07-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark three service worker clients tests as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=183705
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-07-22  Dean Jackson  <dino@apple.com>
 
         fullscreen env() variables should have initial values
