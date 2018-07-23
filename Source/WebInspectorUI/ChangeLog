@@ -1,3 +1,16 @@
+2018-07-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: remove odd-looking top border
+        https://bugs.webkit.org/show_bug.cgi?id=187885
+
+        Reviewed by Matt Baker.
+
+        This border doesn't exist in the light mode, and it shouldn't be in the dark mode either.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (body .toolbar):
+
 2018-07-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: Layers tab background should be dark
