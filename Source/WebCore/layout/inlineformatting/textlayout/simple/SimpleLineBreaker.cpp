@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FontCascade.h"
+#include "Hyphenation.h"
 #include "InlineFormattingContext.h"
 #include "LayoutContext.h"
 #include "RenderStyle.h"
@@ -66,7 +67,7 @@ static inline unsigned adjustedEndPosition(const TextRun& textRun)
 void SimpleLineBreaker::Line::setTextAlign(TextAlignMode textAlign)
 {
     m_style.textAlign = textAlign;
-    m_collectExpansionOpportunities = textAlign == TextAlignMode::Justify; 
+    m_collectExpansionOpportunities = textAlign == TextAlignMode::Justify;
 }
 
 float SimpleLineBreaker::Line::adjustedLeftForTextAlign(TextAlignMode textAlign) const
@@ -115,7 +116,7 @@ void SimpleLineBreaker::Line::justifyRuns()
             return;
         }
         auto& layoutRun = m_layoutRuns.at(runIndex++);
-        auto expansionForRun = expansionEntry.count * expansion; 
+        auto expansionForRun = expansionEntry.count * expansion;
 
         layoutRun.setExpansion(expansionEntry.behavior, expansionForRun);
         layoutRun.setLeft(layoutRun.left() + accumulatedExpansion);
@@ -135,6 +136,7 @@ void SimpleLineBreaker::Line::adjustRunsForTextAlign(bool lastLine)
         justifyRuns();
         return;
     }
+
     auto adjustedLeft = adjustedLeftForTextAlign(textAlign);
     if (adjustedLeft == m_left)
         return;
@@ -164,7 +166,7 @@ void SimpleLineBreaker::Line::collectExpansionOpportunities(const TextRun& textR
         // Create an entry for this new layout run.
         m_expansionOpportunityList.append({ });
     }
-    
+
     if (!textRun.length())
         return;
 
@@ -174,7 +176,7 @@ void SimpleLineBreaker::Line::collectExpansionOpportunities(const TextRun& textR
         ++m_expansionOpportunityList.last().count;
 
     if (textRun.isNonWhitespace())
-        m_lastNonWhitespaceExpansionOppportunity = m_expansionOpportunityList.last(); 
+        m_lastNonWhitespaceExpansionOppportunity = m_expansionOpportunityList.last();
 }
 
 void SimpleLineBreaker::Line::closeLastRun()
@@ -183,12 +185,12 @@ void SimpleLineBreaker::Line::closeLastRun()
         return;
 
     m_layoutRuns.last().setIsEndOfLine();
-    
+
     // Forbid trailing expansion for the last run on line.
     if (!m_collectExpansionOpportunities || m_expansionOpportunityList.isEmpty())
         return;
-    
-    auto& lastExpansionEntry = m_expansionOpportunityList.last(); 
+
+    auto& lastExpansionEntry = m_expansionOpportunityList.last();
     auto expansionBehavior = lastExpansionEntry.behavior;
     // Remove allow and add forbid.
     expansionBehavior ^= AllowTrailingExpansion;
@@ -215,11 +217,13 @@ void SimpleLineBreaker::Line::append(const TextRun& textRun)
 
     // New line needs new run.
     if (textRunCreatesNewLayoutRun)
-        m_layoutRuns.append({ start, end, previousLogicalRight, previousLogicalRight + textRun.width() });
+        m_layoutRuns.append({ start, end, previousLogicalRight, previousLogicalRight + textRun.width(), textRun.hasHyphen() });
     else {
         auto& lastRun = m_layoutRuns.last();
         lastRun.setEnd(end);
         lastRun.setRight(lastRun.right() + textRun.width());
+        if (textRun.hasHyphen())
+            lastRun.setHasHyphen();
     }
 
     m_lastTextRun = textRun;
@@ -267,7 +271,7 @@ void SimpleLineBreaker::Line::collapseTrailingWhitespace()
 void SimpleLineBreaker::Line::reset()
 {
     m_runsWidth = 0;
-    m_firstRunIndex = m_layoutRuns.size(); 
+    m_firstRunIndex = m_layoutRuns.size();
     m_availableWidth = 0;
     m_trailingWhitespaceWidth  = 0;
     m_expansionOpportunityList.clear();
@@ -278,14 +282,22 @@ void SimpleLineBreaker::Line::reset()
 
 // FIXME: Use variable style based on the current text run.
 SimpleLineBreaker::Style::Style(const RenderStyle& style)
-    : wrapLines(style.autoWrap())
+    : font(style.fontCascade())
+    , wrapLines(style.autoWrap())
     , breakAnyWordOnOverflow(style.wordBreak() == WordBreak::BreakAll && wrapLines)
     , breakFirstWordOnOverflow(breakAnyWordOnOverflow || (style.breakWords() && (wrapLines || style.preserveNewline())))
     , collapseWhitespace(style.collapseWhiteSpace())
     , preWrap(wrapLines && !collapseWhitespace)
     , preserveNewline(style.preserveNewline())
     , textAlign(style.textAlign())
+    , shouldHyphenate(style.hyphens() == Hyphens::Auto && canHyphenate(style.locale()))
+    , hyphenStringWidth(shouldHyphenate ? font.width(WebCore::TextRun(String(style.hyphenString()))) : 0)
+    , hyphenLimitBefore(style.hyphenationLimitBefore() < 0 ? 2 : style.hyphenationLimitBefore())
+    , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())
+    , locale(style.locale())
 {
+    if (style.hyphenationLimitLines() > -1)
+        hyphenLimitLines = style.hyphenationLimitLines();
 }
 
 SimpleLineBreaker::SimpleLineBreaker(const Vector<TextRun>& textRuns, const TextContentProvider& contentProvider, LineConstraintList&& lineConstraintList, const RenderStyle& style)
@@ -314,15 +326,24 @@ Vector<LayoutRun> SimpleLineBreaker::runs()
 
 void SimpleLineBreaker::handleLineEnd()
 {
-    auto lineHasContent = m_currentLine.hasContent(); 
+    auto lineHasContent = m_currentLine.hasContent();
     if (lineHasContent) {
         ASSERT(m_layoutRuns.size());
         ++m_numberOfLines;
         m_currentLine.closeLastRun();
 
-        auto lastLine = !m_textRunList.current(); 
+        auto lastLine = !m_textRunList.current();
         m_currentLine.adjustRunsForTextAlign(lastLine);
     }
+    // Check if we need to disable hyphenation.
+    if (m_style.hyphenLimitLines) {
+        if (!lineHasContent || (m_layoutRuns.size() && !m_layoutRuns.last().hasHyphen()))
+            m_numberOfPrecedingLinesWithHyphen = 0;
+        else
+            ++m_numberOfPrecedingLinesWithHyphen;
+        m_hyphenationIsDisabled = m_numberOfPrecedingLinesWithHyphen >= *m_style.hyphenLimitLines;
+    }
+
     m_previousLineHasNonForcedContent = lineHasContent && m_currentLine.availableWidth() >= 0;
     m_currentLine.reset();
 }
@@ -391,6 +412,14 @@ void SimpleLineBreaker::createRunsForLine()
         }
 
         ASSERT(textRun->isNonWhitespace());
+        // Find out if this non-whitespace fragment has a hyphen where we can break.
+        if (m_style.shouldHyphenate && !m_hyphenationIsDisabled) {
+            if (!splitTextRun(*textRun)) {
+                ++m_textRunList;
+                break;
+            }
+        }
+
         // Non-breakable non-whitespace first run. Add it to the current line. -it overflows though.
         if (!m_currentLine.hasContent()) {
             handleOverflownRun();
@@ -495,6 +524,63 @@ void SimpleLineBreaker::collapseTrailingWhitespace()
     m_currentLine.collapseTrailingWhitespace();
 }
 
+std::optional<ContentPosition> SimpleLineBreaker::hyphenPositionBefore(const TextRun& textRun, ContentPosition before) const
+{
+    // Enough characters before the split position?
+    if (before <= textRun.start() + m_style.hyphenLimitBefore)
+        return { };
+
+    // Adjust before to accommodate the limit-after value (this is the last potential hyphen location).
+    before = std::min(before, textRun.end() - m_style.hyphenLimitAfter + 1);
+
+    auto hyphenLocation = m_contentProvider.hyphenPositionBefore(textRun.start(), textRun.end(), before);
+    if (!hyphenLocation)
+        return { };
+
+    ASSERT(hyphenLocation >= textRun.start() && hyphenLocation <= textRun.end());
+    // Check if there are enough characters before and after the hyphen.
+    if (*hyphenLocation < textRun.start() + m_style.hyphenLimitBefore || m_style.hyphenLimitAfter > (textRun.end() - *hyphenLocation))
+        return { };
+
+    return hyphenLocation;
+}
+
+std::optional<ContentPosition> SimpleLineBreaker::adjustSplitPositionWithHyphenation(const TextRun& textRun, ContentPosition splitPosition, float leftSideWidth) const
+{
+    ASSERT(textRun.isNonWhitespace());
+
+    // Use hyphen?
+    if (!m_style.shouldHyphenate || m_hyphenationIsDisabled)
+        return { };
+
+    // Check if there are enough characters in the run.
+    auto runLength = textRun.length();
+    if (m_style.hyphenLimitBefore >= runLength || m_style.hyphenLimitAfter >= runLength || m_style.hyphenLimitBefore + m_style.hyphenLimitAfter > runLength)
+        return { };
+
+    // FIXME: This is a workaround for webkit.org/b/169613. See maxPrefixWidth computation in tryHyphenating().
+    // It does not work properly with non-collapsed leading tabs when font is enlarged.
+    auto adjustedAvailableWidth = m_currentLine.availableWidth() - m_style.hyphenStringWidth;
+    if (m_currentLine.hasContent())
+        adjustedAvailableWidth += m_style.font.spaceWidth();
+
+    if (!enoughWidthForHyphenation(adjustedAvailableWidth, m_style.font.pixelSize()))
+        return { };
+
+    // Find the split position where hyphen surely fits (we might be able to fit the hyphen at the split position).
+    auto left = textRun.start();
+    auto right = splitPosition;
+    while (leftSideWidth + m_style.hyphenStringWidth > m_currentLine.availableWidth()) {
+        if (--right <= left)
+            return { }; // No space for hyphen.
+        // FIXME: for correctness (kerning) we should instead measure the left side.
+        leftSideWidth -= m_contentProvider.width(right, right + 1, 0);
+    }
+
+    // Find out if there's an actual hyphen opportinity at this position (or before).
+    return hyphenPositionBefore(textRun, right + 1);
+}
+
 bool SimpleLineBreaker::splitTextRun(const TextRun& textRun)
 {
     // Single character handling.
@@ -539,16 +625,24 @@ TextRunSplitPair SimpleLineBreaker::split(const TextRun& textRun, float leftSide
         }
     }
 
-    // Keep at least one character on empty lines.f
+    // Keep at least one character on empty lines.
+    bool splitHasHypen = false;
     left = textRun.start();
     if (left >= right && !m_currentLine.hasContent()) {
         right = left + 1;
-        leftSideWidth = m_contentProvider.width(textRun.start(), right, 0);
+        leftSideWidth = m_contentProvider.width(left, right, 0);
+    } else if (textRun.isNonWhitespace()) {
+        if (auto hyphenPosition = adjustSplitPositionWithHyphenation(textRun, right, leftSideWidth)) {
+            splitHasHypen = true;
+            right = *hyphenPosition;
+            leftSideWidth = m_contentProvider.width(left, right, 0) + m_style.hyphenStringWidth;
+        }
     }
 
     auto rightSideWidth = m_contentProvider.width(right, textRun.end(), 0);
     if (textRun.isNonWhitespace())
-        return { TextRun::createNonWhitespaceRun(left, right, leftSideWidth), TextRun::createNonWhitespaceRun(right, textRun.end(), rightSideWidth) };
+        return { splitHasHypen ? TextRun::createNonWhitespaceRunWithHyphen(left, right, leftSideWidth) : TextRun::createNonWhitespaceRun(left, right, leftSideWidth),
+            TextRun::createNonWhitespaceRun(right, textRun.end(), rightSideWidth) };
 
     // We never split collapsed whitespace.
     ASSERT(textRun.isWhitespace());

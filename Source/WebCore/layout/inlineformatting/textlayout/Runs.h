@@ -46,11 +46,12 @@ public:
     };
     static TextRun createWhitespaceRun(ContentPosition start, ContentPosition end, float width, bool isCollapsed);
     static TextRun createNonWhitespaceRun(ContentPosition start, ContentPosition end, float width);
+    static TextRun createNonWhitespaceRunWithHyphen(ContentPosition start, ContentPosition end, float width);
     static TextRun createSoftLineBreakRun(ContentPosition);
     static TextRun createHardLineBreakRun(ContentPosition);
 
     TextRun() = default;
-    TextRun(ContentPosition start, ContentPosition end, Type, float width = 0, bool isCollapsed = false);
+    TextRun(ContentPosition start, ContentPosition end, Type, float width = 0, bool isCollapsed = false, bool hasHyphen = false);
 
     ContentPosition start() const;
     ContentPosition end() const;
@@ -68,6 +69,7 @@ public:
     Type type() const { return m_type; }
 
     void setIsCollapsed(bool isCollapsed) { m_isCollapsed = isCollapsed; }
+    bool hasHyphen() const { return m_hasHyphen; }
     void setWidth(float width) { m_width = width; }
 
 private:
@@ -76,11 +78,12 @@ private:
     Type m_type { Type::Invalid };
     float m_width { 0 };
     bool m_isCollapsed { false };
+    bool m_hasHyphen { false };
 };
 
 struct LayoutRun {
 public:
-    LayoutRun(ContentPosition start, ContentPosition end, float left, float right);
+    LayoutRun(ContentPosition start, ContentPosition end, float left, float right, bool hasHyphen);
 
     ContentPosition start() const { return m_start; }
     ContentPosition end() const { return m_end; }
@@ -98,6 +101,8 @@ public:
     void setIsEndOfLine() { m_isEndOfLine = true; }
 
     void setExpansion(ExpansionBehavior, float expansion);
+    void setHasHyphen() { m_hasHyphen = true; }
+    bool hasHyphen() const { return m_hasHyphen; }
 
 private:
     ContentPosition m_start { 0 };
@@ -105,6 +110,7 @@ private:
     float m_left { 0 };
     float m_right { 0 };
     bool m_isEndOfLine { false };
+    bool m_hasHyphen { false };
     float m_expansion { 0 };
     ExpansionBehavior m_expansionBehavior { ForbidLeadingExpansion | ForbidTrailingExpansion };
 };
@@ -144,11 +150,12 @@ inline ConstVectorIterator<T>& ConstVectorIterator<T>::operator++()
     return *this;
 }
 
-inline LayoutRun::LayoutRun(ContentPosition start, ContentPosition end, float left, float right)
+inline LayoutRun::LayoutRun(ContentPosition start, ContentPosition end, float left, float right, bool hasHyphen)
     : m_start(start)
     , m_end(end)
     , m_left(left)
     , m_right(right)
+    , m_hasHyphen(hasHyphen)
 {
 }
 
@@ -168,6 +175,11 @@ inline TextRun TextRun::createNonWhitespaceRun(ContentPosition start, ContentPos
     return { start, end, Type::NonWhitespace, width };
 }
 
+inline TextRun TextRun::createNonWhitespaceRunWithHyphen(ContentPosition start, ContentPosition end, float width)
+{
+    return { start, end, Type::NonWhitespace, width, false, true };
+}
+
 inline TextRun TextRun::createSoftLineBreakRun(ContentPosition position)
 {
     return { position, position + 1, Type::SoftLineBreak };
@@ -178,12 +190,13 @@ inline TextRun TextRun::createHardLineBreakRun(ContentPosition position)
     return { position, position, Type::HardLineBreak };
 }
 
-inline TextRun::TextRun(ContentPosition start, ContentPosition end, Type type, float width, bool isCollapsed)
+inline TextRun::TextRun(ContentPosition start, ContentPosition end, Type type, float width, bool isCollapsed, bool hasHyphen)
     : m_start(start)
     , m_end(end)
     , m_type(type)
     , m_width(width)
     , m_isCollapsed(isCollapsed)
+    , m_hasHyphen(hasHyphen)
 {
 }
 

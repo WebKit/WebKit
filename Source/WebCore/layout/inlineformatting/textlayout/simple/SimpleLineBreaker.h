@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class FontCascade;
 class RenderStyle;
 
 namespace Layout {
@@ -62,6 +63,7 @@ private:
     struct Style {
         explicit Style(const RenderStyle&);
 
+        const FontCascade& font;
         bool wrapLines { false };
         bool breakAnyWordOnOverflow { false };
         bool breakFirstWordOnOverflow { false };
@@ -69,6 +71,12 @@ private:
         bool preWrap { false };
         bool preserveNewline { false };
         TextAlignMode textAlign { TextAlignMode::Left };
+        bool shouldHyphenate;
+        float hyphenStringWidth;
+        ItemPosition hyphenLimitBefore;
+        ItemPosition hyphenLimitAfter;
+        AtomicString locale;
+        std::optional<unsigned> hyphenLimitLines;
     };
 
     class TextRunList {
@@ -113,13 +121,14 @@ private:
             bool collapseWhitespace { false };
             TextAlignMode textAlign { TextAlignMode::Left };
         };
+
         float adjustedLeftForTextAlign(TextAlignMode) const;
         void justifyRuns();
         void collectExpansionOpportunities(const TextRun&, bool textRunCreatesNewLayoutRun);
 
         Vector<LayoutRun>& m_layoutRuns;
         Style m_style;
-    
+
         float m_runsWidth { 0 };
         float m_availableWidth { 0 };
         float m_left { 0 };
@@ -146,6 +155,8 @@ private:
     void collapseTrailingWhitespace();
     bool splitTextRun(const TextRun&);
     TextRunSplitPair split(const TextRun&, float leftSideMaximumWidth) const;
+    std::optional<ContentPosition> hyphenPositionBefore(const TextRun&, ContentPosition before) const;
+    std::optional<ContentPosition> adjustSplitPositionWithHyphenation(const TextRun&, ContentPosition splitPosition, float leftSideWidth) const;
     LineConstraint lineConstraint(float verticalPosition);
     float verticalPosition() const { return m_numberOfLines * m_lineHeight; }
 
@@ -163,6 +174,8 @@ private:
     unsigned m_numberOfLines { 0 };
     bool m_previousLineHasNonForcedContent { false };
     float m_lineHeight { 0 };
+    bool m_hyphenationIsDisabled { false };
+    unsigned m_numberOfPrecedingLinesWithHyphen { 0 };
 };
 
 inline std::optional<TextRun> SimpleLineBreaker::TextRunList::current() const

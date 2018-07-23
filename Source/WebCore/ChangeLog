@@ -1,3 +1,40 @@
+2018-07-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LCF][IFC] Add support for hyphenation.
+        https://bugs.webkit.org/show_bug.cgi?id=187913
+
+        Reviewed by Antti Koivisto.
+
+        Move the hyphenation logic over from SimpleLineLayout::TextFragmentIterator.
+
+        * layout/inlineformatting/textlayout/Runs.h:
+        (WebCore::Layout::TextRun::hasHyphen const):
+        (WebCore::Layout::LayoutRun::setHasHyphen):
+        (WebCore::Layout::LayoutRun::hasHyphen const):
+        (WebCore::Layout::LayoutRun::LayoutRun):
+        (WebCore::Layout::TextRun::createNonWhitespaceRunWithHyphen):
+        (WebCore::Layout::TextRun::TextRun):
+        * layout/inlineformatting/textlayout/TextContentProvider.cpp:
+        (WebCore::Layout::TextContentProvider::findTextItemSlow const):
+        (WebCore::Layout::TextContentProvider::width const):
+        (WebCore::Layout::TextContentProvider::hyphenPositionBefore const):
+        * layout/inlineformatting/textlayout/TextContentProvider.h:
+        * layout/inlineformatting/textlayout/simple/SimpleLineBreaker.cpp:
+        (WebCore::Layout::SimpleLineBreaker::Line::setTextAlign):
+        (WebCore::Layout::SimpleLineBreaker::Line::justifyRuns):
+        (WebCore::Layout::SimpleLineBreaker::Line::adjustRunsForTextAlign):
+        (WebCore::Layout::SimpleLineBreaker::Line::collectExpansionOpportunities):
+        (WebCore::Layout::SimpleLineBreaker::Line::closeLastRun):
+        (WebCore::Layout::SimpleLineBreaker::Line::append):
+        (WebCore::Layout::SimpleLineBreaker::Line::reset):
+        (WebCore::Layout::SimpleLineBreaker::Style::Style):
+        (WebCore::Layout::SimpleLineBreaker::handleLineEnd):
+        (WebCore::Layout::SimpleLineBreaker::createRunsForLine):
+        (WebCore::Layout::SimpleLineBreaker::hyphenPositionBefore const):
+        (WebCore::Layout::SimpleLineBreaker::adjustSplitPositionWithHyphenation const):
+        (WebCore::Layout::SimpleLineBreaker::split const):
+        * layout/inlineformatting/textlayout/simple/SimpleLineBreaker.h:
+
 2018-07-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Querying the current time of a finished CSSAnimation after removing its target leads to a crash

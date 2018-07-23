@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FontCascade.h"
+#include "Hyphenation.h"
 #include "RenderStyle.h"
 #include "SimpleTextRunGenerator.h"
 #include <wtf/IsoMallocInlines.h>
@@ -79,26 +80,27 @@ static bool contains(ContentPosition position, const TextContentProvider::TextIt
     return textItem.start <= position && position < textItem.end;
 }
 
+const TextContentProvider::TextItem* TextContentProvider::findTextItemSlow(ContentPosition position) const
+{
+    // Since this is an iterator like class, check the next item first (instead of starting the search from the beginning).
+    if (auto* textItem = (++m_textContentIterator).current()) {
+        if (contains(position, *textItem))
+            return textItem;
+    }
+
+    m_textContentIterator.reset();
+    while (auto* textItem = m_textContentIterator.current()) {
+        if (contains(position, *textItem))
+            return textItem;
+        ++m_textContentIterator;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 float TextContentProvider::width(ContentPosition from, ContentPosition to, float xPosition) const
 {
-    auto textItemPositionSlow = [&]() -> unsigned {
-        // Since this is an iterator like class, check the next item first (instead of starting the search from the beginning).
-        if (auto* textItem = (++m_textContentIterator).current()) {
-            if (contains(from, *textItem))
-                return textItem->start;
-        }
-
-        m_textContentIterator.reset();
-        while (auto* textItem = m_textContentIterator.current()) {
-            if (contains(from, *textItem))
-                return textItem->start;
-            ++m_textContentIterator;
-        }
-
-        ASSERT_NOT_REACHED();
-        return 0;
-    };
-
     if (from >= to) {
         ASSERT_NOT_REACHED();
         return 0;
@@ -113,7 +115,7 @@ float TextContentProvider::width(ContentPosition from, ContentPosition to, float
     float width = 0;
     auto length = to - from;
     auto* textItem = m_textContentIterator.current();
-    auto startPosition = from - (textItem && contains(from, *textItem) ? textItem->start : textItemPositionSlow());
+    auto startPosition = from - (textItem && contains(from, *textItem) ? textItem->start : findTextItemSlow(from)->start);
 
     while (length) {
         textItem = m_textContentIterator.current();
@@ -188,6 +190,30 @@ float TextContentProvider::fixedPitchWidth(String text, const TextItem::Style& s
     }
 
     return width;
+}
+
+std::optional<ContentPosition> TextContentProvider::hyphenPositionBefore(ContentPosition from, ContentPosition to, ContentPosition before) const
+{
+    auto contentLength = length();
+    if (before >= contentLength || before < from || before > to) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto* textItem = m_textContentIterator.current();
+    if (!textItem || !contains(before, *textItem))
+        textItem = findTextItemSlow(before);
+
+    auto fromItemPosition = from - textItem->start;
+    auto stringForHyphenLocation = StringView(textItem->text).substring(fromItemPosition, to - from);
+
+    // adjustedBefore -> ContentPosition -> ItemPosition -> run position.
+    auto adjustedBefore = before - from;
+    auto hyphenLocation = lastHyphenLocation(stringForHyphenLocation, adjustedBefore, textItem->style.locale);
+    if (!hyphenLocation)
+        return { };
+
+    return from + hyphenLocation;
 }
 
 unsigned TextContentProvider::length() const

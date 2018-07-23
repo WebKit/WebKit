@@ -77,6 +77,7 @@ public:
 
     unsigned length() const;
     float width(ContentPosition from, ContentPosition to, float xPosition) const;
+    std::optional<ContentPosition> hyphenPositionBefore(ContentPosition from, ContentPosition to, ContentPosition before) const;
 
     class Iterator {
     public:
@@ -97,6 +98,7 @@ public:
 private:
     friend class Iterator;
 
+    const TextItem* findTextItemSlow(ContentPosition) const;
     float textWidth(const TextItem&, ItemPosition from, ItemPosition to, float xPosition) const;
     float fixedPitchWidth(String, const TextItem::Style&, ItemPosition from, ItemPosition to, float xPosition) const;
 
