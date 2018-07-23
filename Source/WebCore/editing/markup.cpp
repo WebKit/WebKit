@@ -466,7 +466,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
             newInlineStyle = EditingStyle::create();
 
         if (is<StyledElement>(element) && downcast<StyledElement>(element).inlineStyle())
-            newInlineStyle->overrideWithStyle(downcast<StyledElement>(element).inlineStyle());
+            newInlineStyle->overrideWithStyle(*downcast<StyledElement>(element).inlineStyle());
 
         if (shouldAnnotateOrForceInline) {
             if (shouldAnnotate())
@@ -504,7 +504,7 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
     }
 
     if (m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode())
-        m_wrappingStyle = EditingStyle::wrappingStyleForSerialization(m_highestNodeToBeSerialized->parentNode(), shouldAnnotate());
+        m_wrappingStyle = EditingStyle::wrappingStyleForSerialization(*m_highestNodeToBeSerialized->parentNode(), shouldAnnotate());
 
     return traverseNodesForSerialization(startNode, pastEnd, EmitString);
 }

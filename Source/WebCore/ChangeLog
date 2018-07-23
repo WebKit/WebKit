@@ -1,3 +1,44 @@
+2018-07-23  Sam Weinig  <sam@webkit.org>
+
+        Convert some obvious never-null pointers to references in the editing code
+        https://bugs.webkit.org/show_bug.cgi?id=187914
+
+        Reviewed by Dean Jackson.
+
+        Fixup trivial cases of never-null pointers that really should be references.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::shouldApplyInlineStyleToRun):
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement):
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement):
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::overrideWithStyle):
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement const):
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement const):
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfAttributes const):
+        (WebCore::EditingStyle::extractConflictingImplicitStyleOfAttributes const):
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode const):
+        (WebCore::EditingStyle::elementIsStyledSpanOrHTMLEquivalent):
+        (WebCore::EditingStyle::mergeInlineStyleOfElement):
+        (WebCore::EditingStyle::wrappingStyleForSerialization):
+        (WebCore::EditingStyle::legacyFontSize const):
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::legacyFontSizeFromCSSValue):
+        * editing/EditingStyle.h:
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement const):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartCSSPropertyValue):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::isInlineNodeWithStyle):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        (WebCore::StyledMarkupAccumulator::serializeNodes):
+
 2018-07-23  Per Arne Vollan  <pvollan@apple.com>
 
         WebCore::primaryScreenDisplayID() always return 0

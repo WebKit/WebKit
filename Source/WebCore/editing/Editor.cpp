@@ -1005,7 +1005,7 @@ String Editor::selectionStartCSSPropertyValue(CSSPropertyID propertyID)
         return String();
 
     if (propertyID == CSSPropertyFontSize)
-        return String::number(selectionStyle->legacyFontSize(&document()));
+        return String::number(selectionStyle->legacyFontSize(document()));
     return selectionStyle->style()->getPropertyValue(propertyID);
 }
 
