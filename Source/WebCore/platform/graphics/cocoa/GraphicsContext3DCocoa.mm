@@ -175,18 +175,36 @@ static void identifyAndSetCurrentGPU(PlatformGraphicsContext3D contextObj, CGLPi
     CGLError error = CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount, &virtualScreenCount);
     ASSERT(error == kCGLNoError);
 
+    GLint firstAcceleratedScreen = -1;
+
     for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen) {
         GLint rendererID = 0;
         error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFARendererID, &rendererID);
         ASSERT(error == kCGLNoError);
         if (error != kCGLNoError)
             continue;
+
         if (rendererID == preferredRendererID) {
             error = CGLSetVirtualScreen(contextObj, virtualScreen);
             ASSERT(error == kCGLNoError);
             LOG(WebGL, "Context (%p) set to GPU renderer (%d).", contextObj, rendererID);
-            break;
+            return;
         }
+
+        if (firstAcceleratedScreen < 0) {
+            GLint isAccelerated = 0;
+            error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFAAccelerated, &isAccelerated);
+            ASSERT(error == kCGLNoError);
+            if (isAccelerated)
+                firstAcceleratedScreen = virtualScreen;
+        }
+    }
+
+    // No renderer match found; set to first hardware-accelerated virtual screen.
+    if (firstAcceleratedScreen >= 0) {
+        error = CGLSetVirtualScreen(contextObj, firstAcceleratedScreen);
+        ASSERT(error == kCGLNoError);
+        LOG(WebGL, "Renderer (%d) not matched; Context (%p) set to virtual screen (%d).", preferredRendererID, contextObj, firstAcceleratedScreen);
     }
 }
 #endif

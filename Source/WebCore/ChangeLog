@@ -1,3 +1,21 @@
+2018-07-23  Justin Fan  <justin_fan@apple.com>
+
+        [macOS] Ensure that WebGL contexts are always set to an accelerated virtual screen
+        https://bugs.webkit.org/show_bug.cgi?id=187923
+
+        Reviewed by Dean Jackson.
+
+        On eGPU displays, it is possible that CGL does not match the preferred renderer. 
+        In this case, and when the web process is blocked from accessing the window server, 
+        3D contexts *may* default to the software renderer. Ensure that even if this occurs,
+        we set the context to use a hardware-accelerated renderer/virtual screen.
+
+        No new tests. Existing behavior covered by existing tests.
+        Requires multiple screens, at least one attached to an eGPU, to stress. 
+
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::identifyAndSetCurrentGPU):
+
 2018-07-23  Sam Weinig  <sam@webkit.org>
 
         Convert some obvious never-null pointers to references in the editing code
