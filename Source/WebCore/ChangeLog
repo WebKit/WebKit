@@ -1,3 +1,18 @@
+2018-07-23  Per Arne Vollan  <pvollan@apple.com>
+
+        WebCore::primaryScreenDisplayID() always return 0
+        https://bugs.webkit.org/show_bug.cgi?id=187922
+        <rdar://problem/42286933>
+
+        Reviewed by Geoffrey Garen.
+
+        This function should return a valid display ID.
+
+        No new tests. Testing this requires a dual monitor setup.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::primaryScreenDisplayID):
+
 2018-07-23  Nan Wang  <n_wang@apple.com>
 
         AX: Press tab to highlight items on a webpage is not working with voiceover enabled

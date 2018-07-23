@@ -102,11 +102,9 @@ static ScreenProperties& screenProperties()
     return screenProperties;
 }
 
-// FIXME: This function only returns 0 for now.
 static PlatformDisplayID& primaryScreenDisplayID()
 {
-    static PlatformDisplayID primaryScreenDisplayID = 0;
-    return primaryScreenDisplayID;
+    return screenProperties().primaryDisplayID;
 }
 
 static GLint rendererIDForDisplayMask(GLuint displayMask)
