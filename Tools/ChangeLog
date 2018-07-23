@@ -1,3 +1,16 @@
+2018-07-23  Zalan Bujtas  <zalan@apple.com>
+
+        DRT relies on [webView display] to call -viewWillDraw on the WebHTMLView
+        https://bugs.webkit.org/show_bug.cgi?id=187924
+        <rdar://problem/41745884>
+
+        Reviewed by Simon Fraser.
+
+        WebKit relies on -viewWillDraw getting called on WebHTMLView, even though that view has not been marked as needing display.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+
 2018-07-23  Chris Dumez  <cdumez@apple.com>
 
         WebResourceLoadStatisticsStore fails to unregister itself as a MessageReceiver in its destructor
