@@ -526,7 +526,7 @@ class RunPythonTests(TestWithFailureCount):
     name = "webkitpy-test"
     description = ["python-tests running"]
     descriptionDone = ["python-tests"]
-    command = ["python", "./Tools/Scripts/test-webkitpy", "--verbose"]
+    command = ["python", "./Tools/Scripts/test-webkitpy", "--verbose", WithProperties("--%(configuration)s")]
     failedTestsFormatString = "%d python test%s failed"
 
     def start(self):

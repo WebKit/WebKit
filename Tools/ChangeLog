@@ -1,3 +1,26 @@
+2018-07-23  Daniel Bates  <dabates@apple.com>
+
+        test-webkitpy should take configuration command line options
+        https://bugs.webkit.org/show_bug.cgi?id=187872
+
+        Reviewed by David Kilzer.
+
+        Add --debug and --release optional command line options and teach the test bots to invoke test-webkitpy
+        with the appropriate configuration. At the moment these options are only meaningful on Mac since they
+        effect the configuration lldbWebKitTester is built with and we only build lldbWebKitTester on Mac.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunPythonTests): Pass the configuration to test-webkitpy. On Mac this will effect
+        how lldbWebKitTester is built. All other ports do not make use of the specified configuration.
+        * Scripts/webkitpy/test/main.py:
+        (_build_lldb_webkit_tester): Modified to take the configuration to build lldbWebKitTester. If
+        the specified configuration is None then we fall back to using the default configuration (as set
+        by script set-webkit-configuration).
+        (Tester._parse_args): Add command line options --debug and --release to build lldbWebKitTester
+        with a Debug configuration and a Release configuration, respectively
+        (Tester._run_tests): Pass the configuration to build lldbWebKitTester that we parsed from
+        the command line options. It may be None if neither --debug nor --release were passed.
+
 2018-07-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r233030.

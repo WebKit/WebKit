@@ -52,14 +52,14 @@ _host = SystemHost()
 _webkit_root = None
 
 
-def _build_lldb_webkit_tester():
+def _build_lldb_webkit_tester(configuration):
     if not _host.platform.is_mac():
         _log.error('lldbWebKitTester is not supported on this platform.')
         return False
     config = Config(_host.executive, _host.filesystem)
     build_lldbwebkittester = os.path.join(_webkit_root, 'Tools', 'Scripts', 'build-lldbwebkittester')
     try:
-        _host.executive.run_and_throw_if_fail([build_lldbwebkittester, config.flag_for_configuration(config.default_configuration())], quiet=True)
+        _host.executive.run_and_throw_if_fail([build_lldbwebkittester, config.flag_for_configuration(configuration or config.default_configuration())], quiet=True)
     except ScriptError as e:
         _log.error(e.message_with_output(output_limit=None))
         return False
@@ -137,6 +137,15 @@ class Tester(object):
 
     def _parse_args(self, argv=None):
         parser = optparse.OptionParser(usage='usage: %prog [options] [args...]')
+
+        #  Configuration options only effect the building of lldbWebKitTester.
+        configuration_group = optparse.OptionGroup(parser, 'Configuration options')
+        configuration_group.add_option('--debug', action='store_const', const='Debug', dest="configuration",
+            help='Set the configuration to Debug')
+        configuration_group.add_option('--release', action='store_const', const='Release', dest="configuration",
+            help='Set the configuration to Release')
+        parser.add_option_group(configuration_group)
+
         parser.add_option('-a', '--all', action='store_true', default=False,
                           help='run all the tests')
         parser.add_option('-c', '--coverage', action='store_true', default=False,
@@ -189,7 +198,7 @@ class Tester(object):
 
         if will_run_lldb_webkit_tests:
             self.printer.write_update('Building lldbWebKitTester ...')
-            if not _build_lldb_webkit_tester():
+            if not _build_lldb_webkit_tester(configuration=self._options.configuration):
                 _log.error('Failed to build lldbWebKitTester.')
                 return False
 
