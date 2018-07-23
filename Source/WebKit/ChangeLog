@@ -1,3 +1,20 @@
+2018-07-23  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add logging of Storage Access API use in experimental debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=187918
+        <rdar://problem/42509062>
+
+        Reviewed by Jiewen Tan.
+
+        Tested manually by looking at log output.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords):
+            This is just a clean-up change.
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener):
+            Both these now log proper info in debug mode.
+
 2018-07-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for input[type=color]

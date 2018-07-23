@@ -239,8 +239,7 @@ void ResourceLoadStatisticsMemoryStore::removeDataRecords(CompletionHandler<void
     }
 
 #if !RELEASE_LOG_DISABLED
-    if (m_debugLoggingEnabled)
-        RELEASE_LOG_INFO(ResourceLoadStatisticsDebug, "About to remove data records for %{public}s.", domainsToString(prevalentResourceDomains).utf8().data());
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "About to remove data records for %{public}s.", domainsToString(prevalentResourceDomains).utf8().data());
 #endif
 
     setDataRecordsBeingRemoved(true);
@@ -403,19 +402,32 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccess(String&& subFramePr
 
     auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
     if (shouldBlockCookies(subFrameStatistic)) {
+#if !RELEASE_LOG_DISABLED
+        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Cannot grant storage access to %{public}s since its cookies are blocked in third-party contexts.", subFramePrimaryDomain.utf8().data());
+#endif
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
     }
 
     if (!shouldPartitionCookies(subFrameStatistic)) {
+#if !RELEASE_LOG_DISABLED
+        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "No need to grant storage access to %{public}s since its cookies are neither blocked nor partitioned in third-party contexts.", subFramePrimaryDomain.utf8().data());
+#endif
         completionHandler(StorageAccessStatus::HasAccess);
         return;
     }
 
     auto userWasPromptedEarlier = promptEnabled && hasUserGrantedStorageAccessThroughPrompt(subFrameStatistic, topFramePrimaryDomain);
     if (promptEnabled && !userWasPromptedEarlier) {
+#if !RELEASE_LOG_DISABLED
+        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "About to ask the user whether they want to grant storage access to %{public}s under %{public}s or not.", subFramePrimaryDomain.utf8().data(), topFramePrimaryDomain.utf8().data());
+#endif
         completionHandler(StorageAccessStatus::RequiresUserPrompt);
         return;
+    } else if (userWasPromptedEarlier) {
+#if !RELEASE_LOG_DISABLED
+        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Storage access was granted to %{public}s under %{public}s.", subFramePrimaryDomain.utf8().data(), topFramePrimaryDomain.utf8().data());
+#endif
     }
 
     subFrameStatistic.timesAccessedAsFirstPartyDueToStorageAccessAPI++;
@@ -445,7 +457,7 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener(String&&
         return;
 
 #if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Grant storage access for %{public}s under opener %{public}s, %{public}s user interaction.", primaryDomainInNeedOfStorageAccess.utf8().data(), openerPrimaryDomain.utf8().data(), (isTriggeredByUserGesture ? "with" : "without"));
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "[Temporary combatibility fix] Storage access was granted for %{public}s under opener page from %{public}s, %{public}s user interaction in the opened window.", primaryDomainInNeedOfStorageAccess.utf8().data(), openerPrimaryDomain.utf8().data(), (isTriggeredByUserGesture ? "with" : "without"));
 #endif
     grantStorageAccessInternal(WTFMove(primaryDomainInNeedOfStorageAccess), WTFMove(openerPrimaryDomain), std::nullopt, openerPageID, false, [](bool) { });
 }
