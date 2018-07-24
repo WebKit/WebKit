@@ -1,3 +1,13 @@
+2018-07-23  Sihui Liu  <sihui_liu@apple.com>
+
+        CrashTracer: com.apple.WebKit.Storage at WebCore: WebCore::encodeKey
+        https://bugs.webkit.org/show_bug.cgi?id=187927
+        <rdar://problem/42516426>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/IndexedDB/key-conversion-exceptions-expected.txt:
+
 2018-07-20  Frederic Wang  <fwang@igalia.com>
 
         Import new WPT tests for custom elements

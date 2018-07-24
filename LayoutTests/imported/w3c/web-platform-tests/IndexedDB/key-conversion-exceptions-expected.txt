@@ -2,9 +2,7 @@
 FAIL IDBFactory cmp() static with throwing/invalid keys assert_throws: first key conversion with invalid key should throw DataError function "() => {
             receiver[method](invalid_key, throwing_key('getter 2'));
         }" threw object "getter 2: throwing from getter" that is not a DOMException DataError: property "code" is equal to undefined, expected 0
-FAIL IDBCursor continue() method with throwing/invalid keys assert_throws: key conversion with invalid key should throw DataError function "() => {
-            receiver[method](invalid_key);
-        }" threw object "InvalidStateError: Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end." that is not a DOMException DataError: property "code" is equal to 11, expected 0
+PASS IDBCursor continue() method with throwing/invalid keys 
 PASS IndexedDB: Exceptions thrown during key conversion 
 PASS IDBCursor update() method with throwing/invalid keys 
 PASS IDBKeyRange only() static with throwing/invalid keys 

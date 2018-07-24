@@ -1,3 +1,18 @@
+2018-07-23  Sihui Liu  <sihui_liu@apple.com>
+
+        CrashTracer: com.apple.WebKit.Storage at WebCore: WebCore::encodeKey
+        https://bugs.webkit.org/show_bug.cgi?id=187927
+        <rdar://problem/42516426>
+
+        Reviewed by Chris Dumez.
+
+        Add a new test case in existing test file to cover the crash case and update the expecation accordingly.
+
+        * storage/indexeddb/index-multientry-expected.txt:
+        * storage/indexeddb/index-multientry-private-expected.txt:
+        * storage/indexeddb/resources/index-multientry.js:
+        (addData):
+
 2018-07-23  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening
