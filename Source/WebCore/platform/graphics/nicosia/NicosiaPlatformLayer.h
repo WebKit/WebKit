@@ -29,6 +29,7 @@
 #pragma once
 
 #include "Color.h"
+#include "FilterOperations.h"
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
@@ -83,6 +84,7 @@ public:
                     bool contentsTilingChanged : 1;
                     bool opacityChanged : 1;
                     bool solidColorChanged : 1;
+                    bool filtersChanged : 1;
                     bool childrenChanged : 1;
                     bool maskChanged : 1;
                     bool replicaChanged : 1;
@@ -126,6 +128,8 @@ public:
 
         float opacity { 0 };
         WebCore::Color solidColor;
+
+        WebCore::FilterOperations filters;
 
         Vector<RefPtr<CompositionLayer>> children;
         RefPtr<CompositionLayer> replica;

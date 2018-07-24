@@ -1,5 +1,25 @@
 2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] Add FilterOperations member to CompositionLayer::LayerState
+        https://bugs.webkit.org/show_bug.cgi?id=187901
+
+        Reviewed by Carlos Garcia Campos.
+
+        Nicosia::CompositionLayer::LayerState gains a FilterOperations member
+        that can be assigned the list of filter operations for a given layer.
+        The corresponding filtersChanged boolean is added to LayerState::Delta.
+
+        CoordinatedGraphicsLayer::syncFilters() flips on that delta member,
+        which in turn causes the FilterOperations value to be updated during
+        the layer flush, in flushCompositingStateForThisLayerOnly().
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncFilters):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+
+2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Use adjusted position, anchor point, size values for Nicosia::CompositionLayer state
         https://bugs.webkit.org/show_bug.cgi?id=187899
 

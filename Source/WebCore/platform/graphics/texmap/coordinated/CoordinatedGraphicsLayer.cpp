@@ -645,6 +645,7 @@ void CoordinatedGraphicsLayer::syncFilters()
 
     m_layerState.filters = GraphicsLayer::filters();
     m_layerState.filtersChanged = true;
+    m_nicosia.delta.filtersChanged = true;
 }
 
 void CoordinatedGraphicsLayer::syncImageBacking()
@@ -817,6 +818,9 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     state.opacity = opacity();
                 if (localDelta.solidColorChanged)
                     state.solidColor = m_solidColor;
+
+                if (localDelta.filtersChanged)
+                    state.filters = filters();
 
                 if (localDelta.childrenChanged) {
                     state.children = WTF::map(children(),
