@@ -1,3 +1,53 @@
+2018-07-23  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Language tags are not canonicalized
+        https://bugs.webkit.org/show_bug.cgi?id=185836
+
+        Reviewed by Keith Miller.
+
+        Canonicalize language tags, replacing deprecated tag parts with the
+        preferred values. Remove broken support for algorithmic numbering systems,
+        that can cause an error in icu, and are not supported in other engines.
+
+        Generate the lookup functions from the language-subtag-registry.
+
+        Also initialize the UNumberFormat in initializeNumberFormat so any
+        failures are thrown immediately instead of failing to format later.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/generateIntlCanonicalizeLanguage.py: Added.
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::formatNumber):
+        (JSC::IntlNumberFormat::formatToParts):
+        (JSC::IntlNumberFormat::createNumberFormat): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlObject.cpp:
+        (JSC::intlNumberOption):
+        (JSC::intlDefaultNumberOption):
+        (JSC::preferredLanguage):
+        (JSC::preferredRegion):
+        (JSC::canonicalLangTag):
+        (JSC::canonicalizeLanguageTag):
+        (JSC::defaultLocale):
+        (JSC::removeUnicodeLocaleExtension):
+        (JSC::numberingSystemsForLocale):
+        (JSC::grandfatheredLangTag): Deleted.
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::addMissingScriptLocales):
+        (JSC::JSGlobalObject::intlCollatorAvailableLocales):
+        (JSC::JSGlobalObject::intlDateTimeFormatAvailableLocales):
+        (JSC::JSGlobalObject::intlNumberFormatAvailableLocales):
+        (JSC::JSGlobalObject::intlPluralRulesAvailableLocales):
+        * ucd/language-subtag-registry.txt: Added.
+
 2018-07-23  Mark Lam  <mark.lam@apple.com>
 
         Add some asserts to help diagnose a crash.

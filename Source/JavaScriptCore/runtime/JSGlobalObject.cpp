@@ -1563,6 +1563,20 @@ void JSGlobalObject::setName(const String& name)
 }
 
 # if ENABLE(INTL)
+static void addMissingScriptLocales(HashSet<String>& availableLocales)
+{
+    if (availableLocales.contains("pa-Arab-PK"))
+        availableLocales.add("pa-PK"_s);
+    if (availableLocales.contains("zh-Hans-CN"))
+        availableLocales.add("zh-CN"_s);
+    if (availableLocales.contains("zh-Hant-HK"))
+        availableLocales.add("zh-HK"_s);
+    if (availableLocales.contains("zh-Hans-SG"))
+        availableLocales.add("zh-SG"_s);
+    if (availableLocales.contains("zh-Hant-TW"))
+        availableLocales.add("zh-TW"_s);
+}
+
 const HashSet<String>& JSGlobalObject::intlCollatorAvailableLocales()
 {
     if (m_intlCollatorAvailableLocales.isEmpty()) {
@@ -1572,6 +1586,7 @@ const HashSet<String>& JSGlobalObject::intlCollatorAvailableLocales()
             convertICULocaleToBCP47LanguageTag(locale);
             m_intlCollatorAvailableLocales.add(locale);
         }
+        addMissingScriptLocales(m_intlCollatorAvailableLocales);
     }
     return m_intlCollatorAvailableLocales;
 }
@@ -1585,6 +1600,7 @@ const HashSet<String>& JSGlobalObject::intlDateTimeFormatAvailableLocales()
             convertICULocaleToBCP47LanguageTag(locale);
             m_intlDateTimeFormatAvailableLocales.add(locale);
         }
+        addMissingScriptLocales(m_intlDateTimeFormatAvailableLocales);
     }
     return m_intlDateTimeFormatAvailableLocales;
 }
@@ -1598,6 +1614,7 @@ const HashSet<String>& JSGlobalObject::intlNumberFormatAvailableLocales()
             convertICULocaleToBCP47LanguageTag(locale);
             m_intlNumberFormatAvailableLocales.add(locale);
         }
+        addMissingScriptLocales(m_intlNumberFormatAvailableLocales);
     }
     return m_intlNumberFormatAvailableLocales;
 }
@@ -1611,6 +1628,7 @@ const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
             convertICULocaleToBCP47LanguageTag(locale);
             m_intlPluralRulesAvailableLocales.add(locale);
         }
+        addMissingScriptLocales(m_intlPluralRulesAvailableLocales);
     }
     return m_intlPluralRulesAvailableLocales;
 }

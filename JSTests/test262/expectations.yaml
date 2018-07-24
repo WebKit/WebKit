@@ -1471,24 +1471,15 @@ test/intl402/Collator/length.js:
 test/intl402/Collator/prototype/compare/compare-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/intl402/Collator/unicode-ext-seq-in-private-tag.js:
-  default: 'Test262Error: Expected SameValue(Â«phonebkÂ», Â«defaultÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«phonebkÂ», Â«defaultÂ») to be true'
 test/intl402/DateTimeFormat/length.js:
   default: 'Test262Error: Expected obj[length] to have configurable:true.'
   strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
 test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/intl402/DateTimeFormat/prototype/format/proleptic-gregorian-calendar.js:
-  default: "Test262Error: Internal error: Didn't find Gregorian calendar Expected SameValue(Â«gregorianÂ», Â«gregoryÂ») to be true"
-  strict mode: "Test262Error: Internal error: Didn't find Gregorian calendar Expected SameValue(Â«gregorianÂ», Â«gregoryÂ») to be true"
 test/intl402/DateTimeFormat/prototype/formatToParts/length.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
-test/intl402/DateTimeFormat/prototype/resolvedOptions/basic.js:
-  default: 'Test262Error: Invalid calendar: gregorian Expected SameValue(Â«-1Â», Â«-1Â») to be false'
-  strict mode: 'Test262Error: Invalid calendar: gregorian Expected SameValue(Â«-1Â», Â«-1Â») to be false'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle.js:
   default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«h11Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«h11Â») to be true'
@@ -1498,18 +1489,9 @@ test/intl402/DateTimeFormat/prototype/resolvedOptions/resolved-locale-with-hc-un
 test/intl402/Intl/getCanonicalLocales/Locale-object.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-gb-oed\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-gb-oed\")')"
-test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
-  default: 'Test262Error: Expected SameValue(Â«sgn-GRÂ», Â«gssÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«sgn-GRÂ», Â«gssÂ») to be true'
 test/intl402/Intl/getCanonicalLocales/invalid-tags.js:
   default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
   strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
-test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
-test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
-  default: 'Test262Error: Expected SameValue(Â«ja-Latn-hepburn-heplocÂ», Â«ja-Latn-alalc97Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«ja-Latn-hepburn-heplocÂ», Â«ja-Latn-alalc97Â») to be true'
 test/intl402/Locale/constructor-getter-order.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale')"
@@ -1762,15 +1744,9 @@ test/intl402/Locale/prototype/toString/prop-desc.js:
 test/intl402/Locale/prototype/toStringTag/toStringTag.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
-test/intl402/Number/prototype/toLocaleString/returns-same-results-as-NumberFormat.js:
-  default: 'Error: Failed to format a number.'
-  strict mode: 'Error: Failed to format a number.'
 test/intl402/NumberFormat/length.js:
   default: 'Test262Error: descriptor should be configurable'
   strict mode: 'Test262Error: descriptor should be configurable'
-test/intl402/NumberFormat/prototype/format/bound-to-numberformat-instance.js:
-  default: 'Error: Failed to format a number.'
-  strict mode: 'Error: Failed to format a number.'
 test/intl402/NumberFormat/prototype/format/format-fraction-digits.js:
   default: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
   strict mode: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
@@ -1798,12 +1774,6 @@ test/intl402/NumberFormat/prototype/formatToParts/name.js:
 test/intl402/NumberFormat/prototype/formatToParts/return-abrupt-tonumber.js:
   default: 'Test262Error: valueOf Expected a Test262Error but got a TypeError'
   strict mode: 'Test262Error: valueOf Expected a Test262Error but got a TypeError'
-test/intl402/NumberFormat/significant-digits-options-get-sequence.js:
-  default: 'Test262Error: minimumSignificantDigits getter already called Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: minimumSignificantDigits getter already called Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/intl402/PluralRules/default-options-object-prototype.js:
-  default: 'Test262Error: Expected SameValue(Â«ordinalÂ», Â«cardinalÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«ordinalÂ», Â«cardinalÂ») to be true'
 test/intl402/PluralRules/length.js:
   default: 'Test262Error: descriptor should be configurable'
   strict mode: 'Test262Error: descriptor should be configurable'
@@ -1813,12 +1783,6 @@ test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js:
 test/intl402/TypedArray/prototype/toLocaleString/calls-toLocaleString-number-elements.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
-test/intl402/fallback-locales-are-supported.js:
-  default: "Test262Error: Locale zh-Hans-CN is supported, but fallback zh-CN isn't. Expected SameValue(Â«-1Â», Â«-1Â») to be false (Testing with NumberFormat.)"
-  strict mode: "Test262Error: Locale zh-Hans-CN is supported, but fallback zh-CN isn't. Expected SameValue(Â«-1Â», Â«-1Â») to be false (Testing with NumberFormat.)"
-test/intl402/language-tags-canonicalized.js:
-  default: 'Test262Error: For de-DD got de-DD; expected de-DE. (Testing with Collator.)'
-  strict mode: 'Test262Error: For de-DD got de-DD; expected de-DE. (Testing with Collator.)'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-arguments.js:
   default: 'Test262Error: Expected obj[0] to have enumerable:false.'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-param.js:

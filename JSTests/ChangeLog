@@ -1,3 +1,14 @@
+2018-07-23  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Language tags are not canonicalized
+        https://bugs.webkit.org/show_bug.cgi?id=185836
+
+        Reviewed by Keith Miller.
+
+        Remove expected failures that have been fixed.
+
+        * test262/expectations.yaml:
+
 2018-07-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] GetByIdVariant and InByIdVariant do not need slot base if they are not "hit" variants
