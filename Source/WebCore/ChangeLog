@@ -1,3 +1,39 @@
+2018-07-24  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234158. rdar://problem/42551556
+
+    [Cocoa] Stop crashing in lastResortFallbackFont()
+    https://bugs.webkit.org/show_bug.cgi?id=187936
+    
+    Reviewed by Jon Lee.
+    
+    CoreText can get into a state where both Times and Lucida Grande are inaccessible.
+    Instead of crashing, we should use the real LastResort, which is backed by a section
+    in the .rodata of the CoreText dylib, and as such should always exist.
+    
+    * platform/graphics/FontCache.cpp:
+    (WebCore::FontCache::fontForFamily):
+    * platform/graphics/cocoa/FontCacheCoreText.cpp:
+    (WebCore::FontCache::lastResortFallbackFont):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234158 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] Stop crashing in lastResortFallbackFont()
+            https://bugs.webkit.org/show_bug.cgi?id=187936
+
+            Reviewed by Jon Lee.
+
+            CoreText can get into a state where both Times and Lucida Grande are inaccessible.
+            Instead of crashing, we should use the real LastResort, which is backed by a section
+            in the .rodata of the CoreText dylib, and as such should always exist.
+
+            * platform/graphics/FontCache.cpp:
+            (WebCore::FontCache::fontForFamily):
+            * platform/graphics/cocoa/FontCacheCoreText.cpp:
+            (WebCore::FontCache::lastResortFallbackFont):
+
 2018-07-23  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234073. rdar://problem/42451644
