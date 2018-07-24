@@ -610,9 +610,21 @@ public:
     };
 
     static JS_EXPORT_PRIVATE bool canUseAssembler();
-    static JS_EXPORT_PRIVATE bool canUseJIT();
     static JS_EXPORT_PRIVATE bool canUseRegExpJIT();
     static JS_EXPORT_PRIVATE bool isInMiniMode();
+
+    static void computeCanUseJIT();
+    ALWAYS_INLINE static bool canUseJIT()
+    {
+#if ENABLE(JIT)
+#if !ASSERT_DISABLED
+        RELEASE_ASSERT(s_canUseJITIsSet);
+#endif
+        return s_canUseJIT;
+#else
+        return false;
+#endif
+    }
 
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();
@@ -973,6 +985,13 @@ private:
 #endif
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
+
+#if ENABLE(JIT)
+#if !ASSERT_DISABLED
+    JS_EXPORT_PRIVATE static bool s_canUseJITIsSet;
+#endif
+    JS_EXPORT_PRIVATE static bool s_canUseJIT;
+#endif
 
     VM* m_prev; // Required by DoublyLinkedListNode.
     VM* m_next; // Required by DoublyLinkedListNode.

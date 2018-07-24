@@ -175,6 +175,13 @@ using namespace WTF;
 
 namespace JSC {
 
+#if ENABLE(JIT)
+#if !ASSERT_DISABLED
+bool VM::s_canUseJITIsSet = false;
+#endif
+bool VM::s_canUseJIT = false;
+#endif
+
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
 // ENABLE(JIT) or ENABLE(YARR_JIT) or both are enabled. The code below
 // just checks for ENABLE(JIT) or ENABLE(YARR_JIT) with this premise in mind.
@@ -210,17 +217,14 @@ bool VM::canUseAssembler()
 #endif
 }
 
-bool VM::canUseJIT()
+void VM::computeCanUseJIT()
 {
 #if ENABLE(JIT)
-    static std::once_flag onceKey;
-    static bool enabled = false;
-    std::call_once(onceKey, [] {
-        enabled = VM::canUseAssembler() && Options::useJIT();
-    });
-    return enabled;
-#else
-    return false; // interpreter only
+#if !ASSERT_DISABLED
+    RELEASE_ASSERT(!s_canUseJITIsSet);
+    s_canUseJITIsSet = true;
+#endif
+    s_canUseJIT = VM::canUseAssembler() && Options::useJIT();
 #endif
 }
 

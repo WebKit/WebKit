@@ -1,3 +1,23 @@
+2018-07-24  Saam Barati  <sbarati@apple.com>
+
+        Make VM::canUseJIT an inlined function
+        https://bugs.webkit.org/show_bug.cgi?id=187583
+
+        Reviewed by Mark Lam.
+
+        We know the answer to this query in initializeThreading after initializing
+        the executable allocator. This patch makes it so that we just hold this value
+        in a static variable and have an inlined function that just returns the value
+        of that static variable.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/VM.cpp:
+        (JSC::VM::computeCanUseJIT):
+        (JSC::VM::canUseJIT): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::canUseJIT):
+
 2018-07-24  Mark Lam  <mark.lam@apple.com>
 
         Placate exception check verification after recent changes.
