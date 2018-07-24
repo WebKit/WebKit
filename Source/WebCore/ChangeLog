@@ -1,3 +1,19 @@
+2018-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Stop crashing in lastResortFallbackFont()
+        https://bugs.webkit.org/show_bug.cgi?id=187936
+
+        Reviewed by Jon Lee.
+
+        CoreText can get into a state where both Times and Lucida Grande are inaccessible.
+        Instead of crashing, we should use the real LastResort, which is backed by a section
+        in the .rodata of the CoreText dylib, and as such should always exist.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::fontForFamily):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::lastResortFallbackFont):
+
 2018-07-24  Daniel Bates  <dabates@apple.com>
 
         Cannot view PDF's on my.gov.au: "Refused to load https://my.gov.au/attachment/viewAttachment because it
