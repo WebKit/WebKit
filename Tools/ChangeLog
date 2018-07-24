@@ -1,3 +1,13 @@
+2018-07-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        WebCore::URL::hostIsIPAddress needs a Windows implementation
+        https://bugs.webkit.org/show_bug.cgi?id=187859
+
+        Reviewed by Fujii Hironori.
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        Check for a few other ways an IP address could be invalid.
+
 2018-07-24  Charlie Turner  <cturner@igalia.com>
 
         [Flatpak] Avoid consuming unknown arguments in flatpak wrapper

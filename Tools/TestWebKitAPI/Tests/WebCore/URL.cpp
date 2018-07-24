@@ -345,17 +345,24 @@ TEST_F(URLTest, HostIsIPAddress)
     EXPECT_FALSE(URL::hostIsIPAddress(" 127.0.0.1"));
     EXPECT_FALSE(URL::hostIsIPAddress("127..0.0.1"));
     EXPECT_FALSE(URL::hostIsIPAddress("127.0.0."));
+    EXPECT_FALSE(URL::hostIsIPAddress("256.0.0.1"));
     EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98"));
     EXPECT_FALSE(URL::hostIsIPAddress("012x:4567:89AB:cdef:3210:7654:ba98:FeDc"));
 #if !PLATFORM(COCOA)
     // FIXME: This fails in Mac.
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0.01"));
     EXPECT_FALSE(URL::hostIsIPAddress("00123:4567:89AB:cdef:3210:7654:ba98:FeDc"));
 #endif
     EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:123.45.67.89"));
     EXPECT_FALSE(URL::hostIsIPAddress(":::"));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123::89AB:cdef:3210:7654::FeDc"));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:"));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:FeDc:"));
+    EXPECT_FALSE(URL::hostIsIPAddress(":4567:89AB:cdef:3210:7654:ba98:FeDc"));
+    EXPECT_FALSE(URL::hostIsIPAddress(":0123:4567:89AB:cdef:3210:7654:ba98:FeDc"));
 
     EXPECT_TRUE(URL::hostIsIPAddress("127.0.0.1"));
-    EXPECT_TRUE(URL::hostIsIPAddress("123.45.67.89"));
+    EXPECT_TRUE(URL::hostIsIPAddress("255.1.10.100"));
     EXPECT_TRUE(URL::hostIsIPAddress("0.0.0.0"));
     EXPECT_TRUE(URL::hostIsIPAddress("::1"));
     EXPECT_TRUE(URL::hostIsIPAddress("::"));
