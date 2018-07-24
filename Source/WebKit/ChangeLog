@@ -1,3 +1,25 @@
+2018-07-24  Jeff Miller  <jeffm@apple.com>
+
+        WKUIDelegate needs an alternate decideDatabaseQuotaForSecurityOrigin method that provides the database name and display name
+        https://bugs.webkit.org/show_bug.cgi?id=187567
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        Declare alternate decideDatabaseQuotaForSecurityOrigin method, copying the existing FIXME comment
+        from the old method.
+        
+        * UIProcess/Cocoa/UIDelegate.h:
+        Add flag for new delegate method.
+        
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        Initialize new flag.
+        
+        (WebKit::UIDelegate::UIClient::exceededDatabaseQuota):
+        Prefer the new UIDelegate method that takes the database name and display name, falling back to the
+        existing method if the client doesn't implement it.
+
 2018-07-24  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Add support to WebView for setting tooltips
