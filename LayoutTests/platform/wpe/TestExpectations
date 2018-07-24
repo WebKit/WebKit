@@ -35,6 +35,7 @@ webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
 webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
 webkit.org/b/177533 webrtc/video-interruption.html
 
+webkit.org/b/186933 webrtc/peer-connection-createMediaStreamDestination.html
 webkit.org/b/186933 webrtc/peer-connection-remote-audio-mute2.html
 webkit.org/b/186933 webrtc/peer-connection-audio-unmute.html
 webkit.org/b/186933 webrtc/peer-connection-audio-mute2.html

@@ -1,3 +1,15 @@
+2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
+
+        Unreviewed WPE/GTK gardening.
+
+        Disabled newly added webrtc tests that depend on implementing WebAudioSourceProviderGStreamer.
+
+        Namely:
+          webrtc/peer-connection-createMediaStreamDestination.html
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-07-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/workers/service/serviceworkerclients-matchAll.https.html as flaky.
