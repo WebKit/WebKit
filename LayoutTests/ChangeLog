@@ -1,3 +1,23 @@
+2018-07-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r233496 and r233571.
+
+        Likely cause of <rdar://problem/42160890> and
+        <rdar://problem/42329658> as ActiveDOMObjects can now be
+        constructed / destroyed while we are iterating over them.
+
+        Reverted changesets:
+
+        "Nullptr crash accessing Document in
+        GenericEventQueue::dispatchOneEvent()"
+        https://bugs.webkit.org/show_bug.cgi?id=187284
+        https://trac.webkit.org/changeset/233496
+
+        "REGRESSION(r233496): macOS Sierra hits debug assertions in
+        TrackListBase::suspend"
+        https://bugs.webkit.org/show_bug.cgi?id=187378
+        https://trac.webkit.org/changeset/233571
+
 2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
 
         Unreviewed WPE/GTK gardening.

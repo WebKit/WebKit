@@ -265,9 +265,4 @@ EventTargetInterface TextTrackList::eventTargetInterface() const
     return TextTrackListEventTargetInterfaceType;
 }
 
-const char* TextTrackList::activeDOMObjectName() const
-{
-    return "TextTrackList";
-}
-
 #endif
