@@ -1,3 +1,14 @@
+2018-07-24  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception check verification after recent changes.
+        https://bugs.webkit.org/show_bug.cgi?id=187961
+        <rdar://problem/42545394>
+
+        Reviewed by Saam Barati.
+
+        * runtime/IntlObject.cpp:
+        (JSC::intlNumberOption):
+
 2018-07-23  Saam Barati  <sbarati@apple.com>
 
         need to didFoldClobberWorld when we constant fold GetByVal
