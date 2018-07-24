@@ -133,11 +133,6 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
 
     return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.data() length:length];
 }
-    
-bool deleteNonEmptyDirectory(const String& path)
-{
-    return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
-}
 
 } // namespace FileSystem
 } // namespace WebCore

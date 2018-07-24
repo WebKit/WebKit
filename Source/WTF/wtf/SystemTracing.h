@@ -96,8 +96,6 @@ enum TracePointCode {
     CommitLayerTreeEnd,
     ProcessLaunchStart,
     ProcessLaunchEnd,
-    InitializeSandboxStart,
-    InitializeSandboxEnd,
 };
 
 #ifdef __cplusplus

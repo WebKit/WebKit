@@ -80,7 +80,6 @@ class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     friend NeverDestroyed<DownloadManager>;
 public:
     static NetworkProcess& singleton();
-    static constexpr ProcessType processType = ProcessType::Network;
 
     template <typename T>
     T* supplement()

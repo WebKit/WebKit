@@ -1,3 +1,15 @@
+2018-07-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r234121.
+
+        Caused perf test failures.
+
+        Reverted changeset:
+
+        "We should cache the compiled sandbox profile in a data vault"
+        https://bugs.webkit.org/show_bug.cgi?id=184991
+        https://trac.webkit.org/changeset/234121
+
 2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Implement bitrate modulation support in GStreamer based libwebrtc Encoders
