@@ -1,3 +1,35 @@
+2018-07-24  Chris Dumez  <cdumez@apple.com>
+
+        WebFullScreenManagerProxy does not need to be ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=187928
+
+        Reviewed by Eric Carlson.
+
+        WebFullScreenManagerProxy does not need to be ref counted, it is owned by WebPageProxy.
+        It is also error-prone because WebFullScreenManagerProxy has a raw pointer to its WebPageProxy
+        and anybody could extend the lifetime of the WebFullScreenManagerProxy by refing it, which
+        would make the WebPageProxy pointer stale.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::WebFullScreenManagerProxy):
+        (WebKit::WebFullScreenManagerProxy::willEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::didEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::willExitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::didExitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::setAnimatingFullScreen):
+        (WebKit::WebFullScreenManagerProxy::requestExitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::saveScrollPosition):
+        (WebKit::WebFullScreenManagerProxy::restoreScrollPosition):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenInsets):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenAutoHideDuration):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenControlsHidden):
+        (WebKit::WebFullScreenManagerProxy::invalidate):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        * UIProcess/WebPageProxy.h:
+
 2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [TextureMapper] Separate repaint counter state from debug visuals

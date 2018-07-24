@@ -55,12 +55,11 @@ public:
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
 };
 
-class WebFullScreenManagerProxy : public RefCounted<WebFullScreenManagerProxy>, public IPC::MessageReceiver {
+class WebFullScreenManagerProxy : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<WebFullScreenManagerProxy> create(WebPageProxy&, WebFullScreenManagerProxyClient&);
+    WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
     virtual ~WebFullScreenManagerProxy();
-
-    void invalidate();
 
     bool isFullScreen();
     void close();
@@ -78,8 +77,6 @@ public:
     void setFullscreenControlsHidden(bool);
 
 private:
-    explicit WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
-
     void supportsFullScreen(bool withKeyboard, bool&);
     void enterFullScreen();
     void exitFullScreen();
@@ -89,8 +86,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
-    WebPageProxy* m_page;
-    WebFullScreenManagerProxyClient* m_client;
+    WebPageProxy& m_page;
+    WebFullScreenManagerProxyClient& m_client;
 };
 
 } // namespace WebKit
