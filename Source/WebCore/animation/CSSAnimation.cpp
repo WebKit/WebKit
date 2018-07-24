@@ -49,6 +49,9 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
 {
     DeclarativeAnimation::syncPropertiesWithBackingAnimation();
 
+    if (!effect())
+        return;
+
     suspendEffectInvalidation();
 
     auto& animation = backingAnimation();
