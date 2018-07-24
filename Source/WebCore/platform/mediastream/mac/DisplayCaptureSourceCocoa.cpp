@@ -42,6 +42,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
+#include "CoreVideoSoftLink.h"
+
 namespace WebCore {
 using namespace PAL;
 
@@ -178,7 +180,7 @@ RetainPtr<CMSampleBufferRef> DisplayCaptureSourceCocoa::sampleBufferFromPixelBuf
     return adoptCF(sampleBuffer);
 }
 
-#if HAVE(IOSURFACE)
+#if HAVE(IOSURFACE) && PLATFORM(MAC)
 static int32_t roundUpToMacroblockMultiple(int32_t size)
 {
     return (size + 15) & ~15;

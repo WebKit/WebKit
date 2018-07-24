@@ -1,3 +1,13 @@
+2018-07-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Restructure getDisplayMedia classes
+        https://bugs.webkit.org/show_bug.cgi?id=187905
+        <rdar://problem/42500215>
+
+        Unreviewed build fix.
+
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp: 
+
 2018-07-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Crash when setting "animation: none" after clearing an animation's effect
