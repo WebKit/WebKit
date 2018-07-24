@@ -282,10 +282,8 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
     JSC::DFG::Worklist* worklist = JSC::DFG::existingGlobalDFGWorklistOrNull();
     if (worklist)
         return worklist->setNumberOfThreads(numberOfThreads, JSC::Options::priorityDeltaOfDFGCompilerThreads());
-
-    auto currentNumberOfThreads = JSC::Options::numberOfDFGCompilerThreads();
-    JSC::Options::numberOfDFGCompilerThreads() = numberOfThreads;
-    return currentNumberOfThreads;
+    else
+        return JSC::DFG::setNumberOfDFGCompilerThreads(numberOfThreads);
 }
 
 + (NSUInteger)setNumberOfFTLCompilerThreads:(NSUInteger)numberOfThreads
@@ -293,10 +291,8 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
     JSC::DFG::Worklist* worklist = JSC::DFG::existingGlobalFTLWorklistOrNull();
     if (worklist)
         return worklist->setNumberOfThreads(numberOfThreads, JSC::Options::priorityDeltaOfFTLCompilerThreads());
-
-    auto currentNumberOfThreads = JSC::Options::numberOfFTLCompilerThreads();
-    JSC::Options::numberOfFTLCompilerThreads() = numberOfThreads;
-    return currentNumberOfThreads;
+    else
+        return JSC::DFG::setNumberOfFTLCompilerThreads(numberOfThreads);
 }
 
 #endif // ENABLE(DFG_JIT)

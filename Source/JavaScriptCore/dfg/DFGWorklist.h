@@ -122,6 +122,9 @@ private:
     unsigned m_numberOfActiveThreads;
 };
 
+JS_EXPORT_PRIVATE unsigned setNumberOfDFGCompilerThreads(unsigned);
+JS_EXPORT_PRIVATE unsigned setNumberOfFTLCompilerThreads(unsigned);
+
 // For DFGMode compilations.
 JS_EXPORT_PRIVATE Worklist& ensureGlobalDFGWorklist();
 JS_EXPORT_PRIVATE Worklist* existingGlobalDFGWorklistOrNull();

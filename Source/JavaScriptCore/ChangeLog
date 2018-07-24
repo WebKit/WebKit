@@ -1,3 +1,29 @@
+2018-07-24  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Don't modify Options when setting JIT thread limits
+        https://bugs.webkit.org/show_bug.cgi?id=187886
+
+        Reviewed by Filip Pizlo.
+
+        Previously, when setting the JIT thread limit prior to the worklist
+        initialization, it'd be set via Options, which didn't work if Options
+        hadn't been initialized yet. Change it to use a static variable in the
+        Worklist instead.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVirtualMachine setNumberOfDFGCompilerThreads:]):
+        (+[JSVirtualMachine setNumberOfFTLCompilerThreads:]):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::getNumberOfDFGCompilerThreads):
+        (JSC::DFG::getNumberOfFTLCompilerThreads):
+        (JSC::DFG::setNumberOfDFGCompilerThreads):
+        (JSC::DFG::setNumberOfFTLCompilerThreads):
+        (JSC::DFG::ensureGlobalDFGWorklist):
+        (JSC::DFG::ensureGlobalFTLWorklist):
+        * dfg/DFGWorklist.h:
+
 2018-07-24  Mark Lam  <mark.lam@apple.com>
 
         Refactoring: make DFG::Plan a class.
