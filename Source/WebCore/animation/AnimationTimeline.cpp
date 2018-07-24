@@ -474,11 +474,15 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
 
 void AnimationTimeline::cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation> animation)
 {
-    auto phase = animation->effect()->phase();
-    if (phase != AnimationEffectReadOnly::Phase::Idle && phase != AnimationEffectReadOnly::Phase::After)
-        animation->cancel();
-    else
-        removeAnimation(animation.releaseNonNull());
+    if (auto* effect = animation->effect()) {
+        auto phase = effect->phase();
+        if (phase != AnimationEffectReadOnly::Phase::Idle && phase != AnimationEffectReadOnly::Phase::After) {
+            animation->cancel();
+            return;
+        }
+    }
+
+    removeAnimation(animation.releaseNonNull());
 }
 
 String AnimationTimeline::description()

@@ -1,5 +1,18 @@
 2018-07-24  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Crash when setting "animation: none" after clearing an animation's effect
+        https://bugs.webkit.org/show_bug.cgi?id=187952
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that setting "animation: none" on an element that previously had a valid
+        CSS animation and for which the effect was set to null does not crash.
+
+        * webanimations/setting-css-animation-none-after-clearing-effect-expected.txt: Added.
+        * webanimations/setting-css-animation-none-after-clearing-effect.html: Added.
+
+2018-07-24  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Crash accessing CSSAnimation::bindingsCurrentTime when effect has been set to null
         https://bugs.webkit.org/show_bug.cgi?id=187950
         <rdar://problem/42515747>

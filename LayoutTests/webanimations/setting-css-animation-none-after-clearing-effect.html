@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableWebAnimationsCSSIntegration=true ] -->
+<meta charset=utf-8>
+<title>Crash setting a CSS Animation to "none" after setting its effect to null</title>
+<style>
+    @keyframes animation {
+        from {
+            margin-left: 0px;
+        }
+        to {
+            margin-left: 100px;
+        }
+    }
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+test(t => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.style.animation = "animation 1s";
+
+    const animations = target.getAnimations();
+    assert_equals(animations.length, 1, "The target element has one animation.");
+
+    animations[0].effect = null;
+
+    target.style.animation = "none";
+}, "Setting a CSS Animation to 'none' after setting its effect to null does not crash.");
+
+</script>
+</body>
