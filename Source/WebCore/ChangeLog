@@ -1,3 +1,13 @@
+2018-07-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] BlockContainer::establishesInlineFormattingContext should only check the first inflow child.
+        https://bugs.webkit.org/show_bug.cgi?id=187965
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutBlockContainer.cpp:
+        (WebCore::Layout::BlockContainer::establishesInlineFormattingContext const):
+
 2018-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Stop crashing in lastResortFallbackFont()

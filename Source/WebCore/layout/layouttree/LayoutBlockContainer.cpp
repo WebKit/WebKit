@@ -45,11 +45,12 @@ bool BlockContainer::establishesInlineFormattingContext() const
 {
     // 9.4.2 Inline formatting contexts
     // An inline formatting context is established by a block container box that contains no block-level boxes.
-    for (auto* child = firstInFlowChild(); child; child = child->nextInFlowSibling()) {
-        if (child->isBlockLevelBox())
-            return false;
-    }
-    return hasInFlowOrFloatingChild();
+
+    // It's enough to check the first in-flow child since we can't have both block and inline level sibling boxes.
+    if (auto* firstInFlowChild = this->firstInFlowChild())
+        return firstInFlowChild->isInlineLevelBox();
+
+    return false;
 }
 
 }
