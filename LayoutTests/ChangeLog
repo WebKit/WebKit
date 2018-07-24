@@ -1,3 +1,43 @@
+2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        Adding WPE-specific baselines for WebGL2 conformance tests that are
+        already passing on this port.
+
+        * platform/wpe/webgl: Added.
+        * platform/wpe/webgl/2.0.0: Added.
+        * platform/wpe/webgl/2.0.0/conformance2: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/array-as-return-value-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/array-assign-constructor-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/array-assign-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/array-complex-indexing-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/array-element-increment-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/array-equality-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/array-in-complex-expression-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/compare-structs-containing-arrays-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/const-array-init-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/forbidden-operators-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/frag-depth-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/invalid-default-precision-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/invalid-invariant-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/loops-with-side-effects-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/misplaced-version-directive-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/sampler-no-precision-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/sequence-operator-returns-non-constant-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/shader-linking-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/short-circuiting-in-loop-condition-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/texture-offset-uniform-texture-coordinate-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/uniform-block-layout-match-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/uniform-block-layouts-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/valid-invariant-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing-nv-driver-bug-expected.txt: Added.
+
 2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK] Implement PeerConnection API on top of libwebrtc
