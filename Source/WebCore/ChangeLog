@@ -1,3 +1,21 @@
+2018-07-24  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Black backdrop on -webkit-clip-path on SVG root
+        https://bugs.webkit.org/show_bug.cgi?id=187880
+
+        Reviewed by Simon Fraser.
+
+        For SVG document root elements, we currently clip twice:
+        In RenderLayer and SVGRenderSupport.
+        Avoid clipping in RenderLayer which currently clips before we established a
+        backdrop for an SVG document.
+
+        Tests: svg/clip-path/clip-path-on-svg-005-expected.svg
+               svg/clip-path/clip-path-on-svg-005.svg
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath): Skip actual clipping.
+
 2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add TextureMapperAnimations member to CompositingLayer::LayerState

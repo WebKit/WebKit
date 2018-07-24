@@ -1,3 +1,15 @@
+2018-07-24  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Black backdrop on -webkit-clip-path on SVG root
+        https://bugs.webkit.org/show_bug.cgi?id=187880
+
+        Avoid duplicated clip in RenderLayer.
+
+        Reviewed by Simon Fraser.
+
+        * svg/clip-path/clip-path-on-svg-005-expected.svg: Added.
+        * svg/clip-path/clip-path-on-svg-005.svg: Added.
+
 2018-07-23  Per Arne Vollan  <pvollan@apple.com>
 
         The test webanimations/accessing-current-time-after-finished-css-animation-target-removal.html is failing on Windows.

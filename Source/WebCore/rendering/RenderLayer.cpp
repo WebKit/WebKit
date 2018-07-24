@@ -100,6 +100,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGRoot.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableCell.h"
@@ -4155,6 +4156,10 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
         rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, 0);
         rootRelativeBoundsComputed = true;
     }
+
+    // SVG elements get clipped in SVG code.
+    if (is<RenderSVGRoot>(renderer()))
+        return false;
 
     auto& style = renderer().style();
     LayoutSize paintingOffsetFromRoot = LayoutSize(snapSizeToDevicePixel(offsetFromRoot + paintingInfo.subpixelOffset, LayoutPoint(), renderer().document().deviceScaleFactor()));
