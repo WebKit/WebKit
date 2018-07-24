@@ -1,5 +1,28 @@
 2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] Add TextureMapperAnimations member to CompositingLayer::LayerState
+        https://bugs.webkit.org/show_bug.cgi?id=187941
+
+        Reviewed by Carlos Garcia Campos.
+
+        Nicosia::CompositingLayer::LayerState gains a TextureMapperAnimations
+        member that will be assigned a list of all active animations during each
+        layer flush. Despite the name, TextureMapperAnimations doesn't depend on
+        any other TextureMapper class. It might be renamed and moved in the
+        future, but for now it's used as-is.
+
+        In CoordinatedGraphicsLayer, the syncAnimations() method now flips on
+        the animationsChanged flag in the LayerState::Delta struct. This causes
+        all the active animations to be copied over into the layer state in
+        flushCompositingStateForThisLayerOnly().
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncAnimations):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+
+2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
         [Nicosia] Add FilterOperations member to CompositionLayer::LayerState
         https://bugs.webkit.org/show_bug.cgi?id=187901
 

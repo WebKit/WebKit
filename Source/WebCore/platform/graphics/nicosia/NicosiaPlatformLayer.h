@@ -34,6 +34,7 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
+#include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -85,6 +86,7 @@ public:
                     bool opacityChanged : 1;
                     bool solidColorChanged : 1;
                     bool filtersChanged : 1;
+                    bool animationsChanged : 1;
                     bool childrenChanged : 1;
                     bool maskChanged : 1;
                     bool replicaChanged : 1;
@@ -130,6 +132,9 @@ public:
         WebCore::Color solidColor;
 
         WebCore::FilterOperations filters;
+        // FIXME: Despite the name, this implementation is not
+        // TextureMapper-specific. Should be renamed when necessary.
+        WebCore::TextureMapperAnimations animations;
 
         Vector<RefPtr<CompositionLayer>> children;
         RefPtr<CompositionLayer> replica;

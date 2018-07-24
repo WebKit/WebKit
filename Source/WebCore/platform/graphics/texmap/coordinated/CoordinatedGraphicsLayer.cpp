@@ -735,6 +735,7 @@ void CoordinatedGraphicsLayer::syncAnimations()
     m_shouldSyncAnimations = false;
     m_layerState.animations = m_animations.getActiveAnimations();
     m_layerState.animationsChanged = true;
+    m_nicosia.delta.animationsChanged = true;
 }
 
 void CoordinatedGraphicsLayer::syncPlatformLayer()
@@ -821,6 +822,8 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 
                 if (localDelta.filtersChanged)
                     state.filters = filters();
+                if (localDelta.animationsChanged)
+                    state.animations = m_animations.getActiveAnimations();
 
                 if (localDelta.childrenChanged) {
                     state.children = WTF::map(children(),
