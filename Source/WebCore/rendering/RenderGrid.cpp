@@ -141,7 +141,7 @@ std::optional<LayoutUnit> RenderGrid::availableSpaceForGutters(GridTrackSizingDi
 {
     bool isRowAxis = direction == ForColumns;
     const GapLength& gapLength = isRowAxis ? style().columnGap() : style().rowGap();
-    if (gapLength.isNormal() || !gapLength.length().isPercent())
+    if (gapLength.isNormal() || !gapLength.length().isPercentOrCalculated())
         return std::nullopt;
 
     return isRowAxis ? availableLogicalWidth() : availableLogicalHeightForPercentageComputation();

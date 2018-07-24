@@ -1,3 +1,18 @@
+2018-07-23  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add support for calc() in gutter properties
+        https://bugs.webkit.org/show_bug.cgi?id=187902
+
+        Reviewed by Simon Fraser.
+
+        Two new WPT tests are imported to verify the expected behavior.
+
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002-rtl-expected.txt: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002-rtl.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/w3c-import.log:
+
 2018-07-23  Sihui Liu  <sihui_liu@apple.com>
 
         CrashTracer: com.apple.WebKit.Storage at WebCore: WebCore::encodeKey

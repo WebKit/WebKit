@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -41,6 +41,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-rtl-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002-rtl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-rtl-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-implicit-grid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-implicit-grid-line-001.html

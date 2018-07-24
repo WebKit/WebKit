@@ -1,3 +1,24 @@
+2018-07-23  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add support for calc() in gutter properties
+        https://bugs.webkit.org/show_bug.cgi?id=187902
+
+        Reviewed by Simon Fraser.
+
+        The parsing was already accepting calc() in grid row and column gaps,
+        however the code was not taking that into account properly.
+        If the calc() had a percentage it was ignored and that's wrong.
+
+        The fix is just a change in the ceck at RenderGrid::availableSpaceForGutters().
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002-rtl.html
+               imported/w3c/web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-002.html
+               imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-011.html
+               imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-012.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::availableSpaceForGutters const):
+
 2018-07-23  Aditya Keerthi  <akeerthi@apple.com>
 
         Remove extraneous #endif in html.css
