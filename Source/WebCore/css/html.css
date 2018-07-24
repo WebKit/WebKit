@@ -884,8 +884,6 @@ input[type="color"]::-webkit-color-swatch {
     flex: 1;
 }
 
-#endif // defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
-
 #endif // defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 
 select {
