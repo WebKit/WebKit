@@ -93,7 +93,7 @@ messages -> WebPageProxy {
     DidChangeContentSize(WebCore::IntSize newSize)
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect);
+    ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, Vector<WebCore::Color> suggestions);
     SetColorPickerColor(WebCore::Color color);
     EndColorPicker();
 #endif

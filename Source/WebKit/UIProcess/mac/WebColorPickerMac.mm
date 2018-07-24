@@ -36,27 +36,34 @@
 
 #if USE(APPKIT)
 
+#import <WebCore/Color.h>
 #import <WebCore/ColorMac.h>
 
 using namespace WebKit;
 
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
 
-// The methods we use from NSPopoverColorWell aren't declared in its header
-// so there's no benefit to trying to include them. Instead we just declare
-// the class and methods here.
-@interface NSPopoverColorWell : NSColorWell
-@end
+#import <pal/spi/mac/NSColorWellSPI.h>
+#import <pal/spi/mac/NSPopoverColorWellSPI.h>
+#import <pal/spi/mac/NSPopoverSPI.h>
 
-@interface NSPopoverColorWell (AppKitSecretsIKnow)
-- (void)_showPopover;
+static const size_t maxColorSuggestions = 12;
+static const CGFloat colorPickerMatrixNumColumns = 12.0;
+static const CGFloat colorPickerMatrixSwatchWidth = 12.0;
+static const CGFloat colorPickerMatrixBorderWidth = 1.0;
+
+@interface WKPopoverColorWell : NSPopoverColorWell {
+    RetainPtr<NSColorList> _suggestedColors;
+}
+
+- (void)setSuggestedColors:(NSColorList *)suggestedColors;
 @end
 
 @interface WKColorPopoverMac : NSObject<WKColorPickerUIMac, NSWindowDelegate> {
 @private
     BOOL _lastChangedByUser;
     WebColorPickerMac *_picker;
-    RetainPtr<NSPopoverColorWell> _popoverWell;
+    RetainPtr<WKPopoverColorWell> _popoverWell;
 }
 - (id)initWithFrame:(const WebCore::IntRect &)rect inView:(NSView *)view;
 @end
@@ -75,9 +82,9 @@ using namespace WebKit;
 
 namespace WebKit {
 
-Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, NSView* view)
+Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions, NSView *view)
 {
-    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, view));
+    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, WTFMove(suggestions), view));
 }
 
 WebColorPickerMac::~WebColorPickerMac()
@@ -86,8 +93,9 @@ WebColorPickerMac::~WebColorPickerMac()
         endPicker();
 }
 
-WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, NSView* view)
+WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions, NSView *view)
     : WebColorPicker(client)
+    , m_suggestions(WTFMove(suggestions))
 {
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
     m_colorPickerUI = adoptNS([[WKColorPopoverMac alloc] initWithFrame:rect inView:view]);
@@ -128,12 +136,74 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
         m_colorPickerUI = adoptNS([[WKColorPanelMac alloc] init]);
 #endif
 
-    [m_colorPickerUI setAndShowPicker:this withColor:nsColor(color)];
+    [m_colorPickerUI setAndShowPicker:this withColor:nsColor(color) suggestions:WTFMove(m_suggestions)];
 }
 
 } // namespace WebKit
 
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+
+@implementation WKPopoverColorWell
+
++ (NSPopover *)_colorPopoverCreateIfNecessary:(BOOL)forceCreation
+{
+    static NSPopover *colorPopover = nil;
+    if (forceCreation) {
+        NSPopover *popover = [[NSPopover alloc] init];
+        [popover _setRequiresCorrectContentAppearance:YES];
+        popover.behavior = NSPopoverBehaviorTransient;
+
+        NSColorPopoverController *controller = [[NSClassFromString(@"NSColorPopoverController") alloc] init];
+        popover.contentViewController = controller;
+        controller.popover = popover;
+        [controller release];
+
+        colorPopover = popover;
+    }
+
+    return colorPopover;
+}
+
+- (void)_showPopover
+{
+    NSPopover *popover = [[self class] _colorPopoverCreateIfNecessary:YES];
+    popover.delegate = self;
+
+    [self deactivate];
+
+    // Deactivate previous NSPopoverColorWell
+    NSColorWell *owner = [NSColorWell _exclusiveColorPanelOwner];
+    if ([owner isKindOfClass:[NSPopoverColorWell class]])
+        [owner deactivate];
+
+    NSColorPopoverController *controller = (NSColorPopoverController *)[popover contentViewController];
+    controller.delegate = self;
+
+    if (_suggestedColors) {
+        NSUInteger numColors = [[_suggestedColors allKeys] count];
+        CGFloat swatchWidth = (colorPickerMatrixNumColumns * colorPickerMatrixSwatchWidth + (colorPickerMatrixNumColumns * colorPickerMatrixBorderWidth - numColors)) / numColors;
+        CGFloat swatchHeight = colorPickerMatrixSwatchWidth;
+
+        // topBarMatrixView cannot be accessed until view has been loaded
+        if (!controller.isViewLoaded)
+            [controller loadView];
+
+        NSColorPickerMatrixView *topMatrix = controller.topBarMatrixView;
+        [topMatrix setNumberOfColumns:numColors];
+        [topMatrix setSwatchSize:NSMakeSize(swatchWidth, swatchHeight)];
+        [topMatrix setColorList:_suggestedColors.get()];
+    }
+
+    [self activate:YES];
+    [popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSMinYEdge];
+}
+
+- (void)setSuggestedColors:(NSColorList *)suggestedColors
+{
+    _suggestedColors = suggestedColors;
+}
+
+@end
 
 @implementation WKColorPopoverMac
 - (id)initWithFrame:(const WebCore::IntRect &)rect inView:(NSView *)view
@@ -141,22 +211,32 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     if(!(self = [super init]))
         return self;
 
-    _popoverWell = adoptNS([[NSPopoverColorWell alloc] initWithFrame:[view convertRect:NSRectFromCGRect(rect) toView:nil]]);
+    _popoverWell = adoptNS([[WKPopoverColorWell alloc] initWithFrame:[view convertRect:NSRectFromCGRect(rect) toView:nil]]);
     if (!_popoverWell)
         return self;
 
+    [_popoverWell setAlphaValue:0.0];
     [[view window].contentView addSubview:_popoverWell.get()];
 
     return self;
 }
 
-- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color
+- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color suggestions:(Vector<WebCore::Color>&&)suggestions
 {
     _picker = picker;
 
     [_popoverWell setTarget:self];
     [_popoverWell setAction:@selector(didChooseColor:)];
     [_popoverWell setColor:color];
+
+    NSColorList *suggestedColors = nil;
+    if (suggestions.size()) {
+        suggestedColors = [[[NSColorList alloc] init] autorelease];
+        for (size_t i = 0; i < std::min(suggestions.size(), maxColorSuggestions); i++)
+            [suggestedColors insertColor:nsColor(suggestions.at(i)) key:@(i).stringValue atIndex:i];
+    }
+
+    [_popoverWell setSuggestedColors:suggestedColors];
     [_popoverWell _showPopover];
     
     _lastChangedByUser = YES;
@@ -216,7 +296,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     return self;
 }
 
-- (void)setAndShowPicker:(WebColorPickerMac*)picker withColor:(NSColor *)color
+- (void)setAndShowPicker:(WebColorPickerMac*)picker withColor:(NSColor *)color suggestions:(Vector<WebCore::Color>&&)suggestions
 {
     _picker = picker;
 

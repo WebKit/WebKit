@@ -42,5 +42,6 @@ typedef NS_OPTIONS(NSUInteger, NSPopoverPositioningOptions) {
 };
 
 @interface NSPopover (WKDetails)
+- (void)_setRequiresCorrectContentAppearance:(BOOL)requiresCorrectAppearance;
 @property NSPopoverPositioningOptions positioningOptions;
 @end

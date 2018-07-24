@@ -146,6 +146,8 @@
 		A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */; };
 		A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */; };
 		A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C66CDB1F462D6A009E6EE9 /* SessionID.h */; };
+		E5D45D122106A07400D2B738 /* NSColorWellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D45D112106A07400D2B738 /* NSColorWellSPI.h */; };
+		E5D45D142106A18700D2B738 /* NSPopoverColorWellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */; };
 		F442915E1FA52473002CC93E /* NSFileSizeFormatterSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */; };
 		F44291601FA5261E002CC93E /* FileSizeFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = F442915F1FA5261E002CC93E /* FileSizeFormatter.h */; };
 		F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44291621FA52670002CC93E /* FileSizeFormatter.cpp */; };
@@ -298,6 +300,8 @@
 		A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		A3C66CDB1F462D6A009E6EE9 /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
+		E5D45D112106A07400D2B738 /* NSColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorWellSPI.h; sourceTree = "<group>"; };
+		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
 		F442915D1FA52473002CC93E /* NSFileSizeFormatterSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSFileSizeFormatterSPI.h; sourceTree = "<group>"; };
 		F442915F1FA5261E002CC93E /* FileSizeFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSizeFormatter.h; sourceTree = "<group>"; };
 		F44291621FA52670002CC93E /* FileSizeFormatter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileSizeFormatter.cpp; sourceTree = "<group>"; };
@@ -432,6 +436,7 @@
 				1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */,
 				0C7785751F45130F00F4EBB6 /* NSApplicationSPI.h */,
 				A1175B4A1F6B2D7E00C4B9F0 /* NSCellSPI.h */,
+				E5D45D112106A07400D2B738 /* NSColorWellSPI.h */,
 				0C7785761F45130F00F4EBB6 /* NSEventSPI.h */,
 				0C7785771F45130F00F4EBB6 /* NSFontSPI.h */,
 				A10826FD1F58A433004772AC /* NSGraphicsSPI.h */,
@@ -439,6 +444,7 @@
 				0C7785781F45130F00F4EBB6 /* NSImmediateActionGestureRecognizerSPI.h */,
 				0C7785791F45130F00F4EBB6 /* NSMenuSPI.h */,
 				0C77857A1F45130F00F4EBB6 /* NSPasteboardSPI.h */,
+				E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */,
 				0C77857B1F45130F00F4EBB6 /* NSPopoverSPI.h */,
 				A10826F01F573BCA004772AC /* NSResponderSPI.h */,
 				0C77857C1F45130F00F4EBB6 /* NSScrollerImpSPI.h */,
@@ -674,6 +680,7 @@
 				0C2DA14C1F3BEB4900DBC317 /* NSCalendarDateSPI.h in Headers */,
 				A1175B4B1F6B2D7E00C4B9F0 /* NSCellSPI.h in Headers */,
 				0C2DA14D1F3BEB4900DBC317 /* NSColorSPI.h in Headers */,
+				E5D45D122106A07400D2B738 /* NSColorWellSPI.h in Headers */,
 				0C77858F1F45130F00F4EBB6 /* NSEventSPI.h in Headers */,
 				0C2DA14E1F3BEB4900DBC317 /* NSExtensionSPI.h in Headers */,
 				0C2DA14F1F3BEB4900DBC317 /* NSFileManagerSPI.h in Headers */,
@@ -685,6 +692,7 @@
 				7A1656441F97B2B900BA3CE4 /* NSKeyedArchiverSPI.h in Headers */,
 				0C7785921F45130F00F4EBB6 /* NSMenuSPI.h in Headers */,
 				0C7785931F45130F00F4EBB6 /* NSPasteboardSPI.h in Headers */,
+				E5D45D142106A18700D2B738 /* NSPopoverColorWellSPI.h in Headers */,
 				0C7785941F45130F00F4EBB6 /* NSPopoverSPI.h in Headers */,
 				A10826F11F573BCA004772AC /* NSResponderSPI.h in Headers */,
 				0C7785951F45130F00F4EBB6 /* NSScrollerImpSPI.h in Headers */,

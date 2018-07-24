@@ -1,3 +1,53 @@
+2018-07-24  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][macOS] Display suggestions for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=187794
+
+        Reviewed by Tim Horton.
+
+        An input[type=color] element that has an associated datalist element should
+        display the color values provided. We now support 1-12 suggested colors, that
+        will be displayed at the top of the color selection popover. If no suggestions
+        are specified we keep the existing default colors.
+
+        Created an NSPopoverColorWell subclass that allows custom colors to be specified
+        in the form of an NSColorList.
+
+        Also fixed a bug where an additional color well was displayed when clicking on
+        the input element.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Color>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showColorPicker):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/mac/WebColorPickerMac.h:
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::create):
+        (WebKit::WebColorPickerMac::WebColorPickerMac):
+        (WebKit::WebColorPickerMac::showColorPicker):
+        (+[WKPopoverColorWell _colorPopoverCreateIfNecessary:]):
+        (-[WKPopoverColorWell _showPopover]):
+        (-[WKPopoverColorWell setSuggestedColors:]):
+        (-[WKColorPopoverMac initWithFrame:inView:]):
+        (-[WKColorPopoverMac setAndShowPicker:withColor:suggestions:]):
+        (-[WKColorPanelMac setAndShowPicker:withColor:suggestions:]):
+        * WebProcess/WebCoreSupport/WebColorChooser.cpp:
+        (WebKit::WebColorChooser::WebColorChooser):
+        (WebKit::WebColorChooser::reattachColorChooser):
+
 2018-07-24  Alex Christensen  <achristensen@webkit.org>
 
         Modernize NavigationState

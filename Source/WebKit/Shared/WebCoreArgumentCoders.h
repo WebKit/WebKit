@@ -379,6 +379,7 @@ template<> struct ArgumentCoder<WebCore::WindowFeatures> {
 template<> struct ArgumentCoder<WebCore::Color> {
     static void encode(Encoder&, const WebCore::Color&);
     static bool decode(Decoder&, WebCore::Color&);
+    static std::optional<WebCore::Color> decode(Decoder&);
 };
 
 #if ENABLE(DRAG_SUPPORT)

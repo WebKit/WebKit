@@ -43,7 +43,7 @@ WebColorChooser::WebColorChooser(WebPage* page, ColorChooserClient* client, cons
     , m_page(page)
 {
     m_page->setActiveColorChooser(this);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(initialColor, client->elementRectRelativeToRootView()), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(initialColor, client->elementRectRelativeToRootView(), client->suggestions()), m_page->pageID());
 }
 
 WebColorChooser::~WebColorChooser()
@@ -75,7 +75,7 @@ void WebColorChooser::reattachColorChooser(const Color& color)
     m_page->setActiveColorChooser(this);
 
     ASSERT(m_colorChooserClient);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, m_colorChooserClient->elementRectRelativeToRootView()), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, m_colorChooserClient->elementRectRelativeToRootView(), m_colorChooserClient->suggestions()), m_page->pageID());
 }
 
 void WebColorChooser::setSelectedColor(const Color& color)

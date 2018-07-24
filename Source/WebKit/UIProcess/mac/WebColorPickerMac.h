@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebColorPickerMac_h
-#define WebColorPickerMac_h
+#pragma once
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
@@ -49,7 +48,7 @@ class WebColorPickerMac;
 }
 
 @protocol WKColorPickerUIMac <NSObject>
-- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color;
+- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color suggestions:(Vector<WebCore::Color>&&)suggestions;
 - (void)invalidate;
 - (void)setColor:(NSColor *)color;
 - (void)didChooseColor:(id)sender;
@@ -59,7 +58,7 @@ namespace WebKit {
     
 class WebColorPickerMac : public WebColorPicker {
 public:        
-    static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, NSView*);
+    static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, Vector<WebCore::Color>&&, NSView *);
     ~WebColorPickerMac();
 
     void endPicker() override;
@@ -69,8 +68,9 @@ public:
     void didChooseColor(const WebCore::Color&);
 
 private:
-    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, NSView*);
+    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, Vector<WebCore::Color>&&, NSView *);
     RetainPtr<NSObject<WKColorPickerUIMac> > m_colorPickerUI;
+    Vector<WebCore::Color> m_suggestions;
 };
 
 } // namespace WebKit
@@ -78,5 +78,3 @@ private:
 #endif // ENABLE(INPUT_TYPE_COLOR)
 
 #endif // USE(APPKIT)
-
-#endif // WebContextMenuProxyMac_h
