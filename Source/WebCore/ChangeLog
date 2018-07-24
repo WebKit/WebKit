@@ -1,5 +1,45 @@
 2018-07-24  Daniel Bates  <dabates@apple.com>
 
+        Cannot view PDF's on my.gov.au: "Refused to load https://my.gov.au/attachment/viewAttachment because it
+        appears in neither the object-src directive nor the default-src directive of the Content Security Policy"
+        https://bugs.webkit.org/show_bug.cgi?id=187870
+        <rdar://problem/41190880>
+
+        Reviewed by Dean Jackson.
+
+        Fixes an issue where opening attachments on my.gov.au would show a "Blocked Plug-in" message.
+
+        Opening an attachment on my.gov.au opens a same-origin plugin document in a child window. Currently
+        same-origin plugin documents inherit their CSP policy from their opener. If the opener's CSP policy
+        disallows embedding plugins then the plugin document would be blocked from loading a plugin. For now
+        we relax the inheritance model such that we only inherit the plugin-types and report-uri directives
+        from the opener.
+
+        Developers that want to block plugin content from being loaded in a same-origin child window must now
+        serve such plugin content with a CSP policy that includes "object-src 'none'". This matches the behavior
+        described in the second Note in section object-src of the CSP 3 spec: <https://w3c.github.io/webappsec-csp/#directive-object-src>
+        (Editor's Draft, 10 July 2018). It also makes the behavior in WebKit more closely aligned with the
+        behavior of Chrome and Firefox.
+
+        Tests: http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html
+               http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php
+               http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initContentSecurityPolicy): For plugin documents that have an opener call ContentSecurityPolicy::createPolicyForPluginDocumentFrom()
+        to only inherit the plugin-types and report-uri directives from its opener's CSP policy. Otherwise, call ContentSecurityPolicy::copyStateFrom()
+        to inherit all directives from the owner frame as we do now.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::createPolicyForPluginDocumentFrom): Create a new policy from the specified policy
+        inheriting only the plugin-types and report-uri directives.
+        * page/csp/ContentSecurityPolicy.h: Define a new PolicyFrom enumerator, InheritedForPluginDocument, for plugin documents
+        loaded in a child window.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::parse): When policyFrom is InheritedForPluginDocument then only
+        recognize the plugin-types and report-uri directives when parsing the policy.
+
+2018-07-24  Daniel Bates  <dabates@apple.com>
+
         Rename Document::firstPartyForSameSiteCookies() to siteForCookies()
         https://bugs.webkit.org/show_bug.cgi?id=187892
 

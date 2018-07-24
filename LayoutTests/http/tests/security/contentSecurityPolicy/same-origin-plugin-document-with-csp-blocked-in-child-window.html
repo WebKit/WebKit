@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; plugin-types application/x-webkit-dummy-plugin">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; object-src 'none'">
 <script src="resources/checkDidSameOriginChildWindowLoad.js"></script>
 <script>
 if (window.testRunner) {
@@ -14,7 +14,7 @@ if (window.testRunner) {
 </head>
 <body>
 <script>
-checkDidSameOriginChildWindowLoadAndNotifyDone(window.open("http://127.0.0.1:8000/plugins/resources/plugin-document-alert-and-notify-done.pl"));
+checkDidSameOriginChildWindowLoadAndNotifyDone(window.open("http://127.0.0.1:8000/plugins/resources/plugin-document-alert-and-notify-done.pl?additionalHeader=Content-Security-Policy%3A+object-src+%27none%27"));
 </script>
 </body>
 </html>

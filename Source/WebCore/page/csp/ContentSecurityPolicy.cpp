@@ -117,6 +117,17 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
     m_httpStatusCode = other->m_httpStatusCode;
 }
 
+void ContentSecurityPolicy::createPolicyForPluginDocumentFrom(const ContentSecurityPolicy& other)
+{
+    if (m_hasAPIPolicy)
+        return;
+    ASSERT(m_policies.isEmpty());
+    for (auto& policy : other.m_policies)
+        didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::InheritedForPluginDocument, String { });
+    m_referrer = other.m_referrer;
+    m_httpStatusCode = other.m_httpStatusCode;
+}
+
 void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy& other)
 {
     m_upgradeInsecureRequests = other.m_upgradeInsecureRequests;

@@ -1,3 +1,32 @@
+2018-07-24  Daniel Bates  <dabates@apple.com>
+
+        Cannot view PDF's on my.gov.au: "Refused to load https://my.gov.au/attachment/viewAttachment because it
+        appears in neither the object-src directive nor the default-src directive of the Content Security Policy"
+        https://bugs.webkit.org/show_bug.cgi?id=187870
+        <rdar://problem/41190880>
+
+        Reviewed by Dean Jackson.
+
+        Add new tests and fix up the existing test http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html
+        so that still tests a scenario where a same-origin plugin document loaded in a child window is blocked from
+        loading its plugin now that that "object-src: 'none'" is no longer inherited by the plugin document.
+
+        * http/tests/plugins/resources/plugin-document-alert-and-notify-done.pl:
+        * http/tests/security/contentSecurityPolicy/resources/checkDidSameOriginChildWindowLoad.js: Added.
+        (checkDidSameOriginChildWindowLoadAndNotifyDone):
+        (checkDidLoad):
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-expected.txt:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html: Added.
+        * platform/ios/TestExpectations: Skip the included tests as we do not support plugins on iOS.
+        * platform/win/TestExpectations: Skip the included tests as plugins do not seem to work on Windows. We currently skip many
+        (if not all) plugin tests on Windows despite <rdar://problem/5074411> being marked as Closed (why?). 
+
 2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.

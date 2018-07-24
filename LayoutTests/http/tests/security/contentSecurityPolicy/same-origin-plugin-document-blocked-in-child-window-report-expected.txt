@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/plugins/resources/mock-plugin.pl because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
+CSP report received:
+CONTENT_TYPE: application/csp-report
+HTTP_HOST: 127.0.0.1:8000
+HTTP_REFERER: http://127.0.0.1:8000/plugins/resources/mock-plugin.pl
+REQUEST_METHOD: POST
+REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.php?test=/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php
+=== POST DATA ===
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/plugins/resources/mock-plugin.pl","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php","violated-directive":"plugin-types application/x-webkit-dummy-plugin","effective-directive":"plugin-types","original-policy":"script-src 'self' 'unsafe-inline'; plugin-types application/x-webkit-dummy-plugin; report-uri /security/contentSecurityPolicy/resources/save-report.php?test=/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php","blocked-uri":"http://127.0.0.1:8000/plugins/resources/mock-plugin.pl","status-code":200}}
