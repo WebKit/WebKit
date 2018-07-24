@@ -156,6 +156,19 @@ template <> void derefGPtr(GClosure* ptr)
         g_closure_unref(ptr);
 }
 
+template <> GRegex* refGPtr(GRegex* ptr)
+{
+    if (ptr)
+        g_regex_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GRegex* ptr)
+{
+    if (ptr)
+        g_regex_unref(ptr);
+}
+
 } // namespace WTF
 
 #endif // USE(GLIB)

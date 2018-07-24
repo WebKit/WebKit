@@ -1,3 +1,18 @@
+2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Implement bitrate modulation support in GStreamer based libwebrtc Encoders
+        https://bugs.webkit.org/show_bug.cgi?id=187643
+
+        Reviewed by Philippe Normand.
+
+        Added support for GRegex in GRefPtr.
+
+        Source/WTF:
+        * wtf/glib/GRefPtr.cpp:
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/glib/GRefPtr.h:
+
 2018-07-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         WTF::StringView::split should have an allowEmptyEntries flag

@@ -49,7 +49,14 @@
 GST_DEBUG_CATEGORY(webkit_webrtcenc_debug);
 #define GST_CAT_DEFAULT webkit_webrtcenc_debug
 
+#define KBIT_TO_BIT 1024
+
 namespace WebCore {
+
+typedef void (*BitrateSetter)(GstElement* encoder, uint32_t bitrate);
+static GRefPtr<GRegex> targetBitrateBitPerSec;
+static GRefPtr<GRegex> bitrateBitPerSec;
+static GRefPtr<GRegex> bitrateKBitPerSec;
 
 class GStreamerVideoEncoder : public webrtc::VideoEncoder {
 public:
@@ -57,12 +64,14 @@ public:
         : m_pictureId(0)
         , m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+        , m_bitrateSetter(nullptr)
     {
     }
     GStreamerVideoEncoder()
         : m_pictureId(0)
         , m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+        , m_bitrateSetter(nullptr)
     {
     }
 
@@ -75,6 +84,9 @@ public:
         gst_caps_set_simple(caps, "framerate", GST_TYPE_FRACTION, frameRate, 1, nullptr);
 
         SetRestrictionCaps(caps);
+
+        if (m_bitrateSetter && m_encoder)
+            m_bitrateSetter(m_encoder, newBitrate);
 
         return WEBRTC_VIDEO_CODEC_OK;
     }
@@ -100,8 +112,9 @@ public:
         m_pipeline = makeElement("pipeline");
 
         connectSimpleBusMessageCallback(m_pipeline.get());
-        auto encodebin = CreateEncoder(&m_encoder).leakRef();
+        auto encodebin = createEncoder(&m_encoder).leakRef();
         ASSERT(m_encoder);
+        m_bitrateSetter = getBitrateSetter(gst_element_get_factory(m_encoder));
 
         m_src = makeElement("appsrc");
         g_object_set(m_src, "is-live", true, "format", GST_FORMAT_TIME, nullptr);
@@ -239,7 +252,41 @@ public:
         return GST_FLOW_OK;
     }
 
-    GRefPtr<GstElement> CreateEncoder(GstElement** encoder)
+#define RETURN_BITRATE_SETTER_IF_MATCHES(regex, propertyName, bitrateMultiplier, unit)                 \
+    if (g_regex_match(regex.get(), factoryName, static_cast<GRegexMatchFlags>(0), nullptr)) {          \
+        GST_INFO_OBJECT(encoderFactory, "Detected as having a " #propertyName " property in " unit); \
+        return [](GstElement* encoder, uint32_t bitrate)                                               \
+            {                                                                                          \
+                g_object_set(encoder, propertyName, bitrate * bitrateMultiplier, nullptr);            \
+            };                                                                                         \
+    }
+
+    // GStreamer doesn't have a unified encoder API and the encoders have their
+    // own semantics and naming to set the bitrate, this is a best effort to handle
+    // setting bitrate for the well known encoders.
+    // See https://bugzilla.gnome.org/show_bug.cgi?id=796716
+    BitrateSetter getBitrateSetter(GstElementFactory* encoderFactory)
+    {
+        static std::once_flag regexRegisteredFlag;
+
+        std::call_once(regexRegisteredFlag, [] {
+            targetBitrateBitPerSec = g_regex_new("^vp.enc$|^omx.*enc$", static_cast<GRegexCompileFlags>(0), static_cast<GRegexMatchFlags>(0), nullptr);
+            bitrateBitPerSec = g_regex_new("^openh264enc$", static_cast<GRegexCompileFlags>(0), static_cast<GRegexMatchFlags>(0), nullptr);
+            bitrateKBitPerSec = g_regex_new("^x264enc$|vaapi.*enc$", static_cast<GRegexCompileFlags>(0), static_cast<GRegexMatchFlags>(0), nullptr);
+            ASSERT(targetBitrateBitPerSec.get() && bitrateBitPerSec.get() && bitrateKBitPerSec.get());
+        });
+
+        auto factoryName = GST_OBJECT_NAME(encoderFactory);
+        RETURN_BITRATE_SETTER_IF_MATCHES(targetBitrateBitPerSec, "target-bitrate", KBIT_TO_BIT, "Bits Per Second")
+        RETURN_BITRATE_SETTER_IF_MATCHES(bitrateBitPerSec, "bitrate", KBIT_TO_BIT, "Bits Per Second")
+        RETURN_BITRATE_SETTER_IF_MATCHES(bitrateKBitPerSec, "bitrate", 1, "KBits Per Second")
+
+        GST_WARNING_OBJECT(encoderFactory, "unkonwn encoder, can't set bitrates on it");
+        return nullptr;
+    }
+#undef RETURN_BITRATE_SETTER_IF_MATCHES
+
+    GRefPtr<GstElement> createEncoder(GstElement** encoder)
     {
         GstElement* enc = nullptr;
 
@@ -280,7 +327,7 @@ public:
     {
         GstElement* encoder;
 
-        if (CreateEncoder(&encoder).get() != nullptr) {
+        if (createEncoder(&encoder).get() != nullptr) {
             webrtc::SdpVideoFormat format = ConfigureSupportedCodec(encoder);
 
             supportedFormats->push_back(format);
@@ -338,7 +385,7 @@ public:
 
     void SetRestrictionCaps(GstCaps* caps)
     {
-        if (caps && m_profile.get())
+        if (caps && m_profile.get() && gst_caps_is_equal(m_restrictionCaps.get(), caps))
             g_object_set(m_profile.get(), "restriction-caps", caps, nullptr);
 
         m_restrictionCaps = caps;
@@ -361,6 +408,7 @@ private:
     GstClockTime m_firstFramePts;
     GRefPtr<GstCaps> m_restrictionCaps;
     GRefPtr<GstEncodingProfile> m_profile;
+    BitrateSetter m_bitrateSetter;
 };
 
 class H264Encoder : public GStreamerVideoEncoder {

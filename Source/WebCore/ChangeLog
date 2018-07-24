@@ -1,3 +1,24 @@
+2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Implement bitrate modulation support in GStreamer based libwebrtc Encoders
+        https://bugs.webkit.org/show_bug.cgi?id=187643
+
+        Reviewed by Philippe Normand.
+
+        Problem being that we do not have a proper unified encoder API in GStreamer, some work
+        started at https://bugzilla.gnome.org/show_bug.cgi?id=796716 but it is quite controversial
+        and meanwhile we should just move forward working around that limitation.
+
+        Source/WebCore:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::GStreamerVideoEncoder):
+        (WebCore::GStreamerVideoEncoder::InitEncode):
+        (WebCore::GStreamerVideoEncoder::getBitrateSetter):
+        (WebCore::GStreamerVideoEncoder::createEncoder):
+        (WebCore::GStreamerVideoEncoder::AddCodecIfSupported):
+        (WebCore::GStreamerVideoEncoder::SetRestrictionCaps):
+        (WebCore::GStreamerVideoEncoder::CreateEncoder): Deleted.
+
 2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r234055): inverted return values in MediaPlayer::wouldTaintOrigin()
