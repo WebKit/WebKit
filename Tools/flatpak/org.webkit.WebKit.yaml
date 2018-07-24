@@ -128,6 +128,12 @@ modules:
       - --enable-vp9-temporal-denoising
       - --enable-vp9-postproc
       - --enable-shared
+  - name: libopenh264
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://github.com/cisco/openh264.git
+        branch: a1b3f07c5271f312997fcc3451237031444c4475 # 1.8.0 + fix for gcc 8
   - name: gstreamer
     buildsystem: meson
     sources:
