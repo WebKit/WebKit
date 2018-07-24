@@ -1,3 +1,28 @@
+2018-07-24  Daniel Bates  <dabates@apple.com>
+
+        Rename Document::firstPartyForSameSiteCookies() to siteForCookies()
+        https://bugs.webkit.org/show_bug.cgi?id=187892
+
+        Reviewed by Dean Jackson.
+
+        Standardize on the spec. language "site for cookies" for the names of the setter and getter
+        on Document. The latest description of Same-Site cookies is in <https://httpwg.org/http-extensions/rfc6265bis.html>.
+
+        No functionality changed. So, no new tests.
+
+        * dom/Document.h:
+        (WebCore::Document::siteForCookies const):
+        (WebCore::Document::setSiteForCookies):
+        (WebCore::Document::firstPartyForSameSiteCookies const): Deleted.
+        (WebCore::Document::setFirstPartyForSameSiteCookies): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setFirstPartyForCookies):
+        (WebCore::FrameLoader::addSameSiteInfoToRequestIfNeeded):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::createPageForServiceWorker):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2018-07-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         WebCore::URL::hostIsIPAddress needs a Windows implementation

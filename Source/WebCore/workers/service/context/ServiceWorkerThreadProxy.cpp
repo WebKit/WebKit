@@ -66,7 +66,7 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
     auto origin = data.registration.key.topOrigin().securityOrigin();
     origin->setStorageBlockingPolicy(storageBlockingPolicy);
 
-    document->setFirstPartyForSameSiteCookies(topOriginURL(origin));
+    document->setSiteForCookies(topOriginURL(origin));
     document->setFirstPartyForCookies(data.scriptURL);
     document->setDomainForCachePartition(origin->domainForCachePartition());
     mainFrame.setDocument(WTFMove(document));
