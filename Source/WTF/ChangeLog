@@ -1,3 +1,21 @@
+2018-07-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        WTF::StringView::split should have an allowEmptyEntries flag
+        https://bugs.webkit.org/show_bug.cgi?id=187864
+
+        Reviewed by Konstantin Tokarev.
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::SplitResult::Iterator::findNextSubstring):
+        (WTF::StringView::SplitResult::Iterator::operator++):
+        * wtf/text/StringView.h:
+        (WTF::StringView::split const):
+        (WTF::StringView::SplitResult::SplitResult):
+        (WTF::StringView::SplitResult::Iterator::operator== const):
+        We can't mimic String::split completely, because this one's iterator-based --
+        achieve desired behavior by adding m_allowEmptyEntries to SplitResult and m_isDone to its Iterator.
+        (The latter keeps us from hitting begin() == end() prematurely on a final empty entry.)
+
 2018-07-23  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault

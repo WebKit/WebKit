@@ -105,22 +105,25 @@ size_t StringView::find(StringView matchString, unsigned start) const
 void StringView::SplitResult::Iterator::findNextSubstring()
 {
     for (size_t separatorPosition; (separatorPosition = m_result.m_string.find(m_result.m_separator, m_position)) != notFound; ++m_position) {
-        if (separatorPosition > m_position) {
+        if (m_result.m_allowEmptyEntries || separatorPosition > m_position) {
             m_length = separatorPosition - m_position;
             return;
         }
     }
     m_length = m_result.m_string.length() - m_position;
+    if (!m_length && !m_result.m_allowEmptyEntries)
+        m_isDone = true;
 }
 
 auto StringView::SplitResult::Iterator::operator++() -> Iterator&
 {
-    ASSERT(m_position < m_result.m_string.length());
+    ASSERT(m_position <= m_result.m_string.length() && !m_isDone);
     m_position += m_length;
     if (m_position < m_result.m_string.length()) {
         ++m_position;
         findNextSubstring();
-    }
+    } else if (!m_isDone)
+        m_isDone = true;
     return *this;
 }
 

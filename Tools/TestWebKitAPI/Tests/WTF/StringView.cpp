@@ -289,10 +289,16 @@ TEST(WTF, StringViewSplitBasic)
 TEST(WTF, StringViewSplitWithConsecutiveSeparators)
 {
     String referenceHolder;
-    StringView a = stringViewFromUTF8(referenceHolder, "This     is  a       sentence.");
+    StringView a = stringViewFromUTF8(referenceHolder, " This     is  a       sentence. ");
 
     Vector<String> actual = vectorFromSplitResult(a.split(' '));
     Vector<String> expected({ "This", "is", "a", "sentence." });
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    actual = vectorFromSplitResult(a.split(' ', StringView::AllowEmptyEntries));
+    expected = { "", "This", "", "", "", "", "is", "", "a", "", "", "", "", "", "", "sentence.", "" };
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
