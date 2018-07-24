@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "LifecycleLogger.h"
+#include "MoveOnlyLifecycleLogger.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -49,6 +50,46 @@ TEST(WTF_NeverDestroyed, Construct)
         ASSERT_STREQ(x.get().name, "name");
     }
     ASSERT_STREQ("construct(name) copy-construct(name) set-name(x) destruct(x) ", takeLogStr().c_str());
+
+    { static NeverDestroyed<LifecycleLogger> x { [] { return LifecycleLogger { "name" }; }() }; UNUSED_PARAM(x); }
+    ASSERT_STREQ("construct(name) move-construct(name) destruct(<default>) ", takeLogStr().c_str());
+
+    {
+        static auto x = makeNeverDestroyed([] {
+            LifecycleLogger l { "name" };
+            l.setName("x");
+            return l;
+        }());
+        ASSERT_STREQ(x.get().name, "x");
+    }
+    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
+
+    {
+        static NeverDestroyed<LifecycleLogger> x;
+        static NeverDestroyed<LifecycleLogger> y { WTFMove(x) };
+        UNUSED_PARAM(y);
+    }
+    ASSERT_STREQ("construct(<default>) move-construct(<default>) ", takeLogStr().c_str());
+
+    {
+        static NeverDestroyed<const LifecycleLogger> x;
+        static NeverDestroyed<const LifecycleLogger> y { WTFMove(x) };
+        UNUSED_PARAM(y);
+    }
+    ASSERT_STREQ("construct(<default>) move-construct(<default>) ", takeLogStr().c_str());
+
+    { static NeverDestroyed<MoveOnlyLifecycleLogger> x { [] { return MoveOnlyLifecycleLogger { "name" }; }() }; UNUSED_PARAM(x); }
+    ASSERT_STREQ("construct(name) move-construct(name) destruct(<default>) ", takeLogStr().c_str());
+
+    {
+        static auto x = makeNeverDestroyed([] {
+            MoveOnlyLifecycleLogger l { "name" };
+            l.setName("x");
+            return l;
+        }());
+        UNUSED_PARAM(x);
+    }
+    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
 }
 
 static const Vector<int>& list()

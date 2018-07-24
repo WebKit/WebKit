@@ -748,6 +748,7 @@
 		CE4D5DE71F6743BA0072CFC6 /* StringWithDirection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */; };
 		CE6E81A020A6935F00E2C80F /* SetTimeoutFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */; };
 		CE6E81A420A933D500E2C80F /* set-timeout-function.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE6E81A320A933B800E2C80F /* set-timeout-function.html */; };
+		CE78705F2107AB980053AC67 /* MoveOnlyLifecycleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */; };
 		CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */; };
 		CEA7F57D2089624B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */; };
 		CEBABD491B71687C0051210A /* should-open-external-schemes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBABD481B71687C0051210A /* should-open-external-schemes.html */; };
@@ -1945,6 +1946,8 @@
 		CE50D8C81C8665CE0072EA5A /* OptionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionSet.cpp; sourceTree = "<group>"; };
 		CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SetTimeoutFunction.mm; sourceTree = "<group>"; };
 		CE6E81A320A933B800E2C80F /* set-timeout-function.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "set-timeout-function.html"; path = "ios/set-timeout-function.html"; sourceTree = SOURCE_ROOT; };
+		CE78705C2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveOnlyLifecycleLogger.h; sourceTree = "<group>"; };
+		CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveOnlyLifecycleLogger.cpp; sourceTree = "<group>"; };
 		CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenAndCloseWindow.mm; sourceTree = "<group>"; };
 		CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "open-and-close-window.html"; sourceTree = "<group>"; };
 		CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DidResignInputElementStrongPasswordAppearance.mm; sourceTree = "<group>"; };
@@ -2934,6 +2937,8 @@
 				CD5497B315857F0C00B5BC30 /* MediaTime.cpp */,
 				0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */,
 				93A427AC180DA60F00CD24D7 /* MoveOnly.h */,
+				CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */,
+				CE78705C2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.h */,
 				FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */,
 				A57D54F21F338C3600A97AA7 /* NeverDestroyed.cpp */,
 				1AFDE6541953B2C000C48FFA /* Optional.cpp */,
@@ -3508,6 +3513,7 @@
 				7C83DEEF1D0A590C00FEBCF3 /* MD5.cpp in Sources */,
 				7C83DEF11D0A590C00FEBCF3 /* MediaTime.cpp in Sources */,
 				7C83DEF61D0A590C00FEBCF3 /* MetaAllocator.cpp in Sources */,
+				CE78705F2107AB980053AC67 /* MoveOnlyLifecycleLogger.cpp in Sources */,
 				7C83DEFE1D0A590C00FEBCF3 /* NakedPtr.cpp in Sources */,
 				A57D54F31F338C3600A97AA7 /* NeverDestroyed.cpp in Sources */,
 				7C83DF011D0A590C00FEBCF3 /* Optional.cpp in Sources */,

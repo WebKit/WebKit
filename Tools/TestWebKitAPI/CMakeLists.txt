@@ -117,6 +117,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MediaTime.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/MoveOnlyLifecycleLogger.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/NakedPtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/NeverDestroyed.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Optional.cpp

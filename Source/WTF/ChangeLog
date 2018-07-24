@@ -1,3 +1,36 @@
+2018-07-24  Daniel Bates  <dabates@apple.com>
+
+        Move-constructing NeverDestroyed should move construct underlying object instead of copy constructing it
+        https://bugs.webkit.org/show_bug.cgi?id=187971
+
+        Reviewed by Saam Barati.
+
+        Fixes an issue where move constructing a NeverDestroyed<T> would always copy construct T into
+        the destination storage buffer regardless of whether T is move constructable. For example:
+
+        {
+            static NeverDestroyed<T> x;
+            static NeverDestroyed<T> y { WTFMove(x) }; // currently makes a copy of x's T even if T is move constructable
+        }
+
+        Currently the NeverDestroyed<T> instantiates T into the destination storage buffer by WTFMove()ing
+        the NeverDestroyed<T> into it, implicitly converting it to const T& by way of const T& conversion
+        operator. As a result the compiler picks the copy constructor for T to invoke instead of evaluating
+        whether T can be move constructed. Instead we should explicitly WTFMove() the underlying T so that
+        the compiler can choose to either move-construct T or copy construct it.
+
+        A side benefit of this change it is now possible to invoke makeNeverDestroyed() with the result
+        of a function that returns a move-only type (e.g. RenderStyle):
+
+        static auto sharedStyle = makeNeverDestroyed([] {
+            auto style = RenderStyle::create();
+            ...
+            return style;
+        }());
+
+        * wtf/NeverDestroyed.h:
+        (WTF::NeverDestroyed::NeverDestroyed):
+
 2018-07-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234121.

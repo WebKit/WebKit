@@ -52,7 +52,7 @@ public:
 
     NeverDestroyed(NeverDestroyed&& other)
     {
-        MaybeRelax<T>(new (storagePointer()) T(WTFMove(other)));
+        MaybeRelax<T>(new (storagePointer()) T(WTFMove(*other.storagePointer())));
     }
 
     operator T&() { return *storagePointer(); }

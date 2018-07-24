@@ -1,3 +1,26 @@
+2018-07-24  Daniel Bates  <dabates@apple.com>
+
+        Move-constructing NeverDestroyed should move construct underlying object instead of copy constructing it
+        https://bugs.webkit.org/show_bug.cgi?id=187971
+
+        Reviewed by Saam Barati.
+
+        Add unit tests to cover move constructing a NeverDestroyed with a non-const and const data type
+        as well as invoking makeNeverDestroyed() with the result of a function that returns a move-only
+        data type.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/MoveOnlyLifecycleLogger.cpp: Added.
+        (TestWebKitAPI::MoveOnlyLifecycleLogger::MoveOnlyLifecycleLogger):
+        (TestWebKitAPI::MoveOnlyLifecycleLogger::~MoveOnlyLifecycleLogger):
+        (TestWebKitAPI::MoveOnlyLifecycleLogger::operator=):
+        (TestWebKitAPI::MoveOnlyLifecycleLogger::setName):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/MoveOnlyLifecycleLogger.h: Added.
+        * TestWebKitAPI/Tests/WTF/NeverDestroyed.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-07-24  Thomas Denney  <tdenney@apple.com>
         Minor changes to the WHLSL interpreter to support the new compiler
         https://bugs.webkit.org/show_bug.cgi?id=187728
