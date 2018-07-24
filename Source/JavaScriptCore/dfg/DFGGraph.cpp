@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ static const char* dfgOpNames[] = {
 Graph::Graph(VM& vm, Plan& plan)
     : m_vm(vm)
     , m_plan(plan)
-    , m_codeBlock(m_plan.codeBlock)
+    , m_codeBlock(m_plan.codeBlock())
     , m_profiledBlock(m_codeBlock->alternative())
     , m_ssaCFG(std::make_unique<SSACFG>(*this))
     , m_nextMachineLocal(0)
@@ -1022,14 +1022,15 @@ bool Graph::watchCondition(const ObjectPropertyCondition& key)
 {
     if (!key.isWatchable())
         return false;
-    
-    m_plan.weakReferences.addLazily(key.object());
+
+    DesiredWeakReferences& weakReferences = m_plan.weakReferences();
+    weakReferences.addLazily(key.object());
     if (key.hasPrototype())
-        m_plan.weakReferences.addLazily(key.prototype());
+        weakReferences.addLazily(key.prototype());
     if (key.hasRequiredValue())
-        m_plan.weakReferences.addLazily(key.requiredValue());
-    
-    m_plan.watchpoints.addLazily(key);
+        weakReferences.addLazily(key.requiredValue());
+
+    m_plan.watchpoints().addLazily(key);
 
     if (key.kind() == PropertyCondition::Presence)
         m_safeToLoad.add(std::make_pair(key.object(), key.offset()));
@@ -1076,12 +1077,12 @@ InferredType::Descriptor Graph::inferredTypeFor(const PropertyTypeKey& key)
     
     m_inferredTypes.add(key, typeDescriptor);
 
-    m_plan.weakReferences.addLazily(typeObject);
+    m_plan.weakReferences().addLazily(typeObject);
     registerInferredType(typeDescriptor);
 
     // Note that we may already be watching this desired inferred type, because multiple structures may
     // point to the same InferredType instance.
-    m_plan.watchpoints.addLazily(DesiredInferredType(typeObject, typeDescriptor));
+    m_plan.watchpoints().addLazily(DesiredInferredType(typeObject, typeDescriptor));
 
     return typeDescriptor;
 }
@@ -1226,7 +1227,7 @@ unsigned Graph::stackPointerOffset()
 unsigned Graph::requiredRegisterCountForExit()
 {
     unsigned count = JIT::frameRegisterCountFor(m_profiledBlock);
-    for (InlineCallFrameSet::iterator iter = m_plan.inlineCallFrames->begin(); !!iter; ++iter) {
+    for (InlineCallFrameSet::iterator iter = m_plan.inlineCallFrames()->begin(); !!iter; ++iter) {
         InlineCallFrame* inlineCallFrame = *iter;
         CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
         unsigned requiredCount = VirtualRegister(inlineCallFrame->stackOffset).toLocal() + 1 + JIT::frameRegisterCountFor(codeBlock);
@@ -1426,11 +1427,11 @@ void Graph::registerFrozenValues()
             continue;
         
         ASSERT(value->structure());
-        ASSERT(m_plan.weakReferences.contains(value->structure()));
-        
+        ASSERT(m_plan.weakReferences().contains(value->structure()));
+
         switch (value->strength()) {
         case WeakValue: {
-            m_plan.weakReferences.addLazily(value->value().asCell());
+            m_plan.weakReferences().addLazily(value->value().asCell());
             break;
         }
         case StrongValue: {
@@ -1503,8 +1504,8 @@ void Graph::convertToStrongConstant(Node* node, JSValue value)
 
 RegisteredStructure Graph::registerStructure(Structure* structure, StructureRegistrationResult& result)
 {
-    m_plan.weakReferences.addLazily(structure);
-    if (m_plan.watchpoints.consider(structure))
+    m_plan.weakReferences().addLazily(structure);
+    if (m_plan.watchpoints().consider(structure))
         result = StructureRegisteredAndWatched;
     else
         result = StructureRegisteredNormally;
@@ -1513,8 +1514,8 @@ RegisteredStructure Graph::registerStructure(Structure* structure, StructureRegi
 
 void Graph::registerAndWatchStructureTransition(Structure* structure)
 {
-    m_plan.weakReferences.addLazily(structure);
-    m_plan.watchpoints.addLazily(structure->transitionWatchpointSet());
+    m_plan.weakReferences().addLazily(structure);
+    m_plan.watchpoints().addLazily(structure->transitionWatchpointSet());
 }
 
 void Graph::assertIsRegistered(Structure* structure)
@@ -1522,9 +1523,9 @@ void Graph::assertIsRegistered(Structure* structure)
     // It's convenient to be able to call this with a maybe-null structure.
     if (!structure)
         return;
-    
-    DFG_ASSERT(*this, nullptr, m_plan.weakReferences.contains(structure));
-    
+
+    DFG_ASSERT(*this, nullptr, m_plan.weakReferences().contains(structure));
+
     if (!structure->dfgShouldWatch())
         return;
     if (watchpoints().isWatched(structure->transitionWatchpointSet()))

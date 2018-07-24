@@ -56,11 +56,11 @@ size_t JITFinalizer::codeSize()
 
 bool JITFinalizer::finalize()
 {
-    MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = FINALIZE_DFG_CODE(*m_linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data());
+    MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = FINALIZE_DFG_CODE(*m_linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock(), JITCode::DFGJIT)).data());
     m_jitCode->initializeCodeRef(codeRef, codeRef.code());
-    
-    m_plan.codeBlock->setJITCode(m_jitCode.copyRef());
-    
+
+    m_plan.codeBlock()->setJITCode(m_jitCode.copyRef());
+
     finalizeCommon();
     
     return true;
@@ -70,10 +70,10 @@ bool JITFinalizer::finalizeFunction()
 {
     RELEASE_ASSERT(!m_withArityCheck.isEmptyValue());
     m_jitCode->initializeCodeRef(
-        FINALIZE_DFG_CODE(*m_linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data()),
+        FINALIZE_DFG_CODE(*m_linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock(), JITCode::DFGJIT)).data()),
         m_withArityCheck);
-    m_plan.codeBlock->setJITCode(m_jitCode.copyRef());
-    
+    m_plan.codeBlock()->setJITCode(m_jitCode.copyRef());
+
     finalizeCommon();
     
     return true;
@@ -82,18 +82,18 @@ bool JITFinalizer::finalizeFunction()
 void JITFinalizer::finalizeCommon()
 {
     // Some JIT finalizers may have added more constants. Shrink-to-fit those things now.
-    m_plan.codeBlock->constants().shrinkToFit();
-    m_plan.codeBlock->constantsSourceCodeRepresentation().shrinkToFit();
-    
+    m_plan.codeBlock()->constants().shrinkToFit();
+    m_plan.codeBlock()->constantsSourceCodeRepresentation().shrinkToFit();
+
 #if ENABLE(FTL_JIT)
-    m_jitCode->optimizeAfterWarmUp(m_plan.codeBlock);
+    m_jitCode->optimizeAfterWarmUp(m_plan.codeBlock());
 #endif // ENABLE(FTL_JIT)
-    
-    if (UNLIKELY(m_plan.compilation))
-        m_plan.vm->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, *m_plan.compilation);
-    
-    if (!m_plan.willTryToTierUp)
-        m_plan.codeBlock->baselineVersion()->m_didFailFTLCompilation = true;
+
+    if (UNLIKELY(m_plan.compilation()))
+        m_plan.vm()->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock(), *m_plan.compilation());
+
+    if (!m_plan.willTryToTierUp())
+        m_plan.codeBlock()->baselineVersion()->m_didFailFTLCompilation = true;
 }
 
 } } // namespace JSC::DFG

@@ -36,8 +36,8 @@ class VM;
 
 namespace DFG {
 
+class Plan;
 class Scannable;
-struct Plan;
 
 class Safepoint {
 public:

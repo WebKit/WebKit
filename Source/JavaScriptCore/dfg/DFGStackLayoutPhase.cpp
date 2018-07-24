@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,8 +103,8 @@ public:
                 }
             }
         }
-        
-        for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames->begin(); !!iter; ++iter) {
+
+        for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames()->begin(); !!iter; ++iter) {
             InlineCallFrame* inlineCallFrame = *iter;
             
             if (inlineCallFrame->isVarargs()) {

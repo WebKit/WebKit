@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -442,10 +442,11 @@ private:
             ASSERT(block->isReachable);
             if (!block->isOSRTarget)
                 continue;
-            if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
+            if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex())
                 continue;
-            for (size_t i = 0; i < m_graph.m_plan.mustHandleValues.size(); ++i) {
-                int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
+            const Operands<JSValue>& mustHandleValues = m_graph.m_plan.mustHandleValues();
+            for (size_t i = 0; i < mustHandleValues.size(); ++i) {
+                int operand = mustHandleValues.operandForIndex(i);
                 Node* node = block->variablesAtHead.operand(operand);
                 if (!node)
                     continue;
@@ -455,7 +456,7 @@ private:
                     continue;
                 if (!TypeCheck::isValidToHoist(iter->value))
                     continue;
-                JSValue value = m_graph.m_plan.mustHandleValues[i];
+                JSValue value = mustHandleValues[i];
                 if (!value || !value.isCell() || TypeCheck::isContravenedByValue(iter->value, value)) {
                     TypeCheck::disableHoisting(iter->value);
                     continue;

@@ -32,7 +32,7 @@
 
 namespace JSC { namespace DFG {
 
-struct Plan;
+class Plan;
 
 class Finalizer {
     WTF_MAKE_NONCOPYABLE(Finalizer); WTF_MAKE_FAST_ALLOCATED;

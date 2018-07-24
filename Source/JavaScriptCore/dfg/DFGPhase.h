@@ -81,7 +81,7 @@ bool runAndLog(PhaseType& phase)
     
     bool result = phase.run();
 
-    if (result && logCompilationChanges(phase.graph().m_plan.mode))
+    if (result && logCompilationChanges(phase.graph().m_plan.mode()))
         dataLogF("Phase %s changed the IR.\n", phase.name());
     return result;
 }

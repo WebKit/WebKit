@@ -57,8 +57,8 @@ public:
         ASSERT(m_graph.m_refCountState == EverythingIsLive);
         
         m_count = 0;
-        
-        if (m_verbose && !shouldDumpGraphAtEachPhase(m_graph.m_plan.mode)) {
+
+        if (m_verbose && !shouldDumpGraphAtEachPhase(m_graph.m_plan.mode())) {
             dataLog("Graph before CFA:\n");
             m_graph.dump();
         }
@@ -88,7 +88,7 @@ public:
                 
                 if (!block->isOSRTarget)
                     continue;
-                if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
+                if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex())
                     continue;
                 
                 // We record that the block needs some OSR stuff, but we don't do that yet. We want to
@@ -156,9 +156,10 @@ private:
             dataLog("   Found must-handle block: ", *block, "\n");
         
         bool changed = false;
-        for (size_t i = m_graph.m_plan.mustHandleValues.size(); i--;) {
-            int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
-            JSValue value = m_graph.m_plan.mustHandleValues[i];
+        const Operands<JSValue>& mustHandleValues = m_graph.m_plan.mustHandleValues();
+        for (size_t i = mustHandleValues.size(); i--;) {
+            int operand = mustHandleValues.operandForIndex(i);
+            JSValue value = mustHandleValues[i];
             Node* node = block->variablesAtHead.operand(operand);
             if (!node) {
                 if (m_verbose)

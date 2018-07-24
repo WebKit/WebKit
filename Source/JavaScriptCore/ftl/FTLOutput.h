@@ -109,7 +109,7 @@ public:
 
     LValue weakPointer(DFG::Graph& graph, JSCell* cell)
     {
-        ASSERT(graph.m_plan.weakReferences.contains(cell));
+        ASSERT(graph.m_plan.weakReferences().contains(cell));
 
         return constIntPtr(bitwise_cast<intptr_t>(cell));
     }
@@ -117,7 +117,7 @@ public:
     template<typename Key>
     LValue weakPoisonedPointer(DFG::Graph& graph, JSCell* cell)
     {
-        ASSERT(graph.m_plan.weakReferences.contains(cell));
+        ASSERT(graph.m_plan.weakReferences().contains(cell));
 
         return constIntPtr(bitwise_cast<intptr_t>(cell) ^ Key::key());
     }

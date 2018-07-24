@@ -168,7 +168,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (B3::Air::Disassembler* disassembler = state.proc->code().disassembler()) {
         PrintStream& out = WTF::dataFile();
 
-        out.print("Generated ", state.graph.m_plan.mode, " code for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ", instruction count = ", state.graph.m_codeBlock->instructionCount(), ":\n");
+        out.print("Generated ", state.graph.m_plan.mode(), " code for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ", instruction count = ", state.graph.m_codeBlock->instructionCount(), ":\n");
 
         LinkBuffer& linkBuffer = *state.finalizer->b3CodeLinkBuffer;
         B3::Value* currentB3Value = nullptr;

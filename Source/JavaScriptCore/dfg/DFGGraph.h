@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -780,12 +780,12 @@ public:
         InlineWatchpointSet& set = globalObject->numberToStringWatchpoint();
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
-    
-    Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
-    
-    DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
-    DesiredWatchpoints& watchpoints() { return m_plan.watchpoints; }
-    
+
+    Profiler::Compilation* compilation() { return m_plan.compilation(); }
+
+    DesiredIdentifiers& identifiers() { return m_plan.identifiers(); }
+    DesiredWatchpoints& watchpoints() { return m_plan.watchpoints(); }
+
     // Returns false if the key is already invalid or unwatchable. If this is a Presence condition,
     // this also makes it cheap to query if the condition holds. Also makes sure that the GC knows
     // what's going on.

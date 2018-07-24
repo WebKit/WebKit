@@ -922,9 +922,9 @@ private:
                         Graph::parameterSlotsForArgCount(numAllocatedArgs));
                 }
             }
-            
-            m_graph.m_plan.recordedStatuses.addCallLinkStatus(m_node->origin.semantic, CallLinkStatus(callVariant));
-            
+
+            m_graph.m_plan.recordedStatuses().addCallLinkStatus(m_node->origin.semantic, CallLinkStatus(callVariant));
+
             m_node->convertToDirectCall(m_graph.freeze(executable));
             m_changed = true;
             break;

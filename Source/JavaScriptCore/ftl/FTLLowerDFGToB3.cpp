@@ -6669,7 +6669,7 @@ private:
                     storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
             } else {
                 DFG_ASSERT(m_graph, m_node, variant.kind() == PutByIdVariant::Transition, variant.kind());
-                m_graph.m_plan.transitions.addLazily(
+                m_graph.m_plan.transitions().addLazily(
                     codeBlock(), m_node->origin.semantic.codeOriginOwner(),
                     variant.oldStructureForTransition(), variant.newStructure());
                 
@@ -16108,8 +16108,8 @@ private:
             Availability availability = availabilityMap.m_locals[i];
             
             if (Options::validateFTLOSRExitLiveness()
-                && m_graph.m_plan.mode != FTLForOSREntryMode) {
-                
+                && m_graph.m_plan.mode() != FTLForOSREntryMode) {
+
                 if (availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitOrigin))
                     DFG_CRASH(m_graph, m_node, toCString("Live bytecode local not available: operand = ", VirtualRegister(operand), ", availability = ", availability, ", origin = ", exitOrigin).data());
             }
@@ -16384,7 +16384,7 @@ private:
     
     void addWeakReference(JSCell* target)
     {
-        m_graph.m_plan.weakReferences.addLazily(target);
+        m_graph.m_plan.weakReferences().addLazily(target);
     }
 
     LValue loadStructure(LValue value)

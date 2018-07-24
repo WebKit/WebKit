@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,10 +47,10 @@ public:
     
     bool run()
     {
-        RELEASE_ASSERT(m_graph.m_plan.mode == FTLForOSREntryMode);
+        RELEASE_ASSERT(m_graph.m_plan.mode() == FTLForOSREntryMode);
         RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
-        
-        unsigned bytecodeIndex = m_graph.m_plan.osrEntryBytecodeIndex;
+
+        unsigned bytecodeIndex = m_graph.m_plan.osrEntryBytecodeIndex();
         RELEASE_ASSERT(bytecodeIndex);
         RELEASE_ASSERT(bytecodeIndex != UINT_MAX);
         

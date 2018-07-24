@@ -1238,8 +1238,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     // If we have profiling information about this call, and it did not behave too polymorphically,
     // we may be able to inline it, or in the case of recursive tail calls turn it into a jump.
     if (callLinkStatus.canOptimize()) {
-        addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses.addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
-        
+        addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses().addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
+
         VirtualRegister thisArgument = virtualRegisterForArgument(0, registerOffset);
         auto optimizationResult = handleInlining(callTarget, result, callLinkStatus, registerOffset, thisArgument,
             argumentCountIncludingThis, m_currentIndex + instructionSize, op, kind, prediction);
@@ -1283,8 +1283,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, N
     VERBOSE_LOG("    Varargs call link status at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
     
     if (callLinkStatus.canOptimize()) {
-        addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses.addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
-        
+        addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses().addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
+
         if (handleVarargsInlining(callTarget, result,
             callLinkStatus, firstFreeReg, VirtualRegister(thisReg), VirtualRegister(arguments),
             firstVarArgOffset, op,
@@ -1915,7 +1915,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     // the DFG. And by polyvariant profiling we mean polyvariant profiling of *this* call. Note that
     // we could improve that aspect of this by doing polymorphic inlining but having the profiling
     // also.
-    if (!isFTL(m_graph.m_plan.mode) || !Options::usePolymorphicCallInlining()) {
+    if (!m_graph.m_plan.isFTL() || !Options::usePolymorphicCallInlining()) {
         VERBOSE_LOG("Bailing inlining (hard).\nStack: ", currentCodeOrigin(), "\n");
         return CallOptimizationResult::DidNothing;
     }
@@ -2807,7 +2807,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
     case FTLTrueIntrinsic: {
         insertChecks();
-        set(VirtualRegister(resultOperand), jsConstant(jsBoolean(isFTL(m_graph.m_plan.mode))));
+        set(VirtualRegister(resultOperand), jsConstant(jsBoolean(m_graph.m_plan.isFTL())));
         return true;
     }
         
@@ -2821,7 +2821,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
     case IsFinalTierIntrinsic: {
         insertChecks();
         set(VirtualRegister(resultOperand),
-            jsConstant(jsBoolean(Options::useFTLJIT() ? isFTL(m_graph.m_plan.mode) : true)));
+            jsConstant(jsBoolean(Options::useFTLJIT() ? m_graph.m_plan.isFTL() : true)));
         return true;
     }
         
@@ -3167,7 +3167,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
     case CPUCpuidIntrinsic:
     case CPUPauseIntrinsic: {
 #if CPU(X86_64)
-        if (!isFTL(m_graph.m_plan.mode))
+        if (!m_graph.m_plan.isFTL())
             return false;
         insertChecks();
         set(VirtualRegister(resultOperand),
@@ -3335,7 +3335,7 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
     addToGraph(CheckSubClass, OpInfo(domAttribute.classInfo), thisNode);
     
     bool wasSeenInJIT = true;
-    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), GetByIdStatus(GetByIdStatus::Custom, wasSeenInJIT, variant))), thisNode);
+    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), GetByIdStatus(GetByIdStatus::Custom, wasSeenInJIT, variant))), thisNode);
 
     CallDOMGetterData* callDOMGetterData = m_graph.m_callDOMGetterData.add();
     callDOMGetterData->customAccessorGetter = variant.customAccessorGetter();
@@ -3367,8 +3367,8 @@ bool ByteCodeParser::handleModuleNamespaceLoad(int resultOperand, SpeculatedType
     if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
         return false;
     addToGraph(CheckCell, OpInfo(m_graph.freeze(getById.moduleNamespaceObject())), Edge(base, CellUse));
-    
-    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), getById)), base);
+
+    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), getById)), base);
 
     // Ideally we wouldn't have to do this Phantom. But:
     //
@@ -4029,16 +4029,16 @@ void ByteCodeParser::handleGetById(
     // GetByIdStatus. That means that the constant folder also needs to do the same!
     
     if (getByIdStatus.numVariants() > 1) {
-        if (getByIdStatus.makesCalls() || !isFTL(m_graph.m_plan.mode)
+        if (getByIdStatus.makesCalls() || !m_graph.m_plan.isFTL()
             || !Options::usePolymorphicAccessInlining()
             || getByIdStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
             set(VirtualRegister(destinationOperand),
                 addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
             return;
         }
-        
-        addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
-        
+
+        addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
+
         Vector<MultiGetByOffsetCase, 2> cases;
         
         // 1) Emit prototype structure checks for all chains. This could sort of maybe not be
@@ -4081,8 +4081,8 @@ void ByteCodeParser::handleGetById(
         return;
     }
 
-    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
-    
+    addToGraph(FilterGetByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByIdStatus(currentCodeOrigin(), getByIdStatus)), base);
+
     ASSERT(getByIdStatus.numVariants() == 1);
     GetByIdVariant variant = getByIdStatus[0];
     
@@ -4175,7 +4175,7 @@ void ByteCodeParser::handlePutById(
     }
     
     if (putByIdStatus.numVariants() > 1) {
-        if (!isFTL(m_graph.m_plan.mode) || putByIdStatus.makesCalls()
+        if (!m_graph.m_plan.isFTL() || putByIdStatus.makesCalls()
             || !Options::usePolymorphicAccessInlining()
             || putByIdStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
             emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
@@ -4195,8 +4195,8 @@ void ByteCodeParser::handlePutById(
         
         if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedPutById();
-        
-        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
 
         for (const PutByIdVariant& variant : putByIdStatus.variants()) {
             m_graph.registerInferredType(variant.requiredType());
@@ -4218,8 +4218,8 @@ void ByteCodeParser::handlePutById(
     
     switch (variant.kind()) {
     case PutByIdVariant::Replace: {
-        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
-        
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+
         store(base, identifierNumber, variant, value);
         if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedPutById();
@@ -4227,8 +4227,8 @@ void ByteCodeParser::handlePutById(
     }
     
     case PutByIdVariant::Transition: {
-        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
-        
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
         if (!check(variant.conditionSet())) {
             emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
@@ -4296,8 +4296,8 @@ void ByteCodeParser::handlePutById(
     }
         
     case PutByIdVariant::Setter: {
-        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
-        
+        addToGraph(FilterPutByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(currentCodeOrigin(), putByIdStatus)), base);
+
         Node* loadedValue = load(SpecCellOther, base, identifierNumber, variant);
         if (!loadedValue) {
             emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
@@ -5648,7 +5648,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 NEXT_OPCODE(op_catch);
             }
 
-            if (m_graph.m_plan.mode == FTLForOSREntryMode) {
+            if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
                 NEXT_OPCODE(op_catch);
             }
 
@@ -6495,8 +6495,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 }
 
                 if (allOK) {
-                    addToGraph(FilterInByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses.addInByIdStatus(currentCodeOrigin(), status)), base);
-                    
+                    addToGraph(FilterInByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addInByIdStatus(currentCodeOrigin(), status)), base);
+
                     Node* match = addToGraph(MatchStructure, OpInfo(data), base);
                     set(VirtualRegister(currentInstruction[1].u.operand), match);
                     NEXT_OPCODE(op_in_by_id);
@@ -6699,8 +6699,8 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // Inline case.
         ASSERT(codeBlock != byteCodeParser->m_codeBlock);
         ASSERT(inlineCallFrameStart.isValid());
-        
-        m_inlineCallFrame = byteCodeParser->m_graph.m_plan.inlineCallFrames->add();
+
+        m_inlineCallFrame = byteCodeParser->m_graph.m_plan.inlineCallFrames()->add();
         m_optimizedContext.inlineCallFrame = m_inlineCallFrame;
 
         // The owner is the machine code block, and we already have a barrier on that when the
@@ -6776,7 +6776,7 @@ void ByteCodeParser::parseCodeBlock()
     }
     
     if (UNLIKELY(Options::dumpSourceAtDFGTime())) {
-        Vector<DeferredSourceDump>& deferredSourceDump = m_graph.m_plan.callback->ensureDeferredSourceDump();
+        Vector<DeferredSourceDump>& deferredSourceDump = m_graph.m_plan.callback()->ensureDeferredSourceDump();
         if (inlineCallFrame()) {
             DeferredSourceDump dump(codeBlock->baselineVersion(), m_codeBlock, JITCode::DFGJIT, inlineCallFrame()->directCaller);
             deferredSourceDump.append(dump);
@@ -6870,7 +6870,7 @@ void ByteCodeParser::parse()
     if (m_hasAnyForceOSRExits) {
         BlockSet blocksToIgnore;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            if (block->isOSRTarget && block->bytecodeBegin == m_graph.m_plan.osrEntryBytecodeIndex) {
+            if (block->isOSRTarget && block->bytecodeBegin == m_graph.m_plan.osrEntryBytecodeIndex()) {
                 blocksToIgnore.add(block);
                 break;
             }

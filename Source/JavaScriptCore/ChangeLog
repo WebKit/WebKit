@@ -1,3 +1,166 @@
+2018-07-24  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring: make DFG::Plan a class.
+        https://bugs.webkit.org/show_bug.cgi?id=187968
+
+        Reviewed by Saam Barati.
+
+        This patch makes all the DFG::Plan fields private, and provide accessor methods
+        for them.  This makes it easier to reason about how these fields are used and
+        modified.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleModuleNamespaceLoad):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        (JSC::DFG::CFAPhase::injectOSR):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::notifyCompilingStructureTransition):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFinalizer.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupCompareStrictEqAndSameValue):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::watchCondition):
+        (JSC::DFG::Graph::inferredTypeFor):
+        (JSC::DFG::Graph::requiredRegisterCountForExit):
+        (JSC::DFG::Graph::registerFrozenValues):
+        (JSC::DFG::Graph::registerStructure):
+        (JSC::DFG::Graph::registerAndWatchStructureTransition):
+        (JSC::DFG::Graph::assertIsRegistered):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::compilation):
+        (JSC::DFG::Graph::identifiers):
+        (JSC::DFG::Graph::watchpoints):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::disassemble):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addWeakReference):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::beginPhase):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::computeCompileTimes const):
+        (JSC::DFG::Plan::reportCompileTimes const):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::isStillValid):
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::notifyCompiling):
+        (JSC::DFG::Plan::notifyReady):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::finalizeAndNotifyCallback):
+        (JSC::DFG::Plan::key):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::finalizeInGC):
+        (JSC::DFG::Plan::isKnownToBeLiveDuringGC):
+        (JSC::DFG::Plan::cancel):
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::canTierUpAndOSREnter const):
+        (JSC::DFG::Plan::vm const):
+        (JSC::DFG::Plan::codeBlock):
+        (JSC::DFG::Plan::mode const):
+        (JSC::DFG::Plan::osrEntryBytecodeIndex const):
+        (JSC::DFG::Plan::mustHandleValues const):
+        (JSC::DFG::Plan::threadData const):
+        (JSC::DFG::Plan::compilation const):
+        (JSC::DFG::Plan::finalizer const):
+        (JSC::DFG::Plan::setFinalizer):
+        (JSC::DFG::Plan::inlineCallFrames const):
+        (JSC::DFG::Plan::watchpoints):
+        (JSC::DFG::Plan::identifiers):
+        (JSC::DFG::Plan::weakReferences):
+        (JSC::DFG::Plan::transitions):
+        (JSC::DFG::Plan::recordedStatuses):
+        (JSC::DFG::Plan::willTryToTierUp const):
+        (JSC::DFG::Plan::setWillTryToTierUp):
+        (JSC::DFG::Plan::tierUpInLoopHierarchy):
+        (JSC::DFG::Plan::tierUpAndOSREnterBytecodes):
+        (JSC::DFG::Plan::stage const):
+        (JSC::DFG::Plan::callback const):
+        (JSC::DFG::Plan::setCallback):
+        * dfg/DFGPlanInlines.h:
+        (JSC::DFG::Plan::iterateCodeBlocksForGC):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGSafepoint.cpp:
+        (JSC::DFG::Safepoint::Safepoint):
+        (JSC::DFG::Safepoint::~Safepoint):
+        (JSC::DFG::Safepoint::begin):
+        * dfg/DFGSafepoint.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::weakPointer):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::weakPoisonedPointer):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::disableHoistingAcrossOSREntries):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::isActiveForVM const):
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::removeNonCompilingPlansForVM):
+        * dfg/DFGWorklistInlines.h:
+        (JSC::DFG::Worklist::iterateCodeBlocksForGC):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::buildExitArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::addWeakReference):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+
 2018-07-24  Saam Barati  <sbarati@apple.com>
 
         Make VM::canUseJIT an inlined function

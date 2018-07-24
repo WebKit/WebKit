@@ -48,7 +48,7 @@ class TrackedReferences;
 namespace DFG {
 
 struct Node;
-struct Plan;
+class Plan;
 
 // CommonData holds the set of data that both DFG and FTL code blocks need to know
 // about themselves.

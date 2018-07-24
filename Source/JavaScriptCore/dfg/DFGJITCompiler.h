@@ -214,7 +214,7 @@ public:
     
     void addWeakReference(JSCell* target)
     {
-        m_graph.m_plan.weakReferences.addLazily(target);
+        m_graph.m_plan.weakReferences().addLazily(target);
     }
     
     void addWeakReferences(const StructureSet& structureSet)

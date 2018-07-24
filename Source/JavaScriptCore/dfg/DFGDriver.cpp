@@ -101,8 +101,8 @@ static CompilationResult compileImpl(
     
     Ref<Plan> plan = adoptRef(
         *new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));
-    
-    plan->callback = WTFMove(callback);
+
+    plan->setCallback(WTFMove(callback));
     if (Options::useConcurrentJIT()) {
         Worklist& worklist = ensureGlobalWorklistFor(mode);
         if (logCompilationChanges(mode))

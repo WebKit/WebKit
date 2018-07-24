@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,8 +61,8 @@ public:
     
     bool run()
     {
-        RELEASE_ASSERT(m_graph.m_plan.mode == DFGMode);
-        
+        RELEASE_ASSERT(m_graph.m_plan.mode() == DFGMode);
+
         if (!Options::useFTLJIT())
             return false;
         
@@ -110,7 +110,7 @@ public:
 
                 unsigned bytecodeIndex = origin.semantic.bytecodeIndex;
                 if (canOSREnter)
-                    m_graph.m_plan.tierUpAndOSREnterBytecodes.append(bytecodeIndex);
+                    m_graph.m_plan.tierUpAndOSREnterBytecodes().append(bytecodeIndex);
 
                 if (const NaturalLoop* loop = naturalLoops.innerMostLoopOf(block)) {
                     LoopHintDescriptor descriptor;
@@ -147,9 +147,9 @@ public:
             }
 
             if (!tierUpCandidates.isEmpty())
-                m_graph.m_plan.tierUpInLoopHierarchy.add(entry.key, WTFMove(tierUpCandidates));
+                m_graph.m_plan.tierUpInLoopHierarchy().add(entry.key, WTFMove(tierUpCandidates));
         }
-        m_graph.m_plan.willTryToTierUp = true;
+        m_graph.m_plan.setWillTryToTierUp(true);
         return true;
 #else // ENABLE(FTL_JIT)
         RELEASE_ASSERT_NOT_REACHED();

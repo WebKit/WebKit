@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ void Worklist::iterateCodeBlocksForGC(VM& vm, const Func& func)
     LockHolder locker(*m_lock);
     for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
         Plan* plan = iter->value.get();
-        if (plan->vm != &vm)
+        if (plan->vm() != &vm)
             continue;
         plan->iterateCodeBlocksForGC(func);
     }

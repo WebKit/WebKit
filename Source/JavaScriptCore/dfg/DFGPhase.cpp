@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,8 @@ void Phase::beginPhase()
         m_graph.dump(out);
         m_graphDumpBeforePhase = out.toCString();
     }
-    
-    if (!shouldDumpGraphAtEachPhase(m_graph.m_plan.mode))
+
+    if (!shouldDumpGraphAtEachPhase(m_graph.m_plan.mode()))
         return;
     
     dataLog("Beginning DFG phase ", m_name, ".\n");

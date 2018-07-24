@@ -51,7 +51,8 @@ class ThreadData;
 
 #if ENABLE(DFG_JIT)
 
-struct Plan : public ThreadSafeRefCounted<Plan> {
+class Plan : public ThreadSafeRefCounted<Plan> {
+public:
     Plan(
         CodeBlock* codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
         CompilationMode, unsigned osrEntryBytecodeIndex,
@@ -76,47 +77,43 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     void finalizeInGC();
     void cancel();
 
-    bool canTierUpAndOSREnter() const { return !tierUpAndOSREnterBytecodes.isEmpty(); }
-    
+    bool canTierUpAndOSREnter() const { return !m_tierUpAndOSREnterBytecodes.isEmpty(); }
+
     void cleanMustHandleValuesIfNecessary();
-    
-    // Warning: pretty much all of the pointer fields in this object get nulled by cancel(). So, if
-    // you're writing code that is callable on the cancel path, be sure to null check everything!
-    
-    VM* vm;
 
-    // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.
-    CodeBlock* codeBlock;
-    CodeBlock* profiledDFGCodeBlock;
+    VM* vm() const { return m_vm; }
 
-    CompilationMode mode;
-    const unsigned osrEntryBytecodeIndex;
-    Operands<JSValue> mustHandleValues;
-    bool mustHandleValuesMayIncludeGarbage { true };
-    Lock mustHandleValueCleaningLock;
-    
-    ThreadData* threadData;
+    CodeBlock* codeBlock() { return m_codeBlock; }
 
-    RefPtr<Profiler::Compilation> compilation;
+    bool isFTL() const { return DFG::isFTL(m_mode); }
+    CompilationMode mode() const { return m_mode; }
+    unsigned osrEntryBytecodeIndex() const { return m_osrEntryBytecodeIndex; }
+    const Operands<JSValue>& mustHandleValues() const { return m_mustHandleValues; }
 
-    std::unique_ptr<Finalizer> finalizer;
-    
-    RefPtr<InlineCallFrameSet> inlineCallFrames;
-    DesiredWatchpoints watchpoints;
-    DesiredIdentifiers identifiers;
-    DesiredWeakReferences weakReferences;
-    DesiredTransitions transitions;
-    RecordedStatuses recordedStatuses;
-    
-    bool willTryToTierUp { false };
+    ThreadData* threadData() const { return m_threadData; }
+    Profiler::Compilation* compilation() const { return m_compilation.get(); }
 
-    HashMap<unsigned, Vector<unsigned>> tierUpInLoopHierarchy;
-    Vector<unsigned> tierUpAndOSREnterBytecodes;
+    Finalizer* finalizer() const { return m_finalizer.get(); }
+    void setFinalizer(std::unique_ptr<Finalizer>&& finalizer) { m_finalizer = WTFMove(finalizer); }
+
+    RefPtr<InlineCallFrameSet> inlineCallFrames() const { return m_inlineCallFrames; }
+    DesiredWatchpoints& watchpoints() { return m_watchpoints; }
+    DesiredIdentifiers& identifiers() { return m_identifiers; }
+    DesiredWeakReferences& weakReferences() { return m_weakReferences; }
+    DesiredTransitions& transitions() { return m_transitions; }
+    RecordedStatuses& recordedStatuses() { return m_recordedStatuses; }
+
+    bool willTryToTierUp() const { return m_willTryToTierUp; }
+    void setWillTryToTierUp(bool willTryToTierUp) { m_willTryToTierUp = willTryToTierUp; }
+
+    HashMap<unsigned, Vector<unsigned>>& tierUpInLoopHierarchy() { return m_tierUpInLoopHierarchy; }
+    Vector<unsigned>& tierUpAndOSREnterBytecodes() { return m_tierUpAndOSREnterBytecodes; }
 
     enum Stage { Preparing, Compiling, Ready, Cancelled };
-    Stage stage;
+    Stage stage() const { return m_stage; }
 
-    RefPtr<DeferredCompilationCallback> callback;
+    DeferredCompilationCallback* callback() const { return m_callback.get(); }
+    void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTFMove(callback); }
 
 private:
     bool computeCompileTimes() const;
@@ -127,6 +124,43 @@ private:
     
     bool isStillValid();
     void reallyAdd(CommonData*);
+
+    // Warning: pretty much all of the pointer fields in this object get nulled by cancel(). So, if
+    // you're writing code that is callable on the cancel path, be sure to null check everything!
+
+    VM* m_vm;
+
+    // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.
+    CodeBlock* m_codeBlock;
+    CodeBlock* m_profiledDFGCodeBlock;
+
+    CompilationMode m_mode;
+    const unsigned m_osrEntryBytecodeIndex;
+    Operands<JSValue> m_mustHandleValues;
+    bool m_mustHandleValuesMayIncludeGarbage { true };
+    Lock m_mustHandleValueCleaningLock;
+
+    ThreadData* m_threadData;
+
+    RefPtr<Profiler::Compilation> m_compilation;
+
+    std::unique_ptr<Finalizer> m_finalizer;
+
+    RefPtr<InlineCallFrameSet> m_inlineCallFrames;
+    DesiredWatchpoints m_watchpoints;
+    DesiredIdentifiers m_identifiers;
+    DesiredWeakReferences m_weakReferences;
+    DesiredTransitions m_transitions;
+    RecordedStatuses m_recordedStatuses;
+
+    bool m_willTryToTierUp { false };
+
+    HashMap<unsigned, Vector<unsigned>> m_tierUpInLoopHierarchy;
+    Vector<unsigned> m_tierUpAndOSREnterBytecodes;
+
+    Stage m_stage;
+
+    RefPtr<DeferredCompilationCallback> m_callback;
 
     MonotonicTime m_timeBeforeFTL;
 };

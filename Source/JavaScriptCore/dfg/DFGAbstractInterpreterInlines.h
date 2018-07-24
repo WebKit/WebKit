@@ -3395,8 +3395,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         newSet.merge(*m_graph.addStructureSet(variant.oldStructure()));
                     }
                 }
-                
-                if (status.numVariants() == 1 || isFTL(m_graph.m_plan.mode))
+
+                if (status.numVariants() == 1 || m_graph.m_plan.isFTL())
                     m_state.setFoundConstants(true);
                 
                 didFoldClobberWorld();

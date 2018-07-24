@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ protected:
             }
             return PollResult::Stop;
         }
-        RELEASE_ASSERT(m_plan->stage == Plan::Preparing);
+        RELEASE_ASSERT(m_plan->stage() == Plan::Preparing);
         m_worklist.m_numberOfActiveThreads++;
         return PollResult::Work;
     }
@@ -100,7 +100,7 @@ protected:
         LockHolder locker(m_data.m_rightToRun);
         {
             LockHolder locker(*m_worklist.m_lock);
-            if (m_plan->stage == Plan::Cancelled)
+            if (m_plan->stage() == Plan::Cancelled)
                 return WorkResult::Continue;
             m_plan->notifyCompiling();
         }
@@ -109,13 +109,13 @@ protected:
             dataLog(m_worklist, ": Compiling ", m_plan->key(), " asynchronously\n");
         
         // There's no way for the GC to be safepointing since we own rightToRun.
-        if (m_plan->vm->heap.worldIsStopped()) {
+        if (m_plan->vm()->heap.worldIsStopped()) {
             dataLog("Heap is stoped but here we are! (1)\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
         m_plan->compileInThread(&m_data);
-        if (m_plan->stage != Plan::Cancelled) {
-            if (m_plan->vm->heap.worldIsStopped()) {
+        if (m_plan->stage() != Plan::Cancelled) {
+            if (m_plan->vm()->heap.worldIsStopped()) {
                 dataLog("Heap is stopped but here we are! (2)\n");
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -123,7 +123,7 @@ protected:
         
         {
             LockHolder locker(*m_worklist.m_lock);
-            if (m_plan->stage == Plan::Cancelled)
+            if (m_plan->stage() == Plan::Cancelled)
                 return WorkResult::Continue;
             
             m_plan->notifyReady();
@@ -134,8 +134,8 @@ protected:
             }
             
             m_worklist.m_readyPlans.append(m_plan);
-            
-            RELEASE_ASSERT(!m_plan->vm->heap.worldIsStopped());
+
+            RELEASE_ASSERT(!m_plan->vm()->heap.worldIsStopped());
             m_worklist.m_planCompiled.notifyAll();
         }
         
@@ -223,7 +223,7 @@ bool Worklist::isActiveForVM(VM& vm) const
     LockHolder locker(*m_lock);
     PlanMap::const_iterator end = m_plans.end();
     for (PlanMap::const_iterator iter = m_plans.begin(); iter != end; ++iter) {
-        if (iter->value->vm == &vm)
+        if (iter->value->vm() == &vm)
             return true;
     }
     return false;
@@ -248,7 +248,7 @@ Worklist::State Worklist::compilationState(CompilationKey key)
     PlanMap::iterator iter = m_plans.find(key);
     if (iter == m_plans.end())
         return NotKnown;
-    return iter->value->stage == Plan::Ready ? Compiled : Compiling;
+    return iter->value->stage() == Plan::Ready ? Compiled : Compiling;
 }
 
 void Worklist::waitUntilAllPlansForVMAreReady(VM& vm)
@@ -278,9 +278,9 @@ void Worklist::waitUntilAllPlansForVMAreReady(VM& vm)
         bool allAreCompiled = true;
         PlanMap::iterator end = m_plans.end();
         for (PlanMap::iterator iter = m_plans.begin(); iter != end; ++iter) {
-            if (iter->value->vm != &vm)
+            if (iter->value->vm() != &vm)
                 continue;
-            if (iter->value->stage != Plan::Ready) {
+            if (iter->value->stage() != Plan::Ready) {
                 allAreCompiled = false;
                 break;
             }
@@ -299,9 +299,9 @@ void Worklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<Plan>, 8>& myReady
     LockHolder locker(*m_lock);
     for (size_t i = 0; i < m_readyPlans.size(); ++i) {
         RefPtr<Plan> plan = m_readyPlans[i];
-        if (plan->vm != &vm)
+        if (plan->vm() != &vm)
             continue;
-        if (plan->stage != Plan::Ready)
+        if (plan->stage() != Plan::Ready)
             continue;
         myReadyPlans.append(plan);
         m_readyPlans[i--] = m_readyPlans.last();
@@ -331,9 +331,9 @@ Worklist::State Worklist::completeAllReadyPlansForVM(VM& vm, CompilationKey requ
         
         if (Options::verboseCompilationQueue())
             dataLog(*this, ": Completing ", currentKey, "\n");
-        
-        RELEASE_ASSERT(plan->stage == Plan::Ready);
-        
+
+        RELEASE_ASSERT(plan->stage() == Plan::Ready);
+
         plan->finalizeAndNotifyCallback();
         
         if (currentKey == requestedKey)
@@ -377,7 +377,7 @@ void Worklist::visitWeakReferences(SlotVisitor& visitor)
         LockHolder locker(*m_lock);
         for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
             Plan* plan = iter->value.get();
-            if (plan->vm != vm)
+            if (plan->vm() != vm)
                 continue;
             plan->checkLivenessAndVisitChildren(visitor);
         }
@@ -401,13 +401,13 @@ void Worklist::removeDeadPlans(VM& vm)
         HashSet<CompilationKey> deadPlanKeys;
         for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
             Plan* plan = iter->value.get();
-            if (plan->vm != &vm)
+            if (plan->vm() != &vm)
                 continue;
             if (plan->isKnownToBeLiveDuringGC()) {
                 plan->finalizeInGC();
                 continue;
             }
-            RELEASE_ASSERT(plan->stage != Plan::Cancelled); // Should not be cancelled, yet.
+            RELEASE_ASSERT(plan->stage() != Plan::Cancelled); // Should not be cancelled, yet.
             ASSERT(!deadPlanKeys.contains(plan->key()));
             deadPlanKeys.add(plan->key());
         }
@@ -417,12 +417,12 @@ void Worklist::removeDeadPlans(VM& vm)
             Deque<RefPtr<Plan>> newQueue;
             while (!m_queue.isEmpty()) {
                 RefPtr<Plan> plan = m_queue.takeFirst();
-                if (plan->stage != Plan::Cancelled)
+                if (plan->stage() != Plan::Cancelled)
                     newQueue.append(plan);
             }
             m_queue.swap(newQueue);
             for (unsigned i = 0; i < m_readyPlans.size(); ++i) {
-                if (m_readyPlans[i]->stage != Plan::Cancelled)
+                if (m_readyPlans[i]->stage() != Plan::Cancelled)
                     continue;
                 m_readyPlans[i--] = m_readyPlans.last();
                 m_readyPlans.removeLast();
@@ -451,9 +451,9 @@ void Worklist::removeNonCompilingPlansForVM(VM& vm)
     Vector<RefPtr<Plan>> deadPlans;
     for (auto& entry : m_plans) {
         Plan* plan = entry.value.get();
-        if (plan->vm != &vm)
+        if (plan->vm() != &vm)
             continue;
-        if (plan->stage == Plan::Compiling)
+        if (plan->stage() == Plan::Compiling)
             continue;
         deadPlanKeys.add(plan->key());
         deadPlans.append(plan);

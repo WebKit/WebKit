@@ -43,7 +43,7 @@ using namespace DFG;
 State::State(Graph& graph)
     : graph(graph)
 {
-    switch (graph.m_plan.mode) {
+    switch (graph.m_plan.mode()) {
     case FTLMode: {
         jitCode = adoptRef(new JITCode());
         break;
@@ -51,7 +51,7 @@ State::State(Graph& graph)
     case FTLForOSREntryMode: {
         RefPtr<ForOSREntryJITCode> code = adoptRef(new ForOSREntryJITCode());
         code->initializeEntryBuffer(graph.m_vm, graph.m_profiledBlock->numCalleeLocals());
-        code->setBytecodeIndex(graph.m_plan.osrEntryBytecodeIndex);
+        code->setBytecodeIndex(graph.m_plan.osrEntryBytecodeIndex());
         jitCode = code;
         break;
     }
@@ -60,8 +60,8 @@ State::State(Graph& graph)
         break;
     }
 
-    graph.m_plan.finalizer = std::make_unique<JITFinalizer>(graph.m_plan);
-    finalizer = static_cast<JITFinalizer*>(graph.m_plan.finalizer.get());
+    graph.m_plan.setFinalizer(std::make_unique<JITFinalizer>(graph.m_plan));
+    finalizer = static_cast<JITFinalizer*>(graph.m_plan.finalizer());
 
     proc = std::make_unique<Procedure>();
 
