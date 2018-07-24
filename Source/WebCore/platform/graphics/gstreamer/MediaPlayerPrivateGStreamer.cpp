@@ -242,10 +242,11 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)
 {
-    loadFull(urlString, nullptr);
+    loadFull(urlString, nullptr, String());
 }
 
-void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar *playbinName)
+void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar* playbinName,
+    const String& pipelineName)
 {
     // FIXME: This method is still called even if supportsType() returned
     // IsNotSupported. This would deserve more investigation but meanwhile make
@@ -263,7 +264,7 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar 
         return;
 
     if (!m_pipeline)
-        createGSTPlayBin(isMediaSource() ? "playbin" : playbinName);
+        createGSTPlayBin(isMediaSource() ? "playbin" : playbinName, pipelineName);
 
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
@@ -305,7 +306,10 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
 #if GST_CHECK_VERSION(1, 10, 0)
     m_streamPrivate = &stream;
-    loadFull(String("mediastream://") + stream.id(), "playbin3");
+    auto pipelineName = String::format("mediastream_%s_%p",
+        (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "Local" : "Remote", this);
+
+    loadFull(String("mediastream://") + stream.id(), "playbin3", pipelineName);
 #if USE(GSTREAMER_GL)
     ensureGLVideoSinkContext();
 #endif
@@ -2468,7 +2472,7 @@ AudioSourceProvider* MediaPlayerPrivateGStreamer::audioSourceProvider()
 }
 #endif
 
-void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName)
+void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, const String& pipelineName)
 {
     if (m_pipeline) {
         if (!playbinName) {
@@ -2503,7 +2507,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName)
 
     // gst_element_factory_make() returns a floating reference so
     // we should not adopt.
-    setPipeline(gst_element_factory_make(playbinName, String::format("play_%p", this).utf8().data()));
+    setPipeline(gst_element_factory_make(playbinName,
+        pipelineName.isEmpty() ? String::format("play_%p", this).utf8().data() : pipelineName.utf8().data()));
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 
     GST_INFO("Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));

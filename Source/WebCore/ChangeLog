@@ -1,3 +1,35 @@
+2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE][GTK] Implement PeerConnection API on top of libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=186932
+
+        Reviewed by Philippe Normand.
+
+        Enabled many webrtc tests.
+
+        * platform/GStreamer.cmake: Build new files
+        * platform/graphics/gstreamer/GStreamerCommon.cpp: Fix minor style issues
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp: Add a way to give precise name to pipelines
+        and give useful names to pipelines with sources comming from a PeerConnection
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Ditto.
+        * platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.cpp: Added. Implement a subclass of webrtc::VideoFrame
+        to represent a kNative GStreamer video frame.
+        * platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.h: Added. Ditto.
+        * platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp: Handle incoming audio samples from libwebrtc.
+        * platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.h: Ditto.
+        * platform/mediastream/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp: Handle incoming video frames from libwebrtc.
+        * platform/mediastream/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.h: Ditto.
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp: Handle passing locally captured audio sample to libwebrtc.
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.h: Ditto.
+        * platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp: Handle passing locally captured vidoe frames to libwebrtc.
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp: Added. Implement a video decoder factory and LibWebRTC Video decoders based on GStreamer.
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.h: Added. Ditto.
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp: Added. Implement a video encoder factory and LibWebRTC H264/VP8 Video encoders based on GStreamer.
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.h: Added. Ditto.
+        * platform/mediastream/libwebrtc/LibWebRTCAudioFormat.h: Add information about signness of the LibWebRTC audio format.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp: Add support for newly added Encoder/Decoder factories.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderGlib.h: Ditto.
+
 2018-07-24  Dirk Schulze  <krit@webkit.org>
 
         [css-masking] Black backdrop on -webkit-clip-path on SVG root

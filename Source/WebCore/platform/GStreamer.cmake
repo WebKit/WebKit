@@ -33,6 +33,8 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
         platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
 
+        platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp
+        platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp
         platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
         platform/mediastream/libwebrtc/LibWebRTCProviderGlib.cpp
 
@@ -43,6 +45,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
+        platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.cpp
         platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp
         platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp
         platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp
@@ -57,6 +60,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         ${GSTREAMER_BASE_INCLUDE_DIRS}
         ${GSTREAMER_APP_INCLUDE_DIRS}
         ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
+        ${GSTREAMER_CODECPARSERS_INCLUDE_DIRS}
     )
 
     list(APPEND WebCore_LIBRARIES
@@ -65,6 +69,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         ${GSTREAMER_LIBRARIES}
         ${GSTREAMER_PBUTILS_LIBRARIES}
         ${GSTREAMER_AUDIO_LIBRARIES}
+        ${GSTREAMER_CODECPARSERS_LIBRARIES}
     )
 
     # Avoiding a GLib deprecation warning due to GStreamer API using deprecated classes.
@@ -100,6 +105,15 @@ if (ENABLE_VIDEO)
         )
         list(APPEND WebCore_SOURCES
             platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp
+        )
+    endif ()
+
+    if (USE_LIBWEBRTC)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${GSTREAMER_CODECPARSERS_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_CODECPARSERS_LIBRARIES}
         )
     endif ()
 endif ()

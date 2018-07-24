@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
- * Author: Thibault Saunier <tsaunier@igalia.com>
- * Author: Alejandro G. Castro <alex@igalia.com>
+ * Copyright (C) 2018 Igalia S.L. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +23,7 @@
 #if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 
 #include "AudioStreamDescription.h"
+#include "GStreamerCommon.h"
 #include <gst/audio/audio.h>
 
 namespace WebCore {

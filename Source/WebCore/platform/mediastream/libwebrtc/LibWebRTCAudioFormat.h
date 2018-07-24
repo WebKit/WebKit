@@ -35,6 +35,7 @@ static const size_t sampleRate = 48000;
 static const size_t chunkSampleCount = 480;
 static const size_t sampleSize = 16;
 static const size_t sampleByteSize = 2;
+static const bool isSigned = true;
 static const bool isFloat = false;
 static const bool isBigEndian = false;
 static const bool isNonInterleaved = false;

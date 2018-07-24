@@ -30,6 +30,9 @@
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "RealtimeOutgoingVideoSourceLibWebRTC.h"
 
+#include "GStreamerVideoFrameLibWebRTC.h"
+#include "MediaSampleGStreamer.h"
+
 namespace WebCore {
 
 Ref<RealtimeOutgoingVideoSource> RealtimeOutgoingVideoSource::create(Ref<MediaStreamTrackPrivate>&& videoSource)
@@ -47,8 +50,34 @@ RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<M
 {
 }
 
-void RealtimeOutgoingVideoSourceLibWebRTC::sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&)
+void RealtimeOutgoingVideoSourceLibWebRTC::sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample& sample)
 {
+    if (!m_sinks.size())
+        return;
+
+    if (m_muted || !m_enabled)
+        return;
+
+    switch (sample.videoRotation()) {
+    case MediaSample::VideoRotation::None:
+        m_currentRotation = webrtc::kVideoRotation_0;
+        break;
+    case MediaSample::VideoRotation::UpsideDown:
+        m_currentRotation = webrtc::kVideoRotation_180;
+        break;
+    case MediaSample::VideoRotation::Right:
+        m_currentRotation = webrtc::kVideoRotation_90;
+        break;
+    case MediaSample::VideoRotation::Left:
+        m_currentRotation = webrtc::kVideoRotation_270;
+        break;
+    }
+
+    ASSERT(sample.platformSample().type == PlatformSample::GStreamerSampleType);
+    auto& mediaSample = static_cast<MediaSampleGStreamer&>(sample);
+    auto frameBuffer(GStreamerVideoFrameLibWebRTC::create(gst_sample_ref(mediaSample.platformSample().sample.gstSample)));
+
+    sendFrame(WTFMove(frameBuffer));
 }
 
 } // namespace WebCore

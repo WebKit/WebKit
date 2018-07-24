@@ -31,6 +31,10 @@
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "RealtimeIncomingVideoSourceLibWebRTC.h"
 
+#include "GStreamerVideoFrameLibWebRTC.h"
+#include "MediaSampleGStreamer.h"
+#include <gst/video/video.h>
+
 namespace WebCore {
 
 Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
@@ -50,8 +54,16 @@ RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(rtc::
 {
 }
 
-void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame&)
+void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& frame)
 {
+    if (!isProducingData())
+        return;
+
+    auto sample = GStreamerSampleFromLibWebRTCVideoFrame(frame);
+    callOnMainThread([protectedThis = makeRef(*this), sample] {
+        protectedThis->videoSampleAvailable(MediaSampleGStreamer::create(sample.get(),
+            WebCore::FloatSize(), String()));
+    });
 }
 
 } // namespace WebCore

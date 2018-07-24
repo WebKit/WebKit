@@ -1,3 +1,12 @@
+2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE][GTK] Implement WebRTC based on libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=186932
+
+        Reviewed by Philippe Normand.
+
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h: Use LibWebRTCProviderGlib when building WPE or GTK ports.
+
 2018-07-23  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Add implementation for setting cursors

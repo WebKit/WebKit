@@ -42,6 +42,8 @@ private:
 
     // webrtc::AudioTrackSinkInterface API
     void OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames) final;
+
+    uint64_t m_numberOfFrames { 0 };
 };
 
 } // namespace WebCore

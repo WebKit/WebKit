@@ -572,7 +572,36 @@ webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
-webrtc [ Skip ]
+webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
+webkit.org/b/187064 webrtc/video-with-receiver.html
+webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
+webkit.org/b/187064 webrtc/video-remote-mute.html
+webkit.org/b/187064 webrtc/video-addTransceiver.html
+webkit.org/b/187064 webrtc/peer-connection-track-end.html
+webkit.org/b/187064 webrtc/video.html
+webkit.org/b/187064 webrtc/multi-video.html
+webkit.org/b/187064 webrtc/video-addTrack.html
+webkit.org/b/187064 webrtc/video-rotation.html
+webkit.org/b/187064 webrtc/video-mute.html
+webkit.org/b/187064 webrtc/video-disabled-black.html
+webkit.org/b/187064 webrtc/video-replace-track.html
+webkit.org/b/187064 webrtc/video-with-data-channel.html
+webkit.org/b/187064 webrtc/video-replace-muted-track.html
+webkit.org/b/187064 webrtc/video-unmute.html
+webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
+webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
+webkit.org/b/177533 webrtc/video-interruption.html
+
+webkit.org/b/186933 webrtc/peer-connection-remote-audio-mute2.html
+webkit.org/b/186933 webrtc/peer-connection-audio-unmute.html
+webkit.org/b/186933 webrtc/peer-connection-audio-mute2.html
+webkit.org/b/186933 webrtc/peer-connection-audio-mute.html
+webkit.org/b/186933 webrtc/peer-connection-remote-audio-mute.html
+webkit.org/b/186933 webrtc/clone-audio-track.html
+webkit.org/b/186933 webrtc/audio-replace-track.html
+webkit.org/b/186933 webrtc/audio-peer-connection-webaudio.html
+webkit.org/b/186933 webrtc/audio-muted-stats.html
+
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 http/tests/webrtc [ Skip ]
 # The MediaStream implementation is also still not completed

@@ -13,7 +13,38 @@ Bug(WPE) printing/ [ Skip ]
 Bug(WPE) scrollingcoordinator/ [ Skip ]
 Bug(WPE) webarchive/ [ Skip ]
 Bug(WPE) webaudio/ [ Skip ]
-Bug(WPE) webrtc [ Skip ]
+
+# The webrtc implementation is not fully completed yet
+webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
+webkit.org/b/187064 webrtc/video-with-receiver.html
+webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
+webkit.org/b/187064 webrtc/video-remote-mute.html
+webkit.org/b/187064 webrtc/video-addTransceiver.html
+webkit.org/b/187064 webrtc/peer-connection-track-end.html
+webkit.org/b/187064 webrtc/video.html
+webkit.org/b/187064 webrtc/multi-video.html
+webkit.org/b/187064 webrtc/video-addTrack.html
+webkit.org/b/187064 webrtc/video-rotation.html
+webkit.org/b/187064 webrtc/video-mute.html
+webkit.org/b/187064 webrtc/video-disabled-black.html
+webkit.org/b/187064 webrtc/video-replace-track.html
+webkit.org/b/187064 webrtc/video-with-data-channel.html
+webkit.org/b/187064 webrtc/video-replace-muted-track.html
+webkit.org/b/187064 webrtc/video-unmute.html
+webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
+webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
+webkit.org/b/177533 webrtc/video-interruption.html
+
+webkit.org/b/186933 webrtc/peer-connection-remote-audio-mute2.html
+webkit.org/b/186933 webrtc/peer-connection-audio-unmute.html
+webkit.org/b/186933 webrtc/peer-connection-audio-mute2.html
+webkit.org/b/186933 webrtc/peer-connection-audio-mute.html
+webkit.org/b/186933 webrtc/peer-connection-remote-audio-mute.html
+webkit.org/b/186933 webrtc/clone-audio-track.html
+webkit.org/b/186933 webrtc/audio-replace-track.html
+webkit.org/b/186933 webrtc/audio-peer-connection-webaudio.html
+webkit.org/b/186933 webrtc/audio-muted-stats.html
+
 
 # The MediaStream implementation is still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]

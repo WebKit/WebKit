@@ -25,6 +25,11 @@
 
 #pragma once
 
+#if USE(GSTREAMER)
+#include "GStreamerVideoDecoderFactory.h"
+#include "GStreamerVideoEncoderFactory.h"
+#endif
+
 #include "LibWebRTCProvider.h"
 
 #if USE(LIBWEBRTC)
@@ -34,6 +39,11 @@ namespace WebCore {
 class WEBCORE_EXPORT LibWebRTCProviderGlib : public LibWebRTCProvider {
 public:
     LibWebRTCProviderGlib() = default;
+
+#if USE(GSTREAMER)
+    std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
+    std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() final;
+#endif
 };
 
 } // namespace WebCore

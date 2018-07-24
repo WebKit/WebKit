@@ -45,7 +45,7 @@ static void webkitMediaStreamSrcTrackEnded(WebKitMediaStreamSrc* self, MediaStre
 static GstStaticPadTemplate videoSrcTemplate = GST_STATIC_PAD_TEMPLATE("video_src",
     GST_PAD_SRC,
     GST_PAD_SOMETIMES,
-    GST_STATIC_CAPS("video/x-raw"));
+    GST_STATIC_CAPS("video/x-raw;video/x-h264;video/x-vp8"));
 
 static GstStaticPadTemplate audioSrcTemplate = GST_STATIC_PAD_TEMPLATE("audio_src",
     GST_PAD_SRC,

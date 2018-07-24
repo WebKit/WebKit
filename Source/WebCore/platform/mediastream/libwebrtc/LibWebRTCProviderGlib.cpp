@@ -44,4 +44,16 @@ bool LibWebRTCProvider::webRTCAvailable()
     return true;
 }
 
+#if USE(LIBWEBRTC) && USE(GSTREAMER)
+std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderGlib::createDecoderFactory()
+{
+    return std::make_unique<GStreamerVideoDecoderFactory>();
+}
+
+std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderGlib::createEncoderFactory()
+{
+    return std::make_unique<GStreamerVideoEncoderFactory>();
+}
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)
+
 } // namespace WebCore
