@@ -49,6 +49,10 @@
 + (void)synchronize;
 @end
 
+@interface WebView ()
+- (BOOL)_flushCompositingChanges;
+@end
+
 static void paintRepaintRectOverlay(WebView* webView, CGContextRef context)
 {
     CGRect viewRect = NSRectToCGRect([webView bounds]);
@@ -87,10 +91,6 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     if ([view _isUsingAcceleratedCompositing])
         onscreen = YES;
 
-    // If the window is layer-backed, its backing store will be empty, so we have to use a window server snapshot.
-    if ([view.window.contentView layer])
-        onscreen = YES;
-
     float deviceScaleFactor = [view _backingScaleFactor];
     NSSize webViewSize = [view frame].size;
     size_t pixelsWide = static_cast<size_t>(webViewSize.width * deviceScaleFactor);
@@ -122,6 +122,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
             // FIXME: This will break repaint testing if we have compositing in repaint tests.
             // (displayWebView() painted gray over the webview, but we'll be making everything repaint again).
             [view display];
+            [view _flushCompositingChanges];
             [CATransaction flush];
             [CATransaction synchronize];
 
@@ -133,30 +134,12 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
 
             if ([view isTrackingRepaints])
                 paintRepaintRectOverlay(view, context);
-        } else if (deviceScaleFactor != 1) {
+        } else {
             // Call displayRectIgnoringOpacity for HiDPI tests since it ensures we paint directly into the context
             // that we have appropriately sized and scaled.
             [view displayRectIgnoringOpacity:[view bounds] inContext:nsContext];
             if ([view isTrackingRepaints])
                 paintRepaintRectOverlay(view, context);
-        } else {
-            // Make sure the view has been painted.
-            [view displayIfNeeded];
-
-            // Grab directly the contents of the window backing buffer (this ignores any surfaces on the window)
-            // FIXME: This path is suboptimal: data is read from window backing store, converted to RGB8 then drawn again into an RGBA8 bitmap
-            [view lockFocus];
-            NSBitmapImageRep *imageRep = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]] autorelease];
-            [view unlockFocus];
-
-            RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
-            [NSGraphicsContext setCurrentContext:nsContext];
-            [imageRep draw];
-            
-            if ([view isTrackingRepaints])
-                paintRepaintRectOverlay(view, context);
-            
-            [NSGraphicsContext setCurrentContext:savedContext.get()];
         }
     }
 
