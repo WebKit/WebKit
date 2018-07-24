@@ -108,7 +108,7 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
-    notImplemented();
+    m_view.setCursor(cursor);
 }
 
 void PageClientImpl::setCursorHiddenUntilMouseMoves(bool /* hiddenUntilMouseMoves */)

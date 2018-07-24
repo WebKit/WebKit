@@ -750,6 +750,14 @@ HCURSOR WebView::cursorToShow() const
     return m_webCoreCursor;
 }
 
+void WebView::setCursor(const WebCore::Cursor& cursor)
+{
+    if (!cursor.platformCursor()->nativeCursor())
+        return;
+    m_webCoreCursor = cursor.platformCursor()->nativeCursor();
+    updateNativeCursor();
+}
+
 void WebView::updateNativeCursor()
 {
     m_lastCursorSet = cursorToShow();

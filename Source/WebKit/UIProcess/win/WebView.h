@@ -59,6 +59,7 @@ public:
     bool isFocused();
     bool isVisible();
     bool isInWindow();
+    void setCursor(const WebCore::Cursor&);
     void setOverrideCursor(HCURSOR);
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void initialize();

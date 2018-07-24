@@ -1,3 +1,17 @@
+2018-07-23  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Add implementation for setting cursors
+        https://bugs.webkit.org/show_bug.cgi?id=187868
+
+        Reviewed by Fujii Hironori.
+
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setCursor): Set cursor on the webview
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setCursor): Add implementation to set the
+        web cursor to update the Windows cursor
+        * UIProcess/win/WebView.h:
+
 2018-07-23  Jeremy Jones  <jeremyj@apple.com>
 
         Crash when loadViewIfRequired called while WKFullScreenViewController is being deallocated.
