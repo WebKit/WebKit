@@ -351,10 +351,9 @@ class Rewriter {
     {
         let result = new FunctionLikeBlock(
             node.origin,
-            Node.visit(node.returnType, this),
-            node.argumentList.map(argument => argument.visit(this)),
-            node.parameters.map(parameter => parameter.visit(this)),
-            node.body.visit(this));
+            node.func.visit(this),
+            node.argumentList.map(arg => arg.visit(this))
+        );
         result.returnEPtr = node.returnEPtr;
         return result;
     }

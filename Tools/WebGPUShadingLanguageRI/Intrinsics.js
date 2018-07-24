@@ -30,7 +30,7 @@ class Intrinsics {
         this._map = new Map();
 
         // NOTE: Intrinsic resolution happens before type name resolution, so the strings we use here
-        // to catch the intrinsics must be based on the type names that StandardLibraryPrologue.js uses.
+        // to catch the intrinsics must be based on the type names that StandardLibrary.js uses.
         // For example, if a native function is declared using "int" rather than "int32", then we must
         // use "int" here, since we don't yet know that they are the same type.
         
@@ -653,6 +653,23 @@ class Intrinsics {
                         return EPtr.box(ref.length);
                     };
                 });
+        }
+
+        for (let swizzle of SwizzleOp.allSwizzleOperators()) {
+            this._map.set(swizzle.toString(), 
+            func => {
+                func.implementation = ([vec], node) => {
+                    const outputBuffer = new EBuffer(swizzle.outSize);
+                    const readIndices = { 'x': 0, 'y': 1, 'z': 2, 'w': 3 };
+                    for (let i = 0; i < swizzle.outSize; i++)
+                        outputBuffer.set(i, vec.get(readIndices[swizzle.components[i]]));
+                    
+                    
+                    return new EPtr(outputBuffer, 0);
+                },
+                func.implementationData = swizzle;
+            });
+            console.log(swizzle.toString());
         }
     }
     

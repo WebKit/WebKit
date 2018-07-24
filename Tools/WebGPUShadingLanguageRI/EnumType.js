@@ -45,6 +45,7 @@ class EnumType extends Type {
     get origin() { return this._origin; }
     get name() { return this._name; }
     get baseType() { return this._baseType; }
+    get isEnum() { return true; }
     
     get memberNames() { return this._members.keys(); }
     memberByName(name) { return this._members.get(name); }

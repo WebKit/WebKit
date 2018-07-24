@@ -406,35 +406,6 @@ function intToString(x)
     }
 }
 
-// There are 481 swizzle operators. Let's not list them explicitly.
-function _generateSwizzle(maxDepth, maxItems, array)
-{
-    if (!array)
-        array = [];
-    if (array.length == maxDepth) {
-        let result = `vec${array.length}<T> operator.${array.join("")}<T>(vec${maxItems}<T> v)
-{
-    vec${array.length}<T> result;
-`;
-        for (let i = 0; i < array.length; ++i) {
-            result += `    result.${intToString(i)} = v.${array[i]};
-`;
-        }
-        result += `    return result;
-}
-`;
-        return result;
-    }
-    let result = "";
-    for (let i = 0; i < maxItems; ++i) {
-        array.push(intToString(i));
-        result += _generateSwizzle(maxDepth, maxItems, array);
-        array.pop();
-    }
-    return result;
-}
-
-for (let maxDepth = 2; maxDepth <= 4; maxDepth++) {
-    for (let maxItems = 2; maxItems <= 4; maxItems++)
-        standardLibrary += _generateSwizzle(maxDepth, maxItems);
-}
+// There are 481 swizzle operators, so we compile them as native functions
+standardLibrary += SwizzleOp.allSwizzleOperators().join(";\n") + ";";
+console.log(standardLibrary);

@@ -25,21 +25,20 @@
 "use strict";
 
 class FunctionLikeBlock extends Value {
-    constructor(origin, returnType, argumentList, parameters, body)
+    constructor(origin, func, argumentList)
     {
         super();
         this._origin = origin;
-        this._returnType = returnType;
+        this._func = func;
         this._argumentList = argumentList;
-        this._parameters = parameters;
-        this._body = body;
     }
     
     get origin() { return this._origin; }
-    get returnType() { return this._returnType; }
+    get func() { return this._func; }
+    get returnType() { return this.func._returnType; }
     get argumentList() { return this._argumentList; }
-    get parameters() { return this._parameters; }
-    get body() { return this._body; }
+    get parameters() { return this.func._parameters; }
+    get body() { return this.func._body; }
     
     toString()
     {

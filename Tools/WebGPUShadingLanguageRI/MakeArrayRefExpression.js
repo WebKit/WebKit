@@ -29,10 +29,14 @@ class MakeArrayRefExpression extends Expression {
     {
         super(origin);
         this._lValue = lValue;
+        if (this.lValue.variable && this.lValue.variable.type && this.lValue.variable.type.isArray && this.lValue.variable.type.elementType) {
+            this._type = new ArrayRefType(origin, "thread", this.lValue.variable.type.elementType);
+        }
     }
-    
+
+    get type() { return this._type; }
     get lValue() { return this._lValue; }
-    
+
     toString()
     {
         return "@" + (this.numElements ? "<<" + this.numElements + ">>" : "") + "(" + this.lValue + ")";

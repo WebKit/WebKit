@@ -54,6 +54,7 @@ class Func extends Node {
     get parameterTypes() { return this.parameters.map(parameter => parameter.type); }
     get isCast() { return this._isCast; }
     get shaderType() { return this._shaderType; }
+    get isEntryPoint() { return this.shaderType != null; }
     get returnTypeForOverloadResolution() { return this.isCast ? this.returnType : null; }
     
     get kind() { return Func; }

@@ -42,8 +42,7 @@ class Inliner extends Rewriter {
             if (func.isNative)
                 throw new Error("Unexpected native func: " + func);
             _inlineFunction(this._program, func, this._visiting);
-            let resultingBlock = new FunctionLikeBlock(
-                result.origin, func.returnType, result.argumentList, func.parameters, func.body);
+            let resultingBlock = new FunctionLikeBlock(result.origin, func, result.argumentList);
             resultingBlock.returnEPtr = result.resultEPtr;
             return resultingBlock;
         });

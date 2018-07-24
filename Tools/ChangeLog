@@ -1,3 +1,78 @@
+2018-07-24  Thomas Denney  <tdenney@apple.com>
+        Minor changes to the WHLSL interpreter to support the new compiler
+        https://bugs.webkit.org/show_bug.cgi?id=187728
+
+        Reviewed by Myles C. Maxfield.
+
+        This bug contains small changes that are make minor changes to the
+        behaviour of the existing interpreter (the tests are unaffected and all
+        still pass).
+
+        * WebGPUShadingLanguageRI/EnumType.js:
+        (EnumType.prototype.get isEnum): Property added to EnumType and Type
+        * WebGPUShadingLanguageRI/Evaluator.js: Correct typo
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.get isEntryPoint): Add boolean property
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.get instances): Public accessor for existing
+        private field
+        * WebGPUShadingLanguageRI/FunctionLikeBlock.js: Refactored the class so
+        that it directly wraps a Func instance (therefore the only interface
+        change is to the constructor and the addition of the func accessor).
+        This change allows the de-inlining of functions.
+        (FunctionLikeBlock):
+        (FunctionLikeBlock.prototype.get func):
+        (FunctionLikeBlock.prototype.get returnType):
+        (FunctionLikeBlock.prototype.get parameters):
+        (FunctionLikeBlock.prototype.get body):
+        * WebGPUShadingLanguageRI/Inliner.js: Use the new FunctionLikeBlock
+        constructor
+        (Inliner.prototype.visitCallExpression):
+        (Inliner):
+        * WebGPUShadingLanguageRI/Intrinsics.js: Migrate the swizzle operators
+        to native functions (with additional support in StandardLibrary.js).
+        This reduces first-time compile-time from around 4s to around 0.1s.
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Lexer.js: Ensure that the parsing of multiline
+        comments completes correctly
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/MakeArrayRefExpression.js: Addition of type
+        property, which is based on the type of the lValue and the semantics of
+        the language (the @ operator yields an array reference with the thread
+        scope).
+        (MakeArrayRefExpression):
+        (MakeArrayRefExpression.prototype.get type):
+        * WebGPUShadingLanguageRI/NativeFunc.js: Add setter/getter for
+        implementationData to support swizzle operator change
+        (NativeFunc.prototype.get implementationData):
+        (NativeFunc.prototype.set implementationData):
+        * WebGPUShadingLanguageRI/Rewriter.js: Use new FunctionLikeBlock
+        constructor
+        (Rewriter.prototype.visitFunctionLikeBlock):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (_generateSwizzle): Deleted.
+        * WebGPUShadingLanguageRI/SwizzleOp.js: Introduces a new class for
+        carrying metadata about swizzle operators so that they are implemented
+        as native functions rather than generated at compile time.
+        (SwizzleOp):
+        (SwizzleOp.prototype.get outSize):
+        (SwizzleOp.prototype.get components):
+        (SwizzleOp.prototype.get inSize):
+        (SwizzleOp.prototype.toString):
+        (SwizzleOp.allSwizzleOperators.):
+        (SwizzleOp.allSwizzleOperators):
+        * WebGPUShadingLanguageRI/StandardLibrary.js: +        (SwizzleOp):
+        (SwizzleOp.prototype.get outSize):
+        (SwizzleOp.prototype.get components):
+        (SwizzleOp.prototype.get inSize):
+        (SwizzleOp.prototype.toString):
+        (generateSwizzles):
+        (_generateSwizzle): Deleted.
+        * WebGPUShadingLanguageRI/Type.js: Addition of isEnum property, as
+        above.
+        (Type.prototype.get isEnum):
+
 2018-07-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234121.

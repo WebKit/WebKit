@@ -103,7 +103,7 @@ class Lexer {
                 let endIndex = relevantText.search(/\*\//);
                 if (endIndex < 0)
                     this.fail("Unterminated comment");
-                this._index += endIndex;
+                this._index += endIndex + 2;
                 continue;
             }
             if (/^\/\/.*/.test(relevantText)) {

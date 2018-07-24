@@ -34,6 +34,7 @@ class Type extends Node {
     get isNumber() { return false; }
     get isInt() { return false; }
     get isFloating() { return false; }
+    get isEnum() { return false; }
     get isPrimitive() { return false; }
     
     inherits(protocol)

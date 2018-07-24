@@ -194,6 +194,23 @@ tests = new Proxy({}, {
     }
 });
 
+tests.commentParsing = function() {
+    let program = doPrep(`
+        /* this comment
+        runs over multiple lines */
+        bool foo() { return true; }
+    `);
+    checkBool(program, callFunction(program, "foo", [], []), true);
+
+    checkFail(
+        () => doPrep(`
+        /* this comment
+        runs over multiple lines
+        bool foo() { return true; }
+        `),
+        (e) => e instanceof WSyntaxError);
+}
+
 tests.literalBool = function() {
     let program = doPrep("bool foo() { return true; }");
     checkBool(program, callFunction(program, "foo", [], []), true);

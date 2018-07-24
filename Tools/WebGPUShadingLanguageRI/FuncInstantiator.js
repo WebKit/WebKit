@@ -31,6 +31,8 @@ class FuncInstantiator {
         this._instances = new Map();
     }
     
+    get instances() { return this._instances; }
+    
     // Returns a Func object that uniquely identifies a particular system of type arguments. You must
     // intantiate things with concrete types, because this code casually assumes this. Note that this
     // will return a different func from `func` no matter what. This ensures that we can use the
