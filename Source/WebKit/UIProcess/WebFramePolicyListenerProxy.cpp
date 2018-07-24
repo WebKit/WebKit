@@ -40,12 +40,12 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, u
 {
 }
 
-void WebFramePolicyListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action, std::optional<WebsitePoliciesData>&& data)
+void WebFramePolicyListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action, std::optional<WebsitePoliciesData>&& data, ShouldProcessSwapIfPossible swap)
 {
     if (!m_frame)
         return;
     
-    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get(), WTFMove(data));
+    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get(), WTFMove(data), swap);
     m_frame = nullptr;
 }
 
@@ -57,32 +57,24 @@ void WebFramePolicyListenerProxy::changeWebsiteDataStore(WebsiteDataStore& websi
     m_frame->changeWebsiteDataStore(websiteDataStore);
 }
 
-bool WebFramePolicyListenerProxy::isMainFrame() const
-{
-    if (!m_frame)
-        return false;
-    
-    return m_frame->isMainFrame();
-}
-
 void WebFramePolicyListenerProxy::setNavigation(Ref<API::Navigation>&& navigation)
 {
     m_navigation = WTFMove(navigation);
 }
     
-void WebFramePolicyListenerProxy::use(std::optional<WebsitePoliciesData>&& data)
+void WebFramePolicyListenerProxy::use(std::optional<WebsitePoliciesData>&& data, ShouldProcessSwapIfPossible swap)
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Use, WTFMove(data));
+    receivedPolicyDecision(WebCore::PolicyAction::Use, WTFMove(data), swap);
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Download, std::nullopt);
+    receivedPolicyDecision(WebCore::PolicyAction::Download, std::nullopt, ShouldProcessSwapIfPossible::No);
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Ignore, std::nullopt);
+    receivedPolicyDecision(WebCore::PolicyAction::Ignore, std::nullopt, ShouldProcessSwapIfPossible::No);
 }
 
 } // namespace WebKit

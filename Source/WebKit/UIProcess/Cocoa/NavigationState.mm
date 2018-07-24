@@ -551,13 +551,12 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         case _WKNavigationActionPolicyAllowInNewProcess:
 #pragma clang diagnostic pop
             tryAppLink(WTFMove(navigationAction), mainFrameURLString, [actionPolicy, localListener = WTFMove(localListener), data = WTFMove(data)](bool followedLinkToApp) mutable {
-                localListener->setApplyPolicyInNewProcessIfPossible(actionPolicy == _WKNavigationActionPolicyAllowInNewProcess);
                 if (followedLinkToApp) {
                     localListener->ignore();
                     return;
                 }
 
-                localListener->use(WTFMove(data));
+                localListener->use(WTFMove(data), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ShouldProcessSwapIfPossible::Yes : ShouldProcessSwapIfPossible::No);
             });
         
             break;

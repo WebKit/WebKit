@@ -110,6 +110,8 @@ int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
 
+enum class ShouldProcessSwapIfPossible;
+
 class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, public CanMakeWeakPtr<WebProcessPool>, private IPC::MessageReceiver {
 public:
     static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
@@ -452,7 +454,7 @@ public:
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
 #endif
 
-    Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, bool shouldProcessSwapIfPossible, WebCore::PolicyAction&);
+    Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, ShouldProcessSwapIfPossible, WebCore::PolicyAction&);
     void registerSuspendedPageProxy(SuspendedPageProxy&);
     void unregisterSuspendedPageProxy(SuspendedPageProxy&);
     void didReachGoodTimeToPrewarm();
@@ -470,7 +472,7 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    Ref<WebProcessProxy> processForNavigationInternal(WebPageProxy&, const API::Navigation&, bool shouldProcessSwapIfPossible, WebCore::PolicyAction&);
+    Ref<WebProcessProxy> processForNavigationInternal(WebPageProxy&, const API::Navigation&, ShouldProcessSwapIfPossible, WebCore::PolicyAction&);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 

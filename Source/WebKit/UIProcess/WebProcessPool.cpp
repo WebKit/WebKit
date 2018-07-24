@@ -2107,7 +2107,7 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
         m_swappedProcesses.remove(origin);
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, bool shouldProcessSwapIfPossible, PolicyAction& action)
+Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible, PolicyAction& action)
 {
     auto process = processForNavigationInternal(page, navigation, shouldProcessSwapIfPossible, action);
 
@@ -2125,9 +2125,9 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     return process;
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, bool shouldProcessSwapIfPossible, PolicyAction& action)
+Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible, PolicyAction& action)
 {
-    if (!m_configuration->processSwapsOnNavigation() && !shouldProcessSwapIfPossible)
+    if (!m_configuration->processSwapsOnNavigation() && shouldProcessSwapIfPossible == ShouldProcessSwapIfPossible::No)
         return page.process();
 
     if (page.inspectorFrontendCount() > 0)
@@ -2171,7 +2171,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
     }
 
     auto targetURL = navigation.currentRequest().url();
-    if (!shouldProcessSwapIfPossible) {
+    if (shouldProcessSwapIfPossible == ShouldProcessSwapIfPossible::No) {
         if (navigation.treatAsSameOriginNavigation())
             return page.process();
 

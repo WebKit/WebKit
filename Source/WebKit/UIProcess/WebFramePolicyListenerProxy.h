@@ -51,6 +51,8 @@ enum class PolicyListenerType {
     Response,
 };
 
+enum class ShouldProcessSwapIfPossible { No, Yes };
+
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
@@ -59,7 +61,7 @@ public:
         return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID, policyType));
     }
 
-    void use(std::optional<WebsitePoliciesData>&&);
+    void use(std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible = ShouldProcessSwapIfPossible::No);
     void download();
     void ignore();
 
@@ -70,21 +72,16 @@ public:
     void setNavigation(Ref<API::Navigation>&&);
     
     void changeWebsiteDataStore(WebsiteDataStore&);
-    bool isMainFrame() const;
-
-    void setApplyPolicyInNewProcessIfPossible(bool applyPolicyInNewProcessIfPossible) { m_applyPolicyInNewProcessIfPossible = applyPolicyInNewProcessIfPossible; }
-    bool applyPolicyInNewProcessIfPossible() const { return m_applyPolicyInNewProcessIfPossible; }
 
 private:
     WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID, PolicyListenerType);
 
-    void receivedPolicyDecision(WebCore::PolicyAction, std::optional<WebsitePoliciesData>&&);
+    void receivedPolicyDecision(WebCore::PolicyAction, std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible);
 
     PolicyListenerType m_policyType;
     RefPtr<WebFrameProxy> m_frame;
     uint64_t m_listenerID { 0 };
     RefPtr<API::Navigation> m_navigation;
-    bool m_applyPolicyInNewProcessIfPossible { false };
 };
 
 } // namespace WebKit

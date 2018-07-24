@@ -52,6 +52,7 @@ class WebCertificateInfo;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
 class WebsiteDataStore;
+enum class ShouldProcessSwapIfPossible;
 enum class PolicyListenerType;
 struct WebsitePoliciesData;
 
@@ -116,7 +117,7 @@ public:
     void didChangeTitle(const String&);
 
     // Policy operations.
-    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, std::optional<WebsitePoliciesData>&&);
+    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible);
 
     WebFramePolicyListenerProxy& setUpPolicyListenerProxy(uint64_t listenerID, PolicyListenerType);
     WebFramePolicyListenerProxy* activePolicyListenerProxy();

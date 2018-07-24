@@ -2406,7 +2406,7 @@ void WebPageProxy::centerSelectionInVisibleArea()
     m_process->send(Messages::WebPage::CenterSelectionInVisibleArea(), m_pageID);
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& frame, uint64_t listenerID, API::Navigation* navigation, std::optional<WebsitePoliciesData>&& websitePolicies)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& frame, uint64_t listenerID, API::Navigation* navigation, std::optional<WebsitePoliciesData>&& websitePolicies, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible)
 {
     if (!isValid())
         return;
@@ -2438,7 +2438,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
         ASSERT(activePolicyListener->listenerID() == listenerID);
 
         if (action == PolicyAction::Use && navigation && frame.isMainFrame()) {
-            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, activePolicyListener->applyPolicyInNewProcessIfPossible(), action);
+            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, shouldProcessSwapIfPossible, action);
 
             if (proposedProcess.ptr() != &process()) {
                 LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), proposedProcess->processIdentifier(), navigation->navigationID(), navigation->loggingString());
@@ -4028,7 +4028,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame->didHandleContentFilterUnblockNavigation(request))
-        return receivedPolicyDecision(PolicyAction::Ignore, *frame, listenerID, &m_navigationState->navigation(newNavigationID), { });
+        return receivedPolicyDecision(PolicyAction::Ignore, *frame, listenerID, &m_navigationState->navigation(newNavigationID), std::nullopt, ShouldProcessSwapIfPossible::No);
 #else
     UNUSED_PARAM(newNavigationID);
 #endif

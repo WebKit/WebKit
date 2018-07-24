@@ -1,5 +1,49 @@
 2018-07-24  Alex Christensen  <achristensen@webkit.org>
 
+        Reduce getters/setters in WebFramePolicyListenerProxy
+        https://bugs.webkit.org/show_bug.cgi?id=187830
+
+        Reviewed by Dean Jackson.
+
+        This is a step towards making it a lambda, which has no getters or setters.
+        No change in behavior.
+
+        setApplyPolicyInNewProcessIfPossible can be replaced by passing another parameter.
+        This bit was just piggy-backing on the WebFramePolicyListenerProxy.
+
+        isMainFrame was only used in an assert, which has a corresponding ObjC exception in
+        NavigationState::NavigationClient::decidePolicyForNavigationAction for the one relevant client.
+
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUseInNewProcess):
+        (useWithPolicies):
+        (WKFramePolicyListenerUseWithPolicies):
+        (WKFramePolicyListenerUseInNewProcessWithPolicies):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::receivedPolicyDecision):
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::download):
+        (WebKit::WebFramePolicyListenerProxy::ignore):
+        (WebKit::WebFramePolicyListenerProxy::isMainFrame const): Deleted.
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::setApplyPolicyInNewProcessIfPossible): Deleted.
+        (WebKit::WebFramePolicyListenerProxy::applyPolicyInNewProcessIfPossible const): Deleted.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessPool.h:
+
+2018-07-24  Alex Christensen  <achristensen@webkit.org>
+
         Remove WebFramePolicyListenerProxy::invalidate
         https://bugs.webkit.org/show_bug.cgi?id=187833
 

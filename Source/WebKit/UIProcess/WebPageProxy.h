@@ -259,6 +259,8 @@ struct PrintInfo;
 struct WebPopupItem;
 struct URLSchemeTaskParameters;
 
+enum class ShouldProcessSwapIfPossible;
+
 #if USE(QUICK_LOOK)
 class QuickLookDocumentData;
 #endif
@@ -906,7 +908,7 @@ public:
     void performDictionaryLookupOfCurrentSelection();
 #endif
 
-    void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy&, uint64_t listenerID, API::Navigation* navigationID, std::optional<WebsitePoliciesData>&&);
+    void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy&, uint64_t listenerID, API::Navigation*, std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible);
 
     void backForwardRemovedItem(const WebCore::BackForwardItemIdentifier&);
 

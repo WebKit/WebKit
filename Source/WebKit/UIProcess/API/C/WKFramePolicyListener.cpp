@@ -31,6 +31,7 @@
 #include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
+#include "WebProcessPool.h"
 #include "WebsitePoliciesData.h"
 
 using namespace WebKit;
@@ -47,29 +48,31 @@ void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 
 void WKFramePolicyListenerUseInNewProcess(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->setApplyPolicyInNewProcessIfPossible(true);
-    toImpl(policyListenerRef)->use(std::nullopt);
+    toImpl(policyListenerRef)->use(std::nullopt, ShouldProcessSwapIfPossible::Yes);
 }
 
-void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
+static void useWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible)
 {
     auto data = toImpl(websitePolicies)->data();
 
     if (data.websiteDataStoreParameters) {
         auto& sessionID = data.websiteDataStoreParameters->networkSessionParameters.sessionID;
         RELEASE_ASSERT_WITH_MESSAGE(sessionID.isEphemeral() || sessionID == PAL::SessionID::defaultSessionID(), "If WebsitePolicies specifies a WebsiteDataStore, the data store's session must be default or non-persistent.");
-        RELEASE_ASSERT_WITH_MESSAGE(toImpl(policyListenerRef)->isMainFrame(), "WebsitePolicies cannot specify a WebsiteDataStore for subframe navigations.");
 
         toImpl(policyListenerRef)->changeWebsiteDataStore(toImpl(websitePolicies)->websiteDataStore()->websiteDataStore());
     }
 
-    toImpl(policyListenerRef)->use(WTFMove(data));
+    toImpl(policyListenerRef)->use(WTFMove(data), shouldProcessSwapIfPossible);
+}
+
+void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
+{
+    useWithPolicies(policyListenerRef, websitePolicies, ShouldProcessSwapIfPossible::No);
 }
 
 void WKFramePolicyListenerUseInNewProcessWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
-    toImpl(policyListenerRef)->setApplyPolicyInNewProcessIfPossible(true);
-    WKFramePolicyListenerUseWithPolicies(policyListenerRef, websitePolicies);
+    useWithPolicies(policyListenerRef, websitePolicies, ShouldProcessSwapIfPossible::Yes);
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)
