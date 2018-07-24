@@ -64,20 +64,20 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry {
     public:
-        static FormattingContext::Geometry::HeightAndMargin inFlowHeightAndMargin(LayoutContext&, const Box&);
-        static FormattingContext::Geometry::WidthAndMargin inFlowWidthAndMargin(LayoutContext&, const Box&);
+        static HeightAndMargin inFlowHeightAndMargin(LayoutContext&, const Box&);
+        static WidthAndMargin inFlowWidthAndMargin(LayoutContext&, const Box&);
 
-        static FormattingContext::Geometry::Position staticPosition(LayoutContext&, const Box&);
-        static FormattingContext::Geometry::Position inFlowPositionedPosition(LayoutContext&, const Box&);
+        static Position staticPosition(LayoutContext&, const Box&);
+        static Position inFlowPositionedPosition(LayoutContext&, const Box&);
 
         static bool instrinsicWidthConstraintsNeedChildrenWidth(const Box&);
         static FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&);
 
     private:
-        static FormattingContext::Geometry::HeightAndMargin inFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);
-        static FormattingContext::Geometry::WidthAndMargin inFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = std::nullopt);
-        static FormattingContext::Geometry::WidthAndMargin inFlowReplacedWidthAndMargin(LayoutContext&, const Box&);
-        static FormattingContext::Geometry::Position staticPositionForOutOfFlowPositioned(const LayoutContext&, const Box&);
+        static HeightAndMargin inFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);
+        static WidthAndMargin inFlowNonReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = std::nullopt);
+        static WidthAndMargin inFlowReplacedWidthAndMargin(LayoutContext&, const Box&);
+        static Position staticPositionForOutOfFlowPositioned(const LayoutContext&, const Box&);
     };
     
     // This class implements margin collapsing for block formatting context.

@@ -85,36 +85,6 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
-        struct Position {
-            // FIXME: Use LayoutUnit<Horizontal> to avoid top/left vs. x/y confusion.
-            LayoutUnit x; // left
-            LayoutUnit y; // top
-            operator LayoutPoint() const { return { x, y }; }
-        };
-
-        struct WidthAndMargin {
-            LayoutUnit width;
-            Display::Box::HorizontalEdges margin;
-        };
-
-        struct HeightAndMargin {
-            LayoutUnit height;
-            Display::Box::VerticalEdges margin;
-            std::optional<Display::Box::VerticalEdges> collapsedMargin;
-        };
-
-         struct HorizontalGeometry {
-            LayoutUnit left;
-            LayoutUnit right;
-            WidthAndMargin widthAndMargin;
-         };
-
-        struct VerticalGeometry {
-            LayoutUnit top;
-            LayoutUnit bottom;
-            HeightAndMargin heightAndMargin;
-        };
-
         static VerticalGeometry outOfFlowVerticalGeometry(LayoutContext&, const Box&);
         static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutContext&, const FormattingContext&, const Box&);
 
@@ -125,11 +95,11 @@ protected:
         static WidthAndMargin inlineReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedMarginLeft = { },
             std::optional<LayoutUnit> precomputedMarginRight = { });
 
-        static Display::Box::Edges computedBorder(LayoutContext&, const Box&);
-        static std::optional<Display::Box::Edges> computedPadding(LayoutContext&, const Box&);
+        static Edges computedBorder(LayoutContext&, const Box&);
+        static std::optional<Edges> computedPadding(LayoutContext&, const Box&);
 
-        static Display::Box::HorizontalEdges computedNonCollapsedHorizontalMarginValue(const LayoutContext&, const Box&);
-        static Display::Box::VerticalEdges computedNonCollapsedVerticalMarginValue(const LayoutContext&, const Box&);
+        static HorizontalEdges computedNonCollapsedHorizontalMarginValue(const LayoutContext&, const Box&);
+        static VerticalEdges computedNonCollapsedVerticalMarginValue(const LayoutContext&, const Box&);
 
         static std::optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
         static std::optional<LayoutUnit> fixedValue(const Length& geometryProperty);

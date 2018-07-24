@@ -27,9 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutPoint.h"
-#include "LayoutRect.h"
-#include "LayoutUnit.h"
+#include "LayoutUnits.h"
 #include "RenderStyleConstants.h"
 #include <wtf/IsoMalloc.h>
 
@@ -176,27 +174,12 @@ private:
     void setContentBoxHeight(LayoutUnit);
     void setContentBoxWidth(LayoutUnit);
 
-    struct HorizontalEdges {
-        LayoutUnit left;
-        LayoutUnit right;
-    };
+    void setHorizontalMargin(Layout::HorizontalEdges);
+    void setVerticalMargin(Layout::VerticalEdges);
+    void setVerticalNonCollapsedMargin(Layout::VerticalEdges);
 
-    struct VerticalEdges {
-        LayoutUnit top;
-        LayoutUnit bottom;
-    };
-
-    struct Edges {
-        HorizontalEdges horizontal;
-        VerticalEdges vertical;
-    };
-
-    void setHorizontalMargin(HorizontalEdges);
-    void setVerticalMargin(VerticalEdges);
-    void setVerticalNonCollapsedMargin(VerticalEdges);
-
-    void setBorder(Edges);
-    void setPadding(Edges);
+    void setBorder(Layout::Edges);
+    void setPadding(Layout::Edges);
 
 #if !ASSERT_DISABLED
     void invalidateMargin();
@@ -220,11 +203,11 @@ private:
     LayoutUnit m_contentWidth;
     LayoutUnit m_contentHeight;
 
-    Edges m_margin;
-    VerticalEdges m_verticalNonCollapsedMargin;
+    Layout::Edges m_margin;
+    Layout::VerticalEdges m_verticalNonCollapsedMargin;
 
-    Edges m_border;
-    Edges m_padding;
+    Layout::Edges m_border;
+    Layout::Edges m_padding;
 
 #if !ASSERT_DISABLED
     bool m_hasValidHorizontalMargin { false };
@@ -454,7 +437,7 @@ inline LayoutUnit Box::contentBoxWidth() const
     return m_contentWidth;
 }
 
-inline void Box::setHorizontalMargin(HorizontalEdges margin)
+inline void Box::setHorizontalMargin(Layout::HorizontalEdges margin)
 {
 #if !ASSERT_DISABLED
     setHasValidHorizontalMargin();
@@ -462,7 +445,7 @@ inline void Box::setHorizontalMargin(HorizontalEdges margin)
     m_margin.horizontal = margin;
 }
 
-inline void Box::setVerticalMargin(VerticalEdges margin)
+inline void Box::setVerticalMargin(Layout::VerticalEdges margin)
 {
 #if !ASSERT_DISABLED
     setHasValidVerticalMargin();
@@ -470,7 +453,7 @@ inline void Box::setVerticalMargin(VerticalEdges margin)
     m_margin.vertical = margin;
 }
 
-inline void Box::setVerticalNonCollapsedMargin(VerticalEdges margin)
+inline void Box::setVerticalNonCollapsedMargin(Layout::VerticalEdges margin)
 {
 #if !ASSERT_DISABLED
     setHasValidVerticalNonCollapsedMargin();
@@ -478,7 +461,7 @@ inline void Box::setVerticalNonCollapsedMargin(VerticalEdges margin)
     m_verticalNonCollapsedMargin = margin;
 }
 
-inline void Box::setBorder(Edges border)
+inline void Box::setBorder(Layout::Edges border)
 {
 #if !ASSERT_DISABLED
     setHasValidBorder();
@@ -486,7 +469,7 @@ inline void Box::setBorder(Edges border)
     m_border = border;
 }
 
-inline void Box::setPadding(Edges padding)
+inline void Box::setPadding(Layout::Edges padding)
 {
 #if !ASSERT_DISABLED
     setHasValidPadding();

@@ -145,7 +145,7 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(LayoutContext& layoutCo
     return std::min(std::max(instrinsicWidthConstraints.minimum, availableWidth), instrinsicWidthConstraints.maximum);
 }
 
-FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
+VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
 
@@ -261,7 +261,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     return { *top, *bottom, { *height, { *marginTop, *marginBottom }, { } } };
 }
 
-FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
     
@@ -405,7 +405,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     return { *left, *right, { *width, { *marginLeft, *marginRight } } };
 }
 
-FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
+VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
 
@@ -474,7 +474,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     return { *top, *bottom, { height, { *marginTop, *marginBottom }, { } } };
 }
 
-FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
+HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
 
@@ -570,7 +570,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     return { *left, *right, { width, { *marginLeft, *marginRight } } };
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
 
@@ -601,10 +601,10 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floati
         height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating non-replaced -> height(" << *height << "px) margin(" << *marginTop << "px, " << *marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
-    return FormattingContext::Geometry::HeightAndMargin { *height, { *marginTop, *marginBottom }, { } };
+    return HeightAndMargin { *height, { *marginTop, *marginBottom }, { } };
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
 
@@ -624,10 +624,10 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
         width = shrinkToFitWidth(layoutContext, formattingContext, layoutBox);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> floating non-replaced -> width(" << *width << "px) margin(" << margin.left << "px, " << margin.right << "px) -> layoutBox(" << &layoutBox << ")");
-    return FormattingContext::Geometry::WidthAndMargin { *width, margin };
+    return WidthAndMargin { *width, margin };
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+HeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && layoutBox.replaced());
 
@@ -637,7 +637,7 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floati
     return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned() && layoutBox.replaced());
 
@@ -651,7 +651,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     return inlineReplacedWidthAndMargin(layoutContext, layoutBox, margin.left, margin.right);
 }
 
-FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
+VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
@@ -660,7 +660,7 @@ FormattingContext::Geometry::VerticalGeometry FormattingContext::Geometry::outOf
     return outOfFlowReplacedVerticalGeometry(layoutContext, layoutBox);
 }
 
-FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
@@ -669,7 +669,7 @@ FormattingContext::Geometry::HorizontalGeometry FormattingContext::Geometry::out
     return outOfFlowReplacedHorizontalGeometry(layoutContext, layoutBox);
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned());
 
@@ -678,7 +678,7 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::floati
     return floatingReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatingWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+WidthAndMargin FormattingContext::Geometry::floatingWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isFloatingPositioned());
 
@@ -687,7 +687,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::floatin
     return floatingReplacedWidthAndMargin(layoutContext, layoutBox);
 }
 
-FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
 
@@ -733,7 +733,7 @@ FormattingContext::Geometry::HeightAndMargin FormattingContext::Geometry::inline
     return { *height, margin, { } };
 }
 
-FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,
+WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox,
     std::optional<LayoutUnit> precomputedMarginLeft, std::optional<LayoutUnit> precomputedMarginRight)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
@@ -809,7 +809,7 @@ FormattingContext::Geometry::WidthAndMargin FormattingContext::Geometry::inlineR
     return { *width, { marginLeft, marginRight } };
 }
 
-Display::Box::Edges FormattingContext::Geometry::computedBorder(LayoutContext&, const Box& layoutBox)
+Edges FormattingContext::Geometry::computedBorder(LayoutContext&, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
@@ -819,7 +819,7 @@ Display::Box::Edges FormattingContext::Geometry::computedBorder(LayoutContext&, 
     };
 }
 
-std::optional<Display::Box::Edges> FormattingContext::Geometry::computedPadding(LayoutContext& layoutContext, const Box& layoutBox)
+std::optional<Edges> FormattingContext::Geometry::computedPadding(LayoutContext& layoutContext, const Box& layoutBox)
 {
     if (!layoutBox.isPaddingApplicable())
         return std::nullopt;
@@ -827,13 +827,13 @@ std::optional<Display::Box::Edges> FormattingContext::Geometry::computedPadding(
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
-    return Display::Box::Edges {
+    return Edges {
         { valueForLength(style.paddingLeft(), containingBlockWidth), valueForLength(style.paddingRight(), containingBlockWidth) },
         { valueForLength(style.paddingTop(), containingBlockWidth), valueForLength(style.paddingBottom(), containingBlockWidth) }
     };
 }
 
-Display::Box::HorizontalEdges FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
+HorizontalEdges FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
@@ -845,7 +845,7 @@ Display::Box::HorizontalEdges FormattingContext::Geometry::computedNonCollapsedH
     return { marginLeft, marginRight };
 }
 
-Display::Box::VerticalEdges FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
+VerticalEdges FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
