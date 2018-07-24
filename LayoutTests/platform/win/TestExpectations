@@ -4141,3 +4141,5 @@ webkit.org/b/187177 fast/text/mark-matches-broken-line-rendering.html [ ImageOnl
 webkit.org/b/187177 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
 
 webkit.org/b/187912 webanimations/empty-keyframes-crash.html [ Failure ]
+
+webkit.org/b/187943 webanimations/accessing-current-time-after-finished-css-animation-target-removal.html [ Failure ]
