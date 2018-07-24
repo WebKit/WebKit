@@ -72,7 +72,7 @@ static void hasCompatibleServicesForItems(dispatch_group_t group, NSArray *items
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     dispatch_group_enter(group);
-    [NSSharingService sharingServicesForItems:items mask:servicesMask completion:BlockPtr<void(NSArray *)>::fromCallable([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
+    [NSSharingService getSharingServicesForItems:items mask:servicesMask completion:BlockPtr<void(NSArray *)>::fromCallable([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
         completionHandler(services.count);
         dispatch_group_leave(group);
     }).get()];

@@ -1,3 +1,10 @@
+2018-07-23  Timothy Horton  <timothy_horton@apple.com>
+
+        Try to fix the build.
+
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::hasCompatibleServicesForItems):
+
 2018-07-23  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault
