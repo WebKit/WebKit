@@ -1,3 +1,32 @@
+2018-07-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        webkitpy.port.server_process_unittest.TestServerProcess.test_basic failed on Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=187581
+
+        Reviewed by Daniel Bates.
+
+        There are two failures in this test case:
+        1. proc.poll() doesn't return 0.
+        2. stderr is not output.
+
+        For failure #1, this is expected. the process should not exit at
+        the time. proc.poll() should return None because the process is
+        still alive.
+
+        This change added a new test to check proc.poll() becomes 0 after
+        the process successfully exits.
+
+        For failure #2, stderr is not flushed even though stdout is
+        flushed. This change uses '-u' command switch to force stdin,
+        stdout and stderr to be totally unbuffered.
+
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TestServerProcess.test_basic): Added -u command switch. Do not
+        flush stdout. Removed the special condition for Windows. Add a new
+        test to check proc.poll() returns 0.
+        (TestServerProcess.test_process_crashing): Added -u command
+        switch. Do not flush stdout.
+
 2018-07-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         WTF::StringView::split should have an allowEmptyEntries flag

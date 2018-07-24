@@ -99,7 +99,8 @@ class FakeServerProcess(server_process.ServerProcess):
 
 class TestServerProcess(unittest.TestCase):
     def test_basic(self):
-        cmd = [sys.executable, '-c', 'import sys; print "stdout"; sys.stdout.flush(); print >>sys.stderr, "stderr"; sys.stdin.readline();']
+        # Give -u switch to force stdout and stderr to be unbuffered for Windows
+        cmd = [sys.executable, '-uc', 'import sys; print "stdout"; print >>sys.stderr, "stderr"; sys.stdin.readline();']
         host = SystemHost()
         factory = PortFactory(host)
         port = factory.get()
@@ -107,10 +108,7 @@ class TestServerProcess(unittest.TestCase):
         proc = server_process.ServerProcess(port, 'python', cmd)
         proc.write('')
 
-        if sys.platform.startswith('win'):
-            self.assertEqual(proc.poll(), 0)
-        else:
-            self.assertEqual(proc.poll(), None)
+        self.assertEqual(proc.poll(), None)
         self.assertFalse(proc.has_crashed())
 
         # check that doing a read after an expired deadline returns
@@ -125,6 +123,9 @@ class TestServerProcess(unittest.TestCase):
         self.assertEqual(line.strip(), "stderr")
 
         proc.write('End\n')
+        time.sleep(0.1)  # Give process a moment to close.
+        self.assertEqual(proc.poll(), 0)
+
         proc.stop(0)
 
     def test_read_after_process_exits(self):
@@ -146,7 +147,8 @@ class TestServerProcess(unittest.TestCase):
         proc.stop(0)
 
     def test_process_crashing(self):
-        cmd = [sys.executable, '-c', 'import sys; print "stdout 1"; print "stdout 2"; print "stdout 3"; sys.stdout.flush(); sys.stdin.readline(); sys.exit(1);']
+        # Give -u switch to force stdout to be unbuffered for Windows
+        cmd = [sys.executable, '-uc', 'import sys; print "stdout 1"; print "stdout 2"; print "stdout 3"; sys.stdin.readline(); sys.exit(1);']
         host = SystemHost()
         factory = PortFactory(host)
         port = factory.get()
