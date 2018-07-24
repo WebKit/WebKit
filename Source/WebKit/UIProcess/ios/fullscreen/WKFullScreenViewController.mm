@@ -199,6 +199,7 @@ private:
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+    _playbackClient.setParent(nullptr);
     _playbackClient.setInterface(nullptr);
     _videoFullscreenClient.setParent(nullptr);
     _videoFullscreenClient.setInterface(nullptr);
@@ -287,6 +288,10 @@ private:
         return;
 
     _playing = isPlaying;
+
+    if (![self viewIfLoaded])
+        return;
+
     if (!_playing)
         [self showUI];
     else {
@@ -310,6 +315,10 @@ private:
     if (_animating == animating)
         return;
     _animating = animating;
+
+    if (![self viewIfLoaded])
+        return
+
     [self setNeedsStatusBarAppearanceUpdate];
 
     if (_animating)

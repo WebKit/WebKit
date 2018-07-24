@@ -1,3 +1,22 @@
+2018-07-23  Jeremy Jones  <jeremyj@apple.com>
+
+        Crash when loadViewIfRequired called while WKFullScreenViewController is being deallocated.
+        https://bugs.webkit.org/show_bug.cgi?id=187920
+        rdar://problem/41324023
+
+        Reviewed by Eric Carlson.
+
+        Clear dangling weak-ref.
+        Prevent async playback state calls from instantiating the interface.
+        Release WKFullScreenViewController when it is no longer needed.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController dealloc]):
+        (-[WKFullScreenViewController setPlaying:]):
+        (-[WKFullScreenViewController setAnimating:]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+
 2018-07-23  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the build.
