@@ -542,11 +542,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-// FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationActionPolicyAllowInNewProcess:
-#pragma clang diagnostic pop
             tryAppLink(WTFMove(navigationAction), mainFrameURLString, [actionPolicy, localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)](bool followedLinkToApp) mutable {
                 if (followedLinkToApp) {
                     localListener->ignore();
@@ -562,14 +558,10 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             localListener->ignore();
             break;
 
-// FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationActionPolicyDownload:
             localListener->download();
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
-#pragma clang diagnostic pop
             localListener->use(apiWebsitePolicies.get());
             break;
         }
@@ -637,10 +629,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
     if (!navigationDelegate)
         return;
 
-    RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
-    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    RefPtr<API::NavigationResponse> navigationResponseRefPtr(navigationResponse.ptr());
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
+    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:BlockPtr<void(WKNavigationResponsePolicy)>::fromCallable([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -654,15 +644,11 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
             localListener->ignore();
             break;
 
-// FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationResponsePolicyBecomeDownload:
             localListener->download();
-#pragma clang diagnostic pop
             break;
         }
-    }];
+    }).get()];
 }
 
 void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object* userInfo)
