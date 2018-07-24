@@ -866,4 +866,22 @@ void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
     }
 }
 
+void WebView::setToolTip(const String& toolTip)
+{
+    if (!m_toolTipWindow)
+        return;
+
+    if (!toolTip.isEmpty()) {
+        TOOLINFO info = { 0 };
+        info.cbSize = sizeof(info);
+        info.uFlags = TTF_IDISHWND;
+        info.uId = reinterpret_cast<UINT_PTR>(nativeWindow());
+        Vector<UChar> toolTipCharacters = toolTip.charactersWithNullTermination(); // Retain buffer long enough to make the SendMessage call
+        info.lpszText = const_cast<UChar*>(toolTipCharacters.data());
+        ::SendMessage(m_toolTipWindow, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
+    }
+
+    ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !toolTip.isEmpty(), 0);
+}
+
 } // namespace WebKit

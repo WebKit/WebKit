@@ -63,6 +63,7 @@ public:
     void setOverrideCursor(HCURSOR);
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void initialize();
+    void setToolTip(const String&);
 
     void setViewNeedsDisplay(const WebCore::Region&);
 
@@ -129,6 +130,7 @@ private:
     HWND m_window { nullptr };
     HWND m_topLevelParentWindow { nullptr };
     HWND m_toolTipWindow { nullptr };
+    WTF::String m_toolTip;
 
     WebCore::IntSize m_nextResizeScrollOffset;
 

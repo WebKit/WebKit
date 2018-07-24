@@ -101,9 +101,9 @@ void PageClientImpl::didRelaunchProcess()
     notImplemented();
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String&)
+void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 {
-    notImplemented();
+    m_view.setToolTip(newToolTip);
 }
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
