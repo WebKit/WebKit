@@ -1,3 +1,14 @@
+2018-07-24  Jon Davis  <jond@apple.com>
+
+        Disable some vestibular trigger animations when prefers-reduced-motion is active.
+        https://bugs.webkit.org/show_bug.cgi?id=186529
+
+        Reviewed by Dean Jackson.
+
+        * wp-content/themes/webkit/style.css:
+        (@media (prefers-reduced-motion)): Added to honor reduced motion settings.
+        (article,): Added to only use fade-in animation and prevent motion.
+
 2018-06-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPE] Some fixups on webkit.org page

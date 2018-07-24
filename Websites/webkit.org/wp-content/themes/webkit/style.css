@@ -1703,6 +1703,16 @@ header .menu-item { /* add bottom dimension to main menu items */
     margin-top: 0;
 }
 
+/** Accessibility **/
+
+@media (prefers-reduced-motion) {
+    article,
+    .feature-status-page {
+        -webkit-animation: fade-in 0.7s;
+        animation: fade-in 0.7s;
+    }
+}
+
 /** Screen Breakpoints **/
 
 @media only screen and (max-width: 1180px) {
