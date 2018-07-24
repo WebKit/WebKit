@@ -795,11 +795,11 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                 state.delta.value |= localDelta.value;
 
                 if (localDelta.positionChanged)
-                    state.position = position();
+                    state.position = m_adjustedPosition;
                 if (localDelta.anchorPointChanged)
-                    state.anchorPoint = anchorPoint();
+                    state.anchorPoint = m_adjustedAnchorPoint;
                 if (localDelta.sizeChanged)
-                    state.size = size();
+                    state.size = m_adjustedSize;
 
                 if (localDelta.transformChanged)
                     state.transform = transform();

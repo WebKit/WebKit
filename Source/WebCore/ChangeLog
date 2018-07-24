@@ -1,3 +1,17 @@
+2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Use adjusted position, anchor point, size values for Nicosia::CompositionLayer state
+        https://bugs.webkit.org/show_bug.cgi?id=187899
+
+        Reviewed by Carlos Garcia Campos.
+
+        As is done for the CoordinatedGraphicsLayerState, the scale-adjusted
+        position, anchor point and size values should be used when updating the
+        corresponding Nicosia::CompositionLayer::LayerState members.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+
 2018-07-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add support for calc() in gutter properties
