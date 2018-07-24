@@ -1,3 +1,25 @@
+2018-07-24  Charlie Turner  <cturner@igalia.com>
+
+        [Flatpak] Avoid consuming unknown arguments in flatpak wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=187951
+
+        When running run-webkit-tests --wpe --debug, it was observed that
+        both self.platform != 'wpe' and self.debug != True. This turned
+        out to be because of the "args" argument consuming the remainder
+        of future arguments that came after it. Since the first argument
+        to load_from_args was the test script to run, it would end up
+        never processing the other arguments supplied to the wrapper
+        script.
+
+        Tested this by rebuilding GTK in debug mode, running the
+        minibrowser with various extra options, and running some tests
+        with various extra options.
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+
 2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] Remove now unnecessary 'hacks' for running tests

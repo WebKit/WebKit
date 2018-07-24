@@ -504,9 +504,6 @@ class WebkitFlatpak:
         general.add_argument("-y", "--assumeyes",
                             help="Automatically answer yes for all questions.",
                             action="store_true")
-        general.add_argument("args",
-                            nargs=argparse.REMAINDER,
-                            help="Arguments passed when starting %s" % self.name)
         general.add_argument('--avalaible', action='store_true', dest="check_avalaible", help='Check if required dependencies are avalaible.'),
 
         debugoptions = parser.add_argument_group("Debugging")
@@ -521,7 +518,7 @@ class WebkitFlatpak:
         general.add_argument("--clean", dest="clean", action="store_true",
             help="Clean previous builds and restart from scratch")
 
-        parser.parse_args(args=args, namespace=self)
+        _, self.args = parser.parse_known_args(args=args, namespace=self)
 
         return self
 
