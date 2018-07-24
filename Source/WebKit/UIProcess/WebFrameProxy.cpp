@@ -65,7 +65,7 @@ void WebFrameProxy::webProcessWillShutDown()
     m_page = nullptr;
 
     if (m_activeListener) {
-        m_activeListener->invalidate();
+        m_activeListener->ignore();
         m_activeListener = nullptr;
     }
 }
@@ -191,7 +191,7 @@ void WebFrameProxy::receivedPolicyDecision(PolicyAction action, uint64_t listene
 WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID, PolicyListenerType policyListenerType)
 {
     if (m_activeListener)
-        m_activeListener->invalidate();
+        m_activeListener->ignore();
     m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID, policyListenerType);
     return *static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
 }

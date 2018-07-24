@@ -57,11 +57,6 @@ void WebFramePolicyListenerProxy::changeWebsiteDataStore(WebsiteDataStore& websi
     m_frame->changeWebsiteDataStore(websiteDataStore);
 }
 
-void WebFramePolicyListenerProxy::invalidate()
-{
-    m_frame = nullptr;
-}
-
 bool WebFramePolicyListenerProxy::isMainFrame() const
 {
     if (!m_frame)

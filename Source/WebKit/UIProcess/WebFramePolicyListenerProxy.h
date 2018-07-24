@@ -68,7 +68,6 @@ public:
     uint64_t listenerID() const { return m_listenerID; }
     
     void setNavigation(Ref<API::Navigation>&&);
-    void invalidate();
     
     void changeWebsiteDataStore(WebsiteDataStore&);
     bool isMainFrame() const;
