@@ -649,16 +649,6 @@ class WebkitFlatpak:
 
         return True
 
-    def _cleanup_faltpak_args_for_tests_if_needed(self, args):
-        if not args or not args[0].endswith('run-webkit-tests'):
-            return self.finish_args
-
-        # We are going to run our own Xvfb server in the sandbox
-        unwanted_args = ["--socket=x11"]
-        finish_args = [e for e in self.finish_args if e not in unwanted_args]
-
-        return finish_args
-
     def run_in_sandbox(self, *args, **kwargs):
         cwd = kwargs.pop("cwd", None)
         stdout = kwargs.pop("stdout", sys.stdout)
@@ -700,8 +690,7 @@ class WebkitFlatpak:
             for envvar, value in forwarded.items():
                 flatpak_command.append("--env=%s=%s" % (envvar, value))
 
-            finish_args = self._cleanup_faltpak_args_for_tests_if_needed(args)
-            flatpak_command += finish_args + extra_flatpak_args + [self.flatpak_build_path]
+            flatpak_command += self.finish_args + extra_flatpak_args + [self.flatpak_build_path]
 
             shell_string = ""
             if args:

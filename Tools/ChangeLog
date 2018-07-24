@@ -1,3 +1,22 @@
+2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
+
+        [Flatpak] Remove now unnecessary 'hacks' for running tests
+        https://bugs.webkit.org/show_bug.cgi?id=187608
+
+        Reviewed by Philippe Normand.
+
+        We used to need to not share X11 with the sandbox when running tests
+        but it is not needed anymore as we do not mount `/tmp` on `/tmp` in the
+        sandbox (we mount it on `/run/host/tmp` now).
+
+        This has the advantage of making running the MiniBrowser to display test
+        results working again.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak._cleanup_faltpak_args_for_tests_if_needed): Deleted.
+
 2018-07-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         webkitpy.port.server_process_unittest.TestServerProcess.test_basic failed on Windows Python
