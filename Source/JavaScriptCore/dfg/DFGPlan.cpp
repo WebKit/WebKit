@@ -148,6 +148,7 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     , weakReferences(codeBlock)
     , stage(Preparing)
 {
+    RELEASE_ASSERT(codeBlock->alternative()->jitCode());
 }
 
 Plan::~Plan()
