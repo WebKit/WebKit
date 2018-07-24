@@ -1,3 +1,14 @@
+2018-07-23  Saam Barati  <sbarati@apple.com>
+
+        need to didFoldClobberWorld when we constant fold GetByVal
+        https://bugs.webkit.org/show_bug.cgi?id=187917
+        <rdar://problem/42505095>
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2018-07-23  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Language tags are not canonicalized

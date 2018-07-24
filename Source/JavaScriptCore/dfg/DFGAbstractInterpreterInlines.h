@@ -1886,7 +1886,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                             && globalObject->arrayPrototypeChainIsSane()) {
                             m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
                             m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-                            didFoldClobberWorld();
                             // Note that Array::Double and Array::Int32 return JSValue if array mode is OutOfBounds.
                             setConstant(node, jsUndefined());
                             return true;
@@ -1923,9 +1922,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     if (!value)
                         return false;
 
-                    if (node->arrayMode().isOutOfBounds())
-                        didFoldClobberWorld();
-
                     if (value.isCell())
                         setConstant(node, *m_graph.freeze(value.asCell()));
                     else
@@ -1936,7 +1932,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 return false;
             };
 
-            if (foldGetByValOnConstantProperty(m_graph.child(node, 0), m_graph.child(node, 1)))
+            bool didFold = false;
+            switch (node->arrayMode().type()) {
+            case Array::Generic:
+            case Array::Int32:
+            case Array::Double:
+            case Array::Contiguous:
+            case Array::ArrayStorage:
+            case Array::SlowPutArrayStorage:
+                if (foldGetByValOnConstantProperty(m_graph.child(node, 0), m_graph.child(node, 1))) {
+                    if (!node->arrayMode().isInBounds())
+                        didFoldClobberWorld();
+                    didFold = true;
+                }
+                break;
+            default:
+                break;
+            }
+
+            if (didFold)
                 break;
         }
 
