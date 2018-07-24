@@ -116,8 +116,10 @@ std::optional<double> CSSAnimation::bindingsCurrentTime() const
 {
     flushPendingStyleChanges();
     auto currentTime = DeclarativeAnimation::bindingsCurrentTime();
-    if (currentTime)
-        return std::max(0.0, std::min(currentTime.value(), effect()->timing()->activeDuration().milliseconds()));
+    if (currentTime) {
+        if (auto* animationEffect = effect())
+            return std::max(0.0, std::min(currentTime.value(), animationEffect->timing()->activeDuration().milliseconds()));
+    }
     return currentTime;
 }
 

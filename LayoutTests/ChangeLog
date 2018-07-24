@@ -1,3 +1,16 @@
+2018-07-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Crash accessing CSSAnimation::bindingsCurrentTime when effect has been set to null
+        https://bugs.webkit.org/show_bug.cgi?id=187950
+        <rdar://problem/42515747>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test where we check that the current time of a CSSAnimation can be accessed after setting its effect to null.
+
+        * webanimations/accessing-current-time-after-clearing-css-animation-effect-expected.txt: Added.
+        * webanimations/accessing-current-time-after-clearing-css-animation-effect.html: Added.
+
 2018-07-24  Daniel Bates  <dabates@apple.com>
 
         Cannot view PDF's on my.gov.au: "Refused to load https://my.gov.au/attachment/viewAttachment because it

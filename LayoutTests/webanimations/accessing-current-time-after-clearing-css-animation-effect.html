@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableWebAnimationsCSSIntegration=true ] -->
+<meta charset=utf-8>
+<title>Crash accessing a CSSAnimation's current time after setting its effect to null</title>
+<style>
+    @keyframes animation {
+        from {
+            margin-left: 0px;
+        }
+        to {
+            margin-left: 100px;
+        }
+    }
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+test(t => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.style.animation = "animation 1s";
+
+    const animations = target.getAnimations();
+    assert_equals(animations.length, 1, "The target element has one animation.");
+
+    const animation = animations[0];
+    animation.effect = null;
+
+    assert_equals(animation.currentTime, 0, "The animation's current time is 0 after removing its effect.");
+}, "Current time is 0 after removing its effect.");
+
+</script>
+</body>
