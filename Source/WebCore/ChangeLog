@@ -1,5 +1,27 @@
 2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        REGRESSION(r234055): inverted return values in MediaPlayer::wouldTaintOrigin()
+        https://bugs.webkit.org/show_bug.cgi?id=187944
+
+        Reviewed by Carlos Garcia Campos.
+
+        The MediaPlayer::wouldTaintOrigin(), as introduced in r234055, should
+        return false when the URL protocol is `data:`, and should return true
+        when the given SecurityOrigin cannot access the media URL.
+
+        This matches behavior of CanvasRenderingContext::wouldTaintOrigin()
+        which the new method falls back to when the MediaPlayerPrivate
+        implementation doesn't or can't determine the would-taint result.
+
+        This fixes a bunch of failing and timing-out WebGL test cases on ports
+        using GStreamer (on which the MediaPlayerPrivate derivate doesn't
+        implement the wouldTaintOrigin() method).
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::wouldTaintOrigin const):
+
+2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
         [TextureMapper] Separate repaint counter state from debug visuals
         https://bugs.webkit.org/show_bug.cgi?id=187946
 
