@@ -81,7 +81,7 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
         return;
 
     auto listener = std::exchange(decision->priv->listener, nullptr);
-    listener->use(std::nullopt);
+    listener->use();
 }
 
 /**

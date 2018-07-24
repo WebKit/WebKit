@@ -491,7 +491,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             }
 
             if (!navigationAction->targetFrame()) {
-                listener->use(std::nullopt);
+                listener->use();
                 return;
             }
 
@@ -500,7 +500,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 if (navigationAction->shouldPerformDownload())
                     listener->download();
                 else
-                    listener->use(std::nullopt);
+                    listener->use();
                 return;
             }
 
@@ -529,17 +529,14 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             return;
         checker->didCallCompletionHandler();
 
-        std::optional<WebsitePoliciesData> data;
-        if (websitePolicies) {
-            data = websitePolicies->_websitePolicies->data();
-            if (data->websiteDataStoreParameters) {
-                auto& sessionID = data->websiteDataStoreParameters->networkSessionParameters.sessionID;
+        RefPtr<API::WebsitePolicies> apiWebsitePolicies = websitePolicies ? websitePolicies->_websitePolicies.get() : nullptr;
+        if (apiWebsitePolicies) {
+            if (auto* websiteDataStore = apiWebsitePolicies->websiteDataStore()) {
+                auto sessionID = websiteDataStore->websiteDataStore().sessionID();
                 if (!sessionID.isEphemeral() && sessionID != PAL::SessionID::defaultSessionID())
                     [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil, default, or non-persistent."];
                 if (subframeNavigation)
                     [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil for subframe navigations."];
-
-                webPageProxy->changeWebsiteDataStore(websitePolicies->_websitePolicies->websiteDataStore()->websiteDataStore());
             }
         }
 
@@ -550,13 +547,13 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationActionPolicyAllowInNewProcess:
 #pragma clang diagnostic pop
-            tryAppLink(WTFMove(navigationAction), mainFrameURLString, [actionPolicy, localListener = WTFMove(localListener), data = WTFMove(data)](bool followedLinkToApp) mutable {
+            tryAppLink(WTFMove(navigationAction), mainFrameURLString, [actionPolicy, localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)](bool followedLinkToApp) mutable {
                 if (followedLinkToApp) {
                     localListener->ignore();
                     return;
                 }
 
-                localListener->use(WTFMove(data), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ShouldProcessSwapIfPossible::Yes : ShouldProcessSwapIfPossible::No);
+                localListener->use(websitePolicies.get(), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ShouldProcessSwapIfPossible::Yes : ShouldProcessSwapIfPossible::No);
             });
         
             break;
@@ -573,7 +570,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
 #pragma clang diagnostic pop
-            localListener->use(WTFMove(data));
+            localListener->use(apiWebsitePolicies.get());
             break;
         }
     };
@@ -623,14 +620,14 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
             BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:url.path isDirectory:&isDirectory];
 
             if (exists && !isDirectory && navigationResponse->canShowMIMEType())
-                listener->use(std::nullopt);
+                listener->use();
             else
                 listener->ignore();
             return;
         }
 
         if (navigationResponse->canShowMIMEType())
-            listener->use(std::nullopt);
+            listener->use();
         else
             listener->ignore();
         return;
@@ -650,7 +647,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
 
         switch (responsePolicy) {
         case WKNavigationResponsePolicyAllow:
-            localListener->use(std::nullopt);
+            localListener->use();
             break;
 
         case WKNavigationResponsePolicyCancel:

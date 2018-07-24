@@ -43,26 +43,22 @@ WKTypeID WKFramePolicyListenerGetTypeID()
 
 void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->use(std::nullopt);
+    toImpl(policyListenerRef)->use();
 }
 
 void WKFramePolicyListenerUseInNewProcess(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->use(std::nullopt, ShouldProcessSwapIfPossible::Yes);
+    toImpl(policyListenerRef)->use(nullptr, ShouldProcessSwapIfPossible::Yes);
 }
 
 static void useWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible)
 {
-    auto data = toImpl(websitePolicies)->data();
-
-    if (data.websiteDataStoreParameters) {
-        auto& sessionID = data.websiteDataStoreParameters->networkSessionParameters.sessionID;
+    if (auto* websiteDataStore = toImpl(websitePolicies)->websiteDataStore()) {
+        auto sessionID = websiteDataStore->websiteDataStore().sessionID();
         RELEASE_ASSERT_WITH_MESSAGE(sessionID.isEphemeral() || sessionID == PAL::SessionID::defaultSessionID(), "If WebsitePolicies specifies a WebsiteDataStore, the data store's session must be default or non-persistent.");
-
-        toImpl(policyListenerRef)->changeWebsiteDataStore(toImpl(websitePolicies)->websiteDataStore()->websiteDataStore());
     }
 
-    toImpl(policyListenerRef)->use(WTFMove(data), shouldProcessSwapIfPossible);
+    toImpl(policyListenerRef)->use(toImpl(websitePolicies), shouldProcessSwapIfPossible);
 }
 
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)

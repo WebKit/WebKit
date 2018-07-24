@@ -27,6 +27,8 @@
 #include "WebFramePolicyListenerProxy.h"
 
 #include "APINavigation.h"
+#include "APIWebsiteDataStore.h"
+#include "APIWebsitePolicies.h"
 #include "WebFrameProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
@@ -49,21 +51,20 @@ void WebFramePolicyListenerProxy::receivedPolicyDecision(WebCore::PolicyAction a
     m_frame = nullptr;
 }
 
-void WebFramePolicyListenerProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)
-{
-    if (!m_frame)
-        return;
-    
-    m_frame->changeWebsiteDataStore(websiteDataStore);
-}
-
 void WebFramePolicyListenerProxy::setNavigation(Ref<API::Navigation>&& navigation)
 {
     m_navigation = WTFMove(navigation);
 }
     
-void WebFramePolicyListenerProxy::use(std::optional<WebsitePoliciesData>&& data, ShouldProcessSwapIfPossible swap)
+void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap)
 {
+    std::optional<WebsitePoliciesData> data;
+    if (policies) {
+        data = policies->data();
+        if (m_frame && policies->websiteDataStore())
+            m_frame->changeWebsiteDataStore(policies->websiteDataStore()->websiteDataStore());
+    }
+
     receivedPolicyDecision(WebCore::PolicyAction::Use, WTFMove(data), swap);
 }
 

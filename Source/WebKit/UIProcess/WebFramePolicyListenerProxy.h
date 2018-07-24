@@ -33,6 +33,7 @@
 
 namespace API {
 class Navigation;
+class WebsitePolicies;
 }
 
 namespace WebCore {
@@ -41,8 +42,8 @@ enum class PolicyAction;
 
 namespace WebKit {
 
-class WebsiteDataStore;
 class WebFrameProxy;
+class WebsiteDataStore;
 struct WebsitePoliciesData;
 
 enum class PolicyListenerType {
@@ -61,7 +62,7 @@ public:
         return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID, policyType));
     }
 
-    void use(std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible = ShouldProcessSwapIfPossible::No);
+    void use(API::WebsitePolicies* = nullptr, ShouldProcessSwapIfPossible = ShouldProcessSwapIfPossible::No);
     void download();
     void ignore();
 
@@ -70,8 +71,6 @@ public:
     uint64_t listenerID() const { return m_listenerID; }
     
     void setNavigation(Ref<API::Navigation>&&);
-    
-    void changeWebsiteDataStore(WebsiteDataStore&);
 
 private:
     WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID, PolicyListenerType);

@@ -1,3 +1,41 @@
+2018-07-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WebFramePolicyListenerProxy::changeWebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=187967
+
+        Reviewed by Andy Estes.
+
+        We need to call WebFrameProxy::changeWebsiteDataStore if the _WKWebsitePolicies has a WKWebsiteDataStore.
+        We're doing that in a weird way that is not in the right layer.  Inside the call to WebFramePolicyListenerProxy::use
+        we can inform the frame if there's a new WebsiteDataStore.
+        
+        No change in behavior, as verified by the WebKit.WebsitePoliciesDataStore API test.
+        This is a step towards using lambdas in WebFramePolicyListenerProxy.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::decidePolicyForNavigationAction):
+        (API::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        (API::PolicyClient::decidePolicyForResponse):
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUse):
+        (WKFramePolicyListenerUseInNewProcess):
+        (useWithPolicies):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::changeWebsiteDataStore): Deleted.
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/mac/PageClientImplMac.mm:
+
 2018-07-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234121.
