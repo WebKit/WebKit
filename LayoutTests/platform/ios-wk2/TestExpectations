@@ -1358,3 +1358,4 @@ webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Fail
 
 webkit.org/b/183705 http/tests/workers/service/client-added-to-clients-when-restored-from-page-cache.html [ Pass Failure ]
 webkit.org/b/183705 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Pass Failure ]
+webkit.org/b/183705 http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Pass Failure ]
