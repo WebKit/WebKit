@@ -83,9 +83,8 @@ public:
         return !m_currentFilters.isEmpty();
     }
 
-    void setDebugVisuals(bool showDebugBorders, const Color& debugBorderColor, float debugBorderWidth, bool showRepaintCounter);
-    bool isShowingRepaintCounter() const { return m_state.showRepaintCounter; }
-    void setRepaintCount(int);
+    void setDebugVisuals(bool showDebugBorders, const Color& debugBorderColor, float debugBorderWidth);
+    void setRepaintCounter(bool showRepaintCounter, int repaintCount);
     void setContentsLayer(TextureMapperPlatformLayer*);
     void setAnimations(const TextureMapperAnimations&);
     void setBackingStore(TextureMapperBackingStore*);

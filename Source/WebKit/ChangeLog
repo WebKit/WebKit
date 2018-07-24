@@ -1,3 +1,25 @@
+2018-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TextureMapper] Separate repaint counter state from debug visuals
+        https://bugs.webkit.org/show_bug.cgi?id=187946
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of managing the repaint counter visibility along with the
+        debug border visuals, do that together with the repaint count value.
+
+        In the CoordinatedGraphicsScene class, remove the helper
+        setLayerRepaintCountIfNeeded() method that's only been called in one
+        place, and instead set the repaint count information on the
+        TextureMapperLayer object directly from setLayerState(). The repaint
+        counter visiblity and count value are gathered from the new struct
+        that's kept on the CoordinatedGraphicsLayerState object.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::setLayerState):
+        (WebKit::CoordinatedGraphicsScene::setLayerRepaintCountIfNeeded): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+
 2018-07-24  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK] Implement WebRTC based on libwebrtc

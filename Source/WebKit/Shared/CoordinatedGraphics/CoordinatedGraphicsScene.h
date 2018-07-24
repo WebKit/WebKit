@@ -108,7 +108,6 @@ private:
     void setLayerFiltersIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
     void setLayerAnimationsIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
     void syncPlatformLayerIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-    void setLayerRepaintCountIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
 
     void syncImageBackings(const WebCore::CoordinatedGraphicsState&, CommitScope&);
     void createImageBacking(WebCore::CoordinatedImageBackingID);

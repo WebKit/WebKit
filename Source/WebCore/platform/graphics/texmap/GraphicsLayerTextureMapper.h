@@ -90,7 +90,6 @@ public:
 
     Color debugBorderColor() const { return m_debugBorderColor; }
     float debugBorderWidth() const { return m_debugBorderWidth; }
-    void setRepaintCount(int);
 
 private:
     // GraphicsLayer

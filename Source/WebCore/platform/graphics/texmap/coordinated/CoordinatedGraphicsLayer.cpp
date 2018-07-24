@@ -100,7 +100,7 @@ void CoordinatedGraphicsLayer::didUpdateTileBuffers()
         return;
 
     auto repaintCount = incrementRepaintCount();
-    m_layerState.repaintCount = repaintCount;
+    m_layerState.repaintCount.count = repaintCount;
     m_layerState.repaintCountChanged = true;
     m_nicosia.repaintCounter.count = repaintCount;
     m_nicosia.delta.repaintCounterChanged = true;
@@ -504,8 +504,8 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
         return;
 
     GraphicsLayer::setShowRepaintCounter(show);
-    m_layerState.debugVisuals.showRepaintCounter = show;
-    m_layerState.debugVisualsChanged = true;
+    m_layerState.repaintCount.showRepaintCounter = show;
+    m_layerState.repaintCountChanged = true;
     m_nicosia.repaintCounter.visible = show;
     m_nicosia.delta.repaintCounterChanged = true;
 
@@ -702,11 +702,11 @@ void CoordinatedGraphicsLayer::syncLayerState()
 
     if (m_layerState.debugVisualsChanged) {
         m_layerState.debugVisuals.showDebugBorders = isShowingDebugBorder();
-        m_layerState.debugVisuals.showRepaintCounter = isShowingRepaintCounter();
+        if (m_layerState.debugVisuals.showDebugBorders)
+            updateDebugIndicators();
     }
-
-    if (m_layerState.debugVisuals.showDebugBorders)
-        updateDebugIndicators();
+    if (m_layerState.repaintCountChanged)
+        m_layerState.repaintCount.showRepaintCounter = isShowingRepaintCounter();
 }
 
 void CoordinatedGraphicsLayer::setDebugBorder(const Color& color, float width)

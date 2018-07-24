@@ -66,18 +66,14 @@ struct TileCreationInfo {
 };
 
 struct DebugVisuals {
-    DebugVisuals()
-        : showDebugBorders(false)
-        , showRepaintCounter(false) { }
     Color debugBorderColor;
     float debugBorderWidth { 0 };
-    union {
-        struct {
-            bool showDebugBorders : 1;
-            bool showRepaintCounter : 1;
-        };
-        unsigned flags;
-    };
+    bool showDebugBorders { false };
+};
+
+struct RepaintCount {
+    unsigned count { 0 };
+    bool showRepaintCounter { false };
 };
 
 struct CoordinatedGraphicsLayerState {
@@ -134,7 +130,6 @@ struct CoordinatedGraphicsLayerState {
         , replica(InvalidCoordinatedLayerID)
         , mask(InvalidCoordinatedLayerID)
         , imageID(InvalidCoordinatedImageBackingID)
-        , repaintCount(0)
 #if USE(COORDINATED_GRAPHICS_THREADED)
         , platformLayerProxy(0)
 #endif
@@ -160,8 +155,8 @@ struct CoordinatedGraphicsLayerState {
     CoordinatedLayerID mask;
     CoordinatedImageBackingID imageID;
     DebugVisuals debugVisuals;
+    RepaintCount repaintCount;
 
-    unsigned repaintCount;
     Vector<TileUpdateInfo> tilesToUpdate;
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
