@@ -34,24 +34,20 @@ namespace WebCore {
 class DisplayCaptureManagerCocoa final : public CaptureDeviceManager {
 public:
     static DisplayCaptureManagerCocoa& singleton();
+
     DisplayCaptureManagerCocoa() = default;
 
-    void refreshCaptureDevices() final;
-
 private:
-    virtual ~DisplayCaptureManagerCocoa();
+    virtual ~DisplayCaptureManagerCocoa() = default;
+
+    void updateDisplayCaptureDevices();
 
     const Vector<CaptureDevice>& captureDevices() final;
+
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
     std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
 
-    struct CGDisplayCaptureDevice {
-        uint32_t cgDirectDisplayID;
-        uint32_t cgOpenGLDisplayMask;
-    };
-    Vector<CGDisplayCaptureDevice> m_displaysInternal;
-    Vector<CaptureDevice> m_displays;
-    bool m_observingDisplayChanges { false };
+    Vector<CaptureDevice> m_devices;
 };
 
 } // namespace WebCore

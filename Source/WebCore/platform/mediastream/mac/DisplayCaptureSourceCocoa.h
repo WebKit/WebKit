@@ -55,6 +55,12 @@ protected:
 
     Seconds elapsedTime();
     bool applyFrameRate(double) override;
+    bool applySize(const IntSize&) override;
+
+    RetainPtr<CMSampleBufferRef> sampleBufferFromPixelBuffer(CVPixelBufferRef);
+#if HAVE(IOSURFACE)
+    RetainPtr<CVPixelBufferRef> pixelBufferFromIOSurface(IOSurfaceRef);
+#endif
 
 private:
 
@@ -73,6 +79,7 @@ private:
     MonotonicTime m_startTime { MonotonicTime::nan() };
     Seconds m_elapsedTime { 0_s };
 
+    RetainPtr<CFMutableDictionaryRef> m_bufferAttributes;
     RunLoop::Timer<DisplayCaptureSourceCocoa> m_timer;
 };
 

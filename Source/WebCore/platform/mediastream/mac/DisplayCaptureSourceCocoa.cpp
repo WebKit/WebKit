@@ -127,6 +127,15 @@ Seconds DisplayCaptureSourceCocoa::elapsedTime()
     return m_elapsedTime + (MonotonicTime::now() - m_startTime);
 }
 
+bool DisplayCaptureSourceCocoa::applySize(const IntSize& newSize)
+{
+    if (size() == newSize)
+        return true;
+
+    m_bufferAttributes = nullptr;
+    return true;
+}
+
 bool DisplayCaptureSourceCocoa::applyFrameRate(double rate)
 {
     if (m_timer.isActive())
@@ -142,6 +151,76 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
     generateFrame();
 }
+
+RetainPtr<CMSampleBufferRef> DisplayCaptureSourceCocoa::sampleBufferFromPixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    if (!pixelBuffer)
+        return nullptr;
+
+    CMTime sampleTime = CMTimeMake(((elapsedTime() + 100_ms) * 100).seconds(), 100);
+    CMSampleTimingInfo timingInfo = { kCMTimeInvalid, sampleTime, sampleTime };
+
+    CMVideoFormatDescriptionRef formatDescription = nullptr;
+    auto status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
+    if (status) {
+        RELEASE_LOG(Media, "Failed to initialize CMVideoFormatDescription with error code: %d", static_cast<int>(status));
+        return nullptr;
+    }
+
+    CMSampleBufferRef sampleBuffer;
+    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
+    CFRelease(formatDescription);
+    if (status) {
+        RELEASE_LOG(Media, "Failed to initialize CMSampleBuffer with error code: %d", static_cast<int>(status));
+        return nullptr;
+    }
+
+    return adoptCF(sampleBuffer);
+}
+
+#if HAVE(IOSURFACE)
+static int32_t roundUpToMacroblockMultiple(int32_t size)
+{
+    return (size + 15) & ~15;
+}
+
+RetainPtr<CVPixelBufferRef> DisplayCaptureSourceCocoa::pixelBufferFromIOSurface(IOSurfaceRef surface)
+{
+    if (!m_bufferAttributes) {
+        m_bufferAttributes = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+        auto format = IOSurfaceGetPixelFormat(surface);
+        if (format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
+
+            // If the width x height isn't a multiple of 16 x 16 and the surface has extra memory in the planes, set pixel buffer attributes to reflect it.
+            auto width = IOSurfaceGetWidth(surface);
+            auto height = IOSurfaceGetHeight(surface);
+            int32_t extendedRight = roundUpToMacroblockMultiple(width) - width;
+            int32_t extendedBottom = roundUpToMacroblockMultiple(height) - height;
+
+            if ((IOSurfaceGetBytesPerRowOfPlane(surface, 0) >= width + extendedRight)
+                && (IOSurfaceGetBytesPerRowOfPlane(surface, 1) >= width + extendedRight)
+                && (IOSurfaceGetAllocSize(surface) >= (height + extendedBottom) * IOSurfaceGetBytesPerRowOfPlane(surface, 0) * 3 / 2)) {
+                auto cfInt = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &extendedRight));
+                CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferExtendedPixelsRightKey, cfInt.get());
+                cfInt = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &extendedBottom));
+                CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferExtendedPixelsBottomKey, cfInt.get());
+            }
+        }
+
+        CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferOpenGLCompatibilityKey, kCFBooleanTrue);
+    }
+
+    CVPixelBufferRef pixelBuffer;
+    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, m_bufferAttributes.get(), &pixelBuffer);
+    if (status) {
+        RELEASE_LOG(Media, "CVPixelBufferCreateWithIOSurface failed with error code: %d", static_cast<int>(status));
+        return nullptr;
+    }
+
+    return adoptCF(pixelBuffer);
+}
+#endif
 
 } // namespace WebCore
 

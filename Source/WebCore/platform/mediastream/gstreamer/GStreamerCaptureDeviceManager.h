@@ -33,12 +33,12 @@ class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
 public:
     std::optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(const String&);
 
-    void refreshCaptureDevices() final;
     const Vector<CaptureDevice>& captureDevices() final;
     virtual CaptureDevice::DeviceType deviceType() = 0;
 
 private:
     void deviceAdded(GRefPtr<GstDevice>&&);
+    void refreshCaptureDevices();
 
     GRefPtr<GstDeviceMonitor> m_deviceMonitor;
     Vector<GStreamerCaptureDevice> m_gstreamerDevices;

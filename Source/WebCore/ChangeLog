@@ -1,3 +1,53 @@
+2018-07-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Restructure getDisplayMedia classes
+        https://bugs.webkit.org/show_bug.cgi?id=187905
+
+        Reviewed by Dean Jackson.
+
+        No new tests, no functional changes.
+
+        * platform/mediastream/CaptureDeviceManager.h:
+        (WebCore::CaptureDeviceManager::refreshCaptureDevices): Deleted, no need for it to be a 
+        virtual method.
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.h: refreshCaptureDevices is
+        no longer virtual.
+
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::DisplayCaptureManagerCocoa::captureDevices):
+        (WebCore::DisplayCaptureManagerCocoa::updateDisplayCaptureDevices): Moved functionality 
+        to ScreenDisplayCaptureSourceMac.
+        (WebCore::DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID): Ditto.
+        (WebCore::displayReconfigurationCallBack): Deleted, moved to ScreenDisplayCaptureSourceMac.
+        (WebCore::DisplayCaptureManagerCocoa::~DisplayCaptureManagerCocoa): Deleted.
+        (WebCore::DisplayCaptureManagerCocoa::refreshCaptureDevices): Deleted.
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.h:
+
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::roundUpToMacroblockMultiple): Moved from ScreenDisplayCaptureSourceMac.
+        (WebCore::DisplayCaptureSourceCocoa::applySize): Ditto.
+        (WebCore::DisplayCaptureSourceCocoa::sampleBufferFromPixelBuffer): Ditto.
+        (WebCore::DisplayCaptureSourceCocoa::pixelBufferFromIOSurface): Ditto.
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::updateDisplayID):
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream): Fix log message.
+        (WebCore::ScreenDisplayCaptureSourceMac::startDisplayStream): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::applySize): Update for base class changes.
+        (WebCore::ScreenDisplayCaptureSourceMac::applyFrameRate): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::frameAvailable): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID): Moved from
+        DisplayCaptureManagerCocoa.
+        (WebCore::ScreenDisplayCaptureSourceMac::screenCaptureDevices): Ditto.
+        (WebCore::roundUpToMacroblockMultiple): Moved to DisplayCaptureSourceCocoa.
+        (WebCore::ScreenDisplayCaptureSourceMac::updateDisplayID): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::sampleBufferFromPixelBuffer): Ditto.
+        (WebCore::ScreenDisplayCaptureSourceMac::pixelBufferFromIOSurface): Ditto.
+
 2018-07-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Move geometry data structures to a dedicated file

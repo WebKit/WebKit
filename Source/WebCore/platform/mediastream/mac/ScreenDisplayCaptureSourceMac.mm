@@ -46,12 +46,7 @@ size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
 namespace WebCore {
 
-static int32_t roundUpToMacroblockMultiple(int32_t size)
-{
-    return (size + 15) & ~15;
-}
-
-std::optional<CGDirectDisplayID> ScreenDisplayCaptureSourceMac::updateDisplayID(CGDirectDisplayID displayID)
+static std::optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
 {
     uint32_t displayCount = 0;
     auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
@@ -127,11 +122,10 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
 
     if (m_displayID != actualDisplayID.value()) {
         m_displayID = actualDisplayID.value();
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::create(%p), display ID changed to %d", this, static_cast<int>(m_displayID));
+        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream(%p), display ID changed to %d", this, static_cast<int>(m_displayID));
     }
 
     if (!m_displayStream) {
-
         if (size().isEmpty()) {
             RetainPtr<CGDisplayModeRef> displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
             auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
@@ -213,69 +207,6 @@ void ScreenDisplayCaptureSourceMac::stopProducingData()
     m_isRunning = false;
 }
 
-RetainPtr<CMSampleBufferRef> ScreenDisplayCaptureSourceMac::sampleBufferFromPixelBuffer(CVPixelBufferRef pixelBuffer)
-{
-    if (!pixelBuffer)
-        return nullptr;
-
-    CMTime sampleTime = CMTimeMake(((elapsedTime() + 100_ms) * 100).seconds(), 100);
-    CMSampleTimingInfo timingInfo = { kCMTimeInvalid, sampleTime, sampleTime };
-
-    CMVideoFormatDescriptionRef formatDescription = nullptr;
-    auto status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
-    if (status) {
-        RELEASE_LOG(Media, "Failed to initialize CMVideoFormatDescription with error code: %d", static_cast<int>(status));
-        return nullptr;
-    }
-
-    CMSampleBufferRef sampleBuffer;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
-    CFRelease(formatDescription);
-    if (status) {
-        RELEASE_LOG(Media, "Failed to initialize CMSampleBuffer with error code: %d", static_cast<int>(status));
-        return nullptr;
-    }
-
-    return adoptCF(sampleBuffer);
-}
-
-RetainPtr<CVPixelBufferRef> ScreenDisplayCaptureSourceMac::pixelBufferFromIOSurface(IOSurfaceRef surface)
-{
-    if (!m_bufferAttributes) {
-        m_bufferAttributes = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-        auto format = IOSurfaceGetPixelFormat(surface);
-        if (format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-
-            // If the width x height isn't a multiple of 16 x 16 and the surface has extra memory in the planes, set pixel buffer attributes to reflect it.
-            auto width = IOSurfaceGetWidth(surface);
-            auto height = IOSurfaceGetHeight(surface);
-            int32_t extendedRight = roundUpToMacroblockMultiple(width) - width;
-            int32_t extendedBottom = roundUpToMacroblockMultiple(height) - height;
-
-            if ((IOSurfaceGetBytesPerRowOfPlane(surface, 0) >= width + extendedRight)
-                && (IOSurfaceGetBytesPerRowOfPlane(surface, 1) >= width + extendedRight)
-                && (IOSurfaceGetAllocSize(surface) >= (height + extendedBottom) * IOSurfaceGetBytesPerRowOfPlane(surface, 0) * 3 / 2)) {
-                    auto cfInt = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &extendedRight));
-                    CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferExtendedPixelsRightKey, cfInt.get());
-                    cfInt = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &extendedBottom));
-                    CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferExtendedPixelsBottomKey, cfInt.get());
-            }
-        }
-
-        CFDictionarySetValue(m_bufferAttributes.get(), kCVPixelBufferOpenGLCompatibilityKey, kCFBooleanTrue);
-    }
-
-    CVPixelBufferRef pixelBuffer;
-    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, m_bufferAttributes.get(), &pixelBuffer);
-    if (status) {
-        RELEASE_LOG(Media, "Failed to initialize CMVideoFormatDescription with error code: %d", static_cast<int>(status));
-        return nullptr;
-    }
-
-    return adoptCF(pixelBuffer);
-}
-
 void ScreenDisplayCaptureSourceMac::generateFrame()
 {
     if (!m_currentFrame.ioSurface())
@@ -306,7 +237,7 @@ void ScreenDisplayCaptureSourceMac::startDisplayStream()
 
     if (m_displayID != actualDisplayID.value()) {
         m_displayID = actualDisplayID.value();
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::create(%p), display ID changed to %d", this, static_cast<int>(m_displayID));
+        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::startDisplayStream(%p), display ID changed to %d", this, static_cast<int>(m_displayID));
     }
 
     if (!m_displayStream && !createDisplayStream())
@@ -314,7 +245,7 @@ void ScreenDisplayCaptureSourceMac::startDisplayStream()
 
     auto err = CGDisplayStreamStart(m_displayStream.get());
     if (err) {
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::startProducingData(%p), CGDisplayStreamStart failed with error %d", this, static_cast<int>(err));
+        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::startDisplayStream(%p), CGDisplayStreamStart failed with error %d", this, static_cast<int>(err));
         captureFailed();
         return;
     }
@@ -324,20 +255,17 @@ void ScreenDisplayCaptureSourceMac::startDisplayStream()
 
 bool ScreenDisplayCaptureSourceMac::applySize(const IntSize& newSize)
 {
-    if (size() == newSize)
-        return true;
+    if (!DisplayCaptureSourceCocoa::applySize(newSize))
+        return false;
 
-    m_bufferAttributes = nullptr;
     m_displayStream = nullptr;
     return true;
 }
 
 bool ScreenDisplayCaptureSourceMac::applyFrameRate(double rate)
 {
-    if (frameRate() != rate) {
-        m_bufferAttributes = nullptr;
+    if (frameRate() != rate)
         m_displayStream = nullptr;
-    }
 
     return DisplayCaptureSourceCocoa::applyFrameRate(rate);
 }
@@ -386,8 +314,55 @@ void ScreenDisplayCaptureSourceMac::frameAvailable(CGDisplayStreamFrameStatus st
         return;
 
     LockHolder lock(m_currentFrameMutex);
-    m_lastFrameTime = MonotonicTime::now();
     m_currentFrame = frameSurface;
+}
+
+std::optional<CaptureDevice> ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
+{
+    bool ok;
+    auto displayID = deviceID.toUIntStrict(&ok);
+    if (!ok) {
+        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID: display ID does not convert to 32-bit integer");
+        return std::nullopt;
+    }
+
+    auto actualDisplayID = updateDisplayID(displayID);
+    if (!actualDisplayID)
+        return std::nullopt;
+
+    auto device = CaptureDevice(String::number(actualDisplayID.value()), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s);
+    device.setEnabled(true);
+
+    return device;
+}
+
+void ScreenDisplayCaptureSourceMac::screenCaptureDevices(Vector<CaptureDevice>& displays)
+{
+    uint32_t displayCount = 0;
+    auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
+    if (err) {
+        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get display count", (int)err);
+        return;
+    }
+
+    if (!displayCount) {
+        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned a display count of 0");
+        return;
+    }
+
+    CGDirectDisplayID activeDisplays[displayCount];
+    err = CGGetActiveDisplayList(displayCount, &(activeDisplays[0]), &displayCount);
+    if (err) {
+        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", (int)err);
+        return;
+    }
+
+    int count = 0;
+    for (auto displayID : activeDisplays) {
+        CaptureDevice displayDevice(String::number(displayID), CaptureDevice::DeviceType::Screen, makeString("Screen ", String::number(count++)));
+        displayDevice.setEnabled(CGDisplayIDToOpenGLDisplayMask(displayID));
+        displays.append(WTFMove(displayDevice));
+    }
 }
 
 } // namespace WebCore

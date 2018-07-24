@@ -58,7 +58,7 @@ protected:
     AVCaptureDeviceManager();
     ~AVCaptureDeviceManager() final;
 
-    void refreshCaptureDevices() final;
+    void refreshCaptureDevices();
     void registerForDeviceNotifications();
     void refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType);
     Vector<CaptureDevice>& captureDevicesInternal();

@@ -42,8 +42,6 @@ public:
     virtual const Vector<CaptureDevice>& captureDevices() = 0;
     virtual std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) { return std::nullopt; }
 
-    virtual void refreshCaptureDevices() { }
-
 protected:
     virtual ~CaptureDeviceManager();
     CaptureDevice captureDeviceFromPersistentID(const String& captureDeviceID);
