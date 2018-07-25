@@ -208,10 +208,9 @@ public:
         if (isJSArray()) {
             if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray()) {
                 ArrayModes arrayModes = profile->observedArrayModes(locker);
-                IndexingType observedIndexingModes = profile->observedIndexingModes(locker);
-                if ((hasSeenCopyOnWriteArray(arrayModes) || isCopyOnWrite(observedIndexingModes)) && !hasSeenWritableArray(arrayModes))
+                if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
                     myArrayClass = Array::OriginalCopyOnWriteArray;
-                else if ((!hasSeenCopyOnWriteArray(arrayModes) && !isCopyOnWrite(observedIndexingModes)) && hasSeenWritableArray(arrayModes))
+                else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
                     myArrayClass = Array::OriginalArray;
                 else
                     myArrayClass = Array::Array;

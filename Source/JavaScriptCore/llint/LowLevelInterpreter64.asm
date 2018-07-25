@@ -2033,8 +2033,6 @@ macro arrayProfileForCall()
     loadpFromInstruction((CallOpCodeSize - 2), t1)
     loadi JSCell::m_structureID[t0], t3
     storei t3, ArrayProfile::m_lastSeenStructureID[t1]
-    loadb JSCell::m_indexingTypeAndMisc[t0], t3
-    ori t3, ArrayProfile::m_observedIndexingModes[t1]
 .done:
 end
 

@@ -57,10 +57,6 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
         } else
             isArray = Array::Array;
 
-        bool includesCopyOnWrite = isCopyOnWrite(profile->observedIndexingModes(locker));
-        if (includesCopyOnWrite && !(observed & asArrayModes(toIndexingShape(type) | ArrayClass | CopyOnWrite)))
-            observed |= asArrayModes(toIndexingShape(type) | ArrayClass | CopyOnWrite);
-
         if (action == Array::Write && (observed & asArrayModes(toIndexingShape(type) | ArrayClass | CopyOnWrite)))
             converts = Array::Convert;
         else
