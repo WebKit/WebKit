@@ -92,16 +92,16 @@ bool ViewBackend::initialize()
     if (!m_eglContext)
         return false;
 
-    static struct wpe_view_backend_exportable_fdo_client exportableClient = {
+    static struct wpe_view_backend_exportable_fdo_egl_client exportableClient = {
         // export_buffer_resource
-        [](void* data, struct wl_resource* bufferResource)
+        [](void* data, EGLImageKHR image)
         {
-            static_cast<ViewBackend*>(data)->displayBuffer(bufferResource);
+            static_cast<ViewBackend*>(data)->displayBuffer(image);
         },
         // padding
         nullptr, nullptr, nullptr, nullptr
     };
-    m_exportable = wpe_view_backend_exportable_fdo_create(&exportableClient, this, m_width, m_height);
+    m_exportable = wpe_view_backend_exportable_fdo_egl_create(&exportableClient, this, m_width, m_height);
 
     return true;
 }

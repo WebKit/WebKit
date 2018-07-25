@@ -37,17 +37,17 @@ namespace WPEToolingBackends {
 class HeadlessViewBackend final : public ViewBackend {
 public:
     HeadlessViewBackend(uint32_t width, uint32_t height);
-    ~HeadlessViewBackend();
+    virtual ~HeadlessViewBackend();
 
     cairo_surface_t* createSnapshot();
 
 private:
-    void displayBuffer(struct wl_resource*) override;
+    void displayBuffer(EGLImageKHR) override;
 
     void performUpdate();
 
-    std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_pendingImage { };
-    std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_lockedImage { };
+    EGLImageKHR m_pendingImage;
+    EGLImageKHR m_lockedImage;
 
     GSource* m_updateSource { nullptr };
     gint64 m_frameRate { G_USEC_PER_SEC / 60 };

@@ -41,10 +41,10 @@ namespace WPEToolingBackends {
 class WindowViewBackend final : public ViewBackend {
 public:
     WindowViewBackend(uint32_t width, uint32_t height);
-    ~WindowViewBackend();
+    virtual ~WindowViewBackend();
 
 private:
-    void displayBuffer(struct wl_resource*) override;
+    void displayBuffer(EGLImageKHR) override;
 
     static const struct wl_registry_listener s_registryListener;
     static const struct zxdg_shell_v6_listener s_xdgWmBaseListener;
@@ -119,10 +119,7 @@ private:
     unsigned m_program { 0 };
     unsigned m_textureUniform { 0 };
     unsigned m_viewTexture { 0 };
-    struct {
-        struct wl_resource* bufferResource { nullptr };
-        EGLImageKHR image;
-    } m_committed;
+    EGLImageKHR m_committedImage;
 };
 
 } // WPEToolingBackends

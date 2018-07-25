@@ -35,6 +35,7 @@
 // This include order is necessary to enforce the Wayland EGL platform.
 #include <wayland-egl.h>
 #include <epoxy/egl.h>
+#include <wpe/fdo-egl.h>
 
 #ifndef EGL_WL_bind_wayland_display
 #define EGL_WL_bind_wayland_display 1
@@ -46,8 +47,6 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, st
 
 namespace WPEToolingBackends {
 
-static PFNEGLCREATEIMAGEKHRPROC createImage;
-static PFNEGLDESTROYIMAGEKHRPROC destroyImage;
 static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
 
 struct EventSource {
@@ -499,8 +498,6 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     if (!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         return;
 
-    createImage = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
-    destroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
     imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
     {
@@ -577,9 +574,6 @@ WindowViewBackend::~WindowViewBackend()
     if (m_compositor)
         wl_compositor_destroy(m_compositor);
 
-    if (m_committed.image)
-        destroyImage(m_eglDisplay, m_committed.image);
-
     if (m_eglSurface)
         eglDestroySurface(m_eglDisplay, m_eglSurface);
 
@@ -597,15 +591,13 @@ const struct wl_callback_listener WindowViewBackend::s_frameListener = {
         auto& window = *static_cast<WindowViewBackend*>(data);
         wpe_view_backend_exportable_fdo_dispatch_frame_complete(window.m_exportable);
 
-        if (window.m_committed.image)
-            destroyImage(window.m_eglDisplay, window.m_committed.image);
-        if (window.m_committed.bufferResource)
-            wpe_view_backend_exportable_fdo_dispatch_release_buffer(window.m_exportable, window.m_committed.bufferResource);
-        window.m_committed = { nullptr, nullptr };
+        if (window.m_committedImage)
+            wpe_view_backend_exportable_fdo_egl_dispatch_release_image(window.m_exportable, window.m_committedImage);
+        window.m_committedImage = EGL_NO_IMAGE_KHR;
     }
 };
 
-void WindowViewBackend::displayBuffer(struct wl_resource* bufferResource)
+void WindowViewBackend::displayBuffer(EGLImageKHR image)
 {
     if (!m_eglContext)
         return;
@@ -617,20 +609,12 @@ void WindowViewBackend::displayBuffer(struct wl_resource* bufferResource)
 
     glUseProgram(m_program);
 
-    {
-        static EGLint imageAttributes[] = {
-            EGL_WAYLAND_PLANE_WL, 0,
-            EGL_NONE
-        };
-        EGLImageKHR image = createImage(m_eglDisplay, EGL_NO_CONTEXT, EGL_WAYLAND_BUFFER_WL, bufferResource, imageAttributes);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_viewTexture);
+    imageTargetTexture2DOES(GL_TEXTURE_2D, image);
+    glUniform1i(m_textureUniform, 0);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_viewTexture);
-        imageTargetTexture2DOES(GL_TEXTURE_2D, image);
-        glUniform1i(m_textureUniform, 0);
-
-        m_committed = { bufferResource, image };
-    }
+    m_committedImage = image;
 
     static const GLfloat vertices[4][2] = {
         { -1.0, 1.0 },

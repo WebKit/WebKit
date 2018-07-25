@@ -1,3 +1,54 @@
+2018-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Switch ViewBackend to using wpe_view_backend_exportable_fdo_egl APIs
+        https://bugs.webkit.org/show_bug.cgi?id=187997
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of the raw wpe_view_backend_exportable_fdo API, switch to using
+        the EGL-oriented API that simply serves EGLImageKHR objects instead of
+        raw buffer resources. This allows us not to wrangle with creating and
+        managing lifetime of the same EGLImageKHR by ourselves.
+
+        ViewBackend now defines a wpe_view_backend_exportable_fdo_egl_client
+        struct and uses wpe_view_backend_exportable_fdo_egl_create() to create
+        the exportable object. This means that for each frame we're served an
+        EGLImageKHR object that is passed on to the displayBuffer()
+        implementation.
+
+        HeadlessViewBackend now just manages the pending and committed image
+        objects. Width and height values used during pixel data retrieval are
+        gathered from the ViewBackend's size that was specified when
+        constructed.
+
+        WindowViewBackend similarly only manages the committed image object,
+        not having to create an equivalent EGLImageKHR object from the raw
+        buffer resource anymore.
+
+        Unused EGL entrypoints in both HeadlessViewBackend and WindowViewBackend
+        classes are removed, and destructors for both classes are made virtual.
+
+        The WPEBackend-fdo version is bumped in order to have the EGL-specific
+        export API available.
+
+        * flatpak/org.webkit.WPE.yaml:
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::createSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::performUpdate):
+        (WPEToolingBackends::HeadlessViewBackend::displayBuffer):
+        * wpe/backends/HeadlessViewBackend.h:
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::initialize):
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend):
+        (WPEToolingBackends::WindowViewBackend::~WindowViewBackend):
+        (WPEToolingBackends::WindowViewBackend::displayBuffer):
+        * wpe/backends/WindowViewBackend.h:
+        * wpe/jhbuild.modules:
+
 2018-07-24  Thomas Denney  <tdenney@apple.com>
 
         Remove support for the double type from WHLSL

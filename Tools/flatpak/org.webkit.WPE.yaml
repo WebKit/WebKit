@@ -9,7 +9,7 @@
   sources:
     - type: git
       url: https://github.com/Igalia/WPEBackend-fdo.git
-      branch: bdd46870b1dc3c92005343e3161bdd24f620b11d
+      branch: da746af2dff6b972c5c4903a132edcafdb768926
 - name: lua
   buildsystem: simple
   build-commands:
