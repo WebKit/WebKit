@@ -284,3 +284,12 @@ class RunWebKitTests(shell.Test):
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
         return shell.Test.start(self)
+
+
+class ArchiveBuiltProduct(shell.ShellCommand):
+    command = ['python', 'Tools/BuildSlaveSupport/built-product-archive',
+               WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'archive']
+    name = 'archive-built-product'
+    description = ['archiving built product']
+    descriptionDone = ['archived built product']
+    haltOnFailure = True
