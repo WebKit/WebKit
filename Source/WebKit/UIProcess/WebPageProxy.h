@@ -908,7 +908,7 @@ public:
     void performDictionaryLookupOfCurrentSelection();
 #endif
 
-    void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy&, uint64_t listenerID, API::Navigation*, std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible);
+    void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy&, uint64_t listenerID, API::Navigation*, std::optional<WebsitePoliciesData>&&);
 
     void backForwardRemovedItem(const WebCore::BackForwardItemIdentifier&);
 

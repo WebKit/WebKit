@@ -26,13 +26,9 @@
 #pragma once
 
 #include "APIObject.h"
-
-#if PLATFORM(COCOA)
-#include "WKFoundation.h"
-#endif
+#include <wtf/CompletionHandler.h>
 
 namespace API {
-class Navigation;
 class WebsitePolicies;
 }
 
@@ -42,45 +38,24 @@ enum class PolicyAction;
 
 namespace WebKit {
 
-class WebFrameProxy;
-class WebsiteDataStore;
-struct WebsitePoliciesData;
-
-enum class PolicyListenerType {
-    NavigationAction,
-    NewWindowAction,
-    Response,
-};
-
 enum class ShouldProcessSwapIfPossible { No, Yes };
 
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
-    static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID, PolicyListenerType policyType)
+    static Ref<WebFramePolicyListenerProxy> create(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&& completionHandler)
     {
-        return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID, policyType));
+        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(completionHandler)));
     }
 
     void use(API::WebsitePolicies* = nullptr, ShouldProcessSwapIfPossible = ShouldProcessSwapIfPossible::No);
     void download();
     void ignore();
 
-    PolicyListenerType policyListenerType() const { return m_policyType; }
-
-    uint64_t listenerID() const { return m_listenerID; }
-    
-    void setNavigation(Ref<API::Navigation>&&);
-
 private:
-    WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID, PolicyListenerType);
+    WebFramePolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&&);
 
-    void receivedPolicyDecision(WebCore::PolicyAction, std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible);
-
-    PolicyListenerType m_policyType;
-    RefPtr<WebFrameProxy> m_frame;
-    uint64_t m_listenerID { 0 };
-    RefPtr<API::Navigation> m_navigation;
+    CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)> m_completionHandler;
 };
 
 } // namespace WebKit

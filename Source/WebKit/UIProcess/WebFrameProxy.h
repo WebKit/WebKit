@@ -53,7 +53,6 @@ class WebFramePolicyListenerProxy;
 class WebPageProxy;
 class WebsiteDataStore;
 enum class ShouldProcessSwapIfPossible;
-enum class PolicyListenerType;
 struct WebsitePoliciesData;
 
 typedef GenericCallback<API::Data*> DataCallback;
@@ -116,13 +115,7 @@ public:
     void didSameDocumentNavigation(const WebCore::URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
 
-    // Policy operations.
-    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, std::optional<WebsitePoliciesData>&&, ShouldProcessSwapIfPossible);
-
-    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(uint64_t listenerID, PolicyListenerType);
-    WebFramePolicyListenerProxy* activePolicyListenerProxy();
-
-    void changeWebsiteDataStore(WebsiteDataStore&);
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&&);
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTFMove(contentFilterUnblockHandler); }

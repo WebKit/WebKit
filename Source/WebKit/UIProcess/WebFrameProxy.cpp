@@ -178,35 +178,15 @@ void WebFrameProxy::didChangeTitle(const String& title)
     m_title = title;
 }
 
-void WebFrameProxy::receivedPolicyDecision(PolicyAction action, uint64_t listenerID, API::Navigation* navigation, std::optional<WebsitePoliciesData>&& data, ShouldProcessSwapIfPossible swap)
-{
-    if (!m_page)
-        return;
-
-    ASSERT(m_activeListener);
-    ASSERT(m_activeListener->listenerID() == listenerID);
-    m_page->receivedPolicyDecision(action, *this, listenerID, navigation, WTFMove(data), swap);
-}
-
-WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID, PolicyListenerType policyListenerType)
+WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&& completionHandler)
 {
     if (m_activeListener)
         m_activeListener->ignore();
-    m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID, policyListenerType);
-    return *static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
-}
-
-WebFramePolicyListenerProxy* WebFrameProxy::activePolicyListenerProxy()
-{
-    return m_activeListener.get();
-}
-
-void WebFrameProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)
-{
-    if (!m_page)
-        return;
-
-    m_page->changeWebsiteDataStore(websiteDataStore);
+    m_activeListener = WebFramePolicyListenerProxy::create([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (WebCore::PolicyAction action, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) {
+        completionHandler(action, policies, swap);
+        m_activeListener = nullptr;
+    });
+    return *m_activeListener;
 }
 
 void WebFrameProxy::getWebArchive(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)

@@ -35,47 +35,24 @@
 
 namespace WebKit {
 
-WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, uint64_t listenerID, PolicyListenerType policyType)
-    : m_policyType(policyType)
-    , m_frame(frame)
-    , m_listenerID(listenerID)
+WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&& completionHandler)
+    : m_completionHandler(WTFMove(completionHandler))
 {
 }
 
-void WebFramePolicyListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action, std::optional<WebsitePoliciesData>&& data, ShouldProcessSwapIfPossible swap)
-{
-    if (!m_frame)
-        return;
-    
-    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get(), WTFMove(data), swap);
-    m_frame = nullptr;
-}
-
-void WebFramePolicyListenerProxy::setNavigation(Ref<API::Navigation>&& navigation)
-{
-    m_navigation = WTFMove(navigation);
-}
-    
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap)
 {
-    std::optional<WebsitePoliciesData> data;
-    if (policies) {
-        data = policies->data();
-        if (m_frame && policies->websiteDataStore())
-            m_frame->changeWebsiteDataStore(policies->websiteDataStore()->websiteDataStore());
-    }
-
-    receivedPolicyDecision(WebCore::PolicyAction::Use, WTFMove(data), swap);
+    m_completionHandler(WebCore::PolicyAction::Use, policies, swap);
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Download, std::nullopt, ShouldProcessSwapIfPossible::No);
+    m_completionHandler(WebCore::PolicyAction::Download, nullptr, ShouldProcessSwapIfPossible::No);
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Ignore, std::nullopt, ShouldProcessSwapIfPossible::No);
+    m_completionHandler(WebCore::PolicyAction::Ignore, nullptr, ShouldProcessSwapIfPossible::No);
 }
 
 } // namespace WebKit
