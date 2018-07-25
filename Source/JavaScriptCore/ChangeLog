@@ -1,3 +1,52 @@
+2018-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Record CoW status in ArrayProfile
+        https://bugs.webkit.org/show_bug.cgi?id=187949
+
+        Reviewed by Saam Barati.
+
+        Once CoW array is converted to non-CoW array, subsequent operations are done for this non-CoW array.
+        Even though these operations are performed onto both CoW and non-CoW arrays in the code, array profiles
+        in these code typically record only non-CoW arrays since array profiles hold only one StructureID recently
+        seen. This results emitting CheckStructure for non-CoW arrays in DFG, and it soon causes OSR exits due to
+        CoW arrays.
+
+        In this patch, we record CoW status in ArrayProfile separately to construct more appropriate DFG::ArrayMode
+        speculation. To do so efficiently, we store union of seen IndexingMode in ArrayProfile.
+
+        This patch removes one of Kraken/stanford-crypto-aes's OSR exit reason, and improves the performance by 6-7%.
+
+                                      baseline                  patched
+
+        stanford-crypto-aes        60.893+-1.346      ^      57.412+-1.298         ^ definitely 1.0606x faster
+        stanford-crypto-ccm        62.124+-1.992             58.921+-1.844           might be 1.0544x faster
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::briefDescriptionWithoutUpdating):
+        * bytecode/ArrayProfile.h:
+        (JSC::asArrayModes):
+        We simplify asArrayModes instead of giving up Int8ArrayMode - Float64ArrayMode contiguous sequence.
+
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::addressOfObservedIndexingModes):
+        (JSC::ArrayProfile::observedIndexingModes const):
+        Currently, our macro assembler and offlineasm only support `or32` / `ori` operation onto addresses.
+        So storing the union of seen IndexingMode in `unsigned` instead.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withProfile const):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitArrayProfilingSiteWithCell):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2018-07-24  Tim Horton  <timothy_horton@apple.com>
 
         Enable Web Content Filtering on watchOS

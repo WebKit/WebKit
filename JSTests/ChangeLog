@@ -1,3 +1,16 @@
+2018-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Record CoW status in ArrayProfile
+        https://bugs.webkit.org/show_bug.cgi?id=187949
+
+        Reviewed by Saam Barati.
+
+        * stress/array-profile-should-record-copy-on-write.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        (test3):
+
 2018-07-23  Saam Barati  <sbarati@apple.com>
 
         need to didFoldClobberWorld when we constant fold GetByVal

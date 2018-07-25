@@ -1990,9 +1990,11 @@ macro arrayProfileForCall()
     negi t3
     bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
     loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
-    loadp JSCell::m_structureID[t0], t0
+    loadp JSCell::m_structureID[t0], t3
     loadpFromInstruction(CallOpCodeSize - 2, t1)
-    storep t0, ArrayProfile::m_lastSeenStructureID[t1]
+    storep t3, ArrayProfile::m_lastSeenStructureID[t1]
+    loadb JSCell::m_indexingTypeAndMisc[t0], t3
+    ori t3, ArrayProfile::m_observedIndexingModes[t1]
 .done:
 end
 

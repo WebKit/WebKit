@@ -931,6 +931,7 @@ macro arrayProfile(cellAndIndexingType, profile, scratch)
     loadi JSCell::m_structureID[cell], scratch
     storei scratch, ArrayProfile::m_lastSeenStructureID[profile]
     loadb JSCell::m_indexingTypeAndMisc[cell], indexingType
+    ori indexingType, ArrayProfile::m_observedIndexingModes[profile]
 end
 
 macro skipIfIsRememberedOrInEden(cell, slowPath)

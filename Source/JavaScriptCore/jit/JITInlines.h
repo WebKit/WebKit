@@ -348,6 +348,8 @@ inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID inde
     }
 
     load8(Address(cell, JSCell::indexingTypeAndMiscOffset()), indexingType);
+    if (shouldEmitProfiling())
+        or32(indexingType, AbsoluteAddress(arrayProfile->addressOfObservedIndexingModes()));
 }
 
 inline void JIT::emitArrayProfilingSiteForBytecodeIndexWithCell(RegisterID cell, RegisterID indexingType, unsigned bytecodeIndex)

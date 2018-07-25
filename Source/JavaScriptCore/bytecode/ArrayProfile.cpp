@@ -165,6 +165,8 @@ CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJSLocker&)
         out.print(comma, "Intercept");
     if (m_usesOriginalArrayStructures)
         out.print(comma, "Original");
+    if (isCopyOnWrite(m_observedArrayModes))
+        out.print(comma, "CopyOnWrite");
 
     return out.toCString();
 }

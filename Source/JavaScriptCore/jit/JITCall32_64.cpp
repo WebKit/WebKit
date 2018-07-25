@@ -248,10 +248,13 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int registerOffset = -instruction[4].u.operand;
         
         if (opcodeID == op_call && shouldEmitProfiling()) {
+            ArrayProfile* arrayProfile = instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile;
             emitLoad(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0, regT1);
             Jump done = branchIfNotCell(regT0);
-            loadPtr(Address(regT1, JSCell::structureIDOffset()), regT1);
-            storePtr(regT1, instruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile->addressOfLastSeenStructureID());
+            loadPtr(Address(regT1, JSCell::structureIDOffset()), regT0);
+            storePtr(regT0, arrayProfile->addressOfLastSeenStructureID());
+            load8(Address(regT1, JSCell::indexingTypeAndMiscOffset()), regT0);
+            or32(regT0, AbsoluteAddress(arrayProfile->addressOfObservedIndexingModes()));
             done.link(this);
         }
     
