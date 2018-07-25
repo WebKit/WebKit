@@ -1,3 +1,16 @@
+2018-07-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][STABLE] Non-deterministic build failure (missing JavaScriptCore/JSContextRef.h)
+        https://bugs.webkit.org/show_bug.cgi?id=183788
+
+        Unreviewed build fix. LLIntOffsetsExtractor target should depend on
+        JavaScriptCoreForwardingHeaders.
+
+        Thanks to Fujii for debugging this, Don for fixing it months ago on trunk, and Mart from
+        Gentoo for testing it.
+
+        * CMakeLists.txt:
+
 2018-06-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Trying to access the remote inspector hits an assertion in the UIProcess
