@@ -1,3 +1,13 @@
+2018-07-24  Tim Horton  <timothy_horton@apple.com>
+
+        Enable Web Content Filtering on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=187979
+        <rdar://problem/42559346>
+
+        Reviewed by Wenson Hsieh.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-07-24  Tadeu Zagallo  <tzagallo@apple.com>
 
         Don't modify Options when setting JIT thread limits
