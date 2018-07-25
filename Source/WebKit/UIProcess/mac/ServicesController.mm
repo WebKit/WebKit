@@ -71,15 +71,19 @@ static void hasCompatibleServicesForItems(dispatch_group_t group, NSArray *items
     NSSharingServiceMask servicesMask = NSSharingServiceMaskViewer | NSSharingServiceMaskEditor;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    dispatch_group_enter(group);
-    [NSSharingService getSharingServicesForItems:items mask:servicesMask completion:BlockPtr<void(NSArray *)>::fromCallable([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
-        completionHandler(services.count);
-        dispatch_group_leave(group);
-    }).get()];
+    if ([NSSharingService respondsToSelector:@selector(sharingServicesForItems:mask:completion:)]) {
+        dispatch_group_enter(group);
+        [NSSharingService getSharingServicesForItems:items mask:servicesMask completion:BlockPtr<void(NSArray *)>::fromCallable([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
+            completionHandler(services.count);
+            dispatch_group_leave(group);
+        }).get()];
+        return;
+    }
 #else
     UNUSED_PARAM(group);
-    completionHandler([NSSharingService sharingServicesForItems:items mask:servicesMask].count);
 #endif
+    
+    completionHandler([NSSharingService sharingServicesForItems:items mask:servicesMask].count);
 }
 
 void ServicesController::refreshExistingServices(bool refreshImmediately)
