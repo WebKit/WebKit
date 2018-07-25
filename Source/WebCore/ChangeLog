@@ -1,3 +1,19 @@
+2018-07-24  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r219757): Accessing response getter of XHR instance from IFRAME sets constructor to Object from the IFRAME
+        https://bugs.webkit.org/show_bug.cgi?id=187411
+        <rdar://problem/41920593>
+
+        Reviewed by Sam Weinig.
+
+        Update JSXMLHttpRequest::response() to use the XMLHttpRequest's global object exec when constructing a JSONObject
+        for the response instead of the caller's exec.
+
+        Test: http/tests/xmlhttprequest/xhr-response-constructor-subframe.html
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::response const):
+
 2018-07-24  Simon Fraser  <simon.fraser@apple.com>
 
         Animation stops with object-fit:contain on an animated 2d canvas

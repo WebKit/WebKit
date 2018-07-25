@@ -84,7 +84,7 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
         return jsUndefined();
 
     case XMLHttpRequest::ResponseType::Json:
-        value = toJS<IDLJSON>(state, wrapped().responseTextIgnoringResponseType());
+        value = toJS<IDLJSON>(*globalObject()->globalExec(), wrapped().responseTextIgnoringResponseType());
         if (!value)
             value = jsNull();
         break;
