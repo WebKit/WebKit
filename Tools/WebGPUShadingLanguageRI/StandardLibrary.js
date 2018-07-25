@@ -40,36 +40,25 @@ typedef int = int32;
 typedef uint = uint32;
 
 native typedef float32;
-native typedef float64;
 typedef float = float32;
-typedef double = float64;
 
 native operator int32(uint32);
 native operator int32(uint8);
 native operator int32(float);
-native operator int32(double);
 native operator uint32(int32);
 native operator uint32(uint8);
 native operator uint32(float);
-native operator uint32(double);
 native operator uint8(int32);
 native operator uint8(uint32);
 native operator uint8(float);
-native operator uint8(double);
 native operator float(int32);
 native operator float(uint32);
 native operator float(uint8);
-native operator float(double);
-native operator double(float);
-native operator double(int32);
-native operator double(uint32);
-native operator double(uint8);
 
 native int operator+(int, int);
 native uint operator+(uint, uint);
 uint8 operator+(uint8 a, uint8 b) { return uint8(uint(a) + uint(b)); }
 native float operator+(float, float);
-native double operator+(double, double);
 int operator++(int value) { return value + 1; }
 uint operator++(uint value) { return value + 1; }
 uint8 operator++(uint8 value) { return value + 1; }
@@ -77,7 +66,6 @@ native int operator-(int, int);
 native uint operator-(uint, uint);
 uint8 operator-(uint8 a, uint8 b) { return uint8(uint(a) - uint(b)); }
 native float operator-(float, float);
-native double operator-(double, double);
 int operator--(int value) { return value - 1; }
 uint operator--(uint value) { return value - 1; }
 uint8 operator--(uint8 value) { return value - 1; }
@@ -85,7 +73,6 @@ native int operator*(int, int);
 native uint operator*(uint, uint);
 uint8 operator*(uint8 a, uint8 b) { return uint8(uint(a) * uint(b)); }
 native float operator*(float, float);
-native double operator*(double, double);
 native int operator/(int, int);
 native uint operator/(uint, uint);
 uint8 operator/(uint8 a, uint8 b) { return uint8(uint(a) / uint(b)); }
@@ -108,33 +95,27 @@ uint8 operator~(uint8 value) { return uint8(~uint(value)); }
 uint8 operator<<(uint8 a, uint b) { return uint8(uint(a) << (b & 7)); }
 uint8 operator>>(uint8 a, uint b) { return uint8(uint(a) >> (b & 7)); }
 native float operator/(float, float);
-native double operator/(double, double);
 native bool operator==(int, int);
 native bool operator==(uint, uint);
 bool operator==(uint8 a, uint8 b) { return uint(a) == uint(b); }
 native bool operator==(bool, bool);
 native bool operator==(float, float);
-native bool operator==(double, double);
 native bool operator<(int, int);
 native bool operator<(uint, uint);
 bool operator<(uint8 a, uint8 b) { return uint(a) < uint(b); }
 native bool operator<(float, float);
-native bool operator<(double, double);
 native bool operator<=(int, int);
 native bool operator<=(uint, uint);
 bool operator<=(uint8 a, uint8 b) { return uint(a) <= uint(b); }
 native bool operator<=(float, float);
-native bool operator<=(double, double);
 native bool operator>(int, int);
 native bool operator>(uint, uint);
 bool operator>(uint8 a, uint8 b) { return uint(a) > uint(b); }
 native bool operator>(float, float);
-native bool operator>(double, double);
 native bool operator>=(int, int);
 native bool operator>=(uint, uint);
 bool operator>=(uint8 a, uint8 b) { return uint(a) >= uint(b); }
 native bool operator>=(float, float);
-native bool operator>=(double, double);
 
 bool operator&(bool a, bool b)
 {
@@ -196,7 +177,6 @@ struct vec2<T> {
 typedef int2 = vec2<int>;
 typedef uint2 = vec2<uint>;
 typedef float2 = vec2<float>;
-typedef double2 = vec2<double>;
 
 operator<T> vec2<T>(T x, T y)
 {
@@ -229,7 +209,6 @@ struct vec3<T> {
 typedef int3 = vec3<int>;
 typedef uint3 = vec3<uint>;
 typedef float3 = vec3<float>;
-typedef double3 = vec3<double>;
 
 operator<T> vec3<T>(T x, T y, T z)
 {
@@ -284,7 +263,6 @@ struct vec4<T> {
 typedef int4 = vec4<int>;
 typedef uint4 = vec4<uint>;
 typedef float4 = vec4<float>;
-typedef double4 = vec4<double>;
 
 operator<T> vec4<T>(T x, T y, T z, T w)
 {

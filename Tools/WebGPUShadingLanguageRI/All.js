@@ -64,8 +64,6 @@ load("ConvertPtrToArrayRefExpression.js");
 load("DereferenceExpression.js");
 load("DoWhileLoop.js");
 load("DotExpression.js");
-load("DoubleLiteral.js");
-load("DoubleLiteralType.js");
 load("EArrayRef.js");
 load("EBuffer.js");
 load("EBufferBuilder.js");

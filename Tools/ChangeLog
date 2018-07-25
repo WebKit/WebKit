@@ -1,3 +1,23 @@
+2018-07-24  Thomas Denney  <tdenney@apple.com>
+
+        Remove support for the double type from WHLSL
+        https://bugs.webkit.org/show_bug.cgi?id=187977
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebGPUShadingLanguageRI/All.js: Removed DoubleLiteral.js and DoubleLiteralType.js include.
+        * WebGPUShadingLanguageRI/DoubleLiteral.js: Removed.
+        * WebGPUShadingLanguageRI/DoubleLiteralType.js: Removed.
+        * WebGPUShadingLanguageRI/Intrinsics.js: Removed double arithmetic functions.
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTerm): Removed parsing of double literals.
+        * WebGPUShadingLanguageRI/SPIRV.html: Removed DoubleLiteral.js and DoubleLiteralType.js include.
+        * WebGPUShadingLanguageRI/SPIRVCodegen.js: Removed double type logic.
+        * WebGPUShadingLanguageRI/StandardLibrary.js: Removed double type declarations.
+        * WebGPUShadingLanguageRI/Test.html: Removed DoubleLiteral.js and DoubleLiteralType.js include.
+        * WebGPUShadingLanguageRI/Test.js: Removed tests that test doubles or ported them to use floats.
+        * WebGPUShadingLanguageRI/index.html: Removed DoubleLiteral.js and DoubleLiteralType.js include.
+
 2018-07-24  Tim Horton  <timothy_horton@apple.com>
 
         Enable Web Content Filtering on watchOS

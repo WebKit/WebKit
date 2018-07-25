@@ -201,19 +201,12 @@ function parse(program, origin, originKind, lineNumberOffset, text)
                 return new IntLiteral(token, intVersion);
             return new UintLiteral(token, intVersion >>> 0);
         }
-        if (token = tryConsumeKind("doubleLiteral"))
-            return new DoubleLiteral(token, +token.text);
         if (token = tryConsumeKind("floatLiteral")) {
             let text = token.text;
-            let d = token.text.endsWith("d");
             let f = token.text.endsWith("f");
-            if (d && f)
-                throw new Error("Literal cannot be both a double literal and a float literal.");
-            if (d || f)
+            if (f)
                 text = text.substring(0, text.length - 1);
             let value = parseFloat(text);
-            if (d)
-                return new DoubleLiteral(token, value);
             return new FloatLiteral(token, Math.fround(value));
         }
         if (token = tryConsume("true", "false"))

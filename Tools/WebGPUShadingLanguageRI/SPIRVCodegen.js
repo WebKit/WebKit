@@ -214,14 +214,6 @@ function generateSPIRV(spirv, program)
                 values = uintView;
                 break;
             }
-            case program.intrinsics.double: {
-                let arrayBuffer = new ArrayBuffer(Math.max(Uint32Array.BYTES_PER_ELEMENT, Float64Array.BYTES_PER_ELEMENT));
-                let doubleView = new Float64Array(arrayBuffer);
-                let uintView = new Uint32Array(arrayBuffer);
-                doubleView[0] = node.value;
-                values = uintView;
-                break;
-            }
             default:
                 throw new Error("Unrecognized literal.");
             }

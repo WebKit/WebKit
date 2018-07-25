@@ -78,11 +78,6 @@ function makeFloat(program, value)
     return TypedValue.box(program.intrinsics.float, value);
 }
 
-function makeDouble(program, value)
-{
-    return TypedValue.box(program.intrinsics.double, value);
-}
-
 function makeEnum(program, enumName, value)
 {
     let enumType = program.types.get(enumName);
@@ -144,14 +139,6 @@ function checkBool(program, result, expected)
 function checkFloat(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.float))
-        throw new Error("Wrong result type: " + result.type);
-    if (result.value != expected)
-        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
-}
-
-function checkDouble(program, result, expected)
-{
-    if (!result.type.equals(program.intrinsics.double))
         throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
@@ -608,7 +595,7 @@ tests.badAdd = function()
 
 tests.lexerKeyword = function()
 {
-    let result = doLex("ident for while 123 123u { } {asd asd{ 1a3 1.2 + 3.4 + 1. + .2 1.2d 0.d .3d && ||");
+    let result = doLex("ident for while 123 123u { } {asd asd{ 1a3 1.2 + 3.4 + 1. + .2 1.2f 0.f .3f && ||");
     if (result.length != 25)
         throw new Error("Lexer emitted an incorrect number of tokens (expected 23): " + result.length);
     checkLexerToken(result[0],  0,  "identifier",    "ident");
@@ -631,9 +618,9 @@ tests.lexerKeyword = function()
     checkLexerToken(result[17], 55, "floatLiteral",  "1.");
     checkLexerToken(result[18], 58, "punctuation",   "+");
     checkLexerToken(result[19], 60, "floatLiteral",  ".2");
-    checkLexerToken(result[20], 63, "floatLiteral",  "1.2d");
-    checkLexerToken(result[21], 68, "floatLiteral",  "0.d");
-    checkLexerToken(result[22], 72, "floatLiteral",  ".3d");
+    checkLexerToken(result[20], 63, "floatLiteral",  "1.2f");
+    checkLexerToken(result[21], 68, "floatLiteral",  "0.f");
+    checkLexerToken(result[22], 72, "floatLiteral",  ".3f");
     checkLexerToken(result[23], 76, "punctuation",   "&&");
     checkLexerToken(result[24], 79, "punctuation",   "||");
 }
@@ -960,9 +947,9 @@ tests.returnIntLiteralUint = function()
     checkNumber(program, callFunction(program, "foo", [], []), 42);
 }
 
-tests.returnIntLiteralDouble = function()
+tests.returnIntLiteralFloat = function()
 {
-    let program = doPrep("double foo() { return 42; }");
+    let program = doPrep("float foo() { return 42; }");
     checkNumber(program, callFunction(program, "foo", [], []), 42);
 }
 
@@ -980,10 +967,10 @@ tests.badIntLiteralForUint = function()
         (e) => e instanceof WSyntaxError);
 }
 
-tests.badIntLiteralForDouble = function()
+tests.badIntLiteralForFloat = function()
 {
     checkFail(
-        () => doPrep("void foo() { double x = 5000000000000000000000000000000000000; }"),
+        () => doPrep("void foo() { float x = 5000000000000000000000000000000000000; }"),
         (e) => e instanceof WSyntaxError);
 }
 
@@ -1547,7 +1534,7 @@ tests.intOverloadResolution = function()
     let program = doPrep(`
         int foo(int) { return 1; }
         int foo(uint) { return 2; }
-        int foo(double) { return 3; }
+        int foo(float) { return 3; }
         int bar() { return foo(42); }
     `);
     checkInt(program, callFunction(program, "bar", [], []), 1);
@@ -1556,7 +1543,7 @@ tests.intOverloadResolution = function()
 tests.intOverloadResolutionReverseOrder = function()
 {
     let program = doPrep(`
-        int foo(double) { return 3; }
+        int foo(float) { return 3; }
         int foo(uint) { return 2; }
         int foo(int) { return 1; }
         int bar() { return foo(42); }
@@ -2691,7 +2678,7 @@ tests.simpleLength = function()
     let program = doPrep(`
         uint foo()
         {
-            double[754] array;
+            float[754] array;
             return (@array).length;
         }
     `);
@@ -2703,7 +2690,7 @@ tests.nonArrayRefArrayLengthSucceed = function()
     let program = doPrep(`
         uint foo()
         {
-            double[754] array;
+            float[754] array;
             return array.length;
         }
     `);
@@ -2765,7 +2752,7 @@ tests.assignLength = function()
         () => doPrep(`
             void foo()
             {
-                double[754] array;
+                float[754] array;
                 (@array).length = 42;
             }
         `),
@@ -2776,13 +2763,13 @@ tests.assignLengthHelper = function()
 {
     checkFail(
         () => doPrep(`
-            void bar(thread double[] array)
+            void bar(thread float[] array)
             {
                 array.length = 42;
             }
             void foo()
             {
-                double[754] array;
+                float[754] array;
                 bar(@array);
             }
         `),
@@ -3605,7 +3592,7 @@ tests.floatMath = function()
         }
         bool foo5()
         {
-            return 42.5d == 42.5d;
+            return 42.5f == 42.5f;
         }
         float bar(float x)
         {
@@ -3619,10 +3606,6 @@ tests.floatMath = function()
         {
             return bar(7.5f);
         }
-        float foo8()
-        {
-            return bar(7.5d);
-        }
         float foo9()
         {
             return float(7.5);
@@ -3631,23 +3614,14 @@ tests.floatMath = function()
         {
             return float(7.5f);
         }
-        float foo11()
-        {
-            return float(7.5d);
-        }
         float foo12()
         {
             return float(7);
         }
         float foo13()
         {
-            double x = 7.5d;
+            float x = 7.5f;
             return float(x);
-        }
-        double foo14()
-        {
-            double x = 7.5f;
-            return double(x);
         }
     `);
     checkBool(program, callFunction(program, "foo", [], []), true);
@@ -3657,13 +3631,10 @@ tests.floatMath = function()
     checkBool(program, callFunction(program, "foo5", [], []), true);
     checkFloat(program, callFunction(program, "foo6", [], []), 7.5);
     checkFloat(program, callFunction(program, "foo7", [], []), 7.5);
-    checkFloat(program, callFunction(program, "foo8", [], []), 7.5);
     checkFloat(program, callFunction(program, "foo9", [], []), 7.5);
     checkFloat(program, callFunction(program, "foo10", [], []), 7.5);
-    checkFloat(program, callFunction(program, "foo11", [], []), 7.5);
     checkFloat(program, callFunction(program, "foo12", [], []), 7);
     checkFloat(program, callFunction(program, "foo13", [], []), 7.5);
-    checkDouble(program, callFunction(program, "foo14", [], []), 7.5);
     checkFail(
         () => doPrep(`
             int bar(int x)
@@ -3684,7 +3655,7 @@ tests.floatMath = function()
             }
             int foo()
             {
-                bar(4.d);
+                bar(4.f);
             }
         `),
         (e) => e instanceof WTypeError);
@@ -3720,7 +3691,7 @@ tests.floatMath = function()
             }
             int foo()
             {
-                bar(4.d);
+                bar(4.f);
             }
         `),
         (e) => e instanceof WTypeError);
@@ -3733,40 +3704,6 @@ tests.floatMath = function()
             int foo()
             {
                 bar(4.f);
-            }
-        `),
-        (e) => e instanceof WTypeError);
-    checkFail(
-        () => doPrep(`
-            float bar(float x)
-            {
-                return x;
-            }
-            void foo()
-            {
-                bar(16777217.d);
-            }
-        `),
-        (e) => e instanceof WTypeError);
-    checkFail(
-        () => doPrep(`
-            float bar(float x)
-            {
-                return x;
-            }
-            float foo()
-            {
-                double x = 7.;
-                return bar(x);
-            }
-        `),
-        (e) => e instanceof WTypeError);
-    checkFail(
-        () => doPrep(`
-            float foo()
-            {
-                double x = 7.;
-                return x;
             }
         `),
         (e) => e instanceof WTypeError);
@@ -4146,44 +4083,6 @@ tests.builtinVectors = function()
             float3 c = float3(3., 4., 6.);
             return b == c;
         }
-        double food()
-        {
-            double2 a = double2(3., 4.);
-            return a[0];
-        }
-        double food2()
-        {
-            double2 a = double2(3., 4.);
-            double3 b = double3(a, 5.);
-            return b[1];
-        }
-        double food3()
-        {
-            double3 a = double3(3., 4., 5.);
-            double4 b = double4(6., a);
-            return b[1];
-        }
-        double food4()
-        {
-            double2 a = double2(3., 4.);
-            double2 b = double2(5., 6.);
-            double4 c = double4(a, b);
-            return c[2];
-        }
-        bool food5()
-        {
-            double4 a = double4(3., 4., 5., 6.);
-            double2 b = double2(4., 5.);
-            double4 c = double4(3., b, 6.);
-            return a == c;
-        }
-        bool food6()
-        {
-            double2 a = double2(4., 5.);
-            double3 b = double3(3., a);
-            double3 c = double3(3., 4., 6.);
-            return b == c;
-        }
     `);
     checkInt(program, callFunction(program, "foo", [], []), 3);
     checkInt(program, callFunction(program, "foo2", [], []), 4);
@@ -4203,12 +4102,6 @@ tests.builtinVectors = function()
     checkFloat(program, callFunction(program, "foof4", [], []), 5);
     checkBool(program, callFunction(program, "foof5", [], []), true);
     checkBool(program, callFunction(program, "foof6", [], []), false);
-    checkDouble(program, callFunction(program, "food", [], []), 3);
-    checkDouble(program, callFunction(program, "food2", [], []), 4);
-    checkDouble(program, callFunction(program, "food3", [], []), 3);
-    checkDouble(program, callFunction(program, "food4", [], []), 5);
-    checkBool(program, callFunction(program, "food5", [], []), true);
-    checkBool(program, callFunction(program, "food6", [], []), false);
 }
 
 tests.instantiateStructInStruct = function()
@@ -4971,18 +4864,18 @@ tests.simpleSwitch = function()
 
 tests.exhaustiveUint8Switch = function()
 {
-    let text = "double foo(uint8 x) { switch (uint8(x)) {"
+    let text = "float foo(uint8 x) { switch (uint8(x)) {"
     for (let i = 0; i <= 0xff; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "} }";
     let program = doPrep(text);
     for (let i = 0; i < 0xff; ++i)
-        checkDouble(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
+        checkFloat(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
 }
 
 tests.notQuiteExhaustiveUint8Switch = function()
 {
-    let text = "double foo(uint8 x) { switch (uint8(x)) {"
+    let text = "float foo(uint8 x) { switch (uint8(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "} }";
@@ -4991,14 +4884,14 @@ tests.notQuiteExhaustiveUint8Switch = function()
 
 tests.notQuiteExhaustiveUint8SwitchWithDefault = function()
 {
-    let text = "double foo(uint8 x) { switch (uint8(x)) {"
+    let text = "float foo(uint8 x) { switch (uint8(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "default: return " + 0xff * 1.5 + ";";
     text += "} }";
     let program = doPrep(text);
     for (let i = 0; i < 0xff; ++i)
-        checkDouble(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
+        checkFloat(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
 }
 
 tests.switchFallThrough = function()
@@ -5327,7 +5220,7 @@ tests.setterWithMismatchedType = function()
 {
     checkFail(
         () => doPrep(`
-            double operator.foo(int)
+            float operator.foo(int)
             {
                 return 5.43;
             }
@@ -5420,9 +5313,9 @@ tests.operatorCastWithTypeVariableInferredFromReturnType = function()
         protocol Barable {
             void bar(thread Barable*, int);
         }
-        void bar(thread double* result, int value)
+        void bar(thread float* result, int value)
         {
-            *result = double(value);
+            *result = float(value);
         }
         operator<T:Barable> T(Foo foo)
         {
@@ -5434,7 +5327,7 @@ tests.operatorCastWithTypeVariableInferredFromReturnType = function()
         {
             Foo foo;
             foo.x = 75;
-            double x = double(foo);
+            float x = float(foo);
             return int(x * 1.5);
         }
     `);
@@ -5473,7 +5366,7 @@ tests.incWrongTypes = function()
 {
     checkFail(
         () => doPrep(`
-            int operator++(double) { return 32; }
+            int operator++(float) { return 32; }
         `),
         e => e instanceof WTypeError);
 }
@@ -5482,7 +5375,7 @@ tests.decWrongTypes = function()
 {
     checkFail(
         () => doPrep(`
-            int operator--(double) { return 32; }
+            int operator--(float) { return 32; }
         `),
         e => e instanceof WTypeError);
 }
@@ -6073,7 +5966,7 @@ tests.indexSetterWithMismatchedType = function()
 {
     checkFail(
         () => doPrep(`
-            double operator[](int, uint)
+            float operator[](int, uint)
             {
                 return 5.43;
             }
@@ -6264,7 +6157,7 @@ tests.indexAnderWithArrayRef = function()
         struct Foo {
             int x;
         }
-        thread int* operator&[](thread Foo[] array, double index)
+        thread int* operator&[](thread Foo[] array, float index)
         {
             return &array[uint(index + 1)].x;
         }
@@ -6272,7 +6165,7 @@ tests.indexAnderWithArrayRef = function()
         {
             Foo x;
             x.x = 13;
-            return (@x)[double(-1)];
+            return (@x)[float(-1)];
         }
     `);
     checkInt(program, callFunction(program, "foo", [], []), 13);
@@ -6361,7 +6254,7 @@ tests.indexSetterWithMismatchedTypeInProtocol = function()
     checkFail(
         () => doPrep(`
             protocol Foo {
-                double operator[](Foo, uint);
+                float operator[](Foo, uint);
                 Foo operator[]=(Foo, uint, int);
             }
             struct Bar { }
@@ -6593,14 +6486,14 @@ tests.indexAnderWithArrayRefInProtocol = function()
 {
     let program = doPrep(`
         protocol Foo {
-            thread int* operator&[](thread Foo[] array, double index);
+            thread int* operator&[](thread Foo[] array, float index);
         }
         int bar<T:Foo>(thread T[] x)
         {
             return x[1.5];
         }
         struct Bar { }
-        thread int* operator&[](thread Bar[], double)
+        thread int* operator&[](thread Bar[], float)
         {
             int result = 1234;
             return &result;
