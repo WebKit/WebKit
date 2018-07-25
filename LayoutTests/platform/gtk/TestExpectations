@@ -551,6 +551,7 @@ webkit.org/b/166536 inspector/canvas/create-context-webgl2.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/requestContent-webgl2.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
+webkit.org/b/166536 webgl/2.0.0/conformance2/glsl3 [ Skip ]
 
 # These tests reference specific fonts on Mac port.
 Bug(GTK) fast/text/font-weights.html [ WontFix ]
@@ -2044,6 +2045,7 @@ webkit.org/b/187761 http/tests/security/contentSecurityPolicy/1.1/plugintypes-af
 webkit.org/b/187760 fast/mediastream/get-user-media-on-loadedmetadata.html [ Pass Failure ]
 
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]
+webkit.org/b/187999 media/video-restricted-invisible-autoplay-allowed-when-visible.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3518,6 +3520,8 @@ webkit.org/b/187268 compositing/backing/backing-store-attachment-outside-viewpor
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 
 webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Failure ]
+webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
+webkit.org/b/187996 http/tests/security/canvas-remote-read-remote-video-hls.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
