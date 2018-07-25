@@ -1,5 +1,16 @@
 2018-07-25  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add build step UploadBuiltProduct
+        https://bugs.webkit.org/show_bug.cgi?id=188016
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (UploadBuiltProduct): Added build step UploadBuiltProduct.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-test.
+
+2018-07-25  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add build step ArchiveBuiltProduct
         https://bugs.webkit.org/show_bug.cgi?id=188014
 

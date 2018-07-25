@@ -22,11 +22,12 @@
 
 from buildbot.process import buildstep, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
-from buildbot.steps import shell
+from buildbot.steps import shell, transfer
 from buildbot.steps.source import svn
 from twisted.internet import defer
 
 WithProperties = properties.WithProperties
+
 
 class ConfigureBuild(buildstep.BuildStep):
     name = "configure-build"
@@ -293,3 +294,17 @@ class ArchiveBuiltProduct(shell.ShellCommand):
     description = ['archiving built product']
     descriptionDone = ['archived built product']
     haltOnFailure = True
+
+
+class UploadBuiltProduct(transfer.FileUpload):
+    name = 'upload-built-product'
+    workersrc = WithProperties('WebKitBuild/%(configuration)s.zip')
+    masterdest = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(ewspatchid)s.zip')
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        kwargs['workersrc'] = self.workersrc
+        kwargs['masterdest'] = self.masterdest
+        kwargs['mode'] = 0644
+        kwargs['blocksize'] = 1024 * 256
+        transfer.FileUpload.__init__(self, **kwargs)

@@ -25,8 +25,9 @@ import os
 import shutil
 import tempfile
 
+from buildbot.process import remotetransfer
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
-from buildbot.test.fake.remotecommand import ExpectShell
+from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShell
 from buildbot.test.util.steps import BuildStepMixin
 from twisted.internet import error, reactor
 from twisted.python import failure, log
@@ -133,6 +134,16 @@ class BuildStepMixinAdditions(BuildStepMixin):
         deferred_result = super(BuildStepMixinAdditions, self).runStep()
         deferred_result.addCallback(check)
         return deferred_result
+
+
+def uploadFileWithContentsOfString(string, timestamp=None):
+    def behavior(command):
+        writer = command.args['writer']
+        writer.remote_write(string + '\n')
+        writer.remote_close()
+        if timestamp:
+            writer.remote_utime(timestamp)
+    return behavior
 
 
 class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
@@ -778,6 +789,36 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='archived built product (failure)')
+        return self.runStep()
+
+
+class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(UploadBuiltProduct())
+        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('ewspatchid', '1234')
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            Expect('uploadFile', dict(
+                                        workersrc='WebKitBuild/release.zip', workdir='wkdir',
+                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
+                                     ))
+            + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
+            + 0,
+        )
+        self.expectUploadedFile('public_html/archives/mac-sierra-x86_64-release/1234.zip')
+
+        self.expectOutcome(result=SUCCESS, state_string='uploading release.zip')
         return self.runStep()
 
 
