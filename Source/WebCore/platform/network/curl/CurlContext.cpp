@@ -810,6 +810,116 @@ void CurlHandle::enableStdErrIfUsed()
 
 #endif
 
+// CurlSocketHandle
+
+CurlSocketHandle::CurlSocketHandle(const URL& url, Function<void(CURLcode)>&& errorHandler)
+    : m_errorHandler(WTFMove(errorHandler))
+{
+    // Libcurl is not responsible for the protocol handling. It just handles connection.
+    // Only scheme, host and port is required.
+    URL urlForConnection;
+    urlForConnection.setProtocol(url.protocolIs("wss") ? "https" : "http");
+    urlForConnection.setHostAndPort(url.hostAndPort());
+    setUrl(urlForConnection);
+
+    enableConnectionOnly();
+}
+
+bool CurlSocketHandle::connect()
+{
+    CURLcode errorCode = perform();
+    if (errorCode != CURLE_OK) {
+        m_errorHandler(errorCode);
+        return false;
+    }
+
+    return true;
+}
+
+size_t CurlSocketHandle::send(const uint8_t* buffer, size_t size)
+{
+    size_t totalBytesSent = 0;
+
+    while (totalBytesSent < size) {
+        size_t bytesSent = 0;
+        CURLcode errorCode = curl_easy_send(handle(), buffer + totalBytesSent, size - totalBytesSent, &bytesSent);
+        if (errorCode != CURLE_OK) {
+            if (errorCode != CURLE_AGAIN)
+                m_errorHandler(errorCode);
+            break;
+        }
+
+        totalBytesSent += bytesSent;
+    }
+
+    return totalBytesSent;
+}
+
+std::optional<size_t> CurlSocketHandle::receive(uint8_t* buffer, size_t bufferSize)
+{
+    size_t bytesRead = 0;
+
+    CURLcode errorCode = curl_easy_recv(handle(), buffer, bufferSize, &bytesRead);
+    if (errorCode != CURLE_OK) {
+        if (errorCode != CURLE_AGAIN)
+            m_errorHandler(errorCode);
+
+        return std::nullopt;
+    }
+
+    return bytesRead;
+}
+
+std::optional<CurlSocketHandle::WaitResult> CurlSocketHandle::wait(const Seconds& timeout, bool alsoWaitForWrite)
+{
+    curl_socket_t socket;
+    CURLcode errorCode = curl_easy_getinfo(handle(), CURLINFO_ACTIVESOCKET, &socket);
+    if (errorCode != CURLE_OK) {
+        m_errorHandler(errorCode);
+        return std::nullopt;
+    }
+
+    int64_t usec = timeout.microsecondsAs<int64_t>();
+
+    struct timeval selectTimeout;
+    if (usec <= 0) {
+        selectTimeout.tv_sec = 0;
+        selectTimeout.tv_usec = 0;
+    } else {
+        selectTimeout.tv_sec = usec / 1000000;
+        selectTimeout.tv_usec = usec % 1000000;
+    }
+
+    int rc = 0;
+    int maxfd = static_cast<int>(socket) + 1;
+    fd_set fdread;
+    fd_set fdwrite;
+    fd_set fderr;
+
+    // Retry 'select' if it was interrupted by a process signal.
+    do {
+        FD_ZERO(&fdread);
+        FD_SET(socket, &fdread);
+
+        FD_ZERO(&fdwrite);
+        if (alsoWaitForWrite)
+            FD_SET(socket, &fdwrite);
+
+        FD_ZERO(&fderr);
+        FD_SET(socket, &fderr);
+
+        rc = ::select(maxfd, &fdread, &fdwrite, &fderr, &selectTimeout);
+    } while (rc == -1 && errno == EINTR);
+
+    if (rc <= 0)
+        return std::nullopt;
+
+    WaitResult result;
+    result.readable = FD_ISSET(socket, &fdread) || FD_ISSET(socket, &fderr);
+    result.writable = FD_ISSET(socket, &fdwrite);
+    return result;
+}
+
 }
 
 #endif

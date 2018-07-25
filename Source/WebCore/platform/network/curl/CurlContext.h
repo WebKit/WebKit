@@ -307,4 +307,24 @@ private:
     std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
 };
 
+class CurlSocketHandle : public CurlHandle {
+    WTF_MAKE_NONCOPYABLE(CurlSocketHandle);
+
+public:
+    struct WaitResult {
+        bool readable { false };
+        bool writable { false };
+    };
+
+    CurlSocketHandle(const URL&, Function<void(CURLcode)>&& errorHandler);
+
+    bool connect();
+    size_t send(const uint8_t*, size_t);
+    std::optional<size_t> receive(uint8_t*, size_t);
+    std::optional<WaitResult> wait(const Seconds& timeout, bool alsoWaitForWrite);
+
+private:
+    Function<void(CURLcode)> m_errorHandler;
+};
+
 } // namespace WebCore

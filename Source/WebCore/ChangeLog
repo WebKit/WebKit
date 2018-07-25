@@ -1,3 +1,40 @@
+2018-07-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Add support for wss:// websockets
+        https://bugs.webkit.org/show_bug.cgi?id=172630
+
+        Reviewed by Fujii Hironori.
+
+        To support secure WebSocket connection, it is almost rewritten by using existing
+        backend for CurlHandle to handle TLS connection and proxy support.
+
+        Test: http/tests/websocket/tests/hybi/simple-wss.html
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlSocketHandle::CurlSocketHandle):
+        (WebCore::CurlSocketHandle::connect):
+        (WebCore::CurlSocketHandle::send):
+        (WebCore::CurlSocketHandle::receive):
+        (WebCore::CurlSocketHandle::wait):
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::SocketData::SocketData): Deleted.
+        * platform/network/curl/SocketStreamHandleImplCurl.cpp:
+        (WebCore::SocketStreamHandleImpl::SocketStreamHandleImpl):
+        (WebCore::SocketStreamHandleImpl::~SocketStreamHandleImpl):
+        (WebCore::SocketStreamHandleImpl::platformSendInternal):
+        (WebCore::SocketStreamHandleImpl::platformClose):
+        (WebCore::SocketStreamHandleImpl::threadEntryPoint):
+        (WebCore::SocketStreamHandleImpl::handleError):
+        (WebCore::SocketStreamHandleImpl::stopThread):
+        (WebCore::createCopy): Deleted.
+        (WebCore::SocketStreamHandleImpl::readData): Deleted.
+        (WebCore::SocketStreamHandleImpl::sendData): Deleted.
+        (WebCore::SocketStreamHandleImpl::waitForAvailableData): Deleted.
+        (WebCore::SocketStreamHandleImpl::startThread): Deleted.
+        (WebCore::SocketStreamHandleImpl::didReceiveData): Deleted.
+        (WebCore::SocketStreamHandleImpl::didOpenSocket): Deleted.
+
 2018-07-24  Tim Horton  <timothy_horton@apple.com>
 
         Enable Web Content Filtering on watchOS

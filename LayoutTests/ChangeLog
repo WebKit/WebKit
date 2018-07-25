@@ -1,3 +1,14 @@
+2018-07-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Add support for wss:// websockets
+        https://bugs.webkit.org/show_bug.cgi?id=172630
+
+        Reviewed by Fujii Hironori.
+
+        Pass simple-wss.html.
+
+        * platform/wincairo/TestExpectations:
+
 2018-07-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r233496 and r233571.
