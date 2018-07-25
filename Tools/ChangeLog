@@ -1,3 +1,17 @@
+2018-07-25  Chris Dumez  <cdumez@apple.com>
+
+        navigator.userAgent may return outdated value after webView.customUserAgent is set
+        https://bugs.webkit.org/show_bug.cgi?id=188009
+        <rdar://problem/42566456>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CustomUserAgent.mm: Added.
+        (TEST):
+
 2018-07-25  Charlie Turner  <cturner@igalia.com>
 
         [Flatpak] Pass more environment variables to sandbox

@@ -2909,7 +2909,13 @@ String WebPage::userAgent(WebFrame* frame, const URL& webcoreURL) const
     
 void WebPage::setUserAgent(const String& userAgent)
 {
+    if (m_userAgent == userAgent)
+        return;
+
     m_userAgent = userAgent;
+
+    if (m_page)
+        m_page->userAgentChanged();
 }
 
 void WebPage::suspendActiveDOMObjectsAndAnimations()

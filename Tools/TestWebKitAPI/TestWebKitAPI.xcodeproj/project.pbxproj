@@ -160,6 +160,7 @@
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
 		4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */; };
 		466C3843210637DE006A88DE /* notify-resourceLoadObserver.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */; };
+		46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A911582108E66B0078D40D /* CustomUserAgent.mm */; };
 		46AE5A3720F9066D00E0873E /* SimpleServiceWorkerRegistrations-3.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-3.sqlite3 */; };
 		46C519DA1D355AB200DAA51A /* LocalStorageNullEntries.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */; };
 		46C519E61D3563FD00DAA51A /* LocalStorageNullEntries.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46C519E21D35629600DAA51A /* LocalStorageNullEntries.html */; };
@@ -1401,6 +1402,7 @@
 		4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessDidTerminate.cpp; sourceTree = "<group>"; };
 		4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-3.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SimpleServiceWorkerRegistrations-3.sqlite3"; sourceTree = "<group>"; };
 		466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "notify-resourceLoadObserver.html"; sourceTree = "<group>"; };
+		46A911582108E66B0078D40D /* CustomUserAgent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomUserAgent.mm; sourceTree = "<group>"; };
 		46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageNullEntries.mm; sourceTree = "<group>"; };
 		46C519E21D35629600DAA51A /* LocalStorageNullEntries.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LocalStorageNullEntries.html; sourceTree = "<group>"; };
 		46C519E31D35629600DAA51A /* LocalStorageNullEntries.localstorage */ = {isa = PBXFileReference; lastKnownFileType = file; path = LocalStorageNullEntries.localstorage; sourceTree = "<group>"; };
@@ -2255,6 +2257,7 @@
 				9B1056411F9045C700D5583F /* CopyHTML.mm */,
 				9999108A1F393C8B008AD455 /* Copying.mm */,
 				9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */,
+				46A911582108E66B0078D40D /* CustomUserAgent.mm */,
 				2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */,
 				518EE51C20A78D3300E024F3 /* DecidePolicyForNavigationAction.mm */,
 				CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */,
@@ -3639,6 +3642,7 @@
 				7CCE7F291A411B1000447C4C /* CustomProtocolsInvalidScheme.mm in Sources */,
 				7CCE7F2A1A411B1000447C4C /* CustomProtocolsSyncXHRTest.mm in Sources */,
 				7CCE7F2B1A411B1000447C4C /* CustomProtocolsTest.mm in Sources */,
+				46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */,
 				751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */,
 				2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */,
 				F4D4F3B61E4E2BCB00BB2767 /* DataInteractionSimulator.mm in Sources */,

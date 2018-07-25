@@ -2795,7 +2795,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 {    
     ASSERT(preferences == [self preferences]);
     if (!_private->userAgentOverridden)
-        _private->userAgent = String();
+        [self _invalidateUserAgentCache];
 
     // Cache this value so we don't have to read NSUserDefaults on each page load
     _private->useSiteSpecificSpoofing = [preferences _useSiteSpecificSpoofing];
@@ -6580,7 +6580,17 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     [_private->applicationNameForUserAgent release];
     _private->applicationNameForUserAgent = name;
     if (!_private->userAgentOverridden)
-        _private->userAgent = String();
+        [self _invalidateUserAgentCache];
+}
+
+- (void)_invalidateUserAgentCache
+{
+    if (_private->userAgent.isNull())
+        return;
+
+    _private->userAgent = String();
+    if (_private->page)
+        _private->page->userAgentChanged();
 }
 
 - (NSString *)applicationNameForUserAgent
@@ -6590,6 +6600,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)setCustomUserAgent:(NSString *)userAgentString
 {
+    [self _invalidateUserAgentCache];
     _private->userAgent = userAgentString;
     _private->userAgentOverridden = userAgentString != nil;
 }

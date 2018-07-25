@@ -1,3 +1,20 @@
+2018-07-25  Chris Dumez  <cdumez@apple.com>
+
+        navigator.userAgent may return outdated value after webView.customUserAgent is set
+        https://bugs.webkit.org/show_bug.cgi?id=188009
+        <rdar://problem/42566456>
+
+        Reviewed by Alex Christensen.
+
+        Let the page know when the user agent changes.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        (-[WebView setApplicationNameForUserAgent:]):
+        (-[WebView _invalidateUserAgentCache]):
+        (-[WebView setCustomUserAgent:]):
+        * WebView/WebViewInternal.h:
+
 2018-07-24  Tim Horton  <timothy_horton@apple.com>
 
         Enable Web Content Filtering on watchOS

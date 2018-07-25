@@ -35,7 +35,7 @@
     readonly attribute DOMString platform;
     readonly attribute DOMString product;
     [Exposed=Window] readonly attribute DOMString productSub;
-    [CachedAttribute] readonly attribute DOMString userAgent;
+    readonly attribute DOMString userAgent;
     [Exposed=Window] readonly attribute DOMString vendor;
     [Exposed=Window] readonly attribute DOMString vendorSub;
 };

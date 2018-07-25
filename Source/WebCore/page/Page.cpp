@@ -1238,6 +1238,17 @@ const String& Page::userStyleSheet() const
     return m_userStyleSheet;
 }
 
+void Page::userAgentChanged()
+{
+    for (auto* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        auto* window = frame->window();
+        if (!window)
+            continue;
+        if (auto* navigator = window->optionalNavigator())
+            navigator->userAgentChanged();
+    }
+}
+
 void Page::invalidateStylesForAllLinks()
 {
     for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {

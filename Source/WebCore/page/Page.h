@@ -439,6 +439,8 @@ public:
     void userStyleSheetLocationChanged();
     const String& userStyleSheet() const;
 
+    WEBCORE_EXPORT void userAgentChanged();
+
     void dnsPrefetchingStateChanged();
     void storageBlockingStateChanged();
 

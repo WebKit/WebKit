@@ -84,6 +84,11 @@ const String& Navigator::userAgent() const
     return m_userAgent;
 }
 
+void Navigator::userAgentChanged()
+{
+    m_userAgent = String();
+}
+
 bool Navigator::onLine() const
 {
     return platformStrategies()->loaderStrategy()->isOnLine();

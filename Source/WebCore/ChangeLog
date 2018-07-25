@@ -1,3 +1,22 @@
+2018-07-25  Chris Dumez  <cdumez@apple.com>
+
+        navigator.userAgent may return outdated value after webView.customUserAgent is set
+        https://bugs.webkit.org/show_bug.cgi?id=188009
+        <rdar://problem/42566456>
+
+        Reviewed by Alex Christensen.
+
+        Invalidate the navigator.userAgent cache whenever the user agent gets changed to avoid exposing
+        outdated values to JavaScript.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::userAgentChanged):
+        * page/Navigator.h:
+        * page/NavigatorID.idl:
+        * page/Page.cpp:
+        (WebCore::Page::userAgentChanged):
+        * page/Page.h:
+
 2018-07-25  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r234187.
