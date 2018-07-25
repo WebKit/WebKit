@@ -1765,9 +1765,6 @@ test/intl402/NumberFormat/prototype/formatToParts/return-abrupt-tonumber.js:
 test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js:
   default: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'
   strict mode: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'
-test/intl402/TypedArray/prototype/toLocaleString/calls-toLocaleString-number-elements.js:
-  default: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«à¹.à¹à¹à¹Â») to be true (Testing with Float64Array.)'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-arguments.js:
   default: 'Test262Error: Expected obj[0] to have enumerable:false.'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-param.js:

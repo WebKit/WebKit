@@ -1,5 +1,18 @@
 2018-07-25  Andy VanWagoner  <andy@vanwagoner.family>
 
+        [INTL] Call Typed Array elements toLocaleString with locale and options
+        https://bugs.webkit.org/show_bug.cgi?id=185796
+
+        Reviewed by Keith Miller.
+
+        Improve ECMA 402 compliance of typed array toLocaleString, passing along
+        the locale and options to element toLocaleString calls.
+
+        * builtins/TypedArrayPrototype.js:
+        (toLocaleString):
+
+2018-07-25  Andy VanWagoner  <andy@vanwagoner.family>
+
         [INTL] Intl constructor lengths should be configurable
         https://bugs.webkit.org/show_bug.cgi?id=187960
 

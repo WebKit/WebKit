@@ -396,7 +396,7 @@ function filter(callback /*, thisArg */)
     return result;
 }
 
-function toLocaleString()
+function toLocaleString(/* locale, options */)
 {
     "use strict";
 
@@ -405,9 +405,9 @@ function toLocaleString()
     if (length == 0)
         return "";
 
-    var string = this[0].toLocaleString();
+    var string = this[0].toLocaleString(@argument(0), @argument(1));
     for (var i = 1; i < length; i++)
-        string += "," + this[i].toLocaleString();
+        string += "," + this[i].toLocaleString(@argument(0), @argument(1));
 
     return string;
 }
