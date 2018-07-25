@@ -51,6 +51,7 @@
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
 #include "APIURLRequest.h"
+#include "APIWebsitePolicies.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "DataReference.h"
@@ -2406,7 +2407,7 @@ void WebPageProxy::centerSelectionInVisibleArea()
     m_process->send(Messages::WebPage::CenterSelectionInVisibleArea(), m_pageID);
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& frame, uint64_t listenerID, API::Navigation* navigation, std::optional<WebsitePoliciesData>&& websitePolicies, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& frame, uint64_t listenerID, API::Navigation* navigation, std::optional<WebsitePoliciesData>&& websitePolicies)
 {
     if (!isValid())
         return;
@@ -2431,23 +2432,6 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
         downloadID = download->downloadID();
         handleDownloadRequest(download);
         m_decidePolicyForResponseRequest = { };
-    }
-
-    auto* activePolicyListener = frame.activePolicyListenerProxy();
-    if (activePolicyListener && activePolicyListener->policyListenerType() == PolicyListenerType::NavigationAction) {
-        ASSERT(activePolicyListener->listenerID() == listenerID);
-
-        if (action == PolicyAction::Use && navigation && frame.isMainFrame()) {
-            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, shouldProcessSwapIfPossible, action);
-
-            if (proposedProcess.ptr() != &process()) {
-                LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), proposedProcess->processIdentifier(), navigation->navigationID(), navigation->loggingString());
-
-                RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
-                    continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
-                });
-            }
-        }
     }
 
     if (auto syncNavigationActionPolicyReply = WTFMove(m_syncNavigationActionPolicyReply)) {
@@ -4021,14 +4005,34 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     navigation->setHasOpenedFrames(navigationActionData.hasOpenedFrames);
     navigation->setOpener(navigationActionData.opener);
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NavigationAction));
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(*frame), listenerID, navigation] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) {
+        std::optional<WebsitePoliciesData> data;
+        if (policies) {
+            data = policies->data();
+            if (policies->websiteDataStore())
+                changeWebsiteDataStore(policies->websiteDataStore()->websiteDataStore());
+        }
+
+        if (policyAction == PolicyAction::Use && frame->isMainFrame()) {
+            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, swap, policyAction);
+            
+            if (proposedProcess.ptr() != &process()) {
+                LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), proposedProcess->processIdentifier(), navigation->navigationID(), navigation->loggingString());
+                
+                RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
+                    continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
+                });
+            }
+        }
+
+        receivedPolicyDecision(policyAction, frame.get(), listenerID, navigation.get(), WTFMove(data));
+    }));
 
     API::Navigation* mainFrameNavigation = frame->isMainFrame() ? navigation.get() : nullptr;
-    listener->setNavigation(navigation.releaseNonNull());
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame->didHandleContentFilterUnblockNavigation(request))
-        return receivedPolicyDecision(PolicyAction::Ignore, *frame, listenerID, &m_navigationState->navigation(newNavigationID), std::nullopt, ShouldProcessSwapIfPossible::No);
+        return receivedPolicyDecision(PolicyAction::Ignore, *frame, listenerID, &m_navigationState->navigation(newNavigationID), std::nullopt);
 #else
     UNUSED_PARAM(newNavigationID);
 #endif
@@ -4078,7 +4082,11 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const Securi
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
 
-    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NewWindowAction);
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), listenerID, frame = makeRef(*frame)] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) {
+        ASSERT_UNUSED(policies, !policies);
+        ASSERT_UNUSED(swap, swap == ShouldProcessSwapIfPossible::No);
+        receivedPolicyDecision(policyAction, frame.get(), listenerID, nullptr, std::nullopt);
+    }));
 
     if (m_navigationClient) {
         RefPtr<API::FrameInfo> sourceFrameInfo;
@@ -4106,11 +4114,12 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const SecurityOrigi
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(response.url());
 
-    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::Response);
-    if (navigationID) {
-        auto& navigation = m_navigationState->navigation(navigationID);
-        listener->setNavigation(navigation);
-    }
+    RefPtr<API::Navigation> navigation = navigationID ? &m_navigationState->navigation(navigationID) : nullptr;
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(*frame), listenerID, navigation = WTFMove(navigation)] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) {
+        ASSERT_UNUSED(policies, !policies);
+        ASSERT_UNUSED(swap, swap == ShouldProcessSwapIfPossible::No);
+        receivedPolicyDecision(policyAction, frame.get(), listenerID, nullptr, std::nullopt);
+    }));
 
     if (m_navigationClient) {
         auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin()).get(), request, response, canShowMIMEType);
