@@ -1340,25 +1340,6 @@ static RefPtr<CSSPrimitiveValue> consumeLineClamp(CSSParserTokenRange& range)
     return consumePositiveInteger(range);
 }
 
-static RefPtr<CSSValue> consumeLinesClamp(CSSParserTokenRange& range)
-{
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-    
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    RefPtr<CSSPrimitiveValue> startClampValue = consumeLineClamp(range);
-    RefPtr<CSSPrimitiveValue> endClampValue = consumeLineClamp(range);
-    RefPtr<CSSPrimitiveValue> centerClampValue = consumeCustomIdent(range);
-    if (!startClampValue)
-        return nullptr;
-    list->append(startClampValue.releaseNonNull());
-    if (endClampValue)
-        list->append(endClampValue.releaseNonNull());
-    if (centerClampValue)
-        list->append(centerClampValue.releaseNonNull());
-    return list;
-}
-
 static RefPtr<CSSValue> consumeAutoOrString(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueAuto)
@@ -4025,8 +4006,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid);
     case CSSPropertyWebkitLineClamp:
         return consumeLineClamp(m_range);
-    case CSSPropertyWebkitLinesClamp:
-        return m_context.allowNewLinesClamp ? consumeLinesClamp(m_range) : nullptr;
     case CSSPropertyWebkitFontSizeDelta:
         return consumeLength(m_range, m_context.mode, ValueRangeAll, UnitlessQuirk::Allow);
     case CSSPropertyWebkitHyphenateCharacter:

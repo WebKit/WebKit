@@ -26,7 +26,6 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
-#include "RenderLinesClampFlow.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -81,7 +80,7 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
     if (descendantBox.isFloatingOrOutOfFlowPositioned())
         return false;
 
-    if (!fragmentedFlow.isColumnSpanningDescendant(descendantBox))
+    if (descendantBox.style().columnSpan() != ColumnSpan::All)
         return false;
 
     auto* parent = descendantBox.parent();
@@ -166,7 +165,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
         }
     }
 
-    auto newFragmentedFlow = !flow.style().hasLinesClamp() ? WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), DisplayType::Block)) :  WebCore::createRenderer<RenderLinesClampFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), DisplayType::Block));
+    auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), DisplayType::Block));
     newFragmentedFlow->initializeStyle();
     auto& fragmentedFlow = *newFragmentedFlow;
     m_builder.blockBuilder().attach(flow, WTFMove(newFragmentedFlow), nullptr);
@@ -178,14 +177,6 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
         for (auto& box : childrenOfType<RenderBox>(fragmentedFlow)) {
             if (box.isLegend())
                 m_builder.move(fragmentedFlow, flow, box, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
-        }
-    }
-
-    if (flow.style().hasLinesClamp()) {
-        // Keep the middle block out of the flow thread.
-        for (auto& element : childrenOfType<RenderElement>(fragmentedFlow)) {
-            if (!downcast<RenderLinesClampFlow>(fragmentedFlow).isChildAllowedInFragmentedFlow(flow, element))
-                m_builder.move(fragmentedFlow, flow, element, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         }
     }
 
@@ -352,7 +343,7 @@ RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(R
     // Need to create a new column set when there's no set already created. We also always insert
     // another column set after a spanner. Even if it turns out that there are no renderers
     // following the spanner, there may be bottom margins there, which take up space.
-    auto newSet = flow.createMultiColumnSet(RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), DisplayType::Block));
+    auto newSet = createRenderer<RenderMultiColumnSet>(flow, RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), DisplayType::Block));
     newSet->initializeStyle();
     auto& set = *newSet;
     m_builder.blockBuilder().attach(*multicolContainer, WTFMove(newSet), insertBeforeMulticolChild);

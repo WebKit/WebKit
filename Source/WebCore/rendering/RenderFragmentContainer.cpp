@@ -178,11 +178,6 @@ LayoutUnit RenderFragmentContainer::pageLogicalTopForOffset(LayoutUnit /* offset
     return fragmentedFlow()->isHorizontalWritingMode() ? fragmentedFlowPortionRect().y() : fragmentedFlowPortionRect().x();
 }
 
-LayoutUnit RenderFragmentContainer::pageLogicalHeightForOffset(LayoutUnit /* offset */) const
-{
-    return pageLogicalHeight();
-}
-
 bool RenderFragmentContainer::isFirstFragment() const
 {
     ASSERT(isValid());

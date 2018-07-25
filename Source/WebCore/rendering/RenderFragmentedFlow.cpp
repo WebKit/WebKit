@@ -108,7 +108,7 @@ void RenderFragmentedFlow::validateFragments()
     if (m_fragmentsInvalidated) {
         m_fragmentsInvalidated = false;
         m_fragmentsHaveUniformLogicalWidth = true;
-        m_fragmentsHaveUniformLogicalHeight = singleFragmentHasUniformLogicalHeight();
+        m_fragmentsHaveUniformLogicalHeight = true;
 
         if (hasFragments()) {
             LayoutUnit previousFragmentLogicalWidth = 0;
@@ -345,7 +345,7 @@ LayoutUnit RenderFragmentedFlow::pageLogicalHeightForOffset(LayoutUnit offset) c
     if (!fragment)
         return 0;
 
-    return fragment->pageLogicalHeightForOffset(offset);
+    return fragment->pageLogicalHeight();
 }
 
 LayoutUnit RenderFragmentedFlow::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
@@ -355,7 +355,7 @@ LayoutUnit RenderFragmentedFlow::pageRemainingLogicalHeightForOffset(LayoutUnit 
         return 0;
 
     LayoutUnit pageLogicalTop = fragment->pageLogicalTopForOffset(offset);
-    LayoutUnit pageLogicalHeight = fragment->pageLogicalHeightForOffset(offset);
+    LayoutUnit pageLogicalHeight = fragment->pageLogicalHeight();
     LayoutUnit pageLogicalBottom = pageLogicalTop + pageLogicalHeight;
     LayoutUnit remainingHeight = pageLogicalBottom - offset;
     if (pageBoundaryRule == IncludePageBoundary) {

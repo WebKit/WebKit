@@ -133,11 +133,6 @@ void RenderMultiColumnFlow::layout()
     m_lastSetWorkedOn = nullptr;
 }
 
-bool RenderMultiColumnFlow::isColumnSpanningDescendant(const RenderBox& descendantBox) const
-{
-    return descendantBox.style().columnSpan() == ColumnSpan::All;
-}
-
 void RenderMultiColumnFlow::addFragmentToThread(RenderFragmentContainer* RenderFragmentContainer)
 {
     auto* columnSet = downcast<RenderMultiColumnSet>(RenderFragmentContainer);
@@ -158,11 +153,6 @@ void RenderMultiColumnFlow::willBeRemovedFromTree()
     for (RenderMultiColumnSet* columnSet = firstMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet())
         columnSet->detachFragment();
     RenderFragmentedFlow::willBeRemovedFromTree();
-}
-
-RenderPtr<RenderMultiColumnSet> RenderMultiColumnFlow::createMultiColumnSet(RenderStyle&& style)
-{
-    return createRenderer<RenderMultiColumnSet>(*this, WTFMove(style));
 }
 
 void RenderMultiColumnFlow::fragmentedFlowDescendantBoxLaidOut(RenderBox* descendant)

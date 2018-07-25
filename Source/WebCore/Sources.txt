@@ -1888,8 +1888,6 @@ rendering/RenderLayerFilterInfo.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLineBoxList.cpp
 rendering/RenderLineBreak.cpp
-rendering/RenderLinesClampFlow.cpp
-rendering/RenderLinesClampSet.cpp
 rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
 rendering/RenderListMarker.cpp

@@ -57,7 +57,6 @@ public:
     bool conicGradientsEnabled { false };
     bool colorFilterEnabled { false };
     bool deferredCSSParserEnabled { false };
-    bool allowNewLinesClamp { false };
     
     // This is only needed to support getMatchedCSSRules.
     bool hasDocumentSecurityOrigin { false };
@@ -97,10 +96,9 @@ struct CSSParserContextHash {
             & key.conicGradientsEnabled                     << 7
             & key.colorFilterEnabled                        << 8
             & key.deferredCSSParserEnabled                  << 9
-            & key.allowNewLinesClamp                        << 10
-            & key.hasDocumentSecurityOrigin                 << 11
-            & key.useSystemAppearance                       << 12
-            & key.mode                                      << 13; // Keep this last.
+            & key.hasDocumentSecurityOrigin                 << 10
+            & key.useSystemAppearance                       << 11
+            & key.mode                                      << 12; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

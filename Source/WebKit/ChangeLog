@@ -1,3 +1,14 @@
+2018-07-25  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r227577) Text on TV & Movies page doesn't wrap properly in iTunes
+        https://bugs.webkit.org/show_bug.cgi?id=188018
+        <rdar://problem/42517520>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+
 2018-07-25  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

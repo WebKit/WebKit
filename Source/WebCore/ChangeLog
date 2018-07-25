@@ -1,3 +1,128 @@
+2018-07-25  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r227577) Text on TV & Movies page doesn't wrap properly in iTunes
+        https://bugs.webkit.org/show_bug.cgi?id=188018
+        <rdar://problem/42517520>
+
+        Reviewed by Dean Jackson.
+
+        Manual rollout of r227577.
+
+        Test: fast/overflow/line-clamp-with-text-shadow.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueWebkitLinesClamp): Deleted.
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::consumeLinesClamp): Deleted.
+        * page/Settings.yaml:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willCreateColumns const):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlockFlow::heightForLineCount):
+        (WebCore::RenderBlockFlow::layoutExcludedChildren):
+        (WebCore::RenderBlockFlow::logicalHeightForLineCount): Deleted.
+        (WebCore::RenderBlockFlow::logicalHeightExcludingLineCount): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::pageLogicalHeightForOffset const): Deleted.
+        * rendering/RenderFragmentContainer.h:
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::validateFragments):
+        (WebCore::RenderFragmentedFlow::pageLogicalHeightForOffset const):
+        (WebCore::RenderFragmentedFlow::pageRemainingLogicalHeightForOffset const):
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderLinesClampFlow.cpp: Removed.
+        * rendering/RenderLinesClampFlow.h: Removed.
+        * rendering/RenderLinesClampSet.cpp: Removed.
+        * rendering/RenderLinesClampSet.h: Removed.
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::isColumnSpanningDescendant const): Deleted.
+        (WebCore::RenderMultiColumnFlow::createMultiColumnSet): Deleted.
+        * rendering/RenderMultiColumnFlow.h:
+        (WebCore::RenderMultiColumnFlow::multiColumnBlockFlow const): Deleted.
+        (WebCore::RenderMultiColumnFlow::hasColumnSpanner const): Deleted.
+        (WebCore::RenderMultiColumnFlow::findColumnSpannerPlaceholder const): Deleted.
+        (WebCore::RenderMultiColumnFlow::columnCount const): Deleted.
+        (WebCore::RenderMultiColumnFlow::columnWidth const): Deleted.
+        (WebCore::RenderMultiColumnFlow::columnHeightAvailable const): Deleted.
+        (WebCore::RenderMultiColumnFlow::setColumnHeightAvailable): Deleted.
+        (WebCore::RenderMultiColumnFlow::inBalancingPass const): Deleted.
+        (WebCore::RenderMultiColumnFlow::setInBalancingPass): Deleted.
+        (WebCore::RenderMultiColumnFlow::needsHeightsRecalculation const): Deleted.
+        (WebCore::RenderMultiColumnFlow::setNeedsHeightsRecalculation): Deleted.
+        (WebCore::RenderMultiColumnFlow::shouldRelayoutForPagination const): Deleted.
+        (WebCore::RenderMultiColumnFlow::setColumnCountAndWidth): Deleted.
+        (WebCore::RenderMultiColumnFlow::progressionIsInline const): Deleted.
+        (WebCore::RenderMultiColumnFlow::setProgressionIsInline): Deleted.
+        (WebCore::RenderMultiColumnFlow::progressionIsReversed const): Deleted.
+        (WebCore::RenderMultiColumnFlow::setProgressionIsReversed): Deleted.
+        (WebCore::RenderMultiColumnFlow::spannerMap): Deleted.
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset const):
+        * rendering/RenderMultiColumnSet.h:
+        (WebCore::RenderMultiColumnSet::multiColumnBlockFlow const): Deleted.
+        (WebCore::RenderMultiColumnSet::multiColumnFlow const): Deleted.
+        (WebCore::RenderMultiColumnSet::logicalTopInFragmentedFlow const): Deleted.
+        (WebCore::RenderMultiColumnSet::logicalBottomInFragmentedFlow const): Deleted.
+        (WebCore::RenderMultiColumnSet::logicalHeightInFragmentedFlow const): Deleted.
+        (WebCore::RenderMultiColumnSet::computedColumnCount const): Deleted.
+        (WebCore::RenderMultiColumnSet::computedColumnWidth const): Deleted.
+        (WebCore::RenderMultiColumnSet::computedColumnHeight const): Deleted.
+        (WebCore::RenderMultiColumnSet::columnHeightComputed const): Deleted.
+        (WebCore::RenderMultiColumnSet::setComputedColumnWidthAndCount): Deleted.
+        (WebCore::RenderMultiColumnSet::updateMinimumColumnHeight): Deleted.
+        (WebCore::RenderMultiColumnSet::minimumColumnHeight const): Deleted.
+        (WebCore::RenderMultiColumnSet::forcedBreaksCount const): Deleted.
+        (WebCore::RenderMultiColumnSet::hasBeenFlowed const): Deleted.
+        (WebCore::RenderMultiColumnSet::skipLayerFragmentCollectionForColumn const): Deleted.
+        (WebCore::RenderMultiColumnSet::customBlockProgressionAdjustmentForColumn const): Deleted.
+        (WebCore::RenderMultiColumnSet::ContentRun::ContentRun): Deleted.
+        (WebCore::RenderMultiColumnSet::ContentRun::assumedImplicitBreaks const): Deleted.
+        (WebCore::RenderMultiColumnSet::ContentRun::assumeAnotherImplicitBreak): Deleted.
+        (WebCore::RenderMultiColumnSet::ContentRun::breakOffset const): Deleted.
+        (WebCore::RenderMultiColumnSet::ContentRun::columnLogicalHeight const): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderLinesClampFlow const): Deleted.
+        (WebCore::RenderObject::isRenderLinesClampSet const): Deleted.
+        * rendering/style/LineClampValue.h:
+        (WebCore::LinesClampValue::LinesClampValue): Deleted.
+        (WebCore::LinesClampValue::isNone const): Deleted.
+        (WebCore::LinesClampValue::operator== const): Deleted.
+        (WebCore::LinesClampValue::operator!= const): Deleted.
+        (WebCore::LinesClampValue::start const): Deleted.
+        (WebCore::LinesClampValue::end const): Deleted.
+        (WebCore::LinesClampValue::center const): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::lineClamp const):
+        (WebCore::RenderStyle::setLineClamp):
+        (WebCore::RenderStyle::initialLineClamp):
+        (WebCore::RenderStyle::hasInlineColumnAxis const):
+        (WebCore::RenderStyle::linesClamp const): Deleted.
+        (WebCore::RenderStyle::hasLinesClamp const): Deleted.
+        (WebCore::RenderStyle::setLinesClamp): Deleted.
+        (WebCore::RenderStyle::initialLinesClamp): Deleted.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::isValidColumnSpanner):
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant):
+
 2018-07-25  Chris Dumez  <cdumez@apple.com>
 
         navigator.userAgent may return outdated value after webView.customUserAgent is set
