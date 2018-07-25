@@ -53,7 +53,6 @@ public:
 
 private:
     VideoTrackList(HTMLMediaElement*, ScriptExecutionContext*);
-    const char* activeDOMObjectName() const final;
 };
 
 } // namespace WebCore

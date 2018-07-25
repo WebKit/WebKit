@@ -52,7 +52,6 @@ public:
 
 private:
     AudioTrackList(HTMLMediaElement*, ScriptExecutionContext*);
-    const char* activeDOMObjectName() const final;
 };
 
 } // namespace WebCore
