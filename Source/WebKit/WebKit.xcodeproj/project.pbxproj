@@ -3361,7 +3361,7 @@
 		37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFormInputSession.h; sourceTree = "<group>"; };
 		37A709A61E3EA0FD00CA5969 /* WKDataDetectorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDataDetectorTypes.h; sourceTree = "<group>"; };
 		37A709A81E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDataDetectorTypesInternal.h; sourceTree = "<group>"; };
-		37B418EB1C9624F20031E63B /* WebContent-OSX-restricted.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "WebContent-OSX-restricted.entitlements"; sourceTree = "<group>"; };
+		37B418EB1C9624F20031E63B /* WebContent-or-Plugin-OSX-restricted.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "WebContent-or-Plugin-OSX-restricted.entitlements"; sourceTree = "<group>"; };
 		37B47E2C1D64DB76005F4EFF /* objcSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcSPI.h; sourceTree = "<group>"; };
 		37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorPrivate.h; sourceTree = "<group>"; };
 		37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CompletionHandlerCallChecker.mm; sourceTree = "<group>"; };
@@ -3915,7 +3915,7 @@
 		7A9CD8C21C779AD600D9F6C7 /* WebResourceLoadStatisticsStore.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebResourceLoadStatisticsStore.messages.in; sourceTree = "<group>"; };
 		7AB6EA441EEAAE2300037B2B /* APIIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIIconDatabaseClient.h; sourceTree = "<group>"; };
 		7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeolocationProvider.h; sourceTree = "<group>"; };
-		7ACFAAD820B88D4F00C53203 /* process-webcontent-entitlements.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "process-webcontent-entitlements.sh"; sourceTree = "<group>"; };
+		7ACFAAD820B88D4F00C53203 /* process-webcontent-or-plugin-entitlements.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "process-webcontent-or-plugin-entitlements.sh"; sourceTree = "<group>"; };
 		7AF2361E1E79A3B400438A05 /* WebErrors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebErrors.cpp; sourceTree = "<group>"; };
 		7AF2361F1E79A3D800438A05 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
 		7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebErrorsCocoa.mm; sourceTree = "<group>"; };
@@ -5196,7 +5196,7 @@
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				37119A7E20CCB64E002C6DC9 /* WebContent-iOS-minimalsimulator.entitlements */,
 				7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */,
-				37B418EB1C9624F20031E63B /* WebContent-OSX-restricted.entitlements */,
+				37B418EB1C9624F20031E63B /* WebContent-or-Plugin-OSX-restricted.entitlements */,
 				7AF66E1120C07CB6007828EA /* WebContent-OSX.entitlements */,
 				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
@@ -8643,7 +8643,7 @@
 				0FC0856F187CE0A900780D86 /* messages.py */,
 				0FC08570187CE0A900780D86 /* model.py */,
 				0FC08571187CE0A900780D86 /* parser.py */,
-				7ACFAAD820B88D4F00C53203 /* process-webcontent-entitlements.sh */,
+				7ACFAAD820B88D4F00C53203 /* process-webcontent-or-plugin-entitlements.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -10161,6 +10161,7 @@
 				BC8283F516B4FDDE00A278FE /* Sources */,
 				BC8283F616B4FDDE00A278FE /* Frameworks */,
 				BC8283F716B4FDDE00A278FE /* Resources */,
+				7A79E2DE2107F32B00EF32A4 /* Process Plugin entitlements */,
 			);
 			buildRules = (
 			);
@@ -10180,6 +10181,7 @@
 				BC82841B16B4FDF600A278FE /* Sources */,
 				BC82841C16B4FDF600A278FE /* Frameworks */,
 				BC82841D16B4FDF600A278FE /* Resources */,
+				7A79E2DD2107F2DD00EF32A4 /* Process Plugin entitlements */,
 			);
 			buildRules = (
 			);
@@ -10544,6 +10546,44 @@
 			shellPath = /bin/sh;
 			shellScript = "# We autogenerate this file, so don't want to retain an old copy during builds.\nrm -f ${TEMP_FILE_DIR}/${FULL_PRODUCT_NAME}.xcent\n";
 		};
+		7A79E2DD2107F2DD00EF32A4 /* Process Plugin entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).xcent",
+			);
+			name = "Process Plugin entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-webcontent-or-plugin-entitlements.sh\n";
+		};
+		7A79E2DE2107F32B00EF32A4 /* Process Plugin entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).xcent",
+			);
+			name = "Process Plugin entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-webcontent-or-plugin-entitlements.sh\n";
+		};
 		7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10557,7 +10597,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/process-webcontent-entitlements.sh\n";
+			shellScript = "Scripts/process-webcontent-or-plugin-entitlements.sh\n";
 		};
 		7AFCBD5520B8917D00F55C9C /* Process WebContent entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10572,7 +10612,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/process-webcontent-entitlements.sh\n";
+			shellScript = "Scripts/process-webcontent-or-plugin-entitlements.sh\n";
 		};
 		99CA3862207286DB00BAD578 /* Copy WebDriver Atoms to Framework Private Headers */ = {
 			isa = PBXShellScriptBuildPhase;

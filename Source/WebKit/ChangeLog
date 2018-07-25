@@ -1,3 +1,27 @@
+2018-07-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] PluginProcess needs TCC entitlements for media capture
+        https://bugs.webkit.org/show_bug.cgi?id=187981
+        <rdar://problem/42433634>
+
+        Reviewed by Chris Dumez.
+
+        The changes needed in Bug 185526 are also needed for the plugin process, or else the UIProcess
+        (e.g., Safari) is not able to pass the user's camera/microphone access permission to the plugin process.
+
+        This patch has the following changes:
+
+        1. Rename "WebContent-OSX-restricted.entitlements" to "WebContent-or-Plugin-OSX-restricted.entitlements"
+        2. Rename "process-webcontent-entitlements.sh" to "process-webcontent-or-plugin-entitlements.sh"
+        3. Add a run-script step to the Plugin.64 and Plugin.32 builds to add the relevant entitlements.
+        4. Silence some Flash plugin sandbox exceptions triggered after activating the camera.
+
+        * Configurations/WebContent-or-Plugin-OSX-restricted.entitlements: Renamed from Source/WebKit/Configurations/WebContent-OSX-restricted.entitlements.
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player ESR.plugin.sb: Address sandbox violations needed by camera use.
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb: Ditto.
+        * Scripts/process-webcontent-or-plugin-entitlements.sh: Renamed from Source/WebKit/Scripts/process-webcontent-entitlements.sh.
+        * WebKit.xcodeproj/project.pbxproj: Update for renaming, and perform entitlement steps on Plugin process.
+
 2018-07-24  Tim Horton  <timothy_horton@apple.com>
 
         Enable Web Content Filtering on watchOS

@@ -10,7 +10,7 @@ if [[ ${WK_PLATFORM_NAME} == "macosx" ]]; then
 
         if (( ${TARGET_MAC_OS_X_VERSION_MAJOR} >= 101400 )); then
             echo "Adding macOS platform entitlements.";
-            /usr/libexec/PlistBuddy -c "Merge Configurations/WebContent-OSX-restricted.entitlements" "${PROCESSED_XCENT_FILE}";
+            /usr/libexec/PlistBuddy -c "Merge Configurations/WebContent-or-Plugin-OSX-restricted.entitlements" "${PROCESSED_XCENT_FILE}";
         fi
 
         if [[ ${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT} == "YES" ]]; then
