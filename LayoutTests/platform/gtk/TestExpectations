@@ -1312,27 +1312,8 @@ webkit.org/b/180098 security/isSecureContext-disabled.html [ Crash Pass ]
 
 webkit.org/b/180803 http/tests/media/hls/video-cookie.html [ Crash ]
 
-<<<<<<< HEAD
 webkit.org/b/182106 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end.html [ Crash ]
 webkit.org/b/182106 media/video-multiple-concurrent-playback.html [ Crash ]
-=======
-webkit.org/b/182106 media/video-multiple-concurrent-playback.html [ Crash Pass Timeout ]
-
-webkit.org/b/183180 imported/blink/fast/forms/time-multiple-fields/time-multiple-fields-crash-by-focus-on-unload.html [ Crash Pass ]
-
-webkit.org/b/183215 imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Crash Pass ]
-
-webkit.org/b/183401 fast/animation/request-animation-frame-during-modal.html [ Crash Pass ]
-
-webkit.org/b/184781 [ Release ] plugins/unavailable-plugin-indicator-obscurity.html [ Crash ]
-
-webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass ]
-
-# Crashes only when GNOME icon theme is not installed
-webkit.org/b/186767 fast/hidpi/broken-image-icon-very-hidpi.html [ Crash Pass ]
-
-webkit.org/b/186779 http/tests/security/sandboxed-iframe-DENIED-modals.html [ Crash Pass ]
->>>>>>> 14e2b3524ff... REGRESSION(r230950): [GTK] WebKit::CoordinatedBackingStoreTile::setBackBuffer(): WebKitWebProcess killed by SIGSEGV (ASSERTION FAILED: it != m_tiles.end())
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1659,11 +1640,7 @@ webkit.org/b/133001 fast/workers/worker-context-gc.html [ Pass Timeout ]
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass ]
 webkit.org/b/133866 media/media-controls-cancel-events.html [ Timeout Failure Pass ]
 webkit.org/b/133867 webaudio/audioprocessingevent.html [ Failure Pass ]
-<<<<<<< HEAD
 webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
-=======
-webkit.org/b/133869 media/video-seek-after-end.html [ Failure ]
->>>>>>> 14e2b3524ff... REGRESSION(r230950): [GTK] WebKit::CoordinatedBackingStoreTile::setBackBuffer(): WebKitWebProcess killed by SIGSEGV (ASSERTION FAILED: it != m_tiles.end())
 
 # Crash is webkit.org/b/176802
 webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass Crash ]
