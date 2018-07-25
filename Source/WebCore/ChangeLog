@@ -1,3 +1,22 @@
+2018-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Turn assertion preventing removal of ActiveDOMObjects while we iterate over them into a RELEASE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=187978
+
+        Reviewed by Eric Carlson.
+
+        Turn assertion preventing removal of ActiveDOMObjects while we iterate over them into a RELEASE_ASSERT.
+        If code does this, this leads to hard to investigate crashes such as rdar://problem/42160890. With a
+        release assertion, we would find the culprits right away. The assertion guarding against addition of
+        ActiveDOMObjects while we iterate is already a RELEASE_ASSERT.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::willDestroyActiveDOMObject):
+        * dom/ScriptExecutionContext.h:
+
 2018-07-24  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r219757): Accessing response getter of XHR instance from IFRAME sets constructor to Object from the IFRAME

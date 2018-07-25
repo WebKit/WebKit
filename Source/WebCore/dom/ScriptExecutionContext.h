@@ -321,13 +321,11 @@ private:
     bool m_activeDOMObjectsAreStopped { false };
     bool m_inDispatchErrorEvent { false };
     bool m_activeDOMObjectAdditionForbidden { false };
+    bool m_activeDOMObjectRemovalForbidden { false };
     bool m_willprocessMessageWithMessagePortsSoon { false };
 
 #if !ASSERT_DISABLED
     bool m_inScriptExecutionContextDestructor { false };
-#endif
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
-    bool m_activeDOMObjectRemovalForbidden { false };
 #endif
 
 #if ENABLE(SERVICE_WORKER)

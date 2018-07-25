@@ -229,9 +229,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension(Vec
     bool canSuspend = true;
 
     m_activeDOMObjectAdditionForbidden = true;
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = true;
-#endif
 
     // We assume that m_activeDOMObjects will not change during iteration: canSuspend
     // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
@@ -249,9 +247,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension(Vec
     }
 
     m_activeDOMObjectAdditionForbidden = false;
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = false;
-#endif
 
     return canSuspend;
 }
@@ -271,9 +267,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
     m_activeDOMObjectsAreSuspended = true;
 
     m_activeDOMObjectAdditionForbidden = true;
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = true;
-#endif
 
     // We assume that m_activeDOMObjects will not change during iteration: suspend
     // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
@@ -284,9 +278,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
         activeDOMObject->suspend(why);
 
     m_activeDOMObjectAdditionForbidden = false;
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = false;
-#endif
 
     m_reasonForSuspendingActiveDOMObjects = why;
 }
@@ -300,9 +292,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
     m_activeDOMObjectsAreSuspended = false;
 
     m_activeDOMObjectAdditionForbidden = true;
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = true;
-#endif
 
     // We assume that m_activeDOMObjects will not change during iteration: resume
     // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
@@ -313,9 +303,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
         activeDOMObject->resume();
 
     m_activeDOMObjectAdditionForbidden = false;
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = false;
-#endif
 }
 
 void ScriptExecutionContext::stopActiveDOMObjects()
@@ -371,7 +359,7 @@ void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject& activeDOM
 
 void ScriptExecutionContext::willDestroyActiveDOMObject(ActiveDOMObject& activeDOMObject)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_activeDOMObjectRemovalForbidden);
+    RELEASE_ASSERT(!m_activeDOMObjectRemovalForbidden);
     m_activeDOMObjects.remove(&activeDOMObject);
 }
 
