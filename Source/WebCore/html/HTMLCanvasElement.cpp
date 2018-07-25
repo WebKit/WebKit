@@ -508,23 +508,16 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
     clearCopiedImage();
 
     FloatRect dirtyRect = rect;
-    if (auto* renderer = renderBox()) {
-        FloatRect destRect;
-        if (is<RenderReplaced>(renderer))
-            destRect = downcast<RenderReplaced>(renderer)->replacedContentRect();
-        else
-            destRect = renderer->contentBoxRect();
-
+    if (RenderBox* ro = renderBox()) {
+        FloatRect destRect = ro->contentBoxRect();
         // Inflate dirty rect to cover antialiasing on image buffers.
         if (drawingContext() && drawingContext()->shouldAntialias())
             dirtyRect.inflate(1);
-
         FloatRect r = mapRect(dirtyRect, FloatRect(0, 0, size().width(), size().height()), destRect);
         r.intersect(destRect);
-
         if (!r.isEmpty() && !m_dirtyRect.contains(r)) {
             m_dirtyRect.unite(r);
-            renderer->repaintRectangle(enclosingIntRect(m_dirtyRect));
+            ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
         }
     }
     notifyObserversCanvasChanged(dirtyRect);

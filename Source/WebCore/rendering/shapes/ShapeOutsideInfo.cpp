@@ -151,7 +151,7 @@ std::unique_ptr<Shape> ShapeOutsideInfo::createShapeForImage(StyleImage* styleIm
 
     const LayoutRect& marginRect = getShapeImageMarginRect(m_renderer, m_referenceBoxLogicalSize);
     const LayoutRect& imageRect = is<RenderImage>(m_renderer)
-        ? downcast<RenderImage>(m_renderer).replacedContentRect()
+        ? downcast<RenderImage>(m_renderer).replacedContentRect(m_renderer.intrinsicSize())
         : LayoutRect(LayoutPoint(), imageSize);
 
     ASSERT(!styleImage->isPending());
