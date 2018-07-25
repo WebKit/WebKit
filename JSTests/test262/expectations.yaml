@@ -1465,21 +1465,12 @@ test/built-ins/WeakSet/proto-from-ctor-realm.js:
 test/harness/assert-throws-early-referenceerror.js:
   default: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Function: 1 = 1; Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/intl402/Collator/length.js:
-  default: 'Test262Error: Expected obj[length] to have configurable:true.'
-  strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
 test/intl402/Collator/prototype/compare/compare-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/intl402/DateTimeFormat/length.js:
-  default: 'Test262Error: Expected obj[length] to have configurable:true.'
-  strict mode: 'Test262Error: Expected obj[length] to have configurable:true.'
 test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/length.js:
-  default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle.js:
   default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«h11Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«h11Â») to be true'
@@ -1499,8 +1490,8 @@ test/intl402/Locale/constructor-locale-object.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-US\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-US\")')"
 test/intl402/Locale/constructor-non-iana-canon.js:
-  default: 'Test262Error: Expected SameValue(Â«moÂ», Â«roÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«moÂ», Â«roÂ») to be true'
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag)')"
 test/intl402/Locale/constructor-options-calendar-invalid.js:
   default: 'Test262Error:  is an invalid calendar option value Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error:  is an invalid calendar option value Expected a RangeError but got a TypeError'
@@ -1604,8 +1595,8 @@ test/intl402/Locale/length.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
 test/intl402/Locale/likely-subtags-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«en-GB-oedÂ», Â«en-GB-oxendictÂ») to be true'
+  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(tag)')"
 test/intl402/Locale/likely-subtags.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(maximal)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(maximal)')"
@@ -1744,9 +1735,6 @@ test/intl402/Locale/prototype/toString/prop-desc.js:
 test/intl402/Locale/prototype/toStringTag/toStringTag.js:
   default: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Intl.Locale.prototype')"
-test/intl402/NumberFormat/length.js:
-  default: 'Test262Error: descriptor should be configurable'
-  strict mode: 'Test262Error: descriptor should be configurable'
 test/intl402/NumberFormat/prototype/format/format-fraction-digits.js:
   default: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
   strict mode: 'Test262Error: Formatted value for 12344501000000000000000000000000000, en-US-u-nu-arab and options {"useGrouping":false,"minimumIntegerDigits":3,"minimumFractionDigits":1,"maximumFractionDigits":3} is Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù«Ù ; expected Ù¡Ù¢Ù£Ù¤Ù¤Ù¥Ù Ù¡Ù Ù Ù Ù Ù Ù Ù Ù Ù Ù¤Ù¨Ù§Ù¨Ù¡Ù¥Ù¤Ù¤Ù¤Ù¦Ù§Ù¨Ù£Ù¡Ù¡Ù©Ù£Ù¦Ù«Ù .'
@@ -1774,9 +1762,6 @@ test/intl402/NumberFormat/prototype/formatToParts/name.js:
 test/intl402/NumberFormat/prototype/formatToParts/return-abrupt-tonumber.js:
   default: 'Test262Error: valueOf Expected a Test262Error but got a TypeError'
   strict mode: 'Test262Error: valueOf Expected a Test262Error but got a TypeError'
-test/intl402/PluralRules/length.js:
-  default: 'Test262Error: descriptor should be configurable'
-  strict mode: 'Test262Error: descriptor should be configurable'
 test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js:
   default: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'
   strict mode: 'Test262Error: Should have different arrays Expected SameValue(Â«undefinedÂ», Â«undefinedÂ») to be false'

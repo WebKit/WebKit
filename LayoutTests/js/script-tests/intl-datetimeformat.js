@@ -501,7 +501,7 @@ shouldNotBe("var incompat = {};Intl.DateTimeFormat.apply(incompat)", "incompat")
 
 // ECMA-402 4th edition 15.4 Intl.DateTimeFormat.prototype.formatToParts
 shouldBeType("Intl.DateTimeFormat.prototype.formatToParts", "Function");
-shouldBe("Intl.DateTimeFormat.prototype.formatToParts.length", "0");
+shouldBe("Intl.DateTimeFormat.prototype.formatToParts.length", "1");
 shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').writable");
 shouldBeFalse("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').enumerable");
 shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').configurable");

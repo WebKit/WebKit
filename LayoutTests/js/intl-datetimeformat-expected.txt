@@ -2111,7 +2111,7 @@ PASS var legacy = Object.create(Intl.DateTimeFormat.prototype);Intl.DateTimeForm
 PASS var legacy = Object.create(Intl.DateTimeFormat.prototype);Intl.DateTimeFormat.call(legacy, 'en-u-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '١٢/٢٥/٢٠١٥'
 PASS var incompat = {};Intl.DateTimeFormat.apply(incompat) is not incompat
 PASS Intl.DateTimeFormat.prototype.formatToParts is an instance of Function
-PASS Intl.DateTimeFormat.prototype.formatToParts.length is 0
+PASS Intl.DateTimeFormat.prototype.formatToParts.length is 1
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').writable is true
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').enumerable is false
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'formatToParts').configurable is true

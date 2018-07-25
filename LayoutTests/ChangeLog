@@ -1,3 +1,15 @@
+2018-07-25  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Intl constructor lengths should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=187960
+
+        Reviewed by Saam Barati.
+
+        Expect DateTimeFormat formatToParts length to be 1.
+
+        * js/intl-datetimeformat-expected.txt:
+        * js/script-tests/intl-datetimeformat.js:
+
 2018-07-25  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening

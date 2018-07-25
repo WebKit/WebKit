@@ -1,3 +1,24 @@
+2018-07-25  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Intl constructor lengths should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=187960
+
+        Reviewed by Saam Barati.
+
+        Removed DontDelete from Intl constructor lengths.
+        Fixed DateTimeFormat formatToParts length.
+
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::finishCreation):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::IntlPluralRulesConstructor::finishCreation):
+
 2018-07-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         runJITThreadLimitTests is failing
