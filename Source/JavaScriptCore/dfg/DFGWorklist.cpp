@@ -535,12 +535,12 @@ static unsigned numberOfFTLCompilerThreads;
 
 static unsigned getNumberOfDFGCompilerThreads()
 {
-    return numberOfDFGCompilerThreads ?: Options::numberOfDFGCompilerThreads();
+    return numberOfDFGCompilerThreads ? numberOfDFGCompilerThreads : Options::numberOfDFGCompilerThreads();
 }
 
 static unsigned getNumberOfFTLCompilerThreads()
 {
-    return numberOfFTLCompilerThreads ?: Options::numberOfFTLCompilerThreads();
+    return numberOfFTLCompilerThreads ? numberOfFTLCompilerThreads : Options::numberOfFTLCompilerThreads();
 }
 
 unsigned setNumberOfDFGCompilerThreads(unsigned numberOfThreads)
