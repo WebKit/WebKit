@@ -122,7 +122,6 @@ struct Instruction {
         Opcode opcode;
         int operand;
         unsigned unsignedValue;
-        intptr_t operandPointer;
         WriteBarrierBase<Structure> structure;
         StructureID structureID;
         WriteBarrierBase<SymbolTable> symbolTable;
