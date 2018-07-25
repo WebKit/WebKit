@@ -679,9 +679,27 @@ class WebkitFlatpak:
                 "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": "/app/webkit/lib/libTestRunnerInjectedBundle.so",
             }
 
+            env_var_prefixes_to_keep = [
+                "GST",
+                "GTK",
+                "G",
+                "JSC",
+                "WEBKIT",
+                "WEBKIT2",
+                "WPE",
+                "GIGACAGE",
+            ]
+
+            env_vars_to_keep = [
+                "JavaScriptCoreUseJIT",
+                "Malloc",
+                "WAYLAND_DISPLAY",
+                "DISPLAY",
+                "LANG",
+            ]
+
             for envvar, value in os.environ.items():
-                if envvar.split("_")[0] in ("GST", "GTK", "G") or \
-                        envvar in ["WAYLAND_DISPLAY", "DISPLAY", "LANG"]:
+                if envvar.split("_")[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep:
                     forwarded[envvar] = value
 
             for envvar, value in forwarded.items():
