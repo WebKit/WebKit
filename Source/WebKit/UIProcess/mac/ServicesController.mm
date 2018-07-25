@@ -71,7 +71,7 @@ static void hasCompatibleServicesForItems(dispatch_group_t group, NSArray *items
     NSSharingServiceMask servicesMask = NSSharingServiceMaskViewer | NSSharingServiceMaskEditor;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    if ([NSSharingService respondsToSelector:@selector(sharingServicesForItems:mask:completion:)]) {
+    if ([NSSharingService respondsToSelector:@selector(getSharingServicesForItems:mask:completion:)]) {
         dispatch_group_enter(group);
         [NSSharingService getSharingServicesForItems:items mask:servicesMask completion:BlockPtr<void(NSArray *)>::fromCallable([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
             completionHandler(services.count);
