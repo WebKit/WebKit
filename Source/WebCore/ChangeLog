@@ -1,3 +1,32 @@
+2018-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Animation stops with object-fit:contain on an animated 2d canvas
+        https://bugs.webkit.org/show_bug.cgi?id=187840
+
+        Reviewed by Zalan Bujtas.
+        
+        If a canvas has object-fit: cover or contain, repaints need to mapped through
+        the rect that is used to position the canvas in the element bounds, which is replacedContentRect().
+        
+        Add a version of replacedContentRect() that doesn't require passing the intrinsicSize() since
+        all but RenderVideo just pass the RenderReplaced's intrinsicSize.
+
+        Test: fast/repaint/canvas-object-fit.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::didDraw):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::updateInnerContentRect):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentsBox const):
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::replacedContentRect const):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::createShapeForImage const):
+
 2018-07-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Add support for wss:// websockets

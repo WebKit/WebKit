@@ -2344,7 +2344,7 @@ LayoutRect RenderLayerBacking::contentsBox() const
 #endif
     if (is<RenderReplaced>(renderBox)) {
         RenderReplaced& renderReplaced = downcast<RenderReplaced>(renderBox);
-        contentsRect = renderReplaced.replacedContentRect(renderBox.intrinsicSize());
+        contentsRect = renderReplaced.replacedContentRect();
     } else
         contentsRect = renderBox.contentBoxRect();
 
