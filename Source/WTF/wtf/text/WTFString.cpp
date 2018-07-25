@@ -462,7 +462,7 @@ WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char
     if (strstr(format, "%@")) {
         auto cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
         auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
-        va_end(args);
+        va_end(argsCopy);
         return result.get();
     }
 #endif
@@ -474,12 +474,15 @@ WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char
     char ch;
     int result = vsnprintf(&ch, 1, format, args);
 #endif
-    va_end(args);
 
-    if (result == 0)
+    if (!result) {
+        va_end(argsCopy);
         return emptyString();
-    if (result < 0)
+    }
+    if (result < 0) {
+        va_end(argsCopy);
         return String();
+    }
 
     Vector<char, 256> buffer;
     unsigned len = result;

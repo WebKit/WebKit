@@ -1,3 +1,16 @@
+2018-07-25  Tomas Popela  <tpopela@redhat.com>
+
+        Correctly close the variable argument list
+        https://bugs.webkit.org/show_bug.cgi?id=186758
+
+        Reviewed by Michael Catanzaro.
+
+        The argcCopy is not ended when we early return. Also don't call
+        va_end() on args because it's closed in caller.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::createWithFormatAndArguments):
+
 2018-07-24  Tim Horton  <timothy_horton@apple.com>
 
         HAVE(PARENTAL_CONTROLS) should be true on watchOS
