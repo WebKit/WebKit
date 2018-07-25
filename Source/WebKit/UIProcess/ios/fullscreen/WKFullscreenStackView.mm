@@ -60,6 +60,11 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVBackgroundView)
     _backgroundView = adoptNS([allocAVBackgroundViewInstance() initWithFrame:frame]);
     [self addSubview:_backgroundView.get()];
 
+    // FIXME: remove this once AVBackgroundView handles this. https://bugs.webkit.org/show_bug.cgi?id=188022
+    [_backgroundView setClipsToBounds:YES];
+    [_backgroundView.get().layer setContinuousCorners:YES];
+    [_backgroundView.get().layer setCornerRadius:16];
+
     return self;
 }
 

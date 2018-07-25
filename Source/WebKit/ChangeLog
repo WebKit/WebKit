@@ -1,3 +1,16 @@
+2018-07-25  Jeremy Jones  <jeremyj@apple.com>
+
+        Mask AVBackgroundView to the corner radius.
+        https://bugs.webkit.org/show_bug.cgi?id=187976
+        rdar://problem/41810866
+
+        Reviewed by Jon Lee.
+
+        This changes sets the appropriate mask to the layer so the corners look correct.
+
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm:
+        (-[WKFullscreenStackView init]):
+
 2018-07-25  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r227577) Text on TV & Movies page doesn't wrap properly in iTunes
