@@ -1,3 +1,28 @@
+2018-07-24  Saam Barati  <sbarati@apple.com>
+
+        Revert back to using phys_footprint to calculate isUnderMemoryPressure()
+        https://bugs.webkit.org/show_bug.cgi?id=187919
+        <rdar://problem/42552888>
+
+        Reviewed by Simon Fraser.
+
+        Currently on iOS, bmalloc will run the scavenger more frequently when it detects
+        that the process is under memory pressure. However, it only uses bmalloc's
+        own footprint as a percentage of the HW available memory to determine if
+        the process is under memory pressure. This is a change I recently made
+        in an effort to run the scavenger less when bmalloc wasn't contributing
+        to the dirty footprint in the process. However, this fails to run the
+        scavenger eagerly when the process in question has a heap split
+        between a lot of dirty bmalloc memory as well as a lot of dirty memory
+        from elsewhere. We also have evidence that we may have increased jetsams
+        in the Web Content process. Since my original change was not a measurable
+        speedup, this patch reverts isUnderMemoryPressure() to its previous
+        behavior of using phys_footprint to determine if 75% of the available 
+        HW memory is being used.
+
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::memoryStatus):
+
 2019-07-12  Michael Saboff  <msaboff@apple.com>
 
         Disable IsoHeaps when Gigacage is off
