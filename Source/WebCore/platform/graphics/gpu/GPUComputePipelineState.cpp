@@ -28,16 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
 #include "Logging.h"
 
 namespace WebCore {
-    
-RefPtr<GPUComputePipelineState> GPUComputePipelineState::create(GPUDevice* device, GPUFunction* function)
-{
-    RefPtr<GPUComputePipelineState> state = adoptRef(new GPUComputePipelineState(device, function));
-    return state;
-}
     
 GPUComputePipelineState::~GPUComputePipelineState()
 {

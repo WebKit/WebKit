@@ -1,3 +1,16 @@
+2018-07-04  Darin Adler  <darin@apple.com>
+
+        Improve WebGPU implementation, including using Metal Objective-C protocols more simply and correctly
+        https://bugs.webkit.org/show_bug.cgi?id=187333
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/mac/GPUBuffer.mm: Updated.
+        * TestWebKitAPI/Tests/WebCore/mac/GPUCommandQueue.mm: Updated.
+        * TestWebKitAPI/Tests/WebCore/mac/GPUDevice.mm: Updated.
+        * TestWebKitAPI/Tests/WebCore/mac/GPUFunction.mm: Updated.
+        * TestWebKitAPI/Tests/WebCore/mac/GPULibrary.mm: Updated.
+
 2018-07-25  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add build steps DownloadBuiltProduct and ExtractBuiltProduct

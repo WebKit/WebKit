@@ -27,39 +27,34 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLDepthStencilState;
-#endif
+OBJC_PROTOCOL(MTLDepthStencilState);
 
 namespace WebCore {
 
 class GPUDevice;
 class GPUDepthStencilDescriptor;
 
-class GPUDepthStencilState : public RefCounted<GPUDepthStencilState> {
+class GPUDepthStencilState {
 public:
-    static RefPtr<GPUDepthStencilState> create(GPUDevice*, GPUDepthStencilDescriptor*);
-    WEBCORE_EXPORT ~GPUDepthStencilState();
+    GPUDepthStencilState() = default;
+    GPUDepthStencilState(const GPUDevice&, const GPUDepthStencilDescriptor&);
+    ~GPUDepthStencilState();
 
-    WEBCORE_EXPORT String label() const;
-    WEBCORE_EXPORT void setLabel(const String&);
+    String label() const;
+    void setLabel(const String&) const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLDepthStencilState *platformDepthStencilState();
+#if USE(METAL)
+    MTLDepthStencilState *metal() const { return m_metal.get(); }
 #endif
 
+#if USE(METAL)
 private:
-    GPUDepthStencilState(GPUDevice*, GPUDepthStencilDescriptor*);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLDepthStencilState> m_depthStencilState;
+    RetainPtr<MTLDepthStencilState> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

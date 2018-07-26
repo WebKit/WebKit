@@ -31,42 +31,33 @@
 #import "GPURenderPassColorAttachmentDescriptor.h"
 #import "GPURenderPassDepthAttachmentDescriptor.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
 GPURenderPassDescriptor::GPURenderPassDescriptor()
+    : m_metal { adoptNS([MTLRenderPassDescriptor new]) }
 {
     LOG(WebGPU, "GPURenderPassDescriptor::GPURenderPassDescriptor()");
-
-    m_renderPassDescriptor = adoptNS((MTLRenderPassDescriptor *)[MTLRenderPassDescriptor new]);
 }
 
-Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>> GPURenderPassDescriptor::colorAttachments()
+Vector<GPURenderPassColorAttachmentDescriptor> GPURenderPassDescriptor::colorAttachments() const
 {
-    if (!m_renderPassDescriptor)
-        return Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>>();
+    if (!m_metal)
+        return { };
 
-    Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>> platformColorAttachments;
-    platformColorAttachments.append(GPURenderPassColorAttachmentDescriptor::create([[m_renderPassDescriptor colorAttachments] objectAtIndexedSubscript:0]));
-    return platformColorAttachments;
+    // FIXME: Why is it correct to return one color here?
+    return { { [[m_metal colorAttachments] objectAtIndexedSubscript:0] } };
 }
 
-RefPtr<GPURenderPassDepthAttachmentDescriptor> GPURenderPassDescriptor::depthAttachment()
+GPURenderPassDepthAttachmentDescriptor GPURenderPassDescriptor::depthAttachment() const
 {
-    if (!m_renderPassDescriptor)
-        return nullptr;
-
-    if (!m_depthAttachment)
-        m_depthAttachment = GPURenderPassDepthAttachmentDescriptor::create([m_renderPassDescriptor depthAttachment]);
-    
-    return m_depthAttachment;
+    return [m_metal depthAttachment];
 }
 
-MTLRenderPassDescriptor *GPURenderPassDescriptor::platformRenderPassDescriptor()
+MTLRenderPassDescriptor *GPURenderPassDescriptor::metal() const
 {
-    return m_renderPassDescriptor.get();
+    return m_metal.get();
 }
 
 } // namespace WebCore

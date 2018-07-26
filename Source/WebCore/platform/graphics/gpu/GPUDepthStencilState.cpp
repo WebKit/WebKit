@@ -28,33 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDepthStencilDescriptor.h"
-#include "GPUDevice.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPUDepthStencilState> GPUDepthStencilState::create(GPUDevice* device, GPUDepthStencilDescriptor* descriptor)
-{
-    RefPtr<GPUDepthStencilState> state = adoptRef(new GPUDepthStencilState(device, descriptor));
-    return state;
-}
 
 GPUDepthStencilState::~GPUDepthStencilState()
 {
     LOG(WebGPU, "GPUDepthStencilState::~GPUDepthStencilState()");
 }
-
-#if !PLATFORM(COCOA)
-String GPUDepthStencilState::label() const
-{
-    return emptyString();
-}
-
-void GPUDepthStencilState::setLabel(const String&)
-{
-}
-#endif
 
 } // namespace WebCore
 

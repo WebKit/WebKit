@@ -24,46 +24,34 @@
  */
 
 #import "config.h"
-#import "GPURenderPipelineColorAttachmentDescriptor.h"
+#import "GPUFunction.h"
 
 #if ENABLE(WEBGPU)
 
+#import "GPULibrary.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-RefPtr<GPURenderPipelineColorAttachmentDescriptor> GPURenderPipelineColorAttachmentDescriptor::create(MTLRenderPipelineColorAttachmentDescriptor *attachmentDescriptor)
+GPUFunction::GPUFunction(const GPULibrary& library, const String& name)
+    : m_metal { adoptNS([library.metal() newFunctionWithName:name]) }
 {
-    RefPtr<GPURenderPipelineColorAttachmentDescriptor> descriptor = adoptRef(new GPURenderPipelineColorAttachmentDescriptor(attachmentDescriptor));
-    return descriptor;
+    LOG(WebGPU, "GPUFunction::GPUFunction()");
 }
 
-GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor(MTLRenderPipelineColorAttachmentDescriptor *attachmentDescriptor)
+String GPUFunction::name() const
 {
-    LOG(WebGPU, "GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor()");
+    if (!m_metal)
+        return emptyString();
 
-    m_renderPipelineColorAttachmentDescriptor = attachmentDescriptor;
+    return [m_metal name];
 }
 
-unsigned long GPURenderPipelineColorAttachmentDescriptor::pixelFormat() const
+bool GPUFunction::operator!() const
 {
-    if (!m_renderPipelineColorAttachmentDescriptor)
-        return 0; // FIXME: WebGPU - There is probably a real value for this.
-
-    return [m_renderPipelineColorAttachmentDescriptor pixelFormat];
-}
-
-void GPURenderPipelineColorAttachmentDescriptor::setPixelFormat(unsigned long newPixelFormat)
-{
-    ASSERT(m_renderPipelineColorAttachmentDescriptor);
-    [m_renderPipelineColorAttachmentDescriptor setPixelFormat:static_cast<MTLPixelFormat>(newPixelFormat)];
-}
-
-MTLRenderPipelineColorAttachmentDescriptor *GPURenderPipelineColorAttachmentDescriptor::platformRenderPipelineColorAttachmentDescriptor()
-{
-    return m_renderPipelineColorAttachmentDescriptor.get();
+    return !m_metal;
 }
 
 } // namespace WebCore

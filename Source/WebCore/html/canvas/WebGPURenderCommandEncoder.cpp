@@ -29,7 +29,6 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUCommandBuffer.h"
-#include "GPURenderCommandEncoder.h"
 #include "GPURenderPassDescriptor.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUCommandBuffer.h"
@@ -40,64 +39,47 @@
 
 namespace WebCore {
 
-Ref<WebGPURenderCommandEncoder> WebGPURenderCommandEncoder::create(WebGPURenderingContext* context, WebGPUCommandBuffer* buffer, WebGPURenderPassDescriptor* descriptor)
+Ref<WebGPURenderCommandEncoder> WebGPURenderCommandEncoder::create(WebGPURenderingContext& context, const GPUCommandBuffer& buffer, const GPURenderPassDescriptor& descriptor)
 {
     return adoptRef(*new WebGPURenderCommandEncoder(context, buffer, descriptor));
 }
 
-WebGPURenderCommandEncoder::WebGPURenderCommandEncoder(WebGPURenderingContext* context, WebGPUCommandBuffer* buffer, WebGPURenderPassDescriptor* descriptor)
-    : WebGPUObject(context)
+WebGPURenderCommandEncoder::WebGPURenderCommandEncoder(WebGPURenderingContext& context, const GPUCommandBuffer& buffer, const GPURenderPassDescriptor& descriptor)
+    : WebGPUObject { &context }
+    , m_encoder { buffer, descriptor }
 {
-    m_renderCommandEncoder = buffer->commandBuffer()->createRenderCommandEncoder(descriptor->renderPassDescriptor());
 }
 
 WebGPURenderCommandEncoder::~WebGPURenderCommandEncoder() = default;
 
 void WebGPURenderCommandEncoder::setRenderPipelineState(WebGPURenderPipelineState& pipelineState)
 {
-    if (!m_renderCommandEncoder)
-        return;
-
-    m_renderCommandEncoder->setRenderPipelineState(pipelineState.renderPipelineState());
+    m_encoder.setRenderPipelineState(pipelineState.state());
 }
 
 void WebGPURenderCommandEncoder::setDepthStencilState(WebGPUDepthStencilState& depthStencilState)
 {
-    if (!m_renderCommandEncoder)
-        return;
-
-    m_renderCommandEncoder->setDepthStencilState(depthStencilState.depthStencilState());
+    m_encoder.setDepthStencilState(depthStencilState.state());
 }
 
 void WebGPURenderCommandEncoder::setVertexBuffer(WebGPUBuffer& buffer, unsigned offset, unsigned index)
 {
-    if (!m_renderCommandEncoder)
-        return;
-
-    m_renderCommandEncoder->setVertexBuffer(buffer.buffer(), offset, index);
+    m_encoder.setVertexBuffer(buffer.buffer(), offset, index);
 }
 
 void WebGPURenderCommandEncoder::setFragmentBuffer(WebGPUBuffer& buffer, unsigned offset, unsigned index)
 {
-    if (!m_renderCommandEncoder)
-        return;
-
-    m_renderCommandEncoder->setFragmentBuffer(buffer.buffer(), offset, index);
+    m_encoder.setFragmentBuffer(buffer.buffer(), offset, index);
 }
 
 void WebGPURenderCommandEncoder::drawPrimitives(unsigned type, unsigned start, unsigned count)
 {
-    if (!m_renderCommandEncoder)
-        return;
-
-    m_renderCommandEncoder->drawPrimitives(type, start, count);
+    m_encoder.drawPrimitives(type, start, count);
 }
 
 void WebGPURenderCommandEncoder::endEncoding()
 {
-    if (!m_renderCommandEncoder)
-        return;
-    return m_renderCommandEncoder->endEncoding();
+    return m_encoder.endEncoding();
 }
 
 } // namespace WebCore

@@ -1067,6 +1067,8 @@
 #endif
 #endif
 
+#define USE_METAL 1
+
 #if HAVE(ACCESSIBILITY)
 #define USE_ACCESSIBILITY_CONTEXT_MENUS 1
 #endif

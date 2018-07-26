@@ -27,38 +27,32 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLDrawable;
-OBJC_CLASS MTLTexture;
-#endif
+OBJC_PROTOCOL(MTLDrawable);
+OBJC_PROTOCOL(MTLTexture);
 
 namespace WebCore {
 
-class GPUTexture;
 class GPUDevice;
 
-class GPUDrawable : public RefCounted<GPUDrawable> {
+class GPUDrawable {
 public:
-    static RefPtr<GPUDrawable> create(GPUDevice*);
-    WEBCORE_EXPORT ~GPUDrawable();
+    explicit GPUDrawable(const GPUDevice&);
+    ~GPUDrawable();
 
-    WEBCORE_EXPORT void release();
+    void release();
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLDrawable *platformDrawable();
+#if USE(METAL)
+    MTLDrawable *metal() const;
+
     // FIXME: WebGPU - not all drawables should have this. Only the framebuffer.
-    WEBCORE_EXPORT MTLTexture *platformTexture();
+    MTLTexture *texture() const;
 #endif
 
+#if USE(METAL)
 private:
-    GPUDrawable(GPUDevice*);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLDrawable> m_drawable;
+    RetainPtr<MTLDrawable> m_metal;
 #endif
 };
     

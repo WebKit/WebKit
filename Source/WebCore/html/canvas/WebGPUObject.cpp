@@ -33,16 +33,11 @@
 namespace WebCore {
 
 WebGPUObject::WebGPUObject(WebGPURenderingContext* context)
-    : m_context(context)
+    : m_context { context }
 {
 }
 
 WebGPUObject::~WebGPUObject() = default;
-
-void WebGPUObject::deleteObject(GPUDevice*)
-{
-    m_deleted = true;
-}
 
 }
 

@@ -28,38 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCommandBuffer.h"
-#include "GPUDevice.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPUCommandQueue> GPUCommandQueue::create(GPUDevice* device)
-{
-    RefPtr<GPUCommandQueue> queue = adoptRef(new GPUCommandQueue(device));
-    return queue;
-}
 
 GPUCommandQueue::~GPUCommandQueue()
 {
     LOG(WebGPU, "GPUCommandQueue::~GPUCommandQueue()");
 }
-
-RefPtr<GPUCommandBuffer> GPUCommandQueue::createCommandBuffer()
-{
-    return GPUCommandBuffer::create(this);
-}
-
-#if !PLATFORM(COCOA)
-String GPUCommandQueue::label() const
-{
-    return emptyString();
-}
-
-void GPUCommandQueue::setLabel(const String&)
-{
-}
-#endif
 
 } // namespace WebCore
 

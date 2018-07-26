@@ -32,72 +32,10 @@
 
 namespace WebCore {
 
-RefPtr<GPUTextureDescriptor> GPUTextureDescriptor::create(unsigned long pixelFormat, unsigned long width, unsigned long height, bool mipmapped)
-{
-    RefPtr<GPUTextureDescriptor> descriptor = adoptRef(new GPUTextureDescriptor(pixelFormat, width, height, mipmapped));
-    return descriptor;
-}
-
 GPUTextureDescriptor::~GPUTextureDescriptor()
 {
     LOG(WebGPU, "GPUTextureDescriptor::~GPUTextureDescriptor()");
 }
-
-#if !PLATFORM(COCOA)
-unsigned long GPUTextureDescriptor::width() const
-{
-    return 0;
-}
-
-void GPUTextureDescriptor::setWidth(unsigned long)
-{
-}
-
-unsigned long GPUTextureDescriptor::height() const
-{
-    return 0;
-}
-
-void GPUTextureDescriptor::setHeight(unsigned long)
-{
-}
-
-unsigned long GPUTextureDescriptor::sampleCount() const
-{
-    return 0;
-}
-
-void GPUTextureDescriptor::setSampleCount(unsigned long)
-{
-}
-
-unsigned long GPUTextureDescriptor::textureType() const
-{
-    return 0;
-}
-
-void GPUTextureDescriptor::setTextureType(unsigned long)
-{
-}
-
-unsigned long GPUTextureDescriptor::storageMode() const
-{
-    return 0;
-}
-
-void GPUTextureDescriptor::setStorageMode(unsigned long)
-{
-}
-
-unsigned long GPUTextureDescriptor::usage() const
-{
-    return 0;
-}
-
-void GPUTextureDescriptor::setUsage(unsigned long)
-{
-}
-#endif
 
 } // namespace WebCore
 

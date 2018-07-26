@@ -27,25 +27,24 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBuffer.h"
 #include "WebGPUObject.h"
 
 namespace WebCore {
 
-class GPUBuffer;
-
 class WebGPUBuffer : public WebGPUObject {
 public:
-    virtual ~WebGPUBuffer();
-    static Ref<WebGPUBuffer> create(WebGPURenderingContext*, ArrayBufferView*);
+    static RefPtr<WebGPUBuffer> create(WebGPURenderingContext&, const JSC::ArrayBufferView&);
 
-    unsigned long length() const;
-    RefPtr<ArrayBuffer> contents() const;
+    unsigned length() const { return m_buffer.length(); }
+    JSC::ArrayBuffer& contents() const { return *m_buffer.contents(); }
 
-    GPUBuffer* buffer() { return m_buffer.get(); }
+    const GPUBuffer& buffer() const { return m_buffer; }
 
 private:
-    WebGPUBuffer(WebGPURenderingContext*, ArrayBufferView*);
-    RefPtr<GPUBuffer> m_buffer;
+    WebGPUBuffer(WebGPURenderingContext&, const JSC::ArrayBufferView&);
+
+    GPUBuffer m_buffer;
 };
 
 } // namespace WebCore

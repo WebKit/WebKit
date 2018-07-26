@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,39 +27,34 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLRenderPipelineState;
-#endif
+OBJC_PROTOCOL(MTLRenderPipelineState);
 
 namespace WebCore {
 
 class GPUDevice;
 class GPURenderPipelineDescriptor;
 
-class GPURenderPipelineState : public RefCounted<GPURenderPipelineState> {
+class GPURenderPipelineState {
 public:
-    static RefPtr<GPURenderPipelineState> create(GPUDevice*, GPURenderPipelineDescriptor*);
-    WEBCORE_EXPORT ~GPURenderPipelineState();
+    GPURenderPipelineState() = default;
+    GPURenderPipelineState(const GPUDevice&, const GPURenderPipelineDescriptor&);
+    ~GPURenderPipelineState();
 
-    WEBCORE_EXPORT String label() const;
-    WEBCORE_EXPORT void setLabel(const String&);
+    String label() const;
+    void setLabel(const String&) const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderPipelineState *platformRenderPipelineState();
+#if USE(METAL)
+    MTLRenderPipelineState *metal() const;
 #endif
 
+#if USE(METAL)
 private:
-    GPURenderPipelineState(GPUDevice*, GPURenderPipelineDescriptor*);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLRenderPipelineState> m_renderPipelineState;
+    RetainPtr<MTLRenderPipelineState> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

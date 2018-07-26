@@ -27,29 +27,24 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPURenderPipelineState.h"
 #include "WebGPUObject.h"
-
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPURenderPipelineState;
-class WebGPURenderPipelineDescriptor;
-
 class WebGPURenderPipelineState : public WebGPUObject {
 public:
-    virtual ~WebGPURenderPipelineState();
-    static Ref<WebGPURenderPipelineState> create(WebGPURenderingContext*, WebGPURenderPipelineDescriptor*);
+    static Ref<WebGPURenderPipelineState> create(WebGPURenderingContext&, const GPURenderPipelineDescriptor&);
 
     String label() const;
     void setLabel(const String&);
 
-    GPURenderPipelineState* renderPipelineState() { return m_renderPipelineState.get(); }
+    const GPURenderPipelineState& state() const { return m_state; }
 
 private:
-    WebGPURenderPipelineState(WebGPURenderingContext*, WebGPURenderPipelineDescriptor*);
+    WebGPURenderPipelineState(WebGPURenderingContext&, const GPURenderPipelineDescriptor&);
 
-    RefPtr<GPURenderPipelineState> m_renderPipelineState;
+    GPURenderPipelineState m_state;
 };
     
 } // namespace WebCore

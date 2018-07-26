@@ -44,39 +44,35 @@ namespace TestWebKitAPI {
 
 TEST_F(GPU, BufferCreate)
 {
-    auto device = GPUDevice::create();
+    GPUDevice device;
+
     // Not all hardware supports Metal, so it is possible
     // that we were unable to create the MTLDevice object.
     // In that case, the device should be null.
     if (!device)
         return;
 
-    id<MTLDevice> mtlDevice = (id<MTLDevice>)device->platformDevice();
-    EXPECT_NOT_NULL(mtlDevice);
+    EXPECT_NOT_NULL(device.metal());
 
     auto bufferView = JSC::Uint8Array::create(1024);
 
-    uint8_t* data = bufferView->data();
+    auto data = bufferView->data();
     memset(data, 1, bufferView->byteLength());
 
-    auto buffer = device->createBufferFromData(bufferView.get());
-    EXPECT_NOT_NULL(buffer);
-    EXPECT_EQ(buffer->length(), static_cast<unsigned long>(1024));
+    GPUBuffer buffer { device, *bufferView };
+    EXPECT_EQ(1024U, buffer.length());
 
-    auto contents = buffer->contents();
+    auto contents = buffer.contents();
     EXPECT_NOT_NULL(contents);
-    EXPECT_EQ(contents->byteLength(), static_cast<unsigned long>(1024));
+    EXPECT_EQ(1024U, contents->byteLength());
 
-    uint8_t* contentsData = static_cast<uint8_t*>(contents->data());
-    EXPECT_NE(contentsData, data);
-    EXPECT_EQ(contentsData[0], 1);
-    EXPECT_EQ(contentsData[512], 1);
-    EXPECT_EQ(contentsData[1023], 1);
+    auto contentsData = static_cast<uint8_t*>(contents->data());
+    EXPECT_NE(data, contentsData);
+    EXPECT_EQ(1U, contentsData[0]);
+    EXPECT_EQ(1U, contentsData[512]);
+    EXPECT_EQ(1U, contentsData[1023]);
 
-    MTLBuffer *mtlBuffer = buffer->platformBuffer();
-    EXPECT_NOT_NULL(mtlBuffer);
-
-
+    EXPECT_NOT_NULL(buffer.metal());
 }
 
 } // namespace TestWebKitAPI

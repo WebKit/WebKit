@@ -28,32 +28,20 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUFunction.h"
-#include "GPULibrary.h"
 #include "WebGPULibrary.h"
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPUFunction> WebGPUFunction::create(WebGPURenderingContext* context, WebGPULibrary* library, const String& name)
+Ref<WebGPUFunction> WebGPUFunction::create(WebGPURenderingContext& context, GPUFunction&& function)
 {
-    return adoptRef(*new WebGPUFunction(context, library, name));
+    return adoptRef(*new WebGPUFunction(context, WTFMove(function)));
 }
 
-WebGPUFunction::WebGPUFunction(WebGPURenderingContext* context, WebGPULibrary* library, const String& name)
-    : WebGPUObject(context)
+WebGPUFunction::WebGPUFunction(WebGPURenderingContext& context, GPUFunction&& function)
+    : WebGPUObject { &context }
+    , m_function { WTFMove(function) }
 {
-    m_function = library->library()->functionWithName(name);
-}
-
-WebGPUFunction::~WebGPUFunction() = default;
-
-String WebGPUFunction::name() const
-{
-    if (!m_function)
-        return emptyString();
-
-    return m_function->name();
 }
 
 } // namespace WebCore

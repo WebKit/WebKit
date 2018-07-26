@@ -27,36 +27,31 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPULibrary.h"
 #include "WebGPUObject.h"
-
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPULibrary;
 class WebGPUFunction;
 
 class WebGPULibrary : public WebGPUObject {
 public:
-    virtual ~WebGPULibrary();
-    static Ref<WebGPULibrary> create(WebGPURenderingContext*, const String& sourceCode);
+    static Ref<WebGPULibrary> create(WebGPURenderingContext&, const String& sourceCode);
 
-    String sourceCode() const { return m_sourceCode; }
-    String label() const;
-    void setLabel(const String&);
+    const String& sourceCode() const { return m_sourceCode; }
 
-    Vector<String> functionNames();
+    String label() const { return m_library.label(); }
+    void setLabel(const String& label) { m_library.setLabel(label); }
 
-    RefPtr<WebGPUFunction> functionWithName(const String&);
+    Vector<String> functionNames() const;
 
-    GPULibrary* library() { return m_library.get(); }
+    RefPtr<WebGPUFunction> functionWithName(const String&) const;
 
 private:
-    WebGPULibrary(WebGPURenderingContext*, const String& sourceCode);
+    WebGPULibrary(WebGPURenderingContext&, const String& sourceCode);
 
     String m_sourceCode;
-    RefPtr<GPULibrary> m_library;
+    GPULibrary m_library;
 };
 
 } // namespace WebCore

@@ -27,14 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUSize.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLComputeCommandEncoder;
-#endif
+OBJC_PROTOCOL(MTLComputeCommandEncoder);
 
 namespace WebCore {
     
@@ -42,27 +37,24 @@ class GPUBuffer;
 class GPUCommandBuffer;
 class GPUComputePipelineState;
 
-class GPUComputeCommandEncoder : public RefCounted<GPUComputeCommandEncoder> {
+struct GPUSize;
+
+class GPUComputeCommandEncoder {
 public:
-    static RefPtr<GPUComputeCommandEncoder> create(GPUCommandBuffer*);
-    WEBCORE_EXPORT ~GPUComputeCommandEncoder();
-        
-    WEBCORE_EXPORT void setComputePipelineState(GPUComputePipelineState*);
-    WEBCORE_EXPORT void setBuffer(GPUBuffer*, unsigned, unsigned);
-    WEBCORE_EXPORT void dispatch(GPUSize, GPUSize);
-    WEBCORE_EXPORT void endEncoding();
-        
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLComputeCommandEncoder *platformComputeCommandEncoder();
-#endif
-        
+    explicit GPUComputeCommandEncoder(const GPUCommandBuffer&);
+    ~GPUComputeCommandEncoder();
+
+    void setComputePipelineState(const GPUComputePipelineState&) const;
+    void setBuffer(const GPUBuffer&, unsigned, unsigned) const;
+    void dispatch(GPUSize, GPUSize) const;
+    void endEncoding() const;
+
+#if USE(METAL)
 private:
-    GPUComputeCommandEncoder(GPUCommandBuffer*);
-        
-#if PLATFORM(COCOA)
-    RetainPtr<MTLComputeCommandEncoder> m_computeCommandEncoder;
+    RetainPtr<MTLComputeCommandEncoder> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

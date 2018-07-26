@@ -24,59 +24,39 @@
  */
 
 #import "config.h"
-#import "GPUTexture.h"
+#import "GPUDepthStencilState.h"
 
 #if ENABLE(WEBGPU)
 
+#import "GPUDepthStencilDescriptor.h"
 #import "GPUDevice.h"
-#import "GPUDrawable.h"
-#import "GPUTextureDescriptor.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-GPUTexture::GPUTexture(GPUDevice* device, GPUTextureDescriptor* descriptor)
+GPUDepthStencilState::GPUDepthStencilState(const GPUDevice& device, const GPUDepthStencilDescriptor& descriptor)
+    : m_metal { adoptNS([device.metal() newDepthStencilStateWithDescriptor:descriptor.metal()]) }
 {
-    LOG(WebGPU, "GPUTexture::GPUTexture()");
-
-    if (!device || !device->platformDevice() || !descriptor || !descriptor->platformTextureDescriptor())
-        return;
-
-    m_texture = adoptNS((MTLTexture *)[device->platformDevice() newTextureWithDescriptor:descriptor->platformTextureDescriptor()]);
+    LOG(WebGPU, "GPUDepthStencilState::GPUDepthStencilState()");
 }
 
-GPUTexture::GPUTexture(GPUDrawable* other)
+String GPUDepthStencilState::label() const
 {
-    LOG(WebGPU, "GPUTexture::GPUTexture()");
+    if (!m_metal)
+        return emptyString();
 
-    m_texture = other->platformTexture();
+    return [m_metal label];
 }
 
-unsigned long GPUTexture::width() const
+void GPUDepthStencilState::setLabel(const String&) const
 {
-    if (!m_texture)
-        return 0;
-
-    id<MTLTexture> texture = static_cast<id<MTLTexture>>(m_texture.get());
-    return texture.width;
+    // FIXME: The MTLDepthStencilState protocol does not allow setting the label.
+    // The label has to be set on the descriptor when creating the state object.
+    // We should consider changing the WebGPU interface to not require this!
 }
-
-unsigned long GPUTexture::height() const
-{
-    if (!m_texture)
-        return 0;
-
-    id<MTLTexture> texture = static_cast<id<MTLTexture>>(m_texture.get());
-    return texture.height;
-}
-
-MTLTexture *GPUTexture::platformTexture()
-{
-    return m_texture.get();
-}
-
+    
 } // namespace WebCore
 
 #endif

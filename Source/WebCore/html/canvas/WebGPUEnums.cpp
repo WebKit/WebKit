@@ -55,7 +55,7 @@ std::optional<WebGPUCompareFunction> toWebGPUCompareFunction(const String& name)
     return std::nullopt;
 }
 
-String web3DCompareFunctionName(const WebGPUCompareFunction value)
+String web3DCompareFunctionName(WebGPUCompareFunction value)
 {
     if (value == WebGPUCompareFunction::Never)
         return "never"_s;

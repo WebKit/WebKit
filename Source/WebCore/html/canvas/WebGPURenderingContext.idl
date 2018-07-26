@@ -100,16 +100,16 @@
 
     WebGPULibrary createLibrary(DOMString sourceCode);
 
-    WebGPURenderPipelineState? createRenderPipelineState(WebGPURenderPipelineDescriptor descriptor);
-    WebGPUDepthStencilState? createDepthStencilState(WebGPUDepthStencilDescriptor descriptor);
-    WebGPUComputePipelineState? createComputePipelineState(WebGPUFunction function);
+    WebGPURenderPipelineState createRenderPipelineState(WebGPURenderPipelineDescriptor descriptor);
+    WebGPUDepthStencilState createDepthStencilState(WebGPUDepthStencilDescriptor descriptor);
+    WebGPUComputePipelineState createComputePipelineState(WebGPUFunction function);
 
-    WebGPUCommandQueue? createCommandQueue();
+    WebGPUCommandQueue createCommandQueue();
 
-    WebGPUDrawable? nextDrawable();
+    WebGPUDrawable nextDrawable();
 
     WebGPUBuffer? createBuffer(ArrayBufferView data);
 
-    WebGPUTexture? createTexture(WebGPUTextureDescriptor descriptor);
+    WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
 
 };

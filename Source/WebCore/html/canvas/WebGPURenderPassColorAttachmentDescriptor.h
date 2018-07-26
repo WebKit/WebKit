@@ -27,30 +27,26 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUObject.h"
+#include "GPURenderPassColorAttachmentDescriptor.h"
 #include "WebGPURenderPassAttachmentDescriptor.h"
 
-#include <wtf/Vector.h>
-
 namespace WebCore {
-
-class GPURenderPassColorAttachmentDescriptor;
 
 class WebGPURenderPassColorAttachmentDescriptor : public WebGPURenderPassAttachmentDescriptor {
 public:
     virtual ~WebGPURenderPassColorAttachmentDescriptor();
-    static Ref<WebGPURenderPassColorAttachmentDescriptor> create(WebGPURenderingContext*, GPURenderPassColorAttachmentDescriptor*);
+    static Ref<WebGPURenderPassColorAttachmentDescriptor> create(WebGPURenderingContext&, GPURenderPassColorAttachmentDescriptor&&);
 
     Vector<float> clearColor() const;
     void setClearColor(const Vector<float>&);
 
-    GPURenderPassColorAttachmentDescriptor* renderPassColorAttachmentDescriptor() const;
-
-    bool isColorAttachmentDescriptor() const override { return true; }
-
 private:
-    WebGPURenderPassColorAttachmentDescriptor(WebGPURenderingContext*, GPURenderPassColorAttachmentDescriptor*);
+    WebGPURenderPassColorAttachmentDescriptor(WebGPURenderingContext&, GPURenderPassColorAttachmentDescriptor&&);
 
+    const GPURenderPassAttachmentDescriptor& descriptor() const final;
+    bool isColorAttachmentDescriptor() const final { return true; }
+
+    GPURenderPassColorAttachmentDescriptor m_descriptor;
 };
     
 } // namespace WebCore

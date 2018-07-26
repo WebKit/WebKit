@@ -28,45 +28,27 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCommandQueue.h"
 #include "WebGPUCommandBuffer.h"
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPUCommandQueue> WebGPUCommandQueue::create(WebGPURenderingContext* context)
+Ref<WebGPUCommandQueue> WebGPUCommandQueue::create(WebGPURenderingContext& context)
 {
     return adoptRef(*new WebGPUCommandQueue(context));
 }
 
-WebGPUCommandQueue::WebGPUCommandQueue(WebGPURenderingContext* context)
-    : WebGPUObject(context)
+WebGPUCommandQueue::WebGPUCommandQueue(WebGPURenderingContext& context)
+    : WebGPUObject { &context }
+    , m_queue { context.device() }
 {
-    m_commandQueue = context->device()->createCommandQueue();
 }
 
 WebGPUCommandQueue::~WebGPUCommandQueue() = default;
 
-String WebGPUCommandQueue::label() const
+Ref<WebGPUCommandBuffer> WebGPUCommandQueue::createCommandBuffer()
 {
-    if (!m_commandQueue)
-        return emptyString();
-
-    return m_commandQueue->label();
-}
-
-void WebGPUCommandQueue::setLabel(const String& label)
-{
-    if (!m_commandQueue)
-        return;
-
-    m_commandQueue->setLabel(label);
-}
-
-RefPtr<WebGPUCommandBuffer> WebGPUCommandQueue::createCommandBuffer()
-{
-    RefPtr<WebGPUCommandBuffer> buffer = WebGPUCommandBuffer::create(this->context(), this);
-    return buffer;
+    return WebGPUCommandBuffer::create(*context(), m_queue);
 }
 
 } // namespace WebCore

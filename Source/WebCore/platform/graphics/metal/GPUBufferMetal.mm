@@ -24,45 +24,44 @@
  */
 
 #import "config.h"
-#import "GPURenderPipelineState.h"
+#import "GPUBuffer.h"
 
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
-#import "GPURenderPipelineDescriptor.h"
 #import "Logging.h"
-
+#import <JavaScriptCore/ArrayBufferView.h>
 #import <Metal/Metal.h>
+#import <wtf/Gigacage.h>
+#import <wtf/PageBlock.h>
 
 namespace WebCore {
 
-GPURenderPipelineState::GPURenderPipelineState(GPUDevice* device, GPURenderPipelineDescriptor* descriptor)
+GPUBuffer::GPUBuffer(const GPUDevice& device, const JSC::ArrayBufferView& data)
 {
-    LOG(WebGPU, "GPURenderPipelineState::GPURenderPipelineState()");
+    LOG(WebGPU, "GPUBuffer::GPUBuffer()");
 
-    if (!device || !device->platformDevice() || !descriptor || !descriptor->platformRenderPipelineDescriptor())
+    if (!device.metal())
         return;
-
-    m_renderPipelineState = adoptNS((MTLRenderPipelineState *)[device->platformDevice() newRenderPipelineStateWithDescriptor:descriptor->platformRenderPipelineDescriptor() error:nil]);
-}
-
-String GPURenderPipelineState::label() const
-{
-    if (!m_renderPipelineState)
-        return emptyString();
-
-    return [m_renderPipelineState label];
-}
-
-void GPURenderPipelineState::setLabel(const String& label)
-{
-    ASSERT(m_renderPipelineState);
-    [m_renderPipelineState setLabel:label];
-}
     
-MTLRenderPipelineState *GPURenderPipelineState::platformRenderPipelineState()
-{
-    return m_renderPipelineState.get();
+    size_t pageSize = WTF::pageSize();
+    size_t pageAlignedSize = roundUpToMultipleOf(pageSize, data.byteLength());
+    void* pageAlignedCopy = Gigacage::tryAlignedMalloc(Gigacage::Primitive, pageSize, pageAlignedSize);
+    if (!pageAlignedCopy)
+        return;
+    memcpy(pageAlignedCopy, data.baseAddress(), data.byteLength());
+    m_contents = ArrayBuffer::createFromBytes(pageAlignedCopy, data.byteLength(), [] (void* ptr) {
+        Gigacage::alignedFree(Gigacage::Primitive, ptr);
+    });
+    m_contents->ref();
+    ArrayBuffer* capturedContents = m_contents.get();
+    m_metal = adoptNS([device.metal() newBufferWithBytesNoCopy:m_contents->data() length:pageAlignedSize options:MTLResourceOptionCPUCacheModeDefault deallocator:^(void*, NSUInteger) {
+        capturedContents->deref();
+    }]);
+    if (!m_metal) {
+        m_contents->deref();
+        m_contents = nullptr;
+    }
 }
 
 } // namespace WebCore

@@ -27,24 +27,23 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUComputePipelineState.h"
 #include "WebGPUObject.h"
-
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPUComputePipelineState;
 class WebGPUFunction;
 
 class WebGPUComputePipelineState : public WebGPUObject {
 public:
-    virtual ~WebGPUComputePipelineState();
-    static Ref<WebGPUComputePipelineState> create(WebGPURenderingContext*, WebGPUFunction*);
-    GPUComputePipelineState* computePipelineState() { return m_computePipelineState.get(); }
+    static Ref<WebGPUComputePipelineState> create(WebGPURenderingContext&, const GPUFunction&);
+
+    GPUComputePipelineState& state() { return m_state; }
 
 private:
-    WebGPUComputePipelineState(WebGPURenderingContext*, WebGPUFunction*);
-    RefPtr<GPUComputePipelineState> m_computePipelineState;
+    WebGPUComputePipelineState(WebGPURenderingContext&, const GPUFunction&);
+
+    GPUComputePipelineState m_state;
 };
 
 } // namespace WebCore

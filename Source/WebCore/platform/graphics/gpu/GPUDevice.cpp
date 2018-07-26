@@ -28,73 +28,15 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBuffer.h"
-#include "GPUCommandQueue.h"
-#include "GPUDrawable.h"
-#include "GPULibrary.h"
-#include "GPUTexture.h"
-#include "GPUTextureDescriptor.h"
 #include "Logging.h"
 
 namespace WebCore {
 
-RefPtr<GPUDevice> GPUDevice::create()
-{
-    RefPtr<GPUDevice> device = adoptRef(new GPUDevice());
-
-#if PLATFORM(COCOA)
-    if (!device->platformDevice()) {
-        LOG(WebGPU, "GPUDevice::create() was unable to create the low-level device");
-        return nullptr;
-    }
-#endif
-
-    LOG(WebGPU, "GPUDevice::create() device is %p", device.get());
-    return device;
-}
-
 GPUDevice::~GPUDevice()
 {
     LOG(WebGPU, "GPUDevice::~GPUDevice()");
+    disconnect();
 }
-
-RefPtr<GPUCommandQueue> GPUDevice::createCommandQueue()
-{
-    return GPUCommandQueue::create(this);
-}
-
-RefPtr<GPULibrary> GPUDevice::createLibrary(const String& sourceCode)
-{
-    return GPULibrary::create(this, sourceCode);
-}
-
-RefPtr<GPUBuffer> GPUDevice::createBufferFromData(ArrayBufferView* data)
-{
-    return GPUBuffer::create(this, data);
-}
-
-RefPtr<GPUTexture> GPUDevice::createTexture(GPUTextureDescriptor* descriptor)
-{
-    return GPUTexture::create(this, descriptor);
-}
-
-RefPtr<GPUDrawable> GPUDevice::getFramebuffer()
-{
-    return GPUDrawable::create(this);
-}
-
-#if !PLATFORM(COCOA)
-
-GPUDevice::GPUDevice()
-{
-
-}
-
-void GPUDevice::reshape(int, int)
-{
-}
-
-#endif
 
 } // namespace WebCore
 

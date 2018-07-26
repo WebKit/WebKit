@@ -33,23 +33,10 @@
 
 namespace WebCore {
 
-RefPtr<GPURenderPassDescriptor> GPURenderPassDescriptor::create()
-{
-    RefPtr<GPURenderPassDescriptor> descriptor = adoptRef(new GPURenderPassDescriptor());
-    return descriptor;
-}
-
 GPURenderPassDescriptor::~GPURenderPassDescriptor()
 {
     LOG(WebGPU, "GPURenderPassDescriptor::~GPURenderPassDescriptor()");
 }
-
-#if !PLATFORM(COCOA)
-RefPtr<GPURenderPassDepthAttachmentDescriptor> GPURenderPassDescriptor::depthAttachment()
-{
-    return nullptr;
-}
-#endif
 
 } // namespace WebCore
 

@@ -27,42 +27,39 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLRenderPassAttachmentDescriptor;
-#endif
 
 namespace WebCore {
 
 class GPUTexture;
 
-class GPURenderPassAttachmentDescriptor : public RefCounted<GPURenderPassAttachmentDescriptor> {
+class GPURenderPassAttachmentDescriptor {
 public:
-    WEBCORE_EXPORT ~GPURenderPassAttachmentDescriptor();
+    ~GPURenderPassAttachmentDescriptor();
 
-    WEBCORE_EXPORT unsigned long loadAction() const;
-    WEBCORE_EXPORT void setLoadAction(unsigned long);
+    unsigned loadAction() const;
+    void setLoadAction(unsigned) const;
 
-    WEBCORE_EXPORT unsigned long storeAction() const;
-    WEBCORE_EXPORT void setStoreAction(unsigned long);
+    unsigned storeAction() const;
+    void setStoreAction(unsigned) const;
 
-    WEBCORE_EXPORT void setTexture(RefPtr<GPUTexture>);
+    void setTexture(const GPUTexture&) const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderPassAttachmentDescriptor *platformRenderPassAttachmentDescriptor();
+#if USE(METAL)
+    MTLRenderPassAttachmentDescriptor *metal() const;
 #endif
 
+#if USE(METAL)
 protected:
-#if PLATFORM(COCOA)
-    GPURenderPassAttachmentDescriptor(MTLRenderPassAttachmentDescriptor *);
-    RetainPtr<MTLRenderPassAttachmentDescriptor> m_renderPassAttachmentDescriptor;
-#else
-    GPURenderPassAttachmentDescriptor();
+    explicit GPURenderPassAttachmentDescriptor(MTLRenderPassAttachmentDescriptor *);
+
+private:
+    RetainPtr<MTLRenderPassAttachmentDescriptor> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

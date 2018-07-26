@@ -39,31 +39,29 @@ namespace TestWebKitAPI {
 
 TEST_F(GPU, CommandQueueCreate)
 {
-    auto device = GPUDevice::create();
+    GPUDevice device;
+
     // Not all hardware supports Metal, so it is possible
     // that we were unable to create the MTLDevice object.
     // In that case, the device should be null.
     if (!device)
         return;
 
-    auto commandQueue = device->createCommandQueue();
-    EXPECT_NOT_NULL(commandQueue);
-    EXPECT_WK_STREQ(commandQueue->label(), emptyString());
+    GPUCommandQueue commandQueue { device };
+    EXPECT_WK_STREQ("", commandQueue.label());
 
-    id<MTLCommandQueue> mtlCommandQueue = (id<MTLCommandQueue>)commandQueue->platformCommandQueue();
-    EXPECT_NOT_NULL(mtlCommandQueue);
+    EXPECT_NOT_NULL(commandQueue.metal());
 
     // If you haven't set a label, we just use the prefix.
-    EXPECT_STREQ("com.apple.WebKit", [mtlCommandQueue.label UTF8String]);
+    EXPECT_STREQ("com.apple.WebKit", commandQueue.metal().label.UTF8String);
 
-    String testLabel("this.is.a.test"_s);
-    commandQueue->setLabel(testLabel);
+    commandQueue.setLabel("this.is.a.test"_s);
 
     // The WebKit API doesn't prefix.
-    EXPECT_WK_STREQ(commandQueue->label(), testLabel);
+    EXPECT_WK_STREQ("this.is.a.test", commandQueue.label());
 
     // But the underlying Metal object label will have one.
-    EXPECT_STREQ("com.apple.WebKit.this.is.a.test", [mtlCommandQueue.label UTF8String]);
+    EXPECT_STREQ("com.apple.WebKit.this.is.a.test", commandQueue.metal().label.UTF8String);
 }
 
 } // namespace TestWebKitAPI

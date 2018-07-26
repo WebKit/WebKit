@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,47 @@
  */
 
 #import "config.h"
-#import "GPUComputePipelineState.h"
+#import "GPUCommandQueue.h"
 
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
-#import "GPUFunction.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
-GPUComputePipelineState::GPUComputePipelineState(GPUDevice* device, GPUFunction* function)
+static NSString * const commandQueueDefaultLabel = @"com.apple.WebKit";
+static NSString * const commandQueueLabelPrefix = @"com.apple.WebKit.";
+
+GPUCommandQueue::GPUCommandQueue(const GPUDevice& device)
+    : m_metal { adoptNS([device.metal() newCommandQueue]) }
 {
-    LOG(WebGPU, "GPUComputePipelineState::GPUComputePipelineState()");
+    LOG(WebGPU, "GPUCommandQueue::GPUCommandQueue()");
 
-    if (!device || !device->platformDevice() || !function || !function->platformFunction())
-        return;
-
-    m_computePipelineState = adoptNS((MTLComputePipelineState *)[device->platformDevice() newComputePipelineStateWithFunction:(id<MTLFunction>)function->platformFunction() error:nil]);
+    [m_metal setLabel:commandQueueDefaultLabel];
 }
 
-MTLComputePipelineState *GPUComputePipelineState::platformComputePipelineState()
+String GPUCommandQueue::label() const
 {
-    return m_computePipelineState.get();
+    if (!m_metal)
+        return emptyString();
+
+    NSString *prefixedLabel = [m_metal label];
+
+    if ([prefixedLabel isEqualToString:commandQueueDefaultLabel])
+        return emptyString();
+
+    ASSERT(prefixedLabel.length > commandQueueLabelPrefix.length);
+    return [prefixedLabel substringFromIndex:commandQueueLabelPrefix.length];
+}
+
+void GPUCommandQueue::setLabel(const String& label) const
+{
+    if (label.isEmpty())
+        [m_metal setLabel:commandQueueDefaultLabel];
+    else
+        [m_metal setLabel:[commandQueueLabelPrefix stringByAppendingString:label]];
 }
 
 } // namespace WebCore

@@ -28,38 +28,25 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDrawable.h"
 #include "GPUTexture.h"
 #include "WebGPURenderingContext.h"
 #include "WebGPUTexture.h"
 
 namespace WebCore {
 
-Ref<WebGPUDrawable> WebGPUDrawable::create(WebGPURenderingContext* context)
+Ref<WebGPUDrawable> WebGPUDrawable::create(WebGPURenderingContext& context)
 {
     return adoptRef(*new WebGPUDrawable(context));
 }
 
-WebGPUDrawable::WebGPUDrawable(WebGPURenderingContext* context)
-    : WebGPUObject(context)
+WebGPUDrawable::WebGPUDrawable(WebGPURenderingContext& context)
+    : WebGPUObject { &context }
+    , m_drawable { context.device() }
+    , m_texture { WebGPUTexture::createFromDrawableTexture(context, GPUTexture { m_drawable }) }
 {
-    m_drawable = context->device()->getFramebuffer();
-    if (!m_drawable)
-        return;
-
-    auto drawableTexture = GPUTexture::createFromDrawable(m_drawable.get());
-    m_texture = WebGPUTexture::createFromDrawableTexture(context, WTFMove(drawableTexture));
 }
 
 WebGPUDrawable::~WebGPUDrawable() = default;
-
-WebGPUTexture* WebGPUDrawable::texture()
-{
-    if (!m_texture)
-        return nullptr;
-
-    return m_texture.get();
-}
 
 } // namespace WebCore
 

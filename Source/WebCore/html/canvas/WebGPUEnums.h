@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/Forward.h>
 #include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -46,8 +46,8 @@ enum class WebGPUCompareFunction {
 };
 
 std::optional<WebGPUCompareFunction> toWebGPUCompareFunction(const String&);
-String web3DCompareFunctionName(const WebGPUCompareFunction);
-GPUCompareFunction toGPUCompareFunction(const WebGPUCompareFunction);
+String web3DCompareFunctionName(WebGPUCompareFunction);
+GPUCompareFunction toGPUCompareFunction(WebGPUCompareFunction);
 
 } // namespace WebCore
 

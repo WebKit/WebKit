@@ -28,33 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "GPURenderPipelineDescriptor.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPURenderPipelineState> GPURenderPipelineState::create(GPUDevice* device, GPURenderPipelineDescriptor* descriptor)
-{
-    RefPtr<GPURenderPipelineState> state = adoptRef(new GPURenderPipelineState(device, descriptor));
-    return state;
-}
 
 GPURenderPipelineState::~GPURenderPipelineState()
 {
     LOG(WebGPU, "GPURenderPipelineState::~GPURenderPipelineState()");
 }
-
-#if !PLATFORM(COCOA)
-String GPURenderPipelineState::label() const
-{
-    return emptyString();
-}
-
-void GPURenderPipelineState::setLabel(const String&)
-{
-}
-#endif
 
 } // namespace WebCore
 

@@ -27,26 +27,22 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUFunction.h"
 #include "WebGPUObject.h"
 
 namespace WebCore {
 
-class GPUFunction;
-class WebGPULibrary;
-
 class WebGPUFunction : public WebGPUObject {
 public:
-    virtual ~WebGPUFunction();
-    static Ref<WebGPUFunction> create(WebGPURenderingContext*, WebGPULibrary*, const String& name);
+    static Ref<WebGPUFunction> create(WebGPURenderingContext&, GPUFunction&&);
 
-    String name() const;
-
-    GPUFunction* function() const { return m_function.get(); }
+    String name() const { return m_function.name(); }
+    const GPUFunction& function() const { return m_function; }
 
 private:
-    WebGPUFunction(WebGPURenderingContext*, WebGPULibrary*, const String& name);
+    WebGPUFunction(WebGPURenderingContext&, GPUFunction&&);
 
-    RefPtr<GPUFunction> m_function;
+    GPUFunction m_function;
 };
     
 } // namespace WebCore

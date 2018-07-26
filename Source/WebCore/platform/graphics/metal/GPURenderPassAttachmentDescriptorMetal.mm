@@ -35,56 +35,42 @@
 
 namespace WebCore {
 
-GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor(MTLRenderPassAttachmentDescriptor *attachmentDescriptor)
+GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor(MTLRenderPassAttachmentDescriptor *metal)
+    : m_metal { metal }
 {
     LOG(WebGPU, "GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor()");
-
-    m_renderPassAttachmentDescriptor = attachmentDescriptor;
 }
 
-unsigned long GPURenderPassAttachmentDescriptor::loadAction() const
+unsigned GPURenderPassAttachmentDescriptor::loadAction() const
 {
-    if (!m_renderPassAttachmentDescriptor)
-        return 0; // FIXME: WebGPU - There is probably a real value for this.
-
-    return [m_renderPassAttachmentDescriptor loadAction];
+    return [m_metal loadAction];
 }
 
-void GPURenderPassAttachmentDescriptor::setLoadAction(unsigned long newLoadAction)
+void GPURenderPassAttachmentDescriptor::setLoadAction(unsigned newLoadAction) const
 {
-    if (!m_renderPassAttachmentDescriptor)
-        return;
-
-    [m_renderPassAttachmentDescriptor setLoadAction:static_cast<MTLLoadAction>(newLoadAction)];
+    // FIXME: Should this range check for legitimate values?
+    [m_metal setLoadAction:static_cast<MTLLoadAction>(newLoadAction)];
 }
 
-unsigned long GPURenderPassAttachmentDescriptor::storeAction() const
+unsigned GPURenderPassAttachmentDescriptor::storeAction() const
 {
-    if (!m_renderPassAttachmentDescriptor)
-        return 0; // FIXME: WebGPU - There is probably a real value for this.
-
-    return [m_renderPassAttachmentDescriptor storeAction];
+    return [m_metal storeAction];
 }
 
-void GPURenderPassAttachmentDescriptor::setStoreAction(unsigned long newStoreAction)
+void GPURenderPassAttachmentDescriptor::setStoreAction(unsigned newStoreAction) const
 {
-    if (!m_renderPassAttachmentDescriptor)
-        return;
-
-    [m_renderPassAttachmentDescriptor setStoreAction:static_cast<MTLStoreAction>(newStoreAction)];
+    // FIXME: Should this range check for legitimate values?
+    [m_metal setStoreAction:static_cast<MTLStoreAction>(newStoreAction)];
 }
 
-void GPURenderPassAttachmentDescriptor::setTexture(RefPtr<GPUTexture> texture)
+void GPURenderPassAttachmentDescriptor::setTexture(const GPUTexture& texture) const
 {
-    if (!m_renderPassAttachmentDescriptor)
-        return;
-    
-    [m_renderPassAttachmentDescriptor setTexture:static_cast<id<MTLTexture>>(texture->platformTexture())];
+    [m_metal setTexture:texture.metal()];
 }
 
-MTLRenderPassAttachmentDescriptor *GPURenderPassAttachmentDescriptor::platformRenderPassAttachmentDescriptor()
+MTLRenderPassAttachmentDescriptor *GPURenderPassAttachmentDescriptor::metal() const
 {
-    return m_renderPassAttachmentDescriptor.get();
+    return m_metal.get();
 }
 
 } // namespace WebCore

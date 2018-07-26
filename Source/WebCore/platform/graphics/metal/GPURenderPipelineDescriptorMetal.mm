@@ -24,55 +24,58 @@
  */
 
 #import "config.h"
-#import "GPUDepthStencilDescriptor.h"
+#import "GPURenderPipelineDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
-#import "GPUEnums.h"
+#import "GPUFunction.h"
+#import "GPURenderPipelineColorAttachmentDescriptor.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
 
-GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()
+GPURenderPipelineDescriptor::GPURenderPipelineDescriptor()
+    : m_metal { adoptNS([MTLRenderPipelineDescriptor new]) }
 {
-    LOG(WebGPU, "GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()");
-
-    m_depthStencilDescriptor = adoptNS((MTLDepthStencilDescriptor *)[MTLDepthStencilDescriptor new]);
+    LOG(WebGPU, "GPURenderPipelineDescriptor::GPURenderPipelineDescriptor()");
 }
 
-bool GPUDepthStencilDescriptor::depthWriteEnabled() const
+unsigned GPURenderPipelineDescriptor::depthAttachmentPixelFormat() const
 {
-    if (!m_depthStencilDescriptor)
-        return false;
-
-    return [m_depthStencilDescriptor isDepthWriteEnabled];
+    return [m_metal depthAttachmentPixelFormat];
 }
 
-void GPUDepthStencilDescriptor::setDepthWriteEnabled(bool newDepthWriteEnabled)
+void GPURenderPipelineDescriptor::setDepthAttachmentPixelFormat(unsigned newPixelFormat) const
 {
-    ASSERT(m_depthStencilDescriptor);
-    [m_depthStencilDescriptor setDepthWriteEnabled:newDepthWriteEnabled];
+    [m_metal setDepthAttachmentPixelFormat:static_cast<MTLPixelFormat>(newPixelFormat)];
 }
 
-GPUCompareFunction GPUDepthStencilDescriptor::depthCompareFunction() const
+void GPURenderPipelineDescriptor::setVertexFunction(const GPUFunction& newFunction) const
 {
-    if (!m_depthStencilDescriptor)
-        return GPUCompareFunction::Never;
-
-    return static_cast<GPUCompareFunction>([m_depthStencilDescriptor depthCompareFunction]);
+    [m_metal setVertexFunction:newFunction.metal()];
 }
 
-void GPUDepthStencilDescriptor::setDepthCompareFunction(GPUCompareFunction newFunction)
+void GPURenderPipelineDescriptor::setFragmentFunction(const GPUFunction& newFunction) const
 {
-    ASSERT(m_depthStencilDescriptor);
-    [m_depthStencilDescriptor setDepthCompareFunction:static_cast<MTLCompareFunction>(newFunction)];
+    [m_metal setFragmentFunction:newFunction.metal()];
 }
 
-MTLDepthStencilDescriptor *GPUDepthStencilDescriptor::platformDepthStencilDescriptor()
+Vector<GPURenderPipelineColorAttachmentDescriptor> GPURenderPipelineDescriptor::colorAttachments() const
 {
-    return m_depthStencilDescriptor.get();
+    // FIXME: Why is it always OK to return exactly one attachment?
+    return { { [[m_metal colorAttachments] objectAtIndexedSubscript:0] } };
+}
+
+void GPURenderPipelineDescriptor::reset() const
+{
+    [m_metal reset];
+}
+
+MTLRenderPipelineDescriptor *GPURenderPipelineDescriptor::metal() const
+{
+    return m_metal.get();
 }
 
 } // namespace WebCore

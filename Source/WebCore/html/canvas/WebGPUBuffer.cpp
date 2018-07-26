@@ -28,39 +28,20 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBuffer.h"
 #include "WebGPURenderingContext.h"
-#include <JavaScriptCore/ArrayBuffer.h>
 
 namespace WebCore {
 
-Ref<WebGPUBuffer> WebGPUBuffer::create(WebGPURenderingContext* context, ArrayBufferView* data)
+RefPtr<WebGPUBuffer> WebGPUBuffer::create(WebGPURenderingContext& context, const JSC::ArrayBufferView& data)
 {
+    // FIXME: Consider returning null rather than a buffer with length 0 and contents null when creation fails.
     return adoptRef(*new WebGPUBuffer(context, data));
 }
 
-WebGPUBuffer::WebGPUBuffer(WebGPURenderingContext* context, ArrayBufferView* data)
-    : WebGPUObject(context)
+WebGPUBuffer::WebGPUBuffer(WebGPURenderingContext& context, const JSC::ArrayBufferView& data)
+    : WebGPUObject { &context }
+    , m_buffer { context.device(), data }
 {
-    m_buffer = context->device()->createBufferFromData(data);
-}
-
-WebGPUBuffer::~WebGPUBuffer() = default;
-
-unsigned long WebGPUBuffer::length() const
-{
-    if (!m_buffer)
-        return 0;
-
-    return m_buffer->length();
-}
-
-RefPtr<ArrayBuffer> WebGPUBuffer::contents() const
-{
-    if (!m_buffer)
-        return nullptr;
-
-    return m_buffer->contents();
 }
 
 } // namespace WebCore

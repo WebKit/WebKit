@@ -27,29 +27,28 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUTexture.h"
 #include "WebGPUObject.h"
 
 namespace WebCore {
 
-class GPUTexture;
-class WebGPUTextureDescriptor;
+class GPUTextureDescriptor;
 
 class WebGPUTexture : public WebGPUObject {
 public:
-    virtual ~WebGPUTexture();
-    static Ref<WebGPUTexture> createFromDrawableTexture(WebGPURenderingContext*, RefPtr<GPUTexture>&&);
-    static Ref<WebGPUTexture> create(WebGPURenderingContext*, WebGPUTextureDescriptor*);
+    static Ref<WebGPUTexture> createFromDrawableTexture(WebGPURenderingContext&, GPUTexture&&);
+    static Ref<WebGPUTexture> create(WebGPURenderingContext&, const GPUTextureDescriptor&);
 
-    unsigned long width() const;
-    unsigned long height() const;
+    unsigned width() const { return m_texture.width(); }
+    unsigned height() const { return m_texture.height(); }
 
-    GPUTexture* texture() const { return m_texture.get(); }
+    const GPUTexture& texture() const { return m_texture; }
 
 private:
-    WebGPUTexture(WebGPURenderingContext*, RefPtr<GPUTexture>&&);
-    WebGPUTexture(WebGPURenderingContext*, WebGPUTextureDescriptor*);
+    WebGPUTexture(WebGPURenderingContext&, GPUTexture&&);
+    WebGPUTexture(WebGPURenderingContext&, const GPUTextureDescriptor&);
 
-    RefPtr<GPUTexture> m_texture;
+    GPUTexture m_texture;
 };
     
 } // namespace WebCore

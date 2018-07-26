@@ -30,7 +30,6 @@
 
 #include "GPUFunction.h"
 #include "GPURenderPipelineColorAttachmentDescriptor.h"
-#include "GPURenderPipelineDescriptor.h"
 #include "WebGPUFunction.h"
 #include "WebGPURenderPipelineColorAttachmentDescriptor.h"
 #include "WebGPURenderingContext.h"
@@ -39,83 +38,72 @@ namespace WebCore {
 
 Ref<WebGPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::create()
 {
-    return adoptRef(*new WebGPURenderPipelineDescriptor());
+    return adoptRef(*new WebGPURenderPipelineDescriptor);
 }
 
-WebGPURenderPipelineDescriptor::WebGPURenderPipelineDescriptor()
-    : WebGPUObject()
-{
-    m_renderPipelineDescriptor = GPURenderPipelineDescriptor::create();
-}
+WebGPURenderPipelineDescriptor::WebGPURenderPipelineDescriptor() = default;
 
 WebGPURenderPipelineDescriptor::~WebGPURenderPipelineDescriptor() = default;
 
-RefPtr<WebGPUFunction> WebGPURenderPipelineDescriptor::vertexFunction() const
+WebGPUFunction* WebGPURenderPipelineDescriptor::vertexFunction() const
 {
-    return m_vertexFunction;
+    return m_vertexFunction.get();
 }
 
-void WebGPURenderPipelineDescriptor::setVertexFunction(RefPtr<WebGPUFunction> newVertexFunction)
+void WebGPURenderPipelineDescriptor::setVertexFunction(RefPtr<WebGPUFunction>&& newVertexFunction)
 {
+    // FIXME: Why can't we set this to null?
     if (!newVertexFunction)
         return;
 
-    m_vertexFunction = newVertexFunction;
+    m_vertexFunction = WTFMove(newVertexFunction);
 
-    if (m_renderPipelineDescriptor)
-        m_renderPipelineDescriptor->setVertexFunction(newVertexFunction->function());
+    m_descriptor.setVertexFunction(m_vertexFunction->function());
 }
 
-RefPtr<WebGPUFunction> WebGPURenderPipelineDescriptor::fragmentFunction() const
+WebGPUFunction* WebGPURenderPipelineDescriptor::fragmentFunction() const
 {
-    return m_fragmentFunction;
+    return m_fragmentFunction.get();
 }
 
-void WebGPURenderPipelineDescriptor::setFragmentFunction(RefPtr<WebGPUFunction> newFragmentFunction)
+void WebGPURenderPipelineDescriptor::setFragmentFunction(RefPtr<WebGPUFunction>&& newFragmentFunction)
 {
+    // FIXME: Why can't we set this to null?
     if (!newFragmentFunction)
         return;
 
-    m_fragmentFunction = newFragmentFunction;
+    m_fragmentFunction = WTFMove(newFragmentFunction);
 
-    if (m_renderPipelineDescriptor)
-        m_renderPipelineDescriptor->setFragmentFunction(newFragmentFunction->function());
+    m_descriptor.setFragmentFunction(m_fragmentFunction->function());
 }
 
-Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>> WebGPURenderPipelineDescriptor::colorAttachments()
+const Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>>& WebGPURenderPipelineDescriptor::colorAttachments()
 {
-    if (!m_renderPipelineDescriptor)
-        return Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>>();
-
-    if (!m_colorAttachmentDescriptors.size()) {
-        Vector<RefPtr<GPURenderPipelineColorAttachmentDescriptor>> platformColorAttachments = m_renderPipelineDescriptor->colorAttachments();
-        for (auto& attachment : platformColorAttachments)
-            m_colorAttachmentDescriptors.append(WebGPURenderPipelineColorAttachmentDescriptor::create(this->context(), attachment.get()));
+    if (!m_colorAttachments.size()) {
+        auto attachments = m_descriptor.colorAttachments();
+        m_colorAttachments.reserveInitialCapacity(attachments.size());
+        for (auto& attachment : attachments)
+            m_colorAttachments.uncheckedAppend(WebGPURenderPipelineColorAttachmentDescriptor::create(*context(), WTFMove(attachment)));
     }
-    return m_colorAttachmentDescriptors;
+    return m_colorAttachments;
 }
 
-unsigned long WebGPURenderPipelineDescriptor::depthAttachmentPixelFormat() const
+unsigned WebGPURenderPipelineDescriptor::depthAttachmentPixelFormat() const
 {
-    if (!m_renderPipelineDescriptor)
-        return 0; // FIXME: probably a real value for unknown
-
-    return m_renderPipelineDescriptor->depthAttachmentPixelFormat();
-
+    return m_descriptor.depthAttachmentPixelFormat();
 }
 
-void WebGPURenderPipelineDescriptor::setDepthAttachmentPixelFormat(unsigned long newPixelFormat)
+void WebGPURenderPipelineDescriptor::setDepthAttachmentPixelFormat(unsigned newPixelFormat)
 {
-    if (!m_renderPipelineDescriptor)
-        return;
-
-    m_renderPipelineDescriptor->setDepthAttachmentPixelFormat(newPixelFormat);
+    m_descriptor.setDepthAttachmentPixelFormat(newPixelFormat);
 }
 
 void WebGPURenderPipelineDescriptor::reset()
 {
     m_vertexFunction = nullptr;
     m_fragmentFunction = nullptr;
+
+    // FIXME: Why doesn't this clear out the functions on m_descriptor?
 }
 
 } // namespace WebCore

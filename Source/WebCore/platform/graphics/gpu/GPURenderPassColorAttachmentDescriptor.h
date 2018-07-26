@@ -28,40 +28,26 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPassAttachmentDescriptor.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLRenderPassColorAttachmentDescriptor;
-#endif
 
 namespace WebCore {
 
 class GPURenderPassColorAttachmentDescriptor : public GPURenderPassAttachmentDescriptor {
 public:
-#if PLATFORM(COCOA)
-    static RefPtr<GPURenderPassColorAttachmentDescriptor> create(MTLRenderPassColorAttachmentDescriptor *);
-#else
-    static RefPtr<GPURenderPassColorAttachmentDescriptor> create();
-#endif
-    WEBCORE_EXPORT ~GPURenderPassColorAttachmentDescriptor();
-
-    WEBCORE_EXPORT Vector<float> clearColor() const;
-    WEBCORE_EXPORT void setClearColor(const Vector<float>&);
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderPassColorAttachmentDescriptor *platformRenderPassColorAttachmentDescriptor();
-#endif
-
-private:
-#if PLATFORM(COCOA)
+#if USE(METAL)
     GPURenderPassColorAttachmentDescriptor(MTLRenderPassColorAttachmentDescriptor *);
-#else
-    GPURenderPassColorAttachmentDescriptor();
+#endif
+    ~GPURenderPassColorAttachmentDescriptor();
+
+    Vector<float> clearColor() const;
+    void setClearColor(const Vector<float>&) const;
+
+#if USE(METAL)
+    MTLRenderPassColorAttachmentDescriptor *metal() const;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

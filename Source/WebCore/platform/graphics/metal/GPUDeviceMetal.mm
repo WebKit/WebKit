@@ -26,56 +26,63 @@
 #import "config.h"
 #import "GPUDevice.h"
 
+#if ENABLE(WEBGPU)
+
 #import "Logging.h"
 #import "WebGPULayer.h"
-
 #import <JavaScriptCore/ArrayBuffer.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if ENABLE(WEBGPU)
-
 namespace WebCore {
 
 GPUDevice::GPUDevice()
+    : m_metal { adoptNS(MTLCreateSystemDefaultDevice()) }
 {
-    m_device = MTLCreateSystemDefaultDevice();
 
-    if (!m_device) {
+    if (!m_metal) {
         LOG(WebGPU, "GPUDevice::GPUDevice -- could not create the device. This usually means Metal is not available on this hardware.");
         return;
     }
 
-    LOG(WebGPU, "GPUDevice::GPUDevice Metal device is %p", m_device.get());
+    LOG(WebGPU, "GPUDevice::GPUDevice Metal device is %p", m_metal.get());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    m_layer = [[WebGPULayer alloc] initWithGPUDevice:this];
+
+    m_layer = adoptNS([[WebGPULayer alloc] initWithGPUDevice:this]);
     [m_layer setOpaque:0];
     [m_layer setName:@"WebGPU Layer"];
 
     // FIXME: WebGPU - Should this be in the WebGPULayer initializer?
-    [m_layer setDevice:(id<MTLDevice>)m_device.get()];
+    [m_layer setDevice:m_metal.get()];
     [m_layer setPixelFormat:MTLPixelFormatBGRA8Unorm];
     [m_layer setFramebufferOnly:YES];
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void GPUDevice::reshape(int width, int height)
+void GPUDevice::disconnect()
 {
-    if (!m_device)
-        return;
+    m_layer.get().context = nullptr;
+    // FIXME: Should we also clear out the device property, which has the MTLDevice?
+}
 
-    if (m_layer) {
-        [m_layer setBounds:CGRectMake(0, 0, width, height)];
-        [m_layer setDrawableSize:CGSizeMake(width, height)];
-    }
+void GPUDevice::reshape(int width, int height) const
+{
+    [m_layer setBounds:CGRectMake(0, 0, width, height)];
+    [m_layer setDrawableSize:CGSizeMake(width, height)];
 
     // FIXME: WebGPU - Lots of reshape stuff should go here. See GC3D.
 }
 
-id GPUDevice::platformDevice()
+CALayer *GPUDevice::platformLayer() const
 {
-    return m_device.get();
+    return m_layer.get();
+}
+
+bool GPUDevice::operator!() const
+{
+    return !m_metal;
 }
 
 } // namespace WebCore

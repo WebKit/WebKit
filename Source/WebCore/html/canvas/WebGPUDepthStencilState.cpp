@@ -28,41 +28,30 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDepthStencilState.h"
 #include "WebGPUDepthStencilDescriptor.h"
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPUDepthStencilState> WebGPUDepthStencilState::create(WebGPURenderingContext* context, WebGPUDepthStencilDescriptor* descriptor)
+Ref<WebGPUDepthStencilState> WebGPUDepthStencilState::create(WebGPURenderingContext& context, const GPUDepthStencilDescriptor& descriptor)
 {
     return adoptRef(*new WebGPUDepthStencilState(context, descriptor));
 }
 
-WebGPUDepthStencilState::WebGPUDepthStencilState(WebGPURenderingContext* context, WebGPUDepthStencilDescriptor* descriptor)
-    : WebGPUObject(context)
+WebGPUDepthStencilState::WebGPUDepthStencilState(WebGPURenderingContext& context, const GPUDepthStencilDescriptor& descriptor)
+    : WebGPUObject { &context }
+    , m_state { context.device(), descriptor }
 {
-    if (!context || !descriptor)
-        return;
-    m_depthStencilState = GPUDepthStencilState::create(context->device().get(), descriptor->depthStencilDescriptor());
 }
-
-WebGPUDepthStencilState::~WebGPUDepthStencilState() = default;
 
 String WebGPUDepthStencilState::label() const
 {
-    if (!m_depthStencilState)
-        return emptyString();
-
-    return m_depthStencilState->label();
+    return m_state.label();
 }
 
 void WebGPUDepthStencilState::setLabel(const String& label)
 {
-    if (!m_depthStencilState)
-        return;
-
-    m_depthStencilState->setLabel(label);
+    m_state.setLabel(label);
 }
 
 } // namespace WebCore

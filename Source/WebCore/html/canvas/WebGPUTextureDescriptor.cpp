@@ -28,118 +28,76 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTextureDescriptor.h"
-#include "WebGPURenderingContext.h"
-
 namespace WebCore {
 
-Ref<WebGPUTextureDescriptor> WebGPUTextureDescriptor::create(unsigned long pixelFormat, unsigned long width, unsigned long height, bool mipmapped)
+Ref<WebGPUTextureDescriptor> WebGPUTextureDescriptor::create(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped)
 {
     return adoptRef(*new WebGPUTextureDescriptor(pixelFormat, width, height, mipmapped));
 }
 
-WebGPUTextureDescriptor::WebGPUTextureDescriptor(unsigned long pixelFormat, unsigned long width, unsigned long height, bool mipmapped)
-    : WebGPUObject()
+WebGPUTextureDescriptor::WebGPUTextureDescriptor(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped)
+    : m_descriptor { pixelFormat, width, height, mipmapped }
 {
-    m_textureDescriptor = GPUTextureDescriptor::create(pixelFormat, width, height, mipmapped);
 }
 
-WebGPUTextureDescriptor::~WebGPUTextureDescriptor() = default;
-
-unsigned long WebGPUTextureDescriptor::width() const
+unsigned WebGPUTextureDescriptor::width() const
 {
-    if (!m_textureDescriptor)
-        return 0;
-
-    return m_textureDescriptor->width();
+    return m_descriptor.width();
 }
 
-void WebGPUTextureDescriptor::setWidth(unsigned long width)
+void WebGPUTextureDescriptor::setWidth(unsigned width)
 {
-    if (!m_textureDescriptor)
-        return;
-
-    m_textureDescriptor->setWidth(width);
+    m_descriptor.setWidth(width);
 }
 
-unsigned long WebGPUTextureDescriptor::height() const
+unsigned WebGPUTextureDescriptor::height() const
 {
-    if (!m_textureDescriptor)
-        return 0;
-
-    return m_textureDescriptor->height();
+    return m_descriptor.height();
 }
 
-void WebGPUTextureDescriptor::setHeight(unsigned long height)
+void WebGPUTextureDescriptor::setHeight(unsigned height)
 {
-    if (!m_textureDescriptor)
-        return;
-    
-    m_textureDescriptor->setHeight(height);
+    m_descriptor.setHeight(height);
 }
 
-unsigned long WebGPUTextureDescriptor::sampleCount() const
+unsigned WebGPUTextureDescriptor::sampleCount() const
 {
-    if (!m_textureDescriptor)
-        return 0;
-
-    return m_textureDescriptor->sampleCount();
+    return m_descriptor.sampleCount();
 }
 
-void WebGPUTextureDescriptor::setSampleCount(unsigned long sampleCount)
+void WebGPUTextureDescriptor::setSampleCount(unsigned sampleCount)
 {
-    if (!m_textureDescriptor)
-        return;
-    
-    m_textureDescriptor->setSampleCount(sampleCount);
+    m_descriptor.setSampleCount(sampleCount);
 }
 
-unsigned long WebGPUTextureDescriptor::textureType() const
+unsigned WebGPUTextureDescriptor::textureType() const
 {
-    if (!m_textureDescriptor)
-        return 0;
-
-    return m_textureDescriptor->textureType();
+    return m_descriptor.textureType();
 }
 
-void WebGPUTextureDescriptor::setTextureType(unsigned long textureType)
+void WebGPUTextureDescriptor::setTextureType(unsigned textureType)
 {
-    if (!m_textureDescriptor)
-        return;
-    
-    m_textureDescriptor->setTextureType(textureType);
+    m_descriptor.setTextureType(textureType);
 }
 
-unsigned long WebGPUTextureDescriptor::storageMode() const
+unsigned WebGPUTextureDescriptor::storageMode() const
 {
-    if (!m_textureDescriptor)
-        return 0;
-
-    return m_textureDescriptor->storageMode();
+    return m_descriptor.storageMode();
 }
 
-void WebGPUTextureDescriptor::setStorageMode(unsigned long storageMode)
+void WebGPUTextureDescriptor::setStorageMode(unsigned storageMode)
 {
-    if (!m_textureDescriptor)
-        return;
-    
-    m_textureDescriptor->setStorageMode(storageMode);
+    m_descriptor.setStorageMode(storageMode);
 }
 
-unsigned long WebGPUTextureDescriptor::usage() const
+unsigned WebGPUTextureDescriptor::usage() const
 {
-    if (!m_textureDescriptor)
-        return 0;
-
-    return m_textureDescriptor->usage();
+    return m_descriptor.usage();
 }
 
-void WebGPUTextureDescriptor::setUsage(unsigned long usage)
+void WebGPUTextureDescriptor::setUsage(unsigned usage)
 {
-    if (!m_textureDescriptor)
-        return;
-
-    m_textureDescriptor->setUsage(usage);
+    m_descriptor.setUsage(usage);
 }
     
 } // namespace WebCore

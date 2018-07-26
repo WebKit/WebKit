@@ -27,36 +27,31 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLComputePipelineState;
-#endif
+OBJC_PROTOCOL(MTLComputePipelineState);
 
 namespace WebCore {
 
 class GPUDevice;
 class GPUFunction;
 
-class GPUComputePipelineState : public RefCounted<GPUComputePipelineState> {
+class GPUComputePipelineState {
 public:
-    static RefPtr<GPUComputePipelineState> create(GPUDevice*, GPUFunction*);
-    WEBCORE_EXPORT ~GPUComputePipelineState();
+    GPUComputePipelineState() = default;
+    GPUComputePipelineState(const GPUDevice&, const GPUFunction&);
+    ~GPUComputePipelineState();
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLComputePipelineState *platformComputePipelineState();
+#if USE(METAL)
+    MTLComputePipelineState *metal() const { return m_metal.get(); }
 #endif
 
+#if USE(METAL)
 private:
-    GPUComputePipelineState(GPUDevice*, GPUFunction*);
-
-#if PLATFORM(COCOA)
-    RetainPtr<MTLComputePipelineState> m_computePipelineState;
+    RetainPtr<MTLComputePipelineState> m_metal;
 #endif
 };
 
 } // namespace WebCore
+
 #endif

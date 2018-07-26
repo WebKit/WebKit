@@ -27,38 +27,39 @@
 
 #if ENABLE(WEBGPU)
 
-#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLBuffer;
-#endif
+OBJC_PROTOCOL(MTLBuffer);
+
+namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
+}
 
 namespace WebCore {
 
 class GPUDevice;
 
-class GPUBuffer : public RefCounted<GPUBuffer> {
+class GPUBuffer {
 public:
-    static RefPtr<GPUBuffer> create(GPUDevice*, ArrayBufferView*);
+    WEBCORE_EXPORT GPUBuffer(const GPUDevice&, const JSC::ArrayBufferView&);
     WEBCORE_EXPORT ~GPUBuffer();
 
-    WEBCORE_EXPORT unsigned long length() const;
-    WEBCORE_EXPORT RefPtr<ArrayBuffer> contents();
+    WEBCORE_EXPORT unsigned length() const;
+    JSC::ArrayBuffer* contents() const { return m_contents.get(); }
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLBuffer *platformBuffer();
+#if USE(METAL)
+    MTLBuffer *metal() const { return m_metal.get(); }
 #endif
 
 private:
-    GPUBuffer(GPUDevice*, ArrayBufferView*);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLBuffer> m_buffer;
+#if USE(METAL)
+    RetainPtr<MTLBuffer> m_metal;
 #endif
-    RefPtr<ArrayBuffer> m_contents;
+    RefPtr<JSC::ArrayBuffer> m_contents;
 };
     
 } // namespace WebCore
+
 #endif

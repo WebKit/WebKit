@@ -27,38 +27,35 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUEnums.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLDepthStencilDescriptor;
-#endif
 
 namespace WebCore {
 
-class GPUDepthStencilDescriptor : public RefCounted<GPUDepthStencilDescriptor> {
+enum class GPUCompareFunction;
+
+class GPUDepthStencilDescriptor {
 public:
-    static RefPtr<GPUDepthStencilDescriptor> create();
-    WEBCORE_EXPORT ~GPUDepthStencilDescriptor();
+    GPUDepthStencilDescriptor();
+    ~GPUDepthStencilDescriptor();
 
-    WEBCORE_EXPORT bool depthWriteEnabled() const;
-    WEBCORE_EXPORT void setDepthWriteEnabled(bool);
+    bool depthWriteEnabled() const;
+    void setDepthWriteEnabled(bool) const;
 
-    WEBCORE_EXPORT GPUCompareFunction depthCompareFunction() const;
-    WEBCORE_EXPORT void setDepthCompareFunction(GPUCompareFunction);
+    GPUCompareFunction depthCompareFunction() const;
+    void setDepthCompareFunction(GPUCompareFunction) const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLDepthStencilDescriptor *platformDepthStencilDescriptor();
+#if USE(METAL)
+    MTLDepthStencilDescriptor *metal() const { return m_metal.get(); }
 #endif
 
+#if USE(METAL)
 private:
-    GPUDepthStencilDescriptor();
-#if PLATFORM(COCOA)
-    RetainPtr<MTLDepthStencilDescriptor> m_depthStencilDescriptor;
+    RetainPtr<MTLDepthStencilDescriptor> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

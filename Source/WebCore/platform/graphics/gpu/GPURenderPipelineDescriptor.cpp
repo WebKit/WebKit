@@ -28,47 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUFunction.h"
-#include "GPURenderPipelineColorAttachmentDescriptor.h"
-#include "GPUTexture.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPURenderPipelineDescriptor> GPURenderPipelineDescriptor::create()
-{
-    RefPtr<GPURenderPipelineDescriptor> descriptor = adoptRef(new GPURenderPipelineDescriptor());
-    return descriptor;
-}
 
 GPURenderPipelineDescriptor::~GPURenderPipelineDescriptor()
 {
     LOG(WebGPU, "GPURenderPipelineDescriptor::~GPURenderPipelineDescriptor()");
 }
-
-#if !PLATFORM(COCOA)
-unsigned long GPURenderPipelineDescriptor::depthAttachmentPixelFormat() const
-{
-    return false;
-}
-
-void GPURenderPipelineDescriptor::setDepthAttachmentPixelFormat(unsigned long)
-{
-}
-
-void GPURenderPipelineDescriptor::setVertexFunction(RefPtr<GPUFunction>)
-{
-}
-
-void GPURenderPipelineDescriptor::setFragmentFunction(RefPtr<GPUFunction>)
-{
-}
-
-Vector<RefPtr<GPURenderPipelineColorAttachmentDescriptor>> GPURenderPipelineDescriptor::colorAttachments()
-{
-    return Vector<RefPtr<GPURenderPipelineColorAttachmentDescriptor>>();
-}
-#endif
 
 } // namespace WebCore
 

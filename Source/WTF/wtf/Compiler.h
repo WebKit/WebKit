@@ -296,6 +296,18 @@
 #define OBJC_CLASS class
 #endif
 
+/* OBJC_PROTOCOL */
+
+#if !defined(OBJC_PROTOCOL) && defined(__OBJC__)
+/* This forward-declares a protocol, then also creates a type of the same name based on NSObject.
+ * This allows us to use "NSObject<MyProtocol> *" or "MyProtocol *" more-or-less interchangably. */
+#define OBJC_PROTOCOL(protocolName) @protocol protocolName; using protocolName = NSObject<protocolName>
+#endif
+
+#if !defined(OBJC_PROTOCOL)
+#define OBJC_PROTOCOL(protocolName) class protocolName
+#endif
+
 /* PURE_FUNCTION */
 
 #if !defined(PURE_FUNCTION) && COMPILER(GCC_OR_CLANG)

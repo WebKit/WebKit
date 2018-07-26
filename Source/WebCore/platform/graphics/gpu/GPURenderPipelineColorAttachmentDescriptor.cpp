@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
 #include "Logging.h"
 
 namespace WebCore {
@@ -37,22 +36,6 @@ GPURenderPipelineColorAttachmentDescriptor::~GPURenderPipelineColorAttachmentDes
 {
     LOG(WebGPU, "GPURenderPipelineColorAttachmentDescriptor::~GPURenderPipelineColorAttachmentDescriptor()");
 }
-
-#if !PLATFORM(COCOA)
-GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor()
-{
-    LOG(WebGPU, "GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor()");
-}
-
-unsigned long GPURenderPipelineColorAttachmentDescriptor::pixelFormat() const
-{
-    return 0;
-}
-
-void GPURenderPipelineColorAttachmentDescriptor::setPixelFormat(unsigned long)
-{
-}
-#endif
 
 } // namespace WebCore
 

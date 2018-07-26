@@ -27,60 +27,38 @@
 
 #if ENABLE(WEBGPU)
 
-#include "PlatformLayer.h"
-#include <JavaScriptCore/ArrayBufferView.h>
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 
-#if USE(CA)
-#include "PlatformCALayer.h"
-#endif
-
-#if PLATFORM(COCOA)
-typedef struct objc_object* id;
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGPULayer;
-#else
-class WebGPULayer;
-#endif
+
+OBJC_PROTOCOL(MTLDevice);
 
 namespace WebCore {
 
-class GPUBuffer;
-class GPUCommandQueue;
-class GPUDrawable;
-class GPULibrary;
-class GPUTexture;
-class GPUTextureDescriptor;
-
-class GPUDevice : public RefCounted<GPUDevice> {
+class GPUDevice {
 public:
-    WEBCORE_EXPORT static RefPtr<GPUDevice> create();
+    WEBCORE_EXPORT GPUDevice();
     WEBCORE_EXPORT ~GPUDevice();
 
-    void reshape(int width, int height);
+    WEBCORE_EXPORT bool operator!() const;
 
-#if PLATFORM(COCOA)
-    WebGPULayer* layer() { return m_layer.get(); }
-    CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_layer.get()); }
-    WEBCORE_EXPORT id platformDevice();
+    void reshape(int width, int height) const;
+
+#if USE(METAL)
+    WebGPULayer *layer() const { return m_layer.get(); }
+    WEBCORE_EXPORT CALayer *platformLayer() const;
+    MTLDevice *metal() const { return m_metal.get(); }
 #endif
 
-    WEBCORE_EXPORT RefPtr<GPUCommandQueue> createCommandQueue();
-    WEBCORE_EXPORT RefPtr<GPULibrary> createLibrary(const String& sourceCode);
-    WEBCORE_EXPORT RefPtr<GPUBuffer> createBufferFromData(ArrayBufferView* data);
-    WEBCORE_EXPORT RefPtr<GPUTexture> createTexture(GPUTextureDescriptor*);
-
-    RefPtr<GPUDrawable> getFramebuffer();
-
-    void markLayerComposited() { }
+    void markLayerComposited() const { }
 
 private:
-    GPUDevice();
+    void disconnect();
 
-#if PLATFORM(COCOA)
+#if USE(METAL)
     RetainPtr<WebGPULayer> m_layer;
-    RetainPtr<id> m_device;
+    RetainPtr<MTLDevice> m_metal;
 #endif
 };
 

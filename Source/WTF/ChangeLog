@@ -1,3 +1,17 @@
+2018-07-04  Darin Adler  <darin@apple.com>
+
+        Improve WebGPU implementation, including using Metal Objective-C protocols more simply and correctly
+        https://bugs.webkit.org/show_bug.cgi?id=187333
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Compiler.h: Added OBJC_PROTOCOL, a macro for convieniently treating an
+        Objective-C protocol in a way that lets it be mentioned in a C++ source file.
+        This is the rough equivalent of OBJC_CLASS, but for protocols.
+
+        * wtf/Platform.h: Added USE(METAL), alongside USE(OPENGL) and the like.
+        Now used in the WebGPU platform layer to guard the Metal-specific code.
+
 2018-07-26  Tomas Popela  <tpopela@redhat.com>
 
         [WTF] Coverity scan issues

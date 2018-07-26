@@ -27,32 +27,27 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUCommandQueue.h"
 #include "WebGPUObject.h"
-
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPUCommandBuffer;
-class GPUCommandQueue;
 class WebGPUCommandBuffer;
 
 class WebGPUCommandQueue : public WebGPUObject {
 public:
     virtual ~WebGPUCommandQueue();
-    static Ref<WebGPUCommandQueue> create(WebGPURenderingContext*);
+    static Ref<WebGPUCommandQueue> create(WebGPURenderingContext&);
 
-    String label() const;
-    void setLabel(const String&);
+    String label() const { return m_queue.label(); }
+    void setLabel(const String& label) { m_queue.setLabel(label); }
 
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer();
-
-    GPUCommandQueue* commandQueue() { return m_commandQueue.get(); }
+    Ref<WebGPUCommandBuffer> createCommandBuffer();
 
 private:
-    WebGPUCommandQueue(WebGPURenderingContext*);
+    explicit WebGPUCommandQueue(WebGPURenderingContext&);
 
-    RefPtr<GPUCommandQueue> m_commandQueue;
+    GPUCommandQueue m_queue;
 };
 
 } // namespace WebCore

@@ -27,40 +27,33 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLRenderPassDescriptor;
-#endif
 
 namespace WebCore {
 
 class GPURenderPassColorAttachmentDescriptor;
 class GPURenderPassDepthAttachmentDescriptor;
 
-class GPURenderPassDescriptor : public RefCounted<GPURenderPassDescriptor> {
+class GPURenderPassDescriptor {
 public:
-    static RefPtr<GPURenderPassDescriptor> create();
-    WEBCORE_EXPORT ~GPURenderPassDescriptor();
-
-    Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>> colorAttachments();
-    RefPtr<GPURenderPassDepthAttachmentDescriptor> depthAttachment();
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderPassDescriptor *platformRenderPassDescriptor();
-#endif
-
-private:
     GPURenderPassDescriptor();
+    ~GPURenderPassDescriptor();
 
-#if PLATFORM(COCOA)
-    RetainPtr<MTLRenderPassDescriptor> m_renderPassDescriptor;
+    Vector<GPURenderPassColorAttachmentDescriptor> colorAttachments() const;
+    GPURenderPassDepthAttachmentDescriptor depthAttachment() const;
+
+#if USE(METAL)
+    MTLRenderPassDescriptor *metal() const;
 #endif
-    RefPtr<GPURenderPassDepthAttachmentDescriptor> m_depthAttachment;
+
+#if USE(METAL)
+private:
+    RetainPtr<MTLRenderPassDescriptor> m_metal;
+#endif
 };
     
 } // namespace WebCore
+
 #endif

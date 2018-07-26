@@ -27,35 +27,31 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPURenderPassDescriptor.h"
 #include "WebGPUObject.h"
 #include "WebGPURenderPassColorAttachmentDescriptor.h"
 #include "WebGPURenderPassDepthAttachmentDescriptor.h"
-
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class GPURenderPassDescriptor;
-class WebGPURenderPassColorAttachmentDescriptor;
-class WebGPURenderPassDepthAttachmentDescriptor;
 
 class WebGPURenderPassDescriptor : public WebGPUObject {
 public:
     virtual ~WebGPURenderPassDescriptor();
     static Ref<WebGPURenderPassDescriptor> create();
 
-    RefPtr<WebGPURenderPassDepthAttachmentDescriptor> depthAttachment();
-    Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>> colorAttachments();
+    WebGPURenderPassDepthAttachmentDescriptor& depthAttachment();
+    const Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>>& colorAttachments();
 
-    GPURenderPassDescriptor* renderPassDescriptor() { return m_renderPassDescriptor.get(); }
+    const GPURenderPassDescriptor& descriptor() const { return m_descriptor; }
 
 private:
     WebGPURenderPassDescriptor();
 
-    Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>> m_colorAttachmentDescriptors;
-    RefPtr<WebGPURenderPassDepthAttachmentDescriptor> m_depthAttachmentDescriptor;
+    Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>> m_colorAttachments;
+    RefPtr<WebGPURenderPassDepthAttachmentDescriptor> m_depthAttachment;
 
-    RefPtr<GPURenderPassDescriptor> m_renderPassDescriptor;
+    GPURenderPassDescriptor m_descriptor;
 };
     
 } // namespace WebCore

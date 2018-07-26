@@ -28,51 +28,34 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPassColorAttachmentDescriptor.h"
-#include "GPURenderPassDepthAttachmentDescriptor.h"
-#include "GPURenderPassDescriptor.h"
-#include "WebGPURenderPassColorAttachmentDescriptor.h"
-#include "WebGPURenderPassDepthAttachmentDescriptor.h"
-#include "WebGPURenderingContext.h"
-
 namespace WebCore {
 
 Ref<WebGPURenderPassDescriptor> WebGPURenderPassDescriptor::create()
 {
-    return adoptRef(*new WebGPURenderPassDescriptor());
+    return adoptRef(*new WebGPURenderPassDescriptor);
 }
 
-WebGPURenderPassDescriptor::WebGPURenderPassDescriptor()
-    : WebGPUObject()
-{
-    m_renderPassDescriptor = GPURenderPassDescriptor::create();
-}
+WebGPURenderPassDescriptor::WebGPURenderPassDescriptor() = default;
 
 WebGPURenderPassDescriptor::~WebGPURenderPassDescriptor() = default;
 
-RefPtr<WebGPURenderPassDepthAttachmentDescriptor> WebGPURenderPassDescriptor::depthAttachment()
+WebGPURenderPassDepthAttachmentDescriptor& WebGPURenderPassDescriptor::depthAttachment()
 {
-    if (!m_renderPassDescriptor)
-        return nullptr;
-
-    if (!m_depthAttachmentDescriptor) {
-        RefPtr<GPURenderPassDepthAttachmentDescriptor> platformDepthAttachment = m_renderPassDescriptor->depthAttachment();
-        m_depthAttachmentDescriptor = WebGPURenderPassDepthAttachmentDescriptor::create(this->context(), platformDepthAttachment.get());
-    }
-    return m_depthAttachmentDescriptor;
+    if (!m_depthAttachment)
+        m_depthAttachment = WebGPURenderPassDepthAttachmentDescriptor::create(*context(), m_descriptor.depthAttachment());
+    return *m_depthAttachment;
 }
 
-Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>> WebGPURenderPassDescriptor::colorAttachments()
+const Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>>& WebGPURenderPassDescriptor::colorAttachments()
 {
-    if (!m_renderPassDescriptor)
-        return Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>>();
-
-    if (!m_colorAttachmentDescriptors.size()) {
-        Vector<RefPtr<GPURenderPassColorAttachmentDescriptor>> platformColorAttachments = m_renderPassDescriptor->colorAttachments();
-        for (auto& attachment : platformColorAttachments)
-            m_colorAttachmentDescriptors.append(WebGPURenderPassColorAttachmentDescriptor::create(this->context(), attachment.get()));
+    if (m_colorAttachments.isEmpty()) {
+        auto attachments = m_descriptor.colorAttachments();
+        ASSERT(!attachments.isEmpty());
+        m_colorAttachments.reserveInitialCapacity(attachments.size());
+        for (auto& attachment : attachments)
+            m_colorAttachments.uncheckedAppend(WebGPURenderPassColorAttachmentDescriptor::create(*context(), WTFMove(attachment)));
     }
-    return m_colorAttachmentDescriptors;
+    return m_colorAttachments;
 }
 
 } // namespace WebCore

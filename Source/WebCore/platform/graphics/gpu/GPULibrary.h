@@ -27,43 +27,34 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLLibrary;
-#endif
+OBJC_PROTOCOL(MTLLibrary);
 
 namespace WebCore {
 
 class GPUDevice;
-class GPUFunction;
 
-class GPULibrary : public RefCounted<GPULibrary> {
+class GPULibrary {
 public:
-    static RefPtr<GPULibrary> create(GPUDevice*, const String& sourceCode);
+    WEBCORE_EXPORT GPULibrary(const GPUDevice&, const String& sourceCode);
     WEBCORE_EXPORT ~GPULibrary();
 
     WEBCORE_EXPORT String label() const;
-    WEBCORE_EXPORT void setLabel(const String&);
+    WEBCORE_EXPORT void setLabel(const String&) const;
 
-    WEBCORE_EXPORT Vector<String> functionNames();
+    WEBCORE_EXPORT Vector<String> functionNames() const;
 
-    WEBCORE_EXPORT RefPtr<GPUFunction> functionWithName(const String&);
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLLibrary *platformLibrary();
+#if USE(METAL)
+    MTLLibrary *metal() const { return m_metal.get(); }
 #endif
 
+#if USE(METAL)
 private:
-    GPULibrary(GPUDevice*, const String& sourceCode);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLLibrary> m_library;
+    RetainPtr<MTLLibrary> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

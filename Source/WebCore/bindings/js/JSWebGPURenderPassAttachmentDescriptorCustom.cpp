@@ -30,17 +30,17 @@
 
 #include "JSDOMBinding.h"
 #include "JSWebGPURenderPassColorAttachmentDescriptor.h"
+#include "JSWebGPURenderPassDepthAttachmentDescriptor.h"
 #include "WebGPURenderPassColorAttachmentDescriptor.h"
-
+#include "WebGPURenderPassDepthAttachmentDescriptor.h"
 
 namespace WebCore {
-using namespace JSC;
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<WebGPURenderPassAttachmentDescriptor>&& object)
 {
     if (object->isColorAttachmentDescriptor())
         return createWrapper<WebGPURenderPassColorAttachmentDescriptor>(globalObject, WTFMove(object));
-    return createWrapper<WebGPURenderPassAttachmentDescriptor>(globalObject, WTFMove(object));
+    return createWrapper<WebGPURenderPassDepthAttachmentDescriptor>(globalObject, WTFMove(object));
 }
 
 JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebGPURenderPassAttachmentDescriptor& object)

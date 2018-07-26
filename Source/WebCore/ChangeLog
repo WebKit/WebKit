@@ -1,3 +1,506 @@
+2018-07-04  Darin Adler  <darin@apple.com>
+
+        Improve WebGPU implementation, including using Metal Objective-C protocols more simply and correctly
+        https://bugs.webkit.org/show_bug.cgi?id=187333
+
+        Reviewed by Sam Weinig.
+
+        - Used a new OBJC_PROTOCOL macro to handle things in the Metal API that are protocols.
+          The code previously had used OBJC_CLASS, but that created unrelated classes.
+          Fixing this allows removing many typecasts that were in the existing code, makes it
+          ARC-compatible, and also allowed the compiler to detect a couple mistakes where we
+          were calling methods that don't exist.
+
+        - Eliminated use of separate heap-allocated, reference-counted objects to
+          hold pointers to Metal objects.
+
+        - Reduced the use of the WebGPU wrappers to pass around arguments inside the code.
+          They are now used only as part of the DOM binding; the inner GPU objects are used
+          whenever possible. This cuts down the number of separate functions needed a bit,
+          since we don't always need accessors for the things inside the wrappers.
+
+        - Used references rather than pointers in many cases.
+
+        - Took out three kinds of null checks: 1) Unneeded ones since Objective-C has the
+          "do nothing and return 0" behavior for methods without return values and that return
+          integer scalars. 2) Checks that aren't needed because the code has clear, invariant
+          guarantees that the pointer won't be null. 3) The simplest variant of (2), checks
+          that can be obviated by using reference types instead of pointer types.
+
+        - For Metal-specific functions and data members, used the function name metal() and
+          the data member name m_metal rather than longer wordier names with the word "platform"
+          in them. We could use "platform" if these objects were platform-specific objects used
+          in a cross-platform way that needed a common name. But in this case it's clearer to
+          call them "metal" since we are dropping down to the metal with Metal API, and
+          shared platform-independent code will not be accessing these.
+
+        - Fixed the common mistake of using "unsigned long" in our C++ code to match IDL.
+          The "unsigned long" type in IDL correponds to the "unsigned" type in WebKit code.
+
+        - Used "const" more in the GPU functions that are wrappers around Metal objects to
+          reflect the fact that these have semantics of smart pointers; most operations can be
+          done without changing which object is pointed to. This allows us to use const
+          references to pass things around without reference count churn.
+
+        - Reduced includes.
+
+        - Added "explicit" keywords where appropriate.
+
+        - Removed unused functions. In particular, removed non-Metal stub versions of the
+          functions in the GPU classes: the right way to start a new port is to clone the
+          Metal-specific files and turn the into stubs if needed, it does not make it
+          significantly more convenient to have stubs in the platform independent files,
+          especially ones that are not compiled for any platform.
+
+        - Removed most the WEBCORE_EXPORT in the GPU headers; left only what's needed to
+          support testing with TestWebKitAPI.
+
+        - Fixed two storage leaks in GPUDevice by adding missing adoptNS.
+
+        * PlatformMac.cmake: Moved files from platform/graphics/cocoa to platform/graphics/metal.
+        * SourcesCocoa.txt: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto. Fixed paths on some files and groups/directories.
+        Made the platform files that abstract GPU all be "project" visible, not "private", since
+        they don't need to be visible outside WebCore. Removed reference to FontSelectionKeywordValues.h,
+        which does not seem to be a source file, a derived source file, or mentioned in any change log.
+
+        * bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp:
+        (WebCore::toJSNewlyCreated): Create the correct wrapper for a
+        WebGPURenderPassDepthAttachmentDescriptor. The old code would instead
+        create a WebGPURenderPassAttachmentDescriptor wrapper, which can't be
+        used to access the clearDepth attribute.
+
+        * html/canvas/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::create): Use more references rather than pointers for things
+        that are never null. Added comment about possibly returning null on failure in future.
+        (WebCore::WebGPUBuffer::WebGPUBuffer): Updated to store the GPUBuffer inside the class
+        instead of in a separate reference counted object.
+        * html/canvas/WebGPUBuffer.h: Ditto.
+
+        * html/canvas/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::create): Use references and lower level types.
+        (WebCore::WebGPUCommandBuffer::WebGPUCommandBuffer): Store the GPUCommandBuffer
+        inside the class.
+        (WebCore::WebGPUCommandBuffer::commit): Removed unneeded null checks.
+        (WebCore::WebGPUCommandBuffer::presentDrawable): Ditto.
+        (WebCore::WebGPUCommandBuffer::createRenderCommandEncoderWithDescriptor):
+        Removed unneeded local variable.
+        (WebCore::WebGPUCommandBuffer::createComputeCommandEncoder): Ditto.
+        (WebCore::WebGPUCommandBuffer::completed): Store the DOMPromiseProxy in this
+        class, not in GPUCommandBuffer.
+        * html/canvas/WebGPUCommandBuffer.h: Ditto.
+
+        * html/canvas/WebGPUCommandQueue.cpp:
+        (WebCore::WebGPUCommandQueue::create): Use references and lower level types.
+        (WebCore::WebGPUCommandQueue::WebGPUCommandQueue): Store the GPUCommandQueue
+        inside the class.
+        (WebCore::WebGPUCommandQueue::createCommandBuffer): Ditto.
+        * html/canvas/WebGPUCommandQueue.h: Ditto.
+        * html/canvas/WebGPUCommandQueue.idl: The return value of createCommandBuffer
+        is no longer nullable.
+
+        * html/canvas/WebGPUComputeCommandEncoder.cpp:
+        (WebCore::WebGPUComputeCommandEncoder::create): More of the same.
+        (WebCore::WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder): Ditto.
+        (WebCore::WebGPUComputeCommandEncoder::setComputePipelineState): Ditto.
+        (WebCore::WebGPUComputeCommandEncoder::setBuffer): Ditto.
+        (WebCore::WebGPUComputeCommandEncoder::dispatch): Ditto.
+        (WebCore::WebGPUComputeCommandEncoder::endEncoding): Ditto.
+        * html/canvas/WebGPUComputeCommandEncoder.h: Ditto.
+
+        * html/canvas/WebGPUComputePipelineState.cpp:
+        (WebCore::WebGPUComputePipelineState::create): More of the same.
+        (WebCore::WebGPUComputePipelineState::WebGPUComputePipelineState): Ditto.
+        * html/canvas/WebGPUComputePipelineState.h: Ditto.
+
+        * html/canvas/WebGPUDepthStencilDescriptor.cpp:
+        (WebCore::WebGPUDepthStencilDescriptor::create): More of the same.
+        (WebCore::WebGPUDepthStencilDescriptor::depthWriteEnabled const): Ditto.
+        (WebCore::WebGPUDepthStencilDescriptor::setDepthWriteEnabled): Ditto.
+        (WebCore::WebGPUDepthStencilDescriptor::depthCompareFunction const): Ditto.
+        (WebCore::WebGPUDepthStencilDescriptor::setDepthCompareFunction): Ditto.
+        * html/canvas/WebGPUDepthStencilDescriptor.h: Ditto. Also fixed a bug
+        where m_depthCompareFunction was uninitialized in newly created objects.
+
+        * html/canvas/WebGPUDepthStencilState.cpp:
+        (WebCore::WebGPUDepthStencilState::create): More of the same.
+        (WebCore::WebGPUDepthStencilState::WebGPUDepthStencilState): Ditto.
+        (WebCore::WebGPUDepthStencilState::label const): Ditto.
+        (WebCore::WebGPUDepthStencilState::setLabel): Ditto.
+        * html/canvas/WebGPUDepthStencilState.h: Ditto.
+
+        * html/canvas/WebGPUDrawable.cpp:
+        (WebCore::WebGPUDrawable::create): More of the same.
+        (WebCore::WebGPUDrawable::WebGPUDrawable): Ditto.
+        * html/canvas/WebGPUDrawable.h: Ditto.
+
+        * html/canvas/WebGPUEnums.cpp: Removed some stray const.
+        * html/canvas/WebGPUEnums.h: Ditto.
+
+        * html/canvas/WebGPUFunction.cpp:
+        (WebCore::WebGPUFunction::create): More of the same.
+        (WebCore::WebGPUFunction::WebGPUFunction): Ditto.
+        * html/canvas/WebGPUFunction.h: Ditto.
+
+        * html/canvas/WebGPULibrary.cpp:
+        (WebCore::WebGPULibrary::create): More of the same.
+        (WebCore::WebGPULibrary::WebGPULibrary): Ditto.
+        (WebCore::WebGPULibrary::functionNames const): Ditto.
+        (WebCore::WebGPULibrary::functionWithName const): Ditto.
+        * html/canvas/WebGPULibrary.h: Ditto.
+
+        * html/canvas/WebGPUObject.cpp:
+        (WebCore::WebGPUObject::WebGPUObject):
+        (WebCore::WebGPUObject::deleteObject): Deleted this unused function.
+        We can bring it back later if we find we need it the way we did with the
+        WebGL implementation, but currently it's a never-called stub. Also
+        deleted the isDeleted and m_deleted for the same reason.
+        * html/canvas/WebGPUObject.h: Ditto.
+
+        * html/canvas/WebGPURenderCommandEncoder.cpp:
+        (WebCore::WebGPURenderCommandEncoder::create): More of the same.
+        (WebCore::WebGPURenderCommandEncoder::WebGPURenderCommandEncoder): Ditto.
+        (WebCore::WebGPURenderCommandEncoder::setRenderPipelineState): Ditto.
+        (WebCore::WebGPURenderCommandEncoder::setDepthStencilState): Ditto.
+        (WebCore::WebGPURenderCommandEncoder::setVertexBuffer): Ditto.
+        (WebCore::WebGPURenderCommandEncoder::setFragmentBuffer): Ditto.
+        (WebCore::WebGPURenderCommandEncoder::drawPrimitives): Ditto.
+        (WebCore::WebGPURenderCommandEncoder::endEncoding): Ditto.
+        * html/canvas/WebGPURenderCommandEncoder.h: Ditto.
+
+        * html/canvas/WebGPURenderPassAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPassAttachmentDescriptor::WebGPURenderPassAttachmentDescriptor):
+        More of the same.
+        (WebCore::WebGPURenderPassAttachmentDescriptor::loadAction const): Ditto.
+        (WebCore::WebGPURenderPassAttachmentDescriptor::setLoadAction): Ditto.
+        (WebCore::WebGPURenderPassAttachmentDescriptor::storeAction const): Ditto.
+        (WebCore::WebGPURenderPassAttachmentDescriptor::setStoreAction): Ditto.
+        (WebCore::WebGPURenderPassAttachmentDescriptor::texture const): Ditto.
+        (WebCore::WebGPURenderPassAttachmentDescriptor::setTexture): Ditto.
+        * html/canvas/WebGPURenderPassAttachmentDescriptor.h: Ditto.
+
+        * html/canvas/WebGPURenderPassColorAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPassColorAttachmentDescriptor::create): More of the same.
+        (WebCore::WebGPURenderPassColorAttachmentDescriptor::WebGPURenderPassColorAttachmentDescriptor): Ditto.
+        (WebCore::WebGPURenderPassColorAttachmentDescriptor::descriptor const): Ditto.
+        (WebCore::WebGPURenderPassColorAttachmentDescriptor::clearColor const): Ditto.
+        (WebCore::WebGPURenderPassColorAttachmentDescriptor::setClearColor): Ditto.
+        * html/canvas/WebGPURenderPassColorAttachmentDescriptor.h: Ditto.
+
+        * html/canvas/WebGPURenderPassDepthAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPassDepthAttachmentDescriptor::create): More of the same.
+        (WebCore::WebGPURenderPassDepthAttachmentDescriptor::WebGPURenderPassDepthAttachmentDescriptor): Ditto.
+        (WebCore::WebGPURenderPassDepthAttachmentDescriptor::clearDepth const): Ditto.
+        (WebCore::WebGPURenderPassDepthAttachmentDescriptor::setClearDepth): Ditto.
+        (WebCore::WebGPURenderPassDepthAttachmentDescriptor::descriptor const): Ditto.
+        * html/canvas/WebGPURenderPassDepthAttachmentDescriptor.h: Ditto.
+
+        * html/canvas/WebGPURenderPassDescriptor.cpp:
+        (WebCore::WebGPURenderPassDescriptor::create): More of the same.
+        (WebCore::WebGPURenderPassDescriptor::depthAttachment): Ditto.
+        (WebCore::WebGPURenderPassDescriptor::colorAttachments): Ditto.
+        * html/canvas/WebGPURenderPassDescriptor.h: Ditto.
+
+        * html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPipelineColorAttachmentDescriptor::create): More of the same.
+        (WebCore::WebGPURenderPipelineColorAttachmentDescriptor::WebGPURenderPipelineColorAttachmentDescriptor): Ditto.
+        (WebCore::WebGPURenderPipelineColorAttachmentDescriptor::pixelFormat const): Ditto.
+        (WebCore::WebGPURenderPipelineColorAttachmentDescriptor::setPixelFormat): Ditto.
+        * html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.h: Ditto.
+
+        * html/canvas/WebGPURenderPipelineDescriptor.cpp:
+        (WebCore::WebGPURenderPipelineDescriptor::create): More of the same.
+        (WebCore::WebGPURenderPipelineDescriptor::vertexFunction const): Ditto.
+        (WebCore::WebGPURenderPipelineDescriptor::setVertexFunction): Ditto.
+        (WebCore::WebGPURenderPipelineDescriptor::fragmentFunction const): Ditto.
+        (WebCore::WebGPURenderPipelineDescriptor::setFragmentFunction): Ditto.
+        (WebCore::WebGPURenderPipelineDescriptor::colorAttachments): Ditto.
+        (WebCore::WebGPURenderPipelineDescriptor::depthAttachmentPixelFormat const): Ditto.
+        (WebCore::WebGPURenderPipelineDescriptor::setDepthAttachmentPixelFormat): Ditto.
+        (WebCore::WebGPURenderPipelineDescriptor::reset): Ditto.
+        * html/canvas/WebGPURenderPipelineDescriptor.h: Ditto.
+
+        * html/canvas/WebGPURenderPipelineState.cpp:
+        (WebCore::WebGPURenderPipelineState::create): More of the same.
+        (WebCore::WebGPURenderPipelineState::WebGPURenderPipelineState): Ditto.
+        (WebCore::WebGPURenderPipelineState::label const): Ditto.
+        (WebCore::WebGPURenderPipelineState::setLabel): Ditto.
+        * html/canvas/WebGPURenderPipelineState.h: Ditto.
+
+        * html/canvas/WebGPURenderingContext.cpp:
+        (WebCore::WebGPURenderingContext::create): More of the same.
+        (WebCore::WebGPURenderingContext::WebGPURenderingContext): Ditto.
+        (WebCore::WebGPURenderingContext::initializeNewContext): Ditto.
+        (WebCore::WebGPURenderingContext::platformLayer const): Ditto.
+        (WebCore::WebGPURenderingContext::markLayerComposited): Ditto.
+        (WebCore::WebGPURenderingContext::reshape): Ditto.
+        (WebCore::WebGPURenderingContext::createLibrary): Ditto.
+        (WebCore::WebGPURenderingContext::createRenderPipelineState): Ditto.
+        (WebCore::WebGPURenderingContext::createDepthStencilState): Ditto.
+        (WebCore::WebGPURenderingContext::createComputePipelineState): Ditto.
+        (WebCore::WebGPURenderingContext::createCommandQueue): Ditto.
+        (WebCore::WebGPURenderingContext::nextDrawable): Ditto.
+        (WebCore::WebGPURenderingContext::createBuffer): Ditto.
+        (WebCore::WebGPURenderingContext::createTexture): Ditto.
+        * html/canvas/WebGPURenderingContext.h: Made many functions final and
+        private.
+        * html/canvas/WebGPURenderingContext.idl: The return value of most of
+        the create functions are no longer nullable.
+
+        * html/canvas/WebGPUSize.h: Use "unsigned" instead of "unsigned long".
+
+        * html/canvas/WebGPUTexture.cpp:
+        (WebCore::WebGPUTexture::createFromDrawableTexture): More of the same.
+        (WebCore::WebGPUTexture::create): Ditto.
+        (WebCore::WebGPUTexture::WebGPUTexture): Ditto.
+        * html/canvas/WebGPUTexture.h: Ditto.
+
+        * html/canvas/WebGPUTextureDescriptor.cpp:
+        (WebCore::WebGPUTextureDescriptor::create): More of the same.
+        (WebCore::WebGPUTextureDescriptor::WebGPUTextureDescriptor): Ditto.
+        (WebCore::WebGPUTextureDescriptor::width const): Ditto.
+        (WebCore::WebGPUTextureDescriptor::setWidth): Ditto.
+        (WebCore::WebGPUTextureDescriptor::height const): Ditto.
+        (WebCore::WebGPUTextureDescriptor::setHeight): Ditto.
+        (WebCore::WebGPUTextureDescriptor::sampleCount const): Ditto.
+        (WebCore::WebGPUTextureDescriptor::setSampleCount): Ditto.
+        (WebCore::WebGPUTextureDescriptor::textureType const): Ditto.
+        (WebCore::WebGPUTextureDescriptor::setTextureType): Ditto.
+        (WebCore::WebGPUTextureDescriptor::storageMode const): Ditto.
+        (WebCore::WebGPUTextureDescriptor::setStorageMode): Ditto.
+        (WebCore::WebGPUTextureDescriptor::usage const): Ditto.
+        (WebCore::WebGPUTextureDescriptor::setUsage): Ditto.
+        * html/canvas/WebGPUTextureDescriptor.h: Ditto.
+
+        * platform/graphics/metal/GPUBufferMetal.mm: Moved from "cocoa" directory.
+        (WebCore::GPUBuffer::GPUBuffer): Simplify code using references and the
+        "metal" naming.
+
+        * platform/graphics/metal/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::GPUCommandBuffer): Take a function to be called as the
+        completed handler and set it up.
+        (WebCore::GPUCommandBuffer::presentDrawable const): Ditto.
+        (WebCore::GPUCommandBuffer::commit const): Ditto.
+        (WebCore::GPUCommandBuffer::addCompletedHandler): Deleted.
+
+        * platform/graphics/metal/GPUCommandQueueMetal.mm:
+        (WebCore::GPUCommandQueue::GPUCommandQueue): Ditto. Also rewrote label handling a bit.
+        (WebCore::GPUCommandQueue::label const): Ditto.
+        (WebCore::GPUCommandQueue::setLabel const): Ditto.
+
+        * platform/graphics/metal/GPUComputeCommandEncoderMetal.mm:
+        (WebCore::GPUComputeCommandEncoder::GPUComputeCommandEncoder): Ditto.
+        (WebCore::GPUComputeCommandEncoder::setComputePipelineState const): Ditto.
+        (WebCore::GPUComputeCommandEncoder::setBuffer const): Ditto.
+        (WebCore::GPUComputeCommandEncoder::dispatch const): Ditto.
+        (WebCore::GPUComputeCommandEncoder::endEncoding const): Ditto.
+
+        * platform/graphics/metal/GPUComputePipelineStateMetal.mm:
+        (WebCore::GPUComputePipelineState::GPUComputePipelineState): Ditto.
+
+        * platform/graphics/metal/GPUDepthStencilDescriptorMetal.mm:
+        (WebCore::GPUDepthStencilDescriptor::GPUDepthStencilDescriptor): Ditto.
+        (WebCore::GPUDepthStencilDescriptor::depthWriteEnabled const): Ditto.
+        (WebCore::GPUDepthStencilDescriptor::setDepthWriteEnabled const): Ditto.
+        (WebCore::GPUDepthStencilDescriptor::depthCompareFunction const): Ditto.
+        (WebCore::GPUDepthStencilDescriptor::setDepthCompareFunction const): Ditto.
+
+        * platform/graphics/metal/GPUDepthStencilStateMetal.mm:
+        (WebCore::GPUDepthStencilState::GPUDepthStencilState): Ditto.
+        (WebCore::GPUDepthStencilState::label const): Ditto.
+        (WebCore::GPUDepthStencilState::setLabel const): Ditto. This is one of the
+        functions that was calling a method that does not exist. Added a comment.
+
+        * platform/graphics/metal/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::GPUDevice): Ditto. Also fixed two storage leaks where
+        we neglected to do adoptNS on the result of MTLCreateSystemDefaultDevice and
+        on the result of -[[WebGPULayer alloc] initWithGPUDevice:].
+        (WebCore::GPUDevice::reshape const): Ditto.
+        (WebCore::GPUDevice::platformLayer const): Ditto.
+        (WebCore::GPUDevice::operator! const): Ditto.
+
+        * platform/graphics/metal/GPUDrawableMetal.mm:
+        (WebCore::GPUDrawable::GPUDrawable): Ditto.
+        (WebCore::GPUDrawable::release): Ditto.
+        (WebCore::GPUDrawable::metal const): Ditto.
+        (WebCore::GPUDrawable::texture const): Ditto.
+
+        * platform/graphics/metal/GPUFunctionMetal.mm:
+        (WebCore::GPUFunction::GPUFunction): Ditto.
+        (WebCore::GPUFunction::name const): Ditto.
+        (WebCore::GPUFunction::metal const): Ditto.
+        (WebCore::GPUFunction::operator! const): Ditto.
+
+        * platform/graphics/metal/GPULibraryMetal.mm:
+        (WebCore::GPULibrary::GPULibrary): Ditto.
+        (WebCore::GPULibrary::label const): Ditto.
+        (WebCore::GPULibrary::setLabel const): Ditto.
+        (WebCore::GPULibrary::functionNames const): Ditto.
+        (WebCore::GPULibrary::metal const): Ditto.
+
+        * platform/graphics/metal/GPURenderCommandEncoderMetal.mm:
+        (WebCore::GPURenderCommandEncoder::GPURenderCommandEncoder): Ditto.
+        (WebCore::GPURenderCommandEncoder::setRenderPipelineState const): Ditto.
+        (WebCore::GPURenderCommandEncoder::setDepthStencilState const): Ditto.
+        (WebCore::GPURenderCommandEncoder::setVertexBuffer const): Ditto.
+        (WebCore::GPURenderCommandEncoder::setFragmentBuffer const): Ditto.
+        (WebCore::GPURenderCommandEncoder::drawPrimitives const): Ditto.
+        (WebCore::GPURenderCommandEncoder::endEncoding const): Ditto.
+
+        * platform/graphics/metal/GPURenderPassAttachmentDescriptorMetal.mm:
+        (WebCore::GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor): Ditto.
+        (WebCore::GPURenderPassAttachmentDescriptor::loadAction const): Ditto.
+        (WebCore::GPURenderPassAttachmentDescriptor::setLoadAction const): Ditto.
+        (WebCore::GPURenderPassAttachmentDescriptor::storeAction const): Ditto.
+        (WebCore::GPURenderPassAttachmentDescriptor::setStoreAction const): Ditto.
+        (WebCore::GPURenderPassAttachmentDescriptor::setTexture const): Ditto.
+
+        * platform/graphics/metal/GPURenderPassColorAttachmentDescriptorMetal.mm:
+        (WebCore::GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor): Ditto.
+        (WebCore::GPURenderPassColorAttachmentDescriptor::clearColor const): Ditto.
+        (WebCore::GPURenderPassColorAttachmentDescriptor::setClearColor const): Ditto.
+        (WebCore::GPURenderPassColorAttachmentDescriptor::metal const): Ditto.
+
+        * platform/graphics/metal/GPURenderPassDepthAttachmentDescriptorMetal.mm:
+        (WebCore::GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor): Ditto.
+        (WebCore::GPURenderPassDepthAttachmentDescriptor::clearDepth const): Ditto.
+        (WebCore::GPURenderPassDepthAttachmentDescriptor::setClearDepth const): Ditto.
+        (WebCore::GPURenderPassDepthAttachmentDescriptor::metal const): Ditto.
+
+        * platform/graphics/metal/GPURenderPassDescriptorMetal.mm:
+        (WebCore::GPURenderPassDescriptor::GPURenderPassDescriptor): Ditto.
+        (WebCore::GPURenderPassDescriptor::colorAttachments const): Ditto.
+        (WebCore::GPURenderPassDescriptor::depthAttachment const): Ditto.
+        (WebCore::GPURenderPassDescriptor::metal const): Ditto.
+
+        * platform/graphics/metal/GPURenderPipelineColorAttachmentDescriptorMetal.mm:
+        (WebCore::GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor): Ditto.
+        (WebCore::GPURenderPipelineColorAttachmentDescriptor::pixelFormat const): Ditto.
+        (WebCore::GPURenderPipelineColorAttachmentDescriptor::setPixelFormat const): Ditto.
+        (WebCore::GPURenderPipelineColorAttachmentDescriptor::metal const): Ditto.
+
+        * platform/graphics/metal/GPURenderPipelineDescriptorMetal.mm:
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor): Ditto.
+        (WebCore::GPURenderPipelineDescriptor::depthAttachmentPixelFormat const): Ditto.
+        (WebCore::GPURenderPipelineDescriptor::setDepthAttachmentPixelFormat const): Ditto.
+        (WebCore::GPURenderPipelineDescriptor::setVertexFunction const): Ditto.
+        (WebCore::GPURenderPipelineDescriptor::setFragmentFunction const): Ditto.
+        (WebCore::GPURenderPipelineDescriptor::colorAttachments const): Ditto.
+        (WebCore::GPURenderPipelineDescriptor::reset const): Ditto.
+        (WebCore::GPURenderPipelineDescriptor::metal const): Ditto.
+
+        * platform/graphics/metal/GPURenderPipelineStateMetal.mm:
+        (WebCore::GPURenderPipelineState::GPURenderPipelineState): Ditto.
+        (WebCore::GPURenderPipelineState::label const): Ditto.
+        (WebCore::GPURenderPipelineState::setLabel const): Ditto. This is one of the
+        functions that was calling a method that does not exist. Added a comment.
+        (WebCore::GPURenderPipelineState::metal const): Ditto.
+
+        * platform/graphics/metal/GPUTextureDescriptorMetal.mm:
+        (WebCore::GPUTextureDescriptor::GPUTextureDescriptor): Ditto.
+        (WebCore::GPUTextureDescriptor::width const): Ditto.
+        (WebCore::GPUTextureDescriptor::setWidth const): Ditto.
+        (WebCore::GPUTextureDescriptor::height const): Ditto.
+        (WebCore::GPUTextureDescriptor::setHeight const): Ditto.
+        (WebCore::GPUTextureDescriptor::sampleCount const): Ditto.
+        (WebCore::GPUTextureDescriptor::setSampleCount const): Ditto.
+        (WebCore::GPUTextureDescriptor::textureType const): Ditto.
+        (WebCore::GPUTextureDescriptor::setTextureType const): Ditto.
+        (WebCore::GPUTextureDescriptor::storageMode const): Ditto.
+        (WebCore::GPUTextureDescriptor::setStorageMode const): Ditto.
+        (WebCore::GPUTextureDescriptor::usage const): Ditto.
+        (WebCore::GPUTextureDescriptor::setUsage const): Ditto.
+        (WebCore::GPUTextureDescriptor::metal const): Ditto.
+
+        * platform/graphics/metal/GPUTextureMetal.mm:
+        (WebCore::GPUTexture::GPUTexture): Ditto.
+        (WebCore::GPUTexture::width const): Ditto.
+        (WebCore::GPUTexture::height const): Ditto.
+        (WebCore::GPUTexture::metal const): Ditto.
+
+        * platform/graphics/gpu/GPUBuffer.cpp: Removed unused stubs.
+        (WebCore::GPUBuffer::length const): Moved this function here since it has
+        a useful platform-independent implementation.
+
+        * platform/graphics/gpu/GPUBuffer.h: Use OBJC_PROTOCOL for MTLBuffer.
+        Did the other thigs mentioned above: USE(METAL), remove WEBCORE_EXPORT,
+        no longer be RefCounted, etc.
+
+        * platform/graphics/gpu/GPUCommandBuffer.cpp: Ditto.
+        * platform/graphics/gpu/GPUCommandBuffer.h: Ditto. Use OBJC_PROTOCOL
+        for MTLCommandBuffer.
+
+        * platform/graphics/gpu/GPUCommandQueue.cpp: Ditto.
+        * platform/graphics/gpu/GPUCommandQueue.h: Ditto. Use OBJC_PROTOCOL for
+        MTLCommandQueue.
+
+        * platform/graphics/gpu/GPUComputeCommandEncoder.cpp: Ditto.
+        * platform/graphics/gpu/GPUComputeCommandEncoder.h: Ditto. Use OBJC_PROTOCOL for
+        MTLComputeCommandEncoder.
+
+        * platform/graphics/gpu/GPUComputePipelineState.cpp: Ditto.
+        * platform/graphics/gpu/GPUComputePipelineState.h: Ditto. Use OBJC_PROTOCOL for
+        MTLComputePipelineState.
+
+        * platform/graphics/gpu/GPUDepthStencilDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPUDepthStencilDescriptor.h: Ditto.
+
+        * platform/graphics/gpu/GPUDepthStencilState.cpp: Ditto.
+        * platform/graphics/gpu/GPUDepthStencilState.h: Ditto. Use OBJC_PROTOCOL for
+        MTLDepthStencilState.
+
+        * platform/graphics/gpu/GPUDevice.cpp: Ditto.
+        * platform/graphics/gpu/GPUDevice.h: Ditto. Use OBJC_PROTOCOL for MTLDevice.
+
+        * platform/graphics/gpu/GPUDrawable.cpp: Ditto.
+        * platform/graphics/gpu/GPUDrawable.h: Ditto. Use OBJC_PROTOCOL for
+        MTLDrawable and MTLTexture.
+
+        * platform/graphics/gpu/GPUEnums.h: Tweaked formatting.
+
+        * platform/graphics/gpu/GPUFunction.cpp: Ditto.
+        * platform/graphics/gpu/GPUFunction.h: Ditto. Use OBJC_PROTOCOL for
+        MTLFunction.
+
+        * platform/graphics/gpu/GPULibrary.cpp: Ditto.
+        * platform/graphics/gpu/GPULibrary.h: Ditto. Use OBJC_PROTOCOL for
+        MTLLibrary.
+
+        * platform/graphics/gpu/GPURenderCommandEncoder.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderCommandEncoder.h: Ditto.
+        Use OBJC_PROTOCOL for MTLRenderCommandEncoder.
+
+        * platform/graphics/gpu/GPURenderPassAttachmentDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderPassAttachmentDescriptor.h: Ditto.
+
+        * platform/graphics/gpu/GPURenderPassColorAttachmentDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderPassColorAttachmentDescriptor.h: Ditto.
+
+        * platform/graphics/gpu/GPURenderPassDepthAttachmentDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderPassDepthAttachmentDescriptor.h: Ditto.
+
+        * platform/graphics/gpu/GPURenderPassDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderPassDescriptor.h: Ditto.
+
+        * platform/graphics/gpu/GPURenderPipelineColorAttachmentDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderPipelineColorAttachmentDescriptor.h: Ditto.
+
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Ditto.
+
+        * platform/graphics/gpu/GPURenderPipelineState.cpp: Ditto.
+        * platform/graphics/gpu/GPURenderPipelineState.h: Ditto. Use OBJC_PROTOCOL
+        for MTLRenderPipelineState.
+
+        * platform/graphics/gpu/GPUSize.h: Use "unsigned" instead of "unsigned long".
+
+        * platform/graphics/gpu/GPUTexture.cpp: Ditto.
+        * platform/graphics/gpu/GPUTexture.h: Ditto. Use OBJC_PROTOCOL for
+        MTLTexture.
+
+        * platform/graphics/gpu/GPUTextureDescriptor.cpp: Ditto.
+        * platform/graphics/gpu/GPUTextureDescriptor.h: Ditto.
+
 2018-07-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Add skeleton for basic positioning.

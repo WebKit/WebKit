@@ -29,38 +29,36 @@
 #if ENABLE(WEBGPU)
 
 #include "DOMPromiseProxy.h"
+#include "GPUCommandBuffer.h"
 #include "WebGPUObject.h"
-
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPUCommandBuffer;
-class WebGPUCommandQueue;
+class WebGPUComputeCommandEncoder;
 class WebGPUDrawable;
-class WebGPUFunction;
 class WebGPURenderCommandEncoder;
 class WebGPURenderPassDescriptor;
-class WebGPUComputeCommandEncoder;
 
 class WebGPUCommandBuffer : public WebGPUObject {
 public:
     virtual ~WebGPUCommandBuffer();
-    static Ref<WebGPUCommandBuffer> create(WebGPURenderingContext*, WebGPUCommandQueue*);
+    static Ref<WebGPUCommandBuffer> create(WebGPURenderingContext&, const GPUCommandQueue&);
 
     void commit();
     void presentDrawable(WebGPUDrawable&);
 
-    RefPtr<WebGPURenderCommandEncoder> createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor&);
-    RefPtr<WebGPUComputeCommandEncoder> createComputeCommandEncoder();
-
-    GPUCommandBuffer* commandBuffer() { return m_commandBuffer.get(); }
+    Ref<WebGPURenderCommandEncoder> createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor&);
+    Ref<WebGPUComputeCommandEncoder> createComputeCommandEncoder();
 
     DOMPromiseProxy<IDLVoid>& completed();
 
+    const GPUCommandBuffer& buffer() const { return m_buffer; }
+
 private:
-    WebGPUCommandBuffer(WebGPURenderingContext*, WebGPUCommandQueue*);
-    RefPtr<GPUCommandBuffer> m_commandBuffer;
+    WebGPUCommandBuffer(WebGPURenderingContext&, const GPUCommandQueue&);
+
+    GPUCommandBuffer m_buffer;
+    DOMPromiseProxy<IDLVoid> m_completed;
 };
 
 } // namespace WebCore

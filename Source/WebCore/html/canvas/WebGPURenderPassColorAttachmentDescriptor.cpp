@@ -28,47 +28,38 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPassColorAttachmentDescriptor.h"
 #include "GPUTexture.h"
 #include "WebGPURenderingContext.h"
 #include "WebGPUTexture.h"
 
 namespace WebCore {
 
-Ref<WebGPURenderPassColorAttachmentDescriptor> WebGPURenderPassColorAttachmentDescriptor::create(WebGPURenderingContext* context, GPURenderPassColorAttachmentDescriptor* descriptor)
+Ref<WebGPURenderPassColorAttachmentDescriptor> WebGPURenderPassColorAttachmentDescriptor::create(WebGPURenderingContext& context, GPURenderPassColorAttachmentDescriptor&& descriptor)
 {
-    return adoptRef(*new WebGPURenderPassColorAttachmentDescriptor(context, descriptor));
+    return adoptRef(*new WebGPURenderPassColorAttachmentDescriptor(context, WTFMove(descriptor)));
 }
 
-WebGPURenderPassColorAttachmentDescriptor::WebGPURenderPassColorAttachmentDescriptor(WebGPURenderingContext* context, GPURenderPassColorAttachmentDescriptor* descriptor)
-    : WebGPURenderPassAttachmentDescriptor(context, descriptor)
+WebGPURenderPassColorAttachmentDescriptor::WebGPURenderPassColorAttachmentDescriptor(WebGPURenderingContext& context, GPURenderPassColorAttachmentDescriptor&& descriptor)
+    : WebGPURenderPassAttachmentDescriptor(context)
+    , m_descriptor(WTFMove(descriptor))
 {
 }
 
 WebGPURenderPassColorAttachmentDescriptor::~WebGPURenderPassColorAttachmentDescriptor() = default;
 
-GPURenderPassColorAttachmentDescriptor* WebGPURenderPassColorAttachmentDescriptor::renderPassColorAttachmentDescriptor() const
+const GPURenderPassAttachmentDescriptor& WebGPURenderPassColorAttachmentDescriptor::descriptor() const
 {
-    return static_cast<GPURenderPassColorAttachmentDescriptor*>(renderPassAttachmentDescriptor());
+    return m_descriptor;
 }
 
 Vector<float> WebGPURenderPassColorAttachmentDescriptor::clearColor() const
 {
-    RefPtr<GPURenderPassColorAttachmentDescriptor> descriptor = renderPassColorAttachmentDescriptor();
-    if (!descriptor) {
-        Vector<float> black = { 0.0, 0.0, 0.0, 1.0 };
-        return black;
-    }
-    return descriptor->clearColor();
+    return m_descriptor.clearColor();
 }
 
 void WebGPURenderPassColorAttachmentDescriptor::setClearColor(const Vector<float>& newClearColor)
 {
-    RefPtr<GPURenderPassColorAttachmentDescriptor> descriptor = renderPassColorAttachmentDescriptor();
-    if (!descriptor)
-        return;
-
-    descriptor->setClearColor(newClearColor);
+    m_descriptor.setClearColor(newClearColor);
 }
 
 } // namespace WebCore

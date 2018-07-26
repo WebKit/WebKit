@@ -37,53 +37,43 @@
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {
-    
-inline GPUSize GPUSizeMake(WebGPUSize size)
+
+static inline GPUSize GPUSizeMake(WebGPUSize size)
 {
-    return {size.width, size.height, size.depth};
+    return { size.width, size.height, size.depth };
 }
 
-Ref<WebGPUComputeCommandEncoder> WebGPUComputeCommandEncoder::create(WebGPURenderingContext* context, WebGPUCommandBuffer* buffer)
+Ref<WebGPUComputeCommandEncoder> WebGPUComputeCommandEncoder::create(WebGPURenderingContext& context, const GPUCommandBuffer& buffer)
 {
     return adoptRef(*new WebGPUComputeCommandEncoder(context, buffer));
 }
     
-WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder(WebGPURenderingContext* context, WebGPUCommandBuffer* buffer)
-    : WebGPUObject(context)
+WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder(WebGPURenderingContext& context, const GPUCommandBuffer& buffer)
+    : WebGPUObject { &context }
+    , m_encoder { buffer }
 {
-    m_computeCommandEncoder = buffer->commandBuffer()->createComputeCommandEncoder();
 }
-    
-WebGPUComputeCommandEncoder::~WebGPUComputeCommandEncoder() = default;
-    
+
 void WebGPUComputeCommandEncoder::setComputePipelineState(WebGPUComputePipelineState& pipelineState)
 {
-    if (!m_computeCommandEncoder)
-        return;
-    m_computeCommandEncoder->setComputePipelineState(pipelineState.computePipelineState());
+    m_encoder.setComputePipelineState(pipelineState.state());
 }
-    
+
 void WebGPUComputeCommandEncoder::setBuffer(WebGPUBuffer& buffer, unsigned offset, unsigned index)
 {
-    if (!m_computeCommandEncoder)
-        return;
-    m_computeCommandEncoder->setBuffer(buffer.buffer(), offset, index);
+    m_encoder.setBuffer(buffer.buffer(), offset, index);
 }
-    
+
 void WebGPUComputeCommandEncoder::dispatch(WebGPUSize threadgroupsPerGrid, WebGPUSize threadsPerThreadgroup)
 {
-    if (!m_computeCommandEncoder)
-        return;
-    m_computeCommandEncoder->dispatch(GPUSizeMake(threadgroupsPerGrid), GPUSizeMake(threadsPerThreadgroup));
+    m_encoder.dispatch(GPUSizeMake(threadgroupsPerGrid), GPUSizeMake(threadsPerThreadgroup));
 }
-    
+
 void WebGPUComputeCommandEncoder::endEncoding()
 {
-    if (!m_computeCommandEncoder)
-        return;
-    m_computeCommandEncoder->endEncoding();
+    m_encoder.endEncoding();
 }
-    
+
 } // namespace WebCore
 
 #endif

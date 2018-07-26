@@ -28,46 +28,15 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "GPUFunction.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPULibrary> GPULibrary::create(GPUDevice* device, const String& sourceCode)
-{
-    RefPtr<GPULibrary> library = adoptRef(new GPULibrary(device, sourceCode));
-    return library;
-}
 
 GPULibrary::~GPULibrary()
 {
     LOG(WebGPU, "GPULibrary::~GPULibrary()");
 }
 
-#if !PLATFORM(COCOA)
-
-String GPULibrary::label() const
-{
-    return emptyString();
-}
-
-void GPULibrary::setLabel(const String&)
-{
-}
-
-Vector<String> GPULibrary::functionNames()
-{
-    return { };
-}
-
-#endif
-
-RefPtr<GPUFunction> GPULibrary::functionWithName(const String& name)
-{
-    return GPUFunction::create(this, name);
-}
-    
 } // namespace WebCore
 
 #endif

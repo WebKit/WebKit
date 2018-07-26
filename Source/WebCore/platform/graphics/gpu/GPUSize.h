@@ -30,10 +30,11 @@
 namespace WebCore {
     
 struct GPUSize {
-    unsigned long width;
-    unsigned long height;
-    unsigned long depth;
+    unsigned width;
+    unsigned height;
+    unsigned depth;
 };
 
 } // namespace WebCore
+
 #endif

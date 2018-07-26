@@ -27,43 +27,32 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLRenderPipelineColorAttachmentDescriptor;
-#endif
 
 namespace WebCore {
 
-class GPUTexture;
-
-class GPURenderPipelineColorAttachmentDescriptor : public RefCounted<GPURenderPipelineColorAttachmentDescriptor> {
+class GPURenderPipelineColorAttachmentDescriptor {
 public:
-#if PLATFORM(COCOA)
-    static RefPtr<GPURenderPipelineColorAttachmentDescriptor> create(MTLRenderPipelineColorAttachmentDescriptor *);
-#else
-    static RefPtr<GPURenderPipelineColorAttachmentDescriptor> create();
-#endif
-
-    WEBCORE_EXPORT ~GPURenderPipelineColorAttachmentDescriptor();
-
-    WEBCORE_EXPORT unsigned long pixelFormat() const;
-    WEBCORE_EXPORT void setPixelFormat(unsigned long);
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderPipelineColorAttachmentDescriptor *platformRenderPipelineColorAttachmentDescriptor();
-#endif
-
-protected:
-#if PLATFORM(COCOA)
+#if USE(METAL)
     GPURenderPipelineColorAttachmentDescriptor(MTLRenderPipelineColorAttachmentDescriptor *);
-    RetainPtr<MTLRenderPipelineColorAttachmentDescriptor> m_renderPipelineColorAttachmentDescriptor;
-#else
-    GPURenderPipelineColorAttachmentDescriptor();
+#endif
+    ~GPURenderPipelineColorAttachmentDescriptor();
+
+    unsigned pixelFormat() const;
+    void setPixelFormat(unsigned) const;
+
+#if USE(METAL)
+    MTLRenderPipelineColorAttachmentDescriptor *metal() const;
+#endif
+
+#if USE(METAL)
+private:
+    RetainPtr<MTLRenderPipelineColorAttachmentDescriptor> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

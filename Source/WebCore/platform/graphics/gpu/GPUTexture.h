@@ -27,13 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLTexture;
-#endif
+OBJC_PROTOCOL(MTLTexture);
 
 namespace WebCore {
 
@@ -41,28 +37,25 @@ class GPUDevice;
 class GPUDrawable;
 class GPUTextureDescriptor;
 
-class GPUTexture : public RefCounted<GPUTexture> {
+class GPUTexture {
 public:
-    static RefPtr<GPUTexture> create(GPUDevice*, GPUTextureDescriptor*);
-    static RefPtr<GPUTexture> createFromDrawable(GPUDrawable*);
+    GPUTexture(const GPUDevice&, const GPUTextureDescriptor&);
+    explicit GPUTexture(const GPUDrawable&);
+    ~GPUTexture();
 
-    WEBCORE_EXPORT ~GPUTexture();
+    unsigned width() const;
+    unsigned height() const;
 
-    WEBCORE_EXPORT unsigned long width() const;
-    WEBCORE_EXPORT unsigned long height() const;
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLTexture *platformTexture();
+#if USE(METAL)
+    MTLTexture *metal() const;
 #endif
 
+#if USE(METAL)
 private:
-    GPUTexture(GPUDevice*, GPUTextureDescriptor*);
-    GPUTexture(GPUDrawable*);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLTexture> m_texture;
+    RetainPtr<MTLTexture> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

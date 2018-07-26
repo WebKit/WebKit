@@ -28,40 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPUDepthStencilDescriptor> GPUDepthStencilDescriptor::create()
-{
-    RefPtr<GPUDepthStencilDescriptor> descriptor = adoptRef(new GPUDepthStencilDescriptor());
-    return descriptor;
-}
 
 GPUDepthStencilDescriptor::~GPUDepthStencilDescriptor()
 {
     LOG(WebGPU, "GPUDepthStencilDescriptor::~GPUDepthStencilDescriptor()");
 }
-
-#if !PLATFORM(COCOA)
-bool GPUDepthStencilDescriptor::depthWriteEnabled() const
-{
-    return false;
-}
-
-void GPUDepthStencilDescriptor::setDepthWriteEnabled(bool)
-{
-}
-
-GPUCompareFunction GPUDepthStencilDescriptor::depthCompareFunction() const
-{
-}
-
-void GPUDepthStencilDescriptor::setDepthCompareFunction(GPUCompareFunction)
-{
-}
-#endif
 
 } // namespace WebCore
 

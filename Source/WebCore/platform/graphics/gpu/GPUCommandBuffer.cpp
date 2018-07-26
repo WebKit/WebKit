@@ -29,46 +29,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCommandQueue.h"
-#include "GPUComputeCommandEncoder.h"
-#include "GPUDevice.h"
-#include "GPURenderCommandEncoder.h"
-#include "GPURenderPassDescriptor.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPUCommandBuffer> GPUCommandBuffer::create(GPUCommandQueue* queue)
-{
-    RefPtr<GPUCommandBuffer> buffer = adoptRef(new GPUCommandBuffer(queue));
-    return buffer;
-}
 
 GPUCommandBuffer::~GPUCommandBuffer()
 {
     LOG(WebGPU, "GPUCommandBuffer::~GPUCommandBuffer()");
 }
-
-RefPtr<GPURenderCommandEncoder> GPUCommandBuffer::createRenderCommandEncoder(GPURenderPassDescriptor* descriptor)
-{
-    return GPURenderCommandEncoder::create(this, descriptor);
-}
-
-RefPtr<GPUComputeCommandEncoder> GPUCommandBuffer::createComputeCommandEncoder()
-{
-    return GPUComputeCommandEncoder::create(this);
-}
-
-#if !PLATFORM(COCOA)
-void GPUCommandBuffer::presentDrawable(GPUDrawable*)
-{
-}
-
-DOMPromiseProxy<IDLVoid>& GPUCommandBuffer::completed();
-{
-    return m_completedPromise;
-}
-#endif
 
 } // namespace WebCore
 

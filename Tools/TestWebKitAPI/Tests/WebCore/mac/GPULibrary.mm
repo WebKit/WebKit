@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUTest.h"
+#import "PlatformUtilities.h"
 #import <Metal/Metal.h>
 #import <WebCore/GPUDevice.h>
 #import <WebCore/GPULibrary.h>
@@ -38,46 +39,46 @@ namespace TestWebKitAPI {
 
 TEST_F(GPU, LibraryCreate)
 {
-    auto device = GPUDevice::create();
+    GPUDevice device;
+
     // Not all hardware supports Metal, so it is possible
     // that we were unable to create the MTLDevice object.
     // In that case, the device should be null.
     if (!device)
         return;
 
-    id<MTLDevice> mtlDevice = (id<MTLDevice>)device->platformDevice();
-    EXPECT_NOT_NULL(mtlDevice);
+    EXPECT_NOT_NULL(device.metal());
 
-    auto library = device->createLibrary(librarySourceCode());
-    EXPECT_NOT_NULL(library);
+    GPULibrary library { device, librarySourceCode() };
+    EXPECT_NOT_NULL(library.metal());
 }
 
 TEST_F(GPU, LibrarySetLabel)
 {
-    auto device = GPUDevice::create();
+    GPUDevice device;
     if (!device)
         return;
 
-    auto library = device->createLibrary(librarySourceCode());
-    EXPECT_NOT_NULL(library);
+    GPULibrary library { device, librarySourceCode() };
+    EXPECT_NOT_NULL(library.metal());
 
-    library->setLabel("TestLabel");
-    EXPECT_EQ("TestLabel", library->label());
+    library.setLabel("TestLabel"_s);
+    EXPECT_EQ("TestLabel", library.label());
 }
 
 TEST_F(GPU, LibraryFunctionNames)
 {
-    auto device = GPUDevice::create();
+    GPUDevice device;
     if (!device)
         return;
 
-    auto library = device->createLibrary(librarySourceCode());
-    EXPECT_NOT_NULL(library);
+    GPULibrary library { device, librarySourceCode() };
+    EXPECT_NOT_NULL(library.metal());
 
-    auto functionNames = library->functionNames();
-    EXPECT_EQ(functionNames.size(), static_cast<unsigned long>(2));
-    EXPECT_EQ("vertex_main", functionNames[0]);
-    EXPECT_EQ("fragment_main", functionNames[1]);
+    auto functionNames = library.functionNames();
+    EXPECT_EQ(2U, functionNames.size());
+    EXPECT_WK_STREQ("vertex_main", functionNames[0]);
+    EXPECT_WK_STREQ("fragment_main", functionNames[1]);
 }
 
 } // namespace TestWebKitAPI

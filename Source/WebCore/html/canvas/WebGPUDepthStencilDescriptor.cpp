@@ -28,41 +28,26 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDepthStencilDescriptor.h"
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
 Ref<WebGPUDepthStencilDescriptor> WebGPUDepthStencilDescriptor::create()
 {
-    return adoptRef(*new WebGPUDepthStencilDescriptor());
+    return adoptRef(*new WebGPUDepthStencilDescriptor);
 }
-
-WebGPUDepthStencilDescriptor::WebGPUDepthStencilDescriptor()
-    : WebGPUObject()
-{
-    m_depthStencilDescriptor = GPUDepthStencilDescriptor::create();
-}
-
-WebGPUDepthStencilDescriptor::~WebGPUDepthStencilDescriptor() = default;
 
 bool WebGPUDepthStencilDescriptor::depthWriteEnabled() const
 {
-    if (!m_depthStencilDescriptor)
-        return false;
-
-    return m_depthStencilDescriptor->depthWriteEnabled();
+    return m_descriptor.depthWriteEnabled();
 }
 
 void WebGPUDepthStencilDescriptor::setDepthWriteEnabled(bool newDepthWriteEnabled)
 {
-    if (!m_depthStencilDescriptor)
-        return;
-
-    m_depthStencilDescriptor->setDepthWriteEnabled(newDepthWriteEnabled);
+    m_descriptor.setDepthWriteEnabled(newDepthWriteEnabled);
 }
 
-auto WebGPUDepthStencilDescriptor::depthCompareFunction() const -> WebGPUCompareFunction
+WebGPUCompareFunction WebGPUDepthStencilDescriptor::depthCompareFunction() const
 {
     return m_depthCompareFunction;
 }
@@ -70,7 +55,7 @@ auto WebGPUDepthStencilDescriptor::depthCompareFunction() const -> WebGPUCompare
 void WebGPUDepthStencilDescriptor::setDepthCompareFunction(CompareFunction newDepthCompareFunction)
 {
     m_depthCompareFunction = newDepthCompareFunction;
-    m_depthStencilDescriptor->setDepthCompareFunction(toGPUCompareFunction(m_depthCompareFunction));
+    m_descriptor.setDepthCompareFunction(toGPUCompareFunction(m_depthCompareFunction));
 }
 
 } // namespace WebCore

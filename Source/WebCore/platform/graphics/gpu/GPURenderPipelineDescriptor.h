@@ -27,46 +27,40 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUEnums.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLRenderPipelineDescriptor;
-#endif
 
 namespace WebCore {
 
 class GPUFunction;
 class GPURenderPipelineColorAttachmentDescriptor;
 
-class GPURenderPipelineDescriptor : public RefCounted<GPURenderPipelineDescriptor> {
+class GPURenderPipelineDescriptor {
 public:
-    static RefPtr<GPURenderPipelineDescriptor> create();
-    WEBCORE_EXPORT ~GPURenderPipelineDescriptor();
+    GPURenderPipelineDescriptor();
+    ~GPURenderPipelineDescriptor();
 
-    WEBCORE_EXPORT void setVertexFunction(RefPtr<GPUFunction>);
-    WEBCORE_EXPORT void setFragmentFunction(RefPtr<GPUFunction>);
+    void setVertexFunction(const GPUFunction&) const;
+    void setFragmentFunction(const GPUFunction&) const;
 
-    WEBCORE_EXPORT unsigned long depthAttachmentPixelFormat() const;
-    WEBCORE_EXPORT void setDepthAttachmentPixelFormat(unsigned long);
+    unsigned depthAttachmentPixelFormat() const;
+    void setDepthAttachmentPixelFormat(unsigned) const;
 
-    WEBCORE_EXPORT Vector<RefPtr<GPURenderPipelineColorAttachmentDescriptor>> colorAttachments();
+    Vector<GPURenderPipelineColorAttachmentDescriptor> colorAttachments() const;
 
-    WEBCORE_EXPORT void reset();
+    void reset() const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderPipelineDescriptor *platformRenderPipelineDescriptor();
+#if USE(METAL)
+    MTLRenderPipelineDescriptor *metal() const;
 #endif
 
+#if USE(METAL)
 private:
-    GPURenderPipelineDescriptor();
-#if PLATFORM(COCOA)
-    RetainPtr<MTLRenderPipelineDescriptor> m_renderPipelineDescriptor;
+    RetainPtr<MTLRenderPipelineDescriptor> m_metal;
 #endif
 };
-    
+
 } // namespace WebCore
+
 #endif

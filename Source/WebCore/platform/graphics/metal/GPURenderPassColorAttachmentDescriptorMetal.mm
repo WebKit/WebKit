@@ -24,45 +24,44 @@
  */
 
 #import "config.h"
-#import "GPUDepthStencilState.h"
+#import "GPURenderPassColorAttachmentDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
-#import "GPUDepthStencilDescriptor.h"
-#import "GPUDevice.h"
+#import "FloatConversion.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
 
-GPUDepthStencilState::GPUDepthStencilState(GPUDevice* device, GPUDepthStencilDescriptor* descriptor)
+GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor(MTLRenderPassColorAttachmentDescriptor *metal)
+    : GPURenderPassAttachmentDescriptor { metal }
 {
-    LOG(WebGPU, "GPUDepthStencilState::GPUDepthStencilState()");
+    LOG(WebGPU, "GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor()");
+}
 
-    if (!device || !device->platformDevice() || !descriptor || !descriptor->platformDepthStencilDescriptor())
+Vector<float> GPURenderPassColorAttachmentDescriptor::clearColor() const
+{
+    auto* metal = this->metal();
+    if (!metal)
+        return { };
+
+    auto color = [metal clearColor];
+    return { narrowPrecisionToFloat(color.red), narrowPrecisionToFloat(color.green), narrowPrecisionToFloat(color.blue), narrowPrecisionToFloat(color.alpha) };
+}
+
+void GPURenderPassColorAttachmentDescriptor::setClearColor(const Vector<float>& newClearColor) const
+{
+    if (newClearColor.size() != 4)
         return;
 
-    m_depthStencilState = adoptNS((MTLDepthStencilState *)[device->platformDevice() newDepthStencilStateWithDescriptor:descriptor->platformDepthStencilDescriptor()]);
+    [metal() setClearColor:MTLClearColorMake(newClearColor[0], newClearColor[1], newClearColor[2], newClearColor[3])];
 }
 
-String GPUDepthStencilState::label() const
+MTLRenderPassColorAttachmentDescriptor *GPURenderPassColorAttachmentDescriptor::metal() const
 {
-    if (!m_depthStencilState)
-        return emptyString();
-
-    return [m_depthStencilState label];
-}
-
-void GPUDepthStencilState::setLabel(const String& label)
-{
-    ASSERT(m_depthStencilState);
-    [m_depthStencilState setLabel:label];
-}
-    
-MTLDepthStencilState *GPUDepthStencilState::platformDepthStencilState()
-{
-    return m_depthStencilState.get();
+    return static_cast<MTLRenderPassColorAttachmentDescriptor *>(GPURenderPassAttachmentDescriptor::metal());
 }
 
 } // namespace WebCore

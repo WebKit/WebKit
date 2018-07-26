@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,37 +24,54 @@
  */
 
 #import "config.h"
-#import "GPUFunction.h"
+#import "GPUComputeCommandEncoder.h"
 
 #if ENABLE(WEBGPU)
 
-#import "GPULibrary.h"
+#import "GPUBuffer.h"
+#import "GPUCommandBuffer.h"
+#import "GPUComputePipelineState.h"
+#import "GPUSize.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
-GPUFunction::GPUFunction(GPULibrary* library, const String& name)
+static inline MTLSize MTLSizeMake(GPUSize size)
 {
-    LOG(WebGPU, "GPUFunction::GPUFunction()");
+    return { size.width, size.height, size.depth };
+}
 
-    if (!library || !library->platformLibrary())
+GPUComputeCommandEncoder::GPUComputeCommandEncoder(const GPUCommandBuffer& buffer)
+    : m_metal { [buffer.metal() computeCommandEncoder] }
+{
+    LOG(WebGPU, "GPUComputeCommandEncoder::GPUComputeCommandEncoder()");
+}
+
+void GPUComputeCommandEncoder::setComputePipelineState(const GPUComputePipelineState& computePipelineState) const
+{
+    if (!computePipelineState.metal())
         return;
 
-    m_function = adoptNS((MTLFunction *)[library->platformLibrary() newFunctionWithName:name]);
+    [m_metal setComputePipelineState:computePipelineState.metal()];
 }
-
-String GPUFunction::name() const
-{
-    if (!m_function)
-        return emptyString();
     
-    return [m_function name];
+void GPUComputeCommandEncoder::setBuffer(const GPUBuffer& buffer, unsigned offset, unsigned index) const
+{
+    if (!buffer.metal())
+        return;
+
+    [m_metal setBuffer:buffer.metal() offset:offset atIndex:index];
+}
+    
+void GPUComputeCommandEncoder::dispatch(GPUSize threadgroupsPerGrid, GPUSize threadsPerThreadgroup) const
+{
+    [m_metal dispatchThreadgroups:MTLSizeMake(threadgroupsPerGrid) threadsPerThreadgroup:MTLSizeMake(threadsPerThreadgroup)];
 }
 
-MTLFunction *GPUFunction::platformFunction()
+void GPUComputeCommandEncoder::endEncoding() const
 {
-    return m_function.get();
+    [m_metal endEncoding];
 }
 
 } // namespace WebCore

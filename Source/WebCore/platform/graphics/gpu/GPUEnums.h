@@ -41,4 +41,5 @@ enum class GPUCompareFunction {
 };
 
 } // namespace WebCore
+
 #endif

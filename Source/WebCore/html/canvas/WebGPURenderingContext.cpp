@@ -46,7 +46,6 @@
 #include "WebGPURenderPipelineState.h"
 #include "WebGPUTexture.h"
 #include "WebGPUTextureDescriptor.h"
-
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
@@ -71,17 +70,16 @@ namespace WebCore {
 
 static const int kMaxTextureSize = 4096;
 
-
 std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(CanvasBase& canvas)
 {
-    RefPtr<GPUDevice> device(GPUDevice::create());
+    GPUDevice device;
 
     if (!device) {
         // FIXME: WebGPU - dispatch an event here for the failure.
         return nullptr;
     }
 
-    auto renderingContext = std::unique_ptr<WebGPURenderingContext>(new WebGPURenderingContext(canvas, device.releaseNonNull()));
+    auto renderingContext = std::unique_ptr<WebGPURenderingContext>(new WebGPURenderingContext(canvas, WTFMove(device)));
     renderingContext->suspendIfNeeded();
 
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
@@ -89,7 +87,7 @@ std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(CanvasBas
     return renderingContext;
 }
 
-WebGPURenderingContext::WebGPURenderingContext(CanvasBase& canvas, Ref<GPUDevice>&& device)
+WebGPURenderingContext::WebGPURenderingContext(CanvasBase& canvas, GPUDevice&& device)
     : GPUBasedCanvasRenderingContext(canvas)
     , m_device(WTFMove(device))
 {
@@ -109,7 +107,7 @@ void WebGPURenderingContext::initializeNewContext()
     // FIXME: WebGPU - Maybe we should reset a bunch of stuff here.
 
     IntSize canvasSize = clampedCanvasSize();
-    m_device->reshape(canvasSize.width(), canvasSize.height());
+    m_device.reshape(canvasSize.width(), canvasSize.height());
 }
 
 IntSize WebGPURenderingContext::clampedCanvasSize() const
@@ -139,66 +137,58 @@ bool WebGPURenderingContext::canSuspendForDocumentSuspension() const
 
 PlatformLayer* WebGPURenderingContext::platformLayer() const
 {
-    return m_device->platformLayer();
+    return m_device.platformLayer();
 }
 
 void WebGPURenderingContext::markLayerComposited()
 {
-    m_device->markLayerComposited();
+    m_device.markLayerComposited();
 }
 
 void WebGPURenderingContext::reshape(int width, int height)
 {
     // FIXME: WebGPU - Do we need to reset stuff here?
-    m_device->reshape(width, height);
+    m_device.reshape(width, height);
 }
 
-RefPtr<WebGPULibrary> WebGPURenderingContext::createLibrary(const String sourceCode)
+Ref<WebGPULibrary> WebGPURenderingContext::createLibrary(const String& sourceCode)
 {
-    RefPtr<WebGPULibrary> library = WebGPULibrary::create(this, sourceCode);
-    return library;
+    return WebGPULibrary::create(*this, sourceCode);
 }
 
-RefPtr<WebGPURenderPipelineState> WebGPURenderingContext::createRenderPipelineState(WebGPURenderPipelineDescriptor& descriptor)
+Ref<WebGPURenderPipelineState> WebGPURenderingContext::createRenderPipelineState(WebGPURenderPipelineDescriptor& descriptor)
 {
-    RefPtr<WebGPURenderPipelineState> state = WebGPURenderPipelineState::create(this, &descriptor);
-    return state;
+    return WebGPURenderPipelineState::create(*this, descriptor.descriptor());
 }
 
-RefPtr<WebGPUDepthStencilState> WebGPURenderingContext::createDepthStencilState(WebGPUDepthStencilDescriptor& descriptor)
+Ref<WebGPUDepthStencilState> WebGPURenderingContext::createDepthStencilState(WebGPUDepthStencilDescriptor& descriptor)
 {
-    RefPtr<WebGPUDepthStencilState> state = WebGPUDepthStencilState::create(this, &descriptor);
-    return state;
+    return WebGPUDepthStencilState::create(*this, descriptor.descriptor());
 }
 
-RefPtr<WebGPUComputePipelineState> WebGPURenderingContext::createComputePipelineState(WebGPUFunction& function)
+Ref<WebGPUComputePipelineState> WebGPURenderingContext::createComputePipelineState(WebGPUFunction& function)
 {
-    RefPtr<WebGPUComputePipelineState> state = WebGPUComputePipelineState::create(this, &function);
-    return state;
+    return WebGPUComputePipelineState::create(*this, function.function());
 }
 
-RefPtr<WebGPUCommandQueue> WebGPURenderingContext::createCommandQueue()
+Ref<WebGPUCommandQueue> WebGPURenderingContext::createCommandQueue()
 {
-    RefPtr<WebGPUCommandQueue> queue = WebGPUCommandQueue::create(this);
-    return queue;
+    return WebGPUCommandQueue::create(*this);
 }
 
-RefPtr<WebGPUDrawable> WebGPURenderingContext::nextDrawable()
+Ref<WebGPUDrawable> WebGPURenderingContext::nextDrawable()
 {
-    RefPtr<WebGPUDrawable> drawable = WebGPUDrawable::create(this);
-    return drawable;
+    return WebGPUDrawable::create(*this);
 }
 
-RefPtr<WebGPUBuffer> WebGPURenderingContext::createBuffer(ArrayBufferView& data)
+RefPtr<WebGPUBuffer> WebGPURenderingContext::createBuffer(JSC::ArrayBufferView& data)
 {
-    RefPtr<WebGPUBuffer> buffer = WebGPUBuffer::create(this, &data);
-    return buffer;
+    return WebGPUBuffer::create(*this, data);
 }
 
-RefPtr<WebGPUTexture> WebGPURenderingContext::createTexture(WebGPUTextureDescriptor& descriptor)
+Ref<WebGPUTexture> WebGPURenderingContext::createTexture(WebGPUTextureDescriptor& descriptor)
 {
-    RefPtr<WebGPUTexture> texture = WebGPUTexture::create(this, &descriptor);
-    return texture;
+    return WebGPUTexture::create(*this, descriptor.descriptor());
 }
 
 } // namespace WebCore

@@ -30,41 +30,33 @@
 
 #import "GPURenderPassAttachmentDescriptor.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
-RefPtr<GPURenderPassDepthAttachmentDescriptor> GPURenderPassDepthAttachmentDescriptor::create(MTLRenderPassDepthAttachmentDescriptor *depthAttachmentDescriptor)
-{
-    RefPtr<GPURenderPassDepthAttachmentDescriptor> descriptor = adoptRef(new GPURenderPassDepthAttachmentDescriptor(depthAttachmentDescriptor));
-    return descriptor;
-}
-
-GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor(MTLRenderPassDepthAttachmentDescriptor *attachmentDescriptor)
-    : GPURenderPassAttachmentDescriptor(attachmentDescriptor)
+GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor(MTLRenderPassDepthAttachmentDescriptor *metal)
+    : GPURenderPassAttachmentDescriptor { metal }
 {
     LOG(WebGPU, "GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor()");
 }
 
 double GPURenderPassDepthAttachmentDescriptor::clearDepth() const
 {
-    MTLRenderPassDepthAttachmentDescriptor *depthAttachmentDescriptor = static_cast<MTLRenderPassDepthAttachmentDescriptor *>(m_renderPassAttachmentDescriptor.get());
-    if (!depthAttachmentDescriptor)
+    auto* metal = this->metal();
+    if (!metal)
         return 0;
 
-    return [depthAttachmentDescriptor clearDepth];
+    return [metal clearDepth];
 }
 
-void GPURenderPassDepthAttachmentDescriptor::setClearDepth(double newClearDepth)
+void GPURenderPassDepthAttachmentDescriptor::setClearDepth(double newClearDepth) const
 {
-    MTLRenderPassDepthAttachmentDescriptor *depthAttachmentDescriptor = platformRenderPassDepthAttachmentDescriptor();
-    [depthAttachmentDescriptor setClearDepth:newClearDepth];
+    [metal() setClearDepth:newClearDepth];
 }
 
-MTLRenderPassDepthAttachmentDescriptor *GPURenderPassDepthAttachmentDescriptor::platformRenderPassDepthAttachmentDescriptor()
+MTLRenderPassDepthAttachmentDescriptor *GPURenderPassDepthAttachmentDescriptor::metal() const
 {
-    return static_cast<MTLRenderPassDepthAttachmentDescriptor *>(platformRenderPassAttachmentDescriptor());
+    return static_cast<MTLRenderPassDepthAttachmentDescriptor *>(GPURenderPassAttachmentDescriptor::metal());
 }
 
 } // namespace WebCore

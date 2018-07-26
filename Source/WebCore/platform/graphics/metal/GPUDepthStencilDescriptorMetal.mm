@@ -23,24 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUBuffer.h"
+#import "config.h"
+#import "GPUDepthStencilDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
-#include "Logging.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+#import "GPUEnums.h"
+#import "Logging.h"
+#import <Metal/Metal.h>
 
 namespace WebCore {
 
-GPUBuffer::~GPUBuffer()
+GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()
+    : m_metal { adoptNS([MTLDepthStencilDescriptor new]) }
 {
-    LOG(WebGPU, "GPUBuffer::~GPUBuffer()");
+    LOG(WebGPU, "GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()");
 }
 
-unsigned GPUBuffer::length() const
+bool GPUDepthStencilDescriptor::depthWriteEnabled() const
 {
-    return m_contents ? m_contents->byteLength() : 0;
+    return [m_metal isDepthWriteEnabled];
+}
+
+void GPUDepthStencilDescriptor::setDepthWriteEnabled(bool newDepthWriteEnabled) const
+{
+    [m_metal setDepthWriteEnabled:newDepthWriteEnabled];
+}
+
+GPUCompareFunction GPUDepthStencilDescriptor::depthCompareFunction() const
+{
+    return static_cast<GPUCompareFunction>([m_metal depthCompareFunction]);
+}
+
+void GPUDepthStencilDescriptor::setDepthCompareFunction(GPUCompareFunction newFunction) const
+{
+    // FIXME: Do we need to check if the function value is in range before casting to MTLCompareFunction?
+    [m_metal setDepthCompareFunction:static_cast<MTLCompareFunction>(newFunction)];
 }
 
 } // namespace WebCore

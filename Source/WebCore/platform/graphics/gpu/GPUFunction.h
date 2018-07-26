@@ -27,35 +27,30 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLFunction;
-#endif
+OBJC_PROTOCOL(MTLFunction);
 
 namespace WebCore {
 
 class GPULibrary;
 
-class GPUFunction : public RefCounted<GPUFunction> {
+class GPUFunction {
 public:
-    static RefPtr<GPUFunction> create(GPULibrary*, const String& name);
+    WEBCORE_EXPORT GPUFunction(const GPULibrary&, const String& name);
     WEBCORE_EXPORT ~GPUFunction();
+
+    bool operator!() const;
 
     WEBCORE_EXPORT String name() const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLFunction *platformFunction();
+#if USE(METAL)
+    MTLFunction *metal() const { return m_metal.get(); }
 #endif
 
+#if USE(METAL)
 private:
-    GPUFunction(GPULibrary*, const String& name);
-
-#if PLATFORM(COCOA)
-    RetainPtr<MTLFunction> m_function;
+    RetainPtr<MTLFunction> m_metal;
 #endif
 };
     

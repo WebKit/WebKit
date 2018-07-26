@@ -28,48 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCommandBuffer.h"
-#include "GPURenderPassDescriptor.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPURenderCommandEncoder> GPURenderCommandEncoder::create(GPUCommandBuffer* buffer, GPURenderPassDescriptor* descriptor)
-{
-    RefPtr<GPURenderCommandEncoder> encoder = adoptRef(new GPURenderCommandEncoder(buffer, descriptor));
-    return encoder;
-}
 
 GPURenderCommandEncoder::~GPURenderCommandEncoder()
 {
     LOG(WebGPU, "GPURenderCommandEncoder::~GPURenderCommandEncoder()");
 }
-
-#if !PLATFORM(COCOA)
-void GPURenderCommandEncoder::setRenderPipelineState(GPURenderPipelineState*)
-{
-}
-
-void GPURenderCommandEncoder::setDepthStencilState(GPUDepthStencilState*)
-{
-}
-
-void GPURenderCommandEncoder::setVertexBuffer(GPUBuffer*, unsigned, unsigned)
-{
-}
-
-void GPURenderCommandEncoder::setFragmentBuffer(GPUBuffer*, unsigned, unsigned)
-{
-}
-
-void GPURenderCommandEncoder::drawPrimitives(unsigned, unsigned, unsigned)
-{
-}
-
-void GPURenderCommandEncoder::endEncoding()
-{
-}
-#endif
 
 } // namespace WebCore
 

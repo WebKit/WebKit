@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,56 +24,25 @@
  */
 
 #import "config.h"
-#import "GPUCommandQueue.h"
+#import "GPUComputePipelineState.h"
 
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
+#import "GPUFunction.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
-
-static NSString *webkitPrefix = @"com.apple.WebKit";
 
 namespace WebCore {
 
-GPUCommandQueue::GPUCommandQueue(GPUDevice* device)
+GPUComputePipelineState::GPUComputePipelineState(const GPUDevice& device, const GPUFunction& function)
 {
-    LOG(WebGPU, "GPUCommandQueue::GPUCommandQueue()");
+    LOG(WebGPU, "GPUComputePipelineState::GPUComputePipelineState()");
 
-    if (!device || !device->platformDevice())
+    if (!function.metal())
         return;
 
-    m_commandQueue = adoptNS((MTLCommandQueue *)[device->platformDevice() newCommandQueue]);
-    setLabel(emptyString());
-}
-
-String GPUCommandQueue::label() const
-{
-    if (!m_commandQueue)
-        return emptyString();
-
-    NSString *prefixedLabel = [m_commandQueue label];
-
-    if ([prefixedLabel isEqualToString:webkitPrefix])
-        return emptyString();
-
-    ASSERT(prefixedLabel.length >= (webkitPrefix.length + 1));
-    return [prefixedLabel substringFromIndex:(webkitPrefix.length + 1)];
-}
-
-void GPUCommandQueue::setLabel(const String& label)
-{
-    ASSERT(m_commandQueue);
-    if (label.isEmpty())
-        [m_commandQueue setLabel:webkitPrefix];
-    else
-        [m_commandQueue setLabel:[NSString stringWithFormat:@"%@.%@", webkitPrefix, static_cast<NSString *>(label)]];
-}
-    
-MTLCommandQueue *GPUCommandQueue::platformCommandQueue()
-{
-    return m_commandQueue.get();
+    m_metal = adoptNS([device.metal() newComputePipelineStateWithFunction:function.metal() error:nil]);
 }
 
 } // namespace WebCore

@@ -23,24 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUBuffer.h"
+#import "config.h"
+#import "GPURenderPipelineState.h"
 
 #if ENABLE(WEBGPU)
 
-#include "Logging.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+#import "GPUDevice.h"
+#import "GPURenderPipelineDescriptor.h"
+#import "Logging.h"
+#import <Metal/Metal.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-GPUBuffer::~GPUBuffer()
+GPURenderPipelineState::GPURenderPipelineState(const GPUDevice& device, const GPURenderPipelineDescriptor& descriptor)
+    : m_metal { adoptNS([device.metal() newRenderPipelineStateWithDescriptor:descriptor.metal() error:nil]) }
 {
-    LOG(WebGPU, "GPUBuffer::~GPUBuffer()");
+    LOG(WebGPU, "GPURenderPipelineState::GPURenderPipelineState()");
 }
 
-unsigned GPUBuffer::length() const
+String GPURenderPipelineState::label() const
 {
-    return m_contents ? m_contents->byteLength() : 0;
+    if (!m_metal)
+        return emptyString();
+    return [m_metal label];
+}
+
+void GPURenderPipelineState::setLabel(const String&) const
+{
+    // FIXME: The MTLRenderPipelineState protocol does not allow setting the label.
+    // The label has to be set on the descriptor when creating the state object.
+    // We should consider changing the WebGPU interface to not require this!
+}
+    
+MTLRenderPipelineState *GPURenderPipelineState::metal() const
+{
+    return m_metal.get();
 }
 
 } // namespace WebCore

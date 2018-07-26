@@ -28,41 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBuffer.h"
-#include "GPUCommandBuffer.h"
-#include "GPUComputePipelineState.h"
 #include "Logging.h"
 
 namespace WebCore {
-    
-RefPtr<GPUComputeCommandEncoder> GPUComputeCommandEncoder::create(GPUCommandBuffer* buffer)
-{
-    RefPtr<GPUComputeCommandEncoder> encoder = adoptRef(new GPUComputeCommandEncoder(buffer));
-    return encoder;
-}
     
 GPUComputeCommandEncoder::~GPUComputeCommandEncoder()
 {
     LOG(WebGPU, "GPUComputeCommandEncoder::~GPUComputeCommandEncoder()");
 }
-    
-#if !PLATFORM(COCOA)
-void GPUComputeCommandEncoder::setComputePipelineState(GPUComputePipelineState*)
-{
-}
-    
-void GPUComputeCommandEncoder::setBuffer(GPUBuffer*, unsigned, unsigned)
-{
-}
-    
-void GPUComputeCommandEncoder::dispatch(GPUSize threadgroupsPerGrid, GPUSize threadsPerThreadgroup);
-{
-}
-
-void GPUComputeCommandEncoder::endEncoding()
-{
-}
-#endif
     
 } // namespace WebCore
 

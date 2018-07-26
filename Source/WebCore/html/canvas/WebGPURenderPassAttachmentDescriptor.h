@@ -29,8 +29,6 @@
 
 #include "WebGPUObject.h"
 
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
 class GPURenderPassAttachmentDescriptor;
@@ -40,30 +38,26 @@ class WebGPURenderPassAttachmentDescriptor : public WebGPUObject {
 public:
     virtual ~WebGPURenderPassAttachmentDescriptor();
 
-    unsigned long loadAction() const;
-    void setLoadAction(unsigned long);
+    unsigned loadAction() const;
+    void setLoadAction(unsigned);
 
-    unsigned long storeAction() const;
-    void setStoreAction(unsigned long);
+    unsigned storeAction() const;
+    void setStoreAction(unsigned);
 
-    RefPtr<WebGPUTexture> texture() const;
-    void setTexture(RefPtr<WebGPUTexture>);
+    WebGPUTexture* texture() const;
+    void setTexture(RefPtr<WebGPUTexture>&&);
 
-    GPURenderPassAttachmentDescriptor* renderPassAttachmentDescriptor() const { return m_renderPassAttachmentDescriptor.get(); }
-
-    virtual bool isColorAttachmentDescriptor() const { return false; }
+    virtual bool isColorAttachmentDescriptor() const = 0;
 
 protected:
-
-    WebGPURenderPassAttachmentDescriptor(WebGPURenderingContext*, GPURenderPassAttachmentDescriptor*);
-
+    explicit WebGPURenderPassAttachmentDescriptor(WebGPURenderingContext&);
 
 private:
+    virtual const GPURenderPassAttachmentDescriptor& descriptor() const = 0;
 
-    RefPtr<GPURenderPassAttachmentDescriptor> m_renderPassAttachmentDescriptor;
     RefPtr<WebGPUTexture> m_texture;
 };
-    
+
 } // namespace WebCore
 
 #endif

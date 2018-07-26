@@ -293,27 +293,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/TransformationMatrixCG.cpp
     platform/graphics/cg/UTIRegistry.cpp
 
-    platform/graphics/cocoa/GPUBufferMetal.mm
-    platform/graphics/cocoa/GPUCommandBufferMetal.mm
-    platform/graphics/cocoa/GPUCommandQueueMetal.mm
-    platform/graphics/cocoa/GPUComputeCommandEncoderMetal.mm
-    platform/graphics/cocoa/GPUComputePipelineStateMetal.mm
-    platform/graphics/cocoa/GPUDepthStencilDescriptorMetal.mm
-    platform/graphics/cocoa/GPUDepthStencilStateMetal.mm
-    platform/graphics/cocoa/GPUDeviceMetal.mm
-    platform/graphics/cocoa/GPUDrawableMetal.mm
-    platform/graphics/cocoa/GPUFunctionMetal.mm
-    platform/graphics/cocoa/GPULibraryMetal.mm
-    platform/graphics/cocoa/GPURenderCommandEncoderMetal.mm
-    platform/graphics/cocoa/GPURenderPassAttachmentDescriptorMetal.mm
-    platform/graphics/cocoa/GPURenderPassColorAttachmentDescriptorMetal.mm
-    platform/graphics/cocoa/GPURenderPassDepthAttachmentDescriptorMetal.mm
-    platform/graphics/cocoa/GPURenderPassDescriptorMetal.mm
-    platform/graphics/cocoa/GPURenderPipelineColorAttachmentDescriptorMetal.mm
-    platform/graphics/cocoa/GPURenderPipelineDescriptorMetal.mm
-    platform/graphics/cocoa/GPURenderPipelineStateMetal.mm
-    platform/graphics/cocoa/GPUTextureDescriptorMetal.mm
-    platform/graphics/cocoa/GPUTextureMetal.mm
     platform/graphics/cocoa/GraphicsContext3DCocoa.mm
     platform/graphics/cocoa/GraphicsContextCocoa.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
@@ -356,6 +335,28 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/PDFDocumentImageMac.mm
     platform/graphics/mac/SimpleFontDataCoreText.cpp
     platform/graphics/mac/WebLayer.mm
+
+    platform/graphics/metal/GPUBufferMetal.mm
+    platform/graphics/metal/GPUCommandBufferMetal.mm
+    platform/graphics/metal/GPUCommandQueueMetal.mm
+    platform/graphics/metal/GPUComputeCommandEncoderMetal.mm
+    platform/graphics/metal/GPUComputePipelineStateMetal.mm
+    platform/graphics/metal/GPUDepthStencilDescriptorMetal.mm
+    platform/graphics/metal/GPUDepthStencilStateMetal.mm
+    platform/graphics/metal/GPUDeviceMetal.mm
+    platform/graphics/metal/GPUDrawableMetal.mm
+    platform/graphics/metal/GPUFunctionMetal.mm
+    platform/graphics/metal/GPULibraryMetal.mm
+    platform/graphics/metal/GPURenderCommandEncoderMetal.mm
+    platform/graphics/metal/GPURenderPassAttachmentDescriptorMetal.mm
+    platform/graphics/metal/GPURenderPassColorAttachmentDescriptorMetal.mm
+    platform/graphics/metal/GPURenderPassDepthAttachmentDescriptorMetal.mm
+    platform/graphics/metal/GPURenderPassDescriptorMetal.mm
+    platform/graphics/metal/GPURenderPipelineColorAttachmentDescriptorMetal.mm
+    platform/graphics/metal/GPURenderPipelineDescriptorMetal.mm
+    platform/graphics/metal/GPURenderPipelineStateMetal.mm
+    platform/graphics/metal/GPUTextureDescriptorMetal.mm
+    platform/graphics/metal/GPUTextureMetal.mm
 
     platform/graphics/opengl/Extensions3DOpenGL.cpp
     platform/graphics/opengl/Extensions3DOpenGLCommon.cpp

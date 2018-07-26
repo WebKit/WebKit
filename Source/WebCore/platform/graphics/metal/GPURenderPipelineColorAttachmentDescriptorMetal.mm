@@ -23,24 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUBuffer.h"
+#import "config.h"
+#import "GPURenderPipelineColorAttachmentDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
-#include "Logging.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+#import "Logging.h"
+#import <Metal/Metal.h>
 
 namespace WebCore {
 
-GPUBuffer::~GPUBuffer()
+GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor(MTLRenderPipelineColorAttachmentDescriptor *metal)
+    : m_metal { metal }
 {
-    LOG(WebGPU, "GPUBuffer::~GPUBuffer()");
+    LOG(WebGPU, "GPURenderPipelineColorAttachmentDescriptor::GPURenderPipelineColorAttachmentDescriptor()");
 }
 
-unsigned GPUBuffer::length() const
+unsigned GPURenderPipelineColorAttachmentDescriptor::pixelFormat() const
 {
-    return m_contents ? m_contents->byteLength() : 0;
+    return [m_metal pixelFormat];
+}
+
+void GPURenderPipelineColorAttachmentDescriptor::setPixelFormat(unsigned newPixelFormat) const
+{
+    // FIXME: Should we check for enumeration values out of range before calling the method?
+    [m_metal setPixelFormat:static_cast<MTLPixelFormat>(newPixelFormat)];
+}
+
+MTLRenderPipelineColorAttachmentDescriptor *GPURenderPipelineColorAttachmentDescriptor::metal() const
+{
+    return m_metal.get();
 }
 
 } // namespace WebCore

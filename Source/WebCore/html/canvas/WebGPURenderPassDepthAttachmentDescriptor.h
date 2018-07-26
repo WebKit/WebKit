@@ -27,26 +27,26 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUObject.h"
+#include "GPURenderPassDepthAttachmentDescriptor.h"
 #include "WebGPURenderPassAttachmentDescriptor.h"
 
 namespace WebCore {
 
-class GPURenderPassDepthAttachmentDescriptor;
-
-class WebGPURenderPassDepthAttachmentDescriptor : public WebGPURenderPassAttachmentDescriptor {
+class WebGPURenderPassDepthAttachmentDescriptor final : public WebGPURenderPassAttachmentDescriptor {
 public:
     virtual ~WebGPURenderPassDepthAttachmentDescriptor();
-    static Ref<WebGPURenderPassDepthAttachmentDescriptor> create(WebGPURenderingContext*, GPURenderPassDepthAttachmentDescriptor*);
+    static Ref<WebGPURenderPassDepthAttachmentDescriptor> create(WebGPURenderingContext&, GPURenderPassDepthAttachmentDescriptor&&);
 
     double clearDepth() const;
     void setClearDepth(double);
 
-    GPURenderPassDepthAttachmentDescriptor* renderPassDepthAttachmentDescriptor() const;
-
 private:
-    WebGPURenderPassDepthAttachmentDescriptor(WebGPURenderingContext*, GPURenderPassDepthAttachmentDescriptor*);
+    WebGPURenderPassDepthAttachmentDescriptor(WebGPURenderingContext&, GPURenderPassDepthAttachmentDescriptor&&);
 
+    const GPURenderPassAttachmentDescriptor& descriptor() const final;
+    bool isColorAttachmentDescriptor() const final { return false; }
+
+    GPURenderPassDepthAttachmentDescriptor m_descriptor;
 };
     
 } // namespace WebCore

@@ -30,6 +30,6 @@
 
     attribute DOMString label;
 
-    WebGPUCommandBuffer? createCommandBuffer();
+    WebGPUCommandBuffer createCommandBuffer();
 
 };

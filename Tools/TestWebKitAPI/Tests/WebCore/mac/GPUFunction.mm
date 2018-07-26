@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUTest.h"
+#import "PlatformUtilities.h"
 #import <Metal/Metal.h>
 #import <WebCore/GPUDevice.h>
 #import <WebCore/GPUFunction.h>
@@ -40,29 +41,28 @@ namespace TestWebKitAPI {
 
 TEST_F(GPU, FunctionAccessByName)
 {
-    auto device = GPUDevice::create();
+    GPUDevice device;
+
     // Not all hardware supports Metal, so it is possible
     // that we were unable to create the MTLDevice object.
     // In that case, the device should be null.
     if (!device)
         return;
 
-    id<MTLDevice> mtlDevice = (id<MTLDevice>)device->platformDevice();
-    EXPECT_NOT_NULL(mtlDevice);
+    EXPECT_NOT_NULL(device.metal());
 
-    auto library = device->createLibrary(librarySourceCode());
-    EXPECT_NOT_NULL(library);
+    GPULibrary library { device, librarySourceCode() };
 
-    auto vertexFunction = library->functionWithName("vertex_main");
-    EXPECT_NOT_NULL(vertexFunction);
-    EXPECT_EQ("vertex_main", vertexFunction->name());
+    GPUFunction vertexFunction { library, "vertex_main"_s };
+    EXPECT_NOT_NULL(vertexFunction.metal());
+    EXPECT_WK_STREQ("vertex_main", vertexFunction.name());
 
-    auto fragmentFunction = library->functionWithName("fragment_main");
-    EXPECT_NOT_NULL(fragmentFunction);
-    EXPECT_EQ("fragment_main", fragmentFunction->name());
+    GPUFunction fragmentFunction { library, "fragment_main"_s };
+    EXPECT_NOT_NULL(fragmentFunction.metal());
+    EXPECT_WK_STREQ("fragment_main", fragmentFunction.name());
 
-    auto nonExistentFunction = library->functionWithName("name_that_is_not_in_library");
-    EXPECT_NULL(nonExistentFunction);
+    GPUFunction nonexistentFunction { library, "name_that_is_not_in_library"_s };
+    EXPECT_NULL(nonexistentFunction.metal());
 }
 
 } // namespace TestWebKitAPI

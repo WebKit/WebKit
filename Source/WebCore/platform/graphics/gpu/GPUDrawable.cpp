@@ -28,28 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCommandBuffer.h"
-#include "GPUDevice.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPUDrawable> GPUDrawable::create(GPUDevice* device)
-{
-    RefPtr<GPUDrawable> drawable = adoptRef(new GPUDrawable(device));
-    return drawable;
-}
 
 GPUDrawable::~GPUDrawable()
 {
     LOG(WebGPU, "GPUDrawable::~GPUDrawable()");
 }
-
-#if !PLATFORM(COCOA)
-void GPUDrawable::release()
-{
-}
-#endif
 
 } // namespace WebCore
 

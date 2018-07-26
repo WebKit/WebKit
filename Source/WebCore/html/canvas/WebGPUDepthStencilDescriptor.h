@@ -27,18 +27,14 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUDepthStencilDescriptor.h"
 #include "WebGPUEnums.h"
 #include "WebGPUObject.h"
 
-#include <wtf/Vector.h>
-
 namespace WebCore {
-
-class GPUDepthStencilDescriptor;
 
 class WebGPUDepthStencilDescriptor : public WebGPUObject {
 public:
-    virtual ~WebGPUDepthStencilDescriptor();
     static Ref<WebGPUDepthStencilDescriptor> create();
 
     bool depthWriteEnabled() const;
@@ -48,13 +44,18 @@ public:
     CompareFunction depthCompareFunction() const;
     void setDepthCompareFunction(CompareFunction);
 
-    GPUDepthStencilDescriptor* depthStencilDescriptor() { return m_depthStencilDescriptor.get(); }
+    GPUDepthStencilDescriptor& descriptor() { return m_descriptor; }
 
 private:
-    WebGPUDepthStencilDescriptor();
+    WebGPUDepthStencilDescriptor() = default;
 
-    WebGPUCompareFunction m_depthCompareFunction;
-    RefPtr<GPUDepthStencilDescriptor> m_depthStencilDescriptor;
+    // FIXME: The default value of "Always" is defined both here and in the
+    // GPUDepthStencilDescriptor class's implementation. Might be better to not
+    // store the compare function separately here, translate it instead, and then
+    // there would be no need for a default value here.
+
+    WebGPUCompareFunction m_depthCompareFunction { WebGPUCompareFunction::Always };
+    GPUDepthStencilDescriptor m_descriptor;
 };
 
 } // namespace WebCore

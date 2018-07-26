@@ -30,38 +30,35 @@
 
 #import "GPUDevice.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
 #import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {
 
-GPUDrawable::GPUDrawable(GPUDevice* device)
+GPUDrawable::GPUDrawable(const GPUDevice& device)
+    : m_metal { [device.layer() nextDrawable] }
 {
     LOG(WebGPU, "GPUDrawable::GPUDrawable()");
-
-    if (!device || !device->platformDevice())
-        return;
-
-    m_drawable = (MTLDrawable *)[static_cast<CAMetalLayer*>(device->platformLayer()) nextDrawable];
 }
 
 void GPUDrawable::release()
 {
     LOG(WebGPU, "GPUDrawable::release()");
-    m_drawable = nullptr;
+    m_metal = nil;
 }
     
-MTLDrawable *GPUDrawable::platformDrawable()
+MTLDrawable *GPUDrawable::metal() const
 {
-    return m_drawable.get();
+    return m_metal.get();
 }
 
-MTLTexture *GPUDrawable::platformTexture()
+MTLTexture *GPUDrawable::texture() const
 {
-    if (!m_drawable)
-        return nullptr;
-    return (MTLTexture *)[(id<CAMetalDrawable>)m_drawable.get() texture];
+    if (![m_metal conformsToProtocol:@protocol(CAMetalDrawable)]) {
+        ASSERT(!m_metal);
+        return nil;
+    }
+    return [(id<CAMetalDrawable>)m_metal.get() texture];
 }
 
 } // namespace WebCore

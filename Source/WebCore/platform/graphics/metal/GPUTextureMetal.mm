@@ -24,64 +24,47 @@
  */
 
 #import "config.h"
-#import "GPUCommandBuffer.h"
+#import "GPUTexture.h"
 
 #if ENABLE(WEBGPU)
 
-#import "GPUCommandQueue.h"
 #import "GPUDevice.h"
 #import "GPUDrawable.h"
+#import "GPUTextureDescriptor.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
-#import <wtf/BlockPtr.h>
 
 namespace WebCore {
 
-GPUCommandBuffer::GPUCommandBuffer(GPUCommandQueue* queue)
+GPUTexture::GPUTexture(const GPUDevice& device, const GPUTextureDescriptor& descriptor)
 {
-    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
+    LOG(WebGPU, "GPUTexture::GPUTexture()");
 
-    if (!queue || !queue->platformCommandQueue())
+    if (!descriptor.metal())
         return;
 
-    m_commandBuffer = (MTLCommandBuffer *)[queue->platformCommandQueue() commandBuffer];
+    m_metal = adoptNS([device.metal() newTextureWithDescriptor:descriptor.metal()]);
 }
 
-MTLCommandBuffer *GPUCommandBuffer::platformCommandBuffer()
+GPUTexture::GPUTexture(const GPUDrawable& other)
+    : m_metal { other.texture() }
 {
-    return m_commandBuffer.get();
+    LOG(WebGPU, "GPUTexture::GPUTexture()");
 }
 
-void GPUCommandBuffer::presentDrawable(GPUDrawable* drawable)
+unsigned GPUTexture::width() const
 {
-    if (!m_commandBuffer || !drawable->platformDrawable())
-        return;
-
-    [m_commandBuffer presentDrawable:static_cast<id<MTLDrawable>>(drawable->platformDrawable())];
-    drawable->release();
+    return m_metal.get().width;
 }
 
-void GPUCommandBuffer::commit()
+unsigned GPUTexture::height() const
 {
-    if (!m_commandBuffer)
-        return;
-
-    [m_commandBuffer commit];
+    return m_metal.get().height;
 }
 
-DOMPromiseProxy<IDLVoid>& GPUCommandBuffer::completed()
+MTLTexture *GPUTexture::metal() const
 {
-    if (!m_commandBuffer)
-        return m_completedPromise;
-
-    [m_commandBuffer addCompletedHandler:BlockPtr<void (id<MTLCommandBuffer>)>::fromCallable([this, protectedThis = makeRef(*this)] (id<MTLCommandBuffer>) {
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
-            this->m_completedPromise.resolve();
-        });
-    }).get()];
-    
-    return m_completedPromise;
+    return m_metal.get();
 }
 
 } // namespace WebCore

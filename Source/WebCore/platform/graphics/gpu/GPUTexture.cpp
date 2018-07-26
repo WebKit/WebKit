@@ -28,40 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "GPUDrawable.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-RefPtr<GPUTexture> GPUTexture::create(GPUDevice* device, GPUTextureDescriptor* descriptor)
-{
-    RefPtr<GPUTexture> texture = adoptRef(new GPUTexture(device, descriptor));
-    return texture;
-}
-
-RefPtr<GPUTexture> GPUTexture::createFromDrawable(GPUDrawable* other)
-{
-    RefPtr<GPUTexture> texture = adoptRef(new GPUTexture(other));
-    return texture;
-}
 
 GPUTexture::~GPUTexture()
 {
     LOG(WebGPU, "GPUTexture::~GPUTexture()");
 }
-
-#if !PLATFORM(COCOA)
-unsigned long GPUTexture::width() const
-{
-    return 0;
-}
-
-unsigned long GPUTexture::height() const
-{
-    return 0;
-}
-#endif
 
 } // namespace WebCore
 

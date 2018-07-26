@@ -28,48 +28,34 @@
 
 #if ENABLE(WEBGPU)
 
-#include "DOMPromiseProxy.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLCommandBuffer;
-#endif
+OBJC_PROTOCOL(MTLCommandBuffer);
 
 namespace WebCore {
 
 class GPUCommandQueue;
-class GPUComputeCommandEncoder;
 class GPUDrawable;
-class GPURenderCommandEncoder;
-class GPURenderPassDescriptor;
 
-class GPUCommandBuffer : public RefCounted<GPUCommandBuffer> {
+class GPUCommandBuffer {
 public:
-    static RefPtr<GPUCommandBuffer> create(GPUCommandQueue*);
-    WEBCORE_EXPORT ~GPUCommandBuffer();
+    explicit GPUCommandBuffer(const GPUCommandQueue&, Function<void()>&& completedCallback);
+    ~GPUCommandBuffer();
 
-    WEBCORE_EXPORT void commit();
-    WEBCORE_EXPORT void presentDrawable(GPUDrawable*);
+    void commit() const;
+    void presentDrawable(GPUDrawable&) const;
 
-    WEBCORE_EXPORT RefPtr<GPURenderCommandEncoder> createRenderCommandEncoder(GPURenderPassDescriptor*);
-    WEBCORE_EXPORT RefPtr<GPUComputeCommandEncoder> createComputeCommandEncoder();
-    WEBCORE_EXPORT DOMPromiseProxy<IDLVoid>& completed();
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLCommandBuffer *platformCommandBuffer();
+#if USE(METAL)
+    MTLCommandBuffer *metal() const { return m_metal.get(); }
 #endif
 
+#if USE(METAL)
 private:
-    GPUCommandBuffer(GPUCommandQueue*);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLCommandBuffer> m_commandBuffer;
+    RetainPtr<MTLCommandBuffer> m_metal;
 #endif
-
-    DOMPromiseProxy<IDLVoid> m_completedPromise;
 };
     
 } // namespace WebCore
+
 #endif

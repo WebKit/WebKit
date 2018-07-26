@@ -28,40 +28,27 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPassAttachmentDescriptor.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLRenderPassDepthAttachmentDescriptor;
-#endif
 
 namespace WebCore {
 
 class GPURenderPassDepthAttachmentDescriptor : public GPURenderPassAttachmentDescriptor {
 public:
-#if PLATFORM(COCOA)
-    static RefPtr<GPURenderPassDepthAttachmentDescriptor> create(MTLRenderPassDepthAttachmentDescriptor *);
-#else
-    static RefPtr<GPURenderPassDepthAttachmentDescriptor> create();
+#if USE(METAL)
+    GPURenderPassDepthAttachmentDescriptor(MTLRenderPassDepthAttachmentDescriptor *);
 #endif
-    WEBCORE_EXPORT ~GPURenderPassDepthAttachmentDescriptor();
+    ~GPURenderPassDepthAttachmentDescriptor();
 
     double clearDepth() const;
-    void setClearDepth(double);
+    void setClearDepth(double) const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderPassDepthAttachmentDescriptor *platformRenderPassDepthAttachmentDescriptor();
-#endif
-
+#if USE(METAL)
 private:
-#if PLATFORM(COCOA)
-    GPURenderPassDepthAttachmentDescriptor(MTLRenderPassDepthAttachmentDescriptor *);
-#else
-    GPURenderPassDepthAttachmentDescriptor();
+    MTLRenderPassDepthAttachmentDescriptor *metal() const;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

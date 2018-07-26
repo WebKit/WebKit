@@ -27,48 +27,42 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS MTLTextureDescriptor;
-#endif
 
 namespace WebCore {
 
-class GPUTextureDescriptor : public RefCounted<GPUTextureDescriptor> {
+class GPUTextureDescriptor {
 public:
-    static RefPtr<GPUTextureDescriptor> create(unsigned long pixelFormat, unsigned long width, unsigned long height, bool mipmapped);
-    WEBCORE_EXPORT ~GPUTextureDescriptor();
+    GPUTextureDescriptor(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped);
+    ~GPUTextureDescriptor();
 
-    WEBCORE_EXPORT unsigned long width() const;
-    WEBCORE_EXPORT void setWidth(unsigned long);
+    unsigned width() const;
+    void setWidth(unsigned) const;
 
-    WEBCORE_EXPORT unsigned long height() const;
-    WEBCORE_EXPORT void setHeight(unsigned long);
+    unsigned height() const;
+    void setHeight(unsigned) const;
 
-    WEBCORE_EXPORT unsigned long sampleCount() const;
-    WEBCORE_EXPORT void setSampleCount(unsigned long);
+    unsigned sampleCount() const;
+    void setSampleCount(unsigned) const;
 
-    WEBCORE_EXPORT unsigned long textureType() const;
-    WEBCORE_EXPORT void setTextureType(unsigned long);
+    unsigned textureType() const;
+    void setTextureType(unsigned) const;
 
-    WEBCORE_EXPORT unsigned long storageMode() const;
-    WEBCORE_EXPORT void setStorageMode(unsigned long);
+    unsigned storageMode() const;
+    void setStorageMode(unsigned) const;
 
-    WEBCORE_EXPORT unsigned long usage() const;
-    WEBCORE_EXPORT void setUsage(unsigned long);
+    unsigned usage() const;
+    void setUsage(unsigned) const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLTextureDescriptor *platformTextureDescriptor();
+#if USE(METAL)
+    MTLTextureDescriptor *metal() const;
 #endif
 
+#if USE(METAL)
 private:
-    GPUTextureDescriptor(unsigned long pixelFormat, unsigned long width, unsigned long height, bool mipmapped);
-
-#if PLATFORM(COCOA)
-    RetainPtr<MTLTextureDescriptor> m_textureDescriptor;
+    RetainPtr<MTLTextureDescriptor> m_metal;
 #endif
 };
     

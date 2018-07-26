@@ -28,50 +28,30 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
 #include "WebGPURenderingContext.h"
-#include "WebGPUTextureDescriptor.h"
 
 namespace WebCore {
 
-Ref<WebGPUTexture> WebGPUTexture::createFromDrawableTexture(WebGPURenderingContext* context, RefPtr<GPUTexture>&& drawableTexture)
+Ref<WebGPUTexture> WebGPUTexture::createFromDrawableTexture(WebGPURenderingContext& context, GPUTexture&& texture)
 {
-    return adoptRef(*new WebGPUTexture(context, WTFMove(drawableTexture)));
+    return adoptRef(*new WebGPUTexture(context, WTFMove(texture)));
 }
 
-Ref<WebGPUTexture> WebGPUTexture::create(WebGPURenderingContext* context, WebGPUTextureDescriptor* descriptor)
+Ref<WebGPUTexture> WebGPUTexture::create(WebGPURenderingContext& context, const GPUTextureDescriptor& descriptor)
 {
     return adoptRef(*new WebGPUTexture(context, descriptor));
 }
 
-WebGPUTexture::WebGPUTexture(WebGPURenderingContext* context, RefPtr<GPUTexture>&& drawableTexture)
-    : WebGPUObject(context)
-    , m_texture(WTFMove(drawableTexture))
+WebGPUTexture::WebGPUTexture(WebGPURenderingContext& context, GPUTexture&& texture)
+    : WebGPUObject { &context }
+    , m_texture { WTFMove(texture) }
 {
 }
 
-WebGPUTexture::WebGPUTexture(WebGPURenderingContext* context, WebGPUTextureDescriptor* descriptor)
-    : WebGPUObject(context)
+WebGPUTexture::WebGPUTexture(WebGPURenderingContext& context, const GPUTextureDescriptor& descriptor)
+    : WebGPUObject { &context }
+    , m_texture { context.device(), descriptor }
 {
-    m_texture = context->device()->createTexture(descriptor->textureDescriptor());
-}
-
-WebGPUTexture::~WebGPUTexture() = default;
-
-unsigned long WebGPUTexture::width() const
-{
-    if (!m_texture)
-        return 0;
-    
-    return m_texture->width();
-}
-
-unsigned long WebGPUTexture::height() const
-{
-    if (!m_texture)
-        return 0;
-
-    return m_texture->height();
 }
 
 } // namespace WebCore

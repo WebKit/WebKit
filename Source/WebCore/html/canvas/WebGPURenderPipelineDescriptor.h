@@ -27,9 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPURenderPipelineDescriptor.h"
 #include "WebGPUObject.h"
 #include "WebGPURenderPipelineColorAttachmentDescriptor.h"
-
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -44,20 +44,20 @@ public:
     virtual ~WebGPURenderPipelineDescriptor();
     static Ref<WebGPURenderPipelineDescriptor> create();
 
-    RefPtr<WebGPUFunction> vertexFunction() const;
-    void setVertexFunction(RefPtr<WebGPUFunction>);
+    WebGPUFunction* vertexFunction() const;
+    void setVertexFunction(RefPtr<WebGPUFunction>&&);
 
-    RefPtr<WebGPUFunction> fragmentFunction() const;
-    void setFragmentFunction(RefPtr<WebGPUFunction>);
+    WebGPUFunction* fragmentFunction() const;
+    void setFragmentFunction(RefPtr<WebGPUFunction>&&);
 
-    Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>> colorAttachments();
+    const Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>>& colorAttachments();
 
-    unsigned long depthAttachmentPixelFormat() const;
-    void setDepthAttachmentPixelFormat(unsigned long);
+    unsigned depthAttachmentPixelFormat() const;
+    void setDepthAttachmentPixelFormat(unsigned);
 
     void reset();
 
-    GPURenderPipelineDescriptor* renderPipelineDescriptor() { return m_renderPipelineDescriptor.get(); }
+    const GPURenderPipelineDescriptor& descriptor() { return m_descriptor; }
 
 private:
     WebGPURenderPipelineDescriptor();
@@ -65,9 +65,9 @@ private:
     RefPtr<WebGPUFunction> m_vertexFunction;
     RefPtr<WebGPUFunction> m_fragmentFunction;
 
-    Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>> m_colorAttachmentDescriptors;
+    Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>> m_colorAttachments;
 
-    RefPtr<GPURenderPipelineDescriptor> m_renderPipelineDescriptor;
+    GPURenderPipelineDescriptor m_descriptor;
 };
 
 } // namespace WebCore

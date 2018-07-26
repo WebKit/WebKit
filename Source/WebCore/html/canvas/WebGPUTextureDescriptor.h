@@ -27,44 +27,39 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUEnums.h"
+#include "GPUTextureDescriptor.h"
 #include "WebGPUObject.h"
-
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPUTextureDescriptor;
-
 class WebGPUTextureDescriptor : public WebGPUObject {
 public:
-    virtual ~WebGPUTextureDescriptor();
-    static Ref<WebGPUTextureDescriptor> create(unsigned long pixelFormat, unsigned long width, unsigned long height, bool mipmapped);
+    static Ref<WebGPUTextureDescriptor> create(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped);
 
-    unsigned long width() const;
-    void setWidth(unsigned long);
+    unsigned width() const;
+    void setWidth(unsigned);
 
-    unsigned long height() const;
-    void setHeight(unsigned long);
+    unsigned height() const;
+    void setHeight(unsigned);
 
-    unsigned long sampleCount() const;
-    void setSampleCount(unsigned long);
+    unsigned sampleCount() const;
+    void setSampleCount(unsigned);
 
-    unsigned long textureType() const;
-    void setTextureType(unsigned long);
+    unsigned textureType() const;
+    void setTextureType(unsigned);
 
-    unsigned long storageMode() const;
-    void setStorageMode(unsigned long);
+    unsigned storageMode() const;
+    void setStorageMode(unsigned);
 
-    unsigned long usage() const;
-    void setUsage(unsigned long);
+    unsigned usage() const;
+    void setUsage(unsigned);
 
-    GPUTextureDescriptor* textureDescriptor() { return m_textureDescriptor.get(); }
+    const GPUTextureDescriptor& descriptor() { return m_descriptor; }
 
 private:
-    WebGPUTextureDescriptor(unsigned long pixelFormat, unsigned long width, unsigned long height, bool mipmapped);
+    WebGPUTextureDescriptor(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped);
 
-    RefPtr<GPUTextureDescriptor> m_textureDescriptor;
+    GPUTextureDescriptor m_descriptor;
 };
 
 } // namespace WebCore

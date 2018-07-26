@@ -30,72 +30,62 @@
 
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUDevice.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+
+namespace JSC {
+class ArrayBufferView;
+}
 
 namespace WebCore {
 
+class WebGPUBuffer;
 class WebGPUCommandQueue;
 class WebGPUComputePipelineState;
+class WebGPUDepthStencilDescriptor;
+class WebGPUDepthStencilState;
+class WebGPUDrawable;
 class WebGPUFunction;
 class WebGPULibrary;
 class WebGPURenderPipelineDescriptor;
 class WebGPURenderPipelineState;
-class WebGPUDepthStencilDescriptor;
-class WebGPUDepthStencilState;
-class WebGPURenderPassDescriptor;
-class WebGPUDrawable;
-class WebGPUBuffer;
 class WebGPUTexture;
 class WebGPUTextureDescriptor;
 
-class WebGPURenderingContext : public GPUBasedCanvasRenderingContext {
+class WebGPURenderingContext final : public GPUBasedCanvasRenderingContext {
 public:
     static std::unique_ptr<WebGPURenderingContext> create(CanvasBase&);
 
+    // FIXME: IDL file says this is not nullable, but this function can return null.
     HTMLCanvasElement* canvas() const;
 
-    bool isWebGPU() const final { return true; }
+    Ref<WebGPULibrary> createLibrary(const String&);
+    Ref<WebGPURenderPipelineState> createRenderPipelineState(WebGPURenderPipelineDescriptor&);
+    Ref<WebGPUDepthStencilState> createDepthStencilState(WebGPUDepthStencilDescriptor&);
+    Ref<WebGPUComputePipelineState> createComputePipelineState(WebGPUFunction&);
+    Ref<WebGPUCommandQueue> createCommandQueue();
+    Ref<WebGPUDrawable> nextDrawable();
+    RefPtr<WebGPUBuffer> createBuffer(JSC::ArrayBufferView&);
+    Ref<WebGPUTexture> createTexture(WebGPUTextureDescriptor&);
 
-    void reshape(int width, int height) final;
+    const GPUDevice& device() const { return m_device; }
 
-    void markLayerComposited() final;
+private:
+    WebGPURenderingContext(CanvasBase&, GPUDevice&&);
 
-    PlatformLayer* platformLayer() const override;
-
-    RefPtr<GPUDevice> device() { return m_device; }
-
-    // WebGPU entry points
-
-    RefPtr<WebGPULibrary> createLibrary(const String);
-
-    RefPtr<WebGPURenderPipelineState> createRenderPipelineState(WebGPURenderPipelineDescriptor&);
-
-    RefPtr<WebGPUDepthStencilState> createDepthStencilState(WebGPUDepthStencilDescriptor&);
-
-    RefPtr<WebGPUComputePipelineState> createComputePipelineState(WebGPUFunction&);
-
-    RefPtr<WebGPUCommandQueue> createCommandQueue();
-
-    RefPtr<WebGPUDrawable> nextDrawable();
-
-    RefPtr<WebGPUBuffer> createBuffer(ArrayBufferView& data);
-
-    RefPtr<WebGPUTexture> createTexture(WebGPUTextureDescriptor&);
-
-protected:
-    // ActiveDOMObject
-    bool hasPendingActivity() const override;
-    void stop() override;
-    const char* activeDOMObjectName() const override;
-    bool canSuspendForDocumentSuspension() const override;
+    bool hasPendingActivity() const final;
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     IntSize clampedCanvasSize() const;
     void initializeNewContext();
 
-private:
-    WebGPURenderingContext(CanvasBase&, Ref<GPUDevice>&&);
+    bool isWebGPU() const final { return true; }
 
-    RefPtr<GPUDevice> m_device;
+    void reshape(int width, int height) final;
+    void markLayerComposited() final;
+    PlatformLayer* platformLayer() const final;
+
+    GPUDevice m_device;
 };
 
 } // namespace WebCore

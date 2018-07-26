@@ -28,40 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPassAttachmentDescriptor.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-#if !PLATFORM(COCOA)
-RefPtr<GPURenderPassColorAttachmentDescriptor> GPURenderPassColorAttachmentDescriptor::create()
-{
-    RefPtr<GPURenderPassColorAttachmentDescriptor> descriptor = adoptRef(new GPURenderPassColorAttachmentDescriptor());
-    return descriptor;
-}
-
-GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor()
-    : GPURenderPassAttachmentDescriptor()
-{
-    LOG(WebGPU, "GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor()");
-}
-#endif
 
 GPURenderPassColorAttachmentDescriptor::~GPURenderPassColorAttachmentDescriptor()
 {
     LOG(WebGPU, "GPURenderPassColorAttachmentDescriptor::~GPURenderPassColorAttachmentDescriptor()");
 }
-
-#if !PLATFORM(COCOA)
-Vector<float> GPURenderPassColorAttachmentDescriptor::clearColor() const
-{
-    return Vector<float>();
-}
-
-void GPURenderPassColorAttachmentDescriptor::setClearColor(const Vector<float>&)
-{
-}
-#endif
 
 } // namespace WebCore
 

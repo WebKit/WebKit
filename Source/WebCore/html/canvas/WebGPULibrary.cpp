@@ -28,59 +28,34 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPULibrary.h"
 #include "WebGPUFunction.h"
 #include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPULibrary> WebGPULibrary::create(WebGPURenderingContext* context, const String& sourceCode)
+Ref<WebGPULibrary> WebGPULibrary::create(WebGPURenderingContext& context, const String& sourceCode)
 {
     return adoptRef(*new WebGPULibrary(context, sourceCode));
 }
 
-WebGPULibrary::WebGPULibrary(WebGPURenderingContext* context, const String& sourceCode)
-    : WebGPUObject(context)
-    , m_sourceCode(sourceCode)
+WebGPULibrary::WebGPULibrary(WebGPURenderingContext& context, const String& sourceCode)
+    : WebGPUObject { &context }
+    , m_sourceCode { sourceCode }
+    , m_library { context.device(), sourceCode }
 {
-    m_library = context->device()->createLibrary(sourceCode);
 }
 
-WebGPULibrary::~WebGPULibrary() = default;
-
-String WebGPULibrary::label() const
+Vector<String> WebGPULibrary::functionNames() const
 {
-    if (!m_library)
-        return emptyString();
-
-    return m_library->label();
+    return m_library.functionNames();
 }
 
-void WebGPULibrary::setLabel(const String& label)
+RefPtr<WebGPUFunction> WebGPULibrary::functionWithName(const String& name) const
 {
-    if (!m_library)
-        return;
-
-    m_library->setLabel(label);
-}
-
-Vector<String> WebGPULibrary::functionNames()
-{
-    if (!m_library)
-        return Vector<String>();
-
-    return m_library->functionNames();
-}
-
-RefPtr<WebGPUFunction> WebGPULibrary::functionWithName(const String& name)
-{
-    if (!m_library)
+    GPUFunction function { m_library, name };
+    if (!function)
         return nullptr;
-
-    RefPtr<WebGPUFunction> function = WebGPUFunction::create(this->context(), this, name);
-    if (!function->function())
-        return nullptr;
-    return function;
+    return WebGPUFunction::create(*context(), WTFMove(function));
 }
 
 } // namespace WebCore

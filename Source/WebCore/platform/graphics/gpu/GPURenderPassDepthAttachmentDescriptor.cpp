@@ -28,40 +28,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPassAttachmentDescriptor.h"
 #include "Logging.h"
 
 namespace WebCore {
-
-#if !PLATFORM(COCOA)
-RefPtr<GPURenderPassDepthAttachmentDescriptor> GPURenderPassDepthAttachmentDescriptor::create()
-{
-    RefPtr<GPURenderPassDepthAttachmentDescriptor> descriptor = adoptRef(new GPURenderPassDepthAttachmentDescriptor());
-    return descriptor;
-}
-
-GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor()
-    : GPURenderPassAttachmentDescriptor()
-{
-    LOG(WebGPU, "GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor()");
-}
-#endif
 
 GPURenderPassDepthAttachmentDescriptor::~GPURenderPassDepthAttachmentDescriptor()
 {
     LOG(WebGPU, "GPURenderPassDepthAttachmentDescriptor::~GPURenderPassDepthAttachmentDescriptor()");
 }
-
-#if !PLATFORM(COCOA)
-double GPURenderPassDepthAttachmentDescriptor::clearDepth() const
-{
-    return 0;
-}
-
-void GPURenderPassDepthAttachmentDescriptor::setClearDepth(double)
-{
-}
-#endif
 
 } // namespace WebCore
 

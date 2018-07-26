@@ -30,55 +30,47 @@
 
 #import "GPUDevice.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-GPULibrary::GPULibrary(GPUDevice* device, const String& sourceCode)
+GPULibrary::GPULibrary(const GPUDevice& device, const String& sourceCode)
 {
     LOG(WebGPU, "GPULibrary::GPULibrary()");
 
-    if (!device || !device->platformDevice())
+    if (!device.metal())
         return;
 
     NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
-    m_library = adoptNS((MTLLibrary *)[device->platformDevice() newLibraryWithSource:sourceCode options:nil error:&error]);
-    if (!m_library)
+    m_metal = adoptNS([device.metal() newLibraryWithSource:sourceCode options:nil error:&error]);
+    if (!m_metal)
         LOG(WebGPU, "Compilation error: %s", [[error localizedDescription] UTF8String]);
 }
 
 String GPULibrary::label() const
 {
-    if (!m_library)
+    if (!m_metal)
         return emptyString();
 
-    return [m_library label];
+    return [m_metal label];
 }
 
-void GPULibrary::setLabel(const String& label)
+void GPULibrary::setLabel(const String& label) const
 {
-    ASSERT(m_library);
-    [m_library setLabel:label];
+    ASSERT(m_metal);
+    [m_metal setLabel:label];
 }
 
-Vector<String> GPULibrary::functionNames()
+Vector<String> GPULibrary::functionNames() const
 {
-    if (!m_library)
-        return Vector<String>();
-
-    Vector<String> names;
-
-    NSArray<NSString*> *functionNames = [m_library functionNames];
-    for (NSString *string in functionNames)
-        names.append(string);
-    
-    return names;
-}
-
-MTLLibrary *GPULibrary::platformLibrary()
-{
-    return m_library.get();
+    auto array = [m_metal functionNames];
+    Vector<String> vector;
+    vector.reserveInitialCapacity(array.count);
+    for (NSString *string in array)
+        vector.uncheckedAppend(string);
+    return vector;
 }
 
 } // namespace WebCore

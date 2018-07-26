@@ -28,38 +28,27 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPipelineColorAttachmentDescriptor.h"
-#include "WebGPURenderingContext.h"
-
 namespace WebCore {
 
-Ref<WebGPURenderPipelineColorAttachmentDescriptor> WebGPURenderPipelineColorAttachmentDescriptor::create(WebGPURenderingContext* context, GPURenderPipelineColorAttachmentDescriptor* descriptor)
+Ref<WebGPURenderPipelineColorAttachmentDescriptor> WebGPURenderPipelineColorAttachmentDescriptor::create(WebGPURenderingContext& context, GPURenderPipelineColorAttachmentDescriptor&& descriptor)
 {
-    return adoptRef(*new WebGPURenderPipelineColorAttachmentDescriptor(context, descriptor));
+    return adoptRef(*new WebGPURenderPipelineColorAttachmentDescriptor(context, WTFMove(descriptor)));
 }
 
-WebGPURenderPipelineColorAttachmentDescriptor::WebGPURenderPipelineColorAttachmentDescriptor(WebGPURenderingContext* context, GPURenderPipelineColorAttachmentDescriptor* descriptor)
-    : WebGPUObject(context)
-    , m_renderPipelineColorAttachmentDescriptor(descriptor)
+WebGPURenderPipelineColorAttachmentDescriptor::WebGPURenderPipelineColorAttachmentDescriptor(WebGPURenderingContext& context, GPURenderPipelineColorAttachmentDescriptor&& descriptor)
+    : WebGPUObject { &context }
+    , m_descriptor { WTFMove(descriptor) }
 {
 }
 
-WebGPURenderPipelineColorAttachmentDescriptor::~WebGPURenderPipelineColorAttachmentDescriptor() = default;
-
-unsigned long WebGPURenderPipelineColorAttachmentDescriptor::pixelFormat() const
+unsigned WebGPURenderPipelineColorAttachmentDescriptor::pixelFormat() const
 {
-    if (!m_renderPipelineColorAttachmentDescriptor)
-        return 0; // FIXME: probably a real value for unknown
-
-    return m_renderPipelineColorAttachmentDescriptor->pixelFormat();
+    return m_descriptor.pixelFormat();
 }
 
-void WebGPURenderPipelineColorAttachmentDescriptor::setPixelFormat(unsigned long newPixelFormat)
+void WebGPURenderPipelineColorAttachmentDescriptor::setPixelFormat(unsigned newPixelFormat)
 {
-    if (!m_renderPipelineColorAttachmentDescriptor)
-        return;
-
-    m_renderPipelineColorAttachmentDescriptor->setPixelFormat(newPixelFormat);
+    m_descriptor.setPixelFormat(newPixelFormat);
 }
 
 } // namespace WebCore

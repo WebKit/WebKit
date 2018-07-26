@@ -24,57 +24,41 @@
  */
 
 #import "config.h"
-#import "GPUBuffer.h"
+#import "GPUCommandBuffer.h"
 
 #if ENABLE(WEBGPU)
 
-#import "GPUDevice.h"
+#import "GPUCommandQueue.h"
+#import "GPUDrawable.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
-#import <wtf/Gigacage.h>
-#import <wtf/PageBlock.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/MainThread.h>
 
 namespace WebCore {
 
-GPUBuffer::GPUBuffer(GPUDevice* device, ArrayBufferView* data)
+GPUCommandBuffer::GPUCommandBuffer(const GPUCommandQueue& queue, Function<void()>&& completedCallback)
+    : m_metal { [queue.metal() commandBuffer] }
 {
-    LOG(WebGPU, "GPUBuffer::GPUBuffer()");
+    LOG(WebGPU, "GPUCommandBuffer::GPUCommandBuffer()");
 
-    if (!device || !device->platformDevice() || !data)
+    [m_metal addCompletedHandler:BlockPtr<void (id<MTLCommandBuffer>)>::fromCallable([completedCallback = WTFMove(completedCallback)] (id<MTLCommandBuffer>) mutable {
+        callOnMainThread(WTFMove(completedCallback));
+    }).get()];
+}
+
+void GPUCommandBuffer::presentDrawable(GPUDrawable& drawable) const
+{
+    if (!m_metal || !drawable.metal())
         return;
-    
-    size_t pageSize = WTF::pageSize();
-    size_t pageAlignedSize = roundUpToMultipleOf(pageSize, data->byteLength());
-    void* pageAlignedCopy = Gigacage::tryAlignedMalloc(Gigacage::Primitive, pageSize, pageAlignedSize);
-    if (!pageAlignedCopy)
-        return;
-    memcpy(pageAlignedCopy, data->baseAddress(), data->byteLength());
-    m_contents = ArrayBuffer::createFromBytes(pageAlignedCopy, data->byteLength(), [] (void* ptr) { Gigacage::alignedFree(Gigacage::Primitive, ptr); });
-    m_contents->ref();
-    ArrayBuffer* capturedContents = m_contents.get();
-    m_buffer = adoptNS((MTLBuffer *)[device->platformDevice() newBufferWithBytesNoCopy:m_contents->data() length:pageAlignedSize options:MTLResourceOptionCPUCacheModeDefault deallocator:^(void*, NSUInteger) { capturedContents->deref(); }]);
-    if (!m_buffer) {
-        m_contents->deref();
-        m_contents = nullptr;
-    }
+
+    [m_metal presentDrawable:drawable.metal()];
+    drawable.release();
 }
 
-unsigned long GPUBuffer::length() const
+void GPUCommandBuffer::commit() const
 {
-    if (!m_buffer)
-        return 0;
-
-    return m_contents->byteLength();
-}
-
-RefPtr<ArrayBuffer> GPUBuffer::contents()
-{
-    return m_contents;
-}
-
-MTLBuffer *GPUBuffer::platformBuffer()
-{
-    return m_buffer.get();
+    [m_metal commit];
 }
 
 } // namespace WebCore

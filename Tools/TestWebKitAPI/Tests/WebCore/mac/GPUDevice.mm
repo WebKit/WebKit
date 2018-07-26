@@ -37,21 +37,18 @@ namespace TestWebKitAPI {
 
 TEST_F(GPU, DeviceCreate)
 {
-    auto device = GPUDevice::create();
+    GPUDevice device;
+
     // Not all hardware supports Metal, so it is possible
     // that we were unable to create the MTLDevice object.
     // In that case, the device should be null.
     if (!device)
         return;
 
-    EXPECT_NOT_NULL(device->layer());
-    EXPECT_NOT_NULL(device->platformLayer());
-
-    id<MTLDevice> mtlDevice = (id<MTLDevice>)device->platformDevice();
-    EXPECT_NOT_NULL(mtlDevice);
-
-    NSString *deviceName = mtlDevice.name;
-    EXPECT_GT(deviceName.length, static_cast<unsigned long>(0));
+    EXPECT_NOT_NULL(device.layer());
+    EXPECT_NOT_NULL(device.platformLayer());
+    EXPECT_NOT_NULL(device.metal());
+    EXPECT_LT(0U, device.metal().name.length);
 }
 
 } // namespace TestWebKitAPI

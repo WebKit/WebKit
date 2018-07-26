@@ -38,35 +38,6 @@ GPURenderPassAttachmentDescriptor::~GPURenderPassAttachmentDescriptor()
     LOG(WebGPU, "GPURenderPassAttachmentDescriptor::~GPURenderPassAttachmentDescriptor()");
 }
 
-#if !PLATFORM(COCOA)
-GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor()
-{
-    LOG(WebGPU, "GPURenderPassAttachmentDescriptor::GPURenderPassAttachmentDescriptor()");
-}
-
-unsigned long GPURenderPassAttachmentDescriptor::loadAction() const
-{
-    return 0;
-}
-
-void GPURenderPassAttachmentDescriptor::setLoadAction(unsigned long)
-{
-}
-
-unsigned long GPURenderPassAttachmentDescriptor::storeAction() const
-{
-    return 0;
-}
-
-void GPURenderPassAttachmentDescriptor::setStoreAction(unsigned long)
-{
-}
-
-void GPURenderPassAttachmentDescriptor::setTexture(RefPtr<GPUTexture>)
-{
-}
-#endif
-
 } // namespace WebCore
 
 #endif

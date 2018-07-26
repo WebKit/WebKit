@@ -27,9 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -39,19 +38,15 @@ class WebGPUObject : public RefCounted<WebGPUObject> {
 public:
     virtual ~WebGPUObject();
 
-    void deleteObject(GPUDevice*);
-    bool isDeleted() const { return m_deleted; }
-
-    WebGPURenderingContext* context() { return m_context.get(); }
+    WebGPURenderingContext* context() const { return m_context.get(); }
 
 protected:
-    WebGPUObject(WebGPURenderingContext* = nullptr);
+    explicit WebGPUObject(WebGPURenderingContext* = nullptr);
 
     bool hasContext() const { return m_context; }
 
 private:
     RefPtr<WebGPURenderingContext> m_context;
-    bool m_deleted { false };
 };
     
 } // namespace WebCore

@@ -27,13 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS MTLRenderCommandEncoder;
-#endif
+OBJC_PROTOCOL(MTLRenderCommandEncoder);
 
 namespace WebCore {
 
@@ -43,29 +39,24 @@ class GPUDepthStencilState;
 class GPURenderPassDescriptor;
 class GPURenderPipelineState;
 
-class GPURenderCommandEncoder : public RefCounted<GPURenderCommandEncoder> {
+class GPURenderCommandEncoder {
 public:
-    static RefPtr<GPURenderCommandEncoder> create(GPUCommandBuffer*, GPURenderPassDescriptor*);
-    WEBCORE_EXPORT ~GPURenderCommandEncoder();
+    GPURenderCommandEncoder(const GPUCommandBuffer&, const GPURenderPassDescriptor&);
+    ~GPURenderCommandEncoder();
 
-    WEBCORE_EXPORT void setRenderPipelineState(GPURenderPipelineState*);
-    WEBCORE_EXPORT void setDepthStencilState(GPUDepthStencilState*);
-    WEBCORE_EXPORT void setVertexBuffer(GPUBuffer*, unsigned offset, unsigned index);
-    WEBCORE_EXPORT void setFragmentBuffer(GPUBuffer*, unsigned offset, unsigned index);
-    WEBCORE_EXPORT void drawPrimitives(unsigned type, unsigned start, unsigned count);
-    WEBCORE_EXPORT void endEncoding();
+    void setRenderPipelineState(const GPURenderPipelineState&) const;
+    void setDepthStencilState(const GPUDepthStencilState&) const;
+    void setVertexBuffer(const GPUBuffer&, unsigned offset, unsigned index) const;
+    void setFragmentBuffer(const GPUBuffer&, unsigned offset, unsigned index) const;
+    void drawPrimitives(unsigned type, unsigned start, unsigned count) const;
+    void endEncoding() const;
 
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT MTLRenderCommandEncoder *platformRenderCommandEncoder();
-#endif
-
+#if USE(METAL)
 private:
-    GPURenderCommandEncoder(GPUCommandBuffer*, GPURenderPassDescriptor*);
-    
-#if PLATFORM(COCOA)
-    RetainPtr<MTLRenderCommandEncoder> m_renderCommandEncoder;
+    RetainPtr<MTLRenderCommandEncoder> m_metal;
 #endif
 };
     
 } // namespace WebCore
+
 #endif

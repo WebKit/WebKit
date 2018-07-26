@@ -27,29 +27,24 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUDepthStencilState.h"
 #include "WebGPUObject.h"
-
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPUDepthStencilState;
-class WebGPUDepthStencilDescriptor;
-
 class WebGPUDepthStencilState : public WebGPUObject {
 public:
-    virtual ~WebGPUDepthStencilState();
-    static Ref<WebGPUDepthStencilState> create(WebGPURenderingContext*, WebGPUDepthStencilDescriptor*);
+    static Ref<WebGPUDepthStencilState> create(WebGPURenderingContext&, const GPUDepthStencilDescriptor&);
 
     String label() const;
     void setLabel(const String&);
 
-    GPUDepthStencilState* depthStencilState() { return m_depthStencilState.get(); }
+    GPUDepthStencilState& state() { return m_state; }
 
 private:
-    WebGPUDepthStencilState(WebGPURenderingContext*, WebGPUDepthStencilDescriptor*);
+    WebGPUDepthStencilState(WebGPURenderingContext&, const GPUDepthStencilDescriptor&);
 
-    RefPtr<GPUDepthStencilState> m_depthStencilState;
+    GPUDepthStencilState m_state;
 };
     
 } // namespace WebCore
