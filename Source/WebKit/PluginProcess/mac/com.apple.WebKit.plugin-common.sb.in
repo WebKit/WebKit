@@ -367,6 +367,7 @@
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
     (global-name "com.apple.audio.AudioComponentRegistrar")
+    (global-name "com.apple.assertiond.processassertionconnection")
     (global-name "com.apple.CoreServices.coreservicesd")
     (global-name "com.apple.DiskArbitration.diskarbitrationd")
     (global-name "com.apple.FileCoordination")
@@ -391,6 +392,7 @@
     (global-name "com.apple.ocspd")
     (global-name "com.apple.pasteboard.1")
     (global-name "com.apple.pbs.fetch_services")
+    (global-name "com.apple.tccd")
     (global-name "com.apple.tccd.system")
     (global-name "com.apple.tsm.uiserver")
     (global-name "com.apple.window_proxies")
