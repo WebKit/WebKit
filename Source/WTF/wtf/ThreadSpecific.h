@@ -122,7 +122,7 @@ private:
     void static THREAD_SPECIFIC_CALL destroy(void* ptr);
 
 #if USE(PTHREADS)
-    pthread_key_t m_key;
+    pthread_key_t m_key { };
 #elif OS(WINDOWS)
     int m_index;
 #endif

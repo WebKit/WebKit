@@ -489,7 +489,7 @@ template <typename ResultType> struct ArithmeticOperations<unsigned, int, Result
 
     static inline bool multiply(int64_t lhs, int64_t rhs, ResultType& result)
     {
-        return ArithmeticOperations<int, unsigned, ResultType>::multiply(rhs, lhs, result);
+        return ArithmeticOperations<int, unsigned, ResultType>::multiply(lhs, rhs, result);
     }
 
     static inline bool equals(unsigned lhs, int rhs)
