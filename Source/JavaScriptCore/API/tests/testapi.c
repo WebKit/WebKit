@@ -62,6 +62,10 @@
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
 
+#if COMPILER(MSVC)
+#pragma warning(disable:4204)
+#endif
+
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
@@ -1206,7 +1210,7 @@ static void testMarkingConstraintsAndHeapFinalizers(void)
 
     weakRefs = (JSWeakRef*)calloc(numWeakRefs, sizeof(JSWeakRef));
 
-    JSContextGroupAddMarkingConstraint(group, markingConstraint, weakRefs);
+    JSContextGroupAddMarkingConstraint(group, markingConstraint, (void*)weakRefs);
     JSContextGroupAddHeapFinalizer(group, heapFinalizer, (void*)(uintptr_t)42);
     
     for (i = numWeakRefs; i--;)
