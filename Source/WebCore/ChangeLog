@@ -1,5 +1,21 @@
 2018-07-25  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234222. rdar://problem/42612113
+
+    Build fix after r234215. Unreviewed.
+    
+    * rendering/RenderTheme.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234222 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-25  Zalan Bujtas  <zalan@apple.com>
+
+            Build fix after r234215. Unreviewed.
+
+            * rendering/RenderTheme.cpp:
+
+2018-07-25  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234215. rdar://problem/42604541
 
     REGRESSION(r227577) Text on TV & Movies page doesn't wrap properly in iTunes
