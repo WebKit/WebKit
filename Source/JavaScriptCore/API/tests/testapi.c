@@ -1351,10 +1351,10 @@ static void testCFStrings(void)
 int main(int argc, char* argv[])
 {
 #if OS(WINDOWS)
-    // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
+    // Cygwin calls SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
-    ::SetErrorMode(0);
+    SetErrorMode(0);
 #endif
 
     testCompareAndSwap();
@@ -2157,8 +2157,8 @@ static char* createStringWithContentsOfFile(const char* fileName)
 }
 
 #if OS(WINDOWS)
-extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
+__declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, char* argv[])
 {
-    return main(argc, const_cast<char**>(argv));
+    return main(argc, argv);
 }
 #endif
