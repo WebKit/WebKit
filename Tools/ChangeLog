@@ -1,3 +1,12 @@
+2018-07-26  Aaron Chu  <aaron_chu@apple.com>
+
+        Add Aaron Chu as a committer to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=188066
+
+        Unreviwed. Added myself as committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-07-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add build step to run API Tests
