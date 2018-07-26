@@ -586,10 +586,9 @@ HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(
     auto& style = layoutBox.style();
     auto& containingBlock = *layoutBox.containingBlock();
     auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(containingBlock);
-    auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
     auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
 
-    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
+    auto height = fixedValue(style.logicalHeight());
     auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
     auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
 
@@ -597,8 +596,16 @@ HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(
     marginTop = marginTop.value_or(0);
     marginBottom = marginBottom.value_or(0);
     // #2
-    if (!height)
-        height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
+    if (!height) {
+        if (style.logicalHeight().isAuto())
+            height = contentHeightForFormattingContextRoot(layoutContext, layoutBox);
+        else
+            ASSERT_NOT_IMPLEMENTED_YET();
+    }
+
+    ASSERT(height);
+    ASSERT(marginTop);
+    ASSERT(marginBottom);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating non-replaced -> height(" << *height << "px) margin(" << *marginTop << "px, " << *marginBottom << "px) -> layoutBox(" << &layoutBox << ")");
     return HeightAndMargin { *height, { *marginTop, *marginBottom }, { } };
@@ -707,22 +714,25 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(Layou
     auto& style = layoutBox.style();
     auto replaced = layoutBox.replaced();
     auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockDisplayBox.height();
     auto containingBlockWidth = containingBlockDisplayBox.width();
 
-    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
+    auto height = fixedValue(style.logicalHeight());
+    auto heightIsAuto = style.logicalHeight().isAuto();
     auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
 
-    if (!height && !width && replaced->hasIntrinsicHeight()) {
+    if (!height && !heightIsAuto)
+        ASSERT_NOT_IMPLEMENTED_YET();
+
+    if (heightIsAuto && !width && replaced->hasIntrinsicHeight()) {
         // #2
         height = replaced->intrinsicHeight();
-    } else if (!height && replaced->hasIntrinsicRatio()) {
+    } else if (heightIsAuto && replaced->hasIntrinsicRatio()) {
         // #3
         height = *width / replaced->intrinsicRatio();
-    } else if (!height && replaced->hasIntrinsicHeight()) {
+    } else if (heightIsAuto && replaced->hasIntrinsicHeight()) {
         // #4
         height = replaced->intrinsicHeight();
-    } else if (!height) {
+    } else if (heightIsAuto) {
         // #5
         height = { 150 };
     }
@@ -759,7 +769,6 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutC
 
     auto& style = layoutBox.style();
     auto& containingBlockDisplayBox = *layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockDisplayBox.height();
     auto containingBlockWidth = containingBlockDisplayBox.width();
 
     auto computeMarginRight = [&]() {
@@ -776,24 +785,26 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutC
         return marginLeft.value_or(LayoutUnit { 0 });
     };
 
-    LayoutUnit marginLeft = computeMarginLeft();
-    LayoutUnit marginRight = computeMarginRight();
-
     auto replaced = layoutBox.replaced();
-    auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
-    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
-
     ASSERT(replaced);
 
-    if (!width && !height && replaced->hasIntrinsicWidth()) {
+    auto marginLeft = computeMarginLeft();
+    auto marginRight = computeMarginRight();
+    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
+
+    auto heightIsAuto = style.logicalHeight().isAuto();
+    auto height = fixedValue(style.logicalHeight());
+    if (!height && !heightIsAuto)
+        ASSERT_NOT_IMPLEMENTED_YET();
+
+    if (!width && heightIsAuto && replaced->hasIntrinsicWidth()) {
         // #1
         width = replaced->intrinsicWidth();
-    } else if ((!width && !height && !replaced->hasIntrinsicWidth() && replaced->hasIntrinsicHeight() && replaced->hasIntrinsicRatio())
-        || (!width && height && replaced->hasIntrinsicRatio())) { 
+    } else if ((!width && heightIsAuto && !replaced->hasIntrinsicWidth() && replaced->hasIntrinsicHeight() && replaced->hasIntrinsicRatio())
+        || (!width && height && replaced->hasIntrinsicRatio())) {
         // #2
-        auto usedHeight = height.value_or(replaced->intrinsicHeight());
-        width = usedHeight * replaced->intrinsicRatio();
-    } else if (!width && !height && replaced->hasIntrinsicRatio() && !replaced->hasIntrinsicWidth() && !replaced->hasIntrinsicHeight()) {
+        width = height.value_or(replaced->hasIntrinsicHeight()) * replaced->intrinsicRatio();
+    } else if (!width && heightIsAuto && replaced->hasIntrinsicRatio() && !replaced->hasIntrinsicWidth() && !replaced->hasIntrinsicHeight()) {
         // #3
         // FIXME: undefined but surely doable.
         ASSERT_NOT_IMPLEMENTED_YET();
@@ -804,6 +815,8 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutC
         // #5
         width = { 300 };
     }
+
+    ASSERT(width);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << *width << "px) margin(" << marginLeft << "px, " << marginRight << "px) -> layoutBox(" << &layoutBox << ")");
     return { *width, { marginLeft, marginRight } };

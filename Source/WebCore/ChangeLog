@@ -1,3 +1,17 @@
+2018-07-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Do not try to access containing block's height during descendant height computation
+        https://bugs.webkit.org/show_bug.cgi?id=187970
+
+        Reviewed by Antti Koivisto.
+
+        Mostly becasue in BFC, we compute the descendents' height first so the containing block's height is probably not computed yet.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+
 2018-07-26  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed, add bug references into FIXME comments for CSSOM View API
