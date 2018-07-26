@@ -539,8 +539,6 @@ public:
     void setUseSystemAppearance(bool);
     bool useSystemAppearance();
 
-    void setUseDarkAppearance(bool);
-
     void effectiveAppearanceDidChange();
     bool effectiveAppearanceIsDark();
 

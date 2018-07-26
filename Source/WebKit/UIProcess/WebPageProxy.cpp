@@ -6247,7 +6247,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #if PLATFORM(MAC)
     parameters.colorSpace = m_pageClient.colorSpace();
     parameters.useSystemAppearance = m_useSystemAppearance;
-    parameters.useDarkAppearance = m_useDarkAppearance;
+    parameters.useDarkAppearance = useDarkAppearance();
 #endif
 #if PLATFORM(IOS)
     parameters.screenSize = screenSize();
@@ -6862,6 +6862,11 @@ void WebPageProxy::handleAlternativeTextUIResult(const String& result)
         m_process->send(Messages::WebPage::HandleAlternativeTextUIResult(result), m_pageID);
 }
 
+bool WebPageProxy::useDarkAppearance() const
+{
+    return m_pageClient.effectiveAppearanceIsDark();
+}
+
 #if USE(DICTATION_ALTERNATIVES)
 void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
 {
@@ -7371,16 +7376,12 @@ void WebPageProxy::setUseSystemAppearance(bool useSystemAppearance)
     m_process->send(Messages::WebPage::SetUseSystemAppearance(useSystemAppearance), m_pageID);
 }
     
-void WebPageProxy::setUseDarkAppearance(bool useDarkAppearance)
+void WebPageProxy::effectiveAppearanceDidChange()
 {
     if (!isValid())
         return;
 
-    if (useDarkAppearance == m_useDarkAppearance)
-        return;
-
-    m_useDarkAppearance = useDarkAppearance;
-    m_process->send(Messages::WebPage::SetUseDarkAppearance(useDarkAppearance), m_pageID);
+    m_process->send(Messages::WebPage::SetUseDarkAppearance(useDarkAppearance()), m_pageID);
 }
 
 void WebPageProxy::setHeaderBannerHeightForTesting(int height)
@@ -7428,7 +7429,7 @@ void WebPageProxy::removePlaybackTargetPickerClient(uint64_t contextId)
 
 void WebPageProxy::showPlaybackTargetPicker(uint64_t contextId, const WebCore::FloatRect& rect, bool hasVideo)
 {
-    m_pageClient.mediaSessionManager().showPlaybackTargetPicker(*this, contextId, m_pageClient.rootViewToScreen(IntRect(rect)), hasVideo, m_useDarkAppearance);
+    m_pageClient.mediaSessionManager().showPlaybackTargetPicker(*this, contextId, m_pageClient.rootViewToScreen(IntRect(rect)), hasVideo, useDarkAppearance());
 }
 
 void WebPageProxy::playbackTargetPickerClientStateDidChange(uint64_t contextId, WebCore::MediaProducer::MediaStateFlags state)

@@ -836,8 +836,8 @@ public:
 #if PLATFORM(MAC)
     void setUseSystemAppearance(bool);
     bool useSystemAppearance() const { return m_useSystemAppearance; }
-    void setUseDarkAppearance(bool);
-    bool useDarkAppearance() const { return m_useDarkAppearance; }
+    void effectiveAppearanceDidChange();
+    bool useDarkAppearance() const;
 #endif
 
 #if PLATFORM(COCOA)
@@ -1891,7 +1891,6 @@ private:
         
 #if PLATFORM(MAC)
     bool m_useSystemAppearance { false };
-    bool m_useDarkAppearance { false };
 #endif
 
 #if ENABLE(APPLE_PAY)

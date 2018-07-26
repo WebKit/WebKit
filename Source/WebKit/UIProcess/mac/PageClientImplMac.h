@@ -231,6 +231,7 @@ private:
     NSWindow *platformWindow() override;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
+    bool effectiveAppearanceIsDark() const override;
 
 #if WK_API_ENABLED
     NSView *inspectorAttachmentView() override;

@@ -266,6 +266,8 @@ public:
     virtual NSWindow *platformWindow() = 0;
     virtual void setShouldSuppressFirstResponderChanges(bool) = 0;
 
+    virtual bool effectiveAppearanceIsDark() const = 0;
+
 #if WK_API_ENABLED
     virtual NSView *inspectorAttachmentView() = 0;
     virtual _WKRemoteObjectRegistry *remoteObjectRegistry() = 0;

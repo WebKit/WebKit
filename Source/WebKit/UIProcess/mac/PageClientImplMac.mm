@@ -894,6 +894,11 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
     return (m_view.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionLeftToRight) ? WebCore::UserInterfaceLayoutDirection::LTR : WebCore::UserInterfaceLayoutDirection::RTL;
 }
 
+bool PageClientImpl::effectiveAppearanceIsDark() const
+{
+    return m_impl->effectiveAppearanceIsDark();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

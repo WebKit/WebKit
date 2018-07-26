@@ -1312,8 +1312,6 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     m_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
-    m_page->setUseDarkAppearance(effectiveAppearanceIsDark());
-
     m_page->initializeWebPage();
 
     registerDraggedTypes();
@@ -5023,7 +5021,7 @@ bool WebViewImpl::useSystemAppearance()
 
 void WebViewImpl::effectiveAppearanceDidChange()
 {
-    setUseDarkAppearance(effectiveAppearanceIsDark());
+    m_page->effectiveAppearanceDidChange();
 }
 
 bool WebViewImpl::effectiveAppearanceIsDark()
@@ -5034,11 +5032,6 @@ bool WebViewImpl::effectiveAppearanceIsDark()
 #else
     return false;
 #endif
-}
-
-void WebViewImpl::setUseDarkAppearance(bool useDarkAppearance)
-{
-    m_page->setUseDarkAppearance(useDarkAppearance);
 }
 
 } // namespace WebKit

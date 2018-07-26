@@ -1,3 +1,36 @@
+2018-07-26  Chris Dumez  <cdumez@apple.com>
+
+        ERROR: Unhandled web process message 'WebPage:SetUseDarkAppearance' when browsing in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=188028
+
+        Reviewed by Wenson Hsieh.
+
+        The issue was that the WebViewImpl constructor was calling setUseDarkAppearance() *before* calling
+        initializeWebPage(), which would cause us to send IPC the WebContent process for a pageID that does
+        not exist on WebProcess side yet.
+
+        To address the issue, the WebViewImpl constructor no longer calls setUseDarkAppearance() and WebPageProxy
+        no longer holds a flag indicates is dark appearance is used. Instead, the WebPageProxy asks the WebView
+        for the value whenever it needs to, via the PageClient.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::effectiveAppearanceDidChange):
+        (WebKit::WebViewImpl::setUseDarkAppearance): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::useDarkAppearance const):
+        (WebKit::WebPageProxy::effectiveAppearanceDidChange):
+        (WebKit::WebPageProxy::showPlaybackTargetPicker):
+        (WebKit::WebPageProxy::setUseDarkAppearance): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::useDarkAppearance const): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::effectiveAppearanceIsDark const):
+
 2018-07-26  Sihui Liu  <sihui_liu@apple.com>
 
         Remove a forward protocol declaration of '_WKWebViewPrintProvider'
