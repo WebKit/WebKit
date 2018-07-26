@@ -61,6 +61,10 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/SoftLinking.h>
 
+#if PLATFORM(MAC)
+#include "LocalDefaultSystemAppearance.h"
+#endif
+
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 @interface NSAttributedString ()
 - (NSString *)_htmlDocumentFragmentString:(NSRange)range documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
@@ -119,6 +123,11 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
 {
     FragmentAndResources result;
     Document& document = *frame.document();
+
+#if PLATFORM(MAC)
+    auto* page = frame.page();
+    LocalDefaultSystemAppearance localAppearance(page->useSystemAppearance(), page->useDarkAppearance());
+#endif
 
     NSArray *subresources = nil;
     NSString *fragmentString = [string _htmlDocumentFragmentString:NSMakeRange(0, [string length]) documentAttributes:attributesForAttributedStringConversion() subresources:&subresources];

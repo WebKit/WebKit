@@ -1,3 +1,14 @@
+2018-07-26  Timothy Hatcher  <timothy@apple.com>
+
+        Use the Page's appearance when converting pasteboard attributed strings.
+        https://bugs.webkit.org/show_bug.cgi?id=188067
+        rdar://problem/42632246
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragment): Create a LocalDefaultSystemAppearance based on the Page.
+
 2018-07-26  Eric Carlson  <eric.carlson@apple.com>
 
         Switching tabs should not close PiP window
