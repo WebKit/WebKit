@@ -521,6 +521,11 @@ void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParamet
         initWithMemoryCapacity:pluginMemoryCacheSize
         diskCapacity:pluginDiskCacheSize
         diskPath:m_nsurlCacheDirectory]).get()];
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    // Disable Dark Mode in the plugin process to avoid rendering issues.
+    [NSApp setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
+#endif
 }
 
 void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)

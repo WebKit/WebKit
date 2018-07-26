@@ -1,5 +1,19 @@
 2018-07-26  Chris Dumez  <cdumez@apple.com>
 
+        Disable Dark Mode in the Plugin process to avoid rendering issues
+        https://bugs.webkit.org/show_bug.cgi?id=188059
+        <rdar://problem/42369281>
+
+        Reviewed by Tim Horton.
+
+        Plugins generally do not support dark mode and this causes rendering issues so
+        disable dark mode in the plugin process.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+
+2018-07-26  Chris Dumez  <cdumez@apple.com>
+
         WebSiteData-related methods should take in CompletionHandlers instead of Functions
         https://bugs.webkit.org/show_bug.cgi?id=188027
 
