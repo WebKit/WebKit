@@ -1,3 +1,16 @@
+2018-07-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188076
+
+        Unreviewed test gardening.
+
+        Mark diskcache test "Failure" for upcoming fix:
+        - https://bugs.webkit.org/show_bug.cgi?id=188069.
+
+        * platform/wincairo/TestExpectations:
+          - http/tests/cache/disk-cache/disk-cache-302-status-code.html [ Failure ]
+
 2018-07-26  Nan Wang  <n_wang@apple.com>
 
         AX: nothing returned for various previous text marker APIs from one div/p node to another

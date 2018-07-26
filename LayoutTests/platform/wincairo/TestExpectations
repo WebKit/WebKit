@@ -862,6 +862,9 @@ http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Timeout ]
 # XMLHTTPRequest (sync)
 http/tests/xmlhttprequest/simple-sync.html [ Crash ]
 
+# DiskCache
+http/tests/cache/disk-cache/disk-cache-302-status-code.html [ Failure ]
+
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
 #///////////////////////////////////////////////////////////////////////////////
