@@ -61,6 +61,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 using namespace Inspector;
@@ -228,28 +229,49 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension(Vec
 
     bool canSuspend = true;
 
-    m_activeDOMObjectAdditionForbidden = true;
-    m_activeDOMObjectRemovalForbidden = true;
-
-    // We assume that m_activeDOMObjects will not change during iteration: canSuspend
-    // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
-    // An ASSERT_WITH_SECURITY_IMPLICATION or RELEASE_ASSERT will fire if this happens, but it's important to code
-    // canSuspend functions so it will not happen!
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    for (auto* activeDOMObject : m_activeDOMObjects) {
-        if (!activeDOMObject->canSuspendForDocumentSuspension()) {
+    forEachActiveDOMObject([&](auto& activeDOMObject) {
+        if (!activeDOMObject.canSuspendForDocumentSuspension()) {
             canSuspend = false;
             if (unsuspendableObjects)
-                unsuspendableObjects->append(activeDOMObject);
+                unsuspendableObjects->append(&activeDOMObject);
             else
-                break;
+                return ShouldContinue::No;
         }
+        return ShouldContinue::Yes;
+    });
+
+    if (unsuspendableObjects) {
+        // Remove activeDOMObjects that have been destroyed while we were iterating above.
+        unsuspendableObjects->removeAllMatching([&](auto* activeDOMObject) {
+            return !m_activeDOMObjects.contains(activeDOMObject);
+        });
     }
 
-    m_activeDOMObjectAdditionForbidden = false;
-    m_activeDOMObjectRemovalForbidden = false;
-
     return canSuspend;
+}
+
+void ScriptExecutionContext::forEachActiveDOMObject(const Function<ShouldContinue(ActiveDOMObject&)>& apply) const
+{
+    // It is not allowed to run arbitrary script or construct new ActiveDOMObjects while we are iterating over ActiveDOMObjects.
+    // An ASSERT_WITH_SECURITY_IMPLICATION or RELEASE_ASSERT will fire if this happens, but it's important to code
+    // canSuspendActiveDOMObjectsForDocumentSuspension() / suspend() / resume() / stop() functions so it will not happen!
+    ScriptDisallowedScope scriptDisallowedScope;
+    SetForScope<bool> activeDOMObjectAdditionForbiddenScope(m_activeDOMObjectAdditionForbidden, true);
+
+    // Make a frozen copy of the objects so we can iterate while new ones might be destroyed.
+    auto possibleActiveDOMObjects = copyToVector(m_activeDOMObjects);
+
+    for (auto* activeDOMObject : possibleActiveDOMObjects) {
+        // Check if this object was deleted already. If so, just skip it.
+        // Calling contains on a possibly-already-deleted object is OK because we guarantee
+        // no new object can be added, so even if a new object ends up allocated with the
+        // same address, that will be *after* this function exits.
+        if (!m_activeDOMObjects.contains(activeDOMObject))
+            continue;
+
+        if (apply(*activeDOMObject) == ShouldContinue::No)
+            break;
+    }
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
@@ -266,19 +288,10 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
 
     m_activeDOMObjectsAreSuspended = true;
 
-    m_activeDOMObjectAdditionForbidden = true;
-    m_activeDOMObjectRemovalForbidden = true;
-
-    // We assume that m_activeDOMObjects will not change during iteration: suspend
-    // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
-    // An ASSERT_WITH_SECURITY_IMPLICATION or RELEASE_ASSERT will fire if this happens, but it's important to code
-    // suspend functions so it will not happen!
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    for (auto* activeDOMObject : m_activeDOMObjects)
-        activeDOMObject->suspend(why);
-
-    m_activeDOMObjectAdditionForbidden = false;
-    m_activeDOMObjectRemovalForbidden = false;
+    forEachActiveDOMObject([why](auto& activeDOMObject) {
+        activeDOMObject.suspend(why);
+        return ShouldContinue::Yes;
+    });
 
     m_reasonForSuspendingActiveDOMObjects = why;
 }
@@ -291,19 +304,10 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
         return;
     m_activeDOMObjectsAreSuspended = false;
 
-    m_activeDOMObjectAdditionForbidden = true;
-    m_activeDOMObjectRemovalForbidden = true;
-
-    // We assume that m_activeDOMObjects will not change during iteration: resume
-    // functions should not add new active DOM objects, nor execute arbitrary JavaScript.
-    // An ASSERT_WITH_SECURITY_IMPLICATION or RELEASE_ASSERT will fire if this happens, but it's important to code
-    // resume functions so it will not happen!
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    for (auto* activeDOMObject : m_activeDOMObjects)
-        activeDOMObject->resume();
-
-    m_activeDOMObjectAdditionForbidden = false;
-    m_activeDOMObjectRemovalForbidden = false;
+    forEachActiveDOMObject([](auto& activeDOMObject) {
+        activeDOMObject.resume();
+        return ShouldContinue::Yes;
+    });
 }
 
 void ScriptExecutionContext::stopActiveDOMObjects()
@@ -314,27 +318,10 @@ void ScriptExecutionContext::stopActiveDOMObjects()
         return;
     m_activeDOMObjectsAreStopped = true;
 
-    // Make a frozen copy of the objects so we can iterate while new ones might be destroyed.
-    auto possibleActiveDOMObjects = copyToVector(m_activeDOMObjects);
-
-    m_activeDOMObjectAdditionForbidden = true;
-
-    // We assume that new objects will not be added to m_activeDOMObjects during iteration:
-    // stop functions should not add new active DOM objects, nor execute arbitrary JavaScript.
-    // An ASSERT_WITH_SECURITY_IMPLICATION or RELEASE_ASSERT will fire if this happens, but it's important to code stop functions
-    // so it will not happen!
-    ScriptDisallowedScope scriptDisallowedScope;
-    for (auto* activeDOMObject : possibleActiveDOMObjects) {
-        // Check if this object was deleted already. If so, just skip it.
-        // Calling contains on a possibly-already-deleted object is OK because we guarantee
-        // no new object can be added, so even if a new object ends up allocated with the
-        // same address, that will be *after* this function exits.
-        if (!m_activeDOMObjects.contains(activeDOMObject))
-            continue;
-        activeDOMObject->stop();
-    }
-
-    m_activeDOMObjectAdditionForbidden = false;
+    forEachActiveDOMObject([](auto& activeDOMObject) {
+        activeDOMObject.stop();
+        return ShouldContinue::Yes;
+    });
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject& activeDOMObject)
@@ -359,7 +346,6 @@ void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject& activeDOM
 
 void ScriptExecutionContext::willDestroyActiveDOMObject(ActiveDOMObject& activeDOMObject)
 {
-    RELEASE_ASSERT(!m_activeDOMObjectRemovalForbidden);
     m_activeDOMObjects.remove(&activeDOMObject);
 }
 

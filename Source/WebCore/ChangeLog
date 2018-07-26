@@ -1,3 +1,29 @@
+2018-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Allow ActiveDOMObject's canSuspend / suspend / resume overrides to destroy ActiveDOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=188025
+
+        Reviewed by Alex Christensen.
+
+        Apply the same logic as in ScriptExecutionContext::stopActiveDOMObjects() to support destruction of
+        ActiveDOMObjects while we're calling ActiveDOMObject's canSuspend / suspend / resume overrides.
+
+        We copy m_activeDOMObjects into a Vector and iterate over the copy instead of m_activeDOMObjects.
+        Since ActiveDOMObject is not RefCounted or CanMakeWeakPtr, we verify that the raw pointer is still
+        valid by checking if m_activeDOMObjects still contains it, as we iterate. This is safe as the
+        ActiveDOMObject destructor removes the object from ScriptExecutionContext::m_activeDOMObjects.
+        New ActiveDOMObjects with the same pointer value cannot be created while we iterate as we already
+        prevent the construction of new ActiveDOMObjects while we iterate via RELEASE_ASSERT().
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension):
+        (WebCore::ScriptExecutionContext::forEachActiveDOMObject const):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::willDestroyActiveDOMObject):
+        * dom/ScriptExecutionContext.h:
+
 2018-07-25  Justin Fan  <justin_fan@apple.com>
 
         Systems with no NSScreens hitting assertion in rendererIDForDisplay when creating WebGL context

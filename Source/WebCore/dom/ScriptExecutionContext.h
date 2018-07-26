@@ -294,6 +294,9 @@ private:
     virtual void refScriptExecutionContext() = 0;
     virtual void derefScriptExecutionContext() = 0;
 
+    enum class ShouldContinue { No, Yes };
+    void forEachActiveDOMObject(const Function<ShouldContinue(ActiveDOMObject&)>&) const;
+
     RejectedPromiseTracker& ensureRejectedPromiseTrackerSlow();
 
     void checkConsistency() const;
@@ -320,8 +323,7 @@ private:
     bool m_activeDOMObjectsAreSuspended { false };
     bool m_activeDOMObjectsAreStopped { false };
     bool m_inDispatchErrorEvent { false };
-    bool m_activeDOMObjectAdditionForbidden { false };
-    bool m_activeDOMObjectRemovalForbidden { false };
+    mutable bool m_activeDOMObjectAdditionForbidden { false };
     bool m_willprocessMessageWithMessagePortsSoon { false };
 
 #if !ASSERT_DISABLED
