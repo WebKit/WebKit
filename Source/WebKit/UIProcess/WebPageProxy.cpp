@@ -4082,9 +4082,9 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const Securi
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), listenerID, frame = makeRef(*frame)] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) {
-        ASSERT_UNUSED(policies, !policies);
-        ASSERT_UNUSED(swap, swap == ShouldProcessSwapIfPossible::No);
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), listenerID, frame = makeRef(*frame)] (WebCore::PolicyAction policyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible swap) {
+        // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
+        RELEASE_ASSERT(swap == ShouldProcessSwapIfPossible::No);
         receivedPolicyDecision(policyAction, frame.get(), listenerID, nullptr, std::nullopt);
     }));
 
@@ -4115,9 +4115,9 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const SecurityOrigi
     MESSAGE_CHECK_URL(response.url());
 
     RefPtr<API::Navigation> navigation = navigationID ? &m_navigationState->navigation(navigationID) : nullptr;
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(*frame), listenerID, navigation = WTFMove(navigation)] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) {
-        ASSERT_UNUSED(policies, !policies);
-        ASSERT_UNUSED(swap, swap == ShouldProcessSwapIfPossible::No);
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(*frame), listenerID, navigation = WTFMove(navigation)] (WebCore::PolicyAction policyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible swap) {
+        // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
+        RELEASE_ASSERT(swap == ShouldProcessSwapIfPossible::No);
         receivedPolicyDecision(policyAction, frame.get(), listenerID, navigation.get(), std::nullopt);
     }));
 
