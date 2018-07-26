@@ -718,6 +718,8 @@ public:
 
     size_t pluginCount();
 
+    void notifyResourceLoadObserver();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

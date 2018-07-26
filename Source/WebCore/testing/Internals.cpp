@@ -4633,4 +4633,9 @@ size_t Internals::pluginCount()
     return contextDocument()->page()->pluginData().webVisiblePlugins().size();
 }
 
+void Internals::notifyResourceLoadObserver()
+{
+    ResourceLoadObserver::shared().notifyObserver();
+}
+
 } // namespace WebCore

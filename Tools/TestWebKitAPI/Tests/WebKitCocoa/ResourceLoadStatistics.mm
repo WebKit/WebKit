@@ -28,11 +28,32 @@
 #import "PlatformUtilities.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
+
+static bool finishedNavigation = false;
+
+@interface DisableITPDuringNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation DisableITPDuringNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
+{
+    // Disable ITP so that the WebResourceLoadStatisticsStore gets destroyed before its has a chance to receive the notification from the page.
+    [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:NO];
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    finishedNavigation = true;
+}
+
+@end
 
 TEST(ResourceLoadStatistics, GrandfatherCallback)
 {
@@ -150,6 +171,28 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
 
     EXPECT_EQ((pid_t)0, [sharedProcessPool _storageProcessIdentifier]);
     EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
+}
+
+TEST(ResourceLoadStatistics, IPCAfterStoreDestruction)
+{
+    [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:YES];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    // Test page requires window.internals.
+#if WK_HAVE_C_SPI
+    WKRetainPtr<WKContextRef> context(AdoptWK, TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+#endif
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto navigationDelegate = adoptNS([[DisableITPDuringNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"notify-resourceLoadObserver" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+
+    TestWebKitAPI::Util::run(&finishedNavigation);
 }
 
 #endif

@@ -60,7 +60,7 @@ enum class StorageAccessStatus {
     HasAccess
 };
 
-class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, private IPC::MessageReceiver {
+class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public IPC::MessageReceiver {
 public:
     static Ref<WebResourceLoadStatisticsStore> create(WebsiteDataStore& websiteDataStore)
     {
@@ -82,8 +82,6 @@ public:
     void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&);
     void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
-    void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
-    void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
     void logFrameNavigation(const WebFrameProxy&, const WebCore::URL& pageURL, const WebCore::ResourceRequest&, const WebCore::URL& redirectURL);
