@@ -1,3 +1,18 @@
+2018-07-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Update sandboxes for revised OpenCL calls and streaming media
+        https://bugs.webkit.org/show_bug.cgi?id=188013
+        <rdar://problem/42594262>
+
+        Reviewed by Eric Carlson.
+
+        Testing logs from recent Mojave builds shows that OpenCL is checking more CPU-specific values as part of WebKit
+        painting operations. We need to allow these checks in the sandbox to support these more optimized drawing operations.
+
+        I also corrected some sandbox violations I found while investigating streaming media issues.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-07-25  Jeremy Jones  <jeremyj@apple.com>
 
         Mask AVBackgroundView to the corner radius.
