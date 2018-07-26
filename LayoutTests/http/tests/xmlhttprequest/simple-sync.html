@@ -1,15 +1,15 @@
 <body>
     <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=188033">bug 188033</a>:
     Syncronous XMLHTTPRequest crashes on WinCairo.</p>
-    
+
     <div id=result>result: </div>
-    
+
     <script>
     if (window.testRunner)
       testRunner.dumpAsText();
-    
+
     req = new XMLHttpRequest;
-    req.open("GET", "resources/print-referer.cgi", false);
+    req.open("GET", "resources/print-referer.php", false);
     req.send(null);
     if (req.responseText == document.URL)
       document.getElementById("result").firstChild.data += "OK";
