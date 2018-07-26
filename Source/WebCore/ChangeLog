@@ -1,3 +1,10 @@
+2018-07-26  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed, add bug references into FIXME comments for CSSOM View API
+
+        * dom/Element.idl:
+        * page/ScrollToOptions.idl:
+
 2018-07-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] assert-not-implemented-yet on inflow non-replaced height when style is not fixed/auto.

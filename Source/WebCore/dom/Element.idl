@@ -71,15 +71,15 @@
     // CSSOM-view extensions (https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface).
     DOMRectList getClientRects();
     [NewObject] DOMRect getBoundingClientRect();
-    void scrollIntoView(optional boolean alignWithTop = true); // FIXME: Parameter type should be (boolean or object).
+    void scrollIntoView(optional boolean alignWithTop = true); // FIXME(webkit.org/b/161611): Parameter type should be (boolean or object).
     [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
     [ImplementedAs=scrollTo] void scroll(unrestricted double x, unrestricted double y);
     void scrollTo(optional ScrollToOptions options);
     void scrollTo(unrestricted double x, unrestricted double y);
     void scrollBy(optional ScrollToOptions option);
     void scrollBy(unrestricted double x, unrestricted double y);
-    attribute long scrollTop; // FIXME: should be unrestricted double.
-    attribute long scrollLeft; // FIXME: should be unrestricted double.
+    attribute long scrollTop; // FIXME(webkit.org/b/188045): should be unrestricted double.
+    attribute long scrollLeft; // FIXME(webkit.org/b/188045): should be unrestricted double.
     readonly attribute long scrollWidth;
     readonly attribute long scrollHeight;
     readonly attribute double clientTop; // FIXME: Should be of type long.
