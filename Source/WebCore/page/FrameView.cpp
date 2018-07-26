@@ -118,6 +118,8 @@
 #include "LegacyTileCache.h"
 #endif
 
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(frame().page() && frame().page()->isAlwaysOnLoggingAllowed(), Layout, "%p - FrameView::" fmt, this, ##__VA_ARGS__)
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -4140,8 +4142,10 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
         return;
 
     ASSERT(!needsLayout());
-    if (needsLayout())
+    if (needsLayout()) {
+        RELEASE_LOG_IF_ALLOWED("FrameView::paintContents() - not painting because render tree needs layout (is main frame %d)", frame().isMainFrame());
         return;
+    }
 
     PaintingState paintingState;
     willPaintContents(context, dirtyRect, paintingState);

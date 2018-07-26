@@ -1,5 +1,36 @@
 2018-07-25  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234053. rdar://problem/42451651
+
+    Update FrameView::paintContents to use release logging.
+    https://bugs.webkit.org/show_bug.cgi?id=187854
+    <rdar://problem/42432371>
+    
+    Reviewed by Simon Fraser.
+    
+    Adding release logging helps identifying blank content cases.
+    
+    * page/FrameView.cpp:
+    (WebCore::FrameView::paintContents):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234053 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-20  Zalan Bujtas  <zalan@apple.com>
+
+            Update FrameView::paintContents to use release logging.
+            https://bugs.webkit.org/show_bug.cgi?id=187854
+            <rdar://problem/42432371>
+
+            Reviewed by Simon Fraser.
+
+            Adding release logging helps identifying blank content cases.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::paintContents):
+
+2018-07-25  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234177. rdar://problem/42586717
 
     Unreviewed, rolling out r233496 and r233571.
