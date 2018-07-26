@@ -2454,6 +2454,9 @@ void Page::setFullscreenInsets(const FloatBoxExtent& insets)
 
 void Page::setFullscreenAutoHideDuration(Seconds duration)
 {
+    if (duration == m_fullscreenAutoHideDuration)
+        return;
+    m_fullscreenAutoHideDuration = duration;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;

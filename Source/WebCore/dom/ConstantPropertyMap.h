@@ -68,7 +68,7 @@ private:
     void setValueForProperty(ConstantProperty, Ref<CSSVariableData>&&);
 
     void updateConstantsForSafeAreaInsets();
-    void updateConstantsForFullscreenInsets();
+    void updateConstantsForFullscreen();
 
     std::optional<Values> m_values;
 
