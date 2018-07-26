@@ -1982,7 +1982,7 @@ webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-add-text.htm
 webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Pass ]
-webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Timeout Pass ]
+webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Failure Timeout Pass ]
 webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Failure Pass ]
@@ -2046,6 +2046,14 @@ webkit.org/b/187760 fast/mediastream/get-user-media-on-loadedmetadata.html [ Pas
 
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]
 webkit.org/b/187999 media/video-restricted-invisible-autoplay-allowed-when-visible.html [ Pass Failure ]
+
+webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html [ Failure Pass ]
+
+webkit.org/b/188042 imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure Timeout ]
+
+webkit.org/b/188044 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec4.html [ Timeout Pass ]
+
+webkit.org/b/188046 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

@@ -1,3 +1,12 @@
+2018-07-26  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ and WPE gardening after r234252.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/overflow/line-clamp-expected.png:
+        * platform/gtk/fast/overflow/line-clamp-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2018-07-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] REGRESSION: transition added immediately after element creation doesn't work

@@ -72,6 +72,7 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
 webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
 webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pass Timeout ]
 # Crash is bug #176801
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
 webkit.org/b/172269 fast/mediastream/media-devices-enumerate-devices.html [ Failure ]
@@ -1072,7 +1073,7 @@ Bug(WPE) perf/accessibility-title-ui-element.html [ Failure ]
 webkit.org/b/177873 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 
 webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Pass Crash ]
-webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
+webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Timeout ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
@@ -1198,6 +1199,7 @@ webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout 
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/179761 workers/wasm-hashset-many-2.html [ Pass Timeout Crash ]
+webkit.org/b/188056 workers/wasm-hashset-many.html [ Timeout Pass ]
 
 webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 
@@ -1281,6 +1283,8 @@ webkit.org/b/187593 http/tests/cache/disk-cache/disk-cache-cancel.html [ Failure
 webkit.org/b/187594 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Failure Pass ]
 
 webkit.org/b/187595 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-lr-002.html [ Failure Pass ]
+webkit.org/b/187595 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-002.html [ Failure Pass ]
+webkit.org/b/187595 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-rl-002.html [ Failure Pass ]
 
 webkit.org/b/187596 fast/events/autoscroll-with-non-scrollable-parent.html [ Timeout Pass ]
 
@@ -1297,3 +1301,22 @@ webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/
 webkit.org/b/187602 media/media-source/media-source-remove-unload-crash.html [ Crash Pass ]
 
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
+
+webkit.org/b/188047 crypto/workers/subtle/hrsa-postMessage-worker.html [ Failure Pass ]
+
+webkit.org/b/188048 fast/canvas/webgl/worker-data-view-test.html [ Timeout Pass ]
+webkit.org/b/188048 fast/workers/empty-worker-nocrash.html [ Timeout Pass ]
+
+webkit.org/b/188049 fetch/fetch-worker-crash.html [ Timeout Pass ]
+
+webkit.org/b/188051 http/tests/cache/redirect-referer.html [ Timeout Pass ]
+
+webkit.org/b/188052 http/tests/images/draw-pattern-slow-load-large-image.html [ Timeout Pass ]
+
+webkit.org/b/188053 http/wpt/service-workers/update-service-worker.https.html [ Failure Timeout Pass ]
+
+webkit.org/b/188055 svg/filters/hidpi/fePointLight-coordinates.svg [ Timeout Pass ]
+
+webkit.org/b/188057 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure Pass ]
+
+webkit.org/b/188058 webanimations/partly-accelerated-transition-by-removing-property.html [ Failure ]
