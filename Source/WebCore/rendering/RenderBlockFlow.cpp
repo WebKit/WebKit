@@ -424,11 +424,7 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
     // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating in the RenderView instead.
     if ((style().overflowY() == Overflow::PagedX || style().overflowY() == Overflow::PagedY) && !(isDocumentElementRenderer() || isBody()))
         return true;
-    
-    // Lines clamping creates columns.
-    if (style().hasLinesClamp())
-        return true;
-    
+
     if (!style().specifiesColumns())
         return false;
 
@@ -3212,54 +3208,37 @@ int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* fou
     return count;
 }
 
-static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bool includeEdgeBorderPadding, bool forward, int& count)
+static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bool includeBottom, int& count)
 {
     if (block.style().visibility() != Visibility::Visible)
         return -1;
 
-    // FIXME: Orthogonal writing modes don't work here, but it's not even clear how they should behave anyway.
     if (block.childrenInline()) {
-        for (auto* box = forward ? block.firstRootBox() : block.lastRootBox(); box; box = forward ? box->nextRootBox() : box->prevRootBox()) {
-            if (++count == lineCount) {
-                // Matches the pagination rules in adjustLinePositionsForPagination.
-                LayoutRect logicalVisualOverflow = box->logicalVisualOverflowRect(box->lineTop(), box->lineBottom());
-                LayoutUnit logicalTop = std::min(box->lineTopWithLeading(), logicalVisualOverflow.y());
-                LayoutUnit logicalBottom = std::max(box->lineBottomWithLeading(), logicalVisualOverflow.maxY());
-                if (forward)
-                    return logicalBottom + (includeEdgeBorderPadding ? (block.borderAndPaddingAfter()) : LayoutUnit());
-                return logicalTop + (includeEdgeBorderPadding ? (block.borderAndPaddingBefore()) : LayoutUnit());
-            }
+        for (auto* box = block.firstRootBox(); box; box = box->nextRootBox()) {
+            if (++count == lineCount)
+                return box->lineBottom() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : LayoutUnit());
         }
     } else {
         RenderBox* normalFlowChildWithoutLines = nullptr;
-        for (auto* obj = forward ? block.firstChildBox() : block.lastChildBox(); obj; obj = forward ? obj->nextSiblingBox() : obj->previousSiblingBox()) {
+        for (auto* obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
             if (is<RenderBlockFlow>(*obj) && shouldCheckLines(downcast<RenderBlockFlow>(*obj))) {
-                int result = getHeightForLineCount(downcast<RenderBlockFlow>(*obj), lineCount, false, forward, count);
-                if (result != -1) {
-                    if (forward)
-                        return result + block.logicalTopForChild(*obj) + (includeEdgeBorderPadding ? (block.borderAndPaddingAfter()) : LayoutUnit());
-                    return result + block.logicalTopForChild(*obj) + (includeEdgeBorderPadding ? (block.borderAndPaddingBefore()) : LayoutUnit());
-                }
+                int result = getHeightForLineCount(downcast<RenderBlockFlow>(*obj), lineCount, false, count);
+                if (result != -1)
+                    return result + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : LayoutUnit());
             } else if (!obj->isFloatingOrOutOfFlowPositioned())
                 normalFlowChildWithoutLines = obj;
         }
         if (normalFlowChildWithoutLines && !lineCount)
-            return block.logicalTopForChild(*normalFlowChildWithoutLines) + block.logicalHeightForChild(*normalFlowChildWithoutLines);
+            return normalFlowChildWithoutLines->y() + normalFlowChildWithoutLines->height();
     }
     
     return -1;
 }
 
-int RenderBlockFlow::logicalHeightForLineCount(int lineCount)
+int RenderBlockFlow::heightForLineCount(int lineCount)
 {
     int count = 0;
-    return getHeightForLineCount(*this, lineCount, true, true, count);
-}
-
-int RenderBlockFlow::logicalHeightExcludingLineCount(int lineCount)
-{
-    int count = 0;
-    return getHeightForLineCount(*this, lineCount, true, false, count);
+    return getHeightForLineCount(*this, lineCount, true, count);
 }
 
 void RenderBlockFlow::clearTruncation()
@@ -3838,8 +3817,6 @@ void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
         fragmentedFlow->setNeedsHeightsRecalculation(false);
     }
     determineLogicalLeftPositionForChild(*fragmentedFlow);
-    
-    fragmentedFlow->layoutFlowExcludedObjects(relayoutChildren);
 }
 
 void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged)

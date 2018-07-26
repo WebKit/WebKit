@@ -487,9 +487,6 @@ serviceControlsEnabled:
 appleMailPaginationQuirkEnabled:
   initial: false
 
-appleMailLinesClampEnabled:
-  initial: false
-
 deferredCSSParserEnabled:
   initial: false
 

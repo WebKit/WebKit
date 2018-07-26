@@ -5087,12 +5087,6 @@
         "-webkit-line-clamp": {
             "status": "non-standard"
         },
-        "-webkit-lines-clamp": {
-            "status": "non-standard",
-            "codegen-properties": {
-                "custom": "Value"
-            }
-        },
         "-webkit-line-grid": {
             "inherited": true,
             "codegen-properties": {

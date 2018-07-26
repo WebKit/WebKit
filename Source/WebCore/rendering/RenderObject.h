@@ -285,9 +285,6 @@ public:
     virtual bool isRenderMultiColumnFlow() const { return false; }
     virtual bool isRenderMultiColumnSpannerPlaceholder() const { return false; }
 
-    virtual bool isRenderLinesClampFlow() const { return false; }
-    virtual bool isRenderLinesClampSet() const { return false; }
-
     virtual bool isRenderScrollbarPart() const { return false; }
 
     bool isDocumentElementRenderer() const { return document().documentElement() == &m_node; }

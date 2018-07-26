@@ -83,13 +83,9 @@ public:
     void validateFragments();
     void invalidateFragments(MarkingBehavior = MarkContainingBlockChain);
     bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmpty(); }
-
-    virtual bool singleFragmentHasUniformLogicalHeight() const { return true; }
     
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
-
-    virtual void layoutFlowExcludedObjects(bool) { }
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

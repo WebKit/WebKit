@@ -967,7 +967,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         if (lineCount <= numVisibleLines)
             continue;
 
-        LayoutUnit newHeight = blockChild.logicalHeightForLineCount(numVisibleLines);
+        LayoutUnit newHeight = blockChild.heightForLineCount(numVisibleLines);
         if (newHeight == child->height())
             continue;
 

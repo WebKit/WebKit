@@ -67,7 +67,6 @@ CSSParserContext::CSSParserContext(Document& document, const URL& sheetBaseURL, 
     conicGradientsEnabled = document.settings().conicGradientsEnabled();
     colorFilterEnabled = document.settings().colorFilterEnabled();
     deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
-    allowNewLinesClamp = document.settings().appleMailLinesClampEnabled();
     useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
 
 #if PLATFORM(IOS)
