@@ -58,7 +58,7 @@ protected:
     void pageBackgroundTransparencyChanged() override;
 
     void setVisibleContentsRect(const WebCore::FloatRect&);
-    void renderNextFrame();
+    void renderNextFrame(bool);
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
 
@@ -70,6 +70,8 @@ protected:
     void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
     void notifyFlushRequired() override { scheduleLayerFlush(); };
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
+
+    void flushLayersAndForceRepaint();
 
 private:
     void layerFlushTimerFired();

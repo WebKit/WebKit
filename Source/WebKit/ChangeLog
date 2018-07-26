@@ -1,3 +1,47 @@
+2018-07-26  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Improve the way request displayRefresh notifications
+        https://bugs.webkit.org/show_bug.cgi?id=188005
+
+        Reviewed by Žan Doberšek.
+
+        Add a new interface ThreadedDisplayRefreshMonitor::Client and use it to pipe the the
+        requestDisplayRefreshMonitorUpdate and handleDisplayRefreshMonitorUpdate to the
+        ThreadedCoordinatedLayerTreeHost.
+
+        In response to requestDisplayRefreshMonitorUpdate, the LayerTreeHost will force a layer
+        flush that in the end causes a repaint, which generates the requested display refresh
+        event.
+
+        In response to handleDisplayRefreshMonitorUpdate, the call to renderNextFrame will happen,
+        and if the DisplayRefreshMonitor has been rescheduled, renderNextFrame will also force
+        a new layer flush, causing the repaint that will generate the display refreh event.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create):
+        (WebKit::ThreadedCompositor::ThreadedCompositor):
+        (WebKit::m_displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::handleDisplayRefreshMonitorUpdate):
+        (WebKit::ThreadedCompositor::requestDisplayRefreshMonitorUpdate): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor):
+        (WebKit::ThreadedDisplayRefreshMonitor::requestRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::invalidate):
+        (WebKit::ThreadedDisplayRefreshMonitor::displayRefreshCallback):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.h:
+        (WebKit::ThreadedDisplayRefreshMonitor::create):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHost::flushLayersAndForceRepaint):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::requestDisplayRefreshMonitorUpdate):
+        (WebKit::ThreadedCoordinatedLayerTreeHost::handleDisplayRefreshMonitorUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+
 2018-07-25  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Update sandboxes for revised OpenCL calls and streaming media
