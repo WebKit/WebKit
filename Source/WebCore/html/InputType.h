@@ -226,6 +226,9 @@ public:
     virtual HTMLElement* sliderThumbElement() const { return nullptr; }
     virtual HTMLElement* sliderTrackElement() const { return nullptr; }
     virtual HTMLElement* placeholderElement() const;
+#if ENABLE(DATALIST_ELEMENT)
+    virtual HTMLElement* dataListButtonElement() const { return nullptr; }
+#endif
 
     // Miscellaneous functions.
 
@@ -290,6 +293,7 @@ public:
     void dispatchSimulatedClickIfActive(KeyboardEvent&) const;
 
 #if ENABLE(DATALIST_ELEMENT)
+    virtual bool isShowingList() const { return false; };
     virtual void listAttributeTargetChanged();
     virtual std::optional<Decimal> findClosestTickMarkValue(const Decimal&);
 #endif

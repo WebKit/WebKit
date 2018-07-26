@@ -51,6 +51,9 @@ enum ControlPart {
 #if ENABLE(APPLE_PAY)
     ApplePayButtonPart,
 #endif
+#if ENABLE(DATALIST_ELEMENT)
+    ListButtonPart,
+#endif
     TextAreaPart,
 #if ENABLE(ATTACHMENT_ELEMENT)
     AttachmentPart, BorderlessAttachmentPart,

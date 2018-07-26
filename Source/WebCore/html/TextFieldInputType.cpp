@@ -285,6 +285,9 @@ RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(RenderStyle&& s
 
 bool TextFieldInputType::needsContainer() const
 {
+#if ENABLE(DATALIST_ELEMENT)
+    return element()->hasAttributeWithoutSynchronization(listAttr);
+#endif
     return false;
 }
 
@@ -343,6 +346,12 @@ void TextFieldInputType::createShadowSubtree()
     }
 
     updateAutoFillButton();
+
+#if ENABLE(DATALIST_ELEMENT)
+    m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
+    m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
+    m_container->appendChild(*m_dataListDropdownIndicator);
+#endif
 }
 
 HTMLElement* TextFieldInputType::containerElement() const
@@ -392,6 +401,9 @@ void TextFieldInputType::destroyShadowSubtree()
     m_innerSpinButton = nullptr;
     m_capsLockIndicator = nullptr;
     m_autoFillButton = nullptr;
+#if ENABLE(DATALIST)
+    m_dataListDropdownIndicator = nullptr;
+#endif
     m_container = nullptr;
 }
 
@@ -785,6 +797,25 @@ void TextFieldInputType::updateAutoFillButton()
 
 #if ENABLE(DATALIST_ELEMENT)
 
+void TextFieldInputType::listAttributeTargetChanged()
+{
+    if (!m_dataListDropdownIndicator)
+        return;
+
+    m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, element()->list() ? CSSValueBlock : CSSValueNone, true);
+}
+
+HTMLElement* TextFieldInputType::dataListButtonElement() const
+{
+    return m_dataListDropdownIndicator.get();
+}
+
+void TextFieldInputType::dataListButtonElementWasClicked()
+{
+    if (element()->list())
+        displaySuggestions(DataListSuggestionActivationType::IndicatorClicked);
+}
+
 IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
 {
     if (!element()->renderer())
@@ -819,6 +850,7 @@ void TextFieldInputType::didSelectDataListOption(const String& selectedOption)
 void TextFieldInputType::didCloseSuggestions()
 {
     m_suggestionPicker = nullptr;
+    element()->renderer()->repaint();
 }
 
 void TextFieldInputType::displaySuggestions(DataListSuggestionActivationType type)
@@ -842,6 +874,11 @@ void TextFieldInputType::closeSuggestions()
 {
     if (m_suggestionPicker)
         m_suggestionPicker->close();
+}
+
+bool TextFieldInputType::isShowingList() const
+{
+    return !!m_suggestionPicker;
 }
 
 #endif

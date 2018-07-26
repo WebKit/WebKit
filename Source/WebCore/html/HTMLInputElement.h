@@ -148,6 +148,9 @@ public:
     HTMLElement* sliderTrackElement() const;
     HTMLElement* placeholderElement() const final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
+#if ENABLE(DATALIST_ELEMENT)
+    HTMLElement* dataListButtonElement() const;
+#endif
 
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, TextFieldEventBehavior = DispatchNoEvent);
@@ -272,6 +275,7 @@ public:
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;
     RefPtr<HTMLDataListElement> dataList() const;
     void listAttributeTargetChanged();
+    bool isShowingList() const;
 #endif
 
     Vector<HTMLInputElement*> radioButtonGroup() const;
