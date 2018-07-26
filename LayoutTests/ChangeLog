@@ -1,3 +1,19 @@
+2018-07-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r234263. rdar://problem/42387347
+
+    Unreviewed, update TestExpectations for macOS WK1.
+    
+    * platform/mac-wk1/TestExpectations:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@234263 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed, update TestExpectations for macOS WK1.
+
+            * platform/mac-wk1/TestExpectations:
+
 2018-07-25  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234215. rdar://problem/42604541
