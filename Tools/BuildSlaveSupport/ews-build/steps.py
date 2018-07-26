@@ -26,6 +26,7 @@ from buildbot.steps import shell, transfer
 from buildbot.steps.source import svn
 from twisted.internet import defer
 
+EWS_URL = 'http://ews-build.webkit-uat.org/'
 WithProperties = properties.WithProperties
 
 
@@ -308,3 +309,24 @@ class UploadBuiltProduct(transfer.FileUpload):
         kwargs['mode'] = 0644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
+
+
+class DownloadBuiltProduct(shell.ShellCommand):
+    command = ['python', 'Tools/BuildSlaveSupport/download-built-product',
+        WithProperties('--platform=%(platform)s'), WithProperties('--%(configuration)s'),
+        WithProperties(EWS_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(ewspatchid)s.zip')]
+    name = 'download-built-product'
+    description = ['downloading built product']
+    descriptionDone = ['downloaded built product']
+    haltOnFailure = True
+    flunkOnFailure = True
+
+
+class ExtractBuiltProduct(shell.ShellCommand):
+    command = ['python', 'Tools/BuildSlaveSupport/built-product-archive',
+               WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'extract']
+    name = 'extract-built-product'
+    description = ['extracting built product']
+    descriptionDone = ['extracted built product']
+    haltOnFailure = True
+    flunkOnFailure = True
