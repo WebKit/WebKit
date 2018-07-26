@@ -1582,9 +1582,9 @@ const HashSet<String>& JSGlobalObject::intlCollatorAvailableLocales()
     if (m_intlCollatorAvailableLocales.isEmpty()) {
         int32_t count = ucol_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
-            String locale(ucol_getAvailable(i));
-            convertICULocaleToBCP47LanguageTag(locale);
-            m_intlCollatorAvailableLocales.add(locale);
+            String locale = convertICULocaleToBCP47LanguageTag(ucol_getAvailable(i));
+            if (!locale.isEmpty())
+                m_intlCollatorAvailableLocales.add(locale);
         }
         addMissingScriptLocales(m_intlCollatorAvailableLocales);
     }
@@ -1596,9 +1596,9 @@ const HashSet<String>& JSGlobalObject::intlDateTimeFormatAvailableLocales()
     if (m_intlDateTimeFormatAvailableLocales.isEmpty()) {
         int32_t count = udat_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
-            String locale(udat_getAvailable(i));
-            convertICULocaleToBCP47LanguageTag(locale);
-            m_intlDateTimeFormatAvailableLocales.add(locale);
+            String locale = convertICULocaleToBCP47LanguageTag(udat_getAvailable(i));
+            if (!locale.isEmpty())
+                m_intlDateTimeFormatAvailableLocales.add(locale);
         }
         addMissingScriptLocales(m_intlDateTimeFormatAvailableLocales);
     }
@@ -1610,9 +1610,9 @@ const HashSet<String>& JSGlobalObject::intlNumberFormatAvailableLocales()
     if (m_intlNumberFormatAvailableLocales.isEmpty()) {
         int32_t count = unum_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
-            String locale(unum_getAvailable(i));
-            convertICULocaleToBCP47LanguageTag(locale);
-            m_intlNumberFormatAvailableLocales.add(locale);
+            String locale = convertICULocaleToBCP47LanguageTag(unum_getAvailable(i));
+            if (!locale.isEmpty())
+                m_intlNumberFormatAvailableLocales.add(locale);
         }
         addMissingScriptLocales(m_intlNumberFormatAvailableLocales);
     }
@@ -1624,9 +1624,9 @@ const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
     if (m_intlPluralRulesAvailableLocales.isEmpty()) {
         int32_t count = uloc_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
-            String locale(uloc_getAvailable(i));
-            convertICULocaleToBCP47LanguageTag(locale);
-            m_intlPluralRulesAvailableLocales.add(locale);
+            String locale = convertICULocaleToBCP47LanguageTag(uloc_getAvailable(i));
+            if (!locale.isEmpty())
+                m_intlPluralRulesAvailableLocales.add(locale);
         }
         addMissingScriptLocales(m_intlPluralRulesAvailableLocales);
     }

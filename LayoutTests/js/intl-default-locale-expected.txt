@@ -1,0 +1,7 @@
+PASS new Intl.DateTimeFormat().resolvedOptions().locale is 'tlh'
+PASS new Intl.NumberFormat().resolvedOptions().locale is 'tlh'
+PASS new Intl.Collator().resolvedOptions().locale is 'tlh'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

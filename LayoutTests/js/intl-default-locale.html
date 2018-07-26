@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (window.internals) {
+    // Any language name with less than two characters is considered invalid, so we use "a" here.
+    // "i-klingon" is grandfathered, and is canonicalized "tlh".
+    // It should not be part of any available locale sets, so we know it came from here.
+    window.internals.setUserPreferredLanguages([ "a", "*", "en_US.utf8", "i-klingon", "en-US" ]);
+}
+shouldBe("new Intl.DateTimeFormat().resolvedOptions().locale", "'tlh'");
+shouldBe("new Intl.NumberFormat().resolvedOptions().locale", "'tlh'");
+shouldBe("new Intl.Collator().resolvedOptions().locale", "'tlh'");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

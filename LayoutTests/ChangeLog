@@ -1,3 +1,18 @@
+2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
+
+        JSC: Intl API should ignore encoding when parsing BCP 47 language tag from ISO 15897 locale string (passed via LANG)
+        https://bugs.webkit.org/show_bug.cgi?id=167991
+
+        Reviewed by Michael Catanzaro.
+
+        Replaced expecting throwing a runtime error to avoid a crash, with testing for good default locale fallback behavior.
+
+        * js/intl-default-locale-expected.txt: Added.
+        * js/intl-default-locale.html: Added.
+        * js/intl-invalid-locale-crash-expected.txt: Removed.
+        * js/intl-invalid-locale-crash.html: Removed.
+        * platform/win/TestExpectations:
+
 2018-07-26  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ and WPE gardening after r234252.

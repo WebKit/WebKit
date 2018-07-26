@@ -59,7 +59,7 @@ private:
 };
 
 String defaultLocale(ExecState&);
-void convertICULocaleToBCP47LanguageTag(String& locale);
+String convertICULocaleToBCP47LanguageTag(const char* localeID);
 bool intlBooleanOption(ExecState&, JSValue options, PropertyName, bool& usesFallback);
 String intlStringOption(ExecState&, JSValue options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(ExecState&, JSValue options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);

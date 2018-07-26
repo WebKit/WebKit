@@ -1,3 +1,25 @@
+2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
+
+        JSC: Intl API should ignore encoding when parsing BCP 47 language tag from ISO 15897 locale string (passed via LANG)
+        https://bugs.webkit.org/show_bug.cgi?id=167991
+
+        Reviewed by Michael Catanzaro.
+
+        Improved the conversion of ICU locales to BCP47 tags, using their preferred method.
+        Checked locale.isEmpty() before returning it from defaultLocale, so there should be
+        no more cases where you might have an invalid locale come back from resolveLocale.
+
+        * runtime/IntlObject.cpp:
+        (JSC::convertICULocaleToBCP47LanguageTag):
+        (JSC::defaultLocale):
+        (JSC::lookupMatcher):
+        * runtime/IntlObject.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::intlCollatorAvailableLocales):
+        (JSC::JSGlobalObject::intlDateTimeFormatAvailableLocales):
+        (JSC::JSGlobalObject::intlNumberFormatAvailableLocales):
+        (JSC::JSGlobalObject::intlPluralRulesAvailableLocales):
+
 2018-07-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r234248) [Win] testapi.c: nonstandard extension used: non-constant aggregate initializer

@@ -130,9 +130,19 @@ Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void convertICULocaleToBCP47LanguageTag(String& locale)
+String convertICULocaleToBCP47LanguageTag(const char* localeID)
 {
-    locale.replace('_', '-');
+    UErrorCode status = U_ZERO_ERROR;
+    Vector<char, 32> buffer(32);
+    auto length = uloc_toLanguageTag(localeID, buffer.data(), buffer.size(), false, &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        buffer.grow(length);
+        status = U_ZERO_ERROR;
+        uloc_toLanguageTag(localeID, buffer.data(), buffer.size(), false, &status);
+    }
+    if (!U_FAILURE(status))
+        return String(buffer.data(), length);
+    return String();
 }
 
 bool intlBooleanOption(ExecState& state, JSValue options, PropertyName property, bool& usesFallback)
@@ -590,20 +600,25 @@ String defaultLocale(ExecState& state)
     // same thing as userPreferredLanguages()[0].
     VM& vm = state.vm();
     if (auto defaultLanguage = state.jsCallee()->globalObject(vm)->globalObjectMethodTable()->defaultLanguage) {
-        String locale = defaultLanguage();
+        String locale = canonicalizeLanguageTag(defaultLanguage());
         if (!locale.isEmpty())
-            return canonicalizeLanguageTag(locale);
+            return locale;
     }
 
     Vector<String> languages = userPreferredLanguages();
-    if (!languages.isEmpty() && !languages[0].isEmpty())
-        return canonicalizeLanguageTag(languages[0]);
+    for (const auto& language : languages) {
+        String locale = canonicalizeLanguageTag(language);
+        if (!locale.isEmpty())
+            return locale;
+    }
 
     // If all else fails, ask ICU. It will probably say something bogus like en_us even if the user
     // has configured some other language, but being wrong is better than crashing.
-    String locale = uloc_getDefault();
-    convertICULocaleToBCP47LanguageTag(locale);
-    return locale;
+    String locale = convertICULocaleToBCP47LanguageTag(uloc_getDefault());
+    if (!locale.isEmpty())
+        return locale;
+
+    return "en"_s;
 }
 
 String removeUnicodeLocaleExtension(const String& locale)
@@ -646,7 +661,7 @@ static MatcherResult lookupMatcher(ExecState& state, const HashSet<String>& avai
     }
 
     MatcherResult result;
-    if (!availableLocale.isNull()) {
+    if (!availableLocale.isEmpty()) {
         result.locale = availableLocale;
         if (locale != noExtensionsLocale) {
             size_t extensionIndex = locale.find("-u-");
