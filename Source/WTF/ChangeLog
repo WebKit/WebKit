@@ -1,3 +1,14 @@
+2018-07-26  Sam Weinig  <sam@webkit.org>
+
+        Remove unused/undefined String::appendInternal
+        https://bugs.webkit.org/show_bug.cgi?id=188063
+
+        Reviewed by Daniel Bates.
+
+        * wtf/text/WTFString.h:
+        String::appendInternal is declared in WTFString.h, but is never used
+        and and never even defined. Remove it.
+
 2018-07-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234181 and r234189.
