@@ -1053,9 +1053,9 @@ bool MediaPlayer::wouldTaintOrigin(const SecurityOrigin& origin) const
         return wouldTaint.value();
 
     if (m_url.protocolIsData())
-        return true;
+        return false;
 
-    return origin.canRequest(m_url);
+    return !origin.canRequest(m_url);
 }
 
 MediaPlayer::MovieLoadType MediaPlayer::movieLoadType() const
