@@ -859,6 +859,9 @@ http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failu
 
 http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Timeout ]
 
+# XMLHTTPRequest (sync)
+http/tests/xmlhttprequest/simple-sync.html [ Crash ]
+
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
 #///////////////////////////////////////////////////////////////////////////////

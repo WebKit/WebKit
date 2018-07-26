@@ -1,3 +1,13 @@
+2018-07-25  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188034
+
+        Unreviewed WinCairo gardening.
+
+        * httpxmlhttprequest/simple-sync.html: Added.
+        * platform/wincairo/TestExpectations:
+
 2018-07-25  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r227577) Text on TV & Movies page doesn't wrap properly in iTunes
