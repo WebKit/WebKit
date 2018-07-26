@@ -737,6 +737,11 @@ http/tests/plugins/npapi-response-headers.html [ Skip ]
 webkit.org/b/117323 fast/frames/sandboxed-iframe-plugins.html [ Skip ]
 webkit.org/b/117323 platform/win/plugins/call-javascript-that-destroys-plugin.html [ Skip ]
 webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html [ Skip ]
+
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html [ Skip ]
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php [ Skip ]
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
+
 ################################################################################
 ############################   End Plugin Failures   ###########################
 ################################################################################

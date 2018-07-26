@@ -155,7 +155,10 @@ http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugi
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html
 http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html
 http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php
+http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html
 
 # Pointer-lock not supported on iOS
 pointer-lock

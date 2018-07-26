@@ -354,6 +354,10 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
                     m_policy.reportInvalidDirectiveInHTTPEquivMeta(name);
                     continue;
                 }
+            } else if (policyFrom == ContentSecurityPolicy::PolicyFrom::InheritedForPluginDocument) {
+                if (!equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::pluginTypes)
+                    && !equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reportURI))
+                    continue;
             }
             addDirective(name, value);
         }

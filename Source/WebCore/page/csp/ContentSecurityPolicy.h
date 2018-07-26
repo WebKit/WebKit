@@ -70,6 +70,7 @@ public:
 
     void copyStateFrom(const ContentSecurityPolicy*);
     void copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy&);
+    void createPolicyForPluginDocumentFrom(const ContentSecurityPolicy&);
 
     void didCreateWindowProxy(JSWindowProxy&) const;
 
@@ -78,6 +79,7 @@ public:
         HTTPEquivMeta,
         HTTPHeader,
         Inherited,
+        InheritedForPluginDocument,
     };
     WEBCORE_EXPORT ContentSecurityPolicyResponseHeaders responseHeaders() const;
     enum ReportParsingErrors { No, Yes };
