@@ -1,3 +1,13 @@
+2018-07-26  Mark Lam  <mark.lam@apple.com>
+
+        arrayProtoPrivateFuncConcatMemcpy() should handle copying from an Undecided type array.
+        https://bugs.webkit.org/show_bug.cgi?id=188065
+        <rdar://problem/42515726>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-188065.js: Added.
+
 2018-07-25  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Call Typed Array elements toLocaleString with locale and options

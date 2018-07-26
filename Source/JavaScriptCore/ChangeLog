@@ -1,3 +1,16 @@
+2018-07-26  Mark Lam  <mark.lam@apple.com>
+
+        arrayProtoPrivateFuncConcatMemcpy() should handle copying from an Undecided type array.
+        https://bugs.webkit.org/show_bug.cgi?id=188065
+        <rdar://problem/42515726>
+
+        Reviewed by Saam Barati.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::clearElement):
+        (JSC::copyElements):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+
 2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         JSC: Intl API should ignore encoding when parsing BCP 47 language tag from ISO 15897 locale string (passed via LANG)

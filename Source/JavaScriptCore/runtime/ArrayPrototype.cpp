@@ -1292,6 +1292,29 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
 
 }
 
+template<typename T>
+void clearElement(T& element)
+{
+    element.clear();
+}
+
+template<>
+void clearElement(double& element)
+{
+    element = PNaN;
+}
+
+template<typename T>
+ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, void* source, unsigned sourceSize, IndexingType sourceType)
+{
+    if (sourceType != ArrayWithUndecided) {
+        memcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
+        return;
+    }
+
+    for (unsigned i = sourceSize; i--;)
+        clearElement<T>(buffer[i + offset]);
+};
 
 EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
 {
@@ -1367,26 +1390,16 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         throwOutOfMemoryError(exec, scope);
         return encodedJSValue();
     }
-    
+
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();
-        memcpy(buffer, firstButterfly->contiguousDouble().data(), sizeof(JSValue) * firstArraySize);
-        memcpy(buffer + firstArraySize, secondButterfly->contiguousDouble().data(), sizeof(JSValue) * secondArraySize);
+        copyElements(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
+        copyElements(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
+
     } else if (type != ArrayWithUndecided) {
         WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
-        
-        auto copy = [&] (unsigned offset, void* source, unsigned size, IndexingType type) {
-            if (type != ArrayWithUndecided) {
-                memcpy(buffer + offset, source, sizeof(JSValue) * size);
-                return;
-            }
-            
-            for (unsigned i = size; i--;)
-                buffer[i + offset].clear();
-        };
-        
-        copy(0, firstButterfly->contiguous().data(), firstArraySize, firstType);
-        copy(firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
+        copyElements(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
+        copyElements(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
     }
 
     result->butterfly()->setPublicLength(resultSize);
