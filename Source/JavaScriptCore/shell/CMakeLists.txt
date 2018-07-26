@@ -28,6 +28,7 @@ set(TESTAPI_SOURCES
     ../API/tests/PingPongStackOverflowTest.cpp
     ../API/tests/TypedArrayCTest.cpp
     ../API/tests/testapi.c
+    ../API/tests/testapi.cpp
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

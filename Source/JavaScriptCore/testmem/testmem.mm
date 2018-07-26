@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <inttypes.h>
 #import <stdio.h>

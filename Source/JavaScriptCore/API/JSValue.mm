@@ -39,6 +39,7 @@
 #import "JSCJSValue.h"
 #import "Strong.h"
 #import "StrongInlines.h"
+#import <wtf/Expected.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
@@ -151,6 +152,13 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     return [JSValue valueWithJSValueRef:JSValueMakeUndefined([context JSGlobalContextRef]) inContext:context];
 }
 
++ (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context
+{
+    JSStringRef string = JSStringCreateWithCFString(reinterpret_cast<CFStringRef>(description));
+    return [JSValue valueWithJSValueRef:JSValueMakeSymbol([context JSGlobalContextRef], string) inContext:context];
+}
+
+
 - (id)toObject
 {
     return valueToObject(_context, m_value);
@@ -234,72 +242,81 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     return result;
 }
 
-- (JSValue *)valueForProperty:(NSString *)propertyName
+template<typename Result, typename NSStringFunction, typename JSValueFunction, typename... Types>
+inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction stringFunction, JSValueFunction jsFunction, JSValue* value, id propertyKey, Types... arguments)
 {
-    JSValueRef exception = 0;
-    JSObjectRef object = JSValueToObject([_context JSGlobalContextRef], m_value, &exception);
+    JSContext* context = [value context];
+    JSValueRef exception = nullptr;
+    JSObjectRef object = JSValueToObject([context JSGlobalContextRef], [value JSValueRef], &exception);
     if (exception)
-        return [_context valueFromNotifyException:exception];
+        return Unexpected<JSValueRef>(exception);
 
-    JSStringRef name = JSStringCreateWithCFString((__bridge CFStringRef)propertyName);
-    JSValueRef result = JSObjectGetProperty([_context JSGlobalContextRef], object, name, &exception);
-    JSStringRelease(name);
-    if (exception)
-        return [_context valueFromNotifyException:exception];
-
-    return [JSValue valueWithJSValueRef:result inContext:_context];
+    Result result;
+    // If it's a NSString already, reduce indirection and just pass the NSString.
+    if ([propertyKey isKindOfClass:[NSString class]]) {
+        JSStringRef name = JSStringCreateWithCFString((__bridge CFStringRef)propertyKey);
+        result = stringFunction([context JSGlobalContextRef], object, name, arguments..., &exception);
+        JSStringRelease(name);
+    } else
+        result = jsFunction([context JSGlobalContextRef], object, [[JSValue valueWithObject:propertyKey inContext:context] JSValueRef], arguments..., &exception);
+    return Expected<Result, JSValueRef>(result);
 }
 
-- (void)setValue:(id)value forProperty:(NSString *)propertyName
+- (JSValue *)valueForProperty:(id)key
 {
-    JSValueRef exception = 0;
-    JSObjectRef object = JSValueToObject([_context JSGlobalContextRef], m_value, &exception);
-    if (exception) {
-        [_context notifyException:exception];
+    auto result = performPropertyOperation<JSValueRef>(JSObjectGetProperty, JSObjectGetPropertyKey, self, key);
+    if (!result)
+        return [_context valueFromNotifyException:result.error()];
+
+    return [JSValue valueWithJSValueRef:result.value() inContext:_context];
+}
+
+
+- (void)setValue:(id)value forProperty:(JSValuePropertyKeyType)key
+{
+    // We need Unit business because void can't be assigned to in performPropertyOperation and I don't want to duplicate the code...
+    using Unit = std::tuple<>;
+    auto stringSetProperty = [] (auto... args) -> Unit {
+        JSObjectSetProperty(args...);
+        return { };
+    };
+
+    auto jsValueSetProperty = [] (auto... args) -> Unit {
+        JSObjectSetPropertyKey(args...);
+        return { };
+    };
+
+    auto result = performPropertyOperation<Unit>(stringSetProperty, jsValueSetProperty, self, key, objectToValue(_context, value), kJSPropertyAttributeNone);
+    if (!result) {
+        [_context notifyException:result.error()];
         return;
     }
-
-    JSStringRef name = JSStringCreateWithCFString((__bridge CFStringRef)propertyName);
-    JSObjectSetProperty([_context JSGlobalContextRef], object, name, objectToValue(_context, value), 0, &exception);
-    JSStringRelease(name);
-    if (exception) {
-        [_context notifyException:exception];
-        return;
-    }
 }
 
-- (BOOL)deleteProperty:(NSString *)propertyName
+- (BOOL)deleteProperty:(JSValuePropertyKeyType)key
 {
-    JSValueRef exception = 0;
-    JSObjectRef object = JSValueToObject([_context JSGlobalContextRef], m_value, &exception);
-    if (exception)
-        return [_context boolFromNotifyException:exception];
-
-    JSStringRef name = JSStringCreateWithCFString((__bridge CFStringRef)propertyName);
-    BOOL result = JSObjectDeleteProperty([_context JSGlobalContextRef], object, name, &exception);
-    JSStringRelease(name);
-    if (exception)
-        return [_context boolFromNotifyException:exception];
-
-    return result;
+    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(JSObjectDeleteProperty, JSObjectDeletePropertyKey, self, key);
+    if (!result)
+        return [_context boolFromNotifyException:result.error()];
+    return result.value();
 }
 
-- (BOOL)hasProperty:(NSString *)propertyName
+- (BOOL)hasProperty:(JSValuePropertyKeyType)key
 {
-    JSValueRef exception = 0;
-    JSObjectRef object = JSValueToObject([_context JSGlobalContextRef], m_value, &exception);
-    if (exception)
-        return [_context boolFromNotifyException:exception];
+    // The C-api doesn't return an exception value for the string version of has property.
+    auto stringHasProperty = [] (JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef*) -> BOOL {
+        return JSObjectHasProperty(ctx, object, propertyName);
+    };
 
-    JSStringRef name = JSStringCreateWithCFString((__bridge CFStringRef)propertyName);
-    BOOL result = JSObjectHasProperty([_context JSGlobalContextRef], object, name);
-    JSStringRelease(name);
-    return result;
+    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(stringHasProperty, JSObjectHasPropertyKey, self, key);
+    if (!result)
+        return [_context boolFromNotifyException:result.error()];
+    return result.value();
 }
 
-- (void)defineProperty:(NSString *)property descriptor:(id)descriptor
+- (void)defineProperty:(JSValuePropertyKeyType)key descriptor:(id)descriptor
 {
-    [[_context globalObject][@"Object"] invokeMethod:@"defineProperty" withArguments:@[ self, property, descriptor ]];
+    [[_context globalObject][@"Object"] invokeMethod:@"defineProperty" withArguments:@[ self, key, descriptor ]];
 }
 
 - (JSValue *)valueAtIndex:(NSUInteger)index
@@ -370,6 +387,11 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 - (BOOL)isObject
 {
     return JSValueIsObject([_context JSGlobalContextRef], m_value);
+}
+
+- (BOOL)isSymbol
+{
+    return JSValueIsSymbol([_context JSGlobalContextRef], m_value);
 }
 
 - (BOOL)isArray
@@ -554,13 +576,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 - (JSValue *)objectForKeyedSubscript:(id)key
 {
-    if (![key isKindOfClass:[NSString class]]) {
-        key = [[JSValue valueWithObject:key inContext:_context] toString];
-        if (!key)
-            return [JSValue valueWithUndefinedInContext:_context];
-    }
-
-    return [self valueForProperty:(NSString *)key];
+    return [self valueForProperty:key];
 }
 
 - (JSValue *)objectAtIndexedSubscript:(NSUInteger)index
@@ -568,15 +584,9 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     return [self valueAtIndex:index];
 }
 
-- (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key
+- (void)setObject:(id)object forKeyedSubscript:(id)key
 {
-    if (![key isKindOfClass:[NSString class]]) {
-        key = [[JSValue valueWithObject:key inContext:_context] toString];
-        if (!key)
-            return;
-    }
-
-    [self setValue:object forProperty:(NSString *)key];
+    [self setValue:object forProperty:key];
 }
 
 - (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index

@@ -366,6 +366,100 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     handleExceptionIfNeeded(scope, exec, exception);
 }
 
+bool JSObjectHasPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSObject* jsObject = toJS(object);
+    Identifier ident = toJS(exec, key).toPropertyKey(exec);
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
+        return false;
+
+    bool result = jsObject->hasProperty(exec, ident);
+    handleExceptionIfNeeded(scope, exec, exception);
+    return result;
+}
+
+JSValueRef JSObjectGetPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSObject* jsObject = toJS(object);
+    Identifier ident = toJS(exec, key).toPropertyKey(exec);
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    JSValue jsValue = jsObject->get(exec, ident);
+    handleExceptionIfNeeded(scope, exec, exception);
+    return toRef(exec, jsValue);
+}
+
+void JSObjectSetPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSObject* jsObject = toJS(object);
+    JSValue jsValue = toJS(exec, value);
+
+    Identifier ident = toJS(exec, key).toPropertyKey(exec);
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
+        return;
+
+    bool doesNotHaveProperty = attributes && !jsObject->hasProperty(exec, ident);
+    if (LIKELY(!scope.exception())) {
+        if (doesNotHaveProperty) {
+            PropertyDescriptor desc(jsValue, attributes);
+            jsObject->methodTable(vm)->defineOwnProperty(jsObject, exec, ident, desc, false);
+        } else {
+            PutPropertySlot slot(jsObject);
+            jsObject->methodTable(vm)->put(jsObject, exec, ident, jsValue, slot);
+        }
+    }
+    handleExceptionIfNeeded(scope, exec, exception);
+}
+
+bool JSObjectDeletePropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSObject* jsObject = toJS(object);
+    Identifier ident = toJS(exec, key).toPropertyKey(exec);
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
+        return false;
+
+    bool result = jsObject->methodTable(vm)->deleteProperty(jsObject, exec, ident);
+    handleExceptionIfNeeded(scope, exec, exception);
+    return result;
+}
+
 JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned propertyIndex, JSValueRef* exception)
 {
     if (!ctx) {

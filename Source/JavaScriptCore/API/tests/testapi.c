@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/Platform.h>
+#define ASSERT_DISABLED 0
+#include "config.h"
 
 #if USE(CF)
 #include "JavaScriptCore.h"
@@ -44,7 +45,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#define ASSERT_DISABLED 0
 #include <wtf/Assertions.h>
 
 #if OS(WINDOWS)
@@ -65,6 +65,8 @@
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
+
+int testCAPIViaCpp(void);
 
 bool assertTrue(bool value, const char* message);
 
@@ -1361,6 +1363,7 @@ int main(int argc, char* argv[])
 #if JSC_OBJC_API_ENABLED
     testObjectiveCAPI();
 #endif
+    RELEASE_ASSERT(!testCAPIViaCpp());
 
     const char *scriptPath = "testapi.js";
     if (argc > 1) {

@@ -47,6 +47,12 @@
 NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSValue : NSObject
 
+#if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < JSC_MAC_VERSION_TBA) || (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < JSC_IOS_VERSION_TBA)
+typedef NSString *JSValuePropertyKeyType;
+#else
+typedef id JSValuePropertyKeyType;
+#endif
+
 /*!
 @property
 @abstract The JSContext that this value originates from.
@@ -147,6 +153,15 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The JSValue representing the JavaScript value <code>undefined</code>.
 */
 + (JSValue *)valueWithUndefinedInContext:(JSContext *)context;
+
+/*!
+ @method
+ @abstract Create a new, unique, symbol object.
+ @param description The description of the symbol object being created.
+ @param context The JSContext to which the resulting JSValue belongs.
+ @result The JSValue representing a unique JavaScript value with type symbol.
+ */
++ (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @methodgroup Converting to Objective-C Types
@@ -305,43 +320,48 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 /*!
 @methodgroup Accessing Properties
 */
+
 /*!
 @method
 @abstract Access a property of a JSValue.
 @result The JSValue for the requested property or the JSValue <code>undefined</code> 
  if the property does not exist.
+@discussion Corresponds to the JavaScript operation <code>object[property]</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (JSValue *)valueForProperty:(NSString *)property;
+- (JSValue *)valueForProperty:(JSValuePropertyKeyType)property;
 
 /*!
 @method
 @abstract Set a property on a JSValue.
+@discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (void)setValue:(id)value forProperty:(NSString *)property;
+- (void)setValue:(id)value forProperty:(JSValuePropertyKeyType)property;
 
 /*!
 @method
 @abstract Delete a property from a JSValue.
 @result YES if deletion is successful, NO otherwise.
+@discussion Corresponds to the JavaScript operation <code>delete object[property]</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (BOOL)deleteProperty:(NSString *)property;
+- (BOOL)deleteProperty:(JSValuePropertyKeyType)property;
 
 /*!
 @method
 @abstract Check if a JSValue has a property.
 @discussion This method has the same function as the JavaScript operator <code>in</code>.
 @result Returns YES if property is present on the value.
+@discussion Corresponds to the JavaScript operation <code>property in object</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (BOOL)hasProperty:(NSString *)property;
+- (BOOL)hasProperty:(JSValuePropertyKeyType)property;
 
 /*!
 @method
 @abstract Define properties with custom descriptors on JSValues.
 @discussion This method may be used to create a data or accessor property on an object.
  This method operates in accordance with the Object.defineProperty method in the 
- JavaScript language.
+ JavaScript language. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (void)defineProperty:(NSString *)property descriptor:(id)descriptor;
+- (void)defineProperty:(JSValuePropertyKeyType)property descriptor:(id)descriptor;
 
 /*!
 @method
@@ -404,15 +424,21 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 
 /*!
 @property
+@abstract Check if a JSValue is a symbol.
+*/
+@property (readonly) BOOL isSymbol JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+
+/*!
+@property
 @abstract Check if a JSValue is an array.
 */ 
-@property (readonly) BOOL isArray NS_AVAILABLE(10_11, 9_0);
+@property (readonly) BOOL isArray JSC_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 /*!
 @property
 @abstract Check if a JSValue is a date.
 */ 
-@property (readonly) BOOL isDate NS_AVAILABLE(10_11, 9_0);
+@property (readonly) BOOL isDate JSC_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 /*!
 @method
@@ -569,13 +595,16 @@ Create a JSValue from a CGRect.
 @/textblock
 
  An object key passed as a subscript will be converted to a JavaScript value,
- and then the value converted to a string used as a property name.
+ and then the value converted to a string used as a property name. In macOS
+ 10.13 and iOS 11 and below, the <code>key</code> argument of
+ <code>setObject:object forKeyedSubscript:key</code> was restricted to an
+ <code>NSString <NSCopying> *</code> but that restriction was never used.
 */
 @interface JSValue (SubscriptSupport)
 
-- (JSValue *)objectForKeyedSubscript:(id)key;
+- (JSValue *)objectForKeyedSubscript:(JSValuePropertyKeyType)key;
 - (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
-- (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key;
+- (void)setObject:(id)object forKeyedSubscript:(JSValuePropertyKeyType)key;
 - (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index;
 
 @end

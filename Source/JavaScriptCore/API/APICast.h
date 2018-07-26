@@ -30,6 +30,7 @@
 #include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
+#include "HeapCellInlines.h"
 
 namespace JSC {
     class ExecState;
