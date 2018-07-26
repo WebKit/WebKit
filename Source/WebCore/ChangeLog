@@ -1,3 +1,19 @@
+2018-07-25  Justin Fan  <justin_fan@apple.com>
+
+        Systems with no NSScreens hitting assertion in rendererIDForDisplay when creating WebGL context
+        https://bugs.webkit.org/show_bug.cgi?id=188023
+        <rdar://problem/42476622>
+
+        Reviewed by Simon Fraser.
+
+        On systems with no NSScreens, PlatformScreenMac's screenData map is not populated; rendererIDForDisplay
+        will thus hit an assertion rather than returning 0. Removing the assertion for now. 
+
+        Covered by existing tests.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::rendererIDForDisplay):
+
 2018-07-25  Zalan Bujtas  <zalan@apple.com>
 
         Build fix after r234215. Unreviewed.

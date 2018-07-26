@@ -204,7 +204,6 @@ GLint rendererIDForDisplay(PlatformDisplayID displayID)
 #else
     return rendererIDForDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
 #endif
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
