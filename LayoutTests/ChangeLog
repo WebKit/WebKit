@@ -1,3 +1,25 @@
+2018-07-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] REGRESSION: transition added immediately after element creation doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=187942
+
+        Reviewed by Dean Jackson.
+
+        Creating a new test that runs a transition based on an explicit value being removed in favor
+        of the implicit value of a property that can be accelerated. To check that we indeed run the
+        animation, we have a cache that covers the entire range of interpolated values except for the
+        start and end values and wait 100ms after creating the transition to end the test. Prior to this
+        patch, the element would be at its start value and a 1px red line would show to the right of the
+        cache. With this patch, the red line is hidden by the cache as it's animated.
+
+        We also add a test that checks that we do not create a composited layer when several transitions,
+        with only one being potentially accelerated, target the same element.
+
+        * webanimations/accelerated-transition-by-removing-property-expected.html: Added.
+        * webanimations/accelerated-transition-by-removing-property.html: Added.
+        * webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Added.
+        * webanimations/partly-accelerated-transition-by-removing-property.html: Added.
+
 2018-07-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening

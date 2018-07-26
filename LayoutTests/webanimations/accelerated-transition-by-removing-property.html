@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableWebAnimationsCSSIntegration=true ] -->
+<body>
+<style>
+    div {
+        position: absolute;
+        height: 100px;
+        top: 0;
+    }
+</style>
+<div id="target" style="left: 0; width: 1px; background-color: red;"></div>
+<div style="left: 1px; width: 798px; background-color: black;"></div>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const target = document.getElementById("target");
+target.style.transform = "translateX(799px)";
+setTimeout(() => {
+    target.style.removeProperty("transform");
+    target.style.transition = "transform 10s linear";
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 100);
+});
+
+</script>
+</body>

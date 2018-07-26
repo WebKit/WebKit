@@ -108,6 +108,7 @@ public:
     void animationSuspensionStateDidChange(bool) final;
     void applyPendingAcceleratedActions();
     bool isRunningAccelerated() const { return m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
+    bool hasPendingAcceleratedAction() const { return !m_pendingAcceleratedActions.isEmpty() && isRunningAccelerated(); }
 
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;

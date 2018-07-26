@@ -286,6 +286,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 {
     auto* oldStyle = renderOrDisplayContentsStyle(element);
 
+    bool shouldRecompositeLayer = false;
+
     // New code path for CSS Animations and CSS Transitions.
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
         // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
@@ -303,16 +305,10 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     if (auto timeline = m_document.existingTimeline()) {
         // Now we can update all Web animations, which will include CSS Animations as well
         // as animations created via the JS API.
-        auto webAnimations = timeline->animationsForElement(element);
-        if (!webAnimations.isEmpty()) {
-            auto animatedStyle = RenderStyle::clonePtr(*newStyle);
-            for (const auto& animation : webAnimations)
-                animation->resolve(*animatedStyle);
-            newStyle = WTFMove(animatedStyle);
-        }
+        auto animatedStyle = RenderStyle::clonePtr(*newStyle);
+        shouldRecompositeLayer = timeline->resolveAnimationsForElement(element, *animatedStyle);
+        newStyle = WTFMove(animatedStyle);
     }
-
-    bool shouldRecompositeLayer = false;
 
     // Old code path for CSS Animations and CSS Transitions.
     if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {

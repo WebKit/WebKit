@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableWebAnimationsCSSIntegration=true ] -->
+<body>
+<pre id="results"></pre>
+<div id="target" style="width: 100px; height: 100px; background-color: black;"></div>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+const target = document.getElementById("target");
+target.style.opacity = "0.5";
+target.style.marginLeft = "100px";
+setTimeout(() => {
+    target.style.removeProperty("opacity");
+    target.style.removeProperty("margin-left");
+    target.style.transitionProperty = "margin-left opacity";
+    target.style.transitionDuration = "1s";
+    requestAnimationFrame(() => {
+        if (window.internals)
+            document.getElementById("results").innerText = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+
+</script>
+</body>

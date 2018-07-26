@@ -1,3 +1,31 @@
+2018-07-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] REGRESSION: transition added immediately after element creation doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=187942
+
+        Reviewed by Dean Jackson.
+
+        Tests: webanimations/accelerated-transition-by-removing-property.html
+               webanimations/partly-accelerated-transition-by-removing-property.html
+
+        The Style::TreeResolver::createAnimatedElementUpdate() function expected a flag to be set that indicates that
+        running animations on an element should yield a change in composited state for that element's layer. We did not
+        have code accounting for this flag in the Web Animations engine. We now have a resolveAnimationsForElement()
+        method on DocumentTimeline which looks at all animations resolved on the element and see if all of them are
+        running accelerated and whether at least one of them is pending. In that case, we set the shouldRecompositeLayer
+        flag in createAnimatedElementUpdate() to true which guarantees the element's layer will have a backing when
+        we attempt to start the animation in KeyframeEffectReadOnly::applyPendingAcceleratedActions() where we would
+        have previously failed to have layer-backed renderer to perform an accelerated animation on (under certain
+        circumstances, see test).
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::resolveAnimationsForElement):
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffectReadOnly.h:
+        (WebCore::KeyframeEffectReadOnly::hasPendingAcceleratedAction const):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
 2018-07-25  Chris Dumez  <cdumez@apple.com>
 
         Allow ActiveDOMObject's canSuspend / suspend / resume overrides to destroy ActiveDOMObjects
