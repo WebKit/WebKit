@@ -1,3 +1,20 @@
+2018-07-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to run API Tests
+        https://bugs.webkit.org/show_bug.cgi?id=188079
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (TestWithFailureCount): Common class for various tests with failure count.
+        (TestWithFailureCount.start): Configure Buildbot's logobserver.
+        (TestWithFailureCount.commandComplete): Updates the failure count.
+        (TestWithFailureCount.evaluateCommand): Set the step status appropriately.
+        (TestWithFailureCount.getResultSummary): Set the step summary appropriately.
+        (RunAPITests): Build step to run API tests.
+        (RunAPITests.countFailures): Count the failures by parsing the output.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter

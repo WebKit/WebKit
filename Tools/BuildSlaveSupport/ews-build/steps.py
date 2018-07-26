@@ -20,11 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from buildbot.process import buildstep, properties
+from buildbot.process import buildstep, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import shell, transfer
 from buildbot.steps.source import svn
 from twisted.internet import defer
+
+import re
 
 EWS_URL = 'http://ews-build.webkit-uat.org/'
 WithProperties = properties.WithProperties
@@ -87,6 +89,44 @@ class CheckStyle(shell.ShellCommand):
     descriptionDone = ['check-webkit-style']
     flunkOnFailure = True
     command = ['Tools/Scripts/check-webkit-style']
+
+
+class TestWithFailureCount(shell.Test):
+    failedTestsFormatString = "%d test%s failed"
+    failedTestCount = 0
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        return shell.Test.start(self)
+
+    def countFailures(self, cmd):
+        raise NotImplementedError
+
+    def commandComplete(self, cmd):
+        shell.Test.commandComplete(self, cmd)
+        self.failedTestCount = self.countFailures(cmd)
+        self.failedTestPluralSuffix = "" if self.failedTestCount == 1 else "s"
+
+    def evaluateCommand(self, cmd):
+        if self.failedTestCount:
+            return FAILURE
+
+        if cmd.rc != 0:
+            return FAILURE
+
+        return SUCCESS
+
+    def getResultSummary(self):
+        status = self.name
+
+        if self.results != SUCCESS and self.failedTestCount:
+            status = self.failedTestsFormatString % (self.failedTestCount, self.failedTestPluralSuffix)
+
+        if self.results != SUCCESS:
+            status += u' ({})'.format(Results[self.results])
+
+        return {u'step': status}
 
 
 class RunBindingsTests(shell.ShellCommand):
@@ -330,3 +370,23 @@ class ExtractBuiltProduct(shell.ShellCommand):
     descriptionDone = ['extracted built product']
     haltOnFailure = True
     flunkOnFailure = True
+
+
+class RunAPITests(TestWithFailureCount):
+    name = 'run-api-tests'
+    description = ['api tests running']
+    descriptionDone = ['api-tests']
+    command = ['python', 'Tools/Scripts/run-api-tests', '--no-build', WithProperties('--%(configuration)s'), '--verbose']
+    failedTestsFormatString = '%d api test%s failed or timed out'
+
+    def start(self):
+        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        return TestWithFailureCount.start(self)
+
+    def countFailures(self, cmd):
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+
+        match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', log_text)
+        if not match:
+            return 0
+        return int(match.group('ran')) - int(match.group('passed'))
