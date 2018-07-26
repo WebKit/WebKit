@@ -30,6 +30,7 @@
 #import "SameDocumentNavigationType.h"
 #import "WKWebViewConfiguration.h"
 #import "_WKAttachmentInternal.h"
+#import "_WKWebViewPrintFormatterInternal.h"
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -61,7 +62,6 @@ struct PrintInfo;
 @class WKWebViewContentProviderRegistry;
 @class WKPasswordView;
 @class _WKFrameHandle;
-@protocol _WKWebViewPrintProvider;
 
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 

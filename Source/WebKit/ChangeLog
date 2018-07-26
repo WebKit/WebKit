@@ -1,3 +1,17 @@
+2018-07-26  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove a forward protocol declaration of '_WKWebViewPrintProvider'
+        https://bugs.webkit.org/show_bug.cgi?id=188012
+        <rdar://problem/42309526>
+
+        Reviewed by Darin Adler.
+
+        @procotol() expressions emit invalid protocol metadata when used with forward @protocol declarations. 
+        Clang is going to make it an error for using a forward-declared protocol in a @protocol expression, so
+        we need to stop doing this.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+
 2018-07-26  Chris Dumez  <cdumez@apple.com>
 
         Disable Dark Mode in the Plugin process to avoid rendering issues
