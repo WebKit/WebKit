@@ -1,3 +1,14 @@
+2018-07-26  Nan Wang  <n_wang@apple.com>
+
+        AX: nothing returned for various previous text marker APIs from one div/p node to another
+        https://bugs.webkit.org/show_bug.cgi?id=188071
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/text-marker-p-tags-expected.txt: Added.
+        * accessibility/mac/text-marker-p-tags.html: Added.
+        * accessibility/mac/text-marker-string-for-document-range-expected.txt:
+
 2018-07-26  David Fenton  <david_fenton@apple.com>
 
         Layout Test webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html is timing out on mac Debug

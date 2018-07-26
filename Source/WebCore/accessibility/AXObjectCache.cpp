@@ -1694,6 +1694,11 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
                             currentNode = shadowHost;
                             continue;
                         }
+                    } else if (previousNode && previousNode->isTextNode() && previousNode->isDescendantOf(currentNode) && currentNode->hasTagName(pTag)) {
+                        // TextIterator is emitting an extra newline after the <p> element. We should
+                        // ignore that since the extra text node is not in the DOM tree.
+                        currentNode = previousNode;
+                        continue;
                     } else if (currentNode != previousNode) {
                         // We should set the start offset and length for the current node in case this is the last iteration.
                         lastStartOffset = 1;
