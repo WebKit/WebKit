@@ -1,3 +1,15 @@
+2018-07-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] assert-not-implemented-yet on inflow non-replaced height when style is not fixed/auto.
+        https://bugs.webkit.org/show_bug.cgi?id=187969
+
+        Reviewed by Antti Koivisto.
+
+        Assert on unsupported height types when computing inflow non-replaced height.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+
 2018-07-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] REGRESSION: transition added immediately after element creation doesn't work
