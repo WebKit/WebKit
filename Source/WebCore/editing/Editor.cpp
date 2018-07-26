@@ -892,10 +892,10 @@ Element* Editor::findEventTargetFromSelection() const
 void Editor::applyStyle(StyleProperties* style, EditAction editingAction)
 {
     if (style)
-        applyStyle(EditingStyle::create(style), editingAction);
+        applyStyle(EditingStyle::create(style), editingAction, ColorFilterMode::UseOriginalColor);
 }
 
-void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction)
+void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction, ColorFilterMode colorFilterMode)
 {
     if (!style)
         return;
@@ -910,12 +910,14 @@ void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction)
     if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
         return;
 
+    Ref<EditingStyle> styleToApply = colorFilterMode == ColorFilterMode::InvertColor ? style->inverseTransformColorIfNeeded(*element) : style.releaseNonNull();
+
     switch (selectionType) {
     case VisibleSelection::CaretSelection:
-        computeAndSetTypingStyle(*style, editingAction);
+        computeAndSetTypingStyle(styleToApply.get(), editingAction);
         break;
     case VisibleSelection::RangeSelection:
-        ApplyStyleCommand::create(document(), style.get(), editingAction)->apply();
+        ApplyStyleCommand::create(document(), styleToApply.ptr(), editingAction)->apply();
         break;
     default:
         break;
@@ -962,7 +964,7 @@ void Editor::applyStyleToSelection(StyleProperties* style, EditAction editingAct
     applyStyle(style, editingAction);
 }
 
-void Editor::applyStyleToSelection(Ref<EditingStyle>&& style, EditAction editingAction)
+void Editor::applyStyleToSelection(Ref<EditingStyle>&& style, EditAction editingAction, ColorFilterMode colorFilterMode)
 {
     if (style->isEmpty() || !canEditRichly())
         return;
@@ -971,7 +973,7 @@ void Editor::applyStyleToSelection(Ref<EditingStyle>&& style, EditAction editing
     if (!client() || !client()->shouldApplyStyle(style->styleWithResolvedTextDecorations().ptr(), m_frame.selection().toNormalizedRange().get()))
         return;
 
-    applyStyle(WTFMove(style), editingAction);
+    applyStyle(WTFMove(style), editingAction, colorFilterMode);
 }
 
 void Editor::applyParagraphStyleToSelection(StyleProperties* style, EditAction editingAction)

@@ -100,11 +100,12 @@ static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAc
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        frame.editor().applyStyleToSelection(WTFMove(style), action);
+        // Use InvertColor for testing purposes. foreColor and backColor are never triggered with CommandFromMenuOrKeyBinding outside DRT/WTR.
+        frame.editor().applyStyleToSelection(WTFMove(style), action, Editor::ColorFilterMode::InvertColor);
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame.editor().applyStyle(WTFMove(style), EditActionUnspecified);
+        frame.editor().applyStyle(WTFMove(style), EditActionUnspecified, Editor::ColorFilterMode::UseOriginalColor);
         return true;
     }
     ASSERT_NOT_REACHED();

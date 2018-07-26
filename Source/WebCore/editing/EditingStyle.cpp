@@ -1538,6 +1538,36 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
     return foundDirection;
 }
 
+Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
+{
+    auto* renderer = element.renderer();
+    if (!m_mutableStyle || !renderer || !renderer->style().hasAppleColorFilter())
+        return *this;
+
+    bool hasColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyColor);
+    bool hasBackgroundColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
+    if (!hasColor && !hasBackgroundColor)
+        return *this;
+
+    auto styleWithInvertedColors = copy();
+    ASSERT(styleWithInvertedColors->m_mutableStyle);
+
+    const auto& colorFilter = renderer->style().appleColorFilter();
+    auto invertedColor = [&](CSSPropertyID propertyID) {
+        Color newColor = cssValueToColor(extractPropertyValue(*m_mutableStyle, propertyID).get());
+        colorFilter.inverseTransformColor(newColor);
+        styleWithInvertedColors->m_mutableStyle->setProperty(propertyID, newColor.cssText());
+    };
+
+    if (hasColor)
+        invertedColor(CSSPropertyColor);
+
+    if (hasBackgroundColor)
+        invertedColor(CSSPropertyBackgroundColor);
+
+    return styleWithInvertedColors;
+}
+
 static void reconcileTextDecorationProperties(MutableStyleProperties* style)
 {    
     RefPtr<CSSValue> textDecorationsInEffect = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
@@ -1580,7 +1610,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     reconcileTextDecorationProperties(mutableStyle.get());
     bool shouldStyleWithCSS = document->frame()->editor().shouldStyleWithCSS();
     if (!shouldStyleWithCSS)
-        extractTextStyles(document, *node, *mutableStyle, computedStyle.useFixedFontDefaultSize());
+        extractTextStyles(document, *mutableStyle, computedStyle.useFixedFontDefaultSize());
 
     bool shouldAddUnderline = style->underlineChange() == TextDecorationChange::Add;
     bool shouldAddStrikeThrough = style->strikeThroughChange() == TextDecorationChange::Add;
@@ -1653,7 +1683,7 @@ static void setTextDecorationProperty(MutableStyleProperties& style, const CSSVa
     }
 }
 
-void StyleChange::extractTextStyles(Document* document, Node& startNode, MutableStyleProperties& style, bool shouldUseFixedFontDefaultSize)
+void StyleChange::extractTextStyles(Document* document, MutableStyleProperties& style, bool shouldUseFixedFontDefaultSize)
 {
     if (identifierForStyleProperty(style, CSSPropertyFontWeight) == CSSValueBold) {
         style.removeProperty(CSSPropertyFontWeight);
@@ -1697,12 +1727,7 @@ void StyleChange::extractTextStyles(Document* document, Node& startNode, Mutable
     }
 
     if (style.getPropertyCSSValue(CSSPropertyColor)) {
-        Color newColor = textColorFromStyle(style);
-
-        if (startNode.renderer() && startNode.renderer()->style().hasAppleColorFilter())
-            startNode.renderer()->style().appleColorFilter().inverseTransformColor(newColor);
-
-        m_applyFontColor = newColor.serialized();
+        m_applyFontColor = Color(textColorFromStyle(style)).serialized();
         style.removeProperty(CSSPropertyColor);
     }
 

@@ -291,9 +291,9 @@ void TestRunner::keepWebHistory()
     InjectedBundle::singleton().postSetAddsVisitedLinks(true);
 }
 
-void TestRunner::execCommand(JSStringRef name, JSStringRef argument)
+void TestRunner::execCommand(JSStringRef name, JSStringRef showUI, JSStringRef value)
 {
-    WKBundlePageExecuteEditingCommand(InjectedBundle::singleton().page()->page(), toWK(name).get(), toWK(argument).get());
+    WKBundlePageExecuteEditingCommand(InjectedBundle::singleton().page()->page(), toWK(name).get(), toWK(value).get());
 }
 
 bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)

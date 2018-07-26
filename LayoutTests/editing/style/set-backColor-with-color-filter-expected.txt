@@ -1,0 +1,6 @@
+Setting the background color should invert the color through -apple-color-filter
+
+"world" should be #ecfffd / rgb(236, 255, 253):
+| <span>
+|   style="background-color: rgb(236, 255, 253);"
+|   "<#selection-anchor>hello world<#selection-focus>"

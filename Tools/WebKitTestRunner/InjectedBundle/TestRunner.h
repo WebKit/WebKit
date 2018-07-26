@@ -135,7 +135,7 @@ public:
 
     // Special DOM functions.
     void clearBackForwardList();
-    void execCommand(JSStringRef name, JSStringRef argument);
+    void execCommand(JSStringRef name, JSStringRef showUI, JSStringRef value);
     bool isCommandEnabled(JSStringRef name);
     unsigned windowCount();
 

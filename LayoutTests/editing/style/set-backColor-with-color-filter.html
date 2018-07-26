@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+<body>
+<div id="test" style="-apple-color-filter: apple-invert-lightness()" contenteditable>hello world</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description('Setting the background color should invert the color through -apple-color-filter');
+
+window.getSelection().setPosition(test, 0);
+window.getSelection().modify('extend', 'forward', 'word');
+window.getSelection().modify('extend', 'forward', 'word');
+if (window.testRunner)
+    testRunner.execCommand('backColor', false, '#224433');
+else
+    document.write('This test requires WebKitTestRunner or DumpRenderTree');
+
+Markup.dump('test', `"world" should be #ecfffd / rgb(${0xec}, ${0xff}, ${0xfd})`);
+
+</script>
+</body>
+</html>
