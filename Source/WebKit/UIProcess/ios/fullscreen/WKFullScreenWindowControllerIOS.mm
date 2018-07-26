@@ -752,6 +752,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         _repaintCallback->performCallback();
 
     [_fullscreenViewController setPrefersStatusBarHidden:YES];
+    _fullscreenViewController = nil;
 }
 
 - (void)close
