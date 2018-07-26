@@ -29,21 +29,37 @@
 
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 namespace Layout {
 
+class Box;
 class FormattingState;
+class LayoutContext;
 
 // FloatingState holds the floating boxes per formatting context.
 class FloatingState : public RefCounted<FloatingState> {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
-    static Ref<FloatingState> create() { return adoptRef(*new FloatingState()); }
+    static Ref<FloatingState> create(LayoutContext& layoutContext) { return adoptRef(*new FloatingState(layoutContext)); }
+
+    void append(const Box& layoutBox);
+
+    bool isEmpty() const { return m_leftFloatings.isEmpty() && m_rightFloatings.isEmpty(); }
 
 private:
-    FloatingState();
+    friend class FloatingContext;
+    FloatingState(LayoutContext&);
+
+    LayoutContext& layoutContext() const { return m_layoutContext; }
+
+    LayoutContext& m_layoutContext;
+
+    using FloatingList = Vector<WeakPtr<Box>>;
+    FloatingList m_leftFloatings;
+    FloatingList m_rightFloatings;
 };
 
 }

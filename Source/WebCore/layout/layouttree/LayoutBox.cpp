@@ -100,6 +100,16 @@ bool Box::isFloatingPositioned() const
     return m_style.floating() != Float::No;
 }
 
+bool Box::isLeftFloatingPositioned() const
+{
+    return m_style.floating() == Float::Left;
+}
+
+bool Box::isRightFloatingPositioned() const
+{
+    return m_style.floating() == Float::Right;
+}
+
 const Container* Box::containingBlock() const
 {
     // The containing block in which the root element lives is a rectangle called the initial containing block.

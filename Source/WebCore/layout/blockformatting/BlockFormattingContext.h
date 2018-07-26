@@ -38,6 +38,7 @@ namespace Layout {
 
 class BlockFormattingState;
 class Box;
+class FloatingContext;
 
 // This class implements the layout logic for block formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
@@ -49,12 +50,13 @@ public:
     void layout(LayoutContext&, FormattingState&) const override;
 
 private:
-    void layoutFormattingContextRoot(LayoutContext&, FormattingState&, const Box&, Display::Box&) const;
+    void layoutFormattingContextRoot(LayoutContext&, FloatingContext&, FormattingState&, const Box&, Display::Box&) const;
 
     void computeWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
 
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
+    void computeFloatingPosition(FloatingContext&, const Box&, Display::Box&) const;
     void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeInFlowHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;

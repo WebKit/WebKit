@@ -28,6 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBox.h"
+#include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -35,8 +37,27 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
-FloatingState::FloatingState()
+FloatingState::FloatingState(LayoutContext& layoutContext)
+    : m_layoutContext(layoutContext)
 {
+}
+
+void FloatingState::append(const Box& layoutBox)
+{
+    // Floating state should hold boxes with computed position/size.
+    ASSERT(m_layoutContext.displayBoxForLayoutBox(layoutBox));
+
+    if (layoutBox.isLeftFloatingPositioned()) {
+        m_leftFloatings.append(makeWeakPtr(const_cast<Box&>(layoutBox)));
+        return;
+    }
+
+    if (layoutBox.isRightFloatingPositioned()) {
+        m_rightFloatings.append(makeWeakPtr(const_cast<Box&>(layoutBox)));
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 }

@@ -79,7 +79,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& displayBox = layoutPair.displayBox;
 
             if (layoutBox.establishesFormattingContext()) {
-                layoutFormattingContextRoot(layoutContext, formattingState, layoutBox, displayBox);
+                layoutFormattingContextRoot(layoutContext, floatingContext, formattingState, layoutBox, displayBox);
                 layoutQueue.removeLast();
                 // Since this box is a formatting context root, it takes care of its entire subtree.
                 // Continue with next sibling if exists.
@@ -94,6 +94,8 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             computeStaticPosition(layoutContext, layoutBox, displayBox);
             computeBorderAndPadding(layoutContext, layoutBox, displayBox);
             computeWidthAndMargin(layoutContext, layoutBox, displayBox);
+            if (layoutBox.isFloatingPositioned())
+                computeFloatingPosition(floatingContext, layoutBox, displayBox);
             if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
                 break;
             auto& firstChild = *downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
@@ -112,8 +114,6 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             ASSERT(!layoutBox.establishesFormattingContext());
 
             computeHeightAndMargin(layoutContext, layoutBox, displayBox);
-            // Adjust position now that we have all the previous floats placed in this context -if needed.
-            floatingContext.computePosition(layoutBox, displayBox);
             if (!is<Container>(layoutBox))
                 continue;
             auto& container = downcast<Container>(layoutBox);
@@ -131,20 +131,21 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> block formatting context -> layout context(" << &layoutContext << ") formatting root(" << &root() << ")");
 }
 
-void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutContext, FormattingState& formattingState, const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutContext, FloatingContext& floatingContext, FormattingState&, const Box& layoutBox, Display::Box& displayBox) const
 {
     // Start laying out this formatting root in the formatting contenxt it lives in.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Position][Border][Padding][Width][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeStaticPosition(layoutContext, layoutBox, displayBox);
     computeBorderAndPadding(layoutContext, layoutBox, displayBox);
     computeWidthAndMargin(layoutContext, layoutBox, displayBox);
+    if (layoutBox.isFloatingPositioned())
+        computeFloatingPosition(floatingContext, layoutBox, displayBox);
 
     // Swich over to the new formatting context (the one that the root creates).
     auto formattingContext = layoutContext.formattingContext(layoutBox);
     formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox));
 
     // Come back and finalize the root's geometry.
-    FloatingContext(formattingState.floatingState()).computePosition(layoutBox, displayBox);
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeHeightAndMargin(layoutContext, layoutBox, displayBox);
     // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
@@ -154,6 +155,13 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
 void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     displayBox.setTopLeft(Geometry::staticPosition(layoutContext, layoutBox));
+}
+
+void BlockFormattingContext::computeFloatingPosition(FloatingContext& floatingContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    ASSERT(layoutBox.isFloatingPositioned());
+    displayBox.setTopLeft(floatingContext.computePosition(layoutBox));
+    floatingContext.floatingState().append(layoutBox);
 }
 
 void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

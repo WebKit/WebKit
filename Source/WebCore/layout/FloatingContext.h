@@ -27,7 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutUnit.h"
+#include "FloatingState.h"
+#include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class Box;
 namespace Layout {
 
 class Box;
-class FloatingState;
+class LayoutContext;
 
 // FloatingContext is responsible for adjusting the position of a box in the current formatting context
 // by taking the floating boxes into account.
@@ -48,10 +49,14 @@ class FloatingContext {
 public:
     FloatingContext(FloatingState&);
 
-    void computePosition(const Box&, Display::Box&);
-    LayoutUnit left(LayoutUnit verticalPosition);
-    LayoutUnit right(LayoutUnit verticalPosition);
-    LayoutUnit bottom();
+    FloatingState& floatingState() const { return m_floatingState; }
+
+    Position computePosition(const Box&);
+
+private:
+    LayoutContext& layoutContext() const { return m_floatingState.layoutContext(); }
+
+    FloatingState& m_floatingState;
 };
 
 }

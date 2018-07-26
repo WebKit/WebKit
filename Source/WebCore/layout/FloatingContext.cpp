@@ -28,6 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBox.h"
+#include "LayoutContainer.h"
+#include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -35,12 +38,29 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingContext);
 
-FloatingContext::FloatingContext(FloatingState&)
+FloatingContext::FloatingContext(FloatingState& floatingState)
+    : m_floatingState(floatingState)
 {
 }
 
-void FloatingContext::computePosition(const Box&, Display::Box&)
+Position FloatingContext::computePosition(const Box& layoutBox)
 {
+    auto& layoutContext = m_floatingState.layoutContext();
+    // 1. No floating box on the context yet -> align it with the containing block's left/right edge.
+    if (m_floatingState.isEmpty()) {
+        // Push the box to the left/right edge.
+        auto* containingBlock = layoutBox.containingBlock();
+        auto* displayBox = layoutContext.displayBoxForLayoutBox(*containingBlock);
+
+        if (layoutBox.isLeftFloatingPositioned())
+            return { displayBox->contentBoxLeft(), displayBox->contentBoxTop() };
+
+        auto boxWidth = layoutContext.displayBoxForLayoutBox(layoutBox)->width();
+        return { displayBox->contentBoxRight() - boxWidth, displayBox->contentBoxTop() };
+    }
+
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
 }
 
 }

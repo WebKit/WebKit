@@ -42,6 +42,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(BlockInvalidation);
 
 static bool invalidationStopsAtFormattingContextBoundary(const Container& formattingContextRoot, const Box&, StyleDiff)
 {
+    UNUSED_PARAM(formattingContextRoot);
+
     ASSERT(formattingContextRoot.establishesFormattingContext());
     return true;
 }

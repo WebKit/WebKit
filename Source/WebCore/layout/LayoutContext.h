@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>

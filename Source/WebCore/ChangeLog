@@ -1,5 +1,43 @@
 2018-07-26  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floating] Add skeleton for basic positioning.
+        https://bugs.webkit.org/show_bug.cgi?id=187974
+
+        Reviewed by Antti Koivisto.
+
+        Add floating boxes to an empty floating context.
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::FloatingContext):
+        (WebCore::Layout::FloatingContext::computePosition):
+        * layout/FloatingContext.h:
+        (WebCore::Layout::FloatingContext::floatingState const):
+        (WebCore::Layout::FloatingContext::layoutContext const):
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatingState):
+        (WebCore::Layout::FloatingState::append):
+        * layout/FloatingState.h:
+        (WebCore::Layout::FloatingState::create):
+        (WebCore::Layout::FloatingState::isEmpty const):
+        (WebCore::Layout::FloatingState::layoutContext const):
+        * layout/FormattingState.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::establishedFormattingState):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockInvalidation.cpp:
+        (WebCore::Layout::invalidationStopsAtFormattingContextBoundary):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isLeftFloatingPositioned const):
+        (WebCore::Layout::Box::isRightFloatingPositioned const):
+        * layout/layouttree/LayoutBox.h:
+
+2018-07-26  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Do not try to access containing block's height during descendant height computation
         https://bugs.webkit.org/show_bug.cgi?id=187970
 
