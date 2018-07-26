@@ -104,8 +104,7 @@ static ScreenProperties& screenProperties()
 
 static PlatformDisplayID& primaryScreenDisplayID()
 {
-    static PlatformDisplayID primaryScreenDisplayID = 0;
-    return primaryScreenDisplayID;
+    return screenProperties().primaryDisplayID;
 }
 
 ScreenProperties collectScreenProperties()

@@ -1,5 +1,40 @@
 2018-07-25  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234113. rdar://problem/42604546
+
+    WebCore::primaryScreenDisplayID() always return 0
+    https://bugs.webkit.org/show_bug.cgi?id=187922
+    <rdar://problem/42286933>
+    
+    Reviewed by Geoffrey Garen.
+    
+    This function should return a valid display ID.
+    
+    No new tests. Testing this requires a dual monitor setup.
+    
+    * platform/mac/PlatformScreenMac.mm:
+    (WebCore::primaryScreenDisplayID):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234113 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-23  Per Arne Vollan  <pvollan@apple.com>
+
+            WebCore::primaryScreenDisplayID() always return 0
+            https://bugs.webkit.org/show_bug.cgi?id=187922
+            <rdar://problem/42286933>
+
+            Reviewed by Geoffrey Garen.
+
+            This function should return a valid display ID.
+
+            No new tests. Testing this requires a dual monitor setup.
+
+            * platform/mac/PlatformScreenMac.mm:
+            (WebCore::primaryScreenDisplayID):
+
+2018-07-25  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234112. rdar://problem/42604514
 
     AX: Press tab to highlight items on a webpage is not working with voiceover enabled
