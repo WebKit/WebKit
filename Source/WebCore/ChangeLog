@@ -1,3 +1,29 @@
+2018-07-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Switching tabs should not close PiP window
+        https://bugs.webkit.org/show_bug.cgi?id=188054
+        <rdar://problem/41212379>
+
+        Reviewed by Jon Lee.
+
+        No new tests, fixes an existing test.
+        
+        Prior to r233926, calling VideoFullscreenInterfaceMac::requestHideAndExitFullscreen was a noop.
+        In r233926 it was updated to close the PiP window and was called from the PIPViewControllerDelegate
+        selectors to close the PiP window. requestHideAndExitFullscreen is also called from 
+        WebPageProxy::viewDidLeaveWindow when the web view is removed from it window, so switching
+        tabs also closed the PiP window. Revert the changes to requestHideAndExitFullscreen, and add
+        a new method that is only used by the delegate to exit PiP.
+
+        * platform/mac/VideoFullscreenInterfaceMac.h:
+        (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen): Make this an empty,
+        do-nothing method.
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC pipShouldClose:]): Call requestHideAndExitPiP.
+        (-[WebVideoFullscreenInterfaceMacObjC pipActionStop:]): Ditto.
+        (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitPiP): Renamed from requestHideAndExitFullscreen.
+        (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen): Deleted.
+
 2018-07-04  Darin Adler  <darin@apple.com>
 
         Improve WebGPU implementation, including using Metal Objective-C protocols more simply and correctly

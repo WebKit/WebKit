@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT void cleanupFullscreen();
     WEBCORE_EXPORT void invalidate();
-    WEBCORE_EXPORT void requestHideAndExitFullscreen();
+    void requestHideAndExitFullscreen() { }
     WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect, NSWindow *parentWindow);
     void preparedToExitFullscreen() { }
 
@@ -93,6 +93,8 @@ public:
     void applicationDidBecomeActive() { }
 
     WEBCORE_EXPORT WebVideoFullscreenInterfaceMacObjC *videoFullscreenInterfaceObjC();
+
+    WEBCORE_EXPORT void requestHideAndExitPiP();
 
 private:
     WEBCORE_EXPORT VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac&);
