@@ -1,5 +1,11 @@
 2018-07-25  Zalan Bujtas  <zalan@apple.com>
 
+        Build fix after r234215. Unreviewed.
+
+        * rendering/RenderTheme.cpp:
+
+2018-07-25  Zalan Bujtas  <zalan@apple.com>
+
         REGRESSION(r227577) Text on TV & Movies page doesn't wrap properly in iTunes
         https://bugs.webkit.org/show_bug.cgi?id=188018
         <rdar://problem/42517520>

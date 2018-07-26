@@ -27,6 +27,7 @@
 #include "FileList.h"
 #include "FileSystem.h"
 #include "FloatConversion.h"
+#include "FloatRoundedRect.h"
 #include "FocusController.h"
 #include "FontSelector.h"
 #include "Frame.h"
