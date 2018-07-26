@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)taskCompleted:(WebCoreNSURLSessionDataTask *)task;
 - (void)addDelegateOperation:(Function<void()>&&)operation;
 - (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveCORSAccessCheckResult:(BOOL)result;
+- (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveResponseFromOrigin:(Ref<WebCore::SecurityOrigin>&&)origin;
 @end
 
 @interface WebCoreNSURLSessionDataTask ()
@@ -147,6 +148,12 @@ NS_ASSUME_NONNULL_END
         _corsResults = WebCoreNSURLSessionCORSAccessCheckResults::Pass;
 }
 
+- (void)task:(WebCoreNSURLSessionDataTask *)task didReceiveResponseFromOrigin:(Ref<WebCore::SecurityOrigin>&&)origin
+{
+    UNUSED_PARAM(task);
+    _origins.add(WTFMove(origin));
+}
+
 #pragma mark - NSURLSession API
 @synthesize sessionDescription=_sessionDescription;
 @dynamic delegate;
@@ -182,6 +189,15 @@ NS_ASSUME_NONNULL_END
 - (BOOL)didPassCORSAccessChecks
 {
     return _corsResults == WebCoreNSURLSessionCORSAccessCheckResults::Pass;
+}
+
+- (BOOL)wouldTaintOrigin:(const WebCore::SecurityOrigin &)origin
+{
+    for (auto& responseOrigin : _origins) {
+        if (!origin.canAccess(*responseOrigin))
+            return true;
+    }
+    return false;
 }
 
 - (void)finishTasksAndInvalidate
@@ -614,6 +630,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT(response.source() == ResourceResponse::Source::Network || response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation || response.source() == ResourceResponse::Source::ServiceWorker);
     ASSERT_UNUSED(resource, &resource == _resource);
     ASSERT(isMainThread());
+    [self.session task:self didReceiveResponseFromOrigin:SecurityOrigin::create(response.url())];
     [self.session task:self didReceiveCORSAccessCheckResult:resource.didPassAccessControlCheck()];
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     [self _setDefersLoading:YES];

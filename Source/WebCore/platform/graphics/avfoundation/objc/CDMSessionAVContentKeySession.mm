@@ -237,18 +237,6 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
 {
     UNUSED_PARAM(nextMessage);
 
-    if (m_stopped) {
-        errorCode = MediaPlayer::InvalidPlayerState;
-        return false;
-    }
-
-    bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
-    if (!m_certificate) {
-        LOG(Media, "CDMSessionAVContentKeySession::update(%p) - certificate data", this);
-
-        m_certificate = key;
-    }
-
     if (isEqual(key, "acknowledged")) {
         LOG(Media, "CDMSessionAVContentKeySession::update(%p) - acknowleding secure stop message", this);
 
@@ -264,6 +252,18 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
             [getAVContentKeySessionClass() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
         m_expiredSession = nullptr;
         return true;
+    }
+
+    if (m_stopped) {
+        errorCode = MediaPlayer::InvalidPlayerState;
+        return false;
+    }
+
+    bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
+    if (!m_certificate) {
+        LOG(Media, "CDMSessionAVContentKeySession::update(%p) - certificate data", this);
+
+        m_certificate = key;
     }
 
     if (m_mode == KeyRelease)

@@ -1046,6 +1046,18 @@ bool MediaPlayer::didPassCORSAccessCheck() const
     return m_private->didPassCORSAccessCheck();
 }
 
+bool MediaPlayer::wouldTaintOrigin(const SecurityOrigin& origin) const
+{
+    auto wouldTaint = m_private->wouldTaintOrigin(origin);
+    if (wouldTaint.has_value())
+        return wouldTaint.value();
+
+    if (m_url.protocolIsData())
+        return true;
+
+    return origin.canRequest(m_url);
+}
+
 MediaPlayer::MovieLoadType MediaPlayer::movieLoadType() const
 {
     return m_private->movieLoadType();
