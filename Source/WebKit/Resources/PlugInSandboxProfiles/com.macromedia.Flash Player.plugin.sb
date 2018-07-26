@@ -62,3 +62,18 @@
 
 (allow network-bind (local ip))
 
+;;;
+;;; Needed for Camera access
+;;;
+(allow iokit-get-properties
+    (iokit-property-regex #"^(Activation|Animation)Thresholds")
+    (iokit-property-regex #"^((Accurate|Extended)Max|Min)DigitizerPressureValue")
+    (iokit-property "IOPCITunnelCompatible")
+    (iokit-property "PowerControlSupported")
+    (iokit-property "Removable")
+    (iokit-property "ResetOnLockMs")
+    (iokit-property "ResetOnUnlockMs")
+    (iokit-property "ShouldResetOnButton")
+    (iokit-property-regex #"^Support(sSilentClick|TapToWake)")
+    (iokit-property "WirelessChargingNotificationSupported")
+)
