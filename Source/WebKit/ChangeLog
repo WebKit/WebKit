@@ -1,3 +1,36 @@
+2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter
+        https://bugs.webkit.org/show_bug.cgi?id=187963
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::updateVaryInformation):
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::fuzzyMatchURLs):
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginInfoFromPropertyLists):
+        (WebKit::PluginVersion::parse):
+        * Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp:
+        (WebKit::NetscapePluginModule::parseMIMEDescription):
+        * Shared/Plugins/unix/PluginSearchPath.cpp:
+        (WebKit::pluginsDirectories):
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::fileCanBeAcceptedForUpload):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::isTransparentSilverlightBackgroundValue):
+        Update split/splitAllowingEmptyEntries usage.
+
 2018-07-26  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertions introduced in r234210

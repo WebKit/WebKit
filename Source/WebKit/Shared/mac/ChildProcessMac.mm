@@ -134,9 +134,8 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         }
     }
 
-    Vector<String> osVersionParts;
     String osSystemMarketingVersion = systemMarketingVersion();
-    osSystemMarketingVersion.split('.', false, osVersionParts);
+    Vector<String> osVersionParts = osSystemMarketingVersion.split('.');
     if (osVersionParts.size() < 2) {
         WTFLogAlways("%s: Couldn't find OS Version\n", getprogname());
         exit(EX_NOPERM);

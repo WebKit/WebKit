@@ -67,11 +67,8 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     SoupCookieJar* jar = session.cookieStorage();
     GSList* existingCookies = soup_cookie_jar_get_cookie_list(jar, origin.get(), TRUE);
 
-    Vector<String> cookies;
-    value.split('\n', cookies);
-    const size_t cookiesCount = cookies.size();
-    for (size_t i = 0; i < cookiesCount; ++i) {
-        GUniquePtr<SoupCookie> cookie(soup_cookie_parse(cookies[i].utf8().data(), origin.get()));
+    for (auto& cookieString : value.split('\n')) {
+        GUniquePtr<SoupCookie> cookie(soup_cookie_parse(cookieString.utf8().data(), origin.get()));
         if (!cookie)
             continue;
 

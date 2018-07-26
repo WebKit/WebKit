@@ -133,10 +133,7 @@ static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Docum
     String normalizedAcceptCharset = acceptCharset;
     normalizedAcceptCharset.replace(',', ' ');
 
-    Vector<String> charsets;
-    normalizedAcceptCharset.split(' ', charsets);
-
-    for (auto& charset : charsets) {
+    for (auto& charset : normalizedAcceptCharset.split(' ')) {
         TextEncoding encoding(charset);
         if (encoding.isValid())
             return encoding;

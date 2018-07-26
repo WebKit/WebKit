@@ -115,9 +115,7 @@ static Vector<String> patternToFamilies(FcPattern& pattern)
     String patternString = String::fromUTF8(patternChars);
     free(patternChars);
 
-    Vector<String> results;
-    patternString.split(',', results);
-    return results;
+    return patternString.split(',');
 }
 
 Vector<String> FontCache::systemFontFamilies()

@@ -171,9 +171,7 @@ bool parseCookieHeader(const String& cookieLine, const String& domain, Cookie& r
     bool hasMaxAge = false;
     result.session = true;
 
-    Vector<String> cookieAttributes;
-    cookieLine.split(';', true, cookieAttributes);
-    for (auto attribute : cookieAttributes)
+    for (auto attribute : cookieLine.splitAllowingEmptyEntries(';'))
         parseCookieAttributes(attribute, domain, hasMaxAge, result);
 
     return true;

@@ -198,8 +198,7 @@ RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) con
     if (!charactersAreAllASCII(reinterpret_cast<const LChar*>(response.data()), response.size()))
         return nullptr;
 
-    Vector<String> responseArray;
-    String(response.data(), response.size()).split(" "_s, responseArray);
+    Vector<String> responseArray = String(response.data(), response.size()).split(' ');
 
     if (!responseArray.contains(String("valid-response"_s)))
         return nullptr;
@@ -304,8 +303,7 @@ void MockCDMInstance::updateLicense(const String& sessionID, LicenseType, const 
         return;
     }
 
-    Vector<String> responseVector;
-    String(response.data(), response.size()).split(" "_s, responseVector);
+    Vector<String> responseVector = String(response.data(), response.size()).split(' ');
 
     if (responseVector.contains(String("invalid-format"_s))) {
         callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);

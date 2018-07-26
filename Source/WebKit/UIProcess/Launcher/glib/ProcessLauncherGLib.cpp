@@ -114,9 +114,7 @@ void ProcessLauncher::launchProcess()
 #if ENABLE(DEVELOPER_MODE)
     Vector<CString> prefixArgs;
     if (!m_launchOptions.processCmdPrefix.isNull()) {
-        Vector<String> splitArgs;
-        m_launchOptions.processCmdPrefix.split(' ', splitArgs);
-        for (auto& arg : splitArgs)
+        for (auto& arg : m_launchOptions.processCmdPrefix.split(' '))
             prefixArgs.append(arg.utf8());
         nargs += prefixArgs.size();
     }

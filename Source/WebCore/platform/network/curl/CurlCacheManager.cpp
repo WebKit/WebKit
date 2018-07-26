@@ -131,8 +131,7 @@ void CurlCacheManager::loadIndex()
 
     // Create strings from buffer
     String headerContent = String(buffer.data(), buffer.size());
-    Vector<String> indexURLs;
-    headerContent.split('\n', indexURLs);
+    Vector<String> indexURLs = headerContent.split('\n');
     buffer.clear();
 
     // Add entries to index

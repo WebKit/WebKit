@@ -1029,17 +1029,16 @@ bool AccessibilityRenderObject::isARIAGrabbed()
     return elementAttributeValue(aria_grabbedAttr);
 }
 
-void AccessibilityRenderObject::determineARIADropEffects(Vector<String>& effects)
+Vector<String> AccessibilityRenderObject::determineARIADropEffects()
 {
     const AtomicString& dropEffects = getAttribute(aria_dropeffectAttr);
     if (dropEffects.isEmpty()) {
-        effects.clear();
-        return;
+        return { };
     }
     
     String dropEffectsString = dropEffects.string();
     dropEffectsString.replace('\n', ' ');
-    dropEffectsString.split(' ', effects);
+    return dropEffectsString.split(' ');
 }
     
 bool AccessibilityRenderObject::exposesTitleUIElement() const

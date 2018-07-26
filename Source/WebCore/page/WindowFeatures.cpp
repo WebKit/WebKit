@@ -117,9 +117,7 @@ void processFeaturesString(StringView features, FeatureMode mode, const WTF::Fun
 OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String& disabledAdaptationsString)
 {
     OptionSet<DisabledAdaptations> disabledAdaptations;
-    Vector<String> disabledAdaptationNames;
-    disabledAdaptationsString.split(',', false, disabledAdaptationNames);
-    for (auto& name : disabledAdaptationNames) {
+    for (auto& name : disabledAdaptationsString.split(',')) {
         auto normalizedName = name.stripWhiteSpace().convertToASCIILowercase();
         if (normalizedName == watchAdaptationName())
             disabledAdaptations |= DisabledAdaptations::Watch;
@@ -248,10 +246,7 @@ static DialogFeaturesMap parseDialogFeaturesMap(const String& string)
 
     DialogFeaturesMap features;
 
-    Vector<String> vector;
-    string.split(';', vector);
-
-    for (auto& featureString : vector) {
+    for (auto& featureString : string.split(';')) {
         size_t separatorPosition = featureString.find('=');
         size_t colonPosition = featureString.find(':');
         if (separatorPosition != notFound && colonPosition != notFound)

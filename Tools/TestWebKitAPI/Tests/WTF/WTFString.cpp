@@ -499,4 +499,21 @@ TEST(WTF, StringFormatWithArguments)
     testWithFormatAndArguments("hello -17890.5 world", "%s %.1f %s", "hello", -17890.5, "world");
 }
 
+TEST(WTF, StringSplitWithConsecutiveSeparators)
+{
+    String string { " This     is  a       sentence. " };
+
+    Vector<String> actual = string.split(' ');
+    Vector<String> expected { "This", "is", "a", "sentence." };
+    ASSERT_EQ(expected.size(), actual.size());
+    for (auto i = 0u; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    actual = string.splitAllowingEmptyEntries(' ');
+    expected = { "", "This", "", "", "", "", "is", "", "a", "", "", "", "", "", "", "sentence.", "" };
+    ASSERT_EQ(expected.size(), actual.size());
+    for (auto i = 0u; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+}
+
 } // namespace TestWebKitAPI

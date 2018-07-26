@@ -166,7 +166,7 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const Atomic
         // Per the SMIL specification, leading and trailing white space,
         // and white space before and after semicolon separators, is allowed and will be ignored.
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
-        value.string().split(';', m_values);
+        m_values = value.string().split(';');
         for (auto& value : m_values)
             value = value.stripWhiteSpace();
 

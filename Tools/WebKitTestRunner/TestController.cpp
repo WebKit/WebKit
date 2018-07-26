@@ -1088,7 +1088,7 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
         auto key = pairString.substr(pairStart, equalsLocation - pairStart);
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
         if (key == "language")
-            String(value.c_str()).split(",", false, testOptions.overrideLanguages);
+            testOptions.overrideLanguages = String(value.c_str()).split(',');
         else if (key == "useThreadedScrolling")
             testOptions.useThreadedScrolling = parseBooleanTestHeaderValue(value);
         else if (key == "useAcceleratedDrawing")

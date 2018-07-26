@@ -202,8 +202,7 @@ bool DataDetection::shouldCancelDefaultAction(Element& element)
     NSArray *results = element.document().frame()->dataDetectionResults();
     if (!results)
         return false;
-    Vector<String> resultIndices;
-    resultAttribute.string().split('/', resultIndices);
+    Vector<String> resultIndices = resultAttribute.string().split('/');
     DDResultRef result = [[results objectAtIndex:resultIndices[0].toInt()] coreResult];
     // Handle the case of a signature block, where we need to check the correct subresult.
     for (size_t i = 1; i < resultIndices.size(); i++) {

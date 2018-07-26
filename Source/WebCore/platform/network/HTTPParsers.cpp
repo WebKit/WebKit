@@ -277,21 +277,17 @@ std::optional<WallTime> parseHTTPDate(const String& value)
 // in a case-sensitive manner. (There are likely other bugs as well.)
 String filenameFromHTTPContentDisposition(const String& value)
 {
-    Vector<String> keyValuePairs;
-    value.split(';', keyValuePairs);
-
-    unsigned length = keyValuePairs.size();
-    for (unsigned i = 0; i < length; i++) {
-        size_t valueStartPos = keyValuePairs[i].find('=');
+    for (auto& keyValuePair : value.split(';')) {
+        size_t valueStartPos = keyValuePair.find('=');
         if (valueStartPos == notFound)
             continue;
 
-        String key = keyValuePairs[i].left(valueStartPos).stripWhiteSpace();
+        String key = keyValuePair.left(valueStartPos).stripWhiteSpace();
 
         if (key.isEmpty() || key != "filename")
             continue;
         
-        String value = keyValuePairs[i].substring(valueStartPos + 1).stripWhiteSpace();
+        String value = keyValuePair.substring(valueStartPos + 1).stripWhiteSpace();
 
         // Remove quotes if there are any
         if (value[0] == '\"')
@@ -507,11 +503,8 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(const String& header)
     if (header.isEmpty())
         return result;
 
-    Vector<String> headers;
-    header.split(',', headers);
-
-    for (size_t i = 0; i < headers.size(); i++) {
-        String currentHeader = headers[i].stripWhiteSpace();
+    for (auto& currentHeader : header.split(',')) {
+        currentHeader = currentHeader.stripWhiteSpace();
         XFrameOptionsDisposition currentValue = XFrameOptionsNone;
         if (equalLettersIgnoringASCIICase(currentHeader, "deny"))
             currentValue = XFrameOptionsDeny;
@@ -777,9 +770,7 @@ size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned cha
 
 void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet& headerSet)
 {
-    Vector<String> headers;
-    headerValue.split(',', false, headers);
-    for (auto& header : headers) {
+    for (auto& header : headerValue.split(',')) {
         String strippedHeader = header.stripWhiteSpace();
         if (!strippedHeader.isEmpty())
             headerSet.add(strippedHeader);

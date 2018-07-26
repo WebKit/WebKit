@@ -1066,7 +1066,7 @@ static bool isIPv4Address(StringView string)
 {
     auto count = 0;
 
-    for (const auto octet : string.split('.', StringView::AllowEmptyEntries)) {
+    for (const auto octet : string.splitAllowingEmptyEntries('.')) {
         if (count >= 4)
             return false;
 
@@ -1100,7 +1100,7 @@ static bool isIPv6Address(StringView string)
     auto skipState = None;
     auto count = 0;
 
-    for (const auto hextet : string.split(':', StringView::AllowEmptyEntries)) {
+    for (const auto hextet : string.splitAllowingEmptyEntries(':')) {
         if (count >= 8 || skipState == Final)
             return false;
 

@@ -78,8 +78,7 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context, b
     m_vendor = String(reinterpret_cast<const char*>(::glGetString(GL_VENDOR)));
     m_renderer = String(reinterpret_cast<const char*>(::glGetString(GL_RENDERER)));
 
-    Vector<String> vendorComponents;
-    m_vendor.convertToASCIILowercase().split(' ', vendorComponents);
+    Vector<String> vendorComponents = m_vendor.convertToASCIILowercase().split(' ');
     if (vendorComponents.contains("nvidia"))
         m_isNVIDIA = true;
     if (vendorComponents.contains("ati") || vendorComponents.contains("amd"))
@@ -235,10 +234,8 @@ void Extensions3DOpenGLCommon::initializeAvailableExtensions()
 #endif
     {
         String extensionsString = getExtensions();
-        Vector<String> availableExtensions;
-        extensionsString.split(' ', availableExtensions);
-        for (size_t i = 0; i < availableExtensions.size(); ++i)
-            m_availableExtensions.add(availableExtensions[i]);
+        for (auto& extension : extensionsString.split(' '))
+            m_availableExtensions.add(extension);
     }
     m_initializedAvailableExtensions = true;
 }

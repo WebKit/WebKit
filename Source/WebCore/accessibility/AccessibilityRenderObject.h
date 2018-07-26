@@ -176,7 +176,7 @@ public:
     bool supportsARIADropping() const override;
     bool supportsARIADragging() const override;
     bool isARIAGrabbed() override;
-    void determineARIADropEffects(Vector<String>&) override;
+    Vector<String> determineARIADropEffects() override;
     
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
     VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;

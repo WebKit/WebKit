@@ -1,3 +1,92 @@
+2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter
+        https://bugs.webkit.org/show_bug.cgi?id=187963
+
+        Reviewed by Alex Christensen.
+
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        (WebCore::convert):
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::hasResponseVaryStarHeaderValue):
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::queryCacheMatch):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::filterICECandidate):
+        (WebCore::PeerConnectionBackend::filterSDP const):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::determineARIADropEffects):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineARIADropEffects):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::shouldCancelDefaultAction):
+        * editing/markup.cpp:
+        (WebCore::fillContainerFromString):
+        (WebCore::createFragmentFromText):
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::typeMismatchFor const):
+        (WebCore::EmailInputType::sanitizeValue const):
+        * html/HTMLInputElement.cpp:
+        (WebCore::parseAcceptAttribute):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::compileShader):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::nodeForPath):
+        * loader/FormSubmission.cpp:
+        (WebCore::encodingFromAcceptCharset):
+        * loader/ResourceTiming.cpp:
+        (WebCore::passesTimingAllowCheck):
+        * page/WindowFeatures.cpp:
+        (WebCore::parseDisabledAdaptations):
+        (WebCore::parseDialogFeaturesMap):
+        * platform/URL.cpp:
+        (WebCore::isIPv4Address):
+        (WebCore::isIPv6Address):
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::version):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::patternToFamilies):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::extractGStreamerOptionsFromCommandLine):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon):
+        (WebCore::Extensions3DOpenGLCommon::initializeAvailableExtensions):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillSelectionData):
+        * platform/gtk/SelectionData.cpp:
+        (WebCore::SelectionData::setURIList):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::collectVaryingRequestHeaders):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::filenameFromHTTPContentDisposition):
+        (WebCore::parseXFrameOptionsHeader):
+        (WebCore::parseAccessControlExposeHeadersAllowList):
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::parseCookieHeader):
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::loadResponseHeaders):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::loadIndex):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookiesFromDOM):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseAttribute):
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendOS2Table):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseBeginOrEnd):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDM::sanitizeResponse const):
+        (WebCore::MockCDMInstance::updateLicense):
+        Update split/splitAllowingEmptyEntries usage.
+
 2018-07-26  Nan Wang  <n_wang@apple.com>
 
         AX: nothing returned for various previous text marker APIs from one div/p node to another

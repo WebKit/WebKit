@@ -2295,8 +2295,7 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
         return nullptr;
 
     Node* node = m_document.get();
-    Vector<String> pathTokens;
-    path.split(',', false, pathTokens);
+    Vector<String> pathTokens = path.split(',');
     if (!pathTokens.size())
         return nullptr;
 

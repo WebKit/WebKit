@@ -127,8 +127,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
     ASSERT(m_messageBody);
     m_messageHeading->removeChildren();
     m_messageBody->removeChildren();
-    Vector<String> lines;
-    m_message.split('\n', lines);
+    Vector<String> lines = m_message.split('\n');
     Document& document = m_messageHeading->document();
     for (unsigned i = 0; i < lines.size(); ++i) {
         if (i) {

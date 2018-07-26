@@ -190,20 +190,16 @@ bool PluginPackage::fetchInfo()
     if (isPluginBlacklisted())
         return false;
 
-    Vector<String> types;
-    getVersionInfo(versionInfoData.data(), "MIMEType").split('|', types);
-    Vector<String> extensionLists;
-    getVersionInfo(versionInfoData.data(), "FileExtents").split('|', extensionLists);
-    Vector<String> descriptions;
-    getVersionInfo(versionInfoData.data(), "FileOpenName").split('|', descriptions);
+    Vector<String> types = getVersionInfo(versionInfoData.data(), "MIMEType").split('|');
+    Vector<String> extensionLists = getVersionInfo(versionInfoData.data(), "FileExtents").split('|');
+    Vector<String> descriptions = getVersionInfo(versionInfoData.data(), "FileOpenName").split('|');
 
     for (unsigned i = 0; i < types.size(); i++) {
         String type = types[i].convertToASCIILowercase();
         String description = i < descriptions.size() ? descriptions[i] : "";
         String extensionList = i < extensionLists.size() ? extensionLists[i] : "";
 
-        Vector<String> extensionsVector;
-        extensionList.split(',', extensionsVector);
+        Vector<String> extensionsVector = extensionList.split(',');
 
         // Get rid of the extension list that may be at the end of the description string.
         int pos = description.find("(*");

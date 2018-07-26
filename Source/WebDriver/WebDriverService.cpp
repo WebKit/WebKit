@@ -197,10 +197,8 @@ bool WebDriverService::findCommand(HTTPMethod method, const String& path, Comman
         if (s_commands[i].method != method)
             continue;
 
-        Vector<String> pathTokens;
-        path.split("/", pathTokens);
-        Vector<String> commandTokens;
-        String::fromUTF8(s_commands[i].uriTemplate).split("/", commandTokens);
+        Vector<String> pathTokens = path.split('/');
+        Vector<String> commandTokens = String::fromUTF8(s_commands[i].uriTemplate).split('/');
         if (pathTokens.size() != commandTokens.size())
             continue;
 

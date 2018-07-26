@@ -1,3 +1,14 @@
+2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter
+        https://bugs.webkit.org/show_bug.cgi?id=187963
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        Update split/splitAllowingEmptyEntries usage.
+
 2018-07-18  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Interpolation between font-styles with a keyword value should be discrete

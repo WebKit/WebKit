@@ -88,7 +88,7 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
         return true;
 
     bool isVarying = false;
-    varyValue.split(',', false, [&](StringView view) {
+    varyValue.split(',', [&](StringView view) {
         if (isVarying)
             return;
         auto nameView = stripLeadingAndTrailingHTTPSpaces(view);

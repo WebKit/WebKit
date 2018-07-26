@@ -128,9 +128,7 @@ void ProcessLauncher::launchProcess()
     auto languagesIterator = m_launchOptions.extraInitializationData.find("OverrideLanguages");
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
         auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
-        Vector<String> languageVector;
-        languagesIterator->value.split(",", false, languageVector);
-        for (auto& language : languageVector)
+        for (auto& language : languagesIterator->value.split(','))
             xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
         xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
     }

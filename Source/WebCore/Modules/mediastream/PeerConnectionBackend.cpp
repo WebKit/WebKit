@@ -382,7 +382,7 @@ static String filterICECandidate(String&& sdp)
     bool skipNextItem = false;
     bool isFirst = true;
     StringBuilder filteredSDP;
-    sdp.split(' ', false, [&](StringView item) {
+    sdp.split(' ', [&](StringView item) {
         if (skipNextItem) {
             skipNextItem = false;
             return;
@@ -412,7 +412,7 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
         return WTFMove(sdp);
 
     StringBuilder filteredSDP;
-    sdp.split('\n', false, [&filteredSDP](StringView line) {
+    sdp.split('\n', [&filteredSDP](StringView line) {
         if (!line.startsWith("a=candidate"))
             filteredSDP.append(line);
         else if (line.find(" host ", 11) == notFound)

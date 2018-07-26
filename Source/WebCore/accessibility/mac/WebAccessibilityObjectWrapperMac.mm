@@ -3093,8 +3093,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool:m_object->isARIAGrabbed()];
     
     if ([attributeName isEqualToString:NSAccessibilityDropEffectsAttribute]) {
-        Vector<String> dropEffects;
-        m_object->determineARIADropEffects(dropEffects);
+        Vector<String> dropEffects = m_object->determineARIADropEffects();
         return convertStringsToNSArray(dropEffects);
     }
     

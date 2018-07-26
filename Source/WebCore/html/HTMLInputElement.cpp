@@ -1278,9 +1278,7 @@ static Vector<String> parseAcceptAttribute(const String& acceptString, bool (*pr
     if (acceptString.isEmpty())
         return types;
 
-    Vector<String> splitTypes;
-    acceptString.split(',', false, splitTypes);
-    for (auto& splitType : splitTypes) {
+    for (auto& splitType : acceptString.split(',')) {
         String trimmedType = stripLeadingAndTrailingHTMLSpaces(splitType);
         if (trimmedType.isEmpty())
             continue;

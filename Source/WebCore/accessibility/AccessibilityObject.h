@@ -731,7 +731,7 @@ public:
     virtual bool supportsARIADragging() const { return false; }
     virtual bool isARIAGrabbed() { return false; }
     virtual void setARIAGrabbed(bool) { }
-    virtual void determineARIADropEffects(Vector<String>&) { }
+    virtual Vector<String> determineARIADropEffects() { return { }; }
     
     // Called on the root AX object to return the deepest available element.
     virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const { return nullptr; }

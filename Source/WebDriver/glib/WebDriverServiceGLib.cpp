@@ -32,8 +32,7 @@ static bool parseVersion(const String& version, uint64_t& major, uint64_t& minor
 {
     major = minor = micro = 0;
 
-    Vector<String> tokens;
-    version.split(".", false, tokens);
+    Vector<String> tokens = version.split('.');
     bool ok;
     switch (tokens.size()) {
     case 3:

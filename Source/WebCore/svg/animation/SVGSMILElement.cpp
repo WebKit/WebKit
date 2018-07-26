@@ -446,9 +446,7 @@ void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd begin
     HashSet<double> existing;
     for (auto& time : timeList)
         existing.add(time.time().value());
-    Vector<String> splitString;
-    parseString.split(';', splitString);
-    for (auto& string : splitString) {
+    for (auto& string : parseString.split(';')) {
         SMILTime value = parseClockValue(string);
         if (value.isUnresolved())
             parseCondition(string, beginOrEnd);

@@ -225,8 +225,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* data, unsigned /* inf
         selection.setURIList(selectionDataToUTF8String(data));
     } else if (target == netscapeURLAtom) {
         String urlWithLabel(selectionDataToUTF8String(data));
-        Vector<String> pieces;
-        urlWithLabel.split('\n', pieces);
+        Vector<String> pieces = urlWithLabel.split('\n');
 
         // Give preference to text/uri-list here, as it can hold more
         // than one URI but still take  the label if there is one.

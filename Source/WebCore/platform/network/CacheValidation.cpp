@@ -350,8 +350,7 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(const WebCore::Re
     String varyValue = response.httpHeaderField(WebCore::HTTPHeaderName::Vary);
     if (varyValue.isEmpty())
         return { };
-    Vector<String> varyingHeaderNames;
-    varyValue.split(',', varyingHeaderNames);
+    Vector<String> varyingHeaderNames = varyValue.split(',');
     Vector<std::pair<String, String>> varyingRequestHeaders;
     varyingRequestHeaders.reserveCapacity(varyingHeaderNames.size());
     for (auto& varyHeaderName : varyingHeaderNames) {

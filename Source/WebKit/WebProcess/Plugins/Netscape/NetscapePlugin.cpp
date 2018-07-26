@@ -601,8 +601,7 @@ static bool isTransparentSilverlightBackgroundValue(const String& lowercaseBackg
             return true;
         }
     } else if (lowercaseBackgroundValue.startsWith("sc#")) {
-        Vector<String> components;
-        lowercaseBackgroundValue.substring(3).split(',', components);
+        Vector<String> components = lowercaseBackgroundValue.substring(3).split(',');
 
         // An ScRGB value with alpha transparency, in the form sc#A,R,G,B.
         if (components.size() == 4) {

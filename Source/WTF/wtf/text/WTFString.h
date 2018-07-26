@@ -270,15 +270,15 @@ public:
     static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
     static String createUninitialized(unsigned length, LChar*& data) { return StringImpl::createUninitialized(length, data); }
 
-    WTF_EXPORT_PRIVATE void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
-    void split(const String& separator, Vector<String>& result) const { split(separator, false, result); }
-
     using SplitFunctor = WTF::Function<void(const StringView&)>;
-    WTF_EXPORT_PRIVATE void split(UChar separator, bool allowEmptyEntries, const SplitFunctor&) const;
-    WTF_EXPORT_PRIVATE void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
-    void split(UChar separator, Vector<String>& result) const { split(separator, false, result); }
-    Vector<String> split(UChar separator) const;
-    Vector<String> split(const String& separator) const;
+
+    WTF_EXPORT_PRIVATE void split(UChar separator, const SplitFunctor&) const;
+    WTF_EXPORT_PRIVATE Vector<String> split(UChar separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> split(const String& separator) const;
+
+    WTF_EXPORT_PRIVATE void splitAllowingEmptyEntries(UChar separator, const SplitFunctor&) const;
+    WTF_EXPORT_PRIVATE Vector<String> splitAllowingEmptyEntries(UChar separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> splitAllowingEmptyEntries(const String& separator) const;
 
     WTF_EXPORT_PRIVATE int toIntStrict(bool* ok = nullptr, int base = 10) const;
     WTF_EXPORT_PRIVATE unsigned toUIntStrict(bool* ok = nullptr, int base = 10) const;
@@ -368,6 +368,10 @@ public:
 
 private:
     template<typename CharacterType> void removeInternal(const CharacterType*, unsigned, unsigned);
+
+    template<bool allowEmptyEntries> void splitInternal(UChar separator, const SplitFunctor&) const;
+    template<bool allowEmptyEntries> Vector<String> splitInternal(UChar separator) const;
+    template<bool allowEmptyEntries> Vector<String> splitInternal(const String& separator) const;
 
     RefPtr<StringImpl> m_impl;
 };
@@ -529,20 +533,6 @@ template<unsigned characterCount> ALWAYS_INLINE String& String::replaceWithLiter
     if (m_impl)
         m_impl = m_impl->replace(target, characters, characterCount - 1);
     return *this;
-}
-
-inline Vector<String> String::split(UChar separator) const
-{
-    Vector<String> result;
-    split(separator, false, result);
-    return result;
-}
-
-inline Vector<String> String::split(const String& separator) const
-{
-    Vector<String> result;
-    split(separator, false, result);
-    return result;
 }
 
 template<size_t inlineCapacity> inline String String::make8BitFrom16BitSource(const Vector<UChar, inlineCapacity>& buffer)

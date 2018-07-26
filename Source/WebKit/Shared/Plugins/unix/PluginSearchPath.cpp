@@ -38,8 +38,7 @@ Vector<String> pluginsDirectories()
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String mozillaPaths(getenv("MOZ_PLUGIN_PATH"));
     if (!mozillaPaths.isEmpty()) {
-        Vector<String> paths;
-        mozillaPaths.split(UChar(':'), /* allowEmptyEntries */ false, paths);
+        Vector<String> paths = mozillaPaths.split(':');
         result.appendVector(paths);
     }
 

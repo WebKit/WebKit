@@ -124,11 +124,9 @@ public:
     template<typename MatchedCharacterPredicate>
     StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&);
 
-    enum AllowEmptyEntriesTag { AllowEmptyEntries };
-
     class SplitResult;
     SplitResult split(UChar) const;
-    SplitResult split(UChar, AllowEmptyEntriesTag) const;
+    SplitResult splitAllowingEmptyEntries(UChar) const;
 
     size_t find(UChar, unsigned start = 0) const;
     size_t find(CodeUnitMatchFunction, unsigned start = 0) const;
@@ -905,7 +903,7 @@ inline auto StringView::split(UChar separator) const -> SplitResult
     return SplitResult { *this, separator, false };
 }
 
-inline auto StringView::split(UChar separator, AllowEmptyEntriesTag) const -> SplitResult
+inline auto StringView::splitAllowingEmptyEntries(UChar separator) const -> SplitResult
 {
     return SplitResult { *this, separator, true };
 }

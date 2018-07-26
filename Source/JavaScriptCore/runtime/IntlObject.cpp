@@ -484,8 +484,7 @@ static String canonicalizeLanguageTag(const String& locale)
     if (!grandfather.isNull())
         return grandfather;
 
-    Vector<String> parts;
-    locale.split('-', true, parts);
+    Vector<String> parts = locale.splitAllowingEmptyEntries('-');
     if (!parts.isEmpty()) {
         String langtag = canonicalLangTag(parts);
         if (!langtag.isNull())
@@ -623,8 +622,7 @@ String defaultLocale(ExecState& state)
 
 String removeUnicodeLocaleExtension(const String& locale)
 {
-    Vector<String> parts;
-    locale.split('-', parts);
+    Vector<String> parts = locale.split('-');
     StringBuilder builder;
     size_t partsSize = parts.size();
     bool atPrivate = false;

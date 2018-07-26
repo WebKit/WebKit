@@ -145,7 +145,7 @@ static inline bool hasResponseVaryStarHeaderValue(const FetchResponse& response)
 {
     auto varyValue = response.headers().internalHeaders().get(WebCore::HTTPHeaderName::Vary);
     bool hasStar = false;
-    varyValue.split(',', false, [&](StringView view) {
+    varyValue.split(',', [&](StringView view) {
         if (!hasStar && stripLeadingAndTrailingHTTPSpaces(view) == "*")
             hasStar = true;
     });

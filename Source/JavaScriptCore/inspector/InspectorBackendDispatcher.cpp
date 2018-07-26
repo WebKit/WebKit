@@ -161,8 +161,7 @@ void BackendDispatcher::dispatch(const String& message)
             return;
         }
 
-        Vector<String> domainAndMethod;
-        methodString.split('.', true, domainAndMethod);
+        Vector<String> domainAndMethod = methodString.splitAllowingEmptyEntries('.');
         if (domainAndMethod.size() != 2 || !domainAndMethod[0].length() || !domainAndMethod[1].length()) {
             reportProtocolError(InvalidRequest, "The 'method' property was formatted incorrectly. It should be 'Domain.method'"_s);
             sendPendingErrors();

@@ -806,8 +806,7 @@ static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<Str
         return true;
 
     // Fall back to checking for a MIME type wildcard if an exact match is not found.
-    Vector<String> components;
-    mappedMIMEType.split('/', false, components);
+    Vector<String> components = mappedMIMEType.split('/');
     if (components.size() != 2)
         return false;
 

@@ -504,13 +504,8 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
     }
 #endif
 
-    String logLevelString = logLevel;
-    Vector<String> components;
-    logLevelString.split(',', components);
-
-    for (size_t i = 0; i < components.size(); ++i) {
-        Vector<String> componentInfo;
-        components[i].split('=', componentInfo);
+    for (auto& logLevelComponent : String(logLevel).split(',')) {
+        Vector<String> componentInfo = logLevelComponent.split('=');
         String component = componentInfo[0].stripWhiteSpace();
 
         WTFLogChannelState logChannelState = WTFLogChannelOn;

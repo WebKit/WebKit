@@ -85,7 +85,7 @@ static inline void updateVaryInformation(RecordInformation& recordInformation, c
         return;
     }
 
-    varyValue.split(',', false, [&](StringView view) {
+    varyValue.split(',', [&](StringView view) {
         if (!recordInformation.hasVaryStar && stripLeadingAndTrailingHTTPSpaces(view) == "*")
             recordInformation.hasVaryStar = true;
         String headerName = view.toString();

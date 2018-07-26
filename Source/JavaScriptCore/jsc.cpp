@@ -687,7 +687,7 @@ struct ModuleName {
 ModuleName::ModuleName(const String& moduleName)
 {
     // A module name given from code is represented as the UNIX style path. Like, `./A/B.js`.
-    moduleName.split('/', true, queries);
+    queries = moduleName.splitAllowingEmptyEntries('/');
 }
 
 static std::optional<DirectoryName> extractDirectoryName(const String& absolutePathToFile)
@@ -750,8 +750,7 @@ static std::optional<DirectoryName> currentWorkingDirectory()
 
 static String resolvePath(const DirectoryName& directoryName, const ModuleName& moduleName)
 {
-    Vector<String> directoryPieces;
-    directoryName.queryName.split(pathSeparator(), false, directoryPieces);
+    Vector<String> directoryPieces = directoryName.queryName.split(pathSeparator());
 
     // Only first '/' is recognized as the path from the root.
     if (moduleName.startsWithRoot())

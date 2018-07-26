@@ -216,9 +216,8 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
     const auto& requestPath = requestURL.path();
     const auto& resourcePath = resourceURL.path();
 
-    Vector<String> requestPathComponents, resourcePathComponents;
-    requestPath.split('/', requestPathComponents);
-    resourcePath.split('/', resourcePathComponents);
+    Vector<String> requestPathComponents = requestPath.split('/');
+    Vector<String> resourcePathComponents = resourcePath.split('/');
 
     auto updatedIterators = std::mismatch(
         std::begin(requestPathComponents), std::end(requestPathComponents),

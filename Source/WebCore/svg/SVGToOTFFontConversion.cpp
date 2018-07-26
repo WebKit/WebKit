@@ -519,8 +519,7 @@ void SVGToOTFFontConverter::appendOS2Table()
     const unsigned panoseSize = 10;
     char panoseBytes[panoseSize];
     if (m_fontFaceElement) {
-        Vector<String> segments;
-        m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr).string().split(' ', segments);
+        Vector<String> segments = m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr).string().split(' ');
         if (segments.size() == panoseSize) {
             for (auto& segment : segments) {
                 bool ok;

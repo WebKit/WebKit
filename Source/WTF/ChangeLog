@@ -1,3 +1,23 @@
+2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter
+        https://bugs.webkit.org/show_bug.cgi?id=187963
+
+        Reviewed by Alex Christensen.
+
+        * wtf/Assertions.cpp:
+        Update split/splitAllowingEmptyEntries usage.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::splitAllowingEmptyEntries const):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::splitInternal const):
+        (WTF::String::split const):
+        (WTF::String::splitAllowingEmptyEntries const):
+        * wtf/text/WTFString.h:
+        (WTF::String::split const):
+        Introduce splitAllowingEmptyEntries instead of boolean or enum parameter.
+
 2018-07-26  Sam Weinig  <sam@webkit.org>
 
         Remove unused/undefined String::appendInternal
