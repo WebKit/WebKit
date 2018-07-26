@@ -533,6 +533,10 @@
         color: var(--text-color-secondary);
     }
 
+    .edit-breakpoint-popover-condition {
+        background: var(--background-color-code);
+    }
+
 
     /* BreakpointActionView.css */
     .breakpoint-action-block-body {
@@ -548,6 +552,10 @@
     .breakpoint-action-append-button,
     .breakpoint-action-remove-button {
         filter: invert();
+    }
+
+    .breakpoint-action-eval-editor {
+        background: var(--background-color-code);
     }
 
 

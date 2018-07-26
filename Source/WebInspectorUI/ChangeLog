@@ -1,3 +1,15 @@
+2018-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: Breakpoint editor in JS debugger has inconsistent background
+        https://bugs.webkit.org/show_bug.cgi?id=188026
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.edit-breakpoint-popover-condition):
+        (.breakpoint-action-eval-editor):
+
 2018-07-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: remove odd-looking top border
