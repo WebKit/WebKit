@@ -1,3 +1,30 @@
+2018-07-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Accelerated animations don't respect a positive delay value
+        https://bugs.webkit.org/show_bug.cgi?id=186930
+        <rdar://problem/41393393>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/accelerated-animation-with-delay.html
+
+        We would mistakenly clear the list of pending accelerated actions in KeyframeEffectReadOnly::applyPendingAcceleratedActions()
+        even if we failed to proceed because of the target element's renderer not being composited yet. Now, we clear the list after
+        we've established we can apply them, and if we can't we inform the animation with a call to acceleratedStateDidChange() which
+        will in turn call into the document timeline so that we may consider these animations on the next tick.
+
+        For this to work correctly we must make a change to DocumentTimeline::applyPendingAcceleratedAnimations() which only cleared
+        its list of pending accelerated animations _after_ iterating through them, which would be problematic since we would now add
+        animations to this list. That list is now copied and cleared prior to iterating through its members.
+
+        We also fix the naming of the m_pendingAcceleratedActions copy in KeyframeEffectReadOnly::applyPendingAcceleratedActions()
+        to have a more similar name.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::applyPendingAcceleratedAnimations):
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::applyPendingAcceleratedActions):
+
 2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter

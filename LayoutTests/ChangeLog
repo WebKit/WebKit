@@ -1,3 +1,21 @@
+2018-07-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Accelerated animations don't respect a positive delay value
+        https://bugs.webkit.org/show_bug.cgi?id=186930
+        <rdar://problem/41393393>
+
+        Reviewed by Dean Jackson.
+
+        Creating a new test that runs an accelerated animation on a non-positioned element with a small
+        positive delay. Prior to this patch, the element would move slightly when the delay elapses but
+        wouldn't animate towards the target value. With this patch, it animatea correctly. To check
+        that it does animate, we add a cache over the element except for the first 25px which is the area
+        within which it might have moved prior to this patch. This way the test only passes if the element
+        is fully hidden by the cache.
+
+        * webanimations/accelerated-animation-with-delay-expected.html: Added.
+        * webanimations/accelerated-animation-with-delay.html: Added.
+
 2018-07-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening

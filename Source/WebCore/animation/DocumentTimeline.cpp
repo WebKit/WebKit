@@ -397,8 +397,11 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
 {
+    auto acceleratedAnimationsPendingRunningStateChange = m_acceleratedAnimationsPendingRunningStateChange;
+    m_acceleratedAnimationsPendingRunningStateChange.clear();
+
     bool hasForcedLayout = false;
-    for (auto& animation : m_acceleratedAnimationsPendingRunningStateChange) {
+    for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {
         if (!hasForcedLayout) {
             auto* effect = animation->effect();
             if (is<KeyframeEffectReadOnly>(effect))
@@ -406,8 +409,6 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
         }
         animation->applyPendingAcceleratedActions();
     }
-
-    m_acceleratedAnimationsPendingRunningStateChange.clear();
 }
 
 bool DocumentTimeline::resolveAnimationsForElement(Element& element, RenderStyle& targetStyle)

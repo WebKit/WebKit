@@ -1264,15 +1264,17 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
     // pending accelerated actions.
     m_needsForcedLayout = false;
 
-    auto pendingAccelerationActions = m_pendingAcceleratedActions;
-    m_pendingAcceleratedActions.clear();
-
-    if (pendingAccelerationActions.isEmpty())
+    if (m_pendingAcceleratedActions.isEmpty())
         return;
 
     auto* renderer = this->renderer();
-    if (!renderer || !renderer->isComposited())
+    if (!renderer || !renderer->isComposited()) {
+        animation()->acceleratedStateDidChange();
         return;
+    }
+
+    auto pendingAcceleratedActions = m_pendingAcceleratedActions;
+    m_pendingAcceleratedActions.clear();
 
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
 
@@ -1284,7 +1286,7 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
     if (timing()->delay() < 0_s)
         timeOffset = -timing()->delay().seconds();
 
-    for (const auto& action : pendingAccelerationActions) {
+    for (const auto& action : pendingAcceleratedActions) {
         switch (action) {
         case AcceleratedAction::Play:
             if (!compositedRenderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer().ptr(), m_blendingKeyframes)) {
