@@ -1,3 +1,28 @@
+2018-07-25  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234189. rdar://problem/42604524
+
+    HAVE(PARENTAL_CONTROLS) should be true on watchOS
+    https://bugs.webkit.org/show_bug.cgi?id=187985
+    <rdar://problem/42559346>
+    
+    Reviewed by Andy Estes.
+    
+    * wtf/Platform.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234189 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-24  Tim Horton  <timothy_horton@apple.com>
+
+            HAVE(PARENTAL_CONTROLS) should be true on watchOS
+            https://bugs.webkit.org/show_bug.cgi?id=187985
+            <rdar://problem/42559346>
+
+            Reviewed by Andy Estes.
+
+            * wtf/Platform.h:
+
 2018-07-14  Kocsen Chung  <kocsen_chung@apple.com>
 
         Ensure WebKit stack is ad-hoc signed
