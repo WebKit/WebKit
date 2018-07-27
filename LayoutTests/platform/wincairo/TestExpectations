@@ -842,6 +842,12 @@ fast/dom/focus-shift-crash.html [ Pass Timeout ]
 fast/dom/Range/detach-range-during-deletecontents.html [ Pass Timeout ]
 imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Pass Timeout ]
 
+#//////////////////////////////////////////////////////////////////////////////////////////
+# WinCairo is not ready to run http test in general, but there're some exceptions.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+http/tests [ Skip ]
+
 # WebSocket
 http/tests/websocket [ Pass ]
 http/tests/websocket/tests/hybi/contentextensions [ Failure ]
@@ -1574,7 +1580,6 @@ fast/xsl [ Skip ]
 fonts/use-typo-metrics-1.html [ Skip ]
 fullscreen [ Skip ]
 html5lib [ Skip ]
-http/tests [ Skip ]
 http/wpt [ Skip ]
 imported/blink [ Skip ]
 imported/mozilla [ Skip ]
