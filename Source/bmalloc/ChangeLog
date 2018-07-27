@@ -1,5 +1,18 @@
 2018-07-27  Saam Barati  <sbarati@apple.com>
 
+        Explicitly handle memlimit_active < 0
+        https://bugs.webkit.org/show_bug.cgi?id=188125
+
+        Reviewed by Mark Lam.
+
+        This may come up during development when someone wants the limit
+        to be "infinite".
+
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::jetsamLimit):
+
+2018-07-27  Saam Barati  <sbarati@apple.com>
+
         Use SPI to compute the jetsam limit on iOS instead of hardcoding 840MB
         https://bugs.webkit.org/show_bug.cgi?id=188091
         <rdar://problem/42647697>
