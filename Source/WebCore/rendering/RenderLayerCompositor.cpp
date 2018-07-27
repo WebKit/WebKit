@@ -2068,6 +2068,25 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
     return false;
 }
 
+#if ENABLE(FULLSCREEN_API)
+enum class FullScreenDescendant { Yes, No, NotApplicable };
+static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& layer)
+{
+    auto& document = layer.renderer().document();
+
+    if (!document.webkitIsFullScreen() || !document.fullScreenRenderer())
+        return FullScreenDescendant::NotApplicable;
+
+    auto* fullScreenLayer = document.fullScreenRenderer()->layer();
+    if (!fullScreenLayer) {
+        ASSERT_NOT_REACHED();
+        return FullScreenDescendant::NotApplicable;
+    }
+
+    return layer.isDescendantOf(*fullScreenLayer) ? FullScreenDescendant::Yes : FullScreenDescendant::No;
+}
+#endif
+
 bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, const RenderLayer* compositingAncestorLayer, const LayoutRect& layerCompositedBoundsInAncestor, const LayoutRect& ancestorCompositedBounds) const
 {
     auto& renderer = layer.renderer();
@@ -2565,6 +2584,11 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
     if (!renderer.style().willChange() || !renderer.style().willChange()->canTriggerCompositing())
         return false;
 
+#if ENABLE(FULLSCREEN_API)
+    if (renderer.layer() && isDescendantOfFullScreenLayer(*renderer.layer()) == FullScreenDescendant::No)
+        return false;
+#endif
+
     if (is<RenderBox>(renderer))
         return true;
 
@@ -2635,6 +2659,11 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     if (!renderer.isPositioned())
         return false;
     
+#if ENABLE(FULLSCREEN_API)
+    if (isDescendantOfFullScreenLayer(layer) == FullScreenDescendant::No)
+        return false;
+#endif
+
     auto position = renderer.style().position();
     bool isFixed = renderer.isOutOfFlowPositioned() && position == PositionType::Fixed;
     if (isFixed && !layer.isStackingContainer())

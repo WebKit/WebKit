@@ -143,6 +143,7 @@ public:
     RenderLayer* nextSibling() const { return m_next; }
     RenderLayer* firstChild() const { return m_first; }
     RenderLayer* lastChild() const { return m_last; }
+    bool isDescendantOf(const RenderLayer&) const;
 
     void addChild(RenderLayer* newChild, RenderLayer* beforeChild = nullptr);
     RenderLayer* removeChild(RenderLayer*);

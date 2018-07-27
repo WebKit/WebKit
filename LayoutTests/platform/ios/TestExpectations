@@ -33,6 +33,7 @@ perf/accessibility-title-ui-element.html
 # No fullscreen API on iOS
 fullscreen
 http/tests/fullscreen
+compositing/no-compositing-when-fulll-screen-is-present.html
 
 # WebGPU is not enabled on iOS Simulator.
 fast/canvas/webgpu

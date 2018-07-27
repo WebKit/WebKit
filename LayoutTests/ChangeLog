@@ -1,3 +1,14 @@
+2018-07-26  Zalan Bujtas  <zalan@apple.com>
+
+        [Fullscreen] Do not create composited layers for renderers unless they are part of the fullscreen subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=188087
+        <rdar://problem/42632124>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/no-compositing-when-fulll-screen-is-present-expected.txt: Added.
+        * compositing/no-compositing-when-fulll-screen-is-present.html: Added.
+
 2018-07-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234281.

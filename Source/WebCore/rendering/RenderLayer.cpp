@@ -1843,6 +1843,15 @@ void RenderLayer::willBeDestroyed()
 }
 #endif
 
+bool RenderLayer::isDescendantOf(const RenderLayer& layer) const
+{
+    for (auto* ancestor = this; ancestor; ancestor = ancestor->parent()) {
+        if (&layer == ancestor)
+            return true;
+    }
+    return false;
+}
+
 void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
 {
     RenderLayer* prevSibling = beforeChild ? beforeChild->previousSibling() : lastChild();
