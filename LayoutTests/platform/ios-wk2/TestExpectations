@@ -1258,6 +1258,8 @@ webkit.org/b/165165 [ Release ] http/tests/security/contentSecurityPolicy/1.1/sc
 
 webkit.org/b/165344 [ Release ] http/tests/security/module-incorrect-mime-types.html [ Pass Timeout ]
 
+webkit.org/b/162685 [ Release ] http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Pass Failure ]
+
 # Hover test does not apply
 fast/css/deferred-parsing/hover-test.html [ Skip ]
 
