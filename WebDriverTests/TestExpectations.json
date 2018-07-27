@@ -7,7 +7,7 @@
             "testShouldAllowUsersToAcceptAnAlertInANestedFrame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181727"}}
             },
-            "testShouldHandleAlertOnPageBeforeUnload[WebKitGTK]": {
+            "testShouldHandleAlertOnPageBeforeUnload": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
@@ -85,7 +85,7 @@
     },
     "imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py": {
         "subtests": {
-            "testClickShouldTimeout[WebKitGTK]": {
+            "testClickShouldTimeout": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
             }
         }
@@ -189,7 +189,7 @@
     },
     "imported/selenium/py/test/selenium/webdriver/common/window_tests.py": {
         "subtests": {
-            "test_should_fullscreen_the_current_window[WebKitGTK]": {
+            "test_should_fullscreen_the_current_window": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
@@ -481,7 +481,7 @@
     "imported/w3c/webdriver/tests/close_window/close.py": {
         "subtests": {
             "test_close_last_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
             }
         }
     },

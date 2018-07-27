@@ -1,3 +1,9 @@
+2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        More unreviewed GTK test gardening
+
+        * TestExpectations:
+
 2018-07-27  David Fenton  <david_fenton@apple.com>
 
         LayoutTest http/tests/cache/disk-cache/disk-cache-204-status-code.html is a flaky failure.

@@ -1,5 +1,13 @@
 2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        More unreviewed GTK test gardening
+
+        I don't really know what I'm doing with these WebDriver expectations... will this work?
+
+        * TestExpectations.json:
+
+2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed GTK test gardening
 
         * TestExpectations.json:
