@@ -1,3 +1,30 @@
+2018-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Add RefCounted CompletionHandler wrapping abstraction for sending policy decisions back to WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=188089
+
+        Reviewed by Geoffrey Garen.
+
+        This will be necessary for when I add an asynchronous parallel step to decidePolicyForNavigationAction.
+        We will want to wait for that asynchronous step for decidePolicyForNavigationActionSync but not for a client.
+
+        No change in behavior.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::PolicyDecisionSender::create):
+        (WebKit::WebPageProxy::PolicyDecisionSender::operator()):
+        (WebKit::WebPageProxy::PolicyDecisionSender::PolicyDecisionSender):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-07-27  Saam Barati  <sbarati@apple.com>
 
         Use SPI to compute the jetsam limit on iOS instead of hardcoding 840MB
