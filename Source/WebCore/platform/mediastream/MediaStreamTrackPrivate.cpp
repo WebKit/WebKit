@@ -63,16 +63,32 @@ MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
     m_source->removeObserver(*this);
 }
 
+void MediaStreamTrackPrivate::forEachObserver(const WTF::Function<void(Observer&)>& apply) const
+{
+    Vector<Observer*> observersCopy;
+    {
+        auto locker = holdLock(m_observersLock);
+        observersCopy = copyToVector(m_observers);
+    }
+    for (auto* observer : observersCopy) {
+        auto locker = holdLock(m_observersLock);
+        // Make sure the observer has not been destroyed.
+        if (!m_observers.contains(observer))
+            continue;
+        apply(*observer);
+    }
+}
+
 void MediaStreamTrackPrivate::addObserver(MediaStreamTrackPrivate::Observer& observer)
 {
-    m_observers.append(&observer);
+    auto locker = holdLock(m_observersLock);
+    m_observers.add(&observer);
 }
 
 void MediaStreamTrackPrivate::removeObserver(MediaStreamTrackPrivate::Observer& observer)
 {
-    size_t pos = m_observers.find(&observer);
-    if (pos != notFound)
-        m_observers.remove(pos);
+    auto locker = holdLock(m_observersLock);
+    m_observers.remove(&observer);
 }
 
 const String& MediaStreamTrackPrivate::label() const
@@ -98,8 +114,9 @@ void MediaStreamTrackPrivate::setEnabled(bool enabled)
     // Always update the enabled state regardless of the track being ended.
     m_isEnabled = enabled;
 
-    for (auto& observer : m_observers)
-        observer->trackEnabledChanged(*this);
+    forEachObserver([this](auto& observer) {
+        observer.trackEnabledChanged(*this);
+    });
 }
 
 void MediaStreamTrackPrivate::endTrack()
@@ -115,8 +132,9 @@ void MediaStreamTrackPrivate::endTrack()
 
     m_source->requestStop(this);
 
-    for (auto& observer : m_observers)
-        observer->trackEnded(*this);
+    forEachObserver([this](auto& observer) {
+        observer.trackEnded(*this);
+    });
 }
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
@@ -160,8 +178,9 @@ AudioSourceProvider* MediaStreamTrackPrivate::audioSourceProvider()
 
 void MediaStreamTrackPrivate::sourceStarted()
 {
-    for (auto& observer : m_observers)
-        observer->trackStarted(*this);
+    forEachObserver([this](auto& observer) {
+        observer.trackStarted(*this);
+    });
 }
 
 void MediaStreamTrackPrivate::sourceStopped()
@@ -172,20 +191,23 @@ void MediaStreamTrackPrivate::sourceStopped()
     m_isEnded = true;
     updateReadyState();
 
-    for (auto& observer : m_observers)
-        observer->trackEnded(*this);
+    forEachObserver([this](auto& observer) {
+        observer.trackEnded(*this);
+    });
 }
 
 void MediaStreamTrackPrivate::sourceMutedChanged()
 {
-    for (auto& observer : m_observers)
-        observer->trackMutedChanged(*this);
+    forEachObserver([this](auto& observer) {
+        observer.trackMutedChanged(*this);
+    });
 }
 
 void MediaStreamTrackPrivate::sourceSettingsChanged()
 {
-    for (auto& observer : m_observers)
-        observer->trackSettingsChanged(*this);
+    forEachObserver([this](auto& observer) {
+        observer.trackSettingsChanged(*this);
+    });
 }
 
 bool MediaStreamTrackPrivate::preventSourceFromStopping()
@@ -205,10 +227,12 @@ void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
         return;
 
     mediaSample.setTrackID(id());
-    for (auto& observer : m_observers)
-        observer->sampleBufferUpdated(*this, mediaSample);
+    forEachObserver([&](auto& observer) {
+        observer.sampleBufferUpdated(*this, mediaSample);
+    });
 }
 
+// May get called on a background thread.
 void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
     if (!m_haveProducedData) {
@@ -216,8 +240,9 @@ void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime& mediaTime, 
         updateReadyState();
     }
 
-    for (auto& observer : m_observers)
-        observer->audioSamplesAvailable(*this, mediaTime, data, description, sampleCount);
+    forEachObserver([&](auto& observer) {
+        observer.audioSamplesAvailable(*this, mediaTime, data, description, sampleCount);
+    });
 }
 
 
@@ -234,8 +259,9 @@ void MediaStreamTrackPrivate::updateReadyState()
         return;
 
     m_readyState = state;
-    for (auto& observer : m_observers)
-        observer->readyStateChanged(*this);
+    forEachObserver([this](auto& observer) {
+        observer.readyStateChanged(*this);
+    });
 }
 
 } // namespace WebCore

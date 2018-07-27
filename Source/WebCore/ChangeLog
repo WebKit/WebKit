@@ -1,3 +1,51 @@
+2018-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Fix thread-safety issues related to RealtimeMediaSource::audioSamplesAvailable()
+        https://bugs.webkit.org/show_bug.cgi?id=188097
+        <rdar://problem/42558823>
+
+        Reviewed by Eric Carlson.
+
+        Fix thread-safety issues related to RealtimeMediaSource::audioSamplesAvailable(). RealtimeMediaSource::audioSamplesAvailable()
+        is called on a background thread but iterates over observers that may get destroyed concurrently on the main thread.
+
+        To address the issue:
+        - Introduce a Lock to protect m_observer accesses
+        - Copy observers to a Vector before iterating over them
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::forEachObserver const):
+        (WebCore::MediaStreamTrackPrivate::addObserver):
+        (WebCore::MediaStreamTrackPrivate::removeObserver):
+        (WebCore::MediaStreamTrackPrivate::setEnabled):
+        (WebCore::MediaStreamTrackPrivate::endTrack):
+        (WebCore::MediaStreamTrackPrivate::sourceStarted):
+        (WebCore::MediaStreamTrackPrivate::sourceStopped):
+        (WebCore::MediaStreamTrackPrivate::sourceMutedChanged):
+        (WebCore::MediaStreamTrackPrivate::sourceSettingsChanged):
+        (WebCore::MediaStreamTrackPrivate::videoSampleAvailable):
+        (WebCore::MediaStreamTrackPrivate::audioSamplesAvailable):
+        (WebCore::MediaStreamTrackPrivate::updateReadyState):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::Observer::sampleBufferUpdated):
+        (WebCore::MediaStreamTrackPrivate::Observer::audioSamplesAvailable):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::addObserver):
+        (WebCore::RealtimeMediaSource::removeObserver):
+        (WebCore::RealtimeMediaSource::forEachObserver const):
+        (WebCore::RealtimeMediaSource::notifyMutedObservers const):
+        (WebCore::RealtimeMediaSource::settingsDidChange):
+        (WebCore::RealtimeMediaSource::videoSampleAvailable):
+        (WebCore::RealtimeMediaSource::audioSamplesAvailable):
+        (WebCore::RealtimeMediaSource::start):
+        (WebCore::RealtimeMediaSource::requestStop):
+        (WebCore::RealtimeMediaSource::captureFailed):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+
 2018-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Don't include WebPageProxy.h just for UndoOrRedo

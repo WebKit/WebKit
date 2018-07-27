@@ -159,6 +159,7 @@ void WebAudioSourceProviderAVFObjC::unprepare()
     }
 }
 
+// May get called on a background thread.
 void WebAudioSourceProviderAVFObjC::audioSamplesAvailable(MediaStreamTrackPrivate& track, const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
 {
     if (!track.enabled())

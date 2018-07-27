@@ -61,16 +61,16 @@ RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const Stri
 
 void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
 {
-    m_observers.append(observer);
+    auto locker = holdLock(m_observersLock);
+    m_observers.add(&observer);
 }
 
 void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer)
 {
-    m_observers.removeFirstMatching([&observer](auto anObserver) {
-        return &anObserver.get() == &observer;
-    });
+    auto locker = holdLock(m_observersLock);
 
-    if (!m_observers.size())
+    m_observers.remove(&observer);
+    if (m_observers.isEmpty())
         stop();
 }
 
@@ -110,10 +110,27 @@ void RealtimeMediaSource::notifyMutedChange(bool muted)
     notifyMutedObservers();
 }
 
+void RealtimeMediaSource::forEachObserver(const WTF::Function<void(Observer&)>& apply) const
+{
+    Vector<Observer*> observersCopy;
+    {
+        auto locker = holdLock(m_observersLock);
+        observersCopy = copyToVector(m_observers);
+    }
+    for (auto* observer : observersCopy) {
+        auto locker = holdLock(m_observersLock);
+        // Make sure the observer has not been destroyed.
+        if (!m_observers.contains(observer))
+            continue;
+        apply(*observer);
+    }
+}
+
 void RealtimeMediaSource::notifyMutedObservers() const
 {
-    for (Observer& observer : m_observers)
+    forEachObserver([](auto& observer) {
         observer.sourceMutedChanged();
+    });
 }
 
 void RealtimeMediaSource::settingsDidChange()
@@ -127,21 +144,24 @@ void RealtimeMediaSource::settingsDidChange()
 
     scheduleDeferredTask([this] {
         m_pendingSettingsDidChangeNotification = false;
-        for (Observer& observer : m_observers)
+        forEachObserver([](auto& observer) {
             observer.sourceSettingsChanged();
+        });
     });
 }
 
 void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 {
-    for (Observer& observer : m_observers)
+    forEachObserver([&](auto& observer) {
         observer.videoSampleAvailable(mediaSample);
+    });
 }
 
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
-    for (Observer& observer : m_observers)
+    forEachObserver([&](auto& observer) {
         observer.audioSamplesAvailable(time, audioData, description, numberOfFrames);
+    });
 }
 
 void RealtimeMediaSource::start()
@@ -155,8 +175,9 @@ void RealtimeMediaSource::start()
     if (!m_isProducingData)
         return;
 
-    for (Observer& observer : m_observers)
+    forEachObserver([](auto& observer) {
         observer.sourceStarted();
+    });
 }
 
 void RealtimeMediaSource::stop()
@@ -173,17 +194,20 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
     if (!m_isProducingData)
         return;
 
-    for (Observer& observer : m_observers) {
+    bool hasObserverPreventingStopping = false;
+    forEachObserver([&](auto& observer) {
         if (observer.preventSourceFromStopping())
-            return;
-    }
+            hasObserverPreventingStopping = true;
+    });
+    if (hasObserverPreventingStopping)
+        return;
 
     stop();
 
-    for (Observer& observer : m_observers) {
+    forEachObserver([callingObserver](auto& observer) {
         if (&observer != callingObserver)
             observer.sourceStopped();
-    }
+    });
 }
 
 void RealtimeMediaSource::captureFailed()
@@ -193,8 +217,9 @@ void RealtimeMediaSource::captureFailed()
     m_isProducingData = false;
     m_captureDidFailed = true;
 
-    for (Observer& observer : m_observers)
+    forEachObserver([](auto& observer) {
         observer.sourceStopped();
+    });
 }
 
 bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<int>, std::optional<int>, std::optional<double>)

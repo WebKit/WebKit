@@ -1,3 +1,13 @@
+2018-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Fix thread-safety issues related to RealtimeMediaSource::audioSamplesAvailable()
+        https://bugs.webkit.org/show_bug.cgi?id=188097
+        <rdar://problem/42558823>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+
 2018-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Don't include WebPageProxy.h just for UndoOrRedo

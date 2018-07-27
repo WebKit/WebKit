@@ -165,12 +165,9 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
     return remoteIOUnit;
 }
 
+// May get called on a background thread.
 void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
-    // This function is called on a background thread. The following protectedThis object ensures the object is not
-    // destroyed on the main thread before this function exits.
-    Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
-
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 
     if (!m_inputDescription || *m_inputDescription != description) {

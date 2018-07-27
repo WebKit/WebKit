@@ -81,6 +81,7 @@ bool RealtimeOutgoingAudioSourceCocoa::hasBufferedEnoughData()
     return writtenAudioDuration >= readAudioDuration + 0.01;
 }
 
+// May get called on a background thread.
 void RealtimeOutgoingAudioSourceCocoa::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
 {
     if (m_inputStreamDescription != streamDescription) {
