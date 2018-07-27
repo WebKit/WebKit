@@ -1,3 +1,15 @@
+2018-07-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Dump IndexingMode in Structure
+        https://bugs.webkit.org/show_bug.cgi?id=188085
+
+        Reviewed by Keith Miller.
+
+        Dump IndexingMode instead of IndexingType.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::dump const):
+
 2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter
