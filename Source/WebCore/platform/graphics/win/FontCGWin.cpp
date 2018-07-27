@@ -174,9 +174,6 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     CGAffineTransform savedMatrix = CGContextGetTextMatrix(cgContext);
     CGContextSetTextMatrix(cgContext, matrix);
 
-    // Uniscribe gives us offsets to help refine the positioning of combining glyphs.
-    FloatSize translation = glyphBuffer.offsetAt(from);
-
     CGContextSetFontSize(cgContext, platformData.size());
     wkSetCGContextFontRenderingStyle(cgContext, font.platformData().isSystemFont(), false, font.platformData().useGDI());
 
@@ -192,22 +189,22 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         Color fillColor = graphicsContext.fillColor();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
         graphicsContext.setFillColor(shadowFillColor);
-        float shadowTextX = point.x() + translation.width() + shadowOffset.width();
+        float shadowTextX = point.x() + shadowOffset.width();
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
-        float shadowTextY = point.y() + translation.height() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
+        float shadowTextY = point.y() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
         CGContextSetTextPosition(cgContext, shadowTextX, shadowTextY);
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
         if (font.syntheticBoldOffset()) {
-            CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowOffset.width() + font.syntheticBoldOffset(), point.y() + translation.height() + shadowOffset.height());
+            CGContextSetTextPosition(cgContext, point.x() + shadowOffset.width() + font.syntheticBoldOffset(), point.y() + shadowOffset.height());
             CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
         }
         graphicsContext.setFillColor(fillColor);
     }
 
-    CGContextSetTextPosition(cgContext, point.x() + translation.width(), point.y() + translation.height());
+    CGContextSetTextPosition(cgContext, point.x(), point.y());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
     if (font.syntheticBoldOffset()) {
-        CGContextSetTextPosition(cgContext, point.x() + translation.width() + font.syntheticBoldOffset(), point.y() + translation.height());
+        CGContextSetTextPosition(cgContext, point.x() + font.syntheticBoldOffset(), point.y());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
     }
 

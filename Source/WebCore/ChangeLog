@@ -1,3 +1,55 @@
+2018-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WIN] Crash when trying to access store pages
+        https://bugs.webkit.org/show_bug.cgi?id=188032
+        <rdar://problem/42467016>
+
+        Reviewed by Brent Fulgham.
+
+        The Windows implementation of GlyphBuffer has an additional member, m_offsets, which represents
+        an additional offset to the position to paint each glyph. It also has two add() functions, one
+        which appends to this vector, and one which doesn't. The one that doesn't append to the vector
+        should never be called on Windows (because Windows requires this vector to be full).
+
+        There were two situations where it was getting called:
+        1) Inside ComplexTextController
+        2) Inside display list playback
+
+        Windows shouldn't be using ComplexTextController because the Windows implementation of this 
+        class isn't ready yet; instead it should be using UniscribeController. The display list playback
+        code should be used on Windows.
+
+        Rather than fix the function to append an offset, we actually don't need the m_offsets vector
+        in the first place. Instead, we can do it the same way that the Cocoa ports do it, which is to
+        bake the offsets into the glyph advances. This is possible because the GlyphBuffer doesn't need
+        to distinguish between layout advances and paint advances, so we can bake them together and
+        just put paint advances in the GlyphBuffer. This should be a small (probably within-the-noise)
+        performance and memory improvement.
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Make sure that ComplexTextController
+        isn't used on Windows.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthOfTextRange const): Switch from ComplexTextController to
+        UniscribeController on Windows.
+        (WebCore::FontCascade::drawGlyphBuffer const): After deleting the m_offsets vector, there's
+        no reason to consult it when drawing.
+        * platform/graphics/GlyphBuffer.h: Remove m_offsets
+        (WebCore::GlyphBuffer::clear):
+        (WebCore::GlyphBuffer::advanceAt const):
+        (WebCore::GlyphBuffer::add):
+        (WebCore::GlyphBuffer::expandLastAdvance):
+        (WebCore::GlyphBuffer::shrink):
+        (WebCore::GlyphBuffer::swap):
+        (WebCore::GlyphBuffer::offsetAt const): Deleted.
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::FontCascade::drawGlyphs): After deleting the m_offsets vector, there's no reason
+        to consult it when drawing.
+        * platform/graphics/win/FontCascadeDirect2D.cpp:
+        (WebCore::FontCascade::drawGlyphs): Ditto.
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem): Bake in the offsets into the glyph advances.
+
 2018-07-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Crash on synchronous request via ResourceHandle.

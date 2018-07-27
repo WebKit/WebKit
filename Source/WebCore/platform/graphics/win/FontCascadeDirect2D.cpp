@@ -83,9 +83,6 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         context->SetTransform(matrix * skewMatrix);
     }
 
-    // Uniscribe gives us offsets to help refine the positioning of combining glyphs.
-    FloatSize translation = glyphBuffer.offsetAt(from);
-
     RELEASE_ASSERT(platformData.dwFont());
     RELEASE_ASSERT(platformData.dwFontFace());
 
@@ -125,9 +122,9 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         graphicsContext.clearShadow();
         Color fillColor = graphicsContext.fillColor();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
-        float shadowTextX = point.x() + translation.width() + shadowOffset.width();
+        float shadowTextX = point.x() + shadowOffset.width();
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
-        float shadowTextY = point.y() + translation.height() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
+        float shadowTextY = point.y() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
 
         auto shadowBrush = graphicsContext.brushWithColor(shadowFillColor);
         context->DrawGlyphRun(D2D1::Point2F(shadowTextX, shadowTextY), &glyphRun, shadowBrush);
@@ -135,9 +132,9 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
             context->DrawGlyphRun(D2D1::Point2F(shadowTextX + font.syntheticBoldOffset(), shadowTextY), &glyphRun, shadowBrush);
     }
 
-    context->DrawGlyphRun(D2D1::Point2F(point.x() + translation.width(), point.y() + translation.height()), &glyphRun, graphicsContext.solidFillBrush());
+    context->DrawGlyphRun(D2D1::Point2F(point.x(), point.y()), &glyphRun, graphicsContext.solidFillBrush());
     if (font.syntheticBoldOffset())
-        context->DrawGlyphRun(D2D1::Point2F(point.x() + translation.width() + font.syntheticBoldOffset(), point.y() + translation.height()), &glyphRun, graphicsContext.solidFillBrush());
+        context->DrawGlyphRun(D2D1::Point2F(point.x() + font.syntheticBoldOffset(), point.y()), &glyphRun, graphicsContext.solidFillBrush());
 
     if (hasSimpleShadow)
         graphicsContext.setShadow(shadowOffset, shadowBlur, shadowColor);
