@@ -609,6 +609,7 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(uint64_t contextId)
     m_page->send(Messages::VideoFullscreenManager::DidCleanupFullscreen(contextId), m_page->pageID());
 
     interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+    interface->setVideoFullscreenModel(nullptr);
     removeClientForContext(contextId);
 }
 
