@@ -1,5 +1,62 @@
 2018-07-26  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234264. rdar://problem/42650373
+
+    Switching tabs should not close PiP window
+    https://bugs.webkit.org/show_bug.cgi?id=188054
+    <rdar://problem/41212379>
+    
+    Reviewed by Jon Lee.
+    
+    No new tests, fixes an existing test.
+    
+    Prior to r233926, calling VideoFullscreenInterfaceMac::requestHideAndExitFullscreen was a noop.
+    In r233926 it was updated to close the PiP window and was called from the PIPViewControllerDelegate
+    selectors to close the PiP window. requestHideAndExitFullscreen is also called from
+    WebPageProxy::viewDidLeaveWindow when the web view is removed from it window, so switching
+    tabs also closed the PiP window. Revert the changes to requestHideAndExitFullscreen, and add
+    a new method that is only used by the delegate to exit PiP.
+    
+    * platform/mac/VideoFullscreenInterfaceMac.h:
+    (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen): Make this an empty,
+    do-nothing method.
+    * platform/mac/VideoFullscreenInterfaceMac.mm:
+    (-[WebVideoFullscreenInterfaceMacObjC pipShouldClose:]): Call requestHideAndExitPiP.
+    (-[WebVideoFullscreenInterfaceMacObjC pipActionStop:]): Ditto.
+    (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitPiP): Renamed from requestHideAndExitFullscreen.
+    (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234264 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-26  Eric Carlson  <eric.carlson@apple.com>
+
+            Switching tabs should not close PiP window
+            https://bugs.webkit.org/show_bug.cgi?id=188054
+            <rdar://problem/41212379>
+
+            Reviewed by Jon Lee.
+
+            No new tests, fixes an existing test.
+
+            Prior to r233926, calling VideoFullscreenInterfaceMac::requestHideAndExitFullscreen was a noop.
+            In r233926 it was updated to close the PiP window and was called from the PIPViewControllerDelegate
+            selectors to close the PiP window. requestHideAndExitFullscreen is also called from
+            WebPageProxy::viewDidLeaveWindow when the web view is removed from it window, so switching
+            tabs also closed the PiP window. Revert the changes to requestHideAndExitFullscreen, and add
+            a new method that is only used by the delegate to exit PiP.
+
+            * platform/mac/VideoFullscreenInterfaceMac.h:
+            (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen): Make this an empty,
+            do-nothing method.
+            * platform/mac/VideoFullscreenInterfaceMac.mm:
+            (-[WebVideoFullscreenInterfaceMacObjC pipShouldClose:]): Call requestHideAndExitPiP.
+            (-[WebVideoFullscreenInterfaceMacObjC pipActionStop:]): Ditto.
+            (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitPiP): Renamed from requestHideAndExitFullscreen.
+            (WebCore::VideoFullscreenInterfaceMac::requestHideAndExitFullscreen): Deleted.
+
+2018-07-26  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234078. rdar://problem/42490088
 
     REGRESSION (r233974): Cannot close pip'd video; pops back into PiP.
