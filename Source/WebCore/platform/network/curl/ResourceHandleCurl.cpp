@@ -66,9 +66,6 @@ bool ResourceHandle::start()
 
     CurlContext::singleton();
 
-    if (!d->m_delegate.get())
-        d->m_delegate = std::make_unique<CurlResourceHandleDelegate>(*this);
-
     // The frame could be null if the ResourceHandle is not associated to any
     // Frame, e.g. if we are downloading a file.
     // If the frame is not null but the page is null this must be an attempted
@@ -159,7 +156,9 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest& request, Req
 
 CurlResourceHandleDelegate* ResourceHandle::delegate()
 {
-    ASSERT(d->m_delegate);
+    if (!d->m_delegate)
+        d->m_delegate = std::make_unique<CurlResourceHandleDelegate>(*this);
+
     return d->m_delegate.get();
 }
 

@@ -1,3 +1,19 @@
+2018-07-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Crash on synchronous request via ResourceHandle.
+        https://bugs.webkit.org/show_bug.cgi?id=188033
+
+        Reviewed by Alex Christensen.
+
+        The timing of instantiation of delegate was wrong. Move it inside `delegate` getter().
+        This bug was introduced at r228577.
+
+        Test: http/tests/xmlhttprequest/simple-sync.html
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::delegate):
+
 2018-07-03  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233461.

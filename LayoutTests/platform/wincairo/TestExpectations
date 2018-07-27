@@ -928,7 +928,7 @@ http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failu
 http/tests/workers [ Skip ]
 
 http/tests/xmlhttprequest [ Skip ]
-http/tests/xmlhttprequest/simple-sync.html [ Crash ]
+http/tests/xmlhttprequest/simple-sync.html [ Pass ]
 
 http/tests/xmlviewer [ Skip ]
 http/tests/xsl [ Skip ]

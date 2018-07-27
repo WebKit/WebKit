@@ -1,3 +1,14 @@
+2018-07-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Crash on synchronous request via ResourceHandle.
+        https://bugs.webkit.org/show_bug.cgi?id=188033
+
+        Reviewed by Alex Christensen.
+
+        bug/188033 Crash sync xmlhttprequest
+
+        * platform/wincairo/TestExpectations:
+
 2018-07-27  David Fenton  <david_fenton@apple.com>
 
         Layout Test tiled-drawing/scrolling/fixed/four-bars-zoomed.html is flaky text failure.
