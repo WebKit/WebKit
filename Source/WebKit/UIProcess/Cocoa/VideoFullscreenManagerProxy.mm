@@ -449,6 +449,7 @@ void VideoFullscreenManagerProxy::removeClientForContext(uint64_t contextId)
     clientCount--;
 
     if (clientCount <= 0) {
+        ensureInterface(contextId).setVideoFullscreenModel(nullptr);
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
@@ -646,7 +647,6 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(uint64_t contextId)
     m_page->send(Messages::VideoFullscreenManager::DidCleanupFullscreen(contextId), m_page->pageID());
 
     interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
-    interface->setVideoFullscreenModel(nullptr);
     removeClientForContext(contextId);
 }
 
