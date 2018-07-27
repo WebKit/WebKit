@@ -333,6 +333,9 @@ private:
     struct CompositingState;
     struct OverlapExtent;
 
+    // Returns true if the policy changed.
+    bool updateCompositingPolicy();
+    
     // GraphicsLayerClient implementation
     void notifyFlushRequired(const GraphicsLayer*) override;
     void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect&, GraphicsLayerPaintBehavior) override;
@@ -490,6 +493,8 @@ private:
 
     ChromeClient::CompositingTriggerFlags m_compositingTriggers { static_cast<ChromeClient::CompositingTriggerFlags>(ChromeClient::AllTriggers) };
     bool m_hasAcceleratedCompositing { true };
+    
+    CompositingPolicy m_compositingPolicy { CompositingPolicy::Normal };
 
     bool m_showDebugBorders { false };
     bool m_showRepaintCounter { false };
@@ -572,5 +577,6 @@ private:
 void paintScrollbar(Scrollbar*, GraphicsContext&, const IntRect& clip);
 
 WTF::TextStream& operator<<(WTF::TextStream&, CompositingUpdateType);
+WTF::TextStream& operator<<(WTF::TextStream&, CompositingPolicy);
 
 } // namespace WebCore

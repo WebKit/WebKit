@@ -60,6 +60,7 @@
 #include "Settings.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -346,6 +347,9 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         if (m_layerForScrollCorner)
             m_layerForScrollCorner->setShowDebugBorder(m_showDebugBorders);
     }
+    
+    if (updateCompositingPolicy())
+        setCompositingLayersNeedRebuild();
 }
 
 void RenderLayerCompositor::cacheAcceleratedCompositingFlagsAfterLayout()
@@ -360,6 +364,19 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlagsAfterLayout()
         m_forceCompositingMode = forceCompositingMode;
         setCompositingLayersNeedRebuild();
     }
+}
+
+bool RenderLayerCompositor::updateCompositingPolicy()
+{
+    auto currentPolicy = m_compositingPolicy;
+    if (page().compositingPolicyOverride()) {
+        m_compositingPolicy = page().compositingPolicyOverride().value();
+        return m_compositingPolicy != currentPolicy;
+    }
+    
+    auto memoryPolicy = MemoryPressureHandler::currentMemoryUsagePolicy();
+    m_compositingPolicy = memoryPolicy == WTF::MemoryUsagePolicy::Unrestricted ? CompositingPolicy::Normal : CompositingPolicy::Conservative;
+    return m_compositingPolicy != currentPolicy;
 }
 
 bool RenderLayerCompositor::canRender3DTransforms() const
@@ -732,7 +749,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         auto& frame = m_renderView.frameView().frame();
         bool isMainFrame = isMainFrameCompositor();
-        LOG(Compositing, "\nUpdate %d of %s.\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame.tree().uniqueName().string().utf8().data());
+        LOG_WITH_STREAM(Compositing, stream << "\nUpdate " << m_rootLayerUpdateCount << " of " << (isMainFrame ? "main frame" : frame.tree().uniqueName().string().utf8().data()) << " - compositing policy is " << m_compositingPolicy);
     }
 #endif
 
@@ -2389,7 +2406,19 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
 
     // Note that we ask the renderer if it has a transform, because the style may have transforms,
     // but the renderer may be an inline that doesn't suppport them.
-    return renderer.hasTransform() && renderer.style().transform().has3DOperation();
+    if (!renderer.hasTransform())
+        return false;
+    
+    switch (m_compositingPolicy) {
+    case CompositingPolicy::Normal:
+        return renderer.style().transform().has3DOperation();
+    case CompositingPolicy::Conservative:
+        // Continue to allow pages to avoid the very slow software filter path.
+        if (renderer.style().transform().has3DOperation() && renderer.hasFilter())
+            return true;
+        return !renderer.style().transform().isRepresentableIn2D();
+    }
+    return false;
 }
 
 bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayerModelObject& renderer) const
@@ -2415,15 +2444,17 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& 
 {
     if (!(m_compositingTriggers & ChromeClient::VideoTrigger))
         return false;
+
 #if ENABLE(VIDEO)
-    if (is<RenderVideo>(renderer)) {
-        auto& video = downcast<RenderVideo>(renderer);
-        return (video.requiresImmediateCompositing() || video.shouldDisplayVideo()) && canAccelerateVideoRendering(video);
-    }
+    if (!is<RenderVideo>(renderer))
+        return false;
+
+    auto& video = downcast<RenderVideo>(renderer);
+    return (video.requiresImmediateCompositing() || video.shouldDisplayVideo()) && canAccelerateVideoRendering(video);
 #else
     UNUSED_PARAM(renderer);
-#endif
     return false;
+#endif
 }
 
 bool RenderLayerCompositor::requiresCompositingForCanvas(RenderLayerModelObject& renderer) const
@@ -2431,17 +2462,22 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderLayerModelObject&
     if (!(m_compositingTriggers & ChromeClient::CanvasTrigger))
         return false;
 
-    if (renderer.isCanvas()) {
-#if USE(COMPOSITING_FOR_SMALL_CANVASES)
-        bool isCanvasLargeEnoughToForceCompositing = true;
-#else
-        auto* canvas = downcast<HTMLCanvasElement>(renderer.element());
-        auto canvasArea = canvas->size().area<RecordOverflow>();
-        bool isCanvasLargeEnoughToForceCompositing = !canvasArea.hasOverflowed() && canvasArea.unsafeGet() >= canvasAreaThresholdRequiringCompositing;
+    if (!renderer.isCanvas())
+        return false;
+
+    bool isCanvasLargeEnoughToForceCompositing = true;
+#if !USE(COMPOSITING_FOR_SMALL_CANVASES)
+    auto* canvas = downcast<HTMLCanvasElement>(renderer.element());
+    auto canvasArea = canvas->size().area<RecordOverflow>();
+    isCanvasLargeEnoughToForceCompositing = !canvasArea.hasOverflowed() && canvasArea.unsafeGet() >= canvasAreaThresholdRequiringCompositing;
 #endif
-        CanvasCompositingStrategy compositingStrategy = canvasCompositingStrategy(renderer);
-        return compositingStrategy == CanvasAsLayerContents || (compositingStrategy == CanvasPaintedToLayer && isCanvasLargeEnoughToForceCompositing);
-    }
+
+    CanvasCompositingStrategy compositingStrategy = canvasCompositingStrategy(renderer);
+    if (compositingStrategy == CanvasAsLayerContents)
+        return true;
+
+    if (m_compositingPolicy == CompositingPolicy::Normal)
+        return compositingStrategy == CanvasPaintedToLayer && isCanvasLargeEnoughToForceCompositing;
 
     return false;
 }
@@ -2451,8 +2487,8 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
     if (!(m_compositingTriggers & ChromeClient::PluginTrigger))
         return false;
 
-    bool composite = is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).allowsAcceleratedCompositing();
-    if (!composite)
+    bool isCompositedPlugin = is<RenderEmbeddedObject>(renderer) && downcast<RenderEmbeddedObject>(renderer).allowsAcceleratedCompositing();
+    if (!isCompositedPlugin)
         return false;
 
     m_reevaluateCompositingAfterLayout = true;
@@ -2588,6 +2624,9 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
     if (renderer.layer() && isDescendantOfFullScreenLayer(*renderer.layer()) == FullScreenDescendant::No)
         return false;
 #endif
+
+    if (m_compositingPolicy == CompositingPolicy::Conservative)
+        return false;
 
     if (is<RenderBox>(renderer))
         return true;
@@ -2835,8 +2874,6 @@ bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& lay
 
     if (m_renderView.settings().fixedBackgroundsPaintRelativeToDocument())
         return false;
-
-    LOG(Compositing, "RenderLayerCompositor %p needsFixedRootBackgroundLayer returning %d", this, supportsFixedRootBackgroundCompositing() && m_renderView.rootBackgroundIsEntirelyFixed());
 
     return supportsFixedRootBackgroundCompositing() && m_renderView.rootBackgroundIsEntirelyFixed();
 }
@@ -4116,6 +4153,15 @@ TextStream& operator<<(TextStream& ts, CompositingUpdateType updateType)
     case CompositingUpdateType::OnHitTest: ts << "on hit test"; break;
     case CompositingUpdateType::OnScroll: ts << "on scroll"; break;
     case CompositingUpdateType::OnCompositedScroll: ts << "on composited scroll"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, CompositingPolicy compositingPolicy)
+{
+    switch (compositingPolicy) {
+    case CompositingPolicy::Normal: ts << "normal"; break;
+    case CompositingPolicy::Conservative: ts << "conservative"; break;
     }
     return ts;
 }

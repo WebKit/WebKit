@@ -87,6 +87,8 @@ public:
                opType == MATRIX_3D ||
                opType == PERSPECTIVE;
     }
+    
+    virtual bool isRepresentableIn2D() const { return true; }
 
     bool isRotateTransformOperationType() const
     {

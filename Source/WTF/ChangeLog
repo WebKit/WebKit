@@ -1,3 +1,30 @@
+2018-07-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Be more conservative with compositing layer creation when memory is low
+        https://bugs.webkit.org/show_bug.cgi?id=187866
+        rdar://problem/42366345
+
+        Reviewed by Zalan Bujtas.
+        
+        When process physical footprint is above a fraction of the jetsam limit, be more conservative in making
+        compositing layers. We avoid compositing for these situations:
+        1. Layers with 3D transforms which are affine (like translateZ(0)).
+        2. Layers with will-change
+        3. Layers for canvases (other than WebGL/WebGPU)
+        
+        We reuse some macOS code in MemoryPressureHandler() but choose different thresholds for iOS,
+        falling into "conservative mode" at 50% of jetsam limit, and "strict mode" at 65%.
+        Compositing chooses to be more conservative in either "conservative" or "strict" memory modes.
+        
+        Plumb through a "compositingPolicyOverride" both so that on-device testing isn't
+        flakily falling into a different mode, and so that we can impose the conservative
+        mode for testing.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForPolicy):
+        (WTF::MemoryPressureHandler::currentMemoryUsagePolicy):
+        * wtf/MemoryPressureHandler.h:
+
 2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Remove INTL sub-feature compile flags

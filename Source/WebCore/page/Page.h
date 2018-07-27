@@ -154,6 +154,11 @@ enum class EventThrottlingBehavior {
     Unresponsive
 };
 
+enum class CompositingPolicy : uint8_t {
+    Normal,
+    Conservative, // Used in low memory situations.
+};
+
 enum class CanWrap : bool;
 enum class DidWrap : bool;
 enum class RouteSharingPolicy;
@@ -636,6 +641,9 @@ public:
     std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
     void setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
 
+    std::optional<CompositingPolicy> compositingPolicyOverride() const { return m_compositingPolicyOverride; }
+    void setCompositingPolicyOverride(std::optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
+
     WebGLStateTracker* webGLStateTracker() const { return m_webGLStateTracker.get(); }
 
     bool isOnlyNonUtilityPage() const;
@@ -873,6 +881,7 @@ private:
     
     // For testing.
     std::optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
+    std::optional<CompositingPolicy> m_compositingPolicyOverride;
 
     std::unique_ptr<PerformanceMonitor> m_performanceMonitor;
     std::unique_ptr<LowPowerModeNotifier> m_lowPowerModeNotifier;

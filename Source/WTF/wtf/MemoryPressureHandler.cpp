@@ -113,12 +113,22 @@ size_t MemoryPressureHandler::thresholdForMemoryKill()
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)
 {
     const size_t baseThresholdForPolicy = std::min(3 * GB, ramSize());
+
+#if PLATFORM(IOS)
+    const double conservativeThresholdFraction = 0.5;
+    const double strictThresholdFraction = 0.65;
+#else
+    const double conservativeThresholdFraction = 0.33;
+    const double strictThresholdFraction = 0.5;
+#endif
+
     switch (policy) {
-    case MemoryUsagePolicy::Conservative:
-        return baseThresholdForPolicy / 3;
-    case MemoryUsagePolicy::Strict:
-        return baseThresholdForPolicy / 2;
     case MemoryUsagePolicy::Unrestricted:
+        return 0;
+    case MemoryUsagePolicy::Conservative:
+        return baseThresholdForPolicy * conservativeThresholdFraction;
+    case MemoryUsagePolicy::Strict:
+        return baseThresholdForPolicy * strictThresholdFraction;
     default:
         ASSERT_NOT_REACHED();
         return 0;
@@ -132,6 +142,11 @@ static MemoryUsagePolicy policyForFootprint(size_t footprint)
     if (footprint >= thresholdForPolicy(MemoryUsagePolicy::Conservative))
         return MemoryUsagePolicy::Conservative;
     return MemoryUsagePolicy::Unrestricted;
+}
+
+MemoryUsagePolicy MemoryPressureHandler::currentMemoryUsagePolicy()
+{
+    return policyForFootprint(memoryFootprint().value_or(0));
 }
 
 void MemoryPressureHandler::shrinkOrDie()
