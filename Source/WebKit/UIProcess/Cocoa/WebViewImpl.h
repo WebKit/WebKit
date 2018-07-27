@@ -28,10 +28,11 @@
 #if PLATFORM(MAC)
 
 #include "PluginComplexTextInputState.h"
+#include "ShareableBitmap.h"
 #include "WKDragDestinationAction.h"
 #include "WKLayoutMode.h"
-#include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
+#include <WebCore/ScrollTypes.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
@@ -55,6 +56,7 @@ OBJC_CLASS WKImmediateActionController;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
+OBJC_CLASS _WKRemoteObjectRegistry;
 OBJC_CLASS _WKThumbnailView;
 
 #if HAVE(TOUCH_BAR)
@@ -66,6 +68,12 @@ OBJC_CLASS NSPopoverTouchBarItem;
 OBJC_CLASS WKTextTouchBarItemController;
 OBJC_CLASS WebPlaybackControlsManager;
 #endif // HAVE(TOUCH_BAR)
+
+namespace API {
+class HitTestResult;
+class Object;
+class PageConfiguration;
+}
 
 @protocol WebViewImplDelegate
 
@@ -108,17 +116,24 @@ OBJC_CLASS WebPlaybackControlsManager;
 
 namespace WebCore {
 struct DragItem;
-struct KeyPressCommand;
+struct KeypressCommand;
 }
 
 namespace WebKit {
 
+class PageClient;
 class PageClientImpl;
 class DrawingAreaProxy;
 class ViewGestureController;
+class ViewSnapshot;
+class WebBackForwardListItem;
 class WebEditCommandProxy;
+class WebFrameProxy;
 class WebPageProxy;
+class WebProcessPool;
 struct ColorSpaceData;
+struct WebHitTestResultData;
+enum class UndoOrRedo;
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
@@ -290,7 +305,7 @@ public:
     bool isEditable() const;
     bool executeSavedCommandBySelector(SEL);
     void executeEditCommandForSelector(SEL, const String& argument = String());
-    void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo);
+    void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo);
     void clearAllEditCommands();
     bool writeSelectionToPasteboard(NSPasteboard *, NSArray *types);
     bool readSelectionFromPasteboard(NSPasteboard *);

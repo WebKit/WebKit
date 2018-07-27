@@ -80,6 +80,7 @@
 #include "TextCheckerState.h"
 #include "UIMessagePortChannelProvider.h"
 #include "URLSchemeTaskParameters.h"
+#include "UndoOrRedo.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "UserMediaProcessManager.h"
 #include "WKContextPrivate.h"
@@ -4936,7 +4937,7 @@ void WebPageProxy::compositionWasCanceled()
 
 void WebPageProxy::registerEditCommandForUndo(uint64_t commandID, uint32_t editAction)
 {
-    registerEditCommand(WebEditCommandProxy::create(commandID, static_cast<EditAction>(editAction), this), Undo);
+    registerEditCommand(WebEditCommandProxy::create(commandID, static_cast<EditAction>(editAction), this), UndoOrRedo::Undo);
 }
     
 void WebPageProxy::registerInsertionUndoGrouping()
@@ -4946,15 +4947,14 @@ void WebPageProxy::registerInsertionUndoGrouping()
 #endif
 }
 
-void WebPageProxy::canUndoRedo(uint32_t action, bool& result)
+void WebPageProxy::canUndoRedo(UndoOrRedo action, bool& result)
 {
-    result = m_pageClient.canUndoRedo(static_cast<UndoOrRedo>(action));
+    result = m_pageClient.canUndoRedo(action);
 }
 
-void WebPageProxy::executeUndoRedo(uint32_t action, bool& result)
+void WebPageProxy::executeUndoRedo(UndoOrRedo action)
 {
-    m_pageClient.executeUndoRedo(static_cast<UndoOrRedo>(action));
-    result = true;
+    m_pageClient.executeUndoRedo(action);
 }
 
 void WebPageProxy::clearAllEditCommands()
@@ -5317,16 +5317,12 @@ void WebPageProxy::removeEditCommand(WebEditCommandProxy* command)
 
 bool WebPageProxy::canUndo()
 {
-    bool result;
-    canUndoRedo(Undo, result);
-    return result;
+    return m_pageClient.canUndoRedo(UndoOrRedo::Undo);
 }
 
 bool WebPageProxy::canRedo()
 {
-    bool result;
-    canUndoRedo(Redo, result);
-    return result;
+    return m_pageClient.canUndoRedo(UndoOrRedo::Redo);
 }
 
 bool WebPageProxy::isValidEditCommand(WebEditCommandProxy* command)

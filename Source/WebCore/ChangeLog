@@ -1,5 +1,14 @@
 2018-07-27  Alex Christensen  <achristensen@webkit.org>
 
+        Don't include WebPageProxy.h just for UndoOrRedo
+        https://bugs.webkit.org/show_bug.cgi?id=188086
+
+        Reviewed by Saam Barati.
+
+        * platform/DragItem.h:
+
+2018-07-27  Alex Christensen  <achristensen@webkit.org>
+
         Make CompletionHandler more const correct
         https://bugs.webkit.org/show_bug.cgi?id=186543
 

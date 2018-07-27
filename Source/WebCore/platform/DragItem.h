@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DragActions.h"
 #include "DragImage.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"

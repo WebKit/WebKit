@@ -1,5 +1,46 @@
 2018-07-27  Alex Christensen  <achristensen@webkit.org>
 
+        Don't include WebPageProxy.h just for UndoOrRedo
+        https://bugs.webkit.org/show_bug.cgi?id=188086
+
+        Reviewed by Saam Barati.
+
+        * Shared/UndoOrRedo.h: Added.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::registerEditCommand):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::unapply):
+        (WebKit::WebEditCommandProxy::reapply):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerEditCommandForUndo):
+        (WebKit::WebPageProxy::canUndoRedo):
+        (WebKit::WebPageProxy::executeUndoRedo):
+        (WebKit::WebPageProxy::canUndo):
+        (WebKit::WebPageProxy::canRedo):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::canUndo const):
+        (WebKit::WebEditorClient::canRedo const):
+        (WebKit::WebEditorClient::undo):
+        (WebKit::WebEditorClient::redo):
+
+2018-07-27  Alex Christensen  <achristensen@webkit.org>
+
         Make CompletionHandler more const correct
         https://bugs.webkit.org/show_bug.cgi?id=186543
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebEditCommandProxy.h"
 
+#include "UndoOrRedo.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -56,7 +57,7 @@ void WebEditCommandProxy::unapply()
         return;
 
     m_page->process().send(Messages::WebPage::UnapplyEditCommand(m_commandID), m_page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_page->registerEditCommand(*this, WebPageProxy::Redo);
+    m_page->registerEditCommand(*this, UndoOrRedo::Redo);
 }
 
 void WebEditCommandProxy::reapply()
@@ -65,7 +66,7 @@ void WebEditCommandProxy::reapply()
         return;
 
     m_page->process().send(Messages::WebPage::ReapplyEditCommand(m_commandID), m_page->pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_page->registerEditCommand(*this, WebPageProxy::Undo);
+    m_page->registerEditCommand(*this, UndoOrRedo::Undo);
 }
 
 String WebEditCommandProxy::nameForEditAction(EditAction editAction)

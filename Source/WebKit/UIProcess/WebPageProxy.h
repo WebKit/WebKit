@@ -260,6 +260,7 @@ struct WebPopupItem;
 struct URLSchemeTaskParameters;
 
 enum class ShouldProcessSwapIfPossible;
+enum class UndoOrRedo;
 
 #if USE(QUICK_LOOK)
 class QuickLookDocumentData;
@@ -951,7 +952,6 @@ public:
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
-    enum UndoOrRedo { Undo, Redo };
     void addEditCommand(WebEditCommandProxy*);
     void removeEditCommand(WebEditCommandProxy*);
     bool isValidEditCommand(WebEditCommandProxy*);
@@ -1551,8 +1551,8 @@ private:
     void registerEditCommandForUndo(uint64_t commandID, uint32_t editAction);
     void registerInsertionUndoGrouping();
     void clearAllEditCommands();
-    void canUndoRedo(uint32_t action, bool& result);
-    void executeUndoRedo(uint32_t action, bool& result);
+    void canUndoRedo(UndoOrRedo, bool& result);
+    void executeUndoRedo(UndoOrRedo);
 
     // Keyboard handling
 #if PLATFORM(COCOA)

@@ -22,14 +22,15 @@
 #include "config.h"
 #include "DefaultUndoController.h"
 
+#include "UndoOrRedo.h"
 #include "WebEditCommandProxy.h"
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-void DefaultUndoController::registerEditCommand(Ref<WebEditCommandProxy>&& command, WebPageProxy::UndoOrRedo undoOrRedo)
+void DefaultUndoController::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
-    if (undoOrRedo == WebPageProxy::Undo)
+    if (undoOrRedo == UndoOrRedo::Undo)
         m_undoStack.append(WTFMove(command));
     else
         m_redoStack.append(WTFMove(command));
@@ -41,18 +42,18 @@ void DefaultUndoController::clearAllEditCommands()
     m_redoStack.clear();
 }
 
-bool DefaultUndoController::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+bool DefaultUndoController::canUndoRedo(UndoOrRedo undoOrRedo)
 {
-    if (undoOrRedo == WebPageProxy::Undo)
+    if (undoOrRedo == UndoOrRedo::Undo)
         return !m_undoStack.isEmpty();
 
     return !m_redoStack.isEmpty();
 }
 
-void DefaultUndoController::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+void DefaultUndoController::executeUndoRedo(UndoOrRedo undoOrRedo)
 {
     RefPtr<WebEditCommandProxy> command;
-    if (undoOrRedo == WebPageProxy::Undo) {
+    if (undoOrRedo == UndoOrRedo::Undo) {
         command = m_undoStack.last();
         m_undoStack.removeLast();
         command->unapply();

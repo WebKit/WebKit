@@ -19,20 +19,21 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef DefaultUndoController_h
-#define DefaultUndoController_h
+#pragma once
 
 #include "WebEditCommandProxy.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
 
+enum class UndoOrRedo;
+
 class DefaultUndoController {
 public:
-    void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo);
+    void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo);
     void clearAllEditCommands();
-    bool canUndoRedo(WebPageProxy::UndoOrRedo);
-    void executeUndoRedo(WebPageProxy::UndoOrRedo);
+    bool canUndoRedo(UndoOrRedo);
+    void executeUndoRedo(UndoOrRedo);
 
 private:
     typedef Vector<RefPtr<WebEditCommandProxy> > CommandVector;
@@ -41,5 +42,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // DefaultUndoController_h

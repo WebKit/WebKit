@@ -238,8 +238,8 @@ messages -> WebPageProxy {
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)
     ClearAllEditCommands()
     RegisterInsertionUndoGrouping()
-    CanUndoRedo(uint32_t action) -> (bool result)
-    ExecuteUndoRedo(uint32_t action) -> (bool result)
+    CanUndoRedo(enum WebKit::UndoOrRedo undoOrRedo) -> (bool result)
+    ExecuteUndoRedo(enum WebKit::UndoOrRedo undoOrRedo) -> ()
 
     # Diagnostic messages logging
     LogDiagnosticMessage(String message, String description, enum WebCore::ShouldSample shouldSample)

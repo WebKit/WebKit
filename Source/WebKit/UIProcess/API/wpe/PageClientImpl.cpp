@@ -135,7 +135,7 @@ void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttribut
 {
 }
 
-void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo)
+void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo)
 {
 }
 
@@ -143,12 +143,12 @@ void PageClientImpl::clearAllEditCommands()
 {
 }
 
-bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo)
+bool PageClientImpl::canUndoRedo(UndoOrRedo)
 {
     return false;
 }
 
-void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo)
+void PageClientImpl::executeUndoRedo(UndoOrRedo)
 {
 }
 
