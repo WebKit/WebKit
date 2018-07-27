@@ -1,3 +1,19 @@
+2018-07-26  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to use WTF::CallbackAggregator from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=188084
+
+        Reviewed by Alex Christensen.
+
+        This code was passing CallbackAggregator objects for background thread and not being
+        careful on which thread the CallbackAggregator gets destroyed. This patch fixes this
+        since the CallbackAggregator destructor no longer takes care of dispatching to the
+        main thread.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearAllCaches):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+
 2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter

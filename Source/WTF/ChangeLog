@@ -1,3 +1,24 @@
+2018-07-26  Chris Dumez  <cdumez@apple.com>
+
+        It should be possible to use WTF::CallbackAggregator from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=188084
+
+        Reviewed by Alex Christensen.
+
+        Make WTF::CallbackAggregator usable on background threads by updating its destructor to call the
+        completion handler on whatever thread it is destroyed on, instead of always dispatching to the
+        main thread before calling the completion handler.
+
+        Existing CallbackAggregator users that deal with threads have been updated to make sure they
+        destroy the CallbackAggregator on the expected thread.
+
+        This will allow us to use CallbackAggregator in the ResourceLoadStatisticsMemoryStore, which lives
+        on a background WorkQueue.
+
+        * wtf/CallbackAggregator.h:
+        (WTF::CallbackAggregator::~CallbackAggregator):
+        (WTF::CallbackAggregator::CallbackAggregator):
+
 2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter

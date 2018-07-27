@@ -75,8 +75,8 @@ public:
     static void clearMemoryRepresentation(PAL::SessionID, WebCore::ClientOrigin&&, WebCore::DOMCacheEngine::CompletionCallback&&);
     static void representation(PAL::SessionID, CompletionHandler<void(String&&)>&&);
 
-    static void clearAllCaches(PAL::SessionID, Ref<WTF::CallbackAggregator>&&);
-    static void clearCachesForOrigin(PAL::SessionID, WebCore::SecurityOriginData&&, Ref<WTF::CallbackAggregator>&&);
+    static void clearAllCaches(PAL::SessionID, CompletionHandler<void()>&&);
+    static void clearCachesForOrigin(PAL::SessionID, WebCore::SecurityOriginData&&, CompletionHandler<void()>&&);
 
     bool shouldPersist() const { return !!m_ioQueue;}
 
@@ -95,8 +95,11 @@ private:
     void remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void retrieveCaches(const WebCore::ClientOrigin&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
-    void clearAllCaches(WTF::CallbackAggregator&);
-    void clearCachesForOrigin(const WebCore::SecurityOriginData&, WTF::CallbackAggregator&);
+    void clearAllCaches(CompletionHandler<void()>&&);
+    void clearAllCachesFromDisk(CompletionHandler<void()>&&);
+    void clearCachesForOrigin(const WebCore::SecurityOriginData&, CompletionHandler<void()>&&);
+    void clearCachesForOriginFromDisk(const WebCore::SecurityOriginData&, CompletionHandler<void()>&&);
+    void deleteDirectoryRecursivelyOnBackgroundThread(const String& path, CompletionHandler<void()>&&);
 
     void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&);
     String representation();
