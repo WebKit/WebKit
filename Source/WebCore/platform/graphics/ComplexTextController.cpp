@@ -144,6 +144,10 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     , m_mayUseNaturalWritingDirection(mayUseNaturalWritingDirection)
     , m_forTextEmphasis(forTextEmphasis)
 {
+#if PLATFORM(WIN)
+    ASSERT_NOT_REACHED();
+#endif
+
     computeExpansionOpportunity();
 
     collectComplexTextRuns();
