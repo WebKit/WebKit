@@ -289,8 +289,8 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     } else if ([getAVLayerVideoGravityResizeAspectFill() isEqualToString:self.videoGravity]) {
         sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.modelVideoLayerFrame);
         self.modelVideoLayerFrame = CGRectMake(0, 0, sourceVideoFrame.width(), sourceVideoFrame.height());
-        ASSERT(_fullscreenInterface->videoFullscreenModel());
-        _fullscreenInterface->videoFullscreenModel()->setVideoLayerFrame(self.modelVideoLayerFrame);
+        if (auto* model = _fullscreenInterface->videoFullscreenModel())
+            model->setVideoLayerFrame(self.modelVideoLayerFrame);
         targetVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
     } else
         ASSERT_NOT_REACHED();
@@ -325,8 +325,8 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     
     if (!CGRectEqualToRect(self.modelVideoLayerFrame, [self bounds])) {
         self.modelVideoLayerFrame = [self bounds];
-        ASSERT(_fullscreenInterface->videoFullscreenModel());
-        _fullscreenInterface->videoFullscreenModel()->setVideoLayerFrame(self.modelVideoLayerFrame);
+        if (auto* model = _fullscreenInterface->videoFullscreenModel())
+            model->setVideoLayerFrame(self.modelVideoLayerFrame);
     }
     [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
     
@@ -350,8 +350,8 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     else
         ASSERT_NOT_REACHED();
     
-    ASSERT(_fullscreenInterface->videoFullscreenModel());
-    _fullscreenInterface->videoFullscreenModel()->setVideoLayerGravity(gravity);
+    if (auto* model = _fullscreenInterface->videoFullscreenModel())
+        model->setVideoLayerGravity(gravity);
 }
 
 - (NSString *)videoGravity
