@@ -1,3 +1,25 @@
+2018-07-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Record CoW status in ArrayProfile correctly
+        https://bugs.webkit.org/show_bug.cgi?id=187949
+
+        Reviewed by Saam Barati.
+
+        In this patch, we simplify asArrayModes: just shifting the value with IndexingMode.
+        This is important since our OSR exit compiler records m_observedArrayModes by calculating
+        ArrayModes with shifting. Since ArrayModes for CoW arrays are incorrectly calculated,
+        our OSR exit compiler records incorrect results in ArrayProfile. And it leads to
+        Array::Generic DFG nodes.
+
+        * bytecode/ArrayProfile.h:
+        (JSC::asArrayModes):
+        (JSC::ArrayProfile::ArrayProfile):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * runtime/IndexingType.h:
+
 2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Remove INTL sub-feature compile flags

@@ -39,36 +39,27 @@ class LLIntOffsetsExtractor;
 // There are 9 typed array types taking the bits 16 to 25.
 typedef unsigned ArrayModes;
 
-const ArrayModes CopyOnWriteArrayWithInt32ArrayMode = 1 << 16;
-const ArrayModes CopyOnWriteArrayWithDoubleArrayMode = 1 << 17;
-const ArrayModes CopyOnWriteArrayWithContiguousArrayMode = 1 << 18;
+// The possible IndexingTypes are limited within (0 - 16, 21, 23, 25).
+// This is because CoW types only appear for JSArrays.
+static_assert(CopyOnWriteArrayWithInt32 == 21, "");
+static_assert(CopyOnWriteArrayWithDouble == 23, "");
+static_assert(CopyOnWriteArrayWithContiguous == 25, "");
+const ArrayModes CopyOnWriteArrayWithInt32ArrayMode = 1 << CopyOnWriteArrayWithInt32;
+const ArrayModes CopyOnWriteArrayWithDoubleArrayMode = 1 << CopyOnWriteArrayWithDouble;
+const ArrayModes CopyOnWriteArrayWithContiguousArrayMode = 1 << CopyOnWriteArrayWithContiguous;
 
-const ArrayModes Int8ArrayMode = 1 << 19;
-const ArrayModes Int16ArrayMode = 1 << 20;
-const ArrayModes Int32ArrayMode = 1 << 21;
-const ArrayModes Uint8ArrayMode = 1 << 22;
-const ArrayModes Uint8ClampedArrayMode = 1 << 23;
-const ArrayModes Uint16ArrayMode = 1 << 24;
-const ArrayModes Uint32ArrayMode = 1 << 25;
-const ArrayModes Float32ArrayMode = 1 << 26;
-const ArrayModes Float64ArrayMode = 1 << 27;
+const ArrayModes Int8ArrayMode = 1 << 16;
+const ArrayModes Int16ArrayMode = 1 << 17;
+const ArrayModes Int32ArrayMode = 1 << 18;
+const ArrayModes Uint8ArrayMode = 1 << 19;
+const ArrayModes Uint8ClampedArrayMode = 1 << 20; // 21 - 25 are used for CoW arrays.
+const ArrayModes Uint16ArrayMode = 1 << 26;
+const ArrayModes Uint32ArrayMode = 1 << 27;
+const ArrayModes Float32ArrayMode = 1 << 28;
+const ArrayModes Float64ArrayMode = 1 << 29;
 
 inline constexpr ArrayModes asArrayModes(IndexingType indexingMode)
 {
-    if (isCopyOnWrite(indexingMode)) {
-        switch (indexingMode) {
-        case CopyOnWriteArrayWithInt32:
-            return CopyOnWriteArrayWithInt32ArrayMode;
-        case CopyOnWriteArrayWithDouble:
-            return CopyOnWriteArrayWithDoubleArrayMode;
-        case CopyOnWriteArrayWithContiguous:
-            return CopyOnWriteArrayWithContiguousArrayMode;
-        default:
-            UNREACHABLE_FOR_PLATFORM();
-            return 0;
-        }
-    }
-
     return static_cast<unsigned>(1) << static_cast<unsigned>(indexingMode);
 }
 
@@ -221,26 +212,15 @@ inline bool hasSeenCopyOnWriteArray(ArrayModes arrayModes)
 class ArrayProfile {
 public:
     ArrayProfile()
-        : m_bytecodeOffset(std::numeric_limits<unsigned>::max())
-        , m_lastSeenStructureID(0)
-        , m_mayStoreToHole(false)
-        , m_outOfBounds(false)
-        , m_mayInterceptIndexedAccesses(false)
-        , m_usesOriginalArrayStructures(true)
-        , m_didPerformFirstRunPruning(false)
-        , m_observedArrayModes(0)
+        : ArrayProfile(std::numeric_limits<unsigned>::max())
     {
     }
     
-    ArrayProfile(unsigned bytecodeOffset)
+    explicit ArrayProfile(unsigned bytecodeOffset)
         : m_bytecodeOffset(bytecodeOffset)
-        , m_lastSeenStructureID(0)
-        , m_mayStoreToHole(false)
-        , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
         , m_usesOriginalArrayStructures(true)
         , m_didPerformFirstRunPruning(false)
-        , m_observedArrayModes(0)
     {
     }
     
@@ -281,13 +261,13 @@ private:
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
     unsigned m_bytecodeOffset;
-    StructureID m_lastSeenStructureID;
-    bool m_mayStoreToHole; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
-    bool m_outOfBounds;
+    StructureID m_lastSeenStructureID { 0 };
+    bool m_mayStoreToHole { false }; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
+    bool m_outOfBounds { false };
     bool m_mayInterceptIndexedAccesses : 1;
     bool m_usesOriginalArrayStructures : 1;
     bool m_didPerformFirstRunPruning : 1;
-    ArrayModes m_observedArrayModes;
+    ArrayModes m_observedArrayModes { 0 };
 };
 
 typedef SegmentedVector<ArrayProfile, 4> ArrayProfileVector;
