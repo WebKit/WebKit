@@ -1,5 +1,23 @@
 2018-07-26  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233936. rdar://problem/42354941
+
+    Unreviewed API Test fix; restored a line inadventantly removed in r233926.
+    
+    * platform/mac/VideoFullscreenInterfaceMac.mm:
+    (-[WebVideoFullscreenInterfaceMacObjC pipDidClose:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233936 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-18  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed API Test fix; restored a line inadventantly removed in r233926.
+
+            * platform/mac/VideoFullscreenInterfaceMac.mm:
+            (-[WebVideoFullscreenInterfaceMacObjC pipDidClose:]):
+
+2018-07-26  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233930. rdar://problem/42354941
 
     Unreviewed build fix after r233926; BOOL !== bool.
