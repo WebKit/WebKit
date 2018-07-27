@@ -1,3 +1,19 @@
+2018-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Loading a file URL and then issuing a reload right away causes the load to fail due to sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=188078
+        <rdar://problem/42562493>
+
+        Unreviewed, follow-up fix after r234290 to address assertion hits on the bots. Make the fix
+        specific to reloads as we know the existing provisional sandbox extension is for the same
+        URL then.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::SandboxExtensionTracker::beginLoad):
+        (WebKit::WebPage::SandboxExtensionTracker::beginReload):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Remove INTL sub-feature compile flags

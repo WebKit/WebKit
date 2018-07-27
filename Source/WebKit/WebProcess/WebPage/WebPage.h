@@ -693,6 +693,7 @@ public:
         void invalidate();
 
         void beginLoad(WebFrame*, SandboxExtension::Handle&&);
+        void beginReload(WebFrame*, SandboxExtension::Handle&&);
         void willPerformLoadDragDestinationAction(RefPtr<SandboxExtension>&& pendingDropSandboxExtension);
         void didStartProvisionalLoad(WebFrame*);
         void didCommitProvisionalLoad(WebFrame*);

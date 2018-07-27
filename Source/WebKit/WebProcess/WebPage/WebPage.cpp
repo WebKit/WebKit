@@ -1397,7 +1397,7 @@ void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExten
     ASSERT(!m_mainFrame->coreFrame()->loader().frameHasLoaded() || !m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
 
-    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), WTFMove(sandboxExtensionHandle));
+    m_sandboxExtensionTracker.beginReload(m_mainFrame.get(), WTFMove(sandboxExtensionHandle));
     corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), OptionSet<ReloadOption>::fromRaw(reloadOptions));
 
     if (m_pendingNavigationID) {
@@ -4086,6 +4086,15 @@ void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, SandboxExtensi
 {
     ASSERT_UNUSED(frame, frame->isMainFrame());
 
+    setPendingProvisionalSandboxExtension(SandboxExtension::create(WTFMove(handle)));
+}
+
+void WebPage::SandboxExtensionTracker::beginReload(WebFrame* frame, SandboxExtension::Handle&& handle)
+{
+    ASSERT_UNUSED(frame, frame->isMainFrame());
+
+    // Maintain existing provisional SandboxExtension in case of a reload, if the new handle is null. This is needed
+    // because the UIProcess sends us a null handle if it already sent us a handle for this path in the past.
     if (auto sandboxExtension = SandboxExtension::create(WTFMove(handle)))
         setPendingProvisionalSandboxExtension(WTFMove(sandboxExtension));
 }
