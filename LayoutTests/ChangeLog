@@ -1,3 +1,13 @@
+2018-07-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Set correct source info to ResourceResponse.
+        https://bugs.webkit.org/show_bug.cgi?id=188069
+
+        Reviewed by Fujii Hironori.
+
+        * platform/wincairo/TestExpectations:
+          - http/tests/cache/disk-cache/disk-cache-302-status-code.html: Pass
+
 2018-07-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

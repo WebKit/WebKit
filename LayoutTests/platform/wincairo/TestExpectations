@@ -850,7 +850,7 @@ http/tests/appcache [ Skip ]
 http/tests/blink [ Skip ]
 
 http/tests/cache [ Skip ]
-http/tests/cache/disk-cache/disk-cache-302-status-code.html [ Failure ]
+http/tests/cache/disk-cache/disk-cache-302-status-code.html [ Pass ]
 
 http/tests/cache-storage [ Skip ]
 http/tests/canvas [ Skip ]

@@ -103,6 +103,7 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
     }
     setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
     setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)));
+    setSource(ResourceResponse::Source::Network);
 }
 
 void ResourceResponse::appendHTTPHeaderField(const String& header)

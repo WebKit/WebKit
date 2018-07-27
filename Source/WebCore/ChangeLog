@@ -1,3 +1,18 @@
+2018-07-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Set correct source info to ResourceResponse.
+        https://bugs.webkit.org/show_bug.cgi?id=188069
+
+        Reviewed by Fujii Hironori.
+
+        ResourceResponseBase::Source::Network must be set by each ports. Curl port
+        didn't set this.
+
+        Test: http/tests/cache/disk-cache/disk-cache-302-status-code.html
+
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+
 2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Remove INTL sub-feature compile flags
