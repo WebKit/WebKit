@@ -1,3 +1,14 @@
+2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Remove INTL sub-feature compile flags
+        https://bugs.webkit.org/show_bug.cgi?id=188081
+
+        Reviewed by Michael Catanzaro.
+
+        Removed old and unused i18n flag.
+
+        * StitchMarker/wtf/FeatureDefines.h:
+
 2018-07-20  David Fenton  <david_fenton@apple.com>
 
         REGRESSION (234006) ERROR: Blocked access to external URL http://code.jquery.com/jquery-1.9.1.min.js

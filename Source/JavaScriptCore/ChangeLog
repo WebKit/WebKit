@@ -1,3 +1,21 @@
+2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Remove INTL sub-feature compile flags
+        https://bugs.webkit.org/show_bug.cgi?id=188081
+
+        Reviewed by Michael Catanzaro.
+
+        Removed ENABLE_INTL_NUMBER_FORMAT_TO_PARTS and ENABLE_INTL_PLURAL_RULES flags.
+        The runtime flags are still present, and should be relied on instead.
+        The defines for ICU features have also been updated to match HAVE() style.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::resolvedOptions):
+        (JSC::IntlPluralRules::select):
+        * runtime/IntlPluralRules.h:
+        * runtime/Options.h:
+
 2018-07-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Dump IndexingMode in Structure

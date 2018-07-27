@@ -1,3 +1,13 @@
+2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Remove INTL sub-feature compile flags
+        https://bugs.webkit.org/show_bug.cgi?id=188081
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-07-26  Chris Dumez  <cdumez@apple.com>
 
         Loading a file URL and then issuing a reload right away causes the load to fail due to sandboxing

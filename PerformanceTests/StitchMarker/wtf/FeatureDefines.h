@@ -522,10 +522,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_INTL 0
 #endif
 
-#if !defined(ENABLE_JAVASCRIPT_I18N_API)
-#define ENABLE_JAVASCRIPT_I18N_API 0
-#endif
-
 #if !defined(ENABLE_LEGACY_CSS_VENDOR_PREFIXES)
 #define ENABLE_LEGACY_CSS_VENDOR_PREFIXES 0
 #endif

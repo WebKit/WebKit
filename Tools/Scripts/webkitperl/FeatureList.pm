@@ -91,8 +91,6 @@ my (
     $inputTypeTimeSupport,
     $inputTypeWeekSupport,
     $intlSupport,
-    $intlNumberFormatToPartsSupport,
-    $intlPluralRulesSupport,
     $jitSupport,
     $legacyEncryptedMediaSupport,
     $legacyNotificationsSupport,
@@ -263,12 +261,6 @@ my @features = (
 
     { option => "intl", desc => "Toggle Intl support",
       define => "ENABLE_INTL", value => \$intlSupport },
-
-    { option => "intlNumberFormatToParts", desc => "Toggle Intl.NumberFormat.prototype.formatToParts support",
-      define => "ENABLE_INTL_NUMBER_FORMAT_TO_PARTS", value => \$intlNumberFormatToPartsSupport },
-
-    { option => "intlPluralRules", desc => "Toggle Intl.PluralRules support",
-      define => "ENABLE_INTL_PLURAL_RULES", value => \$intlPluralRulesSupport },
 
     { option => "jit", desc => "Enable just-in-time JavaScript support",
       define => "ENABLE_JIT", value => \$jitSupport },

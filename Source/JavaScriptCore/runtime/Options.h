@@ -112,13 +112,13 @@ constexpr bool enableAsyncIteration = true;
 constexpr bool enableAsyncIteration = false;
 #endif
 
-#if ENABLE(INTL_NUMBER_FORMAT_TO_PARTS) && (!PLATFORM(COCOA) || ENABLE(EXPERIMENTAL_FEATURES))
+#if ENABLE(EXPERIMENTAL_FEATURES)
 constexpr bool enableIntlNumberFormatToParts = true;
 #else
 constexpr bool enableIntlNumberFormatToParts = false;
 #endif
 
-#if ENABLE(INTL_PLURAL_RULES) && (!PLATFORM(COCOA) || ENABLE(EXPERIMENTAL_FEATURES))
+#if ENABLE(EXPERIMENTAL_FEATURES)
 constexpr bool enableIntlPluralRules = true;
 #else
 constexpr bool enableIntlPluralRules = false;

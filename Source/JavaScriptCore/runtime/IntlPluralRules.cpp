@@ -214,7 +214,7 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
         options->putDirect(vm, Identifier::fromString(&vm, "maximumSignificantDigits"), jsNumber(m_maximumSignificantDigits.value()));
     }
 
-#if JSC_ICU_HAS_PLURALRULES_KEYWORDS
+#if HAVE(ICU_PLURALRULES_KEYWORDS)
     JSGlobalObject* globalObject = exec.jsCallee()->globalObject(vm);
     JSArray* categories = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!categories)
@@ -252,7 +252,7 @@ JSValue IntlPluralRules::select(ExecState& exec, double value)
     if (!std::isfinite(value))
         return jsNontrivialString(&exec, "other"_s);
 
-#if JSC_ICU_HAS_PLURALRULES_WITH_FORMAT
+#if HAVE(ICU_PLURALRULES_WITH_FORMAT)
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 8> result(8);
     auto length = uplrules_selectWithFormat(m_pluralRules.get(), value, m_numberFormat.get(), result.data(), result.size(), &status);
