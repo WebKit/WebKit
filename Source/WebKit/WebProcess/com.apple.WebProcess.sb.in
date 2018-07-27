@@ -165,7 +165,6 @@
         "hw.byteorder"
         "hw.busfrequency_max"
         "hw.cputype"
-        "hw.l2cachesize"
         "hw.machine"
         "hw.memsize"
         "hw.model"
@@ -176,10 +175,12 @@
         "kern.memorystatus_level"
         "kern.safeboot"
         "kern.version"
+        "machdep.cpu.brand_string"
         "security.mac.sandbox.sentinel"
         "vm.footprint_suspend")
     (sysctl-name-regex #"^hw.(active|avail)cpu")
-    (sysctl-name-regex #"^hw.(busfrequency|cachelinesize|cpufrequency|pagesize|tbfrequency)_compat")
+    (sysctl-name-regex #"^hw.(busfrequency|cachelinesize|cpufrequency(|_max)|pagesize|tbfrequency)(|_compat)")
+    (sysctl-name-regex #"^hw.l.+cachesize")
     (sysctl-name-regex #"^hw.(logical|physical)cpu_max")
     (sysctl-name-regex #"^hw.optional\.")
     (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
@@ -260,6 +261,7 @@
     (iokit-property-regex #"^IOName(|Match(|ed))")
     (iokit-property "IOOCDBundleName")
     (iokit-property "IOPCITunnelled")
+    (iokit-property "IOPCITunnelCompatible")
     (iokit-property "IOPMStrictTreeOrder")
     (iokit-property "IOParentMatch")
     (iokit-property-regex #"^IOPCI((Class|Primary|Property|)Match|Express(Capabilities|Link(Status|Capabilities))|MSIMode|Resourced|Tunnelled)")
@@ -492,6 +494,11 @@
 (allow file-read*
     (literal "/Library/Preferences/com.apple.ViewBridge.plist"))
 
+; FIXME: This is needed for some security framework calls (that use non-CFPreferences readers)
+(allow file-read-data
+    (literal "/Library/Preferences/com.apple.security.plist")
+    (home-subpath "/Library/Preferences/com.apple.security.plist"))
+
 ;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
 ;; and to allow issuing extensions.
 (allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
@@ -573,12 +580,14 @@
        (global-name "com.apple.analyticsd")
        (global-name "com.apple.audio.AudioComponentRegistrar")
 #endif
+       (global-name "com.apple.assertiond.processassertionconnection")
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
        (global-name "com.apple.awdd")
        (global-name "com.apple.cfnetwork.AuthBrokerAgent")
        (global-name "com.apple.cfprefsd.agent")
        (global-name "com.apple.cfprefsd.daemon")
+       (global-name "com.apple.cmio.registerassistantservice") ;; Needed by CoreMedia for plugin drivers
        (global-name "com.apple.cookied")
        (global-name "com.apple.coreservices.launchservicesd")
        (global-name "com.apple.diagnosticd")
@@ -593,6 +602,7 @@
        (global-name "com.apple.lsd.mapdb")
        (global-name "com.apple.mobileassetd")
        (global-name "com.apple.nesessionmanager.flow-divert-token")
+       (global-name "com.apple.powerlog.plxpclogger.xpc")
        (global-name "com.apple.speech.speechsynthesisd")
        (global-name "com.apple.speech.synthesis.console")
        (global-name "com.apple.system.DirectoryService.libinfo_v1")
@@ -613,9 +623,17 @@
        (global-name "com.apple.xpcd")
 )
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.ViewBridgeAuxiliary")
+    (global-name "com.apple.windowserver.active"))
+#endif
+
+
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
 (allow mach-lookup
-    (global-name "com.apple.SecurityServer"))
+    (global-name "com.apple.SecurityServer")
+    (global-name "com.apple.ocspd"))
 
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
