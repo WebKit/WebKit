@@ -1,9 +1,0 @@
-Tests fullscreen video going into pip should exit fullscreen
-
-Going into Full Screen
-EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLVideoElement]') OK
-Going into Picture-in-Picture from Full Screen
-Entered Picture-in-Picture from Full Screen
-EXPECTED (document.webkitCurrentFullScreenElement == 'null') OK
-END OF TEST
-

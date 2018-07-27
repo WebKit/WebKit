@@ -58,16 +58,17 @@ class FloatSize;
 class VideoFullscreenModel;
 class VideoFullscreenChangeObserver;
     
-class WEBCORE_EXPORT VideoFullscreenInterfaceAVKit final
+class VideoFullscreenInterfaceAVKit final
     : public VideoFullscreenModelClient
     , public PlaybackSessionModelClient
     , public ThreadSafeRefCounted<VideoFullscreenInterfaceAVKit> {
 
 public:
-    static Ref<VideoFullscreenInterfaceAVKit> create(PlaybackSessionInterfaceAVKit&);
+    WEBCORE_EXPORT static Ref<VideoFullscreenInterfaceAVKit> create(PlaybackSessionInterfaceAVKit&);
     virtual ~VideoFullscreenInterfaceAVKit();
     WEBCORE_EXPORT void setVideoFullscreenModel(VideoFullscreenModel*);
     WEBCORE_EXPORT void setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver*);
+    PlaybackSessionInterfaceAVKit& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
     // VideoFullscreenModelClient
@@ -130,14 +131,14 @@ public:
     Mode m_targetMode;
 #endif
 
-    VideoFullscreenModel* model() const { return m_videoFullscreenModel; }
+    VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel; }
     bool shouldExitFullscreenWithReason(ExitFullScreenReason);
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_currentMode.mode(); }
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
     void fullscreenMayReturnToInline(WTF::Function<void(bool)>&& callback);
     bool wirelessVideoPlaybackDisabled() const;
-    void applicationDidBecomeActive();
+    WEBCORE_EXPORT void applicationDidBecomeActive();
 
     void willStartPictureInPicture();
     void didStartPictureInPicture();
@@ -151,7 +152,7 @@ public:
 #endif
     bool isPlayingVideoInEnhancedFullscreen() const;
 
-    void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
+    WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_currentMode.hasMode(mode); }
 
@@ -159,6 +160,7 @@ public:
     UIViewController *presentingViewController();
     UIViewController *fullscreenViewController() const { return m_viewController.get(); }
     WebAVPlayerLayerView* playerLayerView() const { return m_playerLayerView.get(); }
+    WEBCORE_EXPORT bool pictureInPictureWasStartedWhenEnteringBackground() const;
 #endif
 
 protected:

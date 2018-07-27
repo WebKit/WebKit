@@ -3283,6 +3283,11 @@ void WebViewImpl::videoControlsManagerDidChange()
 #if HAVE(TOUCH_BAR)
     updateTouchBar();
 #endif
+
+#if ENABLE(FULLSCREEN_API)
+    if (hasFullScreenWindowController())
+        [fullScreenWindowController() videoControlsManagerDidChange];
+#endif
 }
 
 void WebViewImpl::setIgnoresNonWheelEvents(bool ignoresNonWheelEvents)
