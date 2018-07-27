@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
+#include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -81,6 +82,8 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #if ENABLE(APPLICATION_MANIFEST)
     copy->m_applicationManifest = this->m_applicationManifest;
 #endif
+    for (auto& pair : this->m_urlSchemeHandlers)
+        copy->m_urlSchemeHandlers.set(pair.key, pair.value.copyRef());
 
     return copy;
 }
@@ -172,6 +175,16 @@ PAL::SessionID PageConfiguration::sessionID()
 void PageConfiguration::setSessionID(PAL::SessionID sessionID)
 {
     m_sessionID = sessionID;
+}
+
+RefPtr<WebKit::WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLScheme(const WTF::String& scheme)
+{
+    return m_urlSchemeHandlers.get(scheme);
+}
+
+void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&& handler, const WTF::String& scheme)
+{
+    m_urlSchemeHandlers.set(scheme, WTFMove(handler));
 }
 
 #if ENABLE(APPLICATION_MANIFEST)

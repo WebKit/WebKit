@@ -1,3 +1,38 @@
+2018-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Begin making WKWebViewConfiguration a wrapper around an API::PageConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=188030
+
+        Reviewed by Sam Weinig.
+
+        Eventually WKWebViewConfiguration should become just a API::ObjectStorage<API::PageConfiguration>.
+        The transition includes adding fields that exist in WKWebViewConfiguration to API::PageConfiguration
+        and making WKWebViewConfiguration's getters and setters just call API::PageConfiguration's corresponding methods
+        instead of having an ivar for each value then copying it to an API::PageConfiguration we construct in
+        the WKWebView constructor.  To transition incrementally, I've added a RefPtr<API::PageConfiguration> ivar to
+        WKWebViewConfiguration and moved a few ivars to use the values stored in that API::PageConfiguration instead.
+        I've arbitrarily chosen _treatsSHA1SignedCertificatesAsInsecure and _urlSchemeHandlers as the first two 
+        properties to transition, and I'll continue transitioning each ivar in small, easy-to-review bunches.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        (API::PageConfiguration::urlSchemeHandlerForURLScheme):
+        (API::PageConfiguration::setURLSchemeHandlerForURLScheme):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::urlSchemeHandlers):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration setURLSchemeHandler:forURLScheme:]):
+        (-[WKWebViewConfiguration urlSchemeHandlerForURLScheme:]):
+        (-[WKWebViewConfiguration copyPageConfiguration]):
+        (-[WKWebViewConfiguration _treatsSHA1SignedCertificatesAsInsecure]):
+        (-[WKWebViewConfiguration _setTreatsSHA1SignedCertificatesAsInsecure:]):
+        (-[WKWebViewConfiguration _urlSchemeHandlers]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h:
+
 2018-07-27  Chris Dumez  <cdumez@apple.com>
 
         Loading a file URL and then issuing a reload right away causes the load to fail due to sandboxing

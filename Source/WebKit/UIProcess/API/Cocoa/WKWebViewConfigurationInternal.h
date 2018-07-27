@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "APIPageConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import <wtf/Ref.h>
 
 #if WK_API_ENABLED
 
@@ -32,11 +34,11 @@
 
 @interface WKWebViewConfiguration ()
 
-@property (nonatomic, readonly) NSMutableDictionary<NSString *, id <WKURLSchemeHandler>> *_urlSchemeHandlers;
-
 #if PLATFORM(IOS)
 @property (nonatomic, setter=_setContentProviderRegistry:) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 #endif
+
+- (Ref<API::PageConfiguration>)copyPageConfiguration;
 
 @end
 

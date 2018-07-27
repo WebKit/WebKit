@@ -38,6 +38,7 @@
 #import "WKWebView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebKit2Initialize.h"
+#import "WebURLSchemeHandlerCocoa.h"
 #import "_WKVisitedLinkStore.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -104,6 +105,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #endif
 
 @implementation WKWebViewConfiguration {
+    RefPtr<API::PageConfiguration> _pageConfiguration;
     LazyInitialized<RetainPtr<WKProcessPool>> _processPool;
     LazyInitialized<RetainPtr<WKPreferences>> _preferences;
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
@@ -113,9 +115,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
     LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
-    LazyInitialized<RetainPtr<NSMutableDictionary<NSString *, id <WKURLSchemeHandler>>>> _urlSchemeHandlers;
     NSTimeInterval _incrementalRenderingSuppressionTimeout;
-    BOOL _treatsSHA1SignedCertificatesAsInsecure;
     BOOL _respectsImageOrientation;
     BOOL _printsBackgrounds;
     BOOL _allowsJavaScriptMarkup;
@@ -178,6 +178,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     WebKit::InitializeWebKit2();
 
+    _pageConfiguration = API::PageConfiguration::create();
+
 #if PLATFORM(IOS)
 #if !PLATFORM(WATCHOS)
     _allowsPictureInPictureMediaPlayback = YES;
@@ -230,7 +232,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _convertsPositionStyleOnCopy = NO;
     _allowsMetaRefresh = YES;
     _allowUniversalAccessFromFileURLs = NO;
-    _treatsSHA1SignedCertificatesAsInsecure = YES;
     _needsStorageAccessFromFileURLsQuirk = YES;
 
 #if PLATFORM(IOS)
@@ -339,6 +340,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 {
     WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
 
+    configuration->_pageConfiguration = _pageConfiguration->copy();
     configuration.processPool = self.processPool;
     configuration.preferences = self.preferences;
     configuration.userContentController = self.userContentController;
@@ -346,7 +348,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration._visitedLinkStore = self._visitedLinkStore;
     configuration._relatedWebView = _relatedWebView.get().get();
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
-    configuration->_treatsSHA1SignedCertificatesAsInsecure = _treatsSHA1SignedCertificatesAsInsecure;
 #if PLATFORM(IOS)
     configuration._contentProviderRegistry = self._contentProviderRegistry;
 #endif
@@ -408,7 +409,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
     configuration->_overrideContentSecurityPolicy = adoptNS([self->_overrideContentSecurityPolicy copyWithZone:zone]);
 
-    configuration->_urlSchemeHandlers.set(adoptNS([self._urlSchemeHandlers mutableCopyWithZone:zone]));
     configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
     configuration->_legacyEncryptedMediaAPIEnabled = self->_legacyEncryptedMediaAPIEnabled;
     configuration->_allowMediaContentTypesRequiringHardwareSupportAsFallback = self->_allowMediaContentTypesRequiringHardwareSupportAsFallback;
@@ -493,8 +493,6 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme
 {
-    auto *urlSchemeHandlers = _urlSchemeHandlers.get([] { return adoptNS([[NSMutableDictionary alloc] init]); });
-
     if ([WKWebView handlesURLScheme:urlScheme])
         [NSException raise:NSInvalidArgumentException format:@"'%@' is a URL scheme that WKWebView handles natively", urlScheme];
 
@@ -502,10 +500,10 @@ static NSString *defaultApplicationNameForUserAgent()
     if (!canonicalScheme)
         [NSException raise:NSInvalidArgumentException format:@"'%@' is not a valid URL scheme", urlScheme];
 
-    if ([urlSchemeHandlers objectForKey:(NSString *)canonicalScheme.value()])
+    if (_pageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme))
         [NSException raise:NSInvalidArgumentException format:@"URL scheme '%@' already has a registered URL scheme handler", urlScheme];
 
-    [urlSchemeHandlers setObject:urlSchemeHandler forKey:(NSString *)canonicalScheme.value()];
+    _pageConfiguration->setURLSchemeHandlerForURLScheme(WebKit::WebURLSchemeHandlerCocoa::create(urlSchemeHandler), *canonicalScheme);
 }
 
 - (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
@@ -514,8 +512,8 @@ static NSString *defaultApplicationNameForUserAgent()
     if (!canonicalScheme)
         return nil;
 
-    auto *urlSchemeHandlers = _urlSchemeHandlers.get([] { return adoptNS([[NSMutableDictionary alloc] init]); });
-    return [urlSchemeHandlers objectForKey:(NSString *)canonicalScheme.value()];
+    auto handler = _pageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme);
+    return handler ? static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler() : nil;
 }
 
 #pragma clang diagnostic push
@@ -533,11 +531,6 @@ static NSString *defaultApplicationNameForUserAgent()
 
 #pragma clang diagnostic pop
 
-- (NSMutableDictionary<NSString *, id <WKURLSchemeHandler>> *)_urlSchemeHandlers
-{
-    return _urlSchemeHandlers.get([] { return adoptNS([[NSMutableDictionary alloc] init]); });
-}
-
 #if PLATFORM(IOS)
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
 {
@@ -549,6 +542,11 @@ static NSString *defaultApplicationNameForUserAgent()
     _contentProviderRegistry.set(registry);
 }
 #endif
+
+- (Ref<API::PageConfiguration>)copyPageConfiguration
+{
+    return _pageConfiguration->copy();
+}
 
 @end
 
@@ -586,12 +584,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_treatsSHA1SignedCertificatesAsInsecure
 {
-    return _treatsSHA1SignedCertificatesAsInsecure;
+    return _pageConfiguration->treatsSHA1SignedCertificatesAsInsecure();
 }
 
 - (void)_setTreatsSHA1SignedCertificatesAsInsecure:(BOOL)insecure
 {
-    _treatsSHA1SignedCertificatesAsInsecure = insecure;
+    _pageConfiguration->setTreatsSHA1SignedCertificatesAsInsecure(insecure);
 }
 
 - (BOOL)_respectsImageOrientation

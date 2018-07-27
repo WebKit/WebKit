@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIPageConfiguration_h
-#define APIPageConfiguration_h
+#pragma once
 
 #include "APIObject.h"
 #include "WebPreferencesStore.h"
@@ -38,6 +37,7 @@ class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
 class WebProcessPool;
+class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 }
 
@@ -115,6 +115,10 @@ public:
     void setApplicationManifest(ApplicationManifest*);
 #endif
 
+    RefPtr<WebKit::WebURLSchemeHandler> urlSchemeHandlerForURLScheme(const WTF::String&);
+    void setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String&);
+    const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() { return m_urlSchemeHandlers; }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -130,14 +134,14 @@ private:
     // Once we get rid of it we should get rid of this configuration parameter as well.
     PAL::SessionID m_sessionID;
 
-    bool m_treatsSHA1SignedCertificatesAsInsecure = true;
+    bool m_treatsSHA1SignedCertificatesAsInsecure { true };
 #if PLATFORM(IOS)
-    bool m_alwaysRunsAtForegroundPriority = false;
+    bool m_alwaysRunsAtForegroundPriority { false };
 #endif
-    bool m_initialCapitalizationEnabled = true;
-    bool m_waitsForPaintAfterViewDidMoveToWindow = true;
-    bool m_drawsBackground = true;
-    bool m_controlledByAutomation = false;
+    bool m_initialCapitalizationEnabled { true };
+    bool m_waitsForPaintAfterViewDidMoveToWindow { true };
+    bool m_drawsBackground { true };
+    bool m_controlledByAutomation { false };
     std::optional<double> m_cpuLimit;
 
     WTF::String m_overrideContentSecurityPolicy;
@@ -145,9 +149,8 @@ private:
 #if ENABLE(APPLICATION_MANIFEST)
     RefPtr<ApplicationManifest> m_applicationManifest;
 #endif
+
+    HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> m_urlSchemeHandlers;
 };
 
 } // namespace API
-
-
-#endif // APIPageConfiguration_h
