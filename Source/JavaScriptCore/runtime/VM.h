@@ -289,7 +289,16 @@ public:
     JS_EXPORT_PRIVATE SamplingProfiler& ensureSamplingProfiler(RefPtr<Stopwatch>&&);
 #endif
 
+    static unsigned numberOfIDs() { return s_numberOfIDs.load(); }
+    unsigned id() const { return m_id; }
+    bool isEntered() const { return !!entryScope; }
+
 private:
+    unsigned nextID();
+
+    static Atomic<unsigned> s_numberOfIDs;
+
+    unsigned m_id;
     RefPtr<JSLock> m_apiLock;
 #if USE(CF)
     // These need to be initialized before heap below.

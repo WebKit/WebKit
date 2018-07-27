@@ -182,6 +182,8 @@ bool VM::s_canUseJITIsSet = false;
 bool VM::s_canUseJIT = false;
 #endif
 
+Atomic<unsigned> VM::s_numberOfIDs;
+
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
 // ENABLE(JIT) or ENABLE(YARR_JIT) or both are enabled. The code below
 // just checks for ENABLE(JIT) or ENABLE(YARR_JIT) with this premise in mind.
@@ -247,8 +249,20 @@ bool VM::isInMiniMode()
     return !canUseJIT() || Options::forceMiniVMMode();
 }
 
+inline unsigned VM::nextID()
+{
+    for (;;) {
+        unsigned currentNumberOfIDs = s_numberOfIDs.load();
+        unsigned newID = currentNumberOfIDs + 1;
+        if (s_numberOfIDs.compareExchangeWeak(currentNumberOfIDs, newID))
+            return newID;
+    }
+}
+
+
 VM::VM(VMType vmType, HeapType heapType)
-    : m_apiLock(adoptRef(new JSLock(this)))
+    : m_id(nextID())
+    , m_apiLock(adoptRef(new JSLock(this)))
 #if USE(CF)
     , m_runLoop(CFRunLoopGetCurrent())
 #endif // USE(CF)

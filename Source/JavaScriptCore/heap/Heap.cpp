@@ -1121,14 +1121,20 @@ void Heap::collectInCollectorThread()
     }
 }
 
+ALWAYS_INLINE int asInt(CollectorPhase phase)
+{
+    return static_cast<int>(phase);
+}
+
 void Heap::checkConn(GCConductor conn)
 {
+    unsigned worldState = m_worldState.load();
     switch (conn) {
     case GCConductor::Mutator:
-        RELEASE_ASSERT(m_worldState.load() & mutatorHasConnBit);
+        RELEASE_ASSERT(worldState & mutatorHasConnBit, worldState, asInt(m_lastPhase), asInt(m_currentPhase), asInt(m_nextPhase), vm()->id(), VM::numberOfIDs(), vm()->isEntered());
         return;
     case GCConductor::Collector:
-        RELEASE_ASSERT(!(m_worldState.load() & mutatorHasConnBit));
+        RELEASE_ASSERT(!(worldState & mutatorHasConnBit), worldState, asInt(m_lastPhase), asInt(m_currentPhase), asInt(m_nextPhase), vm()->id(), VM::numberOfIDs(), vm()->isEntered());
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -1519,6 +1525,7 @@ bool Heap::changePhase(GCConductor conn, CollectorPhase nextPhase)
 {
     checkConn(conn);
 
+    m_lastPhase = m_currentPhase;
     m_nextPhase = nextPhase;
 
     return finishChangingPhase(conn);

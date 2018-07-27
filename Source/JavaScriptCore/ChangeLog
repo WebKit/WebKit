@@ -1,3 +1,42 @@
+2018-07-27  Mark Lam  <mark.lam@apple.com>
+
+        Add some crash info to Heap::checkConn() RELEASE_ASSERTs.
+        https://bugs.webkit.org/show_bug.cgi?id=188123
+        <rdar://problem/42672268>
+
+        Reviewed by Keith Miller.
+
+        1. Add VM::m_id and Heap::m_lastPhase fields.  Both of these fit within existing
+           padding space in VM and Heap, and should not cost any measurable perf to
+           initialize and update.
+
+        2. Add some crash info to the RELEASE_ASSERTs in Heap::checkConn():
+
+           worldState tells us the value we failed the assertion on.
+
+           m_lastPhase, m_currentPhase, and m_nextPhase tells us the GC phase transition
+           that led us here.
+
+           VM::id(), and VM::numberOfIDs() tells us how many VMs may be in play.
+
+           VM::isEntered() tells us if the current VM is currently executing JS code.
+
+           Some of this data may be redundant, but the redundancy is intentional so that
+           we can double check what is really happening at the time of crash.
+
+        * heap/Heap.cpp:
+        (JSC::asInt):
+        (JSC::Heap::checkConn):
+        (JSC::Heap::changePhase):
+        * heap/Heap.h:
+        * runtime/VM.cpp:
+        (JSC::VM::nextID):
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::numberOfIDs):
+        (JSC::VM::id const):
+        (JSC::VM::isEntered const):
+
 2018-07-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Record CoW status in ArrayProfile correctly

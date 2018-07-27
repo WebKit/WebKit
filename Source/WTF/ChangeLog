@@ -1,3 +1,44 @@
+2018-07-27  Mark Lam  <mark.lam@apple.com>
+
+        Add some crash info to Heap::checkConn() RELEASE_ASSERTs.
+        https://bugs.webkit.org/show_bug.cgi?id=188123
+        <rdar://problem/42672268>
+
+        Reviewed by Keith Miller.
+
+        1. Rename STUFF_FOR_CRASH_REGISTERx to CRASH_GPRx.  These are only used in
+           locally in Assertions.cpp.  There is little to no chance of a name collision,
+           and the shorter names will be much easier to read and grok in the code.
+
+        2. Added an additional 2 registers so that we can pass more info.
+
+        3. Change the WTFCrashWithInfo() implementations to issue only a single asm
+           statement so that the compiler does not inadvertently move values out of the
+           CRASH_GPRs that we want them to be in.
+
+        4. Use register targeting for local variables to get the compiler to put our
+           desired values in specific registers.  For how this works, see
+           https://gcc.gnu.org/onlinedocs/gcc/Local-Register-Variables.html#Local-Register-Variables
+
+           "The only supported use for this feature is to specify registers for input and
+           output operands when calling Extended asm (see Extended Asm).  This may be
+           necessary if the constraints for a particular machine don’t provide sufficient
+           control to select the desired register."
+
+        5. Enhance ASSERT, ASSERT_UNUSED, RELEASE_ASSERT, RELEASE_ASSERT_NOT_REACHED to
+           accept crash info arguments.  We no longer need to use an if statement with a
+           call to CRASH_WITH_INFO instead of these assertions.  The only case not handled
+           yet is one where we might want to dataLog some info before the crash.  I'll
+           add that functionality in a subsequent patch.
+
+        6. Move UNREACHABLE_FOR_PLATFORM to the bottom of Assertions.h because it depends
+           on the definition of RELEASE_ASSERT_NOT_REACHED, which now depends on the
+           definiton of CRASH_WITH_INFO.
+
+        * wtf/Assertions.cpp:
+        (WTFCrashWithInfo):
+        * wtf/Assertions.h:
+
 2018-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Make CompletionHandler more const correct
