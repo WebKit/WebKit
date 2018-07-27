@@ -6,6 +6,17 @@
         Make API tests use new delegate method.
 
         * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesWebsiteDataStoreDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+
+2018-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API tests after r234314
+        https://bugs.webkit.org/show_bug.cgi?id=188077
+
+        Make API tests use new delegate method.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
         (-[ContentBlockingWebsitePoliciesDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
         (-[AutoplayPoliciesDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
         (-[AsyncAutoplayPoliciesDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):

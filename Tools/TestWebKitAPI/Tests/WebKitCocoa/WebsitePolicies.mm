@@ -919,7 +919,7 @@ static bool done;
 
 @implementation WebsitePoliciesWebsiteDataStoreDelegate
 
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
 {
     NSURL *url = navigationAction.request.URL;
     if ([url.path isEqualToString:@"/invalid"]) {
