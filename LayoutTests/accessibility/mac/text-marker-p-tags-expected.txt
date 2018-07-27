@@ -1,0 +1,21 @@
+This tests that previous sentence/word/paragraph text marker calls work with p tag elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectedString is 'Where'
+Previous sentence: Test sentence two
+
+
+Previous word: two
+
+
+Previous paragraph: Test sentence one. Test sentence two
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test sentence one. Test sentence two
+
+Where

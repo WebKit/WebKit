@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div>
+<p id="p1">Test sentence one. Test sentence two</p>
+</div>
+<div>
+<p id="p2">Where</p>
+</div>
+
+<script>
+
+    description("This tests that previous sentence\/word\/paragraph text marker calls work with p tag elements");
+
+    if (window.accessibilityController) {
+
+        // select text
+        selectText('p2');
+        var p2 = accessibilityController.accessibleElementById("p2");
+        var selectedRange = p2.selectedTextMarkerRange();
+        var selectedString = p2.stringForTextMarkerRange(selectedRange);
+        shouldBe("selectedString", "'Where'");
+
+        var startTextMarker = p2.startTextMarkerForTextMarkerRange(selectedRange);
+        var preSentenceStart = p2.previousSentenceStartTextMarkerForTextMarker(startTextMarker);
+        var sentenceRange = p2.textMarkerRangeForMarkers(preSentenceStart, startTextMarker);
+        var sentenceString = p2.stringForTextMarkerRange(sentenceRange);
+        debug("Previous sentence: " + sentenceString);
+
+        var preWordStart = p2.previousWordStartTextMarkerForTextMarker(startTextMarker);
+        var wordRange = p2.textMarkerRangeForMarkers(preWordStart, startTextMarker);
+        var wordString = p2.stringForTextMarkerRange(wordRange);
+        debug("Previous word: " + wordString);
+
+        var preParagraphStart = p2.previousParagraphStartTextMarkerForTextMarker(startTextMarker);
+        var paragraphRange = p2.textMarkerRangeForMarkers(preParagraphStart, startTextMarker);
+        var paragraphString = p2.stringForTextMarkerRange(paragraphRange);
+        debug("Previous paragraph: " + paragraphString);
+    }
+
+    function selectText(node) {
+        node = document.getElementById(node);
+
+        if (document.body.createTextRange) {
+            const range = document.body.createTextRange();
+            range.moveToElementText(node);
+            range.select();
+        } else if (window.getSelection) {
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(node);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } else {
+            console.warn("Could not select text in node: Unsupported browser.");
+        }
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
