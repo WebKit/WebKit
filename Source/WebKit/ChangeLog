@@ -1,5 +1,31 @@
 2018-07-26  Chris Dumez  <cdumez@apple.com>
 
+        Loading a file URL and then issuing a reload right away causes the load to fail due to sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=188078
+        <rdar://problem/42562493>
+
+        Reviewed by Geoff Garen.
+
+        When WebPageProxy::loadFile() is called, we create a SandboxExtension::Handle for the resource path provided
+        by the caller and pass it to the WebProcess. WebPage::loadRequest() then calls SandboxExtensionTracker::beginLoad()
+        to store this handle in m_provisionalSandboxExtension for later consumption.
+
+        If a reload is issued before this sandbox extension has been consumed, then the following happens:
+        1. WebPageProxy::reload() does NOT create a SandboxExtension::Handle because it has already issued one earlier.
+           maybeInitializeSandboxExtensionHandle() returns early due to m_process->hasAssumedReadAccessToURL(url) check.
+        2. WebPage::reload() then calls SandboxExtensionTracker::beginLoad() with a null handle, which overwrites the
+           previous m_provisionalSandboxExtension its needs.
+        3. The load fails because the WebContent process is missing the sandbox extension.
+
+        To address the issue, SandboxExtensionTracker::beginLoad() is updated to only overwrite m_provisionalSandboxExtension
+        if the new handle is not null. This avoids inadvertently clearing a valid sandbox extension we may need for the load,
+        since the UIProcess sends us a null handle if it previously sent us a sandbox extension for the path in question.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::SandboxExtensionTracker::beginLoad):
+
+2018-07-26  Chris Dumez  <cdumez@apple.com>
+
         It should be possible to use WTF::CallbackAggregator from a background thread
         https://bugs.webkit.org/show_bug.cgi?id=188084
 

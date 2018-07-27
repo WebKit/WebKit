@@ -157,6 +157,7 @@
 		4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */; };
 		44817A2F1F0486BF00003810 /* WKRequestActivatedElementInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */; };
 		448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */; };
+		4612C2B9210A6ACE00B788A6 /* LoadFileThenReload.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4612C2B8210A6ABF00B788A6 /* LoadFileThenReload.mm */; };
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
 		4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */; };
 		466C3843210637DE006A88DE /* notify-resourceLoadObserver.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */; };
@@ -1398,6 +1399,7 @@
 		44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRequestActivatedElementInfo.mm; sourceTree = "<group>"; };
 		448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentUtilitiesTest.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
+		4612C2B8210A6ABF00B788A6 /* LoadFileThenReload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadFileThenReload.mm; sourceTree = "<group>"; };
 		46397B941DC2C850009A78AE /* DOMNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNode.mm; sourceTree = "<group>"; };
 		4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessDidTerminate.cpp; sourceTree = "<group>"; };
 		4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-3.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SimpleServiceWorkerRegistrations-3.sqlite3"; sourceTree = "<group>"; };
@@ -2290,6 +2292,7 @@
 				C25CCA051E51380B0026CB8A /* LineBreaking.mm */,
 				37D36ED61AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm */,
 				A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */,
+				4612C2B8210A6ABF00B788A6 /* LoadFileThenReload.mm */,
 				57901FAC1CAF12C200ED64F9 /* LoadInvalidURLRequest.mm */,
 				51E6A8921D2F1BEC00C004B6 /* LocalStorageClear.mm */,
 				CA38459520AE012E00990D3B /* LocalStorageDatabaseTracker.mm */,
@@ -3760,6 +3763,7 @@
 				7CCE7EFE1A411AE600447C4C /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */,
 				7CCE7EFF1A411AE600447C4C /* LoadCanceledNoServerRedirectCallback.cpp in Sources */,
 				A125478F1DB18B9400358564 /* LoadDataWithNilMIMEType.mm in Sources */,
+				4612C2B9210A6ACE00B788A6 /* LoadFileThenReload.mm in Sources */,
 				5C838F7F1DB04F900082858F /* LoadInvalidURLRequest.mm in Sources */,
 				7C83E0C01D0A652700FEBCF3 /* LoadInvalidURLRequest.mm in Sources */,
 				7CCE7F001A411AE600447C4C /* LoadPageOnCrash.cpp in Sources */,

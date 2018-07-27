@@ -1,3 +1,21 @@
+2018-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Loading a file URL and then issuing a reload right away causes the load to fail due to sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=188078
+        <rdar://problem/42562493>
+
+        Reviewed by Geoff Garen.
+
+        Add API test coverage. It exercises the right code path but unfortunately is not yet a regression
+        test because TestWebKitAPI does not appear to be sandboxed (rdar://problem/42638129).
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadFileThenReload.mm: Added.
+        (-[LoadFileThenReloadDelegate webView:didFinishNavigation:]):
+        (-[LoadFileThenReloadDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[LoadFileThenReloadDelegate webView:didFailNavigation:withError:]):
+        (TEST):
+
 2018-07-26  Aaron Chu  <aaron_chu@apple.com>
 
         Add Aaron Chu as a committer to contributors.json

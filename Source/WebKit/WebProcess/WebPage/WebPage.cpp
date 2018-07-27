@@ -4086,7 +4086,8 @@ void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, SandboxExtensi
 {
     ASSERT_UNUSED(frame, frame->isMainFrame());
 
-    setPendingProvisionalSandboxExtension(SandboxExtension::create(WTFMove(handle)));
+    if (auto sandboxExtension = SandboxExtension::create(WTFMove(handle)))
+        setPendingProvisionalSandboxExtension(WTFMove(sandboxExtension));
 }
 
 void WebPage::SandboxExtensionTracker::setPendingProvisionalSandboxExtension(RefPtr<SandboxExtension>&& pendingProvisionalSandboxExtension)
