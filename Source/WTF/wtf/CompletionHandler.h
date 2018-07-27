@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "Function.h"
+#include <wtf/Function.h>
 
 namespace WTF {
 
 template<typename> class CompletionHandler;
 
-// Wraps a WTF::Function to make sure it is always called once and only once.
+// Wraps a Function to make sure it is always called once and only once.
 template <typename Out, typename... In>
 class CompletionHandler<Out(In...)> {
 public:
@@ -53,15 +53,14 @@ public:
 
     explicit operator bool() const { return !!m_function; }
 
-    Out operator()(In... in) const
+    Out operator()(In... in)
     {
         ASSERT_WITH_MESSAGE(m_function, "Completion handler should not be called more than once");
-        auto function = WTFMove(m_function);
-        return function(std::forward<In>(in)...);
+        return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
     }
 
 private:
-    mutable WTF::Function<Out(In...)> m_function;
+    Function<Out(In...)> m_function;
 };
 
 class CompletionHandlerCallingScope {

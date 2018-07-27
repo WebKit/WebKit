@@ -1,3 +1,32 @@
+2018-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Make CompletionHandler more const correct
+        https://bugs.webkit.org/show_bug.cgi?id=186543
+
+        Reviewed by Saam Barati.
+
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::checkRemotePortForActivity):
+        * dom/messageports/MessagePortChannelProviderImpl.cpp:
+        (WebCore::MessagePortChannelProviderImpl::checkRemotePortForActivity):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadPostRequest):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (WebCore::WebCoreNSURLSessionDataTaskClient::redirectReceived):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::pushChanges):
+        (WebCore::RegistrationDatabase::clearAll):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::matchAll):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::matchAll):
+        * workers/service/server/SWServerWorker.h:
+
 2018-07-27  Simon Fraser  <simon.fraser@apple.com>
 
         Be more conservative with compositing layer creation when memory is low

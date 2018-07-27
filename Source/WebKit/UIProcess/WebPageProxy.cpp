@@ -4267,7 +4267,7 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
 
     auto mainFrameURL = m_mainFrame->url();
 
-    m_uiClient->createNewPage(*this, WTFMove(originatingFrameInfo), WTFMove(request), WTFMove(windowFeatures), WTFMove(navigationActionData), [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply)](RefPtr<WebPageProxy> newPage) {
+    m_uiClient->createNewPage(*this, WTFMove(originatingFrameInfo), WTFMove(request), WTFMove(windowFeatures), WTFMove(navigationActionData), [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply)] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(0, { });
             return;
@@ -4448,7 +4448,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 void WebPageProxy::webGLPolicyForURL(URL&& url, Messages::WebPageProxy::WebGLPolicyForURL::DelayedReply&& reply)
 {
     if (m_navigationClient) {
-        m_navigationClient->webGLLoadPolicy(*this, url, [reply = WTFMove(reply)](WebGLLoadPolicy policy) {
+        m_navigationClient->webGLLoadPolicy(*this, url, [reply = WTFMove(reply)] (WebGLLoadPolicy policy) mutable {
             reply(static_cast<uint32_t>(policy));
         });
     } else
@@ -4458,7 +4458,7 @@ void WebPageProxy::webGLPolicyForURL(URL&& url, Messages::WebPageProxy::WebGLPol
 void WebPageProxy::resolveWebGLPolicyForURL(URL&& url, Messages::WebPageProxy::ResolveWebGLPolicyForURL::DelayedReply&& reply)
 {
     if (m_navigationClient) {
-        m_navigationClient->resolveWebGLLoadPolicy(*this, url, [reply = WTFMove(reply)](WebGLLoadPolicy policy) {
+        m_navigationClient->resolveWebGLLoadPolicy(*this, url, [reply = WTFMove(reply)] (WebGLLoadPolicy policy) mutable {
             reply(static_cast<uint32_t>(policy));
         });
     } else
@@ -4508,7 +4508,7 @@ void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 
 void WebPageProxy::getWindowFrame(Messages::WebPageProxy::GetWindowFrame::DelayedReply&& reply)
 {
-    m_uiClient->windowFrame(*this, [this, protectedThis = makeRef(*this), reply = WTFMove(reply)] (FloatRect frame) {
+    m_uiClient->windowFrame(*this, [this, protectedThis = makeRef(*this), reply = WTFMove(reply)] (FloatRect frame) mutable {
         reply(m_pageClient.convertToUserSpace(frame));
     });
 }

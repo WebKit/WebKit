@@ -229,7 +229,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
     SimulatedInputSourceState& a = inputSource.state;
     SimulatedInputSourceState& b = newState;
 
-    AutomationCompletionHandler eventDispatchFinished = [&inputSource, &newState, completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) {
+    AutomationCompletionHandler eventDispatchFinished = [&inputSource, &newState, completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) mutable {
         if (error) {
             completionHandler(error);
             return;

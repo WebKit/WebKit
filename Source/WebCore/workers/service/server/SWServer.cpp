@@ -414,7 +414,7 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
 }
 
 // https://w3c.github.io/ServiceWorker/#clients-getall
-void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOptions& options, const ServiceWorkerClientsMatchAllCallback& callback)
+void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
 {
     // FIXME: Support reserved client filtering.
     // FIXME: Support WindowClient additional properties.

@@ -102,7 +102,7 @@ void MessagePortChannelProviderImpl::takeAllMessagesForPort(const MessagePortIde
 
 void MessagePortChannelProviderImpl::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& outerCallback)
 {
-    auto callback = CompletionHandler<void(HasActivity)> { [outerCallback = WTFMove(outerCallback)](HasActivity hasActivity) {
+    auto callback = CompletionHandler<void(HasActivity)> { [outerCallback = WTFMove(outerCallback)](HasActivity hasActivity) mutable {
         ASSERT(isMainThread());
         outerCallback(hasActivity);
     } };

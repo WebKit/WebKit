@@ -540,9 +540,7 @@ void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandle
             if (WebCore::FileSystem::fileIsDirectory(filename, WebCore::FileSystem::ShouldFollowSymbolicLinks::No))
                 deleteDirectoryRecursively(filename);
         }
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
-            completionHandler();
-        });
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -591,9 +589,7 @@ void Engine::deleteDirectoryRecursivelyOnBackgroundThread(const String& path, Co
     m_ioQueue->dispatch([path = path.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         deleteDirectoryRecursively(path);
 
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
-            completionHandler();
-        });
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 

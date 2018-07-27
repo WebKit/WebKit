@@ -207,7 +207,7 @@ void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier&
         return;
     }
 
-    auto outerCallback = CompletionHandler<void(MessagePortChannelProvider::HasActivity)> { [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (MessagePortChannelProvider::HasActivity hasActivity) {
+    auto outerCallback = CompletionHandler<void(MessagePortChannelProvider::HasActivity)> { [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (MessagePortChannelProvider::HasActivity hasActivity) mutable {
         if (hasActivity == MessagePortChannelProvider::HasActivity::Yes) {
             callback(hasActivity);
             return;

@@ -1,3 +1,14 @@
+2018-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Make CompletionHandler more const correct
+        https://bugs.webkit.org/show_bug.cgi?id=186543
+
+        Reviewed by Saam Barati.
+
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandler<Out):
+        Calling a CompletionHandler mutates it. Make the code reflect that.
+
 2018-07-27  Simon Fraser  <simon.fraser@apple.com>
 
         Be more conservative with compositing layer creation when memory is low

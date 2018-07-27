@@ -93,7 +93,7 @@ void PingLoad::loadRequest(ResourceRequest&& request)
 
 void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
-    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTFMove(request), WTFMove(redirectResponse), nullptr, [this, completionHandler = WTFMove(completionHandler)](auto&& result) {
+    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTFMove(request), WTFMove(redirectResponse), nullptr, [this, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         if (!result.has_value()) {
             completionHandler({ });
             this->didFinish(result.error());

@@ -150,7 +150,7 @@ void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<W
     uint64_t callbackID = generateCallbackID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is fetching Website data", this);
 
-    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID](WebsiteData websiteData) {
+    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] (WebsiteData websiteData) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
         UNUSED_PARAM(sessionID);
@@ -167,7 +167,7 @@ void NetworkProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<
     auto callbackID = generateCallbackID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data", this);
 
-    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] {
+    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
         UNUSED_PARAM(sessionID);
@@ -185,7 +185,7 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, 
     uint64_t callbackID = generateCallbackID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data for several origins", this);
 
-    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] {
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
         UNUSED_PARAM(sessionID);
@@ -432,7 +432,7 @@ void NetworkProcessProxy::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::S
     }
     
     auto callbackId = generateCallbackID();
-    auto addResult = m_updatePartitionOrBlockCookiesCallbackMap.add(callbackId, [protectedThis = makeRef(*this), token = throttler().backgroundActivityToken(), callback = WTFMove(callback)] {
+    auto addResult = m_updatePartitionOrBlockCookiesCallbackMap.add(callbackId, [protectedThis = makeRef(*this), token = throttler().backgroundActivityToken(), callback = WTFMove(callback)] () mutable {
         callback();
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);

@@ -1458,7 +1458,7 @@ void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInt
         }
 
         // Bridge the flushed callback to our command's completion handler.
-        auto mouseEventsFlushedCallback = [completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) {
+        auto mouseEventsFlushedCallback = [completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) mutable {
             completionHandler(error);
         };
 
@@ -1482,7 +1482,7 @@ void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInt
 void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
 {
     // Bridge the flushed callback to our command's completion handler.
-    auto keyboardEventsFlushedCallback = [completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) {
+    auto keyboardEventsFlushedCallback = [completionHandler = WTFMove(completionHandler)](std::optional<AutomationCommandError> error) mutable {
         completionHandler(error);
     };
 

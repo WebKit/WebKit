@@ -131,9 +131,9 @@ std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(co
     return m_server.serviceWorkerClientWithOriginByID(origin(), clientId);
 }
 
-void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, const ServiceWorkerClientsMatchAllCallback& callback)
+void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
 {
-    return m_server.matchAll(*this, options, callback);
+    return m_server.matchAll(*this, options, WTFMove(callback));
 }
 
 void SWServerWorker::claim()

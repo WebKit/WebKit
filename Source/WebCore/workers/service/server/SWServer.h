@@ -156,7 +156,7 @@ public:
     void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, bool wasSuccessful);
     void didFinishActivation(SWServerWorker&);
     void workerContextTerminated(SWServerWorker&);
-    void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, const ServiceWorkerClientsMatchAllCallback&);
+    void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void claim(SWServerWorker&);
 
     WEBCORE_EXPORT void serverToContextConnectionCreated(SWServerToContextConnection&);

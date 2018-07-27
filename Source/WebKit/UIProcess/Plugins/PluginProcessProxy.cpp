@@ -178,17 +178,17 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
     }
 
     m_pendingFetchWebsiteDataRequests.clear();
-    for (const auto& callback : m_pendingFetchWebsiteDataCallbacks.values())
+    for (auto&& callback : m_pendingFetchWebsiteDataCallbacks.values())
         callback({ });
     m_pendingFetchWebsiteDataCallbacks.clear();
 
     m_pendingDeleteWebsiteDataRequests.clear();
-    for (const auto& callback : m_pendingDeleteWebsiteDataCallbacks.values())
+    for (auto&& callback : m_pendingDeleteWebsiteDataCallbacks.values())
         callback();
     m_pendingDeleteWebsiteDataRequests.clear();
 
     m_pendingDeleteWebsiteDataForHostNamesRequests.clear();
-    for (const auto& callback : m_pendingDeleteWebsiteDataForHostNamesCallbacks.values())
+    for (auto&& callback : m_pendingDeleteWebsiteDataForHostNamesCallbacks.values())
         callback();
     m_pendingDeleteWebsiteDataForHostNamesCallbacks.clear();
 

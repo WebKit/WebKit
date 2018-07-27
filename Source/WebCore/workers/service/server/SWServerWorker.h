@@ -92,7 +92,7 @@ public:
     void didFinishActivation();
     void contextTerminated();
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> findClientByIdentifier(const ServiceWorkerClientIdentifier&) const;
-    void matchAll(const ServiceWorkerClientQueryOptions&, const ServiceWorkerClientsMatchAllCallback&);
+    void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void claim();
     void setScriptResource(URL&&, ServiceWorkerContextData::ImportedScript&&);
 

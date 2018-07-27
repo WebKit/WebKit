@@ -832,7 +832,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     RefPtr<SubresourceLoader> mainResourceLoader = this->mainResourceLoader();
     if (mainResourceLoader)
         mainResourceLoader->markInAsyncResponsePolicyCheck();
-    frameLoader()->checkContentPolicy(m_response, [this, protectedThis = makeRef(*this), mainResourceLoader = WTFMove(mainResourceLoader), completionHandler = completionHandlerCaller.release()](PolicyAction policy) {
+    frameLoader()->checkContentPolicy(m_response, [this, protectedThis = makeRef(*this), mainResourceLoader = WTFMove(mainResourceLoader), completionHandler = completionHandlerCaller.release()] (PolicyAction policy) mutable {
         continueAfterContentPolicy(policy);
         if (mainResourceLoader)
             mainResourceLoader->didReceiveResponsePolicy();

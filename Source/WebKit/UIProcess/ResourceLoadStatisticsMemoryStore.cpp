@@ -389,7 +389,7 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const String& subFrameP
 
     RunLoop::main().dispatch([store = makeRef(m_store), subFramePrimaryDomain = subFramePrimaryDomain.isolatedCopy(), topFramePrimaryDomain = topFramePrimaryDomain.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
         store->callHasStorageAccessForFrameHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)](bool result) mutable {
-            store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] {
+            store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
                 completionHandler(result);
             });
         });
@@ -495,7 +495,7 @@ void ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal(String&& subF
 
     RunLoop::main().dispatch([subFramePrimaryDomain = subFramePrimaryDomain.isolatedCopy(), topFramePrimaryDomain = topFramePrimaryDomain.isolatedCopy(), frameID, pageID, store = makeRef(m_store), callback = WTFMove(callback)]() mutable {
         store->callGrantStorageAccessHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, [callback = WTFMove(callback), store = store.copyRef()](bool value) mutable {
-            store->statisticsQueue().dispatch([callback = WTFMove(callback), value] {
+            store->statisticsQueue().dispatch([callback = WTFMove(callback), value] () mutable {
                 callback(value);
             });
         });
@@ -1068,8 +1068,8 @@ void ResourceLoadStatisticsMemoryStore::updateCookiePartitioning(CompletionHandl
     }
 
     RunLoop::main().dispatch([this, store = makeRef(m_store), domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, ShouldClearFirst::No, [this, store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
-            store->statisticsQueue().dispatch([this, completionHandler = WTFMove(completionHandler)] {
+        store->callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, ShouldClearFirst::No, [this, store = store.copyRef(), completionHandler = WTFMove(completionHandler)] () mutable {
+            store->statisticsQueue().dispatch([this, completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler();
 
 #if !RELEASE_LOG_DISABLED

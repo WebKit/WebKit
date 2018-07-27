@@ -1366,7 +1366,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     if (!targetFrame && !frameName.isEmpty()) {
         action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));
-        policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(request), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
+        policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(request), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) mutable {
             continueLoadAfterNewWindowPolicy(request, formState.get(), frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
         });
@@ -1400,7 +1400,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (isSystemPreview)
         request.setSystemPreviewRect(frameLoadRequest.systemPreviewRect());
 #endif
-    loadWithNavigationAction(request, action, lockHistory, newLoadType, WTFMove(formState), allowNavigationToInvalidURL, [this, isRedirect, sameURL, newLoadType, protectedFrame = makeRef(m_frame), completionHandler = completionHandlerCaller.release()] {
+    loadWithNavigationAction(request, action, lockHistory, newLoadType, WTFMove(formState), allowNavigationToInvalidURL, [this, isRedirect, sameURL, newLoadType, protectedFrame = makeRef(m_frame), completionHandler = completionHandlerCaller.release()] () mutable {
         if (isRedirect) {
             m_quickRedirectComing = false;
             if (m_provisionalDocumentLoader)
@@ -1595,7 +1595,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         return;
     }
 
-    policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { } /* redirectResponse */, loader, WTFMove(formState), [this, protectedFrame = makeRef(m_frame), allowNavigationToInvalidURL, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<FormState>&& formState, ShouldContinue shouldContinue) {
+    policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { } /* redirectResponse */, loader, WTFMove(formState), [this, protectedFrame = makeRef(m_frame), allowNavigationToInvalidURL, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<FormState>&& formState, ShouldContinue shouldContinue) mutable {
         continueLoadAfterNavigationPolicy(request, formState.get(), shouldContinue, allowNavigationToInvalidURL);
         completionHandler();
     });
@@ -2915,7 +2915,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
             return;
         }
 
-        policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(workingResourceRequest), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = WTFMove(completionHandler)] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) {
+        policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(workingResourceRequest), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = WTFMove(completionHandler)] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue) mutable {
             continueLoadAfterNewWindowPolicy(request, formState.get(), frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
         });
@@ -2924,7 +2924,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     // must grab this now, since this load may stop the previous load and clear this flag
     bool isRedirect = m_quickRedirectComing;
-    loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL, [this, isRedirect, protectedFrame = makeRef(m_frame), completionHandler = WTFMove(completionHandler)] {
+    loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL, [this, isRedirect, protectedFrame = makeRef(m_frame), completionHandler = WTFMove(completionHandler)] () mutable {
         if (isRedirect) {
             m_quickRedirectComing = false;
             if (m_provisionalDocumentLoader)

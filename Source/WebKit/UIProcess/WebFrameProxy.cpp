@@ -182,7 +182,7 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionH
 {
     if (m_activeListener)
         m_activeListener->ignore();
-    m_activeListener = WebFramePolicyListenerProxy::create([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (WebCore::PolicyAction action, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) {
+    m_activeListener = WebFramePolicyListenerProxy::create([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (WebCore::PolicyAction action, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) mutable {
         completionHandler(action, policies, swap);
         m_activeListener = nullptr;
     });

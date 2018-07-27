@@ -278,9 +278,7 @@ void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas,
         if (!completionHandler)
             return;
 
-        callOnMainThread([completionHandler = WTFMove(completionHandler)] {
-            completionHandler();
-        });
+        callOnMainThread(WTFMove(completionHandler));
     });
 }
 
@@ -292,9 +290,7 @@ void RegistrationDatabase::clearAll(CompletionHandler<void()>&& completionHandle
         SQLiteFileSystem::deleteDatabaseFile(m_databaseFilePath);
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
 
-        callOnMainThread([completionHandler = WTFMove(completionHandler)] {
-            completionHandler();
-        });
+        callOnMainThread(WTFMove(completionHandler));
     });
 }
 
