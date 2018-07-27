@@ -843,15 +843,77 @@ fast/dom/Range/detach-range-during-deletecontents.html [ Pass Timeout ]
 imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Pass Timeout ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
-# WinCairo is not ready to run http test in general, but there're some exceptions.
+# http
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-http/tests [ Skip ]
+http/tests/appcache [ Skip ]
+http/tests/blink [ Skip ]
 
-# WebSocket
-http/tests/websocket [ Pass ]
+http/tests/cache [ Skip ]
+http/tests/cache/disk-cache/disk-cache-302-status-code.html [ Failure ]
+
+http/tests/cache-storage [ Skip ]
+http/tests/canvas [ Skip ]
+http/tests/contentdispositionattachmentsandbox [ Skip ]
+http/tests/contentextensions [ Skip ]
+http/tests/contentfiltering [ Skip ]
+http/tests/cookies [ Skip ]
+
+http/tests/css/border-image-loading.html [ Failure ]
+http/tests/css/css-image-loading.html [ Failure ]
+http/tests/css/mask-image-loading.html [ Failure ]
+http/tests/css/reflection-mask-image-loading.html [ Failure ]
+
+http/tests/dom [ Skip ]
+http/tests/download [ Skip ]
+http/tests/events [ Skip ]
+http/tests/eventsource [ Skip ]
+http/tests/favicon.ico [ Skip ]
+http/tests/fetch [ Skip ]
+http/tests/fileapi [ Skip ]
+http/tests/frame-throttling [ Skip ]
+http/tests/fullscreen [ Skip ]
+http/tests/globalhistory [ Skip ]
+http/tests/gzip-content-encoding [ Skip ]
+http/tests/history [ Skip ]
+http/tests/images [ Skip ]
+http/tests/incremental [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/loading [ Skip ]
+http/tests/local [ Skip ]
+http/tests/media [ Skip ]
+http/tests/messaging [ Skip ]
+http/tests/mime [ Skip ]
+http/tests/misc [ Skip ]
+http/tests/multipart [ Skip ]
+http/tests/navigation [ Skip ]
+http/tests/notifications [ Skip ]
+http/tests/paymentrequest [ Skip ]
+http/tests/performance [ Skip ]
+http/tests/permissionclient [ Skip ]
+http/tests/plugins [ Skip ]
+http/tests/pointer-lock [ Skip ]
+http/tests/preconnect [ Skip ]
+http/tests/preload [ Skip ]
+http/tests/quicklook [ Skip ]
+http/tests/referrer-policy [ Skip ]
+http/tests/resourceLoadStatistics [ Skip ]
+http/tests/security [ Skip ]
+http/tests/ssl [ Skip ]
+http/tests/storage [ Skip ]
+http/tests/storageAccess [ Skip ]
+http/tests/subresource-integrity [ Skip ]
+http/tests/svg [ Skip ]
+http/tests/uri [ Skip ]
+http/tests/webarchive [ Skip ]
+http/tests/webauthn [ Skip ]
+http/tests/webfont [ Skip ]
+http/tests/webgl [ Skip ]
+http/tests/webrtc [ Skip ]
+
 http/tests/websocket/tests/hybi/contentextensions [ Failure ]
 http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php [ Pass ]
+http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Timeout ]
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 http/tests/websocket/tests/hybi/httponly-cookie.pl [ Failure ]
 http/tests/websocket/tests/hybi/inspector [ Skip ]
@@ -863,13 +925,13 @@ http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.
 http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Failure ]
 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
 
-http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Timeout ]
+http/tests/workers [ Skip ]
 
-# XMLHTTPRequest (sync)
+http/tests/xmlhttprequest [ Skip ]
 http/tests/xmlhttprequest/simple-sync.html [ Crash ]
 
-# DiskCache
-http/tests/cache/disk-cache/disk-cache-302-status-code.html [ Failure ]
+http/tests/xmlviewer [ Skip ]
+http/tests/xsl [ Skip ]
 
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)
