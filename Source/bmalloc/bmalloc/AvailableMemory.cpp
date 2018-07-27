@@ -26,6 +26,9 @@
 #include "AvailableMemory.h"
 
 #include "Environment.h"
+#if BPLATFORM(IOS)
+#include "MemoryStatusSPI.h"
+#endif
 #include "PerProcess.h"
 #include "Scavenger.h"
 #include "Sizes.h"
@@ -72,12 +75,23 @@ static size_t memorySizeAccordingToKernel()
 }
 #endif
 
+#if BPLATFORM(IOS)
+static size_t jetsamLimit()
+{
+    memorystatus_memlimit_properties_t properties;
+    pid_t pid = getpid();
+    if (memorystatus_control(MEMORYSTATUS_CMD_GET_MEMLIMIT_PROPERTIES, pid, 0, &properties, sizeof(properties)))
+        return 840 * bmalloc::MB;
+    return static_cast<size_t>(properties.memlimit_active) * bmalloc::MB;
+}
+#endif
+
 static size_t computeAvailableMemory()
 {
 #if BOS(DARWIN)
     size_t sizeAccordingToKernel = memorySizeAccordingToKernel();
 #if BPLATFORM(IOS)
-    sizeAccordingToKernel = std::min(sizeAccordingToKernel, 840 * bmalloc::MB);
+    sizeAccordingToKernel = std::min(sizeAccordingToKernel, jetsamLimit());
 #endif
     size_t multiple = 128 * bmalloc::MB;
 

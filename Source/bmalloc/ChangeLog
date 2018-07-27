@@ -1,3 +1,27 @@
+2018-07-27  Saam Barati  <sbarati@apple.com>
+
+        Use SPI to compute the jetsam limit on iOS instead of hardcoding 840MB
+        https://bugs.webkit.org/show_bug.cgi?id=188091
+        <rdar://problem/42647697>
+
+        Reviewed by Simon Fraser.
+
+        We want bmalloc to dynamically adapt to the jetsam limit of the process
+        it's running in. WTF::ramSize() is based off bmalloc's availableMemory,
+        so it will now reflect the result of the real jetsam limit when we can
+        read it.
+        
+        Reading the jetsam limit requires an entitlement, so this patch opts in
+        the WebContent/Storage/Network processes. We fall back to 840MB (the
+        old hard coded value) when the SPI call fails (e.g, when we're in a
+        process without the proper entitlement).
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::jetsamLimit):
+        (bmalloc::computeAvailableMemory):
+        * bmalloc/darwin/MemoryStatusSPI.h: Added.
+
 2018-07-24  Saam Barati  <sbarati@apple.com>
 
         Revert back to using phys_footprint to calculate isUnderMemoryPressure()

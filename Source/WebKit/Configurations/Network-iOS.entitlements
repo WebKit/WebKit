@@ -16,5 +16,7 @@
 	<array>
 		<string>com.apple.WebKit.Networking</string>
 	</array>
+	<key>com.apple.private.memorystatus</key>
+	<true/>
 </dict>
 </plist>

@@ -1,3 +1,18 @@
+2018-07-27  Saam Barati  <sbarati@apple.com>
+
+        Use SPI to compute the jetsam limit on iOS instead of hardcoding 840MB
+        https://bugs.webkit.org/show_bug.cgi?id=188091
+        <rdar://problem/42647697>
+
+        Reviewed by Simon Fraser.
+
+        Give the Network/Storage/WebContent process the com.apple.private.memorystatus
+        entitlement. This allows them to read the process jetsam limit.
+
+        * Configurations/Databases-iOS.entitlements:
+        * Configurations/Network-iOS.entitlements:
+        * Configurations/WebContent-iOS.entitlements:
+
 2018-07-03  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r233461.
