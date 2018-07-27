@@ -1,3 +1,9 @@
+2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2018-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix API tests after r234314

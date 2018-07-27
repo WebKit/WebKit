@@ -45,14 +45,11 @@
     },
     "TestWebsiteData": {
         "subtests": {
-            "/webkit/WebKitWebsiteData/databases": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181251"}}
-            },
             "/webkit/WebKitWebsiteData/cache": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
+                "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188113"}}
             },
             "/webkit/WebKitWebsiteData/appcache": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
+                "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188117"}}
             },
             "/webkit/WebKitWebsiteData/configuration": {
                 "expected": {"wpe": {"status": ["FAIL"]}}
@@ -71,7 +68,7 @@
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/183183"}}
             },
             "/webkit/WebKitWebView/languages": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188111"}}
             }
         }
     },
@@ -86,7 +83,12 @@
         }
     },
     "TestInspectorServer": {
-        "expected": {"all": {"slow": true}}
+        "expected": {"all": {"slow": true}},
+        "subtests": {
+            "/webkit/WebKitWebInspectorServer/test-page-list": {
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188115"}
+            }
+        }
     },
     "TestWebKit": {
         "subtests": {
@@ -155,7 +157,7 @@
                 "expected": {"all": {"slow": true}}
             },
             "WTF_Lock.ManyContendedLongSections": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Lock.ManyContendedShortSections": {
                 "expected": {"all": {"slow": true}}
@@ -190,10 +192,13 @@
     "TestSSL": {
         "subtests": {
             "/webkit/WebKitWebView/tls-errors-policy": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/186913"}}
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/186913"}}
             },
             "/webkit/WebKitWebView/load-failed-with-tls-errors": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/186913"}}
+            },
+            "/webkit/WebKitWebView/tls-subresource": {
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/186913"}}
             }
         }
     },
@@ -239,6 +244,13 @@
         "subtests": {
             "/jsc/vm": {
                 "expected": {"all@Debug": {"slow": true}}
+            }
+        }
+    },
+    "TestWebKitFaviconDatabase": {
+        "subtests": {
+            "/webkit/WebKitFaviconDatabase/favicon-database-test": {
+                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188110"}}
             }
         }
     }

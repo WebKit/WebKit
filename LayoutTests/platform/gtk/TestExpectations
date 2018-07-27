@@ -517,7 +517,7 @@ webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Timeout Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
@@ -1953,8 +1953,6 @@ webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/183903 http/tests/media/video-buffered-range-contains-currentTime.html [ Crash Pass ]
 
-webkit.org/b/183904 imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.html [ Crash Pass ]
-
 webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure Pass Timeout ]
 
 webkit.org/b/186143 imported/mozilla/css-animations/test_event-dispatch.html [ Timeout Pass ]
@@ -2054,6 +2052,12 @@ webkit.org/b/188042 imported/w3c/web-platform-tests/infrastructure/assumptions/a
 webkit.org/b/188044 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec4.html [ Timeout Pass ]
 
 webkit.org/b/188046 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Pass ]
+
+webkit.org/b/188100 imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context.html [ Failure Pass ]
+
+webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
+
+webkit.org/b/188105 media/track/track-css-all-cues.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2394,9 +2398,13 @@ webkit.org/b/186252 legacy-animation-engine/css3/filters/backdrop/animation.html
 
 webkit.org/b/187266 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Pass Timeout ]
 
-webkit.org/b/187267 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue.htm [ Pass Failure ]
-
 webkit.org/b/187273 media/picture-in-picture-interruption.html [ Timeout ]
+
+webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html [ Failure Pass ]
+webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html [ Failure Pass ]
+
+webkit.org/b/188104 webgl/1.0.2/conformance/ogles/GL/vec/vec_009_to_016.html [ Timeout Pass ]
+webkit.org/b/188106 webgl/1.0.2/conformance/ogles/GL/swizzlers/swizzlers_017_to_024.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3530,6 +3538,8 @@ webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Failure ]
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 webkit.org/b/187996 http/tests/security/canvas-remote-read-remote-video-hls.html [ Failure ]
+
+webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

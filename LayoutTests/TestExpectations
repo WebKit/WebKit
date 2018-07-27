@@ -1479,8 +1479,10 @@ workers/sab/sent-from-worker-no-transfer.html [ Skip ]
 workers/wasm-hashset-many.html [ Slow ]
 workers/wasm-hashset-many-2.html [ Slow ]
 workers/wasm-hashset.html [ Slow ]
-workers/wasm-long-compile-many.html [ Slow ]
 workers/wasm-long-compile.html [ Slow ]
+
+# This one is so slow that we cannot use Slow for it anymore.
+workers/wasm-long-compile-many.html [ Pass Timeout ]
 
 # Flaky WebCrypto API tests
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
@@ -2197,6 +2199,10 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Pass Failure ]
 
 webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAll.html [ Pass Failure ]
+webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html [ Pass Failure ]
+webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.html [ Pass Failure ]
+webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue.htm [ Pass Failure ]
+webkit.org/b/175609 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm [ Pass Failure ]
 
 webkit.org/b/186848 imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice.html [ Pass Failure ]
 webkit.org/b/179176 svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]

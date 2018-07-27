@@ -6,6 +6,9 @@
             },
             "testShouldAllowUsersToAcceptAnAlertInANestedFrame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181727"}}
+            },
+            "testShouldHandleAlertOnPageBeforeUnload[WebKitGTK]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
@@ -77,6 +80,13 @@
             },
             "testSendingKeysToActiveElementWithModifier": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py": {
+        "subtests": {
+            "testClickShouldTimeout[WebKitGTK]": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
@@ -174,6 +184,13 @@
             },
             "testCanCallGetWindowHandlesAfterClosingAWindow": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/window_tests.py": {
+        "subtests": {
+            "test_should_fullscreen_the_current_window[WebKitGTK]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
@@ -458,6 +475,20 @@
             },
             "test_invalid_multiple_codepoint_keys_fail[\\u1100\\u1161\\u11a8c]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/close_window/close.py": {
+        "subtests": {
+            "test_close_last_browsing_context": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/close_window/user_prompts.py": {
+        "subtests": {
+            "test_handle_prompt_accept": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
@@ -959,8 +990,35 @@
     },
     "imported/w3c/webdriver/tests/set_window_rect/set.py": {
         "subtests": {
+            "test_fully_exit_fullscreen": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+            },
             "test_negative_x_y": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180418"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/maximize_window/maximize.py": {
+        "subtests": {
+            "test_fully_exit_fullscreen": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/minimize_window/minimize.py": {
+        "subtests": {
+            "test_fully_exit_fullscreen": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/new_session/response.py": {
+        "subtests": {
+            "test_resp_capabilites": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
+            },
+            "test_resp_data": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
         }
     }
