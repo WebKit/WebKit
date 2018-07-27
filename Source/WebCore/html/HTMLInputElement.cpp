@@ -241,13 +241,6 @@ HTMLElement* HTMLInputElement::placeholderElement() const
     return m_inputType->placeholderElement();
 }
 
-#if ENABLE(DATALIST_ELEMENT)
-HTMLElement* HTMLInputElement::dataListButtonElement() const
-{
-    return m_inputType->dataListButtonElement();
-}
-#endif
-
 bool HTMLInputElement::shouldAutocomplete() const
 {
     if (m_autocomplete != Uninitialized)
@@ -1633,11 +1626,6 @@ void HTMLInputElement::resetListAttributeTargetObserver()
 void HTMLInputElement::listAttributeTargetChanged()
 {
     m_inputType->listAttributeTargetChanged();
-}
-
-bool HTMLInputElement::isShowingList() const
-{
-    return m_inputType->isShowingList();
 }
 
 #endif // ENABLE(DATALIST_ELEMENT)

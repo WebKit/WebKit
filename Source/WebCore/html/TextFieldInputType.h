@@ -32,7 +32,6 @@
 #pragma once
 
 #include "AutoFillButtonElement.h"
-#include "DataListButtonElement.h"
 #include "DataListSuggestionPicker.h"
 #include "DataListSuggestionsClient.h"
 #include "InputType.h"
@@ -47,7 +46,7 @@ class TextControlInnerTextElement;
 // It supports not only the types for BaseTextInputType but also type=number.
 class TextFieldInputType : public InputType, protected SpinButtonElement::SpinButtonOwner, protected AutoFillButtonElement::AutoFillButtonOwner
 #if ENABLE(DATALIST_ELEMENT)
-    , private DataListSuggestionsClient, protected DataListButtonElement::DataListButtonOwner
+    , private DataListSuggestionsClient
 #endif
 {
 protected:
@@ -65,9 +64,6 @@ protected:
     HTMLElement* innerSpinButtonElement() const final;
     HTMLElement* capsLockIndicatorElement() const final;
     HTMLElement* autoFillButtonElement() const final;
-#if ENABLE(DATALIST_ELEMENT)
-    HTMLElement* dataListButtonElement() const final;
-#endif
 
     virtual bool needsContainer() const;
     void createShadowSubtree() override;
@@ -124,8 +120,6 @@ private:
     void createAutoFillButton(AutoFillButtonType);
 
 #if ENABLE(DATALIST_ELEMENT)
-    bool isShowingList() const override;
-    void listAttributeTargetChanged() final;
     void displaySuggestions(DataListSuggestionActivationType);
     void closeSuggestions();
 
@@ -134,9 +128,6 @@ private:
     Vector<String> suggestions() const final;
     void didSelectDataListOption(const String&) final;
     void didCloseSuggestions() final;
-
-    void dataListButtonElementWasClicked() final;
-    RefPtr<DataListButtonElement> m_dataListDropdownIndicator;
 
     std::unique_ptr<DataListSuggestionPicker> m_suggestionPicker;
 #endif

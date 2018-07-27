@@ -616,20 +616,6 @@ input::-webkit-caps-lock-indicator {
     -webkit-user-select: none;
 }
 
-#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
-input::-webkit-list-button {
-    -webkit-appearance: list-button;
-    display: block;
-    position: relative;
-    cursor: default;
-    align-self: stretch;
-    flex: none;
-    -webkit-user-select: none;
-    width: 16px;
-    height: 100%;
-}
-#endif
-
 keygen, select {
     border-radius: 5px;
 }

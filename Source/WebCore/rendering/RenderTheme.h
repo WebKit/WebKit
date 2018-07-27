@@ -338,10 +338,6 @@ protected:
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
-#if ENABLE(DATALIST_ELEMENT)
-    virtual void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const;
-#endif
-
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, const Element*) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 

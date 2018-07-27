@@ -621,11 +621,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         m_value.valueID = CSSValueApplePayButton;
         break;
 #endif
-#if ENABLE(DATALIST_ELEMENT)
-    case ListButtonPart:
-        m_value.valueID = CSSValueListButton;
-        break;
-#endif
     }
 }
 

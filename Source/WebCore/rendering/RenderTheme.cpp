@@ -266,10 +266,6 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case BorderlessAttachmentPart:
         return adjustAttachmentStyle(styleResolver, style, element);
 #endif
-#if ENABLE(DATALIST_ELEMENT)
-    case ListButtonPart:
-        return adjustListButtonStyle(styleResolver, style, element);
-#endif
     default:
         break;
     }
@@ -1001,10 +997,6 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-
-void RenderTheme::adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const
-{
-}
 
 LayoutUnit RenderTheme::sliderTickSnappingThreshold() const
 {

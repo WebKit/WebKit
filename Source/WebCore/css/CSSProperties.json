@@ -3793,7 +3793,6 @@
                 "textarea",
                 "attachment",
                 "caps-lock-indicator",
-                "list-button",
                 "none"
             ],
             "status": {
