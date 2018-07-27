@@ -1,3 +1,49 @@
+2018-07-27  Chris Dumez  <cdumez@apple.com>
+
+        [Media] Avoid unnecessarily constructing *TrackList objects
+        https://bugs.webkit.org/show_bug.cgi?id=188094
+
+        Reviewed by Eric Carlson.
+
+        Avoid unnecessarily constructing *TrackList objects as this is preventing us from making them
+        ActiveDOMObjects.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addAudioTrack):
+        (WebCore::HTMLMediaElement::addTextTrack):
+        (WebCore::HTMLMediaElement::addVideoTrack):
+        (WebCore::HTMLMediaElement::ensureAudioTracks):
+        (WebCore::HTMLMediaElement::ensureTextTracks):
+        (WebCore::HTMLMediaElement::ensureVideoTracks):
+        (WebCore::HTMLMediaElement::setSelectedTextTrack):
+        (WebCore::HTMLMediaElement::audioTracks): Deleted.
+        (WebCore::HTMLMediaElement::textTracks): Deleted.
+        (WebCore::HTMLMediaElement::videoTracks): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::audioTracks const):
+        (WebCore::HTMLMediaElement::textTracks const):
+        (WebCore::HTMLMediaElement::videoTracks const):
+        * html/HTMLMediaElement.idl:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        (WebCore::MediaControlTextTrackContainerElement::updateTextStrokeStyle):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::setKind):
+        (WebCore::TextTrack::trackIndex):
+        (WebCore::TextTrack::trackIndexRelativeToRenderedTracks):
+        (WebCore::TextTrack::setLanguage):
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::setKind):
+        (WebCore::VideoTrack::setLanguage):
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::setMediaElement):
+        (WebCore::PlaybackSessionModelMediaElement::updateMediaSelectionOptions):
+
 2018-07-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Set correct source info to ResourceResponse.

@@ -729,7 +729,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         // 5.4 If the removed enabled audio track flag equals true, then queue a task to fire a simple event
         // named change at the HTMLMediaElement audioTracks list.
         if (removedEnabledAudioTrack)
-            mediaElement()->audioTracks().scheduleChangeEvent();
+            mediaElement()->ensureAudioTracks().scheduleChangeEvent();
     }
 
     // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
@@ -769,7 +769,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         // 7.4 If the removed selected video track flag equals true, then queue a task to fire a simple event
         // named change at the HTMLMediaElement videoTracks list.
         if (removedSelectedVideoTrack)
-            mediaElement()->videoTracks().scheduleChangeEvent();
+            mediaElement()->ensureVideoTracks().scheduleChangeEvent();
     }
 
     // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
@@ -809,7 +809,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         // 9.4 If the removed enabled text track flag equals true, then queue a task to fire a simple event
         // named change at the HTMLMediaElement textTracks list.
         if (removedEnabledTextTrack)
-            mediaElement()->textTracks().scheduleChangeEvent();
+            mediaElement()->ensureTextTracks().scheduleChangeEvent();
     }
 
     // 10. If sourceBuffer is in activeSourceBuffers, then remove sourceBuffer from activeSourceBuffers ...

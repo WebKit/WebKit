@@ -760,7 +760,7 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
     if (!mediaElement)
         return;
 
-    if (!mediaElement->textTracks().length())
+    if (!mediaElement->textTracks() || !mediaElement->textTracks()->length())
         return;
 
     rebuildTrackListMenu();
@@ -821,14 +821,14 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     if (!mediaElement)
         return;
 
-    TextTrackList& trackList = mediaElement->textTracks();
-    if (!trackList.length())
+    auto* trackList = mediaElement->textTracks();
+    if (!trackList || !trackList->length())
         return;
 
     if (!document().page())
         return;
     auto& captionPreferences = document().page()->group().captionPreferences();
-    Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences.sortedTrackListForMenu(&trackList);
+    Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences.sortedTrackListForMenu(trackList);
 
     auto captionsHeader = HTMLHeadingElement::create(h3Tag, document());
     captionsHeader->appendChild(document().createTextNode(textTrackSubtitlesText()));
@@ -1269,12 +1269,13 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
     // FIXME: Since it is possible to have more than one text track enabled, the following code may not find the correct language.
     // The default UI only allows a user to enable one track at a time, so it should be OK for now, but we should consider doing
     // this differently, see <https://bugs.webkit.org/show_bug.cgi?id=169875>.
-    auto& tracks = mediaElement->textTracks();
-    for (unsigned i = 0; i < tracks.length(); ++i) {
-        auto track = tracks.item(i);
-        if (track && track->mode() == TextTrack::Mode::Showing) {
-            language = track->validBCP47Language();
-            break;
+    if (auto* tracks = mediaElement->textTracks()) {
+        for (unsigned i = 0; i < tracks->length(); ++i) {
+            auto track = tracks->item(i);
+            if (track && track->mode() == TextTrack::Mode::Showing) {
+                language = track->validBCP47Language();
+                break;
+            }
         }
     }
 

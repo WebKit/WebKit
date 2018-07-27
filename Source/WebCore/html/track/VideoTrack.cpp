@@ -189,7 +189,7 @@ void VideoTrack::setKind(const AtomicString& kind)
 
     // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
     // the videoTracks attribute on the HTMLMediaElement.
-    mediaElement()->videoTracks().scheduleChangeEvent();
+    mediaElement()->ensureVideoTracks().scheduleChangeEvent();
 }
 
 void VideoTrack::setLanguage(const AtomicString& language)
@@ -211,7 +211,7 @@ void VideoTrack::setLanguage(const AtomicString& language)
     // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
     // the videoTracks attribute on the HTMLMediaElement.
     if (mediaElement())
-        mediaElement()->videoTracks().scheduleChangeEvent();
+        mediaElement()->ensureVideoTracks().scheduleChangeEvent();
 }
 
 #endif

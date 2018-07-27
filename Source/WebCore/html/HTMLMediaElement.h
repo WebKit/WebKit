@@ -330,9 +330,12 @@ public:
 #if ENABLE(VIDEO_TRACK)
     ExceptionOr<TextTrack&> addTextTrack(const String& kind, const String& label, const String& language);
 
-    AudioTrackList& audioTracks();
-    TextTrackList& textTracks();
-    VideoTrackList& videoTracks();
+    AudioTrackList& ensureAudioTracks();
+    TextTrackList& ensureTextTracks();
+    VideoTrackList& ensureVideoTracks();
+    AudioTrackList* audioTracks() const { return m_audioTracks.get(); }
+    TextTrackList* textTracks() const { return m_textTracks.get(); }
+    VideoTrackList* videoTracks() const { return m_videoTracks.get(); }
 
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
