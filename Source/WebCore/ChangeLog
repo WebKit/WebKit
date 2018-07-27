@@ -1,5 +1,57 @@
 2018-07-26  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234291. rdar://problem/42650439
+
+    [Fullscreen] Do not create composited layers for renderers unless they are part of the fullscreen subtree.
+    https://bugs.webkit.org/show_bug.cgi?id=188087
+    <rdar://problem/42632124>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Sibling composited layers prevent battery lifetime optimizations when in fullscreen.
+    
+    Test: compositing/no-compositing-when-fulll-screen-is-present.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::isDescendantOf const):
+    * rendering/RenderLayer.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::isDescendantOfFullScreenLayer):
+    (WebCore::RenderLayerCompositor::requiresCompositingForWillChange const):
+    (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+    
+    LayoutTests:
+    
+    * compositing/no-compositing-when-fulll-screen-is-present-expected.txt: Added.
+    * compositing/no-compositing-when-fulll-screen-is-present.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234291 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-26  Zalan Bujtas  <zalan@apple.com>
+
+            [Fullscreen] Do not create composited layers for renderers unless they are part of the fullscreen subtree.
+            https://bugs.webkit.org/show_bug.cgi?id=188087
+            <rdar://problem/42632124>
+
+            Reviewed by Simon Fraser.
+
+            Sibling composited layers prevent battery lifetime optimizations when in fullscreen.
+
+            Test: compositing/no-compositing-when-fulll-screen-is-present.html
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::isDescendantOf const):
+            * rendering/RenderLayer.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::isDescendantOfFullScreenLayer):
+            (WebCore::RenderLayerCompositor::requiresCompositingForWillChange const):
+            (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+
+2018-07-26  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234275. rdar://problem/42650440
 
     AX: nothing returned for various previous text marker APIs from one div/p node to another
