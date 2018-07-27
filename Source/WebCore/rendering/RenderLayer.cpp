@@ -881,7 +881,9 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
             clearRepaintRects();
         else // FIXME: We could track the repaint container as we walk down the tree.
             computeRepaintRects(renderer().containerForRepaint(), geometryMap);
-    } else {
+    } else if (!renderer().view().frameView().platformWidget()) {
+        // When ScrollView's m_paintsEntireContents flag flips due to layer backing changes, the repaint area transitions from
+        // visual to layout overflow. When this happens the cached repaint rects become invalid and they need to be recomputed (see webkit.org/b/188121).
         // Check that our cached rects are correct.
         ASSERT(!renderer().hasRepaintLayoutRects() || renderer().repaintLayoutRects().m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint()));
         ASSERT(!renderer().hasRepaintLayoutRects() || renderer().repaintLayoutRects().m_outlineBox == renderer().outlineBoundsForRepaint(renderer().containerForRepaint()));
