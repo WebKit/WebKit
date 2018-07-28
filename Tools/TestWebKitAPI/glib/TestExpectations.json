@@ -67,7 +67,7 @@
             "/webkit/WebKitWebContext/uri-scheme": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/183183"}}
             },
-            "/webkit/WebKitWebView/languages": {
+            "/webkit/WebKitWebContext/languages": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188111"}}
             }
         }
@@ -160,7 +160,7 @@
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Lock.ManyContendedShortSections": {
-                "expected": {"all": {"slow": true}}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_WordLock.ContendedShortSection": {
                 "expected": {"all": {"slow": true}}

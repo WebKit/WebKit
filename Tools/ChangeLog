@@ -1,5 +1,11 @@
 2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, fix typo in test expectations and mark another test as timing out
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         More unreviewed GTK test gardening
 
         * TestWebKitAPI/glib/TestExpectations.json:
