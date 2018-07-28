@@ -162,9 +162,6 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
     if (m_sessions.isEmpty() || std::all_of(m_sessions.begin(), m_sessions.end(), std::logical_not<void>())) {
         m_remoteCommandListener = nullptr;
         m_audioHardwareListener = nullptr;
-#if USE(AUDIO_SESSION)
-        AudioSession::sharedSession().tryToSetActive(false);
-#endif
     }
 
     scheduleUpdateSessionState();

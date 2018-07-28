@@ -1,3 +1,19 @@
+2018-07-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Don't deactivate audio session
+        https://bugs.webkit.org/show_bug.cgi?id=188127
+        <rdar://problem/42544143>
+
+        Reviewed by Jon Lee.
+        
+        r233435 includes a change that deactivates the shared audio session when there are no more
+        active media sessions. This is a good in WK2 because it allows other applications to resume
+        playing audio when WebKit stops playing, but it is potentially bad in WK1 where the host
+        app may also be playing audio.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::removeSession): Don't deactivate the audio session.
+
 2018-07-27  Chris Dumez  <cdumez@apple.com>
 
         Fix thread-safety issues related to RealtimeMediaSource::audioSamplesAvailable()
