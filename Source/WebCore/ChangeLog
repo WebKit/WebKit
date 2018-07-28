@@ -1,3 +1,17 @@
+2018-07-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reset CompositingPolicyOverride between tests
+        https://bugs.webkit.org/show_bug.cgi?id=188138
+
+        Reviewed by Zalan Bujtas.
+
+        WK1 tests were failing after r234330 because the compositing policy override optional
+        was left set on the Page (WK1 has injected bundle SPI to clear it). Fix by having 
+        Internals::resetToConsistentState clear this state.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2018-07-24  Simon Fraser  <simon.fraser@apple.com>
 
         Animation stops with object-fit:contain on an animated 2d canvas
