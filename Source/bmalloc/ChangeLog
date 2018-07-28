@@ -1,3 +1,14 @@
+2018-07-27  Mark Lam  <mark.lam@apple.com>
+
+        Initialize bmalloc::DebugHeap::m_pageSize for non-Darwin builds.
+        https://bugs.webkit.org/show_bug.cgi?id=188132
+        <rdar://problem/40401599>
+
+        Reviewed by Saam Barati.
+
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::DebugHeap):
+
 2018-07-27  Saam Barati  <sbarati@apple.com>
 
         Explicitly handle memlimit_active < 0
