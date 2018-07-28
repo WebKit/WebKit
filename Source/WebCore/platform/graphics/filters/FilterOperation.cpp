@@ -258,11 +258,10 @@ bool InvertLightnessFilterOperation::inverseTransformColor(FloatComponents& sRGB
     FloatComponents rgbComponents = sRGBColorComponents;
     // Apply the matrix.
     float matrixValues[20] = {
-        -1.124858, -0.244747, 0.119605, 0, 1.25,
-        -0.124506, -1.244758, 0.119264, 0, 1.25,
-        -0.12445, -0.244568, -0.880982, 0, 1.25,
-        0, 0, 0, 1, 0
-
+        -1.300, -0.097,  0.147, 0, 1.25,
+        -0.049, -1.347,  0.146, 0, 1.25,
+        -0.049, -0.097, -1.104, 0, 1.25,
+         0,      0,      0,     1, 0
     };
     ColorMatrix toLightModeMatrix(matrixValues);
     toLightModeMatrix.transformColorComponents(rgbComponents);

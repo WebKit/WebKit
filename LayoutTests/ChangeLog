@@ -1,3 +1,20 @@
+2018-07-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Adjust the color matrix for the inverse apple-invert-lightness() transformation
+        https://bugs.webkit.org/show_bug.cgi?id=188131
+        rdar://problem/42673070
+
+        Reviewed by Zalan Bujtas.
+
+        Rebaseline tests that use the filter inversion. Add a new test that does inversion
+        for a whole range of colors, to get good coverage of the inversion matrix.
+
+        * editing/style/inverse-color-filter-expected.txt: Added.
+        * editing/style/inverse-color-filter.html: Added.
+        * editing/style/set-backColor-with-color-filter-expected.txt:
+        * editing/style/set-foreColor-with-color-filter-expected.txt:
+        * platform/win/TestExpectations:
+
 2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         More unreviewed GTK test gardening
