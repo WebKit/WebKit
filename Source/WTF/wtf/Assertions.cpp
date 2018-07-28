@@ -665,12 +665,6 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t reason)
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfo(int, const char*, const char*, int)
-{
-    __asm__ volatile (CRASH_INST : : );
-    __builtin_unreachable();
-}
-
 #else
 
 void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
@@ -680,7 +674,6 @@ void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, ui
 void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t) { CRASH(); }
 void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t, uint64_t) { CRASH(); }
 void WTFCrashWithInfo(int, const char*, const char*, int, uint64_t) { CRASH(); }
-void WTFCrashWithInfo(int, const char*, const char*, int) { CRASH(); }
 
 #endif // OS(DARWIN) && (CPU(X64_64) || CPU(ARM64))
 

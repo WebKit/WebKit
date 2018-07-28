@@ -1,3 +1,26 @@
+2018-07-28  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: build fix for internal builds.
+        https://bugs.webkit.org/show_bug.cgi?id=188123
+        <rdar://problem/42672268>
+
+        Not reviewed.
+
+        Some code is relying on RELEASE_ASSERT (without extra crash info arguments)
+        being purely inlined and not require linkage to an external symbol.  This patch
+        restores this property of the original RELEASE_ASSERT.
+
+        This means moving the variant of WTFCrashWithInfo that does not take extra args
+        to Assertions.h and making it an "inline" function.  When compiling with clang,
+        we also specify __attribute__((optnone)) to force the function out of being an
+        inline function (each linkage unit will get a copy of the function).  This causes
+        the 1st 4 arguments of WTFCrashWithInfo (e.g. line number) to still be captured
+        in the argument registers for crash diagnostics.
+
+        * wtf/Assertions.cpp:
+        (WTFCrashWithInfo):
+        * wtf/Assertions.h:
+
 2018-07-27  Mark Lam  <mark.lam@apple.com>
 
         Add some crash info to Heap::checkConn() RELEASE_ASSERTs.
