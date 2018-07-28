@@ -285,7 +285,7 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 void RenderImage::updateInnerContentRect()
 {
     // Propagate container size to image resource.
-    IntSize containerSize(replacedContentRect(intrinsicSize()).size());
+    IntSize containerSize(replacedContentRect().size());
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
         if (HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr)
@@ -497,7 +497,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     LayoutRect contentBoxRect = this->contentBoxRect();
     contentBoxRect.moveBy(paintOffset);
-    LayoutRect replacedContentRect = this->replacedContentRect(intrinsicSize());
+    LayoutRect replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);
     bool clip = !contentBoxRect.contains(replacedContentRect);
     GraphicsContextStateSaver stateSaver(context, clip);

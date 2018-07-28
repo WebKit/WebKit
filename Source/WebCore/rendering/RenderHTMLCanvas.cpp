@@ -74,7 +74,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
 
     LayoutRect contentBoxRect = this->contentBoxRect();
     contentBoxRect.moveBy(paintOffset);
-    LayoutRect replacedContentRect = this->replacedContentRect(intrinsicSize());
+    LayoutRect replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);
 
     // Not allowed to overflow the content box.

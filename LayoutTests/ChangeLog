@@ -1,3 +1,13 @@
+2018-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Animation stops with object-fit:contain on an animated 2d canvas
+        https://bugs.webkit.org/show_bug.cgi?id=187840
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/repaint/canvas-object-fit-expected.txt: Added.
+        * fast/repaint/canvas-object-fit.html: Added.
+
 2018-07-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening
