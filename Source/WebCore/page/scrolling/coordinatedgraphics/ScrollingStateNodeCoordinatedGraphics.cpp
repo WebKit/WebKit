@@ -34,14 +34,24 @@
 
 namespace WebCore {
 
-void LayerRepresentation::retainPlatformLayer(PlatformLayer*)
+void LayerRepresentation::retainPlatformLayer(void*)
 {
     notImplemented();
 }
 
-void LayerRepresentation::releasePlatformLayer(PlatformLayer*)
+void LayerRepresentation::releasePlatformLayer(void*)
 {
     notImplemented();
+}
+
+PlatformLayer* LayerRepresentation::makePlatformLayerTyped(void* typelessLayer)
+{
+    return static_cast<PlatformLayer*>(typelessLayer);
+}
+
+void* LayerRepresentation::makePlatformLayerTypeless(PlatformLayer* layer)
+{
+    return layer;
 }
 
 } // namespace WebCore

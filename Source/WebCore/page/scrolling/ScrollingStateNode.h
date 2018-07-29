@@ -71,11 +71,11 @@ public:
     { }
 
     LayerRepresentation(PlatformLayer* platformLayer)
-        : m_platformLayer(platformLayer)
+        : m_typelessPlatformLayer(makePlatformLayerTypeless(platformLayer))
         , m_layerID(0)
         , m_representation(PlatformLayerRepresentation)
     {
-        retainPlatformLayer(platformLayer);
+        retainPlatformLayer(m_typelessPlatformLayer);
     }
 
     LayerRepresentation(GraphicsLayer::PlatformLayerID layerID)
@@ -86,18 +86,18 @@ public:
     }
 
     LayerRepresentation(const LayerRepresentation& other)
-        : m_platformLayer(other.m_platformLayer)
+        : m_typelessPlatformLayer(other.m_typelessPlatformLayer)
         , m_layerID(other.m_layerID)
         , m_representation(other.m_representation)
     {
         if (m_representation == PlatformLayerRepresentation)
-            retainPlatformLayer(m_platformLayer);
+            retainPlatformLayer(m_typelessPlatformLayer);
     }
 
     ~LayerRepresentation()
     {
         if (m_representation == PlatformLayerRepresentation)
-            releasePlatformLayer(m_platformLayer);
+            releasePlatformLayer(m_typelessPlatformLayer);
     }
 
     operator GraphicsLayer*() const
@@ -109,7 +109,7 @@ public:
     operator PlatformLayer*() const
     {
         ASSERT(m_representation == PlatformLayerRepresentation);
-        return m_platformLayer;
+        return makePlatformLayerTyped(m_typelessPlatformLayer);
     }
     
     GraphicsLayer::PlatformLayerID layerID() const
@@ -125,12 +125,12 @@ public:
 
     LayerRepresentation& operator=(const LayerRepresentation& other)
     {
-        m_platformLayer = other.m_platformLayer;
+        m_typelessPlatformLayer = other.m_typelessPlatformLayer;
         m_layerID = other.m_layerID;
         m_representation = other.m_representation;
 
         if (m_representation == PlatformLayerRepresentation)
-            retainPlatformLayer(m_platformLayer);
+            retainPlatformLayer(m_typelessPlatformLayer);
 
         return *this;
     }
@@ -146,7 +146,7 @@ public:
             return m_graphicsLayer == other.m_graphicsLayer
                 && m_layerID == other.m_layerID;
         case PlatformLayerRepresentation:
-            return m_platformLayer == other.m_platformLayer;
+            return m_typelessPlatformLayer == other.m_typelessPlatformLayer;
         case PlatformLayerIDRepresentation:
             return m_layerID == other.m_layerID;
         }
@@ -174,12 +174,14 @@ public:
     bool representsPlatformLayerID() const { return m_representation == PlatformLayerIDRepresentation; }
     
 private:
-    WEBCORE_EXPORT void retainPlatformLayer(PlatformLayer*);
-    WEBCORE_EXPORT void releasePlatformLayer(PlatformLayer*);
+    WEBCORE_EXPORT static void retainPlatformLayer(void* typelessPlatformLayer);
+    WEBCORE_EXPORT static void releasePlatformLayer(void* typelessPlatformLayer);
+    WEBCORE_EXPORT static PlatformLayer* makePlatformLayerTyped(void* typelessPlatformLayer);
+    WEBCORE_EXPORT static void* makePlatformLayerTypeless(PlatformLayer*);
 
     union {
         GraphicsLayer* m_graphicsLayer;
-        PlatformLayer *m_platformLayer;
+        void* m_typelessPlatformLayer;
     };
 
     GraphicsLayer::PlatformLayerID m_layerID;

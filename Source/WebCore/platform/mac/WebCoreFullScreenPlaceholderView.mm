@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,16 @@
  */
 
 #include "config.h"
-#if !PLATFORM(IOS)
-
 #include "WebCoreFullScreenPlaceholderView.h"
+
+#if PLATFORM(MAC)
 
 #include "LocalizedStrings.h"
 #include "WebCoreFullScreenWarningView.h"
 #include <wtf/text/WTFString.h>
 
-using WebCore::clickToExitFullScreenText;
-@interface CAFilter : NSObject
-+ (CAFilter *)filterWithType:(NSString *)type;
-@end
-
 @implementation WebCoreFullScreenPlaceholderView
+
 - (id)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
@@ -73,7 +69,7 @@ using WebCore::clickToExitFullScreenText;
     _exitWarning.get().editable = NO;
     _exitWarning.get().font = [NSFont systemFontOfSize:27];
     _exitWarning.get().selectable = NO;
-    _exitWarning.get().stringValue = clickToExitFullScreenText();
+    _exitWarning.get().stringValue = WebCore::clickToExitFullScreenText();
     _exitWarning.get().textColor = [NSColor tertiaryLabelColor];
     [_exitWarning sizeToFit];
 
@@ -86,9 +82,9 @@ using WebCore::clickToExitFullScreenText;
 }
 
 @synthesize target = _target;
-@synthesize action = _action;
 
 @dynamic contents;
+
 - (void)setContents:(id)contents
 {
     [[self layer] setContents:contents];
@@ -104,13 +100,10 @@ using WebCore::clickToExitFullScreenText;
     [_effectView setHidden:!visible];
 }
 
-- (void)mouseDown:(NSEvent *)theEvent
+- (void)mouseDown:(NSEvent *)event
 {
-    UNUSED_PARAM(theEvent);
-
-    if (!_target || !_action)
-        return;
-    [_target performSelector:_action];
+    UNUSED_PARAM(event);
+    [_target cancelOperation:self];
 }
 
 @end

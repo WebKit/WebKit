@@ -109,7 +109,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
     RetainPtr<NSSet> newAVOptions = adoptNS([[NSSet alloc] initWithArray:[getAVMediaSelectionGroupClass() playableMediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]]]);
     RetainPtr<NSMutableSet> oldAVOptions = adoptNS([[NSMutableSet alloc] initWithCapacity:m_options.size()]);
     for (auto& avOption : m_options.keys())
-        [oldAVOptions addObject:avOption];
+        [oldAVOptions addObject:(__bridge AVMediaSelectionOption *)avOption];
 
     RetainPtr<NSMutableSet> addedAVOptions = adoptNS([newAVOptions mutableCopy]);
     [addedAVOptions minusSet:oldAVOptions.get()];
@@ -121,7 +121,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
         if (m_selectedOption && removedAVOption == m_selectedOption->avMediaSelectionOption())
             m_selectedOption = nullptr;
 
-        m_options.remove(removedAVOption);
+        m_options.remove((__bridge CFTypeRef)removedAVOption);
     }
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -131,7 +131,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
         auto addedOption = MediaSelectionOptionAVFObjC::create(*this, addedAVOption);
         if (addedAVOption == selectedOption)
             m_selectedOption = addedOption.ptr();
-        m_options.set(addedAVOption, WTFMove(addedOption));
+        m_options.set((__bridge CFTypeRef)addedAVOption, WTFMove(addedOption));
     }
 
     if (!m_shouldSelectOptionAutomatically)
@@ -164,8 +164,8 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
     if (m_selectedOption && m_selectedOption->avMediaSelectionOption() == preferredOption)
         return;
 
-    ASSERT(m_options.contains(preferredOption));
-    m_selectedOption = m_options.get(preferredOption);
+    ASSERT(m_options.contains((__bridge CFTypeRef)preferredOption));
+    m_selectedOption = m_options.get((__bridge CFTypeRef)preferredOption);
     m_selectionTimer.startOneShot(0_s);
 }
 

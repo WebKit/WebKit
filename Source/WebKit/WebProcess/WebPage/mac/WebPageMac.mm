@@ -399,8 +399,9 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
     // Find the frame the point is over.
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)));
-    NSDictionary *options = nil;
-    auto range = DictionaryLookup::rangeAtHitTestResult(result, &options);
+    RefPtr<Range> range;
+    NSDictionary *options;
+    std::tie(range, options) = DictionaryLookup::rangeAtHitTestResult(result);
     if (!range)
         return;
 
@@ -413,8 +414,10 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
 void WebPage::performDictionaryLookupForSelection(Frame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
-    NSDictionary *options = nil;
-    if (auto selectedRange = DictionaryLookup::rangeForSelection(selection, &options))
+    RefPtr<Range> selectedRange;
+    NSDictionary *options;
+    std::tie(selectedRange, options) = DictionaryLookup::rangeForSelection(selection);
+    if (selectedRange)
         performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
 }
 
@@ -1052,9 +1055,7 @@ std::tuple<RefPtr<WebCore::Range>, NSDictionary *> WebPage::lookupTextAtLocation
 
     auto point = roundedIntPoint(locationInViewCoordinates);
     auto result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
-    NSDictionary *options = nil;
-    auto range = DictionaryLookup::rangeAtHitTestResult(result, &options);
-    return { WTFMove(range), WTFMove(options) };
+    return DictionaryLookup::rangeAtHitTestResult(result);
 }
 
 void WebPage::immediateActionDidUpdate()

@@ -498,11 +498,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     JSLockHolder lock(exec);
 
-    id result = convertValueToObjcValue(exec, [self _imp], ObjcObjectType).objectValue;
-
-    NSString *description = [result description];
-
-    return description;
+    return [(__bridge id)convertValueToObjcValue(exec, [self _imp], ObjcObjectType).objectValue description];
 }
 
 - (id)webScriptValueAtIndex:(unsigned)index

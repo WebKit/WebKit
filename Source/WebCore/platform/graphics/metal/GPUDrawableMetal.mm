@@ -30,8 +30,7 @@
 
 #import "GPUDevice.h"
 #import "Logging.h"
-#import <Metal/Metal.h>
-#import <QuartzCore/QuartzCore.h>
+#import "WebGPULayer.h"
 
 namespace WebCore {
 

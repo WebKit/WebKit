@@ -1,3 +1,22 @@
+2018-07-28  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Update more WebCore Objective-C code to be ARC compatible
+        https://bugs.webkit.org/show_bug.cgi?id=188140
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]): Removed the call to
+        setAction: since the full screen placeholder view now always uses the
+        cancelOperation: method.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::lookupTextAtLocation): Updated to use the new
+        DictionaryLookup function that returns a tuple instead of using an out argument.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Ditto.
+        (WebKit::WebPage::performDictionaryLookupForSelection): Ditto.
+
 2018-07-27  Chris Dumez  <cdumez@apple.com>
 
         Fix thread-safety issues related to RealtimeMediaSource::audioSamplesAvailable()

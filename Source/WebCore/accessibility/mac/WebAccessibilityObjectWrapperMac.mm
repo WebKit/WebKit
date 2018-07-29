@@ -1844,15 +1844,14 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [NSValue valueWithPoint:NSMakePoint(cgPoint.x, cgPoint.y)];
 }
 
-typedef HashMap<int, NSString*> AccessibilityRoleMap;
+using AccessibilityRoleMap = HashMap<int, CFStringRef>;
 
-static const AccessibilityRoleMap& createAccessibilityRoleMap()
+static AccessibilityRoleMap createAccessibilityRoleMap()
 {
     struct RoleEntry {
         AccessibilityRole value;
         __unsafe_unretained NSString *string;
     };
-    
     static const RoleEntry roles[] = {
         { AccessibilityRole::Unknown, NSAccessibilityUnknownRole },
         { AccessibilityRole::Button, NSAccessibilityButtonRole },
@@ -1993,19 +1992,16 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { AccessibilityRole::GraphicsSymbol, NSAccessibilityImageRole },
         { AccessibilityRole::Caption, NSAccessibilityGroupRole },
     };
-    AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
-    
-    const unsigned numRoles = sizeof(roles) / sizeof(roles[0]);
-    for (unsigned i = 0; i < numRoles; ++i)
-        roleMap.set(static_cast<int>(roles[i].value), roles[i].string);
+    AccessibilityRoleMap roleMap;
+    for (auto& role : roles)
+        roleMap.add(static_cast<int>(role.value), (__bridge CFStringRef)role.string);
     return roleMap;
 }
 
-static NSString* roleValueToNSString(AccessibilityRole value)
+static NSString *roleValueToNSString(AccessibilityRole value)
 {
-    ASSERT(static_cast<int>(value));
-    static const AccessibilityRoleMap& roleMap = createAccessibilityRoleMap();
-    return roleMap.get(static_cast<int>(value));
+    static NeverDestroyed<AccessibilityRoleMap> roleMap = createAccessibilityRoleMap();
+    return (__bridge NSString *)roleMap.get().get(static_cast<int>(value));
 }
 
 - (NSString*)role

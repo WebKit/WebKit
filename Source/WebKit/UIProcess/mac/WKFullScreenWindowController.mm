@@ -288,10 +288,8 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     _page->setSuppressVisibilityUpdates(true);
 
     // Swap the webView placeholder into place.
-    if (!_webViewPlaceholder) {
+    if (!_webViewPlaceholder)
         _webViewPlaceholder = adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
-        [_webViewPlaceholder setAction:@selector(cancelOperation:)];
-    }
     [_webViewPlaceholder setTarget:nil];
     [_webViewPlaceholder setContents:(__bridge id)webViewContents.get()];
     self.savedConstraints = _webView.superview.constraints;

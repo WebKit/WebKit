@@ -180,7 +180,7 @@ bool ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue aValue) 
     ObjcValue oValue = convertValueToObjcValue (exec, aValue, ObjcObjectType);
 
     @try {
-        [_array.get() insertObject:oValue.objectValue atIndex:index];
+        [_array.get() insertObject:(__bridge id)oValue.objectValue atIndex:index];
         return true;
     } @catch(NSException* localException) {
         throwException(exec, scope, createError(exec, "Objective-C exception."));

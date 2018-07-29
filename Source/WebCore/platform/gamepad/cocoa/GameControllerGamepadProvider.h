@@ -72,7 +72,7 @@ private:
 
     void makeInvisibileGamepadsVisible();
 
-    HashMap<GCController *, std::unique_ptr<GameControllerGamepad>> m_gamepadMap;
+    HashMap<CFTypeRef, std::unique_ptr<GameControllerGamepad>> m_gamepadMap;
     Vector<PlatformGamepad*> m_gamepadVector;
     HashSet<PlatformGamepad*> m_invisibleGamepads;
 

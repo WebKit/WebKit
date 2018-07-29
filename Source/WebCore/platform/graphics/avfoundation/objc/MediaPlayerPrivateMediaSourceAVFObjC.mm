@@ -321,8 +321,8 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVolume(float volume)
 {
-    for (auto pair : m_sampleBufferAudioRendererMap)
-        [pair.key setVolume:volume];
+    for (auto key : m_sampleBufferAudioRendererMap.keys())
+        [(__bridge AVSampleBufferAudioRenderer *)key.get() setVolume:volume];
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::supportsScanning() const
@@ -332,8 +332,8 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsScanning() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
 {
-    for (auto pair : m_sampleBufferAudioRendererMap)
-        [pair.key setMuted:muted];
+    for (auto key : m_sampleBufferAudioRendererMap.keys())
+        [(__bridge AVSampleBufferAudioRenderer *)key.get() setMuted:muted];
 }
 
 FloatSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
@@ -477,8 +477,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
 void MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch(bool preservesPitch)
 {
     NSString *algorithm = preservesPitch ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed;
-    for (auto pair : m_sampleBufferAudioRendererMap)
-        [pair.key setAudioTimePitchAlgorithm:algorithm];
+    for (auto key : m_sampleBufferAudioRendererMap.keys())
+        [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateMediaSourceAVFObjC::networkState() const
@@ -776,7 +776,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableAudioSample(AVSampleBufferAudioRenderer* renderer, bool flag)
 #pragma clang diagnostic pop
 {
-    auto iter = m_sampleBufferAudioRendererMap.find(renderer);
+    auto iter = m_sampleBufferAudioRendererMap.find((__bridge CFTypeRef)renderer);
     if (iter == m_sampleBufferAudioRendererMap.end())
         return;
 
@@ -1020,10 +1020,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState(MediaPlayer::NetworkS
 void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
 #pragma clang diagnostic pop
 {
-    if (m_sampleBufferAudioRendererMap.contains(audioRenderer))
+    if (!m_sampleBufferAudioRendererMap.add((__bridge CFTypeRef)audioRenderer, AudioRendererProperties()).isNewEntry)
         return;
-
-    m_sampleBufferAudioRendererMap.add(audioRenderer, AudioRendererProperties());
 
     [audioRenderer setMuted:m_player->muted()];
     [audioRenderer setVolume:m_player->volume()];
@@ -1039,7 +1037,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioR
 void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
 #pragma clang diagnostic pop
 {
-    auto iter = m_sampleBufferAudioRendererMap.find(audioRenderer);
+    auto iter = m_sampleBufferAudioRendererMap.find((__bridge CFTypeRef)audioRenderer);
     if (iter == m_sampleBufferAudioRendererMap.end())
         return;
 

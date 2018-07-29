@@ -271,7 +271,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicIsAuxiliaryContent, NSStri
 #if ENABLE(DATACUE_VALUE)
 
 SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceQuickTimeUserData, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMetadataKeySpaceISOUserData, NSString*)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMetadataKeySpaceISOUserData, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceQuickTimeMetadata, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceiTunes, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceID3, NSString *)
@@ -288,7 +288,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceID3, NSString *)
 
 SOFT_LINK_CONSTANT(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetHTTPCookiesKey, NSString*)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetHTTPCookiesKey, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetRequiresCustomURLLoadingKey, NSString *)
 
 #define AVURLAssetBoundNetworkInterfaceName getAVURLAssetBoundNetworkInterfaceName()
@@ -1816,7 +1816,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 #endif
 
     RefPtr<WebCoreAVFResourceLoader> resourceLoader = WebCoreAVFResourceLoader::create(this, avRequest);
-    m_resourceLoaderMap.add(avRequest, resourceLoader);
+    m_resourceLoaderMap.add((__bridge CFTypeRef)avRequest, resourceLoader);
     resourceLoader->startLoading();
     return true;
 }
@@ -1825,7 +1825,7 @@ void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResource
 {
     String scheme = [[[avRequest request] URL] scheme];
 
-    WebCoreAVFResourceLoader* resourceLoader = m_resourceLoaderMap.get(avRequest);
+    WebCoreAVFResourceLoader* resourceLoader = m_resourceLoaderMap.get((__bridge CFTypeRef)avRequest);
 
     if (resourceLoader)
         resourceLoader->stopLoading();
@@ -1833,7 +1833,7 @@ void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResource
 
 void MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest(AVAssetResourceLoadingRequest *avRequest)
 {
-    m_resourceLoaderMap.remove(avRequest);
+    m_resourceLoaderMap.remove((__bridge CFTypeRef)avRequest);
 }
 #endif
 

@@ -101,8 +101,8 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
                 globalObject = originGlobalObject;
                 
             RootObject* rootObject = findRootObject(globalObject);
-            result.objectValue =  rootObject
-                ? [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject]
+            result.objectValue = rootObject
+                ? (__bridge CFTypeRef)[webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject]
                 : nil;
         }
         break;

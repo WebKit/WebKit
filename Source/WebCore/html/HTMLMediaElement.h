@@ -177,7 +177,9 @@ public:
     void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
+#ifdef __OBJC__
     PlatformLayer* videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
+#endif
     void setVideoFullscreenFrame(FloatRect);
     void setVideoFullscreenGravity(MediaPlayerEnums::VideoGravity);
     MediaPlayerEnums::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }

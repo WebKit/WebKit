@@ -57,9 +57,9 @@ using namespace JSC;
 static NSString *s_exception;
 static JSGlobalObject* s_exceptionEnvironment; // No need to protect this value, since we just use it for a pointer comparison.
 
-static HashMap<id, ObjcInstance*>& wrapperCache()
+static HashMap<CFTypeRef, ObjcInstance*>& wrapperCache()
 {
-    static NeverDestroyed<HashMap<id, ObjcInstance*>> map;
+    static NeverDestroyed<HashMap<CFTypeRef, ObjcInstance*>> map;
     return map;
 }
 
@@ -106,7 +106,7 @@ ObjcInstance::ObjcInstance(id instance, RefPtr<RootObject>&& rootObject)
 
 RefPtr<ObjcInstance> ObjcInstance::create(id instance, RefPtr<RootObject>&& rootObject)
 {
-    auto result = wrapperCache().add(instance, nullptr);
+    auto result = wrapperCache().add((__bridge CFTypeRef)instance, nullptr);
     if (result.isNewEntry) {
         RefPtr<ObjcInstance> wrapper = adoptRef(new ObjcInstance(instance, WTFMove(rootObject)));
         result.iterator->value = wrapper.get();
@@ -121,7 +121,7 @@ ObjcInstance::~ObjcInstance()
     // Both -finalizeForWebScript and -dealloc/-finalize of _instance may require autorelease pools.
     @autoreleasepool {
         ASSERT(_instance);
-        wrapperCache().remove(_instance.get());
+        wrapperCache().remove((__bridge CFTypeRef)_instance.get());
 
         if ([_instance.get() respondsToSelector:@selector(finalizeForWebScript)])
             [_instance.get() performSelector:@selector(finalizeForWebScript)];
@@ -247,7 +247,7 @@ JSC::JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
         int count = exec->argumentCount();
         for (int i = 0; i < count; i++) {
             ObjcValue value = convertValueToObjcValue(exec, exec->uncheckedArgument(i), ObjcObjectType);
-            [objcArgs addObject:value.objectValue];
+            [objcArgs addObject:(__bridge id)value.objectValue];
         }
         [invocation setArgument:&objcArgs atIndex:3];
     } else {
@@ -361,7 +361,7 @@ JSC::JSValue ObjcInstance::invokeDefaultMethod(ExecState* exec)
     unsigned count = exec->argumentCount();
     for (unsigned i = 0; i < count; i++) {
         ObjcValue value = convertValueToObjcValue(exec, exec->uncheckedArgument(i), ObjcObjectType);
-        [objcArgs addObject:value.objectValue];
+        [objcArgs addObject:(__bridge id)value.objectValue];
     }
     [invocation setArgument:&objcArgs atIndex:2];
 
@@ -408,7 +408,7 @@ bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName proper
         ObjcValue objcValue = convertValueToObjcValue(exec, aValue, ObjcObjectType);
 
         @try {
-            [targetObject setValue:objcValue.objectValue forUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
+            [targetObject setValue:(__bridge id)objcValue.objectValue forUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
         }

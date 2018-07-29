@@ -232,10 +232,6 @@
 #include "MockMediaPlayerMediaSource.h"
 #endif
 
-#if PLATFORM(MAC)
-#include "DictionaryLookup.h"
-#endif
-
 #if ENABLE(CONTENT_FILTERING)
 #include "MockContentFilterSettings.h"
 #endif
@@ -1858,23 +1854,12 @@ RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& searchRange, con
     return findClosestPlainText(searchRange, text, { }, targetOffset);
 }
 
-ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, int y)
+#if !PLATFORM(MAC)
+ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int, int)
 {
-#if PLATFORM(MAC)
-    auto* document = contextDocument();
-    if (!document || !document->frame())
-        return Exception { InvalidAccessError };
-
-    document->updateLayoutIgnorePendingStylesheets();
-
-    HitTestResult result = document->frame()->mainFrame().eventHandler().hitTestResultAtPoint(IntPoint(x, y));
-    return DictionaryLookup::rangeAtHitTestResult(result, nullptr);
-#else
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
     return Exception { InvalidAccessError };
-#endif
 }
+#endif
 
 ExceptionOr<void> Internals::setDelegatesScrolling(bool enabled)
 {

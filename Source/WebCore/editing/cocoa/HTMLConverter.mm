@@ -369,7 +369,7 @@ private:
     DocumentLoader* m_dataSource;
     
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
-    HashMap<RetainPtr<NSTextTable>, RefPtr<Element>> m_textTableFooters;
+    HashMap<RetainPtr<CFTypeRef>, RefPtr<Element>> m_textTableFooters;
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
 
     NSMutableAttributedString *_attrStr;
@@ -1863,7 +1863,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             _addTableCellForElement(nil);
         _addTableForElement(tableElement);
     } else if (displayValue == "table-footer-group" && [_textTables count] > 0) {
-        m_textTableFooters.add([_textTables lastObject], &element);
+        m_textTableFooters.add((__bridge CFTypeRef)[_textTables lastObject], &element);
         retval = NO;
     } else if (displayValue == "table-row" && [_textTables count] > 0) {
         PlatformColor *color = _colorForElement(element, CSSPropertyBackgroundColor);
@@ -2095,12 +2095,12 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
     range = NSMakeRange(startIndex, [_attrStr length] - startIndex);
     if (displayValue == "table" && [_textTables count] > 0) {
         NSTextTable *key = [_textTables lastObject];
-        Element* footer = m_textTableFooters.get(key);
+        Element* footer = m_textTableFooters.get((__bridge CFTypeRef)key);
         while ([_textTables count] < [_textBlocks count] + 1)
             [_textBlocks removeLastObject];
         if (footer) {
             _traverseFooterNode(*footer, depth + 1);
-            m_textTableFooters.remove(key);
+            m_textTableFooters.remove((__bridge CFTypeRef)key);
         }
         [_textTables removeLastObject];
         [_textTableSpacings removeLastObject];

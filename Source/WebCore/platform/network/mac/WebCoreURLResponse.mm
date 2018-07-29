@@ -294,7 +294,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
 
     if (!result) {
         auto url = CFURLResponseGetURL(cfResponse);
-        if ([(NSURL *)url isFileURL]) {
+        if ([(__bridge NSURL *)url isFileURL]) {
             RetainPtr<CFStringRef> extension = adoptCF(CFURLCopyPathExtension(url));
             if (extension) {
                 // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about

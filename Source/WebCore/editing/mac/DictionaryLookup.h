@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if PLATFORM(MAC)
 
 #include "DictionaryPopupInfo.h"
+#include <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #include <wtf/Function.h>
 
-OBJC_CLASS NSString;
 OBJC_CLASS NSView;
 OBJC_CLASS PDFSelection;
-
-// This file is included in Internals.cpp, so we can't use ObjC outright.
-#if defined(__OBJC__)
-#include <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
-#define PlatformAnimationController id<NSImmediateActionAnimationController>
-#else
-#define PlatformAnimationController void*
-#endif
 
 namespace WebCore {
 
@@ -50,16 +40,16 @@ class VisibleSelection;
 
 class DictionaryLookup {
 public:
-    WEBCORE_EXPORT static RefPtr<Range> rangeForSelection(const VisibleSelection&, NSDictionary **options);
-    WEBCORE_EXPORT static RefPtr<Range> rangeAtHitTestResult(const HitTestResult&, NSDictionary **options);
-    WEBCORE_EXPORT static NSString *stringForPDFSelection(PDFSelection *, NSDictionary **options);
+    WEBCORE_EXPORT static std::tuple<RefPtr<Range>, NSDictionary *> rangeForSelection(const VisibleSelection&);
+    WEBCORE_EXPORT static std::tuple<RefPtr<Range>, NSDictionary *> rangeAtHitTestResult(const HitTestResult&);
+    WEBCORE_EXPORT static std::tuple<NSString *, NSDictionary *> stringForPDFSelection(PDFSelection *);
 
     // FIXME: Should move/unify dictionaryPopupInfoForRange here too.
 
     WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr);
     WEBCORE_EXPORT static void hidePopup();
 
-    WEBCORE_EXPORT static PlatformAnimationController animationControllerForPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr);
+    WEBCORE_EXPORT static id <NSImmediateActionAnimationController> animationControllerForPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr);
 };
 
 } // namespace WebCore

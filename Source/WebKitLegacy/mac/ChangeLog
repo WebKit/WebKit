@@ -1,3 +1,14 @@
+2018-07-28  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Update more WebCore Objective-C code to be ARC compatible
+        https://bugs.webkit.org/show_bug.cgi?id=188140
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForText]): Updated to use the
+        new DictionaryLookup function that returns a tuple instead of using an out argument.
+
 2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Remove INTL sub-feature compile flags

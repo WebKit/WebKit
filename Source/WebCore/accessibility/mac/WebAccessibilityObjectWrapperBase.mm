@@ -283,8 +283,9 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
 {
     // Calling updateBackingStore() can invalidate this element so self must be retained.
     // If it does become invalidated, m_object will be nil.
-    [[self retain] autorelease];
-    
+    CFRetain((__bridge CFTypeRef)self);
+    CFAutorelease((__bridge CFTypeRef)self);
+
     if (!m_object)
         return NO;
     

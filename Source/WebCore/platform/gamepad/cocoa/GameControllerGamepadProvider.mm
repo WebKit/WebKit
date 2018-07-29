@@ -67,7 +67,7 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
         m_gamepadVector.grow(index + 1);
 
     m_gamepadVector[index] = gamepad.get();
-    m_gamepadMap.set(controller, WTFMove(gamepad));
+    m_gamepadMap.set((__bridge CFTypeRef)controller, WTFMove(gamepad));
 
 
     if (visibility == ConnectionVisibility::Invisible) {
@@ -85,7 +85,7 @@ void GameControllerGamepadProvider::controllerDidDisconnect(GCController *contro
 {
     LOG(Gamepad, "GameControllerGamepadProvider controller %p removed", controller);
 
-    auto removedGamepad = m_gamepadMap.take(controller);
+    auto removedGamepad = m_gamepadMap.take((__bridge CFTypeRef)controller);
     ASSERT(removedGamepad);
 
     auto i = m_gamepadVector.find(removedGamepad.get());

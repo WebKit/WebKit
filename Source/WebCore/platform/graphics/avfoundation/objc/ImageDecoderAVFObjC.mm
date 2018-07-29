@@ -64,9 +64,9 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAssetReader)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAssetReaderTrackOutput)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaCharacteristicVisual, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
-SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetUsesNoPersistentCacheKey, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMediaCharacteristicVisual, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetUsesNoPersistentCacheKey, NSString *)
 #define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 #define AVURLAssetUsesNoPersistentCacheKey getAVURLAssetUsesNoPersistentCacheKey()
@@ -224,24 +224,22 @@ namespace WebCore {
 
 static NSURL *customSchemeURL()
 {
-    static NeverDestroyed<RetainPtr<NSURL>> url;
-    if (!url.get())
-        url.get() = adoptNS([[NSURL alloc] initWithString:@"custom-imagedecoderavfobjc://resource"]);
-
-    return url.get().get();
+    static NSURL *url = [[NSURL alloc] initWithString:@"custom-imagedecoderavfobjc://resource"];
+    return url;
 }
 
 static NSDictionary *imageDecoderAssetOptions()
 {
-    static NeverDestroyed<RetainPtr<NSDictionary>> options;
-    if (!options.get()) {
-        options.get() = @{
+    static NSDictionary *options = [] {
+        // FIXME: Are these keys really optional?
+        if (!canLoadAVURLAssetReferenceRestrictionsKey() || !canLoadAVURLAssetUsesNoPersistentCacheKey())
+            return [@{ } retain];
+        return [@{
             AVURLAssetReferenceRestrictionsKey: @(AVAssetReferenceRestrictionForbidAll),
             AVURLAssetUsesNoPersistentCacheKey: @YES,
-        };
-    }
-
-    return options.get().get();
+        } retain];
+    }();
+    return options;
 }
 
 static ImageDecoderAVFObjC::RotationProperties transformToRotationProperties(AffineTransform inTransform)
@@ -364,6 +362,12 @@ bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 
 AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()
 {
+    // FIXME: Is AVMediaCharacteristicVisual truly optional?
+    if (!canLoadAVMediaCharacteristicVisual()) {
+        LOG(Images, "ImageDecoderAVFObjC::firstEnabledTrack(%p) - AVMediaCharacteristicVisual is not supported", this);
+        return nil;
+    }
+
     NSArray<AVAssetTrack *> *videoTracks = [m_asset tracksWithMediaCharacteristic:AVMediaCharacteristicVisual];
     NSUInteger firstEnabledIndex = [videoTracks indexOfObjectPassingTest:^(AVAssetTrack *track, NSUInteger, BOOL*) {
         return track.enabled;

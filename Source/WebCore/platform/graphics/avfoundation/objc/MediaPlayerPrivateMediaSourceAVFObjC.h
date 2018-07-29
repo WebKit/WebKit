@@ -270,7 +270,7 @@ private:
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
-    HashMap<RetainPtr<AVSampleBufferAudioRenderer>, AudioRendererProperties> m_sampleBufferAudioRendererMap;
+    HashMap<RetainPtr<CFTypeRef>, AudioRendererProperties> m_sampleBufferAudioRendererMap;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
 #pragma clang diagnostic pop
     RetainPtr<id> m_timeJumpedObserver;

@@ -2088,8 +2088,9 @@ std::tuple<String, PDFSelection *, NSDictionary *> PDFPlugin::lookupTextAtLocati
         return { selection.string, selection, nil };
     }
 
-    NSDictionary *options = nil;
-    NSString *lookupText = DictionaryLookup::stringForPDFSelection(selection, &options);
+    NSString *lookupText;
+    NSDictionary *options;
+    std::tie(lookupText, options) = DictionaryLookup::stringForPDFSelection(selection);
     if (!lookupText.length)
         return { emptyString(), selection, nil };
 

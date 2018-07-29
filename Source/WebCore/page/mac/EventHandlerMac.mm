@@ -453,10 +453,10 @@ static void selfRetainingNSScrollViewScrollWheel(NSScrollView *self, SEL selecto
     bool shouldRetainSelf = isMainThread() && nsScrollViewScrollWheelShouldRetainSelf();
 
     if (shouldRetainSelf)
-        [self retain];
+        CFRetain((__bridge CFTypeRef)self);
     wtfCallIMP<void>(originalNSScrollViewScrollWheel, self, selector, event);
     if (shouldRetainSelf)
-        [self release];
+        CFRelease((__bridge CFTypeRef)self);
 }
 
 bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& wheelEvent, Widget& widget)
@@ -1113,10 +1113,12 @@ VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(c
     if (!m_frame.editor().behavior().shouldSelectBasedOnDictionaryLookup())
         return VisibleSelection();
 
-    if (auto range = DictionaryLookup::rangeAtHitTestResult(result, nullptr))
-        return VisibleSelection(*range);
+    RefPtr<Range> range;
+    std::tie(range, std::ignore) = DictionaryLookup::rangeAtHitTestResult(result);
+    if (!range)
+        return VisibleSelection();
 
-    return VisibleSelection();
+    return VisibleSelection(*range);
 }
 
 static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& screenPoint, const FloatRect& screenRect)

@@ -1,3 +1,207 @@
+2018-07-28  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Update more WebCore Objective-C code to be ARC compatible
+        https://bugs.webkit.org/show_bug.cgi?id=188140
+
+        Reviewed by Sam Weinig.
+
+        This make sure we don't put any Objective-C objects into HashMap/Set
+        data structures, which doesn't work under ARC at this time. We could
+        fix that some day, but it's pretty simple to change code not to rely
+        on it, for now, and not as simple to support it in HashMap/Set.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase updateObjectBackingStore]):
+        Use CFRetain/CFAutorelease instead of retain/autorelease.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap): Use CFStringRef in a HashMap rather than
+        NSString * for string constants.
+        (roleValueToNSString): Updated for above change.
+
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject stringRepresentation]): Updated since objectValue
+        is now CFTypeRef rather than NSObject *.
+
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::create): Use CFTypeRef instead of id for the key types
+        in a HashMap.
+        (ObjcInstance::~ObjcInstance): Updated for the above change.
+        (ObjcInstance::invokeObjcMethod): Updated since objectValue is now
+        CFTypeRef.
+        (ObjcInstance::invokeDefaultMethod): Ditto.
+        (ObjcInstance::setValueOfUndefinedField): Ditto.
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcArray::setValueAt const): Ditto.
+
+        * bridge/objc/objc_utility.h: Use #pragma once. Use CFTypeRef instead
+        of NSObject * for objectValue, since it's in a union and ARC does not
+        support strong Objective-C object pointers in a union.
+
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertValueToObjcValue): Updated since objectValue is
+        now CFTypeRef.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_processElement): Use CFTypeRef rather than NSTextTable
+        for a HashMap.
+        (HTMLConverter::_exitElement): Ditto.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attributesForAttributedStringConversion): Use CFRetain rather
+        than -[NSObject retain] in a workaround for an overrelease.
+
+        * editing/mac/DictionaryLookup.h: Removed code to make this usable from
+        non-Objective-C source files. Use tuples rather than out arguments
+        for the results of the various functions.
+
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::DictionaryLookup::rangeForSelection): Return a tuple rather
+        than using an out argument for options.
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Ditto.
+        (WebCore::DictionaryLookup::stringForPDFSelection): Ditto.
+        (WebCore::showPopupOrCreateAnimationController): Removed use of typedef
+        PlatformAnimationController.
+        (WebCore::DictionaryLookup::animationControllerForPopup): Ditto.
+
+        * html/HTMLMediaElement.h: Put the videoFullscreenLayer function inside
+        an __OBJC__ ifdef since we can't do the type conversion without the
+        full Objective-C type.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::selfRetainingNSScrollViewScrollWheel): Use CFRetain/CFRelease
+        instead of retain/release.
+        (WebCore::EventHandler::selectClosestWordFromHitTestResultBasedOnLookup):
+        Updated to use tuple return value from DictionaryLookup.
+
+        * page/scrolling/ScrollingStateNode.h: Replaced direct use of PlatformLayer*
+        in a union with use of a "typless" void* pointer and added helper functions
+        to convert in both directions.
+        * page/scrolling/cocoa/ScrollingStateNode.mm:
+        (WebCore::LayerRepresentation::retainPlatformLayer): Use CFRetain instead
+        of retain.
+        (WebCore::LayerRepresentation::releasePlatformLayer): Use CFRelease instead
+        of release.
+        (WebCore::LayerRepresentation::makePlatformLayerTyped): Added.
+        (WebCore::LayerRepresentation::makePlatformLayerTypeless): Ditto.
+        * page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp:
+        (WebCore::LayerRepresentation::retainPlatformLayer): Updated argument type.
+        (WebCore::LayerRepresentation::releasePlatformLayer): Ditto.
+        (WebCore::LayerRepresentation::makePlatformLayerTyped): Added.
+        (WebCore::LayerRepresentation::makePlatformLayerTypeless): Ditto.
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.h: Use CFTypeRef
+        instad of GCController * for key type of HashMap.
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect): Updated
+        for the above change.
+        (WebCore::GameControllerGamepadProvider::controllerDidDisconnect): Ditto.
+
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        Use SOFT_LINK_CONSTANT_MAY_FAIL instead of SOFT_LINK_POINTER_OPTIONAL for
+        strings, since SOFT_LINK_POINTER_OPTIONAL does not work for Objective-C
+        types under ARC.
+        (WebCore::AVTrackPrivateAVFObjCImpl::audioKind const): Added checks
+        for the constants.
+        (WebCore::AVTrackPrivateAVFObjCImpl::videoKind const): Ditto.
+        (WebCore::AVTrackPrivateAVFObjCImpl::label const): Ditto.
+
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h:
+        Use #pragma once and use CFTypeRef instead of AVMediaSelectionOption *
+        in the key to a HashMap.
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions): Updated for
+        the above change.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        Use SOFT_LINK_CONSTANT_MAY_FAIL instead of SOFT_LINK_POINTER_OPTIONAL for
+        strings, since SOFT_LINK_POINTER_OPTIONAL does not work for Objective-C
+        types under ARC.
+        (WebCore::customSchemeURL): Removed unnecessary use of
+        NeverDestroyed<RetainPtr>. Can just use a straight pointer without calling
+        release, and that works with or without ARC.
+        (WebCore::imageDecoderAssetOptions): Ditto. Here, had to add a retain,
+        which we'll remove when we turn on ARC. Added canLoad checks, needed
+        because of SOFT_LINK_CONSTANT_MAY_FAIL.
+        (WebCore::ImageDecoderAVFObjC::firstEnabledTrack): Added canLoad check,
+        needed because of SOFT_LINK_CONSTANT_MAY_FAIL.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        Use CFTypeRef instead of AVAssetResourceLoadingRequest in HashMap.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        Updated for above.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest): Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        Use CFTypeRef instead of AVSampleBufferAudioRenderer in HashMap.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVolume): Updated for above.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setMuted): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableAudioSample): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer): Ditto.
+
+        * platform/graphics/metal/GPUDrawableMetal.mm: Updated include; under ARC, it's
+        not safe to call a method on a class without seeing its interface.
+
+        * platform/mac/VideoFullscreenInterfaceMac.mm: Added an explicit
+        __unsafe_unretained for a delegate. Could consider moving to weak, but for now
+        this preserves the current behavior and compiles under ARC.
+
+        * platform/mac/WebCoreFullScreenPlaceholderView.h: Use strong for the contents,
+        weak for the target, and changed the action to be hard-coded instead of an
+        arbitrary selector. If we find we need the flexibility again later, we can do
+        it with a block, which is more ARC-friendly than calling an arbitrary selector.
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        (-[WebCoreFullScreenPlaceholderView initWithFrame:]): Call function directly
+        instead of taking advantage of "using".
+        (-[WebCoreFullScreenPlaceholderView mouseDown:]): Call cancelOperation: on the
+        target rather than performing an arbitrary selector.
+
+        * platform/mac/WebCoreObjCExtras.mm:
+        (WebCoreObjCScheduleDeallocateOnMainThread): Use sel_registerName instead of
+        @selector, since @selector is not supported under ARC.
+
+        * platform/network/ResourceHandle.h: Use a return value rather than using an
+        inout argument in applySniffingPoliciesAndStoragePartitionIfNeeded.
+
+        * platform/network/cocoa/CookieStorageObserver.mm:
+        (WebCore::CookieStorageObserver::startObserving): Removed unnecessary
+        assertion of repondsToSelector since we are about to dispatch it immediately
+        after. Call the selector in the conventional way instead of using performSelector.
+
+        * platform/network/cocoa/WebCoreNSURLSession.h: Use #pragma once and use
+        CFTypeRef instead of an Objective-C type. Also use an explicit __unsafe_unretained
+        for the session in the data task.
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession dealloc]): Updated for the above.
+        (-[WebCoreNSURLSession taskCompleted:]): Ditto.
+        (-[WebCoreNSURLSession invalidateAndCancel]): Ditto.
+        (-[WebCoreNSURLSession getTasksWithCompletionHandler:]): Ditto.
+        (-[WebCoreNSURLSession getAllTasksWithCompletionHandler:]): Ditto.
+        (-[WebCoreNSURLSession dataTaskWithRequest:]): Ditto.
+        (-[WebCoreNSURLSession dataTaskWithURL:]): Ditto.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::applySniffingPoliciesAndStoragePartitionIfNeeded):
+        Use a return value instead of an inout argument. Also use bridging casts.
+        (WebCore::ResourceHandle::createNSURLConnection): Updated for the change above.
+        Also use a bridging cast.
+        (WebCore::ResourceHandle::schedule): Use a bridging cast.
+        (WebCore::ResourceHandle::unschedule): Ditto.
+
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::adjustMIMETypeIfNecessary): Use a bridging cast.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::rangeForDictionaryLookupAtLocation): Moved the macOS
+        version of this function out of this file ...
+        * testing/Internals.mm:
+        (WebCore::Internals::rangeForDictionaryLookupAtLocation): ... to here.
+
 2018-07-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use static global variables instead of static NeverDestroyed inside function if possible

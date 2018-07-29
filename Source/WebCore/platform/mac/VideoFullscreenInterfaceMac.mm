@@ -64,7 +64,7 @@ using WebCore::VideoFullscreenChangeObserver;
 using WebCore::PlaybackSessionModel;
 
 @interface WebVideoViewContainer : NSView {
-    id <WebVideoViewContainerDelegate> _videoViewContainerDelegate;
+    __unsafe_unretained id <WebVideoViewContainerDelegate> _videoViewContainerDelegate;
 }
 
 @property (nonatomic, assign) id <WebVideoViewContainerDelegate> videoViewContainerDelegate;

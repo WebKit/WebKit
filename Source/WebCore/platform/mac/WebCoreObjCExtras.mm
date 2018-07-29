@@ -43,9 +43,8 @@ bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
         return false;
 
     callOnMainThread([cls, object] {
-        Method method = class_getInstanceMethod(cls, @selector(dealloc));
-        IMP imp = method_getImplementation(method);
-        wtfCallIMP<void>(imp, object, @selector(dealloc));
+        auto deallocSelector = sel_registerName("dealloc");
+        wtfCallIMP<void>(method_getImplementation(class_getInstanceMethod(cls, deallocSelector)), object, deallocSelector);
     });
 
     return true;

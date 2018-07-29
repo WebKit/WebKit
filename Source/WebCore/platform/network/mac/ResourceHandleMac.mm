@@ -100,47 +100,51 @@ ResourceHandle::~ResourceHandle()
 }
 
 #if PLATFORM(IOS)
+
 static bool synchronousWillSendRequestEnabled()
 {
     static bool disabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisableSynchronousWillSendRequestPreferenceKey"] || IOSApplication::isIBooks();
     return !disabled;
 }
+
 #endif
 
 #if PLATFORM(COCOA)
-void ResourceHandle::applySniffingPoliciesAndStoragePartitionIfNeeded(NSURLRequest*& nsRequest, bool shouldContentSniff, bool shouldContentEncodingSniff)
+
+NSURLRequest *ResourceHandle::applySniffingPoliciesAndStoragePartitionIfNeeded(NSURLRequest *request, bool shouldContentSniff, bool shouldContentEncodingSniff)
 {
 #if !PLATFORM(MAC)
     UNUSED_PARAM(shouldContentEncodingSniff);
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED < 101302
     shouldContentEncodingSniff = true;
 #endif
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     String storagePartition = d->m_context->storageSession().cookieStoragePartition(firstRequest(), std::nullopt, std::nullopt);
 #else
     String storagePartition;
 #endif
     if (shouldContentSniff && shouldContentEncodingSniff && storagePartition.isEmpty())
-        return;
+        return request;
 
-    auto mutableRequest = adoptNS([nsRequest mutableCopy]);
+    auto mutableRequest = adoptNS([request mutableCopy]);
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101302
     if (!shouldContentEncodingSniff)
-        [mutableRequest _setProperty:@(YES) forKey:(NSString *)kCFURLRequestContentDecoderSkipURLCheck];
+        [mutableRequest _setProperty:@(YES) forKey:(__bridge NSString *)kCFURLRequestContentDecoderSkipURLCheck];
 #endif
 
     if (!shouldContentSniff)
-        [mutableRequest _setProperty:@(NO) forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
+        [mutableRequest _setProperty:@(NO) forKey:(__bridge NSString *)_kCFURLConnectionPropertyShouldSniff];
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (!storagePartition.isEmpty())
         [mutableRequest _setProperty:storagePartition forKey:@"__STORAGE_PARTITION_IDENTIFIER"];
 #endif
 
-    nsRequest = mutableRequest.autorelease();
-
+    return mutableRequest.autorelease();
 }
+
 #endif
 
 #if !PLATFORM(IOS)
@@ -180,7 +184,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     }
 
     NSURLRequest *nsRequest = firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
-    applySniffingPoliciesAndStoragePartitionIfNeeded(nsRequest, shouldContentSniff, shouldContentEncodingSniff);
+    nsRequest = applySniffingPoliciesAndStoragePartitionIfNeeded(nsRequest, shouldContentSniff, shouldContentEncodingSniff);
 
     if (d->m_storageSession)
         nsRequest = [copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest) autorelease];
@@ -211,7 +215,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 
     RetainPtr<CFDataRef> sourceApplicationAuditData = d->m_context->sourceApplicationAuditData();
     if (sourceApplicationAuditData)
-        [streamProperties setObject:(NSData *)sourceApplicationAuditData.get() forKey:@"kCFStreamPropertySourceApplication"];
+        [streamProperties setObject:(__bridge NSData *)sourceApplicationAuditData.get() forKey:@"kCFStreamPropertySourceApplication"];
 
 #if PLATFORM(IOS)
     NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithDictionary:connectionProperties];
@@ -309,13 +313,13 @@ void ResourceHandle::schedule(SchedulePair& pair)
     NSRunLoop *runLoop = pair.nsRunLoop();
     if (!runLoop)
         return;
-    [d->m_connection.get() scheduleInRunLoop:runLoop forMode:(NSString *)pair.mode()];
+    [d->m_connection.get() scheduleInRunLoop:runLoop forMode:(__bridge NSString *)pair.mode()];
 }
 
 void ResourceHandle::unschedule(SchedulePair& pair)
 {
     if (NSRunLoop *runLoop = pair.nsRunLoop())
-        [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair.mode()];
+        [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(__bridge NSString *)pair.mode()];
 }
 
 id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage, MessageQueue<Function<void()>>* queue)

@@ -110,11 +110,16 @@ static NSDictionary *attributesForAttributedStringConversion()
     static NSString * const NSExcludedElementsDocumentAttribute = @"ExcludedElements";
 #endif
 
+    NSURL *baseURL = URL::fakeURLWithRelativePart(emptyString());
+
+    // The output base URL needs +1 refcount to work around the fact that NSHTMLReader over-releases it.
+    CFRetain((__bridge CFTypeRef)baseURL);
+
     return @{
         NSExcludedElementsDocumentAttribute: excludedElements.get(),
         @"InterchangeNewline": @YES,
         @"CoalesceTabSpans": @YES,
-        @"OutputBaseURL": [(NSURL *)URL::fakeURLWithRelativePart(emptyString()) retain], // The value needs +1 refcount, as NSAttributedString over-releases it.
+        @"OutputBaseURL": baseURL,
         @"WebResourceHandler": [[WebArchiveResourceWebResourceHandler new] autorelease],
     };
 }
