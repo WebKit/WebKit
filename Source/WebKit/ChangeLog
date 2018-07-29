@@ -1,3 +1,15 @@
+2018-07-28  Andy Estes  <aestes@apple.com>
+
+        [Wi-Fi Assertions] Pass a ResumptionReason to resumeWiFiAssertions
+        https://bugs.webkit.org/show_bug.cgi?id=188142
+        <rdar://problem/42628842>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformProcessDidResume):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+
 2018-07-28  Darin Adler  <darin@apple.com>
 
         [Cocoa] Update more WebCore Objective-C code to be ARC compatible
