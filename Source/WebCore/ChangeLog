@@ -1,3 +1,90 @@
+2018-07-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use static global variables instead of static NeverDestroyed inside function if possible
+        https://bugs.webkit.org/show_bug.cgi?id=188146
+
+        Reviewed by Darin Adler.
+
+        This patch leverages constexpr constructors / trivial destructors more to remove unnecessary `static NeverDestroyed`
+        inside a function. It simplifies the code, removes the unnecessary function, and ensures the initialization at
+        a program loader phase.
+
+        We make StepRange::StepDescription constructor constexpr to remove bunch of `static NeverDestroyed<const StepRange::StepDescription>`.
+        And we use `static Lock` since WTF::Lock has constexpr constructor.
+
+        No behavior change.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::deref const):
+        (WebCore::MessagePort::isExistingMessagePortLocallyReachable):
+        (WebCore::MessagePort::notifyMessageAvailable):
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::~MessagePort):
+        (WebCore::allMessagePortsLock): Deleted.
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::contextIdentifier const):
+        (WebCore::ScriptExecutionContext::removeFromContextsMap):
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::postTaskTo):
+        (WebCore::allScriptExecutionContextsMapLock): Deleted.
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::createStepRange const):
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::createStepRange const):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::createStepRange const):
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::createStepRange const):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createStepRange const):
+        * html/StepRange.h:
+        (WebCore::StepRange::StepDescription::StepDescription):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::createStepRange const):
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::createStepRange const):
+        * page/SecurityPolicy.cpp:
+        (WebCore::originAccessMap):
+        (WebCore::SecurityPolicy::isAccessWhiteListed):
+        (WebCore::SecurityPolicy::addOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::resetOriginAccessWhitelists):
+        (WebCore::originAccessMapLock): Deleted.
+        * platform/SchemeRegistry.cpp:
+        (WebCore::allBuiltinSchemes):
+        (WebCore::builtinLocalURLSchemes):
+        (WebCore::localURLSchemes):
+        (WebCore::displayIsolatedURLSchemes):
+        (WebCore::builtinSecureSchemes):
+        (WebCore::secureSchemes):
+        (WebCore::builtinSchemesWithUniqueOrigins):
+        (WebCore::schemesWithUniqueOrigins):
+        (WebCore::builtinCanDisplayOnlyIfCanRequestSchemes):
+        (WebCore::canDisplayOnlyIfCanRequestSchemes):
+        (WebCore::SchemeRegistry::registerURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::ContentSecurityPolicyBypassingSchemes):
+        (WebCore::cachePartitioningSchemes):
+        (WebCore::serviceWorkerSchemes):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::registerURLSchemeAsNoAccess):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsNoAccess):
+        (WebCore::SchemeRegistry::registerURLSchemeAsDisplayIsolated):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated):
+        (WebCore::SchemeRegistry::registerURLSchemeAsSecure):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsSecure):
+        (WebCore::SchemeRegistry::canDisplayOnlyIfCanRequest):
+        (WebCore::SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest):
+        (WebCore::SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy):
+        (WebCore::SchemeRegistry::schemeShouldBypassContentSecurityPolicy):
+        (WebCore::SchemeRegistry::registerURLSchemeAsCachePartitioned):
+        (WebCore::SchemeRegistry::shouldPartitionCacheForURLScheme):
+        (WebCore::SchemeRegistry::registerURLSchemeServiceWorkersCanHandle):
+        (WebCore::SchemeRegistry::canServiceWorkersHandleURLScheme):
+        (WebCore::SchemeRegistry::isServiceWorkerContainerCustomScheme):
+        (WebCore::schemeRegistryLock): Deleted.
+
 2018-07-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix the bug when client reject the redirect on WebKitLegacy.

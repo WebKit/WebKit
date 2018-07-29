@@ -66,16 +66,11 @@
 namespace WebCore {
 using namespace Inspector;
 
-static Lock& allScriptExecutionContextsMapLock()
-{
-    static NeverDestroyed<Lock> lock;
-    return lock;
-}
-
+static Lock allScriptExecutionContextsMapLock;
 static HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>& allScriptExecutionContextsMap()
 {
     static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>> contexts;
-    ASSERT(allScriptExecutionContextsMapLock().isLocked());
+    ASSERT(allScriptExecutionContextsMapLock.isLocked());
     return contexts;
 }
 
@@ -105,7 +100,7 @@ ScriptExecutionContextIdentifier ScriptExecutionContext::contextIdentifier() con
 {
     ASSERT(isContextThread());
     if (!m_contextIdentifier) {
-        Locker<Lock> locker(allScriptExecutionContextsMapLock());
+        Locker<Lock> locker(allScriptExecutionContextsMapLock);
 
         m_contextIdentifier = generateObjectIdentifier<ScriptExecutionContextIdentifierType>();
 
@@ -118,7 +113,7 @@ ScriptExecutionContextIdentifier ScriptExecutionContext::contextIdentifier() con
 void ScriptExecutionContext::removeFromContextsMap()
 {
     if (m_contextIdentifier) {
-        Locker<Lock> locker(allScriptExecutionContextsMapLock());
+        Locker<Lock> locker(allScriptExecutionContextsMapLock);
         ASSERT(allScriptExecutionContextsMap().contains(m_contextIdentifier));
         allScriptExecutionContextsMap().remove(m_contextIdentifier);
     }
@@ -154,7 +149,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 #if !ASSERT_DISABLED
     if (m_contextIdentifier) {
-        Locker<Lock> locker(allScriptExecutionContextsMapLock());
+        Locker<Lock> locker(allScriptExecutionContextsMapLock);
         ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_contextIdentifier),
             "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
     }
@@ -601,7 +596,7 @@ bool ScriptExecutionContext::postTaskTo(const DocumentOrWorkerIdentifier& contex
 
 bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identifier, Task&& task)
 {
-    Locker<Lock> locker(allScriptExecutionContextsMapLock());
+    Locker<Lock> locker(allScriptExecutionContextsMapLock);
     auto* context = allScriptExecutionContextsMap().get(identifier);
 
     if (!context)

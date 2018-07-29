@@ -65,11 +65,7 @@ static NeverDestroyed<URLSchemesMap> makeNeverDestroyedSchemeSet(const Vector<St
     return set;
 }
 
-static Lock& schemeRegistryLock()
-{
-    static NeverDestroyed<Lock> lock;
-    return lock;
-}
+static Lock schemeRegistryLock;
 
 static const URLSchemesMap& allBuiltinSchemes()
 {
@@ -98,7 +94,7 @@ static const URLSchemesMap& allBuiltinSchemes()
 
         URLSchemesMap set;
         {
-            Locker<Lock> locker(schemeRegistryLock());
+            Locker<Lock> locker(schemeRegistryLock);
             for (auto& scheme : builtinLocalURLSchemes())
                 set.add(scheme);
 
@@ -114,7 +110,7 @@ static const URLSchemesMap& allBuiltinSchemes()
 
 static const URLSchemesMap& builtinLocalURLSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static const auto schemes = makeNeverDestroyed(URLSchemesMap {
         "file",
 #if PLATFORM(COCOA)
@@ -126,21 +122,21 @@ static const URLSchemesMap& builtinLocalURLSchemes()
 
 static URLSchemesMap& localURLSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> localSchemes = builtinLocalURLSchemes();
     return localSchemes;
 }
 
 static URLSchemesMap& displayIsolatedURLSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> displayIsolatedSchemes;
     return displayIsolatedSchemes;
 }
 
 const Vector<String>& builtinSecureSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static const auto schemes = makeNeverDestroyed(Vector<String> {
         "https",
         "about",
@@ -155,14 +151,14 @@ const Vector<String>& builtinSecureSchemes()
 
 static URLSchemesMap& secureSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static auto secureSchemes = makeNeverDestroyedSchemeSet(builtinSecureSchemes);
     return secureSchemes;
 }
 
 const Vector<String>& builtinSchemesWithUniqueOrigins()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static const auto schemes = makeNeverDestroyed(Vector<String> {
         "about",
         "javascript",
@@ -175,7 +171,7 @@ const Vector<String>& builtinSchemesWithUniqueOrigins()
 
 static URLSchemesMap& schemesWithUniqueOrigins()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static auto schemesWithUniqueOrigins = makeNeverDestroyedSchemeSet(builtinSchemesWithUniqueOrigins);
     return schemesWithUniqueOrigins;
 }
@@ -203,14 +199,14 @@ static URLSchemesMap& schemesForbiddenFromDomainRelaxation()
 
 const Vector<String>& builtinCanDisplayOnlyIfCanRequestSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static const auto schemes = makeNeverDestroyed(Vector<String> { "blob" });
     return schemes;
 }
 
 static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static auto canDisplayOnlyIfCanRequestSchemes = makeNeverDestroyedSchemeSet(builtinCanDisplayOnlyIfCanRequestSchemes);
     return canDisplayOnlyIfCanRequestSchemes;
 }
@@ -227,13 +223,13 @@ void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     localURLSchemes().add(scheme);
 }
 
 void SchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
 {
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     if (builtinLocalURLSchemes().contains(scheme))
         return;
 
@@ -271,21 +267,21 @@ static URLSchemesMap& CORSEnabledSchemes()
 
 static URLSchemesMap& ContentSecurityPolicyBypassingSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> schemes;
     return schemes;
 }
 
 static URLSchemesMap& cachePartitioningSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> schemes;
     return schemes;
 }
 
 static URLSchemesMap& serviceWorkerSchemes()
 {
-    ASSERT(schemeRegistryLock().isHeld());
+    ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> schemes;
     return schemes;
 }
@@ -302,7 +298,7 @@ bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return localURLSchemes().contains(scheme);
 }
 
@@ -311,7 +307,7 @@ void SchemeRegistry::registerURLSchemeAsNoAccess(const String& scheme)
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     schemesWithUniqueOrigins().add(scheme);
 }
 
@@ -320,7 +316,7 @@ bool SchemeRegistry::shouldTreatURLSchemeAsNoAccess(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return schemesWithUniqueOrigins().contains(scheme);
 }
 
@@ -329,7 +325,7 @@ void SchemeRegistry::registerURLSchemeAsDisplayIsolated(const String& scheme)
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     displayIsolatedURLSchemes().add(scheme);
 }
 
@@ -338,7 +334,7 @@ bool SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return displayIsolatedURLSchemes().contains(scheme);
 }
 
@@ -347,7 +343,7 @@ void SchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     secureSchemes().add(scheme);
 }
 
@@ -356,7 +352,7 @@ bool SchemeRegistry::shouldTreatURLSchemeAsSecure(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return secureSchemes().contains(scheme);
 }
 
@@ -393,7 +389,7 @@ bool SchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return canDisplayOnlyIfCanRequestSchemes().contains(scheme);
 }
 
@@ -402,7 +398,7 @@ void SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     canDisplayOnlyIfCanRequestSchemes().add(scheme);
 }
 
@@ -459,7 +455,7 @@ void SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(const Str
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     ContentSecurityPolicyBypassingSchemes().add(scheme);
 }
 
@@ -468,7 +464,7 @@ void SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(c
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     ContentSecurityPolicyBypassingSchemes().remove(scheme);
 }
 
@@ -477,7 +473,7 @@ bool SchemeRegistry::schemeShouldBypassContentSecurityPolicy(const String& schem
     if (scheme.isNull())
         return false;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return ContentSecurityPolicyBypassingSchemes().contains(scheme);
 }
 
@@ -498,7 +494,7 @@ void SchemeRegistry::registerURLSchemeAsCachePartitioned(const String& scheme)
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     cachePartitioningSchemes().add(scheme);
 }
 
@@ -507,7 +503,7 @@ bool SchemeRegistry::shouldPartitionCacheForURLScheme(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return cachePartitioningSchemes().contains(scheme);
 }
 
@@ -516,7 +512,7 @@ void SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(const String& sche
     if (scheme.isNull())
         return;
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     serviceWorkerSchemes().add(scheme);
 }
 
@@ -532,13 +528,13 @@ bool SchemeRegistry::canServiceWorkersHandleURLScheme(const String& scheme)
             return true;
     }
 
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return serviceWorkerSchemes().contains(scheme);
 }
 
 bool SchemeRegistry::isServiceWorkerContainerCustomScheme(const String& scheme)
 {
-    Locker<Lock> locker(schemeRegistryLock());
+    Locker<Lock> locker(schemeRegistryLock);
     return !scheme.isNull() && serviceWorkerSchemes().contains(scheme);
 }
 

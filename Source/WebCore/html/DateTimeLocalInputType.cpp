@@ -36,7 +36,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -45,6 +44,7 @@ using namespace HTMLNames;
 static const int dateTimeLocalDefaultStep = 60;
 static const int dateTimeLocalDefaultStepBase = 0;
 static const int dateTimeLocalStepScaleFactor = 1000;
+static const StepRange::StepDescription dateTimeLocalStepDescription { dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
 
 const AtomicString& DateTimeLocalInputType::formControlType() const
 {
@@ -70,14 +70,12 @@ ExceptionOr<void> DateTimeLocalInputType::setValueAsDate(double value) const
 
 StepRange DateTimeLocalInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    static NeverDestroyed<const StepRange::StepDescription> stepDescription(dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger);
-
     ASSERT(element());
     const Decimal stepBase = parseToNumber(element()->attributeWithoutSynchronization(minAttr), 0);
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), Decimal::fromDouble(DateComponents::minimumDateTime()));
     const Decimal maximum = parseToNumber(element()->attributeWithoutSynchronization(maxAttr), Decimal::fromDouble(DateComponents::maximumDateTime()));
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->attributeWithoutSynchronization(stepAttr));
-    return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, stepDescription);
+    const Decimal step = StepRange::parseStep(anyStepHandling, dateTimeLocalStepDescription, element()->attributeWithoutSynchronization(stepAttr));
+    return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, dateTimeLocalStepDescription);
 }
 
 bool DateTimeLocalInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const

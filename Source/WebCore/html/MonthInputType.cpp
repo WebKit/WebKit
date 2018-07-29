@@ -46,6 +46,7 @@ using namespace HTMLNames;
 static const int monthDefaultStep = 1;
 static const int monthDefaultStepBase = 0;
 static const int monthStepScaleFactor = 1;
+static const StepRange::StepDescription monthStepDescription { monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger };
 
 const AtomicString& MonthInputType::formControlType() const
 {
@@ -91,14 +92,12 @@ Decimal MonthInputType::defaultValueForStepUp() const
 
 StepRange MonthInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    static NeverDestroyed<const StepRange::StepDescription> stepDescription(monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger);
-
     ASSERT(element());
     const Decimal stepBase = parseToNumber(element()->attributeWithoutSynchronization(minAttr), Decimal::fromDouble(monthDefaultStepBase));
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), Decimal::fromDouble(DateComponents::minimumMonth()));
     const Decimal maximum = parseToNumber(element()->attributeWithoutSynchronization(maxAttr), Decimal::fromDouble(DateComponents::maximumMonth()));
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->attributeWithoutSynchronization(stepAttr));
-    return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, stepDescription);
+    const Decimal step = StepRange::parseStep(anyStepHandling, monthStepDescription, element()->attributeWithoutSynchronization(stepAttr));
+    return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, monthStepDescription);
 }
 
 Decimal MonthInputType::parseToNumber(const String& src, const Decimal& defaultValue) const

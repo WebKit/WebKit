@@ -37,7 +37,6 @@
 #include "InputTypeNames.h"
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -46,6 +45,7 @@ using namespace HTMLNames;
 static const int timeDefaultStep = 60;
 static const int timeDefaultStepBase = 0;
 static const int timeStepScaleFactor = 1000;
+static const StepRange::StepDescription timeStepDescription { timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger };
 
 TimeInputType::TimeInputType(HTMLInputElement& element)
     : BaseChooserOnlyDateAndTimeInputType(element)
@@ -77,14 +77,12 @@ Decimal TimeInputType::defaultValueForStepUp() const
 
 StepRange TimeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    static NeverDestroyed<const StepRange::StepDescription> stepDescription(timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger);
-
     ASSERT(element());
     const Decimal stepBase = parseToNumber(element()->attributeWithoutSynchronization(minAttr), 0);
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), Decimal::fromDouble(DateComponents::minimumTime()));
     const Decimal maximum = parseToNumber(element()->attributeWithoutSynchronization(maxAttr), Decimal::fromDouble(DateComponents::maximumTime()));
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->attributeWithoutSynchronization(stepAttr));
-    return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, stepDescription);
+    const Decimal step = StepRange::parseStep(anyStepHandling, timeStepDescription, element()->attributeWithoutSynchronization(stepAttr));
+    return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, timeStepDescription);
 }
 
 bool TimeInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const

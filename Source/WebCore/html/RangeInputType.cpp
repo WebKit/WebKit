@@ -47,7 +47,6 @@
 #include "SliderThumbElement.h"
 #include <limits>
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "Touch.h"
@@ -69,6 +68,7 @@ static const int rangeDefaultMaximum = 100;
 static const int rangeDefaultStep = 1;
 static const int rangeDefaultStepBase = 0;
 static const int rangeStepScaleFactor = 1;
+static const StepRange::StepDescription rangeStepDescription { rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor };
 
 static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum, const Decimal& fallbackValue)
 {
@@ -115,8 +115,6 @@ bool RangeInputType::supportsRequired() const
 
 StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    static NeverDestroyed<const StepRange::StepDescription> stepDescription(rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor);
-
     ASSERT(element());
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), rangeDefaultMinimum);
     const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);
@@ -124,11 +122,11 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
     const AtomicString& precisionValue = element()->attributeWithoutSynchronization(precisionAttr);
     if (!precisionValue.isNull()) {
         const Decimal step = equalLettersIgnoringASCIICase(precisionValue, "float") ? Decimal::nan() : 1;
-        return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, stepDescription);
+        return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
     }
 
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->attributeWithoutSynchronization(stepAttr));
-    return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, stepDescription);
+    const Decimal step = StepRange::parseStep(anyStepHandling, rangeStepDescription, element()->attributeWithoutSynchronization(stepAttr));
+    return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
 }
 
 bool RangeInputType::isSteppable() const
