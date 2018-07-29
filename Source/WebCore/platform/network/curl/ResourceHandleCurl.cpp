@@ -496,7 +496,7 @@ void ResourceHandle::continueAfterWillSendRequest(ResourceRequest&& request)
     ASSERT(isMainThread());
 
     // willSendRequest might cancel the load.
-    if (cancelledOrClientless() || !d->m_curlRequest)
+    if (cancelledOrClientless() || !d->m_curlRequest || request.isNull())
         return;
 
     auto wasSyncRequest = d->m_curlRequest->isSyncRequest();

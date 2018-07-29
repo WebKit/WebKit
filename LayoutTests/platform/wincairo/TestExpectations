@@ -929,7 +929,7 @@ http/tests/workers [ Skip ]
 
 http/tests/xmlhttprequest [ Skip ]
 http/tests/xmlhttprequest/simple-sync.html [ Pass ]
-http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html [ Failure ]
+http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html [ Pass ]
 
 http/tests/xmlviewer [ Skip ]
 http/tests/xsl [ Skip ]
