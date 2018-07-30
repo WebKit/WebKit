@@ -31,13 +31,16 @@
 #include "Cookie.h"
 #include "CookieJarCurlDatabase.h"
 #include "CookieJarDB.h"
+#include "CookieRequestHeaderFieldProxy.h"
 #include "CurlContext.h"
 #include "FileSystem.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
+#include "URL.h"
 
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -103,6 +106,21 @@ void NetworkStorageSession::switchToNewTestingSession()
     // FIXME: Implement for WebKit to use.
 }
 
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value) const
+{
+    cookieStorage().setCookiesFromDOM(*this, firstParty, sameSiteInfo, url, frameID, pageID, value);
+}
+
+bool NetworkStorageSession::cookiesEnabled() const
+{
+    return cookieStorage().cookiesEnabled(*this);
+}
+
+std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies) const
+{
+    return cookieStorage().cookiesForDOM(*this, firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+}
+
 void NetworkStorageSession::setCookies(const Vector<Cookie>&, const URL&, const URL&)
 {
     // FIXME: Implement for WebKit to use.
@@ -118,10 +136,35 @@ void NetworkStorageSession::deleteCookie(const Cookie&)
     // FIXME: Implement for WebKit to use.
 }
 
+void NetworkStorageSession::deleteCookie(const URL& url, const String& cookie) const
+{
+    cookieStorage().deleteCookie(*this, url, cookie);
+}
+
+void NetworkStorageSession::deleteAllCookies()
+{
+    cookieStorage().deleteAllCookies(*this);
+}
+
+void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime since)
+{
+    cookieStorage().deleteAllCookiesModifiedSince(*this, since);
+}
+
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames)
+{
+    cookieStorage().deleteCookiesForHostnames(*this, cookieHostNames);
+}
+
 Vector<Cookie> NetworkStorageSession::getAllCookies()
 {
     // FIXME: Implement for WebKit to use.
     return { };
+}
+
+void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
+{
+    cookieStorage().getHostnamesWithCookies(*this, hostnames);
 }
 
 Vector<Cookie> NetworkStorageSession::getCookies(const URL&)
@@ -130,9 +173,24 @@ Vector<Cookie> NetworkStorageSession::getCookies(const URL&)
     return { };
 }
 
+bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies) const
+{
+    return cookieStorage().getRawCookies(*this, firstParty, sameSiteInfo, url, frameID, pageID, rawCookies);
+}
+
 void NetworkStorageSession::flushCookieStore()
 {
     // FIXME: Implement for WebKit to use.
+}
+
+std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies) const
+{
+    return cookieStorage().cookieRequestHeaderFieldValue(*this, firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+}
+
+std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy& headerFieldProxy) const
+{
+    return cookieStorage().cookieRequestHeaderFieldValue(*this, headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies);
 }
 
 } // namespace WebCore

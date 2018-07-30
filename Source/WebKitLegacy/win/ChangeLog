@@ -1,3 +1,22 @@
+2018-07-30  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=188137
+        Merge PlatformCookieJar functions into NetworkStorageSession
+
+        Adapt callsites to use NetworkStorageSession instead of CookieJar functions.
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookiesForDOM):
+        (WebPlatformStrategies::setCookiesFromDOM):
+        (WebPlatformStrategies::cookiesEnabled):
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebPlatformStrategies::getRawCookies):
+        (WebPlatformStrategies::deleteCookie):
+        * WebPreferences.cpp:
+        (WebPreferences::clearNetworkLoaderSession):
+
 2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter

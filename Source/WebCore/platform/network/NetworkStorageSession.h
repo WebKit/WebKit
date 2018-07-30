@@ -30,6 +30,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
@@ -64,6 +65,10 @@ class ResourceRequest;
 class SoupNetworkSession;
 
 struct Cookie;
+struct CookieRequestHeaderFieldProxy;
+struct SameSiteInfo;
+
+enum class IncludeSecureCookies;
 
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
@@ -137,12 +142,24 @@ public:
     NetworkingContext* context() const;
 #endif
 
+    WEBCORE_EXPORT bool cookiesEnabled() const;
     WEBCORE_EXPORT void setCookie(const Cookie&);
     WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
+    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&) const;
     WEBCORE_EXPORT void deleteCookie(const Cookie&);
+    WEBCORE_EXPORT void deleteCookie(const URL&, const String&) const;
+    WEBCORE_EXPORT void deleteAllCookies();
+    WEBCORE_EXPORT void deleteAllCookiesModifiedSince(WallTime);
+    WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT Vector<Cookie> getCookies(const URL&);
+    WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&) const;
     WEBCORE_EXPORT void flushCookieStore();
+    WEBCORE_EXPORT void getHostnamesWithCookies(HashSet<String>& hostnames);
+    WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const;
+    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const;
+    WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&) const;
+
 
 private:
     static HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>>& globalSessionMap();

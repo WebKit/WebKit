@@ -65,7 +65,6 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStateNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SchemeRegistry.h>
@@ -533,7 +532,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
-            getHostnamesWithCookies(*networkStorageSession, callbackAggregator->m_websiteData.hostNamesWithCookies);
+            networkStorageSession->getHostnamesWithCookies(callbackAggregator->m_websiteData.hostNamesWithCookies);
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
@@ -565,7 +564,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
-            deleteAllCookiesModifiedSince(*networkStorageSession, modifiedSince);
+            networkStorageSession->deleteAllCookiesModifiedSince(modifiedSince);
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
@@ -613,7 +612,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 {
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
-            deleteCookiesForHostnames(*networkStorageSession, cookieHostNames);
+            networkStorageSession->deleteCookiesForHostnames(cookieHostNames);
     }
 
     auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {

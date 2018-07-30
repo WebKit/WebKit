@@ -42,7 +42,6 @@
 #include <WebCore/FontCascade.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/PlatformCookieJar.h>
 #include <limits>
 #include <shlobj.h>
 #include <wchar.h>
@@ -2120,7 +2119,7 @@ HRESULT WebPreferences::mediaPreloadingEnabled(_Out_ BOOL* enabled)
 
 HRESULT WebPreferences::clearNetworkLoaderSession()
 {
-    WebCore::deleteAllCookies(NetworkStorageSession::defaultStorageSession());
+    NetworkStorageSession::defaultStorageSession().deleteAllCookies();
     return S_OK;
 }
 

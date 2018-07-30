@@ -52,7 +52,6 @@
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SameSiteInfo.h>
@@ -379,7 +378,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::Sessi
 void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies, String& cookieString, bool& secureCookiesAccessed)
 {
     auto& networkStorageSession = storageSession(sessionID);
-    std::tie(cookieString, secureCookiesAccessed) = WebCore::cookiesForDOM(networkStorageSession, firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+    std::tie(cookieString, secureCookiesAccessed) = networkStorageSession.cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     if (NetworkProcess::singleton().shouldLogCookieInformation())
         NetworkResourceLoader::logCookieInformation("NetworkConnectionToWebProcess::cookiesForDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, std::nullopt);
@@ -389,7 +388,7 @@ void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, cons
 void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& cookieString)
 {
     auto& networkStorageSession = storageSession(sessionID);
-    WebCore::setCookiesFromDOM(networkStorageSession, firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
+    networkStorageSession.setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     if (NetworkProcess::singleton().shouldLogCookieInformation())
         NetworkResourceLoader::logCookieInformation("NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, std::nullopt);
@@ -398,22 +397,22 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, 
 
 void NetworkConnectionToWebProcess::cookiesEnabled(PAL::SessionID sessionID, bool& result)
 {
-    result = WebCore::cookiesEnabled(storageSession(sessionID));
+    result = storageSession(sessionID).cookiesEnabled();
 }
 
 void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies, String& cookieString, bool& secureCookiesAccessed)
 {
-    std::tie(cookieString, secureCookiesAccessed) = WebCore::cookieRequestHeaderFieldValue(storageSession(sessionID), firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+    std::tie(cookieString, secureCookiesAccessed) = storageSession(sessionID).cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 }
 
 void NetworkConnectionToWebProcess::getRawCookies(PAL::SessionID sessionID, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& result)
 {
-    WebCore::getRawCookies(storageSession(sessionID), firstParty, sameSiteInfo, url, frameID, pageID, result);
+    storageSession(sessionID).getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, result);
 }
 
 void NetworkConnectionToWebProcess::deleteCookie(PAL::SessionID sessionID, const URL& url, const String& cookieName)
 {
-    WebCore::deleteCookie(storageSession(sessionID), url, cookieName);
+    storageSession(sessionID).deleteCookie(url, cookieName);
 }
 
 void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, SandboxExtension::Handle&& extensionHandle, const String& contentType)

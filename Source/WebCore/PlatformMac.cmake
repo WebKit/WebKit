@@ -434,7 +434,6 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/AuthenticationMac.mm
     platform/network/mac/BlobDataFileReferenceMac.mm
     platform/network/mac/CertificateInfoMac.mm
-    platform/network/mac/CookieJarMac.mm
     platform/network/mac/CookieStorageMac.mm
     platform/network/mac/CredentialStorageMac.mm
     platform/network/mac/FormDataStreamMac.mm

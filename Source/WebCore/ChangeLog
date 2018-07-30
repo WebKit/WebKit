@@ -1,3 +1,110 @@
+2018-07-30  Rob Buis  <rbuis@igalia.com>
+
+        Merge PlatformCookieJar functions into NetworkStorageSession
+        https://bugs.webkit.org/show_bug.cgi?id=188137
+
+        Reviewed by Alex Christensen.
+
+        No new tests -- no change in WebKit functionality.
+
+        * PlatformMac.cmake: Remove CookieJarMac.mm reference
+        * SourcesCocoa.txt: Remove CookieJarMac.mm reference
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CookieJar.cpp: Remove PlatformCookieJar.h reference.
+        * platform/Curl.cmake: Remove CookieJarCurl.cpp reference.
+        * platform/SourcesSoup.txt: Remove CookieJarSoup.cpp reference.
+        * platform/network/CacheValidation.cpp: Adapt callsites to use
+        NetworkStorageSession instead of CookieJar functions.
+
+        (WebCore::headerValueForVary):
+        * platform/network/NetworkStorageSession.h: Add PlatformCookieJar
+        functions.
+
+        * platform/network/PlatformCookieJar.h: Removed.
+        * platform/network/SocketStreamHandleImpl.cpp: Adapt callsites to
+        use NetworkStorageSession instead of CookieJar functions.
+        (WebCore::cookieDataForHandshake):
+        * platform/network/cf/CookieJarCFNet.cpp: Removed.
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp: Move functions
+        from CookieJarCFNet.cpp.
+        (WebCore::cookieDomain):
+        (WebCore::canonicalCookieTime):
+        (WebCore::cookieCreatedTime):
+        (WebCore::cookieExpirationTime):
+        (WebCore::cookieName):
+        (WebCore::cookiePath):
+        (WebCore::cookieValue):
+        (WebCore::filterCookies):
+        (WebCore::copyCookiesForURLWithFirstPartyURL):
+        (WebCore::createCookies):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::containsSecureCookies):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+        (WebCore::NetworkStorageSession::cookiesEnabled const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::NetworkStorageSession::deleteCookie const):
+        (WebCore::NetworkStorageSession::getHostnamesWithCookies):
+        (WebCore::NetworkStorageSession::deleteAllCookies):
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+        (WebCore::NetworkStorageSession::deleteAllCookiesModifiedSince):
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm: Move functions
+        from CookieJarMac.mm.
+        (WebCore::httpCookies):
+        (WebCore::deleteHTTPCookie):
+        (WebCore::policyProperties):
+        (WebCore::cookiesForURL):
+        (WebCore::setHTTPCookiesForURL):
+        (WebCore::httpCookiesForURL):
+        (WebCore::filterCookies):
+        (WebCore::applyPartitionToCookies):
+        (WebCore::cookiesAreBlockedForURL):
+        (WebCore::cookiesInPartitionForURL):
+        (WebCore::cookiesForSession):
+        (WebCore::deleteAllHTTPCookies):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::httpCookieAcceptPolicy):
+        (WebCore::NetworkStorageSession::cookiesEnabled const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::NetworkStorageSession::deleteCookie const):
+        (WebCore::NetworkStorageSession::getHostnamesWithCookies):
+        (WebCore::NetworkStorageSession::deleteAllCookies):
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+        (WebCore::NetworkStorageSession::deleteAllCookiesModifiedSince):
+        * platform/network/curl/CookieJarCurl.cpp: Removed.
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp: Merge functions
+        from CookieJarCurl.cpp.
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::cookiesEnabled const):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::deleteCookie const):
+        (WebCore::NetworkStorageSession::deleteAllCookies):
+        (WebCore::NetworkStorageSession::deleteAllCookiesModifiedSince):
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+        (WebCore::NetworkStorageSession::getHostnamesWithCookies):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+        * platform/network/mac/CookieJarMac.mm: Removed.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        * platform/network/soup/CookieJarSoup.cpp: Removed.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp: Merge functions
+        from CookieJarSoup.cpp.
+        (WebCore::NetworkStorageSession::cookiesEnabled const):
+        (WebCore::httpOnlyCookieExists):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::deleteCookie const):
+        (WebCore::NetworkStorageSession::deleteAllCookies):
+        (WebCore::NetworkStorageSession::deleteAllCookiesModifiedSince):
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+        (WebCore::NetworkStorageSession::getHostnamesWithCookies):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::cookiesForSession):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+
 2018-07-30  Chris Dumez  <cdumez@apple.com>
 
         Nullptr crash accessing Document in GenericEventQueue::dispatchOneEvent()

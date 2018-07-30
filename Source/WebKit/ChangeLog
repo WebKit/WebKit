@@ -1,3 +1,33 @@
+2018-07-30  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=188137
+        Merge PlatformCookieJar functions into NetworkStorageSession
+
+        Adapt callsites to use NetworkStorageSession instead of CookieJar functions.
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::deleteCookiesForHostname):
+        (WebKit::WebCookieManager::deleteAllCookies):
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedSince):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::logCookieInformationInternal):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+
 2018-07-30  Alex Christensen  <achristensen@webkit.org>
 
         Add RefCounted CompletionHandler wrapping abstraction for sending policy decisions back to WebProcess

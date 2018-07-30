@@ -18,9 +18,21 @@
 
 #pragma once
 
-#include "PlatformCookieJar.h"
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/WallTime.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class URL;
+class NetworkStorageSession;
+
+struct Cookie;
+struct CookieRequestHeaderFieldProxy;
+struct SameSiteInfo;
+
+enum class IncludeSecureCookies;
 
 class CookieJarCurl {
 public:

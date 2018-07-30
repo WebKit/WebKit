@@ -35,7 +35,6 @@
 #include "FrameLoaderClient.h"
 #include "NetworkStorageSession.h"
 #include "NetworkingContext.h"
-#include "PlatformCookieJar.h"
 #include "PlatformStrategies.h"
 #include "SameSiteInfo.h"
 #include <wtf/SystemTracing.h>

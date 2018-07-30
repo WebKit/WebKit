@@ -59,7 +59,6 @@
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/PlatformCookieJar.h>
 #endif
 
 #if USE(QUICK_LOOK)
@@ -1014,7 +1013,7 @@ static void logCookieInformationInternal(const String& label, const void* logged
     ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
 
     Vector<WebCore::Cookie> cookies;
-    if (!WebCore::getRawCookies(networkStorageSession, partition, sameSiteInfo, url, frameID, pageID, cookies))
+    if (!networkStorageSession.getRawCookies(partition, sameSiteInfo, url, frameID, pageID, cookies))
         return;
 
     auto escapedURL = escapeForJSON(url.string());

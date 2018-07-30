@@ -1,3 +1,22 @@
+2018-07-30  Rob Buis  <rbuis@igalia.com>
+
+        Merge PlatformCookieJar functions into NetworkStorageSession
+        https://bugs.webkit.org/show_bug.cgi?id=188137
+
+        Adapt callsites to use NetworkStorageSession instead of CookieJar functions.
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::cookiesForDOM):
+        (WebPlatformStrategies::setCookiesFromDOM):
+        (WebPlatformStrategies::cookiesEnabled):
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebPlatformStrategies::getRawCookies):
+        (WebPlatformStrategies::deleteCookie):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _clearNetworkLoaderSession]):
+
 2018-07-28  Darin Adler  <darin@apple.com>
 
         [Cocoa] Update more WebCore Objective-C code to be ARC compatible

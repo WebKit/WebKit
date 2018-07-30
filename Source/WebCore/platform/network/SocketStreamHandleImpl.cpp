@@ -28,7 +28,6 @@
 
 #include "CookieRequestHeaderFieldProxy.h"
 #include "NetworkStorageSession.h"
-#include "PlatformCookieJar.h"
 #include "SocketStreamHandleClient.h"
 #include <wtf/Function.h>
 
@@ -85,7 +84,7 @@ static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(co
     
     String cookieDataString;
     bool secureCookiesAccessed = false;
-    std::tie(cookieDataString, secureCookiesAccessed) = WebCore::cookieRequestHeaderFieldValue(*networkStorageSession, headerFieldProxy);
+    std::tie(cookieDataString, secureCookiesAccessed) = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy);
     if (cookieDataString.isEmpty())
         return std::pair<Vector<uint8_t>, bool> { { }, secureCookiesAccessed };
 

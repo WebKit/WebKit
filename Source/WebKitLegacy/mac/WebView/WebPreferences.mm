@@ -42,7 +42,6 @@
 #import <WebCore/AudioSession.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/NetworkStorageSession.h>
-#import <WebCore/PlatformCookieJar.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextEncodingRegistry.h>
@@ -1877,7 +1876,7 @@ static NSString *classIBCreatorID = nil;
 
 + (void)_clearNetworkLoaderSession
 {
-    WebCore::deleteAllCookies(NetworkStorageSession::defaultStorageSession());
+    NetworkStorageSession::defaultStorageSession().deleteAllCookies();
 }
 
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy

@@ -4603,7 +4603,6 @@
 		E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F5AA12EE343F004EC58D /* IntRectHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E139866415478474001E3F65 /* StyleResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E139866215478474001E3F65 /* StyleResolver.h */; };
 		E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */ = {isa = PBXBuildFile; fileRef = E13EF3421684ECF40034C83F /* NetworkStorageSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1424C94164B52C800F32D40 /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = E1424C92164B52C800F32D40 /* CookieJar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */ = {isa = PBXBuildFile; fileRef = E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E152551316FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h */; };
@@ -14130,8 +14129,6 @@
 		E13EF34716850C470034C83F /* NetworkStorageSessionCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStorageSessionCFNet.cpp; sourceTree = "<group>"; };
 		E13F01EA1270E10D00DFBA71 /* CookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorage.h; sourceTree = "<group>"; };
 		E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageMac.mm; sourceTree = "<group>"; };
-		E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCookieJar.h; sourceTree = "<group>"; };
-		E1424C8F164B460B00F32D40 /* CookieJarMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieJarMac.mm; sourceTree = "<group>"; };
 		E1424C91164B52C800F32D40 /* CookieJar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieJar.cpp; sourceTree = "<group>"; };
 		E1424C92164B52C800F32D40 /* CookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieJar.h; sourceTree = "<group>"; };
 		E14A94D616DFDF950068DE82 /* BlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobRegistry.cpp; sourceTree = "<group>"; };
@@ -19073,7 +19070,6 @@
 				CDCD41E61C3DDB0900965D99 /* ParsedContentRange.h */,
 				447958021643B47B001E0A7F /* ParsedContentType.cpp */,
 				447958031643B47B001E0A7F /* ParsedContentType.h */,
-				E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */,
 				37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */,
 				514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */,
 				514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */,
@@ -19113,7 +19109,6 @@
 				514C76430CE9234E007EF3CD /* AuthenticationMac.mm */,
 				E164A2EB191AE6350010737D /* BlobDataFileReferenceMac.mm */,
 				5F2DBBE7178E332D00141486 /* CertificateInfoMac.mm */,
-				E1424C8F164B460B00F32D40 /* CookieJarMac.mm */,
 				E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */,
 				E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */,
 				514C76440CE9234E007EF3CD /* FormDataStreamMac.h */,
@@ -29715,7 +29710,6 @@
 				493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */,
 				2D70BA1318074DDF0001908A /* PlatformCALayerCocoa.h in Headers */,
 				A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */,
-				E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
@@ -29894,8 +29888,6 @@
 				3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,
-				94CFD60A1FE9867E002488AD /* RenderLinesClampFlow.h in Headers */,
-				94CFD60D1FEACEFE002488AD /* RenderLinesClampSet.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
 				A8EA7A500A191A5200A8EF5F /* RenderListMarker.h in Headers */,

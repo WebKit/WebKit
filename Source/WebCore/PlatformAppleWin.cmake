@@ -47,7 +47,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FontCustomPlatformData.cpp
 
     platform/network/cf/AuthenticationCF.cpp
-    platform/network/cf/CookieJarCFNet.cpp
     platform/network/cf/CookieStorageCFNet.cpp
     platform/network/cf/CredentialStorageCFNet.cpp
     platform/network/cf/DNSResolveQueueCFNet.cpp

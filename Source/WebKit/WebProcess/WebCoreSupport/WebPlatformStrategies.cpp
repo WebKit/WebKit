@@ -54,7 +54,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PasteboardItemInfo.h>
-#include <WebCore/PlatformCookieJar.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceError.h>

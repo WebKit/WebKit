@@ -33,7 +33,6 @@
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStorage.h>
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/PlatformCookieJar.h>
 #include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringHash.h>
@@ -60,7 +59,7 @@ void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, Callbac
 {
     HashSet<String> hostnames;
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
-        WebCore::getHostnamesWithCookies(*storageSession, hostnames);
+        storageSession->getHostnamesWithCookies(hostnames);
 
     m_process.send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(copyToVector(hostnames), callbackID), 0);
 }
@@ -68,14 +67,14 @@ void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, Callbac
 void WebCookieManager::deleteCookiesForHostname(PAL::SessionID sessionID, const String& hostname)
 {
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
-        WebCore::deleteCookiesForHostnames(*storageSession, { hostname });
+        storageSession->deleteCookiesForHostnames({ hostname });
 }
 
 
 void WebCookieManager::deleteAllCookies(PAL::SessionID sessionID)
 {
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
-        WebCore::deleteAllCookies(*storageSession);
+        storageSession->deleteAllCookies();
 }
 
 void WebCookieManager::deleteCookie(PAL::SessionID sessionID, const Cookie& cookie, CallbackID callbackID)
@@ -89,7 +88,7 @@ void WebCookieManager::deleteCookie(PAL::SessionID sessionID, const Cookie& cook
 void WebCookieManager::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, CallbackID callbackID)
 {
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
-        WebCore::deleteAllCookiesModifiedSince(*storageSession, time);
+        storageSession->deleteAllCookiesModifiedSince(time);
 
     m_process.send(Messages::WebCookieManagerProxy::DidDeleteCookies(callbackID), 0);
 }
