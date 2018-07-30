@@ -264,7 +264,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (JSValue *)valueForProperty:(id)key
 {
-    auto result = performPropertyOperation<JSValueRef>(JSObjectGetProperty, JSObjectGetPropertyKey, self, key);
+    auto result = performPropertyOperation<JSValueRef>(JSObjectGetProperty, JSObjectGetPropertyForKey, self, key);
     if (!result)
         return [_context valueFromNotifyException:result.error()];
 
@@ -272,7 +272,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 }
 
 
-- (void)setValue:(id)value forProperty:(JSValuePropertyKeyType)key
+- (void)setValue:(id)value forProperty:(JSValueProperty)key
 {
     // We need Unit business because void can't be assigned to in performPropertyOperation and I don't want to duplicate the code...
     using Unit = std::tuple<>;
@@ -282,7 +282,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     };
 
     auto jsValueSetProperty = [] (auto... args) -> Unit {
-        JSObjectSetPropertyKey(args...);
+        JSObjectSetPropertyForKey(args...);
         return { };
     };
 
@@ -293,28 +293,28 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     }
 }
 
-- (BOOL)deleteProperty:(JSValuePropertyKeyType)key
+- (BOOL)deleteProperty:(JSValueProperty)key
 {
-    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(JSObjectDeleteProperty, JSObjectDeletePropertyKey, self, key);
+    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(JSObjectDeleteProperty, JSObjectDeletePropertyForKey, self, key);
     if (!result)
         return [_context boolFromNotifyException:result.error()];
     return result.value();
 }
 
-- (BOOL)hasProperty:(JSValuePropertyKeyType)key
+- (BOOL)hasProperty:(JSValueProperty)key
 {
     // The C-api doesn't return an exception value for the string version of has property.
     auto stringHasProperty = [] (JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef*) -> BOOL {
         return JSObjectHasProperty(ctx, object, propertyName);
     };
 
-    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(stringHasProperty, JSObjectHasPropertyKey, self, key);
+    Expected<BOOL, JSValueRef> result = performPropertyOperation<BOOL>(stringHasProperty, JSObjectHasPropertyForKey, self, key);
     if (!result)
         return [_context boolFromNotifyException:result.error()];
     return result.value();
 }
 
-- (void)defineProperty:(JSValuePropertyKeyType)key descriptor:(id)descriptor
+- (void)defineProperty:(JSValueProperty)key descriptor:(id)descriptor
 {
     [[_context globalObject][@"Object"] invokeMethod:@"defineProperty" withArguments:@[ self, key, descriptor ]];
 }

@@ -366,7 +366,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     handleExceptionIfNeeded(scope, exec, exception);
 }
 
-bool JSObjectHasPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
+bool JSObjectHasPropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
@@ -387,7 +387,7 @@ bool JSObjectHasPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key
     return result;
 }
 
-JSValueRef JSObjectGetPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
+JSValueRef JSObjectGetPropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
@@ -408,7 +408,7 @@ JSValueRef JSObjectGetPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueR
     return toRef(exec, jsValue);
 }
 
-void JSObjectSetPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
+void JSObjectSetPropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
@@ -439,7 +439,7 @@ void JSObjectSetPropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key
     handleExceptionIfNeeded(scope, exec, exception);
 }
 
-bool JSObjectDeletePropertyKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
+bool JSObjectDeletePropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef key, JSValueRef* exception)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();

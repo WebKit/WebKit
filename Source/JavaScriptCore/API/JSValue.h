@@ -48,9 +48,9 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSValue : NSObject
 
 #if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < JSC_MAC_VERSION_TBA) || (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < JSC_IOS_VERSION_TBA)
-typedef NSString *JSValuePropertyKeyType;
+typedef NSString *JSValueProperty;
 #else
-typedef id JSValuePropertyKeyType;
+typedef id JSValueProperty;
 #endif
 
 /*!
@@ -328,14 +328,14 @@ typedef id JSValuePropertyKeyType;
  if the property does not exist.
 @discussion Corresponds to the JavaScript operation <code>object[property]</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (JSValue *)valueForProperty:(JSValuePropertyKeyType)property;
+- (JSValue *)valueForProperty:(JSValueProperty)property;
 
 /*!
 @method
 @abstract Set a property on a JSValue.
 @discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (void)setValue:(id)value forProperty:(JSValuePropertyKeyType)property;
+- (void)setValue:(id)value forProperty:(JSValueProperty)property;
 
 /*!
 @method
@@ -343,7 +343,7 @@ typedef id JSValuePropertyKeyType;
 @result YES if deletion is successful, NO otherwise.
 @discussion Corresponds to the JavaScript operation <code>delete object[property]</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (BOOL)deleteProperty:(JSValuePropertyKeyType)property;
+- (BOOL)deleteProperty:(JSValueProperty)property;
 
 /*!
 @method
@@ -352,7 +352,7 @@ typedef id JSValuePropertyKeyType;
 @result Returns YES if property is present on the value.
 @discussion Corresponds to the JavaScript operation <code>property in object</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (BOOL)hasProperty:(JSValuePropertyKeyType)property;
+- (BOOL)hasProperty:(JSValueProperty)property;
 
 /*!
 @method
@@ -361,7 +361,7 @@ typedef id JSValuePropertyKeyType;
  This method operates in accordance with the Object.defineProperty method in the 
  JavaScript language. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
 */
-- (void)defineProperty:(JSValuePropertyKeyType)property descriptor:(id)descriptor;
+- (void)defineProperty:(JSValueProperty)property descriptor:(id)descriptor;
 
 /*!
 @method
@@ -602,9 +602,9 @@ Create a JSValue from a CGRect.
 */
 @interface JSValue (SubscriptSupport)
 
-- (JSValue *)objectForKeyedSubscript:(JSValuePropertyKeyType)key;
+- (JSValue *)objectForKeyedSubscript:(JSValueProperty)key;
 - (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
-- (void)setObject:(id)object forKeyedSubscript:(JSValuePropertyKeyType)key;
+- (void)setObject:(id)object forKeyedSubscript:(JSValueProperty)key;
 - (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index;
 
 @end

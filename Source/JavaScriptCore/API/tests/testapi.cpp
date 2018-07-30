@@ -293,7 +293,7 @@ int TestAPI::run()
                     [&] {
                         return callFunction(getFunction, object, key);
                     }, [&] (JSValueRef* exception) {
-                        return JSObjectGetPropertyKey(context, object, key, exception);
+                        return JSObjectGetPropertyForKey(context, object, key, exception);
                     }, "checking get property keys");
             }
         }
@@ -313,7 +313,7 @@ int TestAPI::run()
                     [&] {
                         return callFunction(setFunction, jsObject, key, theAnswer);
                     } , [&] (JSValueRef* exception) {
-                        JSObjectSetPropertyKey(context, apiObject, key, theAnswer, kJSPropertyAttributeNone, exception);
+                        JSObjectSetPropertyForKey(context, apiObject, key, theAnswer, kJSPropertyAttributeNone, exception);
                         return JSValueMakeUndefined(context);
                     }, "setting property keys to the answer");
                 // Check get is the same on API object.
@@ -321,14 +321,14 @@ int TestAPI::run()
                     [&] {
                         return callFunction(getFunction, apiObject, key);
                     }, [&] (JSValueRef* exception) {
-                        return JSObjectGetPropertyKey(context, apiObject, key, exception);
+                        return JSObjectGetPropertyForKey(context, apiObject, key, exception);
                     }, "getting property keys from API objects");
                 // Check get is the same on respective objects.
                 checkJSAndAPIMatch(
                     [&] {
                         return callFunction(getFunction, jsObject, key);
                     }, [&] (JSValueRef* exception) {
-                        return JSObjectGetPropertyKey(context, apiObject, key, exception);
+                        return JSObjectGetPropertyForKey(context, apiObject, key, exception);
                     }, "getting property keys from respective objects");
             }
         }
@@ -347,7 +347,7 @@ int TestAPI::run()
                     [&] {
                         return callFunction(hasFunction, object, key);
                     }, [&] (JSValueRef* exception) {
-                        return JSValueMakeBoolean(context, JSObjectHasPropertyKey(context, object, key, exception));
+                        return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
                     }, "checking has property keys unset");
 
                 check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
@@ -356,7 +356,7 @@ int TestAPI::run()
                     [&] {
                         return callFunction(hasFunction, object, key);
                     }, [&] (JSValueRef* exception) {
-                        return JSValueMakeBoolean(context, JSObjectHasPropertyKey(context, object, key, exception));
+                        return JSValueMakeBoolean(context, JSObjectHasPropertyForKey(context, object, key, exception));
                     }, "checking has property keys set");
             }
         }
@@ -375,7 +375,7 @@ int TestAPI::run()
                     [&] {
                         return callFunction(deleteFunction, object, key);
                     }, [&] (JSValueRef* exception) {
-                        return JSValueMakeBoolean(context, JSObjectDeletePropertyKey(context, object, key, exception));
+                        return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
                     }, "checking has property keys unset");
 
                 check(!!callFunction(setFunction, object, key, theAnswer), "set property to the answer");
@@ -384,7 +384,7 @@ int TestAPI::run()
                     [&] {
                         return callFunction(deleteFunction, object, key);
                     }, [&] (JSValueRef* exception) {
-                        return JSValueMakeBoolean(context, JSObjectDeletePropertyKey(context, object, key, exception));
+                        return JSValueMakeBoolean(context, JSObjectDeletePropertyForKey(context, object, key, exception));
                     }, "checking has property keys set");
             }
         }

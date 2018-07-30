@@ -1,3 +1,30 @@
+2018-07-30  Keith Miller  <keith_miller@apple.com>
+
+        Rename some JSC API functions/types.
+        https://bugs.webkit.org/show_bug.cgi?id=188173
+
+        Reviewed by Saam Barati.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectHasPropertyForKey):
+        (JSObjectGetPropertyForKey):
+        (JSObjectSetPropertyForKey):
+        (JSObjectDeletePropertyForKey):
+        (JSObjectHasPropertyKey): Deleted.
+        (JSObjectGetPropertyKey): Deleted.
+        (JSObjectSetPropertyKey): Deleted.
+        (JSObjectDeletePropertyKey): Deleted.
+        * API/JSObjectRef.h:
+        * API/JSValue.h:
+        * API/JSValue.mm:
+        (-[JSValue valueForProperty:]):
+        (-[JSValue setValue:forProperty:]):
+        (-[JSValue deleteProperty:]):
+        (-[JSValue hasProperty:]):
+        (-[JSValue defineProperty:descriptor:]):
+        * API/tests/testapi.cpp:
+        (TestAPI::run):
+
 2018-07-30  Mark Lam  <mark.lam@apple.com>
 
         Add a debugging utility to dump the memory layout of a JSCell.
