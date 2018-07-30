@@ -74,7 +74,7 @@ webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStr
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pass Timeout ]
 # Crash is bug #176801
-webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
+webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Timeout ImageOnlyFailure Crash ]
 webkit.org/b/172269 fast/mediastream/media-devices-enumerate-devices.html [ Failure ]
 webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
 
@@ -1320,3 +1320,8 @@ webkit.org/b/188055 svg/filters/hidpi/fePointLight-coordinates.svg [ Timeout Pas
 webkit.org/b/188057 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure Pass ]
 
 webkit.org/b/188058 webanimations/partly-accelerated-transition-by-removing-property.html [ Failure ]
+
+webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
+
+webkit.org/b/188159 svg/text/text-default-font-size.html [ ImageOnlyFailure ]
+webkit.org/b/188159 svg/as-image/svg-image-with-data-uri-background.html [ ImageOnlyFailure ]

@@ -1,3 +1,14 @@
+2018-07-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        Adding two WPE-specific test baselines. Adjusting or adding a few
+        additional test expectations.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/shader-with-mis-matching-uniform-block-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/texture-offset-out-of-range-expected.txt: Added.
+
 2018-07-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening
