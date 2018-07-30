@@ -928,6 +928,8 @@ http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failu
 http/tests/workers [ Skip ]
 
 http/tests/xmlhttprequest [ Skip ]
+http/tests/xmlhttprequest/basic-auth-load-URL-with-consecutive-slashes.html [ Crash ]
+http/tests/xmlhttprequest/failed-auth.html [ Crash ]
 http/tests/xmlhttprequest/simple-sync.html [ Pass ]
 http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html [ Pass ]
 
