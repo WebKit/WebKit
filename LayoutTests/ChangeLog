@@ -1,3 +1,11 @@
+2018-07-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for mac-wk1.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-07-30  Chris Dumez  <cdumez@apple.com>
 
         Nullptr crash accessing Document in GenericEventQueue::dispatchOneEvent()
