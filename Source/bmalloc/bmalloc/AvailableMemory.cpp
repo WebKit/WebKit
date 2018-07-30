@@ -82,6 +82,8 @@ static size_t jetsamLimit()
     pid_t pid = getpid();
     if (memorystatus_control(MEMORYSTATUS_CMD_GET_MEMLIMIT_PROPERTIES, pid, 0, &properties, sizeof(properties)))
         return 840 * bmalloc::MB;
+    if (properties.memlimit_active < 0)
+        return std::numeric_limits<size_t>::max();
     return static_cast<size_t>(properties.memlimit_active) * bmalloc::MB;
 }
 #endif
