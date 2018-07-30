@@ -1,3 +1,7 @@
+2018-07-30  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r234051. rdar://problem/42451584
+
 2018-07-30  Babak Shafiei  <bshafiei@apple.com>
 
         Revert r234078. rdar://problem/42490088
