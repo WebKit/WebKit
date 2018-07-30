@@ -1,3 +1,10 @@
+2018-07-30  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Fix typo in builder name for Bindings-tests-EWS.
+
+        * BuildSlaveSupport/ews-build/config.json: Changed 'tests' to 'Tests' to make it consistent with
+        other builders.
+
 2018-07-30 Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add support for API tests in OpenSource EWS

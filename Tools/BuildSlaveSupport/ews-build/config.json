@@ -266,7 +266,7 @@
       "workernames": ["ews127", "ews128"]
     },
     {
-      "name": "Bindings-tests-EWS",
+      "name": "Bindings-Tests-EWS",
       "factory": "BindingsFactory",
       "platform": "*",
       "workernames": ["webkit-misc"]
@@ -303,7 +303,7 @@
       "port": 5555,
       "builderNames": ["Style-EWS", "JSC-Tests-EWS", "macOS-Sierra-Release-WK1-EWS", "GTK-Webkit2-EWS", "macOS-Sierra-Release-WK2-EWS",
                        "macOS-High-Sierra-Release-32bit-WK2-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-EWS", "WinCairo-EWS", "iOS-11-Simulator-EWS",
-                       "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-Sierra-Debug-WK1-EWS", "Bindings-tests-EWS"]
+                       "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-Sierra-Debug-WK1-EWS", "Bindings-Tests-EWS"]
     },
     {
       "type": "Triggerable",
