@@ -1,5 +1,41 @@
 2018-07-29  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234329. rdar://problem/42721126
+
+    [WK1] ASSERTION FAILED: renderer().repaintLayoutRects().m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint()) in WebCore::RenderLayer::updateLayerPositionsAfterScroll
+    https://bugs.webkit.org/show_bug.cgi?id=188122
+    <rdar://problem/42584790>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    When ScrollView's m_paintsEntireContents flag flips due to layer backing changes, the repaint area transitions from
+    visual to layout overflow. When this happens the cached repaint rects become invalid and they need to be recomputed.
+    Currently there's no mechanism to trigger repaint cache invalidation from ScrollView.
+    Skip assertion for now on WK1 (see webkit.org/b/188121)
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+    
+    LayoutTests:
+    
+    * platform/mac-wk1/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234329 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-27  Zalan Bujtas  <zalan@apple.com>
+
+            [WK1] ASSERTION FAILED: renderer().repaintLayoutRects().m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint()) in WebCore::RenderLayer::updateLayerPositionsAfterScroll
+            https://bugs.webkit.org/show_bug.cgi?id=188122
+            <rdar://problem/42584790>
+
+            Reviewed by Simon Fraser.
+
+            * platform/mac-wk1/TestExpectations:
+
+2018-07-29  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234125. rdar://problem/42721214
 
     CrashTracer: com.apple.WebKit.Storage at WebCore: WebCore::encodeKey
