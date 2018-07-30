@@ -1,3 +1,10 @@
+2018-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed internal build fix after r234347.
+
+        * html/StepRange.cpp:
+        (WebCore::StepRange::StepRange):
+
 2018-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink GraphicsLayer by making m_transform and m_childrenTransform be unique_ptrs

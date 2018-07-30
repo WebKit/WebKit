@@ -35,6 +35,7 @@ StepRange::StepRange()
     , m_minimum(0)
     , m_step(1)
     , m_stepBase(0)
+    , m_stepDescription()
 {
 }
 
