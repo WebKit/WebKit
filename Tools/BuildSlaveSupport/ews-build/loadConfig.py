@@ -40,7 +40,8 @@ STEP_NAME_LENGTH_LIMIT = 50
 def loadBuilderConfig(c, use_localhost_worker=False, master_prefix_path='./'):
     config = json.load(open(os.path.join(master_prefix_path, 'config.json')))
     passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
-    checkWorkersAndBuildersForConsistency(config['workers'], config['builders'])
+    checkWorkersAndBuildersForConsistency(config, config['workers'], config['builders'])
+    checkValidSchedulers(config, config['schedulers'])
 
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password')) for worker in config['workers']]
     if use_localhost_worker:
@@ -93,7 +94,7 @@ def checkValidWorker(worker):
         raise Exception('Worker {} does not have platform defined.'.format(worker['name']))
 
 
-def checkValidBuilder(builder):
+def checkValidBuilder(config, builder):
     if not builder:
         raise Exception('Builder is None or Empty.')
 
@@ -115,8 +116,33 @@ def checkValidBuilder(builder):
     if not builder.get('platform'):
         raise Exception('Builder {} does not have platform defined.'.format(builder['name']))
 
+    for trigger in builder.get('triggers') or []:
+        if not doesTriggerExist(config, trigger):
+            raise Exception('Trigger: {} in builder {} does not exist in list of Trigerrable schedulers.'.format(trigger, builder['name']))
 
-def checkWorkersAndBuildersForConsistency(workers, builders):
+
+def checkValidSchedulers(config, schedulers):
+    for scheduler in config.get('schedulers') or []:
+        if scheduler.get('type') == 'Triggerable':
+            if not isTriggerUsedByAnyBuilder(config, scheduler['name']):
+                raise Exception('Trigger: {} is not used by any builder in config.json'.format(scheduler['name']))
+
+
+def doesTriggerExist(config, trigger):
+    for scheduler in config.get('schedulers') or []:
+        if scheduler['name'] == trigger:
+            return True
+    return False
+
+
+def isTriggerUsedByAnyBuilder(config, trigger):
+    for builder in config.get('builders'):
+        if trigger in (builder.get('triggers') or []):
+            return True
+    return False
+
+
+def checkWorkersAndBuildersForConsistency(config, workers, builders):
     def _find_worker_with_name(workers, worker_name):
         for worker in workers:
             if worker['name'] == worker_name:
@@ -127,7 +153,7 @@ def checkWorkersAndBuildersForConsistency(workers, builders):
         checkValidWorker(worker)
 
     for builder in builders:
-        checkValidBuilder(builder)
+        checkValidBuilder(config, builder)
         for worker_name in builder['workernames']:
             worker = _find_worker_with_name(workers, worker_name)
             if worker is None:
