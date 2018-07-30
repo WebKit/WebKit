@@ -63,6 +63,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PageOverlayController.h>
+#include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/URL.h>
 #include <WebCore/WheelEventTestTrigger.h>
@@ -713,3 +714,21 @@ void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEven
 
     toImpl(page)->corePage()->setEventThrottlingBehaviorOverride(behaviorValue);
 }
+
+void WKBundlePageSetCompositingPolicyOverride(WKBundlePageRef page, WKCompositingPolicy* policy)
+{
+    std::optional<WebCore::CompositingPolicy> policyValue;
+    if (policy) {
+        switch (*policy) {
+        case kWKCompositingPolicyNormal:
+            policyValue = WebCore::CompositingPolicy::Normal;
+            break;
+        case kWKCompositingPolicyConservative:
+            policyValue = WebCore::CompositingPolicy::Conservative;
+            break;
+        }
+    }
+
+    toImpl(page)->corePage()->setCompositingPolicyOverride(policyValue);
+}
+

@@ -92,6 +92,8 @@ public:
     }
     void setUnderMemoryPressure(bool);
 
+    WTF_EXPORT_PRIVATE static MemoryUsagePolicy currentMemoryUsagePolicy();
+
     class ReliefLogger {
     public:
         explicit ReliefLogger(const char *log)

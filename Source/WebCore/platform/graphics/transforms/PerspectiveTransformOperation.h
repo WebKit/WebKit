@@ -49,6 +49,7 @@ public:
 private:
     bool isIdentity() const override { return !floatValueForLength(m_p, 1); }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isRepresentableIn2D() const final { return false; }
 
     bool operator==(const TransformOperation&) const override;
 

@@ -426,6 +426,10 @@ void InjectedBundlePage::prepare()
     // Force consistent "responsive" behavior for WebPage::eventThrottlingDelay() for testing. Tests can override via internals.
     WKEventThrottlingBehavior behavior = kWKEventThrottlingBehaviorResponsive;
     WKBundlePageSetEventThrottlingBehaviorOverride(m_page, &behavior);
+    
+    // Force consistent compositing behavior, even if the test runner is under memory pressure. Tests can override via internals.
+    WKCompositingPolicy policy = kWKCompositingPolicyNormal;
+    WKBundlePageSetCompositingPolicyOverride(m_page, &policy);
 }
 
 void InjectedBundlePage::resetAfterTest()

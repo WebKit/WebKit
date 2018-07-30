@@ -59,6 +59,8 @@ public:
 private:
     bool isIdentity() const override { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
 
+    bool isRepresentableIn2D() const final { return m_z.isZero(); }
+
     bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const override

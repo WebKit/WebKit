@@ -46,7 +46,9 @@ public:
 
 private:    
     bool isIdentity() const override { return m_matrix.isIdentity(); }
-    bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
+    bool isAffectedByTransformOrigin() const final { return !isIdentity(); }
+
+    bool isRepresentableIn2D() const final;
 
     bool operator==(const TransformOperation&) const override;
 

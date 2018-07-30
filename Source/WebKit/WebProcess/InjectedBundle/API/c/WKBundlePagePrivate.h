@@ -120,6 +120,16 @@ typedef uint32_t WKEventThrottlingBehavior;
 // Passing null in the second parameter clears the override.
 WK_EXPORT void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef, WKEventThrottlingBehavior*);
 
+enum {
+    kWKCompositingPolicyNormal = 0,
+    kWKCompositingPolicyConservative
+};
+
+typedef uint32_t WKCompositingPolicy;
+
+// Passing null in the second parameter clears the override.
+WK_EXPORT void WKBundlePageSetCompositingPolicyOverride(WKBundlePageRef, WKCompositingPolicy*);
+
 #if TARGET_OS_IPHONE
 WK_EXPORT void WKBundlePageSetUseTestingViewportConfiguration(WKBundlePageRef, bool);
 #endif

@@ -81,6 +81,11 @@ enum EventThrottlingBehavior {
     "unresponsive"
 };
 
+enum CompositingPolicy {
+    "normal",
+    "conservative"
+};
+
 [Conditional=VIDEO] enum PlaybackControlsPurpose {
     "ControlsManager",
     "NowPlaying"
@@ -432,6 +437,8 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] void startTrackingCompositingUpdates();
     [MayThrowException] unsigned long compositingUpdateCount();
+
+    attribute CompositingPolicy? compositingPolicyOverride;
 
     // |node| should be Document, HTMLIFrameElement, or unspecified.
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
