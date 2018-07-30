@@ -1,3 +1,37 @@
+2018-07-30  Justin Fan  <justin_fan@apple.com>
+
+        Match GraphicsContext3D with correct virtual screen using registryID
+        https://bugs.webkit.org/show_bug.cgi?id=188072
+        <rdar://problem/42634940>
+
+        Reviewed by Dean Jackson.
+
+        Follow up to https://bugs.webkit.org/show_bug.cgi?id=187750. Rather than matching rendererIDs, 
+        which can vary between processes, match GPU to display using registryID that is unique to a GPU, 
+        which was added to CGL in MacOS 10.13. 
+
+        No new tests. Manually tested on MacBookPro13,3 and iMacPro1,1 with Apple DisplayPort Cinema Display
+        and RX 580 external GPU. 
+
+        * platform/PlatformScreen.h:
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::encode const):
+        (WebCore::ScreenData::decode):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::setGPUByRegistryID):
+        (WebCore::setGPUByDisplayMask):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::screenDidChange):
+        (WebCore::identifyAndSetCurrentGPU): Deleted.
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::collectScreenProperties):
+        (WebCore::primaryRegistryID):
+        (WebCore::registryIDForDisplay):
+        (WebCore::registryIDForDisplayMask):
+        (WebCore::rendererIDForDisplayMask): Deleted.
+        (WebCore::rendererIDForDisplay): Deleted.
+        (WebCore::primaryRendererID): Deleted.
+
 2018-07-30  Rob Buis  <rbuis@igalia.com>
 
         Merge PlatformCookieJar functions into NetworkStorageSession

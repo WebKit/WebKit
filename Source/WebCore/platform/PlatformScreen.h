@@ -58,6 +58,7 @@ class FloatSize;
 class Widget;
 
 using PlatformDisplayID = uint32_t;
+using IORegistryGPUID = int64_t; // Global IOKit I/O registryID that can match a GPU across process boundaries.
 
 int screenDepth(Widget*);
 int screenDepthPerComponent(Widget*);
@@ -100,9 +101,14 @@ WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
 
 uint32_t primaryOpenGLDisplayMask();
 uint32_t displayMaskForDisplay(PlatformDisplayID);
-int32_t rendererIDForDisplay(PlatformDisplayID);
-int32_t primaryRendererID();
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+IORegistryGPUID primaryGPUID();
+IORegistryGPUID gpuIDForDisplay(PlatformDisplayID);
+IORegistryGPUID gpuIDForDisplayMask(uint32_t);
 #endif
+
+#endif // !PLATFORM(MAC)
 
 #if PLATFORM(IOS)
 

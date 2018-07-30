@@ -162,13 +162,15 @@ Ref<GraphicsContext3D> GraphicsContext3D::createShared(GraphicsContext3D& shared
 }
 
 #if PLATFORM(MAC)
-static void identifyAndSetCurrentGPU(PlatformGraphicsContext3D contextObj, CGLPixelFormatObj pixelFormatObj, GLint preferredRendererID)
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+static void setGPUByRegistryID(PlatformGraphicsContext3D contextObj, CGLPixelFormatObj pixelFormatObj, IORegistryGPUID preferredGPUID)
 {
-    // When the WebProcess does not have access to the WindowServer, there is no way for OpenGL to tell which GPU/renderer is connected to a display.
-    // Find the virtual screen that corresponds to the preferred renderer.
+    // When the WebProcess does not have access to the WindowServer, there is no way for OpenGL to tell which GPU is connected to a display.
+    // On 10.13+, find the virtual screen that corresponds to the preferred GPU by its registryID.
     // CGLSetVirtualScreen can then be used to tell OpenGL which GPU it should be using.
 
-    if (!contextObj || !preferredRendererID)
+    if (!contextObj || !preferredGPUID)
         return;
 
     GLint virtualScreenCount = 0;
@@ -178,16 +180,16 @@ static void identifyAndSetCurrentGPU(PlatformGraphicsContext3D contextObj, CGLPi
     GLint firstAcceleratedScreen = -1;
 
     for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen) {
-        GLint rendererID = 0;
-        error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFARendererID, &rendererID);
+        GLint displayMask = 0;
+        error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFADisplayMask, &displayMask);
         ASSERT(error == kCGLNoError);
-        if (error != kCGLNoError)
-            continue;
 
-        if (rendererID == preferredRendererID) {
+        auto gpuID = gpuIDForDisplayMask(displayMask);
+
+        if (gpuID == preferredGPUID) {
             error = CGLSetVirtualScreen(contextObj, virtualScreen);
             ASSERT(error == kCGLNoError);
-            LOG(WebGL, "Context (%p) set to GPU renderer (%d).", contextObj, rendererID);
+            LOG(WebGL, "Context (%p) set to GPU with ID: (%lld).", contextObj, gpuID);
             return;
         }
 
@@ -200,14 +202,45 @@ static void identifyAndSetCurrentGPU(PlatformGraphicsContext3D contextObj, CGLPi
         }
     }
 
-    // No renderer match found; set to first hardware-accelerated virtual screen.
+    // No registryID match found; set to first hardware-accelerated virtual screen.
     if (firstAcceleratedScreen >= 0) {
         error = CGLSetVirtualScreen(contextObj, firstAcceleratedScreen);
         ASSERT(error == kCGLNoError);
-        LOG(WebGL, "Renderer (%d) not matched; Context (%p) set to virtual screen (%d).", preferredRendererID, contextObj, firstAcceleratedScreen);
+        LOG(WebGL, "RegistryID (%lld) not matched; Context (%p) set to virtual screen (%d).", preferredGPUID, contextObj, firstAcceleratedScreen);
+    }
+}
+#else // __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+static void setGPUByDisplayMask(PlatformGraphicsContext3D contextObj, CGLPixelFormatObj pixelFormatObj, uint32_t preferredDisplayMask)
+{
+    // A common case for multiple GPUs, external GPUs, is not supported before macOS 10.13.4.
+    // In the rarer case where there are still multiple displays plugged into multiple GPUs, this should still work.
+    // See code example at https://developer.apple.com/library/content/technotes/tn2229/_index.html#//apple_ref/doc/uid/DTS40008924-CH1-SUBSECTION7
+    // FIXME: Window server is not blocked before 10.14. There might be a more straightforward way to detect the correct GPU.
+
+    if (!contextObj || !preferredDisplayMask)
+        return;
+
+    GLint virtualScreenCount = 0;
+    CGLError error = CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount, &virtualScreenCount);
+    ASSERT(error == kCGLNoError);
+
+    for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen) {
+        GLint displayMask = 0;
+        error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFADisplayMask, &displayMask);
+        ASSERT(error == kCGLNoError);
+        if (error != kCGLNoError)
+            continue;
+
+        if (displayMask & preferredDisplayMask) {
+            error = CGLSetVirtualScreen(contextObj, virtualScreen);
+            ASSERT(error == kCGLNoError);
+            return;
+        }
     }
 }
 #endif
+
+#endif // !PLATFORM(MAC)
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attrs)
@@ -278,11 +311,21 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     CGLSetParameter(m_contextObj, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
     
 #if PLATFORM(MAC)
-    GLint rendererID = (hostWindow && hostWindow->displayID()) ? rendererIDForDisplay(hostWindow->displayID()) : primaryRendererID();
-    identifyAndSetCurrentGPU(m_contextObj, pixelFormatObj, rendererID);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    auto gpuID = (hostWindow && hostWindow->displayID()) ? gpuIDForDisplay(hostWindow->displayID()) : primaryGPUID();
+    setGPUByRegistryID(m_contextObj, pixelFormatObj, gpuID);
+#else
+    if (auto displayMask = primaryOpenGLDisplayMask()) {
+        if (hostWindow && hostWindow->displayID())
+            displayMask = displayMaskForDisplay(hostWindow->displayID());
+        setGPUByDisplayMask(m_contextObj, pixelFormatObj, displayMask);
+    }
+#endif
+
 #else
     UNUSED_PARAM(hostWindow);
-#endif
+#endif // !PLATFORM(MAC)
 
     CGLDestroyPixelFormat(pixelFormatObj);
     
@@ -603,10 +646,13 @@ void GraphicsContext3D::screenDidChange(PlatformDisplayID displayID)
 {
     if (!m_contextObj)
         return;
-
-    identifyAndSetCurrentGPU(m_contextObj, CGLGetPixelFormat(m_contextObj), rendererIDForDisplay(displayID));
-}
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    setGPUByRegistryID(m_contextObj, CGLGetPixelFormat(m_contextObj), gpuIDForDisplay(displayID));
+#else
+    setGPUByDisplayMask(m_contextObj, CGLGetPixelFormat(m_contextObj), displayMaskForDisplay(displayID));
 #endif
+}
+#endif // !PLATFORM(MAC)
 
 }
 
