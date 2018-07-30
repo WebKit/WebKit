@@ -29,5 +29,7 @@
 		<string>kTCCServiceMicrophone</string>
 		<string>kTCCServiceCamera</string>
 	</array>
+	<key>com.apple.private.memorystatus</key>
+	<true/>
 </dict>
 </plist>

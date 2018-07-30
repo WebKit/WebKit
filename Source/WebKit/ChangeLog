@@ -1,3 +1,58 @@
+2018-07-29  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234326. rdar://problem/42721215
+
+    Use SPI to compute the jetsam limit on iOS instead of hardcoding 840MB
+    https://bugs.webkit.org/show_bug.cgi?id=188091
+    <rdar://problem/42647697>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/bmalloc:
+    
+    We want bmalloc to dynamically adapt to the jetsam limit of the process
+    it's running in. WTF::ramSize() is based off bmalloc's availableMemory,
+    so it will now reflect the result of the real jetsam limit when we can
+    read it.
+    
+    Reading the jetsam limit requires an entitlement, so this patch opts in
+    the WebContent/Storage/Network processes. We fall back to 840MB (the
+    old hard coded value) when the SPI call fails (e.g, when we're in a
+    process without the proper entitlement).
+    
+    * bmalloc.xcodeproj/project.pbxproj:
+    * bmalloc/AvailableMemory.cpp:
+    (bmalloc::jetsamLimit):
+    (bmalloc::computeAvailableMemory):
+    * bmalloc/darwin/MemoryStatusSPI.h: Added.
+    
+    Source/WebKit:
+    
+    Give the Network/Storage/WebContent process the com.apple.private.memorystatus
+    entitlement. This allows them to read the process jetsam limit.
+    
+    * Configurations/Databases-iOS.entitlements:
+    * Configurations/Network-iOS.entitlements:
+    * Configurations/WebContent-iOS.entitlements:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234326 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-27  Saam Barati  <sbarati@apple.com>
+
+            Use SPI to compute the jetsam limit on iOS instead of hardcoding 840MB
+            https://bugs.webkit.org/show_bug.cgi?id=188091
+            <rdar://problem/42647697>
+
+            Reviewed by Simon Fraser.
+
+            Give the Network/Storage/WebContent process the com.apple.private.memorystatus
+            entitlement. This allows them to read the process jetsam limit.
+
+            * Configurations/Databases-iOS.entitlements:
+            * Configurations/Network-iOS.entitlements:
+            * Configurations/WebContent-iOS.entitlements:
+
 2018-07-26  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234262. rdar://problem/42650389
