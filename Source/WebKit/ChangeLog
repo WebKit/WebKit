@@ -1,3 +1,20 @@
+2018-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Potential null dereference under WebPage::applicationDidBecomeActive()
+        https://bugs.webkit.org/show_bug.cgi?id=188170
+        <rdar://problem/37493418>
+
+        Reviewed by Wenson Hsieh.
+
+        WebPage::m_page gets nulled out when the page is closed but the WebPage object may receive IPC
+        until it gets destroyed. Therefore, we need to null-check m_page before using it in IPC message
+        handlers.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackground):
+        (WebKit::WebPage::applicationWillEnterForeground):
+        (WebKit::WebPage::applicationDidBecomeActive):
+
 2018-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix incorrect guards around a method declaration in PageClient.h
