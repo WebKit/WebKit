@@ -49,12 +49,18 @@ class ConfigureBuild(buildstep.BuildStep):
         self.additionalArguments = additionalArguments
 
     def start(self):
-        self.setProperty("platform", self.platform)
-        self.setProperty("fullPlatform", self.fullPlatform)
-        self.setProperty("configuration", self.configuration)
-        self.setProperty("architecture", self.architecture)
-        self.setProperty("buildOnly", self.buildOnly)
-        self.setProperty("additionalArguments", self.additionalArguments)
+        if self.platform and self.platform != '*':
+            self.setProperty('platform', self.platform, 'config.json')
+        if self.fullPlatform and self.fullPlatform != '*':
+            self.setProperty('fullPlatform', self.fullPlatform, 'ConfigureBuild')
+        if self.configuration:
+            self.setProperty('configuration', self.configuration, 'config.json')
+        if self.architecture:
+            self.setProperty('architecture', self.architecture, 'config.json')
+        if self.buildOnly:
+            self.setProperty("buildOnly", self.buildOnly, 'config.json')
+        if self.additionalArguments:
+            self.setProperty("additionalArguments", self.additionalArguments, 'config.json')
         self.finished(SUCCESS)
         return defer.succeed(None)
 

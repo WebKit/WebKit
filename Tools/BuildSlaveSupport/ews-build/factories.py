@@ -21,9 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from buildbot.process import factory
+from buildbot.process import factory, properties
+from buildbot.steps import trigger
 
 from steps import *
+
+Property = properties.Property
 
 
 class Factory(factory.BuildFactory):
@@ -58,13 +61,26 @@ class WebKitPyFactory(Factory):
 
 
 class BuildFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, triggers=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
         self.addStep(KillOldProcesses())
         self.addStep(CleanBuild())
         self.addStep(CompileWebKit())
         self.addStep(UnApplyPatchIfRequired())
         self.addStep(CompileWebKitToT())
+        if triggers:
+            self.addStep(ArchiveBuiltProduct())
+            self.addStep(UploadBuiltProduct())
+            self.addStep(trigger.Trigger(schedulerNames=triggers, set_properties=self.propertiesToPassToTriggers() or {}))
+
+    def propertiesToPassToTriggers(self):
+        return {
+            "ewspatchid": Property("ewspatchid"),
+            "configuration": Property("configuration"),
+            "platform": Property("platform"),
+            "fullPlatform": Property("fullPlatform"),
+            "architecture": Property("architecture"),
+        }
 
 
 class JSCTestsFactory(Factory):
@@ -79,6 +95,17 @@ class JSCTestsFactory(Factory):
         self.addStep(RunJavaScriptCoreTestsToT())
 
 
+class APITestsFactory(Factory):
+    def getProduct(self):
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.getProduct()
+        self.addStep(RunAPITests())
+
+
 class GTKFactory(Factory):
     pass
 
@@ -88,8 +115,8 @@ class iOSFactory(BuildFactory):
 
 
 class iOSSimulatorFactory(BuildFactory):
-    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
-        BuildFactory.__init__(self, platform, configuration, architectures, additionalArguments)
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, triggers=None, **kwargs):
+        BuildFactory.__init__(self, platform, configuration, architectures, additionalArguments, triggers)
         self.addStep(RunWebKitTests())
 
 

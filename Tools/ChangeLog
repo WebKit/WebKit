@@ -1,3 +1,20 @@
+2018-07-30 Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add support for API tests in OpenSource EWS
+        https://bugs.webkit.org/show_bug.cgi?id=188156
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/config.json:
+        * BuildSlaveSupport/ews-build/factories.py:
+        (BuildFactory.__init__): Added triggers parameter.
+        (BuildFactory): If trigger is defined, create and upload archive and trigger appropriate queues.
+        (BuildFactory.propertiesToPassToTriggers): Pass all the required properties to triggered queue.
+        (APITestsFactory): Factory for running API tests.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ConfigureBuild.start): Set the property only if property is defined in config.json. Also set the 
+        source of the property.
+
 2018-07-30  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] loadConfig should ensure that the triggers are valid
