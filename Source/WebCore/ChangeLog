@@ -1,3 +1,17 @@
+2018-07-30  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Make codecparsers optionnal
+        https://bugs.webkit.org/show_bug.cgi?id=188010
+
+        And avoid building libWebRTC if it won't be used. While there is no other
+        WebRTC backend, it makes no sense to expose an option.
+
+        Error out when WEBRTC or MEDIA_STREAM is enabled but GStreamer < 1.10
+
+        Reviewed by Alejandro G. Castro.
+
+        * platform/GStreamer.cmake:
+
 2018-07-28  Darin Adler  <darin@apple.com>
 
         [Cocoa] Update more WebCore Objective-C code to be ARC compatible
