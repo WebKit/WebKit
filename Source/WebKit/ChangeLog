@@ -1,3 +1,12 @@
+2018-07-30  Devin Rousso  <webkit@devinrousso.com>
+
+        Add missing CoreGraphics SPI
+        https://bugs.webkit.org/show_bug.cgi?id=188177
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2018-07-30  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=188137

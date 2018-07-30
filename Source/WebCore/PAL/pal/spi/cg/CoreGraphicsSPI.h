@@ -302,6 +302,10 @@ bool ColorSyncProfileIsWideGamut(ColorSyncProfileRef);
 size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
 size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+CGError CGSSetDenyWindowServerConnections(bool);
+#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+
 #endif
 
 WTF_EXTERN_C_END
