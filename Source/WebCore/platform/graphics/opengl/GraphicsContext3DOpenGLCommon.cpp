@@ -400,9 +400,13 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
 
     GC3Dint maxVaryingVectors = 0;
 #if !USE(OPENGL_ES)
-    GC3Dint maxVaryingFloats = 0;
-    ::glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryingFloats);
-    maxVaryingVectors = maxVaryingFloats / 4;
+    if (m_isForWebGL2)
+        ::glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryingVectors);
+    else {
+        GC3Dint maxVaryingFloats = 0;
+        ::glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryingFloats);
+        maxVaryingVectors = maxVaryingFloats / 4;
+    }
 #else
     ::glGetIntegerv(MAX_VARYING_VECTORS, &maxVaryingVectors);
 #endif

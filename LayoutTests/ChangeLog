@@ -1,3 +1,29 @@
+2018-07-30  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL2] Support compilation of GLSL ES version 300 shaders
+        https://bugs.webkit.org/show_bug.cgi?id=187982
+        <rdar://problem/42564229>
+
+        Reviewed by Dean Jackson.
+
+        New simple test added to ensure that GLSL ES version 300 shaders compile.
+        Updated other test results in glsl3 to match new functionality.
+
+        * fast/canvas/webgl/webgl2-glsl3-compile-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-glsl3-compile.html: Added.
+        * platform/ios/TestExpectations: Skipping ios for now. 
+        * webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/forbidden-operators-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/invalid-default-precision-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/invalid-invariant-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/misplaced-version-directive-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/sampler-no-precision-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/sequence-operator-returns-non-constant-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/texture-offset-out-of-range-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/texture-offset-uniform-texture-coordinate-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/uniform-block-layout-match-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/uniform-block-layouts-expected.txt:
+
 2018-07-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/forms/file/input-file-re-render.html for Mojave.

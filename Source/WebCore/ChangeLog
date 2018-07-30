@@ -1,5 +1,27 @@
 2018-07-30  Justin Fan  <justin_fan@apple.com>
 
+        [WebGL2] Support compilation of GLSL ES version 300 shaders
+        https://bugs.webkit.org/show_bug.cgi?id=187982
+        <rdar://problem/42564229>
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/canvas/webgl/webgl2-glsl3-compile.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create): Rename 'useGLES3' to 'isWebGL2' (everywhere) to make more sense.
+        * platform/graphics/GraphicsContext3DAttributes.h: Rename 'useGLES3' to 'isWebGL2'.
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::setPixelFormat): Back WebGL2 contexts with OpenGL 4 for full OpenGL ES 3 support. 
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Request correct GLSL output version and WebGL 2 for ANGLE shader compilation.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking const): MAX_VARYING_FLOATS is deprecated in OpenGL 3+.
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp: Rename 'useGLES3' to 'isWebGL2'.
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
+2018-07-30  Justin Fan  <justin_fan@apple.com>
+
         Match GraphicsContext3D with correct virtual screen using registryID
         https://bugs.webkit.org/show_bug.cgi?id=188072
         <rdar://problem/42634940>

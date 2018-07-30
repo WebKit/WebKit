@@ -48,7 +48,7 @@ struct GraphicsContext3DAttributes {
     // Additional attributes.
     bool forceSoftwareRenderer { false };
     bool shareResources { true };
-    bool useGLES3 { false };
+    bool isWebGL2 { false };
     bool noExtensions { false };
     float devicePixelRatio { 1 };
     PowerPreference initialPowerPreference { PowerPreference::Default };

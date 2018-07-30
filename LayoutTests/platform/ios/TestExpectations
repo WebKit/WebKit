@@ -3339,3 +3339,6 @@ fast/block/block-only/relative-auto-with-parent-offset.html [ Failure ]
 # Datalist
 webkit.org/b/186714 fast/forms/datalist/datalist-show-hide.html [ Skip ]
 webkit.org/b/186714 fast/forms/datalist/datalist-textinput-keydown.html [ Skip ]
+
+# We are only accepting GLSL3 for macOS. 
+webkit.org/b/187982 webgl/2.0.0/conformance2/glsl3 [ Skip ]

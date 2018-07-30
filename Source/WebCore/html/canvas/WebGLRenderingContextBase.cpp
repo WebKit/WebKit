@@ -583,7 +583,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
 #if ENABLE(WEBGL2)
     if (type == "webgl2")
-        attributes.useGLES3 = true;
+        attributes.isWebGL2 = true;
 #endif
 
     if (isPendingPolicyResolution) {
@@ -613,7 +613,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 #if ENABLE(WEBGL2) && PLATFORM(MAC)
     // glTexStorage() was only added to Core in OpenGL 4.2.
     // However, according to https://developer.apple.com/opengl/capabilities/ all Apple GPUs support this extension.
-    if (attributes.useGLES3 && !extensions.supports("GL_ARB_texture_storage"))
+    if (attributes.isWebGL2 && !extensions.supports("GL_ARB_texture_storage"))
         return nullptr;
 #endif
 
