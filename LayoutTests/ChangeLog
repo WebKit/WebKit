@@ -1,5 +1,14 @@
 2018-07-30  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline fast/forms/file/input-file-re-render.html for Mojave.
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/file/input-file-re-render-expected.txt.
+        * platform/mac/fast/forms/file/input-file-re-render-expected.txt:
+
+2018-07-30  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update TestExpectations for mac-wk1.
 
         Unreviewed test gardening.
