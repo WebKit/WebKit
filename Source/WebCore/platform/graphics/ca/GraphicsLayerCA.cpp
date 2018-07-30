@@ -647,7 +647,7 @@ void GraphicsLayerCA::syncBoundsOrigin(const FloatPoint& origin)
 
 void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
 {
-    if (t == m_transform)
+    if (t == transform())
         return;
 
     GraphicsLayer::setTransform(t);
@@ -656,7 +656,7 @@ void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
 
 void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
 {
-    if (t == m_childrenTransform)
+    if (t == childrenTransform())
         return;
 
     GraphicsLayer::setChildrenTransform(t);
@@ -1332,7 +1332,11 @@ TransformationMatrix GraphicsLayerCA::layerTransform(const FloatPoint& position,
     TransformationMatrix transform;
     transform.translate(position.x(), position.y());
 
-    TransformationMatrix currentTransform = customTransform ? *customTransform : m_transform;
+    TransformationMatrix currentTransform;
+    if (customTransform)
+        currentTransform = *customTransform;
+    else if (m_transform)
+        currentTransform = *m_transform;
     
     if (!currentTransform.isIdentity()) {
         FloatPoint3D absoluteAnchorPoint(anchorPoint());
@@ -1343,7 +1347,7 @@ TransformationMatrix GraphicsLayerCA::layerTransform(const FloatPoint& position,
     }
 
     if (GraphicsLayer* parentLayer = parent()) {
-        if (!parentLayer->childrenTransform().isIdentity()) {
+        if (parentLayer->hasNonIdentityChildrenTransform()) {
             FloatPoint3D parentAnchorPoint(parentLayer->anchorPoint());
             parentAnchorPoint.scale(parentLayer->size().width(), parentLayer->size().height(), 1);
 
@@ -2010,7 +2014,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
 
 void GraphicsLayerCA::updateTransform()
 {
-    primaryLayer()->setTransform(m_transform);
+    primaryLayer()->setTransform(transform());
 
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         for (auto& clone : *layerCloneMap) {
@@ -2020,18 +2024,18 @@ void GraphicsLayerCA::updateTransform()
                 // which we set up in replicatedLayerRoot().
                 currLayer->setTransform(TransformationMatrix());
             } else
-                currLayer->setTransform(m_transform);
+                currLayer->setTransform(transform());
         }
     }
 }
 
 void GraphicsLayerCA::updateChildrenTransform()
 {
-    primaryLayer()->setSublayerTransform(m_childrenTransform);
+    primaryLayer()->setSublayerTransform(childrenTransform());
 
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         for (auto& layer : layerCloneMap->values())
-            layer->setSublayerTransform(m_childrenTransform);
+            layer->setSublayerTransform(childrenTransform());
     }
 }
 
@@ -2916,7 +2920,7 @@ bool GraphicsLayerCA::removeCAAnimationFromLayer(AnimatedPropertyID property, co
         return false;
     
     layer->removeAnimationForKey(animationID);
-    bug7311367Workaround(m_structuralLayer.get(), m_transform);
+    bug7311367Workaround(m_structuralLayer.get(), transform());
 
     if (LayerMap* layerCloneMap = animatedLayerClones(property)) {
         for (auto& clone : *layerCloneMap) {

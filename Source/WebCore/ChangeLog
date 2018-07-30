@@ -1,3 +1,39 @@
+2018-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink GraphicsLayer by making m_transform and m_childrenTransform be unique_ptrs
+        https://bugs.webkit.org/show_bug.cgi?id=188143
+
+        Reviewed by Zalan Bujtas.
+
+        m_transform and m_childrenTransform are usually identity; save space by making
+        these unique_ptrs. The getters still return references by returning a reference
+        to a NeverDestroyed<TransformationMatrix> if necessary.
+        
+        Shrinks GraphicsLayerCA from 840 to 640 bytes.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::identityTransform):
+        (WebCore::GraphicsLayer::transform const):
+        (WebCore::GraphicsLayer::setTransform):
+        (WebCore::GraphicsLayer::childrenTransform const):
+        (WebCore::GraphicsLayer::setChildrenTransform):
+        (WebCore::GraphicsLayer::dumpProperties const):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::hasNonIdentityTransform const):
+        (WebCore::GraphicsLayer::hasNonIdentityChildrenTransform const):
+        (WebCore::GraphicsLayer::transform const): Deleted.
+        (WebCore::GraphicsLayer::setTransform): Deleted.
+        (WebCore::GraphicsLayer::childrenTransform const): Deleted.
+        (WebCore::GraphicsLayer::setChildrenTransform): Deleted.
+        (WebCore::GraphicsLayer::hasFlattenedPerspectiveTransform): Deleted. It was unused.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setTransform):
+        (WebCore::GraphicsLayerCA::setChildrenTransform):
+        (WebCore::GraphicsLayerCA::layerTransform const):
+        (WebCore::GraphicsLayerCA::updateTransform):
+        (WebCore::GraphicsLayerCA::updateChildrenTransform):
+        (WebCore::GraphicsLayerCA::removeCAAnimationFromLayer):
+
 2018-07-30  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Make codecparsers optionnal

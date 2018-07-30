@@ -306,6 +306,38 @@ void GraphicsLayer::removeFromParent()
     }
 }
 
+static const TransformationMatrix& identityTransform()
+{
+    static NeverDestroyed<TransformationMatrix> identityTransform;
+    return identityTransform;
+}
+
+const TransformationMatrix& GraphicsLayer::transform() const
+{
+    return m_transform ? *m_transform : identityTransform();
+}
+
+void GraphicsLayer::setTransform(const TransformationMatrix& matrix)
+{
+    if (m_transform)
+        *m_transform = matrix;
+    else
+        m_transform = std::make_unique<TransformationMatrix>(matrix);
+}
+
+const TransformationMatrix& GraphicsLayer::childrenTransform() const
+{
+    return m_childrenTransform ? *m_childrenTransform : identityTransform();
+}
+
+void GraphicsLayer::setChildrenTransform(const TransformationMatrix& matrix)
+{
+    if (m_childrenTransform)
+        *m_childrenTransform = matrix;
+    else
+        m_childrenTransform = std::make_unique<TransformationMatrix>(matrix);
+}
+
 void GraphicsLayer::setMaskLayer(GraphicsLayer* layer)
 {
     if (layer == m_maskLayer)
@@ -789,22 +821,22 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (behavior & LayerTreeAsTextIncludeBackingStoreAttached)
         ts << indent << "(backingStoreAttached " << backingStoreAttachedForTesting() << ")\n";
 
-    if (!m_transform.isIdentity()) {
+    if (m_transform && !m_transform->isIdentity()) {
         ts << indent << "(transform ";
-        ts << "[" << m_transform.m11() << " " << m_transform.m12() << " " << m_transform.m13() << " " << m_transform.m14() << "] ";
-        ts << "[" << m_transform.m21() << " " << m_transform.m22() << " " << m_transform.m23() << " " << m_transform.m24() << "] ";
-        ts << "[" << m_transform.m31() << " " << m_transform.m32() << " " << m_transform.m33() << " " << m_transform.m34() << "] ";
-        ts << "[" << m_transform.m41() << " " << m_transform.m42() << " " << m_transform.m43() << " " << m_transform.m44() << "])\n";
+        ts << "[" << m_transform->m11() << " " << m_transform->m12() << " " << m_transform->m13() << " " << m_transform->m14() << "] ";
+        ts << "[" << m_transform->m21() << " " << m_transform->m22() << " " << m_transform->m23() << " " << m_transform->m24() << "] ";
+        ts << "[" << m_transform->m31() << " " << m_transform->m32() << " " << m_transform->m33() << " " << m_transform->m34() << "] ";
+        ts << "[" << m_transform->m41() << " " << m_transform->m42() << " " << m_transform->m43() << " " << m_transform->m44() << "])\n";
     }
 
     // Avoid dumping the sublayer transform on the root layer, because it's used for geometry flipping, whose behavior
     // differs between platforms.
-    if (parent() && !m_childrenTransform.isIdentity()) {
+    if (parent() && m_childrenTransform && !m_childrenTransform->isIdentity()) {
         ts << indent << "(childrenTransform ";
-        ts << "[" << m_childrenTransform.m11() << " " << m_childrenTransform.m12() << " " << m_childrenTransform.m13() << " " << m_childrenTransform.m14() << "] ";
-        ts << "[" << m_childrenTransform.m21() << " " << m_childrenTransform.m22() << " " << m_childrenTransform.m23() << " " << m_childrenTransform.m24() << "] ";
-        ts << "[" << m_childrenTransform.m31() << " " << m_childrenTransform.m32() << " " << m_childrenTransform.m33() << " " << m_childrenTransform.m34() << "] ";
-        ts << "[" << m_childrenTransform.m41() << " " << m_childrenTransform.m42() << " " << m_childrenTransform.m43() << " " << m_childrenTransform.m44() << "])\n";
+        ts << "[" << m_childrenTransform->m11() << " " << m_childrenTransform->m12() << " " << m_childrenTransform->m13() << " " << m_childrenTransform->m14() << "] ";
+        ts << "[" << m_childrenTransform->m21() << " " << m_childrenTransform->m22() << " " << m_childrenTransform->m23() << " " << m_childrenTransform->m24() << "] ";
+        ts << "[" << m_childrenTransform->m31() << " " << m_childrenTransform->m32() << " " << m_childrenTransform->m33() << " " << m_childrenTransform->m34() << "] ";
+        ts << "[" << m_childrenTransform->m41() << " " << m_childrenTransform->m42() << " " << m_childrenTransform->m43() << " " << m_childrenTransform->m44() << "])\n";
     }
 
     if (m_maskLayer) {

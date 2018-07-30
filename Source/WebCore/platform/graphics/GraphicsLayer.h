@@ -339,11 +339,13 @@ public:
     // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
     virtual void syncBoundsOrigin(const FloatPoint& origin) { m_boundsOrigin = origin; }
 
-    const TransformationMatrix& transform() const { return m_transform; }
-    virtual void setTransform(const TransformationMatrix& t) { m_transform = t; }
+    const TransformationMatrix& transform() const;
+    virtual void setTransform(const TransformationMatrix&);
+    bool hasNonIdentityTransform() const { return m_transform && !m_transform->isIdentity(); }
 
-    const TransformationMatrix& childrenTransform() const { return m_childrenTransform; }
-    virtual void setChildrenTransform(const TransformationMatrix& t) { m_childrenTransform = t; }
+    const TransformationMatrix& childrenTransform() const;
+    virtual void setChildrenTransform(const TransformationMatrix&);
+    bool hasNonIdentityChildrenTransform() const { return m_childrenTransform && !m_childrenTransform->isIdentity(); }
 
     bool preserves3D() const { return m_preserves3D; }
     virtual void setPreserves3D(bool b) { m_preserves3D = b; }
@@ -507,9 +509,6 @@ public:
     WEBCORE_EXPORT virtual void distributeOpacity(float);
     WEBCORE_EXPORT virtual float accumulatedOpacity() const;
 
-#if PLATFORM(IOS)
-    bool hasFlattenedPerspectiveTransform() const { return !preserves3D() && m_childrenTransform.hasPerspective(); }
-#endif
     virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
     
     virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
@@ -632,8 +631,8 @@ protected:
     FloatSize m_size;
     FloatPoint m_boundsOrigin;
 
-    TransformationMatrix m_transform;
-    TransformationMatrix m_childrenTransform;
+    std::unique_ptr<TransformationMatrix> m_transform;
+    std::unique_ptr<TransformationMatrix> m_childrenTransform;
 
     Color m_backgroundColor;
     float m_opacity;
