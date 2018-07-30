@@ -1,3 +1,22 @@
+2018-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: Search sidebar panel text field has a white background
+        https://bugs.webkit.org/show_bug.cgi?id=188128
+        <rdar://problem/42678270>
+
+        Reviewed by Matt Baker.
+
+        Make the search bar in Search tab match the style of the filter bar.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (:matches(.search-bar, .filter-bar) > input[type="search"],):
+        (:matches(.search-bar, .filter-bar) > input[type="search"]::placeholder):
+        (:matches(.search-bar, .filter-bar) > input[type="search"]:focus):
+        (.filter-bar > input[type="search"]): Deleted.
+        (.filter-bar > input[type="search"]::placeholder): Deleted.
+        (.filter-bar > input[type="search"]:focus): Deleted.
+
 2018-07-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234281.
