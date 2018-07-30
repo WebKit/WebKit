@@ -203,9 +203,13 @@ public:
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 
-#if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT)
+#if PLATFORM(GTK)
     virtual void startDrag(Ref<WebCore::SelectionData>&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&& dragImage) = 0;
+#else
+    virtual void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle&) { }
 #endif
+#endif // ENABLE(DRAG_SUPPORT)
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
@@ -219,7 +223,6 @@ public:
 #if PLATFORM(COCOA)
     virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) = 0;
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
-    virtual void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle&) { }
     virtual void updateSecureInputState() = 0;
     virtual void resetSecureInputState() = 0;
     virtual void notifyInputContextAboutDiscardedComposition() = 0;

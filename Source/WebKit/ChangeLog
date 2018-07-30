@@ -1,3 +1,18 @@
+2018-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix incorrect guards around a method declaration in PageClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=188153
+
+        Reviewed by Tim Horton.
+
+        `WebCore::DragItem` is forward declared under `ENABLE(DRAG_SUPPORT)`, but `startDrag` is declared under
+        `PLATFORM(COCOA)`. If `ENABLE(DRAG_SUPPORT)` is off but `PLATFORM(COCOA)` is on, the build breaks.
+
+        We fix this by moving `startDrag` under `ENABLE(DRAG_SUPPORT)`.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::startDrag):
+
 2018-07-28  Andy Estes  <aestes@apple.com>
 
         [Wi-Fi Assertions] Pass a ResumptionReason to resumeWiFiAssertions
