@@ -221,7 +221,7 @@ void NetworkProcess::platformPrepareToSuspend()
 void NetworkProcess::platformProcessDidResume()
 {
 #if ENABLE(WIFI_ASSERTIONS)
-    resumeWiFiAssertions();
+    resumeWiFiAssertions(ResumptionReason::ProcessResuming);
 #endif
 }
 
@@ -235,7 +235,7 @@ void NetworkProcess::platformProcessDidTransitionToBackground()
 void NetworkProcess::platformProcessDidTransitionToForeground()
 {
 #if ENABLE(WIFI_ASSERTIONS)
-    resumeWiFiAssertions();
+    resumeWiFiAssertions(ResumptionReason::ProcessForegrounding);
 #endif
 }
 

@@ -1,5 +1,33 @@
 2018-07-29  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234349. rdar://problem/42721129
+
+    [Wi-Fi Assertions] Pass a ResumptionReason to resumeWiFiAssertions
+    https://bugs.webkit.org/show_bug.cgi?id=188142
+    <rdar://problem/42628842>
+    
+    Reviewed by Darin Adler.
+    
+    * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+    (WebKit::NetworkProcess::platformProcessDidResume):
+    (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234349 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-28  Andy Estes  <aestes@apple.com>
+
+            [Wi-Fi Assertions] Pass a ResumptionReason to resumeWiFiAssertions
+            https://bugs.webkit.org/show_bug.cgi?id=188142
+            <rdar://problem/42628842>
+
+            Reviewed by Darin Adler.
+
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformProcessDidResume):
+            (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+
+2018-07-29  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234330. rdar://problem/42721217
 
     Be more conservative with compositing layer creation when memory is low
