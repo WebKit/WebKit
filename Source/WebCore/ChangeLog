@@ -1,5 +1,38 @@
 2018-07-29  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234345. rdar://problem/42721217
+
+    Reset CompositingPolicyOverride between tests
+    https://bugs.webkit.org/show_bug.cgi?id=188138
+    
+    Reviewed by Zalan Bujtas.
+    
+    WK1 tests were failing after r234330 because the compositing policy override optional
+    was left set on the Page (WK1 has injected bundle SPI to clear it). Fix by having
+    Internals::resetToConsistentState clear this state.
+    
+    * testing/Internals.cpp:
+    (WebCore::Internals::resetToConsistentState):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234345 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-28  Simon Fraser  <simon.fraser@apple.com>
+
+            Reset CompositingPolicyOverride between tests
+            https://bugs.webkit.org/show_bug.cgi?id=188138
+
+            Reviewed by Zalan Bujtas.
+
+            WK1 tests were failing after r234330 because the compositing policy override optional
+            was left set on the Page (WK1 has injected bundle SPI to clear it). Fix by having
+            Internals::resetToConsistentState clear this state.
+
+            * testing/Internals.cpp:
+            (WebCore::Internals::resetToConsistentState):
+
+2018-07-29  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234340. rdar://problem/42721208
 
     Adjust the color matrix for the inverse apple-invert-lightness() transformation
