@@ -4149,3 +4149,7 @@ webkit.org/b/187177 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/187912 webanimations/empty-keyframes-crash.html [ Failure ]
 
 webkit.org/b/187943 webanimations/accessing-current-time-after-finished-css-animation-target-removal.html [ Failure ]
+
+webkit.org/b/188166 webanimations/accessing-current-time-after-clearing-css-animation-effect.html [ Failure ]
+webkit.org/b/188166 webanimations/setting-css-animation-none-after-clearing-effect.html [ Failure ]
+webkit.org/b/188166 webanimations/setting-css-animation-timing-property-via-style-after-clearing-effect.html [ Failure ]
