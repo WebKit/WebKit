@@ -274,7 +274,7 @@ enum class PIPState {
     if (!_videoFullscreenInterfaceMac || !_videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
         return YES;
 
-    _videoFullscreenInterfaceMac->requestHideAndExitPiP();
+    _videoFullscreenInterfaceMac->requestHideAndExitFullscreen();
 
     return NO;
 }
@@ -333,7 +333,7 @@ enum class PIPState {
     if (PlaybackSessionModel* playbackSessionModel = _videoFullscreenInterfaceMac->playbackSessionModel())
         playbackSessionModel->pause();
 
-    _videoFullscreenInterfaceMac->requestHideAndExitPiP();
+    _videoFullscreenInterfaceMac->requestHideAndExitFullscreen();
     _pipState = PIPState::ExitingPIP;
 }
 
@@ -506,7 +506,7 @@ void VideoFullscreenInterfaceMac::invalidate()
     m_webVideoFullscreenInterfaceObjC = nil;
 }
 
-void VideoFullscreenInterfaceMac::requestHideAndExitPiP()
+void VideoFullscreenInterfaceMac::requestHideAndExitFullscreen()
 {
     if (!m_videoFullscreenModel)
         return;
