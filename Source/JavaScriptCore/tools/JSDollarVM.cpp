@@ -1488,6 +1488,18 @@ static EncodedJSValue JSC_HOST_CALL functionDumpStack(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
+// Dumps the internal memory layout of a JSCell.
+// Usage: $vm.dumpCell(cell)
+static EncodedJSValue JSC_HOST_CALL functionDumpCell(ExecState* exec)
+{
+    JSValue value = exec->argument(0);
+    if (!value.isCell())
+        return encodedJSUndefined();
+    
+    VMInspector::dumpCellMemory(value.asCell());
+    return encodedJSUndefined();
+}
+
 // Gets the dataLog dump of the indexingMode of the passed value.
 // Usage: $vm.print("indexingMode = " + $vm.indexingMode(jsValue))
 static EncodedJSValue JSC_HOST_CALL functionIndexingMode(ExecState* exec)
@@ -1988,6 +2000,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "print", functionPrint, 1);
     addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
     addFunction(vm, "dumpStack", functionDumpStack, 0);
+
+    addFunction(vm, "dumpCell", functionDumpCell, 1);
 
     addFunction(vm, "indexingMode", functionIndexingMode, 1);
     addFunction(vm, "inlineCapacity", functionInlineCapacity, 1);

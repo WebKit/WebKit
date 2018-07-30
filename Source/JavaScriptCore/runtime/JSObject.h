@@ -1014,7 +1014,8 @@ protected:
         
 private:
     friend class LLIntOffsetsExtractor;
-        
+    friend class VMInspector;
+
     // Nobody should ever ask any of these questions on something already known to be a JSObject.
     using JSCell::isAPIValueWrapper;
     using JSCell::isGetterSetter;

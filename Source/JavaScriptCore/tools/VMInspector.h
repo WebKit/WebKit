@@ -72,6 +72,8 @@ public:
     JS_EXPORT_PRIVATE static void dumpCallFrame(CallFrame*, unsigned framesToSkip = 0);
     JS_EXPORT_PRIVATE static void dumpStack(CallFrame* topCallFrame, unsigned framesToSkip = 0);
     JS_EXPORT_PRIVATE static void dumpValue(JSValue);
+    JS_EXPORT_PRIVATE static void dumpCellMemory(JSCell*);
+    JS_EXPORT_PRIVATE static void dumpCellMemoryToStream(JSCell*, PrintStream&);
 
 private:
     template <typename Functor> void iterate(const Functor& functor)

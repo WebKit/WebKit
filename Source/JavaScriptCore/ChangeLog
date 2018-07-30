@@ -1,3 +1,86 @@
+2018-07-30  Mark Lam  <mark.lam@apple.com>
+
+        Add a debugging utility to dump the memory layout of a JSCell.
+        https://bugs.webkit.org/show_bug.cgi?id=188157
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds $vm.dumpCell() and VMInspector::dumpCellMemory() to allow us to
+        dump the memory contents of a cell and if present, its butterfly for debugging
+        purposes.
+
+        Example usage for JS code when JSC_useDollarVM=true:
+
+            $vm.dumpCell(obj);
+
+        Example usage from C++ code or from lldb: 
+
+            (lldb) p JSC::VMInspector::dumpCellMemory(obj)
+
+        Some examples of dumps:
+
+            <0x104bc8260, Object>
+              [0] 0x104bc8260 : 0x010016000000016c header
+                structureID 364 0x16c structure 0x104b721b0
+                indexingTypeAndMisc 0 0x0 NonArray
+                type 22 0x16
+                flags 0 0x0
+                cellState 1
+              [1] 0x104bc8268 : 0x0000000000000000 butterfly
+              [2] 0x104bc8270 : 0xffff000000000007
+              [3] 0x104bc8278 : 0xffff000000000008
+
+            <0x104bb4360, Array>
+              [0] 0x104bb4360 : 0x0108210b00000171 header
+                structureID 369 0x171 structure 0x104b723e0
+                indexingTypeAndMisc 11 0xb ArrayWithArrayStorage
+                type 33 0x21
+                flags 8 0x8
+                cellState 1
+              [1] 0x104bb4368 : 0x00000008000f4718 butterfly
+                base 0x8000f46e0
+                hasIndexingHeader YES hasAnyArrayStorage YES
+                publicLength 4 vectorLength 7 indexBias 2
+                preCapacity 2 propertyCapacity 4
+                  <--- preCapacity
+                  [0] 0x8000f46e0 : 0x0000000000000000
+                  [1] 0x8000f46e8 : 0x0000000000000000
+                  <--- propertyCapacity
+                  [2] 0x8000f46f0 : 0x0000000000000000
+                  [3] 0x8000f46f8 : 0x0000000000000000
+                  [4] 0x8000f4700 : 0xffff00000000000d
+                  [5] 0x8000f4708 : 0xffff00000000000c
+                  <--- indexingHeader
+                  [6] 0x8000f4710 : 0x0000000700000004
+                  <--- butterfly
+                  <--- arrayStorage
+                  [7] 0x8000f4718 : 0x0000000000000000
+                  [8] 0x8000f4720 : 0x0000000400000002
+                  <--- indexedProperties
+                  [9] 0x8000f4728 : 0xffff000000000008
+                  [10] 0x8000f4730 : 0xffff000000000009
+                  [11] 0x8000f4738 : 0xffff000000000005
+                  [12] 0x8000f4740 : 0xffff000000000006
+                  [13] 0x8000f4748 : 0x0000000000000000
+                  [14] 0x8000f4750 : 0x0000000000000000
+                  [15] 0x8000f4758 : 0x0000000000000000
+                  <--- unallocated capacity
+                  [16] 0x8000f4760 : 0x0000000000000000
+                  [17] 0x8000f4768 : 0x0000000000000000
+                  [18] 0x8000f4770 : 0x0000000000000000
+                  [19] 0x8000f4778 : 0x0000000000000000
+
+        * runtime/JSObject.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionDumpCell):
+        (JSC::JSDollarVM::finishCreation):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpCellMemory):
+        (JSC::IndentationScope::IndentationScope):
+        (JSC::IndentationScope::~IndentationScope):
+        (JSC::VMInspector::dumpCellMemoryToStream):
+        * tools/VMInspector.h:
+
 2018-07-27  Mark Lam  <mark.lam@apple.com>
 
         Add some crash info to Heap::checkConn() RELEASE_ASSERTs.
