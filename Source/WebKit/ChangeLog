@@ -1,5 +1,9 @@
 2018-07-30  Babak Shafiei  <bshafiei@apple.com>
 
+        Revert r234081. rdar://problem/42490080
+
+2018-07-30  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234369. rdar://problem/42736179
 
     Potential null dereference under WebPage::applicationDidBecomeActive()
