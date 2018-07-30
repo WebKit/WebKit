@@ -1,3 +1,37 @@
+2018-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r230817): Terrible performance when selecting text on Stash code review
+        https://bugs.webkit.org/show_bug.cgi?id=188144
+        <rdar://problem/42642489>
+
+        Reviewed by Darin Adler.
+
+        After r230817, mouse events were serially dispatched to the web process and handled before the subsequent mouse
+        event. However, this resulted in rapid-fire mouse move events filling up the mouse event queue in the case where
+        mouse move events were being handled by the web process at a slower rate than the UI process was enqueueing
+        them. To mitigate this, r231511 introduced a mechanism for replacing the most recently enqueued mouse move event
+        with an incoming mouse move event.
+
+        However, when a user with a force-click-enabled trackpad performs a mouse drag, a rapid stream of
+        "mouseforcechanged" events is interleaved alongside the stream of "mousemove" events. This renders r231511
+        ineffective, since the most recently queued event is often a "mouseforcechanged" event instead of a "mousemove".
+        On the stash code review page, this can result in hundreds of mouse events being backed up in the mouse event
+        queue, causing perceived slowness when selecting text.
+
+        To fix this, we extend the mechanism introduced in r231511, such that it is capable of replacing both
+        "mouseforcechanged" and "mousemove" events in the queue. Rather than consider only the most recently queued
+        item, we instead find the most recently queued event that matches the type of the incoming event, remove it from
+        the queue, and then append the incoming event to the end of the queue. To avoid the risk of removing the only
+        "mousemove" or "mouseforcechanged" event in the middle of a mouse down and mouse up, we also bail when searching
+        backwards for an event to replace if we come across any event that is neither of these types.
+
+        This effectively throttles the rate at which mouseforcechanged or mousemove events are dispatched when a user
+        with force-click-enabled hardware clicks and drags the mouse across the page.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::removeOldRedundantEvent):
+        (WebKit::WebPageProxy::handleMouseEvent):
+
 2018-07-30  Devin Rousso  <webkit@devinrousso.com>
 
         Add missing CoreGraphics SPI

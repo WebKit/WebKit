@@ -1945,21 +1945,47 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 
 #endif // ENABLE(DRAG_SUPPORT)
 
+static bool removeOldRedundantEvent(Deque<NativeWebMouseEvent>& queue, WebEvent::Type incomingEventType)
+{
+    if (incomingEventType != WebEvent::MouseMove && incomingEventType != WebEvent::MouseForceChanged)
+        return false;
+
+    auto it = queue.rbegin();
+    auto end = queue.rend();
+
+    // Must not remove the first event in the deque, since it is already being dispatched.
+    if (it != end)
+        --end;
+
+    for (; it != end; ++it) {
+        auto type = it->type();
+        if (type == incomingEventType) {
+            queue.remove(--it.base());
+            return true;
+        }
+        if (type != WebEvent::MouseMove && type != WebEvent::MouseForceChanged)
+            break;
+    }
+    return false;
+}
+
 void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 {
     if (!isValid())
         return;
 
-    // If we receive multiple mousemove events and the most recent mousemove event has not been
-    // sent to WebProcess for processing, replace the pending mousemove event with a new one.
-    if (event.type() == WebEvent::MouseMove && m_mouseEventQueue.size() > 1 && m_mouseEventQueue.last().type() == WebEvent::MouseMove) {
-        LOG(MouseHandling, "UIProcess: updated pending mousemove event (queue size %zu)", m_mouseEventQueue.size());
-        m_mouseEventQueue.removeLast();
-        m_mouseEventQueue.append(event);
-    } else {
-        LOG(MouseHandling, "UIProcess: enqueued mouse event %s (queue size %zu)", webMouseEventTypeString(event.type()), m_mouseEventQueue.size());
-        m_mouseEventQueue.append(event);
-    }
+    // If we receive multiple mousemove or mouseforcechanged events and the most recent mousemove or mouseforcechanged event
+    // (respectively) has not yet been sent to WebProcess for processing, remove the pending mouse event and insert the new
+    // event in the queue.
+    bool didRemoveEvent = removeOldRedundantEvent(m_mouseEventQueue, event.type());
+    m_mouseEventQueue.append(event);
+
+#if LOG_DISABLED
+    UNUSED_PARAM(didRemoveEvent);
+#else
+    LOG(MouseHandling, "UIProcess: %s mouse event %s (queue size %zu)", didRemoveEvent ? "replaced" : "enqueued", webMouseEventTypeString(event.type()), m_mouseEventQueue.size());
+#endif
+
     if (m_mouseEventQueue.size() == 1) // Otherwise, called from DidReceiveEvent message handler.
         processNextQueuedMouseEvent();
 }
