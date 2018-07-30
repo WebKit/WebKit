@@ -40,9 +40,10 @@
 namespace WebCore {
 
 SourceBufferList::SourceBufferList(ScriptExecutionContext* context)
-    : ContextDestructionObserver(context)
+    : ActiveDOMObject(context)
     , m_asyncEventQueue(*this)
 {
+    suspendIfNeeded();
 }
 
 SourceBufferList::~SourceBufferList()
@@ -97,6 +98,39 @@ void SourceBufferList::scheduleEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
+bool SourceBufferList::canSuspendForDocumentSuspension() const
+{
+    return !m_asyncEventQueue.hasPendingEvents();
+}
+
+void SourceBufferList::suspend(ReasonForSuspension reason)
+{
+    switch (reason) {
+    case ReasonForSuspension::PageCache:
+    case ReasonForSuspension::PageWillBeSuspended:
+        m_asyncEventQueue.suspend();
+        break;
+    case ReasonForSuspension::JavaScriptDebuggerPaused:
+    case ReasonForSuspension::WillDeferLoading:
+        // Do nothing, we don't pause media playback in these cases.
+        break;
+    }
+}
+
+void SourceBufferList::resume()
+{
+    m_asyncEventQueue.resume();
+}
+
+void SourceBufferList::stop()
+{
+    m_asyncEventQueue.close();
+}
+
+const char* SourceBufferList::activeDOMObjectName() const
+{
+    return "SourceBufferList";
+}
 
 } // namespace WebCore
 

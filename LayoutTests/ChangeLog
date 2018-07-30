@@ -1,3 +1,14 @@
+2018-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Nullptr crash accessing Document in GenericEventQueue::dispatchOneEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=187284
+
+        Unreviewed, roll r233496 and r233571 now that all known issues have been fixed via
+        dependency bugs.
+
+        * media/track/video-track-addition-and-frame-removal-expected.txt: Added.
+        * media/track/video-track-addition-and-frame-removal.html: Added.
+
 2018-07-30  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Layout test http/tests/security/canvas-remote-read-remote-video-hls.html is failing.

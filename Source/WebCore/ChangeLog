@@ -1,5 +1,70 @@
 2018-07-30  Chris Dumez  <cdumez@apple.com>
 
+        Nullptr crash accessing Document in GenericEventQueue::dispatchOneEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=187284
+
+        Unreviewed, roll r233496 and r233571 now that all known issues have been fixed via
+        dependency bugs.
+
+        Test: media/track/video-track-addition-and-frame-removal.html
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::suspend):
+        (WebCore::WebKitMediaKeySession::resume):
+        (WebCore::WebKitMediaKeySession::stop):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer):
+        (WebCore::MediaSource::suspend):
+        (WebCore::MediaSource::resume):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::suspend):
+        (WebCore::SourceBuffer::resume):
+        (WebCore::SourceBuffer::stop):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::SourceBufferList):
+        (WebCore::SourceBufferList::canSuspendForDocumentSuspension const):
+        (WebCore::SourceBufferList::suspend):
+        (WebCore::SourceBufferList::resume):
+        (WebCore::SourceBufferList::stop):
+        (WebCore::SourceBufferList::activeDOMObjectName const):
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/mediasource/SourceBufferList.idl:
+        * dom/Document.h:
+        (WebCore::Document::hasBrowsingContext const):
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::dispatchOneEvent):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::prepareToPlay):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        * html/track/AudioTrackList.cpp:
+        (AudioTrackList::activeDOMObjectName const):
+        * html/track/AudioTrackList.h:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::activeDOMObjectName const):
+        * html/track/TextTrackList.h:
+        * html/track/TextTrackList.idl:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::TrackListBase):
+        (WebCore::TrackListBase::canSuspendForDocumentSuspension const):
+        (WebCore::TrackListBase::suspend):
+        (WebCore::TrackListBase::resume):
+        (WebCore::TrackListBase::stop):
+        * html/track/TrackListBase.h:
+        * html/track/VideoTrackList.cpp:
+        (VideoTrackList::activeDOMObjectName const):
+        * html/track/VideoTrackList.h:
+        * html/track/VideoTrackList.idl:
+
+2018-07-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed internal build fix after r234347.
 
         * html/StepRange.cpp:
