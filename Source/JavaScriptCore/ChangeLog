@@ -1,5 +1,14 @@
 2018-07-30  Keith Miller  <keith_miller@apple.com>
 
+        Clarify conversion rules for JSValue property access API
+        https://bugs.webkit.org/show_bug.cgi?id=188179
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSValue.h:
+
+2018-07-30  Keith Miller  <keith_miller@apple.com>
+
         Rename some JSC API functions/types.
         https://bugs.webkit.org/show_bug.cgi?id=188173
 

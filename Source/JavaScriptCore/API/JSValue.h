@@ -326,14 +326,14 @@ typedef id JSValueProperty;
 @abstract Access a property of a JSValue.
 @result The JSValue for the requested property or the JSValue <code>undefined</code> 
  if the property does not exist.
-@discussion Corresponds to the JavaScript operation <code>object[property]</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
+@discussion Corresponds to the JavaScript operation <code>object[property]</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
 - (JSValue *)valueForProperty:(JSValueProperty)property;
 
 /*!
 @method
 @abstract Set a property on a JSValue.
-@discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
+@discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
 - (void)setValue:(id)value forProperty:(JSValueProperty)property;
 
@@ -341,7 +341,7 @@ typedef id JSValueProperty;
 @method
 @abstract Delete a property from a JSValue.
 @result YES if deletion is successful, NO otherwise.
-@discussion Corresponds to the JavaScript operation <code>delete object[property]</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
+@discussion Corresponds to the JavaScript operation <code>delete object[property]</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
 - (BOOL)deleteProperty:(JSValueProperty)property;
 
@@ -350,7 +350,7 @@ typedef id JSValueProperty;
 @abstract Check if a JSValue has a property.
 @discussion This method has the same function as the JavaScript operator <code>in</code>.
 @result Returns YES if property is present on the value.
-@discussion Corresponds to the JavaScript operation <code>property in object</code>. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
+@discussion Corresponds to the JavaScript operation <code>property in object</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
 - (BOOL)hasProperty:(JSValueProperty)property;
 
@@ -358,8 +358,7 @@ typedef id JSValueProperty;
 @method
 @abstract Define properties with custom descriptors on JSValues.
 @discussion This method may be used to create a data or accessor property on an object.
- This method operates in accordance with the Object.defineProperty method in the 
- JavaScript language. Pass an NSString * to access a named property. Other valid properties include symbols, numbers, and stringifiable objects. In macOS 10.13 and iOS 11 and below, 'property' was an NSString *.
+ This method operates in accordance with the Object.defineProperty method in the JavaScript language. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
 - (void)defineProperty:(JSValueProperty)property descriptor:(id)descriptor;
 
@@ -595,8 +594,8 @@ Create a JSValue from a CGRect.
 @/textblock
 
  An object key passed as a subscript will be converted to a JavaScript value,
- and then the value converted to a string used as a property name. In macOS
- 10.13 and iOS 11 and below, the <code>key</code> argument of
+ and then the value using the same rules as <code>valueWithObject:inContext:</code>. In macOS
+ TBA and iOS TBA and below, the <code>key</code> argument of
  <code>setObject:object forKeyedSubscript:key</code> was restricted to an
  <code>NSString <NSCopying> *</code> but that restriction was never used.
 */
