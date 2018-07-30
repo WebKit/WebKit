@@ -4155,3 +4155,6 @@ webkit.org/b/188166 webanimations/setting-css-animation-none-after-clearing-effe
 webkit.org/b/188166 webanimations/setting-css-animation-timing-property-via-style-after-clearing-effect.html [ Failure ]
 
 webkit.org/b/188167 fast/repaint/canvas-object-fit.html [ Failure ]
+
+webkit.org/b/188168 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
+webkit.org/b/188168 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
