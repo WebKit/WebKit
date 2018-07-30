@@ -1,5 +1,12 @@
 2018-07-30  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed WPE gardening. Adding and adjusting a bunch of expectations
+        to cover various ASSERT crashers.
+
+        * platform/wpe/TestExpectations:
+
+2018-07-30  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed WPE gardening.
 
         Adding two WPE-specific test baselines. Adjusting or adding a few
