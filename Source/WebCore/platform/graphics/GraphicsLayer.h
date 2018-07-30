@@ -233,7 +233,7 @@ protected:
 class GraphicsLayer {
     WTF_MAKE_NONCOPYABLE(GraphicsLayer); WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Type {
+    enum class Type : uint8_t {
         Normal,
         PageTiledBacking,
         Scrolling,
@@ -267,13 +267,13 @@ public:
     // Returns true if the child list changed.
     WEBCORE_EXPORT virtual bool setChildren(const Vector<GraphicsLayer*>&);
 
-    enum ContentsLayerPurpose {
-        NoContentsLayer = 0,
-        ContentsLayerForImage,
-        ContentsLayerForMedia,
-        ContentsLayerForCanvas,
-        ContentsLayerForBackgroundColor,
-        ContentsLayerForPlugin
+    enum class ContentsLayerPurpose : uint8_t {
+        None = 0,
+        Image,
+        Media,
+        Canvas,
+        BackgroundColor,
+        Plugin
     };
 
     // Add child layers. If the child is already parented, it will be removed from its old parent.
@@ -477,7 +477,7 @@ public:
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return 0; }
 
-    enum CompositingCoordinatesOrientation { CompositingCoordinatesTopDown, CompositingCoordinatesBottomUp };
+    enum class CompositingCoordinatesOrientation : uint8_t { TopDown, BottomUp };
 
     // Flippedness of the contents of this layer. Does not affect sublayer geometry.
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
@@ -498,7 +498,13 @@ public:
     virtual void setDebugBackgroundColor(const Color&) { }
     virtual void setDebugBorder(const Color&, float /*borderWidth*/) { }
 
-    enum CustomAppearance { NoCustomAppearance, ScrollingOverhang, ScrollingShadow, LightBackdropAppearance, DarkBackdropAppearance };
+    enum class CustomAppearance : uint8_t {
+        None,
+        ScrollingOverhang,
+        ScrollingShadow,
+        LightBackdrop,
+        DarkBackdrop
+    };
     virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
     CustomAppearance customAppearance() const { return m_customAppearance; }
 
@@ -627,7 +633,7 @@ protected:
     // If set, overrides m_position. Only used for coverage computation.
     std::optional<FloatPoint> m_approximatePosition;
 
-    FloatPoint3D m_anchorPoint;
+    FloatPoint3D m_anchorPoint { 0.5f, 0.5f, 0 };
     FloatSize m_size;
     FloatPoint m_boundsOrigin;
 
@@ -635,17 +641,20 @@ protected:
     std::unique_ptr<TransformationMatrix> m_childrenTransform;
 
     Color m_backgroundColor;
-    float m_opacity;
-    float m_zPosition;
+    float m_opacity { 1 };
+    float m_zPosition { 0 };
     
     FilterOperations m_filters;
     FilterOperations m_backdropFilters;
 
 #if ENABLE(CSS_COMPOSITING)
-    BlendMode m_blendMode;
+    BlendMode m_blendMode { BlendModeNormal };
 #endif
 
     const Type m_type;
+    CustomAppearance m_customAppearance { CustomAppearance::None };
+    GraphicsLayerPaintingPhase m_paintingPhase { GraphicsLayerPaintAllWithOverflowClip };
+    CompositingCoordinatesOrientation m_contentsOrientation { CompositingCoordinatesOrientation::TopDown }; // affects orientation of layer contents
 
     bool m_contentsOpaque : 1;
     bool m_supportsSubpixelAntialiasedText : 1;
@@ -663,18 +672,17 @@ protected:
     bool m_isTrackingDisplayListReplay : 1;
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
-    
-    GraphicsLayerPaintingPhase m_paintingPhase;
-    CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents
+
+    int m_repaintCount { 0 };
 
     Vector<GraphicsLayer*> m_children;
-    GraphicsLayer* m_parent;
+    GraphicsLayer* m_parent { nullptr };
 
-    GraphicsLayer* m_maskLayer; // Reference to mask layer. We don't own this.
+    GraphicsLayer* m_maskLayer { nullptr }; // Reference to mask layer. We don't own this.
 
-    GraphicsLayer* m_replicaLayer; // A layer that replicates this layer. We only allow one, for now.
+    GraphicsLayer* m_replicaLayer { nullptr }; // A layer that replicates this layer. We only allow one, for now.
                                    // The replica is not parented; this is the primary reference to it.
-    GraphicsLayer* m_replicatedLayer; // For a replica layer, a reference to the original layer.
+    GraphicsLayer* m_replicatedLayer { nullptr }; // For a replica layer, a reference to the original layer.
     FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.
 
     FloatRect m_contentsRect;
@@ -685,12 +693,9 @@ protected:
     FloatRoundedRect m_backdropFiltersRect;
     std::optional<FloatRect> m_animationExtent;
 
-    int m_repaintCount;
-    CustomAppearance m_customAppearance;
-
 #if USE(CA)
-    Path m_shapeLayerPath;
     WindRule m_shapeLayerWindRule { WindRule::NonZero };
+    Path m_shapeLayerPath;
 #endif
 };
 

@@ -112,12 +112,6 @@ bool GraphicsLayer::supportsContentsTiling()
 
 GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& client)
     : m_client(client)
-    , m_anchorPoint(0.5f, 0.5f, 0)
-    , m_opacity(1)
-    , m_zPosition(0)
-#if ENABLE(CSS_COMPOSITING)
-    , m_blendMode(BlendModeNormal)
-#endif
     , m_type(type)
     , m_contentsOpaque(false)
     , m_supportsSubpixelAntialiasedText(false)
@@ -135,14 +129,6 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& client)
     , m_isTrackingDisplayListReplay(false)
     , m_userInteractionEnabled(true)
     , m_canDetachBackingStore(true)
-    , m_paintingPhase(GraphicsLayerPaintAllWithOverflowClip)
-    , m_contentsOrientation(CompositingCoordinatesTopDown)
-    , m_parent(nullptr)
-    , m_maskLayer(nullptr)
-    , m_replicaLayer(nullptr)
-    , m_replicatedLayer(nullptr)
-    , m_repaintCount(0)
-    , m_customAppearance(NoCustomAppearance)
 {
 #ifndef NDEBUG
     m_client.verifyNotPainting();
@@ -938,11 +924,11 @@ TextStream& operator<<(TextStream& ts, const Vector<GraphicsLayer::PlatformLayer
 TextStream& operator<<(TextStream& ts, const WebCore::GraphicsLayer::CustomAppearance& customAppearance)
 {
     switch (customAppearance) {
-    case GraphicsLayer::CustomAppearance::NoCustomAppearance: ts << "none"; break;
+    case GraphicsLayer::CustomAppearance::None: ts << "none"; break;
     case GraphicsLayer::CustomAppearance::ScrollingOverhang: ts << "scrolling-overhang"; break;
     case GraphicsLayer::CustomAppearance::ScrollingShadow: ts << "scrolling-shadow"; break;
-    case GraphicsLayer::CustomAppearance::LightBackdropAppearance: ts << "light-backdrop"; break;
-    case GraphicsLayer::CustomAppearance::DarkBackdropAppearance: ts << "dark-backdrop"; break;
+    case GraphicsLayer::CustomAppearance::LightBackdrop: ts << "light-backdrop"; break;
+    case GraphicsLayer::CustomAppearance::DarkBackdrop: ts << "dark-backdrop"; break;
     }
     return ts;
 }

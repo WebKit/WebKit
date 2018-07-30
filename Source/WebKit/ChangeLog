@@ -1,3 +1,24 @@
+2018-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=188141
+
+        Reviewed by Zalan Bujtas.
+
+        Shrink GraphicsLayerCA from 1040 to 880 bytes by:
+        * moving all the clone-related stuff into the lazily-allocated m_layerClones
+        * moving all the animation-related stuff into the lazily-allocated m_animations
+        * making enums be 8-bit
+        * re-ordering data members
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::updateCustomAppearance):
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::requiresCustomAppearanceUpdateOnBoundsChange const):
+
 2018-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r230817): Terrible performance when selecting text on Stash code review

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class WindRule {
+enum class WindRule : uint8_t {
     NonZero = 0,
     EvenOdd = 1
 };

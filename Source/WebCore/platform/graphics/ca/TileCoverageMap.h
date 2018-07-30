@@ -58,7 +58,7 @@ public:
 
 private:
     // PlatformCALayerClient
-    GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesTopDown; }
+    GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesOrientation::TopDown; }
     bool platformCALayerContentsOpaque() const override { return true; }
     bool platformCALayerDrawsContent() const override { return true; }
     void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;

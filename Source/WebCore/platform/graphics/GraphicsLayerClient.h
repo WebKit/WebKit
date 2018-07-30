@@ -48,7 +48,7 @@ enum GraphicsLayerPaintingPhaseFlags {
     GraphicsLayerPaintChildClippingMask     = 1 << 6,
     GraphicsLayerPaintAllWithOverflowClip   = GraphicsLayerPaintBackground | GraphicsLayerPaintForeground
 };
-typedef unsigned GraphicsLayerPaintingPhase;
+typedef uint8_t GraphicsLayerPaintingPhase;
 
 enum AnimatedPropertyID {
     AnimatedPropertyInvalid,

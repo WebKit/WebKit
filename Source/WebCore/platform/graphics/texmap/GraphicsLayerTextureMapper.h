@@ -96,7 +96,7 @@ private:
     bool isGraphicsLayerTextureMapper() const override { return true; }
 
     // TextureMapperPlatformLayer::Client
-    void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, NoContentsLayer); }
+    void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, ContentsLayerPurpose::None); }
     void setPlatformLayerNeedsDisplay() override { setContentsNeedsDisplay(); }
 
     void commitLayerChanges();

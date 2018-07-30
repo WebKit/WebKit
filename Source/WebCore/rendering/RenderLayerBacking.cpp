@@ -550,11 +550,11 @@ void RenderLayerBacking::updateCustomAppearance(const RenderStyle& style)
 {
     ControlPart appearance = style.appearance();
     if (appearance == MediaControlsLightBarBackgroundPart)
-        m_graphicsLayer->setCustomAppearance(GraphicsLayer::LightBackdropAppearance);
+        m_graphicsLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::LightBackdrop);
     else if (appearance == MediaControlsDarkBarBackgroundPart)
-        m_graphicsLayer->setCustomAppearance(GraphicsLayer::DarkBackdropAppearance);
+        m_graphicsLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::DarkBackdrop);
     else
-        m_graphicsLayer->setCustomAppearance(GraphicsLayer::NoCustomAppearance);
+        m_graphicsLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::None);
 }
 
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
@@ -745,13 +745,13 @@ bool RenderLayerBacking::updateConfiguration()
         }
 #else
         if (!pluginViewBase->shouldNotAddLayer())
-            m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerForPlugin);
+            m_graphicsLayer->setContentsToPlatformLayer(pluginViewBase->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Plugin);
 #endif
     }
 #if ENABLE(VIDEO)
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
         auto* mediaElement = downcast<HTMLMediaElement>(renderer().element());
-        m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerForMedia);
+        m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
         resetContentsRect();
     }
 #endif
@@ -759,7 +759,7 @@ bool RenderLayerBacking::updateConfiguration()
     else if (renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
         const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (auto* context = canvas->renderingContext())
-            m_graphicsLayer->setContentsToPlatformLayer(context->platformLayer(), GraphicsLayer::ContentsLayerForCanvas);
+            m_graphicsLayer->setContentsToPlatformLayer(context->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Canvas);
         layerConfigChanged = true;
     }
 #endif

@@ -1,3 +1,76 @@
+2018-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=188141
+
+        Reviewed by Zalan Bujtas.
+        
+        Shrink GraphicsLayerCA from 1040 to 880 bytes by:
+        * moving all the clone-related stuff into the lazily-allocated m_layerClones
+        * moving all the animation-related stuff into the lazily-allocated m_animations
+        * making enums be 8-bit
+        * re-ordering data members
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::operator<<):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/WindRule.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimations):
+        (WebCore::GraphicsLayerCA::addProcessingActionForAnimation):
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        (WebCore::GraphicsLayerCA::setContentsToPlatformLayer):
+        (WebCore::GraphicsLayerCA::contentsLayerForMedia const):
+        (WebCore::GraphicsLayerCA::layerDidDisplay):
+        (WebCore::layerTypeForCustomBackdropAppearance):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        (WebCore::GraphicsLayerCA::updateMasksToBounds):
+        (WebCore::GraphicsLayerCA::updateContentsVisibility):
+        (WebCore::GraphicsLayerCA::updateContentsOpaque):
+        (WebCore::GraphicsLayerCA::updateBackfaceVisibility):
+        (WebCore::GraphicsLayerCA::updateFilters):
+        (WebCore::GraphicsLayerCA::updateBackdropFilters):
+        (WebCore::GraphicsLayerCA::updateBackdropFiltersRect):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::updateDrawsContent):
+        (WebCore::GraphicsLayerCA::updateCoverage):
+        (WebCore::GraphicsLayerCA::updateDebugIndicators):
+        (WebCore::GraphicsLayerCA::updateContentsImage):
+        (WebCore::GraphicsLayerCA::updateContentsPlatformLayer):
+        (WebCore::GraphicsLayerCA::updateContentsColorLayer):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::updateMasksToBoundsRect):
+        (WebCore::GraphicsLayerCA::updateMaskLayer):
+        (WebCore::GraphicsLayerCA::updateAnimations):
+        (WebCore::GraphicsLayerCA::isRunningTransformAnimation const):
+        (WebCore::GraphicsLayerCA::ensureLayerAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::animationIsRunning const):
+        (WebCore::GraphicsLayerCA::primaryLayerClones const): Deleted.
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerContentsOrientation const):
+        * platform/graphics/ca/TileCoverageMap.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::PlatformCALayerCocoa):
+        (PlatformCALayerCocoa::requiresCustomAppearanceUpdateOnBoundsChange const):
+        (PlatformCALayerCocoa::updateCustomAppearance):
+        (PlatformCALayer::drawLayerContents):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCustomAppearance):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2018-07-30  Justin Fan  <justin_fan@apple.com>
 
         [WebGL2] Support compilation of GLSL ES version 300 shaders

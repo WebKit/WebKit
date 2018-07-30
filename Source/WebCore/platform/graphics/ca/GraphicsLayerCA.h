@@ -140,7 +140,7 @@ public:
     WEBCORE_EXPORT void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
     WEBCORE_EXPORT void setContentsToSolidColor(const Color&) override;
 
-    bool usesContentsLayer() const override { return m_contentsLayerPurpose != NoContentsLayer; }
+    bool usesContentsLayer() const override { return m_contentsLayerPurpose != ContentsLayerPurpose::None; }
     
     WEBCORE_EXPORT void setShowDebugBorder(bool) override;
     WEBCORE_EXPORT void setShowRepaintCounter(bool) override;
@@ -237,8 +237,9 @@ private:
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
     typedef HashMap<CloneID, RefPtr<PlatformCALayer>> LayerMap;
-    LayerMap* primaryLayerClones() const { return m_structuralLayer.get() ? m_structuralLayerClones.get() : m_layerClones.get(); }
+    LayerMap* primaryLayerClones() const;
     LayerMap* animatedLayerClones(AnimatedPropertyID) const;
+    static void clearClones(LayerMap&);
 
     bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset);
     bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, const FloatSize& boxSize);
@@ -266,9 +267,10 @@ private:
     WEBCORE_EXPORT bool backingStoreAttached() const override;
     WEBCORE_EXPORT bool backingStoreAttachedForTesting() const override;
 
+    bool hasAnimations() const { return m_animations.get(); }
     bool animationIsRunning(const String& animationName) const
     {
-        return m_runningAnimations.find(animationName) != m_runningAnimations.end();
+        return m_animations && m_animations->runningAnimations.contains(animationName);
     }
 
     void commitLayerChangesBeforeSublayers(CommitState&, float pageScaleFactor, const FloatPoint& positionRelativeToBase);
@@ -375,14 +377,12 @@ private:
     RefPtr<PlatformCALayer> fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
     
     Ref<PlatformCALayer> cloneLayer(PlatformCALayer *, CloneLevel);
-    RefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap*, CloneLevel);
+    RefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap&, CloneLevel);
 
     void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
         RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer,
         RefPtr<PlatformCALayer>& shapeMaskLayer, RefPtr<PlatformCALayer>& backdropLayer, RefPtr<PlatformCALayer>& backdropClippingLayer,
         CloneLevel);
-
-    static void clearClones(std::unique_ptr<LayerMap>&);
 
     bool hasCloneLayers() const { return !!m_layerClones; }
     void removeCloneLayers();
@@ -441,6 +441,8 @@ private:
     };
     void ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
+    
+    void ensureLayerAnimations();
 
     void setAnimationOnLayer(PlatformCAAnimation&, AnimatedPropertyID, const String& animationName, int index, int subIndex, Seconds timeOffset);
     bool removeCAAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index, int subINdex);
@@ -554,6 +556,13 @@ private:
     };
     void addProcessingActionForAnimation(const String&, AnimationProcessingAction);
 
+#if PLATFORM(WIN)
+    // FIXME: when initializing m_uncommittedChanges to a non-zero value, nothing is painted on Windows, see https://bugs.webkit.org/show_bug.cgi?id=168666.
+    LayerChangeFlags m_uncommittedChanges { 0 };
+#else
+    LayerChangeFlags m_uncommittedChanges { CoverageRectChanged };
+#endif
+
     RefPtr<PlatformCALayer> m_layer; // The main layer
     RefPtr<PlatformCALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
     RefPtr<PlatformCALayer> m_contentsClippingLayer; // A layer used to clip inner content
@@ -564,62 +573,57 @@ private:
     RefPtr<PlatformCALayer> m_backdropLayer; // The layer used for backdrop rendering, if necessary.
 
     // References to clones of our layers, for replicated layers.
-    std::unique_ptr<LayerMap> m_layerClones;
-    std::unique_ptr<LayerMap> m_structuralLayerClones;
-    std::unique_ptr<LayerMap> m_contentsLayerClones;
-    std::unique_ptr<LayerMap> m_contentsClippingLayerClones;
-    std::unique_ptr<LayerMap> m_contentsShapeMaskLayerClones;
-    std::unique_ptr<LayerMap> m_shapeMaskLayerClones;
-    std::unique_ptr<LayerMap> m_backdropLayerClones;
-    std::unique_ptr<LayerMap> m_backdropClippingLayerClones;
+    struct LayerClones {
+        LayerMap primaryLayerClones;
+        LayerMap structuralLayerClones;
+        LayerMap contentsLayerClones;
+        LayerMap contentsClippingLayerClones;
+        LayerMap contentsShapeMaskLayerClones;
+        LayerMap shapeMaskLayerClones;
+        LayerMap backdropLayerClones;
+        LayerMap backdropClippingLayerClones;
+    };
+
+    std::unique_ptr<LayerClones> m_layerClones;
 
 #ifdef VISIBLE_TILE_WASH
     RefPtr<PlatformCALayer> m_visibleTileWashLayer;
 #endif
     FloatRect m_visibleRect;
-    FloatSize m_sizeAtLastCoverageRectUpdate;
-
+    FloatRect m_previousCommittedVisibleRect;
     FloatRect m_coverageRect; // Area for which we should maintain backing store, in the coordinate space of this layer.
-    
-    ContentsLayerPurpose m_contentsLayerPurpose { NoContentsLayer };
-    bool m_needsFullRepaint { false };
-    bool m_usingBackdropLayerType { false };
-    bool m_isViewportConstrained { false };
-    bool m_intersectsCoverageRect { false };
-    bool m_hasEverPainted { false };
-    bool m_hasDescendantsWithRunningTransformAnimations { false };
+    FloatSize m_sizeAtLastCoverageRectUpdate;
+    FloatSize m_pixelAlignmentOffset;
 
     Color m_contentsSolidColor;
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;
     
-    // Uncommitted transitions and animations.
-    Vector<LayerPropertyAnimation> m_uncomittedAnimations;
-    
     typedef HashMap<String, Vector<AnimationProcessingAction>> AnimationsToProcessMap;
-    AnimationsToProcessMap m_animationsToProcess;
-
-    // Map of animation names to their associated lists of property animations, so we can remove/pause them.
     typedef HashMap<String, Vector<LayerPropertyAnimation>> AnimationsMap;
-    AnimationsMap m_runningAnimations;
+    struct LayerAnimations {
+        Vector<LayerPropertyAnimation> uncomittedAnimations;
+        AnimationsToProcessMap animationsToProcess;
+        AnimationsMap runningAnimations;
+    };
+    
+    std::unique_ptr<LayerAnimations> m_animations;
 
     Vector<FloatRect> m_dirtyRects;
 
     std::unique_ptr<DisplayList::DisplayList> m_displayList;
 
-    FloatSize m_pixelAlignmentOffset;
-
-#if PLATFORM(WIN)
-    // FIXME: when initializing m_uncommittedChanges to a non-zero value, nothing is painted on Windows, see https://bugs.webkit.org/show_bug.cgi?id=168666.
-    LayerChangeFlags m_uncommittedChanges { 0 };
-#else
-    LayerChangeFlags m_uncommittedChanges { CoverageRectChanged };
-#endif
-    bool m_hasDescendantsWithUncommittedChanges { false };
-
+    ContentsLayerPurpose m_contentsLayerPurpose { ContentsLayerPurpose::None };
     bool m_isCommittingChanges { false };
-    FloatRect m_previousCommittedVisibleRect;
+
+    bool m_needsFullRepaint : 1;
+    bool m_usingBackdropLayerType : 1;
+    bool m_isViewportConstrained : 1;
+    bool m_intersectsCoverageRect : 1;
+    bool m_hasEverPainted : 1;
+    bool m_hasDescendantsWithRunningTransformAnimations : 1;
+    bool m_hasDescendantsWithUncommittedChanges : 1;
 };
 
 } // namespace WebCore

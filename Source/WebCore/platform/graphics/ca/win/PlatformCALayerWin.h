@@ -175,7 +175,7 @@ private:
 
     HashMap<String, RefPtr<PlatformCAAnimation>> m_animations;
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
-    GraphicsLayer::CustomAppearance m_customAppearance;
+    GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
 };
 
 }

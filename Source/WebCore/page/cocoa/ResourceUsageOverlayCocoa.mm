@@ -226,7 +226,7 @@ void ResourceUsageOverlay::platformInitialize()
     [m_layer.get() setBackgroundColor:adoptCF(createColor(0, 0, 0, 0.8)).get()];
     [m_layer.get() setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
 
-    overlay().layer().setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::NoContentsLayer);
+    overlay().layer().setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::None);
 
     ResourceUsageThread::addObserver(this, [this] (const ResourceUsageData& data) {
         appendDataToHistory(data);

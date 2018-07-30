@@ -207,7 +207,6 @@ PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(Platf
 
 PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerClient* owner)
     : PlatformCALayer(layerType, owner)
-    , m_customAppearance(GraphicsLayer::NoCustomAppearance)
 {
     Class layerClass = Nil;
     switch (layerType) {
@@ -278,7 +277,6 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
 
 PlatformCALayerCocoa::PlatformCALayerCocoa(PlatformLayer* layer, PlatformCALayerClient* owner)
     : PlatformCALayer(layerTypeForPlatformLayer(layer), owner)
-    , m_customAppearance(GraphicsLayer::NoCustomAppearance)
 {
     m_layer = layer;
     commonInit();
@@ -992,7 +990,7 @@ void PlatformCALayerCocoa::setShapePath(const Path& path)
 
 bool PlatformCALayerCocoa::requiresCustomAppearanceUpdateOnBoundsChange() const
 {
-    return m_customAppearance == GraphicsLayer::ScrollingShadow;
+    return m_customAppearance == GraphicsLayer::CustomAppearance::ScrollingShadow;
 }
 
 void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearance appearance)
@@ -1004,16 +1002,16 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
 
 #if ENABLE(RUBBER_BANDING)
     switch (appearance) {
-    case GraphicsLayer::NoCustomAppearance:
-    case GraphicsLayer::LightBackdropAppearance:
-    case GraphicsLayer::DarkBackdropAppearance:
+    case GraphicsLayer::CustomAppearance::None:
+    case GraphicsLayer::CustomAppearance::LightBackdrop:
+    case GraphicsLayer::CustomAppearance::DarkBackdrop:
         ScrollbarThemeMac::removeOverhangAreaBackground(platformLayer());
         ScrollbarThemeMac::removeOverhangAreaShadow(platformLayer());
         break;
-    case GraphicsLayer::ScrollingOverhang:
+    case GraphicsLayer::CustomAppearance::ScrollingOverhang:
         ScrollbarThemeMac::setUpOverhangAreaBackground(platformLayer());
         break;
-    case GraphicsLayer::ScrollingShadow:
+    case GraphicsLayer::CustomAppearance::ScrollingShadow:
         ScrollbarThemeMac::setUpOverhangAreaShadow(platformLayer());
         break;
     }
@@ -1141,8 +1139,8 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     
     CGContextSaveGState(context);
     
-    // We never use CompositingCoordinatesBottomUp on Mac.
-    ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesTopDown);
+    // We never use CompositingCoordinatesOrientation::BottomUp on Mac.
+    ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesOrientation::TopDown);
     
 #if PLATFORM(IOS)
     FontAntialiasingStateSaver fontAntialiasingState(context, [platformCALayer->platformLayer() isOpaque]);

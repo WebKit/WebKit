@@ -161,11 +161,11 @@ void PlatformCALayerWinInternal::setNeedsDisplayInRect(const FloatRect& dirtyRec
             // We assume a maximum of 4 digits and a font size of 18.
             repaintCounterRect.setWidth(80);
             repaintCounterRect.setHeight(22);
-            if (owner()->owner()->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown)
+            if (owner()->owner()->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesOrientation::TopDown)
                 repaintCounterRect.setY(layerBounds.height() - (layerBounds.y() + repaintCounterRect.height()));
             internalSetNeedsDisplay(&repaintCounterRect);
         }
-        if (owner()->owner()->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown) {
+        if (owner()->owner()->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesOrientation::TopDown) {
             FloatRect flippedDirtyRect = dirtyRect;
             flippedDirtyRect.setY(owner()->bounds().height() - (flippedDirtyRect.y() + flippedDirtyRect.height()));
             internalSetNeedsDisplay(&flippedDirtyRect);

@@ -194,7 +194,7 @@ private:
 
     RetainPtr<NSObject> m_delegate;
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
-    GraphicsLayer::CustomAppearance m_customAppearance;
+    GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
     bool m_wantsDeepColorBackingStore { false };
     bool m_supportsSubpixelAntialiasedText { false };

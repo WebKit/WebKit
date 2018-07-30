@@ -302,7 +302,7 @@ void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
         m_compositedImage = nullptr;
     }
 
-    setContentsToPlatformLayer(m_compositedImage.get(), ContentsLayerForImage);
+    setContentsToPlatformLayer(m_compositedImage.get(), ContentsLayerPurpose::Image);
     notifyChange(ContentChange);
     GraphicsLayer::setContentsToImage(image);
 }

@@ -4170,7 +4170,7 @@ static inline IMP getMethod(id o, SEL s)
             continue;
         
         if (layerForWidget->contentsLayerForMedia() != layer) {
-            layerForWidget->setContentsToPlatformLayer(layer, GraphicsLayer::ContentsLayerForMedia);
+            layerForWidget->setContentsToPlatformLayer(layer, GraphicsLayer::ContentsLayerPurpose::Media);
             // We need to make sure the layer hierachy change is applied immediately.
             if (mainCoreFrame->view())
                 mainCoreFrame->view()->flushCompositingStateIncludingSubframes();

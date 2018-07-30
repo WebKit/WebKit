@@ -832,7 +832,7 @@ void PlatformCALayerRemote::setShapeWindRule(WindRule windRule)
 
 bool PlatformCALayerRemote::requiresCustomAppearanceUpdateOnBoundsChange() const
 {
-    return m_properties.customAppearance == GraphicsLayer::ScrollingShadow;
+    return m_properties.customAppearance == GraphicsLayer::CustomAppearance::ScrollingShadow;
 }
 
 GraphicsLayer::CustomAppearance PlatformCALayerRemote::customAppearance() const

@@ -108,16 +108,16 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 {
 #if ENABLE(RUBBER_BANDING)
     switch (customAppearance) {
-    case GraphicsLayer::NoCustomAppearance:
-    case GraphicsLayer::DarkBackdropAppearance:
-    case GraphicsLayer::LightBackdropAppearance:
+    case GraphicsLayer::CustomAppearance::None:
+    case GraphicsLayer::CustomAppearance::DarkBackdrop:
+    case GraphicsLayer::CustomAppearance::LightBackdrop:
         ScrollbarThemeMac::removeOverhangAreaBackground(layer);
         ScrollbarThemeMac::removeOverhangAreaShadow(layer);
         break;
-    case GraphicsLayer::ScrollingOverhang:
+    case GraphicsLayer::CustomAppearance::ScrollingOverhang:
         ScrollbarThemeMac::setUpOverhangAreaBackground(layer);
         break;
-    case GraphicsLayer::ScrollingShadow:
+    case GraphicsLayer::CustomAppearance::ScrollingShadow:
         ScrollbarThemeMac::setUpOverhangAreaShadow(layer);
         break;
     }
@@ -303,7 +303,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
             [children addObject:relatedLayers.get(child)];
         }
 
-        if (properties.customAppearance == GraphicsLayer::LightBackdropAppearance || properties.customAppearance == GraphicsLayer::DarkBackdropAppearance) {
+        if (properties.customAppearance == GraphicsLayer::CustomAppearance::LightBackdrop || properties.customAppearance == GraphicsLayer::CustomAppearance::DarkBackdrop) {
             // This is a UIBackdropView, which should have children attached to
             // its content view, not directly on its layers.
             [[(_UIBackdropView*)view contentView] _web_setSubviews:children.get()];
@@ -314,7 +314,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
     if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
         CALayer *maskOwnerLayer = view.layer;
 
-        if (properties.customAppearance == GraphicsLayer::LightBackdropAppearance || properties.customAppearance == GraphicsLayer::DarkBackdropAppearance) {
+        if (properties.customAppearance == GraphicsLayer::CustomAppearance::LightBackdrop || properties.customAppearance == GraphicsLayer::CustomAppearance::DarkBackdrop) {
             // This is a UIBackdropView, which means any mask must be applied to the CABackdropLayer rather
             // that the view's layer. The backdrop is the first layer child.
             if (view.layer.sublayers.count && [view.layer.sublayers[0] isKindOfClass:[CABackdropLayer class]])
