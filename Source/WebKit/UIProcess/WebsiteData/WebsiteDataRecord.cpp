@@ -46,20 +46,11 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
 #if PLATFORM(COCOA)
     if (hostName == String(kCFHTTPCookieLocalFileDomain))
         return displayNameForLocalFiles();
-#else
-    if (hostName == "localhost")
-        return hostName;
 #endif
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    return WebCore::topPrivatelyControlledDomain(hostName.startsWith('.') ? hostName.substring(1) : hostName);
-#endif
-
-    return String();
+    return displayNameForHostName(hostName);
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-String WebsiteDataRecord::displayNameForPluginDataHostName(const String& hostName)
+String WebsiteDataRecord::displayNameForHostName(const String& hostName)
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     return WebCore::topPrivatelyControlledDomain(hostName);
@@ -67,7 +58,6 @@ String WebsiteDataRecord::displayNameForPluginDataHostName(const String& hostNam
 
     return String();
 }
-#endif
 
 String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData& securityOrigin)
 {
@@ -106,6 +96,12 @@ void WebsiteDataRecord::addPluginDataHostName(const String& hostName)
     pluginDataHostNames.add(hostName);
 }
 #endif
+
+void WebsiteDataRecord::addHSTSCacheHostname(const String& hostName)
+{
+    types |= WebsiteDataType::HSTSCache;
+    HSTSCacheHostNames.add(hostName);
+}
 
 static inline bool hostIsInDomain(StringView host, StringView domain)
 {

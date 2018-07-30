@@ -197,11 +197,6 @@ CFIndex CFURLCacheMemoryCapacity(CFURLCacheRef);
 void CFURLCacheSetDiskCapacity(CFURLCacheRef, CFIndex);
 CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
 
-#if PLATFORM(COCOA)
-Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef, CFURLStorageSessionRef);
-void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef);
-#endif
-
 void CFHTTPCookieStorageDeleteAllCookies(CFHTTPCookieStorageRef);
 void _CFHTTPCookieStorageFlushCookieStores();
 
@@ -301,7 +296,12 @@ CFDataRef _CFNetworkCopyATSContext(void);
 Boolean _CFNetworkSetATSContext(CFDataRef);
 
 #if PLATFORM(COCOA)
+extern const CFStringRef _kCFNetworkHSTSPreloaded;
+CFDictionaryRef _CFNetworkCopyHSTSPolicies(CFURLStorageSessionRef);
+void _CFNetworkResetHSTS(CFURLRef, CFURLStorageSessionRef);
 void _CFNetworkResetHSTSHostsSinceDate(CFURLStorageSessionRef, CFDateRef);
+Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef, CFURLStorageSessionRef);
+void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef);
 #endif
 
 CFDataRef CFHTTPCookieStorageCreateIdentifyingData(CFAllocatorRef inAllocator, CFHTTPCookieStorageRef inStorage);

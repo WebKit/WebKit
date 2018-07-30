@@ -150,6 +150,26 @@ RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 #endif
 }
 
+static void filterPreloadHSTSEntry(const void* key, const void* value, void* context)
+{
+    HashSet<String>* hostnames = static_cast<HashSet<String>*>(context);
+    auto val = static_cast<CFDictionaryRef>(value);
+    if (CFDictionaryGetValue(val, _kCFNetworkHSTSPreloaded) != kCFBooleanTrue)
+        hostnames->add((CFStringRef)key);
+}
+
+void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& session, HashSet<String>& hostNames)
+{
+    auto HSTSPolicies = adoptCF(_CFNetworkCopyHSTSPolicies(session.platformSession()));
+    CFDictionaryApplyFunction(HSTSPolicies.get(), filterPreloadHSTSEntry, &hostNames);
+}
+
+void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& session, const Vector<String>& hostNames)
+{
+    for (auto& hostName : hostNames)
+        _CFNetworkResetHSTS(CFURLCreateWithString(kCFAllocatorDefault, hostName.createCFString().get(), NULL), session.platformSession());
+}
+
 void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, WallTime modifiedSince)
 {
     NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();

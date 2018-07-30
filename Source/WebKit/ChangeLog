@@ -1,3 +1,40 @@
+2018-07-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Add support for fetching and remove type  _WKWebsiteDataTypeHSTSCache
+        https://bugs.webkit.org/show_bug.cgi?id=187379
+        <rdar://problem/41879559>
+
+        WKWebsiteDataStore should support _WKWebsiteDataTypeHSTSCache so Safari could list HSTS cache entries
+        and be able to remove them on a per-domain basis.
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::filterPreloadHSTSEntry):
+        (WebKit::NetworkProcess::getHostNamesWithHSTSCache):
+        (WebKit::NetworkProcess::deleteHSTSCacheForHostNames):
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::encode const):
+        (WebKit::WebsiteData::decode):
+        * Shared/WebsiteData/WebsiteData.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::displayNameForCookieHostName):
+        (WebKit::WebsiteDataRecord::displayNameForHostName):
+        (WebKit::WebsiteDataRecord::addHSTSCacheHostname):
+        (WebKit::WebsiteDataRecord::displayNameForPluginDataHostName): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+
 2018-07-30  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink GraphicsLayerCA

@@ -551,6 +551,13 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             callbackAggregator->m_websiteData.entries.appendVector(entries);
         });
     }
+
+#if PLATFORM(COCOA)
+    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
+        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+            getHostNamesWithHSTSCache(*networkStorageSession, callbackAggregator->m_websiteData.hostNamesWithHSTSCache);
+    }
+#endif
 }
 
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)
@@ -608,12 +615,19 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Fun
     RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
-void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& originDatas, const Vector<String>& cookieHostNames, uint64_t callbackID)
+void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& originDatas, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
             networkStorageSession->deleteCookiesForHostnames(cookieHostNames);
     }
+
+#if PLATFORM(COCOA)
+    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
+        if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+            deleteHSTSCacheForHostNames(*networkStorageSession, HSTSCacheHostNames);
+    }
+#endif
 
     auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);

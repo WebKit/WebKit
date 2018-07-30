@@ -66,6 +66,7 @@ void WebsiteData::encode(IPC::Encoder& encoder) const
     encoder << hostNamesWithPluginData;
 #endif
     encoder << originsWithCredentials;
+    encoder << hostNamesWithHSTSCache;
 }
 
 bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
@@ -79,6 +80,8 @@ bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
         return false;
 #endif
     if (!decoder.decode(result.originsWithCredentials))
+        return false;
+    if (!decoder.decode(result.hostNamesWithHSTSCache))
         return false;
     return true;
 }

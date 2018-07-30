@@ -43,9 +43,8 @@ namespace WebKit {
 
 struct WebsiteDataRecord {
     static String displayNameForCookieHostName(const String& hostName);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    static String displayNameForPluginDataHostName(const String& hostName);
-#endif
+    static String displayNameForHostName(const String& hostName);
+
     static String displayNameForOrigin(const WebCore::SecurityOriginData&);
 
     void add(WebsiteDataType, const WebCore::SecurityOriginData&);
@@ -54,6 +53,7 @@ struct WebsiteDataRecord {
     void addPluginDataHostName(const String& hostName);
 #endif
     void addOriginWithCredential(const String&);
+    void addHSTSCacheHostname(const String& hostName);
 
     String displayName;
     OptionSet<WebsiteDataType> types;
@@ -70,6 +70,7 @@ struct WebsiteDataRecord {
     HashSet<String> pluginDataHostNames;
 #endif
     HashSet<String> originsWithCredentials;
+    HashSet<String> HSTSCacheHostNames;
 
     bool matchesTopPrivatelyControlledDomain(const String&) const;
     String topPrivatelyControlledDomain();
