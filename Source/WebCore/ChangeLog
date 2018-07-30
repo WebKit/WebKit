@@ -1,5 +1,9 @@
 2018-07-30  Babak Shafiei  <bshafiei@apple.com>
 
+        Revert r234298. rdar://problem/42354941
+
+2018-07-30  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234339. rdar://problem/42736275
 
     [iOS] Don't deactivate audio session
