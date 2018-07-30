@@ -37,6 +37,7 @@ function addData()
     request.onerror = unexpectedErrorCallback;
     request = evalAndLog("transaction.objectStore('store').put({x: [null, 9, 9], y: 'd'}, 'bloop')");
     request.onerror = unexpectedErrorCallback;
+    request = evalAndLog("transaction.objectStore('store').put({x: [1, [2, null]], y:'e'}, 'oh')");
 }
 
 function verifyIndexes(indexName, callback)
@@ -49,6 +50,7 @@ function verifyIndexes(indexName, callback)
 
     expected = [
         { key: 1, primaryKey: 'foo', y: 'a' },
+        { key: 1, primaryKey: 'oh', y: 'e' },
         { key: 2, primaryKey: 'foo', y: 'a' },
         { key: 3, primaryKey: 'foo', y: 'a' },
         { key: 4, primaryKey: 'bar', y: 'b' },
@@ -114,7 +116,7 @@ function verifyCount(callback) {
     request = evalAndLog("index.count()");
     request.onsuccess = function(event) {
 
-        shouldBe("event.target.result", "9");
+        shouldBe("event.target.result", "10");
 
         request = evalAndLog("index.count(7)");
         request.onsuccess = function(event) {

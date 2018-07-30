@@ -426,6 +426,21 @@ IDBKeyData IDBKeyData::deletedValue()
     return result;
 }
 
+bool IDBKeyData::isValid() const
+{
+    if (m_type == KeyType::Invalid)
+        return false;
+    
+    if (m_type == KeyType::Array) {
+        for (auto& key : array()) {
+            if (!key.isValid())
+                return false;
+        }
+    }
+
+    return true;
+}
+
 bool IDBKeyData::operator<(const IDBKeyData& rhs) const
 {
     return compare(rhs) < 0;

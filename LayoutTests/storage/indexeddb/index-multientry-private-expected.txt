@@ -21,6 +21,7 @@ transaction.objectStore('store').put({x: [1, 2, 3], y: 'a'}, 'foo')
 transaction.objectStore('store').put({x: [4, 5, 6], y: 'b'}, 'bar')
 transaction.objectStore('store').put({x: [7, 7, 8, 7], y: 'c'}, 'baz')
 transaction.objectStore('store').put({x: [null, 9, 9], y: 'd'}, 'bloop')
+transaction.objectStore('store').put({x: [1, [2, null]], y:'e'}, 'oh')
 
 Verifying index: index
 transaction = db.transaction(['store'], 'readonly')
@@ -30,6 +31,12 @@ PASS ex is non-null.
 PASS cursor.key is 1
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
+PASS cursor.key is 1
+PASS cursor.primaryKey is "oh"
+PASS cursor.value.y is "e"
 cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
@@ -84,7 +91,7 @@ PASS expected.length is 0
 transaction = db.transaction(['store'])
 transaction.objectStore('store').index('index')
 index.count()
-PASS event.target.result is 9
+PASS event.target.result is 10
 index.count(7)
 PASS event.target.result is 1
 
@@ -119,6 +126,12 @@ PASS cursor.value.y is "a"
 cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
+PASS cursor.key is 1
+PASS cursor.primaryKey is "oh"
+PASS cursor.value.y is "e"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
 PASS cursor.key is 2
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
@@ -170,7 +183,7 @@ PASS expected.length is 0
 transaction = db.transaction(['store'])
 transaction.objectStore('store').index('index')
 index.count()
-PASS event.target.result is 9
+PASS event.target.result is 10
 index.count(7)
 PASS event.target.result is 1
 PASS successfullyParsed is true

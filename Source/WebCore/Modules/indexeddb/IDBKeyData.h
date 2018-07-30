@@ -93,7 +93,7 @@ public:
 #endif
 
     bool isNull() const { return m_isNull; }
-    bool isValid() const { return m_type != KeyType::Invalid; }
+    bool isValid() const;
     KeyType type() const { return m_type; }
 
     bool operator<(const IDBKeyData&) const;
