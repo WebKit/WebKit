@@ -1,5 +1,54 @@
 2018-07-29  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234340. rdar://problem/42721208
+
+    Adjust the color matrix for the inverse apple-invert-lightness() transformation
+    https://bugs.webkit.org/show_bug.cgi?id=188131
+    rdar://problem/42673070
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Use the correct inverse matrix values.
+    
+    Test: editing/style/inverse-color-filter.html
+    
+    * platform/graphics/filters/FilterOperation.cpp:
+    (WebCore::InvertLightnessFilterOperation::inverseTransformColor const):
+    
+    LayoutTests:
+    
+    Rebaseline tests that use the filter inversion. Add a new test that does inversion
+    for a whole range of colors, to get good coverage of the inversion matrix.
+    
+    * editing/style/inverse-color-filter-expected.txt: Added.
+    * editing/style/inverse-color-filter.html: Added.
+    * editing/style/set-backColor-with-color-filter-expected.txt:
+    * editing/style/set-foreColor-with-color-filter-expected.txt:
+    * platform/win/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234340 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-27  Simon Fraser  <simon.fraser@apple.com>
+
+            Adjust the color matrix for the inverse apple-invert-lightness() transformation
+            https://bugs.webkit.org/show_bug.cgi?id=188131
+            rdar://problem/42673070
+
+            Reviewed by Zalan Bujtas.
+
+            Rebaseline tests that use the filter inversion. Add a new test that does inversion
+            for a whole range of colors, to get good coverage of the inversion matrix.
+
+            * editing/style/inverse-color-filter-expected.txt: Added.
+            * editing/style/inverse-color-filter.html: Added.
+            * editing/style/set-backColor-with-color-filter-expected.txt:
+            * editing/style/set-foreColor-with-color-filter-expected.txt:
+            * platform/win/TestExpectations:
+
+2018-07-29  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234330. rdar://problem/42721217
 
     Be more conservative with compositing layer creation when memory is low

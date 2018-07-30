@@ -2,5 +2,5 @@ Setting the foreground color should invert the color through -apple-color-filter
 
 "world" should be #ecfffd:
 | <font>
-|   color="#ecfffd"
+|   color="#e9fffe"
 |   "<#selection-anchor>hello world<#selection-focus>"

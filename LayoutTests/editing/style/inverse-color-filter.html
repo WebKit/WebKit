@@ -1,0 +1,194 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+<head>
+    <style>
+        #container {
+            width: 500px;
+            height: 400px;
+            border: 1px solid black;
+            background-color: white;
+            -apple-color-filter: apple-invert-lightness();
+        }
+        
+        #container > div {
+            height: 30px;
+            width: 30px;
+            margin: 5px;
+            float: left;
+        }
+        
+    </style>
+    <script>
+        const colors = [
+            "rgb(0, 0, 0)",
+            "rgb(255, 255, 255)",
+            "rgb(235, 235, 235)",
+            "rgb(214, 214, 214)",
+            "rgb(192, 192, 192)",
+            "rgb(170, 170, 170)",
+            "rgb(146, 146, 146)",
+            "rgb(122, 122, 122)",
+            "rgb(96, 96, 96)",
+            "rgb(68, 68, 68)",
+            "rgb(35, 35, 35)",
+            "rgb(0, 0, 0)",
+
+            "rgb(0, 54, 74)",
+            "rgb(0, 30, 87)",
+            "rgb(17, 5, 59)",
+            "rgb(46, 7, 62)",
+            "rgb(60, 8, 27)",
+            "rgb(92, 7, 0)",
+            "rgb(90, 28, 0)",
+            "rgb(88, 52, 0)",
+            "rgb(85, 61, 0)",
+            "rgb(102, 97, 0)",
+            "rgb(79, 85, 3)",
+            "rgb(38, 62, 15)",
+
+            "rgb(0, 77, 101)",
+            "rgb(0, 46, 122)",
+            "rgb(26, 10, 83)",
+            "rgb(69, 14, 89)",
+            "rgb(86, 16, 41)",
+            "rgb(131, 17, 0)",
+            "rgb(124, 42, 0)",
+            "rgb(122, 74, 0)",
+            "rgb(120, 87, 0)",
+            "rgb(141, 134, 0)",
+            "rgb(111, 118, 8)",
+            "rgb(56, 87, 26)",
+
+            "rgb(0, 109, 143)",
+            "rgb(0, 66, 170)",
+            "rgb(44, 19, 118)",
+            "rgb(97, 23, 124)",
+            "rgb(121, 26, 62)",
+            "rgb(181, 26, 0)",
+            "rgb(173, 62, 0)",
+            "rgb(169, 104, 0)",
+            "rgb(167, 123, 0)",
+            "rgb(196, 188, 0)",
+            "rgb(154, 166, 14)",
+            "rgb(79, 122, 40)",
+
+            "rgb(0, 140, 180)",
+            "rgb(0, 86, 214)",
+            "rgb(55, 26, 148)",
+            "rgb(123, 33, 159)",
+            "rgb(154, 36, 79)",
+            "rgb(227, 36, 0)",
+            "rgb(217, 80, 0)",
+            "rgb(213, 132, 0)",
+            "rgb(210, 157, 0)",
+            "rgb(245, 236, 0)",
+            "rgb(195, 209, 23)",
+            "rgb(102, 156, 53)",
+
+            "rgb(0, 163, 215)",
+            "rgb(0, 97, 255)",
+            "rgb(77, 34, 179)",
+            "rgb(153, 41, 189)",
+            "rgb(185, 45, 93)",
+            "rgb(255, 64, 19)",
+            "rgb(255, 106, 0)",
+            "rgb(255, 170, 0)",
+            "rgb(254, 199, 0)",
+            "rgb(255, 252, 65)",
+            "rgb(217, 235, 55)",
+            "rgb(119, 187, 65)",
+
+            "rgb(0, 199, 252)",
+            "rgb(58, 136, 254)",
+            "rgb(94, 48, 235)",
+            "rgb(190, 56, 243)",
+            "rgb(230, 59, 122)",
+            "rgb(255, 98, 81)",
+            "rgb(255, 134, 71)",
+            "rgb(255, 180, 63)",
+            "rgb(254, 203, 62)",
+            "rgb(255, 247, 107)",
+            "rgb(228, 239, 101)",
+            "rgb(150, 211, 95)",
+
+            "rgb(83, 213, 253)",
+            "rgb(116, 167, 254)",
+            "rgb(135, 78, 254)",
+            "rgb(211, 87, 254)",
+            "rgb(237, 113, 158)",
+            "rgb(255, 140, 130)",
+            "rgb(255, 165, 125)",
+            "rgb(255, 198, 119)",
+            "rgb(255, 216, 119)",
+            "rgb(255, 249, 149)",
+            "rgb(235, 243, 143)",
+            "rgb(177, 221, 140)",
+
+            "rgb(148, 227, 254)",
+            "rgb(168, 198, 254)",
+            "rgb(177, 140, 254)",
+            "rgb(227, 146, 254)",
+            "rgb(244, 164, 192)",
+            "rgb(255, 181, 175)",
+            "rgb(255, 196, 171)",
+            "rgb(255, 217, 168)",
+            "rgb(255, 228, 168)",
+            "rgb(255, 251, 185)",
+            "rgb(242, 247, 183)",
+            "rgb(204, 232, 181)",
+
+            "rgb(202, 240, 254)",
+            "rgb(212, 227, 254)",
+            "rgb(217, 202, 254)",
+            "rgb(241, 201, 254)",
+            "rgb(249, 211, 224)",
+            "rgb(255, 218, 216)",
+            "rgb(255, 226, 214)",
+            "rgb(255, 236, 213)",
+            "rgb(255, 242, 213)",
+            "rgb(254, 252, 221)",
+            "rgb(248, 250, 219)",
+            "rgb(224, 237, 212)",
+        ];
+        
+        function buildColorSamples()
+        {
+            let container = document.getElementById('container');
+            for (let color of colors) {
+                var child = document.createElement('div');
+                child.setAttribute('contenteditable', '');
+                child.setAttribute('data-color', color);
+                child.textContent = 'aaa';
+                container.appendChild(child);
+            }
+        }
+        
+        function testOneColor(testDiv)
+        {
+            let targetColor = testDiv.getAttribute('data-color');
+            window.getSelection().setPosition(testDiv, 0);
+            window.getSelection().modify('extend', 'forward', 'word');
+            if (window.testRunner)
+                testRunner.execCommand('backColor', false, targetColor);
+        }
+        
+        function runTest()
+        {
+            buildColorSamples();
+
+            let container = document.getElementById('container');
+            for (let child of container.childNodes) {
+                testOneColor(child);
+            }
+
+            Markup.dump(container);
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+    <script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="container" style="-apple-color-filter: apple-invert-lightness()"></div>
+</body>
+</html>
