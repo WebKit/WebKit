@@ -395,12 +395,13 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     Dependency indexingModeDependency = Dependency::fence(indexingMode);
     Locker<JSCellLock> locker(NoLockingNecessary);
     switch (indexingMode) {
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
         // We need to hold this lock to protect against changes to the innards of the butterfly
-        // that can happen when the butterfly is used for array storage. We conservatively
-        // assume that a contiguous butterfly may transform into an array storage one, though
-        // this is probably more conservative than necessary.
+        // that can happen when the butterfly is used for array storage.
+        // We do not need to hold this lock for contiguous butterflies. We do not reuse the existing
+        // butterfly with contiguous shape for new array storage butterfly. When converting the butterfly
+        // with contiguous shape to array storage, we always allocate a new one. Holding this lock for contiguous
+        // butterflies is unnecessary since contiguous shaped butterfly never becomes broken state.
         locker = holdLock(cellLock());
         break;
     default:

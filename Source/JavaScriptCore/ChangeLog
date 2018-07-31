@@ -1,3 +1,18 @@
+2018-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove unnecessary cellLock() in JSObject's GC marking if IndexingType is contiguous
+        https://bugs.webkit.org/show_bug.cgi?id=188201
+
+        Reviewed by Keith Miller.
+
+        We do not reuse the existing butterfly with Contiguous shape for new ArrayStorage butterfly.
+        When converting the butterfly with Contiguous shape to ArrayStorage, we always allocate a
+        new one. So this cellLock() is unnecessary for contiguous shape since contigous shaped butterfly
+        never becomes broken state. This patch removes unnecessary locking.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+
 2018-07-31  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] Remove gcc warnings for 32-bit platforms
