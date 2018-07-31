@@ -599,3 +599,10 @@ webkit.org/b/187557 [ Debug ] media/media-fragments/TC0091.html [ Pass Failure ]
 # <rdar://problem/42627562>
 [ Mojave+ ] media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
 [ Mojave+ ] media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
+
+# <rdar://problem/42736213>
+[ Mojave+ ] displaylists/canvas-display-list.html [ Failure ]
+[ Mojave+ ] displaylists/extent-includes-shadow.html [ Failure ]
+[ Mojave+ ] displaylists/extent-includes-transforms.html [ Failure ]
+[ Mojave+ ] displaylists/layer-dispay-list.html [ Failure ]
+[ Mojave+ ] displaylists/replay-skip-clipped-rect.html [ Failure ]
