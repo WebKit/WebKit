@@ -5274,7 +5274,7 @@ private:
             LValue arrayLength = lowInt32(m_node->child1());
             LBasicBlock loopStart = m_out.newBlock();
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-            RegisteredStructure structure = m_graph.registerStructure(globalObject->restParameterStructure());
+            RegisteredStructure structure = m_graph.registerStructure(globalObject->originalRestParameterStructure());
             ArrayValues arrayValues = allocateUninitializedContiguousJSArray(arrayLength, structure);
             LValue array = arrayValues.array;
             LValue butterfly = arrayValues.butterfly;
