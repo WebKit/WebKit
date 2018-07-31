@@ -1,3 +1,17 @@
+2018-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Spelling suggestions cannot be selected in focused form controls when zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=188107
+        <rdar://problem/42354250>
+
+        Reviewed by Tim Horton.
+
+        Adds a new test to verify that tapping in a misspelled word to bring up the spelling correction callout and
+        selection view does not immediately cause the selection to dismiss.
+
+        * fast/forms/ios/click-should-not-suppress-misspelling-expected.txt: Added.
+        * fast/forms/ios/click-should-not-suppress-misspelling.html: Added.
+
 2018-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Remove Yosemite test results.

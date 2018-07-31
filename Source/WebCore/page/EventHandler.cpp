@@ -1050,12 +1050,21 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         VisibleSelection newSelection;
         Node* node = event.targetNode();
         bool caretBrowsing = m_frame.settings().caretBrowsingEnabled();
+        bool allowSelectionChanges = true;
         if (node && node->renderer() && (caretBrowsing || node->hasEditableStyle())) {
             VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint(), nullptr);
             newSelection = VisibleSelection(pos);
+#if PLATFORM(IOS)
+            // On iOS, selection changes are triggered using platform-specific text interaction gestures rather than
+            // default behavior on click or mouseup. As such, the only time we should allow click events to change the
+            // selection on iOS is when we focus a different editable element, in which case the text interaction
+            // gestures will fail.
+            allowSelectionChanges = m_frame.selection().selection().rootEditableElement() != newSelection.rootEditableElement();
+#endif
         }
 
-        setSelectionIfNeeded(m_frame.selection(), newSelection);
+        if (allowSelectionChanges)
+            setSelectionIfNeeded(m_frame.selection(), newSelection);
 
         handled = true;
     }

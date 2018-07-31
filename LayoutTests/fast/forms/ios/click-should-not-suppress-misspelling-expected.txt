@@ -1,0 +1,6 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS input.selectionStart is 0
+PASS input.selectionEnd is 7
+

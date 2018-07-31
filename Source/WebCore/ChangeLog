@@ -1,3 +1,27 @@
+2018-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Spelling suggestions cannot be selected in focused form controls when zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=188107
+        <rdar://problem/42354250>
+
+        Reviewed by Tim Horton.
+
+        After r232040, the synthetic click gesture recognizer was enabled when tapping inside of the focused element,
+        which allows the page to handle click events inside editable content. However, this means that codepaths in
+        EventHandler that are responsible for changing selection due to default click event behaviors on macOS are now
+        active on iOS; this conflicts with selection changes due to text interaction gestures, which are the existing
+        mechanism for modifying the selection on iOS.
+
+        To address this, we defer selection changes when clicking to text interaction gestures on iOS by tweaking the
+        default behavior of a click on iOS to /not/ change selection when moving within the same editable root. This is
+        similar to r233311, but in a different codepath that specifically handles selection changes when clicking on
+        content that is already selected.
+
+        Test: fast/forms/ios/click-should-not-suppress-misspelling.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2018-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up TransformationMatrix implementation

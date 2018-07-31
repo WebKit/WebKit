@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+input {
+    font-size: 320px;
+    display: block;
+}
+</style>
+</head>
+<body>
+<input id="input" value="covfefe">
+</body>
+<script>
+const input = document.getElementById("input");
+
+addEventListener("load", async () => {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    } else {
+        description(`To manually test, tap the input field to bring up the keyboard, and then tap on a part of the word in
+            the input field that is far away from the editing caret. As a result, the contents of the input should be
+            selected and marked as a misspelled word.`);
+        return;
+    }
+
+    await UIHelper.activateAndWaitForInputSessionAt(100, 150);
+
+    input.addEventListener("click", () => {
+        setTimeout(() => {
+            shouldBe("input.selectionStart", "0");
+            shouldBe("input.selectionEnd", "7");
+            testRunner.notifyDone();
+        });
+    });
+
+    await UIHelper.tapAt(800, 150);
+});
+</script>
+</html>
