@@ -1,3 +1,17 @@
+2018-07-31  Timothy Hatcher  <timothy@apple.com>
+
+        Don't call RenderTheme::platformColorsDidChange() during printing.
+        https://bugs.webkit.org/show_bug.cgi?id=188181
+        rdar://problem/42360070
+
+        Reviewed by Tim Horton.
+
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setEmulatedMedia): Call m_page.updateStyleAfterChangeInEnvironment()
+        instead of going to styleStope() and remove call to RenderTheme::platformColorsDidChange().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustMediaTypeForPrinting): Remove call RenderTheme::platformColorsDidChange().
+
 2018-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use static const global variable for TransformationMatrix instead of NeverDestroyed

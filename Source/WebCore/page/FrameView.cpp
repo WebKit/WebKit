@@ -1388,8 +1388,6 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
             setMediaType(m_mediaTypeWhenNotPrinting);
         m_mediaTypeWhenNotPrinting = String();
     }
-
-    RenderTheme::singleton().platformColorsDidChange();
 }
 
 bool FrameView::useSlowRepaints(bool considerOverlap) const
