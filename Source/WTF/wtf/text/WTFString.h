@@ -263,7 +263,6 @@ public:
     WTF_EXPORT_PRIVATE String foldCase() const;
 
     WTF_EXPORT_PRIVATE static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-    WTF_EXPORT_PRIVATE static String formatWithArguments(const char *, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
 
     // Returns an uninitialized string. The characters needs to be written
     // into the buffer returned in data before the returned string is used.

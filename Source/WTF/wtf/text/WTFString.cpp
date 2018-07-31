@@ -499,11 +499,6 @@ WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char
     return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), len);
 }
 
-String String::formatWithArguments(const char *format, va_list args)
-{
-    return createWithFormatAndArguments(format, args);
-}
-
 String String::format(const char *format, ...)
 {
     va_list args;

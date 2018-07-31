@@ -460,45 +460,6 @@ TEST(WTF, StringReverseFindBasic)
     EXPECT_EQ(reference.reverseFind('c', 4), notFound);
 }
 
-WTF_ATTRIBUTE_PRINTF(2, 3)
-static void testWithFormatAndArguments(const char* expected, const char* format, ...)
-{
-    va_list arguments;
-    va_start(arguments, format);
-
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
-#endif
-    String result = String::formatWithArguments(format, arguments);
-#if COMPILER(GCC_OR_CLANG)
-#pragma GCC diagnostic pop
-#endif
-
-    va_end(arguments);
-
-    EXPECT_STREQ(expected, result.utf8().data());
-}
-
-TEST(WTF, StringFormatWithArguments)
-{
-    testWithFormatAndArguments("hello cruel world", "%s %s %s", "hello", "cruel" , "world");
-
-    testWithFormatAndArguments("hello 17890 world", "%s%u%s", "hello ", 17890u, " world");
-
-    testWithFormatAndArguments("hello 17890.000 world", "%s %.3f %s", "hello", 17890.0f, "world");
-    testWithFormatAndArguments("hello 17890.50 world", "%s %.2f %s", "hello", 17890.5f, "world");
-
-    testWithFormatAndArguments("hello -17890 world", "%s %.0f %s", "hello", -17890.0f, "world");
-    testWithFormatAndArguments("hello -17890.5 world", "%s %.1f %s", "hello", -17890.5f, "world");
-
-    testWithFormatAndArguments("hello 17890 world", "%s %.0f %s", "hello", 17890.0, "world");
-    testWithFormatAndArguments("hello 17890.5 world", "%s %.1f %s", "hello", 17890.5, "world");
-
-    testWithFormatAndArguments("hello -17890 world", "%s %.0f %s", "hello", -17890.0, "world");
-    testWithFormatAndArguments("hello -17890.5 world", "%s %.1f %s", "hello", -17890.5, "world");
-}
-
 TEST(WTF, StringSplitWithConsecutiveSeparators)
 {
     String string { " This     is  a       sentence. " };

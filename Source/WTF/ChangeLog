@@ -1,3 +1,16 @@
+2018-07-31  Tomas Popela  <tpopela@redhat.com>
+
+        [WTF] String::formatWithArguments() is unused
+        https://bugs.webkit.org/show_bug.cgi?id=187955
+
+        Reviewed by Darin Adler.
+
+        This method is unused, remove it.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::formatWithArguments): Deleted.
+        * wtf/text/WTFString.h:
+
 2018-07-28  Mark Lam  <mark.lam@apple.com>
 
         Gardening: build fix for internal builds.

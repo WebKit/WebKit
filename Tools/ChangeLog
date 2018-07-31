@@ -1,3 +1,15 @@
+2018-07-31  Tomas Popela  <tpopela@redhat.com>
+
+        [WTF] String::formatWithArguments() is unused
+        https://bugs.webkit.org/show_bug.cgi?id=187955
+
+        Reviewed by Darin Adler.
+
+        Remove tests for WTF::String::formatWithArguments() as it's unused and
+        we are removing it.
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+
 2018-07-30  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Fix typo in builder name for Bindings-tests-EWS.
