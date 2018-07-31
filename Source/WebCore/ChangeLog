@@ -1,3 +1,25 @@
+2018-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use static const global variable for TransformationMatrix instead of NeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=188195
+
+        Reviewed by Darin Adler.
+
+        Since TransformationMatrix does not have a non-trivial destructor, we can put it
+        as static const global variable if its constructor is constexpr. This patch makes
+        some of constructors constexpr and makes identityTransform static const global variable
+        instead of NeverDestroyed<> + static function. This removes unnecessary static function
+        and lazy initialization.
+
+        No behavior change.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::transform const):
+        (WebCore::GraphicsLayer::childrenTransform const):
+        (WebCore::identityTransform): Deleted.
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::TransformationMatrix):
+
 2018-07-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Add basic left/right floating positioning.
