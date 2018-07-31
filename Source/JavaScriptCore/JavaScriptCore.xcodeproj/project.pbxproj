@@ -874,6 +874,10 @@
 		530FB3021E7A0B6E003C19DD /* WasmWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 530FB3011E7A0B6E003C19DD /* WasmWorklist.h */; };
 		5311BD4B1EA581E500525281 /* WasmOMGPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD491EA581E500525281 /* WasmOMGPlan.h */; };
 		531374BD1D5CE67600AF7A0B /* WasmPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 531374BC1D5CE67600AF7A0B /* WasmPlan.h */; };
+		5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */; };
+		5333BBDC2110F7D9007618EC /* DFGSpeculativeJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */; };
+		5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */; };
+		5333BBDE2110FA3E007618EC /* FTLLowerDFGToB3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A04170513DB00BB722C /* FTLLowerDFGToB3.cpp */; };
 		5341FC721DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5341FC711DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h */; };
 		534638711E70CF3D00F12AC1 /* JSRunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 534638701E70CF3D00F12AC1 /* JSRunLoopTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		534638751E70DDEC00F12AC1 /* PromiseDeferredTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 534638741E70DDEC00F12AC1 /* PromiseDeferredTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1040,9 +1044,9 @@
 		53E777E41E92E265007CBEC4 /* WasmModuleInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E777E21E92E265007CBEC4 /* WasmModuleInformation.h */; };
 		53E9E0AC1EAE83DF00FEE251 /* WasmMachineThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9E0AA1EAE83DE00FEE251 /* WasmMachineThreads.h */; };
 		53E9E0AF1EAEC45700FEE251 /* WasmTierUpCount.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9E0AE1EAEC45700FEE251 /* WasmTierUpCount.h */; settings = {ATTRIBUTES = (Private, ); }; };
-                53F11F41209138D700E411A7 /* JSImmutableButterfly.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F11F40209138D700E411A7 /* JSImmutableButterfly.h */; };
-                53EAFE2F208DFAB4007D524B /* testapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 531D4E191F59CDD200EC836C /* testapi.cpp */; };
-                53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WasmSections.h */; };
+		53EAFE2F208DFAB4007D524B /* testapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 531D4E191F59CDD200EC836C /* testapi.cpp */; };
+		53F11F41209138D700E411A7 /* JSImmutableButterfly.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F11F40209138D700E411A7 /* JSImmutableButterfly.h */; };
+		53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WasmSections.h */; };
 		53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */; };
 		53F40E8D1D5901F20099A1B6 /* WasmParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WasmParser.h */; };
 		53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */; };
@@ -3737,7 +3741,7 @@
 		7D5FB19020744BF1005DDF64 /* IntlPluralRulesConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlPluralRulesConstructor.h; sourceTree = "<group>"; };
 		7D5FB19120744BF1005DDF64 /* IntlPluralRulesPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlPluralRulesPrototype.cpp; sourceTree = "<group>"; };
 		7D5FB19220744BF2005DDF64 /* IntlPluralRules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlPluralRules.h; sourceTree = "<group>"; };
-		7D734FE420B4D8410018844A /* IntlCanonicalizeLanguage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IntlCanonicalizeLanguage.h; path = IntlCanonicalizeLanguage.h; sourceTree = "<group>"; };
+		7D734FE420B4D8410018844A /* IntlCanonicalizeLanguage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlCanonicalizeLanguage.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
 		860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMacroAssembler.h; sourceTree = "<group>"; };
@@ -8983,8 +8987,8 @@
 				0FB467801FDDA6F1003FCB09 /* IsoCellSet.h in Headers */,
 				0FB467811FDDA6F7003FCB09 /* IsoCellSetInlines.h in Headers */,
 				0FDCE12D1FAFB4E5006F3901 /* IsoSubspace.h in Headers */,
-                                0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */,
-                                0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
+				0FD2FD9520B52BE200F09441 /* IsoSubspaceInlines.h in Headers */,
+				0F5E0FE72086AD480097F0DE /* IsoSubspacePerVM.h in Headers */,
 				8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
 				70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */,
@@ -10231,6 +10235,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE05FAFD1FE4CEDA00093230 /* DeprecatedInspectorValues.cpp in Sources */,
+				5333BBDC2110F7D9007618EC /* DFGSpeculativeJIT.cpp in Sources */,
+				5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */,
+				5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */,
+				5333BBDE2110FA3E007618EC /* FTLLowerDFGToB3.cpp in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,

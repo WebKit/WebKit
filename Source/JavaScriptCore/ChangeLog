@@ -1,3 +1,19 @@
+2018-07-31  Keith Miller  <keith_miller@apple.com>
+
+        Long compiling JSC files should not be unified
+        https://bugs.webkit.org/show_bug.cgi?id=188205
+
+        Reviewed by Saam Barati.
+
+        The DFGSpeculativeJIT and FTLLowerDFGToB3 files take a long time
+        to compile. Unifying them means touching anything in the same
+        bundle as those files takes a long time to incrementally build.
+        This patch separates those files so they build standalone.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGSpeculativeJIT64.cpp:
+
 2018-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove unnecessary cellLock() in JSObject's GC marking if IndexingType is contiguous

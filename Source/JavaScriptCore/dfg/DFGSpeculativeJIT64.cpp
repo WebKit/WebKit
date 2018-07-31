@@ -47,6 +47,7 @@
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
 #include "StringPrototype.h"
+#include "SuperSampler.h"
 #include "Watchdog.h"
 
 namespace JSC { namespace DFG {

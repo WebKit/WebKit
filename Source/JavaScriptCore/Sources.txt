@@ -392,9 +392,10 @@ dfg/DFGSSAConversionPhase.cpp
 dfg/DFGSSALoweringPhase.cpp
 dfg/DFGSafepoint.cpp
 dfg/DFGSnippetParams.cpp
-dfg/DFGSpeculativeJIT.cpp
-dfg/DFGSpeculativeJIT32_64.cpp
-dfg/DFGSpeculativeJIT64.cpp
+// These files take a long time to compile so we do them individually.
+dfg/DFGSpeculativeJIT.cpp @no-unify
+dfg/DFGSpeculativeJIT32_64.cpp @no-unify
+dfg/DFGSpeculativeJIT64.cpp @no-unify
 dfg/DFGStackLayoutPhase.cpp
 dfg/DFGStaticExecutionCountEstimationPhase.cpp
 dfg/DFGStoreBarrierClusteringPhase.cpp
@@ -459,7 +460,8 @@ ftl/FTLJITFinalizer.cpp
 ftl/FTLLazySlowPath.cpp
 ftl/FTLLink.cpp
 ftl/FTLLocation.cpp
-ftl/FTLLowerDFGToB3.cpp
+// This file takes a long time to compile so we do it individually.
+ftl/FTLLowerDFGToB3.cpp @no-unify
 ftl/FTLOSREntry.cpp
 ftl/FTLOSRExit.cpp
 ftl/FTLOSRExitCompiler.cpp
