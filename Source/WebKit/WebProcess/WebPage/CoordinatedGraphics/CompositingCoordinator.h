@@ -117,6 +117,7 @@ private:
     WebCore::FloatRect visibleContentsRect() const override;
     Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
+    void attachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     Ref<Nicosia::Buffer> getCoordinatedBuffer(const WebCore::IntSize&, Nicosia::Buffer::Flags, uint32_t&, WebCore::IntRect&) override;
     Nicosia::PaintingEngine& paintingEngine() override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;

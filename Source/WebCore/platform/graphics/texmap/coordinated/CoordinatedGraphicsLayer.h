@@ -52,6 +52,7 @@ public:
     virtual FloatRect visibleContentsRect() const = 0;
     virtual Ref<CoordinatedImageBacking> createImageBackingIfNeeded(Image&) = 0;
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
+    virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual Ref<Nicosia::Buffer> getCoordinatedBuffer(const IntSize&, Nicosia::Buffer::Flags, uint32_t&, IntRect&) = 0;
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
 
@@ -138,6 +139,7 @@ public:
     void removeTile(uint32_t tileID) override;
 
     void setCoordinator(CoordinatedGraphicsLayerClient*);
+    void setCoordinatorIncludingSubLayersIfNeeded(CoordinatedGraphicsLayerClient*);
 
     void setNeedsVisibleRectAdjustment();
     void purgeBackingStores();

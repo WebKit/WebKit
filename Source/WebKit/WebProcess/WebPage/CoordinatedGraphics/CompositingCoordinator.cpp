@@ -354,6 +354,15 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
     notifyFlushRequired(layer);
 }
 
+void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
+{
+    layer->setCoordinator(this);
+    m_registeredLayers.add(layer->id(), layer);
+    m_state.layersToCreate.append(layer->id());
+    layer->setNeedsVisibleRectAdjustment();
+    notifyFlushRequired(layer);
+}
+
 void CompositingCoordinator::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)
 {
     if (auto* layer = m_registeredLayers.get(layerID))
