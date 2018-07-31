@@ -1,3 +1,15 @@
+2018-07-31  Rob Buis  <rbuis@igalia.com>
+
+        Remove ResourceResponse::cacheBodyKey API
+        https://bugs.webkit.org/show_bug.cgi?id=188192
+
+        Reviewed by Frédéric Wang.
+
+        Remove unused API.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+
 2018-07-30  Sihui Liu  <sihui_liu@apple.com>
 
         Add support for fetching and remove type  _WKWebsiteDataTypeHSTSCache

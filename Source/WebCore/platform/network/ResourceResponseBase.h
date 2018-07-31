@@ -32,7 +32,6 @@
 #include "NetworkLoadMetrics.h"
 #include "ParsedContentRange.h"
 #include "URL.h"
-#include <wtf/SHA1.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -150,9 +149,6 @@ public:
         m_source = source;
     }
 
-    const std::optional<SHA1::Digest>& cacheBodyKey() const { return m_cacheBodyKey; }
-    void setCacheBodyKey(const SHA1::Digest& key) { m_cacheBodyKey = key; }
-
     // FIXME: This should be eliminated from ResourceResponse.
     // Network loading metrics should be delivered via didFinishLoad
     // and should not be part of the ResourceResponse.
@@ -224,7 +220,6 @@ private:
     mutable std::optional<WallTime> m_lastModified;
     mutable ParsedContentRange m_contentRange;
     mutable CacheControlDirectives m_cacheControlDirectives;
-    std::optional<SHA1::Digest> m_cacheBodyKey;
 
     mutable bool m_haveParsedCacheControlHeader { false };
     mutable bool m_haveParsedAgeHeader { false };
@@ -270,7 +265,6 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_httpStatusCode;
     encoder << m_certificateInfo;
     encoder.encodeEnum(m_source);
-    encoder << m_cacheBodyKey;
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_tainting);
     encoder << m_isRedirected;
@@ -310,8 +304,6 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!decoder.decode(response.m_certificateInfo))
         return false;
     if (!decoder.decodeEnum(response.m_source))
-        return false;
-    if (!decoder.decode(response.m_cacheBodyKey))
         return false;
     if (!decoder.decodeEnum(response.m_type))
         return false;

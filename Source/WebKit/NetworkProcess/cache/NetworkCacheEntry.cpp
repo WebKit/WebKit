@@ -113,8 +113,6 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     if (!decoder.decode(entry->m_response))
         return nullptr;
     entry->m_response.setSource(WebCore::ResourceResponse::Source::DiskCache);
-    if (storageEntry.bodyHash)
-        entry->m_response.setCacheBodyKey(*storageEntry.bodyHash);
 
     bool hasVaryingRequestHeaders;
     if (!decoder.decode(hasVaryingRequestHeaders))

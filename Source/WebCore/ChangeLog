@@ -1,3 +1,20 @@
+2018-07-31  Rob Buis  <rbuis@igalia.com>
+
+        Remove ResourceResponse::cacheBodyKey API
+        https://bugs.webkit.org/show_bug.cgi?id=188192
+
+        Reviewed by Frédéric Wang.
+
+        Removed unused API.
+
+        No new tests needed since this API is not used.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::encode const):
+        (WebCore::ResourceResponseBase::decode):
+        (WebCore::ResourceResponseBase::cacheBodyKey const): Deleted.
+        (WebCore::ResourceResponseBase::setCacheBodyKey): Deleted.
+
 2018-07-30  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink GraphicsLayerCA
