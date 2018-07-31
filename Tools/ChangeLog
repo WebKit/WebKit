@@ -1,3 +1,12 @@
+2018-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix.  Remove unused variable.
+
+        * TestWebKitAPI/Tests/WebCore/TransformationMatrix.cpp:
+        (TestWebKitAPI::TEST):
+        transform was never used. It was introduced in r205871
+        Apparently I'm the first one to build in a certain configuration that found it.
+
 2018-07-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         server_process.py should print returncode in debug log if the process crashed
