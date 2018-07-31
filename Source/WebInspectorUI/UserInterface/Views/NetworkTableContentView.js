@@ -441,6 +441,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let nameElement = cell.appendChild(document.createElement("span"));
         nameElement.textContent = entry.name;
+
+        cell.title = entry.resource.url;
     }
 
     _populateDomainCell(cell, entry)

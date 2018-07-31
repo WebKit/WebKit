@@ -1,3 +1,14 @@
+2018-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include a full URL tooltip when hovering the name in the Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=188199
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        Give a tooltip to the entire cell since the entire cell has interactivity.
+
 2018-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: Search sidebar panel text field has a white background
