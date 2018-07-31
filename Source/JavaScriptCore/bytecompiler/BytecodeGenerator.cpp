@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -3112,6 +3112,16 @@ void BytecodeGenerator::getVariablesUnderTDZ(VariableEnvironment& result)
                 variablesThatDontNeedTDZ.add(entry.key.get());
         }
     }
+}
+
+void BytecodeGenerator::preserveTDZStack(BytecodeGenerator::PreservedTDZStack& preservedStack)
+{
+    preservedStack.m_preservedTDZStack = m_TDZStack;
+}
+
+void BytecodeGenerator::restoreTDZStack(const BytecodeGenerator::PreservedTDZStack& preservedStack)
+{
+    m_TDZStack = preservedStack.m_preservedTDZStack;
 }
 
 RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
