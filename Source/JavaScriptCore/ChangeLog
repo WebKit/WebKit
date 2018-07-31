@@ -1,3 +1,20 @@
+2018-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        watchOS engineering build is broken after r234227
+        https://bugs.webkit.org/show_bug.cgi?id=188180
+
+        Reviewed by Keith Miller.
+
+        In the case where we're building with a `PLATFORM_NAME` of neither "macosx" nor "iphone*",
+        postprocess-headers.sh attempts to delete any usage of the JSC availability macros. However,
+        `JSC_MAC_VERSION_TBA` and `JSC_IOS_VERSION_TBA` still remain, and JSValue.h's usage of
+        `JSC_IOS_VERSION_TBA` causes engineering watchOS builds to fail.
+
+        To fix this, simply allow the fallback path to remove these macros from JavaScriptCore headers
+        entirely, since there's no relevant version to replace them with.
+
+        * postprocess-headers.sh:
+
 2018-07-30  Keith Miller  <keith_miller@apple.com>
 
         Clarify conversion rules for JSValue property access API

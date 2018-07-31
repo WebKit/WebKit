@@ -76,7 +76,11 @@ function rewrite_headers () {
             -e "s/^JSC_CLASS_DEPRECATED/JSC_EXTERN API_DEPRECATED/"
         )
     else
-        SED_OPTIONS+=(-e 's/JSC_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g' -e 's/JSC_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g')
+        SED_OPTIONS+=(
+            -e 's/JSC_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g'
+            -e 's/JSC_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g'
+            -e 's/JSC_(MAC|IOS)_VERSION_TBA/0/g'
+        )
     fi
 
     SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
