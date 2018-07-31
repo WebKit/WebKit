@@ -5746,6 +5746,8 @@ std::optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GC3Duint nu
         if (m_context->getError() != GraphicsContext3D::NO_ERROR) {
             // We were unable to create a buffer.
             m_vertexAttrib0UsedBefore = false;
+            m_vertexAttrib0BufferSize = 0;
+            m_forceAttrib0BufferRefill = true;
             return std::nullopt;
         }
         m_vertexAttrib0BufferSize = bufferDataSize;
