@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -80,12 +80,14 @@ void BaseClickableWithKeyInputType::accessKeyAction(HTMLInputElement& element, b
 
 void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent& event)
 {
-    handleKeydownEvent(element(), event);
+    ASSERT(element());
+    handleKeydownEvent(*element(), event);
 }
 
 void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent& event)
 {
-    handleKeypressEvent(element(), event);
+    ASSERT(element());
+    handleKeypressEvent(*element(), event);
 }
 
 void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent& event)
@@ -96,7 +98,8 @@ void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent& event)
 void BaseClickableWithKeyInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);
-    accessKeyAction(element(), sendMouseEvents);
+    ASSERT(element());
+    accessKeyAction(*element(), sendMouseEvents);
 }
 
 } // namespace WebCore

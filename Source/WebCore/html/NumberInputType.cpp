@@ -93,14 +93,16 @@ const AtomicString& NumberInputType::formControlType() const
 
 void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    if (!valueChanged && sanitizedValue.isEmpty() && !element().innerTextValue().isEmpty())
+    ASSERT(element());
+    if (!valueChanged && sanitizedValue.isEmpty() && !element()->innerTextValue().isEmpty())
         updateInnerTextValue();
     TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior);
 }
 
 double NumberInputType::valueAsDouble() const
 {
-    return parseToDoubleForNumberType(element().value());
+    ASSERT(element());
+    return parseToDoubleForNumberType(element()->value());
 }
 
 ExceptionOr<void> NumberInputType::setValueAsDouble(double newValue, TextFieldEventBehavior eventBehavior) const
@@ -109,7 +111,8 @@ ExceptionOr<void> NumberInputType::setValueAsDouble(double newValue, TextFieldEv
     const double floatMax = std::numeric_limits<float>::max();
     if (newValue < -floatMax || newValue > floatMax)
         return Exception { InvalidStateError };
-    element().setValue(serializeForNumberType(newValue), eventBehavior);
+    ASSERT(element());
+    element()->setValue(serializeForNumberType(newValue), eventBehavior);
     return { };
 }
 
@@ -119,7 +122,8 @@ ExceptionOr<void> NumberInputType::setValueAsDecimal(const Decimal& newValue, Te
     const Decimal floatMax = Decimal::fromDouble(std::numeric_limits<float>::max());
     if (newValue < -floatMax || newValue > floatMax)
         return Exception { InvalidStateError };
-    element().setValue(serializeForNumberType(newValue), eventBehavior);
+    ASSERT(element());
+    element()->setValue(serializeForNumberType(newValue), eventBehavior);
     return { };
 }
 
@@ -130,17 +134,20 @@ bool NumberInputType::typeMismatchFor(const String& value) const
 
 bool NumberInputType::typeMismatch() const
 {
-    ASSERT(!typeMismatchFor(element().value()));
+    ASSERT(element());
+    ASSERT(!typeMismatchFor(element()->value()));
     return false;
 }
 
 StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     static NeverDestroyed<const StepRange::StepDescription> stepDescription(numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor);
-    const Decimal stepBase = parseToDecimalForNumberType(element().attributeWithoutSynchronization(minAttr), numberDefaultStepBase);
+
+    ASSERT(element());
+    const Decimal stepBase = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(minAttr), numberDefaultStepBase);
     // FIXME: We should use numeric_limits<double>::max for number input type.
     const Decimal floatMax = Decimal::fromDouble(std::numeric_limits<float>::max());
-    const Element& element = this->element();
+    const Element& element = *this->element();
 
     RangeLimitations rangeLimitations = RangeLimitations::Invalid;
     auto extractBound = [&] (const QualifiedName& attributeName, const Decimal& defaultValue) -> Decimal {
@@ -163,15 +170,16 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
 {
     preferredSize = defaultSize;
 
-    auto& stepString = element().attributeWithoutSynchronization(stepAttr);
+    ASSERT(element());
+    auto& stepString = element()->attributeWithoutSynchronization(stepAttr);
     if (equalLettersIgnoringASCIICase(stepString, "any"))
         return false;
 
-    const Decimal minimum = parseToDecimalForNumberType(element().attributeWithoutSynchronization(minAttr));
+    const Decimal minimum = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(minAttr));
     if (!minimum.isFinite())
         return false;
 
-    const Decimal maximum = parseToDecimalForNumberType(element().attributeWithoutSynchronization(maxAttr));
+    const Decimal maximum = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(maxAttr));
     if (!maximum.isFinite())
         return false;
 
@@ -187,8 +195,10 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
 
 float NumberInputType::decorationWidth() const
 {
+    ASSERT(element());
+
     float width = 0;
-    RefPtr<HTMLElement> spinButton = element().innerSpinButtonElement();
+    RefPtr<HTMLElement> spinButton = element()->innerSpinButtonElement();
     if (RenderBox* spinRenderer = spinButton ? spinButton->renderBox() : 0) {
         width += spinRenderer->borderAndPaddingLogicalWidth();
         // Since the width of spinRenderer is not calculated yet, spinRenderer->logicalWidth() returns 0.
@@ -234,12 +244,14 @@ String NumberInputType::localizeValue(const String& proposedValue) const
     // We don't localize scientific notations.
     if (proposedValue.find(isE) != notFound)
         return proposedValue;
-    return element().locale().convertToLocalizedNumber(proposedValue);
+    ASSERT(element());
+    return element()->locale().convertToLocalizedNumber(proposedValue);
 }
 
 String NumberInputType::visibleValue() const
 {
-    return localizeValue(element().value());
+    ASSERT(element());
+    return localizeValue(element()->value());
 }
 
 String NumberInputType::convertFromVisibleValue(const String& visibleValue) const
@@ -249,7 +261,8 @@ String NumberInputType::convertFromVisibleValue(const String& visibleValue) cons
     // We don't localize scientific notations.
     if (visibleValue.find(isE) != notFound)
         return visibleValue;
-    return element().locale().convertFromLocalizedNumber(visibleValue);
+    ASSERT(element());
+    return element()->locale().convertFromLocalizedNumber(visibleValue);
 }
 
 String NumberInputType::sanitizeValue(const String& proposedValue) const
@@ -261,7 +274,8 @@ String NumberInputType::sanitizeValue(const String& proposedValue) const
 
 bool NumberInputType::hasBadInput() const
 {
-    String standardValue = convertFromVisibleValue(element().innerTextValue());
+    ASSERT(element());
+    String standardValue = convertFromVisibleValue(element()->innerTextValue());
     return !standardValue.isEmpty() && !std::isfinite(parseToDoubleForNumberType(standardValue));
 }
 
@@ -282,19 +296,21 @@ bool NumberInputType::isNumberField() const
 
 void NumberInputType::minOrMaxAttributeChanged()
 {
-    InputType::minOrMaxAttributeChanged();
-    HTMLInputElement& element = this->element();
-    element.invalidateStyleForSubtree();
-    if (RenderObject* renderer = element.renderer())
-        renderer->setNeedsLayoutAndPrefWidthsRecalc();
+    if (auto* element = this->element()) {
+        element->invalidateStyleForSubtree();
+        if (auto* renderer = element->renderer())
+            renderer->setNeedsLayoutAndPrefWidthsRecalc();
+    }
 }
 
 void NumberInputType::stepAttributeChanged()
 {
     InputType::stepAttributeChanged();
 
-    if (element().renderer())
-        element().renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+    if (auto* element = this->element()) {
+        if (auto* renderer = element->renderer())
+            renderer->setNeedsLayoutAndPrefWidthsRecalc();
+    }
 }
 
 } // namespace WebCore

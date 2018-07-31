@@ -98,7 +98,8 @@ bool BaseDateAndTimeInputType::isSteppable() const
 
 void BaseDateAndTimeInputType::minOrMaxAttributeChanged()
 {
-    element().invalidateStyleForSubtree();
+    if (auto* element = this->element())
+        element->invalidateStyleForSubtree();
 }
 
 Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const

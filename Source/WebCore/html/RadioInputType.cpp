@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -44,7 +44,8 @@ const AtomicString& RadioInputType::formControlType() const
 
 bool RadioInputType::valueMissing(const String&) const
 {
-    return element().isInRequiredRadioButtonGroup() && !element().checkedRadioButtonForGroup();
+    ASSERT(element());
+    return element()->isInRequiredRadioButtonGroup() && !element()->checkedRadioButtonForGroup();
 }
 
 String RadioInputType::valueMissingText() const
@@ -66,18 +67,19 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent& event)
     if (key != "Up" && key != "Down" && key != "Left" && key != "Right")
         return;
 
+    ASSERT(element());
     // Left and up mean "previous radio button".
     // Right and down mean "next radio button".
     // Tested in WinIE, and even for RTL, left still means previous radio button (and so moves
     // to the right).  Seems strange, but we'll match it.
     // However, when using Spatial Navigation, we need to be able to navigate without changing the selection.
-    if (isSpatialNavigationEnabled(element().document().frame()))
+    if (isSpatialNavigationEnabled(element()->document().frame()))
         return;
     bool forward = (key == "Down" || key == "Right");
 
     // We can only stay within the form's children if the form hasn't been demoted to a leaf because
     // of malformed HTML.
-    RefPtr<Node> node = &element();
+    RefPtr<Node> node = element();
     while ((node = (forward ? NodeTraversal::next(*node) : NodeTraversal::previous(*node)))) {
         // Once we encounter a form element, we know we're through.
         if (is<HTMLFormElement>(*node))
@@ -86,10 +88,10 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent& event)
         if (!is<HTMLInputElement>(*node))
             continue;
         RefPtr<HTMLInputElement> inputElement = downcast<HTMLInputElement>(node.get());
-        if (inputElement->form() != element().form())
+        if (inputElement->form() != element()->form())
             break;
-        if (inputElement->isRadioButton() && inputElement->name() == element().name() && inputElement->isFocusable()) {
-            element().document().setFocusedElement(inputElement.get());
+        if (inputElement->isRadioButton() && inputElement->name() == element()->name() && inputElement->isFocusable()) {
+            element()->document().setFocusedElement(inputElement.get());
             inputElement->dispatchSimulatedClick(&event, SendNoEvents, DoNotShowPressedLook);
             event.setDefaultHandled();
             return;
@@ -102,9 +104,11 @@ void RadioInputType::handleKeyupEvent(KeyboardEvent& event)
     const String& key = event.keyIdentifier();
     if (key != "U+0020")
         return;
+
+    ASSERT(element());
     // If an unselected radio is tabbed into (because the entire group has nothing
     // checked, or because of some explicit .focus() call), then allow space to check it.
-    if (element().checked())
+    if (element()->checked())
         return;
     dispatchSimulatedClickIfActive(event);
 }
@@ -114,32 +118,35 @@ bool RadioInputType::isKeyboardFocusable(KeyboardEvent& event) const
     if (!InputType::isKeyboardFocusable(event))
         return false;
 
+    ASSERT(element());
     // When using Spatial Navigation, every radio button should be focusable.
-    if (isSpatialNavigationEnabled(element().document().frame()))
+    if (isSpatialNavigationEnabled(element()->document().frame()))
         return true;
 
     // Never allow keyboard tabbing to leave you in the same radio group.  Always
     // skip any other elements in the group.
-    RefPtr<Element> currentFocusedNode = element().document().focusedElement();
+    RefPtr<Element> currentFocusedNode = element()->document().focusedElement();
     if (is<HTMLInputElement>(currentFocusedNode)) {
         HTMLInputElement& focusedInput = downcast<HTMLInputElement>(*currentFocusedNode);
-        if (focusedInput.isRadioButton() && focusedInput.form() == element().form() && focusedInput.name() == element().name())
+        if (focusedInput.isRadioButton() && focusedInput.form() == element()->form() && focusedInput.name() == element()->name())
             return false;
     }
 
     // Allow keyboard focus if we're checked or if nothing in the group is checked.
-    return element().checked() || !element().checkedRadioButtonForGroup();
+    return element()->checked() || !element()->checkedRadioButtonForGroup();
 }
 
 bool RadioInputType::shouldSendChangeEventAfterCheckedChanged()
 {
     // Don't send a change event for a radio button that's getting unchecked.
     // This was done to match the behavior of other browsers.
-    return element().checked();
+    ASSERT(element());
+    return element()->checked();
 }
 
 void RadioInputType::willDispatchClick(InputElementClickState& state)
 {
+    ASSERT(element());
     // An event handler can use preventDefault or "return false" to reverse the selection we do here.
     // The InputElementClickState object contains what we need to undo what we did here in didDispatchClick.
 
@@ -147,10 +154,10 @@ void RadioInputType::willDispatchClick(InputElementClickState& state)
     // Therefore if nothing is currently selected, we won't allow the upcoming action to be "undone", since
     // we want some object in the radio group to actually get selected.
 
-    state.checked = element().checked();
-    state.checkedRadioButton = element().checkedRadioButtonForGroup();
+    state.checked = element()->checked();
+    state.checkedRadioButton = element()->checkedRadioButtonForGroup();
 
-    element().setChecked(true, DispatchChangeEvent);
+    element()->setChecked(true, DispatchChangeEvent);
 }
 
 void RadioInputType::didDispatchClick(Event& event, const InputElementClickState& state)
@@ -159,7 +166,8 @@ void RadioInputType::didDispatchClick(Event& event, const InputElementClickState
         // Restore the original selected radio button if possible.
         // Make sure it is still a radio button and only do the restoration if it still belongs to our group.
         auto& button = state.checkedRadioButton;
-        if (button && button->isRadioButton() && button->form() == element().form() && button->name() == element().name())
+        ASSERT(element());
+        if (button && button->isRadioButton() && button->form() == element()->form() && button->name() == element()->name())
             button->setChecked(true);
     }
 
@@ -174,7 +182,8 @@ bool RadioInputType::isRadioButton() const
 
 bool RadioInputType::matchesIndeterminatePseudoClass() const
 {
-    const HTMLInputElement& element = this->element();
+    ASSERT(element());
+    const HTMLInputElement& element = *this->element();
     if (const RadioButtonGroups* radioButtonGroups = element.radioButtonGroups())
         return !radioButtonGroups->hasCheckedButton(&element);
     return !element.checked();

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -46,7 +46,8 @@ const AtomicString& CheckboxInputType::formControlType() const
 
 bool CheckboxInputType::valueMissing(const String&) const
 {
-    return element().isRequired() && !element().checked();
+    ASSERT(element());
+    return element()->isRequired() && !element()->checked();
 }
 
 String CheckboxInputType::valueMissingText() const
@@ -64,23 +65,26 @@ void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
 
 void CheckboxInputType::willDispatchClick(InputElementClickState& state)
 {
+    ASSERT(element());
+
     // An event handler can use preventDefault or "return false" to reverse the checking we do here.
     // The InputElementClickState object contains what we need to undo what we did here in didDispatchClick.
 
-    state.checked = element().checked();
-    state.indeterminate = element().indeterminate();
+    state.checked = element()->checked();
+    state.indeterminate = element()->indeterminate();
 
     if (state.indeterminate)
-        element().setIndeterminate(false);
+        element()->setIndeterminate(false);
 
-    element().setChecked(!state.checked, DispatchChangeEvent);
+    element()->setChecked(!state.checked, DispatchChangeEvent);
 }
 
 void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickState& state)
 {
     if (event.defaultPrevented() || event.defaultHandled()) {
-        element().setIndeterminate(state.indeterminate);
-        element().setChecked(state.checked);
+        ASSERT(element());
+        element()->setIndeterminate(state.indeterminate);
+        element()->setChecked(state.checked);
     }
 
     // The work we did in willDispatchClick was default handling.
@@ -99,7 +103,8 @@ bool CheckboxInputType::matchesIndeterminatePseudoClass() const
 
 bool CheckboxInputType::shouldAppearIndeterminate() const
 {
-    return element().indeterminate();
+    ASSERT(element());
+    return element()->indeterminate();
 }
 
 } // namespace WebCore

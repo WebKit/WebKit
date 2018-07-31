@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2009 Michelangelo De Simone <micdesim@gmail.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +40,8 @@ bool BaseTextInputType::isTextType() const
 
 bool BaseTextInputType::patternMismatch(const String& value) const
 {
-    const AtomicString& rawPattern = element().attributeWithoutSynchronization(patternAttr);
+    ASSERT(element());
+    const AtomicString& rawPattern = element()->attributeWithoutSynchronization(patternAttr);
     if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern).isValid())
         return false;
     String pattern = "^(?:" + rawPattern + ")$";

@@ -92,12 +92,14 @@ const AtomicString& RangeInputType::formControlType() const
 
 double RangeInputType::valueAsDouble() const
 {
-    return parseToDoubleForNumberType(element().value());
+    ASSERT(element());
+    return parseToDoubleForNumberType(element()->value());
 }
 
 ExceptionOr<void> RangeInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventBehavior eventBehavior) const
 {
-    element().setValue(serialize(newValue), eventBehavior);
+    ASSERT(element());
+    element()->setValue(serialize(newValue), eventBehavior);
     return { };
 }
 
@@ -115,16 +117,17 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     static NeverDestroyed<const StepRange::StepDescription> stepDescription(rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor);
 
-    const Decimal minimum = parseToNumber(element().attributeWithoutSynchronization(minAttr), rangeDefaultMinimum);
-    const Decimal maximum = ensureMaximum(parseToNumber(element().attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);
+    ASSERT(element());
+    const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), rangeDefaultMinimum);
+    const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);
 
-    const AtomicString& precisionValue = element().attributeWithoutSynchronization(precisionAttr);
+    const AtomicString& precisionValue = element()->attributeWithoutSynchronization(precisionAttr);
     if (!precisionValue.isNull()) {
         const Decimal step = equalLettersIgnoringASCIICase(precisionValue, "float") ? Decimal::nan() : 1;
         return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, stepDescription);
     }
 
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element().attributeWithoutSynchronization(stepAttr));
+    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->attributeWithoutSynchronization(stepAttr));
     return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, stepDescription);
 }
 
@@ -137,14 +140,15 @@ bool RangeInputType::isSteppable() const
 
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 {
-    if (element().isDisabledFormControl())
+    ASSERT(element());
+    if (element()->isDisabledFormControl())
         return;
 
     if (event.button() != LeftButton || !is<Node>(event.target()))
         return;
-    ASSERT(element().shadowRoot());
+    ASSERT(element()->shadowRoot());
     auto& targetNode = downcast<Node>(*event.target());
-    if (&targetNode != &element() && !targetNode.isDescendantOf(element().userAgentShadowRoot().get()))
+    if (&targetNode != element() && !targetNode.isDescendantOf(element()->userAgentShadowRoot().get()))
         return;
     auto& thumb = typedSliderThumbElement();
     if (&targetNode == &thumb)
@@ -160,7 +164,8 @@ void RangeInputType::handleTouchEvent(TouchEvent& event)
 #if PLATFORM(IOS)
     typedSliderThumbElement().handleTouchEvent(event);
 #elif ENABLE(TOUCH_SLIDER)
-    if (element().isDisabledFormControl())
+    ASSERT(element());
+    if (element()->isDisabledFormControl())
         return;
 
     if (event.type() == eventNames().touchendEvent) {
@@ -193,12 +198,13 @@ void RangeInputType::disabledAttributeChanged()
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
 {
-    if (element().isDisabledFormControl())
+    ASSERT(element());
+    if (element()->isDisabledFormControl())
         return;
 
     const String& key = event.keyIdentifier();
 
-    const Decimal current = parseToNumberOrNaN(element().value());
+    const Decimal current = parseToNumberOrNaN(element()->value());
     ASSERT(current.isFinite());
 
     StepRange stepRange(createStepRange(RejectAny));
@@ -206,12 +212,12 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
 
     // FIXME: We can't use stepUp() for the step value "any". So, we increase
     // or decrease the value by 1/100 of the value range. Is it reasonable?
-    const Decimal step = equalLettersIgnoringASCIICase(element().attributeWithoutSynchronization(stepAttr), "any") ? (stepRange.maximum() - stepRange.minimum()) / 100 : stepRange.step();
+    const Decimal step = equalLettersIgnoringASCIICase(element()->attributeWithoutSynchronization(stepAttr), "any") ? (stepRange.maximum() - stepRange.minimum()) / 100 : stepRange.step();
     const Decimal bigStep = std::max((stepRange.maximum() - stepRange.minimum()) / 10, step);
 
     bool isVertical = false;
-    if (element().renderer()) {
-        ControlPart part = element().renderer()->style().appearance();
+    if (auto* renderer = element()->renderer()) {
+        ControlPart part = renderer->style().appearance();
         isVertical = part == SliderVerticalPart || part == MediaVolumeSliderPart;
     }
 
@@ -241,8 +247,8 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
         EventQueueScope scope;
         setValueAsDecimal(newValue, DispatchInputAndChangeEvent);
 
-        if (AXObjectCache* cache = element().document().existingAXObjectCache())
-            cache->postNotification(&element(), AXObjectCache::AXValueChanged);
+        if (AXObjectCache* cache = element()->document().existingAXObjectCache())
+            cache->postNotification(element(), AXObjectCache::AXValueChanged);
     }
 
     event.setDefaultHandled();
@@ -250,25 +256,27 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
 
 void RangeInputType::createShadowSubtree()
 {
-    ASSERT(element().userAgentShadowRoot());
+    ASSERT(element());
+    ASSERT(element()->userAgentShadowRoot());
 
-    Document& document = element().document();
+    Document& document = element()->document();
     auto track = HTMLDivElement::create(document);
     track->setPseudo(AtomicString("-webkit-slider-runnable-track", AtomicString::ConstructFromLiteral));
     track->appendChild(SliderThumbElement::create(document));
     auto container = SliderContainerElement::create(document);
     container->appendChild(track);
-    element().userAgentShadowRoot()->appendChild(container);
+    element()->userAgentShadowRoot()->appendChild(container);
 }
 
 HTMLElement* RangeInputType::sliderTrackElement() const
 {
-    ASSERT(element().userAgentShadowRoot());
-    ASSERT(element().userAgentShadowRoot()->firstChild()); // container
-    ASSERT(element().userAgentShadowRoot()->firstChild()->isHTMLElement());
-    ASSERT(element().userAgentShadowRoot()->firstChild()->firstChild()); // track
+    ASSERT(element());
+    ASSERT(element()->userAgentShadowRoot());
+    ASSERT(element()->userAgentShadowRoot()->firstChild()); // container
+    ASSERT(element()->userAgentShadowRoot()->firstChild()->isHTMLElement());
+    ASSERT(element()->userAgentShadowRoot()->firstChild()->firstChild()); // track
 
-    RefPtr<ShadowRoot> root = element().userAgentShadowRoot();
+    RefPtr<ShadowRoot> root = element()->userAgentShadowRoot();
     if (!root)
         return nullptr;
     
@@ -294,7 +302,8 @@ HTMLElement* RangeInputType::sliderThumbElement() const
 
 RenderPtr<RenderElement> RangeInputType::createInputRenderer(RenderStyle&& style)
 {
-    return createRenderer<RenderSlider>(element(), WTFMove(style));
+    ASSERT(element());
+    return createRenderer<RenderSlider>(*element(), WTFMove(style));
 }
 
 Decimal RangeInputType::parseToNumber(const String& src, const Decimal& defaultValue) const
@@ -314,7 +323,8 @@ void RangeInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);
 
-    element().dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    ASSERT(element());
+    element()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 void RangeInputType::minOrMaxAttributeChanged()
@@ -322,9 +332,10 @@ void RangeInputType::minOrMaxAttributeChanged()
     InputType::minOrMaxAttributeChanged();
 
     // Sanitize the value.
-    if (element().hasDirtyValue())
-        element().setValue(element().value());
-
+    if (auto* element = this->element()) {
+        if (element->hasDirtyValue())
+            element->setValue(element->value());
+    }
     typedSliderThumbElement().setPositionFromValue();
 }
 
@@ -335,8 +346,10 @@ void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldE
     if (!valueChanged)
         return;
 
-    if (eventBehavior == DispatchNoEvent)
-        element().setTextAsOfLastFormControlChangeEvent(value);
+    if (eventBehavior == DispatchNoEvent) {
+        ASSERT(element());
+        element()->setTextAsOfLastFormControlChangeEvent(value);
+    }
 
     typedSliderThumbElement().setPositionFromValue();
 }
@@ -373,7 +386,8 @@ void RangeInputType::updateTickMarkValues()
         return;
     m_tickMarkValues.clear();
     m_tickMarkValuesDirty = false;
-    auto dataList = element().dataList();
+    ASSERT(element());
+    auto dataList = element()->dataList();
     if (!dataList)
         return;
     Ref<HTMLCollection> options = dataList->options();
@@ -382,7 +396,7 @@ void RangeInputType::updateTickMarkValues()
         RefPtr<Node> node = options->item(i);
         HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);
         String optionValue = optionElement.value();
-        if (!element().isValidValue(optionValue))
+        if (!element()->isValidValue(optionValue))
             continue;
         m_tickMarkValues.append(parseToNumber(optionValue, Decimal::nan()));
     }
