@@ -1038,6 +1038,9 @@ get_simple_globs (XdgMimeCache  *cache,
   xdg_uint32_t child_offset;
   int i;
 
+  assert (*n >= 0);
+  assert (depth >= 0);
+
   if (*n >= n_globs)
     return FALSE;
 
@@ -1046,7 +1049,7 @@ get_simple_globs (XdgMimeCache  *cache,
       xdg_uint32_t mime_offset = GET_UINT32 (cache->buffer, offset + 4);
 
       if (strcasecmp (cache->buffer + mime_offset, mime) == 0) {
-        globs[*n] = malloc (depth * sizeof (char));
+        globs[*n] = malloc ((depth + 1) * sizeof (char));
         for (i = 0; i < depth; i++)
           globs[*n][depth - i - 1] = prefix[i];
         globs[*n][depth] = '\0';
