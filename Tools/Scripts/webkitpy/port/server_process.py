@@ -323,7 +323,7 @@ class ServerProcess(object):
 
     def has_crashed(self):
         if not self._crashed and self.poll():
-            _log.debug('This test marked as a crash because of failure to poll the server process.')
+            _log.debug('This test marked as a crash because of failure to poll the server process (return code was %s).' % self._proc.returncode)
             self._crashed = True
             self._handle_possible_interrupt()
         return self._crashed

@@ -1,3 +1,13 @@
+2018-07-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        server_process.py should print returncode in debug log if the process crashed
+        https://bugs.webkit.org/show_bug.cgi?id=188160
+
+        Reviewed by Konstantin Tokarev.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.has_crashed): Put self._proc.returncode into the debug log message.
+
 2018-07-31  Tomas Popela  <tpopela@redhat.com>
 
         [WTF] String::formatWithArguments() is unused
