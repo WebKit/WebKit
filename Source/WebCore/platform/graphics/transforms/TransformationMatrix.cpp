@@ -1416,7 +1416,7 @@ TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix&
     tmp[3][3] = (mat.m_matrix[3][0] * m_matrix[0][3] + mat.m_matrix[3][1] * m_matrix[1][3]
                + mat.m_matrix[3][2] * m_matrix[2][3] + mat.m_matrix[3][3] * m_matrix[3][3]);
 
-    setMatrix(tmp);
+    memcpy(&m_matrix[0][0], &tmp[0][0], sizeof(Matrix4));
 #endif
     return *this;
 }

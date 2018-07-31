@@ -1,3 +1,26 @@
+2018-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up TransformationMatrix implementation
+        https://bugs.webkit.org/show_bug.cgi?id=188197
+
+        Reviewed by Simon Fraser.
+
+        We perform cleaning up of TransformationMatrix.
+
+        1. We drop user-defined operator= and copy constructor. Default ones works well for TransformationMatrix.
+        2. Remove unused setMatrix. We explicitly use memcpy in TransformationMatrix.cpp (only one place).
+        3. Use memcmp for implementing operator==.
+
+        In (2) and (3), we use `memcpy(&matrix[0][0], &tmp[0][0], sizeof(Matrix4))` instead of `memcpy(matrix, tmp, sizeof(Matrix4))`,
+        since they both are non nullptr and the former is easier to understand.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::multiply):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::setMatrix):
+        (WebCore::TransformationMatrix::operator== const):
+        (WebCore::TransformationMatrix::operator =): Deleted.
+
 2018-07-31  Timothy Hatcher  <timothy@apple.com>
 
         Don't call RenderTheme::platformColorsDidChange() during printing.

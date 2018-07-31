@@ -116,7 +116,6 @@ public:
     {
     }
 
-    TransformationMatrix(const TransformationMatrix& t) { *this = t; }
     WEBCORE_EXPORT TransformationMatrix(const AffineTransform&);
 
     void setMatrix(double a, double b, double c, double d, double e, double f)
@@ -136,12 +135,6 @@ public:
         m_matrix[1][0] = m21; m_matrix[1][1] = m22; m_matrix[1][2] = m23; m_matrix[1][3] = m24; 
         m_matrix[2][0] = m31; m_matrix[2][1] = m32; m_matrix[2][2] = m33; m_matrix[2][3] = m34; 
         m_matrix[3][0] = m41; m_matrix[3][1] = m42; m_matrix[3][2] = m43; m_matrix[3][3] = m44;
-    }
-    
-    TransformationMatrix& operator =(const TransformationMatrix &t)
-    {
-        setMatrix(t.m_matrix);
-        return *this;
     }
 
     TransformationMatrix& makeIdentity()
@@ -342,22 +335,7 @@ public:
 
     bool operator==(const TransformationMatrix& m2) const
     {
-        return (m_matrix[0][0] == m2.m_matrix[0][0] &&
-                m_matrix[0][1] == m2.m_matrix[0][1] &&
-                m_matrix[0][2] == m2.m_matrix[0][2] &&
-                m_matrix[0][3] == m2.m_matrix[0][3] &&
-                m_matrix[1][0] == m2.m_matrix[1][0] &&
-                m_matrix[1][1] == m2.m_matrix[1][1] &&
-                m_matrix[1][2] == m2.m_matrix[1][2] &&
-                m_matrix[1][3] == m2.m_matrix[1][3] &&
-                m_matrix[2][0] == m2.m_matrix[2][0] &&
-                m_matrix[2][1] == m2.m_matrix[2][1] &&
-                m_matrix[2][2] == m2.m_matrix[2][2] &&
-                m_matrix[2][3] == m2.m_matrix[2][3] &&
-                m_matrix[3][0] == m2.m_matrix[3][0] &&
-                m_matrix[3][1] == m2.m_matrix[3][1] &&
-                m_matrix[3][2] == m2.m_matrix[3][2] &&
-                m_matrix[3][3] == m2.m_matrix[3][3]);
+        return memcmp(&m_matrix[0][0], &m2.m_matrix[0][0], sizeof(Matrix4)) == 0;
     }
 
     bool operator!=(const TransformationMatrix& other) const { return !(*this == other); }
@@ -437,12 +415,6 @@ private:
         double resultZ;
         multVecMatrix(sourcePoint.x(), sourcePoint.y(), sourcePoint.z(), resultX, resultY, resultZ);
         return FloatPoint3D(static_cast<float>(resultX), static_cast<float>(resultY), static_cast<float>(resultZ));
-    }
-
-    void setMatrix(const Matrix4 m)
-    {
-        if (m && m != m_matrix)
-            memcpy(m_matrix, m, sizeof(Matrix4));
     }
 
     Matrix4 m_matrix;
