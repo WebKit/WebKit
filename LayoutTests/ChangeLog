@@ -1,3 +1,11 @@
+2018-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Remove Yosemite test results.
+
+        We haven't run these tests in over a year.  They're not needed.
+
+        * platform/mac-yosemite: Removed.
+
 2018-07-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Layout Test media/video-add-autoplay-user-gesture.html is flaky.
