@@ -1967,11 +1967,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case RegExpExec:
     case RegExpExecNonGlobalOrSticky:
         if (node->op() == RegExpExec) {
-            if (node->child2().useKind() == RegExpObjectUse
-                && node->child3().useKind() == StringUse) {
-                // This doesn't clobber the world since there are no conversions to perform.
-            } else
-                clobberWorld(node->origin.semantic, clobberLimit);
+            // Even if we've proven known input types as RegExpObject and String,
+            // accessing lastIndex is effectful if it's a global regexp.
+            clobberWorld(node->origin.semantic, clobberLimit);
         }
 
         if (JSValue globalObjectValue = forNode(node->child1()).m_value) {
@@ -1991,11 +1989,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case RegExpTest:
-        if (node->child2().useKind() == RegExpObjectUse
-            && node->child3().useKind() == StringUse) {
-            // This doesn't clobber the world since there are no conversions to perform.
-        } else
-            clobberWorld(node->origin.semantic, clobberLimit);
+        // Even if we've proven known input types as RegExpObject and String,
+        // accessing lastIndex is effectful if it's a global regexp.
+        clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBoolean);
         break;
 

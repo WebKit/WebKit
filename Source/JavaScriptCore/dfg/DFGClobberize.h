@@ -1488,17 +1488,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case RegExpExec:
     case RegExpTest:
-    case RegExpMatchFast:
-        if (node->child2().useKind() == RegExpObjectUse
-            && node->child3().useKind() == StringUse) {
-            read(RegExpState);
-            read(RegExpObject_lastIndex);
-            write(RegExpState);
-            write(RegExpObject_lastIndex);
-            return;
-        }
+        // Even if we've proven known input types as RegExpObject and String,
+        // accessing lastIndex is effectful if it's a global regexp.
         read(World);
         write(Heap);
+        return;
+
+    case RegExpMatchFast:
+        read(RegExpState);
+        read(RegExpObject_lastIndex);
+        write(RegExpState);
+        write(RegExpObject_lastIndex);
         return;
 
     case RegExpExecNonGlobalOrSticky:
