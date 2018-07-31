@@ -1,3 +1,13 @@
+2018-04-30  Keith Miller  <keith_miller@apple.com>
+
+        Remove unneeded exception check from String.fromCharCode
+        https://bugs.webkit.org/show_bug.cgi?id=185083
+
+        Reviewed by Mark Lam.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCode):
+
 2018-06-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r232816.
