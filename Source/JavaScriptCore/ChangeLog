@@ -1,3 +1,22 @@
+2018-07-31  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Remove gcc warnings for 32-bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=187803
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printPCRegister):
+        (JSC::Printer::printRegisterID):
+        (JSC::Printer::printAddress):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::calculatePokeOffset):
+        * runtime/Options.cpp:
+        (JSC::parse):
+
 2018-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         watchOS engineering build is broken after r234227

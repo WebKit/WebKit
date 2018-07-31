@@ -86,7 +86,7 @@ void printPCRegister(PrintStream& out, Context& context)
 {
     auto cpu = context.probeContext.cpu;
     void* value = cpu.pc();
-    out.printf("pc:<%p %ld>", value, bitwise_cast<intptr_t>(value));
+    out.printf("pc:<%p %" PRIdPTR ">", value, bitwise_cast<intptr_t>(value));
 }
 
 void printRegisterID(PrintStream& out, Context& context)
@@ -94,7 +94,7 @@ void printRegisterID(PrintStream& out, Context& context)
     RegisterID regID = context.data.as<RegisterID>();
     const char* name = CPUState::gprName(regID);
     intptr_t value = context.probeContext.gpr(regID);
-    out.printf("%s:<%p %ld>", name, bitwise_cast<void*>(value), value);
+    out.printf("%s:<%p %" PRIdPTR ">", name, bitwise_cast<void*>(value), value);
 }
 
 void printFPRegisterID(PrintStream& out, Context& context)
@@ -111,7 +111,7 @@ void printAddress(PrintStream& out, Context& context)
     RegisterID regID = address.base;
     const char* name = CPUState::gprName(regID);
     intptr_t value = context.probeContext.gpr(regID);
-    out.printf("Address{base:%s:<%p %ld>, offset:<0x%x %d>", name, bitwise_cast<void*>(value), value, address.offset, address.offset);
+    out.printf("Address{base:%s:<%p %" PRIdPTR ">, offset:<0x%x %d>", name, bitwise_cast<void*>(value), value, address.offset, address.offset);
 }
 
 void printMemory(PrintStream& out, Context& context)
