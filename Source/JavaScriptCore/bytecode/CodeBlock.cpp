@@ -1241,9 +1241,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
         Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
         switch (Interpreter::getOpcodeID(curInstruction[0])) {
-        case op_get_by_id:
-        case op_get_by_id_proto_load:
-        case op_get_by_id_unset: {
+        case op_get_by_id: {
             StructureID oldStructureID = curInstruction[4].u.structureID;
             if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 break;
@@ -1282,6 +1280,8 @@ void CodeBlock::finalizeLLIntInlineCaches()
         // We need to add optimizations for op_resolve_scope_for_hoisting_func_decl_in_eval to do link time scope resolution.
         case op_resolve_scope_for_hoisting_func_decl_in_eval:
             break;
+        case op_get_by_id_proto_load:
+        case op_get_by_id_unset:
         case op_get_array_length:
             break;
         case op_to_this:
@@ -1339,8 +1339,27 @@ void CodeBlock::finalizeLLIntInlineCaches()
 
     // We can't just remove all the sets when we clear the caches since we might have created a watchpoint set
     // then cleared the cache without GCing in between.
-    m_llintGetByIdWatchpointMap.removeIf([](const StructureWatchpointMap::KeyValuePairType& pair) -> bool {
-        return !Heap::isMarked(pair.key);
+    m_llintGetByIdWatchpointMap.removeIf([&] (const StructureWatchpointMap::KeyValuePairType& pair) -> bool {
+        auto clear = [&] () {
+            Instruction* instruction = std::get<1>(pair.key);
+            OpcodeID opcode = Interpreter::getOpcodeID(*instruction);
+            if (opcode == op_get_by_id_proto_load || opcode == op_get_by_id_unset) {
+                if (Options::verboseOSR())
+                    dataLogF("Clearing LLInt property access.\n");
+                clearLLIntGetByIdCache(instruction);
+            }
+            return true;
+        };
+
+        if (!Heap::isMarked(std::get<0>(pair.key)))
+            return clear();
+
+        for (const LLIntPrototypeLoadAdaptiveStructureWatchpoint* watchpoint : pair.value) {
+            if (!watchpoint->key().isStillLive())
+                return clear();
+        }
+
+        return false;
     });
 
     for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {

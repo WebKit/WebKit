@@ -625,7 +625,7 @@ public:
         return m_llintExecuteCounter;
     }
 
-    typedef HashMap<Structure*, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
+    typedef HashMap<std::tuple<Structure*, Instruction*>, Bag<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
     StructureWatchpointMap& llintGetByIdWatchpointMap() { return m_llintGetByIdWatchpointMap; }
 
     // Functions for controlling when tiered compilation kicks in. This
