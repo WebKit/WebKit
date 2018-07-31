@@ -91,6 +91,10 @@ bool StringBuilder::appendQuotedJSONString(const String& string)
     // https://bugs.webkit.org/show_bug.cgi?id=176086
     allocationSize = std::max(allocationSize, roundUpToPowerOfTwo(allocationSize));
 
+    // Allocating this much will definitely fail.
+    if (allocationSize >= 0x80000000)
+        return false;
+
     if (is8Bit() && !string.is8Bit())
         allocateBufferUpConvert(m_bufferCharacters8, allocationSize);
     else
