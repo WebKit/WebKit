@@ -1317,8 +1317,6 @@ webkit.org/b/188055 svg/filters/hidpi/fePointLight-coordinates.svg [ Timeout Pas
 
 webkit.org/b/188057 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure Pass ]
 
-webkit.org/b/188058 webanimations/partly-accelerated-transition-by-removing-property.html [ Failure ]
-
 webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
 
 webkit.org/b/188159 svg/text/text-default-font-size.html [ ImageOnlyFailure ]

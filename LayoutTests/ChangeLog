@@ -1,3 +1,13 @@
+2018-07-31  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] webanimations/partly-accelerated-transition-by-removing-property.html is failing since added in r234250 "[Web Animations] REGRESSION: transition added immediately after element creation doesn't work"
+        https://bugs.webkit.org/show_bug.cgi?id=188058
+
+        Unreviewed. Adding custom test expectation for WPE, as it never leaves AC mode.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Added.
+
 2018-07-30  Justin Fan  <justin_fan@apple.com>
 
         [WebGL2] Support compilation of GLSL ES version 300 shaders
