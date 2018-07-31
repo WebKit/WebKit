@@ -3,23 +3,15 @@
 <head>
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
         description("Tests that a cross-origin iframe from a prevalent domain that is granted storage access and then is detached from the DOM does not have storage access.");
         jsTestIsAsync = true;
 
         window.addEventListener("message", receiveMessage, false);
 
-        function setEnableFeature(enable) {
-            if (!enable)
-                testRunner.statisticsResetToConsistentState();
-            internals.setResourceLoadStatisticsEnabled(enable);
-            testRunner.setCookieStoragePartitioningEnabled(enable);
-            testRunner.setStorageAccessAPIEnabled(enable);
-        }
-
         function finishTest() {
-            setEnableFeature(false);
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         }
 
         const iframeID = "TheIframeThatRequestsStorageAccess";
@@ -97,22 +89,29 @@
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest;
         if (document.location.hash !== "#firstPartyCookieSet" && document.location.hash !== "#elementActivated") {
-            setEnableFeature(true);
-            document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html#firstPartyCookieSet";
+            setEnableFeature(true, function() {
+                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html#firstPartyCookieSet";
+            });
         } else {
-            testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
-            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                testFailed("Host did not get set as prevalent resource.");
-            testRunner.setStatisticsHasHadNonRecentUserInteraction(statisticsUrl, true);
-            if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                testFailed("Host did not get logged for user interaction.");
-            testRunner.statisticsUpdateCookiePartitioning();
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                    testFailed("Host did not get set as prevalent resource.");
+                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                    if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                        testFailed("Host did not get logged for user interaction.");
+                    testRunner.statisticsUpdateCookieBlocking(function() {
+                        let iframeElement = document.createElement("iframe");
+                        iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
+                        iframeElement.onload = runTest;
+                        iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                        iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess";
+                        document.body.appendChild(iframeElement);
+                    });
+                });
+            });
         }
     </script>
 </head>
 <body>
-<div>
-    <iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" onload="runTest()" id="TheIframeThatRequestsStorageAccess" src="http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess"></iframe>
-</div>
 </body>
 </html>

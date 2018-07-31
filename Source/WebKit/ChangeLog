@@ -1,3 +1,186 @@
+2018-07-31  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove partitioned cookies for reduced complexity, lower memory footprint, and ability to support more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=188109
+        <rdar://problem/42664391>
+
+        Reviewed by Brent Fulgham, Chris Dumez, and Alex Christensen.
+
+        This patch removes cookie partitioning which reduces the model to just
+        blocked cookies (in third-party contexts) and first-party cookie access.
+
+        Several of the changes are renaming to reflect that there are no more
+        cookie partitions. However, the compile-time check remains for now since
+        this change is not ready to ship.
+
+        The API changes are mostly in C APIs used for layout tests. The slight
+        change in Cocoa API is that there no longer is a functionality to
+        "enable" cookie partitioning. The boolean member is still there but it
+        no longer does anything.
+
+        The functional changes are in WebKit::ResourceLoadStatisticsMemoryStore
+        and WebKit::NetworkDataTaskCocoa where cookie partitioning used to be
+        managed and applied respectively. The IPC communication has changed to
+        reflect this.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updatePrevalentDomainsToBlockCookiesFor):
+            Name change from updatePrevalentDomainsToPartitionOrBlockCookies().
+            No longer supports the partitioned category.
+        (WebKit::NetworkProcess::removeAllStorageAccess):
+            Now supports a completion handler. This change was made to address
+            flakiness that came after layout test changes that were needed because
+            of the removal of partitioned cookies.
+        (WebKit::NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+            Partitioning removed from message name.
+            RemoveAllStorageAccess message now supports a completion handler
+            as explained above
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+            Removed parameter cookieStoragePartitioningEnabled.
+        (WebKit::NetworkProcessCreationParameters::decode):
+            Removed parameter cookieStoragePartitioningEnabled.
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::logCookieInformation):
+            No longer takes partitioning into account.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            Now only applies cookie blocking.
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+            Now only applies cookie blocking.
+        (WebKit::NetworkDataTaskCocoa::applyCookiePartitioningPolicy): Deleted.
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+            Removed the call to setCookieStoragePartitioningEnabled().
+        (WebKit::NetworkProcess::setCookieStoragePartitioningEnabled): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+            WebCore::NetworkStorageSession::shouldBlockCookies() now takes a
+            frame ID and page ID to resolve cookie access with the Storage
+            Access API. This was previously handled by
+            WebCore::NetworkStorageSession::cookieStoragePartition().
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerSetCookieStoragePartitioningEnabled): Deleted.
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsUpdateCookieBlocking):
+        (WKWebsiteDataStoreSetStatisticsHasHadNonRecentUserInteraction): Deleted.
+            There is no longer a difference between recent and non-recent
+            user interaction so this test function was removed.
+        (WKWebsiteDataStoreSetStatisticsTimeToLiveCookiePartitionFree): Deleted.
+        (WKWebsiteDataStoreStatisticsUpdateCookiePartitioning): Deleted.
+        (WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost): Deleted.
+            Deleted because partitioning is no longer a thing.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+            Deprecated _isCookieStoragePartitioningEnabled() and
+            _setCookieStoragePartitioningEnabled() via WK_API_DEPRECATED.
+        * UIProcess/Cocoa/ResourceLoadStatisticsMemoryStoreCocoa.mm:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded):
+            Removed support for ResourceLoadStatisticsTimeToLiveCookiePartitionFree.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+            No longer sets a parameter based on cookieStoragePartitioningEnabled().
+        (WebKit::WebProcessPool::setCookieStoragePartitioningEnabled):
+            Added a FIXME comment that this setter no longer does anything meaningful.
+            Removed the IPC call to the network process to propagate the setting.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::clearCallbackStates):
+            Name change from m_updatePartitionOrBlockCookiesCallbackMap to
+            m_updateBlockCookiesCallbackMap.
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor):
+            Name change plus it now just takes one vector of strings named domainsToBlock.
+        (WebKit::NetworkProcessProxy::didUpdateBlockCookies):
+            Name change from didUpdatePartitionOrBlockCookies().
+        (WebKit::NetworkProcessProxy::storageAccessRequestResult):
+            Just moved to its right place.
+        (WebKit::NetworkProcessProxy::removeAllStorageAccess):
+            Now take a completion handler.
+        (WebKit::NetworkProcessProxy::didRemoveAllStorageAccess):
+            To call the completion handler.
+        (WebKit::NetworkProcessProxy::updatePrevalentDomainsToPartitionOrBlockCookies): Deleted.
+            Name change.
+        (WebKit::NetworkProcessProxy::didUpdatePartitionOrBlockCookies): Deleted.
+            Name change.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+            Name change and added completion handler message for removeAllStorageAccess().
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsMemoryStore::scheduleStatisticsProcessingRequestIfNecessary):
+        (WebKit::ResourceLoadStatisticsMemoryStore::logUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::mergeWithDataFromDecoder):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+        (WebKit::ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldBlockAndKeepCookies):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldBlockAndPurgeCookies):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::clearBlockingStateForDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::resetCookieBlockingState):
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeAllStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::logNonRecentUserInteraction): Deleted.
+            There is no longer a difference between recent and non-recent
+            user interaction so this test function was removed.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setTimeToLiveCookiePartitionFree): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldPartitionCookies): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldBlockCookies): Deleted.
+            Now split into shouldBlockAndKeepCookies() and shouldBlockAndPurgeCookies().
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookiePartitioning): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookiePartitioningForDomains): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::clearPartitioningStateForDomains): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::resetCookiePartitioningState): Deleted.
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::startMonitoringDisk):
+            Added an empty completion handler to the m_memoryStore.clear() call.
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::setCookieStoragePartitioningEnabled): Deleted.
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::removeAllStorageAccess):
+            Now has a completion handler.
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingStateReset):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemory):
+            Now supports a completion handler for removeAllStorageAccess().
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction): Deleted.
+            There is no longer a difference between recent and non-recent
+            user interaction so this test function was removed.
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdate): Deleted.
+            Renamed to scheduleCookieBlockingUpdate().
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains): Deleted.
+            Renamed to scheduleCookieBlockingUpdateForDomains().
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearPartitioningStateForDomains): Deleted.
+            Renamed to scheduleClearBlockingStateForDomains().
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset): Deleted.
+            Renamed to scheduleCookieBlockingStateReset().
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler): Deleted.
+            Renamed callUpdatePrevalentDomainsToBlockCookiesForHandler().
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor):
+        (WebKit::WebsiteDataStore::removeAllStorageAccessHandler):
+            Now supports a completion handler for removeAllStorageAccess().
+        (WebKit::WebsiteDataStore::networkProcessDidCrash):
+            Name change in function called to get rid of "partitioning."
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies): Deleted.
+            Renamed updatePrevalentDomainsToBlockCookiesFor().
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-07-31  Rob Buis  <rbuis@igalia.com>
 
         Remove ResourceResponse::cacheBodyKey API

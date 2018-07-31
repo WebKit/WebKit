@@ -90,7 +90,6 @@ struct NetworkProcessCreationParameters {
     String httpProxy;
     String httpsProxy;
     RetainPtr<CFDataRef> networkATSContext;
-    bool cookieStoragePartitioningEnabled;
     bool storageAccessAPIEnabled;
     bool suppressesConnectionTerminationOnSystemChange;
 #endif

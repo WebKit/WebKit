@@ -3,6 +3,7 @@
 <head>
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
         description("Tests that cross-origin iframe storage access is denied if the iframe is sandboxed, has the allow token, but is nested.");
         jsTestIsAsync = true;
@@ -12,14 +13,6 @@
 
         window.addEventListener("message", receiveMessage, false);
 
-        function setEnableFeature(enable) {
-            if (!enable)
-                testRunner.statisticsResetToConsistentState();
-            internals.setResourceLoadStatisticsEnabled(enable);
-            testRunner.setCookieStoragePartitioningEnabled(enable);
-            testRunner.setStorageAccessAPIEnabled(enable);
-        }
-
         function receiveMessage(event) {
             if (event.origin === "http://localhost:8000") {
                 if (event.data.indexOf("PASS") !== -1)
@@ -28,8 +21,7 @@
                     testFailed(event.data.replace("FAIL ", ""));
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
-            setEnableFeature(false);
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         }
 
         function activateElement(elementId) {
@@ -42,34 +34,41 @@
                         eventSender.keyDown("escape");
                     else {
                         testFailed("No eventSender.");
-                        setEnableFeature(false);
-                        finishJSTest();
+                        setEnableFeature(false, finishJSTest);
                     }
                 },
                 function () {
                     testFailed("Promise rejected.");
-                    setEnableFeature(false);
-                    finishJSTest();
+                    setEnableFeature(false, finishJSTest);
                 }
             );
         }
 
         function runTest() {
-            setEnableFeature(true);
+            setEnableFeature(true, function() {
+                testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                        testFailed("Host did not get set as prevalent resource.");
+                    testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                            testFailed("Host did not get logged for user interaction.");
+                        testRunner.statisticsUpdateCookieBlocking(function() {
+                            let iframeElement = document.createElement("iframe");
+                            iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
+                            iframeElement.onload = function() {
+                                activateElement("TheIframeThatRequestsStorageAccess");
+                            };
+                            iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                            iframeElement.src = "resources/nesting-iframe.html";
+                            document.body.appendChild(iframeElement);
 
-            testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
-            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                testFailed("Host did not get set as prevalent resource.");
-            testRunner.setStatisticsHasHadNonRecentUserInteraction(statisticsUrl);
-            if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                testFailed("Host did not get logged for user interaction.");
-            testRunner.statisticsUpdateCookiePartitioning();
-
-            activateElement("theIframe");
+                        });
+                    });
+                });
+            });
         }
     </script>
 </head>
-<body>
-<iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" onload="runTest()" id="theIframe" src="resources/nesting-iframe.html"></iframe>
+<body onload="runTest()">
 </body>
 </html>

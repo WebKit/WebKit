@@ -249,7 +249,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    NSURLRequest *applySniffingPoliciesAndStoragePartitionIfNeeded(NSURLRequest *, bool shouldContentSniff, bool shouldContentEncodingSniff);
+    NSURLRequest *applySniffingPoliciesIfNeeded(NSURLRequest *, bool shouldContentSniff, bool shouldContentEncodingSniff);
 #endif
 
 #if USE(CURL)

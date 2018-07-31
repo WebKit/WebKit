@@ -3,21 +3,13 @@
 <body>
 <script src="/js-test-resources/js-test.js"></script>
 <script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/util.js"></script>
 <script>
     description("Tests that user interaction is not reported repeatedly within a short period of time.");
     jsTestIsAsync = true;
 
     const topFrameOrigin = "http://127.0.0.1:8000";
     const subFrameOrigin = "http://localhost:8000";
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     function activateElement(elementId, callback) {
         var element = document.getElementById(elementId);

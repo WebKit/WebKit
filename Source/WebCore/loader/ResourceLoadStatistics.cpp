@@ -265,7 +265,6 @@ String ResourceLoadStatistics::toString() const
     builder.append('\n');
 
     // In-memory only
-    appendBoolean(builder, "isMarkedForCookiePartitioning", isMarkedForCookiePartitioning);
     appendBoolean(builder, "isMarkedForCookieBlocking", isMarkedForCookieBlocking);
     builder.append('\n');
 
@@ -330,7 +329,6 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     dataRecordsRemoved = std::max(dataRecordsRemoved, other.dataRecordsRemoved);
     
     // In-memory only
-    isMarkedForCookiePartitioning |= other.isMarkedForCookiePartitioning;
     isMarkedForCookieBlocking |= other.isMarkedForCookieBlocking;
 }
 

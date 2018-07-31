@@ -1,3 +1,116 @@
+2018-07-31  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove partitioned cookies for reduced complexity, lower memory footprint, and ability to support more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=188109
+        <rdar://problem/42664391>
+
+        Reviewed by Brent Fulgham, Chris Dumez, and Alex Christensen.
+
+        This patch removes cookie partitioning which reduces the model to just
+        blocked cookies (in third-party contexts) and first-party cookie access.
+
+        Several of the changes are renaming to reflect that there are no more
+        cookie partitions.
+
+        The changes to the Storage Access API tests also involve fixes for potential
+        flakiness by adopting several completion handlers in test functions.
+
+        * http/tests/resourceLoadStatistics/add-blocking-to-redirect.html:
+        * http/tests/resourceLoadStatistics/add-partitioning-to-redirect-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html: Removed.
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/cookie-deletion-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion-expected.txt.
+        * http/tests/resourceLoadStatistics/cookie-deletion.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html.
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html.
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html:
+        * http/tests/resourceLoadStatistics/enable-debug-mode.html:
+        * http/tests/resourceLoadStatistics/grandfathering.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context-expected.txt:
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html: Removed.
+        * http/tests/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/remove-blocking-in-redirect-expected.txt:
+        * http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html:
+        * http/tests/resourceLoadStatistics/remove-partitioning-in-redirect-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/remove-partitioning-in-redirect.html: Removed.
+        * http/tests/resourceLoadStatistics/resources/get-cookies.php:
+        * http/tests/resourceLoadStatistics/resources/set-cookie-on-redirect.php: Added.
+        * http/tests/resourceLoadStatistics/resources/util.js: Added.
+        (setEnableFeature):
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/set-custom-prevalent-resource-in-debug-mode.html:
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects.html:
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html:
+        * http/tests/resourceLoadStatistics/telemetry-generation.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction.html: Removed.
+        * http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html:
+        * http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html:
+        * http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-expected.txt:
+        * http/tests/storageAccess/grant-storage-access-under-opener.html:
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-non-recent-user-interaction-expected.txt: Removed.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-non-recent-user-interaction.html: Removed.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-recent-user-interaction.html: Removed.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-recent-user-interaction-expected.txt.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-pop-window-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-pop-window-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-pop-window.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe.html.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame.html.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame.html.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-recent-user-interaction-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-recent-user-interaction.html.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe.html.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe.html.
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-expected.txt:
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-pop-window.html: Removed.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-storage-access-top-frame.html:
+        * http/tests/storageAccess/resources/nesting-iframe.html:
+        * platform/ios/TestExpectations:
+            Test case renaming.
+            webkit.org/b/183216 removed since it's resolved.
+        * platform/mac-wk2/TestExpectations:
+            Test case renaming.
+        * platform/wk2/TestExpectations:
+            Test case renaming.
+
 2018-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Spelling suggestions cannot be selected in focused form controls when zoomed in

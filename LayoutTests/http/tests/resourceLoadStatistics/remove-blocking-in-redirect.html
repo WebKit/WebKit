@@ -3,20 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
     description("Tests that blocking is removed mid-flight in redirects.");
     jsTestIsAsync = true;
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     const partitionHost = "127.0.0.1:8000";
     const thirdPartyOrigin = "http://localhost:8000";
@@ -57,20 +49,18 @@
                 openIframe(redirectChainUrl + "&message=Redirect case 1, should receive first-party cookie for 127.0.0.1.", runTest);
                 break;
             case "#step4":
-                // Set localhost as prevalent and with non-recent user interaction to put it in the blocking category.
+                // Set localhost as prevalent to put it in the blocking category.
                 document.location.hash = "step5";
-                testRunner.setStatisticsPrevalentResource("http://localhost", true, function() {
-                    if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
+                testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                         testFailed("Host did not get set as prevalent resource.");
-                    testRunner.statisticsUpdateCookiePartitioning(function() {
-                        runTest();
-                    });
+                    testRunner.statisticsUpdateCookieBlocking(runTest);
                 });
                 break;
             case "#step5":
-                // Set partitioned cookie for localhost under 127.0.0.1.
+                // Try to set partitioned cookie for localhost under 127.0.0.1.
                 document.location.hash = "step6";
-                openIframe(thirdPartyBaseUrl + subPathToSetPartitionedCookie + "&message=Set partitioned, third-party cookie.", runTest);
+                openIframe(thirdPartyBaseUrl + subPathToSetPartitionedCookie + "&message=Try to set third-party cookie in blocked mode.", runTest);
                 break;
             case "#step6":
                 // Check that no cookie gets sent for localhost under 127.0.0.1 since localhost's cookies are blocked.
@@ -90,12 +80,11 @@
 
     if (document.location.hash === "") {
         setEnableFeature(true, function() {
-            if (testRunner.isStatisticsPrevalentResource("http://localhost"))
+            if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                 testFailed("Localhost was classified as prevalent resource before the test starts.");
             testRunner.dumpChildFramesAsText();
             document.location.hash = "step1";
-            // Make sure the network process is up-to-date.
-            testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", false, runTest);
+            runTest();
         });
     } else {
         runTest();

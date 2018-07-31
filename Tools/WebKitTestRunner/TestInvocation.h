@@ -73,14 +73,13 @@ public:
 
     void didClearStatisticsThroughWebsiteDataRemoval();
     void didResetStatisticsToConsistentState();
-    void didSetPartitionOrBlockCookiesForHost();
+    void didSetBlockCookiesForHost();
     void didSetStatisticsDebugMode();
     void didSetPrevalentResourceForDebugMode();
     void didSetLastSeen();
     void didSetPrevalentResource();
     void didSetVeryPrevalentResource();
     void didSetHasHadUserInteraction();
-    void didSetHasHadNonRecentUserInteraction();
     void didReceiveAllStorageAccessEntries(Vector<String>& domains);
 
     void didRemoveAllSessionCredentials();

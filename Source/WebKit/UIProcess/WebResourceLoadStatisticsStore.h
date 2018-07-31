@@ -86,7 +86,6 @@ public:
 
     void logFrameNavigation(const WebFrameProxy&, const WebCore::URL& pageURL, const WebCore::ResourceRequest&, const WebCore::URL& redirectURL);
     void logUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
-    void logNonRecentUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
     void clearUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
     void hasHadUserInteraction(const WebCore::URL&, CompletionHandler<void(bool)>&&);
     void setLastSeen(const WebCore::URL&, Seconds, CompletionHandler<void()>&&);
@@ -105,12 +104,12 @@ public:
     void setSubresourceUniqueRedirectFrom(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedFrom);
     void setTopFrameUniqueRedirectTo(const WebCore::URL& topFrameHostName, const WebCore::URL& hostNameRedirectedTo);
     void setTopFrameUniqueRedirectFrom(const WebCore::URL& topFrameHostName, const WebCore::URL& hostNameRedirectedFrom);
-    void scheduleCookiePartitioningUpdate(CompletionHandler<void()>&&);
-    void scheduleCookiePartitioningUpdateForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&);
-    void scheduleClearPartitioningStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
+    void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
+    void scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void scheduleClearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing();
     void submitTelemetry();
-    void scheduleCookiePartitioningStateReset();
+    void scheduleCookieBlockingStateReset();
 
     void scheduleClearInMemory(CompletionHandler<void()>&&);
     
@@ -122,7 +121,6 @@ public:
     void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather, CompletionHandler<void()>&&);
 
     void setTimeToLiveUserInteraction(Seconds);
-    void setTimeToLiveCookiePartitionFree(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
     void setMaxStatisticsEntries(size_t);
@@ -136,8 +134,8 @@ public:
     void setStatisticsTestingCallback(WTF::Function<void(const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
     void logTestingEvent(const String&);
     void callGrantStorageAccessHandler(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
-    void removeAllStorageAccess();
-    void callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void removeAllStorageAccess(CompletionHandler<void()>&&);
+    void callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
     void callRemoveDomainsHandler(const Vector<String>& domains);
     void callHasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
 

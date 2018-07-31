@@ -5,7 +5,7 @@
     <script src="/js-test-resources/ui-helper.js"></script>
     <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
-        description("Tests that cross-origin iframe storage access is denied if the iframe is sandboxed and doesn't have the allow token.");
+        description("Tests that cross-origin iframe can display a window if storage access is granted.");
         jsTestIsAsync = true;
 
         const hostUnderTest = "localhost:8000";
@@ -15,10 +15,10 @@
 
         function receiveMessage(event) {
             if (event.origin === "http://localhost:8000") {
-                if (event.data.indexOf("PASS") !== -1)
+                if (event.data.indexOf("PASS ") !== -1)
                     testPassed(event.data.replace("PASS ", ""));
                 else
-                    testFailed(event.data.replace("FAIL ", ""));
+                    testFailed(event.data);
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
             setEnableFeature(false, finishJSTest);
@@ -46,6 +46,8 @@
 
         function runTest() {
             setEnableFeature(true, function() {
+                testRunner.setCanOpenWindows(false);
+                testRunner.setPopupBlockingEnabled(true);
                 testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
                     if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
                         testFailed("Host did not get set as prevalent resource.");
@@ -54,13 +56,13 @@
                             testFailed("Host did not get logged for user interaction.");
                         testRunner.statisticsUpdateCookieBlocking(function() {
                             let iframeElement = document.createElement("iframe");
-                            iframeElement.setAttribute("sandbox", "allow-scripts allow-same-origin allow-modals");
                             iframeElement.onload = function() {
                                 activateElement("TheIframeThatRequestsStorageAccess");
                             };
                             iframeElement.id = "TheIframeThatRequestsStorageAccess";
-                            iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldNotBeConsulted,policyShouldDenyAccess,isNotSameOriginIframe";
+                            iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe-and-pop-window.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
                             document.body.appendChild(iframeElement);
+
                         });
                     });
                 });

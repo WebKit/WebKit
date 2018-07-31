@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -16,18 +17,8 @@
     const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
     const thirdPartyCookieName = "thirdPartyCookie";
     const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=value";
-    const fragmentWithReturnUrl = "http://" + partitionHost + "/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html";
+    const fragmentWithReturnUrl = "http://" + partitionHost + "/resourceLoadStatistics/cookie-deletion.html";
     const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + thirdPartyCookieName;
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     function finishTest() {
         setEnableFeature(false, finishJSTest);
@@ -50,41 +41,57 @@
         testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
-    function setUserInteractionAndContinue() {
-        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
-            if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
-                testFailed("Third party did not get logged for user interaction.");
-            runTest();
+    function setAsNonPrevalentAndContinue() {
+        testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, false, function() {
+            if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                testFailed("Host still set as prevalent resource.");
+            testRunner.statisticsUpdateCookieBlocking(runTest);
         });
     }
 
     function runTest() {
         switch (document.location.hash) {
             case "#step1":
+                // Set first-party cookie for localhost.
                 document.location.href = thirdPartyBaseUrl + subPathToSetFirstPartyCookie + "#" + fragmentWithReturnUrl + "#step2";
                 break;
             case "#step2":
+                // Check that the third-party has access to its first-party cookies.
                 document.location.hash = "step3";
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive no cookies.", runTest);
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive first-party cookie.", runTest);
                 break;
             case "#step3":
+                // Classify localhost as prevalent.
                 document.location.hash = "step4";
-                openIframe(thirdPartyBaseUrl + subPathToSetThirdPartyCookie + "&message=Setting partitioned, third party cookie.", runTest);
+                testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                        testFailed("Host did not get set as prevalent resource.");
+                    testRunner.statisticsUpdateCookieBlocking(runTest);
+                });
                 break;
             case "#step4":
+                // Check that the third-party no longer has access to its first-party cookies.
                 document.location.hash = "step5";
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should only receive partitioned, third party cookie.", fireDataModificationHandlerAndContinue);
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive no cookies.", runTest);
                 break;
             case "#step5":
+                // Try setting a cookie as third-party.
                 document.location.hash = "step6";
-                setTimeout(runTest, 10);
+                openIframe(thirdPartyBaseUrl + subPathToSetThirdPartyCookie + "&message=Try to set third party cookie.", runTest);
                 break;
             case "#step6":
+                // Check that the third-party still has no access to cookies and then fire data record removal.
                 document.location.hash = "step7";
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After removal, should receive no cookies.", setUserInteractionAndContinue);
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive no cookies.", fireDataModificationHandlerAndContinue);
                 break;
             case "#step7":
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should receive no cookies.", finishTest);
+                // Check that the third-party still has no access to cookies and then declassify localhost.
+                document.location.hash = "step8";
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After removal, should receive no cookies.", setAsNonPrevalentAndContinue);
+                break;
+            case "#step8":
+                // Check that the third-party still has no access to cookies.
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After declassified, should receive no cookies.", finishTest);
                 break;
         }
     }
@@ -97,12 +104,7 @@
             testRunner.dumpChildFramesAsText();
             document.location.hash = "step1";
 
-            testRunner.setStatisticsPrevalentResource("http://localhost", true, function() {
-                if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
-                    testFailed("Host did not get set as prevalent resource.");
-
-                testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true, runTest);
-            });
+            runTest();
         });
     } else {
         runTest();

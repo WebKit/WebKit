@@ -137,7 +137,7 @@ void ResourceLoadStatisticsPersistentStorage::startMonitoringDisk()
             refreshMemoryStoreFromDisk();
             break;
         case FileMonitor::FileChangeType::Removal:
-            m_memoryStore.clear();
+            m_memoryStore.clear([] { });
             m_fileMonitor = nullptr;
             monitorDirectoryForNewStatistics();
             break;

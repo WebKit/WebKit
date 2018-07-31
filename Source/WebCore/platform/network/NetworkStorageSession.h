@@ -98,14 +98,11 @@ public:
     // May be null, in which case a Foundation default should be used.
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
-    WEBCORE_EXPORT static void setCookieStoragePartitioningEnabled(bool);
     WEBCORE_EXPORT static void setStorageAccessAPIEnabled(bool);
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
-    WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&) const;
-    WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource) const;
-    WEBCORE_EXPORT String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
-    WEBCORE_EXPORT void setPrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool clearFirst);
+    WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
+    WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
+    WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, bool clearFirst);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
     WEBCORE_EXPORT bool hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID) const;
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
@@ -186,9 +183,7 @@ private:
     CredentialStorage m_credentialStorage;
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    bool shouldPartitionCookies(const String& topPrivatelyControlledDomain) const;
     bool shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
-    HashSet<String> m_topPrivatelyControlledDomainsToPartition;
     HashSet<String> m_topPrivatelyControlledDomainsToBlock;
     HashMap<uint64_t, HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
     HashMap<uint64_t, HashMap<String, String>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pagesGrantedStorageAccess;

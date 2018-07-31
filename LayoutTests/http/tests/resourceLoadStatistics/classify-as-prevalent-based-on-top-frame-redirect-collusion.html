@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -16,15 +17,6 @@
     const topFrameOrigin3 = "http://127.0.0.4:8000/temp";
     const topFrameOrigin4 = "http://127.0.0.5:8000/temp";
     const topFrameOrigin5 = "http://localhost:8000/";
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     function runTest() {
         testRunner.setStatisticsTopFrameUniqueRedirectFrom(statisticsUrl, topFrameOrigin1);

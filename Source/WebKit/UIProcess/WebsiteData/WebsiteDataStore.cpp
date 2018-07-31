@@ -1249,13 +1249,13 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::updatePrevalentDomainsToBlockCookiesFor(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
-            process->updatePrevalentDomainsToPartitionOrBlockCookies(m_sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, [callbackAggregator = callbackAggregator.copyRef()] { });
+            process->updatePrevalentDomainsToBlockCookiesFor(m_sessionID, domainsToBlock, shouldClearFirst, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
@@ -1295,11 +1295,13 @@ void WebsiteDataStore::grantStorageAccessHandler(const String& resourceDomain, c
     networkProcess.grantStorageAccess(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::removeAllStorageAccessHandler()
+void WebsiteDataStore::removeAllStorageAccessHandler(CompletionHandler<void()>&& completionHandler)
 {
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    
     for (auto& processPool : processPools()) {
         if (auto networkProcess = processPool->networkProcess())
-            networkProcess->removeAllStorageAccess(m_sessionID);
+            networkProcess->removeAllStorageAccess(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
@@ -1344,7 +1346,7 @@ void WebsiteDataStore::networkProcessDidCrash()
 {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->scheduleCookiePartitioningStateReset();
+        m_resourceLoadStatistics->scheduleCookieBlockingStateReset();
 #endif
 }
 

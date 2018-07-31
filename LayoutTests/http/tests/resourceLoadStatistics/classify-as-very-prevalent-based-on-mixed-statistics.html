@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -16,15 +17,6 @@
     const numberOfSubresourceDomains = 30;
     for (var i = startNum; i < numberOfSubresourceDomains + startNum; ++i)
         topFrameOrigins.push("http://127.0.0." + i + ":8000/temp")
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     function completeTest() {
         if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))

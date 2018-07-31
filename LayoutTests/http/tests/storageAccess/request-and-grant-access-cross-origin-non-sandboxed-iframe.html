@@ -3,6 +3,7 @@
 <head>
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
         description("Tests that cross-origin iframe storage access is granted if the iframe is not sandboxed and the user accepts.");
         jsTestIsAsync = true;
@@ -12,14 +13,6 @@
 
         window.addEventListener("message", receiveMessage, false);
 
-        function setEnableFeature(enable) {
-            if (!enable)
-                testRunner.statisticsResetToConsistentState();
-            internals.setResourceLoadStatisticsEnabled(enable);
-            testRunner.setCookieStoragePartitioningEnabled(enable);
-            testRunner.setStorageAccessAPIEnabled(enable);
-        }
-
         function receiveMessage(event) {
             if (event.origin === "http://localhost:8000") {
                 if (event.data.indexOf("PASS ") !== -1)
@@ -28,8 +21,7 @@
                     testFailed(event.data);
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
-            finishJSTest();
-            setEnableFeature(false);
+            setEnableFeature(false, finishJSTest);
         }
 
         function activateElement(elementId) {
@@ -42,34 +34,34 @@
                         eventSender.keyDown("escape");
                     else {
                         testFailed("No eventSender.");
-                        finishJSTest();
-                        setEnableFeature(false);
+                        setEnableFeature(false, finishJSTest);
                     }
                 },
                 function () {
                     testFailed("Promise rejected.");
-                    finishJSTest();
-                    setEnableFeature(false);
+                    setEnableFeature(false, finishJSTest);
                 }
             );
         }
 
         function runTest() {
-            setEnableFeature(true);
-
-            testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
-            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                testFailed("Host did not get set as prevalent resource.");
-            testRunner.setStatisticsHasHadNonRecentUserInteraction(statisticsUrl);
-            if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                testFailed("Host did not get logged for user interaction.");
-            testRunner.statisticsUpdateCookiePartitioning();
-
-            activateElement("theIframe");
+            setEnableFeature(true, function() {
+                testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                        testFailed("Host did not get set as prevalent resource.");
+                    testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                            testFailed("Host did not get logged for user interaction.");
+                        testRunner.statisticsUpdateCookieBlocking(function() {
+                            activateElement("TheIframeThatRequestsStorageAccess");
+                        });
+                    });
+                });
+            });
         }
     </script>
 </head>
 <body>
-    <iframe onload="runTest()" id="theIframe" src="http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe"></iframe>
+    <iframe onload="runTest()" id="TheIframeThatRequestsStorageAccess" src="http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe"></iframe>
 </body>
 </html>

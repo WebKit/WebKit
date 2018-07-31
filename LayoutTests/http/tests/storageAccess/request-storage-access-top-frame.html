@@ -3,17 +3,10 @@
 <body onload="runTest()">
 <script src="/js-test-resources/js-test.js"></script>
 <script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resourceLoadStatistics/resources/util.js"></script>
 <script>
     description("Tests that top frame storage access is always granted in case the page requests it.");
     jsTestIsAsync = true;
-
-    function setEnableFeature(enable) {
-        if (!enable)
-            testRunner.statisticsResetToConsistentState();
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        testRunner.setStorageAccessAPIEnabled(enable);
-    }
 
     function activateElement(elementId) {
         var element = document.getElementById(elementId);
@@ -24,8 +17,7 @@
             },
             function () {
                 testFailed("Promise rejected.");
-                setEnableFeature(false);
-                finishJSTest();
+                setEnableFeature(false, finishJSTest);
             }
         );
     }
@@ -54,13 +46,11 @@
                 hasStorageAccess = hasAccess;
                 shouldBe("requestStorageAccessResolved", "true");
                 shouldBe("hasStorageAccess", "true");
-                setEnableFeature(false);
-                finishJSTest();
+                setEnableFeature(false, finishJSTest);
             },
             function (reason) {
                 testFailed("document.hasStorageAccess() was rejected. Reason: " + reason);
-                setEnableFeature(false);
-                finishJSTest();
+                setEnableFeature(false, finishJSTest);
             }
         );
     }

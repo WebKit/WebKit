@@ -99,7 +99,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
 #endif
 
-    WebCore::NetworkStorageSession::setCookieStoragePartitioningEnabled(parameters.cookieStoragePartitioningEnabled);
     WebCore::NetworkStorageSession::setStorageAccessAPIEnabled(parameters.storageAccessAPIEnabled);
     m_suppressesConnectionTerminationOnSystemChange = parameters.suppressesConnectionTerminationOnSystemChange;
 
@@ -199,11 +198,6 @@ void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifie
     [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorageFromIdentifyingData(identifier).get()]).get()];
 }
 #endif
-
-void NetworkProcess::setCookieStoragePartitioningEnabled(bool enabled)
-{
-    WebCore::NetworkStorageSession::setCookieStoragePartitioningEnabled(enabled);
-}
 
 void NetworkProcess::setStorageAccessAPIEnabled(bool enabled)
 {

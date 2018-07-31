@@ -41,11 +41,11 @@
         }
 
         function runTest() {
-            activateElement("theIframe");
+            activateElement("TheIframeThatRequestsStorageAccess");
         }
     </script>
 </head>
 <body>
-    <iframe onload="runTest()" id="theIframe" src="http://127.0.0.1:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldDenyAccess,userShouldNotBeConsulted,policyShouldGrantAccess,isSameOriginIframe"></iframe>
+    <iframe onload="runTest()" id="TheIframeThatRequestsStorageAccess" src="http://127.0.0.1:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldDenyAccess,userShouldNotBeConsulted,policyShouldGrantAccess,isSameOriginIframe"></iframe>
 </body>
 </html>

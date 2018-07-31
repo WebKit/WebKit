@@ -310,8 +310,8 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPartitionOrBlockCookiesForHost")) {
-        m_testRunner->statisticsCallDidSetPartitionOrBlockCookiesForHostCallback();
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetBlockCookiesForHost")) {
+        m_testRunner->statisticsCallDidSetBlockCookiesForHostCallback();
         return;
     }
 
@@ -341,11 +341,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetHasHadUserInteraction")) {
-        m_testRunner->statisticsCallDidSetHasHadUserInteractionCallback();
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetHasHadNonRecentUserInteraction")) {
         m_testRunner->statisticsCallDidSetHasHadUserInteractionCallback();
         return;
     }

@@ -272,15 +272,6 @@ void WebCookieManagerProxy::didSetHTTPCookieAcceptPolicy(WebKit::CallbackID call
     m_callbacks.take<VoidCallback>(callbackID)->performCallback();
 }
 
-void WebCookieManagerProxy::setCookieStoragePartitioningEnabled(bool enabled)
-{
-#if PLATFORM(COCOA)
-    processPool()->sendToNetworkingProcess(Messages::NetworkProcess::SetCookieStoragePartitioningEnabled(enabled));
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
 void WebCookieManagerProxy::setStorageAccessAPIEnabled(bool enabled)
 {
 #if PLATFORM(COCOA)

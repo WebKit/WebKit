@@ -2,21 +2,13 @@
 <html>
 <head>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
     description("Tests that only the origin is sent as referrer for prevalent resources without user interaction.");
     jsTestIsAsync = true;
     testRunner.dumpChildFramesAsText();
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     function openIframe(url, onLoadHandler) {
         const element = document.createElement("iframe");
@@ -42,7 +34,7 @@
                 if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
                     testFailed("Host did not get set as prevalent resource.");
 
-                testRunner.statisticsUpdateCookiePartitioning(function() {
+                testRunner.statisticsUpdateCookieBlocking(function() {
                     fetch("http://localhost:8000/resourceLoadStatistics/resources/echo-referrer.php").then(function(response) {
                         return response.text();
                     }).then(function(data) {

@@ -2,19 +2,11 @@
 <html>
 <head>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
     <script>
         description("Tests that redirects for a non-sandboxed iframe nested in a sandboxed iframe get counted properly.");
         jsTestIsAsync = true;
         window.addEventListener("message", receiveMessage, false);
-
-        function setEnableFeature(enable, completionHandler) {
-            internals.setResourceLoadStatisticsEnabled(enable);
-            testRunner.setCookieStoragePartitioningEnabled(enable);
-            if (!enable)
-                testRunner.statisticsResetToConsistentState(completionHandler);
-            else
-                completionHandler();
-        }
 
         function finishTest() {
             setEnableFeature(false, finishJSTest);

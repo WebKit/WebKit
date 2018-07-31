@@ -2736,15 +2736,6 @@ void TestController::setStatisticsHasHadUserInteraction(WKStringRef host, bool v
     m_currentInvocation->didSetHasHadUserInteraction();
 }
 
-void TestController::setStatisticsHasHadNonRecentUserInteraction(WKStringRef host)
-{
-    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
-    ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreSetStatisticsHasHadNonRecentUserInteraction(dataStore, host, &context, resourceStatisticsVoidResultCallback);
-    runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetHasHadNonRecentUserInteraction();
-}
-
 bool TestController::isStatisticsHasHadUserInteraction(WKStringRef host)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
@@ -2811,34 +2802,19 @@ void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
     WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction(dataStore, seconds);
 }
 
-void TestController::setStatisticsTimeToLiveCookiePartitionFree(double seconds)
-{
-    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
-    WKWebsiteDataStoreSetStatisticsTimeToLiveCookiePartitionFree(dataStore, seconds);
-}
-
 void TestController::statisticsProcessStatisticsAndDataRecords()
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
     WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(dataStore);
 }
 
-void TestController::statisticsUpdateCookiePartitioning()
+void TestController::statisticsUpdateCookieBlocking()
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
     ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreStatisticsUpdateCookiePartitioning(dataStore, &context, resourceStatisticsVoidResultCallback);
+    WKWebsiteDataStoreStatisticsUpdateCookieBlocking(dataStore, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetPartitionOrBlockCookiesForHost();
-}
-
-void TestController::statisticsSetShouldPartitionCookiesForHost(WKStringRef host, bool value)
-{
-    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
-    ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost(dataStore, host, value, &context, resourceStatisticsVoidResultCallback);
-    runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetPartitionOrBlockCookiesForHost();
+    m_currentInvocation->didSetBlockCookiesForHost();
 }
 
 void TestController::statisticsSubmitTelemetry()

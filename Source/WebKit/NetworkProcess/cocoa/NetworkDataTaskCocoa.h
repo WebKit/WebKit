@@ -92,7 +92,6 @@ private:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     static NSHTTPCookieStorage *statelessCookieStorage();
     void applyCookieBlockingPolicy(bool shouldBlock);
-    void applyCookiePartitioningPolicy(const String& requiredStoragePartition, const String& currentStoragePartition);
 #endif
     bool isThirdPartyRequest(const WebCore::ResourceRequest&);
     bool isAlwaysOnLoggingAllowed() const;

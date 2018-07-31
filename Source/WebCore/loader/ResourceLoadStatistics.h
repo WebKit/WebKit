@@ -96,7 +96,6 @@ struct ResourceLoadStatistics {
     unsigned timesAccessedAsFirstPartyDueToStorageAccessAPI { 0 };
 
     // In-memory only
-    bool isMarkedForCookiePartitioning { false };
     bool isMarkedForCookieBlocking { false };
 };
 

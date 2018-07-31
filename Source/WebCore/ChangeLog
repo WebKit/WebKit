@@ -1,3 +1,77 @@
+2018-07-31  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove partitioned cookies for reduced complexity, lower memory footprint, and ability to support more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=188109
+        <rdar://problem/42664391>
+
+        Reviewed by Brent Fulgham, Chris Dumez, and Alex Christensen.
+
+        Tests: http/tests/resourceLoadStatistics/cookie-deletion.html
+               http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html
+               http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-pop-window.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe.html
+               http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html
+
+        This patch removes cookie partitioning which reduces the model to just
+        blocked cookies (in third-party contexts) and first-party cookie access.
+
+        Several of the changes are renaming to reflect that there are no more
+        cookie partitions. However, the compile-time check remains for now since
+        this change is not ready to ship.
+
+        The test cases mentioned about are not new. They are just renamed to
+        reflect the code changes and to shorten their names (as requested by
+        non-Cocoa platforms).
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+            Removed the use of isMarkedForCookiePartitioning.
+        * loader/ResourceLoadStatistics.h:
+            Removed isMarkedForCookiePartitioning.
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/ResourceHandle.h:
+            Renamed applySniffingPoliciesAndStoragePartitionIfNeeded() to
+            applySniffingPoliciesIfNeeded().
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::getPartitioningDomain):
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+            Now takes a frame ID and a page ID to be able to support
+            the Storage Access API. This was previously handled by
+            shouldPartitionCookies() which is now deleted.
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor):
+            Renamed from setPrevalentDomainsToPartitionOrBlockCookies().
+        (WebCore::NetworkStorageSession::removePrevalentDomains):
+            No longer needs to clear the member variable for partitioned cookie domains.
+        (WebCore::NetworkStorageSession::setCookieStoragePartitioningEnabled): Deleted.
+        (WebCore::NetworkStorageSession::cookieStoragePartition const): Deleted.
+        (WebCore::NetworkStorageSession::shouldPartitionCookies const): Deleted.
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies): Deleted.
+            Renamed to setPrevalentDomainsToBlockCookiesFor().
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesForURL):
+            Now calls session.shouldBlockCookies() instead of the
+            wrapper cookiesAreBlockedForURL().
+        (WebCore::setCookiesFromDOM):
+            No longer checks for partition.
+        (WebCore::applyPartitionToCookies): Deleted.
+        (WebCore::cookiesAreBlockedForURL): Deleted.
+            This was just a wrapper for session.shouldBlockCookies().
+        (WebCore::cookiesInPartitionForURL): Deleted.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::applySniffingPoliciesIfNeeded):
+            Renamed from applySniffingPoliciesAndStoragePartitionIfNeeded().
+        (WebCore::ResourceHandle::createNSURLConnection):
+            Consequence of function name change.
+        (WebCore::ResourceHandle::applySniffingPoliciesAndStoragePartitionIfNeeded): Deleted.
+            Renamed to applySniffingPoliciesIfNeeded().
+
 2018-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Spelling suggestions cannot be selected in focused form controls when zoomed in

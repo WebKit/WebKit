@@ -66,7 +66,6 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._applePayEnabled = YES;
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
-    WKCookieManagerSetCookieStoragePartitioningEnabled(WKContextGetCookieManager(context), true);
     WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(context), true);
 #endif
 

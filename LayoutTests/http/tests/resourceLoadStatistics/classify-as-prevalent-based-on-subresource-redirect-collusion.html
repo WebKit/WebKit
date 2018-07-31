@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -15,15 +16,6 @@
     const subresourceOrigin2 = "http://127.0.0.3:8000/temp";
     const subresourceOrigin3 = "http://127.0.0.4:8000/temp";
     const subresourceOrigin4 = "http://127.0.0.5:8000/temp";
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     function runTest() {
         testRunner.statisticsNotifyObserver();

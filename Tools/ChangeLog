@@ -1,3 +1,49 @@
+2018-07-31  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Remove partitioned cookies for reduced complexity, lower memory footprint, and ability to support more platforms
+        https://bugs.webkit.org/show_bug.cgi?id=188109
+        <rdar://problem/42664391>
+
+        Reviewed by Brent Fulgham, Chris Dumez, and Alex Christensen.
+
+        This patch removes cookie partitioning which reduces the model to just
+        blocked cookies (in third-party contexts) and first-party cookie access.
+
+        Several of the changes are renaming to reflect that there are no more
+        cookie partitions.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+           Removed or renamed functions to reflect that there are no more
+           partitioned cookies.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsUpdateCookieBlocking):
+        (WTR::TestRunner::statisticsCallDidSetBlockCookiesForHostCallback):
+        (WTR::TestRunner::setCookieStoragePartitioningEnabled): Deleted.
+        (WTR::TestRunner::setStatisticsHasHadNonRecentUserInteraction): Deleted.
+        (WTR::TestRunner::setStatisticsTimeToLiveCookiePartitionFree): Deleted.
+        (WTR::TestRunner::statisticsUpdateCookiePartitioning): Deleted.
+        (WTR::TestRunner::statisticsSetShouldPartitionCookiesForHost): Deleted.
+        (WTR::TestRunner::statisticsCallDidSetPartitionOrBlockCookiesForHostCallback): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::statisticsUpdateCookieBlocking):
+        (WTR::TestController::setStatisticsHasHadNonRecentUserInteraction): Deleted.
+        (WTR::TestController::setStatisticsTimeToLiveCookiePartitionFree): Deleted.
+        (WTR::TestController::statisticsUpdateCookiePartitioning): Deleted.
+        (WTR::TestController::statisticsSetShouldPartitionCookiesForHost): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didSetBlockCookiesForHost):
+        (WTR::TestInvocation::didSetHasHadUserInteraction):
+        (WTR::TestInvocation::didSetPartitionOrBlockCookiesForHost): Deleted.
+        (WTR::TestInvocation::didSetHasHadNonRecentUserInteraction): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2018-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Build fix.  Remove unused variable.

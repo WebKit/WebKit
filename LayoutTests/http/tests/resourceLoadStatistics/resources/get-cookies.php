@@ -5,10 +5,12 @@ if(!isset($_COOKIE[$_GET["name1"]])) {
 } else {
     echo "Received cookie named '" . $_GET["name1"] . "'.<br>";
 }
-if(!isset($_COOKIE[$_GET["name2"]])) {
-    echo "Did not receive cookie named '" . $_GET["name2"] . "'.<br>";
-} else {
-    echo "Received cookie named '" . $_GET["name2"] . "'.<br>";
+if(!empty($_GET["name2"])) {
+    if(!isset($_COOKIE[$_GET["name2"]])) {
+        echo "Did not receive cookie named '" . $_GET["name2"] . "'.<br>";
+    } else {
+        echo "Received cookie named '" . $_GET["name2"] . "'.<br>";
+    }
 }
 if(!empty($_GET["name3"])) {
     if(!isset($_COOKIE[$_GET["name3"]])) {

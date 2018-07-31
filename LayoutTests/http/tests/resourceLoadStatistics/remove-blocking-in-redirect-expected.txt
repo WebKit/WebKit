@@ -27,7 +27,7 @@ Client-side document.cookie: firstPartyCookie=127.0.0.1
 --------
 Frame: '<!--frame3-->'
 --------
-Set partitioned, third-party cookie.
+Try to set third-party cookie in blocked mode.
 
 
 --------

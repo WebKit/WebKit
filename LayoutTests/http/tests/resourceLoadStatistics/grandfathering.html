@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Test for Grandfathering</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -17,16 +18,6 @@
     const thirdPartyOrigin = "http://127.0.0.1:8000";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=" + cookieValue;
-
-    function setEnableFeature(enable, completionHandler) {
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     function finishTest() {
         setEnableFeature(false, function() {

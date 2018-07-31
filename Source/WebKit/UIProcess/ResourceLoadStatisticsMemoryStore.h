@@ -55,7 +55,7 @@ public:
 
     void setPersistentStorage(ResourceLoadStatisticsPersistentStorage&);
 
-    void clear();
+    void clear(CompletionHandler<void()>&&);
     bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
 
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
@@ -64,16 +64,16 @@ public:
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
     void processStatistics(const Function<void(const WebCore::ResourceLoadStatistics&)>&) const;
 
-    void resetCookiePartitioningState();
-    void updateCookiePartitioning(CompletionHandler<void()>&&);
-    void updateCookiePartitioningForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&);
-    void clearPartitioningStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
+    void resetCookieBlockingState();
+    void updateCookieBlocking(CompletionHandler<void()>&&);
+    void updateCookieBlockingForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void clearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
 
     void includeTodayAsOperatingDateIfNecessary();
     void processStatisticsAndDataRecords();
 
     void requestStorageAccessUnderOpener(String&& primaryDomainInNeedOfStorageAccess, uint64_t openerPageID, String&& openerPrimaryDomain, bool isTriggeredByUserGesture);
-    void removeAllStorageAccess();
+    void removeAllStorageAccess(CompletionHandler<void()>&&);
 
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
     void cancelPendingStatisticsProcessingRequest();
@@ -109,7 +109,6 @@ public:
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setShouldSubmitTelemetry(bool);
     void setTimeToLiveUserInteraction(Seconds);
-    void setTimeToLiveCookiePartitionFree(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
     void setResourceLoadStatisticsDebugMode(bool);
@@ -120,7 +119,6 @@ public:
     void requestStorageAccess(String&& subFramePrimaryDomain, String&& topFramePrimaryDomain, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&);
 
-    void logNonRecentUserInteraction(const String& primaryDomain);
     void logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool areTargetAndMainFrameDomainsAssociated, bool areTargetAndSourceDomainsAssociated, bool isRedirect, bool isMainFrame);
     void logUserInteraction(const String& primaryDomain);
 
@@ -130,8 +128,8 @@ public:
     void setLastSeen(const String& primaryDomain, Seconds);
 
 private:
-    static bool shouldPartitionCookies(const WebCore::ResourceLoadStatistics&);
-    static bool shouldBlockCookies(const WebCore::ResourceLoadStatistics&);
+    static bool shouldBlockAndKeepCookies(const WebCore::ResourceLoadStatistics&);
+    static bool shouldBlockAndPurgeCookies(const WebCore::ResourceLoadStatistics&);
     static bool hasUserGrantedStorageAccessThroughPrompt(const WebCore::ResourceLoadStatistics&, const String& firstPartyPrimaryDomain);
     bool hasHadUnexpiredRecentUserInteraction(WebCore::ResourceLoadStatistics&) const;
     bool hasStatisticsExpired(const WebCore::ResourceLoadStatistics&) const;
@@ -160,7 +158,6 @@ private:
         size_t pruneEntriesDownTo { 800 };
         size_t maxStatisticsEntries { 1000 };
         std::optional<Seconds> timeToLiveUserInteraction;
-        Seconds timeToLiveCookiePartitionFree { 24_h };
         Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
         Seconds grandfatheringTime { 24_h * 7 };
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };

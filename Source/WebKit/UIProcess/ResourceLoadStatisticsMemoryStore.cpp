@@ -35,6 +35,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadStatistics.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 
@@ -377,12 +378,12 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const String& subFrameP
     ASSERT(!RunLoop::isMain());
 
     auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
-    if (shouldBlockCookies(subFrameStatistic)) {
+    if (shouldBlockAndPurgeCookies(subFrameStatistic)) {
         completionHandler(false);
         return;
     }
 
-    if (!shouldPartitionCookies(subFrameStatistic)) {
+    if (!shouldBlockAndKeepCookies(subFrameStatistic)) {
         completionHandler(true);
         return;
     }
@@ -401,17 +402,17 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccess(String&& subFramePr
     ASSERT(!RunLoop::isMain());
 
     auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
-    if (shouldBlockCookies(subFrameStatistic)) {
+    if (shouldBlockAndPurgeCookies(subFrameStatistic)) {
 #if !RELEASE_LOG_DISABLED
-        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Cannot grant storage access to %{public}s since its cookies are blocked in third-party contexts.", subFramePrimaryDomain.utf8().data());
+        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Cannot grant storage access to %{public}s since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFramePrimaryDomain.utf8().data());
 #endif
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
     }
 
-    if (!shouldPartitionCookies(subFrameStatistic)) {
+    if (!shouldBlockAndKeepCookies(subFrameStatistic)) {
 #if !RELEASE_LOG_DISABLED
-        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "No need to grant storage access to %{public}s since its cookies are neither blocked nor partitioned in third-party contexts.", subFramePrimaryDomain.utf8().data());
+        RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "No need to grant storage access to %{public}s since its cookies are not blocked in third-party contexts.", subFramePrimaryDomain.utf8().data());
 #endif
         completionHandler(StorageAccessStatus::HasAccess);
         return;
@@ -446,14 +447,14 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener(String&&
         return;
 
     auto& domainInNeedOfStorageAccessStatistic = ensureResourceStatisticsForPrimaryDomain(primaryDomainInNeedOfStorageAccess);
-    auto cookiesBlocked = shouldBlockCookies(domainInNeedOfStorageAccessStatistic);
+    auto cookiesBlockedAndPurged = shouldBlockAndPurgeCookies(domainInNeedOfStorageAccessStatistic);
 
     // There are no cookies to get access to if the domain has its cookies blocked and did not get user interaction now.
-    if (cookiesBlocked && !isTriggeredByUserGesture)
+    if (cookiesBlockedAndPurged && !isTriggeredByUserGesture)
         return;
 
-    // The domain already has access if its cookies are neither blocked nor partitioned.
-    if (!cookiesBlocked && !shouldPartitionCookies(domainInNeedOfStorageAccessStatistic))
+    // The domain already has access if its cookies are not blocked.
+    if (!cookiesBlockedAndPurged && !shouldBlockAndKeepCookies(domainInNeedOfStorageAccessStatistic))
         return;
 
 #if !RELEASE_LOG_DISABLED
@@ -589,7 +590,7 @@ void ResourceLoadStatisticsMemoryStore::scheduleStatisticsProcessingRequestIfNec
             return;
         }
 
-        updateCookiePartitioning([]() { });
+        updateCookieBlocking([]() { });
         processStatisticsAndDataRecords();
     });
 }
@@ -642,20 +643,6 @@ void ResourceLoadStatisticsMemoryStore::logUserInteraction(const String& primary
     auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteractionTime = WallTime::now();
-
-    if (statistics.isMarkedForCookieBlocking)
-        updateCookiePartitioningForDomains({ primaryDomain }, { }, { }, ShouldClearFirst::No, []() { });
-}
-
-void ResourceLoadStatisticsMemoryStore::logNonRecentUserInteraction(const String& primaryDomain)
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
-    statistics.hadUserInteraction = true;
-    statistics.mostRecentUserInteractionTime = WallTime::now() - (m_parameters.timeToLiveCookiePartitionFree + Seconds::fromHours(1));
-
-    updateCookiePartitioningForDomains({ primaryDomain }, { }, { }, ShouldClearFirst::No, []() { });
 }
 
 void ResourceLoadStatisticsMemoryStore::clearUserInteraction(const String& primaryDomain)
@@ -817,14 +804,6 @@ void ResourceLoadStatisticsMemoryStore::setTimeToLiveUserInteraction(Seconds sec
     m_parameters.timeToLiveUserInteraction = seconds;
 }
 
-void ResourceLoadStatisticsMemoryStore::setTimeToLiveCookiePartitionFree(Seconds seconds)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(seconds >= 0_s);
-
-    m_parameters.timeToLiveCookiePartitionFree = seconds;
-}
-
 void ResourceLoadStatisticsMemoryStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds)
 {
     ASSERT(!RunLoop::isMain());
@@ -923,7 +902,7 @@ void ResourceLoadStatisticsMemoryStore::mergeWithDataFromDecoder(KeyedDecoder& d
         return;
 
     mergeStatistics(WTFMove(loadedStatistics));
-    updateCookiePartitioning([]() { });
+    updateCookieBlocking([]() { });
 
     Vector<OperatingDate> operatingDates;
     succeeded = decoder.decodeObjects("operatingDates", operatingDates, [](KeyedDecoder& decoder, OperatingDate& date) {
@@ -941,17 +920,19 @@ void ResourceLoadStatisticsMemoryStore::mergeWithDataFromDecoder(KeyedDecoder& d
     m_operatingDates = mergeOperatingDates(m_operatingDates, WTFMove(operatingDates));
 }
 
-void ResourceLoadStatisticsMemoryStore::clear()
+void ResourceLoadStatisticsMemoryStore::clear(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     m_resourceStatisticsMap.clear();
     m_operatingDates.clear();
 
-    removeAllStorageAccess();
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    removeAllStorageAccess([callbackAggregator = callbackAggregator.copyRef()] { });
 
     auto primaryDomainsToBlock = ensurePrevalentResourcesForDebugMode();
-    updateCookiePartitioningForDomains({ }, primaryDomainsToBlock, { }, ShouldClearFirst::Yes, []() { });
+    updateCookieBlockingForDomains(primaryDomainsToBlock, ShouldClearFirst::Yes, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 bool ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const
@@ -961,7 +942,7 @@ bool ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteract
 
     auto mostRecentUserInteractionTime = std::max(current.mostRecentUserInteractionTime, updated.mostRecentUserInteractionTime);
 
-    return updated.lastSeen <= mostRecentUserInteractionTime + m_parameters.timeToLiveCookiePartitionFree;
+    return updated.lastSeen <= mostRecentUserInteractionTime + 24_h;
 }
 
 void ResourceLoadStatisticsMemoryStore::mergeStatistics(Vector<ResourceLoadStatistics>&& statistics)
@@ -980,12 +961,12 @@ void ResourceLoadStatisticsMemoryStore::mergeStatistics(Vector<ResourceLoadStati
     }
 }
 
-bool ResourceLoadStatisticsMemoryStore::shouldPartitionCookies(const ResourceLoadStatistics& statistic)
+bool ResourceLoadStatisticsMemoryStore::shouldBlockAndKeepCookies(const ResourceLoadStatistics& statistic)
 {
     return statistic.isPrevalentResource && statistic.hadUserInteraction;
 }
 
-bool ResourceLoadStatisticsMemoryStore::shouldBlockCookies(const ResourceLoadStatistics& statistic)
+bool ResourceLoadStatisticsMemoryStore::shouldBlockAndPurgeCookies(const ResourceLoadStatistics& statistic)
 {
     return statistic.isPrevalentResource && !statistic.hadUserInteraction;
 }
@@ -1028,85 +1009,57 @@ static void debugLogDomainsInBatches(const char* action, const Vector<String>& d
 #endif
 }
 
-void ResourceLoadStatisticsMemoryStore::updateCookiePartitioning(CompletionHandler<void()>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<String> domainsToPartition;
     Vector<String> domainsToBlock;
-    Vector<String> domainsToNeitherPartitionNorBlock;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-
-        bool shouldPartition = shouldPartitionCookies(resourceStatistic);
-        bool shouldBlock = shouldBlockCookies(resourceStatistic);
-
-        if (shouldPartition && !resourceStatistic.isMarkedForCookiePartitioning) {
-            domainsToPartition.append(resourceStatistic.highLevelDomain);
-            resourceStatistic.isMarkedForCookiePartitioning = true;
-        } else if (shouldBlock && !resourceStatistic.isMarkedForCookieBlocking) {
+        if (resourceStatistic.isPrevalentResource && !resourceStatistic.isMarkedForCookieBlocking) {
             domainsToBlock.append(resourceStatistic.highLevelDomain);
             resourceStatistic.isMarkedForCookieBlocking = true;
-        } else if (!shouldPartition && !shouldBlock && resourceStatistic.isPrevalentResource) {
-            domainsToNeitherPartitionNorBlock.append(resourceStatistic.highLevelDomain);
-            resourceStatistic.isMarkedForCookiePartitioning = false;
-            resourceStatistic.isMarkedForCookieBlocking = false;
         }
     }
 
-    if (domainsToPartition.isEmpty() && domainsToBlock.isEmpty() && domainsToNeitherPartitionNorBlock.isEmpty()) {
+    if (domainsToBlock.isEmpty()) {
         completionHandler();
         return;
     }
 
-    if (m_debugLoggingEnabled) {
-        if (!domainsToPartition.isEmpty())
-            debugLogDomainsInBatches("partition", domainsToPartition);
-        if (!domainsToBlock.isEmpty())
+    if (m_debugLoggingEnabled && !domainsToBlock.isEmpty())
             debugLogDomainsInBatches("block", domainsToBlock);
-        if (!domainsToNeitherPartitionNorBlock.isEmpty())
-            debugLogDomainsInBatches("neither partition nor block", domainsToNeitherPartitionNorBlock);
-    }
 
-    RunLoop::main().dispatch([this, store = makeRef(m_store), domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, ShouldClearFirst::No, [this, store = store.copyRef(), completionHandler = WTFMove(completionHandler)] () mutable {
-            store->statisticsQueue().dispatch([this, completionHandler = WTFMove(completionHandler)] () mutable {
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), store = makeRef(m_store), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, ShouldClearFirst::No, [this, weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
+            store->statisticsQueue().dispatch([this, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
-
+                if (!weakThis)
+                    return;
 #if !RELEASE_LOG_DISABLED
-                RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done updating cookie partitioning and blocking.");
+                RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done updating cookie blocking.");
 #endif
             });
         });
     });
 }
 
-void ResourceLoadStatisticsMemoryStore::updateCookiePartitioningForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::updateCookieBlockingForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (domainsToPartition.isEmpty() && domainsToBlock.isEmpty() && domainsToNeitherPartitionNorBlock.isEmpty() && shouldClearFirst == ShouldClearFirst::No) {
+    if (domainsToBlock.isEmpty() && shouldClearFirst == ShouldClearFirst::No) {
         completionHandler();
         return;
     }
 
     if (shouldClearFirst == ShouldClearFirst::Yes)
-        resetCookiePartitioningState();
-    else {
-        for (auto& domain : domainsToNeitherPartitionNorBlock) {
-            auto& statistic = ensureResourceStatisticsForPrimaryDomain(domain);
-            statistic.isMarkedForCookiePartitioning = false;
-            statistic.isMarkedForCookieBlocking = false;
-        }
-    }
-
-    for (auto& domain : domainsToPartition)
-        ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = true;
+        resetCookieBlockingState();
 
     for (auto& domain : domainsToBlock)
         ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookieBlocking = true;
 
-    RunLoop::main().dispatch([store = makeRef(m_store), shouldClearFirst, domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([store = makeRef(m_store), shouldClearFirst, domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, shouldClearFirst, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
             });
@@ -1114,7 +1067,7 @@ void ResourceLoadStatisticsMemoryStore::updateCookiePartitioningForDomains(const
     });
 }
 
-void ResourceLoadStatisticsMemoryStore::clearPartitioningStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::clearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1129,21 +1082,18 @@ void ResourceLoadStatisticsMemoryStore::clearPartitioningStateForDomains(const V
 
     for (auto& domain : domains) {
         auto& statistic = ensureResourceStatisticsForPrimaryDomain(domain);
-        statistic.isMarkedForCookiePartitioning = false;
         statistic.isMarkedForCookieBlocking = false;
     }
 
     completionHandler();
 }
 
-void ResourceLoadStatisticsMemoryStore::resetCookiePartitioningState()
+void ResourceLoadStatisticsMemoryStore::resetCookieBlockingState()
 {
     ASSERT(!RunLoop::isMain());
 
-    for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        resourceStatistic.isMarkedForCookiePartitioning = false;
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values())
         resourceStatistic.isMarkedForCookieBlocking = false;
-    }
 }
 
 void ResourceLoadStatisticsMemoryStore::processStatistics(const Function<void(const ResourceLoadStatistics&)>& processFunction) const
@@ -1300,11 +1250,15 @@ void ResourceLoadStatisticsMemoryStore::setVeryPrevalentResource(const String& p
     setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::VeryHigh);
 }
 
-void ResourceLoadStatisticsMemoryStore::removeAllStorageAccess()
+void ResourceLoadStatisticsMemoryStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::main().dispatch([store = makeRef(m_store)] () {
-        store->removeAllStorageAccess();
+    RunLoop::main().dispatch([store = makeRef(m_store), completionHandler = WTFMove(completionHandler)]() mutable {
+        store->removeAllStorageAccess([store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
+            store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler();
+            });
+        });
     });
 }
 

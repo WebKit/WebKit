@@ -79,7 +79,6 @@ DECLARE_CF_TYPE_TRAIT(CFHTTPCookie);
 
 namespace WebCore {
 
-static bool cookieStoragePartitioningEnabled;
 static bool storageAccessAPIEnabled;
 
 static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFStringRef identifier)
@@ -217,11 +216,6 @@ RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
 #endif
 }
 
-void NetworkStorageSession::setCookieStoragePartitioningEnabled(bool enabled)
-{
-    cookieStoragePartitioningEnabled = enabled;
-}
-
 void NetworkStorageSession::setStorageAccessAPIEnabled(bool enabled)
 {
     storageAccessAPIEnabled = enabled;
@@ -229,12 +223,7 @@ void NetworkStorageSession::setStorageAccessAPIEnabled(bool enabled)
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
-String NetworkStorageSession::cookieStoragePartition(const ResourceRequest& request, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const
-{
-    return cookieStoragePartition(request.firstPartyForCookies(), request.url(), frameID, pageID);
-}
-
-static inline String getPartitioningDomain(const URL& url) 
+static inline String getPartitioningDomain(const URL& url)
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     auto domain = topPrivatelyControlledDomain(url.host().toString());
@@ -246,33 +235,6 @@ static inline String getPartitioningDomain(const URL& url)
     return domain;
 }
 
-String NetworkStorageSession::cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const
-{
-    if (!cookieStoragePartitioningEnabled)
-        return emptyString();
-    
-    auto resourceDomain = getPartitioningDomain(resource);
-    if (!shouldPartitionCookies(resourceDomain))
-        return emptyString();
-
-    auto firstPartyDomain = getPartitioningDomain(firstPartyForCookies);
-    if (firstPartyDomain == resourceDomain)
-        return emptyString();
-
-    if (pageID && hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID.value()))
-        return emptyString();
-
-    return firstPartyDomain;
-}
-
-bool NetworkStorageSession::shouldPartitionCookies(const String& topPrivatelyControlledDomain) const
-{
-    if (topPrivatelyControlledDomain.isEmpty())
-        return false;
-
-    return m_topPrivatelyControlledDomainsToPartition.contains(topPrivatelyControlledDomain);
-}
-
 bool NetworkStorageSession::shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const
 {
     if (topPrivatelyControlledDomain.isEmpty())
@@ -281,19 +243,13 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookies(const String& topPrivat
     return m_topPrivatelyControlledDomainsToBlock.contains(topPrivatelyControlledDomain);
 }
 
-bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request) const
+bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const
 {
-    if (!cookieStoragePartitioningEnabled)
-        return false;
-
-    return shouldBlockCookies(request.firstPartyForCookies(), request.url());
+    return shouldBlockCookies(request.firstPartyForCookies(), request.url(), frameID, pageID);
 }
     
-bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource) const
+bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const
 {
-    if (!cookieStoragePartitioningEnabled)
-        return false;
-    
     auto firstPartyDomain = getPartitioningDomain(firstPartyForCookies);
     if (firstPartyDomain.isEmpty())
         return false;
@@ -305,43 +261,26 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     if (firstPartyDomain == resourceDomain)
         return false;
 
+    if (pageID && hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID.value()))
+        return false;
+
     return shouldBlockThirdPartyCookies(resourceDomain);
 }
 
-void NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool clearFirst)
+void NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(const Vector<String>& domains, bool clearFirst)
 {
     if (clearFirst) {
-        m_topPrivatelyControlledDomainsToPartition.clear();
         m_topPrivatelyControlledDomainsToBlock.clear();
         m_framesGrantedStorageAccess.clear();
     }
 
-    for (auto& domain : domainsToPartition) {
-        m_topPrivatelyControlledDomainsToPartition.add(domain);
-        if (!clearFirst)
-            m_topPrivatelyControlledDomainsToBlock.remove(domain);
-    }
-
-    for (auto& domain : domainsToBlock) {
-        m_topPrivatelyControlledDomainsToBlock.add(domain);
-        if (!clearFirst)
-            m_topPrivatelyControlledDomainsToPartition.remove(domain);
-    }
-    
-    if (!clearFirst) {
-        for (auto& domain : domainsToNeitherPartitionNorBlock) {
-            m_topPrivatelyControlledDomainsToPartition.remove(domain);
-            m_topPrivatelyControlledDomainsToBlock.remove(domain);
-        }
-    }
+    m_topPrivatelyControlledDomainsToBlock.add(domains.begin(), domains.end());
 }
 
 void NetworkStorageSession::removePrevalentDomains(const Vector<String>& domains)
 {
-    for (auto& domain : domains) {
-        m_topPrivatelyControlledDomainsToPartition.remove(domain);
+    for (auto& domain : domains)
         m_topPrivatelyControlledDomainsToBlock.remove(domain);
-    }
 }
 
 bool NetworkStorageSession::hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID) const

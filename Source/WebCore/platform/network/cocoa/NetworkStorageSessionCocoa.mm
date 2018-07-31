@@ -285,57 +285,11 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
     return filteredCookies;
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-
-static NSArray *applyPartitionToCookies(NSString *partition, NSArray *cookies)
-{
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-
-    // FIXME 24747739: CFNetwork should expose this key as SPI
-    static NSString * const partitionKey = @"StoragePartition";
-
-    NSMutableArray *partitionedCookies = [NSMutableArray arrayWithCapacity:cookies.count];
-    for (NSHTTPCookie *cookie in cookies) {
-        RetainPtr<NSMutableDictionary> properties = adoptNS([cookie.properties mutableCopy]);
-        [properties setObject:partition forKey:partitionKey];
-        [partitionedCookies addObject:[NSHTTPCookie cookieWithProperties:properties.get()]];
-    }
-
-    return partitionedCookies;
-}
-
-static bool cookiesAreBlockedForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
-{
-    return session.shouldBlockCookies(firstParty, url);
-}
-
-static NSArray *cookiesInPartitionForURL(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID)
-{
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    String partition = session.cookieStoragePartition(firstParty, url, frameID, pageID);
-    if (partition.isEmpty())
-        return nil;
-
-    // FIXME: Stop creating a new NSHTTPCookieStorage object each time we want to query the cookie jar.
-    // NetworkStorageSession could instead keep a NSHTTPCookieStorage object for us.
-    RetainPtr<NSHTTPCookieStorage> cookieStorage;
-    if (auto storage = session.cookieStorage())
-        cookieStorage = adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage.get()]);
-    else
-        cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    return cookiesForURL(cookieStorage.get(), url, firstParty, sameSiteInfo, partition);
-}
-
-#endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    
 static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID)
 {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (cookiesAreBlockedForURL(session, firstParty, url))
+    if (session.shouldBlockCookies(firstParty, url, frameID, pageID))
         return nil;
-    
-    if (NSArray *cookies = cookiesInPartitionForURL(session, firstParty, sameSiteInfo, url, frameID, pageID))
-        return cookies;
 #else
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -443,12 +397,8 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     ASSERT([filteredCookies.get() count] <= 1);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (shouldBlockCookies(firstParty, url))
+    if (shouldBlockCookies(firstParty, url, frameID, pageID))
         return;
-
-    String partition = cookieStoragePartition(firstParty, url, frameID, pageID);
-    if (!partition.isEmpty())
-        filteredCookies = applyPartitionToCookies(partition, filteredCookies.get());
 #else
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);

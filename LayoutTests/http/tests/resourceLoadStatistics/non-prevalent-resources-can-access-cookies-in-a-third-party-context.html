@@ -4,29 +4,17 @@
     <meta charset="UTF-8">
     <title>Test to ensure non-prevalent resources can access their cookies in a third party context</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
     const partitionHost = "127.0.0.1:8000";
-    const thirdPartyHostname = "localhost";
-    const thirdPartyOrigin = "http://" + thirdPartyHostname + ":8000";
+    const thirdPartyOrigin = "http://localhost:8000";
     const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
     const firstPartyCookieName = "firstPartyCookie";
     const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
-    const partitionedCookieName = "partitionedCookie";
-    const subPathToSetPartitionedCookie = "/set-cookie.php?name=" + partitionedCookieName + "&value=value";
     const fragmentWithReturnUrl = "http://127.0.0.1:8000/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html";
-    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
+    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName;
 
     function finishTest() {
         setEnableFeature(false, function() {
@@ -43,14 +31,6 @@
         document.body.appendChild(element);
     }
 
-    function setUserInteractionAndContinue() {
-        testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
-            if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
-                testFailed("Third party did not get logged for user interaction.");
-            runTest();
-        });
-    }
-
     function runTest() {
         switch (document.location.hash) {
             case "#step1":
@@ -59,27 +39,7 @@
                 break;
             case "#step2":
                 // Load localhost under 127.0.0.1 and check that it gets its cookie.
-                document.location.hash = "step3";
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive one cookie.", runTest);
-                break;
-            case "#step3":
-                // Setup localhost for partitioning.
-                document.location.hash = "step4";
-                testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, true, runTest);
-                break;
-            case "#step4":
-                // Set a partitioned cookie for localhost under 127.0.0.1.
-                document.location.hash = "step5";
-                openIframe(thirdPartyBaseUrl + subPathToSetPartitionedCookie + "&message=Setting partitioned, third party cookie.", runTest);
-                break;
-            case "#step5":
-                // Load localhost under 127.0.0.1 and check that it gets only the partitioned cookie. End by acquiring user interaction for localhost.
-                document.location.hash = "step6";
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive one partitioned, third party cookie.", setUserInteractionAndContinue);
-                break;
-            case "#step6":
-                // Load localhost under 127.0.0.1 and check that it still gets partitioned cookie after user interaction.
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should still only receive one partitioned, third party cookie.", finishTest);
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should receive one cookie.", finishTest);
                 break;
         }
     }
@@ -88,11 +48,10 @@
         testRunner.waitUntilDone();
         testRunner.dumpChildFramesAsText();
         setEnableFeature(true, function() {
-            testRunner.setStatisticsPrevalentResource(thirdPartyHostname, false, function() {
+            testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, false, function() {
                 testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, false, function() {
                     document.location.hash = "step1";
-
-                    testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, false, runTest);
+                    testRunner.statisticsUpdateCookieBlocking(runTest);
                 });
             });
         });

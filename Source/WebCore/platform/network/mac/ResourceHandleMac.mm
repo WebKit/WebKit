@@ -111,20 +111,14 @@ static bool synchronousWillSendRequestEnabled()
 
 #if PLATFORM(COCOA)
 
-NSURLRequest *ResourceHandle::applySniffingPoliciesAndStoragePartitionIfNeeded(NSURLRequest *request, bool shouldContentSniff, bool shouldContentEncodingSniff)
+NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *request, bool shouldContentSniff, bool shouldContentEncodingSniff)
 {
 #if !PLATFORM(MAC)
     UNUSED_PARAM(shouldContentEncodingSniff);
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED < 101302
     shouldContentEncodingSniff = true;
 #endif
-
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    String storagePartition = d->m_context->storageSession().cookieStoragePartition(firstRequest(), std::nullopt, std::nullopt);
-#else
-    String storagePartition;
-#endif
-    if (shouldContentSniff && shouldContentEncodingSniff && storagePartition.isEmpty())
+    if (shouldContentSniff && shouldContentEncodingSniff)
         return request;
 
     auto mutableRequest = adoptNS([request mutableCopy]);
@@ -136,11 +130,6 @@ NSURLRequest *ResourceHandle::applySniffingPoliciesAndStoragePartitionIfNeeded(N
 
     if (!shouldContentSniff)
         [mutableRequest _setProperty:@(NO) forKey:(__bridge NSString *)_kCFURLConnectionPropertyShouldSniff];
-
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (!storagePartition.isEmpty())
-        [mutableRequest _setProperty:storagePartition forKey:@"__STORAGE_PARTITION_IDENTIFIER"];
-#endif
 
     return mutableRequest.autorelease();
 }
@@ -184,7 +173,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     }
 
     NSURLRequest *nsRequest = firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
-    nsRequest = applySniffingPoliciesAndStoragePartitionIfNeeded(nsRequest, shouldContentSniff, shouldContentEncodingSniff);
+    nsRequest = applySniffingPoliciesIfNeeded(nsRequest, shouldContentSniff, shouldContentEncodingSniff);
 
     if (d->m_storageSession)
         nsRequest = [copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest) autorelease];

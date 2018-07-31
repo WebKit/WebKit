@@ -38,10 +38,6 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
         if (timeToLiveUserInteraction > 0_s && timeToLiveUserInteraction <= 24_h * 30)
             setTimeToLiveUserInteraction(timeToLiveUserInteraction);
 
-        Seconds timeToLiveCookiePartitionFree([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveCookiePartitionFree"]);
-        if (timeToLiveCookiePartitionFree > 0_s && timeToLiveCookiePartitionFree <= 24_h)
-            setTimeToLiveCookiePartitionFree(timeToLiveCookiePartitionFree);
-
         Seconds minimumTimeBetweenDataRecordsRemoval([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsMinimumTimeBetweenDataRecordsRemoval"]);
         if (minimumTimeBetweenDataRecordsRemoval > 0_s && minimumTimeBetweenDataRecordsRemoval < 1_h)
             setMinimumTimeBetweenDataRecordsRemoval(minimumTimeBetweenDataRecordsRemoval);

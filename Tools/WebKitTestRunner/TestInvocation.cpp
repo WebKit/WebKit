@@ -877,12 +877,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetCookieStoragePartitioningEnabled")) {
-        WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
-        WKCookieManagerSetCookieStoragePartitioningEnabled(WKContextGetCookieManager(TestController::singleton().context()), WKBooleanGetValue(accept));
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "SetCustomUserAgent")) {
         WKStringRef userAgent = static_cast<WKStringRef>(messageBody);
         WKPageSetCustomUserAgent(TestController::singleton().mainWebView()->page(), userAgent);
@@ -1155,13 +1149,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsHasHadNonRecentUserInteraction")) {
-        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
-        WKStringRef hostName = static_cast<WKStringRef>(messageBody);
-        TestController::singleton().setStatisticsHasHadNonRecentUserInteraction(hostName);
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsHasHadUserInteraction")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         
@@ -1285,37 +1272,16 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTimeToLiveCookiePartitionFree")) {
-        ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
-        WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);
-        TestController::singleton().setStatisticsTimeToLiveCookiePartitionFree(WKDoubleGetValue(seconds));
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsProcessStatisticsAndDataRecords")) {
         TestController::singleton().statisticsProcessStatisticsAndDataRecords();
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsUpdateCookiePartitioning")) {
-        TestController::singleton().statisticsUpdateCookiePartitioning();
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsUpdateCookieBlocking")) {
+        TestController::singleton().statisticsUpdateCookieBlocking();
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetShouldPartitionCookiesForHost")) {
-        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
-        
-        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
-        WKRetainPtr<WKStringRef> hostNameKey(AdoptWK, WKStringCreateWithUTF8CString("HostName"));
-        WKRetainPtr<WKStringRef> valueKey(AdoptWK, WKStringCreateWithUTF8CString("Value"));
-        
-        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
-        WKBooleanRef value = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, valueKey.get()));
-        
-        TestController::singleton().statisticsSetShouldPartitionCookiesForHost(hostName, WKBooleanGetValue(value));
-        return nullptr;
-    }
-    
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSubmitTelemetry")) {
         TestController::singleton().statisticsSubmitTelemetry();
         return nullptr;
@@ -1535,9 +1501,9 @@ void TestInvocation::didResetStatisticsToConsistentState()
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 
-void TestInvocation::didSetPartitionOrBlockCookiesForHost()
+void TestInvocation::didSetBlockCookiesForHost()
 {
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetPartitionOrBlockCookiesForHost"));
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetBlockCookiesForHost"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 
@@ -1574,12 +1540,6 @@ void TestInvocation::didSetVeryPrevalentResource()
 void TestInvocation::didSetHasHadUserInteraction()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetHasHadUserInteraction"));
-    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
-}
-
-void TestInvocation::didSetHasHadNonRecentUserInteraction()
-{
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetHasHadNonRecentUserInteraction"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 

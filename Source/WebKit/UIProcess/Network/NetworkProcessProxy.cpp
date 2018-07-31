@@ -221,8 +221,8 @@ void NetworkProcessProxy::clearCallbackStates()
     while (!m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty())
         m_pendingDeleteWebsiteDataForOriginsCallbacks.take(m_pendingDeleteWebsiteDataForOriginsCallbacks.begin()->key)();
 
-    while (!m_updatePartitionOrBlockCookiesCallbackMap.isEmpty())
-        m_updatePartitionOrBlockCookiesCallbackMap.take(m_updatePartitionOrBlockCookiesCallbackMap.begin()->key)();
+    while (!m_updateBlockCookiesCallbackMap.isEmpty())
+        m_updateBlockCookiesCallbackMap.take(m_updateBlockCookiesCallbackMap.begin()->key)();
     
     while (!m_storageAccessResponseCallbackMap.isEmpty())
         m_storageAccessResponseCallbackMap.take(m_storageAccessResponseCallbackMap.begin()->key)(false);
@@ -424,24 +424,24 @@ void NetworkProcessProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderI
 #endif
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void NetworkProcessProxy::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& callback)
+void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
-        callback();
+        completionHandler();
         return;
     }
     
     auto callbackId = generateCallbackID();
-    auto addResult = m_updatePartitionOrBlockCookiesCallbackMap.add(callbackId, [protectedThis = makeRef(*this), token = throttler().backgroundActivityToken(), callback = WTFMove(callback)] () mutable {
-        callback();
+    auto addResult = m_updateBlockCookiesCallbackMap.add(callbackId, [protectedThis = makeRef(*this), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::UpdatePrevalentDomainsToPartitionOrBlockCookies(sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst == ShouldClearFirst::Yes, callbackId), 0);
+    send(Messages::NetworkProcess::UpdatePrevalentDomainsToBlockCookiesFor(sessionID, domainsToBlock, shouldClearFirst == ShouldClearFirst::Yes, callbackId), 0);
 }
 
-void NetworkProcessProxy::didUpdatePartitionOrBlockCookies(uint64_t callbackId)
+void NetworkProcessProxy::didUpdateBlockCookies(uint64_t callbackId)
 {
-    m_updatePartitionOrBlockCookiesCallbackMap.take(callbackId)();
+    m_updateBlockCookiesCallbackMap.take(callbackId)();
 }
 
 static uint64_t nextRequestStorageAccessContextId()
@@ -466,16 +466,29 @@ void NetworkProcessProxy::grantStorageAccess(PAL::SessionID sessionID, const Str
     send(Messages::NetworkProcess::GrantStorageAccess(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, contextId), 0);
 }
 
-void NetworkProcessProxy::removeAllStorageAccess(PAL::SessionID sessionID)
-{
-    if (canSendMessage())
-        send(Messages::NetworkProcess::RemoveAllStorageAccess(sessionID), 0);
-}
-
 void NetworkProcessProxy::storageAccessRequestResult(bool wasGranted, uint64_t contextId)
 {
     auto callback = m_storageAccessResponseCallbackMap.take(contextId);
     callback(wasGranted);
+}
+
+void NetworkProcessProxy::removeAllStorageAccess(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+
+    auto contextId = nextRequestStorageAccessContextId();
+    auto addResult = m_removeAllStorageAccessCallbackMap.add(contextId, WTFMove(completionHandler));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::RemoveAllStorageAccess(sessionID, contextId), 0);
+}
+
+void NetworkProcessProxy::didRemoveAllStorageAccess(uint64_t contextId)
+{
+    auto completionHandler = m_removeAllStorageAccessCallbackMap.take(contextId);
+    completionHandler();
 }
 
 void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&& domains)>&& callback)

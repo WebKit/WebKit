@@ -151,18 +151,6 @@ void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
     [m_task performSelector:NSSelectorFromString(@"_setExplicitCookieStorage:") withObject:(NSObject*)storage._cookieStorage];
     m_hasBeenSetToUseStatelessCookieStorage = shouldBlock;
 }
-
-void NetworkDataTaskCocoa::applyCookiePartitioningPolicy(const String& requiredStoragePartition, const String& currentStoragePartition)
-{
-    // The need for a partion change is according to the following:
-    //      currentStoragePartition:  null  ""    abc
-    // requiredStoragePartition: ""   false false true
-    //                           abc  true  true  false
-    //                           xyz  true  true  true
-    auto shouldChangePartition = !((requiredStoragePartition.isEmpty() && currentStoragePartition.isEmpty()) || currentStoragePartition == requiredStoragePartition);
-    if (shouldChangePartition)
-        m_task.get()._storagePartitionIdentifier = requiredStoragePartition;
-}
 #endif
 
 bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request)
@@ -218,7 +206,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     bool shouldBlockCookies = false;
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request);
+    shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request, frameID, pageID);
 #endif
     if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
         request.setExistingHTTPReferrerToOriginString();
@@ -252,24 +240,13 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (shouldBlockCookies) {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
         if (NetworkProcess::singleton().shouldLogCookieInformation())
             RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Blocking cookies for URL %s", this, pageID, frameID, (unsigned long)[m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 #else
         LOG(NetworkSession, "%llu Blocking cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 #endif
         applyCookieBlockingPolicy(shouldBlockCookies);
-    } else {
-        auto storagePartition = session.networkStorageSession().cookieStoragePartition(request, m_frameID, m_pageID);
-        if (!storagePartition.isEmpty()) {
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
-            if (NetworkProcess::singleton().shouldLogCookieInformation())
-                RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Partitioning cookies for URL %s", this, pageID, frameID, (unsigned long)[m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
-#else
-            LOG(NetworkSession, "%llu Partitioning cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
-#endif
-            applyCookiePartitioningPolicy(storagePartition, emptyString());
-        }
     }
 #endif
 
@@ -379,7 +356,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     bool shouldBlockCookies = false;
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request);
+    shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request, m_frameID, m_pageID);
 #if !RELEASE_LOG_DISABLED
     if (NetworkProcess::singleton().shouldLogCookieInformation())
         RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID, m_frameID, (unsigned long)[m_task taskIdentifier], (shouldBlockCookies ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
@@ -396,14 +373,12 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     applyCookieBlockingPolicy(shouldBlockCookies);
 
     if (!shouldBlockCookies) {
-        auto requiredStoragePartition = m_session->networkStorageSession().cookieStoragePartition(request, m_frameID, m_pageID);
 #if !RELEASE_LOG_DISABLED
         if (NetworkProcess::singleton().shouldLogCookieInformation())
-            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID, m_frameID, (unsigned long)[m_task taskIdentifier], (requiredStoragePartition.isEmpty() ? "Not partitioning" : "Partitioning"), request.url().string().utf8().data());
+            RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Not partitioning cookies for redirect URL %s", this, m_pageID, m_frameID, (unsigned long)[m_task taskIdentifier], request.url().string().utf8().data());
 #else
-        LOG(NetworkSession, "%llu %s cookies for redirect URL %s", [m_task taskIdentifier], (requiredStoragePartition.isEmpty() ? "Not partitioning" : "Partitioning"), request.url().string().utf8().data());
+        LOG(NetworkSession, "%llu Not partitioning cookies for redirect URL %s", [m_task taskIdentifier], request.url().string().utf8().data());
 #endif
-        applyCookiePartitioningPolicy(requiredStoragePartition, m_task.get()._storagePartitionIdentifier);
     }
 #endif
 

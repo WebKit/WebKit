@@ -2,23 +2,15 @@
 <html>
 <head>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
         description("Tests that a cross-origin window from a prevalent domain without user interaction is denied storage access under its opener.");
         jsTestIsAsync = true;
 
-        function setEnableFeature(enable) {
-            if (!enable)
-                testRunner.statisticsResetToConsistentState();
-            internals.setResourceLoadStatisticsEnabled(enable);
-            testRunner.setCookieStoragePartitioningEnabled(enable);
-            testRunner.setStorageAccessAPIEnabled(enable);
-        }
-
         window.addEventListener("message", receiveMessage, false);
 
         function finishTest() {
-            setEnableFeature(false);
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         }
 
         function openIframe(url, onLoadHandler) {
@@ -43,26 +35,28 @@
             openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should not receive first-party cookie.", finishTest);
         }
 
-        setEnableFeature(true);
-        testRunner.setCanOpenWindows();
-
         const thirdPartyOrigin = "http://localhost:8000";
         const resourcePath = "/storageAccess/resources";
         const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
         const firstPartyCookieName = "firstPartyCookie";
         const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName;
 
-        testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true);
-        if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
-            testFailed("Host did not get set as prevalent resource.");
-        if (testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
-            testFailed("Host logged for user interaction.");
-        testRunner.dumpChildFramesAsText();
-        testRunner.setCloseRemainingWindowsWhenComplete(true);
+        let newWin;
+        setEnableFeature(true, function() {
+            testRunner.setCanOpenWindows();
 
-        var newWin;
-        testRunner.statisticsUpdateCookiePartitioning(function () {
-            newWin = window.open(thirdPartyOrigin + "/storageAccess/resources/set-cookie-and-report-back.html", "testWindow");
+            testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                    testFailed("Host did not get set as prevalent resource.");
+                if (testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+                    testFailed("Host logged for user interaction.");
+                testRunner.dumpChildFramesAsText();
+                testRunner.setCloseRemainingWindowsWhenComplete(true);
+
+                testRunner.statisticsUpdateCookieBlocking(function () {
+                    newWin = window.open(thirdPartyOrigin + "/storageAccess/resources/set-cookie-and-report-back.html", "testWindow");
+                });
+            });
         });
     </script>
 </head>

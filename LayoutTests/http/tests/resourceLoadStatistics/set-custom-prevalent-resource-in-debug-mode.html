@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -10,16 +11,6 @@
     jsTestIsAsync = true;
 
     const thirdPartyOrigin = "http://localhost:8000";
-
-    function setEnableFeature(enable, completionHandler) {
-        internals.setResourceLoadStatisticsEnabled(enable);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
-        testRunner.setCookieStoragePartitioningEnabled(enable);
-        if (!enable)
-            testRunner.statisticsResetToConsistentState(completionHandler);
-        else
-            completionHandler();
-    }
 
     if (window.testRunner && window.internals) {
         setEnableFeature(true, function() {

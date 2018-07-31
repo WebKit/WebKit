@@ -1008,21 +1008,21 @@ static void logBlockedCookieInformation(const String& label, const void* loggedO
 #undef LOCAL_LOG_IF_ALLOWED
 }
 
-static void logCookieInformationInternal(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& partition, const WebCore::SameSiteInfo& sameSiteInfo, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+static void logCookieInformationInternal(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
     ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
 
     Vector<WebCore::Cookie> cookies;
-    if (!networkStorageSession.getRawCookies(partition, sameSiteInfo, url, frameID, pageID, cookies))
+    if (!networkStorageSession.getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, cookies))
         return;
 
     auto escapedURL = escapeForJSON(url.string());
-    auto escapedPartition = escapeForJSON(partition.string());
+    auto escapedPartition = escapeForJSON(emptyString());
     auto escapedReferrer = escapeForJSON(referrer);
     auto escapedFrameID = escapeIDForJSON(frameID);
     auto escapedPageID = escapeIDForJSON(pageID);
     auto escapedIdentifier = escapeIDForJSON(identifier);
-    bool hasStorageAccess = (frameID && pageID) ? networkStorageSession.hasStorageAccess(url.string(), partition.string(), frameID.value(), pageID.value()) : false;
+    bool hasStorageAccess = (frameID && pageID) ? networkStorageSession.hasStorageAccess(url.string(), firstParty.string(), frameID.value(), pageID.value()) : false;
 
 #define LOCAL_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(networkStorageSession.sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - %s::" fmt, loggedObject, label.utf8().data(), ##__VA_ARGS__)
 #define LOCAL_LOG(str, ...) \
@@ -1073,12 +1073,10 @@ void NetworkResourceLoader::logCookieInformation(const String& label, const void
 {
     ASSERT(shouldLogCookieInformation());
 
-    if (networkStorageSession.shouldBlockCookies(firstParty, url))
+    if (networkStorageSession.shouldBlockCookies(firstParty, url, frameID, pageID))
         logBlockedCookieInformation(label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
-    else {
-        auto partition = URL(ParsedURLString, networkStorageSession.cookieStoragePartition(firstParty, url, frameID, pageID));
-        logCookieInformationInternal(label, loggedObject, networkStorageSession, partition, sameSiteInfo, url, referrer, frameID, pageID, identifier);
-    }
+    else
+        logCookieInformationInternal(label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
 }
 #endif
 

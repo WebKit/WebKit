@@ -11,29 +11,29 @@ TEST COMPLETE
 --------
 Frame: '<!--frame1-->'
 --------
+Should receive first-party cookie.
+Received cookie named 'firstPartyCookie'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie: firstPartyCookie=value
+
+--------
+Frame: '<!--frame2-->'
+--------
 Should receive no cookies.
 Did not receive cookie named 'firstPartyCookie'.
 Did not receive cookie named 'thirdPartyCookie'.
 Client-side document.cookie:
 
 --------
-Frame: '<!--frame2-->'
---------
-Setting partitioned, third party cookie.
-
-
---------
 Frame: '<!--frame3-->'
 --------
-Should only receive partitioned, third party cookie.
-Did not receive cookie named 'firstPartyCookie'.
-Received cookie named 'thirdPartyCookie'.
-Client-side document.cookie: thirdPartyCookie=value
+Try to set third party cookie.
+
 
 --------
 Frame: '<!--frame4-->'
 --------
-After removal, should receive no cookies.
+Should receive no cookies.
 Did not receive cookie named 'firstPartyCookie'.
 Did not receive cookie named 'thirdPartyCookie'.
 Client-side document.cookie:
@@ -41,7 +41,15 @@ Client-side document.cookie:
 --------
 Frame: '<!--frame5-->'
 --------
-After user interaction, should receive no cookies.
+After removal, should receive no cookies.
+Did not receive cookie named 'firstPartyCookie'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--frame6-->'
+--------
+After declassified, should receive no cookies.
 Did not receive cookie named 'firstPartyCookie'.
 Did not receive cookie named 'thirdPartyCookie'.
 Client-side document.cookie:

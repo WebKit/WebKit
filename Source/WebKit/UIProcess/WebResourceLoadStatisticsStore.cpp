@@ -216,7 +216,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCor
         m_memoryStore->cancelPendingStatisticsProcessingRequest();
 
         // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
-        m_memoryStore->updateCookiePartitioning([]() { });
+        m_memoryStore->updateCookieBlocking([]() { });
         m_memoryStore->processStatisticsAndDataRecords();
     });
 }
@@ -327,13 +327,17 @@ void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const String&
     callback(false);
 }
 
-void WebResourceLoadStatisticsStore::removeAllStorageAccess()
+void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (m_websiteDataStore)
-        m_websiteDataStore->removeAllStorageAccessHandler();
+        m_websiteDataStore->removeAllStorageAccessHandler(WTFMove(completionHandler));
+    else
+        completionHandler();
+#else
+    completionHandler();
 #endif
 }
 
@@ -414,22 +418,6 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url, Completi
     postTask([this, primaryDomain = isolatedPrimaryDomain(url), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->logUserInteraction(primaryDomain);
-        postTaskReply(WTFMove(completionHandler));
-    });
-}
-
-void WebResourceLoadStatisticsStore::logNonRecentUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (url.isBlankURL() || url.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    postTask([this, primaryDomain = isolatedPrimaryDomain(url), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_memoryStore)
-            m_memoryStore->logNonRecentUserInteraction(primaryDomain);
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -697,7 +685,7 @@ void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const URL& to
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdate(CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdate(CompletionHandler<void()>&& completionHandler)
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
@@ -707,29 +695,29 @@ void WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdate(Completion
             postTaskReply(WTFMove(completionHandler));
             return;
         }
-        m_memoryStore->updateCookiePartitioning([completionHandler = WTFMove(completionHandler)] () mutable {
+        m_memoryStore->updateCookieBlocking([completionHandler = WTFMove(completionHandler)] () mutable {
             postTaskReply(WTFMove(completionHandler));
         });
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
-    postTask([this, domainsToPartition = crossThreadCopy(domainsToPartition), domainsToBlock = crossThreadCopy(domainsToBlock), domainsToNeitherPartitionNorBlock = crossThreadCopy(domainsToNeitherPartitionNorBlock), shouldClearFirst, completionHandler = WTFMove(completionHandler)] () mutable {
+    postTask([this, domainsToBlock = crossThreadCopy(domainsToBlock), shouldClearFirst, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!m_memoryStore) {
             postTaskReply(WTFMove(completionHandler));
             return;
         }
 
-        m_memoryStore->updateCookiePartitioningForDomains(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, [completionHandler = WTFMove(completionHandler)]() mutable {
+        m_memoryStore->updateCookieBlockingForDomains(domainsToBlock, shouldClearFirst, [completionHandler = WTFMove(completionHandler)]() mutable {
             postTaskReply(WTFMove(completionHandler));
         });
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleClearPartitioningStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&& completionHandler)
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
@@ -739,19 +727,19 @@ void WebResourceLoadStatisticsStore::scheduleClearPartitioningStateForDomains(co
             return;
         }
 
-        m_memoryStore->clearPartitioningStateForDomains(domains, [completionHandler = WTFMove(completionHandler)]() mutable {
+        m_memoryStore->clearBlockingStateForDomains(domains, [completionHandler = WTFMove(completionHandler)]() mutable {
             postTaskReply(WTFMove(completionHandler));
         });
     });
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset()
+void WebResourceLoadStatisticsStore::scheduleCookieBlockingStateReset()
 {
     ASSERT(RunLoop::isMain());
     postTask([this] {
         if (m_memoryStore)
-            m_memoryStore->resetCookiePartitioningState();
+            m_memoryStore->resetCookieBlockingState();
     });
 }
 #endif
@@ -759,11 +747,18 @@ void WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset()
 void WebResourceLoadStatisticsStore::scheduleClearInMemory(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    postTask([this, completionHandler = WTFMove(completionHandler)] () mutable {
-        if (m_memoryStore)
-            m_memoryStore->clear();
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
 
-        postTaskReply(WTFMove(completionHandler));
+        CompletionHandler<void()> callCompletionHandlerOnMainThread = [completionHandler = WTFMove(completionHandler)]() mutable {
+            postTaskReply(WTFMove(completionHandler));
+        };
+
+        if (!m_memoryStore) {
+            callCompletionHandlerOnMainThread();
+            return;
+        }
+
+        m_memoryStore->clear(WTFMove(callCompletionHandlerOnMainThread));
     });
 }
 
@@ -772,7 +767,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
     ASSERT(RunLoop::isMain());
     postTask([this, shouldGrandfather, completionHandler = WTFMove(completionHandler)] () mutable {
         if (m_memoryStore)
-            m_memoryStore->clear();
+            m_memoryStore->clear([] { });
         if (m_persistentStorage)
             m_persistentStorage->clear();
         
@@ -805,15 +800,6 @@ void WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds second
     });
 }
 
-void WebResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(Seconds seconds)
-{
-    ASSERT(RunLoop::isMain());
-    postTask([this, seconds] {
-        if (m_memoryStore)
-            m_memoryStore->setTimeToLiveCookiePartitionFree(seconds);
-    });
-}
-
 void WebResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds)
 {
     ASSERT(RunLoop::isMain());
@@ -832,13 +818,13 @@ void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
     });
 }
 
-void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToPartitionOrBlockCookiesHandler(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (m_websiteDataStore) {
-        m_websiteDataStore->updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst, WTFMove(completionHandler));
+        m_websiteDataStore->updatePrevalentDomainsToBlockCookiesFor(domainsToBlock, shouldClearFirst, WTFMove(completionHandler));
         return;
     }
 #endif

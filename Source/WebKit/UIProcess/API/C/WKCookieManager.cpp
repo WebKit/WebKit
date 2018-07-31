@@ -72,11 +72,6 @@ void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, 
     toImpl(cookieManager)->getHTTPCookieAcceptPolicy(PAL::SessionID::defaultSessionID(), toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(context, callback));
 }
 
-void WKCookieManagerSetCookieStoragePartitioningEnabled(WKCookieManagerRef cookieManager, bool enabled)
-{
-    toImpl(cookieManager)->setCookieStoragePartitioningEnabled(enabled);
-}
-
 void WKCookieManagerSetStorageAccessAPIEnabled(WKCookieManagerRef cookieManager, bool enabled)
 {
     toImpl(cookieManager)->setStorageAccessAPIEnabled(enabled);

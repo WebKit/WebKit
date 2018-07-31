@@ -8,7 +8,6 @@
     jsTestIsAsync = true;
 
     internals.setResourceLoadStatisticsEnabled(true);
-    testRunner.setCookieStoragePartitioningEnabled(true);
 
     function doRedirect()
     {
@@ -18,7 +17,7 @@
                 finishJSTest();
             }
             else
-                window.location = "http://localhost:8000/cookies/resources/set-cookie-on-redirect.php?step=1";
+                document.location.href = "http://localhost:8000/resourceLoadStatistics/resources/set-cookie-on-redirect.php?step=1";
         });
     }
 </script>

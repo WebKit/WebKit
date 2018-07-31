@@ -54,7 +54,6 @@ messages -> NetworkProcess LegacyReceiver {
 
 #if PLATFORM(COCOA)
     SetQOS(int latencyQOS, int throughputQOS)
-    SetCookieStoragePartitioningEnabled(bool enabled)
     SetStorageAccessAPIEnabled(bool enabled)
 #endif
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> ()
@@ -84,11 +83,11 @@ messages -> NetworkProcess LegacyReceiver {
     PreconnectTo(WebCore::URL url, enum WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    UpdatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, Vector<String> domainsToPartition, Vector<String> domainsToBlock, Vector<String> domainsToNeitherPartitionNorBlock, bool shouldClearFirst, uint64_t callbackId)
+    UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock, bool shouldClearFirst, uint64_t contextId)
     HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
     GetAllStorageAccessEntries(PAL::SessionID sessionID, uint64_t contextId)
     GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, uint64_t contextId)
-    RemoveAllStorageAccess(PAL::SessionID sessionID)
+    RemoveAllStorageAccess(PAL::SessionID sessionID, uint64_t contextId)
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction);
 #endif
 
