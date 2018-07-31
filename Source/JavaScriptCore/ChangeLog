@@ -1,5 +1,11 @@
 2018-07-31  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed 32-bit build fix...
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+
+2018-07-31  Keith Miller  <keith_miller@apple.com>
+
         Long compiling JSC files should not be unified
         https://bugs.webkit.org/show_bug.cgi?id=188205
 
