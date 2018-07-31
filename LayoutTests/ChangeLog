@@ -1,5 +1,27 @@
 2018-07-31  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r234379. rdar://problem/42387347
+
+    Rebaseline fast/forms/file/input-file-re-render.html for Mojave.
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-highsierra/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/file/input-file-re-render-expected.txt.
+    * platform/mac/fast/forms/file/input-file-re-render-expected.txt:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@234379 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline fast/forms/file/input-file-re-render.html for Mojave.
+
+            Unreviewed test gardening.
+
+            * platform/mac-highsierra/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/file/input-file-re-render-expected.txt.
+            * platform/mac/fast/forms/file/input-file-re-render-expected.txt:
+
+2018-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r234378. rdar://problem/42387347
 
     Update TestExpectations for mac-wk1.
