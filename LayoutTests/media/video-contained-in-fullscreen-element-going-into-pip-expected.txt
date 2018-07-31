@@ -1,0 +1,11 @@
+Tests video contained in fullscreen element going into pip should exit fullscreen
+
+Container div going into Full Screen
+EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLDivElement]') OK
+EXPECTED (video.webkitPresentationMode == 'inline') OK
+Video going into Picture-in-Picture
+Entered Picture-in-Picture from Full Screen
+EXPECTED (document.webkitCurrentFullScreenElement == 'null') OK
+EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
+END OF TEST
+

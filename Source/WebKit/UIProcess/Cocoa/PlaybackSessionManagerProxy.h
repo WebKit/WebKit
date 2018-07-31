@@ -190,8 +190,6 @@ private:
     void addClientForContext(uint64_t contextId);
     void removeClientForContext(uint64_t contextId);
 
-    uint64_t controlsManagerContextId() const { return m_controlsManagerContextId; }
-
     // Messages from PlaybackSessionManager
     void setUpPlaybackControlsManagerWithID(uint64_t contextId);
     void clearPlaybackControlsManager();
