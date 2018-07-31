@@ -1652,7 +1652,7 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
         prototype.asCell()->didBecomePrototype();
     
     if (structure(vm)->hasMonoProto()) {
-        DeferredStructureTransitionWatchpointFire deferred;
+        DeferredStructureTransitionWatchpointFire deferred(vm, structure(vm));
         Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype, deferred);
         setStructure(vm, newStructure);
     } else
@@ -3543,7 +3543,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
 
 void JSObject::convertToDictionary(VM& vm)
 {
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire;
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure(vm));
     setStructure(
         vm, Structure::toCacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
 }
