@@ -1,5 +1,32 @@
 2018-07-31  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r234428. rdar://problem/42387347
+
+    Layout Test media/video-add-autoplay-user-gesture.html is flaky.
+    https://bugs.webkit.org/show_bug.cgi?id=174591
+    
+    Reviewed by Darin Adler.
+    
+    Remove the 1000ms restriction for this test to complete in order to eliminate flakiness.
+    
+    * media/video-add-autoplay-user-gesture.html:
+    
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@234428 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Layout Test media/video-add-autoplay-user-gesture.html is flaky.
+            https://bugs.webkit.org/show_bug.cgi?id=174591
+
+            Reviewed by Darin Adler.
+
+            Remove the 1000ms restriction for this test to complete in order to eliminate flakiness.
+
+            * media/video-add-autoplay-user-gesture.html:
+
+2018-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r234379. rdar://problem/42387347
 
     Rebaseline fast/forms/file/input-file-re-render.html for Mojave.
