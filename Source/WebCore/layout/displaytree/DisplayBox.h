@@ -53,6 +53,7 @@ public:
     class Rect {
     public:
         Rect() = default;
+        Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height);
         
         LayoutUnit top() const;
         LayoutUnit left() const;
@@ -82,6 +83,7 @@ public:
         void moveVertically(LayoutUnit);
 
         void expand(LayoutUnit, LayoutUnit);
+        bool intersects(const Rect& rect) const { return m_rect.intersects(rect); }
 
         Rect clone() const;
         operator LayoutRect() const;
@@ -122,7 +124,7 @@ public:
     LayoutSize size() const { return { width(), height() }; }
     LayoutUnit width() const { return borderLeft() + paddingLeft() + contentBoxWidth() + paddingRight() + borderRight(); }
     LayoutUnit height() const { return borderTop() + paddingTop() + contentBoxHeight() + paddingBottom() + borderBottom(); }
-    LayoutRect rect() const { return { left(), top(), width(), height() }; }
+    Rect rect() const { return { top(), left(), width(), height() }; }
 
     LayoutUnit marginTop() const;
     LayoutUnit marginLeft() const;

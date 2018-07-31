@@ -1,3 +1,47 @@
+2018-07-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Add basic left/right floating positioning.
+        https://bugs.webkit.org/show_bug.cgi?id=188148
+
+        Reviewed by Antti Koivisto.
+
+        This patch implements simple floating positioning.
+        (Floatings with different containing blocks do not work yet.)
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingPair::isEmpty const):
+        (WebCore::Layout::Iterator::current const):
+        (WebCore::Layout::Iterator::verticalPosition const):
+        (WebCore::Layout::FloatingContext::FloatingContext):
+        (WebCore::Layout::FloatingContext::computePosition const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingContext::initialVerticalPosition const):
+        (WebCore::Layout::FloatingContext::alignWithContainingBlock const):
+        (WebCore::Layout::FloatingContext::alignWithFloatings const):
+        (WebCore::Layout::floatingDisplayBox):
+        (WebCore::Layout::FloatingPair::FloatingPair):
+        (WebCore::Layout::FloatingPair::left const):
+        (WebCore::Layout::FloatingPair::right const):
+        (WebCore::Layout::FloatingPair::intersects const):
+        (WebCore::Layout::Iterator::Iterator):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+        (WebCore::Layout::FloatingContext::computePosition): Deleted.
+        * layout/FloatingContext.h:
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::append):
+        * layout/FloatingState.h:
+        (WebCore::Layout::FloatingState::floatings const):
+        (WebCore::Layout::FloatingState::last const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Rect::Rect):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::Rect::intersects const):
+        (WebCore::Display::Box::rect const):
+
 2018-07-31  Rob Buis  <rbuis@igalia.com>
 
         Remove ResourceResponse::cacheBodyKey API

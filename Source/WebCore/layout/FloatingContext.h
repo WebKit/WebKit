@@ -33,13 +33,11 @@
 
 namespace WebCore {
 
-namespace Display {
-class Box;
-}
-
 namespace Layout {
 
 class Box;
+class Container;
+class FloatingPair;
 class LayoutContext;
 
 // FloatingContext is responsible for adjusting the position of a box in the current formatting context
@@ -47,15 +45,22 @@ class LayoutContext;
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(FloatingState&);
+    FloatingContext(const Container& formattingContextRoot, FloatingState&);
 
     FloatingState& floatingState() const { return m_floatingState; }
 
-    Position computePosition(const Box&);
+    Position computePosition(const Box&) const;
 
 private:
     LayoutContext& layoutContext() const { return m_floatingState.layoutContext(); }
 
+    Position floatingPosition(const Box&) const;
+
+    LayoutUnit initialVerticalPosition(const Box&) const;
+    LayoutUnit alignWithContainingBlock(const Box&) const;
+    LayoutUnit alignWithFloatings(const FloatingPair&, const Box&) const;
+
+    const Container& m_formattingContextRoot;
     FloatingState& m_floatingState;
 };
 

@@ -46,14 +46,15 @@ void FloatingState::append(const Box& layoutBox)
 {
     // Floating state should hold boxes with computed position/size.
     ASSERT(m_layoutContext.displayBoxForLayoutBox(layoutBox));
+    m_last = makeWeakPtr(const_cast<Box&>(layoutBox));
 
     if (layoutBox.isLeftFloatingPositioned()) {
-        m_leftFloatings.append(makeWeakPtr(const_cast<Box&>(layoutBox)));
+        m_leftFloatings.append(m_last);
         return;
     }
 
     if (layoutBox.isRightFloatingPositioned()) {
-        m_rightFloatings.append(makeWeakPtr(const_cast<Box&>(layoutBox)));
+        m_rightFloatings.append(m_last);
         return;
     }
 

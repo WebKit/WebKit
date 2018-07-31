@@ -62,7 +62,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
 
     auto& formattingRoot = downcast<Container>(root());
     LayoutQueue layoutQueue;
-    FloatingContext floatingContext(formattingState.floatingState());
+    FloatingContext floatingContext(formattingRoot, formattingState.floatingState());
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
     if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())
@@ -94,8 +94,6 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             computeStaticPosition(layoutContext, layoutBox, displayBox);
             computeBorderAndPadding(layoutContext, layoutBox, displayBox);
             computeWidthAndMargin(layoutContext, layoutBox, displayBox);
-            if (layoutBox.isFloatingPositioned())
-                computeFloatingPosition(floatingContext, layoutBox, displayBox);
             if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
                 break;
             auto& firstChild = *downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
@@ -138,8 +136,6 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     computeStaticPosition(layoutContext, layoutBox, displayBox);
     computeBorderAndPadding(layoutContext, layoutBox, displayBox);
     computeWidthAndMargin(layoutContext, layoutBox, displayBox);
-    if (layoutBox.isFloatingPositioned())
-        computeFloatingPosition(floatingContext, layoutBox, displayBox);
 
     // Swich over to the new formatting context (the one that the root creates).
     auto formattingContext = layoutContext.formattingContext(layoutBox);
@@ -148,6 +144,8 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     // Come back and finalize the root's geometry.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeHeightAndMargin(layoutContext, layoutBox, displayBox);
+    if (layoutBox.isFloatingPositioned())
+        computeFloatingPosition(floatingContext, layoutBox, displayBox);
     // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
     formattingContext->layoutOutOfFlowDescendants(layoutContext, layoutBox);
 }

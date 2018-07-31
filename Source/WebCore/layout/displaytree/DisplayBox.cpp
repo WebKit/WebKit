@@ -36,6 +36,17 @@ namespace Display {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
+Box::Rect::Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height)
+    : m_rect(left, top, width, height)
+{
+#if !ASSERT_DISABLED
+    m_hasValidTop = true;
+    m_hasValidLeft = true;
+    m_hasValidWidth = true;
+    m_hasValidHeight = true;
+#endif
+}
+
 Box::Box(const RenderStyle& style)
     : m_style(style)
 {

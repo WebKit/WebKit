@@ -49,6 +49,14 @@ public:
 
     bool isEmpty() const { return m_leftFloatings.isEmpty() && m_rightFloatings.isEmpty(); }
 
+    using FloatingList = Vector<WeakPtr<Box>>;
+    struct Floatings {
+        const FloatingList& left;
+        const FloatingList& right; 
+    };
+    const Floatings floatings() const { return { m_leftFloatings, m_rightFloatings }; }
+    const Box* last() const { return m_last.get(); }
+
 private:
     friend class FloatingContext;
     FloatingState(LayoutContext&);
@@ -57,9 +65,9 @@ private:
 
     LayoutContext& m_layoutContext;
 
-    using FloatingList = Vector<WeakPtr<Box>>;
     FloatingList m_leftFloatings;
     FloatingList m_rightFloatings;
+    WeakPtr<Box> m_last;
 };
 
 }
