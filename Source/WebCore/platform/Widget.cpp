@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@ namespace WebCore {
 
 void Widget::init(PlatformWidget widget)
 {
-    m_parent = 0;
     m_selfVisible = false;
     m_parentVisible = false;
     m_widget = widget;
@@ -47,7 +46,7 @@ void Widget::setParent(ScrollView* view)
     ASSERT(!view || !m_parent);
     if (!view || !view->isVisible())
         setParentVisible(false);
-    m_parent = view;
+    m_parent = view ? makeWeakPtr(*view) : nullptr;
     if (view && view->isVisible())
         setParentVisible(true);
 }

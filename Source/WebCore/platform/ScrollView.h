@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include "ScrollTypes.h"
 #include "Widget.h"
 #include <wtf/HashSet.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS)
 
@@ -371,6 +372,8 @@ public:
     void setAllowsUnclampedScrollPositionForTesting(bool allowsUnclampedScrollPosition) { m_allowsUnclampedScrollPosition = allowsUnclampedScrollPosition; }
     bool allowsUnclampedScrollPosition() const { return m_allowsUnclampedScrollPosition; }
 
+    auto& weakPtrFactory() const { return m_weakPtrFactory; }
+
 protected:
     ScrollView();
 
@@ -456,6 +459,8 @@ private:
     std::optional<std::pair<ScrollOffset, ScrollOffset>> m_deferredScrollOffsets; // Needed for platform widget scrolling
 
     IntPoint m_panScrollIconPoint;
+
+    WeakPtrFactory<ScrollView> m_weakPtrFactory;
 
     bool m_horizontalScrollbarLock { false };
     bool m_verticalScrollbarLock { false };
