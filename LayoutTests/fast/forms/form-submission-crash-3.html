@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Test for proper handling of form removal.");
+
+jsTestIsAsync = true;
+
+function eventhandler() {
+    div1.innerHTML = "foo";
+    gc();
+}
+ 
+function eventhandler2() {
+}
+
+function start() {
+    button.setAttribute("form", "form1");
+    button.setCustomValidity("foo");
+    button.onfocus = eventhandler2;
+    input.onfocus = eventhandler;
+    button.click();
+    testPassed('if not crashed.');
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<input id="input" autofocus="autofocus" type="button">
+<div id="div1">
+    <form id="form1"></form>
+</div>
+<form id="form2">
+    <button id="button" type="submit"></button>
+</form>
+<iframe onload="start()"></iframe>
+</body>

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -115,15 +116,25 @@ void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomicSt
 void HTMLButtonElement::defaultEventHandler(Event& event)
 {
     if (event.type() == eventNames().DOMActivateEvent && !isDisabledFormControl()) {
-        if (form() && m_type == SUBMIT) {
-            m_isActivatedSubmit = true;
-            form()->prepareForSubmission(event);
-            event.setDefaultHandled();
-            m_isActivatedSubmit = false; // Do this in case submission was canceled.
-        }
-        if (form() && m_type == RESET) {
-            form()->reset();
-            event.setDefaultHandled();
+        RefPtr<HTMLFormElement> protectedForm(form());
+
+        if (protectedForm) {
+            // Update layout before processing form actions in case the style changes
+            // the Form or button relationships.
+            document().updateLayoutIgnorePendingStylesheets();
+
+            if (auto currentForm = form()) {
+                if (m_type == SUBMIT) {
+                    SetForScope<bool> activatedSubmitState(m_isActivatedSubmit, true);
+                    currentForm->prepareForSubmission(event);
+                }
+
+                if (m_type == RESET)
+                    currentForm->reset();
+            }
+
+            if (m_type == SUBMIT || m_type == RESET)
+                event.setDefaultHandled();
         }
     }
 
