@@ -1,3 +1,26 @@
+2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Implement hourCycle in DateTimeFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188006
+
+        Reviewed by Darin Adler.
+
+        Implemented hourCycle, updating both the skeleton and the final pattern.
+        Changed resolveLocale to assume undefined options are not given and null
+        strings actually mean null, which removes the tag extension.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDTFInternal::localeData):
+        (JSC::IntlDateTimeFormat::setFormatsFromPattern):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::resolvedOptions):
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlObject.cpp:
+        (JSC::resolveLocale):
+
 2018-08-01  Keith Miller  <keith_miller@apple.com>
 
         JSArrayBuffer should have its own JSType

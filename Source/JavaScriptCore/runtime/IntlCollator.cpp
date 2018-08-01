@@ -216,12 +216,14 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
         RETURN_IF_EXCEPTION(scope, void());
         if (!usesFallback)
             numericString = numeric ? "true"_s : "false"_s;
-        opt.add("kn"_s, numericString);
+        if (!numericString.isNull())
+            opt.add("kn"_s, numericString);
     }
     {
         String caseFirst = intlStringOption(state, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
         RETURN_IF_EXCEPTION(scope, void());
-        opt.add("kf"_s, caseFirst);
+        if (!caseFirst.isNull())
+            opt.add("kf"_s, caseFirst);
     }
 
     auto& availableLocales = state.jsCallee()->globalObject(vm)->intlCollatorAvailableLocales();

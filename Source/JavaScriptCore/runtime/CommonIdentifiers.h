@@ -138,6 +138,7 @@
     macro(hash) \
     macro(header) \
     macro(hour) \
+    macro(hourCycle) \
     macro(hour12) \
     macro(href) \
     macro(id) \

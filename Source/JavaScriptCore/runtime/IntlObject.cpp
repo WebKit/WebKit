@@ -779,11 +779,11 @@ HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& a
         HashMap<String, String>::const_iterator iterator = options.find(key);
         if (iterator != options.end()) {
             const String& optionsValue = iterator->value;
-            if (!optionsValue.isNull() && keyLocaleData.contains(optionsValue)) {
-                if (optionsValue != value) {
-                    value = optionsValue;
-                    supportedExtensionAddition = String();
-                }
+            // Undefined should not get added to the options, it won't displace the extension.
+            // Null will remove the extension.
+            if ((optionsValue.isNull() || keyLocaleData.contains(optionsValue)) && optionsValue != value) {
+                value = optionsValue;
+                supportedExtensionAddition = String();
             }
         }
         result.add(key, value);

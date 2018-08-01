@@ -97,7 +97,7 @@ private:
     String m_calendar;
     String m_numberingSystem;
     String m_timeZone;
-    bool m_hour12 { true };
+    String m_hourCycle;
     Weekday m_weekday { Weekday::None };
     Era m_era { Era::None };
     Year m_year { Year::None };

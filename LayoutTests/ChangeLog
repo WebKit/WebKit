@@ -1,5 +1,17 @@
 2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
 
+        [INTL] Implement hourCycle in DateTimeFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188006
+
+        Reviewed by Darin Adler.
+
+        Added tests for hourCycle.
+
+        * js/intl-datetimeformat-expected.txt:
+        * js/script-tests/intl-datetimeformat.js:
+
+2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
+
         number-toLocaleString.js test fails on ARM Linux buildbots
         https://bugs.webkit.org/show_bug.cgi?id=154533
 

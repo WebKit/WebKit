@@ -1471,12 +1471,6 @@ test/intl402/Collator/prototype/compare/compare-function-name.js:
 test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle.js:
-  default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«h11Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«h11Â») to be true'
-test/intl402/DateTimeFormat/prototype/resolvedOptions/resolved-locale-with-hc-unicode.js:
-  default: 'Test262Error: Only hc Unicode extension value is present. (With hour option.) Expected SameValue(Â«en-USÂ», Â«en-US-u-hc-h11Â») to be true'
-  strict mode: 'Test262Error: Only hc Unicode extension value is present. (With hour option.) Expected SameValue(Â«en-USÂ», Â«en-US-u-hc-h11Â») to be true'
 test/intl402/Intl/getCanonicalLocales/Locale-object.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-gb-oed\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.Locale(\"en-gb-oed\")')"

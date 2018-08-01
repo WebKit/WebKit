@@ -1,3 +1,14 @@
+2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Implement hourCycle in DateTimeFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188006
+
+        Reviewed by Darin Adler.
+
+        Removed fixed hourCycle expectations.
+
+        * test262/expectations.yaml:
+
 2018-07-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Record CoW status in ArrayProfile correctly

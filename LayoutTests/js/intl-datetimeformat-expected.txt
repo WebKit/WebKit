@@ -98,6 +98,7 @@ PASS Intl.DateTimeFormat('en').resolvedOptions().month is 'numeric'
 PASS Intl.DateTimeFormat('en').resolvedOptions().day is 'numeric'
 PASS Intl.DateTimeFormat('en').resolvedOptions().year is 'numeric'
 PASS Intl.DateTimeFormat('en').resolvedOptions().hour is undefined
+PASS Intl.DateTimeFormat('en').resolvedOptions().hourCycle is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().hour12 is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().minute is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().second is undefined
@@ -242,6 +243,24 @@ PASS Intl.DateTimeFormat('en-u-nu-tamldec', { timeZone: 'America/Los_Angeles' })
 PASS Intl.DateTimeFormat('en-u-nu-telu', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '౧౨/౨౫/౨౦౧౫'
 PASS Intl.DateTimeFormat('en-u-nu-thai', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '๑๒/๒๕/๒๐๑๕'
 PASS Intl.DateTimeFormat('en-u-nu-tibt', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '༡༢/༢༥/༢༠༡༥'
+PASS Intl.DateTimeFormat('en-u-hc-h11').resolvedOptions().locale is 'en-u-hc-h11'
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h12' }).resolvedOptions().locale is 'en'
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h12' }).resolvedOptions().hourCycle is 'h12'
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h11', hour12: true }).resolvedOptions().locale is 'en'
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h11', hour12: true }).resolvedOptions().hourCycle is 'h12'
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h11', hour12: false }).resolvedOptions().hourCycle is 'h23'
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric' }).resolvedOptions().hourCycle is 'h11'
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric' }).resolvedOptions().hour12 is true
+PASS Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', timeZone: 'UTC' }).format(12 * 60 * 60 * 1000).slice(0, 1) is '0'
+PASS Intl.DateTimeFormat('en-u-hc-h12', { hour: 'numeric' }).resolvedOptions().hourCycle is 'h12'
+PASS Intl.DateTimeFormat('en-u-hc-h12', { hour: 'numeric' }).resolvedOptions().hour12 is true
+PASS Intl.DateTimeFormat('en-u-hc-h12', { hour: 'numeric', timeZone: 'UTC' }).format(12 * 60 * 60 * 1000).slice(0, 2) is '12'
+PASS Intl.DateTimeFormat('en-u-hc-h23', { hour: 'numeric' }).resolvedOptions().hourCycle is 'h23'
+PASS Intl.DateTimeFormat('en-u-hc-h23', { hour: 'numeric' }).resolvedOptions().hour12 is false
+PASS Intl.DateTimeFormat('en-u-hc-h23', { hour: 'numeric', timeZone: 'UTC' }).format(0) is '00'
+PASS Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric' }).resolvedOptions().hourCycle is 'h24'
+PASS Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric' }).resolvedOptions().hour12 is false
+PASS Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric', timeZone: 'UTC' }).format(0) is '24'
 PASS Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '٣/١٤/١٤٣٧'
 PASS Intl.DateTimeFormat('en', { weekday: { toString() { throw 'weekday' } } }) threw exception weekday.
 PASS Intl.DateTimeFormat('en', { weekday:'invalid' }) threw exception RangeError: weekday must be "narrow", "short", or "long".
@@ -296,8 +315,10 @@ PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', timeZone: 'UT
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour is 'numeric'
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('en').resolvedOptions().hour12 is undefined
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle is 'h12'
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12 is true
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
+PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle is 'h23'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12 is false
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '00:00'
 PASS Intl.DateTimeFormat('en', { minute: { toString() { throw 'minute' } } }) threw exception minute.

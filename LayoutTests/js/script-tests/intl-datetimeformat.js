@@ -193,6 +193,7 @@ shouldBe("Intl.DateTimeFormat('en').resolvedOptions().month", "'numeric'");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().day", "'numeric'");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().year", "'numeric'");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hour", "undefined");
+shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hourCycle", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hour12", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().minute", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().second", "undefined");
@@ -346,6 +347,26 @@ shouldBe("Intl.DateTimeFormat('en-u-nu-telu', { timeZone: 'America/Los_Angeles' 
 shouldBe("Intl.DateTimeFormat('en-u-nu-thai', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'๑๒/๒๕/๒๐๑๕'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-tibt', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'༡༢/༢༥/༢༠༡༥'");
 
+// Hour cycle sensitive format().
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11').resolvedOptions().locale", "'en-u-hc-h11'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h12' }).resolvedOptions().locale", "'en'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h12' }).resolvedOptions().hourCycle", "'h12'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h11', hour12: true }).resolvedOptions().locale", "'en'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h11', hour12: true }).resolvedOptions().hourCycle", "'h12'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', hourCycle: 'h11', hour12: false }).resolvedOptions().hourCycle", "'h23'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric' }).resolvedOptions().hourCycle", "'h11'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric' }).resolvedOptions().hour12", "true")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h11', { hour: 'numeric', timeZone: 'UTC' }).format(12 * 60 * 60 * 1000).slice(0, 1)", "'0'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h12', { hour: 'numeric' }).resolvedOptions().hourCycle", "'h12'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h12', { hour: 'numeric' }).resolvedOptions().hour12", "true")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h12', { hour: 'numeric', timeZone: 'UTC' }).format(12 * 60 * 60 * 1000).slice(0, 2)", "'12'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h23', { hour: 'numeric' }).resolvedOptions().hourCycle", "'h23'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h23', { hour: 'numeric' }).resolvedOptions().hour12", "false")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h23', { hour: 'numeric', timeZone: 'UTC' }).format(0)", "'00'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric' }).resolvedOptions().hourCycle", "'h24'")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric' }).resolvedOptions().hour12", "false")
+shouldBe("Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric', timeZone: 'UTC' }).format(0)", "'24'")
+
 // Tests multiple keys in extension.
 shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'٣/١٤/١٤٣٧'");
 
@@ -408,8 +429,10 @@ shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolv
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hour12", "undefined");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle", "'h12'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12", "true");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
+shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle", "'h23'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12", "false");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'00:00'");
 
