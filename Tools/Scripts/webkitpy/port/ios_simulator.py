@@ -39,7 +39,7 @@ class IOSSimulatorPort(IOSPort):
     ARCHITECTURES = ['x86_64', 'x86']
     DEFAULT_ARCHITECTURE = 'x86_64'
 
-    DEFAULT_DEVICE_CLASS = 'iPhone 5s'
+    DEFAULT_DEVICE_CLASS = 'iPhone SE'
     CUSTOM_DEVICE_CLASSES = ['iPad', 'iPhone 7']
     SDK = 'iphonesimulator'
 
