@@ -1,3 +1,23 @@
+2018-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Move all calls to ResourceLoader::start to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=184946
+
+        Reviewed by Andy Estes.
+
+        This is in preparation for moving ResourceLoader::start to WebKitLegacy along with all ResourceHandle code.
+        I move the code that moves m_deferredRequest into m_request into WebKitLegacy, which won't change behavior for
+        modern WebKit because modern WebKit never calls ResourceLoader::start, the only place where m_deferredRequest
+        is ever set.  This won't change behavior for WebKitLegacy because the same operations happen in the same order.
+
+        * loader/LoaderStrategy.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::setDefersLoading):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::setRequest):
+        (WebCore::ResourceLoader::deferredRequest const):
+        (WebCore::ResourceLoader::takeDeferredRequest):
+
 2018-08-01  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Add ARIA IDL Attribute Reflection

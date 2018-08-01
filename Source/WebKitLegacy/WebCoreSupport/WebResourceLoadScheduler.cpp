@@ -199,8 +199,12 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     scheduleServePendingRequests();
 }
 
-void WebResourceLoadScheduler::setDefersLoading(ResourceLoader*, bool)
+void WebResourceLoadScheduler::setDefersLoading(ResourceLoader& loader, bool defers)
 {
+    if (!defers && !loader.deferredRequest().isNull()) {
+        loader.setRequest(loader.takeDeferredRequest());
+        loader.start();
+    }
 }
 
 void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const URL& redirectURL)

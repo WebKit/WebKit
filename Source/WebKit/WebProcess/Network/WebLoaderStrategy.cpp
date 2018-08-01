@@ -418,9 +418,9 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     loader->detachFromCoreLoader();
 }
 
-void WebLoaderStrategy::setDefersLoading(ResourceLoader* resourceLoader, bool defers)
+void WebLoaderStrategy::setDefersLoading(ResourceLoader& resourceLoader, bool defers)
 {
-    ResourceLoadIdentifier identifier = resourceLoader->identifier();
+    ResourceLoadIdentifier identifier = resourceLoader.identifier();
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetDefersLoading(identifier, defers), 0);
 }
 

@@ -1,3 +1,14 @@
+2018-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Move all calls to ResourceLoader::start to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=184946
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::setDefersLoading):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2018-08-01  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Add ARIA IDL Attribute Reflection

@@ -1,3 +1,14 @@
+2018-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Move all calls to ResourceLoader::start to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=184946
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::setDefersLoading):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2018-06-25  Keith Rollin  <krollin@apple.com>
         Unreviewed, rolling out r233087.
 

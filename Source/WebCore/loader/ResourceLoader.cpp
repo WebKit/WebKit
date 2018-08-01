@@ -231,13 +231,8 @@ void ResourceLoader::setDefersLoading(bool defers)
     m_defersLoading = defers;
     if (m_handle)
         m_handle->setDefersLoading(defers);
-    if (!defers && !m_deferredRequest.isNull()) {
-        m_request = m_deferredRequest;
-        m_deferredRequest = ResourceRequest();
-        start();
-    }
 
-    platformStrategies()->loaderStrategy()->setDefersLoading(this, defers);
+    platformStrategies()->loaderStrategy()->setDefersLoading(*this, defers);
 }
 
 FrameLoader* ResourceLoader::frameLoader() const

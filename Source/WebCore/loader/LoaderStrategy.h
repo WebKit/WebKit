@@ -62,7 +62,7 @@ public:
     virtual void pageLoadCompleted(uint64_t webPageID) = 0;
 
     virtual void remove(ResourceLoader*) = 0;
-    virtual void setDefersLoading(ResourceLoader*, bool) = 0;
+    virtual void setDefersLoading(ResourceLoader&, bool) = 0;
     virtual void crossOriginRedirectReceived(ResourceLoader*, const URL& redirectURL) = 0;
 
     virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriority::VeryLow) = 0;

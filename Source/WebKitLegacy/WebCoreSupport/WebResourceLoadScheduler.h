@@ -54,7 +54,7 @@ public:
     void pageLoadCompleted(uint64_t webPageID) final;
 
     void remove(WebCore::ResourceLoader*) final;
-    void setDefersLoading(WebCore::ResourceLoader*, bool) final;
+    void setDefersLoading(WebCore::ResourceLoader&, bool) final;
     void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) final;
     
     void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority = WebCore::ResourceLoadPriority::VeryLow) final;
