@@ -1,6 +1,11 @@
+This test verifies that tapping in a misspelled word selects the misspelled word, and does not cause the selection to collapse after a click event is dispatched. To manually test, tap the input field to bring up the keyboard, and then tap on a part of the word in the input field that is far away from the editing caret. As a result, the contents of the input should be selected and marked as a misspelled word.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.selectionStart is 0
+PASS input.selectionEnd is 7
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS input.selectionStart is 0
-PASS input.selectionEnd is 7
 

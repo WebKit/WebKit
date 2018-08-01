@@ -18,32 +18,28 @@ input {
 </head>
 <body>
 <input id="input" value="covfefe">
-</body>
 <script>
 const input = document.getElementById("input");
+jsTestIsAsync = true;
 
-addEventListener("load", async () => {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    } else {
-        description(`To manually test, tap the input field to bring up the keyboard, and then tap on a part of the word in
-            the input field that is far away from the editing caret. As a result, the contents of the input should be
-            selected and marked as a misspelled word.`);
-        return;
-    }
+description("This test verifies that tapping in a misspelled word selects the misspelled word, and does not cause " +
+    "the selection to collapse after a click event is dispatched. To manually test, tap the input field to bring up " +
+    "the keyboard, and then tap on a part of the word in the input field that is far away from the editing caret. As " +
+    "a result, the contents of the input should be selected and marked as a misspelled word.");
 
-    await UIHelper.activateAndWaitForInputSessionAt(100, 150);
+(async function() {
+    await UIHelper.activateAndWaitForInputSessionAt(100, 200);
 
     input.addEventListener("click", () => {
         setTimeout(() => {
             shouldBe("input.selectionStart", "0");
             shouldBe("input.selectionEnd", "7");
-            testRunner.notifyDone();
+            finishJSTest();
         });
     });
 
-    await UIHelper.tapAt(800, 150);
-});
+    UIHelper.tapAt(800, 200);
+})();
 </script>
+</body>
 </html>
