@@ -1,3 +1,12 @@
+2018-08-01  David Fenton  <david_fenton@apple.com>
+
+        Layout Test editing/selection/update-selection-by-style-change.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=187649
+
+        Unreviewed test gardening, re-marked test as flaky.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Implement hourCycle in DateTimeFormat

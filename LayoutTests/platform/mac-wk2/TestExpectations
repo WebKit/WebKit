@@ -719,6 +719,8 @@ webkit.org/b/172201 webaudio/silent-audio-interrupted-in-background.html [ Pass 
 
 webkit.org/b/167757 workers/bomb.html [ Pass Timeout ]
 
+webkit.org/b/187649 editing/selection/update-selection-by-style-change.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/172397 legacy-animation-engine/animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
 # Touch events are not available on open source bots, thus only tested on Mac.
