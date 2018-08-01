@@ -1,3 +1,14 @@
+2018-08-01  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Bugfix on ResourceHandle::cancel()
+        https://bugs.webkit.org/show_bug.cgi?id=188234
+
+        Reviewed by Darin Adler.
+        Trivial bug. The actual request was not cancelled correctly.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::cancel):
+
 2018-08-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] FloatingState should take the formatting root box.

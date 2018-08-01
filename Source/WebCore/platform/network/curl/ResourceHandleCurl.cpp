@@ -97,7 +97,7 @@ void ResourceHandle::cancel()
 
     d->m_cancelled = true;
 
-    if (!d->m_curlRequest)
+    if (d->m_curlRequest)
         d->m_curlRequest->cancel();
 }
 
