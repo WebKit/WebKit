@@ -1,3 +1,28 @@
+2018-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r231107): MoviStar+ launches to a blank black screen
+        https://bugs.webkit.org/show_bug.cgi?id=188139
+
+        Reviewed by Brent Fulgham.
+
+        Add infrastructure to check UIProcess SDK from the WebProcess and NetworkProcess for linked-on-or-after checks.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2018-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add configuration for automatic process pre-warming

@@ -103,6 +103,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << defaultRequestTimeoutInterval;
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
+    encoder << uiProcessSDKVersion;
 #endif
     encoder << presentingApplicationPID;
 #if PLATFORM(COCOA)
@@ -318,6 +319,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #if PLATFORM(COCOA)
     if (!decoder.decode(parameters.uiProcessBundleIdentifier))
+        return false;
+    if (!decoder.decode(parameters.uiProcessSDKVersion))
         return false;
 #endif
     if (!decoder.decode(parameters.presentingApplicationPID))

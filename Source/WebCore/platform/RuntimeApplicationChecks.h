@@ -42,6 +42,9 @@ inline bool isInWebProcess() { return true; }
 
 bool isInWebProcess();
 
+WEBCORE_EXPORT void setApplicationSDKVersion(uint32_t);
+uint32_t applicationSDKVersion();
+
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 String applicationBundleIdentifier();
 
@@ -86,6 +89,7 @@ bool isIBooksStorytime();
 WEBCORE_EXPORT bool isTheSecretSocietyHiddenMystery();
 WEBCORE_EXPORT bool isCardiogram();
 WEBCORE_EXPORT bool isNike();
+bool isMoviStarPlus();
 
 } // IOSApplication
 

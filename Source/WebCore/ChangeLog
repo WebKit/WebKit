@@ -1,3 +1,25 @@
+2018-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r231107): MoviStar+ launches to a blank black screen
+        https://bugs.webkit.org/show_bug.cgi?id=188139
+
+        Reviewed by Brent Fulgham.
+
+        For this app, revert behavior to how it was before r231107 with a linked-on-or-before check.
+        r231107 increased our fetch spec conformance, which we intend to keep.  This makes a low-risk
+        targeted fix that will fix the affected app until they update.  
+
+        I manually verified this fixes the app.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::applicationSDKVersionOverride):
+        (WebCore::setApplicationSDKVersion):
+        (WebCore::applicationSDKVersion):
+        (WebCore::IOSApplication::isMoviStarPlus):
+
 2018-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Addressing post-review comments on r234158

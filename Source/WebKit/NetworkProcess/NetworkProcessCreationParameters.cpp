@@ -69,6 +69,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
+    encoder << uiProcessSDKVersion;
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
 #if PLATFORM(IOS)
@@ -182,6 +183,8 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.parentProcessName))
         return false;
     if (!decoder.decode(result.uiProcessBundleIdentifier))
+        return false;
+    if (!decoder.decode(result.uiProcessSDKVersion))
         return false;
     if (!decoder.decode(result.sourceApplicationBundleIdentifier))
         return false;
