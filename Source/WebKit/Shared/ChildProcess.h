@@ -94,6 +94,7 @@ protected:
     virtual bool shouldTerminate() = 0;
     virtual void terminate();
 
+    virtual bool shouldCallExitWhenConnectionIsClosed() const { return true; }
     virtual void stopRunLoop();
 
 #if USE(APPKIT)
@@ -120,7 +121,7 @@ private:
 
     // IPC::Connection::Client.
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) final;
-    void didClose(IPC::Connection&) final;
+    void didClose(IPC::Connection&) override;
 
     void shutDown();
 

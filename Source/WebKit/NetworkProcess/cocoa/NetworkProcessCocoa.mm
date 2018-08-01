@@ -207,20 +207,24 @@ void NetworkProcess::setStorageAccessAPIEnabled(bool enabled)
 
 void NetworkProcess::syncAllCookies()
 {
+    platformSyncAllCookies([this] {
+        didSyncAllCookies();
+    });
+}
+
+void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completionHander) {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
-    RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create([this] {
-        didSyncAllCookies();
-    });
+    RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create(WTFMove(completionHander));
     WebCore::NetworkStorageSession::forEach([&] (auto& networkStorageSession) {
         [networkStorageSession.nsCookieStorage() _saveCookies:[callbackAggregator] { }];
     });
 #else
     _CFHTTPCookieStorageFlushCookieStores();
-    didSyncAllCookies();
+    completionHander();
 #endif
 
 #pragma clang diagnostic pop

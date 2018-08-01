@@ -1,3 +1,31 @@
+2018-08-01  Chris Dumez  <cdumez@apple.com>
+
+        Make sure cookies get flushed to disk before exiting or suspending the network process
+        https://bugs.webkit.org/show_bug.cgi?id=188241
+        <rdar://problem/42831831>
+
+        Reviewed by Alex Christensen and Geoffrey Garen.
+
+        Make sure cookies get flushed to disk before exiting or suspending the network process,
+        to make sure they do not get lost.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        (WebKit::NetworkProcess::platformSyncAllCookies):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::syncAllCookies):
+        (WebKit::NetworkProcess::platformSyncAllCookies):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::didClose):
+        (WebKit::callExitNow):
+        (WebKit::callExitSoon):
+        (WebKit::ChildProcess::initialize):
+        (WebKit::didCloseOnConnectionWorkQueue): Deleted.
+        * Shared/ChildProcess.h:
+        (WebKit::ChildProcess::shouldCallExitWhenConnectionIsClosed const):
+
 2018-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Move all calls to ResourceLoader::start to WebKitLegacy

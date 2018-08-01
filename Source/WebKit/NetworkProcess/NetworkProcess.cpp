@@ -190,6 +190,16 @@ void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Dec
     didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
 }
 
+void NetworkProcess::didClose(IPC::Connection&)
+{
+    ASSERT(RunLoop::isMain());
+
+    // Make sure we flush all cookies to disk before exiting.
+    platformSyncAllCookies([this] {
+        stopRunLoop();
+    });
+}
+
 void NetworkProcess::didCreateDownload()
 {
     disableTermination();
@@ -846,6 +856,8 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
         }));
     }
 
+    platformSyncAllCookies([delayedTaskCounter] { });
+
     for (auto& connection : m_webProcessConnections)
         connection->cleanupForSuspension([delayedTaskCounter] { });
 }
@@ -979,6 +991,11 @@ void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameter
 
 void NetworkProcess::syncAllCookies()
 {
+}
+
+void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 
 #endif

@@ -189,10 +189,12 @@ private:
     void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
     void initializeConnection(IPC::Connection*) override;
     bool shouldTerminate() override;
+    bool shouldCallExitWhenConnectionIsClosed() const final { return false; } // We override didClose() and want it to be called.
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
+    void didClose(IPC::Connection&) override;
 
     // DownloadManager::Client
     void didCreateDownload() override;
@@ -251,6 +253,8 @@ private:
 #if PLATFORM(COCOA)
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif
+
+    void platformSyncAllCookies(CompletionHandler<void()>&&);
 
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;
