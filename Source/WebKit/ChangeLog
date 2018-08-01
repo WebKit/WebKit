@@ -1,3 +1,17 @@
+2018-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Allow WebFramePolicyListenerProxy to be used multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=188229
+
+        Reviewed by Chris Dumez.
+
+        This fixes a regression from r234210 in clients that misuse the API.
+
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::download):
+        (WebKit::WebFramePolicyListenerProxy::ignore):
+
 2018-08-01  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Color picker should have a border when presented in a popover

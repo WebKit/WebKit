@@ -42,17 +42,20 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(CompletionHandler<void(
 
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap)
 {
-    m_completionHandler(WebCore::PolicyAction::Use, policies, swap);
+    if (m_completionHandler)
+        m_completionHandler(WebCore::PolicyAction::Use, policies, swap);
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    m_completionHandler(WebCore::PolicyAction::Download, nullptr, ShouldProcessSwapIfPossible::No);
+    if (m_completionHandler)
+        m_completionHandler(WebCore::PolicyAction::Download, nullptr, ShouldProcessSwapIfPossible::No);
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    m_completionHandler(WebCore::PolicyAction::Ignore, nullptr, ShouldProcessSwapIfPossible::No);
+    if (m_completionHandler)
+        m_completionHandler(WebCore::PolicyAction::Ignore, nullptr, ShouldProcessSwapIfPossible::No);
 }
 
 } // namespace WebKit
