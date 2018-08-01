@@ -1,3 +1,16 @@
+2018-08-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Align new floating with the bottom of the existing floatings.
+        https://bugs.webkit.org/show_bug.cgi?id=188213
+
+        Reviewed by Antti Koivisto.
+
+        When the incoming floating does not fit at all, align its top with the bottom of the existing floatings.
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingPair::bottom const):
+
 2018-08-01  Eric Carlson  <eric.carlson@apple.com>
 
         Always use MediaPlayback audio category when playing to AppleTV

@@ -66,6 +66,7 @@ public:
     const Display::Box* right() const;
     bool intersects(const Display::Box::Rect&) const;
     LayoutUnit verticalPosition() const { return m_verticalPosition; }
+    LayoutUnit bottom() const;
     bool operator==(const FloatingPair&) const;
 
 private:
@@ -132,6 +133,7 @@ Position FloatingContext::floatingPosition(const Box& layoutBox) const
 
     auto end = Layout::end(layoutContext(), m_floatingState);
     auto top = initialVerticalPosition;
+    auto bottomMost = top;
     for (auto iterator = begin(layoutContext(), m_floatingState, initialVerticalPosition); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
 
@@ -144,11 +146,12 @@ Position FloatingContext::floatingPosition(const Box& layoutBox) const
         if (!floatings.intersects({ top, left, boxSize.width(), boxSize.height() }))
             return { left, top };
 
+        bottomMost = floatings.bottom();
         // Move to the next floating pair.
     }
 
     // Passed all the floatings and still does not fit? 
-    return { alignWithContainingBlock(layoutBox), top };
+    return { alignWithContainingBlock(layoutBox), bottomMost };
 }
 
 LayoutUnit FloatingContext::initialVerticalPosition(const Box& layoutBox) const
@@ -262,6 +265,24 @@ bool FloatingPair::intersects(const Display::Box::Rect& rect) const
 bool FloatingPair::operator ==(const FloatingPair& other) const
 {
     return m_leftIndex == other.m_leftIndex && m_rightIndex == other.m_rightIndex;
+}
+
+LayoutUnit FloatingPair::bottom() const
+{
+    auto* left = this->left();
+    auto* right = this->right();
+    ASSERT(left || right);
+
+    auto leftBottom = left ? std::optional<LayoutUnit>(left->bottom()) : std::nullopt;
+    auto rightBottom = right ? std::optional<LayoutUnit>(right->bottom()) : std::nullopt;
+
+    if (leftBottom && rightBottom)
+        return std::max(*leftBottom, *rightBottom);
+
+    if (leftBottom)
+        return *leftBottom;
+
+    return *rightBottom;
 }
 
 Iterator::Iterator(const LayoutContext& layoutContext, const FloatingState& floatingState, std::optional<LayoutUnit> verticalPosition)
