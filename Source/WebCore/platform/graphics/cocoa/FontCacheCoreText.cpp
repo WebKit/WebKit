@@ -1484,11 +1484,6 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     if (auto result = fontForFamily(fontDescription, AtomicString("Times", AtomicString::ConstructFromLiteral)))
         return *result;
 
-    // The Times fallback will almost always work, but in the highly unusual case where
-    // the user doesn't have it, we fall back on Lucida Grande.
-    if (auto result = fontForFamily(fontDescription, AtomicString("Lucida Grande", AtomicString::ConstructFromLiteral), nullptr, nullptr, { }, false))
-        return *result;
-
     // LastResort is guaranteed to be non-null.
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
     auto fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
