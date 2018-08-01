@@ -72,6 +72,8 @@ void PlatformMediaSessionManager::updateSessionState()
             hasWebAudioType = true;
         if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.state() == PlatformMediaSession::Playing)
             hasAudibleAudioOrVideoMediaType = true;
+        if (session.isPlayingToWirelessPlaybackTarget())
+            hasAudibleAudioOrVideoMediaType = true;
         return (type == PlatformMediaSession::MediaStreamCapturingAudio);
     });
 
