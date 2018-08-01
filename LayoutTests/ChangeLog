@@ -1,3 +1,11 @@
+2018-07-31  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed test gardening.
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css2.1/20110323/replaced-intrinsic-ratio-001-expected.png: Added.
+        * platform/wincairo/css3/masking/clip-path-circle-margin-box-expected.txt: Removed.
+
 2018-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Tidy up a layout test introduced in r234436.
