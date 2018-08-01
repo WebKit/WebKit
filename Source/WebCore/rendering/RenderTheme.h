@@ -413,6 +413,10 @@ protected:
         Color systemLinkColor;
         Color systemActiveLinkColor;
         Color systemVisitedLinkColor;
+        Color systemFocusRingColor;
+        Color systemControlAccentColor;
+        Color systemSelectedTextBackgroundColor;
+        Color systemSelectedContentBackgroundColor;
 
         Color activeSelectionBackgroundColor;
         Color inactiveSelectionBackgroundColor;

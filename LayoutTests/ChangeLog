@@ -1,3 +1,18 @@
+2018-08-01  Timothy Hatcher  <timothy@apple.com>
+
+        Hardcode some system colors to avoid fingerprinting exposure.
+        https://bugs.webkit.org/show_bug.cgi?id=188203
+        rdar://problem/42781630
+
+        Reviewed by Tim Horton.
+
+        * fast/css/apple-system-control-colors-expected.txt: Updated.
+        * fast/css/test-setting-canvas-color.html: Fixed for colors with alpha.
+        * platform/mac-highsierra/fast/css/apple-system-control-colors-expected.txt:
+        * platform/mac-sierra/fast/css/apple-system-control-colors-expected.txt: Updated.
+        * platform/mac/TestExpectations: Removed fast/css/test-setting-canvas-color.html.
+        * platform/mac/fast/css/apple-system-control-colors-expected.txt: Updated.
+
 2018-08-01  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Unreviewed test gardening

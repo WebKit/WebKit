@@ -9,7 +9,7 @@
 -apple-system-unemphasized-selected-content-background : rgb(212, 212, 212)
 -apple-system-selected-text : rgb(0, 0, 0)
 -apple-system-unemphasized-selected-text : rgb(0, 0, 0)
--apple-system-selected-text-background : rgb(181, 213, 255)
+-apple-system-selected-text-background : rgba(128, 188, 254, 0.6)
 -apple-system-unemphasized-selected-text-background : rgb(212, 212, 212)
 -apple-system-placeholder-text : rgba(0, 0, 0, 0.247059)
 -apple-system-find-highlight-background : rgb(255, 255, 0)

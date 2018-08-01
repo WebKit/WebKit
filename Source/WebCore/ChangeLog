@@ -1,3 +1,19 @@
+2018-08-01  Timothy Hatcher  <timothy@apple.com>
+
+        Hardcode some system colors to avoid fingerprinting exposure.
+        https://bugs.webkit.org/show_bug.cgi?id=188203
+        rdar://problem/42781630
+
+        Reviewed by Tim Horton.
+
+        Passes existing tests with the hardcoded blue system appearance.
+
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+        Adds special handling for some system colors. Fixes -apple-system-selected-text-background
+        to match the real selection color by using blendWithWhite().
+
 2018-08-01  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Remove the delay before setting audio session category added in r233535

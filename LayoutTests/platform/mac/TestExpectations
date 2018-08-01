@@ -1794,9 +1794,6 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 
 [ Mojave+ ] http/tests/cookies/same-site [ Pass ]
 
-# <rdar://problem/39118706> REGRESSION (Mojave): LayoutTest fast/css/test-setting-canvas-color.html is failing
-[ Mojave+ ] fast/css/test-setting-canvas-color.html [ Failure ]
-
 # <rdar://problem/36639117> REGRESSION (Mojave): LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
 [ Mojave+ ] svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
 
