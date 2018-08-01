@@ -119,8 +119,10 @@ Position FloatingContext::computePosition(const Box& layoutBox) const
     ASSERT(layoutBox.isFloatingPositioned());
 
     // 1. No floating box on the context yet -> align it with the containing block's left/right edge. 
-    if (m_floatingState.isEmpty())
-        return { alignWithContainingBlock(layoutBox), layoutContext().displayBoxForLayoutBox(layoutBox)->top() };
+    if (m_floatingState.isEmpty()) {
+        auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
+        return { alignWithContainingBlock(layoutBox) + displayBox->marginLeft(), displayBox->top() };
+    }
 
     // 2. Find the top most position where the floating fits.
     return floatingPosition(layoutBox); 
@@ -129,7 +131,8 @@ Position FloatingContext::computePosition(const Box& layoutBox) const
 Position FloatingContext::floatingPosition(const Box& layoutBox) const
 {
     auto initialVerticalPosition = this->initialVerticalPosition(layoutBox);
-    auto boxSize = layoutContext().displayBoxForLayoutBox(layoutBox)->marginBox().size();
+    auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
+    auto marginBoxSize = displayBox->marginBox().size();
 
     auto end = Layout::end(layoutContext(), m_floatingState);
     auto top = initialVerticalPosition;
@@ -143,72 +146,79 @@ Position FloatingContext::floatingPosition(const Box& layoutBox) const
         // Move the box horizontally so that it aligns with the current floating pair.
         auto left = alignWithFloatings(floatings, layoutBox);
         // Check if the box fits at this vertical position.
-        if (!floatings.intersects({ top, left, boxSize.width(), boxSize.height() }))
-            return { left, top };
+        if (!floatings.intersects({ top, left, marginBoxSize.width(), marginBoxSize.height() }))
+            return { left + displayBox->marginLeft(), top + displayBox->marginTop() };
 
         bottomMost = floatings.bottom();
         // Move to the next floating pair.
     }
 
     // Passed all the floatings and still does not fit? 
-    return { alignWithContainingBlock(layoutBox), bottomMost };
+    return { alignWithContainingBlock(layoutBox) + displayBox->marginLeft(), bottomMost + displayBox->marginTop() };
 }
 
 LayoutUnit FloatingContext::initialVerticalPosition(const Box& layoutBox) const
 {
     // Incoming floating cannot be placed higher than existing floatings.
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last floating.
-    auto& displayBox = *layoutContext().displayBoxForLayoutBox(layoutBox);
+    auto marginBoxTop = layoutContext().displayBoxForLayoutBox(layoutBox)->rectWithMargin().top();
 
     if (auto lastFloating = m_floatingState.last())
-        return std::max(displayBox.top(), layoutContext().displayBoxForLayoutBox(*lastFloating)->top());
+        return std::max(marginBoxTop, layoutContext().displayBoxForLayoutBox(*lastFloating)->rectWithMargin().top());
 
-    return displayBox.top();
+    return marginBoxTop;
 }
 
 LayoutUnit FloatingContext::alignWithContainingBlock(const Box& layoutBox) const
 {
     // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
     // (Either there's no floatings at all or this box does not fit at any vertical positions where the floatings are.)
-    auto& layoutContext = m_floatingState.layoutContext();
+    auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
     auto* containingBlock = layoutBox.containingBlock();
     ASSERT(containingBlock == &m_formattingContextRoot || containingBlock->isDescendantOf(m_formattingContextRoot));
 
-    auto* containgBlockDisplayBox = layoutContext.displayBoxForLayoutBox(*containingBlock);
+    auto* containgBlockDisplayBox = layoutContext().displayBoxForLayoutBox(*containingBlock);
 
     if (layoutBox.isLeftFloatingPositioned())
         return containgBlockDisplayBox->contentBoxLeft();
 
-    auto boxWidth = layoutContext.displayBoxForLayoutBox(layoutBox)->marginBox().width();
-    return containgBlockDisplayBox->contentBoxRight() - boxWidth;
+    return containgBlockDisplayBox->contentBoxRight() - displayBox->marginBox().width();
 }
 
 LayoutUnit FloatingContext::alignWithFloatings(const FloatingPair& floatingPair, const Box& layoutBox) const
 {
     // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floatings into account.
+    auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
     auto& containingBlock = *layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockContentLeft = containingBlock.contentBoxLeft();
-    auto containingBlockContentRight = containingBlock.contentBoxRight();
-    auto marginBoxWidth = layoutContext().displayBoxForLayoutBox(layoutBox)->marginBox().width();
+    auto containingBlockContentBoxLeft = containingBlock.contentBoxLeft();
+    auto containingBlockContentBoxRight = containingBlock.contentBoxRight();
+    auto marginBoxWidth = displayBox->marginBox().width();
+
+    auto leftAlignedBoxLeft = containingBlockContentBoxLeft;
+    auto rightAlignedBoxLeft = containingBlockContentBoxRight - displayBox->marginBox().width();
 
     if (floatingPair.isEmpty()) {
         ASSERT_NOT_REACHED();
-        return layoutBox.isLeftFloatingPositioned() ? containingBlockContentLeft : containingBlockContentRight - marginBoxWidth;
+        return layoutBox.isLeftFloatingPositioned() ? leftAlignedBoxLeft : rightAlignedBoxLeft;
     }
 
     if (layoutBox.isLeftFloatingPositioned()) {
-        if (auto* leftDisplayBox = floatingPair.left()) 
-            return std::min(std::max(containingBlockContentLeft, leftDisplayBox->right()), containingBlockContentRight - marginBoxWidth);
+        if (auto* leftDisplayBox = floatingPair.left()) {
+            auto leftFloatingBoxRight = leftDisplayBox->rectWithMargin().right();
+            return std::min(std::max(leftAlignedBoxLeft, leftFloatingBoxRight), rightAlignedBoxLeft);
+        }
         
-        return containingBlockContentLeft;
+        return leftAlignedBoxLeft;
     }
 
     ASSERT(layoutBox.isRightFloatingPositioned());
 
-    if (auto* rightDisplayBox = floatingPair.right())
-        return std::max(std::min(containingBlockContentRight, rightDisplayBox->left()) - marginBoxWidth, containingBlockContentLeft);
+    if (auto* rightDisplayBox = floatingPair.right()) {
+        auto rightFloatingBoxLeft = rightDisplayBox->rectWithMargin().left();
+        return std::max(std::min(rightAlignedBoxLeft, rightFloatingBoxLeft) - marginBoxWidth, leftAlignedBoxLeft);
+    }
 
-    return containingBlockContentRight - marginBoxWidth;
+    return rightAlignedBoxLeft;
 }
 
 static const Display::Box* floatingDisplayBox(unsigned index, const FloatingState::FloatingList& floatings, const LayoutContext& layoutContext)
@@ -244,8 +254,8 @@ bool FloatingPair::intersects(const Display::Box::Rect& rect) const
     auto intersects = [&](const Display::Box* floating, const Display::Box::Rect& rect) {
         if (!floating)
             return false;
-        // FIXME: use margin box here.
-        return floating->rect().intersects(rect);
+
+        return floating->rectWithMargin().intersects(rect);
     };
 
     if (!m_leftIndex && !m_rightIndex) {
