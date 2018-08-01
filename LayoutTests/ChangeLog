@@ -1,3 +1,10 @@
+2018-08-01  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188221
+
+        * platform/gtk/TestExpectations:
+
 2018-07-31  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed test gardening.

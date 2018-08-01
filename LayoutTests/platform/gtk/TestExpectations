@@ -2059,6 +2059,8 @@ webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass
 
 webkit.org/b/188105 media/track/track-css-all-cues.html [ Failure Pass ]
 
+webkit.org/b/188219 legacy-animation-engine/animations/animation-direction-normal.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3540,6 +3542,10 @@ webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-a
 webkit.org/b/187996 http/tests/security/canvas-remote-read-remote-video-hls.html [ Failure ]
 
 webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
+
+webkit.org/b/188217 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
+webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
+webkit.org/b/188220 svg/as-image/svg-image-with-data-uri-background.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
