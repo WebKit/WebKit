@@ -1,3 +1,81 @@
+2018-07-31  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] <select> elements do not popup options
+        https://bugs.webkit.org/show_bug.cgi?id=188172
+
+        Reviewed by Fujii Hironori.
+
+        * PlatformWin.cmake: Add WebPopupMenuProxyWin
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode const): Encode
+        windows parameters
+        (WebKit::PlatformPopupMenuData::decode): Decode windows
+        parameters
+        * Shared/PlatformPopupMenuData.h: Add the windows specific
+        parameters (based on removed Windows implementation)
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        * UIProcess/win/WebPopupMenuProxyWin.cpp: Added. (based on
+        removed Windows implementation plus some fixes/api changes
+        since the removal)
+        (WebKit::isASCIIPrintable):
+        (WebKit::translatePoint):
+        (WebKit::WebPopupMenuProxyWin::WebPopupMenuProxyWndProc):
+        (WebKit::WebPopupMenuProxyWin::wndProc):
+        (WebKit::WebPopupMenuProxyWin::registerWindowClass):
+        (WebKit::WebPopupMenuProxyWin::WebPopupMenuProxyWin):
+        (WebKit::WebPopupMenuProxyWin::~WebPopupMenuProxyWin):
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        (WebKit::WebPopupMenuProxyWin::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyWin::calculatePositionAndSize):
+        (WebKit::WebPopupMenuProxyWin::clientRect const):
+        (WebKit::WebPopupMenuProxyWin::invalidateItem):
+        (WebKit::WebPopupMenuProxyWin::scrollSize const):
+        (WebKit::WebPopupMenuProxyWin::setScrollOffset):
+        (WebKit::WebPopupMenuProxyWin::visibleSize const):
+        (WebKit::WebPopupMenuProxyWin::contentsSize const):
+        (WebKit::WebPopupMenuProxyWin::scrollableAreaBoundingBox const):
+        (WebKit::WebPopupMenuProxyWin::scrollTo):
+        (WebKit::WebPopupMenuProxyWin::invalidateScrollbarRect):
+        (WebKit::WebPopupMenuProxyWin::onMouseActivate):
+        (WebKit::WebPopupMenuProxyWin::onSize):
+        (WebKit::WebPopupMenuProxyWin::onKeyDown):
+        (WebKit::WebPopupMenuProxyWin::onChar):
+        (WebKit::WebPopupMenuProxyWin::onMouseMove):
+        (WebKit::WebPopupMenuProxyWin::onLButtonDown):
+        (WebKit::WebPopupMenuProxyWin::onLButtonUp):
+        (WebKit::WebPopupMenuProxyWin::onMouseWheel):
+        (WebKit::WebPopupMenuProxyWin::onPaint):
+        (WebKit::WebPopupMenuProxyWin::onPrintClient):
+        (WebKit::WebPopupMenuProxyWin::down):
+        (WebKit::WebPopupMenuProxyWin::up):
+        (WebKit::WebPopupMenuProxyWin::paint):
+        (WebKit::WebPopupMenuProxyWin::setFocusedIndex):
+        (WebKit::WebPopupMenuProxyWin::visibleItems const):
+        (WebKit::WebPopupMenuProxyWin::listIndexAtPoint const):
+        (WebKit::WebPopupMenuProxyWin::focusedIndex const):
+        (WebKit::WebPopupMenuProxyWin::focusFirst):
+        (WebKit::WebPopupMenuProxyWin::focusLast):
+        (WebKit::WebPopupMenuProxyWin::incrementWheelDelta):
+        (WebKit::WebPopupMenuProxyWin::reduceWheelDelta):
+        (WebKit::WebPopupMenuProxyWin::scrollToRevealSelection):
+        * UIProcess/win/WebPopupMenuProxyWin.h: Added. (based on
+        removed Windows implementation plus some fixes/api changes
+        since then)
+        (WebKit::WebPopupMenuProxyWin::create):
+        (WebKit::WebPopupMenuProxyWin::hide):
+        (WebKit::WebPopupMenuProxyWin::scrollbar const):
+        (WebKit::WebPopupMenuProxyWin::itemHeight const):
+        (WebKit::WebPopupMenuProxyWin::windowRect const):
+        (WebKit::WebPopupMenuProxyWin::wheelDelta const):
+        (WebKit::WebPopupMenuProxyWin::setWasClicked):
+        (WebKit::WebPopupMenuProxyWin::wasClicked const):
+        (WebKit::WebPopupMenuProxyWin::scrollbarCapturingMouse const):
+        (WebKit::WebPopupMenuProxyWin::setScrollbarCapturingMouse):
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData): Make the data to
+        pass between processes.
+
 2018-07-31  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove partitioned cookies for reduced complexity, lower memory footprint, and ability to support more platforms

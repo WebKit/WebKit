@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebPageProxy.h"
+#include "WebPopupMenuProxyWin.h"
 #include "WebView.h"
 
 using namespace WebCore;
@@ -170,7 +171,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
-    return nullptr;
+    return WebPopupMenuProxyWin::create(&m_view, page);
 }
 
 #if ENABLE(CONTEXT_MENUS)

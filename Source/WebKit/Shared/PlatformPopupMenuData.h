@@ -49,6 +49,15 @@ struct PlatformPopupMenuData {
     bool shouldPopOver;
     bool hideArrows;
     WebCore::PopupMenuStyle::PopupMenuSize menuSize;
+#elif PLATFORM(WIN)
+    int m_clientPaddingLeft { 0 };
+    int m_clientPaddingRight { 0 };
+    int m_clientInsetLeft { 0 };
+    int m_clientInsetRight { 0 };
+    int m_popupWidth { 0 };
+    int m_itemHeight { 0 };
+    RefPtr<ShareableBitmap> m_notSelectedBackingStore;
+    RefPtr<ShareableBitmap> m_selectedBackingStore;
 #endif
 };
 
