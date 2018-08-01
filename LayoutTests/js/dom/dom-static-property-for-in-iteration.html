@@ -27,6 +27,9 @@
                     continue;
                 if (i === "href" || i === "pathname" || i === "baseURI")
                     continue;
+                // ARIA attributes are tested in another test.
+                if (i === "role" || i.startsWith("aria"))
+                    continue;
                 realShouldBe(expected, "a[\"" + i + "\"]", actual);
             }
         }

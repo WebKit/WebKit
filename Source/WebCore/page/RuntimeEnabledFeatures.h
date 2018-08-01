@@ -243,6 +243,9 @@ public:
 
     void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
     bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
+    
+    void setAriaReflectionEnabled(bool isEnabled) { m_ariaReflectionEnabled = isEnabled; }
+    bool ariaReflectionEnabled() const { return m_ariaReflectionEnabled; }
 
     void setMediaCapabilitiesEnabled(bool isEnabled) { m_mediaCapabilitiesEnabled = isEnabled; }
     bool mediaCapabilitiesEnabled() const { return m_mediaCapabilitiesEnabled; }
@@ -402,6 +405,7 @@ private:
     bool m_inspectorAdditionsEnabled { false };
     bool m_webVREnabled { false };
     bool m_accessibilityObjectModelEnabled { false };
+    bool m_ariaReflectionEnabled { true };
     bool m_mediaCapabilitiesEnabled { false };
     bool m_resourceLoadStatisticsDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };

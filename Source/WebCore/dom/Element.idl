@@ -158,6 +158,8 @@ dictionary ShadowRootInit {
     required ShadowRootMode mode;
 };
 
+Element implements AccessibilityRole;
+Element implements AriaAttributes;
 Element implements Animatable;
 Element implements ChildNode;
 Element implements DocumentAndElementEventHandlers;

@@ -1231,6 +1231,14 @@ AccessibilityObjectModelEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+AriaReflectionEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "ARIA Reflection"
+  humanReadableDescription: "ARIA Reflection support"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 WebVREnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../resources/js-test-pre.js"></script>
+<div id="content">
+
+<div id="test" data="some data">
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests ARIA IDL Attribute Reflection.");
+
+    var element = document.getElementById("test");
+    var data = element.getAttribute("data");
+    var otherData = "other data";
+    var currentProperty;
+    var currentAttribute;
+
+    function testElement() {
+        currentAttribute = currentProperty.replace("aria", "aria-").toLowerCase();
+        
+        debug("\nTest " + currentProperty + " < - > " + currentAttribute);
+        shouldBeNull("element[currentProperty]");
+        shouldBeNull("element.getAttribute(currentAttribute)");
+        
+        // Set the property value
+        debug("element[\"" + currentProperty + "\"] = data;");
+        element[currentProperty] = data;
+        shouldBe("element.getAttribute(currentAttribute)", "data");
+
+        // Set the attribute value
+        debug("element.setAttribute(\"" + currentAttribute + "\", otherData);");
+        element.setAttribute(currentAttribute, otherData);
+        shouldBe("element[currentProperty]", "otherData");
+    }
+
+    function testRole() {
+        currentProperty = "role";
+        testElement();
+    }
+
+    if (window.accessibilityController) {
+
+        testRole();
+
+        // There are 46 ARIA attributes in total.
+        var count = 0;
+        for (var propertyName in element) {
+          if (propertyName.startsWith("aria")) {
+              currentProperty = propertyName;
+              testElement();
+              count++;
+          }
+        }
+
+        debug("\n");
+        shouldBe("count", "46");
+
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

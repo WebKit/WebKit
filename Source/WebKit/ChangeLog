@@ -1,3 +1,21 @@
+2018-08-01  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Add ARIA IDL Attribute Reflection
+        https://bugs.webkit.org/show_bug.cgi?id=184676
+        <rdar://problem/39476882>
+
+        Added ARIA property string reflection on Element, behind
+        a new runtime flag. 
+        Spec: https://w3c.github.io/aria/#idl-interface
+
+        Reviewed by Chris Fleizach.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAriaReflectionEnabled):
+        (WKPreferencesGetAriaReflectionEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2018-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Allow WebFramePolicyListenerProxy to be used multiple times

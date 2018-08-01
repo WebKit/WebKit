@@ -439,7 +439,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webvr/VRPose.idl
     Modules/webvr/VRStageParameters.idl
 
+    accessibility/AccessibilityRole.idl
     accessibility/AccessibleSetValueEvent.idl
+    accessibility/AriaAttributes.idl
 
     animation/Animatable.idl
     animation/AnimationEffectReadOnly.idl

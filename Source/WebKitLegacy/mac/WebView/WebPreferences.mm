@@ -682,6 +682,7 @@ public:
         @NO, WebKitInspectorAdditionsEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
         @NO, WebKitAccessibilityObjectModelEnabledPreferenceKey,
+        @YES, WebKitAriaReflectionEnabledPreferenceKey,
         @NO, WebKitMediaCapabilitiesEnabledPreferenceKey,
         @NO, WebKitFetchAPIKeepAliveEnabledPreferenceKey,
         @NO, WebKitServerTimingEnabledPreferenceKey,
@@ -3321,6 +3322,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setAccessibilityObjectModelEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAccessibilityObjectModelEnabledPreferenceKey];
+}
+
+- (BOOL)ariaReflectionEnabled
+{
+    return [self _boolValueForKey:WebKitAriaReflectionEnabledPreferenceKey];
+}
+
+- (void)setAriaReflectionEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAriaReflectionEnabledPreferenceKey];
 }
 
 - (BOOL)mediaCapabilitiesEnabled

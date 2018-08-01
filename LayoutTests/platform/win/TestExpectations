@@ -1715,6 +1715,8 @@ webkit.org/b/138566 accessibility/aria-modal-multiple-dialogs.html [ Skip ]
 # Text marker tests are not supported
 webkit.org/b/153292 accessibility/text-marker [ Skip ]
 
+webkit.org/b/184676 accessibility/ARIA-reflection.html [ Skip ]
+
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################

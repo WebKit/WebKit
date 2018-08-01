@@ -862,6 +862,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setWritableStreamAPIEnabled:YES];
     preferences.encryptedMediaAPIEnabled = YES;
     [preferences setAccessibilityObjectModelEnabled:YES];
+    [preferences setAriaReflectionEnabled:YES];
     [preferences setVisualViewportAPIEnabled:YES];
     [preferences setColorFilterEnabled:YES];
     [preferences setCrossOriginWindowPolicySupportEnabled:YES];
