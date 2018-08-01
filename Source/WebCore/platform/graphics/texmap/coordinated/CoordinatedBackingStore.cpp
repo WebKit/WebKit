@@ -22,13 +22,12 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include <WebCore/GraphicsLayer.h>
-#include <WebCore/NicosiaBuffer.h>
-#include <WebCore/TextureMapper.h>
-#include <WebCore/TextureMapperGL.h>
+#include "GraphicsLayer.h"
+#include "NicosiaBuffer.h"
+#include "TextureMapper.h"
+#include "TextureMapperGL.h"
 
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
 void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
 {

@@ -49,12 +49,11 @@ class Buffer;
 }
 
 namespace WebCore {
+class CoordinatedBackingStore;
 class TextureMapperGL;
 }
 
 namespace WebKit {
-
-class CoordinatedBackingStore;
 
 class CoordinatedGraphicsSceneClient {
 public:
@@ -93,8 +92,8 @@ private:
         CommitScope(CommitScope&) = delete;
         CommitScope& operator=(const CommitScope&) = delete;
 
-        Vector<RefPtr<CoordinatedBackingStore>> releasedImageBackings;
-        HashSet<RefPtr<CoordinatedBackingStore>> backingStoresWithPendingBuffers;
+        Vector<RefPtr<WebCore::CoordinatedBackingStore>> releasedImageBackings;
+        HashSet<RefPtr<WebCore::CoordinatedBackingStore>> backingStoresWithPendingBuffers;
     };
 
     void setRootLayerID(WebCore::CoordinatedLayerID);
@@ -145,8 +144,8 @@ private:
 
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 
-    HashMap<WebCore::CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore>> m_imageBackings;
-    HashMap<WebCore::TextureMapperLayer*, RefPtr<CoordinatedBackingStore>> m_backingStores;
+    HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedBackingStore>> m_imageBackings;
+    HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::CoordinatedBackingStore>> m_backingStores;
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperPlatformLayerProxy>> m_platformLayerProxies;

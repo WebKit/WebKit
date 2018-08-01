@@ -24,7 +24,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CoordinatedBackingStore.h"
+#include <WebCore/CoordinatedBackingStore.h>
 #include <WebCore/NicosiaBuffer.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperBackingStore.h>

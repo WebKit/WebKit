@@ -1,3 +1,19 @@
+2018-08-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Move CoordinatedBackingStore to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=188158
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the CoordinatedBackingStore class from WebKit to WebCore. It has no
+        dependency on anything in the WebKit layer, and it's more suitable to
+        future needs to keep it in the WebCore layer.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+
 2018-07-31  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r231107): MoviStar+ launches to a blank black screen

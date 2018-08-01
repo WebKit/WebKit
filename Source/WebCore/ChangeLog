@@ -1,3 +1,20 @@
+2018-08-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Move CoordinatedBackingStore to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=188158
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the CoordinatedBackingStore class from WebKit to WebCore. It has no
+        dependency on anything in the WebKit layer, and it's more suitable to
+        future needs to keep it in the WebCore layer.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp: Renamed from Source/WebKit/Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp.
+        * platform/graphics/texmap/coordinated/CoordinatedBackingStore.h: Renamed from Source/WebKit/Shared/CoordinatedGraphics/CoordinatedBackingStore.h.
+        (WebCore::CoordinatedBackingStoreTile::CoordinatedBackingStoreTile):
+        (WebCore::CoordinatedBackingStore::rect const):
+
 2018-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WIN] Fix tests for text with initial advances
