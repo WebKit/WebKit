@@ -1,3 +1,22 @@
+2018-08-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Color picker should have a border when presented in a popover
+        https://bugs.webkit.org/show_bug.cgi?id=188207
+
+        Reviewed by Wenson Hsieh.
+
+        The color picker should have a border when presented in a popover. This matches
+        the behavior of color pickers in other parts of iOS.
+
+        Since the popover will resize its view to fill its size, we first place the
+        color picker in a container view. The container view can then fill the popover,
+        while the smaller color picker is centered in it's container - creating the
+        appearance of a border.
+
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKColorPopover initWithView:]):
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+
 2018-08-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234443 and r234445.

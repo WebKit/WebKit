@@ -42,9 +42,9 @@ SOFT_LINK_CLASS(PencilKit, PKColorMatrixView)
 
 static const CGFloat additionalKeyboardAffordance = 80;
 static const CGFloat colorSelectionIndicatorBorderWidth = 4;
-static const CGFloat colorSelectionIndicatorCornerRadius = 13;
+static const CGFloat colorSelectionIndicatorCornerRadius = 9;
 static const CGFloat pickerWidthForPopover = 280;
-static const CGFloat topColorMatrixPadding = 8;
+static const CGFloat topColorMatrixPadding = 5;
 
 using namespace WebKit;
 

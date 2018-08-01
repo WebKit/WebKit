@@ -35,6 +35,9 @@
 
 #pragma mark - WKColorPopover
 
+static const CGFloat colorPopoverWidth = 290;
+static const CGFloat colorPopoverCornerRadius = 9;
+
 @interface WKColorPopover : WKFormRotatingAccessoryPopover<WKFormControl> {
     RetainPtr<NSObject<WKFormControl>> _innerControl;
 }
@@ -52,9 +55,16 @@
     _innerControl = adoptNS([[WKColorPicker alloc] initWithView:view]);
 
     RetainPtr<UIViewController> popoverViewController = adoptNS([[UIViewController alloc] init]);
+    RetainPtr<UIView> controlContainerView = adoptNS([[UIView alloc] initWithFrame:CGRectMake(0, 0, colorPopoverWidth, colorPopoverWidth)]);
+
     UIView *controlView = [_innerControl controlView];
-    [popoverViewController setView:controlView];
-    [popoverViewController setPreferredContentSize:controlView.frame.size];
+    [controlView setCenter:[controlContainerView center]];
+    [controlView.layer setCornerRadius:colorPopoverCornerRadius];
+    [controlView setClipsToBounds:YES];
+    [controlContainerView addSubview:controlView];
+
+    [popoverViewController setView:controlContainerView.get()];
+    [popoverViewController setPreferredContentSize:[controlContainerView size]];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
