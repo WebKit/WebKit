@@ -52,6 +52,7 @@
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <sys/param.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/spi/darwin/dyldSPI.h>
 
 #if PLATFORM(IOS)
 #import "WebMemoryPressureHandlerIOS.h"
@@ -205,6 +206,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     SandboxExtension::createHandleWithoutResolvingPath(parameters.uiProcessBundleResourcePath, SandboxExtension::Type::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
+    parameters.uiProcessSDKVersion = dyld_get_program_sdk_version();
 
 #if PLATFORM(IOS)
     if (!m_resolvedPaths.cookieStorageDirectory.isEmpty())
@@ -291,6 +293,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 {
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    parameters.uiProcessSDKVersion = dyld_get_program_sdk_version();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 

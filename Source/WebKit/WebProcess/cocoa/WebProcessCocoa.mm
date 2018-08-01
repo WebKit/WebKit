@@ -123,6 +123,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #endif
 
     WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
+    WebCore::setApplicationSDKVersion(parameters.uiProcessSDKVersion);
+
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 
 #if ENABLE(SANDBOX_EXTENSIONS)

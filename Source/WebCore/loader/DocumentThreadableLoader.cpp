@@ -50,6 +50,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceTiming.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
@@ -59,6 +60,10 @@
 #include "ThreadableLoaderClient.h"
 #include <wtf/Assertions.h>
 #include <wtf/Ref.h>
+
+#if PLATFORM(IOS)
+#include <wtf/spi/darwin/dyldSPI.h>
+#endif
 
 namespace WebCore {
 
@@ -179,7 +184,13 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
 {
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
-    if ((m_options.preflightPolicy == PreflightPolicy::Consider && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields())) || m_options.preflightPolicy == PreflightPolicy::Prevent || shouldPerformSecurityChecks()) {
+#if PLATFORM(IOS)
+    bool needsPreflightQuirk = IOSApplication::isMoviStarPlus() && applicationSDKVersion() < DYLD_IOS_VERSION_12_0 && (m_options.preflightPolicy == PreflightPolicy::Consider || m_options.preflightPolicy == PreflightPolicy::Force);
+#else
+    bool needsPreflightQuirk = false;
+#endif
+
+    if ((m_options.preflightPolicy == PreflightPolicy::Consider && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields())) || m_options.preflightPolicy == PreflightPolicy::Prevent || (shouldPerformSecurityChecks() && !needsPreflightQuirk)) {
         if (checkURLSchemeAsCORSEnabled(request.url()))
             makeSimpleCrossOriginAccessRequest(WTFMove(request));
     } else {
@@ -194,7 +205,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
             }
         }
 #endif
-        if (!checkURLSchemeAsCORSEnabled(request.url()))
+        if (!needsPreflightQuirk && !checkURLSchemeAsCORSEnabled(request.url()))
             return;
 
         m_simpleRequest = false;

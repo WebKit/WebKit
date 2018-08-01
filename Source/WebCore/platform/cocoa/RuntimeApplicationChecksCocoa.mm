@@ -31,6 +31,7 @@
 #import <Foundation/NSBundle.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
+#import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -63,6 +64,24 @@ void setApplicationBundleIdentifier(const String& bundleIdentifier)
     ASSERT(RunLoop::isMain());
     ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() should not be called before setApplicationBundleIdentifier()");
     applicationBundleIdentifierOverride() = bundleIdentifier;
+}
+
+static std::optional<uint32_t>& applicationSDKVersionOverride()
+{
+    static NeverDestroyed<std::optional<uint32_t>> version;
+    return version;
+}
+
+void setApplicationSDKVersion(uint32_t version)
+{
+    applicationSDKVersionOverride() = version;
+}
+
+uint32_t applicationSDKVersion()
+{
+    if (applicationSDKVersionOverride())
+        return *applicationSDKVersionOverride();
+    return dyld_get_program_sdk_version();
 }
 
 bool isInWebProcess()
@@ -254,6 +273,12 @@ bool IOSApplication::isNike()
     return isNike;
 }
 
+bool IOSApplication::isMoviStarPlus()
+{
+    static bool isMoviStarPlus = applicationBundleIsEqualTo("com.prisatv.yomvi"_s);
+    return isMoviStarPlus;
+}
+    
 #endif
 
 } // namespace WebCore
