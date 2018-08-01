@@ -123,3 +123,10 @@ body[dir=rtl] .sidebar > .panel.navigation.debugger .tree-outline.single-thread 
 .sidebar > .panel.navigation.debugger .details-section.xhr-breakpoints .item.breakpoint .subtitle {
     font-family: Menlo, monospace;
 }
+
+@media (prefers-dark-interface) {
+    .sidebar > .panel.navigation.debugger .warning-banner {
+        background-color: var(--yellow-highlight-background-color);
+        color: var(--yellow-highlight-text-color);
+    }
+}

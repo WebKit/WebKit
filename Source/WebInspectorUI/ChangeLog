@@ -1,3 +1,15 @@
+2018-08-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: disabled breakpoints banner is too light
+        https://bugs.webkit.org/show_bug.cgi?id=188120
+        <rdar://problem/42671348>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.navigation.debugger .warning-banner):
+
 2018-07-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include a full URL tooltip when hovering the name in the Network Tab
