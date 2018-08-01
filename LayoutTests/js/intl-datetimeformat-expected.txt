@@ -9,7 +9,7 @@ PASS Intl.DateTimeFormat.call({}) is an instance of Intl.DateTimeFormat
 PASS new Intl.DateTimeFormat() is an instance of Intl.DateTimeFormat
 PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};(new DerivedDateTimeFormat) instanceof DerivedDateTimeFormat is true
 PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};(new DerivedDateTimeFormat) instanceof Intl.DateTimeFormat is true
-PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};new DerivedDateTimeFormat().format(0).length > 0 is true
+PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};new DerivedDateTimeFormat('en').format(0).length > 0 is true
 PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};Object.getPrototypeOf(new DerivedDateTimeFormat) === DerivedDateTimeFormat.prototype is true
 PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedDateTimeFormat)) === Intl.DateTimeFormat.prototype is true
 PASS Intl.DateTimeFormat.length is 0
@@ -92,7 +92,6 @@ PASS Intl.DateTimeFormat.prototype.resolvedOptions() threw exception TypeError: 
 PASS Intl.DateTimeFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat.
 PASS Intl.DateTimeFormat('$') threw exception RangeError: invalid language tag: $.
 PASS Intl.DateTimeFormat('en', null) threw exception TypeError: null is not an object (evaluating 'Intl.DateTimeFormat('en', null)').
-PASS Intl.DateTimeFormat().resolvedOptions().locale is 'en-US'
 PASS Intl.DateTimeFormat('en').resolvedOptions().weekday is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().era is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().month is 'numeric'

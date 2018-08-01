@@ -1,3 +1,14 @@
+This test checks the default locale behavior of Intl constructors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof new Intl.DateTimeFormat().resolvedOptions().locale is 'string'
+PASS typeof new Intl.NumberFormat().resolvedOptions().locale is 'string'
+PASS typeof new Intl.Collator().resolvedOptions().locale is 'string'
+PASS Intl.getCanonicalLocales(new Intl.DateTimeFormat().resolvedOptions().locale)[0] is new Intl.DateTimeFormat().resolvedOptions().locale
+PASS Intl.getCanonicalLocales(new Intl.NumberFormat().resolvedOptions().locale)[0] is new Intl.NumberFormat().resolvedOptions().locale
+PASS Intl.getCanonicalLocales(new Intl.Collator().resolvedOptions().locale)[0] is new Intl.NumberFormat().resolvedOptions().locale
 PASS new Intl.DateTimeFormat().resolvedOptions().locale is 'tlh'
 PASS new Intl.NumberFormat().resolvedOptions().locale is 'tlh'
 PASS new Intl.Collator().resolvedOptions().locale is 'tlh'

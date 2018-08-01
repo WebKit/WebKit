@@ -11,7 +11,7 @@ PASS new Intl.PluralRules('en', null) threw exception TypeError: null is not an 
 PASS new Intl.PluralRules() is an instance of Intl.PluralRules
 PASS class DerivedPluralRules extends Intl.PluralRules {};(new DerivedPluralRules) instanceof DerivedPluralRules is true
 PASS class DerivedPluralRules extends Intl.PluralRules {};(new DerivedPluralRules) instanceof Intl.PluralRules is true
-PASS class DerivedPluralRules extends Intl.PluralRules {};new DerivedPluralRules().select(1) === 'one' is true
+PASS class DerivedPluralRules extends Intl.PluralRules {};new DerivedPluralRules('en').select(1) === 'one' is true
 PASS class DerivedPluralRules extends Intl.PluralRules {};Object.getPrototypeOf(new DerivedPluralRules) === DerivedPluralRules.prototype is true
 PASS class DerivedPluralRules extends Intl.PluralRules {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedPluralRules)) === Intl.PluralRules.prototype is true
 PASS Intl.PluralRules.length is 0
@@ -112,7 +112,6 @@ PASS Intl.PluralRules.prototype.resolvedOptions.call(5) threw exception TypeErro
 PASS Intl.PluralRules.prototype.resolvedOptions.call({}) threw exception TypeError: Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules.
 PASS defaultPluralRules.resolvedOptions() is an instance of Object
 PASS defaultPluralRules.resolvedOptions() === defaultPluralRules.resolvedOptions() is false
-PASS defaultPluralRules.resolvedOptions().locale is 'en-US'
 PASS defaultPluralRules.resolvedOptions().type is 'cardinal'
 PASS defaultPluralRules.resolvedOptions().minimumIntegerDigits is 1
 PASS defaultPluralRules.resolvedOptions().minimumFractionDigits is 0

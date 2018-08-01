@@ -22,7 +22,7 @@ shouldThrow("Intl.Collator('en', null)", "'TypeError: null is not an object (eva
 var classPrefix = "class DerivedCollator extends Intl.Collator {};";
 shouldBeTrue(classPrefix + "(new DerivedCollator) instanceof DerivedCollator");
 shouldBeTrue(classPrefix + "(new DerivedCollator) instanceof Intl.Collator");
-shouldBeTrue(classPrefix + "new DerivedCollator().compare('a', 'b') === -1");
+shouldBeTrue(classPrefix + "new DerivedCollator('en').compare('a', 'b') === -1");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedCollator) === DerivedCollator.prototype");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) === Intl.Collator.prototype");
 
@@ -45,7 +45,6 @@ var testCollator = function(collator, possibleOptionDifferences) {
 }
 
 // Locale is processed correctly.
-shouldBeTrue("testCollator(Intl.Collator(), [{locale: 'en-US'}])");
 shouldBeTrue("testCollator(Intl.Collator('en'), [{locale: 'en'}])");
 shouldBeTrue("testCollator(Intl.Collator('eN-uS'), [{locale: 'en-US'}])");
 shouldBeTrue("testCollator(Intl.Collator(['en', 'de']), [{locale: 'en'}])");
@@ -234,7 +233,7 @@ shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.Collator.prototype, Symbol.to
 // 10.3.3 Intl.Collator.prototype.compare
 
 // This named accessor property returns a function that compares two strings according to the sort order of this Collator object.
-var defaultCollator = Intl.Collator();
+var defaultCollator = Intl.Collator("en");
 shouldBeType("defaultCollator.compare", "Function");
 
 // The value of the [[Get]] attribute is a function

@@ -15,7 +15,7 @@ shouldBeType("new Intl.DateTimeFormat()", "Intl.DateTimeFormat");
 var classPrefix = "class DerivedDateTimeFormat extends Intl.DateTimeFormat {};";
 shouldBeTrue(classPrefix + "(new DerivedDateTimeFormat) instanceof DerivedDateTimeFormat");
 shouldBeTrue(classPrefix + "(new DerivedDateTimeFormat) instanceof Intl.DateTimeFormat");
-shouldBeTrue(classPrefix + "new DerivedDateTimeFormat().format(0).length > 0");
+shouldBeTrue(classPrefix + "new DerivedDateTimeFormat('en').format(0).length > 0");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedDateTimeFormat) === DerivedDateTimeFormat.prototype");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedDateTimeFormat)) === Intl.DateTimeFormat.prototype");
 
@@ -120,7 +120,7 @@ shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Sym
 // 12.4.3 Intl.DateTimeFormat.prototype.format
 
 // This named accessor property returns a function that formats a date according to the effective locale and the formatting options of this DateTimeFormat object.
-var defaultDTFormat = Intl.DateTimeFormat();
+var defaultDTFormat = Intl.DateTimeFormat("en");
 shouldBeType("defaultDTFormat.format", "Function");
 
 // The value of the [[Get]] attribute is a function
@@ -185,9 +185,6 @@ shouldThrow("Intl.DateTimeFormat.prototype.resolvedOptions.call(5)", "'TypeError
 
 shouldThrow("Intl.DateTimeFormat('$')", "'RangeError: invalid language tag: $'");
 shouldThrow("Intl.DateTimeFormat('en', null)", '"TypeError: null is not an object (evaluating \'Intl.DateTimeFormat(\'en\', null)\')"');
-
-// Defaults to en-US locale in test runner
-shouldBe("Intl.DateTimeFormat().resolvedOptions().locale", "'en-US'");
 
 // Defaults to month, day, year.
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().weekday", "undefined");

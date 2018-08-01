@@ -15,7 +15,7 @@ shouldBeType("new Intl.NumberFormat()", "Intl.NumberFormat");
 var classPrefix = "class DerivedNumberFormat extends Intl.NumberFormat {};";
 shouldBeTrue(classPrefix + "(new DerivedNumberFormat) instanceof DerivedNumberFormat");
 shouldBeTrue(classPrefix + "(new DerivedNumberFormat) instanceof Intl.NumberFormat");
-shouldBeTrue(classPrefix + "new DerivedNumberFormat().format(1) === '1'");
+shouldBeTrue(classPrefix + "new DerivedNumberFormat('en').format(1) === '1'");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedNumberFormat) === DerivedNumberFormat.prototype");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) === Intl.NumberFormat.prototype");
 
@@ -42,7 +42,6 @@ function testNumberFormat(numberFormat, possibleDifferences) {
 }
 
 // Locale is processed correctly.
-shouldBeTrue("testNumberFormat(Intl.NumberFormat(), [{locale: 'en-US'}])");
 shouldBeTrue("testNumberFormat(Intl.NumberFormat('en'), [{locale: 'en'}])");
 shouldBeTrue("testNumberFormat(Intl.NumberFormat('eN-uS'), [{locale: 'en-US'}])");
 shouldBeTrue("testNumberFormat(Intl.NumberFormat(['en', 'de']), [{locale: 'en'}])");
@@ -269,7 +268,7 @@ shouldBeTrue("Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbo
 // 11.4.3 Intl.NumberFormat.prototype.format
 
 // This named accessor property returns a function that formats a number according to the effective locale and the formatting options of this NumberFormat object.
-var defaultNFormat = Intl.NumberFormat();
+var defaultNFormat = Intl.NumberFormat("en");
 shouldBeType("defaultNFormat.format", "Function");
 
 // The value of the [[Get]] attribute is a function

@@ -16,10 +16,9 @@ PASS Intl.Collator('en', 42) is an instance of Intl.Collator
 PASS Intl.Collator('en', null) threw exception TypeError: null is not an object (evaluating 'Intl.Collator('en', null)').
 PASS class DerivedCollator extends Intl.Collator {};(new DerivedCollator) instanceof DerivedCollator is true
 PASS class DerivedCollator extends Intl.Collator {};(new DerivedCollator) instanceof Intl.Collator is true
-PASS class DerivedCollator extends Intl.Collator {};new DerivedCollator().compare('a', 'b') === -1 is true
+PASS class DerivedCollator extends Intl.Collator {};new DerivedCollator('en').compare('a', 'b') === -1 is true
 PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(new DerivedCollator) === DerivedCollator.prototype is true
 PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) === Intl.Collator.prototype is true
-PASS testCollator(Intl.Collator(), [{locale: 'en-US'}]) is true
 PASS testCollator(Intl.Collator('en'), [{locale: 'en'}]) is true
 PASS testCollator(Intl.Collator('eN-uS'), [{locale: 'en-US'}]) is true
 PASS testCollator(Intl.Collator(['en', 'de']), [{locale: 'en'}]) is true

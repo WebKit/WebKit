@@ -1,3 +1,25 @@
+2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
+
+        number-toLocaleString.js test fails on ARM Linux buildbots
+        https://bugs.webkit.org/show_bug.cgi?id=154533
+
+        Reviewed by Yusuke Suzuki.
+
+        Removed assumed default locale in Intl tests. The default is tested to
+        verify that it is a string, and a canonicalized language tag. All other
+        test cases explicitly use a locale when they expect a localized value.
+
+        * js/intl-collator-expected.txt:
+        * js/intl-datetimeformat-expected.txt:
+        * js/intl-default-locale-expected.txt:
+        * js/intl-default-locale.html:
+        * js/intl-numberformat-expected.txt:
+        * js/intl-pluralrules-expected.txt:
+        * js/script-tests/intl-collator.js:
+        * js/script-tests/intl-datetimeformat.js:
+        * js/script-tests/intl-numberformat.js:
+        * js/script-tests/intl-pluralrules.js:
+
 2018-08-01  Timothy Hatcher  <timothy@apple.com>
 
         Hardcode some system colors to avoid fingerprinting exposure.

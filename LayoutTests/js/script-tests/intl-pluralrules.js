@@ -25,7 +25,7 @@ shouldBeType("new Intl.PluralRules()", "Intl.PluralRules");
 var classPrefix = "class DerivedPluralRules extends Intl.PluralRules {};";
 shouldBeTrue(classPrefix + "(new DerivedPluralRules) instanceof DerivedPluralRules");
 shouldBeTrue(classPrefix + "(new DerivedPluralRules) instanceof Intl.PluralRules");
-shouldBeTrue(classPrefix + "new DerivedPluralRules().select(1) === 'one'");
+shouldBeTrue(classPrefix + "new DerivedPluralRules('en').select(1) === 'one'");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedPluralRules) === DerivedPluralRules.prototype");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedPluralRules)) === Intl.PluralRules.prototype");
 
@@ -139,7 +139,7 @@ shouldBeTrue("new Intl.PluralRules().select === new Intl.PluralRules().select");
 // assume a length of 1 since it expects a value.
 shouldBe("Intl.PluralRules.prototype.select.length", "1");
 
-var defaultPluralRules = new Intl.PluralRules();
+var defaultPluralRules = new Intl.PluralRules("en");
 
 // Let pr be the this value.
 // If Type(pr) is not Object, throw a TypeError exception.
@@ -196,9 +196,6 @@ shouldBeType("defaultPluralRules.resolvedOptions()", "Object");
 shouldBeFalse("defaultPluralRules.resolvedOptions() === defaultPluralRules.resolvedOptions()");
 // For each row of Table 8, except the header row, ...
 // Return options.
-
-// Defaults to en-US locale in test runner
-shouldBe("defaultPluralRules.resolvedOptions().locale", "'en-US'");
 
 // Defaults to cardinal.
 shouldBe("defaultPluralRules.resolvedOptions().type", "'cardinal'");
