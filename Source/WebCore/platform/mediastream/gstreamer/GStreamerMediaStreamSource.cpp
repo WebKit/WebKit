@@ -149,7 +149,9 @@ struct _WebKitMediaStreamSrc {
     gchar* uri;
 
     GstElement* audioSrc;
+    GstClockTime firstAudioBufferPts;
     GstElement* videoSrc;
+    GstClockTime firstFramePts;
 
     std::unique_ptr<WebKitMediaStreamTrackObserver> observer;
     String videoTrackID;
@@ -320,6 +322,8 @@ static void webkit_media_stream_src_init(WebKitMediaStreamSrc* self)
 {
     self->observer = std::make_unique<WebKitMediaStreamTrackObserver>(self);
     self->flowCombiner = gst_flow_combiner_new();
+    self->firstAudioBufferPts = GST_CLOCK_TIME_NONE;
+    self->firstFramePts = GST_CLOCK_TIME_NONE;
 }
 
 typedef struct {
@@ -485,14 +489,31 @@ gboolean webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPr
 
 static void webkitMediaStreamSrcPushVideoSample(WebKitMediaStreamSrc* self, GstSample* gstsample)
 {
-    if (self->videoSrc)
+    if (self->videoSrc) {
+        if (!GST_CLOCK_TIME_IS_VALID(self->firstFramePts)) {
+            auto buffer = gst_sample_get_buffer(gstsample);
+
+            self->firstFramePts = GST_BUFFER_PTS(buffer);
+            auto pad = adoptGRef(gst_element_get_static_pad(self->videoSrc, "src"));
+            gst_pad_set_offset(pad.get(), -self->firstFramePts);
+        }
+
         gst_app_src_push_sample(GST_APP_SRC(self->videoSrc), gstsample);
+    }
 }
 
 static void webkitMediaStreamSrcPushAudioSample(WebKitMediaStreamSrc* self, GstSample* gstsample)
 {
-    if (self->audioSrc)
+    if (self->audioSrc) {
+        if (!GST_CLOCK_TIME_IS_VALID(self->firstAudioBufferPts)) {
+            auto buffer = gst_sample_get_buffer(gstsample);
+
+            self->firstAudioBufferPts = GST_BUFFER_PTS(buffer);
+            auto pad = adoptGRef(gst_element_get_static_pad(self->audioSrc, "src"));
+            gst_pad_set_offset(pad.get(), -self->firstAudioBufferPts);
+        }
         gst_app_src_push_sample(GST_APP_SRC(self->audioSrc), gstsample);
+    }
 }
 
 static void webkitMediaStreamSrcTrackEnded(WebKitMediaStreamSrc* self,

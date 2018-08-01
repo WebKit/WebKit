@@ -1,3 +1,20 @@
+2018-08-01  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Make sure that first buffer running time is 0 in GStreamerMediaStreamSource
+        https://bugs.webkit.org/show_bug.cgi?id=188210
+
+        This is a live source and the first frame is the beginning of the stream,
+        but that doesn't mean that the incoming stream from the camera didn't start
+        before. We need to set a pad offset on each srcpad of the source to compensate
+        for that. This is the exact same logic as in webrtc GStreamerVideo/Enc/Dec/oder.
+
+        Reviewed by Alejandro G. Castro.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::webkit_media_stream_src_init):
+        (WebCore::webkitMediaStreamSrcPushVideoSample):
+        (WebCore::webkitMediaStreamSrcPushAudioSample):
+
 2018-08-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Move CoordinatedBackingStore to WebCore
