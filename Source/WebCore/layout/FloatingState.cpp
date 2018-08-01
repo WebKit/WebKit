@@ -37,13 +37,32 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
-FloatingState::FloatingState(LayoutContext& layoutContext)
+FloatingState::FloatingState(LayoutContext& layoutContext, const Box& formattingContextRoot)
     : m_layoutContext(layoutContext)
+    , m_formattingContextRoot(makeWeakPtr(const_cast<Box&>(formattingContextRoot)))
 {
 }
 
+#ifndef NDEBUG
+static bool belongsToThisFloatingContext(const Box& layoutBox, const Box& floatingStateRoot)
+{
+    auto& formattingContextRoot = layoutBox.formattingContextRoot();
+    if (&formattingContextRoot == &floatingStateRoot)
+        return true;
+
+    // Maybe the layout box belongs to an inline formatting context that inherits the floating state from the parent (block) formatting context. 
+    if (!formattingContextRoot.establishesInlineFormattingContext())
+        return false;
+
+    return &formattingContextRoot.formattingContextRoot() == &floatingStateRoot;
+}
+#endif
+
 void FloatingState::append(const Box& layoutBox)
 {
+    ASSERT(is<Container>(*m_formattingContextRoot));
+    ASSERT(belongsToThisFloatingContext(layoutBox, *m_formattingContextRoot));
+
     // Floating state should hold boxes with computed position/size.
     ASSERT(m_layoutContext.displayBoxForLayoutBox(layoutBox));
     m_last = makeWeakPtr(const_cast<Box&>(layoutBox));

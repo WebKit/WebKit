@@ -127,7 +127,7 @@ FormattingState& LayoutContext::establishedFormattingState(const Box& formatting
             // should not interfere with the content inside.
             // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
             if (formattingRoot.establishesBlockFormattingContext())
-                return std::make_unique<InlineFormattingState>(FloatingState::create(*this), *this);
+                return std::make_unique<InlineFormattingState>(FloatingState::create(*this, formattingRoot), *this);
 
             // Otherwise, the formatting context inherits the floats from the parent formatting context.
             // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
@@ -139,7 +139,7 @@ FormattingState& LayoutContext::establishedFormattingState(const Box& formatting
         return *m_formattingStates.ensure(&formattingRoot, [&] {
 
             // Block formatting context always establishes a new floating state.
-            return std::make_unique<BlockFormattingState>(FloatingState::create(*this), *this);
+            return std::make_unique<BlockFormattingState>(FloatingState::create(*this, formattingRoot), *this);
         }).iterator->value;
     }
     CRASH();

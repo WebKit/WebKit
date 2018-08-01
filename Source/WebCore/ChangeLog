@@ -1,5 +1,23 @@
 2018-08-01  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floating] FloatingState should take the formatting root box.
+        https://bugs.webkit.org/show_bug.cgi?id=188214
+
+        Reviewed by Antti Koivisto.
+
+        This will be taken into use when FormattingContext takes all boxes in the coordinate system of the formatting root.
+
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatingState):
+        (WebCore::Layout::belongsToThisFloatingContext):
+        (WebCore::Layout::FloatingState::append):
+        * layout/FloatingState.h:
+        (WebCore::Layout::FloatingState::create):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::establishedFormattingState):
+
+2018-08-01  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floating] Align new floating with the bottom of the existing floatings.
         https://bugs.webkit.org/show_bug.cgi?id=188213
 

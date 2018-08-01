@@ -43,7 +43,7 @@ class LayoutContext;
 class FloatingState : public RefCounted<FloatingState> {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
-    static Ref<FloatingState> create(LayoutContext& layoutContext) { return adoptRef(*new FloatingState(layoutContext)); }
+    static Ref<FloatingState> create(LayoutContext& layoutContext, const Box& formattingContextRoot) { return adoptRef(*new FloatingState(layoutContext, formattingContextRoot)); }
 
     void append(const Box& layoutBox);
 
@@ -59,11 +59,12 @@ public:
 
 private:
     friend class FloatingContext;
-    FloatingState(LayoutContext&);
+    FloatingState(LayoutContext&, const Box& formattingContextRoot);
 
     LayoutContext& layoutContext() const { return m_layoutContext; }
 
     LayoutContext& m_layoutContext;
+    WeakPtr<Box> m_formattingContextRoot;
 
     FloatingList m_leftFloatings;
     FloatingList m_rightFloatings;
