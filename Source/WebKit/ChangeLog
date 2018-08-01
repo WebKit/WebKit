@@ -1,3 +1,31 @@
+2018-08-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] WKColorPicker's selection indicator doesn't always cover the selected swatch
+        https://bugs.webkit.org/show_bug.cgi?id=188124
+
+        Reviewed by Wenson Hsieh.
+
+        - On iPhone, the size of an individual color swatch can change on rotation. In
+        this case, we should resize the selection indicator along with the swatch. Added
+        a new delegate method to WKColorMatrixViewDelegate to notify the color picker if
+        the matrix was redrawn. We then resize the selection indicator to match the
+        selected swatch's size.
+
+        - On iPad, the selection indicator should have rounded corners if it's at the
+        corner of the color picker. Otherwise, part of the indicator will be hidden by
+        the popover. The selected swatch's position is checked before drawing the
+        indicator. If it's at one of the four corners of the picker, the appropriate mask
+        is applied to the color selection indicator's border.
+
+        * UIProcess/ios/forms/WKFormColorPicker.h:
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorMatrixView layoutSubviews]):
+        (-[WKColorPicker initWithView:]):
+        (-[WKColorPicker drawSelectionIndicatorForColorButton:]):
+        (-[WKColorPicker colorMatrixViewDidLayoutSubviews:]):
+        (-[WKColorPicker colorMatrixView:didTapColorButton:]):
+        (-[WKColorPicker didPanColors:]):
+
 2018-08-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Move CoordinatedBackingStore to WebCore

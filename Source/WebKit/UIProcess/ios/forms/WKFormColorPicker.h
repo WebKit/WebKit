@@ -34,6 +34,7 @@ OBJC_CLASS WKContentView;
 
 @protocol WKColorMatrixViewDelegate
 - (void)colorMatrixView:(WKColorMatrixView *)matrixView didTapColorButton:(WKColorButton *)colorButton;
+- (void)colorMatrixViewDidLayoutSubviews:(WKColorMatrixView *)matrixView;
 @end
 
 @interface WKColorPicker : NSObject<WKFormControl, WKColorMatrixViewDelegate>

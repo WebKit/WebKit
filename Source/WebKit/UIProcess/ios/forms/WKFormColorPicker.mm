@@ -41,7 +41,8 @@ SOFT_LINK_PRIVATE_FRAMEWORK(PencilKit)
 SOFT_LINK_CLASS(PencilKit, PKColorMatrixView)
 
 static const CGFloat additionalKeyboardAffordance = 80;
-static const CGFloat colorSelectionIndicatorBorderWidth = 2;
+static const CGFloat colorSelectionIndicatorBorderWidth = 4;
+static const CGFloat colorSelectionIndicatorCornerRadius = 13;
 static const CGFloat pickerWidthForPopover = 280;
 static const CGFloat topColorMatrixPadding = 8;
 
@@ -132,6 +133,8 @@ using namespace WebKit;
             button.frame = CGRectMake(col * buttonWidth, row * buttonHeight, buttonWidth, buttonHeight);
         }
     }
+
+    [self.delegate colorMatrixViewDidLayoutSubviews:self];
 }
 
 - (void)colorButtonTapped:(WKColorButton *)colorButton
@@ -148,8 +151,11 @@ using namespace WebKit;
     RetainPtr<UIView> _colorPicker;
 
     RetainPtr<UIView> _colorSelectionIndicator;
+    RetainPtr<CAShapeLayer> _colorSelectionIndicatorBorder;
+
     RetainPtr<WKColorMatrixView> _topColorMatrix;
     RetainPtr<WKColorMatrixView> _mainColorMatrix;
+    WeakObjCPtr<WKColorButton> _selectedColorButton;
 
     RetainPtr<UIPanGestureRecognizer> _colorPanGR;
 }
@@ -190,14 +196,51 @@ using namespace WebKit;
     [_colorPicker addSubview:_topColorMatrix.get()];
 
     _colorSelectionIndicator = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
-    [[_colorSelectionIndicator layer] setBorderColor:[[UIColor whiteColor] CGColor]];
-    [[_colorSelectionIndicator layer] setBorderWidth:colorSelectionIndicatorBorderWidth];
+    [_colorSelectionIndicator setClipsToBounds:YES];
     [_colorPicker addSubview:_colorSelectionIndicator.get()];
+
+    _colorSelectionIndicatorBorder = adoptNS([[CAShapeLayer alloc] init]);
+    [_colorSelectionIndicatorBorder setLineWidth:colorSelectionIndicatorBorderWidth];
+    [_colorSelectionIndicatorBorder setStrokeColor:[UIColor whiteColor].CGColor];
+    [_colorSelectionIndicatorBorder setFillColor:[UIColor clearColor].CGColor];
+    [[_colorSelectionIndicator layer] addSublayer:_colorSelectionIndicatorBorder.get()];
 
     _colorPanGR = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanColors:)]);
     [_colorPicker addGestureRecognizer:_colorPanGR.get()];
 
     return self;
+}
+
+- (void)drawSelectionIndicatorForColorButton:(WKColorButton *)colorButton
+{
+    _selectedColorButton = colorButton;
+
+    CGRect frame = [_colorPicker convertRect:colorButton.bounds fromView:colorButton];
+    [_colorSelectionIndicator setFrame:frame];
+
+    UIRectCorner roundCorner = 0;
+    if (currentUserInterfaceIdiomIsPad()) {
+        CGRect colorPickerBounds = [_colorPicker bounds];
+
+        bool minXEqual = std::abs(CGRectGetMinX(frame) - CGRectGetMinX(colorPickerBounds)) < FLT_EPSILON;
+        bool minYEqual = std::abs(CGRectGetMinY(frame) - CGRectGetMinY(colorPickerBounds)) < FLT_EPSILON;
+        bool maxXEqual = std::abs(CGRectGetMaxX(frame) - CGRectGetMaxX(colorPickerBounds)) < FLT_EPSILON;
+        bool maxYEqual = std::abs(CGRectGetMaxY(frame) - CGRectGetMaxY(colorPickerBounds)) < FLT_EPSILON;
+
+        // On iPad, round one corner of the indicator if it's at the corner of the picker, to match the popover.
+        if (minXEqual && minYEqual)
+            roundCorner = UIRectCornerTopLeft;
+        else if (maxXEqual && minYEqual)
+            roundCorner = UIRectCornerTopRight;
+        else if (minXEqual && maxYEqual)
+            roundCorner = UIRectCornerBottomLeft;
+        else if (maxXEqual && maxYEqual)
+            roundCorner = UIRectCornerBottomRight;
+    }
+
+    UIBezierPath *cornerMaskPath = [UIBezierPath bezierPathWithRoundedRect:colorButton.bounds byRoundingCorners:roundCorner cornerRadii:CGSizeMake(colorSelectionIndicatorCornerRadius, colorSelectionIndicatorCornerRadius)];
+    [_colorSelectionIndicatorBorder setFrame:colorButton.bounds];
+    [_colorSelectionIndicatorBorder setPath:cornerMaskPath.CGPath];
 }
 
 - (void)setControlValueFromUIColor:(UIColor *)uiColor
@@ -223,9 +266,18 @@ using namespace WebKit;
 
 #pragma mark WKColorMatrixViewDelegate
 
+- (void)colorMatrixViewDidLayoutSubviews:(WKColorMatrixView *)matrixView
+{
+    if ([_selectedColorButton superview] == matrixView)
+        [self drawSelectionIndicatorForColorButton:_selectedColorButton.get().get()];
+}
+
 - (void)colorMatrixView:(WKColorMatrixView *)matrixView didTapColorButton:(WKColorButton *)colorButton
 {
-    [_colorSelectionIndicator setFrame:[_colorPicker convertRect:colorButton.bounds fromView:colorButton]];
+    if (_selectedColorButton.get().get() == colorButton)
+        return;
+
+    [self drawSelectionIndicatorForColorButton:colorButton];
     [self setControlValueFromUIColor:colorButton.color];
 }
 
@@ -236,8 +288,12 @@ using namespace WebKit;
     CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
     UIView *view = [gestureRecognizer.view hitTest:location withEvent:nil];
     if ([view isKindOfClass:[WKColorButton class]]) {
-        [_colorSelectionIndicator setFrame:[_colorPicker convertRect:[view bounds] fromView:view]];
-        [self setControlValueFromUIColor:[(WKColorButton *)view color]];
+        WKColorButton *colorButton = (WKColorButton *)view;
+        if (_selectedColorButton.get().get() == colorButton)
+            return;
+
+        [self drawSelectionIndicatorForColorButton:colorButton];
+        [self setControlValueFromUIColor:colorButton.color];
     }
 }
 
