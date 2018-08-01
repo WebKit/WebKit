@@ -1,3 +1,15 @@
+2018-08-01  Keith Miller  <keith_miller@apple.com>
+
+        JSArrayBuffer should have its own JSType
+        https://bugs.webkit.org/show_bug.cgi?id=188231
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::createStructure):
+        * runtime/JSCast.h:
+        * runtime/JSType.h:
+
 2018-07-31  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed 32-bit build fix...

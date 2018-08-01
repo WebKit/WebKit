@@ -53,6 +53,7 @@ inline To jsCast(JSValue from)
     macro(JSFunction, JSType::JSFunctionType, JSType::JSFunctionType) \
     macro(InternalFunction, JSType::InternalFunctionType, JSType::InternalFunctionType) \
     macro(JSArray, JSType::ArrayType, JSType::DerivedArrayType) \
+    macro(JSArrayBuffer, JSType::ArrayBufferType, JSType::ArrayBufferType) \
     macro(JSArrayBufferView, FirstTypedArrayType, LastTypedArrayType) \
     macro(JSSet, JSType::JSSetType, JSType::JSSetType) \
     macro(JSMap, JSType::JSMapType, JSType::JSMapType) \
