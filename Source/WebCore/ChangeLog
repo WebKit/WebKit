@@ -1,3 +1,32 @@
+2018-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <rdar://problem/40844658> Crash in WebCore::EventTarget::dispatchEvent
+
+        Reviewed by Chris Dumez.
+
+        Like https://trac.webkit.org/r233496.
+
+        The null pointer crash was caused by some GenericEventQueue dispatching an event in a stopped document,
+        which does not have a valid script execution context because some uses of GenericEventQueue in media code
+        was not closing the queue upon stopping of all active DOM objects.
+
+        Fixed close GenericEventQueue when the script execution context is destoryed in WebKitMediaKeySession,
+        SourceBuffer, SourceBufferList, and TrackListBase.
+
+        No new tests since r233496 relied on a debug assertion for testing but we can't add the same assertion here
+        since we'll continue to enqueue events after the document had stopped but not yet destroyed.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::stop):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::stop):
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::contextDestroyed):
+        * Modules/mediasource/SourceBufferList.h:
+        * html/track/TrackListBase.cpp:
+        (TrackListBase::contextDestroyed):
+        * html/track/TrackListBase.h:
+
 2018-07-30  Babak Shafiei  <bshafiei@apple.com>
 
         Revert r233926. rdar://problem/42354941

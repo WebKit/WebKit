@@ -72,6 +72,7 @@ protected:
     Vector<RefPtr<TrackBase>> m_inbandTracks;
 
 private:
+    void contextDestroyed() final;
     void scheduleTrackEvent(const AtomicString& eventName, Ref<TrackBase>&&);
 
     // EventTarget

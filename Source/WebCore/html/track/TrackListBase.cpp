@@ -49,6 +49,12 @@ TrackListBase::~TrackListBase()
     clearElement();
 }
 
+void TrackListBase::contextDestroyed()
+{
+    ContextDestructionObserver::contextDestroyed();
+    m_asyncEventQueue.close();
+}
+
 void TrackListBase::clearElement()
 {
     m_element = nullptr;

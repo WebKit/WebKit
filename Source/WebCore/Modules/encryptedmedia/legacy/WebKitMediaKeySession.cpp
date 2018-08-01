@@ -241,6 +241,7 @@ bool WebKitMediaKeySession::hasPendingActivity() const
 
 void WebKitMediaKeySession::stop()
 {
+    m_asyncEventQueue.close();
     close();
 }
 

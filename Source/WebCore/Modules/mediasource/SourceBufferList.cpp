@@ -50,6 +50,12 @@ SourceBufferList::~SourceBufferList()
     ASSERT(m_list.isEmpty());
 }
 
+void SourceBufferList::contextDestroyed()
+{
+    ContextDestructionObserver::contextDestroyed();
+    m_asyncEventQueue.close();
+}
+
 void SourceBufferList::add(Ref<SourceBuffer>&& buffer)
 {
     m_list.append(WTFMove(buffer));
