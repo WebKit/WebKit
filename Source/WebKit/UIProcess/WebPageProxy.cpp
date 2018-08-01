@@ -3781,6 +3781,8 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID
         m_pageClient.didFinishLoadForMainFrame();
 
         resetRecentCrashCountSoon();
+        
+        notifyProcessPoolToPrewarm();
     }
 
     m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = false;
@@ -3920,10 +3922,8 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, cons
 
     m_loaderClient->didFirstVisuallyNonEmptyLayoutForFrame(*this, *frame, m_process->transformHandlesToObjects(userData.object()).get());
 
-    if (frame->isMainFrame()) {
+    if (frame->isMainFrame())
         m_pageClient.didFirstVisuallyNonEmptyLayoutForMainFrame();
-        notifyProcessPoolToPrewarm();
-    }
 }
 
 void WebPageProxy::didLayoutForCustomContentProvider()

@@ -1,3 +1,17 @@
+2018-07-31  Ben Richards  <benton_richards@apple.com>
+
+        Add configuration for automatic process pre-warming
+        https://bugs.webkit.org/show_bug.cgi?id=187108
+
+        Reviewed by Ryosuke Niwa.
+
+        Added new test case for setting maximum prewarmed process count and updated test case for process swap on navigation to set the maximum prewarmed process count to be 1 where relevant.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SetMaximumPrewarmedProcessCount.mm: Added.
+        (TEST):
+
 2018-07-31  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove partitioned cookies for reduced complexity, lower memory footprint, and ability to support more platforms
