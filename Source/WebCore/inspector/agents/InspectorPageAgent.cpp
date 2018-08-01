@@ -802,12 +802,10 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
 
     m_emulatedMedia = media;
 
-    RenderTheme::singleton().platformColorsDidChange();
+    m_page.updateStyleAfterChangeInEnvironment();
 
-    if (auto document = m_page.mainFrame().document()) {
-        document->styleScope().didChangeStyleSheetEnvironment();
+    if (auto* document = m_page.mainFrame().document())
         document->updateLayout();
-    }
 }
 
 void InspectorPageAgent::applyEmulatedMedia(String& media)

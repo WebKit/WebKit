@@ -1,3 +1,36 @@
+2018-07-31  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234432. rdar://problem/42802123
+
+    Don't call RenderTheme::platformColorsDidChange() during printing.
+    https://bugs.webkit.org/show_bug.cgi?id=188181
+    rdar://problem/42360070
+    
+    Reviewed by Tim Horton.
+    
+    * inspector/agents/InspectorPageAgent.cpp:
+    (WebCore::InspectorPageAgent::setEmulatedMedia): Call m_page.updateStyleAfterChangeInEnvironment()
+    instead of going to styleStope() and remove call to RenderTheme::platformColorsDidChange().
+    * page/FrameView.cpp:
+    (WebCore::FrameView::adjustMediaTypeForPrinting): Remove call RenderTheme::platformColorsDidChange().
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234432 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-31  Timothy Hatcher  <timothy@apple.com>
+
+            Don't call RenderTheme::platformColorsDidChange() during printing.
+            https://bugs.webkit.org/show_bug.cgi?id=188181
+            rdar://problem/42360070
+
+            Reviewed by Tim Horton.
+
+            * inspector/agents/InspectorPageAgent.cpp:
+            (WebCore::InspectorPageAgent::setEmulatedMedia): Call m_page.updateStyleAfterChangeInEnvironment()
+            instead of going to styleStope() and remove call to RenderTheme::platformColorsDidChange().
+            * page/FrameView.cpp:
+            (WebCore::FrameView::adjustMediaTypeForPrinting): Remove call RenderTheme::platformColorsDidChange().
+
 2018-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         <rdar://problem/40844658> Crash in WebCore::EventTarget::dispatchEvent
