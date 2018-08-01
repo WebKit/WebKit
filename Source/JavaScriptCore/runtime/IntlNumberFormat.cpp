@@ -468,7 +468,7 @@ ASCIILiteral IntlNumberFormat::partTypeString(UNumberFormatFields field, double 
     case UNUM_SIGN_FIELD:
         return value < 0 ? "minusSign"_s : "plusSign"_s;
     // These should not show up because there is no way to specify them in NumberFormat options.
-    // If they do, they don't fit well into any of known part types, so consider it a "literal".
+    // If they do, they don't fit well into any of known part types, so consider it an "unknown".
     case UNUM_PERMILL_FIELD:
     case UNUM_EXPONENT_SYMBOL_FIELD:
     case UNUM_EXPONENT_SIGN_FIELD:
@@ -476,10 +476,10 @@ ASCIILiteral IntlNumberFormat::partTypeString(UNumberFormatFields field, double 
 #if !defined(U_HIDE_DEPRECATED_API)
     case UNUM_FIELD_COUNT:
 #endif
-        return "literal"_s;
+        return "unknown"_s;
     }
-    // Any newer additions to the UNumberFormatFields enum should just be considered a "literal" part.
-    return "literal"_s;
+    // Any newer additions to the UNumberFormatFields enum should just be considered an "unknown" part.
+    return "unknown"_s;
 }
 
 JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)

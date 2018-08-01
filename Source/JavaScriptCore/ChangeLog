@@ -1,5 +1,26 @@
 2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
 
+        [INTL] Allow "unknown" formatToParts types
+        https://bugs.webkit.org/show_bug.cgi?id=188176
+
+        Reviewed by Darin Adler.
+
+        Originally extra unexpected field types were marked as "literal", since
+        the spec did not account for these. The ECMA 402 spec has since been updated
+        to specify "unknown" should be used in these cases.
+
+        Currently there is no known way to reach these cases, so no tests can
+        account for them. Theoretically they shoudn't exist, but they are specified,
+        just to be safe. Marking them as "unknown" instead of "literal" hopefully
+        will make such cases easy to identify if they ever happen.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::partTypeString):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::partTypeString):
+
+2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
+
         [INTL] Implement hourCycle in DateTimeFormat
         https://bugs.webkit.org/show_bug.cgi?id=188006
 

@@ -962,7 +962,7 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
     case UDAT_TIMEZONE_ISO_LOCAL_FIELD:
         return "timeZoneName"_s;
     // These should not show up because there is no way to specify them in DateTimeFormat options.
-    // If they do, they don't fit well into any of known part types, so consider it a "literal".
+    // If they do, they don't fit well into any of known part types, so consider it an "unknown".
     case UDAT_DAY_OF_YEAR_FIELD:
     case UDAT_DAY_OF_WEEK_IN_MONTH_FIELD:
     case UDAT_WEEK_OF_YEAR_FIELD:
@@ -977,10 +977,10 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
 #if U_ICU_VERSION_MAJOR_NUM < 58 || !defined(U_HIDE_DEPRECATED_API)
     case UDAT_FIELD_COUNT:
 #endif
-        return "literal"_s;
+        return "unknown"_s;
     }
-    // Any newer additions to the UDateFormatField enum should just be considered a "literal" part.
-    return "literal"_s;
+    // Any newer additions to the UDateFormatField enum should just be considered an "unknown" part.
+    return "unknown"_s;
 }
 
 
