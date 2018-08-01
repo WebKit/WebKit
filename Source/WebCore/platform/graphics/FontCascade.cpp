@@ -1432,8 +1432,13 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
 {
     // Draw each contiguous run of glyphs that use the same font data.
     const Font* fontData = glyphBuffer.fontAt(0);
+#if PLATFORM(WIN)
+    FloatPoint startPoint(point.x() + glyphBuffer.initialAdvance().width(), point.y() + glyphBuffer.initialAdvance().height());
+#else
     // FIXME: Why do we subtract the initial advance's height but not its width???
+    // We should use the line above from Windows instead.
     FloatPoint startPoint(point.x(), point.y() - glyphBuffer.initialAdvance().height());
+#endif
     float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
     float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
     unsigned lastFrom = 0;
