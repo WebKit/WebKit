@@ -1,3 +1,21 @@
+2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add TransformationMatrix::Identity
+        https://bugs.webkit.org/show_bug.cgi?id=188204
+
+        Reviewed by Simon Fraser.
+
+        This patch adds TransformationMatrix::Identity, which is a static const variable holding an identity matrix.
+
+        No behavior change.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::transform const):
+        (WebCore::GraphicsLayer::childrenTransform const):
+        (): Deleted.
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2018-08-01  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Make sure that first buffer running time is 0 in GStreamerMediaStreamSource

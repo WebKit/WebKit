@@ -70,6 +70,8 @@ typedef double Vector3[3];
 
 const double SMALL_NUMBER = 1.e-8;
 
+const TransformationMatrix TransformationMatrix::Identity { };
+
 // inverse(original_matrix, inverse_matrix)
 //
 // calculate the inverse of a 4x4 matrix

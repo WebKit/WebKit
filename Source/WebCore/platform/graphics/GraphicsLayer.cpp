@@ -292,11 +292,9 @@ void GraphicsLayer::removeFromParent()
     }
 }
 
-static const TransformationMatrix identityTransform { };
-
 const TransformationMatrix& GraphicsLayer::transform() const
 {
-    return m_transform ? *m_transform : identityTransform;
+    return m_transform ? *m_transform : TransformationMatrix::Identity;
 }
 
 void GraphicsLayer::setTransform(const TransformationMatrix& matrix)
@@ -309,7 +307,7 @@ void GraphicsLayer::setTransform(const TransformationMatrix& matrix)
 
 const TransformationMatrix& GraphicsLayer::childrenTransform() const
 {
-    return m_childrenTransform ? *m_childrenTransform : identityTransform;
+    return m_childrenTransform ? *m_childrenTransform : TransformationMatrix::Identity;
 }
 
 void GraphicsLayer::setChildrenTransform(const TransformationMatrix& matrix)

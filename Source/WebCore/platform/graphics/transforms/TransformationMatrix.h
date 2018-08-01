@@ -118,6 +118,8 @@ public:
 
     WEBCORE_EXPORT TransformationMatrix(const AffineTransform&);
 
+    static const TransformationMatrix Identity;
+
     void setMatrix(double a, double b, double c, double d, double e, double f)
     {
         m_matrix[0][0] = a; m_matrix[0][1] = b; m_matrix[0][2] = 0; m_matrix[0][3] = 0; 
