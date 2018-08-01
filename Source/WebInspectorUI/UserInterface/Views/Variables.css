@@ -32,6 +32,8 @@
     --z-index-glass-pane-for-drag: 2048;
     --z-index-uncaught-exception-sheet: 4096;
 
+    --text-color-active: black;
+
     --background-color-content: white;
 
     --selected-foreground-color: white;

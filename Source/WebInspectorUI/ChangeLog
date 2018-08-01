@@ -1,5 +1,35 @@
 2018-08-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: SourceCodeTextEditor thread indicator widget is too light
+        https://bugs.webkit.org/show_bug.cgi?id=188119
+        <rdar://problem/42670811>
+
+        Reviewed by Matt Baker.
+
+        Make the background of the thread indicator widget darker.
+
+        Reduce the number of HTML elements and simplify CSS by removing the HTML element that drew an arrow and using clip-path on inline widgets instead.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.text-editor > .CodeMirror .execution-line):
+        (.text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext),):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor .CodeMirror-linewidget):
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget.inline):
+        (@media (prefers-dark-interface)):
+        (.source-code.text-editor > .CodeMirror .thread-widget.inline):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._updateThreadIndicatorWidget):
+        (WI.SourceCodeTextEditor.prototype._updateIssueWidgetForIssues):
+        * UserInterface/Views/TextEditor.css:
+        (@media (prefers-dark-interface)):
+        (.text-editor > .CodeMirror .execution-line.primary .CodeMirror-linenumber::after):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
+2018-08-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Dark Mode: disabled breakpoints banner is too light
         https://bugs.webkit.org/show_bug.cgi?id=188120
         <rdar://problem/42671348>

@@ -776,9 +776,6 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         widget[WI.SourceCodeTextEditor.WidgetContainsMultipleThreadsSymbol] = threads.length > 1;
 
         if (widgetElement.classList.contains("inline") || threads.length === 1) {
-            let arrowElement = widgetElement.appendChild(document.createElement("span"));
-            arrowElement.className = "arrow";
-
             let textElement = widgetElement.appendChild(document.createElement("span"));
             textElement.className = "text";
             textElement.textContent = threads.length === 1 ? threads[0].displayName : WI.UIString("%d Threads").format(threads.length);
@@ -1083,9 +1080,6 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         widgetElement.removeChildren();
 
         if (widgetElement.classList.contains("inline") || issues.length === 1) {
-            var arrowElement = widgetElement.appendChild(document.createElement("span"));
-            arrowElement.className = "arrow";
-
             var iconElement = widgetElement.appendChild(document.createElement("span"));
             iconElement.className = "icon";
 

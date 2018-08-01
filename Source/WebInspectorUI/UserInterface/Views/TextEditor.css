@@ -129,3 +129,9 @@
     from { background-color: highlight; }
     to { background-color: hsla(0, 0%, 0%, 0.1); }
 }
+
+@media (prefers-dark-interface) {
+    .text-editor > .CodeMirror .execution-line.primary .CodeMirror-linenumber::after {
+        filter: brightness(0.9) saturate(2.8);
+    }
+}

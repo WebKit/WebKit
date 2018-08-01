@@ -233,11 +233,11 @@
 
     /* TextEditor.css */
     .text-editor > .CodeMirror .execution-line {
-        background-color: hsla(99, 100%, 51%, 0.3) !important;
+        background-color: hsla(89, 100%, 51%, 0.25) !important;
     }
     .text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext),
     .text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext) + .CodeMirror-widget {
-        background-color: hsl(99, 96%, 19%);
+        background-color: hsl(99, 85%, 30%);
     }
 
 
@@ -1043,16 +1043,8 @@
         background-color: var(--warning-background-color);
     }
 
-    .source-code.text-editor > .CodeMirror .issue-widget.inline.warning > .arrow {
-        border-right-color: var(--warning-background-color);
-    }
-
     .source-code.text-editor > .CodeMirror .issue-widget.inline.error {
         background-color: var(--error-background-color);
-    }
-
-    .source-code.text-editor > .CodeMirror .issue-widget.inline.error > .arrow {
-        border-right-color: var(--error-background-color);
     }
 
 

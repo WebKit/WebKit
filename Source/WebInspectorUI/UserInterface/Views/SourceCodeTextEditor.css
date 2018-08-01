@@ -24,6 +24,7 @@
  */
 
 .source-code.text-editor .CodeMirror-linewidget {
+    color: var(--text-color-active);
     overflow: initial;
     z-index: 3; /* overlap line content */
 }
@@ -51,32 +52,9 @@
     position: relative;
     top: -13px;
     height: 13px;
-    padding: 0px 5px 0 3px;
+    padding: 0 5px 0 8px;
     border-bottom-left-radius: 0;
-}
-
-.source-code.text-editor > .CodeMirror .line-indicator-widget > .arrow {
-    display: none;
-}
-
-.source-code.text-editor > .CodeMirror .line-indicator-widget.inline > .arrow {
-    position: absolute;
-    left: -5px;
-    display: block;
-
-    top: 0px;
-    width: 0px;
-    height: 0px;
-
-    border-top: 6.5px solid transparent;
-    border-bottom: 6.5px solid transparent; 
-    border-right: 5.5px solid transparent;
-}
-
-@media (-webkit-min-device-pixel-ratio: 2) {
-    .source-code.text-editor > .CodeMirror .line-indicator-widget.inline > .arrow {
-        left: -5.5px;
-    }
+    -webkit-clip-path: polygon(0% 50%, 8px 100%, 100% 100%, 100% 0, 8px 0);
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget > .icon {
@@ -117,10 +95,6 @@
     background-color: hsl(43, 97%, 84%);
 }
 
-.source-code.text-editor > .CodeMirror .issue-widget.inline.warning > .arrow {
-    border-right-color: hsl(43, 97%, 84%);
-}
-
 .source-code.text-editor > .CodeMirror .issue-widget.error {
     background-color: hsl(15, 100%, 90%);
 }
@@ -129,20 +103,12 @@
     background-color: hsl(11, 100%, 80%);
 }
 
-.source-code.text-editor > .CodeMirror .issue-widget.inline.error > .arrow {
-    border-right-color: hsl(11, 100%, 80%);
-}
-
 .source-code.text-editor > .CodeMirror .thread-widget {
     background-color: hsl(90, 30%, 82%);
 }
 
 .source-code.text-editor > .CodeMirror .thread-widget.inline {
     background-color: hsl(90, 30%, 82%);
-}
-
-.source-code.text-editor > .CodeMirror .thread-widget.inline > .arrow {
-    border-right-color: hsl(90, 30%, 82%);
 }
 
 .popover .debugger-popover-content {
@@ -214,5 +180,11 @@
 @media (-webkit-min-device-pixel-ratio: 2) {
     .popover .debugger-popover-content > .body {
         border-width: 0.5px;
+    }
+}
+
+@media (prefers-dark-interface) {
+    .source-code.text-editor > .CodeMirror .thread-widget.inline {
+        background-color: hsl(99, 85%, 34%);
     }
 }
