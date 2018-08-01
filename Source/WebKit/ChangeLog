@@ -1,3 +1,14 @@
+2018-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add configuration for automatic process pre-warming
+        https://bugs.webkit.org/show_bug.cgi?id=187108
+
+        Reviewed by Ryosuke Niwa.
+
+        Added the missing availability macros.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+
 2018-07-31  Ben Richards  <benton_richards@apple.com>
 
         Add configuration for automatic process pre-warming
