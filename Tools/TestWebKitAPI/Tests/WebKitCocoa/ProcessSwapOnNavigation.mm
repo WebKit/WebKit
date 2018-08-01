@@ -282,7 +282,6 @@ TEST(ProcessSwap, Basic)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().maximumPrewarmedProcessCount = 1;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -901,7 +900,6 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setProcessSwapsOnNavigation:YES];
-    [processPoolConfiguration setMaximumPrewarmedProcessCount:1];
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1092,7 +1090,7 @@ TEST(ProcessSwap, DisableForInspector)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
-
+    
     RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] init]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
@@ -1477,7 +1475,7 @@ TEST(ProcessSwap, APIControlledProcessSwapping)
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid3 = [webView _webProcessIdentifier];
-
+    
     EXPECT_EQ(3, numberOfDecidePolicyCalls);
     EXPECT_EQ(2u, seenPIDs.size());
     EXPECT_NE(pid1, pid3);

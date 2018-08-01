@@ -403,19 +403,10 @@ void WebProcessPool::setLegacyCustomProtocolManagerClient(std::unique_ptr<API::C
 void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
 {
     // Guard against API misuse.
-    if (m_processes.size() != m_prewarmedProcessCount)
+    if (!m_processes.isEmpty())
         CRASH();
 
     m_configuration->setMaximumProcessCount(maximumNumberOfProcesses);
-}
-    
-void WebProcessPool::setMaximumNumberOfPrewarmedProcesses(unsigned maximumNumberOfProcesses)
-{
-    // Guard against API misuse.
-    if (m_processes.size())
-        CRASH();
-
-    m_configuration->setMaximumPrewarmedProcessCount(maximumNumberOfProcesses);
 }
 
 IPC::Connection* WebProcessPool::networkingProcessConnection()
@@ -1002,7 +993,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 void WebProcessPool::warmInitialProcess()
 {
-    if (m_prewarmedProcessCount >= maximumNumberOfPrewarmedProcesses()) {
+    if (m_prewarmedProcessCount) {
         ASSERT(!m_processes.isEmpty());
         return;
     }
@@ -1318,11 +1309,12 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
 
 void WebProcessPool::didReachGoodTimeToPrewarm()
 {
+    if (!m_configuration->processSwapsOnNavigation())
+        return;
     if (!m_websiteDataStore)
         m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-    
-    unsigned maxPrewarmed = maximumNumberOfPrewarmedProcesses();
-    while (m_prewarmedProcessCount < maxPrewarmed)
+    static constexpr size_t maxPrewarmCount = 1;
+    while (m_prewarmedProcessCount < maxPrewarmCount)
         createNewWebProcess(m_websiteDataStore->websiteDataStore(), WebProcessProxy::IsInPrewarmedPool::Yes);
 }
 

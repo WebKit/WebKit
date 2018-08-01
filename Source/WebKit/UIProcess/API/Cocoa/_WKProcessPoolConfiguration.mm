@@ -249,16 +249,6 @@
     return _processPoolConfiguration->processSwapsOnNavigation();
 }
 
-- (void)setMaximumPrewarmedProcessCount:(NSInteger)count
-{
-    _processPoolConfiguration->setMaximumPrewarmedProcessCount(count);
-}
-
-- (NSInteger)maximumPrewarmedProcessCount
-{
-    return _processPoolConfiguration->maximumPrewarmedProcessCount();
-}
-
 - (void)setAlwaysKeepAndReuseSwappedProcesses:(BOOL)swaps
 {
     _processPoolConfiguration->setAlwaysKeepAndReuseSwappedProcesses(swaps);

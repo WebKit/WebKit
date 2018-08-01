@@ -68,8 +68,6 @@ WK_EXPORT void WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest(WKContextR
 WK_EXPORT void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef context, WKStringRef urlScheme);
 
 WK_EXPORT void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef context, bool value);
-    
-WK_EXPORT void WKContextSetMaximumNumberOfPrewarmedProcesses(WKContextRef context, unsigned count);
 
 WK_EXPORT void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef context, bool value);
 
