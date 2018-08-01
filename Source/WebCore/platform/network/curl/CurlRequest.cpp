@@ -38,14 +38,13 @@
 
 namespace WebCore {
 
-static void runOnMainThread(Function<void()>&& task);
-
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend, bool enableMultipart)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend, bool enableMultipart, MessageQueue<Function<void()>>* messageQueue)
     : m_request(request.isolatedCopy())
     , m_client(client)
     , m_shouldSuspend(shouldSuspend)
     , m_enableMultipart(enableMultipart)
     , m_formDataStream(m_request.httpBody())
+    , m_messageQueue(messageQueue)
 {
     ASSERT(isMainThread());
 }
@@ -55,6 +54,7 @@ void CurlRequest::invalidateClient()
     ASSERT(isMainThread());
 
     m_client = nullptr;
+    m_messageQueue = nullptr;
 }
 
 void CurlRequest::setUserPass(const String& user, const String& password)
@@ -65,7 +65,7 @@ void CurlRequest::setUserPass(const String& user, const String& password)
     m_password = password.isolatedCopy();
 }
 
-void CurlRequest::start(bool isSyncRequest)
+void CurlRequest::start()
 {
     // The pausing of transfer does not work with protocols, like file://.
     // Therefore, PAUSE can not be done in didReceiveData().
@@ -78,28 +78,12 @@ void CurlRequest::start(bool isSyncRequest)
 
     ASSERT(isMainThread());
 
-    m_isSyncRequest = isSyncRequest;
-
     auto url = m_request.url().isolatedCopy();
 
-    if (!m_isSyncRequest) {
-        // For asynchronous, use CurlRequestScheduler. Curl processes runs on sub thread.
-        if (url.isLocalFile())
-            invokeDidReceiveResponseForFile(url);
-        else
-            startWithJobManager();
-    } else {
-        // For synchronous, does not use CurlRequestScheduler. Curl processes runs on main thread.
-        // curl_easy_perform blocks until the transfer is finished.
-        retain();
-        if (url.isLocalFile())
-            invokeDidReceiveResponseForFile(url);
-
-        setupTransfer();
-        CURLcode resultCode = m_curlHandle->perform();
-        didCompleteTransfer(resultCode);
-        release();
-    }
+    if (url.isLocalFile())
+        invokeDidReceiveResponseForFile(url);
+    else
+        startWithJobManager();
 }
 
 void CurlRequest::startWithJobManager()
@@ -118,19 +102,14 @@ void CurlRequest::cancel()
 
     m_cancelled = true;
 
-    if (!m_isSyncRequest) {
-        auto& scheduler = CurlContext::singleton().scheduler();
+    auto& scheduler = CurlContext::singleton().scheduler();
 
-        if (needToInvokeDidCancelTransfer()) {
-            runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
-                didCancelTransfer();
-            });
-        } else
-            scheduler.cancel(this);
-    } else {
-        if (needToInvokeDidCancelTransfer())
+    if (needToInvokeDidCancelTransfer()) {
+        runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
             didCancelTransfer();
-    }
+        });
+    } else
+        scheduler.cancel(this);
 
     invalidateClient();
 }
@@ -158,9 +137,11 @@ void CurlRequest::callClient(Function<void(CurlRequest&, CurlRequestClient&)>&& 
     });
 }
 
-static void runOnMainThread(Function<void()>&& task)
+void CurlRequest::runOnMainThread(Function<void()>&& task)
 {
-    if (isMainThread())
+    if (m_messageQueue)
+        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(task)));
+    else if (isMainThread())
         task();
     else
         callOnMainThread(WTFMove(task));
@@ -168,7 +149,7 @@ static void runOnMainThread(Function<void()>&& task)
 
 void CurlRequest::runOnWorkerThreadIfRequired(Function<void()>&& task)
 {
-    if (isMainThread() && !m_isSyncRequest)
+    if (isMainThread())
         CurlContext::singleton().scheduler().callOnWorkerThread(WTFMove(task));
     else
         task();
@@ -332,19 +313,13 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
         return 0;
 
     if (needToInvokeDidReceiveResponse()) {
-        if (!m_isSyncRequest) {
-            // For asynchronous, pause until completeDidReceiveResponse() is called.
-            setCallbackPaused(true);
-            invokeDidReceiveResponse(m_response, Action::ReceiveData);
-            // Because libcurl pauses the handle after returning this CURL_WRITEFUNC_PAUSE,
-            // we need to update its state here.
-            updateHandlePauseState(true);
-            return CURL_WRITEFUNC_PAUSE;
-        }
-
-        // For synchronous, completeDidReceiveResponse() is called in invokeDidReceiveResponse().
-        // In this case, pause is unnecessary.
-        invokeDidReceiveResponse(m_response, Action::None);
+        // Pause until completeDidReceiveResponse() is called.
+        setCallbackPaused(true);
+        invokeDidReceiveResponse(m_response, Action::ReceiveData);
+        // Because libcurl pauses the handle after returning this CURL_WRITEFUNC_PAUSE,
+        // we need to update its state here.
+        updateHandlePauseState(true);
+        return CURL_WRITEFUNC_PAUSE;
     }
 
     auto receiveBytes = buffer->size();
@@ -517,15 +492,10 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
     // Determine the MIME type based on the path.
     m_response.headers.append(String("Content-Type: " + MIMETypeRegistry::getMIMETypeForPath(m_response.url.path())));
 
-    if (!m_isSyncRequest) {
-        // DidReceiveResponse must not be called immediately
-        runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
-            invokeDidReceiveResponse(m_response, Action::StartTransfer);
-        });
-    } else {
-        // For synchronous, completeDidReceiveResponse() is called in platformContinueSynchronousDidReceiveResponse().
-        invokeDidReceiveResponse(m_response, Action::None);
-    }
+    // DidReceiveResponse must not be called immediately
+    runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
+        invokeDidReceiveResponse(m_response, Action::StartTransfer);
+    });
 }
 
 void CurlRequest::invokeDidReceiveResponse(const CurlResponse& response, Action behaviorAfterInvoke)
@@ -561,12 +531,9 @@ void CurlRequest::completeDidReceiveResponse()
         // Start transfer for file scheme
         startWithJobManager();
     } else if (m_actionAfterInvoke == Action::FinishTransfer) {
-        if (!m_isSyncRequest) {
-            runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
-                didCompleteTransfer(finishedResultCode);
-            });
-        } else
-            didCompleteTransfer(m_finishedResultCode);
+        runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
+            didCompleteTransfer(finishedResultCode);
+        });
     }
 }
 
@@ -642,13 +609,13 @@ void CurlRequest::pausedStatusChanged()
 
 void CurlRequest::updateHandlePauseState(bool paused)
 {
-    ASSERT(!isMainThread() || m_isSyncRequest);
+    ASSERT(!isMainThread());
     m_isHandlePaused = paused;
 }
 
 bool CurlRequest::isHandlePaused() const
 {
-    ASSERT(!isMainThread() || m_isSyncRequest);
+    ASSERT(!isMainThread());
     return m_isHandlePaused;
 }
 

@@ -35,6 +35,7 @@
 #include "FileSystem.h"
 #include "NetworkLoadMetrics.h"
 #include "ResourceRequest.h"
+#include <wtf/MessageQueue.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -57,9 +58,9 @@ public:
         Yes = true
     };
 
-    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No)
+    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient& client, ShouldSuspend shouldSuspend = ShouldSuspend::No, EnableMultipart enableMultipart = EnableMultipart::No, MessageQueue<Function<void()>>* messageQueue = nullptr)
     {
-        return adoptRef(*new CurlRequest(request, &client, shouldSuspend == ShouldSuspend::Yes, enableMultipart == EnableMultipart::Yes));
+        return adoptRef(*new CurlRequest(request, &client, shouldSuspend == ShouldSuspend::Yes, enableMultipart == EnableMultipart::Yes, messageQueue));
     }
 
     virtual ~CurlRequest() = default;
@@ -67,13 +68,12 @@ public:
     void invalidateClient();
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
 
-    void start(bool isSyncRequest = false);
+    void start();
     void cancel();
     WEBCORE_EXPORT void suspend();
     WEBCORE_EXPORT void resume();
 
     const ResourceRequest& resourceRequest() const { return m_request; }
-    bool isSyncRequest() const { return m_isSyncRequest; }
     bool isCompleted() const { return !m_curlHandle; }
     bool isCancelled() const { return m_cancelled; }
     bool isCompletedOrCancelled() const { return isCompleted() || isCancelled(); }
@@ -99,7 +99,7 @@ private:
         FinishTransfer
     };
 
-    CurlRequest(const ResourceRequest&, CurlRequestClient*, bool shouldSuspend, bool enableMultipart);
+    CurlRequest(const ResourceRequest&, CurlRequestClient*, bool, bool, MessageQueue<Function<void()>>*);
 
     void retain() override { ref(); }
     void release() override { deref(); }
@@ -108,6 +108,7 @@ private:
     void startWithJobManager();
 
     void callClient(Function<void(CurlRequest&, CurlRequestClient&)>&&);
+    void runOnMainThread(Function<void()>&&);
     void runOnWorkerThreadIfRequired(Function<void()>&&);
 
     // Transfer processing of Request body, Response header/body
@@ -153,10 +154,9 @@ private:
 
 
     CurlRequestClient* m_client { };
-    bool m_isSyncRequest { false };
     bool m_cancelled { false };
+    MessageQueue<Function<void()>>* m_messageQueue { };
 
-    // Used by worker thread in case of async, and main thread in case of sync.
     ResourceRequest m_request;
     String m_user;
     String m_password;

@@ -1,3 +1,44 @@
+2018-08-01  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Change synchronous request logic using MessageQueue to match with Mac port.
+        https://bugs.webkit.org/show_bug.cgi?id=188206
+
+        Reviewed by Alex Christensen.
+
+        Port synchronous request logic from ResourceHandleMac to use MessageQueue for
+        client callback invocation. This makes simplify the logic of CurlRequest because
+        now every requests are handled in Curl thread and there's no difference between
+        sync and async requests.
+
+        Test: Covered by these tests:
+        - http\tests\xmlhttprequest\simple-sync.html
+        - http\tests\xmlhttprequest\xmlhttprequest-unsafe-redirect.html
+
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/curl/CurlRequest.cpp: Remove synchronous request logics.
+        (WebCore::CurlRequest::CurlRequest):
+        (WebCore::CurlRequest::invalidateClient):
+        (WebCore::CurlRequest::start):
+        (WebCore::CurlRequest::cancel):
+        (WebCore::CurlRequest::runOnMainThread): Added message queue handling.
+        (WebCore::CurlRequest::runOnWorkerThreadIfRequired):
+        (WebCore::CurlRequest::didReceiveData):
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile):
+        (WebCore::CurlRequest::completeDidReceiveResponse):
+        (WebCore::CurlRequest::updateHandlePauseState):
+        (WebCore::CurlRequest::isHandlePaused const):
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::create):
+        (WebCore::CurlRequest::resourceRequest const):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::createCurlRequest):
+        (WebCore::ResourceHandle::restartRequestWithCredential):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::platformContinueSynchronousDidReceiveResponse):
+        (WebCore::ResourceHandle::continueAfterDidReceiveResponse):
+        (WebCore::ResourceHandle::continueAfterWillSendRequest):
+        (WebCore::ResourceHandle::handleDataURL):
+
 2018-08-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Use margin box consistently while placing a floating.

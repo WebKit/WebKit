@@ -149,7 +149,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest& request, Req
     }
 
     CurlRequest::ShouldSuspend shouldSuspend = d->m_defersLoading ? CurlRequest::ShouldSuspend::Yes : CurlRequest::ShouldSuspend::No;
-    auto curlRequest = CurlRequest::create(request, *delegate(), shouldSuspend, CurlRequest::EnableMultipart::Yes);
+    auto curlRequest = CurlRequest::create(request, *delegate(), shouldSuspend, CurlRequest::EnableMultipart::Yes, d->m_messageQueue);
     
     return curlRequest;
 }
@@ -370,16 +370,15 @@ void ResourceHandle::restartRequestWithCredential(const String& user, const Stri
     if (!d->m_curlRequest)
         return;
     
-    auto wasSyncRequest = d->m_curlRequest->isSyncRequest();
     auto previousRequest = d->m_curlRequest->resourceRequest();
     d->m_curlRequest->cancel();
 
     d->m_curlRequest = createCurlRequest(previousRequest, RequestStatus::ReusedRequest);
     d->m_curlRequest->setUserPass(user, password);
-    d->m_curlRequest->start(wasSyncRequest);
+    d->m_curlRequest->start();
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ASSERT(isMainThread());
 
@@ -389,19 +388,20 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     bool shouldContentSniff = true;
     bool shouldContentEncodingSniff = true;
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
+    handle->d->m_messageQueue = &client.messageQueue();
 
     if (localRequest.url().protocolIsData()) {
         handle->handleDataURL();
         return;
     }
 
-    // If defersLoading is true and we call curl_easy_perform
-    // on a paused handle, libcURL would do the transfer anyway
-    // and we would assert so force defersLoading to be false.
-    handle->d->m_defersLoading = false;
-
     handle->d->m_curlRequest = handle->createCurlRequest(localRequest);
-    handle->d->m_curlRequest->start(true);
+    handle->d->m_curlRequest->start();
+
+    do {
+        if (auto task = client.messageQueue().waitForMessage())
+            (*task)();
+    } while (!client.messageQueue().killed() && !handle->cancelledOrClientless());
 
     error = client.error();
     data.swap(client.mutableData());
@@ -496,12 +496,15 @@ void ResourceHandle::continueAfterWillSendRequest(ResourceRequest&& request)
     ASSERT(isMainThread());
 
     // willSendRequest might cancel the load.
-    if (cancelledOrClientless() || !d->m_curlRequest || request.isNull())
+    if (cancelledOrClientless() || !d->m_curlRequest)
         return;
 
-    auto wasSyncRequest = d->m_curlRequest->isSyncRequest();
-    d->m_curlRequest->cancel();
+    if (request.isNull()) {
+        cancel();
+        return;
+    }
 
+    d->m_curlRequest->cancel();
     d->m_curlRequest = createCurlRequest(request);
 
     if (protocolHostAndPortAreEqual(request.url(), delegate()->response().url())) {
@@ -509,7 +512,7 @@ void ResourceHandle::continueAfterWillSendRequest(ResourceRequest&& request)
             d->m_curlRequest->setUserPass(credential->first, credential->second);
     }
 
-    d->m_curlRequest->start(wasSyncRequest);
+    d->m_curlRequest->start();
 }
 
 void ResourceHandle::handleDataURL()
