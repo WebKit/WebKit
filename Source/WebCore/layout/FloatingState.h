@@ -46,16 +46,13 @@ public:
     static Ref<FloatingState> create(LayoutContext& layoutContext, const Box& formattingContextRoot) { return adoptRef(*new FloatingState(layoutContext, formattingContextRoot)); }
 
     void append(const Box& layoutBox);
+    void remove(const Box& layoutBox);
 
-    bool isEmpty() const { return m_leftFloatings.isEmpty() && m_rightFloatings.isEmpty(); }
+    bool isEmpty() const { return m_floatings.isEmpty(); }
 
     using FloatingList = Vector<WeakPtr<Box>>;
-    struct Floatings {
-        const FloatingList& left;
-        const FloatingList& right; 
-    };
-    const Floatings floatings() const { return { m_leftFloatings, m_rightFloatings }; }
-    const Box* last() const { return m_last.get(); }
+    const FloatingList& floatings() const { return m_floatings; }
+    const Box* last() const { return isEmpty() ? nullptr : m_floatings.last().get(); }
 
 private:
     friend class FloatingContext;
@@ -65,10 +62,7 @@ private:
 
     LayoutContext& m_layoutContext;
     WeakPtr<Box> m_formattingContextRoot;
-
-    FloatingList m_leftFloatings;
-    FloatingList m_rightFloatings;
-    WeakPtr<Box> m_last;
+    FloatingList m_floatings;
 };
 
 }

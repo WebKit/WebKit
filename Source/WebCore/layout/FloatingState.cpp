@@ -58,6 +58,17 @@ static bool belongsToThisFloatingContext(const Box& layoutBox, const Box& floati
 }
 #endif
 
+void FloatingState::remove(const Box& layoutBox)
+{
+    for (size_t index = 0; index < m_floatings.size(); ++index) {
+        if (m_floatings[index].get() == &layoutBox) {
+            m_floatings.remove(index);
+            return;
+        }
+    }
+    ASSERT_NOT_REACHED();
+}
+
 void FloatingState::append(const Box& layoutBox)
 {
     ASSERT(is<Container>(*m_formattingContextRoot));
@@ -65,19 +76,7 @@ void FloatingState::append(const Box& layoutBox)
 
     // Floating state should hold boxes with computed position/size.
     ASSERT(m_layoutContext.displayBoxForLayoutBox(layoutBox));
-    m_last = makeWeakPtr(const_cast<Box&>(layoutBox));
-
-    if (layoutBox.isLeftFloatingPositioned()) {
-        m_leftFloatings.append(m_last);
-        return;
-    }
-
-    if (layoutBox.isRightFloatingPositioned()) {
-        m_rightFloatings.append(m_last);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
+    m_floatings.append(makeWeakPtr(const_cast<Box&>(layoutBox)));
 }
 
 }

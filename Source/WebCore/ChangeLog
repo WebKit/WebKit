@@ -1,3 +1,32 @@
+2018-08-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Revert back to only one list for the all the floatings.
+        https://bugs.webkit.org/show_bug.cgi?id=188232
+
+        Reviewed by Antti Koivisto.
+
+        If the combined floating list turns out to be a performance bottleneck, we can still split it into left and right. However at this point
+        having 2 dedicated lists just makes the implementation more complicated.
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::begin):
+        (WebCore::Layout::end):
+        (WebCore::Layout::FloatingPair::FloatingPair):
+        (WebCore::Layout::FloatingPair::left const):
+        (WebCore::Layout::FloatingPair::right const):
+        (WebCore::Layout::Iterator::Iterator):
+        (WebCore::Layout::previousFloatingIndex):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+        (WebCore::Layout::floatingDisplayBox): Deleted.
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::remove):
+        (WebCore::Layout::FloatingState::append):
+        * layout/FloatingState.h:
+        (WebCore::Layout::FloatingState::isEmpty const):
+        (WebCore::Layout::FloatingState::floatings const):
+        (WebCore::Layout::FloatingState::last const):
+
 2018-08-01  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Change synchronous request logic using MessageQueue to match with Mac port.
