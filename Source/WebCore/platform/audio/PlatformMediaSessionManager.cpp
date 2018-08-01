@@ -116,7 +116,7 @@ void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::Interr
     forEachSession([type] (PlatformMediaSession& session, size_t) {
         session.beginInterruption(type);
     });
-    scheduleUpdateSessionState();
+    updateSessionState();
 }
 
 void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInterruptionFlags flags)
@@ -143,7 +143,7 @@ void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
     if (!m_audioHardwareListener)
         m_audioHardwareListener = AudioHardwareListener::create(*this);
 
-    scheduleUpdateSessionState();
+    updateSessionState();
 }
 
 void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
@@ -164,7 +164,7 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
         m_audioHardwareListener = nullptr;
     }
 
-    scheduleUpdateSessionState();
+    updateSessionState();
 }
 
 void PlatformMediaSessionManager::addRestriction(PlatformMediaSession::MediaType type, SessionRestrictions restriction)
@@ -250,7 +250,7 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
 
 void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession&)
 {
-    scheduleUpdateSessionState();
+    updateSessionState();
 }
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)
@@ -354,11 +354,11 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
 
 void PlatformMediaSessionManager::sessionCanProduceAudioChanged(PlatformMediaSession&)
 {
-    scheduleUpdateSessionState();
+    updateSessionState();
 }
 
 #if !PLATFORM(COCOA)
-void PlatformMediaSessionManager::scheduleUpdateSessionState()
+void PlatformMediaSessionManager::updateSessionState()
 {
 }
 #endif
@@ -401,7 +401,7 @@ void PlatformMediaSessionManager::systemDidWake()
 
 void PlatformMediaSessionManager::audioOutputDeviceChanged()
 {
-    scheduleUpdateSessionState();
+    updateSessionState();
 }
 
 void PlatformMediaSessionManager::stopAllMediaPlaybackForDocument(const Document* document)
