@@ -1,3 +1,14 @@
+2018-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r227983): fast/dom/adopt-node-crash-2.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182589
+
+        Rebaseline the test and remove the flaky test expectation.
+
+        * fast/dom/adopt-node-crash-2-expected.txt:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-08-01  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Add ARIA IDL Attribute Reflection
