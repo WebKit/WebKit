@@ -52,6 +52,27 @@ Box::Box(const RenderStyle& style)
 {
 }
 
+Box::Box(const Box& other)
+    : m_style(other.m_style)
+    , m_topLeft(other.m_topLeft)
+    , m_contentWidth(other.m_contentWidth)
+    , m_contentHeight(other.m_contentHeight)
+    , m_margin(other.m_margin)
+    , m_verticalNonCollapsedMargin(other.m_verticalNonCollapsedMargin)
+    , m_border(other.m_border)
+    , m_padding(other.m_padding)
+#if !ASSERT_DISABLED
+    , m_hasValidHorizontalMargin(other.m_hasValidHorizontalMargin)
+    , m_hasValidVerticalMargin(other.m_hasValidVerticalMargin)
+    , m_hasValidVerticalNonCollapsedMargin(other.m_hasValidVerticalNonCollapsedMargin)
+    , m_hasValidBorder(other.m_hasValidBorder)
+    , m_hasValidPadding(other.m_hasValidPadding)
+    , m_hasValidContentHeight(other.m_hasValidContentHeight)
+    , m_hasValidContentWidth(other.m_hasValidContentWidth)
+#endif
+{
+}
+
 Box::~Box()
 {
 }

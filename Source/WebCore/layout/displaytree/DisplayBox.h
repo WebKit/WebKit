@@ -160,6 +160,7 @@ public:
 
 private:
     Box(const RenderStyle&);
+    Box(const Box&);
 
     struct Style {
         Style(const RenderStyle&);

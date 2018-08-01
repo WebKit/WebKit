@@ -142,6 +142,28 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext,
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutContext << " root: " << &root());
 }
 
+Display::Box FormattingContext::mapToAncestor(const LayoutContext& layoutContext, const Box& layoutBox, const Container& ancestor)
+{
+    ASSERT(layoutBox.isDescendantOf(ancestor));
+
+    auto* displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+    ASSERT(displayBox);
+    auto topLeft = displayBox->topLeft();
+
+    auto* containingBlock = layoutBox.containingBlock();
+    for (; containingBlock && containingBlock != &ancestor; containingBlock = containingBlock->containingBlock())
+        topLeft.moveBy(layoutContext.displayBoxForLayoutBox(*containingBlock)->topLeft());
+
+    if (!containingBlock) {
+        ASSERT_NOT_REACHED();
+        return Display::Box(*displayBox);
+    }
+
+    auto mappedDisplayBox = Display::Box(*displayBox);
+    mappedDisplayBox.setTopLeft(topLeft);
+    return mappedDisplayBox;
+}
+
 #ifndef NDEBUG
 void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutContext& layoutContext) const
 {

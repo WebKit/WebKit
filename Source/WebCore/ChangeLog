@@ -1,3 +1,17 @@
+2018-08-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add FormattingContext::mapToAncestor geometry mapping function
+        https://bugs.webkit.org/show_bug.cgi?id=188188
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::mapToAncestor):
+        * layout/FormattingContext.h:
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::clone const):
+        * layout/displaytree/DisplayBox.h:
+
 2018-08-01  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Bugfix on ResourceHandle::cancel()

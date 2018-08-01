@@ -59,6 +59,8 @@ public:
     };
     virtual InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const = 0;
 
+    static Display::Box mapToAncestor(const LayoutContext&, const Box&, const Container& ancestor);
+
 protected:
     struct LayoutPair {
         const Box& layoutBox;
