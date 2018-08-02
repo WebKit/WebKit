@@ -133,6 +133,7 @@ struct WebProcessCreationParameters {
     bool resourceLoadStatisticsEnabled { false };
     bool fullKeyboardAccessEnabled { false };
     bool memoryCacheDisabled { false };
+    bool attrStyleEnabled { false };
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices { false };

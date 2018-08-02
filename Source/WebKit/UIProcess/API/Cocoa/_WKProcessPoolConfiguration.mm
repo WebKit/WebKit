@@ -102,6 +102,16 @@
     _processPoolConfiguration->setIgnoreSynchronousMessagingTimeoutsForTesting(ignoreSynchronousMessagingTimeoutsForTesting);
 }
 
+- (BOOL)attrStyleEnabled
+{
+    return _processPoolConfiguration->attrStyleEnabled();
+}
+
+- (void)setAttrStyleEnabled:(BOOL)enabled
+{
+    return _processPoolConfiguration->setAttrStyleEnabled(enabled);
+}
+
 - (NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
     auto paths = _processPoolConfiguration->additionalReadAccessAllowedPaths();

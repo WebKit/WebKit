@@ -279,6 +279,9 @@ public:
     bool systemPreviewEnabled() const { return m_systemPreviewEnabled; }
 #endif
 
+    void setAttrStyleEnabled(bool isEnabled) { m_attrStyleEnabled = isEnabled; }
+    bool attrStyleEnabled() const { return m_attrStyleEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -419,6 +422,8 @@ private:
 #if USE(SYSTEM_PREVIEW)
     bool m_systemPreviewEnabled { false };
 #endif
+
+    bool m_attrStyleEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

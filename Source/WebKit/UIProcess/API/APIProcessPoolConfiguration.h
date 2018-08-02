@@ -109,6 +109,9 @@ public:
     bool ignoreSynchronousMessagingTimeoutsForTesting() const { return m_ignoreSynchronousMessagingTimeoutsForTesting; }
     void setIgnoreSynchronousMessagingTimeoutsForTesting(bool allowed) { m_ignoreSynchronousMessagingTimeoutsForTesting = allowed; }
 
+    bool attrStyleEnabled() const { return m_attrStyleEnabled; }
+    void setAttrStyleEnabled(bool enabled) { m_attrStyleEnabled = enabled; }
+
     const Vector<WTF::String>& overrideLanguages() const { return m_overrideLanguages; }
     void setOverrideLanguages(Vector<WTF::String>&& languages) { m_overrideLanguages = WTFMove(languages); }
 
@@ -178,6 +181,7 @@ private:
     Vector<WTF::CString> m_additionalReadAccessAllowedPaths;
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreSynchronousMessagingTimeoutsForTesting { false };
+    bool m_attrStyleEnabled { false };
     Vector<WTF::String> m_overrideLanguages;
     WTF::String m_sourceApplicationBundleIdentifier;
     WTF::String m_sourceApplicationSecondaryIdentifier;

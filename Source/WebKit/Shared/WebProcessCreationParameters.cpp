@@ -125,6 +125,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << plugInAutoStartOriginHashes;
     encoder << plugInAutoStartOrigins;
     encoder << memoryCacheDisabled;
+    encoder << attrStyleEnabled;
 
 #if ENABLE(SERVICE_CONTROLS)
     encoder << hasImageServices;
@@ -367,6 +368,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.plugInAutoStartOrigins))
         return false;
     if (!decoder.decode(parameters.memoryCacheDisabled))
+        return false;
+    if (!decoder.decode(parameters.attrStyleEnabled))
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)

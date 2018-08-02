@@ -1,3 +1,35 @@
+2018-08-01  Dan Bernstein  <mitz@apple.com>
+
+        Optionally expose Attr::style to JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=188226
+        <rdar://problem/42818113>
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Encode new attrStyleEnabled member.
+        (WebKit::WebProcessCreationParameters::decode): Decode new attrStyleEnabled member.
+        * Shared/WebProcessCreationParameters.h: Define new attrStyleEnabled member, initialized to
+          false.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy): Copy new m_attrStyleEnabled member.
+        * UIProcess/API/APIProcessPoolConfiguration.h: Define new m_attrStyleEnabled member.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h: Declare new attrStyleEnabled boolean
+          property.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration attrStyleEnabled]): New accessor.
+        (-[_WKProcessPoolConfiguration setAttrStyleEnabled:]): Ditto.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess): Initialize parameters.attrStyleEnabled
+          from the configuration.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Set the attrStyleEnabled runtime feature based
+          on the creation parameters.
+
 2018-08-02  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r234489.

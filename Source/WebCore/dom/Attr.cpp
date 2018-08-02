@@ -107,7 +107,8 @@ Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
 
 CSSStyleDeclaration* Attr::style()
 {
-    // This function only exists to support the Obj-C bindings.
+    // This is not part of the DOM API, and therefore not available to webpages. However, WebKit SPI
+    // lets clients use this via the Objective-C and JavaScript bindings.
     if (!is<StyledElement>(m_element))
         return nullptr;
     m_style = MutableStyleProperties::create();
