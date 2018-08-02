@@ -550,7 +550,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
     auto& cache = colorCache(options);
 
     if (useSystemAppearance) {
-        // Only use NSColor for links when the system appearance is desired.
+        // Special handling for links and other system colors when the system appearance is desired.
         auto systemAppearanceColor = [] (Color& color, SEL selector) -> Color {
             if (!color.isValid()) {
                 auto systemColor = wtfObjcMsgSend<NSColor *>([NSColor class], selector);
@@ -561,15 +561,48 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         };
 
         switch (cssValueID) {
+        // Web views that want system appearance get the system version of link colors, which differ from the HTML spec.
         case CSSValueWebkitLink:
             if (forVisitedLink)
                 return systemAppearanceColor(cache.systemVisitedLinkColor, @selector(systemPurpleColor));
             return systemAppearanceColor(cache.systemLinkColor, @selector(linkColor));
+
         case CSSValueWebkitActivelink:
             // FIXME: Use a semantic system color for this, instead of systemRedColor. <rdar://problem/39256684>
             return systemAppearanceColor(cache.systemActiveLinkColor, @selector(systemRedColor));
+
+        // The following colors would expose user appearance preferences to the web, and could be used for fingerprinting.
+        // These should only be available when the web view is wanting the system appearance.
+        case CSSValueWebkitFocusRingColor:
+        case CSSValueActiveborder:
+            return systemAppearanceColor(cache.systemFocusRingColor, @selector(keyboardFocusIndicatorColor));
+
+        case CSSValueAppleSystemControlAccent:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+            return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
+#else
+            return systemAppearanceColor(cache.systemControlAccentColor, @selector(alternateSelectedControlColor));
+#endif
+
+        case CSSValueAppleSystemSelectedContentBackground:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+            return systemAppearanceColor(cache.systemSelectedContentBackgroundColor, @selector(selectedContentBackgroundColor));
+#else
+            return systemAppearanceColor(cache.systemSelectedContentBackgroundColor, @selector(alternateSelectedControlColor));
+#endif
+
+        case CSSValueAppleSystemSelectedTextBackground:
+        case CSSValueHighlight:
+            // Can't use systemAppearanceColor() since blendWithWhite() needs called before caching as a semantic color.
+            if (!cache.systemSelectedTextBackgroundColor.isValid()) {
+                Color systemColor = semanticColorFromNSColor([NSColor selectedTextBackgroundColor]);
+                cache.systemSelectedTextBackgroundColor = Color(systemColor.blendWithWhite().rgb(), Color::Semantic);
+            }
+
+            return cache.systemSelectedTextBackgroundColor;
+
         default:
-            // Handle non-link colors below, with the regular cache.
+            // Handle other system colors below, that don't need special system appearance handling.
             break;
         }
     } else if (forVisitedLink && cssValueID == CSSValueWebkitLink) {
@@ -580,11 +613,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     ASSERT(!forVisitedLink);
 
-    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
+    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options, &localAppearance] () -> Color {
         auto selectCocoaColor = [cssValueID] () -> SEL {
             switch (cssValueID) {
-            case CSSValueActiveborder:
-                return @selector(keyboardFocusIndicatorColor);
             case CSSValueActivecaption:
                 return @selector(windowFrameTextColor);
             case CSSValueAppworkspace:
@@ -599,8 +630,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(textColor);
             case CSSValueGraytext:
                 return @selector(disabledControlTextColor);
-            case CSSValueHighlight:
-                return @selector(selectedTextBackgroundColor);
             case CSSValueHighlighttext:
                 return @selector(selectedTextColor);
             case CSSValueInactiveborder:
@@ -625,8 +654,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(highlightColor);
             case CSSValueThreedlightshadow:
                 return @selector(controlLightHighlightColor);
-            case CSSValueWebkitFocusRingColor:
-                return @selector(keyboardFocusIndicatorColor);
             case CSSValueWindow:
                 return @selector(windowBackgroundColor);
             case CSSValueWindowframe:
@@ -641,18 +668,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(controlBackgroundColor);
             case CSSValueAppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);
-            case CSSValueAppleSystemControlAccent:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-                return @selector(controlAccentColor);
-#else
-                return @selector(alternateSelectedControlColor);
-#endif
-            case CSSValueAppleSystemSelectedContentBackground:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-                return @selector(selectedContentBackgroundColor);
-#else
-                return @selector(alternateSelectedControlColor);
-#endif
             case CSSValueAppleSystemUnemphasizedSelectedContentBackground:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
                 return @selector(unemphasizedSelectedContentBackgroundColor);
@@ -667,8 +682,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 #else
                 return @selector(textColor);
 #endif
-            case CSSValueAppleSystemSelectedTextBackground:
-                return @selector(selectedTextBackgroundColor);
             case CSSValueAppleSystemUnemphasizedSelectedTextBackground:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
                 return @selector(unemphasizedSelectedTextBackgroundColor);
@@ -747,6 +760,31 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
         case CSSValueMenu:
             return menuBackgroundColor();
+
+        case CSSValueWebkitFocusRingColor:
+        case CSSValueActiveborder:
+            // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
+            if (localAppearance.usingDarkAppearance())
+                return Color(0x4C1AA9FF, Color::Semantic);
+            return Color(0x3F0067F4, Color::Semantic);
+
+        case CSSValueAppleSystemControlAccent:
+            // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
+            // Same color in light and dark appearances.
+            return Color(0xFF007AFF, Color::Semantic);
+
+        case CSSValueAppleSystemSelectedContentBackground:
+            // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
+            if (localAppearance.usingDarkAppearance())
+                return Color(0xFF0058D0, Color::Semantic);
+            return Color(0xFF0063E1, Color::Semantic);
+
+        case CSSValueHighlight:
+        case CSSValueAppleSystemSelectedTextBackground:
+            // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
+            if (localAppearance.usingDarkAppearance())
+                return Color(0xCC0F3C6E, Color::Semantic);
+            return Color(0x9980BCFE, Color::Semantic);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
         case CSSValueAppleSystemFindHighlightBackground:

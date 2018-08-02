@@ -1,3 +1,51 @@
+2018-08-01  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234466. rdar://problem/42843690
+
+    Hardcode some system colors to avoid fingerprinting exposure.
+    https://bugs.webkit.org/show_bug.cgi?id=188203
+    rdar://problem/42781630
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Passes existing tests with the hardcoded blue system appearance.
+    
+    * rendering/RenderTheme.h:
+    * rendering/RenderThemeMac.mm:
+    (WebCore::RenderThemeMac::systemColor const):
+    Adds special handling for some system colors. Fixes -apple-system-selected-text-background
+    to match the real selection color by using blendWithWhite().
+    
+    LayoutTests:
+    
+    * fast/css/apple-system-control-colors-expected.txt: Updated.
+    * fast/css/test-setting-canvas-color.html: Fixed for colors with alpha.
+    * platform/mac-highsierra/fast/css/apple-system-control-colors-expected.txt:
+    * platform/mac-sierra/fast/css/apple-system-control-colors-expected.txt: Updated.
+    * platform/mac/TestExpectations: Removed fast/css/test-setting-canvas-color.html.
+    * platform/mac/fast/css/apple-system-control-colors-expected.txt: Updated.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234466 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-01  Timothy Hatcher  <timothy@apple.com>
+
+            Hardcode some system colors to avoid fingerprinting exposure.
+            https://bugs.webkit.org/show_bug.cgi?id=188203
+            rdar://problem/42781630
+
+            Reviewed by Tim Horton.
+
+            Passes existing tests with the hardcoded blue system appearance.
+
+            * rendering/RenderTheme.h:
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::systemColor const):
+            Adds special handling for some system colors. Fixes -apple-system-selected-text-background
+            to match the real selection color by using blendWithWhite().
+
 2018-07-31  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234447. rdar://problem/42802126

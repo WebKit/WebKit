@@ -21,7 +21,7 @@ function shouldSuccessfullyParse(color) {
     ctx.fillStyle = "#f00";
     ctx.fillStyle = color;
     // Check that there is no red.
-    if (ctx.fillStyle.match(/^#(?!(FF0000|ff0000|f00)$)/))
+    if (ctx.fillStyle.match(/^#(?!(FF0000|ff0000|f00)$)/) || ctx.fillStyle !== "rgb(255, 0, 0)")
         testPassed("Setting color to " + color + " was successfully set.");
     else
         testFailed("Setting color to " + color + " was not set but should!");
@@ -31,7 +31,7 @@ function shouldNotSuccessfullyParse(color) {
     ctx.fillStyle = "#0f0";
     ctx.fillStyle = color;
     // Check that the color is still green.
-    if (ctx.fillStyle.match(/^#(00FF00|00ff00|0f0)$/))
+    if (ctx.fillStyle.match(/^#(00FF00|00ff00|0f0)$/) || ctx.fillStyle === "rgb(0, 255, 0)")
         testPassed("Setting color to " + color + " was not set (as expected).");
     else
         testFailed("Setting color to " + color + " was successfully set but should not!");
