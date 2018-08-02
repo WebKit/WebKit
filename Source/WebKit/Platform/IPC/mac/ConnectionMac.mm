@@ -472,7 +472,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
     uint8_t* messageBody = descriptorData;
     size_t messageBodySize = header->msgh_size - (descriptorData - reinterpret_cast<uint8_t*>(header));
 
-    return std::make_unique<Decoder>(messageBody, messageBodySize, nullptr, attachments);
+    return std::make_unique<Decoder>(messageBody, messageBodySize, nullptr, WTFMove(attachments));
 }
 
 // The receive buffer size should always include the maximum trailer size.

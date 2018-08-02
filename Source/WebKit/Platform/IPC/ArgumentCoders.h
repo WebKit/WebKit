@@ -515,6 +515,68 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
     }
 };
 
+template<size_t index, typename... Types>
+struct VariantCoder {
+    static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
+    {
+        if (i == index) {
+            encoder << WTF::get<index>(variant);
+            return;
+        }
+        VariantCoder<index - 1, Types...>::encode(encoder, variant, i);
+    }
+    
+    static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
+    {
+        if (i == index) {
+            std::optional<typename WTF::variant_alternative<index, WTF::Variant<Types...>>::type> optional;
+            decoder >> optional;
+            if (!optional)
+                return std::nullopt;
+            return { WTFMove(*optional) };
+        }
+        return VariantCoder<index - 1, Types...>::decode(decoder, i);
+    }
+};
+
+template<typename... Types>
+struct VariantCoder<0, Types...> {
+    static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant, unsigned i)
+    {
+        ASSERT_UNUSED(i, !i);
+        encoder << WTF::get<0>(variant);
+    }
+    
+    static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder, unsigned i)
+    {
+        ASSERT_UNUSED(i, !i);
+        std::optional<typename WTF::variant_alternative<0, WTF::Variant<Types...>>::type> optional;
+        decoder >> optional;
+        if (!optional)
+            return std::nullopt;
+        return { WTFMove(*optional) };
+    }
+};
+
+template<typename... Types> struct ArgumentCoder<WTF::Variant<Types...>> {
+    static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant)
+    {
+        ASSERT(static_cast<unsigned>(variant.index()) == variant.index());
+        unsigned i = variant.index();
+        encoder << i;
+        VariantCoder<sizeof...(Types) - 1, Types...>::encode(encoder, variant, i);
+    }
+    
+    static std::optional<WTF::Variant<Types...>> decode(Decoder& decoder)
+    {
+        std::optional<unsigned> i;
+        decoder >> i;
+        if (!i)
+            return std::nullopt;
+        return VariantCoder<sizeof...(Types) - 1, Types...>::decode(decoder, *i);
+    }
+};
+    
 template<> struct ArgumentCoder<WallTime> {
     static void encode(Encoder&, const WallTime&);
     static bool decode(Decoder&, WallTime&);

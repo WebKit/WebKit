@@ -1,5 +1,52 @@
 2018-08-02  Alex Christensen  <achristensen@webkit.org>
 
+        Use WTF::Variant for WebPreferencesStore::Value
+        https://bugs.webkit.org/show_bug.cgi?id=188250
+
+        Reviewed by Sam Weinig.
+
+        It was conceptually a variant. This just uses an actual WTF::Variant.
+        Since it's encoded and decoded, I wrote variadic template encoders and decoders
+        like we have for other types (Expected, std::tuple, KeyValuePair, etc.)
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::VariantCoder::encode):
+        (IPC::VariantCoder::decode):
+        Introduce ArgumentCoder<Variant>, which encodes which type the Variant currently
+        holds followed by the encoding of the current type.
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::Decoder):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::createMessageDecoder):
+        Use move semantics to prevent an unnecessary copy of the Vector<Attachment>
+        * Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb:
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::decode):
+        Use modern std::optional-based decoding supported by the new Variant decoding.
+        (WebKit::valueForKey):
+        Use WTF::get and WTF::holds_alternative instead of custom type checks.
+        (WebKit::WebPreferencesStore::Value::encode const): Deleted.
+        (WebKit::WebPreferencesStore::Value::decode): Deleted.
+        (WebKit::as<String>): Deleted.
+        (WebKit::as<bool>): Deleted.
+        (WebKit::as<uint32_t>): Deleted.
+        (WebKit::as<double>): Deleted.
+        * Shared/WebPreferencesStore.h:
+        (WebKit::WebPreferencesStore::Value::Value): Deleted.
+        (WebKit::WebPreferencesStore::Value::operator=): Deleted.
+        (WebKit::WebPreferencesStore::Value::~Value): Deleted.
+        (WebKit::WebPreferencesStore::Value::type const): Deleted.
+        (WebKit::WebPreferencesStore::Value::asString const): Deleted.
+        (WebKit::WebPreferencesStore::Value::asBool const): Deleted.
+        (WebKit::WebPreferencesStore::Value::asUInt32 const): Deleted.
+        (WebKit::WebPreferencesStore::Value::asDouble const): Deleted.
+        (WebKit::WebPreferencesStore::Value::destroy): Deleted.
+        (): Deleted.
+        Use WTF::Variant instead of a custom type/union pair.
+
+2018-08-02  Alex Christensen  <achristensen@webkit.org>
+
         Check with SafeBrowsing during navigation in WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=188133
 

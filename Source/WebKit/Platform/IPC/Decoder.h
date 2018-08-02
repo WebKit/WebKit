@@ -43,7 +43,7 @@ class ImportanceAssertion;
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>);
+    Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&&);
     ~Decoder();
 
     Decoder(const Decoder&) = delete;

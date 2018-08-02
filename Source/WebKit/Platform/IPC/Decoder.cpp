@@ -44,7 +44,7 @@ static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
     return bufferCopy;
 }
 
-Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment> attachments)
+Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
     : m_buffer { bufferDeallocator ? buffer : copyBuffer(buffer, bufferSize) }
     , m_bufferPos { m_buffer }
     , m_bufferEnd { m_buffer + bufferSize }
