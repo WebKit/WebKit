@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CalculationValue_h
-#define CalculationValue_h
+#pragma once
 
 #include "Length.h"
 #include <memory>
@@ -43,27 +42,28 @@ class TextStream;
 
 namespace WebCore {
 
-enum CalcOperator {
-    CalcAdd = '+',
-    CalcSubtract = '-',
-    CalcMultiply = '*',
-    CalcDivide = '/',
-    CalcMin = 0,
-    CalcMax = 1,
+// Don't change these values; parsing uses them.
+enum class CalcOperator : uint8_t {
+    Add = '+',
+    Subtract = '-',
+    Multiply = '*',
+    Divide = '/',
+    Min = 0,
+    Max = 1,
 };
 
-enum CalcExpressionNodeType {
-    CalcExpressionNodeUndefined,
-    CalcExpressionNodeNumber,
-    CalcExpressionNodeLength,
-    CalcExpressionNodeOperation,
-    CalcExpressionNodeBlendLength,
+enum class CalcExpressionNodeType : uint8_t {
+    Undefined,
+    Number,
+    Length,
+    Operation,
+    BlendLength,
 };
 
 class CalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit CalcExpressionNode(CalcExpressionNodeType = CalcExpressionNodeUndefined);
+    explicit CalcExpressionNode(CalcExpressionNodeType = CalcExpressionNodeType::Undefined);
     virtual ~CalcExpressionNode() = default;
 
     CalcExpressionNodeType type() const { return m_type; }
@@ -171,7 +171,7 @@ inline bool operator==(const CalculationValue& a, const CalculationValue& b)
 }
 
 inline CalcExpressionNumber::CalcExpressionNumber(float value)
-    : CalcExpressionNode(CalcExpressionNodeNumber)
+    : CalcExpressionNode(CalcExpressionNodeType::Number)
     , m_value(value)
 {
 }
@@ -183,12 +183,12 @@ inline bool operator==(const CalcExpressionNumber& a, const CalcExpressionNumber
 
 inline const CalcExpressionNumber& toCalcExpressionNumber(const CalcExpressionNode& value)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeNumber);
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::Number);
     return static_cast<const CalcExpressionNumber&>(value);
 }
 
 inline CalcExpressionLength::CalcExpressionLength(Length length)
-    : CalcExpressionNode(CalcExpressionNodeLength)
+    : CalcExpressionNode(CalcExpressionNodeType::Length)
     , m_length(length)
 {
 }
@@ -200,12 +200,12 @@ inline bool operator==(const CalcExpressionLength& a, const CalcExpressionLength
 
 inline const CalcExpressionLength& toCalcExpressionLength(const CalcExpressionNode& value)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeLength);
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::Length);
     return static_cast<const CalcExpressionLength&>(value);
 }
 
 inline CalcExpressionOperation::CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator op)
-    : CalcExpressionNode(CalcExpressionNodeOperation)
+    : CalcExpressionNode(CalcExpressionNodeType::Operation)
     , m_children(WTFMove(children))
     , m_operator(op)
 {
@@ -215,7 +215,7 @@ bool operator==(const CalcExpressionOperation&, const CalcExpressionOperation&);
 
 inline const CalcExpressionOperation& toCalcExpressionOperation(const CalcExpressionNode& value)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeOperation);
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::Operation);
     return static_cast<const CalcExpressionOperation&>(value);
 }
 
@@ -226,7 +226,7 @@ inline bool operator==(const CalcExpressionBlendLength& a, const CalcExpressionB
 
 inline const CalcExpressionBlendLength& toCalcExpressionBlendLength(const CalcExpressionNode& value)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeBlendLength);
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeType::BlendLength);
     return static_cast<const CalcExpressionBlendLength&>(value);
 }
 
@@ -235,5 +235,3 @@ WTF::TextStream& operator<<(WTF::TextStream&, const CalcExpressionNode&);
 WTF::TextStream& operator<<(WTF::TextStream&, CalcOperator);
 
 } // namespace WebCore
-
-#endif // CalculationValue_h

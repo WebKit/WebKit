@@ -248,21 +248,21 @@ unsigned short CSSPrimitiveValue::primitiveType() const
         return m_primitiveUnitType;
 
     switch (m_value.calc->category()) {
-    case CalcNumber:
+    case CalculationCategory::Number:
         return CSSPrimitiveValue::CSS_NUMBER;
-    case CalcLength:
+    case CalculationCategory::Length:
         return CSSPrimitiveValue::CSS_PX;
-    case CalcPercent:
+    case CalculationCategory::Percent:
         return CSSPrimitiveValue::CSS_PERCENTAGE;
-    case CalcPercentNumber:
+    case CalculationCategory::PercentNumber:
         return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_NUMBER;
-    case CalcPercentLength:
+    case CalculationCategory::PercentLength:
         return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH;
-    case CalcAngle:
-    case CalcTime:
-    case CalcFrequency:
+    case CalculationCategory::Angle:
+    case CalculationCategory::Time:
+    case CalculationCategory::Frequency:
         return m_value.calc->primitiveType();
-    case CalcOther:
+    case CalculationCategory::Other:
         return CSSPrimitiveValue::CSS_UNKNOWN;
     }
     return CSSPrimitiveValue::CSS_UNKNOWN;

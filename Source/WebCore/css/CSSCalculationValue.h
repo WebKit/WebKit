@@ -39,16 +39,16 @@ class CSSParserTokenRange;
 class CSSToLengthConversionData;
 class RenderStyle;
 
-enum CalculationCategory {
-    CalcNumber = 0,
-    CalcLength,
-    CalcPercent,
-    CalcPercentNumber,
-    CalcPercentLength,
-    CalcAngle,
-    CalcTime,
-    CalcFrequency,
-    CalcOther
+enum class CalculationCategory : uint8_t {
+    Number = 0,
+    Length,
+    Percent,
+    PercentNumber,
+    PercentLength,
+    Angle,
+    Time,
+    Frequency,
+    Other
 };
 
 class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {

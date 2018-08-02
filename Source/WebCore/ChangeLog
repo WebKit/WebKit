@@ -1,3 +1,63 @@
+2018-08-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert calc-related enums to 8-bit enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=188215
+
+        Reviewed by Zalan Bujtas.
+
+        This shrinks CSSCalcOperation from 48 to 32 bytes.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::unitCategory):
+        (WebCore::determineCategory):
+        (WebCore::resolvedTypeForMinOrMax):
+        (WebCore::isIntegerResult):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseMinMaxExpression):
+        (WebCore::createBlendHalf):
+        (WebCore::createCSS):
+        * css/CSSCalculationValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::primitiveType const):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTo100PercentMinusLength):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumePositiveIntegerRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::consumePositiveIntegerRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+        (WebCore::CSSPropertyParserHelpers::canConsumeCalcValue):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+        * platform/CalculationValue.cpp:
+        (WebCore::CalcExpressionNumber::operator== const):
+        (WebCore::CalcExpressionOperation::evaluate const):
+        (WebCore::CalcExpressionOperation::operator== const):
+        (WebCore::CalcExpressionOperation::dump const):
+        (WebCore::CalcExpressionLength::operator== const):
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+        (WebCore::CalcExpressionBlendLength::operator== const):
+        (WebCore::operator<<):
+        * platform/CalculationValue.h:
+        (WebCore::CalcExpressionNumber::CalcExpressionNumber):
+        (WebCore::toCalcExpressionNumber):
+        (WebCore::CalcExpressionLength::CalcExpressionLength):
+        (WebCore::toCalcExpressionLength):
+        (WebCore::CalcExpressionOperation::CalcExpressionOperation):
+        (WebCore::toCalcExpressionOperation):
+        (WebCore::toCalcExpressionBlendLength):
+        * platform/Length.cpp:
+        (WebCore::convertTo100PercentMinusLength):
+
 2018-08-02  Charlie Turner  <cturner@igalia.com>
 
         Handle zero-sized ISOMP4 boxes appropriately

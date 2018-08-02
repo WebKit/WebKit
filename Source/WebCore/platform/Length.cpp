@@ -295,7 +295,7 @@ Length convertTo100PercentMinusLength(const Length& length)
     lengths.reserveInitialCapacity(2);
     lengths.uncheckedAppend(std::make_unique<CalcExpressionLength>(Length(100, Percent)));
     lengths.uncheckedAppend(std::make_unique<CalcExpressionLength>(length));
-    auto op = std::make_unique<CalcExpressionOperation>(WTFMove(lengths), CalcSubtract);
+    auto op = std::make_unique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
     return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
 }
 

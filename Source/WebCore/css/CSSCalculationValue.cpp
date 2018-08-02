@@ -56,7 +56,7 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitType type)
 {
     switch (type) {
     case CSSPrimitiveValue::CSS_NUMBER:
-        return CalcNumber;
+        return CalculationCategory::Number;
     case CSSPrimitiveValue::CSS_EMS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_PX:
@@ -71,22 +71,22 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_VH:
     case CSSPrimitiveValue::CSS_VMIN:
     case CSSPrimitiveValue::CSS_VMAX:
-        return CalcLength;
+        return CalculationCategory::Length;
     case CSSPrimitiveValue::CSS_PERCENTAGE:
-        return CalcPercent;
+        return CalculationCategory::Percent;
     case CSSPrimitiveValue::CSS_DEG:
     case CSSPrimitiveValue::CSS_RAD:
     case CSSPrimitiveValue::CSS_GRAD:
     case CSSPrimitiveValue::CSS_TURN:
-        return CalcAngle;
+        return CalculationCategory::Angle;
     case CSSPrimitiveValue::CSS_MS:
     case CSSPrimitiveValue::CSS_S:
-        return CalcTime;
+        return CalculationCategory::Time;
     case CSSPrimitiveValue::CSS_HZ:
     case CSSPrimitiveValue::CSS_KHZ:
-        return CalcFrequency;
+        return CalculationCategory::Frequency;
     default:
-        return CalcOther;
+        return CalculationCategory::Other;
     }
 }
 
@@ -219,21 +219,21 @@ private:
     std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const final
     {
         switch (category()) {
-        case CalcNumber:
+        case CalculationCategory::Number:
             return std::make_unique<CalcExpressionNumber>(m_value->floatValue());
-        case CalcLength:
+        case CalculationCategory::Length:
             return std::make_unique<CalcExpressionLength>(Length(m_value->computeLength<float>(conversionData), WebCore::Fixed));
-        case CalcPercent:
-        case CalcPercentLength: {
+        case CalculationCategory::Percent:
+        case CalculationCategory::PercentLength: {
             return std::make_unique<CalcExpressionLength>(m_value->convertToLength<FixedFloatConversion | PercentConversion>(conversionData));
         }
         // Only types that could be part of a Length expression can be converted
-        // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.
-        case CalcPercentNumber:
-        case CalcAngle:
-        case CalcTime:
-        case CalcFrequency:
-        case CalcOther:
+        // to a CalcExpressionNode. CalculationCategory::PercentNumber makes no sense as a Length.
+        case CalculationCategory::PercentNumber:
+        case CalculationCategory::Angle:
+        case CalculationCategory::Time:
+        case CalculationCategory::Frequency:
+        case CalculationCategory::Other:
             ASSERT_NOT_REACHED();
         }
         ASSERT_NOT_REACHED();
@@ -251,17 +251,17 @@ private:
     double computeLengthPx(const CSSToLengthConversionData& conversionData) const final
     {
         switch (category()) {
-        case CalcLength:
+        case CalculationCategory::Length:
             return m_value->computeLength<double>(conversionData);
-        case CalcPercent:
-        case CalcNumber:
+        case CalculationCategory::Percent:
+        case CalculationCategory::Number:
             return m_value->doubleValue();
-        case CalcPercentLength:
-        case CalcPercentNumber:
-        case CalcAngle:
-        case CalcTime:
-        case CalcFrequency:
-        case CalcOther:
+        case CalculationCategory::PercentLength:
+        case CalculationCategory::PercentNumber:
+        case CalculationCategory::Angle:
+        case CalculationCategory::Time:
+        case CalculationCategory::Frequency:
+        case CalculationCategory::Other:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -293,84 +293,84 @@ private:
     Ref<CSSPrimitiveValue> m_value;
 };
 
-static const CalculationCategory addSubtractResult[CalcAngle][CalcAngle] = {
-//    CalcNumber         CalcLength         CalcPercent        CalcPercentNumber  CalcPercentLength
-    { CalcNumber,        CalcOther,         CalcPercentNumber, CalcPercentNumber, CalcOther }, //         CalcNumber
-    { CalcOther,         CalcLength,        CalcPercentLength, CalcOther,         CalcPercentLength }, // CalcLength
-    { CalcPercentNumber, CalcPercentLength, CalcPercent,       CalcPercentNumber, CalcPercentLength }, // CalcPercent
-    { CalcPercentNumber, CalcOther,         CalcPercentNumber, CalcPercentNumber, CalcOther }, //         CalcPercentNumber
-    { CalcOther,         CalcPercentLength, CalcPercentLength, CalcOther,         CalcPercentLength }, // CalcPercentLength
+static const CalculationCategory addSubtractResult[static_cast<unsigned>(CalculationCategory::Angle)][static_cast<unsigned>(CalculationCategory::Angle)] = {
+//    CalculationCategory::Number         CalculationCategory::Length         CalculationCategory::Percent        CalculationCategory::PercentNumber  CalculationCategory::PercentLength
+    { CalculationCategory::Number,        CalculationCategory::Other,         CalculationCategory::PercentNumber, CalculationCategory::PercentNumber, CalculationCategory::Other }, //         CalculationCategory::Number
+    { CalculationCategory::Other,         CalculationCategory::Length,        CalculationCategory::PercentLength, CalculationCategory::Other,         CalculationCategory::PercentLength }, // CalculationCategory::Length
+    { CalculationCategory::PercentNumber, CalculationCategory::PercentLength, CalculationCategory::Percent,       CalculationCategory::PercentNumber, CalculationCategory::PercentLength }, // CalculationCategory::Percent
+    { CalculationCategory::PercentNumber, CalculationCategory::Other,         CalculationCategory::PercentNumber, CalculationCategory::PercentNumber, CalculationCategory::Other }, //         CalculationCategory::PercentNumber
+    { CalculationCategory::Other,         CalculationCategory::PercentLength, CalculationCategory::PercentLength, CalculationCategory::Other,         CalculationCategory::PercentLength }, // CalculationCategory::PercentLength
 };
 
 static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSide, const CSSCalcExpressionNode& rightSide, CalcOperator op)
 {
     CalculationCategory leftCategory = leftSide.category();
     CalculationCategory rightCategory = rightSide.category();
-    ASSERT(leftCategory < CalcOther);
-    ASSERT(rightCategory < CalcOther);
+    ASSERT(leftCategory < CalculationCategory::Other);
+    ASSERT(rightCategory < CalculationCategory::Other);
 
     switch (op) {
-    case CalcAdd:
-    case CalcSubtract:
-        if (leftCategory < CalcAngle && rightCategory < CalcAngle)
-            return addSubtractResult[leftCategory][rightCategory];
+    case CalcOperator::Add:
+    case CalcOperator::Subtract:
+        if (leftCategory < CalculationCategory::Angle && rightCategory < CalculationCategory::Angle)
+            return addSubtractResult[static_cast<unsigned>(leftCategory)][static_cast<unsigned>(rightCategory)];
         if (leftCategory == rightCategory)
             return leftCategory;
-        return CalcOther;
-    case CalcMultiply:
-        if (leftCategory != CalcNumber && rightCategory != CalcNumber)
-            return CalcOther;
-        return leftCategory == CalcNumber ? rightCategory : leftCategory;
-    case CalcDivide:
-        if (rightCategory != CalcNumber || rightSide.isZero())
-            return CalcOther;
+        return CalculationCategory::Other;
+    case CalcOperator::Multiply:
+        if (leftCategory != CalculationCategory::Number && rightCategory != CalculationCategory::Number)
+            return CalculationCategory::Other;
+        return leftCategory == CalculationCategory::Number ? rightCategory : leftCategory;
+    case CalcOperator::Divide:
+        if (rightCategory != CalculationCategory::Number || rightSide.isZero())
+            return CalculationCategory::Other;
         return leftCategory;
-    case CalcMin:
-    case CalcMax:
+    case CalcOperator::Min:
+    case CalcOperator::Max:
         ASSERT_NOT_REACHED();
-        return CalcOther;
+        return CalculationCategory::Other;
     }
 
     ASSERT_NOT_REACHED();
-    return CalcOther;
+    return CalculationCategory::Other;
 }
 
 static CalculationCategory resolvedTypeForMinOrMax(CalculationCategory category, CalculationCategory destinationCategory)
 {
     switch (category) {
-    case CalcNumber:
-    case CalcLength:
-    case CalcPercentNumber:
-    case CalcPercentLength:
-    case CalcAngle:
-    case CalcTime:
-    case CalcFrequency:
-    case CalcOther:
+    case CalculationCategory::Number:
+    case CalculationCategory::Length:
+    case CalculationCategory::PercentNumber:
+    case CalculationCategory::PercentLength:
+    case CalculationCategory::Angle:
+    case CalculationCategory::Time:
+    case CalculationCategory::Frequency:
+    case CalculationCategory::Other:
         return category;
 
-    case CalcPercent:
-        if (destinationCategory == CalcLength)
-            return CalcPercentLength;
-        if (destinationCategory == CalcNumber)
-            return CalcPercentNumber;
+    case CalculationCategory::Percent:
+        if (destinationCategory == CalculationCategory::Length)
+            return CalculationCategory::PercentLength;
+        if (destinationCategory == CalculationCategory::Number)
+            return CalculationCategory::PercentNumber;
         return category;
     }
 
-    return CalcOther;
+    return CalculationCategory::Other;
 }
 
 static inline bool isIntegerResult(CalcOperator op, const CSSCalcExpressionNode& leftSide, const CSSCalcExpressionNode& rightSide)
 {
     // Performs W3C spec's type checking for calc integers.
     // http://www.w3.org/TR/css3-values/#calc-type-checking
-    return op != CalcDivide && leftSide.isInteger() && rightSide.isInteger();
+    return op != CalcOperator::Divide && leftSide.isInteger() && rightSide.isInteger();
 }
 
 static inline bool isIntegerResult(CalcOperator op, const Vector<Ref<CSSCalcExpressionNode>>& nodes)
 {
     // Performs W3C spec's type checking for calc integers.
     // http://www.w3.org/TR/css3-values/#calc-type-checking
-    if (op == CalcDivide)
+    if (op == CalcOperator::Divide)
         return false;
 
     for (auto& node : nodes) {
@@ -394,11 +394,11 @@ public:
         if (!leftSide || !rightSide)
             return nullptr;
 
-        ASSERT(leftSide->category() < CalcOther);
-        ASSERT(rightSide->category() < CalcOther);
+        ASSERT(leftSide->category() < CalculationCategory::Other);
+        ASSERT(rightSide->category() < CalculationCategory::Other);
 
         auto newCategory = determineCategory(*leftSide, *rightSide, op);
-        if (newCategory == CalcOther)
+        if (newCategory == CalculationCategory::Other)
             return nullptr;
 
         return adoptRef(new CSSCalcOperation(newCategory, op, leftSide.releaseNonNull(), rightSide.releaseNonNull()));
@@ -406,26 +406,26 @@ public:
 
     static RefPtr<CSSCalcOperation> createMinOrMax(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory)
     {
-        ASSERT(op == CalcMin || op == CalcMax);
+        ASSERT(op == CalcOperator::Min || op == CalcOperator::Max);
 
         std::optional<CalculationCategory> category = std::nullopt;
         for (auto& value : values) {
             auto valueCategory = resolvedTypeForMinOrMax(value->category(), destinationCategory);
 
-            ASSERT(valueCategory < CalcOther);
+            ASSERT(valueCategory < CalculationCategory::Other);
             if (!category) {
-                if (valueCategory == CalcOther)
+                if (valueCategory == CalculationCategory::Other)
                     return nullptr;
                 category = valueCategory;
             }
 
             if (category != valueCategory) {
-                if (isSamePair(category.value(), valueCategory, CalcLength, CalcPercentLength)) {
-                    category = CalcPercentLength;
+                if (isSamePair(category.value(), valueCategory, CalculationCategory::Length, CalculationCategory::PercentLength)) {
+                    category = CalculationCategory::PercentLength;
                     continue;
                 }
-                if (isSamePair(category.value(), valueCategory, CalcNumber, CalcPercentNumber)) {
-                    category = CalcPercentNumber;
+                if (isSamePair(category.value(), valueCategory, CalculationCategory::Number, CalculationCategory::PercentNumber)) {
+                    category = CalculationCategory::PercentNumber;
                     continue;
                 }
                 return nullptr;
@@ -442,19 +442,19 @@ public:
 
         auto leftCategory = leftSide->category();
         auto rightCategory = rightSide->category();
-        ASSERT(leftCategory < CalcOther);
-        ASSERT(rightCategory < CalcOther);
+        ASSERT(leftCategory < CalculationCategory::Other);
+        ASSERT(rightCategory < CalculationCategory::Other);
 
         bool isInteger = isIntegerResult(op, *leftSide, *rightSide);
 
         // Simplify numbers.
-        if (leftCategory == CalcNumber && rightCategory == CalcNumber) {
+        if (leftCategory == CalculationCategory::Number && rightCategory == CalculationCategory::Number) {
             CSSPrimitiveValue::UnitType evaluationType = CSSPrimitiveValue::CSS_NUMBER;
             return CSSCalcPrimitiveValue::create(evaluateOperator(op, { leftSide->doubleValue(), rightSide->doubleValue() }), evaluationType, isInteger);
         }
 
         // Simplify addition and subtraction between same types.
-        if (op == CalcAdd || op == CalcSubtract) {
+        if (op == CalcOperator::Add || op == CalcOperator::Subtract) {
             if (leftCategory == rightSide->category()) {
                 CSSPrimitiveValue::UnitType leftType = leftSide->primitiveType();
                 if (hasDoubleValue(leftType)) {
@@ -474,18 +474,18 @@ public:
             }
         } else {
             // Simplify multiplying or dividing by a number for simplifiable types.
-            ASSERT(op == CalcMultiply || op == CalcDivide);
+            ASSERT(op == CalcOperator::Multiply || op == CalcOperator::Divide);
             auto* numberSide = getNumberSide(*leftSide, *rightSide);
             if (!numberSide)
                 return create(op, leftSide.releaseNonNull(), rightSide.releaseNonNull());
-            if (numberSide == leftSide && op == CalcDivide)
+            if (numberSide == leftSide && op == CalcOperator::Divide)
                 return nullptr;
             auto& otherSide = leftSide == numberSide ? *rightSide : *leftSide;
 
             double number = numberSide->doubleValue();
             if (!std::isfinite(number))
                 return nullptr;
-            if (op == CalcDivide && !number)
+            if (op == CalcOperator::Divide && !number)
                 return nullptr;
 
             auto otherType = otherSide.primitiveType();
@@ -537,10 +537,10 @@ private:
         StringBuilder result;
         result.append('(');
         switch (op) {
-        case CalcAdd:
-        case CalcSubtract:
-        case CalcMultiply:
-        case CalcDivide:
+        case CalcOperator::Add:
+        case CalcOperator::Subtract:
+        case CalcOperator::Multiply:
+        case CalcOperator::Divide:
             ASSERT(childExpressions.size() == 2);
             result.append(childExpressions[0]);
             result.append(' ');
@@ -548,10 +548,10 @@ private:
             result.append(' ');
             result.append(childExpressions[1]);
             break;
-        case CalcMin:
-        case CalcMax:
+        case CalcOperator::Min:
+        case CalcOperator::Max:
             ASSERT(!childExpressions.isEmpty());
-            const char* functionName = op == CalcMin ? "min(" : "max(";
+            const char* functionName = op == CalcOperator::Min ? "min(" : "max(";
             result.append(functionName);
             result.append(childExpressions[0]);
             for (size_t i = 1; i < childExpressions.size(); ++i) {
@@ -596,20 +596,20 @@ private:
     CSSPrimitiveValue::UnitType primitiveType() const final
     {
         switch (category()) {
-        case CalcNumber:
+        case CalculationCategory::Number:
 #if !ASSERT_DISABLED
             for (auto& child : m_children)
-                ASSERT(child->category() == CalcNumber);
+                ASSERT(child->category() == CalculationCategory::Number);
 #endif
             return CSSPrimitiveValue::CSS_NUMBER;
-        case CalcLength:
-        case CalcPercent: {
+        case CalculationCategory::Length:
+        case CalculationCategory::Percent: {
             if (m_children.isEmpty())
                 return CSSPrimitiveValue::CSS_UNKNOWN;
             if (m_children.size() == 2) {
-                if (m_children[0]->category() == CalcNumber)
+                if (m_children[0]->category() == CalculationCategory::Number)
                     return m_children[1]->primitiveType();
-                if (m_children[1]->category() == CalcNumber)
+                if (m_children[1]->category() == CalculationCategory::Number)
                     return m_children[0]->primitiveType();
             }
             CSSPrimitiveValue::UnitType firstType = m_children[0]->primitiveType();
@@ -619,15 +619,15 @@ private:
             }
             return firstType;
         }
-        case CalcAngle:
+        case CalculationCategory::Angle:
             return CSSPrimitiveValue::CSS_DEG;
-        case CalcTime:
+        case CalculationCategory::Time:
             return CSSPrimitiveValue::CSS_MS;
-        case CalcFrequency:
+        case CalculationCategory::Frequency:
             return CSSPrimitiveValue::CSS_HZ;
-        case CalcPercentLength:
-        case CalcPercentNumber:
-        case CalcOther:
+        case CalculationCategory::PercentLength:
+        case CalculationCategory::PercentNumber:
+        case CalculationCategory::Other:
             return CSSPrimitiveValue::CSS_UNKNOWN;
         }
         ASSERT_NOT_REACHED();
@@ -644,16 +644,16 @@ private:
 
     CSSCalcOperation(CalculationCategory category, CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& children)
         : CSSCalcExpressionNode(category, isIntegerResult(op, children))
-        , m_children(WTFMove(children))
         , m_operator(op)
+        , m_children(WTFMove(children))
     {
     }
 
     static CSSCalcExpressionNode* getNumberSide(CSSCalcExpressionNode& leftSide, CSSCalcExpressionNode& rightSide)
     {
-        if (leftSide.category() == CalcNumber)
+        if (leftSide.category() == CalculationCategory::Number)
             return &leftSide;
-        if (rightSide.category() == CalcNumber)
+        if (rightSide.category() == CalculationCategory::Number)
             return &rightSide;
         return nullptr;
     }
@@ -666,21 +666,21 @@ private:
     static double evaluateOperator(CalcOperator op, const Vector<double>& children)
     {
         switch (op) {
-        case CalcAdd:
+        case CalcOperator::Add:
             ASSERT(children.size() == 2);
             return children[0] + children[1];
-        case CalcSubtract:
+        case CalcOperator::Subtract:
             ASSERT(children.size() == 2);
             return children[0] - children[1];
-        case CalcMultiply:
+        case CalcOperator::Multiply:
             ASSERT(children.size() == 2);
             return children[0] * children[1];
-        case CalcDivide:
+        case CalcOperator::Divide:
             ASSERT(children.size() == 1 || children.size() == 2);
             if (children.size() == 1)
                 return std::numeric_limits<double>::quiet_NaN();
             return children[0] / children[1];
-        case CalcMin: {
+        case CalcOperator::Min: {
             if (children.isEmpty())
                 return std::numeric_limits<double>::quiet_NaN();
             double minimum = children[0];
@@ -688,7 +688,7 @@ private:
                 minimum = std::min(minimum, child);
             return minimum;
         }
-        case CalcMax: {
+        case CalcOperator::Max: {
             if (children.isEmpty())
                 return std::numeric_limits<double>::quiet_NaN();
             double maximum = children[0];
@@ -701,8 +701,8 @@ private:
         return 0;
     }
 
-    Vector<Ref<CSSCalcExpressionNode>> m_children;
     const CalcOperator m_operator;
+    Vector<Ref<CSSCalcExpressionNode>> m_children;
 };
 
 static ParseState checkDepthAndIndex(int* depth, CSSParserTokenRange tokens)
@@ -754,7 +754,7 @@ private:
             return false;
         
         CSSPrimitiveValue::UnitType type = token.unitType();
-        if (unitCategory(type) == CalcOther)
+        if (unitCategory(type) == CalculationCategory::Other)
             return false;
         
         bool isInteger = token.numericValueType() == IntegerValueType || (token.numericValueType() == NumberValueType && token.numericValue() == trunc(token.numericValue()));
@@ -797,7 +797,7 @@ private:
         
         while (!tokens.atEnd()) {
             char operatorCharacter = operatorValue(tokens.peek());
-            if (operatorCharacter != CalcMultiply && operatorCharacter != CalcDivide)
+            if (operatorCharacter != static_cast<char>(CalcOperator::Multiply) && operatorCharacter != static_cast<char>(CalcOperator::Divide))
                 break;
             tokens.consumeIncludingWhitespace();
             
@@ -824,7 +824,7 @@ private:
         
         while (!tokens.atEnd()) {
             char operatorCharacter = operatorValue(tokens.peek());
-            if (operatorCharacter != CalcAdd && operatorCharacter != CalcSubtract)
+            if (operatorCharacter != static_cast<char>(CalcOperator::Add) && operatorCharacter != static_cast<char>(CalcOperator::Subtract))
                 break;
             if ((&tokens.peek() - 1)->type() != WhitespaceToken)
                 return false; // calc(1px+ 2px) is invalid
@@ -850,7 +850,7 @@ private:
         if (checkDepthAndIndex(&depth, tokens) != OK)
             return false;
 
-        CalcOperator op = (minMaxFunction == CSSValueMin) ? CalcMin : CalcMax;
+        CalcOperator op = (minMaxFunction == CSSValueMin) ? CalcOperator::Min : CalcOperator::Max;
 
         Value value;
         if (!parseValueExpression(tokens, depth, &value))
@@ -885,24 +885,24 @@ private:
 
 static inline RefPtr<CSSCalcOperation> createBlendHalf(const Length& length, const RenderStyle& style, float progress)
 {
-    return CSSCalcOperation::create(CalcMultiply, createCSS(length, style),
+    return CSSCalcOperation::create(CalcOperator::Multiply, createCSS(length, style),
         CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER), !progress || progress == 1));
 }
 
 static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, const RenderStyle& style)
 {
     switch (node.type()) {
-    case CalcExpressionNodeNumber: {
+    case CalcExpressionNodeType::Number: {
         float value = toCalcExpressionNumber(node).value();
         return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER), value == std::trunc(value));
     }
-    case CalcExpressionNodeLength:
+    case CalcExpressionNodeType::Length:
         return createCSS(toCalcExpressionLength(node).length(), style);
-    case CalcExpressionNodeOperation: {
+    case CalcExpressionNodeType::Operation: {
         auto& operationNode = toCalcExpressionOperation(node);
         auto& operationChildren = operationNode.children();
         CalcOperator op = operationNode.getOperator();
-        if (op == CalcMin || op == CalcMax) {
+        if (op == CalcOperator::Min || op == CalcOperator::Max) {
             Vector<Ref<CSSCalcExpressionNode>> values;
             values.reserveInitialCapacity(operationChildren.size());
             for (auto& child : operationChildren) {
@@ -911,7 +911,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
                     return nullptr;
                 values.uncheckedAppend(*cssNode);
             }
-            return CSSCalcOperation::createMinOrMax(operationNode.getOperator(), WTFMove(values), CalcOther);
+            return CSSCalcOperation::createMinOrMax(operationNode.getOperator(), WTFMove(values), CalculationCategory::Other);
         }
 
         if (operationChildren.size() == 2)
@@ -919,13 +919,13 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
 
         return nullptr;
     }
-    case CalcExpressionNodeBlendLength: {
+    case CalcExpressionNodeType::BlendLength: {
         // FIXME: (http://webkit.org/b/122036) Create a CSSCalcExpressionNode equivalent of CalcExpressionBlendLength.
         auto& blend = toCalcExpressionBlendLength(node);
         float progress = blend.progress();
-        return CSSCalcOperation::create(CalcAdd, createBlendHalf(blend.from(), style, 1 - progress), createBlendHalf(blend.to(), style, progress));
+        return CSSCalcOperation::create(CalcOperator::Add, createBlendHalf(blend.from(), style, 1 - progress), createBlendHalf(blend.to(), style, progress));
     }
-    case CalcExpressionNodeUndefined:
+    case CalcExpressionNodeType::Undefined:
         ASSERT_NOT_REACHED();
     }
     return nullptr;
