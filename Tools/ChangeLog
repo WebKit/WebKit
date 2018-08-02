@@ -1,3 +1,14 @@
+2018-08-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        TestWTF.WTF_NeverDestroyed.Construct output differs for MSVC in Debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=188244
+
+        Reviewed by Daniel Bates.
+
+        Follow-up to r234179. MSVC chooses not to inline the lambda in Debug mode. 
+
+        * TestWebKitAPI/Tests/WTF/NeverDestroyed.cpp:
+
 2018-08-01  Tomas Popela  <tpopela@redhat.com>
 
         [WTF] Rename String::format to String::deprecatedFormat

@@ -62,7 +62,11 @@ TEST(WTF_NeverDestroyed, Construct)
         }());
         ASSERT_STREQ(x.get().name, "x");
     }
+#if COMPILER(MSVC) && !defined(NDEBUG)
+    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
+#else
     ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
+#endif
 
     {
         static NeverDestroyed<LifecycleLogger> x;
@@ -89,7 +93,11 @@ TEST(WTF_NeverDestroyed, Construct)
         }());
         UNUSED_PARAM(x);
     }
+#if COMPILER(MSVC) && !defined(NDEBUG)
+    ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
+#else
     ASSERT_STREQ("construct(name) set-name(x) move-construct(x) destruct(<default>) ", takeLogStr().c_str());
+#endif
 }
 
 static const Vector<int>& list()
