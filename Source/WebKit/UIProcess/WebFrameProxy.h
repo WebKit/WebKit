@@ -48,10 +48,12 @@ class Decoder;
 }
 
 namespace WebKit {
+class SafeBrowsingResult;
 class WebCertificateInfo;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
 class WebsiteDataStore;
+enum class ShouldExpectSafeBrowsingResult;
 enum class ShouldProcessSwapIfPossible;
 struct WebsitePoliciesData;
 
@@ -115,7 +117,7 @@ public:
     void didSameDocumentNavigation(const WebCore::URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
 
-    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&&);
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible, Vector<SafeBrowsingResult>&&)>&&, ShouldExpectSafeBrowsingResult);
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTFMove(contentFilterUnblockHandler); }

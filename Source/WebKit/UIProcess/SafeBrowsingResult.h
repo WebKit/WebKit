@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,31 @@
 
 #pragma once
 
-#include "APIObject.h"
-#include <wtf/CompletionHandler.h>
-#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
-namespace API {
-class WebsitePolicies;
-}
-
-namespace WebCore {
-enum class PolicyAction;
-}
+OBJC_CLASS SSBServiceLookupResult;
 
 namespace WebKit {
 
-class SafeBrowsingResult;
-
-enum class ShouldProcessSwapIfPossible { No, Yes };
-enum class ShouldExpectSafeBrowsingResult { No, Yes };
-
-class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
+class SafeBrowsingResult {
 public:
+#if HAVE(SAFE_BROWSING)
+    SafeBrowsingResult(SSBServiceLookupResult *);
+#endif
+    SafeBrowsingResult() = default;
 
-    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible, Vector<SafeBrowsingResult>&&)>;
-    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
-    {
-        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expect));
-    }
-    ~WebFramePolicyListenerProxy();
-
-    void use(API::WebsitePolicies* = nullptr, ShouldProcessSwapIfPossible = ShouldProcessSwapIfPossible::No);
-    void download();
-    void ignore();
-    
-    void didReceiveSafeBrowsingResults(Vector<SafeBrowsingResult>&&);
+    const String& provider() const { return m_provider; }
+    bool isPhishing() const { return m_isPhishing; }
+    bool isMalware() const { return m_isMalware; }
+    bool isUnwantedSoftware() const { return m_isUnwantedSoftware; }
+    bool isKnownToBeUnsafe() const { return m_isKnownToBeUnsafe; }
 
 private:
-    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult);
-
-    std::optional<std::pair<RefPtr<API::WebsitePolicies>, ShouldProcessSwapIfPossible>> m_policyResult;
-    std::optional<Vector<SafeBrowsingResult>> m_safeBrowsingResults;
-    Reply m_reply;
+    String m_provider;
+    bool m_isPhishing { false };
+    bool m_isMalware { false };
+    bool m_isUnwantedSoftware { false };
+    bool m_isKnownToBeUnsafe { false };
 };
 
 } // namespace WebKit

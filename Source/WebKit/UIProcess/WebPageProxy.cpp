@@ -76,6 +76,7 @@
 #include "PluginInformation.h"
 #include "PluginProcessManager.h"
 #include "PrintInfo.h"
+#include "SafeBrowsingResult.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UIMessagePortChannelProvider.h"
@@ -4002,6 +4003,13 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
         m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
+#if !PLATFORM(COCOA)
+void WebPageProxy::beginSafeBrowsingCheck(const URL&, WebFramePolicyListenerProxy& listener)
+{
+    listener.didReceiveSafeBrowsingResults({ });
+}
+#endif
+
 void WebPageProxy::decidePolicyForNavigationActionAsync(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& frameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, uint64_t listenerID)
 {
     decidePolicyForNavigationAction(frameID, frameSecurityOrigin, navigationID, WTFMove(navigationActionData), frameInfoData, originatingPageID, originalRequest, WTFMove(request), WTFMove(redirectResponse), userData, PolicyDecisionSender::create([this, protectedThis = makeRef(*this), frameID, listenerID] (auto... args) {
@@ -4063,7 +4071,9 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
     UNUSED_PARAM(newNavigationID);
 #endif
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(*frame), sender = sender.copyRef(), navigation] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap) mutable {
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(*frame), sender = sender.copyRef(), navigation] (WebCore::PolicyAction policyAction, API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap, Vector<SafeBrowsingResult>&&) mutable {
+        // FIXME: do something with the SafeBrowsingResults.
+
         std::optional<WebsitePoliciesData> data;
         if (policies) {
             data = policies->data();
@@ -4084,7 +4094,8 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const WebCo
         }
 
         receivedPolicyDecision(policyAction, navigation.get(), WTFMove(data), WTFMove(sender));
-    }));
+    }, ShouldExpectSafeBrowsingResult::Yes));
+    beginSafeBrowsingCheck(request.url(), listener);
 
     API::Navigation* mainFrameNavigation = frame->isMainFrame() ? navigation.get() : nullptr;
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameInfoData.frameID);
@@ -4130,13 +4141,14 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const Securi
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), listenerID, frameID] (WebCore::PolicyAction policyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible swap) mutable {
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), listenerID, frameID] (WebCore::PolicyAction policyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible swap, Vector<SafeBrowsingResult>&& safeBrowsingResults) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(swap == ShouldProcessSwapIfPossible::No);
+        ASSERT_UNUSED(safeBrowsingResults, safeBrowsingResults.isEmpty());
         receivedPolicyDecision(policyAction, nullptr, std::nullopt, PolicyDecisionSender::create([this, protectedThis = WTFMove(protectedThis), frameID, listenerID] (auto... args) {
             m_process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), m_pageID);
         }));
-    }));
+    }, ShouldExpectSafeBrowsingResult::No));
 
     if (m_navigationClient) {
         RefPtr<API::FrameInfo> sourceFrameInfo;
@@ -4165,13 +4177,14 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const SecurityOrigi
     MESSAGE_CHECK_URL(response.url());
 
     RefPtr<API::Navigation> navigation = navigationID ? &m_navigationState->navigation(navigationID) : nullptr;
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frameID, listenerID, navigation = WTFMove(navigation)] (WebCore::PolicyAction policyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible swap) mutable {
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frameID, listenerID, navigation = WTFMove(navigation)] (WebCore::PolicyAction policyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible swap, Vector<SafeBrowsingResult>&& safeBrowsingResults) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(swap == ShouldProcessSwapIfPossible::No);
+        ASSERT_UNUSED(safeBrowsingResults, safeBrowsingResults.isEmpty());
         receivedPolicyDecision(policyAction, navigation.get(), std::nullopt, PolicyDecisionSender::create([this, protectedThis = WTFMove(protectedThis), frameID, listenerID] (auto... args) {
             m_process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), m_pageID);
         }));
-    }));
+    }, ShouldExpectSafeBrowsingResult::No));
 
     if (m_navigationClient) {
         auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin()).get(), request, response, canShowMIMEType);

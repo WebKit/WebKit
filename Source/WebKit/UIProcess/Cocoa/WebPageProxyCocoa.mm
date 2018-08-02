@@ -30,11 +30,14 @@
 #import "DataDetectionResult.h"
 #import "LoadParameters.h"
 #import "PageClient.h"
+#import "SafeBrowsingResult.h"
+#import "SafeBrowsingSPI.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/ValidationBubble.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 using namespace WebCore;
@@ -66,6 +69,29 @@ void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::Recent
     }
 
     searchItems = WebCore::loadRecentSearches(name);
+}
+
+void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListenerProxy& listener)
+{
+#if HAVE(SAFE_BROWSING)
+    [[SSBLookupContext sharedLookupContext] lookUpURL:url completionHandler:BlockPtr<void(SSBLookupResult *, NSError *)>::fromCallable([listener = makeRef(listener)] (SSBLookupResult *result, NSError *error) mutable {
+        RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error)] {
+            if (error) {
+                listener->didReceiveSafeBrowsingResults({ });
+                return;
+            }
+
+            NSArray<SSBServiceLookupResult *> *results = [result serviceLookupResults];
+            Vector<SafeBrowsingResult> resultsVector;
+            resultsVector.reserveInitialCapacity([results count]);
+            for (SSBServiceLookupResult *result in results)
+                resultsVector.uncheckedAppend({ result });
+            listener->didReceiveSafeBrowsingResults(WTFMove(resultsVector));
+        });
+    }).get()];
+#else
+    listener.didReceiveSafeBrowsingResults({ });
+#endif
 }
 
 #if ENABLE(CONTENT_FILTERING)
