@@ -561,7 +561,6 @@ struct VariantCoder<0, Types...> {
 template<typename... Types> struct ArgumentCoder<WTF::Variant<Types...>> {
     static void encode(Encoder& encoder, const WTF::Variant<Types...>& variant)
     {
-        ASSERT(static_cast<unsigned>(variant.index()) == variant.index());
         unsigned i = variant.index();
         encoder << i;
         VariantCoder<sizeof...(Types) - 1, Types...>::encode(encoder, variant, i);

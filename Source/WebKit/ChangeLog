@@ -1,3 +1,13 @@
+2018-08-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some builds after r234516
+        ​https://bugs.webkit.org/show_bug.cgi?id=188250
+
+        * Platform/IPC/ArgumentCoders.h:
+        This assertion was comparing integers of different signs.
+        Since we don't allow exception throwing in WebKit, valueless_by_exception won't be true,
+        so this assertion will always be true.  I'll just remove it.
+
 2018-08-02  Sihui Liu  <sihui_liu@apple.com>
 
         httpCookieStore.getAllCookies() does not always call completion block
