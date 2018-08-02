@@ -1,5 +1,16 @@
 2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, revert TransformationMatrix::operator== change
+        https://bugs.webkit.org/show_bug.cgi?id=188197
+
+        This change partially revert cleaning up of TransformationMatrix since memcmp does not
+        follow double comparison algorithm. So semantics was accidentally changed.
+
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::operator== const):
+
+2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, rename TransformationMatrix::Identity to TransformationMatrix::identity
         https://bugs.webkit.org/show_bug.cgi?id=188204
 
