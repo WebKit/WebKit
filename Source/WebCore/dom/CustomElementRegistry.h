@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferred.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
@@ -42,8 +41,10 @@ namespace WebCore {
 
 class CustomElementRegistry;
 class DOMWindow;
+class DeferredPromise;
 class Element;
 class JSCustomElementInterface;
+class Node;
 class QualifiedName;
 
 class CustomElementRegistry : public RefCounted<CustomElementRegistry> {
@@ -62,6 +63,7 @@ public:
     bool containsConstructor(const JSC::JSObject*) const;
 
     JSC::JSValue get(const AtomicString&);
+    void upgrade(Node& root);
 
     HashMap<AtomicString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
 

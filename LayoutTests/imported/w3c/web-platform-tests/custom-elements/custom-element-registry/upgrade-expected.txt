@@ -1,7 +1,7 @@
 
-FAIL Upgrading an element directly (example from the spec) customElements.upgrade is not a function. (In 'customElements.upgrade(el)', 'customElements.upgrade' is undefined)
-FAIL Two elements as children of the upgraded node customElements.upgrade is not a function. (In 'customElements.upgrade(container)', 'customElements.upgrade' is undefined)
-FAIL Two elements as descendants of the upgraded node customElements.upgrade is not a function. (In 'customElements.upgrade(container)', 'customElements.upgrade' is undefined)
-FAIL Two elements as shadow-including descendants (and not descendants) of the upgraded node customElements.upgrade is not a function. (In 'customElements.upgrade(container)', 'customElements.upgrade' is undefined)
-FAIL Elements inside a template contents DocumentFragment node customElements.upgrade is not a function. (In 'customElements.upgrade(template)', 'customElements.upgrade' is undefined)
+PASS Upgrading an element directly (example from the spec) 
+PASS Two elements as children of the upgraded node 
+PASS Two elements as descendants of the upgraded node 
+PASS Two elements as shadow-including descendants (and not descendants) of the upgraded node 
+PASS Elements inside a template contents DocumentFragment node 
 

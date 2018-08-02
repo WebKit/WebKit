@@ -1,3 +1,35 @@
+2018-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement customElements.upgrade()
+        https://bugs.webkit.org/show_bug.cgi?id=183397
+
+        Reviewed by Frédéric Wang.
+
+        Added the support to upgrade custom elements directly. Ordinarily, custom elements get upgraded as they are
+        inserted / connected into a document but some script libraries and authors want to be able to upgrade them before that.
+        Also see https://github.com/w3c/webcomponents/issues/710
+
+        Implemented the method as specified at:
+        https://html.spec.whatwg.org/multipage/custom-elements.html#dom-customelementregistry-upgrade
+
+            When invoked, the upgrade(root) method must run these steps:
+            1. Let candidates be a list of all of root's shadow-including inclusive descendant elements,
+               in shadow-including tree order.
+            2. For each candidate of candidates, try to upgrade candidate.
+
+        Tests: imported/w3c/web-platform-tests/custom-elements/custom-element-registry/upgrade.html
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgradeIfDefined): Removed the assertion that the upgraded element
+        is connected since the whole point of this API is to upgrade a disconnected element.
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::upgradeElementsInShadowIncludingdescendants): Added.
+        (WebCore::CustomElementRegistry::upgrade): Added.
+        * dom/CustomElementRegistry.h: Forward declare DeferredPromise instead of unnecessarily including JSDOMPromiseDeferred.h.
+        * dom/CustomElementRegistry.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::insertedIntoAncestor): Moved the assertion here.
+
 2018-08-02  Simon Fraser  <simon.fraser@apple.com>
 
         Convert calc-related enums to 8-bit enum classes

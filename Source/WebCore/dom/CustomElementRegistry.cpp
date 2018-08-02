@@ -35,6 +35,7 @@
 #include "MathMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
+#include "TypedElementDescendantIterator.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/AtomicString.h>
 
@@ -111,6 +112,27 @@ JSC::JSValue CustomElementRegistry::get(const AtomicString& name)
     if (auto* elementInterface = m_nameMap.get(name))
         return elementInterface->constructor();
     return JSC::jsUndefined();
+}
+
+static void upgradeElementsInShadowIncludingDescendants(ContainerNode& root)
+{
+    for (auto& element : descendantsOfType<Element>(root)) {
+        if (element.isCustomElementUpgradeCandidate())
+            CustomElementReactionQueue::enqueueElementUpgradeIfDefined(element);
+        if (auto* shadowRoot = element.shadowRoot())
+            upgradeElementsInShadowIncludingDescendants(*shadowRoot);
+    }
+}
+
+void CustomElementRegistry::upgrade(Node& root)
+{
+    if (!is<ContainerNode>(root))
+        return;
+
+    if (is<Element>(root) && downcast<Element>(root).isCustomElementUpgradeCandidate())
+        CustomElementReactionQueue::enqueueElementUpgradeIfDefined(downcast<Element>(root));
+
+    upgradeElementsInShadowIncludingDescendants(downcast<ContainerNode>(root));
 }
 
 }

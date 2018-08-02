@@ -122,7 +122,6 @@ void CustomElementReactionQueue::enqueueElementUpgrade(Element& element)
 
 void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element)
 {
-    ASSERT(element.isConnected());
     ASSERT(element.isCustomElementUpgradeCandidate());
     auto* window = element.document().domWindow();
     if (!window)

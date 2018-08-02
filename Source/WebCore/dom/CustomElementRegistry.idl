@@ -31,4 +31,5 @@
     [CEReactions, Custom] void define(DOMString name, Function constructor);
     any get(DOMString name);
     [Custom, MayThrowException, ReturnsOwnPromise] Promise<void> whenDefined(DOMString name);
+    [CEReactions] void upgrade(Node root);
 };

@@ -1,3 +1,14 @@
+2018-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement customElements.upgrade()
+        https://bugs.webkit.org/show_bug.cgi?id=183397
+
+        Reviewed by Frédéric Wang.
+
+        Rebaseline the test now that we're passing.
+
+        * web-platform-tests/custom-elements/custom-element-registry/upgrade-expected.txt:
+
 2018-07-23  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add support for calc() in gutter properties

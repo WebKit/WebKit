@@ -1747,8 +1747,10 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     }
 
     if (becomeConnected) {
-        if (UNLIKELY(isCustomElementUpgradeCandidate()))
+        if (UNLIKELY(isCustomElementUpgradeCandidate())) {
+            ASSERT(isConnected());
             CustomElementReactionQueue::enqueueElementUpgradeIfDefined(*this);
+        }
         if (UNLIKELY(isDefinedCustomElement()))
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
