@@ -70,7 +70,7 @@ typedef double Vector3[3];
 
 const double SMALL_NUMBER = 1.e-8;
 
-const TransformationMatrix TransformationMatrix::Identity { };
+const TransformationMatrix TransformationMatrix::identity { };
 
 // inverse(original_matrix, inverse_matrix)
 //
