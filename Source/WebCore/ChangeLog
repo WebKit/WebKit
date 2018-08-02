@@ -1,5 +1,19 @@
 2018-08-02  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floating] Use displayBox.rectWithMargin().bottom instead of displayBox.bottom() to where applicable.
+        https://bugs.webkit.org/show_bug.cgi?id=188274
+
+        Reviewed by Antti Koivisto.
+
+        Float placement uses the margin box.
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingPair::bottom const):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+
+2018-08-02  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floating] Right aligned float's horizontal candidate position is miscomputed.
         https://bugs.webkit.org/show_bug.cgi?id=188273
 

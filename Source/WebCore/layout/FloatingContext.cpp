@@ -297,8 +297,8 @@ LayoutUnit FloatingPair::bottom() const
     auto* right = this->right();
     ASSERT(left || right);
 
-    auto leftBottom = left ? std::optional<LayoutUnit>(left->bottom()) : std::nullopt;
-    auto rightBottom = right ? std::optional<LayoutUnit>(right->bottom()) : std::nullopt;
+    auto leftBottom = left ? std::optional<LayoutUnit>(left->rectWithMargin().bottom()) : std::nullopt;
+    auto rightBottom = right ? std::optional<LayoutUnit>(right->rectWithMargin().bottom()) : std::nullopt;
 
     if (leftBottom && rightBottom)
         return std::max(*leftBottom, *rightBottom);
@@ -346,7 +346,7 @@ Iterator& Iterator::operator++()
         if (!currentIndex)
             return { };
 
-        auto currentBottom = m_floats[currentIndex].displayBox().bottom();
+        auto currentBottom = m_floats[currentIndex].displayBox().rectWithMargin().bottom();
 
         std::optional<unsigned> index = currentIndex;
         while (true) {
@@ -354,7 +354,7 @@ Iterator& Iterator::operator++()
             if (!index)
                 return { };
 
-            if (m_floats[*index].displayBox().bottom() > currentBottom)
+            if (m_floats[*index].displayBox().rectWithMargin().bottom() > currentBottom)
                 return index;
         }
 
@@ -418,7 +418,7 @@ void Iterator::set(LayoutUnit verticalPosition)
             if (!index)
                 return { };
 
-            auto bottom = m_floats[*index].displayBox().bottom();
+            auto bottom = m_floats[*index].displayBox().rectWithMargin().bottom();
             // Is this floating intrusive on this position?
             if (bottom > verticalPosition)
                 return index;
