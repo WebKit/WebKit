@@ -897,26 +897,36 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     // Now split the recv'd buffer into buffers that are of a size basesrc suggests. It is important not
     // to push buffers that are too large, otherwise incorrect buffering messages can be sent from the
     // pipeline.
-    uint64_t bufferSize = gst_buffer_get_size(priv->buffer.get());
-    uint64_t blockSize = static_cast<uint64_t>(GST_BASE_SRC_CAST(priv->appsrc)->blocksize);
-    ASSERT(blockSize);
+    uint64_t bufferSize = static_cast<uint64_t>(length);
+    // FIXME: Implement adaptive block resizing
+    uint64_t blockSize = static_cast<uint64_t>(gst_base_src_get_blocksize(GST_BASE_SRC_CAST(priv->appsrc)));
     GST_LOG_OBJECT(src, "Splitting the received buffer into %" PRIu64 " blocks", bufferSize / blockSize);
     for (uint64_t currentOffset = 0; currentOffset < bufferSize; currentOffset += blockSize) {
         uint64_t subBufferOffset = startingOffset + currentOffset;
         uint64_t currentOffsetSize = std::min(blockSize, bufferSize - currentOffset);
 
-        GST_TRACE_OBJECT(src, "Create sub-buffer from [%" PRIu64 ", %" PRIu64 "]", currentOffset, currentOffset + currentOffsetSize);
         GstBuffer* subBuffer = gst_buffer_copy_region(priv->buffer.get(), GST_BUFFER_COPY_ALL, currentOffset, currentOffsetSize);
         if (UNLIKELY(!subBuffer)) {
             GST_ELEMENT_ERROR(src, CORE, FAILED, ("Failed to allocate sub-buffer"), (nullptr));
             break;
         }
 
+        GST_TRACE_OBJECT(src, "Sub-buffer bounds: %" PRIu64 " -- %" PRIu64, subBufferOffset, subBufferOffset + currentOffsetSize);
         GST_BUFFER_OFFSET(subBuffer) = subBufferOffset;
         GST_BUFFER_OFFSET_END(subBuffer) = subBufferOffset + currentOffsetSize;
-        GST_TRACE_OBJECT(src, "Set sub-buffer offset bounds [%" PRIu64 ", %" PRIu64 "]", GST_BUFFER_OFFSET(subBuffer), GST_BUFFER_OFFSET_END(subBuffer));
 
-        GST_TRACE_OBJECT(src, "Pushing buffer of size %" G_GSIZE_FORMAT " bytes", gst_buffer_get_size(subBuffer));
+        if (priv->isSeeking) {
+            GST_TRACE_OBJECT(src, "Stopping buffer appends due to seek");
+            // A seek has happened in the middle of us breaking the
+            // incoming data up from a previous request. Stop pushing
+            // buffers that are now from the incorrect offset.
+            break;
+        }
+
+        // It may be tempting to use a GstBufferList here, but note
+        // that there is a race condition in GstDownloadBuffer during
+        // seek flushes that can cause decoders to read at incorrect
+        // offsets.
         GstFlowReturn ret = gst_app_src_push_buffer(priv->appsrc, subBuffer);
 
         if (UNLIKELY(ret != GST_FLOW_OK && ret != GST_FLOW_EOS && ret != GST_FLOW_FLUSHING)) {

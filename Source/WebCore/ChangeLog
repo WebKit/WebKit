@@ -1,3 +1,31 @@
+2018-08-02  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Stop pushing buffers when seeking status changes
+        https://bugs.webkit.org/show_bug.cgi?id=188193
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        After switching to splitting buffers into smaller block sizes in
+
+            https://bugs.webkit.org/show_bug.cgi?id=182829
+
+        It was found that during the individual buffer pushes, the seeking
+        status could change behind our backs from another thread. When
+        this happens, buffers from incorrect offsets would find their way
+        into appsrc and eventually the demuxer itself, which would start
+        parsing from a random place and at best give a confusing error
+        message.
+
+        The solution here is break from pushing buffers when the seeking
+        status has been has changed. Flushes will clear out what we've
+        already delivered into the appsrc, then we must make sure to not
+        continue sending buffers in there after the flush.
+
+        No new tests since this is a timing bug.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::dataReceived):
+
 2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, revert TransformationMatrix::operator== change
