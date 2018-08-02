@@ -338,6 +338,18 @@ Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
 #endif
 }
 
+Color RenderThemeMac::transformSelectionBackgroundColor(const Color& color, OptionSet<StyleColor::Options> options) const
+{
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDarkAppearance));
+    if (localAppearance.usingDarkAppearance()) {
+        // Use an alpha value that is similar to results from blendWithWhite() on light colors.
+        static const float darkAppearanceAlpha = 0.8;
+        return !color.isOpaque() ? color : color.colorWithAlpha(darkAppearanceAlpha);
+    }
+
+    return RenderTheme::transformSelectionBackgroundColor(color, options);
+}
+
 bool RenderThemeMac::supportsSelectionForegroundColors(OptionSet<StyleColor::Options> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseSystemAppearance), options.contains(StyleColor::Options::UseDarkAppearance));
@@ -585,21 +597,11 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 #endif
 
         case CSSValueAppleSystemSelectedContentBackground:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-            return systemAppearanceColor(cache.systemSelectedContentBackgroundColor, @selector(selectedContentBackgroundColor));
-#else
-            return systemAppearanceColor(cache.systemSelectedContentBackgroundColor, @selector(alternateSelectedControlColor));
-#endif
+            return activeListBoxSelectionBackgroundColor(options);
 
         case CSSValueAppleSystemSelectedTextBackground:
         case CSSValueHighlight:
-            // Can't use systemAppearanceColor() since blendWithWhite() needs called before caching as a semantic color.
-            if (!cache.systemSelectedTextBackgroundColor.isValid()) {
-                Color systemColor = semanticColorFromNSColor([NSColor selectedTextBackgroundColor]);
-                cache.systemSelectedTextBackgroundColor = Color(systemColor.blendWithWhite().rgb(), Color::Semantic);
-            }
-
-            return cache.systemSelectedTextBackgroundColor;
+            return activeSelectionBackgroundColor(options);
 
         default:
             // Handle other system colors below, that don't need special system appearance handling.
@@ -783,7 +785,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueAppleSystemSelectedTextBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return Color(0xCC0F3C6E, Color::Semantic);
+                return Color(0xCC3F638B, Color::Semantic);
             return Color(0x9980BCFE, Color::Semantic);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300

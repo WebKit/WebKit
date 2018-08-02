@@ -1,3 +1,31 @@
+2018-08-02  Timothy Hatcher  <timothy@apple.com>
+
+        Text selection color is hard to see in dark mode web views.
+        https://bugs.webkit.org/show_bug.cgi?id=188260
+        rdar://problem/42721294
+
+        Reviewed by Simon Fraser.
+
+        Stop using blendWithWhite() to transform the AppKit selection color in dark mode.
+        Using an alpha of 80% gives good contrast, and still works good for selections over images.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::blendWithWhite const): Mark new colors as semantic if the original is.
+        (WebCore::Color::colorWithAlpha const): Ditto.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionBackgroundColor const): Use transformSelectionBackgroundColor.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeSelectionBackgroundColor const): Use transformSelectionBackgroundColor.
+        (WebCore::RenderTheme::inactiveSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderTheme::transformSelectionBackgroundColor const): Added. Just blend with white.
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::transformSelectionBackgroundColor const): Added. Use an alpha with the color
+        in dark mode, otherwise fallback to RenderTheme.
+        (WebCore::RenderThemeMac::systemColor const): Use activeListBoxSelectionBackgroundColor()
+        and activeSelectionBackgroundColor() instead of caching the colors again. Update hardcoded color.
+
 2018-08-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Use displayBox.rectWithMargin().bottom instead of displayBox.bottom() to where applicable.
