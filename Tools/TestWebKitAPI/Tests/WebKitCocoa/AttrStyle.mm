@@ -56,7 +56,7 @@ TEST(WebKit, AttrStyle)
 
     isDone = false;
     [webView evaluateJavaScript:@"document.body.getAttributeNode('background').style.cssText" completionHandler:^(NSString *result, NSError *error) {
-        EXPECT_STREQ("background-image: url(\"https://example.com/body.png\");", result.UTF8String);
+        EXPECT_STREQ("background-image: url(\"about://example.com/body.png\");", result.UTF8String);
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);

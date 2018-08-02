@@ -1,3 +1,12 @@
+2018-08-02  Dan Bernstein  <mitz@apple.com>
+
+        Fixed WebKit.AttrStyle timing out on build.webkit.org.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AttrStyle.html: Changed from a URL that requires network
+          access to one that doesn’t.
+        * TestWebKitAPI/Tests/WebKitCocoa/AttrStyle.mm:
+        (TEST): Updated expected value.
+
 2018-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Keyboard becomes unresponsive after pressing delete while pressing down on a character key with accents
