@@ -54,11 +54,12 @@ public:
 private:
     LayoutContext& layoutContext() const { return m_floatingState.layoutContext(); }
 
-    Position floatingPosition(const Box&) const;
+    Position floatingPosition(const FloatingState::FloatItem&) const;
 
-    LayoutUnit initialVerticalPosition(const Box&) const;
-    LayoutUnit alignWithContainingBlock(const Box&) const;
-    LayoutUnit alignWithFloatings(const FloatingPair&, const Box&) const;
+    LayoutUnit initialVerticalPosition(const FloatingState::FloatItem&) const;
+    LayoutUnit alignWithContainingBlock(const FloatingState::FloatItem&) const;
+    LayoutUnit alignWithFloatings(const FloatingPair&, const FloatingState::FloatItem&) const;
+    Position toContainingBlock(const FloatingState::FloatItem&, Position) const;
 
     const Container& m_formattingContextRoot;
     FloatingState& m_floatingState;

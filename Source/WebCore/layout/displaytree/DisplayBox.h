@@ -50,6 +50,8 @@ public:
     friend class Layout::FormattingContext;
     friend class Layout::LayoutContext;
 
+    Box(const Box&);
+
     class Rect {
     public:
         Rect() = default;
@@ -161,7 +163,6 @@ public:
 
 private:
     Box(const RenderStyle&);
-    Box(const Box&);
 
     struct Style {
         Style(const RenderStyle&);

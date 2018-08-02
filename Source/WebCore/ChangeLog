@@ -1,3 +1,46 @@
+2018-08-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Convert all coordinates relative to the formatting context root.
+        https://bugs.webkit.org/show_bug.cgi?id=188249
+
+        Reviewed by Antti Koivisto.
+
+        The idea here is that all the float related computation should be happening in the same coordinate system.
+        FloatItem holds the transformed Display::Box for both the layout box and its containing block. 
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::begin):
+        (WebCore::Layout::end):
+        (WebCore::Layout::FloatingContext::computePosition const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingContext::initialVerticalPosition const):
+        (WebCore::Layout::FloatingContext::alignWithContainingBlock const):
+        (WebCore::Layout::FloatingContext::alignWithFloatings const):
+        (WebCore::Layout::FloatingContext::toContainingBlock const):
+        (WebCore::Layout::FloatingPair::FloatingPair):
+        (WebCore::Layout::FloatingPair::left const):
+        (WebCore::Layout::FloatingPair::right const):
+        (WebCore::Layout::Iterator::Iterator):
+        (WebCore::Layout::previousFloatingIndex):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+        * layout/FloatingContext.h:
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        (WebCore::Layout::FloatingState::remove):
+        (WebCore::Layout::FloatingState::append):
+        * layout/FloatingState.h:
+        (WebCore::Layout::FloatingState::isEmpty const):
+        (WebCore::Layout::FloatingState::FloatItem::layoutBox const):
+        (WebCore::Layout::FloatingState::FloatItem::containingBlock const):
+        (WebCore::Layout::FloatingState::FloatItem::displayBox const):
+        (WebCore::Layout::FloatingState::FloatItem::containingBlockDisplayBox const):
+        (WebCore::Layout::FloatingState::floats const):
+        (WebCore::Layout::FloatingState::last const):
+        (WebCore::Layout::FloatingState::root const):
+        (WebCore::Layout::FloatingState::floatings const): Deleted.
+        * layout/displaytree/DisplayBox.h:
+
 2018-08-02  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Dynamically adjust blocksize

@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
@@ -36,6 +37,14 @@ namespace WebCore {
 namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
+
+FloatingState::FloatItem::FloatItem(const Box& layoutBox, const FloatingState& floatingState)
+    : m_layoutBox(makeWeakPtr(const_cast<Box&>(layoutBox)))
+    , m_containingBlock(makeWeakPtr(const_cast<Container&>(*layoutBox.containingBlock())))
+    , m_absoluteDisplayBox(FormattingContext::mapToAncestor(floatingState.layoutContext(), layoutBox, downcast<Container>(floatingState.root())))
+    , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapToAncestor(floatingState.layoutContext(), *m_containingBlock, downcast<Container>(floatingState.root())))
+{
+}
 
 FloatingState::FloatingState(LayoutContext& layoutContext, const Box& formattingContextRoot)
     : m_layoutContext(layoutContext)
@@ -60,9 +69,9 @@ static bool belongsToThisFloatingContext(const Box& layoutBox, const Box& floati
 
 void FloatingState::remove(const Box& layoutBox)
 {
-    for (size_t index = 0; index < m_floatings.size(); ++index) {
-        if (m_floatings[index].get() == &layoutBox) {
-            m_floatings.remove(index);
+    for (size_t index = 0; index < m_floats.size(); ++index) {
+        if (&m_floats[index].layoutBox() == &layoutBox) {
+            m_floats.remove(index);
             return;
         }
     }
@@ -76,7 +85,9 @@ void FloatingState::append(const Box& layoutBox)
 
     // Floating state should hold boxes with computed position/size.
     ASSERT(m_layoutContext.displayBoxForLayoutBox(layoutBox));
-    m_floatings.append(makeWeakPtr(const_cast<Box&>(layoutBox)));
+    ASSERT(is<Container>(*m_formattingContextRoot));
+
+    m_floats.append({ layoutBox, *this });
 }
 
 }

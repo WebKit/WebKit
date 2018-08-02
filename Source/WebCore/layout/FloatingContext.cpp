@@ -53,7 +53,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingContext);
 // 3. Align (F) horizontally with (L3-R1) depending whether (F) is left/right positioned
 // 4. Intersect (F) with (L3-R1)
 // 5. If (F) does not fit, find the next floating pair (L1-R1)
-// 6. Repeat until either (F) fits/no more floatings.  
+// 6. Repeat until either (F) fits/no more floats.
+// Note that all coordinates are in the coordinate system of the formatting root.
+// The formatting root here is always the one that establishes the floating context (see inherited floating context).
+// (It simply means that the float box's formatting root is not necessarily the same as the FormattingContext's root.)
 
 class Iterator;
 
@@ -69,10 +72,10 @@ public:
 
 private:
     friend class Iterator;
-    FloatingPair(const LayoutContext&, const FloatingState::FloatingList&);
+    FloatingPair(const LayoutContext&, const FloatingState::FloatList&);
 
     const LayoutContext& m_layoutContext;
-    const FloatingState::FloatingList& m_floatings;
+    const FloatingState::FloatList& m_floats;
 
     std::optional<unsigned> m_leftIndex;
     std::optional<unsigned> m_rightIndex;
@@ -81,7 +84,7 @@ private:
 
 class Iterator {
 public:
-    Iterator(const LayoutContext&, const FloatingState::FloatingList&, std::optional<LayoutUnit> verticalPosition);
+    Iterator(const LayoutContext&, const FloatingState::FloatList&, std::optional<LayoutUnit> verticalPosition);
 
     const FloatingPair& operator*() const { return m_current; }
     Iterator& operator++();
@@ -92,19 +95,19 @@ private:
     void set(LayoutUnit verticalPosition);
 
     const LayoutContext& m_layoutContext;
-    const FloatingState::FloatingList& m_floatings;
+    const FloatingState::FloatList& m_floats;
     FloatingPair m_current;
 };
 
 static Iterator begin(const LayoutContext& layoutContext, const FloatingState& floatingState, LayoutUnit initialVerticalPosition)
 {
     // Start with the inner-most floating pair for the initial vertical position.
-    return Iterator(layoutContext, floatingState.floatings(), initialVerticalPosition);
+    return Iterator(layoutContext, floatingState.floats(), initialVerticalPosition);
 }
 
 static Iterator end(const LayoutContext& layoutContext, const FloatingState& floatingState)
 {
-    return Iterator(layoutContext, floatingState.floatings(), std::nullopt);
+    return Iterator(layoutContext, floatingState.floats(), std::nullopt);
 }
 
 FloatingContext::FloatingContext(const Container& formattingContextRoot, FloatingState& floatingState)
@@ -117,22 +120,26 @@ FloatingContext::FloatingContext(const Container& formattingContextRoot, Floatin
 Position FloatingContext::computePosition(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
+    FloatingState::FloatItem floatItem = { layoutBox, m_floatingState };
 
-    // 1. No floating box on the context yet -> align it with the containing block's left/right edge. 
+    Position floatPosition;
     if (m_floatingState.isEmpty()) {
-        auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
-        return { alignWithContainingBlock(layoutBox) + displayBox->marginLeft(), displayBox->top() };
+        // No float box on the context yet -> align it with the containing block's left/right edge.
+        auto& displayBox = floatItem.displayBox();
+        floatPosition = { alignWithContainingBlock(floatItem) + displayBox.marginLeft(), displayBox.top() };
+    } else {
+        // Find the top most position where the float box fits.
+        floatPosition = floatingPosition(floatItem);
     }
 
-    // 2. Find the top most position where the floating fits.
-    return floatingPosition(layoutBox); 
+    return toContainingBlock(floatItem, floatPosition);
 }
 
-Position FloatingContext::floatingPosition(const Box& layoutBox) const
+Position FloatingContext::floatingPosition(const FloatingState::FloatItem& floatItem) const
 {
-    auto initialVerticalPosition = this->initialVerticalPosition(layoutBox);
-    auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
-    auto marginBoxSize = displayBox->marginBox().size();
+    auto initialVerticalPosition = this->initialVerticalPosition(floatItem);
+    auto& displayBox = floatItem.displayBox();
+    auto marginBoxSize = displayBox.marginBox().size();
 
     auto end = Layout::end(layoutContext(), m_floatingState);
     auto top = initialVerticalPosition;
@@ -140,69 +147,65 @@ Position FloatingContext::floatingPosition(const Box& layoutBox) const
     for (auto iterator = begin(layoutContext(), m_floatingState, initialVerticalPosition); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
 
-        auto floatings = *iterator;
-        top = floatings.verticalPosition();
+        auto floats = *iterator;
+        top = floats.verticalPosition();
 
         // Move the box horizontally so that it aligns with the current floating pair.
-        auto left = alignWithFloatings(floatings, layoutBox);
+        auto left = alignWithFloatings(floats, floatItem);
         // Check if the box fits at this vertical position.
-        if (!floatings.intersects({ top, left, marginBoxSize.width(), marginBoxSize.height() }))
-            return { left + displayBox->marginLeft(), top + displayBox->marginTop() };
+        if (!floats.intersects({ top, left, marginBoxSize.width(), marginBoxSize.height() }))
+            return { left + displayBox.marginLeft(), top + displayBox.marginTop() };
 
-        bottomMost = floatings.bottom();
+        bottomMost = floats.bottom();
         // Move to the next floating pair.
     }
 
-    // Passed all the floatings and still does not fit? 
-    return { alignWithContainingBlock(layoutBox) + displayBox->marginLeft(), bottomMost + displayBox->marginTop() };
+    // Passed all the floats and still does not fit?
+    return { alignWithContainingBlock(floatItem) + displayBox.marginLeft(), bottomMost + displayBox.marginTop() };
 }
 
-LayoutUnit FloatingContext::initialVerticalPosition(const Box& layoutBox) const
+LayoutUnit FloatingContext::initialVerticalPosition(const FloatingState::FloatItem& floatItem) const
 {
-    // Incoming floating cannot be placed higher than existing floatings.
+    // Incoming floating cannot be placed higher than existing floats.
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last floating.
-    auto marginBoxTop = layoutContext().displayBoxForLayoutBox(layoutBox)->rectWithMargin().top();
+    auto marginBoxTop = floatItem.displayBox().rectWithMargin().top();
 
-    if (auto lastFloating = m_floatingState.last())
-        return std::max(marginBoxTop, layoutContext().displayBoxForLayoutBox(*lastFloating)->rectWithMargin().top());
+    if (auto lastFloat = m_floatingState.last())
+        return std::max(marginBoxTop, lastFloat->displayBox().rectWithMargin().top());
 
     return marginBoxTop;
 }
 
-LayoutUnit FloatingContext::alignWithContainingBlock(const Box& layoutBox) const
+LayoutUnit FloatingContext::alignWithContainingBlock(const FloatingState::FloatItem& floatItem) const
 {
     // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-    // (Either there's no floatings at all or this box does not fit at any vertical positions where the floatings are.)
-    auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
-    auto* containingBlock = layoutBox.containingBlock();
-    ASSERT(containingBlock == &m_formattingContextRoot || containingBlock->isDescendantOf(m_formattingContextRoot));
+    // (Either there's no floats at all or this box does not fit at any vertical positions where the floats are.)
+    auto& containgBlockDisplayBox = floatItem.containingBlockDisplayBox();
+    auto containingBlockContentBoxLeft = containgBlockDisplayBox.left() + containgBlockDisplayBox.contentBoxLeft();
 
-    auto* containgBlockDisplayBox = layoutContext().displayBoxForLayoutBox(*containingBlock);
+    if (floatItem.layoutBox().isLeftFloatingPositioned())
+        return containingBlockContentBoxLeft;
 
-    if (layoutBox.isLeftFloatingPositioned())
-        return containgBlockDisplayBox->contentBoxLeft();
-
-    return containgBlockDisplayBox->contentBoxRight() - displayBox->marginBox().width();
+    return containingBlockContentBoxLeft + containgBlockDisplayBox.contentBoxWidth() - floatItem.displayBox().marginBox().width();
 }
 
-LayoutUnit FloatingContext::alignWithFloatings(const FloatingPair& floatingPair, const Box& layoutBox) const
+LayoutUnit FloatingContext::alignWithFloatings(const FloatingPair& floatingPair, const FloatingState::FloatItem& floatItem) const
 {
-    // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floatings into account.
-    auto* displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
-    auto& containingBlock = *layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockContentBoxLeft = containingBlock.contentBoxLeft();
-    auto containingBlockContentBoxRight = containingBlock.contentBoxRight();
-    auto marginBoxWidth = displayBox->marginBox().width();
+    // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
+    auto& containingBlockDisplayBox = floatItem.containingBlockDisplayBox();
+    auto containingBlockContentBoxLeft = containingBlockDisplayBox.left() + containingBlockDisplayBox.contentBoxLeft();
+    auto containingBlockContentBoxRight = containingBlockDisplayBox.left() + containingBlockDisplayBox.contentBoxRight();
+    auto marginBoxWidth = floatItem.displayBox().marginBox().width();
 
     auto leftAlignedBoxLeft = containingBlockContentBoxLeft;
-    auto rightAlignedBoxLeft = containingBlockContentBoxRight - displayBox->marginBox().width();
+    auto rightAlignedBoxLeft = containingBlockContentBoxRight - marginBoxWidth;
 
     if (floatingPair.isEmpty()) {
         ASSERT_NOT_REACHED();
-        return layoutBox.isLeftFloatingPositioned() ? leftAlignedBoxLeft : rightAlignedBoxLeft;
+        return floatItem.layoutBox().isLeftFloatingPositioned() ? leftAlignedBoxLeft : rightAlignedBoxLeft;
     }
 
-    if (layoutBox.isLeftFloatingPositioned()) {
+    if (floatItem.layoutBox().isLeftFloatingPositioned()) {
         if (auto* leftDisplayBox = floatingPair.left()) {
             auto leftFloatingBoxRight = leftDisplayBox->rectWithMargin().right();
             return std::min(std::max(leftAlignedBoxLeft, leftFloatingBoxRight), rightAlignedBoxLeft);
@@ -211,7 +214,7 @@ LayoutUnit FloatingContext::alignWithFloatings(const FloatingPair& floatingPair,
         return leftAlignedBoxLeft;
     }
 
-    ASSERT(layoutBox.isRightFloatingPositioned());
+    ASSERT(floatItem.layoutBox().isRightFloatingPositioned());
 
     if (auto* rightDisplayBox = floatingPair.right()) {
         auto rightFloatingBoxLeft = rightDisplayBox->rectWithMargin().left();
@@ -221,9 +224,20 @@ LayoutUnit FloatingContext::alignWithFloatings(const FloatingPair& floatingPair,
     return rightAlignedBoxLeft;
 }
 
-FloatingPair::FloatingPair(const LayoutContext& layoutContext, const FloatingState::FloatingList& floatings)
+// FIXME: find a better place for this.
+Position FloatingContext::toContainingBlock(const FloatingState::FloatItem& floatItem, Position position) const
+{
+    // From formatting root coordinate system back to containing block's.
+    if (&floatItem.containingBlock() == &m_floatingState.root())
+        return position;
+
+    auto& containgBlockDisplayBox = floatItem.containingBlockDisplayBox();
+    return { position.x - containgBlockDisplayBox.left(), position.y - containgBlockDisplayBox.top() };
+}
+
+FloatingPair::FloatingPair(const LayoutContext& layoutContext, const FloatingState::FloatList& floats)
     : m_layoutContext(layoutContext)
-    , m_floatings(floatings)
+    , m_floats(floats)
 {
 }
 
@@ -232,8 +246,8 @@ const Display::Box* FloatingPair::left() const
     if (!m_leftIndex)
         return nullptr;
 
-    ASSERT(m_floatings[*m_leftIndex]->isLeftFloatingPositioned());
-    return m_layoutContext.displayBoxForLayoutBox(*m_floatings[*m_leftIndex]);
+    ASSERT(m_floats[*m_leftIndex].layoutBox().isLeftFloatingPositioned());
+    return &m_floats[*m_leftIndex].displayBox();
 }
 
 const Display::Box* FloatingPair::right() const
@@ -241,8 +255,8 @@ const Display::Box* FloatingPair::right() const
     if (!m_rightIndex)
         return nullptr;
 
-    ASSERT(m_floatings[*m_rightIndex]->isRightFloatingPositioned());
-    return m_layoutContext.displayBoxForLayoutBox(*m_floatings[*m_rightIndex]);
+    ASSERT(m_floats[*m_rightIndex].layoutBox().isRightFloatingPositioned());
+    return &m_floats[*m_rightIndex].displayBox();
 }
 
 bool FloatingPair::intersects(const Display::Box::Rect& rect) const
@@ -291,22 +305,22 @@ LayoutUnit FloatingPair::bottom() const
     return *rightBottom;
 }
 
-Iterator::Iterator(const LayoutContext& layoutContext, const FloatingState::FloatingList& floatings, std::optional<LayoutUnit> verticalPosition)
+Iterator::Iterator(const LayoutContext& layoutContext, const FloatingState::FloatList& floats, std::optional<LayoutUnit> verticalPosition)
     : m_layoutContext(layoutContext)
-    , m_floatings(floatings)
-    , m_current(layoutContext, floatings)
+    , m_floats(floats)
+    , m_current(layoutContext, floats)
 {
     if (verticalPosition)
         set(*verticalPosition);
 }
 
-inline static std::optional<unsigned> previousFloatingIndex(Float floatingType, const FloatingState::FloatingList& floatings, unsigned currentIndex)
+inline static std::optional<unsigned> previousFloatingIndex(Float floatingType, const FloatingState::FloatList& floats, unsigned currentIndex)
 {
-    RELEASE_ASSERT(currentIndex <= floatings.size());
+    RELEASE_ASSERT(currentIndex <= floats.size());
 
     while (currentIndex) {
-        auto* floating = floatings[--currentIndex].get();
-        if ((floatingType == Float::Left && floating->isLeftFloatingPositioned()) || (floatingType == Float::Right && floating->isRightFloatingPositioned()))
+        auto& floating = floats[--currentIndex].layoutBox();
+        if ((floatingType == Float::Left && floating.isLeftFloatingPositioned()) || (floatingType == Float::Right && floating.isRightFloatingPositioned()))
             return currentIndex;
     }
 
@@ -322,21 +336,21 @@ Iterator& Iterator::operator++()
 
     auto findPreviousFloatingWithLowerBottom = [&](Float floatingType, unsigned currentIndex) -> std::optional<unsigned> {
 
-        RELEASE_ASSERT(currentIndex < m_floatings.size());
+        RELEASE_ASSERT(currentIndex < m_floats.size());
 
         // Last floating? There's certainly no previous floating at this point.
         if (!currentIndex)
             return { };
 
-        auto currentBottom = m_layoutContext.displayBoxForLayoutBox(*m_floatings[currentIndex])->bottom();
+        auto currentBottom = m_floats[currentIndex].displayBox().bottom();
 
         std::optional<unsigned> index = currentIndex;
         while (true) {
-            index = previousFloatingIndex(floatingType, m_floatings, *index);
+            index = previousFloatingIndex(floatingType, m_floats, *index);
             if (!index)
                 return { };
 
-            if (m_layoutContext.displayBoxForLayoutBox(*m_floatings[*index])->bottom() > currentBottom)
+            if (m_floats[*index].displayBox().bottom() > currentBottom)
                 return index;
         }
 
@@ -345,10 +359,10 @@ Iterator& Iterator::operator++()
     };
 
     // 1. Take the current floating from left and right and check which one's bottom edge is positioned higher (they could be on the same vertical position too).
-    // The current floatings from left and right are considered the inner-most pair for the current vertical position.
-    // 2. Move away from inner-most pair by picking one of the previous floatings in the list(#1)
+    // The current floats from left and right are considered the inner-most pair for the current vertical position.
+    // 2. Move away from inner-most pair by picking one of the previous floats in the list(#1)
     // Ensure that the new floating's bottom edge is positioned lower than the current one -which essentially means skipping in-between floats that are positioned higher).
-    // 3. Reset the vertical position and align it with the new left-right pair. These floatings are now the inner-most boxes for the current vertical position.
+    // 3. Reset the vertical position and align it with the new left-right pair. These floats are now the inner-most boxes for the current vertical position.
     // As the result we have more horizontal space on the current vertical position.
     auto leftBottom = m_current.left() ? std::optional<LayoutUnit>(m_current.left()->bottom()) : std::nullopt;
     auto rightBottom = m_current.right() ? std::optional<LayoutUnit>(m_current.right()->bottom()) : std::nullopt;
@@ -379,8 +393,8 @@ void Iterator::set(LayoutUnit verticalPosition)
     // (Note that verticalPosition has already been adjusted with the top of the last float.)
 
     m_current.m_verticalPosition = verticalPosition;
-    // No floatings at all?
-    if (m_floatings.isEmpty()) {
+    // No floats at all?
+    if (m_floats.isEmpty()) {
         ASSERT_NOT_REACHED();
 
         m_current.m_leftIndex = { };
@@ -390,17 +404,17 @@ void Iterator::set(LayoutUnit verticalPosition)
 
     auto findFloatingBelow = [&](Float floatingType) -> std::optional<unsigned> {
 
-        ASSERT(!m_floatings.isEmpty());
+        ASSERT(!m_floats.isEmpty());
 
         auto index = floatingType == Float::Left ? m_current.m_leftIndex : m_current.m_rightIndex;
         // Start from the end if we don't have current yet.
-        index = index.value_or(m_floatings.size());
+        index = index.value_or(m_floats.size());
         while (true) {
-            index = previousFloatingIndex(floatingType, m_floatings, *index);
+            index = previousFloatingIndex(floatingType, m_floats, *index);
             if (!index)
                 return { };
 
-            auto bottom = m_layoutContext.displayBoxForLayoutBox(*m_floatings[*index])->bottom();
+            auto bottom = m_floats[*index].displayBox().bottom();
             // Is this floating intrusive on this position?
             if (bottom > verticalPosition)
                 return index;
@@ -412,8 +426,8 @@ void Iterator::set(LayoutUnit verticalPosition)
     m_current.m_leftIndex = findFloatingBelow(Float::Left);
     m_current.m_rightIndex = findFloatingBelow(Float::Right);
 
-    ASSERT(!m_current.m_leftIndex || (*m_current.m_leftIndex < m_floatings.size() && m_floatings[*m_current.m_leftIndex]->isLeftFloatingPositioned()));
-    ASSERT(!m_current.m_rightIndex || (*m_current.m_rightIndex < m_floatings.size() && m_floatings[*m_current.m_rightIndex]->isRightFloatingPositioned()));
+    ASSERT(!m_current.m_leftIndex || (*m_current.m_leftIndex < m_floats.size() && m_floats[*m_current.m_leftIndex].layoutBox().isLeftFloatingPositioned()));
+    ASSERT(!m_current.m_rightIndex || (*m_current.m_rightIndex < m_floats.size() && m_floats[*m_current.m_rightIndex].layoutBox().isRightFloatingPositioned()));
 }
 
 bool Iterator::operator==(const Iterator& other) const

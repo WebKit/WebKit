@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -36,6 +37,7 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
+class Container;
 class FormattingState;
 class LayoutContext;
 
@@ -48,21 +50,39 @@ public:
     void append(const Box& layoutBox);
     void remove(const Box& layoutBox);
 
-    bool isEmpty() const { return m_floatings.isEmpty(); }
+    bool isEmpty() const { return m_floats.isEmpty(); }
 
-    using FloatingList = Vector<WeakPtr<Box>>;
-    const FloatingList& floatings() const { return m_floatings; }
-    const Box* last() const { return isEmpty() ? nullptr : m_floatings.last().get(); }
+    class FloatItem {
+    public:
+        FloatItem(const Box&, const FloatingState&);
+
+        const Box& layoutBox() const { return *m_layoutBox; }
+        const Container& containingBlock() const { return *m_containingBlock; }
+
+        const Display::Box& displayBox() const { return m_absoluteDisplayBox; }
+        const Display::Box& containingBlockDisplayBox() const { return m_containingBlockAbsoluteDisplayBox; }
+
+    private:
+        WeakPtr<Box> m_layoutBox;
+        WeakPtr<Container> m_containingBlock;
+
+        Display::Box m_absoluteDisplayBox;
+        Display::Box m_containingBlockAbsoluteDisplayBox;
+    };
+    using FloatList = Vector<FloatItem>;
+    const FloatList& floats() const { return m_floats; }
+    const FloatItem* last() const { return isEmpty() ? nullptr : &m_floats.last(); }
 
 private:
     friend class FloatingContext;
     FloatingState(LayoutContext&, const Box& formattingContextRoot);
 
     LayoutContext& layoutContext() const { return m_layoutContext; }
+    const Box& root() const { return *m_formattingContextRoot; }
 
     LayoutContext& m_layoutContext;
     WeakPtr<Box> m_formattingContextRoot;
-    FloatingList m_floatings;
+    FloatList m_floats;
 };
 
 }
