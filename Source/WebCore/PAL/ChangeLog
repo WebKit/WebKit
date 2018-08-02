@@ -1,3 +1,15 @@
+2018-08-01  Tomas Popela  <tpopela@redhat.com>
+
+        [WTF] Rename String::format to String::deprecatedFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188191
+
+        Reviewed by Darin Adler.
+
+        It should be replaced with string concatenation.
+
+        * pal/FileSizeFormatter.cpp:
+        (fileSizeDescription):
+
 2018-08-01  Tim Horton  <timothy_horton@apple.com>
 
         Using the keyboard arrow keys to scroll a webpage is very slow, not smooth, takes too long

@@ -103,9 +103,9 @@ IDBCursorInfo IDBCursorInfo::isolatedCopy() const
 String IDBCursorInfo::loggingString() const
 {
     if (m_source == IndexedDB::CursorSource::Index)
-        return String::format("<Crsr: %s Idx %" PRIu64 ", OS %" PRIu64 ", tx %s>", m_cursorIdentifier.loggingString().utf8().data(), m_sourceIdentifier, m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
+        return String::deprecatedFormat("<Crsr: %s Idx %" PRIu64 ", OS %" PRIu64 ", tx %s>", m_cursorIdentifier.loggingString().utf8().data(), m_sourceIdentifier, m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
 
-    return String::format("<Crsr: %s OS %" PRIu64 ", tx %s>", m_cursorIdentifier.loggingString().utf8().data(), m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
+    return String::deprecatedFormat("<Crsr: %s OS %" PRIu64 ", tx %s>", m_cursorIdentifier.loggingString().utf8().data(), m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
 }
 #endif
 

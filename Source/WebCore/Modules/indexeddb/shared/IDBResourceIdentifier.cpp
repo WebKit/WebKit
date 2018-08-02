@@ -100,7 +100,7 @@ bool IDBResourceIdentifier::isHashTableDeletedValue() const
 #if !LOG_DISABLED
 String IDBResourceIdentifier::loggingString() const
 {
-    return String::format("<%" PRIu64", %" PRIu64">", m_idbConnectionIdentifier, m_resourceNumber);
+    return String::deprecatedFormat("<%" PRIu64", %" PRIu64">", m_idbConnectionIdentifier, m_resourceNumber);
 }
 #endif
 } // namespace WebCore

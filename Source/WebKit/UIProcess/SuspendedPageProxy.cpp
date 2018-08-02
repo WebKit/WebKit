@@ -140,7 +140,7 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
 #if !LOG_DISABLED
 const char* SuspendedPageProxy::loggingString() const
 {
-    return debugString("(", String::format("%p", this), " page ID ", String::number(m_page.pageID()), ", m_finishedSuspending ", String::number(m_finishedSuspending), ")");
+    return debugString("(", String::deprecatedFormat("%p", this), " page ID ", String::number(m_page.pageID()), ", m_finishedSuspending ", String::number(m_finishedSuspending), ")");
 }
 #endif
 

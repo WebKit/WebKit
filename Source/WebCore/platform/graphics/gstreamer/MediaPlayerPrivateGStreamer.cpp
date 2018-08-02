@@ -306,7 +306,7 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
 #if GST_CHECK_VERSION(1, 10, 0)
     m_streamPrivate = &stream;
-    auto pipelineName = String::format("mediastream_%s_%p",
+    auto pipelineName = String::deprecatedFormat("mediastream_%s_%p",
         (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "Local" : "Remote", this);
 
     loadFull(String("mediastream://") + stream.id(), "playbin3", pipelineName);
@@ -1217,7 +1217,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         // Construct a filename for the graphviz dot file output.
         GstState newState;
         gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
-        CString dotFileName = String::format("%s.%s_%s", GST_OBJECT_NAME(m_pipeline.get()),
+        CString dotFileName = String::deprecatedFormat("%s.%s_%s", GST_OBJECT_NAME(m_pipeline.get()),
             gst_element_state_get_name(currentState), gst_element_state_get_name(newState)).utf8();
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.data());
 
@@ -2508,7 +2508,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, con
     // gst_element_factory_make() returns a floating reference so
     // we should not adopt.
     setPipeline(gst_element_factory_make(playbinName,
-        pipelineName.isEmpty() ? String::format("play_%p", this).utf8().data() : pipelineName.utf8().data()));
+        pipelineName.isEmpty() ? String::deprecatedFormat("play_%p", this).utf8().data() : pipelineName.utf8().data()));
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 
     GST_INFO("Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));

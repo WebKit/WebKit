@@ -475,11 +475,11 @@ static String timeToString(float time)
 
     if (hours) {
         if (hours > 9)
-            return String::format("%s%02d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
-        return String::format("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+            return String::deprecatedFormat("%s%02d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+        return String::deprecatedFormat("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
     }
 
-    return String::format("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
+    return String::deprecatedFormat("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
 }
 
 void FullscreenVideoController::draw()

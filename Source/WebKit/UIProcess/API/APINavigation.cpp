@@ -78,7 +78,7 @@ void Navigation::appendRedirectionURL(const URL& url)
 #if !LOG_DISABLED
 const char* Navigation::loggingString() const
 {
-    return debugString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : String { }, String::format("' (%p)", m_targetItem.get()));
+    return debugString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : String { }, String::deprecatedFormat("' (%p)", m_targetItem.get()));
 }
 #endif
 

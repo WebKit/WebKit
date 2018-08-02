@@ -1859,11 +1859,11 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
 
     std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
     int port = WKProtectionSpaceGetPort(protectionSpace);
-    String message = String::format("%s:%d - didReceiveAuthenticationChallenge - ", host.c_str(), port);
+    String message = String::deprecatedFormat("%s:%d - didReceiveAuthenticationChallenge - ", host.c_str(), port);
     if (!m_handlesAuthenticationChallenges)
         message.append("Simulating cancelled authentication sheet\n");
     else
-        message.append(String::format("Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data()));
+        message.append(String::deprecatedFormat("Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data()));
     m_currentInvocation->outputText(message);
 
     if (!m_handlesAuthenticationChallenges) {
@@ -1961,7 +1961,7 @@ void TestController::downloadDidReceiveServerRedirectToURL(WKContextRef, WKDownl
 void TestController::downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef error)
 {
     if (m_shouldLogDownloadCallbacks) {
-        String message = String::format("Download failed.\n");
+        String message = String::deprecatedFormat("Download failed.\n");
         m_currentInvocation->outputText(message);
 
         WKRetainPtr<WKStringRef> errorDomain = adoptWK(WKErrorCopyDomain(error));
@@ -2070,9 +2070,9 @@ static String originUserVisibleName(WKSecurityOriginRef origin)
 
     unsigned short port = WKSecurityOriginGetPort(origin);
     if (port)
-        return String::format("%s://%s:%d", protocol.c_str(), host.c_str(), port);
+        return String::deprecatedFormat("%s://%s:%d", protocol.c_str(), host.c_str(), port);
 
-    return String::format("%s://%s", protocol.c_str(), host.c_str());
+    return String::deprecatedFormat("%s://%s", protocol.c_str(), host.c_str());
 }
 
 static String userMediaOriginHash(WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin)
@@ -2083,7 +2083,7 @@ static String userMediaOriginHash(WKSecurityOriginRef userMediaDocumentOrigin, W
     if (topLevelDocumentOriginString.isEmpty())
         return userMediaDocumentOriginString;
 
-    return String::format("%s-%s", userMediaDocumentOriginString.utf8().data(), topLevelDocumentOriginString.utf8().data());
+    return String::deprecatedFormat("%s-%s", userMediaDocumentOriginString.utf8().data(), topLevelDocumentOriginString.utf8().data());
 }
 
 static String userMediaOriginHash(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
@@ -2360,7 +2360,7 @@ void TestController::didNavigateWithNavigationData(WKNavigationDataRef navigatio
     WKRetainPtr<WKStringRef> methodWK = adoptWK(WKURLRequestCopyHTTPMethod(requestWK.get()));
 
     // FIXME: Determine whether the navigation was successful / a client redirect rather than hard-coding the message here.
-    m_currentInvocation->outputText(String::format("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was successful and was not a client redirect.\n",
+    m_currentInvocation->outputText(String::deprecatedFormat("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was successful and was not a client redirect.\n",
         toSTD(urlStringWK).c_str(), toSTD(titleWK).c_str(), toSTD(methodWK).c_str()));
 }
 
@@ -2380,7 +2380,7 @@ void TestController::didPerformClientRedirect(WKURLRef sourceURL, WKURLRef desti
     WKRetainPtr<WKStringRef> sourceStringWK = adoptWK(WKURLCopyString(sourceURL));
     WKRetainPtr<WKStringRef> destinationStringWK = adoptWK(WKURLCopyString(destinationURL));
 
-    m_currentInvocation->outputText(String::format("WebView performed a client redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
+    m_currentInvocation->outputText(String::deprecatedFormat("WebView performed a client redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
 }
 
 void TestController::didPerformServerRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void* clientInfo)
@@ -2399,7 +2399,7 @@ void TestController::didPerformServerRedirect(WKURLRef sourceURL, WKURLRef desti
     WKRetainPtr<WKStringRef> sourceStringWK = adoptWK(WKURLCopyString(sourceURL));
     WKRetainPtr<WKStringRef> destinationStringWK = adoptWK(WKURLCopyString(destinationURL));
 
-    m_currentInvocation->outputText(String::format("WebView performed a server redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
+    m_currentInvocation->outputText(String::deprecatedFormat("WebView performed a server redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
 }
 
 void TestController::didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void* clientInfo)
@@ -2416,7 +2416,7 @@ void TestController::didUpdateHistoryTitle(WKStringRef title, WKURLRef URL, WKFr
         return;
 
     WKRetainPtr<WKStringRef> urlStringWK(AdoptWK, WKURLCopyString(URL));
-    m_currentInvocation->outputText(String::format("WebView updated the title for history URL \"%s\" to \"%s\".\n", toSTD(urlStringWK).c_str(), toSTD(title).c_str()));
+    m_currentInvocation->outputText(String::deprecatedFormat("WebView updated the title for history URL \"%s\" to \"%s\".\n", toSTD(urlStringWK).c_str(), toSTD(title).c_str()));
 }
 
 void TestController::setNavigationGesturesEnabled(bool value)

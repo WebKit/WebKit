@@ -43,7 +43,7 @@ bool Connection::createServerAndClientIdentifiers(HANDLE& serverIdentifier, HAND
 
     do {
         unsigned uniqueID = randomNumber() * std::numeric_limits<unsigned>::max();
-        pipeName = String::format("\\\\.\\pipe\\com.apple.WebKit.%x", uniqueID);
+        pipeName = String::deprecatedFormat("\\\\.\\pipe\\com.apple.WebKit.%x", uniqueID);
 
         serverIdentifier = ::CreateNamedPipe(pipeName.charactersWithNullTermination().data(),
             PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,

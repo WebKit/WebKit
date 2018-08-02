@@ -194,13 +194,13 @@ String TimingFunction::cssText() const
             return "ease-out";
         if (function.x1() == 0.42 && !function.y1() && function.x2() == 0.58 && function.y2() == 1.0)
             return "ease-in-out";
-        return String::format("cubic-bezier(%g, %g, %g, %g)", function.x1(), function.y1(), function.x2(), function.y2());
+        return String::deprecatedFormat("cubic-bezier(%g, %g, %g, %g)", function.x1(), function.y1(), function.x2(), function.y2());
     }
 
     if (m_type == TimingFunction::StepsFunction) {
         auto& function = downcast<StepsTimingFunction>(*this);
         if (!function.stepAtStart())
-            return String::format("steps(%d)", function.numberOfSteps());
+            return String::deprecatedFormat("steps(%d)", function.numberOfSteps());
     }
 
     TextStream stream;

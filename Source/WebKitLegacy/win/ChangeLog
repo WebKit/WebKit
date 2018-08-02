@@ -1,3 +1,17 @@
+2018-08-01  Tomas Popela  <tpopela@redhat.com>
+
+        [WTF] Rename String::format to String::deprecatedFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188191
+
+        Reviewed by Darin Adler.
+
+        It should be replaced with string concatenation.
+
+        * FullscreenVideoController.cpp:
+        (timeToString):
+        * WebView.cpp:
+        (webKitVersionString):
+
 2018-07-30  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=188137

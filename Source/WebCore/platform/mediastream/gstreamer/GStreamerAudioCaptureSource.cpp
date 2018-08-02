@@ -69,7 +69,7 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(const String& deviceID,
 {
     auto device = GStreamerAudioCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
-        auto errorMessage = String::format("GStreamerAudioCaptureSource::create(): GStreamer did not find the device: %s.", deviceID.utf8().data());
+        auto errorMessage = String::deprecatedFormat("GStreamerAudioCaptureSource::create(): GStreamer did not find the device: %s.", deviceID.utf8().data());
         return CaptureSourceOrError(WTFMove(errorMessage));
     }
 

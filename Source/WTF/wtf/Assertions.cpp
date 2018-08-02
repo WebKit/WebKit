@@ -419,7 +419,7 @@ void WTFLog(WTFLogChannel* channel, const char* format, ...)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
 #endif
-    String loggingString = String::format(format, args);
+    String loggingString = String::deprecatedFormat(format, args);
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif

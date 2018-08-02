@@ -640,7 +640,7 @@ static Color parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
                 || token.numericValue() < 0. || token.numericValue() >= 1000000.)
                 return Color();
             if (token.type() == NumberToken) // e.g. 112233
-                color = String::format("%d", static_cast<int>(token.numericValue()));
+                color = String::deprecatedFormat("%d", static_cast<int>(token.numericValue()));
             else // e.g. 0001FF
                 color = String::number(static_cast<int>(token.numericValue())) + token.value().toString();
             while (color.length() < 6)

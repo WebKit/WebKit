@@ -98,7 +98,7 @@ public:
 
     GstElement* makeElement(const gchar* factoryName)
     {
-        auto name = String::format("%s_enc_%s_%p", Name(), factoryName, this);
+        auto name = String::deprecatedFormat("%s_enc_%s_%p", Name(), factoryName, this);
         auto elem = gst_element_factory_make(factoryName, name.utf8().data());
 
         return elem;

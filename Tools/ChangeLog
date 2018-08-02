@@ -1,3 +1,35 @@
+2018-08-01  Tomas Popela  <tpopela@redhat.com>
+
+        [WTF] Rename String::format to String::deprecatedFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188191
+
+        Reviewed by Darin Adler.
+
+        It should be replaced with string concatenation.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (applicationId):
+        (main):
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::createURLForResource):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::cacheTestRunnerCallback):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+        (WTR::AccessibilityUIElement::url):
+        (WTR::stringAtOffset):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveAuthenticationChallenge):
+        (WTR::TestController::downloadDidFail):
+        (WTR::originUserVisibleName):
+        (WTR::userMediaOriginHash):
+        (WTR::TestController::didNavigateWithNavigationData):
+        (WTR::TestController::didPerformClientRedirect):
+        (WTR::TestController::didPerformServerRedirect):
+        (WTR::TestController::didUpdateHistoryTitle):
+
 2018-08-01  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Add ARIA IDL Attribute Reflection

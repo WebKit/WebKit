@@ -423,7 +423,7 @@ void CSSParserToken::serialize(StringBuilder& builder) const
         serializeIdentifier(value().toString(), builder);
         break;
     case UnicodeRangeToken:
-        return builder.append(String::format("U+%X-%X", unicodeRangeStart(), unicodeRangeEnd()));
+        return builder.append(String::deprecatedFormat("U+%X-%X", unicodeRangeStart(), unicodeRangeEnd()));
     case StringToken:
         return serializeString(value().toString(), builder);
 

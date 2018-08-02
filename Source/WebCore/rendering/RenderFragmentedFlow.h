@@ -280,7 +280,7 @@ protected:
 namespace WTF {
 
 template <> struct ValueToString<WebCore::RenderFragmentContainer*> {
-    static String string(const WebCore::RenderFragmentContainer* value) { return String::format("%p", value); }
+    static String string(const WebCore::RenderFragmentContainer* value) { return String::deprecatedFormat("%p", value); }
 };
 
 template <> struct ValueToString<WeakPtr<WebCore::RenderFragmentContainer>> {

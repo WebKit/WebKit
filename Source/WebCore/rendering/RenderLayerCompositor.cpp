@@ -835,12 +835,12 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
     absoluteBounds.move(layer.offsetFromAncestor(m_renderView.layer()));
     
     StringBuilder logString;
-    logString.append(String::format("%*p id %" PRIu64 " (%.3f,%.3f-%.3f,%.3f) %.2fKB", 12 + depth * 2, &layer, backing->graphicsLayer()->primaryLayerID(),
+    logString.append(String::deprecatedFormat("%*p id %" PRIu64 " (%.3f,%.3f-%.3f,%.3f) %.2fKB", 12 + depth * 2, &layer, backing->graphicsLayer()->primaryLayerID(),
         absoluteBounds.x().toFloat(), absoluteBounds.y().toFloat(), absoluteBounds.maxX().toFloat(), absoluteBounds.maxY().toFloat(),
         backing->backingStoreMemoryEstimate() / 1024));
     
     if (!layer.renderer().style().hasAutoZIndex())
-        logString.append(String::format(" z-index: %d", layer.renderer().style().zIndex())); 
+        logString.append(String::deprecatedFormat(" z-index: %d", layer.renderer().style().zIndex())); 
 
     logString.appendLiteral(" (");
     logString.append(logReasonsForCompositing(layer));

@@ -69,7 +69,7 @@ static String identifierStringForKeyEvent(struct wpe_input_keyboard_event* event
     if (identifier)
         return String(identifier);
 
-    return String::format("U+%04X", event->unicode);
+    return String::deprecatedFormat("U+%04X", event->unicode);
 }
 
 WallTime wallTimeForEventTime(uint64_t timestamp)

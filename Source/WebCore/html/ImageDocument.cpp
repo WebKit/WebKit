@@ -273,7 +273,7 @@ void ImageDocument::imageUpdated()
 #if PLATFORM(IOS)
         FloatSize screenSize = page()->chrome().screenSize();
         if (imageSize.width() > screenSize.width())
-            processViewport(String::format("width=%u", static_cast<unsigned>(imageSize.width().toInt())), ViewportArguments::ImageDocument);
+            processViewport(String::deprecatedFormat("width=%u", static_cast<unsigned>(imageSize.width().toInt())), ViewportArguments::ImageDocument);
         if (page())
             page()->chrome().client().imageOrMediaDocumentSizeChanged(IntSize(imageSize.width(), imageSize.height()));
 #else

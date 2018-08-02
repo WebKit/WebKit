@@ -472,7 +472,7 @@ inline void doubleQuoteString(const String& str, StringBuilder& dst)
                 // 1. Escaping <, > to prevent script execution.
                 // 2. Technically, we could also pass through c > 126 as UTF8, but this
                 //    is also optional. It would also be a pain to implement here.
-                dst.append(String::format("\\u%04X", c));
+                dst.append(String::deprecatedFormat("\\u%04X", c));
             } else
                 dst.append(c);
         }

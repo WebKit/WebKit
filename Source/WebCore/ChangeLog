@@ -1,3 +1,173 @@
+2018-08-01  Tomas Popela  <tpopela@redhat.com>
+
+        [WTF] Rename String::format to String::deprecatedFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188191
+
+        Reviewed by Darin Adler.
+
+        It should be replaced with string concatenation.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString const):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::loggingString const):
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.cpp:
+        (WebCore::IDBGetAllRecordsData::loggingString const):
+        * Modules/indexeddb/shared/IDBGetRecordData.cpp:
+        (WebCore::IDBGetRecordData::loggingString const):
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        (WebCore::IDBIndexInfo::loggingString const):
+        (WebCore::IDBIndexInfo::condensedLoggingString const):
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp:
+        (WebCore::IDBIterateCursorData::loggingString const):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::condensedLoggingString const):
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::loggingString const):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::formatErrorMessage):
+        * Modules/webdatabase/SQLError.h:
+        (WebCore::SQLError::create):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::encodeProtocolString):
+        * accessibility/win/AccessibilityObjectWrapperWin.cpp:
+        (WebCore::AccessibilityObjectWrapper::accessibilityAttributeValue):
+        * css/CSSUnicodeRangeValue.cpp:
+        (WebCore::CSSUnicodeRangeValue::customCSSText const):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::aspectRatioValueAsString):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::serialize const):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseHexColor):
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFilesizeString):
+        (WebCore::processFileDateString):
+        * html/HTMLMediaElement.h:
+        (WTF::ValueToString<WebCore::TextTrackCue::string):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setLength):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::imageUpdated):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::setDockingUnavailable):
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow):
+        (WebCore::InspectorFrontendClientLocal::setDebuggingEnabled):
+        (WebCore::InspectorFrontendClientLocal::setTimelineProfilingEnabled):
+        (WebCore::InspectorFrontendClientLocal::showMainResourceForFrame):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS const):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/MemoryRelease.cpp:
+        (WebCore::logMemoryStatisticsAtTimeOfDeath):
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::formatByteNumber):
+        (WebCore::gcTimerString):
+        (WebCore::ResourceUsageOverlay::platformDraw):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::logFootprintComparison):
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::cpuUsageString):
+        (WebCore::formatByteNumber):
+        (WebCore::gcTimerString):
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::snapOffsetsToString):
+        (WebCore::snapOffsetRangesToString):
+        (WebCore::snapPortOrAreaToString):
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::toStringForTime const):
+        (WebCore::DateComponents::toString const):
+        * platform/LocalizedStrings.cpp:
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::cssText const):
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation):
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::keyIdentifierForCharCode):
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::HIDGamepad):
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::platformVersionForUAString):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::nameForRenderTreeAsText const):
+        * platform/graphics/FloatPolygon.h:
+        (WTF::ValueToString<WebCore::FloatPolygonEdge::string):
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::id const):
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        (WebCore::MediaSampleAVFObjC::MediaSampleAVFObjC):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setName):
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::updateContentsImage):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::simpleBusMessageCallback):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::handleStateChangeMessage):
+        (WebCore::AppendPipeline::resetPipeline):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::encodeImage):
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::keyIdentifierForGdkKeyCode):
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::GStreamerAudioCaptureSource::create):
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::webkitMediaStreamSrcAddPad):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::create):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::makeElement):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText):
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        * platform/network/ParsedContentRange.cpp:
+        (WebCore::ParsedContentRange::headerValue const):
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::unauthorizedSQLFunction):
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::DateTimeStringBuilder::visitField):
+        * platform/win/GDIObjectCounter.cpp:
+        (WebCore::GDIObjectCounter::GDIObjectCounter):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::keyIdentifierForWindowsKeyCode):
+        * rendering/FloatingObjects.h:
+        (WTF::ValueToString<WebCore::FloatingObject::string):
+        * rendering/RenderFragmentedFlow.h:
+        (WTF::ValueToString<WebCore::RenderFragmentContainer::string):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::formatMediaControlsTime const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::address):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::ensureValidRecordsTable):
+        (WebCore::RegistrationDatabase::importRecords):
+
 2018-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Move all calls to ResourceLoader::start to WebKitLegacy

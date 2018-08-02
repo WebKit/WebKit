@@ -327,7 +327,7 @@ static void simpleBusMessageCallback(GstBus*, GstMessage* message, GstBin* pipel
     case GST_MESSAGE_ERROR:
         GST_ERROR_OBJECT(pipeline, "Got message: %" GST_PTR_FORMAT, message);
         {
-            WTF::String dotFileName = String::format("%s_error", GST_OBJECT_NAME(pipeline));
+            WTF::String dotFileName = String::deprecatedFormat("%s_error", GST_OBJECT_NAME(pipeline));
             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(pipeline, GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
         }
         break;
@@ -341,7 +341,7 @@ static void simpleBusMessageCallback(GstBus*, GstMessage* message, GstBin* pipel
                 gst_element_state_get_name(newState),
                 gst_element_state_get_name(pending));
 
-            WTF::String dotFileName = String::format("%s_%s_%s",
+            WTF::String dotFileName = String::deprecatedFormat("%s_%s_%s",
                 GST_OBJECT_NAME(pipeline),
                 gst_element_state_get_name(oldState),
                 gst_element_state_get_name(newState));

@@ -1,3 +1,36 @@
+2018-08-01  Tomas Popela  <tpopela@redhat.com>
+
+        [WTF] Rename String::format to String::deprecatedFormat
+        https://bugs.webkit.org/show_bug.cgi?id=188191
+
+        Reviewed by Darin Adler.
+
+        It should be replaced with string concatenation.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::nameForRegister):
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeCall):
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::getPropertyValue):
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::enable):
+        (Inspector::InspectorConsoleAgent::stopTiming):
+        * jsc.cpp:
+        (FunctionJSCStackFunctor::operator() const):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::invalidCharacterMessage const):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        (JSC::LiteralParser<CharType>::Lexer::lexStringSlow):
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::getErrorMessage):
+
 2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Allow "unknown" formatToParts types

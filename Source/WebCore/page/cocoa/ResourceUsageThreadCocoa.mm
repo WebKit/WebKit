@@ -62,7 +62,7 @@ void logFootprintComparison(const std::array<TagInfo, 256>& before, const std::a
             continue;
         String tagName = displayNameForVMTag(i);
         if (!tagName)
-            tagName = String::format("Tag %u", i);
+            tagName = String::deprecatedFormat("Tag %u", i);
         WTFLogAlways("  %02X %16s %10ld %10ld %10ld",
             i,
             tagName.ascii().data(),

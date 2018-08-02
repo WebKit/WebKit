@@ -38,11 +38,11 @@ public:
     static Ref<SQLError> create(unsigned code, const String& message) { return adoptRef(*new SQLError(code, message)); }
     static Ref<SQLError> create(unsigned code, const char* message, int sqliteCode)
     {
-        return create(code, String::format("%s (%d)", message, sqliteCode));
+        return create(code, String::deprecatedFormat("%s (%d)", message, sqliteCode));
     }
     static Ref<SQLError> create(unsigned code, const char* message, int sqliteCode, const char* sqliteMessage)
     {
-        return create(code, String::format("%s (%d %s)", message, sqliteCode, sqliteMessage));
+        return create(code, String::deprecatedFormat("%s (%d %s)", message, sqliteCode, sqliteMessage));
     }
 
     unsigned code() const { return m_code; }

@@ -142,7 +142,7 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
         case VK_DELETE:
             return "U+007F";
         default:
-            return String::format("U+%04X", toASCIIUpper(keyCode));
+            return String::deprecatedFormat("U+%04X", toASCIIUpper(keyCode));
     }
 }
 

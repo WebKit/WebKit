@@ -45,25 +45,25 @@ static String cpuUsageString(float cpuUsage)
 {
     if (cpuUsage < 0)
         return "<unknown>"_s;
-    return String::format("%.1f%%", cpuUsage);
+    return String::deprecatedFormat("%.1f%%", cpuUsage);
 }
 
 static String formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
-        return String::format("%.3f GB", static_cast<double>(number) / (1024 * 1048576));
+        return String::deprecatedFormat("%.3f GB", static_cast<double>(number) / (1024 * 1048576));
     if (number >= 1048576)
-        return String::format("%.2f MB", static_cast<double>(number) / 1048576);
+        return String::deprecatedFormat("%.2f MB", static_cast<double>(number) / 1048576);
     if (number >= 1024)
-        return String::format("%.1f kB", static_cast<double>(number) / 1024);
-    return String::format("%lu", number);
+        return String::deprecatedFormat("%.1f kB", static_cast<double>(number) / 1024);
+    return String::deprecatedFormat("%lu", number);
 }
 
 static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
     if (std::isnan(timerFireDate))
         return "[not scheduled]"_s;
-    return String::format("%g", (timerFireDate - now).seconds());
+    return String::deprecatedFormat("%g", (timerFireDate - now).seconds());
 }
 
 static const float gFontSize = 14;

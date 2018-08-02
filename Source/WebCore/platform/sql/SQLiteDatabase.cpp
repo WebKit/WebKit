@@ -46,7 +46,7 @@ static const char notOpenErrorMessage[] = "database is not open";
 static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value **)
 {
     const char* functionName = (const char*)sqlite3_user_data(context);
-    String errorMessage = String::format("Function %s is unauthorized", functionName);
+    String errorMessage = String::deprecatedFormat("Function %s is unauthorized", functionName);
     sqlite3_result_error(context, errorMessage.utf8().data(), -1);
 }
 

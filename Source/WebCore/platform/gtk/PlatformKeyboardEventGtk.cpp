@@ -832,7 +832,7 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
         case GDK_Tab:
             return "U+0009";
         default:
-            return String::format("U+%04X", gdk_keyval_to_unicode(gdk_keyval_to_upper(keyCode)));
+            return String::deprecatedFormat("U+%04X", gdk_keyval_to_unicode(gdk_keyval_to_upper(keyCode)));
     }
 }
 

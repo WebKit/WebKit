@@ -392,8 +392,8 @@ String Color::nameForRenderTreeAsText() const
 {
     // FIXME: Handle ExtendedColors.
     if (alpha() < 0xFF)
-        return String::format("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
-    return String::format("#%02X%02X%02X", red(), green(), blue());
+        return String::deprecatedFormat("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
+    return String::deprecatedFormat("#%02X%02X%02X", red(), green(), blue());
 }
 
 Color Color::light() const

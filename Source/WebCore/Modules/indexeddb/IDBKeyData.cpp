@@ -348,7 +348,7 @@ String IDBKeyData::loggingString() const
 
         size_t i = 0;
         for (; i < 8 && i < data->size(); ++i)
-            builder.append(String::format("%02x", data->at(i)));
+            builder.append(String::deprecatedFormat("%02x", data->at(i)));
 
         if (data->size() > 8)
             builder.append("...");
@@ -360,9 +360,9 @@ String IDBKeyData::loggingString() const
         result = "<string> - " + WTF::get<String>(m_value);
         break;
     case KeyType::Date:
-        return String::format("<date> - %f", WTF::get<double>(m_value));
+        return String::deprecatedFormat("<date> - %f", WTF::get<double>(m_value));
     case KeyType::Number:
-        return String::format("<number> - %f", WTF::get<double>(m_value));
+        return String::deprecatedFormat("<number> - %f", WTF::get<double>(m_value));
     case KeyType::Max:
         return "<maximum>";
     case KeyType::Min:

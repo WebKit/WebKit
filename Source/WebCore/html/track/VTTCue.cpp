@@ -221,7 +221,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
         // maintaining the relative positions of the boxes in boxes to each
         // other.
         setInlineStyleProperty(CSSPropertyTransform,
-            String::format("translate(-%.2f%%, -%.2f%%)", position.first, position.second));
+            String::deprecatedFormat("translate(-%.2f%%, -%.2f%%)", position.first, position.second));
 
         setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePre);
     }

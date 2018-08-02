@@ -337,18 +337,18 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     FloatPoint timeLocation(size.width() * .05, size.height() * .15);
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextModeFill);
-    String string = String::format("%02u:%02u:%02u.%03u", hours, minutes, seconds, milliseconds % 1000);
+    String string = String::deprecatedFormat("%02u:%02u:%02u.%03u", hours, minutes, seconds, milliseconds % 1000);
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 
-    string = String::format("%06u", m_frameNumber++);
+    string = String::deprecatedFormat("%06u", m_frameNumber++);
     timeLocation.move(0, m_baseFontSize);
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 
     FloatPoint statsLocation(size.width() * .65, size.height() * .75);
-    string = String::format("Frame rate: %ffps", frameRate());
+    string = String::deprecatedFormat("Frame rate: %ffps", frameRate());
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
-    string = String::format("Size: %u x %u", size.width(), size.height());
+    string = String::deprecatedFormat("Size: %u x %u", size.width(), size.height());
     statsLocation.move(0, m_statsFontSize);
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
@@ -371,7 +371,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
             camera = "Unknown";
             break;
         }
-        string = String::format("Camera: %s", camera);
+        string = String::deprecatedFormat("Camera: %s", camera);
         statsLocation.move(0, m_statsFontSize);
         context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
     } else {

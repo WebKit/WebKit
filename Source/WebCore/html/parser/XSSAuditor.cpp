@@ -336,7 +336,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
             }
         }
         if (m_xssProtection == XSSProtectionDisposition::Invalid) {
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::deprecatedFormat("%u", errorPosition) + ". The default protections will be applied.");
             m_xssProtection = XSSProtectionDisposition::Enabled;
         }
 

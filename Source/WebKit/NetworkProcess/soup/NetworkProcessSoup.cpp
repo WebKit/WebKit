@@ -84,7 +84,7 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
         if (quality > 0 && quality < 100) {
             char buffer[8];
             g_ascii_formatd(buffer, 8, "%.2f", quality / 100.0);
-            builder.append(String::format(";q=%s", buffer));
+            builder.append(String::deprecatedFormat(";q=%s", buffer));
         }
     }
 

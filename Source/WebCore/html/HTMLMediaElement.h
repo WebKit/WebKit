@@ -1200,7 +1200,7 @@ template <> struct ValueToString<WebCore::TextTrackCue*> {
         String text;
         if (cue->isRenderable())
             text = WebCore::toVTTCue(cue)->text();
-        return String::format("%p id=%s interval=%s-->%s cue=%s)", cue, cue->id().utf8().data(), toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data(), text.utf8().data());
+        return String::deprecatedFormat("%p id=%s interval=%s-->%s cue=%s)", cue, cue->id().utf8().data(), toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data(), text.utf8().data());
     }
 };
 

@@ -138,7 +138,7 @@ private:
 namespace WTF {
 
 template<> struct ValueToString<WebCore::FloatPolygonEdge*> {
-    static String string(const WebCore::FloatPolygonEdge* edge) { return String::format("%p (%f,%f %f,%f)", edge, edge->vertex1().x(), edge->vertex1().y(), edge->vertex2().x(), edge->vertex2().y()); }
+    static String string(const WebCore::FloatPolygonEdge* edge) { return String::deprecatedFormat("%p (%f,%f %f,%f)", edge, edge->vertex1().x(), edge->vertex1().y(), edge->vertex2().x(), edge->vertex2().y()); }
 };
 
 }
