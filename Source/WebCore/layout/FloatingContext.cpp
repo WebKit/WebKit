@@ -216,7 +216,7 @@ LayoutUnit FloatingContext::alignWithFloatings(const FloatingPair& floatingPair,
 
     if (auto* rightDisplayBox = floatingPair.right()) {
         auto rightFloatingBoxLeft = rightDisplayBox->rectWithMargin().left();
-        return std::max(std::min(rightAlignedBoxLeft, rightFloatingBoxLeft) - marginBoxWidth, leftAlignedBoxLeft);
+        return std::max(std::min(rightAlignedBoxLeft, rightFloatingBoxLeft - marginBoxWidth), leftAlignedBoxLeft);
     }
 
     return rightAlignedBoxLeft;

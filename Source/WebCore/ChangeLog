@@ -1,5 +1,17 @@
 2018-08-02  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floating] Right aligned float's horizontal candidate position is miscomputed.
+        https://bugs.webkit.org/show_bug.cgi?id=188273
+
+        Reviewed by Antti Koivisto.
+
+        rightAlignedBoxLeft is already shifted with the size of the margin box.
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::alignWithFloatings const):
+
+2018-08-02  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Display:Box::rectWithMargin()'s width and height don't include margin left/top.
         https://bugs.webkit.org/show_bug.cgi?id=188272
 
