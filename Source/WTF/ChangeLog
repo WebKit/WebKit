@@ -1,3 +1,10 @@
+2018-08-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add some Variant types to Forward.h
+        https://bugs.webkit.org/show_bug.cgi?id=188250
+
+        * wtf/Forward.h:
+
 2018-08-02  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r234489.

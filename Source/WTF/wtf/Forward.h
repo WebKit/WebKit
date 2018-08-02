@@ -68,6 +68,10 @@ template<typename Value, typename = typename DefaultHash<Value>::Hash, typename 
 template<typename KeyArg, typename MappedArg, typename = typename DefaultHash<KeyArg>::Hash, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>> class HashMap;
 template<typename ValueArg, typename = typename DefaultHash<ValueArg>::Hash, typename = HashTraits<ValueArg>> class HashSet;
 
+template<size_t, typename> struct variant_alternative;
+template<ptrdiff_t, typename...> struct __indexed_type;
+template<ptrdiff_t _Index, typename... _Types> constexpr typename __indexed_type<_Index, _Types...>::__type const& get(Variant<_Types...> const&);
+
 }
 
 namespace std {
