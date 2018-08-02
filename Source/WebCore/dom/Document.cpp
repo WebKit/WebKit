@@ -4685,7 +4685,7 @@ String Document::lastModified()
 
     auto ctime = dateTime.value().secondsSinceEpoch().secondsAs<time_t>();
     auto localDateTime = std::localtime(&ctime);
-    return String::deprecatedFormat("%02d/%02d/%04d %02d:%02d:%02d", localDateTime->tm_mon + 1, localDateTime->tm_mday, 1900 + localDateTime->tm_year, localDateTime->tm_hour, localDateTime->tm_min, localDateTime->tm_sec);
+    return String::format("%02d/%02d/%04d %02d:%02d:%02d", localDateTime->tm_mon + 1, localDateTime->tm_mday, 1900 + localDateTime->tm_year, localDateTime->tm_hour, localDateTime->tm_min, localDateTime->tm_sec);
 }
 
 void Document::setCookieURL(const URL& url)

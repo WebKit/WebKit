@@ -149,7 +149,7 @@ void MediaPlayerPrivateGStreamerMSE::load(const String& urlString)
 void MediaPlayerPrivateGStreamerMSE::load(const String& url, MediaSourcePrivateClient* mediaSource)
 {
     m_mediaSource = mediaSource;
-    load(String::deprecatedFormat("mediasource%s", url.utf8().data()));
+    load(String::format("mediasource%s", url.utf8().data()));
 }
 
 void MediaPlayerPrivateGStreamerMSE::pause()
@@ -272,7 +272,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
         || !m_gstSeekCompleted) {
         CString reason = "Unknown reason";
         if (getStateResult == GST_STATE_CHANGE_ASYNC) {
-            reason = String::deprecatedFormat("In async change %s --> %s",
+            reason = String::format("In async change %s --> %s",
                 gst_element_state_get_name(state),
                 gst_element_state_get_name(newState)).utf8();
         } else if (state < GST_STATE_PAUSED)

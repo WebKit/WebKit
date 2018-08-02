@@ -38,7 +38,7 @@ IDBIterateCursorData IDBIterateCursorData::isolatedCopy() const
 #if !LOG_DISABLED
 String IDBIterateCursorData::loggingString() const
 {
-    return String::deprecatedFormat("<Itr8Crsr: key %s, primaryKey %s, count %u>", keyData.loggingString().utf8().data(), primaryKeyData.loggingString().utf8().data(), count);
+    return String::format("<Itr8Crsr: key %s, primaryKey %s, count %u>", keyData.loggingString().utf8().data(), primaryKeyData.loggingString().utf8().data(), count);
 }
 #endif
 

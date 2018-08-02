@@ -425,19 +425,19 @@ static void drawMemoryPie(CGContextRef context, FloatRect& rect, HistoricResourc
 static String formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
-        return String::deprecatedFormat("%.3f GB", static_cast<double>(number) / (1024 * 1048576));
+        return String::format("%.3f GB", static_cast<double>(number) / (1024 * 1048576));
     if (number >= 1048576)
-        return String::deprecatedFormat("%.2f MB", static_cast<double>(number) / 1048576);
+        return String::format("%.2f MB", static_cast<double>(number) / 1048576);
     if (number >= 1024)
-        return String::deprecatedFormat("%.1f kB", static_cast<double>(number) / 1024);
-    return String::deprecatedFormat("%lu", number);
+        return String::format("%.1f kB", static_cast<double>(number) / 1024);
+    return String::format("%lu", number);
 }
 
 static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
     if (std::isnan(timerFireDate))
         return "[not scheduled]"_s;
-    return String::deprecatedFormat("%g", (timerFireDate - now).seconds());
+    return String::format("%g", (timerFireDate - now).seconds());
 }
 
 void ResourceUsageOverlay::platformDraw(CGContextRef context)
@@ -456,7 +456,7 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     CGContextClearRect(context, viewBounds);
 
     static CGColorRef colorForLabels = createColor(0.9, 0.9, 0.9, 1);
-    showText(context, 10, 20, colorForLabels, String::deprecatedFormat("        CPU: %g", data.cpu.last()));
+    showText(context, 10, 20, colorForLabels, String::format("        CPU: %g", data.cpu.last()));
     showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(data.totalDirtySize.last()));
     showText(context, 10, 40, colorForLabels, "   External: " + formatByteNumber(data.totalExternalSize.last()));
 
@@ -466,11 +466,11 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
         size_t reclaimable = category.reclaimableSize.last();
         size_t external = category.externalSize.last();
         
-        String label = String::deprecatedFormat("% 11s: %s", category.name.ascii().data(), formatByteNumber(dirty).ascii().data());
+        String label = String::format("% 11s: %s", category.name.ascii().data(), formatByteNumber(dirty).ascii().data());
         if (external)
-            label = label + String::deprecatedFormat(" + %s", formatByteNumber(external).ascii().data());
+            label = label + String::format(" + %s", formatByteNumber(external).ascii().data());
         if (reclaimable)
-            label = label + String::deprecatedFormat(" [%s]", formatByteNumber(reclaimable).ascii().data());
+            label = label + String::format(" [%s]", formatByteNumber(reclaimable).ascii().data());
 
         // FIXME: Show size/capacity of GC heap.
         showText(context, 10, y, category.color.get(), label);
@@ -479,8 +479,8 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     y -= 5;
 
     MonotonicTime now = MonotonicTime::now();
-    showText(context, 10, y + 10, colorForLabels, String::deprecatedFormat("    Eden GC: %s", gcTimerString(data.timeOfNextEdenCollection, now).ascii().data()));
-    showText(context, 10, y + 20, colorForLabels, String::deprecatedFormat("    Full GC: %s", gcTimerString(data.timeOfNextFullCollection, now).ascii().data()));
+    showText(context, 10, y + 10, colorForLabels, String::format("    Eden GC: %s", gcTimerString(data.timeOfNextEdenCollection, now).ascii().data()));
+    showText(context, 10, y + 20, colorForLabels, String::format("    Full GC: %s", gcTimerString(data.timeOfNextFullCollection, now).ascii().data()));
 
     drawCpuHistory(context, viewBounds.size.width - 70, 0, viewBounds.size.height, data.cpu);
     drawGCHistory(context, viewBounds.size.width - 140, 0, viewBounds.size.height, data.gcHeapSize, data.categories[MemoryCategory::GCHeap].dirtySize);

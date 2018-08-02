@@ -185,7 +185,7 @@ namespace WTF {
 template<> struct ValueToString<WebCore::FloatingObject*> {
     static String string(const WebCore::FloatingObject* floatingObject)
     {
-        return String::deprecatedFormat("%p (%ix%i %ix%i)", floatingObject, floatingObject->frameRect().x().toInt(), floatingObject->frameRect().y().toInt(), floatingObject->frameRect().maxX().toInt(), floatingObject->frameRect().maxY().toInt());
+        return String::format("%p (%ix%i %ix%i)", floatingObject, floatingObject->frameRect().x().toInt(), floatingObject->frameRect().y().toInt(), floatingObject->frameRect().maxX().toInt(), floatingObject->frameRect().maxY().toInt());
     }
 };
 

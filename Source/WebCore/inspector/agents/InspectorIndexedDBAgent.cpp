@@ -711,7 +711,7 @@ public:
             auto result = idbObjectStore->clear(*exec);
             ASSERT(!result.hasException());
             if (result.hasException()) {
-                m_requestCallback->sendFailure(String::deprecatedFormat("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), result.releaseException().code()));
+                m_requestCallback->sendFailure(String::format("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), result.releaseException().code()));
                 return;
             }
             idbRequest = result.releaseReturnValue();

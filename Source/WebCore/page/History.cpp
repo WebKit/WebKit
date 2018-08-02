@@ -218,8 +218,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     
     if (mainHistory->m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
         if (stateObjectType == StateObjectType::Replace)
-            return Exception { SecurityError, String::deprecatedFormat("Attempt to use history.replaceState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
-        return Exception { SecurityError, String::deprecatedFormat("Attempt to use history.pushState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
+            return Exception { SecurityError, String::format("Attempt to use history.replaceState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
+        return Exception { SecurityError, String::format("Attempt to use history.pushState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
     }
 
     Checked<unsigned> titleSize = title.length();

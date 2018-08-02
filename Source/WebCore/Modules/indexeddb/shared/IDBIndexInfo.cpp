@@ -56,12 +56,12 @@ String IDBIndexInfo::loggingString(int indent) const
     for (int i = 0; i < indent; ++i)
         indentString.append(" ");
 
-    return makeString(indentString, "Index: ", m_name, String::deprecatedFormat(" (%" PRIu64 ") keyPath: %s\n", m_identifier, WebCore::loggingString(m_keyPath).utf8().data()));
+    return makeString(indentString, "Index: ", m_name, String::format(" (%" PRIu64 ") keyPath: %s\n", m_identifier, WebCore::loggingString(m_keyPath).utf8().data()));
 }
 
 String IDBIndexInfo::condensedLoggingString() const
 {
-    return String::deprecatedFormat("<Idx: %s (%" PRIu64 "), OS (%" PRIu64 ")>", m_name.utf8().data(), m_identifier, m_objectStoreIdentifier);
+    return String::format("<Idx: %s (%" PRIu64 "), OS (%" PRIu64 ")>", m_name.utf8().data(), m_identifier, m_objectStoreIdentifier);
 }
 #endif
 

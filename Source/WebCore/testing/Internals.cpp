@@ -609,7 +609,7 @@ ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) con
 
 String Internals::address(Node& node)
 {
-    return String::deprecatedFormat("%p", &node);
+    return String::format("%p", &node);
 }
 
 bool Internals::nodeNeedsStyleRecalc(Node& node)

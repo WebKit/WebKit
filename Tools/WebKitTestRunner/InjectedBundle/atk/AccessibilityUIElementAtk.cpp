@@ -605,7 +605,7 @@ String attributesOfElement(AccessibilityUIElement* element)
 {
     StringBuilder builder;
 
-    builder.append(String::deprecatedFormat("%s\n", element->role()->string().utf8().data()));
+    builder.append(String::format("%s\n", element->role()->string().utf8().data()));
 
     // For the parent we print its role and its name, if available.
     builder.append("AXParent: ");
@@ -615,40 +615,40 @@ String attributesOfElement(AccessibilityUIElement* element)
         builder.append(roleToString(atkParent));
         const char* parentName = atk_object_get_name(atkParent);
         if (parentName && g_utf8_strlen(parentName, -1))
-            builder.append(String::deprecatedFormat(": %s", parentName));
+            builder.append(String::format(": %s", parentName));
     } else
         builder.append("(null)");
     builder.append("\n");
 
-    builder.append(String::deprecatedFormat("AXChildren: %d\n", element->childrenCount()));
-    builder.append(String::deprecatedFormat("AXPosition: { %f, %f }\n", element->x(), element->y()));
-    builder.append(String::deprecatedFormat("AXSize: { %f, %f }\n", element->width(), element->height()));
+    builder.append(String::format("AXChildren: %d\n", element->childrenCount()));
+    builder.append(String::format("AXPosition: { %f, %f }\n", element->x(), element->y()));
+    builder.append(String::format("AXSize: { %f, %f }\n", element->width(), element->height()));
 
     String title = element->title()->string();
     if (!title.isEmpty())
-        builder.append(String::deprecatedFormat("%s\n", title.utf8().data()));
+        builder.append(String::format("%s\n", title.utf8().data()));
 
     String description = element->description()->string();
     if (!description.isEmpty())
-        builder.append(String::deprecatedFormat("%s\n", description.utf8().data()));
+        builder.append(String::format("%s\n", description.utf8().data()));
 
     String value = element->stringValue()->string();
     if (!value.isEmpty())
-        builder.append(String::deprecatedFormat("%s\n", value.utf8().data()));
+        builder.append(String::format("%s\n", value.utf8().data()));
 
-    builder.append(String::deprecatedFormat("AXFocusable: %d\n", element->isFocusable()));
-    builder.append(String::deprecatedFormat("AXFocused: %d\n", element->isFocused()));
-    builder.append(String::deprecatedFormat("AXSelectable: %d\n", element->isSelectable()));
-    builder.append(String::deprecatedFormat("AXSelected: %d\n", element->isSelected()));
-    builder.append(String::deprecatedFormat("AXMultiSelectable: %d\n", element->isMultiSelectable()));
-    builder.append(String::deprecatedFormat("AXEnabled: %d\n", element->isEnabled()));
-    builder.append(String::deprecatedFormat("AXExpanded: %d\n", element->isExpanded()));
-    builder.append(String::deprecatedFormat("AXRequired: %d\n", element->isRequired()));
-    builder.append(String::deprecatedFormat("AXChecked: %d\n", element->isChecked()));
+    builder.append(String::format("AXFocusable: %d\n", element->isFocusable()));
+    builder.append(String::format("AXFocused: %d\n", element->isFocused()));
+    builder.append(String::format("AXSelectable: %d\n", element->isSelectable()));
+    builder.append(String::format("AXSelected: %d\n", element->isSelected()));
+    builder.append(String::format("AXMultiSelectable: %d\n", element->isMultiSelectable()));
+    builder.append(String::format("AXEnabled: %d\n", element->isEnabled()));
+    builder.append(String::format("AXExpanded: %d\n", element->isExpanded()));
+    builder.append(String::format("AXRequired: %d\n", element->isRequired()));
+    builder.append(String::format("AXChecked: %d\n", element->isChecked()));
 
     String url = element->url()->string();
     if (!url.isEmpty())
-        builder.append(String::deprecatedFormat("%s\n", url.utf8().data()));
+        builder.append(String::format("%s\n", url.utf8().data()));
 
     // We append the ATK specific attributes as a single line at the end.
     builder.append("AXPlatformAttributes: ");
@@ -1786,7 +1786,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
     for (unsigned i = location; i < location + length; i = end) {
         AtkAttributeSet* attributeSet = atk_text_get_run_attributes(text, i, &start, &end);
         GUniquePtr<gchar> substring(replaceCharactersForResults(atk_text_get_text(text, start, end)));
-        builder.append(String::deprecatedFormat("\n\tRange attributes for '%s':\n\t\t", substring.get()));
+        builder.append(String::format("\n\tRange attributes for '%s':\n\t\t", substring.get()));
         builder.append(attributeSetToString(attributeSet, "\n\t\t"));
     }
 
@@ -2038,7 +2038,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 
     // Build the result string, stripping the absolute URL paths if present.
     char* localURI = g_strstr_len(hyperlinkURI.get(), -1, "LayoutTests");
-    String axURL = String::deprecatedFormat("AXURL: %s", localURI ? localURI : hyperlinkURI.get());
+    String axURL = String::format("AXURL: %s", localURI ? localURI : hyperlinkURI.get());
     return JSStringCreateWithUTF8CString(axURL.utf8().data());
 }
 
@@ -2346,7 +2346,7 @@ JSRetainPtr<JSStringRef> stringAtOffset(PlatformUIElement element, AtkTextBounda
 #else
     builder.append(atk_text_get_text_at_offset(ATK_TEXT(element.get()), offset, boundary, &startOffset, &endOffset));
 #endif
-    builder.append(String::deprecatedFormat(", %i, %i", startOffset, endOffset));
+    builder.append(String::format(", %i, %i", startOffset, endOffset));
     return JSStringCreateWithUTF8CString(builder.toString().utf8().data());
 }
 

@@ -345,7 +345,7 @@ static GstFlowReturn webkitMediaStreamSrcChain(GstPad* pad, GstObject* parent, G
 
 static void webkitMediaStreamSrcAddPad(WebKitMediaStreamSrc* self, GstPad* target, GstStaticPadTemplate* pad_template)
 {
-    auto padname = String::deprecatedFormat("src_%u", g_atomic_int_add(&(self->npads), 1));
+    auto padname = String::format("src_%u", g_atomic_int_add(&(self->npads), 1));
     auto ghostpad = gst_ghost_pad_new_from_template(padname.utf8().data(), target,
         gst_static_pad_template_get(pad_template));
 

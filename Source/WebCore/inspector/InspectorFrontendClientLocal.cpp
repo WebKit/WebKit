@@ -205,7 +205,7 @@ bool InspectorFrontendClientLocal::canAttachWindow()
 
 void InspectorFrontendClientLocal::setDockingUnavailable(bool unavailable)
 {
-    evaluateOnLoad(String::deprecatedFormat("[\"setDockingUnavailable\", %s]", unavailable ? "true" : "false"));
+    evaluateOnLoad(String::format("[\"setDockingUnavailable\", %s]", unavailable ? "true" : "false"));
 }
 
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
@@ -270,7 +270,7 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 
     m_dockSide = dockSide;
 
-    evaluateOnLoad(String::deprecatedFormat("[\"setDockSide\", \"%s\"]", side));
+    evaluateOnLoad(String::format("[\"setDockSide\", \"%s\"]", side));
 }
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
@@ -294,7 +294,7 @@ bool InspectorFrontendClientLocal::isDebuggingEnabled()
 
 void InspectorFrontendClientLocal::setDebuggingEnabled(bool enabled)
 {
-    evaluateOnLoad(String::deprecatedFormat("[\"setDebuggingEnabled\", %s]", enabled ? "true" : "false"));
+    evaluateOnLoad(String::format("[\"setDebuggingEnabled\", %s]", enabled ? "true" : "false"));
 }
 
 bool InspectorFrontendClientLocal::isTimelineProfilingEnabled()
@@ -306,7 +306,7 @@ bool InspectorFrontendClientLocal::isTimelineProfilingEnabled()
 
 void InspectorFrontendClientLocal::setTimelineProfilingEnabled(bool enabled)
 {
-    evaluateOnLoad(String::deprecatedFormat("[\"setTimelineProfilingEnabled\", %s]", enabled ? "true" : "false"));
+    evaluateOnLoad(String::format("[\"setTimelineProfilingEnabled\", %s]", enabled ? "true" : "false"));
 }
 
 bool InspectorFrontendClientLocal::isProfilingJavaScript()
@@ -339,7 +339,7 @@ void InspectorFrontendClientLocal::showResources()
 void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
 {
     String frameId = m_inspectedPageController->pageAgent()->frameId(frame);
-    evaluateOnLoad(String::deprecatedFormat("[\"showMainResourceForFrame\", \"%s\"]", frameId.ascii().data()));
+    evaluateOnLoad(String::format("[\"showMainResourceForFrame\", \"%s\"]", frameId.ascii().data()));
 }
 
 unsigned InspectorFrontendClientLocal::constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight)

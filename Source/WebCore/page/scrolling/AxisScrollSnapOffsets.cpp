@@ -78,7 +78,7 @@ static String snapOffsetsToString(const Vector<LayoutUnit>& snapOffsets)
     StringBuilder s;
     s.append("[ ");
     for (auto offset : snapOffsets)
-        s.append(String::deprecatedFormat("%.1f ", offset.toFloat()));
+        s.append(String::format("%.1f ", offset.toFloat()));
 
     s.append("]");
     return s.toString();
@@ -89,14 +89,14 @@ static String snapOffsetRangesToString(const Vector<ScrollOffsetRange<LayoutUnit
     StringBuilder s;
     s.append("[ ");
     for (auto range : ranges)
-        s.append(String::deprecatedFormat("(%.1f, %.1f) ", range.start.toFloat(), range.end.toFloat()));
+        s.append(String::format("(%.1f, %.1f) ", range.start.toFloat(), range.end.toFloat()));
     s.append("]");
     return s.toString();
 }
 
 static String snapPortOrAreaToString(const LayoutRect& rect)
 {
-    return String::deprecatedFormat("{{%.1f, %.1f} {%.1f, %.1f}}", rect.x().toFloat(), rect.y().toFloat(), rect.width().toFloat(), rect.height().toFloat());
+    return String::format("{{%.1f, %.1f} {%.1f, %.1f}}", rect.x().toFloat(), rect.y().toFloat(), rect.width().toFloat(), rect.height().toFloat());
 }
 
 #endif

@@ -445,16 +445,16 @@ void InputMethodFilter::logHandleKeyboardEventForTesting(GdkEventKey* event, con
     const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
     const char* fakedString = faked == EventFaked ? " (faked)" : "";
     if (!eventString.isNull())
-        m_events.append(String::deprecatedFormat("sendSimpleKeyEvent type=%s keycode=%x text='%s'%s", eventType, event->keyval, eventString.utf8().data(), fakedString));
+        m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x text='%s'%s", eventType, event->keyval, eventString.utf8().data(), fakedString));
     else
-        m_events.append(String::deprecatedFormat("sendSimpleKeyEvent type=%s keycode=%x%s", eventType, event->keyval, fakedString));
+        m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x%s", eventType, event->keyval, fakedString));
 }
 
 void InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting(GdkEventKey* event, ResultsToSend resultsToSend, EventFakedForComposition faked)
 {
     const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
     const char* fakedString = faked == EventFaked ? " (faked)" : "";
-    m_events.append(String::deprecatedFormat("sendKeyEventWithCompositionResults type=%s keycode=%x%s", eventType, event->keyval, fakedString));
+    m_events.append(String::format("sendKeyEventWithCompositionResults type=%s keycode=%x%s", eventType, event->keyval, fakedString));
 
     if (resultsToSend & Composition && !m_confirmedComposition.isNull())
         logConfirmCompositionForTesting();
@@ -467,12 +467,12 @@ void InputMethodFilter::logConfirmCompositionForTesting()
     if (m_confirmedComposition.isEmpty())
         m_events.append(String("confirmCurrentcomposition"));
     else
-        m_events.append(String::deprecatedFormat("confirmComposition '%s'", m_confirmedComposition.utf8().data()));
+        m_events.append(String::format("confirmComposition '%s'", m_confirmedComposition.utf8().data()));
 }
 
 void InputMethodFilter::logSetPreeditForTesting()
 {
-    m_events.append(String::deprecatedFormat("setPreedit text='%s' cursorOffset=%i", m_preedit.utf8().data(), m_cursorOffset));
+    m_events.append(String::format("setPreedit text='%s' cursorOffset=%i", m_preedit.utf8().data(), m_cursorOffset));
 }
 #endif // ENABLE(API_TESTS)
 

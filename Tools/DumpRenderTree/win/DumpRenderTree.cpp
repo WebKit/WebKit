@@ -904,7 +904,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
 static String applicationId()
 {
     DWORD processId = ::GetCurrentProcessId();
-    return String::deprecatedFormat("com.apple.DumpRenderTree.%d", processId);
+    return String::format("com.apple.DumpRenderTree.%d", processId);
 }
 
 static void setApplicationId()
@@ -1535,8 +1535,8 @@ int main(int argc, const char* argv[])
     // Tests involving the clipboard are flaky when running with multiple DRTs, since the clipboard is global.
     // We can fix this by assigning each DRT a separate window station (each window station has its own clipboard).
     DWORD processId = ::GetCurrentProcessId();
-    String windowStationName = String::deprecatedFormat("windowStation%d", processId);
-    String desktopName = String::deprecatedFormat("desktop%d", processId);
+    String windowStationName = String::format("windowStation%d", processId);
+    String desktopName = String::format("desktop%d", processId);
     HDESK desktop = nullptr;
 
     auto windowsStation = ::CreateWindowStation(windowStationName.charactersWithNullTermination().data(), CWF_CREATE_ONLY, WINSTA_ALL_ACCESS, nullptr);

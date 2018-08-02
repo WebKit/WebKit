@@ -57,7 +57,7 @@ HIDGamepad::HIDGamepad(IOHIDDeviceRef hidDevice, unsigned index)
 
     // Currently the spec has no formatting for the id string.
     // This string formatting matches Firefox.
-    m_id = String::deprecatedFormat("%x-%x-%s", vendorID, productID, productName.utf8().data());
+    m_id = String::format("%x-%x-%s", vendorID, productID, productName.utf8().data());
 
     initElements();
 }

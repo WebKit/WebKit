@@ -6182,7 +6182,7 @@ namespace {
         case GraphicsContext3D::CONTEXT_LOST_WEBGL:
             return "CONTEXT_LOST_WEBGL"_s;
         default:
-            return String::deprecatedFormat("WebGL ERROR(%04x)", error);
+            return String::format("WebGL ERROR(%04x)", error);
         }
     }
 

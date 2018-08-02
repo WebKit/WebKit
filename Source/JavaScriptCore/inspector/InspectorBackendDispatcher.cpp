@@ -291,19 +291,19 @@ T BackendDispatcher::getPropertyValue(JSON::Object* object, const String& name, 
 
     if (!object) {
         if (!out_optionalValueFound)
-            reportProtocolError(BackendDispatcher::InvalidParams, String::deprecatedFormat("'params' object must contain required parameter '%s' with type '%s'.", name.utf8().data(), typeName));
+            reportProtocolError(BackendDispatcher::InvalidParams, String::format("'params' object must contain required parameter '%s' with type '%s'.", name.utf8().data(), typeName));
         return result;
     }
 
     auto findResult = object->find(name);
     if (findResult == object->end()) {
         if (!out_optionalValueFound)
-            reportProtocolError(BackendDispatcher::InvalidParams, String::deprecatedFormat("Parameter '%s' with type '%s' was not found.", name.utf8().data(), typeName));
+            reportProtocolError(BackendDispatcher::InvalidParams, String::format("Parameter '%s' with type '%s' was not found.", name.utf8().data(), typeName));
         return result;
     }
 
     if (!asMethod(*findResult->value, result)) {
-        reportProtocolError(BackendDispatcher::InvalidParams, String::deprecatedFormat("Parameter '%s' has wrong type. It must be '%s'.", name.utf8().data(), typeName));
+        reportProtocolError(BackendDispatcher::InvalidParams, String::format("Parameter '%s' has wrong type. It must be '%s'.", name.utf8().data(), typeName));
         return result;
     }
 

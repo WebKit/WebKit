@@ -88,7 +88,7 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
 
     RefPtr<JSON::Value> resultJSONValue = toInspectorValue(*m_injectedScriptObject.scriptState(), resultJSValue);
     if (!resultJSONValue)
-        return JSON::Value::create(String::deprecatedFormat("Object has too long reference chain (must not be longer than %d)", JSON::Value::maxDepth));
+        return JSON::Value::create(String::format("Object has too long reference chain (must not be longer than %d)", JSON::Value::maxDepth));
 
     return resultJSONValue.releaseNonNull();
 }

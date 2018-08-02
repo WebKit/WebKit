@@ -46,7 +46,7 @@ GDIObjectCounter::GDIObjectCounter(const String& identifier)
 
 GDIObjectCounter::GDIObjectCounter(const String& className, void* instance)
 {
-    init(String::deprecatedFormat("%s (%p)", className.latin1().data(), instance));
+    init(String::format("%s (%p)", className.latin1().data(), instance));
 }
 
 void GDIObjectCounter::init(const String& identifier)

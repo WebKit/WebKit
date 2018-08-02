@@ -340,7 +340,7 @@ void AppendPipeline::handleStateChangeMessage(GstMessage* message)
         CString sourceBufferType = String(m_sourceBufferPrivate->type().raw())
             .replace("/", "_").replace(" ", "_")
             .replace("\"", "").replace("\'", "").utf8();
-        CString dotFileName = String::deprecatedFormat("webkit-append-%s-%s_%s",
+        CString dotFileName = String::format("webkit-append-%s-%s_%s",
             sourceBufferType.data(),
             gst_element_state_get_name(currentState),
             gst_element_state_get_name(newState)).utf8();
@@ -760,7 +760,7 @@ void AppendPipeline::resetPipeline()
     {
         static unsigned i = 0;
         // This is here for debugging purposes. It does not make sense to have it as class member.
-        WTF::String  dotFileName = String::deprecatedFormat("reset-pipeline-%d", ++i);
+        WTF::String  dotFileName = String::format("reset-pipeline-%d", ++i);
         gst_debug_bin_to_dot_file(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
     }
 #endif

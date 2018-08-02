@@ -693,11 +693,11 @@ String DateComponents::toStringForTime(SecondFormat format) const
         FALLTHROUGH; // To None.
 #endif
     case None:
-        return String::deprecatedFormat("%02d:%02d", m_hour, m_minute);
+        return String::format("%02d:%02d", m_hour, m_minute);
     case Second:
-        return String::deprecatedFormat("%02d:%02d:%02d", m_hour, m_minute, m_second);
+        return String::format("%02d:%02d:%02d", m_hour, m_minute, m_second);
     case Millisecond:
-        return String::deprecatedFormat("%02d:%02d:%02d.%03d", m_hour, m_minute, m_second, m_millisecond);
+        return String::format("%02d:%02d:%02d.%03d", m_hour, m_minute, m_second, m_millisecond);
     }
 }
 
@@ -705,19 +705,19 @@ String DateComponents::toString(SecondFormat format) const
 {
     switch (m_type) {
     case Date:
-        return String::deprecatedFormat("%04d-%02d-%02d", m_year, m_month + 1, m_monthDay);
+        return String::format("%04d-%02d-%02d", m_year, m_month + 1, m_monthDay);
     case DateTime:
-        return String::deprecatedFormat("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
+        return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
             + toStringForTime(format) + String("Z");
     case DateTimeLocal:
-        return String::deprecatedFormat("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
+        return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
             + toStringForTime(format);
     case Month:
-        return String::deprecatedFormat("%04d-%02d", m_year, m_month + 1);
+        return String::format("%04d-%02d", m_year, m_month + 1);
     case Time:
         return toStringForTime(format);
     case Week:
-        return String::deprecatedFormat("%04d-W%02d", m_year, m_week);
+        return String::format("%04d-W%02d", m_year, m_week);
     case Invalid:
         break;
     }

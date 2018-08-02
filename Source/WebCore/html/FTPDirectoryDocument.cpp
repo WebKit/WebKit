@@ -167,12 +167,12 @@ static String processFilesizeString(const String& size, bool isDirectory)
         return unknownFileSizeText();
 
     if (bytes < 1000000)
-        return String::deprecatedFormat("%.2f KB", static_cast<float>(bytes) / 1000);
+        return String::format("%.2f KB", static_cast<float>(bytes)/1000);
 
     if (bytes < 1000000000)
-        return String::deprecatedFormat("%.2f MB", static_cast<float>(bytes) / 1000000);
+        return String::format("%.2f MB", static_cast<float>(bytes)/1000000);
 
-    return String::deprecatedFormat("%.2f GB", static_cast<float>(bytes) / 1000000000);
+    return String::format("%.2f GB", static_cast<float>(bytes)/1000000000);
 }
 
 static bool wasLastDayOfMonth(int year, int month, int day)
@@ -209,12 +209,12 @@ static String processFileDateString(const FTPTime& fileTime)
         if (hour < 12) {
             if (hour == 0)
                 hour = 12;
-            timeOfDay = String::deprecatedFormat(", %i:%02i AM", hour, fileTime.tm_min);
+            timeOfDay = String::format(", %i:%02i AM", hour, fileTime.tm_min);
         } else {
             hour = hour - 12;
             if (hour == 0)
                 hour = 12;
-            timeOfDay = String::deprecatedFormat(", %i:%02i PM", hour, fileTime.tm_min);
+            timeOfDay = String::format(", %i:%02i PM", hour, fileTime.tm_min);
         }
     }
 

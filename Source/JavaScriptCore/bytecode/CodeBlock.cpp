@@ -2800,7 +2800,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
     if (virtualRegister == thisRegister())
         return "this"_s;
     if (virtualRegister.isArgument())
-        return String::deprecatedFormat("arguments[%3d]", virtualRegister.toArgument());
+        return String::format("arguments[%3d]", virtualRegister.toArgument());
 
     return "";
 }

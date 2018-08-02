@@ -229,7 +229,7 @@ static String aspectRatioValueAsString(CSSValue* value)
         return emptyString();
 
     auto& aspectRatio = downcast<CSSAspectRatioValue>(*value);
-    return String::deprecatedFormat("%f/%f", aspectRatio.numeratorValue(), aspectRatio.denominatorValue());
+    return String::format("%f/%f", aspectRatio.numeratorValue(), aspectRatio.denominatorValue());
 }
 #endif
 

@@ -481,7 +481,7 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
 const char* WebBackForwardList::loggingString()
 {
     StringBuilder builder;
-    builder.append(String::deprecatedFormat("WebBackForwardList %p - %zu entries, has current index %s (%zu)", this, m_entries.size(), m_hasCurrentIndex ? "YES" : "NO", m_hasCurrentIndex ? m_currentIndex : 0));
+    builder.append(String::format("WebBackForwardList %p - %zu entries, has current index %s (%zu)", this, m_entries.size(), m_hasCurrentIndex ? "YES" : "NO", m_hasCurrentIndex ? m_currentIndex : 0));
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
         builder.append("\n");

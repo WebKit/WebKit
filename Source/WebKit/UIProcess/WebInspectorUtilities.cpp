@@ -57,7 +57,7 @@ unsigned inspectorLevelForPage(WebPageProxy* page)
 
 String inspectorPageGroupIdentifierForPage(WebPageProxy* page)
 {
-    return String::deprecatedFormat("__WebInspectorPageGroupLevel%u__", inspectorLevelForPage(page));
+    return String::format("__WebInspectorPageGroupLevel%u__", inspectorLevelForPage(page));
 }
 
 void trackInspectorPage(WebPageProxy* page)

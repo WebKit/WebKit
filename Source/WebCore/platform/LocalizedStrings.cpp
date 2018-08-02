@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-// We can't use String::deprecatedFormat for two reasons:
+// We can't use String::format for two reasons:
 //  1) It doesn't handle non-ASCII characters in the format string.
 //  2) It doesn't handle the %2$d syntax.
 // Note that because |format| is used as the second parameter to va_start, it cannot be a reference

@@ -33,12 +33,12 @@ String fileSizeDescription(uint64_t size)
     // FIXME: These strings should be localized, but that would require bringing LocalizedStrings into PAL.
     // See <https://bugs.webkit.org/show_bug.cgi?id=179019> for more details.
     if (size < 1000)
-        return String::deprecatedFormat("%tu bytes", size);
+        return String::format("%tu bytes", size);
     if (size < 1000000)
-        return String::deprecatedFormat("%.1f KB", size / 1000.);
+        return String::format("%.1f KB", size / 1000.);
     if (size < 1000000000)
-        return String::deprecatedFormat("%.1f MB", size / 1000000.);
-    return String::deprecatedFormat("%.1f GB", size / 1000000000.);
+        return String::format("%.1f MB", size / 1000000.);
+    return String::format("%.1f GB", size / 1000000000.);
 }
 
 #endif

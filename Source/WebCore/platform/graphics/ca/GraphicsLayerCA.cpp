@@ -485,9 +485,9 @@ void GraphicsLayerCA::setName(const String& name)
     String caLayerDescription;
 
     if (!m_layer->isPlatformCALayerRemote())
-        caLayerDescription = String::deprecatedFormat("CALayer(%p) ", m_layer->platformLayer());
+        caLayerDescription = String::format("CALayer(%p) ", m_layer->platformLayer());
 
-    GraphicsLayer::setName(caLayerDescription + String::deprecatedFormat("GraphicsLayer(%p, %llu) ", this, primaryLayerID()) + name);
+    GraphicsLayer::setName(caLayerDescription + String::format("GraphicsLayer(%p, %llu) ", this, primaryLayerID()) + name);
 #else
     GraphicsLayer::setName(name);
 #endif
@@ -1119,7 +1119,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
             m_contentsLayerPurpose = ContentsLayerPurpose::BackgroundColor;
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(String::deprecatedFormat("contents color %llu", m_contentsLayer->layerID()));
+            m_contentsLayer->setName(String::format("contents color %llu", m_contentsLayer->layerID()));
 #else
             m_contentsLayer->setName("contents color");
 #endif
@@ -1521,7 +1521,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         static NeverDestroyed<Color> washBorderColor(255, 0, 0, 100);
         
         m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
-        String name = String::deprecatedFormat("Visible Tile Wash Layer %p", m_visibleTileWashLayer->platformLayer());
+        String name = String::format("Visible Tile Wash Layer %p", m_visibleTileWashLayer->platformLayer());
         m_visibleTileWashLayer->setName(name);
         m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
         m_visibleTileWashLayer->setBorderColor(washBorderColor);
@@ -2522,7 +2522,7 @@ void GraphicsLayerCA::updateContentsImage()
         if (!m_contentsLayer.get()) {
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(String::deprecatedFormat("contents image %llu", m_contentsLayer->layerID()));
+            m_contentsLayer->setName(String::format("contents image %llu", m_contentsLayer->layerID()));
 #else
             m_contentsLayer->setName("contents image");
 #endif
@@ -2628,7 +2628,7 @@ void GraphicsLayerCA::updateContentsRects()
             m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
             m_contentsClippingLayer->setAnchorPoint(FloatPoint());
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsClippingLayer->setName(String::deprecatedFormat("contents clipping %llu", m_contentsClippingLayer->layerID()));
+            m_contentsClippingLayer->setName(String::format("contents clipping %llu", m_contentsClippingLayer->layerID()));
 #else
             m_contentsClippingLayer->setName("contents clipping");
 #endif
@@ -3111,7 +3111,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     for (int internalFilterPropertyIndex = 0; internalFilterPropertyIndex < numAnimatedProperties; ++internalFilterPropertyIndex) {
         bool valuesOK;
         RefPtr<PlatformCAAnimation> caAnimation;
-        String keyPath = String::deprecatedFormat("filters.filter_%d.%s", animationIndex, PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
+        String keyPath = String::format("filters.filter_%d.%s", animationIndex, PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
         
         if (isKeyframe) {
             caAnimation = createKeyframeAnimation(animation, keyPath, false);
@@ -3869,7 +3869,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Platfo
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #if ENABLE(TREE_DEBUGGING)
-        resultLayer->setName(String::deprecatedFormat("clone %d of %llu", cloneID[0U], sourceLayer->layerID()));
+        resultLayer->setName(String::format("clone %d of %llu", cloneID[0U], sourceLayer->layerID()));
 #else
         resultLayer->setName("clone of " + m_name);
 #endif

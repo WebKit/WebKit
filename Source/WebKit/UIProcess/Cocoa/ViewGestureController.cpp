@@ -333,7 +333,7 @@ void ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired()
 
 void ViewGestureController::SnapshotRemovalTracker::startWatchdog(Seconds duration)
 {
-    log(String::deprecatedFormat("(re)started watchdog timer for %.1f seconds", duration.seconds()));
+    log(String::format("(re)started watchdog timer for %.1f seconds", duration.seconds()));
     m_watchdogTimer.startOneShot(duration);
 }
 

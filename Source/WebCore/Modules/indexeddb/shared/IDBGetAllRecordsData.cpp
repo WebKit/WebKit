@@ -41,8 +41,8 @@ IDBGetAllRecordsData IDBGetAllRecordsData::isolatedCopy() const
 String IDBGetAllRecordsData::loggingString() const
 {
     if (indexIdentifier)
-        return String::deprecatedFormat("<GetAllRecords: Idx %" PRIu64 ", OS %" PRIu64 ", %s, range %s>", indexIdentifier, objectStoreIdentifier, getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", keyRangeData.loggingString().utf8().data());
-    return String::deprecatedFormat("<GetAllRecords: OS %" PRIu64 ", %s, range %s>", objectStoreIdentifier, getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", keyRangeData.loggingString().utf8().data());
+        return String::format("<GetAllRecords: Idx %" PRIu64 ", OS %" PRIu64 ", %s, range %s>", indexIdentifier, objectStoreIdentifier, getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", keyRangeData.loggingString().utf8().data());
+    return String::format("<GetAllRecords: OS %" PRIu64 ", %s, range %s>", objectStoreIdentifier, getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", keyRangeData.loggingString().utf8().data());
 }
 #endif
 

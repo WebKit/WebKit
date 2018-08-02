@@ -79,7 +79,7 @@ void InspectorConsoleAgent::enable(ErrorString&)
     m_enabled = true;
 
     if (m_expiredConsoleMessageCount) {
-        ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, String::deprecatedFormat("%d console messages are not shown.", m_expiredConsoleMessageCount));
+        ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount));
         expiredMessage.addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
     }
 
@@ -164,7 +164,7 @@ void InspectorConsoleAgent::stopTiming(const String& title, Ref<ScriptCallStack>
     m_times.remove(it);
 
     Seconds elapsed = MonotonicTime::now() - startTime;
-    String message = title + String::deprecatedFormat(": %.3fms", elapsed.milliseconds());
+    String message = title + String::format(": %.3fms", elapsed.milliseconds());
     addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(callStack)));
 }
 

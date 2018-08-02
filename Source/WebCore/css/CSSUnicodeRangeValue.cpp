@@ -32,7 +32,7 @@ namespace WebCore {
 
 String CSSUnicodeRangeValue::customCSSText() const
 {
-    return String::deprecatedFormat("U+%x-%x", m_from, m_to);
+    return String::format("U+%x-%x", m_from, m_to);
 }
 
 bool CSSUnicodeRangeValue::equals(const CSSUnicodeRangeValue& other) const

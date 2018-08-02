@@ -1789,7 +1789,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         }
 
         // We don't already have a file for this blobURL, so commit our file as a unique filename
-        String storedFilename = String::deprecatedFormat("%" PRId64 ".blob", potentialFileNameInteger);
+        String storedFilename = String::format("%" PRId64 ".blob", potentialFileNameInteger);
         {
             auto* sql = cachedStatement(SQL::AddBlobFilename, "INSERT INTO BlobFiles VALUES (?, ?);"_s);
             if (!sql
