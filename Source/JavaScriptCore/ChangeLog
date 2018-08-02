@@ -1,3 +1,23 @@
+2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add self.queueMicrotask(f) on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=188212
+
+        Reviewed by Ryosuke Niwa.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::enqueueJob):
+        * runtime/JSMicrotask.cpp: Renamed from Source/JavaScriptCore/runtime/JSJob.cpp.
+        (JSC::createJSMicrotask):
+        Export them to WebCore.
+
+        (JSC::JSMicrotask::run):
+        * runtime/JSMicrotask.h: Renamed from Source/JavaScriptCore/runtime/JSJob.h.
+        Add another version of JSMicrotask which does not have arguments.
+
 2018-08-01  Tomas Popela  <tpopela@redhat.com>
 
         [WTF] Rename String::format to String::deprecatedFormat

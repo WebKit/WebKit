@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSJob.h"
+#include "JSMicrotask.h"
 
 #include "CatchScope.h"
 #include "Error.h"
@@ -37,16 +37,17 @@
 
 namespace JSC {
 
-class JSJobMicrotask final : public Microtask {
+class JSMicrotask final : public Microtask {
 public:
-    JSJobMicrotask(VM& vm, JSValue job, JSArray* arguments)
+    JSMicrotask(VM& vm, JSValue job, JSArray* arguments)
     {
         m_job.set(vm, job);
         m_arguments.set(vm, arguments);
     }
 
-    virtual ~JSJobMicrotask()
+    JSMicrotask(VM& vm, JSValue job)
     {
+        m_job.set(vm, job);
     }
 
 private:
@@ -56,12 +57,17 @@ private:
     Strong<JSArray> m_arguments;
 };
 
-Ref<Microtask> createJSJob(VM& vm, JSValue job, JSArray* arguments)
+Ref<Microtask> createJSMicrotask(VM& vm, JSValue job)
 {
-    return adoptRef(*new JSJobMicrotask(vm, job, arguments));
+    return adoptRef(*new JSMicrotask(vm, job));
 }
 
-void JSJobMicrotask::run(ExecState* exec)
+Ref<Microtask> createJSMicrotask(VM& vm, JSValue job, JSArray* arguments)
+{
+    return adoptRef(*new JSMicrotask(vm, job, arguments));
+}
+
+void JSMicrotask::run(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -71,13 +77,15 @@ void JSJobMicrotask::run(ExecState* exec)
     ASSERT(handlerCallType != CallType::None);
 
     MarkedArgumentBuffer handlerArguments;
-    for (unsigned index = 0, length = m_arguments->length(); index < length; ++index) {
-        JSValue arg = m_arguments->JSArray::get(exec, index);
-        CLEAR_AND_RETURN_IF_EXCEPTION(scope, handlerArguments.overflowCheckNotNeeded());
-        handlerArguments.append(arg);
+    if (m_arguments) {
+        for (unsigned index = 0, length = m_arguments->length(); index < length; ++index) {
+            JSValue arg = m_arguments->JSArray::get(exec, index);
+            CLEAR_AND_RETURN_IF_EXCEPTION(scope, handlerArguments.overflowCheckNotNeeded());
+            handlerArguments.append(arg);
+        }
+        if (UNLIKELY(handlerArguments.hasOverflowed()))
+            return;
     }
-    if (UNLIKELY(handlerArguments.hasOverflowed()))
-        return;
     profiledCall(exec, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
     scope.clearException();
 }

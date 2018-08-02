@@ -1,3 +1,21 @@
+2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add self.queueMicrotask(f) on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=188212
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds self.queueMicrotask(f) in DOMWindow, which takes a function and enqueue it into microtask queue.
+        We do not add this to Worker's global scope since our worker does not support microtasks correctly.
+
+        Tests: js/dom/queue-microtask-window.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::queueMicrotask):
+        Post a microtask to JSC's microtask mechanism. This will eventually go to WebCore's MicrotaskQueue code.
+
+        * page/DOMWindow.idl:
+
 2018-08-01  Tomas Popela  <tpopela@redhat.com>
 
         [WTF] Rename String::format to String::deprecatedFormat

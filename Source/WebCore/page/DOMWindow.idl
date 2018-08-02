@@ -89,6 +89,8 @@ typedef USVString CSSOMString;
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
     void print();
 
+    [Custom] void queueMicrotask(VoidCallback callback);
+
     long requestAnimationFrame(RequestAnimationFrameCallback callback); // FIXME: Should return an unsigned long.
     void cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
 

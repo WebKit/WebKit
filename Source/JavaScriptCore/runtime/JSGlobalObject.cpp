@@ -98,10 +98,10 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSInternalPromisePrototype.h"
-#include "JSJob.h"
 #include "JSLexicalEnvironment.h"
 #include "JSLock.h"
 #include "JSMap.h"
+#include "JSMicrotask.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"
@@ -336,7 +336,7 @@ static EncodedJSValue JSC_HOST_CALL enqueueJob(ExecState* exec)
     JSValue arguments = exec->argument(1);
     ASSERT(arguments.inherits<JSArray>(vm));
 
-    globalObject->queueMicrotask(createJSJob(vm, job, jsCast<JSArray*>(arguments)));
+    globalObject->queueMicrotask(createJSMicrotask(vm, job, jsCast<JSArray*>(arguments)));
 
     return JSValue::encode(jsUndefined());
 }

@@ -1,3 +1,13 @@
+2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add self.queueMicrotask(f) on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=188212
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/dom/queue-microtask-window-expected.txt: Added.
+        * js/dom/queue-microtask-window.html: Added.
+
 2018-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r227983): fast/dom/adopt-node-crash-2.html is flaky

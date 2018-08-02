@@ -794,6 +794,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalObjectInlines.h
     runtime/JSInternalPromise.h
     runtime/JSInternalPromiseDeferred.h
+    runtime/JSMicrotask.h
     runtime/JSLock.h
     runtime/JSMap.h
     runtime/JSMapIterator.h

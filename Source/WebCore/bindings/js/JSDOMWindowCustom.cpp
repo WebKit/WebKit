@@ -46,6 +46,7 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Lookup.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -519,6 +520,23 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
     });
 
     return handler.returnValue();
+}
+
+JSValue JSDOMWindow::queueMicrotask(ExecState& state)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 1))
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
+
+    JSValue functionValue = state.uncheckedArgument(0);
+    if (UNLIKELY(!functionValue.isFunction(vm)))
+        return JSValue::decode(throwArgumentMustBeFunctionError(state, scope, 0, "callback", "Window", "queueMicrotask"));
+
+    scope.release();
+    Base::queueMicrotask(JSC::createJSMicrotask(vm, functionValue));
+    return jsUndefined();
 }
 
 DOMWindow* JSDOMWindow::toWrapped(VM& vm, JSValue value)
