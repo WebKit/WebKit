@@ -72,9 +72,8 @@ public:
 
 private:
     friend class Iterator;
-    FloatingPair(const LayoutContext&, const FloatingState::FloatList&);
+    FloatingPair(const FloatingState::FloatList&);
 
-    const LayoutContext& m_layoutContext;
     const FloatingState::FloatList& m_floats;
 
     std::optional<unsigned> m_leftIndex;
@@ -84,7 +83,7 @@ private:
 
 class Iterator {
 public:
-    Iterator(const LayoutContext&, const FloatingState::FloatList&, std::optional<LayoutUnit> verticalPosition);
+    Iterator(const FloatingState::FloatList&, std::optional<LayoutUnit> verticalPosition);
 
     const FloatingPair& operator*() const { return m_current; }
     Iterator& operator++();
@@ -94,20 +93,19 @@ public:
 private:
     void set(LayoutUnit verticalPosition);
 
-    const LayoutContext& m_layoutContext;
     const FloatingState::FloatList& m_floats;
     FloatingPair m_current;
 };
 
-static Iterator begin(const LayoutContext& layoutContext, const FloatingState& floatingState, LayoutUnit initialVerticalPosition)
+static Iterator begin(const FloatingState& floatingState, LayoutUnit initialVerticalPosition)
 {
     // Start with the inner-most floating pair for the initial vertical position.
-    return Iterator(layoutContext, floatingState.floats(), initialVerticalPosition);
+    return Iterator(floatingState.floats(), initialVerticalPosition);
 }
 
-static Iterator end(const LayoutContext& layoutContext, const FloatingState& floatingState)
+static Iterator end(const FloatingState& floatingState)
 {
-    return Iterator(layoutContext, floatingState.floats(), std::nullopt);
+    return Iterator(floatingState.floats(), std::nullopt);
 }
 
 FloatingContext::FloatingContext(FloatingState& floatingState)
@@ -139,10 +137,10 @@ Position FloatingContext::floatingPosition(const FloatingState::FloatItem& float
     auto& displayBox = floatItem.displayBox();
     auto marginBoxSize = displayBox.marginBox().size();
 
-    auto end = Layout::end(layoutContext(), m_floatingState);
+    auto end = Layout::end(m_floatingState);
     auto top = initialVerticalPosition;
     auto bottomMost = top;
-    for (auto iterator = begin(layoutContext(), m_floatingState, initialVerticalPosition); iterator != end; ++iterator) {
+    for (auto iterator = begin(m_floatingState, initialVerticalPosition); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
 
         auto floats = *iterator;
@@ -233,9 +231,8 @@ Position FloatingContext::toContainingBlock(const FloatingState::FloatItem& floa
     return { position.x - containgBlockDisplayBox.left(), position.y - containgBlockDisplayBox.top() };
 }
 
-FloatingPair::FloatingPair(const LayoutContext& layoutContext, const FloatingState::FloatList& floats)
-    : m_layoutContext(layoutContext)
-    , m_floats(floats)
+FloatingPair::FloatingPair(const FloatingState::FloatList& floats)
+    : m_floats(floats)
 {
 }
 
@@ -309,10 +306,9 @@ LayoutUnit FloatingPair::bottom() const
     return *rightBottom;
 }
 
-Iterator::Iterator(const LayoutContext& layoutContext, const FloatingState::FloatList& floats, std::optional<LayoutUnit> verticalPosition)
-    : m_layoutContext(layoutContext)
-    , m_floats(floats)
-    , m_current(layoutContext, floats)
+Iterator::Iterator(const FloatingState::FloatList& floats, std::optional<LayoutUnit> verticalPosition)
+    : m_floats(floats)
+    , m_current(floats)
 {
     if (verticalPosition)
         set(*verticalPosition);

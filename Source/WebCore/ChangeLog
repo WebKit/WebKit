@@ -1,3 +1,17 @@
+2018-08-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Remove redundant LayoutContext member variable.
+        https://bugs.webkit.org/show_bug.cgi?id=188286
+
+        Reviewed by Simon Fraser.
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::begin):
+        (WebCore::Layout::end):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingPair::FloatingPair):
+        (WebCore::Layout::Iterator::Iterator):
+
 2018-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move queue processing logic from CustomElementReactionStack to CustomElementReactionQueue
