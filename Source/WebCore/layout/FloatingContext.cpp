@@ -110,11 +110,9 @@ static Iterator end(const LayoutContext& layoutContext, const FloatingState& flo
     return Iterator(layoutContext, floatingState.floats(), std::nullopt);
 }
 
-FloatingContext::FloatingContext(const Container& formattingContextRoot, FloatingState& floatingState)
-    : m_formattingContextRoot(formattingContextRoot)
-    , m_floatingState(floatingState)
+FloatingContext::FloatingContext(FloatingState& floatingState)
+    : m_floatingState(floatingState)
 {
-    ASSERT(m_formattingContextRoot.establishesFormattingContext());
 }
 
 Position FloatingContext::computePosition(const Box& layoutBox) const

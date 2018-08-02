@@ -45,7 +45,7 @@ class LayoutContext;
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
-    FloatingContext(const Container& formattingContextRoot, FloatingState&);
+    FloatingContext(FloatingState&);
 
     FloatingState& floatingState() const { return m_floatingState; }
 
@@ -61,7 +61,6 @@ private:
     LayoutUnit alignWithFloatings(const FloatingPair&, const FloatingState::FloatItem&) const;
     Position toContainingBlock(const FloatingState::FloatItem&, Position) const;
 
-    const Container& m_formattingContextRoot;
     FloatingState& m_floatingState;
 };
 
