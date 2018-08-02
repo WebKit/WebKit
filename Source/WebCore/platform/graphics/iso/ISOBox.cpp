@@ -44,6 +44,8 @@ ISOBox::PeekResult ISOBox::peekBox(DataView& view, unsigned offset)
 
     if (size == 1 && !checkedRead<uint64_t>(size, view, offset, BigEndian))
         return std::nullopt;
+    else if (!size)
+        size = view.byteLength();
 
     return std::make_pair(type, size);
 }
@@ -74,6 +76,8 @@ bool ISOBox::parse(DataView& view, unsigned& offset)
 
     if (m_size == 1 && !checkedRead<uint64_t>(m_size, view, offset, BigEndian))
         return false;
+    else if (!m_size)
+        m_size = view.byteLength();
 
     if (m_boxType == "uuid") {
         struct ExtendedType {

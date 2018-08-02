@@ -1,3 +1,39 @@
+2018-08-02  Charlie Turner  <cturner@igalia.com>
+
+        Handle zero-sized ISOMP4 boxes appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=188256
+
+        Reviewed by Jer Noble.
+
+        According to ISO/IEC 14496-12:2012(E), when the Box classes' size
+        field is zero, the implied size of the box extends to the end of
+        the file. If this detail is not taken into account, CENC
+        sanitization can incorrectly report an invalid box size, since 0
+        != the number of bytes in this box, specifically, the data layout
+        of Box is as follows,
+
+        aligned(8) class Box (unsigned int(32) boxtype,
+              optional unsigned int(8)[16] extended_type) {
+           unsigned int(32) size;
+           unsigned int(32) type = boxtype;
+           if (size==1) {
+             unsigned int(64) largesize;
+           } else if (size==0) { // This is the case now handled.
+             // box extends to end of file
+           }
+           if (boxtype==‘uuid’) {
+             unsigned int(8)[16] usertype = extended_type;
+           }
+        }
+
+        Tested by imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html
+
+        * platform/graphics/iso/ISOBox.cpp:
+        (WebCore::ISOBox::peekBox): Check if the parsed size is zero, and
+        if it is, the size is calculated as the total number of bytes in
+        the incoming DataView.
+        (WebCore::ISOBox::parse): Ditto.
+
 2018-08-01  Dan Bernstein  <mitz@apple.com>
 
         Optionally expose Attr::style to JavaScript
