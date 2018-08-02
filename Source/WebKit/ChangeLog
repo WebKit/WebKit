@@ -1,3 +1,17 @@
+2018-08-02  Sihui Liu  <sihui_liu@apple.com>
+
+        [Cocoa] setCookie API fails to set session cookies for defaultDataStore if processPool created but not used
+        https://bugs.webkit.org/show_bug.cgi?id=188209
+
+        Reviewed by Geoffrey Garen.
+
+        If defaultDataStore is already created when launching network process, it means user 
+        probably set cookies for default session via API, so we should update m_websiteDataStore to 
+        make sure pendingCookies is passed to network process.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-08-02  Alex Christensen  <achristensen@webkit.org>
 
         Use WTF::Variant for WebPreferencesStore::Value

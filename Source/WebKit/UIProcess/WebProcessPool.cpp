@@ -481,6 +481,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         parameters.defaultSessionParameters.sessionID = PAL::SessionID::defaultSessionID();
     }
 
+    if (!m_websiteDataStore && API::WebsiteDataStore::defaultDataStoreExists())
+        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
+
     if (m_websiteDataStore) {
         parameters.defaultSessionPendingCookies = copyToVector(m_websiteDataStore->websiteDataStore().pendingCookies());
         m_websiteDataStore->websiteDataStore().clearPendingCookies();

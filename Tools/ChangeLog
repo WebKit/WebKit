@@ -1,3 +1,13 @@
+2018-08-02  Sihui Liu  <sihui_liu@apple.com>
+
+        [Cocoa] setCookie API fails to set session cookies for defaultDataStore if processPool created but not used
+        https://bugs.webkit.org/show_bug.cgi?id=188209
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+
 2018-08-02  Dan Bernstein  <mitz@apple.com>
 
         Fixed WebKit.AttrStyle timing out on build.webkit.org.
