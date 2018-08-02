@@ -1,3 +1,30 @@
+2018-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move queue processing logic from CustomElementReactionStack to CustomElementReactionQueue
+        https://bugs.webkit.org/show_bug.cgi?id=188277
+
+        Reviewed by Wenson Hsieh.
+
+        Moved ensureCurrentQueue, processBackupQueue, ElementQueue, ensureBackupQueue, and backupElementQueue
+        from CustomElementReactionStack to CustomElementReactionQueue to simplify CustomElementReactionStack.
+
+        No new tests since there is no behavior change.
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgrade):
+        (WebCore::CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::ElementQueue::add): Moved from CustomElementReactionStack.
+        (WebCore::CustomElementReactionQueue::ElementQueue::invokeAll): Ditto.
+        (WebCore::CustomElementReactionQueue::ensureCurrentQueue): Ditto.
+        (WebCore::CustomElementReactionQueue::ensureBackupQueue): Ditto.
+        (WebCore::CustomElementReactionQueue::processBackupQueue): Ditto.
+        (WebCore::CustomElementReactionQueue::backupElementQueue): Ditto.
+        * dom/CustomElementReactionQueue.h:
+        (WebCore::CustomElementReactionStack::hasCurrentProcessingStack): Deleted. It was never called.
+
 2018-08-02  Timothy Hatcher  <timothy@apple.com>
 
         Text selection color is hard to see in dark mode web views.

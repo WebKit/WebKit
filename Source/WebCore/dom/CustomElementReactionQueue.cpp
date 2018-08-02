@@ -116,7 +116,7 @@ void CustomElementReactionQueue::clear()
 
 void CustomElementReactionQueue::enqueueElementUpgrade(Element& element)
 {
-    auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
+    auto& queue = ensureCurrentQueue(element);
     queue.m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade});
 }
 
@@ -142,7 +142,7 @@ void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& eleme
 {
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
-    auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
+    auto& queue = ensureCurrentQueue(element);
     if (queue.m_interface->hasConnectedCallback())
         queue.m_items.append({CustomElementReactionQueueItem::Type::Connected});
 }
@@ -152,7 +152,7 @@ void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& el
     ASSERT(element.isDefinedCustomElement());
     if (element.document().refCount() <= 0)
         return; // Don't enqueue disconnectedCallback if the entire document is getting destructed.
-    auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
+    auto& queue = ensureCurrentQueue(element);
     if (queue.m_interface->hasDisconnectedCallback())
         queue.m_items.append({CustomElementReactionQueueItem::Type::Disconnected});
 }
@@ -161,7 +161,7 @@ void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element
 {
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
-    auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
+    auto& queue = ensureCurrentQueue(element);
     if (queue.m_interface->hasAdoptedCallback())
         queue.m_items.append({oldDocument, newDocument});
 }
@@ -170,7 +170,7 @@ void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element
 {
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
-    auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
+    auto& queue = ensureCurrentQueue(element);
     if (queue.m_interface->observesAttribute(attributeName.localName()))
         queue.m_items.append({attributeName, oldValue, newValue});
 }
@@ -209,14 +209,14 @@ void CustomElementReactionQueue::invokeAll(Element& element)
     }
 }
 
-inline void CustomElementReactionStack::ElementQueue::add(Element& element)
+inline void CustomElementReactionQueue::ElementQueue::add(Element& element)
 {
     RELEASE_ASSERT(!m_invoking);
     // FIXME: Avoid inserting the same element multiple times.
     m_elements.append(element);
 }
 
-inline void CustomElementReactionStack::ElementQueue::invokeAll()
+inline void CustomElementReactionQueue::ElementQueue::invokeAll()
 {
     RELEASE_ASSERT(!m_invoking);
     SetForScope<bool> invoking(m_invoking, true);
@@ -231,16 +231,16 @@ inline void CustomElementReactionStack::ElementQueue::invokeAll()
     RELEASE_ASSERT(m_elements.isEmpty());
 }
 
-CustomElementReactionQueue& CustomElementReactionStack::ensureCurrentQueue(Element& element)
+CustomElementReactionQueue& CustomElementReactionQueue::ensureCurrentQueue(Element& element)
 {
     ASSERT(element.reactionQueue());
-    if (!s_currentProcessingStack) {
-        auto& queue = CustomElementReactionStack::ensureBackupQueue();
+    if (!CustomElementReactionStack::s_currentProcessingStack) {
+        auto& queue = ensureBackupQueue();
         queue.add(element);
         return *element.reactionQueue();
     }
 
-    auto*& queue = s_currentProcessingStack->m_queue;
+    auto*& queue = CustomElementReactionStack::s_currentProcessingStack->m_queue;
     if (!queue) // We use a raw pointer to avoid genearing code to delete it in ~CustomElementReactionStack.
         queue = new ElementQueue;
     queue->add(element);
@@ -262,14 +262,14 @@ class BackupElementQueueMicrotask final : public Microtask {
 private:
     Result run() final
     {
-        CustomElementReactionStack::processBackupQueue();
+        CustomElementReactionQueue::processBackupQueue();
         return Result::Done;
     }
 };
 
 static bool s_processingBackupElementQueue = false;
 
-CustomElementReactionStack::ElementQueue& CustomElementReactionStack::ensureBackupQueue()
+CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::ensureBackupQueue()
 {
     if (!s_processingBackupElementQueue) {
         s_processingBackupElementQueue = true;
@@ -278,13 +278,13 @@ CustomElementReactionStack::ElementQueue& CustomElementReactionStack::ensureBack
     return backupElementQueue();
 }
 
-void CustomElementReactionStack::processBackupQueue()
+void CustomElementReactionQueue::processBackupQueue()
 {
     backupElementQueue().invokeAll();
     s_processingBackupElementQueue = false;
 }
 
-CustomElementReactionStack::ElementQueue& CustomElementReactionStack::backupElementQueue()
+CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::backupElementQueue()
 {
     static NeverDestroyed<ElementQueue> queue;
     return queue.get();

@@ -55,7 +55,23 @@ public:
     void invokeAll(Element&);
     void clear();
 
+    static void processBackupQueue();
+
+    class ElementQueue {
+    public:
+        void add(Element&);
+        void invokeAll();
+        
+    private:
+        Vector<Ref<Element>> m_elements;
+        bool m_invoking { false };
+    };
+
 private:
+    static CustomElementReactionQueue& ensureCurrentQueue(Element&);
+    static ElementQueue& ensureBackupQueue();
+    static ElementQueue& backupElementQueue();
+
     Ref<JSCustomElementInterface> m_interface;
     Vector<CustomElementReactionQueueItem> m_items;
 };
@@ -75,32 +91,15 @@ public:
         s_currentProcessingStack = m_previousProcessingStack;
     }
 
-    static CustomElementReactionQueue& ensureCurrentQueue(Element&);
-
-    static bool hasCurrentProcessingStack() { return s_currentProcessingStack; }
-
-    static void processBackupQueue();
-
 private:
-    class ElementQueue {
-    public:
-        void add(Element&);
-        void invokeAll();
-
-    private:
-        Vector<Ref<Element>> m_elements;
-        bool m_invoking { false };
-    };
-
     WEBCORE_EXPORT void processQueue();
 
-    static ElementQueue& ensureBackupQueue();
-    static ElementQueue& backupElementQueue();
-
-    ElementQueue* m_queue { nullptr };
+    CustomElementReactionQueue::ElementQueue* m_queue { nullptr }; // Use raw pointer to avoid generating delete in the destructor.
     CustomElementReactionStack* m_previousProcessingStack;
 
     WEBCORE_EXPORT static CustomElementReactionStack* s_currentProcessingStack;
+
+    friend CustomElementReactionQueue;
 };
 
 }
