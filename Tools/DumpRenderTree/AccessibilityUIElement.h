@@ -232,6 +232,7 @@ public:
     
     bool hasContainedByFieldsetTrait();
     AccessibilityUIElement fieldsetAncestorElement();
+    JSStringRef attributedStringForElement();
 #endif
 
 #if PLATFORM(GTK)

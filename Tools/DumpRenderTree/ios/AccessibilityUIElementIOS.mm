@@ -74,6 +74,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSString *)accessibilityPlaceholderValue;
 - (NSString *)stringForRange:(NSRange)range;
 - (NSAttributedString *)attributedStringForRange:(NSRange)range;
+- (NSAttributedString *)attributedStringForElement;
 - (NSArray *)elementsForRange:(NSRange)range;
 - (NSString *)selectionRangeString;
 - (CGPoint)accessibilityClickPoint;
@@ -391,6 +392,15 @@ JSStringRef AccessibilityUIElement::attributedStringForRange(unsigned location, 
     
     NSString* stringWithAttrs = [string description];
     return [stringWithAttrs createJSStringRef];
+}
+
+JSStringRef AccessibilityUIElement::attributedStringForElement()
+{
+    NSAttributedString *string = [m_element attributedStringForElement];
+    if (![string isKindOfClass:[NSAttributedString class]])
+        return nullptr;
+    
+    return [[string description] createJSStringRef];
 }
 
 bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigned)

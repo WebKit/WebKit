@@ -1,3 +1,24 @@
+2018-08-02  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] add support to return the attributed string under the element
+        https://bugs.webkit.org/show_bug.cgi?id=188276
+        <rdar://problem/42872357>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (attributedStringForElementCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::attributedStringForElement):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::attributedStringForElement):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::attributedStringForElement):
+
 2018-08-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip API test DataInteractionTests.CustomActionSheetPopover on current SDKs.

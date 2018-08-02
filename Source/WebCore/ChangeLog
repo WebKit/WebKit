@@ -1,3 +1,21 @@
+2018-08-02  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] add support to return the attributed string under the element
+        https://bugs.webkit.org/show_bug.cgi?id=188276
+        <rdar://problem/42872357>
+
+        Reviewed by Chris Fleizach.
+
+        Provided a way on iOS to return the attributed string under the element for 
+        better performance.
+
+        Test: accessibility/ios-simulator/attributed-string-for-element.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _stringFromStartMarker:toEndMarker:attributed:]):
+        (-[WebAccessibilityObjectWrapper _stringForRange:attributed:]):
+        (-[WebAccessibilityObjectWrapper attributedStringForElement]):
+
 2018-08-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Remove redundant LayoutContext member variable.

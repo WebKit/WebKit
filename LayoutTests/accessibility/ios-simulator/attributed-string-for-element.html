@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+
+<div id="content">
+hello <b>world</b> test <b>bold</b>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+    description("This test ensures that attributed string under the element works");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.accessibleElementById("content");
+        var text = obj.attributedStringForElement();
+        debug("Attributed string: " + text);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

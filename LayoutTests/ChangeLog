@@ -1,3 +1,14 @@
+2018-08-02  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] add support to return the attributed string under the element
+        https://bugs.webkit.org/show_bug.cgi?id=188276
+        <rdar://problem/42872357>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/attributed-string-for-element-expected.txt: Added.
+        * accessibility/ios-simulator/attributed-string-for-element.html: Added.
+
 2018-08-02  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r234488): Layout test fast/events/ios/keyboard-scrolling-repeat.html is timing out
