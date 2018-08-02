@@ -19,11 +19,11 @@
             var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
             var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
             var thirdTargetRect = document.getElementById('thirdSelection').getBoundingClientRect();
-            var noneditableToEditableOffset = document.getElementById('editable').getBoundingClientRect().y - document.getElementById('noneditable').getBoundingClientRect().y;
+            var editableToNoneditableOffset = document.getElementById('noneditable').getBoundingClientRect().y - document.getElementById('editable').getBoundingClientRect().y;
         
             var pressPointX = firstTargetRect.x + firstTargetRect.width / 2;
-            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2 + noneditableToEditableOffset;
-            var dragY = firstTargetRect.y + noneditableToEditableOffset;
+            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2 - editableToNoneditableOffset;
+            var dragY = firstTargetRect.y - editableToNoneditableOffset;
             var dragX = firstTargetRect.x;
             var dragX2 = secondTargetRect.x;
             var dragX3 = thirdTargetRect.x;
@@ -108,12 +108,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+    <div id="editable" contenteditable>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>   
     <div id="noneditable">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et <span id="thirdSelection"></span>dolore <span id="secondSelection"></span>magna <span id="firstSelection">aliqua</span>. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
-    <div id="editable" contenteditable>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div>     
     <div id="target">
         This test requires UIScriptController to run.
     </div>

@@ -19,15 +19,15 @@
             var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
             var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
             var thirdTargetRect = document.getElementById('thirdSelection').getBoundingClientRect();
-            var noneditableToEditableOffset = document.getElementById('editable').getBoundingClientRect().y - document.getElementById('noneditable').getBoundingClientRect().y;
+            var editableToNoneditableOffset = document.getElementById('noneditable').getBoundingClientRect().y - document.getElementById('editable').getBoundingClientRect().y;
         
             var pressPointX = firstTargetRect.x + firstTargetRect.width / 2;
-            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2 + noneditableToEditableOffset;
-            var dragY = firstTargetRect.y + noneditableToEditableOffset;
+            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2 - editableToNoneditableOffset;
+            var dragY = firstTargetRect.y - editableToNoneditableOffset;
             var dragX = firstTargetRect.x;
-            var dragY2 = secondTargetRect.y + noneditableToEditableOffset;
-            var dragY3 = thirdTargetRect.y + noneditableToEditableOffset;
-            var dragY4 = firstTargetRect.y + firstTargetRect.height + noneditableToEditableOffset;
+            var dragY2 = secondTargetRect.y - editableToNoneditableOffset;
+            var dragY3 = thirdTargetRect.y - editableToNoneditableOffset;
+            var dragY4 = firstTargetRect.y + firstTargetRect.height - editableToNoneditableOffset;
         
             await longPressAtPoint(pressPointX, pressPointY);
             if (document.getSelection().toString() == "ut")
@@ -108,12 +108,12 @@
     <meta name="viewport" content="initial-scale=1">
 </head>
 <body>
-    <div id="noneditable">
-        <p>Lorem ipsum dolor sit amet, consectetur<span id="thirdSelection"></span> adipiscing elit, sed d<span id="secondSelection"></span>o eiusmod tempor incididunt <span id="firstSelection">ut</span> labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div>
     <div id="editable" contenteditable>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div> 
+    <div id="noneditable">
+        <p>Lorem ipsum dolor sit amet, consectetur<span id="thirdSelection"></span> adipiscing elit, sed d<span id="secondSelection"></span>o eiusmod tempor incididunt <span id="firstSelection">ut</span> labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
     <div id="target">
         This test requires UIScriptController to run.
     </div>

@@ -1,3 +1,24 @@
+2018-08-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Reformat editable selection tests to remove potential flakeyness due to autoscroll
+        https://bugs.webkit.org/show_bug.cgi?id=188263
+        <rdar://problem/40565375>
+
+        Reviewed by Wenson Hsieh
+
+        Change the format of these editable selection tests to put the editable content at the top of the page so
+        that when selecting we do not run into the page trying to autoscroll while selecting, which makes the tests more
+        flakey, and more difficult to get accurate and consistent answers.
+
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text.html:
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-left-to-change-selected-text.html:
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-right-to-change-selected-text.html:
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-down-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-left-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-right-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html:
+
 2018-08-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add self.queueMicrotask(f) on DOMWindow
