@@ -622,6 +622,8 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         [self.superview addSubview:_interactionViewsContainerView.get()];
     }
 
+    _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollingAnimator alloc] initWithScrollable:self]);
+
     [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:nil];
 
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
@@ -778,6 +780,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     
     _inputViewUpdateDeferrer = nullptr;
     _assistedNodeInformation = { };
+    
+    [_keyboardScrollingAnimator invalidate];
+    _keyboardScrollingAnimator = nil;
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -808,7 +813,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 #endif
 }
 
-- (UIView*)unscaledView
+- (UIView *)unscaledView
 {
     return _interactionViewsContainerView.get();
 }
@@ -3638,6 +3643,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent
 {
+    if ([_keyboardScrollingAnimator handleKeyEvent:theEvent])
+        return;
+
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
 }
 
@@ -3676,73 +3684,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     _uiEventBeingResent = nil;
 }
 
-- (std::optional<FloatPoint>)_scrollOffsetForEvent:(::WebEvent *)event
-{
-    static const unsigned kWebSpaceKey = 0x20;
-
-    if (_page->editorState().isContentEditable)
-        return std::nullopt;
-    
-    if (_assistedNodeInformation.elementType == InputType::Select)
-        return std::nullopt;
-
-    NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
-    if (!charactersIgnoringModifiers.length)
-        return std::nullopt;
-
-    enum ScrollingIncrement { Document, Page, Line };
-    enum ScrollingDirection { Up, Down, Left, Right };
-
-    auto computeOffset = ^(ScrollingIncrement increment, ScrollingDirection direction) {
-        bool isHorizontal = (direction == Left || direction == Right);
-
-        CGFloat scrollDistance = ^ CGFloat {
-            switch (increment) {
-            case Document:
-                ASSERT(!isHorizontal);
-                return self.bounds.size.height;
-            case Page:
-                ASSERT(!isHorizontal);
-                return Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height);
-            case Line:
-                return Scrollbar::pixelsPerLineStep();
-            }
-            ASSERT_NOT_REACHED();
-            return 0;
-        }();
-
-        if (direction == Up || direction == Left)
-            scrollDistance = -scrollDistance;
-        
-        return (isHorizontal ? FloatPoint(scrollDistance, 0) : FloatPoint(0, scrollDistance));
-    };
-
-    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputLeftArrow])
-        return computeOffset(Line, Left);
-    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputRightArrow])
-        return computeOffset(Line, Right);
-
-    ScrollingIncrement incrementForVerticalArrowKey = Line;
-    if (event.modifierFlags & WebEventFlagMaskAlternate)
-        incrementForVerticalArrowKey = Page;
-    else if (event.modifierFlags & WebEventFlagMaskCommand)
-        incrementForVerticalArrowKey = Document;
-    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputUpArrow])
-        return computeOffset(incrementForVerticalArrowKey, Up);
-    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputDownArrow])
-        return computeOffset(incrementForVerticalArrowKey, Down);
-
-    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageDown])
-        return computeOffset(Page, Down);
-    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageUp])
-        return computeOffset(Page, Up);
-
-    if ([charactersIgnoringModifiers characterAtIndex:0] == kWebSpaceKey)
-        return computeOffset(Page, (event.modifierFlags & WebEventFlagMaskShift) ? Up : Down);
-
-    return std::nullopt;
-}
-
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
 {
     static const unsigned kWebEnterKey = 0x0003;
@@ -3757,10 +3698,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!contentEditable && event.isTabKey)
         return NO;
 
-    if (std::optional<FloatPoint> scrollOffset = [self _scrollOffsetForEvent:event]) {
-        [_webView _scrollByContentOffset:*scrollOffset];
+    if ([_keyboardScrollingAnimator beginWithEvent:event])
         return YES;
-    }
 
     UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
     NSString *characters = event.characters;
@@ -3806,6 +3745,36 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     }
 
     return NO;
+}
+
+- (BOOL)isKeyboardScrollable
+{
+    if (_page->editorState().isContentEditable)
+        return NO;
+
+    if (_assistedNodeInformation.elementType == InputType::Select)
+        return NO;
+
+    return YES;
+}
+
+- (CGFloat)distanceForScrollingIncrement:(ScrollingIncrement)increment
+{
+    switch (increment) {
+    case ScrollingIncrement::Document:
+        return self.bounds.size.height;
+    case ScrollingIncrement::Page:
+        return WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height);
+    case ScrollingIncrement::Line:
+        return WebCore::Scrollbar::pixelsPerLineStep();
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+- (void)scrollByContentOffset:(WebCore::FloatPoint)offset animated:(BOOL)animated
+{
+    [_webView _scrollByContentOffset:offset animated:animated];
 }
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName

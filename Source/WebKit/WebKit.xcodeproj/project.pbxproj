@@ -618,6 +618,7 @@
 		2D1087601D2C573E00B85F82 /* LoadParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D10875E1D2C573E00B85F82 /* LoadParameters.cpp */; };
 		2D1087611D2C573E00B85F82 /* LoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D10875F1D2C573E00B85F82 /* LoadParameters.h */; };
 		2D1087631D2C641B00B85F82 /* LoadParametersCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */; };
+		2D11BD1F21125BE8009D99E3 /* WKKeyboardScrollingAnimator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD5E126210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.mm */; };
 		2D125C5E1857EA05003BA3CB /* ViewGestureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D125C5C1857EA05003BA3CB /* ViewGestureController.h */; };
 		2D125C5F1857EA05003BA3CB /* ViewGestureControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */; };
 		2D12DAB520662C73006F00FB /* WKAnimationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D12DAB420662C73006F00FB /* WKAnimationDelegate.h */; };
@@ -717,6 +718,7 @@
 		2DD45ADF1E5F8972006C355F /* InputViewUpdateDeferrer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */; };
 		2DD5A7291EBF08D5009BA597 /* VisibleWebPageCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5A7281EBF08D5009BA597 /* VisibleWebPageCounter.h */; };
 		2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */; };
+		2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */; };
 		2DD67A2E1BD819730053B251 /* APIFindMatchesClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD67A2D1BD819730053B251 /* APIFindMatchesClient.h */; };
 		2DD67A351BD861060053B251 /* WKTextFinderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD67A331BD861060053B251 /* WKTextFinderClient.h */; };
 		2DD67A361BD861060053B251 /* WKTextFinderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD67A341BD861060053B251 /* WKTextFinderClient.mm */; };
@@ -3190,6 +3192,8 @@
 		2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InputViewUpdateDeferrer.mm; path = ios/InputViewUpdateDeferrer.mm; sourceTree = "<group>"; };
 		2DD5A7281EBF08D5009BA597 /* VisibleWebPageCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleWebPageCounter.h; sourceTree = "<group>"; };
 		2DD5A72A1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HiddenPageThrottlingAutoIncreasesCounter.h; sourceTree = "<group>"; };
+		2DD5E126210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKKeyboardScrollingAnimator.mm; path = ios/WKKeyboardScrollingAnimator.mm; sourceTree = "<group>"; };
+		2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKKeyboardScrollingAnimator.h; path = ios/WKKeyboardScrollingAnimator.h; sourceTree = "<group>"; };
 		2DD67A2D1BD819730053B251 /* APIFindMatchesClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFindMatchesClient.h; sourceTree = "<group>"; };
 		2DD67A331BD861060053B251 /* WKTextFinderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextFinderClient.h; sourceTree = "<group>"; };
 		2DD67A341BD861060053B251 /* WKTextFinderClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextFinderClient.mm; sourceTree = "<group>"; };
@@ -5984,6 +5988,8 @@
 				0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */,
 				A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */,
 				A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */,
+				2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */,
+				2DD5E126210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.mm */,
 				2DA1E4FC18C02B6A00DBC929 /* WKLegacyPDFView.h */,
 				2DA1E4FD18C02B6A00DBC929 /* WKLegacyPDFView.mm */,
 				A15EEDE41E301CEE000069B0 /* WKPasswordView.h */,
@@ -9789,6 +9795,7 @@
 				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
 				A5C0F0AB2000658200536536 /* WKInspectorWindow.h in Headers */,
 				A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */,
+				2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
 				2DA1E4FE18C02B6A00DBC929 /* WKLegacyPDFView.h in Headers */,
@@ -11633,6 +11640,7 @@
 				994BADF31F7D781100B571E7 /* WKInspectorViewController.mm in Sources */,
 				A5C0F0AC2000658500536536 /* WKInspectorWindow.mm in Sources */,
 				A518B5D31FE1D55B00F9FA28 /* WKInspectorWKWebView.mm in Sources */,
+				2D11BD1F21125BE8009D99E3 /* WKKeyboardScrollingAnimator.mm in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,
 				2DA1E4FF18C02B6A00DBC929 /* WKLegacyPDFView.mm in Sources */,
 				C98C48A91B6FD5B500145103 /* WKMediaSessionFocusManager.cpp in Sources */,

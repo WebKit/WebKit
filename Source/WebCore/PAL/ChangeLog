@@ -1,3 +1,14 @@
+2018-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        Using the keyboard arrow keys to scroll a webpage is very slow, not smooth, takes too long
+        https://bugs.webkit.org/show_bug.cgi?id=188239
+        <rdar://problem/22997654>
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+        Add a piece of SPI.
+
 2018-07-30  Sihui Liu  <sihui_liu@apple.com>
 
         Add support for fetching and remove type  _WKWebsiteDataTypeHSTSCache

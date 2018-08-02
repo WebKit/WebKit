@@ -37,6 +37,7 @@
 #import "WKAirPlayRoutePicker.h"
 #import "WKFileUploadPanel.h"
 #import "WKFormPeripheral.h"
+#import "WKKeyboardScrollingAnimator.h"
 #import "WKSyntheticClickTapGestureRecognizer.h"
 #import <UIKit/UIView.h>
 #import <WebCore/Color.h>
@@ -215,6 +216,8 @@ struct WKAutoCorrectionData {
     
     std::unique_ptr<WebKit::InputViewUpdateDeferrer> _inputViewUpdateDeferrer;
 
+    RetainPtr<WKKeyboardScrollingAnimator> _keyboardScrollingAnimator;
+
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
@@ -260,7 +263,7 @@ struct WKAutoCorrectionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKKeyboardScrollable
 #if ENABLE(DATA_INTERACTION)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif

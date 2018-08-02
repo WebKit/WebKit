@@ -1,3 +1,94 @@
+2018-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        Using the keyboard arrow keys to scroll a webpage is very slow, not smooth, takes too long
+        https://bugs.webkit.org/show_bug.cgi?id=188239
+        <rdar://problem/22997654>
+
+        Reviewed by Simon Fraser.
+
+        Instead of depending on key repeat to drive scrolling with arrow keys held down,
+        run a display link that animates the scroll. We still do a single discrete scroll
+        first (so that you can tap the key and shift by line/page), but then on the first
+        repeat we ramp up to a constant velocity determined by the desired increment,
+        stopping when the key is lifted or a different key is pressed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollByContentOffset:animated:]):
+        (-[WKWebView _scrollByContentOffset:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Add animated parameter to scrollByContentOffset, and plumb it through to UIScrollView.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        Add a WKKeyboardScrollingAnimator member.
+        Conform to WKKeyboardScrollable.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        Install the WKKeyboardScrollingAnimator.
+
+        (-[WKContentView cleanupInteraction]):
+        Uninstall the WKKeyboardScrollingAnimator.
+
+        (-[WKContentView unscaledView]):
+        Fix a stupid style nit.
+
+        (-[WKContentView handleKeyWebEvent:]):
+        Give WKKeyboardScrollingAnimator the first shot at incoming keyboard events.
+        It will only consume events here if it's already performing a scrolling animation
+        (because otherwise they should go straight through to the page).
+
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+        Give WKKeyboardScrollingAnimator a shot at handling keyboard events that
+        the web content did not handle. We will only start a scrolling animation
+        if the page did not handle an event that would start a scroll.
+
+        (-[WKContentView isKeyboardScrollable]):
+        Part of WKKeyboardScrollable; only report ourselves as scrollable if
+        we would previously have allowed scrolling from keyboard events (if
+        we're not in contenteditable, and don't have a <select> focused).
+
+        (-[WKContentView distanceForScrollingIncrement:]):
+        Part of WKKeyboardScrollable; compute the distance for each scrolling increment.
+
+        (-[WKContentView scrollByContentOffset:animated:]):
+        Part of WKKeyboardScrollable; plumb scrolls up to WKWebView.
+
+        (-[WKContentView _scrollOffsetForEvent:]): Moved to WKKeyboardScrollingAnimator.mm.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.h: Added.
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm: Added.
+        (-[WKKeyboardScrollingAnimator init]):
+        (-[WKKeyboardScrollingAnimator initWithScrollable:]):
+        (-[WKKeyboardScrollingAnimator invalidate]):
+        (-[WKKeyboardScrollingAnimator _scrollOffsetForEvent:]):
+        Compute the scroll offset given a particular event. This is moved from WKContentView;
+        otherwise the primary change is that it now asks the WKKeyboardScrollable
+        for the distance instead of computing it directly.
+
+        (-[WKKeyboardScrollingAnimator beginWithEvent:]):
+        If we're currently in the initial state (WaitingForFirstEvent), and
+        a given event should start a scroll, transition into WaitingForRepeat,
+        and do a single animated scroll of the appropriate distance.
+
+        (-[WKKeyboardScrollingAnimator handleKeyEvent:]):
+        If this key event should terminate a scroll (because it is either a keyup
+        or a non-scrolling keydown), shut down any running animations.
+
+        If this is the first key repeat after the initial scroll, start a scrolling
+        animation.
+
+        Eat the event if it either started or continued a scroll.
+
+        (-[WKKeyboardScrollingAnimator startAnimatedScroll]):
+        (-[WKKeyboardScrollingAnimator stopAnimatedScroll]):
+        Helpers to start and stop the display link and do some bookkeeping.
+
+        (-[WKKeyboardScrollingAnimator displayLinkFired:]):
+        Ask the WKKeyboardScrollable to scroll the content based on the frame time,
+        an acceleration curve, and the current animation's scrolling increment.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-01  Chris Dumez  <cdumez@apple.com>
 
         Make sure cookies get flushed to disk before exiting or suspending the network process

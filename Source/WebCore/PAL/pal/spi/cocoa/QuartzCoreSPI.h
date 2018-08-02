@@ -41,6 +41,7 @@
 #import <QuartzCore/CAContext.h>
 #import <QuartzCore/CALayerHost.h>
 #import <QuartzCore/CALayerPrivate.h>
+#import <QuartzCore/CAMediaTimingFunctionPrivate.h>
 #import <QuartzCore/QuartzCorePrivate.h>
 
 #if PLATFORM(MAC)
@@ -151,6 +152,10 @@ typedef enum {
 
 @interface CASpringAnimation (Private)
 @property CGFloat velocity;
+@end
+
+@interface CAMediaTimingFunction ()
+- (float)_solveForInput:(float)t;
 @end
 
 #endif // __OBJC__
