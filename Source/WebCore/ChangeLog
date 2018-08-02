@@ -1,5 +1,26 @@
 2018-08-02  Charlie Turner  <cturner@igalia.com>
 
+        [GStreamer] Dynamically adjust blocksize
+        https://bugs.webkit.org/show_bug.cgi?id=188194
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update the blocksize depending on how much is obtained from a read
+        of the input stream. This avoids doing too many reads in small
+        chunks when larger amounts of data are available and also prevents
+        using a very large memory area to read a small chunk of data.
+
+        Adapted from https://bugzilla.gnome.org/show_bug.cgi?id=767833
+
+        No tests new tests since no change in functionality.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (CachedResourceStreamingClient::checkUpdateBlocksize):
+        (CachedResourceStreamingClient::dataReceived):
+
+2018-08-02  Charlie Turner  <cturner@igalia.com>
+
         [GStreamer] Stop pushing buffers when seeking status changes
         https://bugs.webkit.org/show_bug.cgi?id=188193
 

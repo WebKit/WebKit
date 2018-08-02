@@ -43,12 +43,23 @@ public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&);
     virtual ~CachedResourceStreamingClient();
 private:
+    void checkUpdateBlocksize(uint64_t bytesRead);
+
     // PlatformMediaResourceClient virtual methods.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
     void dataReceived(PlatformMediaResource&, const char*, int) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&) override;
+
+    static constexpr int s_growBlocksizeLimit { 1 };
+    static constexpr int s_growBlocksizeCount { 1 };
+    static constexpr int s_growBlocksizeFactor { 2 };
+    static constexpr float s_reduceBlocksizeLimit { 0.20 };
+    static constexpr int s_reduceBlocksizeCount { 2 };
+    static constexpr float s_reduceBlocksizeFactor { 0.5 };
+    int m_reduceBlocksizeCount { 0 };
+    int m_increaseBlocksizeCount { 0 };
 
     GRefPtr<GstElement> m_src;
     ResourceRequest m_request;
@@ -88,6 +99,8 @@ struct _WebKitWebSrcPrivate {
     bool isSeeking;
 
     guint64 requestedOffset;
+
+    uint64_t minimumBlocksize;
 
     RefPtr<MainThreadNotifier<MainThreadSourceNotification>> notifier;
     GRefPtr<GstBuffer> buffer;
@@ -248,6 +261,8 @@ static void webkit_web_src_init(WebKitWebSrc* src)
     gst_base_src_set_automatic_eos(GST_BASE_SRC(priv->appsrc), FALSE);
 
     gst_app_src_set_caps(priv->appsrc, nullptr);
+
+    priv->minimumBlocksize = gst_base_src_get_blocksize(GST_BASE_SRC_CAST(priv->appsrc));
 }
 
 static void webKitWebSrcDispose(GObject* object)
@@ -736,6 +751,41 @@ CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, 
 
 CachedResourceStreamingClient::~CachedResourceStreamingClient() = default;
 
+void CachedResourceStreamingClient::checkUpdateBlocksize(uint64_t bytesRead)
+{
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrcPrivate* priv = src->priv;
+
+    uint64_t blocksize = gst_base_src_get_blocksize(GST_BASE_SRC_CAST(priv->appsrc));
+    GST_LOG_OBJECT(src, "Checking to update blocksize. Read:%" PRIu64 " blocksize:%" PRIu64, bytesRead, blocksize);
+
+    if (bytesRead >= blocksize * s_growBlocksizeLimit) {
+        m_reduceBlocksizeCount = 0;
+        m_increaseBlocksizeCount++;
+
+        if (m_increaseBlocksizeCount >= s_growBlocksizeCount) {
+            blocksize *= s_growBlocksizeFactor;
+            GST_DEBUG_OBJECT(src, "Increased blocksize to %" PRIu64, blocksize);
+            gst_base_src_set_blocksize(GST_BASE_SRC_CAST(priv->appsrc), blocksize);
+            m_increaseBlocksizeCount = 0;
+        }
+    } else if (bytesRead < blocksize * s_reduceBlocksizeLimit) {
+        m_reduceBlocksizeCount++;
+        m_increaseBlocksizeCount = 0;
+
+        if (m_reduceBlocksizeCount >= s_reduceBlocksizeCount) {
+            blocksize *= s_reduceBlocksizeFactor;
+            blocksize = std::max(blocksize, priv->minimumBlocksize);
+            GST_DEBUG_OBJECT(src, "Decreased blocksize to %" PRIu64, blocksize);
+            gst_base_src_set_blocksize(GST_BASE_SRC_CAST(priv->appsrc), blocksize);
+            m_reduceBlocksizeCount = 0;
+        }
+    } else {
+        m_reduceBlocksizeCount = 0;
+        m_increaseBlocksizeCount = 0;
+    }
+}
+
 void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
@@ -882,6 +932,8 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     else
         gst_buffer_set_size(priv->buffer.get(), static_cast<gssize>(length));
 
+    checkUpdateBlocksize(length);
+
     uint64_t startingOffset = priv->offset;
 
     if (priv->requestedOffset == priv->offset)
@@ -898,7 +950,6 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     // to push buffers that are too large, otherwise incorrect buffering messages can be sent from the
     // pipeline.
     uint64_t bufferSize = static_cast<uint64_t>(length);
-    // FIXME: Implement adaptive block resizing
     uint64_t blockSize = static_cast<uint64_t>(gst_base_src_get_blocksize(GST_BASE_SRC_CAST(priv->appsrc)));
     GST_LOG_OBJECT(src, "Splitting the received buffer into %" PRIu64 " blocks", bufferSize / blockSize);
     for (uint64_t currentOffset = 0; currentOffset < bufferSize; currentOffset += blockSize) {
