@@ -3651,16 +3651,14 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
 {
-    _keyWebEventHandler = [completionHandler copy];
+    _keyWebEventHandler = makeBlockPtr(completionHandler);
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
 }
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
-    if (_keyWebEventHandler) {
-        _keyWebEventHandler(event, eventWasHandled);
-        [_keyWebEventHandler release];
-        _keyWebEventHandler = nil;
+    if (auto handler = WTFMove(_keyWebEventHandler)) {
+        handler(event, eventWasHandled);
         return;
     }
         

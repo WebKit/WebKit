@@ -1,3 +1,32 @@
+2018-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Keyboard becomes unresponsive after pressing delete while pressing down on a character key with accents
+        https://bugs.webkit.org/show_bug.cgi?id=188251
+        <rdar://problem/37842108>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test to verify that clients (in this case, UIKit) is allowed to invoke
+        -handleKeyWebEvent:withCompletionHandler: within the completion block of a prior invocation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/TestInputDelegate.h: Added.
+
+        Pull some logic used to force an input session to start out from an existing API test file
+        (WKWebViewAutofillTests) and into a separate helper class that is used by both the existing API tests and the
+        new keyboard input test.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (-[AutofillTestView initWithFrame:]):
+        (TestWebKitAPI::TEST):
+        (-[TestInputDelegate init]): Deleted.
+        (-[TestInputDelegate _webView:focusShouldStartInputSession:]): Deleted.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+        Add some UIKit SPI utilized by the new API test.
+
 2018-08-01  Dan Bernstein  <mitz@apple.com>
 
         Optionally expose Attr::style to JavaScript

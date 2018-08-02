@@ -1,3 +1,23 @@
+2018-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Keyboard becomes unresponsive after pressing delete while pressing down on a character key with accents
+        https://bugs.webkit.org/show_bug.cgi?id=188251
+        <rdar://problem/37842108>
+
+        Reviewed by Tim Horton.
+
+        Fixes a bug in key event handling where invoking -handleKeyWebEvent:withCompletionHandler: from within the
+        completion callback of a previous call to -handleKeyWebEvent:withCompletionHandler: would cause the completion
+        callback to be cleared out prematurely. In some cases (as described in the title of this bug), UIKit exercises
+        this codepath and subsequently hangs due to their completion block never getting invoked by WebKit.
+
+        Test: KeyboardInputTests.CanHandleKeyEventInCompletionHandler
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]):
+
 2018-08-01  Dan Bernstein  <mitz@apple.com>
 
         Optionally expose Attr::style to JavaScript

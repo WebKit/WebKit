@@ -30,6 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/UIApplication_Private.h>
+#import <UIKit/UIResponder_Private.h>
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIViewController_Private.h>
@@ -62,8 +63,11 @@ WTF_EXTERN_C_END
 @property (nonatomic, readonly) UIColor *insertionPointColor;
 @end
 
+@class WebEvent;
+
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
+- (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
 @end
 
 #endif
@@ -98,6 +102,10 @@ WTF_EXTERN_C_END
 
 @interface UIViewController (UIKitSPI)
 + (UIViewController *)_viewControllerForFullScreenPresentationFromView:(UIView *)view;
+@end
+
+@interface UIResponder (UIKitSPI)
+- (UIResponder *)firstResponder;
 @end
 
 #endif // PLATFORM(IOS)
