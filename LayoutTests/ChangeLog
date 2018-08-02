@@ -1,3 +1,13 @@
+2018-08-02  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r234488): Layout test fast/events/ios/keyboard-scrolling-repeat.html is timing out
+        <rdar://problem/42878480>
+
+        * fast/events/ios/keyboard-scrolling-repeat-expected.txt: Removed.
+        * fast/events/ios/keyboard-scrolling-repeat.html: Removed.
+        Remove a test that can't work anymore.
+        If we need to re-write it it will probably need to be an API test.
+
 2018-08-02  Megan Gardner  <megan_gardner@apple.com>
 
         Reformat editable selection tests to remove potential flakeyness due to autoscroll
