@@ -195,14 +195,6 @@ public:
         return put(WTFMove(callback));
     }
 
-    // FIXME: <webkit.org/b/174007> WebCookieManagerProxy should pass in BackgroundActivityToken
-    template<typename... T>
-    CallbackID put(Function<void(T...)>&& function)
-    {
-        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function));
-        return put(WTFMove(callback));
-    }
-
     template<class T>
     RefPtr<T> take(CallbackID callbackID)
     {

@@ -1,5 +1,26 @@
 2018-08-02  Sihui Liu  <sihui_liu@apple.com>
 
+        httpCookieStore.getAllCookies() does not always call completion block
+        https://bugs.webkit.org/show_bug.cgi?id=188242
+
+        Reviewed by Chris Dumez.
+
+        Take background assertion for network process to keep it alive during cookieStore API calls.
+
+        * UIProcess/GenericCallback.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookie):
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManagerProxy::setCookie):
+        (WebKit::WebCookieManagerProxy::setCookies):
+        (WebKit::WebCookieManagerProxy::getAllCookies):
+        (WebKit::WebCookieManagerProxy::getCookies):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+
+2018-08-02  Sihui Liu  <sihui_liu@apple.com>
+
         [Cocoa] setCookie API fails to set session cookies for defaultDataStore if processPool created but not used
         https://bugs.webkit.org/show_bug.cgi?id=188209
 
