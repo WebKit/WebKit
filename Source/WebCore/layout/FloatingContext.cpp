@@ -257,13 +257,19 @@ const Display::Box* FloatingPair::right() const
     return &m_floats[*m_rightIndex].displayBox();
 }
 
-bool FloatingPair::intersects(const Display::Box::Rect& rect) const
+bool FloatingPair::intersects(const Display::Box::Rect& candidateRect) const
 {
-    auto intersects = [&](const Display::Box* floating, const Display::Box::Rect& rect) {
+    auto intersects = [&](const Display::Box* floating, Float floatingType) {
         if (!floating)
             return false;
 
-        return floating->rectWithMargin().intersects(rect);
+        auto marginRect = floating->rectWithMargin();
+        // Before intersecting, check if the candidate position is too far to the left/right.
+        // The new float's containing block could push the candidate position beyond the current float horizontally.
+        if ((floatingType == Float::Left && candidateRect.left() < marginRect.right())
+            || (floatingType == Float::Right && candidateRect.right() > marginRect.left()))
+            return true;
+        return marginRect.intersects(candidateRect);
     };
 
     if (!m_leftIndex && !m_rightIndex) {
@@ -271,10 +277,10 @@ bool FloatingPair::intersects(const Display::Box::Rect& rect) const
         return false;
     }
 
-    if (intersects(left(), rect))
+    if (intersects(left(), Float::Left))
         return true;
 
-    if (intersects(right(), rect))
+    if (intersects(right(), Float::Right))
         return true;
 
     return false;
