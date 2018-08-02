@@ -1,3 +1,12 @@
+2018-08-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip API test DataInteractionTests.CustomActionSheetPopover on current SDKs.
+        https://bugs.webkit.org/show_bug.cgi?id=175204
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+
 2018-08-02  Sihui Liu  <sihui_liu@apple.com>
 
         [Cocoa] setCookie API fails to set session cookies for defaultDataStore if processPool created but not used
