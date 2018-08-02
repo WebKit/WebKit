@@ -56,13 +56,26 @@ ChildProcess::~ChildProcess()
 
 void ChildProcess::didClose(IPC::Connection&)
 {
-    // We call _exit() in didCloseOnConnectionWorkQueue.
-    ASSERT_NOT_REACHED();
 }
 
-NO_RETURN static void didCloseOnConnectionWorkQueue(IPC::Connection*)
+NO_RETURN static void callExitNow(IPC::Connection*)
 {
     _exit(EXIT_SUCCESS);
+}
+
+static void callExitSoon(IPC::Connection*)
+{
+    // If the connection has been closed and we haven't responded in the main thread for 10 seconds
+    // the process will exit forcibly.
+    auto watchdogDelay = 10_s;
+
+    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
+        // We use _exit here since the watchdog callback is called from another thread and we don't want
+        // global destructors or atexit handlers to be called from this thread while the main thread is busy
+        // doing its thing.
+        RELEASE_LOG_ERROR(IPC, "Exiting process early due to unacknowledged closed-connection");
+        _exit(EXIT_FAILURE);
+    });
 }
 
 void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)
@@ -86,7 +99,11 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
     PAL::SessionID::enableGenerationProtection();
 
     m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier, *this);
-    m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
+    if (shouldCallExitWhenConnectionIsClosed())
+        m_connection->setDidCloseOnConnectionWorkQueueCallback(callExitNow);
+    else
+        m_connection->setDidCloseOnConnectionWorkQueueCallback(callExitSoon);
+
     initializeConnection(m_connection.get());
     m_connection->open();
 }

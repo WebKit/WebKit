@@ -1,5 +1,66 @@
 2018-08-01  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234486. rdar://problem/42844004
+
+    Make sure cookies get flushed to disk before exiting or suspending the network process
+    https://bugs.webkit.org/show_bug.cgi?id=188241
+    <rdar://problem/42831831>
+    
+    Reviewed by Alex Christensen and Geoffrey Garen.
+    
+    Make sure cookies get flushed to disk before exiting or suspending the network process,
+    to make sure they do not get lost.
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::didClose):
+    (WebKit::NetworkProcess::actualPrepareToSuspend):
+    (WebKit::NetworkProcess::platformSyncAllCookies):
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+    (WebKit::NetworkProcess::syncAllCookies):
+    (WebKit::NetworkProcess::platformSyncAllCookies):
+    * Shared/ChildProcess.cpp:
+    (WebKit::ChildProcess::didClose):
+    (WebKit::callExitNow):
+    (WebKit::callExitSoon):
+    (WebKit::ChildProcess::initialize):
+    (WebKit::didCloseOnConnectionWorkQueue): Deleted.
+    * Shared/ChildProcess.h:
+    (WebKit::ChildProcess::shouldCallExitWhenConnectionIsClosed const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234486 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-01  Chris Dumez  <cdumez@apple.com>
+
+            Make sure cookies get flushed to disk before exiting or suspending the network process
+            https://bugs.webkit.org/show_bug.cgi?id=188241
+            <rdar://problem/42831831>
+
+            Reviewed by Alex Christensen and Geoffrey Garen.
+
+            Make sure cookies get flushed to disk before exiting or suspending the network process,
+            to make sure they do not get lost.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::didClose):
+            (WebKit::NetworkProcess::actualPrepareToSuspend):
+            (WebKit::NetworkProcess::platformSyncAllCookies):
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::syncAllCookies):
+            (WebKit::NetworkProcess::platformSyncAllCookies):
+            * Shared/ChildProcess.cpp:
+            (WebKit::ChildProcess::didClose):
+            (WebKit::callExitNow):
+            (WebKit::callExitSoon):
+            (WebKit::ChildProcess::initialize):
+            (WebKit::didCloseOnConnectionWorkQueue): Deleted.
+            * Shared/ChildProcess.h:
+            (WebKit::ChildProcess::shouldCallExitWhenConnectionIsClosed const):
+
+2018-08-01  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234384. rdar://problem/42843520
 
     REGRESSION (r230817): Terrible performance when selecting text on Stash code review
