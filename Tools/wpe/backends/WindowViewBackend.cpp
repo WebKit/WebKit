@@ -651,18 +651,16 @@ void WindowViewBackend::handleKeyEvent(uint32_t key, uint32_t state, uint32_t ti
 {
     auto& xkb = m_seatData.xkb;
     uint32_t keysym = xkb_state_key_get_one_sym(xkb.state, key);
-    uint32_t unicode = xkb_state_key_get_utf32(xkb.state, key);
 
     if (xkb.composeState
         && state == WL_KEYBOARD_KEY_STATE_PRESSED
         && xkb_compose_state_feed(xkb.composeState, keysym) == XKB_COMPOSE_FEED_ACCEPTED
         && xkb_compose_state_get_status(xkb.composeState) == XKB_COMPOSE_COMPOSED) {
         keysym = xkb_compose_state_get_one_sym(xkb.composeState);
-        unicode = xkb_keysym_to_utf32(keysym);
     }
 
     if (m_seatData.keyboard.target) {
-        struct wpe_input_keyboard_event event = { time, keysym, unicode, !!state, xkb.modifiers };
+        struct wpe_input_keyboard_event event = { time, keysym, key, !!state, xkb.modifiers };
         dispatchInputKeyboardEvent(&event);
     }
 }

@@ -64,7 +64,7 @@ public:
 
     bool dispatchKeyboardEvent(struct wpe_input_keyboard_event* event) override
     {
-        if (event->pressed && event->modifiers & wpe_input_keyboard_modifier_control && event->keyCode == 'q') {
+        if (event->pressed && event->modifiers & wpe_input_keyboard_modifier_control && event->key_code == WPE_KEY_q) {
             g_main_loop_quit(m_loop);
             return true;
         }

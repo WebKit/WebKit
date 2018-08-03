@@ -167,7 +167,7 @@
 
   <cmake id="wpebackend">
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend.git"
-            tag="411decf4875e7a5c858489206cdb7705a4bbb581" />
+            tag="45148ff5e802c6cd1d30d3c318ff6bb5bdf2c4aa" />
   </cmake>
 
   <cmake id="wpebackend-fdo">
@@ -176,7 +176,7 @@
       <dep package="glib"/>
     </dependencies>
     <branch repo="github.com" module="Igalia/WPEBackend-fdo.git"
-            tag="da746af2dff6b972c5c4903a132edcafdb768926"/>
+            tag="fac3fe1ea78b6fc5b6005adfceb93eeb46681485"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">

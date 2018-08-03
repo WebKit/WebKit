@@ -3,13 +3,13 @@
   sources:
     - type: git
       url: https://github.com/WebPlatformForEmbedded/WPEBackend.git
-      branch: 411decf4875e7a5c858489206cdb7705a4bbb581
+      branch: 45148ff5e802c6cd1d30d3c318ff6bb5bdf2c4aa
 - name: wpebackend-fdo
   buildsystem: cmake-ninja
   sources:
     - type: git
       url: https://github.com/Igalia/WPEBackend-fdo.git
-      branch: da746af2dff6b972c5c4903a132edcafdb768926
+      branch: fac3fe1ea78b6fc5b6005adfceb93eeb46681485
 - name: lua
   buildsystem: simple
   build-commands:

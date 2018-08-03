@@ -104,7 +104,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
             if (event->pressed
                 && event->modifiers & wpe_input_keyboard_modifier_control
                 && event->modifiers & wpe_input_keyboard_modifier_shift
-                && event->keyCode == 'G') {
+                && event->key_code == WPE_KEY_G) {
                 auto& preferences = view.page().preferences();
                 preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
                 return;

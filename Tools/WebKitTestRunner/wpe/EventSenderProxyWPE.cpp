@@ -31,8 +31,6 @@
 #include "TestController.h"
 #include <WebCore/NotImplemented.h>
 #include <wpe/wpe.h>
-#include <xkbcommon/xkbcommon-keysyms.h>
-#include <xkbcommon/xkbcommon.h>
 
 namespace WTR {
 
@@ -160,93 +158,93 @@ static uint8_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
     return modifiers;
 }
 
-int getXKBKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint8_t* modifiers)
+static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint8_t* modifiers)
 {
     if (location == DOMKeyLocationNumpad) {
         if (WKStringIsEqualToUTF8CString(keyRef, "leftArrow"))
-            return XKB_KEY_KP_Left;
+            return WPE_KEY_KP_Left;
         if (WKStringIsEqualToUTF8CString(keyRef, "rightArror"))
-            return XKB_KEY_KP_Right;
+            return WPE_KEY_KP_Right;
         if (WKStringIsEqualToUTF8CString(keyRef, "upArrow"))
-            return XKB_KEY_KP_Up;
+            return WPE_KEY_KP_Up;
         if (WKStringIsEqualToUTF8CString(keyRef, "downArrow"))
-            return XKB_KEY_KP_Down;
+            return WPE_KEY_KP_Down;
         if (WKStringIsEqualToUTF8CString(keyRef, "pageUp"))
-            return XKB_KEY_KP_Page_Up;
+            return WPE_KEY_KP_Page_Up;
         if (WKStringIsEqualToUTF8CString(keyRef, "pageDown"))
-            return XKB_KEY_KP_Page_Down;
+            return WPE_KEY_KP_Page_Down;
         if (WKStringIsEqualToUTF8CString(keyRef, "home"))
-            return XKB_KEY_KP_Home;
+            return WPE_KEY_KP_Home;
         if (WKStringIsEqualToUTF8CString(keyRef, "end"))
-            return XKB_KEY_KP_End;
+            return WPE_KEY_KP_End;
         if (WKStringIsEqualToUTF8CString(keyRef, "insert"))
-            return XKB_KEY_KP_Insert;
+            return WPE_KEY_KP_Insert;
         if (WKStringIsEqualToUTF8CString(keyRef, "delete"))
-            return XKB_KEY_KP_Delete;
+            return WPE_KEY_KP_Delete;
 
-        return XKB_KEY_VoidSymbol;
+        return WPE_KEY_VoidSymbol;
     }
 
     if (WKStringIsEqualToUTF8CString(keyRef, "leftControl"))
-        return XKB_KEY_Control_L;
+        return WPE_KEY_Control_L;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightControl"))
-        return XKB_KEY_Control_R;
+        return WPE_KEY_Control_R;
     if (WKStringIsEqualToUTF8CString(keyRef, "leftShift"))
-        return XKB_KEY_Shift_L;
+        return WPE_KEY_Shift_L;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightShift"))
-        return XKB_KEY_Shift_R;
+        return WPE_KEY_Shift_R;
     if (WKStringIsEqualToUTF8CString(keyRef, "leftAlt"))
-        return XKB_KEY_Alt_L;
+        return WPE_KEY_Alt_L;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightAlt"))
-        return XKB_KEY_Alt_R;
+        return WPE_KEY_Alt_R;
     if (WKStringIsEqualToUTF8CString(keyRef, "leftArrow"))
-        return XKB_KEY_Left;
+        return WPE_KEY_Left;
     if (WKStringIsEqualToUTF8CString(keyRef, "rightArrow"))
-        return XKB_KEY_Right;
+        return WPE_KEY_Right;
     if (WKStringIsEqualToUTF8CString(keyRef, "upArrow"))
-        return XKB_KEY_Up;
+        return WPE_KEY_Up;
     if (WKStringIsEqualToUTF8CString(keyRef, "downArrow"))
-        return XKB_KEY_Down;
+        return WPE_KEY_Down;
     if (WKStringIsEqualToUTF8CString(keyRef, "pageUp"))
-        return XKB_KEY_Page_Up;
+        return WPE_KEY_Page_Up;
     if (WKStringIsEqualToUTF8CString(keyRef, "pageDown"))
-        return XKB_KEY_Page_Down;
+        return WPE_KEY_Page_Down;
     if (WKStringIsEqualToUTF8CString(keyRef, "home"))
-        return XKB_KEY_Home;
+        return WPE_KEY_Home;
     if (WKStringIsEqualToUTF8CString(keyRef, "end"))
-        return XKB_KEY_End;
+        return WPE_KEY_End;
     if (WKStringIsEqualToUTF8CString(keyRef, "insert"))
-        return XKB_KEY_Insert;
+        return WPE_KEY_Insert;
     if (WKStringIsEqualToUTF8CString(keyRef, "delete"))
-        return XKB_KEY_Delete;
+        return WPE_KEY_Delete;
     if (WKStringIsEqualToUTF8CString(keyRef, "printScreen"))
-        return XKB_KEY_Print;
+        return WPE_KEY_Print;
     if (WKStringIsEqualToUTF8CString(keyRef, "menu"))
-        return XKB_KEY_Menu;
+        return WPE_KEY_Menu;
     if (WKStringIsEqualToUTF8CString(keyRef, "F1"))
-        return XKB_KEY_F1;
+        return WPE_KEY_F1;
     if (WKStringIsEqualToUTF8CString(keyRef, "F2"))
-        return XKB_KEY_F2;
+        return WPE_KEY_F2;
     if (WKStringIsEqualToUTF8CString(keyRef, "F3"))
-        return XKB_KEY_F3;
+        return WPE_KEY_F3;
     if (WKStringIsEqualToUTF8CString(keyRef, "F4"))
-        return XKB_KEY_F4;
+        return WPE_KEY_F4;
     if (WKStringIsEqualToUTF8CString(keyRef, "F5"))
-        return XKB_KEY_F5;
+        return WPE_KEY_F5;
     if (WKStringIsEqualToUTF8CString(keyRef, "F6"))
-        return XKB_KEY_F6;
+        return WPE_KEY_F6;
     if (WKStringIsEqualToUTF8CString(keyRef, "F7"))
-        return XKB_KEY_F7;
+        return WPE_KEY_F7;
     if (WKStringIsEqualToUTF8CString(keyRef, "F8"))
-        return XKB_KEY_F8;
+        return WPE_KEY_F8;
     if (WKStringIsEqualToUTF8CString(keyRef, "F9"))
-        return XKB_KEY_F9;
+        return WPE_KEY_F9;
     if (WKStringIsEqualToUTF8CString(keyRef, "F10"))
-        return XKB_KEY_F10;
+        return WPE_KEY_F10;
     if (WKStringIsEqualToUTF8CString(keyRef, "F11"))
-        return XKB_KEY_F11;
+        return WPE_KEY_F11;
     if (WKStringIsEqualToUTF8CString(keyRef, "F12"))
-        return XKB_KEY_F12;
+        return WPE_KEY_F12;
 
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(keyRef);
     auto buffer = std::make_unique<char[]>(bufferSize);
@@ -254,27 +252,26 @@ int getXKBKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint8_t* modifi
     char charCode = buffer.get()[0];
 
     if (charCode == '\n' || charCode == '\r')
-        return XKB_KEY_Return;
+        return WPE_KEY_Return;
     if (charCode == '\t')
-        return XKB_KEY_Tab;
+        return WPE_KEY_Tab;
     if (charCode == '\x8')
-        return XKB_KEY_BackSpace;
+        return WPE_KEY_BackSpace;
     if (charCode == 0x001B)
-        return XKB_KEY_Escape;
+        return WPE_KEY_Escape;
 
     if (WTF::isASCIIUpper(charCode))
         *modifiers |= wpe_input_keyboard_modifier_shift;
 
-    // Not sure if this is correct.
-    return charCode;
+    return wpe_unicode_to_key_code(static_cast<uint32_t>(charCode));
 }
 
 void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers, unsigned location)
 {
     uint8_t modifiers = wkEventModifiersToWPE(wkModifiers);
-    uint32_t keySym = getXKBKeySymForKeyRef(keyRef, location, &modifiers);
-    uint32_t unicode = xkb_keysym_to_utf32(keySym);
-    struct wpe_input_keyboard_event event { static_cast<uint32_t>(m_time), keySym, unicode, true, modifiers};
+    uint32_t keySym = wpeKeySymForKeyRef(keyRef, location, &modifiers);
+    // FIXME: we don't have a way to get hardware key code in WPE.
+    struct wpe_input_keyboard_event event { static_cast<uint32_t>(m_time), keySym, 0, true, modifiers};
     wpe_view_backend_dispatch_keyboard_event(m_viewBackend, &event);
     event.pressed = false;
     wpe_view_backend_dispatch_keyboard_event(m_viewBackend, &event);

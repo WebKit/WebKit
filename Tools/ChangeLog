@@ -1,3 +1,19 @@
+2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Use WPE key symbols and new API instead of xkbcommon and the key mapper
+        https://bugs.webkit.org/show_bug.cgi?id=188093
+
+        Reviewed by Žan Doberšek.
+
+        * MiniBrowser/wpe/main.cpp: Use WPE key symbols.
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::wpeKeySymForKeyRef): Use WPE key symbols and wpe_unicode_to_key_code().
+        (WTR::EventSenderProxy::keyDown): Do not set unicode char to the event since it was removed.
+        * flatpak/org.webkit.WPE.yaml: Bump WPEBackend and WPEBackend-fdo versions.
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::handleKeyEvent): Do not set unicode char to the event since it was removed.
+        * wpe/jhbuild.modules: Bump WPEBackend and WPEBackend-fdo versions.
+
 2018-08-02  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] add support to return the attributed string under the element

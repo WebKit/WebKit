@@ -1,3 +1,20 @@
+2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Use WPE key symbols and new API instead of xkbcommon and the key mapper
+        https://bugs.webkit.org/show_bug.cgi?id=188093
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/WebEvent.h: Add WebKeyboardEvent constructor for WPE.
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent): WebKeyboardEvent constructor for WPE.
+        * Shared/wpe/WebEventFactory.cpp:
+        (WebKit::isWPEKeyCodeFromKeyPad): Helper tpo check if a key symbols is from key pad.
+        (WebKit::WebEventFactory::createWebKeyboardEvent): Use PlatformKeyboardEvent API to provide key code, hardware
+        key code, key identifier and windows key code to WebKeyboardEvent.
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend): Use WPE key symbols.
+
 2018-08-02  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Context menus in RTL are left-aligned
