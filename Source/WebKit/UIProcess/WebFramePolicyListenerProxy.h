@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/Vector.h>
 
 namespace API {
 class WebsitePolicies;
@@ -39,33 +38,24 @@ enum class PolicyAction;
 
 namespace WebKit {
 
-class SafeBrowsingResult;
-
 enum class ShouldProcessSwapIfPossible { No, Yes };
-enum class ShouldExpectSafeBrowsingResult { No, Yes };
 
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
-    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible, Vector<SafeBrowsingResult>&&)>;
-    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
+    static Ref<WebFramePolicyListenerProxy> create(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&& completionHandler)
     {
-        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expect));
+        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(completionHandler)));
     }
-    ~WebFramePolicyListenerProxy();
 
     void use(API::WebsitePolicies* = nullptr, ShouldProcessSwapIfPossible = ShouldProcessSwapIfPossible::No);
     void download();
     void ignore();
-    
-    void didReceiveSafeBrowsingResults(Vector<SafeBrowsingResult>&&);
 
 private:
-    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult);
+    WebFramePolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&&);
 
-    std::optional<std::pair<RefPtr<API::WebsitePolicies>, ShouldProcessSwapIfPossible>> m_policyResult;
-    std::optional<Vector<SafeBrowsingResult>> m_safeBrowsingResults;
-    Reply m_reply;
+    CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)> m_completionHandler;
 };
 
 } // namespace WebKit

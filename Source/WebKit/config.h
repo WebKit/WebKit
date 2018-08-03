@@ -126,9 +126,3 @@
 #define HAVE_MOBILE_WIFI 0
 #endif
 #endif
-
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)) && !defined(__i386__)
-#define HAVE_SAFE_BROWSING 1
-#else
-#define HAVE_SAFE_BROWSING 0
-#endif
