@@ -1,3 +1,33 @@
+2018-08-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188293
+
+        Unreviewed test gardening.
+
+        Unskip some http tests.
+
+        * platform/wincairo/TestExpectations:
+          - contentextensions
+          - events
+          - favicon.ico
+          - fullscreen
+          - globalhistory
+          - gzip-content-encoding
+          - history
+          - local
+          - messaging
+          - mime
+          - multipart
+          - performance
+          - permissionclient
+          - referrer-policy
+          - resourceLoadStatistics
+        * platform/wincairo/http/tests/local/file-url-sent-as-referer-expected.txt: Added.
+        * platform/wincairo/http/tests/multipart/invalid-image-data-expected.txt: Added.
+        * platform/wincairo/http/tests/multipart/invalid-image-data-standalone-expected.txt: Added.
+        * platform/wincairo/http/tests/uri/css-href-expected.txt: Added.
+
 2018-08-02  Jer Noble  <jer.noble@apple.com>
 
         Control center controls disappear when pausing, locking device.
