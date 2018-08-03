@@ -60,7 +60,7 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
     : m_unblockURLHost { WTFMove(unblockURLHost) }
     , m_unblockRequester { WTFMove(unblockRequester) }
 {
-    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", unblockURLHost.ascii().data());
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with an unblock requester and unblock URL host <%s>.\n", m_unblockURLHost.ascii().data());
 }
 
 #if HAVE(PARENTAL_CONTROLS) && PLATFORM(IOS)
@@ -68,7 +68,7 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(String unblockURLHost, 
     : m_unblockURLHost { WTFMove(unblockURLHost) }
     , m_webFilterEvaluator { WTFMove(evaluator) }
 {
-    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with a WebFilterEvaluator and unblock URL host <%s>.\n", unblockURLHost.ascii().data());
+    LOG(ContentFiltering, "Creating ContentFilterUnblockHandler with a WebFilterEvaluator and unblock URL host <%s>.\n", m_unblockURLHost.ascii().data());
 }
 #endif
 
