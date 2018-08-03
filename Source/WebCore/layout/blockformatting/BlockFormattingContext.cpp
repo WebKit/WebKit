@@ -117,7 +117,6 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             auto& container = downcast<Container>(layoutBox);
             // Move in-flow positioned children to their final position.
             placeInFlowPositionedChildren(layoutContext, container);
-            layoutOutOfFlowDescendants(layoutContext, container);
             if (auto* nextSibling = container.nextInFlowOrFloatingSibling()) {
                 layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
                 break;

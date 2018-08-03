@@ -1,3 +1,17 @@
+2018-08-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Layout out-of-flow descendants only on the formatting context root.
+        https://bugs.webkit.org/show_bug.cgi?id=188312
+
+        Reviewed by Antti Koivisto.
+
+        Collect out-of-flow descendants on the formatting root container instead of the containing block and run layout on them on the root level. It's more efficient this way.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
 2018-08-03  Andy Estes  <aestes@apple.com>
 
         ContentFilterUnblockHandler's constructors access moved-from variables
