@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,33 +29,52 @@
 #include "APINavigation.h"
 #include "APIWebsiteDataStore.h"
 #include "APIWebsitePolicies.h"
+#include "SafeBrowsingResult.h"
 #include "WebFrameProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
 namespace WebKit {
 
-WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ShouldProcessSwapIfPossible)>&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
+WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
+    : m_reply(WTFMove(reply))
 {
+    if (expect == ShouldExpectSafeBrowsingResult::No)
+        didReceiveSafeBrowsingResults({ });
+}
+
+WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
+
+void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(Vector<SafeBrowsingResult>&& safeBrowsingResults)
+{
+    ASSERT(!m_safeBrowsingResults);
+    if (m_policyResult) {
+        if (m_reply)
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingResults));
+    } else
+        m_safeBrowsingResults = WTFMove(safeBrowsingResults);
 }
 
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap)
 {
-    if (m_completionHandler)
-        m_completionHandler(WebCore::PolicyAction::Use, policies, swap);
+    ASSERT(!m_policyResult);
+    if (m_safeBrowsingResults) {
+        if (m_reply)
+            m_reply(WebCore::PolicyAction::Use, policies, swap, WTFMove(*m_safeBrowsingResults));
+    } else
+        m_policyResult = {{ policies, swap }};
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    if (m_completionHandler)
-        m_completionHandler(WebCore::PolicyAction::Download, nullptr, ShouldProcessSwapIfPossible::No);
+    if (m_reply)
+        m_reply(WebCore::PolicyAction::Download, nullptr, ShouldProcessSwapIfPossible::No, { });
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    if (m_completionHandler)
-        m_completionHandler(WebCore::PolicyAction::Ignore, nullptr, ShouldProcessSwapIfPossible::No);
+    if (m_reply)
+        m_reply(WebCore::PolicyAction::Ignore, nullptr, ShouldProcessSwapIfPossible::No, { });
 }
 
 } // namespace WebKit

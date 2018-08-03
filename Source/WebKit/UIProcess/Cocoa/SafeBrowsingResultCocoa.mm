@@ -23,53 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "SafeBrowsingResult.h"
+
+#import "SafeBrowsingSPI.h"
+
+namespace WebKit {
 
 #if HAVE(SAFE_BROWSING)
-
-#import <Foundation/Foundation.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <SafariSafeBrowsing/SafariSafeBrowsing.h>
-
-#else
-
-typedef NSString * SSBProvider NS_STRING_ENUM;
-
-WTF_EXTERN_C_BEGIN
-
-extern SSBProvider const SSBProviderGoogle;
-extern SSBProvider const SSBProviderTencent;
-
-WTF_EXTERN_C_END
-
-@interface SSBServiceLookupResult : NSObject <NSCopying, NSSecureCoding>
-
-@property (nonatomic, readonly) SSBProvider provider;
-
-@property (nonatomic, readonly, getter=isPhishing) BOOL phishing;
-@property (nonatomic, readonly, getter=isMalware) BOOL malware;
-@property (nonatomic, readonly, getter=isUnwantedSoftware) BOOL unwantedSoftware;
-
-@property (nonatomic, readonly, getter=isKnownToBeUnsafe) BOOL knownToBeUnsafe;
-
-@end
-
-@interface SSBLookupResult : NSObject <NSCopying, NSSecureCoding>
-
-@property (nonatomic, readonly) NSArray<SSBServiceLookupResult *> *serviceLookupResults;
-
-@end
-
-@interface SSBLookupContext : NSObject
-
-+ (SSBLookupContext *)sharedLookupContext;
-
-- (void)lookUpURL:(NSURL *)URL completionHandler:(void (^)(SSBLookupResult *, NSError *))completionHandler;
-
-@end
-
+SafeBrowsingResult::SafeBrowsingResult(SSBServiceLookupResult *result)
+    : m_provider([result provider])
+    , m_isPhishing([result isPhishing])
+    , m_isMalware([result isMalware])
+    , m_isUnwantedSoftware([result isUnwantedSoftware])
+    , m_isKnownToBeUnsafe([result isKnownToBeUnsafe])
+{
+}
 #endif
 
-#endif
+}
