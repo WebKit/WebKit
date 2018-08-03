@@ -932,7 +932,7 @@ sub GeneratePut
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
     
     if (($namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}) || ($indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions})) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack;\n\n");
+        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n\n");
         AddToImplIncludes("CustomElementReactionQueue.h");
     }
     
@@ -1004,7 +1004,7 @@ sub GeneratePutByIndex
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
     
     if (($namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}) || ($indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions})) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack;\n\n");
+        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n\n");
         AddToImplIncludes("CustomElementReactionQueue.h");
     }
     
@@ -1100,7 +1100,7 @@ sub GenerateDefineOwnProperty
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
     
     if (($namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}) || ($indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions})) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack;\n\n");
+        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n\n");
         AddToImplIncludes("CustomElementReactionQueue.h");
     }
     
@@ -1224,7 +1224,7 @@ sub GenerateDeletePropertyCommon
     push(@$outputArray, "    if (isVisibleNamedProperty<${overrideBuiltin}>(*state, thisObject, propertyName)) {\n");
 
     if ($operation->extendedAttributes->{CEReactions}) {
-        push(@$outputArray, "        CustomElementReactionStack customElementReactionStack;\n");
+        push(@$outputArray, "        CustomElementReactionStack customElementReactionStack(*state);\n");
         AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
     }
 
@@ -4844,7 +4844,7 @@ sub GenerateAttributeSetterBodyDefinition
     push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
     
     if ($attribute->extendedAttributes->{CEReactions}) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack;\n");
+        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(state);\n");
         AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
     }
     
@@ -5070,7 +5070,7 @@ sub GenerateOperationBodyDefinition
     if (!$generatingOverloadDispatcher) {
         if ($operation->extendedAttributes->{CEReactions}) {
             AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
-            push(@$outputArray, "    CustomElementReactionStack customElementReactionStack;\n");
+            push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n");
         }
 
         if ($interface->extendedAttributes->{CheckSecurity} and !$operation->extendedAttributes->{DoNotCheckSecurity}) {

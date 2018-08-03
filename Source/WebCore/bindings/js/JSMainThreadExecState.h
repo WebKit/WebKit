@@ -161,6 +161,7 @@ class JSMainThreadNullState {
 public:
     explicit JSMainThreadNullState()
         : m_previousState(JSMainThreadExecState::s_mainThreadState)
+        , m_customElementReactionStack(m_previousState)
     {
         ASSERT(isMainThread());
         JSMainThreadExecState::s_mainThreadState = nullptr;

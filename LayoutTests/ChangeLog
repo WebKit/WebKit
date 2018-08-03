@@ -1,3 +1,15 @@
+2018-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert when throwing exceptions in custom element reactions
+        https://bugs.webkit.org/show_bug.cgi?id=187805
+        <rdar://problem/42432714>
+
+        Reviewed by Saam Barati.
+
+        Unskipped the previously crashing test.
+
+        * TestExpectations:
+
 2018-08-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening

@@ -203,7 +203,7 @@ EncodedJSValue jsTestCEReactionsAttributeWithCEReactions(ExecState* state, Encod
 static inline bool setJSTestCEReactionsAttributeWithCEReactionsSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    CustomElementReactionStack customElementReactionStack;
+    CustomElementReactionStack customElementReactionStack(state);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -235,7 +235,7 @@ EncodedJSValue jsTestCEReactionsReflectAttributeWithCEReactions(ExecState* state
 static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    CustomElementReactionStack customElementReactionStack;
+    CustomElementReactionStack customElementReactionStack(state);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -290,7 +290,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCE
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    CustomElementReactionStack customElementReactionStack;
+    CustomElementReactionStack customElementReactionStack(*state);
     auto& impl = castedThis->wrapped();
     impl.methodWithCEReactions();
     return JSValue::encode(jsUndefined());

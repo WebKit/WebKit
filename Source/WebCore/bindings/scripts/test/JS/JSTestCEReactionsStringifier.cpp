@@ -193,7 +193,7 @@ EncodedJSValue jsTestCEReactionsStringifierValue(ExecState* state, EncodedJSValu
 static inline bool setJSTestCEReactionsStringifierValueSetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    CustomElementReactionStack customElementReactionStack;
+    CustomElementReactionStack customElementReactionStack(state);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);

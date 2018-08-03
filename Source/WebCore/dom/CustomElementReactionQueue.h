@@ -29,6 +29,12 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
+namespace JSC {
+
+class ExecState;
+
+}
+
 namespace WebCore {
 
 class CustomElementReactionQueueItem;
@@ -60,9 +66,11 @@ public:
     class ElementQueue {
     public:
         void add(Element&);
-        void invokeAll();
-        
+        void processQueue(JSC::ExecState*);
+
     private:
+        void invokeAll();
+
         Vector<Ref<Element>> m_elements;
         bool m_invoking { false };
     };
@@ -78,24 +86,30 @@ private:
 
 class CustomElementReactionStack {
 public:
-    CustomElementReactionStack()
+    ALWAYS_INLINE CustomElementReactionStack(JSC::ExecState* state)
         : m_previousProcessingStack(s_currentProcessingStack)
+        , m_state(state)
     {
         s_currentProcessingStack = this;
     }
 
-    ~CustomElementReactionStack()
+    ALWAYS_INLINE CustomElementReactionStack(JSC::ExecState& state)
+        : CustomElementReactionStack(&state)
+    { }
+
+    ALWAYS_INLINE ~CustomElementReactionStack()
     {
         if (UNLIKELY(m_queue))
-            processQueue();
+            processQueue(m_state);
         s_currentProcessingStack = m_previousProcessingStack;
     }
 
 private:
-    WEBCORE_EXPORT void processQueue();
+    WEBCORE_EXPORT void processQueue(JSC::ExecState*);
 
     CustomElementReactionQueue::ElementQueue* m_queue { nullptr }; // Use raw pointer to avoid generating delete in the destructor.
     CustomElementReactionStack* m_previousProcessingStack;
+    JSC::ExecState* m_state;
 
     WEBCORE_EXPORT static CustomElementReactionStack* s_currentProcessingStack;
 

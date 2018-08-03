@@ -1,3 +1,44 @@
+2018-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert when throwing exceptions in custom element reactions
+        https://bugs.webkit.org/show_bug.cgi?id=187805
+        <rdar://problem/42432714>
+
+        Reviewed by Saam Barati.
+
+        The release assertion was hit because we were not catching & re-throwing the exception thrown by DOM API
+        before trying to execute custom elements reactions in ~CustomElementReactionStack as specified here:
+        https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions
+        Fixed the bug by capturing the exception and re-throwing the exception as specified.
+
+        Tests: imported/w3c/web-platform-tests/custom-elements/reactions/with-exceptions.html
+
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadNullState::JSMainThreadNullState): Use the previous JS state.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePut): Pass in the exec state to CustomElementReactionStack.
+        (GeneratePutByIndex): Ditto.
+        (GenerateDefineOwnProperty): Ditto.
+        (GenerateDeletePropertyCommon): Ditto.
+        (GenerateAttributeSetterBodyDefinition): Ditto.
+        (GenerateOperationBodyDefinition): Ditto.
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::setJSTestCEReactionsAttributeWithCEReactionsSetter):
+        (WebCore::setJSTestCEReactionsReflectAttributeWithCEReactionsSetter):
+        (WebCore::jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsBody):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::setJSTestCEReactionsStringifierValueSetter):
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::ElementQueue::processQueue): Added. If there is a script running
+        in the stack (i.e. ExecState is not null), catch any exception before executing custom element reactions,
+        then re-throw the exception afterwards. ExecState is null when DOM API is invoked via Objective-C bindings
+        or when custom element reactions are executed in the backup queue (e.g. for editing operations).
+        (WebCore::CustomElementReactionStack::processQueue):
+        (WebCore::CustomElementReactionQueue::processBackupQueue):
+        * dom/CustomElementReactionQueue.h:
+        (WebCore::CustomElementReactionStack::CustomElementReactionStack):
+        (WebCore::CustomElementReactionStack::~CustomElementReactionStack):
+
 2018-08-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Apply the "10.6.6 Complicated cases" when computing height and margin for the document renderer

@@ -34,6 +34,7 @@
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
 #include "Microtasks.h"
+#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Heap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
@@ -231,6 +232,32 @@ inline void CustomElementReactionQueue::ElementQueue::invokeAll()
     RELEASE_ASSERT(m_elements.isEmpty());
 }
 
+inline void CustomElementReactionQueue::ElementQueue::processQueue(JSC::ExecState* state)
+{
+    if (!state) {
+        invokeAll();
+        return;
+    }
+
+    auto& vm = state->vm();
+    JSC::JSLockHolder lock(vm);
+
+    JSC::Exception* previousException = nullptr;
+    {
+        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        previousException = catchScope.exception();
+        if (previousException)
+            catchScope.clearException();
+    }
+
+    invokeAll();
+
+    if (previousException) {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        throwException(state, throwScope, previousException);
+    }
+}
+
 CustomElementReactionQueue& CustomElementReactionQueue::ensureCurrentQueue(Element& element)
 {
     ASSERT(element.reactionQueue());
@@ -249,10 +276,10 @@ CustomElementReactionQueue& CustomElementReactionQueue::ensureCurrentQueue(Eleme
 
 CustomElementReactionStack* CustomElementReactionStack::s_currentProcessingStack = nullptr;
 
-void CustomElementReactionStack::processQueue()
+void CustomElementReactionStack::processQueue(JSC::ExecState* state)
 {
     ASSERT(m_queue);
-    m_queue->invokeAll();
+    m_queue->processQueue(state);
     delete m_queue;
     m_queue = nullptr;
 }
@@ -280,7 +307,7 @@ CustomElementReactionQueue::ElementQueue& CustomElementReactionQueue::ensureBack
 
 void CustomElementReactionQueue::processBackupQueue()
 {
-    backupElementQueue().invokeAll();
+    backupElementQueue().processQueue(nullptr);
     s_processingBackupElementQueue = false;
 }
 
