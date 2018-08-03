@@ -134,11 +134,6 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         return true;
     }
 
-    if (renderer.marginBoxRect() != displayBox->nonCollapsedMarginBox()) {
-        outputRect("marginBox", renderer.marginBoxRect(), displayBox->nonCollapsedMarginBox());
-        return true;
-    }
-
     if (renderer.borderBoxRect() != displayBox->borderBox()) {
         outputRect("borderBox", renderer.borderBoxRect(), displayBox->borderBox());
         return true;
@@ -154,6 +149,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         return true;
     }
 
+    // TODO: The RenderBox::marginBox() does not follow the spec and ignores certain constraints. Skip them for now.
     return false;
 }
 

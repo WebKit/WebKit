@@ -1,3 +1,15 @@
+2018-08-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Do not check margin box while validating geometry.
+        https://bugs.webkit.org/show_bug.cgi?id=188297
+
+        Reviewed by Antti Koivisto.
+
+        The current RenderBox::marginBox implementation is not spec compliant. Ignore it for now.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+
 2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Use WPE key symbols and new API instead of xkbcommon and the key mapper
