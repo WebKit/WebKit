@@ -34,3 +34,15 @@ fast/block/block-only/relative-simple.html
 fast/block/block-only/absolute-position-when-containing-block-is-not-in-the-formatting-context2.html
 fast/block/block-only/margin-collapse-with-block-formatting-context.html
 fast/block/block-only/margin-collapse-with-block-formatting-context2.html
+fast/block/block-only/float-left-when-container-has-padding-margin.html
+fast/block/block-only/floating-box-left-and-right-multiple-with-top-offset.html
+fast/block/block-only/floating-box-left-and-right-multiple.html
+fast/block/block-only/floating-box-right-simple.html
+fast/block/block-only/floating-box-with-new-formatting-context.html
+fast/block/block-only/floating-box-with-relative-positioned-sibling.html
+fast/block/block-only/floating-left-right-simple.html
+fast/block/block-only/floating-left-right-with-all-margins.html
+fast/block/block-only/floating-lefts-and-rights-simple.html
+fast/block/block-only/floating-multiple-lefts-in-body.html
+fast/block/block-only/floating-multiple-lefts-multiple-lines.html
+fast/block/block-only/floating-multiple-lefts.html
