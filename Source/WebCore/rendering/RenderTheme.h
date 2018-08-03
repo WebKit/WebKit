@@ -139,6 +139,7 @@ public:
     // Text selection colors.
     Color activeSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
     Color inactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
+    virtual Color transformSelectionBackgroundColor(const Color&, OptionSet<StyleColor::Options>) const;
     Color activeSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
     Color inactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
 
@@ -415,8 +416,6 @@ protected:
         Color systemVisitedLinkColor;
         Color systemFocusRingColor;
         Color systemControlAccentColor;
-        Color systemSelectedTextBackgroundColor;
-        Color systemSelectedContentBackgroundColor;
 
         Color activeSelectionBackgroundColor;
         Color inactiveSelectionBackgroundColor;

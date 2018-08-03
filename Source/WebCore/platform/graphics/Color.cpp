@@ -500,6 +500,9 @@ Color Color::blendWithWhite() const
         if (r >= 0 && g >= 0 && b >= 0)
             break;
     }
+
+    if (isSemantic())
+        newColor.setIsSemantic();
     return newColor;
 }
 
@@ -515,7 +518,11 @@ Color Color::colorWithAlpha(float alpha) const
         return Color { m_colorData.extendedColor->red(), m_colorData.extendedColor->green(), m_colorData.extendedColor->blue(), alpha, m_colorData.extendedColor->colorSpace() };
 
     int newAlpha = alpha * 255;
-    return Color { red(), green(), blue(), newAlpha };
+
+    Color result = { red(), green(), blue(), newAlpha };
+    if (isSemantic())
+        result.setIsSemantic();
+    return result;
 }
 
 void Color::getRGBA(float& r, float& g, float& b, float& a) const

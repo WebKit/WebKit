@@ -584,7 +584,7 @@ Color RenderTheme::activeSelectionBackgroundColor(OptionSet<StyleColor::Options>
 {
     auto& cache = colorCache(options);
     if (!cache.activeSelectionBackgroundColor.isValid())
-        cache.activeSelectionBackgroundColor = platformActiveSelectionBackgroundColor(options).blendWithWhite();
+        cache.activeSelectionBackgroundColor = transformSelectionBackgroundColor(platformActiveSelectionBackgroundColor(options), options);
     return cache.activeSelectionBackgroundColor;
 }
 
@@ -592,8 +592,13 @@ Color RenderTheme::inactiveSelectionBackgroundColor(OptionSet<StyleColor::Option
 {
     auto& cache = colorCache(options);
     if (!cache.inactiveSelectionBackgroundColor.isValid())
-        cache.inactiveSelectionBackgroundColor = platformInactiveSelectionBackgroundColor(options).blendWithWhite();
+        cache.inactiveSelectionBackgroundColor = transformSelectionBackgroundColor(platformInactiveSelectionBackgroundColor(options), options);
     return cache.inactiveSelectionBackgroundColor;
+}
+
+Color RenderTheme::transformSelectionBackgroundColor(const Color& color, OptionSet<StyleColor::Options>) const
+{
+    return color.blendWithWhite();
 }
 
 Color RenderTheme::activeSelectionForegroundColor(OptionSet<StyleColor::Options> options) const

@@ -55,6 +55,7 @@ public:
 
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
+    Color transformSelectionBackgroundColor(const Color&, OptionSet<StyleColor::Options>) const final;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
     Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
