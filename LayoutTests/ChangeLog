@@ -1,3 +1,14 @@
+2018-08-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [LayoutTests] Suppress PHP Error message by removing an execution time limit.
+        https://bugs.webkit.org/show_bug.cgi?id=188288
+
+        Reviewed by Alex Christensen.
+
+        Remove execution timeout.
+
+        * http/tests/multipart/resources/multipart.php:
+
 2018-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert when throwing exceptions in custom element reactions
