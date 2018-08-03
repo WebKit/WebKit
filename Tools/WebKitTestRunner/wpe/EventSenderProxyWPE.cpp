@@ -296,11 +296,14 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 {
     uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
     uint32_t keySym = wpeKeySymForKeyRef(keyRef, location, &modifiers);
-    // FIXME: we don't have a way to get hardware key code in WPE.
-    struct wpe_input_keyboard_event event { static_cast<uint32_t>(m_time), keySym, 0, true, modifiers};
+    struct wpe_input_xkb_keymap_entry* entries;
+    uint32_t entriesCount;
+    wpe_input_xkb_context_get_entries_for_key_code(wpe_input_xkb_context_get_default(), keySym, &entries, &entriesCount);
+    struct wpe_input_keyboard_event event { static_cast<uint32_t>(m_time), keySym, entriesCount ? entries[0].hardware_key_code : 0, true, modifiers};
     wpe_view_backend_dispatch_keyboard_event(m_viewBackend, &event);
     event.pressed = false;
     wpe_view_backend_dispatch_keyboard_event(m_viewBackend, &event);
+    free(entries);
 }
 
 void EventSenderProxy::addTouchPoint(int x, int y)

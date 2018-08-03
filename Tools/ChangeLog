@@ -1,5 +1,21 @@
 2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Use the new key mapper API from WPEBackend
+        https://bugs.webkit.org/show_bug.cgi?id=188216
+
+        Reviewed by Žan Doberšek.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::EventSenderProxy::keyDown): Use wpe_input_xkb_context_get_entries_for_key_code() to get the hardware key
+        code.
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend):
+        (WPEToolingBackends::WindowViewBackend::handleKeyEvent):
+        (WPEToolingBackends::WindowViewBackend::modifiers const):
+        * wpe/backends/WindowViewBackend.h:
+
+2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Implement MouseEvent.buttons
         https://bugs.webkit.org/show_bug.cgi?id=187998
 

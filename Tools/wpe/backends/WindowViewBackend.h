@@ -29,8 +29,6 @@
 #include "xdg-shell-unstable-v6-client-protocol.h"
 #include <glib.h>
 #include <unordered_map>
-#include <xkbcommon/xkbcommon.h>
-#include <xkbcommon/xkbcommon-compose.h>
 
 typedef void* EGLImageKHR;
 typedef void* EGLSurface;
@@ -72,6 +70,7 @@ private:
         struct {
             struct wl_keyboard* object { nullptr };
             struct wl_surface* target { nullptr };
+            uint32_t modifiers { 0 };
         } keyboard;
 
         struct {
@@ -79,20 +78,6 @@ private:
             struct wpe_input_touch_event_raw points[10];
             bool tracking { false };
         } touch;
-
-        struct {
-            struct xkb_context* context { nullptr };
-            struct xkb_keymap* keymap { nullptr };
-            struct xkb_state* state { nullptr };
-            struct {
-                xkb_mod_index_t control { 0 };
-                xkb_mod_index_t alt { 0 };
-                xkb_mod_index_t shift { 0 };
-            } indexes;
-            uint32_t modifiers { 0 };
-            struct xkb_compose_table* composeTable { nullptr };
-            struct xkb_compose_state* composeState { nullptr };
-        } xkb;
 
         struct {
             int32_t rate { 0 };
