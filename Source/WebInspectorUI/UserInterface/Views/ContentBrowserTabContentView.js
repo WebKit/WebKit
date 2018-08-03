@@ -242,7 +242,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
     treeElementForRepresentedObject(representedObject)
     {
-        // Can be overriden by subclasses.
+        // Can be overridden by subclasses.
 
         if (!this.navigationSidebarPanel)
             return null;

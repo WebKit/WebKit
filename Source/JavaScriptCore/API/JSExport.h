@@ -124,7 +124,7 @@
   - Any lowercase letter that had followed a colon will be capitalized.
 
  Under the default conversion a selector <code>doFoo:withBar:</code> will be exported as
- <code>doFooWithBar</code>. The default conversion may be overriden using the JSExportAs
+ <code>doFooWithBar</code>. The default conversion may be overridden using the JSExportAs
  macro, for example to export a method <code>doFoo:withBar:</code> as <code>doFoo</code>:
 
 <pre>

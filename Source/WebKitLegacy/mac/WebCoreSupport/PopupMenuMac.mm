@@ -115,7 +115,7 @@ void PopupMenuMac::populate()
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        // Allow the accessible text of the item to be overriden if necessary.
+        // Allow the accessible text of the item to be overridden if necessary.
         if (AXObjectCache::accessibilityEnabled()) {
             NSString *accessibilityOverride = m_client->itemAccessibilityText(i);
             if ([accessibilityOverride length])

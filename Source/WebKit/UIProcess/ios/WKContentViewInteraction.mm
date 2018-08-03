@@ -5257,9 +5257,9 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 {
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:previewForLiftingItem:session:)]) {
-        UITargetedDragPreview *overridenPreview = [uiDelegate _webView:_webView previewForLiftingItem:item session:session];
-        if (overridenPreview)
-            return overridenPreview;
+        UITargetedDragPreview *overriddenPreview = [uiDelegate _webView:_webView previewForLiftingItem:item session:session];
+        if (overriddenPreview)
+            return overriddenPreview;
     }
     return _dragDropInteractionState.previewForDragItem(item, self, self.unscaledView);
 }
@@ -5321,9 +5321,9 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 {
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:previewForCancellingItem:withDefault:)]) {
-        UITargetedDragPreview *overridenPreview = [uiDelegate _webView:_webView previewForCancellingItem:item withDefault:defaultPreview];
-        if (overridenPreview)
-            return overridenPreview;
+        UITargetedDragPreview *overriddenPreview = [uiDelegate _webView:_webView previewForCancellingItem:item withDefault:defaultPreview];
+        if (overriddenPreview)
+            return overriddenPreview;
     }
     return _dragDropInteractionState.previewForDragItem(item, self, self.unscaledView);
 }

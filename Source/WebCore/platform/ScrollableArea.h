@@ -344,7 +344,7 @@ private:
     friend class ScrollAnimator;
     void setScrollOffsetFromAnimation(const ScrollOffset&);
 
-    // This function should be overriden by subclasses to perform the actual
+    // This function should be overridden by subclasses to perform the actual
     // scroll of the content.
     virtual void setScrollOffset(const ScrollOffset&) = 0;
     ScrollSnapOffsetsInfo<LayoutUnit>& ensureSnapOffsetsInfo();

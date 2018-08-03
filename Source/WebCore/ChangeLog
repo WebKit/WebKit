@@ -1,3 +1,34 @@
+2018-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix spelling of "overridden"
+        https://bugs.webkit.org/show_bug.cgi?id=188315
+
+        Reviewed by Darin Adler.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityLabel]):
+        (-[WebAccessibilityObjectWrapper accessibilityValue]):
+        * contentextensions/ContentExtensionsBackend.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        * inspector/CommandLineAPIModuleSource.js:
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        * platform/mediasession/MediaSessionInterruptionProvider.h:
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::localCoordinateSpaceTransform const):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::SVGLengthContext):
+        (WebCore::SVGLengthContext::convertValueToUserUnits const):
+        (WebCore::SVGLengthContext::determineViewport const):
+        * svg/SVGLengthContext.h:
+
 2018-08-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Special case the document renderer when computing the height and margin

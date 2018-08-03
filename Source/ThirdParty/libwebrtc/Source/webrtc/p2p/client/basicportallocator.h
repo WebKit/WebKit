@@ -139,7 +139,7 @@ class BasicPortAllocatorSession : public PortAllocatorSession,
   // network (or a timeout occurs), we will start allocating ports.
   virtual void ConfigReady(PortConfiguration* config);
 
-  // MessageHandler.  Can be overriden if message IDs do not conflict.
+  // MessageHandler.  Can be overridden if message IDs do not conflict.
   void OnMessage(rtc::Message* message) override;
 
  private:

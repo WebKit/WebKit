@@ -308,7 +308,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
     shouldFilterPopulate()
     {
-        // Overriden by subclasses if needed.
+        // Overridden by subclasses if needed.
         return this.hasCustomFilters();
     }
 

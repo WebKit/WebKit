@@ -31,7 +31,7 @@
 
 (function (InjectedScriptHost, inspectedGlobalObject, injectedScriptId) {
 
-// FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden built-ins
+// FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overridden built-ins
 
 var Object = {}.constructor;
 

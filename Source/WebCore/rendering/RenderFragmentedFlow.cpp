@@ -311,7 +311,7 @@ LayoutPoint RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent(const R
             LayoutUnit topRelativeToFragment = top - fragmentLogicalTop;
             referencePoint.setY(startFragmentBox->offsetTop() + topRelativeToFragment);
             
-            // Since the top has been overriden, check if the
+            // Since the top has been overridden, check if the
             // relative/sticky positioning must be reconsidered.
             if (boxModelObject.isRelativelyPositioned())
                 referencePoint.move(0, boxModelObject.relativePositionOffset().height());

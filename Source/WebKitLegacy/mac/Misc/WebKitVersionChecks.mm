@@ -31,7 +31,7 @@
 #import <mach-o/dyld.h>
 
 static int WebKitLinkTimeVersion(void);
-static int overridenWebKitLinkTimeVersion;
+static int overriddenWebKitLinkTimeVersion;
 
 BOOL WebKitLinkedOnOrAfter(int version)
 {
@@ -51,13 +51,13 @@ BOOL WebKitLinkedOnOrAfter(int version)
 
 void setWebKitLinkTimeVersion(int version)
 {
-    overridenWebKitLinkTimeVersion = version;
+    overriddenWebKitLinkTimeVersion = version;
 }
 
 static int WebKitLinkTimeVersion(void)
 {
-    if (overridenWebKitLinkTimeVersion)
-        return overridenWebKitLinkTimeVersion;
+    if (overriddenWebKitLinkTimeVersion)
+        return overriddenWebKitLinkTimeVersion;
 
 #if !PLATFORM(IOS)
     return NSVersionOfLinkTimeLibrary("WebKit");

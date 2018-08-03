@@ -92,7 +92,7 @@ class ProgramImpl : angle::NonCopyable
 
     // Implementation-specific method for ignoring unreferenced uniforms. Some implementations may
     // perform more extensive analysis and ignore some locations that ANGLE doesn't detect as
-    // unreferenced. This method is not required to be overriden by a back-end.
+    // unreferenced. This method is not required to be overridden by a back-end.
     virtual void markUnusedUniformLocations(std::vector<gl::VariableLocation> *uniformLocations,
                                             std::vector<gl::SamplerBinding> *samplerBindings)
     {

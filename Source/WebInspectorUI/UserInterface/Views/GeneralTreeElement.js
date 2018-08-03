@@ -212,7 +212,7 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
 
     ondetach()
     {
-        // Overriden by subclasses.
+        // Overridden by subclasses.
     }
 
     onreveal()

@@ -1,3 +1,18 @@
+2018-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix spelling of "overridden"
+        https://bugs.webkit.org/show_bug.cgi?id=188315
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebKitVersionChecks.mm:
+        (setWebKitLinkTimeVersion):
+        (WebKitLinkTimeVersion):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView handleMouseMoved:]):
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::populate):
+
 2018-08-01  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Add ARIA IDL Attribute Reflection

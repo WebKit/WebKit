@@ -1318,7 +1318,7 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement& element, Node* 
     if (styleFromMatchedRules && !styleFromMatchedRules->isEmpty())
         m_mutableStyle = getPropertiesNotIn(*m_mutableStyle, *styleFromMatchedRules);
 
-    // 2. Remove style present in context and not overriden by matched rules.
+    // 2. Remove style present in context and not overridden by matched rules.
     RefPtr<EditingStyle> computedStyle = EditingStyle::create(context, EditingPropertiesInEffect);
     if (computedStyle->m_mutableStyle) {
         if (!computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor))
@@ -1328,7 +1328,7 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement& element, Node* 
         m_mutableStyle = getPropertiesNotIn(*m_mutableStyle, *computedStyle->m_mutableStyle);
     }
 
-    // 3. If this element is a span and has display: inline or float: none, remove them unless they are overriden by rules.
+    // 3. If this element is a span and has display: inline or float: none, remove them unless they are overridden by rules.
     // These rules are added by serialization code to wrap text nodes.
     if (isStyleSpanOrSpanWithOnlyStyleAttribute(element)) {
         if (!styleFromMatchedRules->getPropertyCSSValue(CSSPropertyDisplay) && identifierForStyleProperty(*m_mutableStyle, CSSPropertyDisplay) == CSSValueInline)

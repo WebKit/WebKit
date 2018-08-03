@@ -930,7 +930,7 @@ private:
     // Rectangle encompassing the scroll corner and resizer rect.
     LayoutRect scrollCornerAndResizerRect() const;
 
-    // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
+    // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(const ScrollPosition&);
     void updateCompositingLayersAfterScroll();
 

@@ -196,7 +196,7 @@ WI.TextEditor = class TextEditor extends WI.View
 
     canBeFormatted()
     {
-        // Can be overriden by subclasses.
+        // Can be overridden by subclasses.
         return this.hasFormatter();
     }
 

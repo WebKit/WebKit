@@ -66,7 +66,7 @@ struct WebPreferencesStore {
 
     typedef HashMap<String, Value> ValueMap;
     ValueMap m_values;
-    ValueMap m_overridenDefaults;
+    ValueMap m_overriddenDefaults;
 
     static ValueMap& defaults();
 };

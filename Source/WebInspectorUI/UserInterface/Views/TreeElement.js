@@ -586,7 +586,7 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     onpopulate()
     {
-        // Overriden by subclasses.
+        // Overridden by subclasses.
     }
 
     traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate, info)

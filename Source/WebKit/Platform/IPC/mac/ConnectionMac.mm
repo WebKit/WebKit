@@ -582,7 +582,7 @@ void Connection::receiveSourceEventHandler()
 #if !PLATFORM(IOS)
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
         if (m_isServer) {
-            // Server connections aren't supposed to have their exception ports overriden. Treat this as an invalid message.
+            // Server connections aren't supposed to have their exception ports overridden. Treat this as an invalid message.
             StringReference messageReceiverNameReference = decoder->messageReceiverName();
             String messageReceiverName(String(messageReceiverNameReference.data(), messageReceiverNameReference.size()));
             StringReference messageNameReference = decoder->messageName();

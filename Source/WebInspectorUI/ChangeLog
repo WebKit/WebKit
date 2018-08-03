@@ -1,3 +1,23 @@
+2018-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix spelling of "overridden"
+        https://bugs.webkit.org/show_bug.cgi?id=188315
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView.prototype.treeElementForRepresentedObject):
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WI.GeneralTreeElement.prototype.ondetach):
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype.get sizesToFit):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.shouldFilterPopulate):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.canBeFormatted):
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.onpopulate):
+
 2018-08-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: SourceCodeTextEditor thread indicator widget is too light

@@ -165,7 +165,7 @@ using namespace WebCore;
 
 - (void)handleMouseMoved:(NSEvent *)event
 {
-    // This needs to be overriden by subclasses.
+    // This needs to be overridden by subclasses.
 }
 
 - (void)handleMouseEntered:(NSEvent *)event

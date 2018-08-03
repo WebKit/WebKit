@@ -1,3 +1,13 @@
+2018-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix spelling of "overridden"
+        https://bugs.webkit.org/show_bug.cgi?id=188315
+
+        Reviewed by Darin Adler.
+
+        * API/JSExport.h:
+        * inspector/InjectedScriptSource.js:
+
 2018-08-02  Saam Barati  <sbarati@apple.com>
 
         Reading instructionPointer from PlatformRegisters may fail when using pointer profiling

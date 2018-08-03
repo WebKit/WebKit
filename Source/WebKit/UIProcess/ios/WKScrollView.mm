@@ -342,7 +342,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     UIEdgeInsets systemContentInset = [super _systemContentInset];
 
     // Internal clients who use setObscuredInsets include the keyboard height in their
-    // manually overriden insets, so we don't need to re-add it here.
+    // manually overridden insets, so we don't need to re-add it here.
     if (_internalDelegate._haveSetObscuredInsets)
         return systemContentInset;
 

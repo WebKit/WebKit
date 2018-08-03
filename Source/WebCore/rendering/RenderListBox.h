@@ -141,7 +141,7 @@ private:
     bool usesMockScrollAnimator() const override;
     void logMockScrollAnimatorMessage(const String&) const override;
 
-    // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
+    // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);
 
     using PaintFunction = WTF::Function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;

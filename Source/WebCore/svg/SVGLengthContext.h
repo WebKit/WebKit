@@ -83,7 +83,7 @@ private:
     ExceptionOr<float> convertValueFromEXSToUserUnits(float value) const;
 
     const SVGElement* m_context;
-    FloatRect m_overridenViewport;
+    FloatRect m_overriddenViewport;
 };
 
 } // namespace WebCore

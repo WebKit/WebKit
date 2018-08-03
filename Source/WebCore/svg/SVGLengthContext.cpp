@@ -42,7 +42,7 @@ SVGLengthContext::SVGLengthContext(const SVGElement* context)
 
 SVGLengthContext::SVGLengthContext(const SVGElement* context, const FloatRect& viewport)
     : m_context(context)
-    , m_overridenViewport(viewport)
+    , m_overriddenViewport(viewport)
 {
 }
 
@@ -113,7 +113,7 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode mode)
 ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLengthMode mode, SVGLengthType fromUnit) const
 {
     // If the SVGLengthContext carries a custom viewport, force resolving against it.
-    if (!m_overridenViewport.isEmpty()) {
+    if (!m_overriddenViewport.isEmpty()) {
         // 100% = 100.0 instead of 1.0 for historical reasons, this could eventually be changed
         if (fromUnit == LengthTypePercentage)
             value /= 100;
@@ -288,9 +288,9 @@ bool SVGLengthContext::determineViewport(FloatSize& viewportSize) const
     if (!m_context)
         return false;
 
-    // If an overriden viewport is given, it has precedence.
-    if (!m_overridenViewport.isEmpty()) {
-        viewportSize = m_overridenViewport.size();
+    // If an overridden viewport is given, it has precedence.
+    if (!m_overriddenViewport.isEmpty()) {
+        viewportSize = m_overriddenViewport.size();
         return true;
     }
 

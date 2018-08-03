@@ -78,7 +78,7 @@ public:
 
     IntPoint locationOfContents() const;
 
-    // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
+    // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     virtual void scrollTo(const ScrollPosition&);
 
     // The window thats hosts the ScrollView. The ScrollView will communicate scrolls and repaints to the

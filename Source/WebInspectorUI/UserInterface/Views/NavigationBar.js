@@ -171,7 +171,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
     get sizesToFit()
     {
-        // Can be overriden by subclasses.
+        // Can be overridden by subclasses.
         return false;
     }
 

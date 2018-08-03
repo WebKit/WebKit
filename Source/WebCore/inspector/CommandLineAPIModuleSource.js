@@ -30,7 +30,7 @@
 
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId, injectedScript, RemoteObject, CommandLineAPIHost) {
 
-// FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden built-ins
+// FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overridden built-ins
 
 function bind(func, thisObject, ...outerArgs)
 {

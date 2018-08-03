@@ -1121,7 +1121,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    // check if the label was overriden
+    // check if the label was overridden
     NSString *label = [super accessibilityLabel];
     if (label)
         return label;
@@ -1396,7 +1396,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
     
-    // check if the value was overriden
+    // check if the value was overridden
     NSString *value = [super accessibilityValue];
     if (value)
         return value;
