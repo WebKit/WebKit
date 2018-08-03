@@ -1,5 +1,20 @@
 2018-08-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [LayoutTests][websocket] Return correct value even when cookie is not set.
+        https://bugs.webkit.org/show_bug.cgi?id=188317
+
+        Reviewed by Darin Adler.
+
+        > ws://127.0.0.1:8880/websocket/tests/hybi/echo-cookie_wsh.py
+        This web socket script throw exception when cookie is not set. That is ended up with
+        immediate disconnection and causes timeout for failure tests which makes debugging hard.
+
+        * http/tests/websocket/tests/hybi/echo-cookie_wsh.py:
+        (web_socket_transfer_data):
+        * platform/wincairo/TestExpectations:
+
+2018-08-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [Curl] Test gardening
         https://bugs.webkit.org/show_bug.cgi?id=188316
 
