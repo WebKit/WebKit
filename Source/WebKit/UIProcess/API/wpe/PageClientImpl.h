@@ -28,6 +28,8 @@
 #include "PageClient.h"
 #include "WebFullScreenManagerProxy.h"
 
+struct wpe_view_backend;
+
 namespace WKWPE {
 class View;
 }
@@ -46,6 +48,8 @@ class PageClientImpl final : public PageClient
 public:
     PageClientImpl(WKWPE::View&);
     virtual ~PageClientImpl();
+
+    struct wpe_view_backend* viewBackend();
 
 private:
     // PageClient

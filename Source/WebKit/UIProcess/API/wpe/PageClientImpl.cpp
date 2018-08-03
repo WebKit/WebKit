@@ -46,6 +46,11 @@ PageClientImpl::PageClientImpl(WKWPE::View& view)
 
 PageClientImpl::~PageClientImpl() = default;
 
+struct wpe_view_backend* PageClientImpl::viewBackend()
+{
+    return m_view.backend();
+}
+
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
     return std::make_unique<AcceleratedDrawingAreaProxy>(m_view.page());

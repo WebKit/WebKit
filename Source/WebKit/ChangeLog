@@ -1,5 +1,40 @@
 2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] WebDriver: add support for action commands
+        https://bugs.webkit.org/show_bug.cgi?id=188301
+
+        Reviewed by Žan Doberšek.
+
+        WPE doesn't support action commands because the platform specific code for handling events is not implemented.
+
+        * SourcesWPE.txt: Add new file to compilation.
+        * UIProcess/API/glib/WebKitUIClient.cpp: Use the drawing area size as window size in WPE.
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewBackend): Return the WPE backend of the view.
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        (WebKit::WebAutomationSession::cancelInteractionSequence):
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp: Added.
+        (WebKit::modifiersToEventState):
+        (WebKit::mouseButtonToWPEButton):
+        (WebKit::stateModifierForWPEButton):
+        (WebKit::doMouseEvent):
+        (WebKit::doMotionEvent):
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        (WebKit::doKeyStrokeEvent):
+        (WebKit::keyCodeForVirtualKey):
+        (WebKit::modifiersForKeyCode):
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::viewBackend): Return the WPE backend.
+
+2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Implement MouseEvent.buttons
         https://bugs.webkit.org/show_bug.cgi?id=187998
 

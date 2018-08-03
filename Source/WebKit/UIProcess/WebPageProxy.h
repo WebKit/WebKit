@@ -205,6 +205,10 @@ struct AttachmentInfo;
 typedef GtkWidget* PlatformWidget;
 #endif
 
+#if PLATFORM(WPE)
+struct wpe_view_backend;
+#endif
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 #endif
@@ -710,6 +714,9 @@ public:
 
 #if PLATFORM(WIN)
     PlatformWidget viewWidget();
+#endif
+#if PLATFORM(WPE)
+    struct wpe_view_backend* viewBackend();
 #endif
 
     bool isProcessingMouseEvents() const;

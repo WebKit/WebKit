@@ -38,6 +38,11 @@ void WebPageProxy::platformInitialize()
     notImplemented();
 }
 
+struct wpe_view_backend* WebPageProxy::viewBackend()
+{
+    return static_cast<PageClientImpl&>(m_pageClient).viewBackend();
+}
+
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);

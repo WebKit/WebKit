@@ -172,6 +172,8 @@ UIProcess/API/wpe/WPEView.cpp @no-unify
 
 UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
+UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp
+
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 
 UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
