@@ -1,3 +1,11 @@
+2018-08-03  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; r234534 changed the policy for what audio session is set when a
+        media element is paused. Updating the test to reflect the new policy.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2018-08-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Now that the document renderer belongs to "complicated cases", adjust viewport stretching.
