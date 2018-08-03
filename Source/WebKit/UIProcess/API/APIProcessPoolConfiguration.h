@@ -51,7 +51,10 @@ public:
     void setShouldHaveLegacyDataStore(bool shouldHaveLegacyDataStore) { m_shouldHaveLegacyDataStore = shouldHaveLegacyDataStore; }
 
     unsigned maximumProcessCount() const { return m_maximumProcessCount; }
-    void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; } 
+    void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; }
+
+    unsigned maximumPrewarmedProcessCount() const { return m_maximumPrewarmedProcessCount; }
+    void setMaximumPrewarmedProcessCount(unsigned maximumPrewarmedProcessCount) { m_maximumPrewarmedProcessCount = maximumPrewarmedProcessCount; }
 
     bool diskCacheSpeculativeValidationEnabled() const { return m_diskCacheSpeculativeValidationEnabled; }
     void setDiskCacheSpeculativeValidationEnabled(bool enabled) { m_diskCacheSpeculativeValidationEnabled = enabled; }
@@ -161,6 +164,7 @@ private:
     bool m_shouldHaveLegacyDataStore { false };
 
     unsigned m_maximumProcessCount { 0 };
+    unsigned m_maximumPrewarmedProcessCount { 0 };
     bool m_diskCacheSpeculativeValidationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
     int64_t m_diskCacheSizeOverride { -1 };

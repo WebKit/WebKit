@@ -201,6 +201,11 @@ static WKProcessPool *sharedProcessPool;
     _processPool->setMaximumNumberOfProcesses(value);
 }
 
+- (void)_setMaximumNumberOfPrewarmedProcesses:(NSUInteger)value
+{
+    _processPool->setMaximumNumberOfPrewarmedProcesses(value);
+}
+
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
 {
     _processPool->setCanHandleHTTPSServerTrustEvaluation(value);

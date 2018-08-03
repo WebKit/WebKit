@@ -1,3 +1,37 @@
+2018-08-03  Ben Richards  <benton_richards@apple.com>
+
+        Add configuration for automatic process pre-warming
+        https://bugs.webkit.org/show_bug.cgi?id=187108
+
+        Reviewed by Ryosuke Niwa.
+
+        Added configurations to allow setting the maximum number of processes that should be automatically prewarmed.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetMaximumNumberOfPrewarmedProcesses):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setMaximumNumberOfPrewarmedProcesses:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setMaximumPrewarmedProcessCount:]):
+        (-[_WKProcessPoolConfiguration maximumPrewarmedProcessCount]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame): Moved call to notifyProcessPoolToPrewarm from didFirstVisuallyNonEmptyLayoutForFrame to here.
+        This is to try to ensure that frame loading and prewarming don't happen at the same time as this would be heavy for some devices.
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setMaximumNumberOfProcesses): Condition changed so that calling setMaximumNumberOfProcesses after warmInitialProcess
+        doesn't result in a crash.
+        (WebKit::WebProcessPool::setMaximumNumberOfPrewarmedProcesses):
+        (WebKit::WebProcessPool::warmInitialProcess):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        * UIProcess/WebProcessPool.h:
+
 2018-08-03  Alex Christensen  <achristensen@webkit.org>
 
         Check with SafeBrowsing during navigation in WKWebView

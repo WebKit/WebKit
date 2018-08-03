@@ -24,40 +24,37 @@
  */
 
 #import "config.h"
+
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import "TestNavigationDelegate.h"
-
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-static NSString *loadableURL = @"data:text/html,no%20error%20A";
-
-TEST(WKProcessPool, InitialWarmedProcessUsed)
+TEST(WKProcessPool, SetMaximumPrewarmedProcessCount)
 {
-    auto pool = adoptNS([[WKProcessPool alloc] init]);
-    [pool _setMaximumNumberOfPrewarmedProcesses:1];
-    [pool _warmInitialProcess];
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setMaximumPrewarmedProcessCount:2];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
-    EXPECT_EQ(static_cast<size_t>(1), [pool _prewarmedWebProcessCount]);
-    EXPECT_EQ(static_cast<size_t>(1), [pool _webPageContentProcessCount]);
+    EXPECT_EQ(0u, [processPool _prewarmedWebProcessCount]);
 
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().processPool = pool.get();
-    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    [processPool _warmInitialProcess];
 
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    EXPECT_EQ(1u, [processPool _prewarmedWebProcessCount]);
 
-    EXPECT_EQ(static_cast<size_t>(0), [pool _prewarmedWebProcessCount]);
-    EXPECT_EQ(static_cast<size_t>(1), [pool _webPageContentProcessCount]);
+    [processPool _warmInitialProcess];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
-    [webView _test_waitForDidFinishNavigation];
+    EXPECT_EQ(2u, [processPool _prewarmedWebProcessCount]);
 
-    EXPECT_EQ(static_cast<size_t>(1), [pool _prewarmedWebProcessCount]);
-    EXPECT_EQ(static_cast<size_t>(2), [pool _webPageContentProcessCount]);
+    [processPool _warmInitialProcess];
+
+    EXPECT_EQ(2u, [processPool _prewarmedWebProcessCount]);
+
+    // Test to make sure this doesn't cause a crash
+    [processPool _setMaximumNumberOfProcesses:1];
 }
 
 #endif

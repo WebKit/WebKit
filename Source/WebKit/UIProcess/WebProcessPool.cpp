@@ -403,10 +403,19 @@ void WebProcessPool::setLegacyCustomProtocolManagerClient(std::unique_ptr<API::C
 void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
 {
     // Guard against API misuse.
-    if (!m_processes.isEmpty())
+    if (m_processes.size() != m_prewarmedProcessCount)
         CRASH();
 
     m_configuration->setMaximumProcessCount(maximumNumberOfProcesses);
+}
+
+void WebProcessPool::setMaximumNumberOfPrewarmedProcesses(unsigned maximumNumberOfProcesses)
+{
+    // Guard against API misuse.
+    if (m_processes.size())
+        CRASH();
+
+    m_configuration->setMaximumPrewarmedProcessCount(maximumNumberOfProcesses);
 }
 
 IPC::Connection* WebProcessPool::networkingProcessConnection()
@@ -997,10 +1006,15 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 void WebProcessPool::warmInitialProcess()
 {
-    if (m_prewarmedProcessCount) {
+    unsigned maxPrewarmed = maximumNumberOfPrewarmedProcesses();
+    if (maxPrewarmed && m_prewarmedProcessCount >= maxPrewarmed) {
         ASSERT(!m_processes.isEmpty());
         return;
     }
+
+    // FIXME: This should be removed after Safari has been patched to use setMaximumNumberOfPrewarmedProcesses
+    if (!maxPrewarmed)
+        m_configuration->setMaximumPrewarmedProcessCount(1);
 
     if (m_processes.size() >= maximumNumberOfProcesses())
         return;
@@ -1313,12 +1327,14 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
 
 void WebProcessPool::didReachGoodTimeToPrewarm()
 {
-    if (!m_configuration->processSwapsOnNavigation())
+    unsigned maxPrewarmed = maximumNumberOfPrewarmedProcesses();
+    if (!maxPrewarmed)
         return;
+
     if (!m_websiteDataStore)
         m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-    static constexpr size_t maxPrewarmCount = 1;
-    while (m_prewarmedProcessCount < maxPrewarmCount)
+
+    while (m_prewarmedProcessCount < maxPrewarmed)
         createNewWebProcess(m_websiteDataStore->websiteDataStore(), WebProcessProxy::IsInPrewarmedPool::Yes);
 }
 

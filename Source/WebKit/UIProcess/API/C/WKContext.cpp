@@ -402,6 +402,11 @@ void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef contextRef, bo
     toImpl(contextRef)->setCanHandleHTTPSServerTrustEvaluation(value);
 }
 
+void WKContextSetMaximumNumberOfPrewarmedProcesses(WKContextRef contextRef, unsigned value)
+{
+    toImpl(contextRef)->setMaximumNumberOfPrewarmedProcesses(value);
+}
+
 void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, bool value)
 {
     toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
