@@ -76,6 +76,95 @@ class CheckOutSource(svn.SVN):
                                                 **kwargs)
 
 
+class CheckPatchRelevance(buildstep.BuildStep):
+    name = 'check-patch-relevance'
+    description = ['check-patch-relevance running']
+    descriptionDone = ['check-patch-relevance']
+    flunkOnFailure = True
+    haltOnFailure = True
+
+    bindings_paths = [
+        "Source/WebCore",
+        "Tools",
+    ]
+
+    jsc_paths = [
+        "JSTests/",
+        "Source/JavaScriptCore/",
+        "Source/WTF/",
+        "Source/bmalloc/",
+        "Makefile",
+        "Makefile.shared",
+        "Source/Makefile",
+        "Source/Makefile.shared",
+        "Tools/Scripts/build-webkit",
+        "Tools/Scripts/build-jsc",
+        "Tools/Scripts/jsc-stress-test-helpers/",
+        "Tools/Scripts/run-jsc",
+        "Tools/Scripts/run-jsc-benchmarks",
+        "Tools/Scripts/run-jsc-stress-tests",
+        "Tools/Scripts/run-javascriptcore-tests",
+        "Tools/Scripts/run-layout-jsc",
+        "Tools/Scripts/update-javascriptcore-test-results",
+        "Tools/Scripts/webkitdirs.pm",
+    ]
+
+    webkitpy_paths = [
+        "Tools/Scripts/webkitpy/",
+        "Tools/QueueStatusServer/",
+    ]
+
+    group_to_paths_mapping = {
+        'bindings': bindings_paths,
+        'jsc': jsc_paths,
+        'webkitpy': webkitpy_paths,
+    }
+
+    def _patch_is_relevant(self, patch, builderName):
+        group = [group for group in self.group_to_paths_mapping.keys() if group in builderName.lower()]
+        if not group:
+            # This builder doesn't have paths defined, all patches are relevant.
+            return True
+
+        relevant_paths = self.group_to_paths_mapping[group[0]]
+
+        for change in patch.splitlines():
+            for path in relevant_paths:
+                if re.search(path, change, re.IGNORECASE):
+                    return True
+        return False
+
+    def _get_patch(self):
+        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
+        if not sourcestamp or not sourcestamp.patch:
+            return None
+        return sourcestamp.patch[1]
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def start(self):
+        patch = self._get_patch()
+        if not patch:
+            # This build doesn't have a patch, it might be a force build.
+            self.finished(SUCCESS)
+            return None
+
+        if self._patch_is_relevant(patch, self.getProperty('buildername', '')):
+            self._addToLog('stdio', 'This patch contains relevant changes.')
+            self.finished(SUCCESS)
+            return None
+
+        self._addToLog('stdio', 'This patch does not have relevant changes.')
+        self.finished(FAILURE)
+        return None
+
+
 class UnApplyPatchIfRequired(CheckOutSource):
     name = 'unapply-patch'
 

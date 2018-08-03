@@ -45,6 +45,7 @@ class StyleFactory(Factory):
 class BindingsFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(CheckPatchRelevance())
         self.addStep(RunBindingsTests())
 
 
@@ -57,6 +58,7 @@ class WebKitPerlFactory(Factory):
 class WebKitPyFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(CheckPatchRelevance())
         self.addStep(RunWebKitPyTests())
 
 
@@ -86,6 +88,7 @@ class BuildFactory(Factory):
 class JSCTestsFactory(Factory):
     def __init__(self, platform, configuration='release', architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
+        self.addStep(CheckPatchRelevance())
         self.addStep(CompileJSCOnly())
         self.addStep(UnApplyPatchIfRequired())
         self.addStep(CompileJSCOnlyToT())

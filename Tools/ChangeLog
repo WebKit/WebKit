@@ -1,3 +1,18 @@
+2018-08-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to Check Patch Relevance
+        https://bugs.webkit.org/show_bug.cgi?id=188295
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): Added step to check patch relevance.
+        (CheckPatchRelevance._patch_is_relevant): Checks if the patch is relevant.
+        (CheckPatchRelevance._get_patch): Retrieves the patch from buildbot.
+        (CheckPatchRelevance._addToLog): Add the log message.
+        (CheckPatchRelevance.start):
+        * BuildSlaveSupport/ews-build/factories.py: Added CheckPatchRelevance step appropriately.
+
 2018-08-03  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; r234534 changed the policy for what audio session is set when a
