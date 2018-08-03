@@ -1,3 +1,13 @@
+2018-08-03  Ms2ger  <Ms2ger@igalia.com>
+
+        Fix invalid optional access in WebDriver Session::createTopLevelBrowsingContext.
+        https://bugs.webkit.org/show_bug.cgi?id=188304
+
+        Reviewed by Brian Burg.
+
+        * Session.cpp:
+        (WebDriver::Session::createTopLevelBrowsingContext): remove incorrect value() call.
+
 2018-07-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         String(View) should have a splitAllowingEmptyEntries function instead of a flag parameter

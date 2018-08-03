@@ -177,7 +177,7 @@ std::optional<String> Session::pageLoadStrategyString() const
 
 void Session::createTopLevelBrowsingContext(Function<void (CommandResult&&)>&& completionHandler)
 {
-    ASSERT(!m_toplevelBrowsingContext.value());
+    ASSERT(!m_toplevelBrowsingContext);
     m_host->sendCommandToBackend("createBrowsingContext"_s, nullptr, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (response.isError || !response.responseObject) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
