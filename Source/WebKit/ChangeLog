@@ -1,3 +1,19 @@
+2018-08-02  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r234486): assertion hit in ~CallbackAggregator()
+        https://bugs.webkit.org/show_bug.cgi?id=188283
+        <rdar://problem/42851342>
+
+        Reviewed by Alex Christensen.
+
+        [NSHTTPCookieStorage _saveCookies:] SPI may call its completion block on the background queue
+        so we need to make sure we dispatch back to the main thread before calling our completion
+        handler.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::saveCookies):
+        (WebKit::NetworkProcess::platformSyncAllCookies):
+
 2018-08-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix some builds after r234516

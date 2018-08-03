@@ -212,6 +212,19 @@ void NetworkProcess::syncAllCookies()
     });
 }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+static void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    [cookieStorage _saveCookies:BlockPtr<void()>::fromCallable([completionHandler = WTFMove(completionHandler)]() mutable {
+        // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
+    }).get()];
+}
+#endif
+
 void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completionHander) {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 #pragma clang diagnostic push
@@ -220,7 +233,7 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create(WTFMove(completionHander));
     WebCore::NetworkStorageSession::forEach([&] (auto& networkStorageSession) {
-        [networkStorageSession.nsCookieStorage() _saveCookies:[callbackAggregator] { }];
+        saveCookies(networkStorageSession.nsCookieStorage(), [callbackAggregator] { });
     });
 #else
     _CFHTTPCookieStorageFlushCookieStores();
