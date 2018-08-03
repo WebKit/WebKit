@@ -1,5 +1,17 @@
 2018-08-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188316
+
+        Unreviewed test gardening.
+
+        Skip some flaky tests.
+        Add comments why we skip for some platform dependent reason.
+
+        * platform/wincairo/TestExpectations:
+
+2018-08-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [LayoutTests][PHP] Fix old-style script which uses function name as a keyword.
         https://bugs.webkit.org/show_bug.cgi?id=188289
 

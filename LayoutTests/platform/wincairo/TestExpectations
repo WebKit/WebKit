@@ -883,7 +883,8 @@ http/tests/local/drag-over-remote-content.html [ Failure ]
 
 http/tests/media [ Skip ]
 
-http/tests/mime/mime-type-sniff.html [ Timeout ]
+# need to implement content sniffing
+http/tests/mime/mime-type-sniff.html [ Skip ]
 
 http/tests/misc [ Skip ]
 
@@ -900,9 +901,7 @@ http/tests/preload [ Skip ]
 http/tests/quicklook [ Skip ]
 http/tests/security [ Skip ]
 http/tests/ssl [ Skip ]
-
-http/tests/subresource-integrity/sri-fetch-worker.html [ Timeout ]
-
+http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
 http/tests/webauthn [ Skip ]
 http/tests/webgl [ Skip ]
@@ -916,7 +915,6 @@ http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php [ Pas
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 http/tests/websocket/tests/hybi/httponly-cookie.pl [ Timeout Failure ]
 http/tests/websocket/tests/hybi/inspector [ Skip ]
-http/tests/websocket/tests/hybi/network-process-crash-error.html [ Failure ]
 http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl [ Timeout Failure ]
 http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Timeout Failure ]
 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Pass Failure ]
@@ -924,6 +922,9 @@ http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.
 http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Failure ]
 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
+
+# There is not NetworkProcess in WK1, so it can't crash.
+http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
 
 http/tests/workers/service [ Skip ]
 http/tests/workers/worker-redirect.html [ Failure ]
