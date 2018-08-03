@@ -29,19 +29,18 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUTexture.h"
-#include "WebGPURenderingContext.h"
 #include "WebGPUTexture.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-Ref<WebGPURenderPassColorAttachmentDescriptor> WebGPURenderPassColorAttachmentDescriptor::create(WebGPURenderingContext& context, GPURenderPassColorAttachmentDescriptor&& descriptor)
+Ref<WebGPURenderPassColorAttachmentDescriptor> WebGPURenderPassColorAttachmentDescriptor::create(GPURenderPassColorAttachmentDescriptor&& descriptor)
 {
-    return adoptRef(*new WebGPURenderPassColorAttachmentDescriptor(context, WTFMove(descriptor)));
+    return adoptRef(*new WebGPURenderPassColorAttachmentDescriptor(WTFMove(descriptor)));
 }
 
-WebGPURenderPassColorAttachmentDescriptor::WebGPURenderPassColorAttachmentDescriptor(WebGPURenderingContext& context, GPURenderPassColorAttachmentDescriptor&& descriptor)
-    : WebGPURenderPassAttachmentDescriptor(context)
-    , m_descriptor(WTFMove(descriptor))
+WebGPURenderPassColorAttachmentDescriptor::WebGPURenderPassColorAttachmentDescriptor(GPURenderPassColorAttachmentDescriptor&& descriptor)
+    : m_descriptor { WTFMove(descriptor) }
 {
 }
 

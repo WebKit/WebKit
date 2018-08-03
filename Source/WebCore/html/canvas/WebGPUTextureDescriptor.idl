@@ -26,7 +26,8 @@
 [
     Constructor(unsigned long pixelFormat, unsigned long width, unsigned long height, boolean mipmapped),
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
 ] interface WebGPUTextureDescriptor {
 
     attribute unsigned long textureType;

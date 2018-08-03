@@ -30,7 +30,8 @@
 
 #include "DOMPromiseProxy.h"
 #include "GPUCommandBuffer.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -39,10 +40,10 @@ class WebGPUDrawable;
 class WebGPURenderCommandEncoder;
 class WebGPURenderPassDescriptor;
 
-class WebGPUCommandBuffer : public WebGPUObject {
+class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
 public:
-    virtual ~WebGPUCommandBuffer();
-    static Ref<WebGPUCommandBuffer> create(WebGPURenderingContext&, const GPUCommandQueue&);
+    ~WebGPUCommandBuffer();
+    static Ref<WebGPUCommandBuffer> create(const GPUCommandQueue&);
 
     void commit();
     void presentDrawable(WebGPUDrawable&);
@@ -55,7 +56,7 @@ public:
     const GPUCommandBuffer& buffer() const { return m_buffer; }
 
 private:
-    WebGPUCommandBuffer(WebGPURenderingContext&, const GPUCommandQueue&);
+    explicit WebGPUCommandBuffer(const GPUCommandQueue&);
 
     GPUCommandBuffer m_buffer;
     DOMPromiseProxy<IDLVoid> m_completed;

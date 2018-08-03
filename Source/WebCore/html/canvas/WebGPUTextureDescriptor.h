@@ -28,11 +28,12 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUTextureDescriptor.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGPUTextureDescriptor : public WebGPUObject {
+class WebGPUTextureDescriptor : public RefCounted<WebGPUTextureDescriptor> {
 public:
     static Ref<WebGPUTextureDescriptor> create(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped);
 

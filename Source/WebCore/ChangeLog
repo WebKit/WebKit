@@ -1,3 +1,273 @@
+2018-08-03  Sam Weinig  <sam@webkit.org>
+
+        Remove WebGPUObject
+        https://bugs.webkit.org/show_bug.cgi?id=188114
+
+        Reviewed by Darin Adler.
+
+        This removes the unecessary WebGPUObject base class and updates the classes
+        that were inheriting from it to instead inherit directly from RefCounted. This
+        shrinks the size of all the classes that were inheriting from it, as they no
+        longer store a RefPtr<WebGPURenderingContext> member, which is unused. Most
+        of the classes also shrink because they can be devirtualized.
+
+        This also updates most of the create functions and constructors for the classes
+        that were inheriting from WebGPUObject to no longer require the WebGPURenderingContext
+        to be passed in. 
+        - For WebGPUBuffer, WebGPUCommandQueue, WebGPUComputeCommandEncoder, WebGPUComputePipelineState, 
+        WebGPUDepthStencilState, WebGPUDrawable, WebGPUFunction, WebGPULibrary, WebGPURenderCommandEncoder, 
+        WebGPURenderPassDepthAttachmentDescriptor, WebGPURenderPipelineColorAttachmentDescriptor, 
+        WebGPURenderPipelineState, and WebGPUTexture the WebGPURenderingContext and any other additional 
+        parameters needed for initialization were replaced with the underlying type (e.g. WebGPUBuffer 
+        now gets passed a GPUBuffer).
+        - WebGPUCommandBuffer is passed a GPUCommandQueue, since it needs to construct the underlying
+        GPUCommandBuffer itself so it can pass in the completion handler.
+        - For WebGPUDepthStencilDescriptor, WebGPURenderPassAttachmentDescriptor, 
+        WebGPURenderPassColorAttachmentDescriptor, WebGPURenderPassDescriptor and WebGPURenderPipelineDescriptor
+        the create and constructor functions are empty.        
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove WebGPUObject.h/cpp
+
+        * html/canvas/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::WebGPUBuffer):
+        * html/canvas/WebGPUBuffer.h:
+        * html/canvas/WebGPUBuffer.idl:
+        Switch from inheriting from WebGPUObject to directly inheriting from 
+        RefCounted<WebGPUBuffer>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create 
+        and constructor to take a GPUBuffer directly, rather than the context.
+
+        * html/canvas/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::create):
+        (WebCore::WebGPUCommandBuffer::WebGPUCommandBuffer):
+        Update create and constructor to no longer require a context, as it would
+        now be unused, as it no longer inherits from WebGPUObject nor needs to hold
+        onto the context for any reason.
+
+        (WebCore::WebGPUCommandBuffer::createRenderCommandEncoderWithDescriptor):
+        Update to call the new WebGPURenderCommandEncoder::create, which no longer
+        requires a context.
+
+        (WebCore::WebGPUCommandBuffer::createComputeCommandEncoder):
+        Update to call the new WebGPUComputeCommandEncoder::create, which no longer
+        requires a context.
+
+        * html/canvas/WebGPUCommandBuffer.h:
+        * html/canvas/WebGPUCommandBuffer.idl:
+        Switch from inheriting from GPUObject to directly inheriting from 
+        RefCounted<WebGPUCommandBuffer>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create and constructor 
+        to no longer take a context, and just take a GPUCommandQueue. We can't directly
+        pass a GPUCommandBuffer as WebGPUCommandBuffer needs to pass in a completion handler
+        on construction of the underlying GPUCommandBuffer.
+        
+        * html/canvas/WebGPUCommandQueue.cpp:
+        (WebCore::WebGPUCommandQueue::WebGPUCommandQueue):
+        (WebCore::WebGPUCommandQueue::createCommandBuffer):
+        Update to call the new WebGPUCommandBuffer::create, which no longer
+        requires a context.
+    
+        * html/canvas/WebGPUCommandQueue.h:
+        * html/canvas/WebGPUCommandQueue.idl:
+        Switch from inheriting from GPUObject to directly inheriting from 
+        RefCounted<WebGPUCommandQueue>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPUCommandQueue directly.
+
+        * html/canvas/WebGPUComputeCommandEncoder.cpp:
+        (WebCore::WebGPUComputeCommandEncoder::create):
+        (WebCore::WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder):
+        * html/canvas/WebGPUComputeCommandEncoder.h:
+        * html/canvas/WebGPUComputeCommandEncoder.idl:
+        Switch from inheriting from GPUObject to directly inheriting from 
+        RefCounted<WebGPUComputeCommandEncoder>. Since this de-virtualizes it, 
+        also add ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPUComputeCommandEncoder directly
+
+        * html/canvas/WebGPUComputePipelineState.cpp:
+        (WebCore::WebGPUComputePipelineState::WebGPUComputePipelineState):
+        * html/canvas/WebGPUComputePipelineState.h:
+        * html/canvas/WebGPUComputePipelineState.idl:
+        Switch from inheriting from WebGPUObject to directly inheriting from 
+        RefCounted<WebGPUComputePipelineState>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPUComputePipelineState directly.
+
+        * html/canvas/WebGPUDepthStencilDescriptor.cpp:
+        Remove unneeded include of include "WebGPURenderingContext.h".
+
+        * html/canvas/WebGPUDepthStencilDescriptor.h:
+        * html/canvas/WebGPUDepthStencilDescriptor.idl:
+        Switch from inheriting from WebGPUObject to directly inheriting from 
+        RefCounted<WebGPUDepthStencilDescriptor>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file.
+
+        * html/canvas/WebGPUDepthStencilState.cpp:
+        (WebCore::WebGPUDepthStencilState::WebGPUDepthStencilState):
+        * html/canvas/WebGPUDepthStencilState.h:
+        * html/canvas/WebGPUDepthStencilState.idl:
+        Switch from inheriting from WebGPUObject to directly inheriting from 
+        RefCounted<WebGPUDepthStencilState>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPUDepthStencilState directly.
+
+        * html/canvas/WebGPUDrawable.cpp:
+        (WebCore::WebGPUDrawable::WebGPUDrawable):
+        * html/canvas/WebGPUDrawable.h:
+        * html/canvas/WebGPUDrawable.idl:
+        Switch from inheriting from WebGPUObject to directly inheriting from 
+        RefCounted<WebGPUDrawable>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPUDrawable directly.
+
+        * html/canvas/WebGPUFunction.cpp:
+        (WebCore::WebGPUFunction::create):
+        (WebCore::WebGPUFunction::WebGPUFunction):
+        * html/canvas/WebGPUFunction.h:
+        * html/canvas/WebGPUFunction.idl:
+        Switch from inheriting from GPUObject to directly inheriting from 
+        RefCounted<WebGPUFunction>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPUFunction directly.
+
+        * html/canvas/WebGPULibrary.cpp:
+        (WebCore::WebGPULibrary::WebGPULibrary):
+        (WebCore::WebGPULibrary::functionWithName const):
+        Update for new WebGPUFunction::create, which no longer requires a
+        context.
+
+        * html/canvas/WebGPULibrary.h:
+        * html/canvas/WebGPULibrary.idl:
+        Switch from inheriting from WebGPUObject to directly inheriting from 
+        RefCounted<WebGPULibrary>. Since this de-virtualizes it, also add 
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPULibrary directly, rather than the context.
+        Unlike the other create functions that take their underlying type, this
+        one also continues to need the sourceCode String to be passed, as that
+        is not available from the underlying GPULibrary and must be stored
+        seperately.
+
+        * html/canvas/WebGPUObject.cpp: Removed.
+        * html/canvas/WebGPUObject.h: Removed.
+        Deleted.
+
+        * html/canvas/WebGPURenderCommandEncoder.cpp:
+        (WebCore::WebGPURenderCommandEncoder::create):
+        (WebCore::WebGPURenderCommandEncoder::WebGPURenderCommandEncoder):
+        * html/canvas/WebGPURenderCommandEncoder.h:
+        * html/canvas/WebGPURenderCommandEncoder.idl:
+        Switch from inheriting from GPUObject to directly inheriting from
+        RefCounted<WebGPURenderCommandEncoder>. Since this de-virtualizes it, also add
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPURenderCommandEncoder directly.
+
+        * html/canvas/WebGPURenderPassAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPassAttachmentDescriptor::WebGPURenderPassAttachmentDescriptor):
+        * html/canvas/WebGPURenderPassAttachmentDescriptor.h:
+        Switch from inheriting from GPUObject to directly inheriting from 
+        RefCounted<WebGPURenderPassAttachmentDescriptor>. Also update create and 
+        constructor to no longer take a context, as it is now not used. This remains virtual
+        as it is inherited from by WebGPURenderPassColorAttachmentDescriptor and WebGPURenderPassDepthAttachmentDescriptor.
+
+        * html/canvas/WebGPURenderPassColorAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPassColorAttachmentDescriptor::create):
+        (WebCore::WebGPURenderPassColorAttachmentDescriptor::WebGPURenderPassColorAttachmentDescriptor):
+        * html/canvas/WebGPURenderPassColorAttachmentDescriptor.h:
+        Update create and constructor to no longer take a context, as it is now not used. Declare final
+        as this is not inherited by anything.
+
+        * html/canvas/WebGPURenderPassDepthAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPassDepthAttachmentDescriptor::create):
+        (WebCore::WebGPURenderPassDepthAttachmentDescriptor::WebGPURenderPassDepthAttachmentDescriptor):
+        * html/canvas/WebGPURenderPassDepthAttachmentDescriptor.h:
+        Update create and constructor to no longer take a context, as it is now not used. Declare final
+        as this is not inherited by anything.
+
+        * html/canvas/WebGPURenderPassDescriptor.cpp:
+        (WebCore::WebGPURenderPassDescriptor::depthAttachment):
+        Update for new WebGPURenderPassDepthAttachmentDescriptor::create function which no longer requires
+        a context. 
+        
+        Semi-interesting note: This function was previously calling "*context()" to pass a WebGPURenderingContext&
+        to WebGPURenderPassDepthAttachmentDescriptor::create. However, "context()" was always returning null, as
+        the constructor of WebGPURenderPassDescriptor was not initializing the WebGPUObject with a WebGPURenderingContext.
+        Now, one might think that this would cause a null-deref, but, because it was being assigned into a 
+        WebGPURenderingContext&, no dereference happens right away (it essentially just passes a pointer) and since
+        the function it is being passed to does not use it, it never actually gets dereferenced.
+
+        (WebCore::WebGPURenderPassDescriptor::colorAttachments):
+        Update for new WebGPURenderPassColorAttachmentDescriptor::create function which no longer requires
+        a context. 
+
+        * html/canvas/WebGPURenderPassDescriptor.h:
+        * html/canvas/WebGPURenderPassDescriptor.idl:
+        Switch from inheriting from GPUObject to directly inheriting from
+        RefCounted<WebGPURenderPassDescriptor>. Since this de-virtualizes it, also add
+        ImplementationLacksVTable to the IDL file.
+
+        * html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.cpp:
+        (WebCore::WebGPURenderPipelineColorAttachmentDescriptor::create):
+        (WebCore::WebGPURenderPipelineColorAttachmentDescriptor::WebGPURenderPipelineColorAttachmentDescriptor):
+        * html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.h:
+        * html/canvas/WebGPURenderPipelineColorAttachmentDescriptor.idl:
+        Switch from inheriting from GPUObject to directly inheriting from
+        RefCounted<WebGPURenderPipelineColorAttachmentDescriptor>. Since this de-virtualizes it, also add
+        ImplementationLacksVTable to the IDL file. Also update create and constructor to
+        no longer take a context, as it is now not used.
+
+        * html/canvas/WebGPURenderPipelineDescriptor.cpp:
+        (WebCore::WebGPURenderPipelineDescriptor::colorAttachments):
+        Update for new WebGPURenderPipelineColorAttachmentDescriptor::create which no longer requires
+        a context.
+
+        * html/canvas/WebGPURenderPipelineDescriptor.h:
+        * html/canvas/WebGPURenderPipelineDescriptor.idl:
+        Switch from inheriting from GPUObject to directly inheriting from
+        RefCounted<WebGPURenderPipelineDescriptor>. Since this de-virtualizes it, also add
+        ImplementationLacksVTable to the IDL file.
+
+        * html/canvas/WebGPURenderPipelineState.cpp:
+        (WebCore::WebGPURenderPipelineState::WebGPURenderPipelineState):
+        * html/canvas/WebGPURenderPipelineState.h:
+        * html/canvas/WebGPURenderPipelineState.idl:
+        Switch from inheriting from GPUObject to directly inheriting from
+        RefCounted<WebGPURenderPipelineState>. Since this de-virtualizes it, also add
+        ImplementationLacksVTable to the IDL file. Also update create and
+        constructor to take a GPURenderPipelineState directly.
+
+        * html/canvas/WebGPURenderingContext.cpp:
+        (WebCore::WebGPURenderingContext::createLibrary):
+        (WebCore::WebGPURenderingContext::createRenderPipelineState):
+        (WebCore::WebGPURenderingContext::createDepthStencilState):
+        (WebCore::WebGPURenderingContext::createComputePipelineState):
+        (WebCore::WebGPURenderingContext::createCommandQueue):
+        (WebCore::WebGPURenderingContext::nextDrawable):
+        (WebCore::WebGPURenderingContext::createBuffer):
+        (WebCore::WebGPURenderingContext::createTexture):
+        Update for new create functions which require the caller to pass
+        the underlying type.
+
+        * html/canvas/WebGPUTexture.cpp:
+        (WebCore::WebGPUTexture::createFromDrawableTexture):
+        Renamed to create.
+
+        (WebCore::WebGPUTexture::create): Deleted
+        All callers now pass a GPUTexture directly.
+
+        * html/canvas/WebGPUTexture.h:
+        * html/canvas/WebGPUTexture.idl:
+        Switch from inheriting from GPUObject to directly inheriting from
+        RefCounted<WebGPUTexture>. Since this de-virtualizes it, also add
+        ImplementationLacksVTable to the IDL file. 
+
+        * html/canvas/WebGPUTextureDescriptor.h:
+        * html/canvas/WebGPUTextureDescriptor.idl:
+        Switch from inheriting from GPUObject to directly inheriting from
+        RefCounted<WebGPUTextureDescriptor>. Since this de-virtualizes it, also add
+        ImplementationLacksVTable to the IDL file.
+
 2018-08-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix spelling of "overridden"

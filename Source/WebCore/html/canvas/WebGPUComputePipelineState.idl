@@ -25,6 +25,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
 ] interface WebGPUComputePipelineState {
 };

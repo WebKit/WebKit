@@ -34,7 +34,6 @@
 #include "WebGPUBuffer.h"
 #include "WebGPUCommandBuffer.h"
 #include "WebGPUComputePipelineState.h"
-#include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
@@ -43,14 +42,13 @@ static inline GPUSize GPUSizeMake(WebGPUSize size)
     return { size.width, size.height, size.depth };
 }
 
-Ref<WebGPUComputeCommandEncoder> WebGPUComputeCommandEncoder::create(WebGPURenderingContext& context, const GPUCommandBuffer& buffer)
+Ref<WebGPUComputeCommandEncoder> WebGPUComputeCommandEncoder::create(GPUComputeCommandEncoder&& encoder)
 {
-    return adoptRef(*new WebGPUComputeCommandEncoder(context, buffer));
+    return adoptRef(*new WebGPUComputeCommandEncoder(WTFMove(encoder)));
 }
     
-WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder(WebGPURenderingContext& context, const GPUCommandBuffer& buffer)
-    : WebGPUObject { &context }
-    , m_encoder { buffer }
+WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder(GPUComputeCommandEncoder&& encoder)
+    : m_encoder { WTFMove(encoder) }
 {
 }
 

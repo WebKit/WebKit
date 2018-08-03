@@ -40,7 +40,8 @@
 [
     Constructor,
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
 ] interface WebGPUDepthStencilDescriptor {
 
     attribute WebGPUCompareFunction depthCompareFunction;

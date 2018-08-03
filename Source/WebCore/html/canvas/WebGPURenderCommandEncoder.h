@@ -28,18 +28,19 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderCommandEncoder.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class WebGPUBuffer;
 class WebGPUDepthStencilState;
 class WebGPURenderPipelineState;
-class WebGPUBuffer;
 
-class WebGPURenderCommandEncoder : public WebGPUObject {
+class WebGPURenderCommandEncoder : public RefCounted<WebGPURenderCommandEncoder> {
 public:
-    virtual ~WebGPURenderCommandEncoder();
-    static Ref<WebGPURenderCommandEncoder> create(WebGPURenderingContext&, const GPUCommandBuffer&, const GPURenderPassDescriptor&);
+    ~WebGPURenderCommandEncoder();
+    static Ref<WebGPURenderCommandEncoder> create(GPURenderCommandEncoder&&);
 
     void setRenderPipelineState(WebGPURenderPipelineState&);
     void setDepthStencilState(WebGPUDepthStencilState&);
@@ -51,7 +52,7 @@ public:
     GPURenderCommandEncoder& encoder() { return m_encoder; }
 
 private:
-    WebGPURenderCommandEncoder(WebGPURenderingContext&, const GPUCommandBuffer&, const GPURenderPassDescriptor&);
+    explicit WebGPURenderCommandEncoder(GPURenderCommandEncoder&&);
 
     GPURenderCommandEncoder m_encoder;
 };

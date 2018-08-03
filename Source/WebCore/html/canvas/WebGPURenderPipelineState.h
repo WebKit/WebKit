@@ -28,13 +28,14 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPipelineState.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGPURenderPipelineState : public WebGPUObject {
+class WebGPURenderPipelineState : public RefCounted<WebGPURenderPipelineState> {
 public:
-    static Ref<WebGPURenderPipelineState> create(WebGPURenderingContext&, const GPURenderPipelineDescriptor&);
+    static Ref<WebGPURenderPipelineState> create(GPURenderPipelineState&&);
 
     String label() const;
     void setLabel(const String&);
@@ -42,7 +43,7 @@ public:
     const GPURenderPipelineState& state() const { return m_state; }
 
 private:
-    WebGPURenderPipelineState(WebGPURenderingContext&, const GPURenderPipelineDescriptor&);
+    explicit WebGPURenderPipelineState(GPURenderPipelineState&&);
 
     GPURenderPipelineState m_state;
 };

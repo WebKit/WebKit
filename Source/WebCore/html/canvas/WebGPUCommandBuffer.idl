@@ -26,12 +26,12 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
 ] interface WebGPUCommandBuffer {
     WebGPURenderCommandEncoder createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor descriptor);
     WebGPUComputeCommandEncoder createComputeCommandEncoder();
     void commit();
     void presentDrawable(WebGPUDrawable drawable);
     readonly attribute Promise<void> completed;
-
 };

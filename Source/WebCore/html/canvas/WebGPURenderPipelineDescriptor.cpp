@@ -32,7 +32,6 @@
 #include "GPURenderPipelineColorAttachmentDescriptor.h"
 #include "WebGPUFunction.h"
 #include "WebGPURenderPipelineColorAttachmentDescriptor.h"
-#include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
@@ -83,7 +82,7 @@ const Vector<RefPtr<WebGPURenderPipelineColorAttachmentDescriptor>>& WebGPURende
         auto attachments = m_descriptor.colorAttachments();
         m_colorAttachments.reserveInitialCapacity(attachments.size());
         for (auto& attachment : attachments)
-            m_colorAttachments.uncheckedAppend(WebGPURenderPipelineColorAttachmentDescriptor::create(*context(), WTFMove(attachment)));
+            m_colorAttachments.uncheckedAppend(WebGPURenderPipelineColorAttachmentDescriptor::create(WTFMove(attachment)));
     }
     return m_colorAttachments;
 }

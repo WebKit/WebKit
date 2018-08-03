@@ -29,18 +29,16 @@
 #if ENABLE(WEBGPU)
 
 #include "WebGPUCommandBuffer.h"
-#include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPUCommandQueue> WebGPUCommandQueue::create(WebGPURenderingContext& context)
+Ref<WebGPUCommandQueue> WebGPUCommandQueue::create(GPUCommandQueue&& queue)
 {
-    return adoptRef(*new WebGPUCommandQueue(context));
+    return adoptRef(*new WebGPUCommandQueue(WTFMove(queue)));
 }
 
-WebGPUCommandQueue::WebGPUCommandQueue(WebGPURenderingContext& context)
-    : WebGPUObject { &context }
-    , m_queue { context.device() }
+WebGPUCommandQueue::WebGPUCommandQueue(GPUCommandQueue&& queue)
+    : m_queue { WTFMove(queue) }
 {
 }
 
@@ -48,7 +46,7 @@ WebGPUCommandQueue::~WebGPUCommandQueue() = default;
 
 Ref<WebGPUCommandBuffer> WebGPUCommandQueue::createCommandBuffer()
 {
-    return WebGPUCommandBuffer::create(*context(), m_queue);
+    return WebGPUCommandBuffer::create(m_queue);
 }
 
 } // namespace WebCore

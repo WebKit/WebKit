@@ -36,18 +36,16 @@
 #include "WebGPUDrawable.h"
 #include "WebGPURenderCommandEncoder.h"
 #include "WebGPURenderPassDescriptor.h"
-#include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPUCommandBuffer> WebGPUCommandBuffer::create(WebGPURenderingContext& context, const GPUCommandQueue& queue)
+Ref<WebGPUCommandBuffer> WebGPUCommandBuffer::create(const GPUCommandQueue& queue)
 {
-    return adoptRef(*new WebGPUCommandBuffer(context, queue));
+    return adoptRef(*new WebGPUCommandBuffer(queue));
 }
 
-WebGPUCommandBuffer::WebGPUCommandBuffer(WebGPURenderingContext& context, const GPUCommandQueue& queue)
-    : WebGPUObject { &context }
-    , m_buffer { queue, [this] () { m_completed.resolve(); } }
+WebGPUCommandBuffer::WebGPUCommandBuffer(const GPUCommandQueue& queue)
+    : m_buffer { queue, [this] () { m_completed.resolve(); } }
 {
     LOG(WebGPU, "WebGPUCommandBuffer::WebGPUCommandBuffer()");
 }
@@ -71,12 +69,12 @@ void WebGPUCommandBuffer::presentDrawable(WebGPUDrawable& drawable)
 
 Ref<WebGPURenderCommandEncoder> WebGPUCommandBuffer::createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor& descriptor)
 {
-    return WebGPURenderCommandEncoder::create(*context(), m_buffer, descriptor.descriptor());
+    return WebGPURenderCommandEncoder::create(GPURenderCommandEncoder { m_buffer, descriptor.descriptor() });
 }
 
 Ref<WebGPUComputeCommandEncoder> WebGPUCommandBuffer::createComputeCommandEncoder()
 {
-    return WebGPUComputeCommandEncoder::create(*context(), m_buffer);
+    return WebGPUComputeCommandEncoder::create(GPUComputeCommandEncoder { m_buffer });
 }
 
 DOMPromiseProxy<IDLVoid>& WebGPUCommandBuffer::completed()

@@ -28,8 +28,9 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPipelineDescriptor.h"
-#include "WebGPUObject.h"
 #include "WebGPURenderPipelineColorAttachmentDescriptor.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,9 +40,9 @@ class GPURenderPipelineDescriptor;
 class WebGPUFunction;
 class WebGPURenderPipelineColorAttachmentDescriptor;
 
-class WebGPURenderPipelineDescriptor : public WebGPUObject {
+class WebGPURenderPipelineDescriptor : public RefCounted<WebGPURenderPipelineDescriptor> {
 public:
-    virtual ~WebGPURenderPipelineDescriptor();
+    ~WebGPURenderPipelineDescriptor();
     static Ref<WebGPURenderPipelineDescriptor> create();
 
     WebGPUFunction* vertexFunction() const;

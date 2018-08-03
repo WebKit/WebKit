@@ -29,19 +29,17 @@
 #if ENABLE(WEBGPU)
 
 #include "WebGPUFunction.h"
-#include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPULibrary> WebGPULibrary::create(WebGPURenderingContext& context, const String& sourceCode)
+Ref<WebGPULibrary> WebGPULibrary::create(GPULibrary&& library, const String& sourceCode)
 {
-    return adoptRef(*new WebGPULibrary(context, sourceCode));
+    return adoptRef(*new WebGPULibrary(WTFMove(library), sourceCode));
 }
 
-WebGPULibrary::WebGPULibrary(WebGPURenderingContext& context, const String& sourceCode)
-    : WebGPUObject { &context }
-    , m_sourceCode { sourceCode }
-    , m_library { context.device(), sourceCode }
+WebGPULibrary::WebGPULibrary(GPULibrary&& library, const String& sourceCode)
+    : m_sourceCode { sourceCode }
+    , m_library { WTFMove(library) }
 {
 }
 
@@ -55,7 +53,7 @@ RefPtr<WebGPUFunction> WebGPULibrary::functionWithName(const String& name) const
     GPUFunction function { m_library, name };
     if (!function)
         return nullptr;
-    return WebGPUFunction::create(*context(), WTFMove(function));
+    return WebGPUFunction::create(WTFMove(function));
 }
 
 } // namespace WebCore

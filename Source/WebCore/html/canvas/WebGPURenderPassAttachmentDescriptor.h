@@ -27,14 +27,15 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class GPURenderPassAttachmentDescriptor;
 class WebGPUTexture;
 
-class WebGPURenderPassAttachmentDescriptor : public WebGPUObject {
+class WebGPURenderPassAttachmentDescriptor : public RefCounted<WebGPURenderPassAttachmentDescriptor> {
 public:
     virtual ~WebGPURenderPassAttachmentDescriptor();
 
@@ -50,7 +51,7 @@ public:
     virtual bool isColorAttachmentDescriptor() const = 0;
 
 protected:
-    explicit WebGPURenderPassAttachmentDescriptor(WebGPURenderingContext&);
+    WebGPURenderPassAttachmentDescriptor();
 
 private:
     virtual const GPURenderPassAttachmentDescriptor& descriptor() const = 0;

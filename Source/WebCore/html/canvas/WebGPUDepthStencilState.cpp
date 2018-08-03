@@ -29,18 +29,17 @@
 #if ENABLE(WEBGPU)
 
 #include "WebGPUDepthStencilDescriptor.h"
-#include "WebGPURenderingContext.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Ref<WebGPUDepthStencilState> WebGPUDepthStencilState::create(WebGPURenderingContext& context, const GPUDepthStencilDescriptor& descriptor)
+Ref<WebGPUDepthStencilState> WebGPUDepthStencilState::create(GPUDepthStencilState&& state)
 {
-    return adoptRef(*new WebGPUDepthStencilState(context, descriptor));
+    return adoptRef(*new WebGPUDepthStencilState(WTFMove(state)));
 }
 
-WebGPUDepthStencilState::WebGPUDepthStencilState(WebGPURenderingContext& context, const GPUDepthStencilDescriptor& descriptor)
-    : WebGPUObject { &context }
-    , m_state { context.device(), descriptor }
+WebGPUDepthStencilState::WebGPUDepthStencilState(GPUDepthStencilState&& state)
+    : m_state { WTFMove(state) }
 {
 }
 

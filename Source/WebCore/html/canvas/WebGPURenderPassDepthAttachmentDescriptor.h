@@ -35,13 +35,13 @@ namespace WebCore {
 class WebGPURenderPassDepthAttachmentDescriptor final : public WebGPURenderPassAttachmentDescriptor {
 public:
     virtual ~WebGPURenderPassDepthAttachmentDescriptor();
-    static Ref<WebGPURenderPassDepthAttachmentDescriptor> create(WebGPURenderingContext&, GPURenderPassDepthAttachmentDescriptor&&);
+    static Ref<WebGPURenderPassDepthAttachmentDescriptor> create(GPURenderPassDepthAttachmentDescriptor&&);
 
     double clearDepth() const;
     void setClearDepth(double);
 
 private:
-    WebGPURenderPassDepthAttachmentDescriptor(WebGPURenderingContext&, GPURenderPassDepthAttachmentDescriptor&&);
+    explicit WebGPURenderPassDepthAttachmentDescriptor(GPURenderPassDepthAttachmentDescriptor&&);
 
     const GPURenderPassAttachmentDescriptor& descriptor() const final;
     bool isColorAttachmentDescriptor() const final { return false; }

@@ -28,16 +28,16 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUTexture.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class GPUTextureDescriptor;
 
-class WebGPUTexture : public WebGPUObject {
+class WebGPUTexture : public RefCounted<WebGPUTexture> {
 public:
-    static Ref<WebGPUTexture> createFromDrawableTexture(WebGPURenderingContext&, GPUTexture&&);
-    static Ref<WebGPUTexture> create(WebGPURenderingContext&, const GPUTextureDescriptor&);
+    static Ref<WebGPUTexture> create(GPUTexture&&);
 
     unsigned width() const { return m_texture.width(); }
     unsigned height() const { return m_texture.height(); }
@@ -45,8 +45,7 @@ public:
     const GPUTexture& texture() const { return m_texture; }
 
 private:
-    WebGPUTexture(WebGPURenderingContext&, GPUTexture&&);
-    WebGPUTexture(WebGPURenderingContext&, const GPUTextureDescriptor&);
+    explicit WebGPUTexture(GPUTexture&&);
 
     GPUTexture m_texture;
 };

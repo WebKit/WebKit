@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_PROTOCOL(MTLDepthStencilState);

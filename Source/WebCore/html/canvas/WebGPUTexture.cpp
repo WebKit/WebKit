@@ -28,29 +28,15 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPURenderingContext.h"
-
 namespace WebCore {
 
-Ref<WebGPUTexture> WebGPUTexture::createFromDrawableTexture(WebGPURenderingContext& context, GPUTexture&& texture)
+Ref<WebGPUTexture> WebGPUTexture::create(GPUTexture&& texture)
 {
-    return adoptRef(*new WebGPUTexture(context, WTFMove(texture)));
+    return adoptRef(*new WebGPUTexture(WTFMove(texture)));
 }
 
-Ref<WebGPUTexture> WebGPUTexture::create(WebGPURenderingContext& context, const GPUTextureDescriptor& descriptor)
-{
-    return adoptRef(*new WebGPUTexture(context, descriptor));
-}
-
-WebGPUTexture::WebGPUTexture(WebGPURenderingContext& context, GPUTexture&& texture)
-    : WebGPUObject { &context }
-    , m_texture { WTFMove(texture) }
-{
-}
-
-WebGPUTexture::WebGPUTexture(WebGPURenderingContext& context, const GPUTextureDescriptor& descriptor)
-    : WebGPUObject { &context }
-    , m_texture { context.device(), descriptor }
+WebGPUTexture::WebGPUTexture(GPUTexture&& texture)
+    : m_texture { WTFMove(texture) }
 {
 }
 

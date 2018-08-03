@@ -6940,8 +6940,6 @@
 		31A088DE1E737B4D003B6609 /* WebGPULibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPULibrary.cpp; sourceTree = "<group>"; };
 		31A088DF1E737B4D003B6609 /* WebGPULibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPULibrary.h; sourceTree = "<group>"; };
 		31A088E01E737B4D003B6609 /* WebGPULibrary.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPULibrary.idl; sourceTree = "<group>"; };
-		31A088E11E737B4D003B6609 /* WebGPUObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUObject.cpp; sourceTree = "<group>"; };
-		31A088E21E737B4D003B6609 /* WebGPUObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUObject.h; sourceTree = "<group>"; };
 		31A088E31E737B4D003B6609 /* WebGPURenderCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderCommandEncoder.cpp; sourceTree = "<group>"; };
 		31A088E41E737B4D003B6609 /* WebGPURenderCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderCommandEncoder.h; sourceTree = "<group>"; };
 		31A088E51E737B4D003B6609 /* WebGPURenderCommandEncoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderCommandEncoder.idl; sourceTree = "<group>"; };
@@ -17470,8 +17468,6 @@
 				31A088DE1E737B4D003B6609 /* WebGPULibrary.cpp */,
 				31A088DF1E737B4D003B6609 /* WebGPULibrary.h */,
 				31A088E01E737B4D003B6609 /* WebGPULibrary.idl */,
-				31A088E11E737B4D003B6609 /* WebGPUObject.cpp */,
-				31A088E21E737B4D003B6609 /* WebGPUObject.h */,
 				31A088E31E737B4D003B6609 /* WebGPURenderCommandEncoder.cpp */,
 				31A088E41E737B4D003B6609 /* WebGPURenderCommandEncoder.h */,
 				31A088E51E737B4D003B6609 /* WebGPURenderCommandEncoder.idl */,

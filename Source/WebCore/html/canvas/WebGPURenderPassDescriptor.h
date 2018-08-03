@@ -28,16 +28,17 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPassDescriptor.h"
-#include "WebGPUObject.h"
 #include "WebGPURenderPassColorAttachmentDescriptor.h"
 #include "WebGPURenderPassDepthAttachmentDescriptor.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class WebGPURenderPassDescriptor : public WebGPUObject {
+class WebGPURenderPassDescriptor : public RefCounted<WebGPURenderPassDescriptor> {
 public:
-    virtual ~WebGPURenderPassDescriptor();
+    ~WebGPURenderPassDescriptor();
     static Ref<WebGPURenderPassDescriptor> create();
 
     WebGPURenderPassDepthAttachmentDescriptor& depthAttachment();

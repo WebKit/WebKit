@@ -28,8 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPURenderingContext.h"
-
 namespace WebCore {
 
 Ref<WebGPUDepthStencilDescriptor> WebGPUDepthStencilDescriptor::create()

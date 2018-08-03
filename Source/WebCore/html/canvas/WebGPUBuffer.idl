@@ -25,7 +25,8 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
 ] interface WebGPUBuffer {
 
     readonly attribute unsigned long length;

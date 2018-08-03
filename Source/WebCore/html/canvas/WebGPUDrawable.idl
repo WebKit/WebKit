@@ -25,7 +25,8 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
 ] interface WebGPUDrawable {
 
     readonly attribute WebGPUTexture texture; // FIXME: Only the framebuffer should have this.

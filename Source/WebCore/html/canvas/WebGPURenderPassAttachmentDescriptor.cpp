@@ -30,13 +30,11 @@
 
 #include "GPURenderPassAttachmentDescriptor.h"
 #include "GPUTexture.h"
-#include "WebGPURenderingContext.h"
 #include "WebGPUTexture.h"
 
 namespace WebCore {
 
-WebGPURenderPassAttachmentDescriptor::WebGPURenderPassAttachmentDescriptor(WebGPURenderingContext& context)
-    : WebGPUObject { &context }
+WebGPURenderPassAttachmentDescriptor::WebGPURenderPassAttachmentDescriptor()
 {
 }
 

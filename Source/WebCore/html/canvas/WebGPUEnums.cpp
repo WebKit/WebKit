@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUEnums.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

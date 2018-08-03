@@ -32,16 +32,16 @@
 
 namespace WebCore {
 
-class WebGPURenderPassColorAttachmentDescriptor : public WebGPURenderPassAttachmentDescriptor {
+class WebGPURenderPassColorAttachmentDescriptor final : public WebGPURenderPassAttachmentDescriptor {
 public:
     virtual ~WebGPURenderPassColorAttachmentDescriptor();
-    static Ref<WebGPURenderPassColorAttachmentDescriptor> create(WebGPURenderingContext&, GPURenderPassColorAttachmentDescriptor&&);
+    static Ref<WebGPURenderPassColorAttachmentDescriptor> create(GPURenderPassColorAttachmentDescriptor&&);
 
     Vector<float> clearColor() const;
     void setClearColor(const Vector<float>&);
 
 private:
-    WebGPURenderPassColorAttachmentDescriptor(WebGPURenderingContext&, GPURenderPassColorAttachmentDescriptor&&);
+    explicit WebGPURenderPassColorAttachmentDescriptor(GPURenderPassColorAttachmentDescriptor&&);
 
     const GPURenderPassAttachmentDescriptor& descriptor() const final;
     bool isColorAttachmentDescriptor() const final { return true; }

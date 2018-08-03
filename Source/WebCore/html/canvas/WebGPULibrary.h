@@ -28,15 +28,16 @@
 #if ENABLE(WEBGPU)
 
 #include "GPULibrary.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class WebGPUFunction;
 
-class WebGPULibrary : public WebGPUObject {
+class WebGPULibrary : public RefCounted<WebGPULibrary> {
 public:
-    static Ref<WebGPULibrary> create(WebGPURenderingContext&, const String& sourceCode);
+    static Ref<WebGPULibrary> create(GPULibrary&&, const String& sourceCode);
 
     const String& sourceCode() const { return m_sourceCode; }
 
@@ -48,7 +49,7 @@ public:
     RefPtr<WebGPUFunction> functionWithName(const String&) const;
 
 private:
-    WebGPULibrary(WebGPURenderingContext&, const String& sourceCode);
+    WebGPULibrary(GPULibrary&&, const String& sourceCode);
 
     String m_sourceCode;
     GPULibrary m_library;

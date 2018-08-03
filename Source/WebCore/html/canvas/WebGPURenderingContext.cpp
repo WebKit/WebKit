@@ -153,42 +153,42 @@ void WebGPURenderingContext::reshape(int width, int height)
 
 Ref<WebGPULibrary> WebGPURenderingContext::createLibrary(const String& sourceCode)
 {
-    return WebGPULibrary::create(*this, sourceCode);
+    return WebGPULibrary::create(GPULibrary { m_device, sourceCode }, sourceCode);
 }
 
 Ref<WebGPURenderPipelineState> WebGPURenderingContext::createRenderPipelineState(WebGPURenderPipelineDescriptor& descriptor)
 {
-    return WebGPURenderPipelineState::create(*this, descriptor.descriptor());
+    return WebGPURenderPipelineState::create(GPURenderPipelineState { m_device, descriptor.descriptor() });
 }
 
 Ref<WebGPUDepthStencilState> WebGPURenderingContext::createDepthStencilState(WebGPUDepthStencilDescriptor& descriptor)
 {
-    return WebGPUDepthStencilState::create(*this, descriptor.descriptor());
+    return WebGPUDepthStencilState::create(GPUDepthStencilState { m_device, descriptor.descriptor() });
 }
 
 Ref<WebGPUComputePipelineState> WebGPURenderingContext::createComputePipelineState(WebGPUFunction& function)
 {
-    return WebGPUComputePipelineState::create(*this, function.function());
+    return WebGPUComputePipelineState::create(GPUComputePipelineState { m_device, function.function() });
 }
 
 Ref<WebGPUCommandQueue> WebGPURenderingContext::createCommandQueue()
 {
-    return WebGPUCommandQueue::create(*this);
+    return WebGPUCommandQueue::create(GPUCommandQueue { m_device });
 }
 
 Ref<WebGPUDrawable> WebGPURenderingContext::nextDrawable()
 {
-    return WebGPUDrawable::create(*this);
+    return WebGPUDrawable::create(GPUDrawable { m_device });
 }
 
 RefPtr<WebGPUBuffer> WebGPURenderingContext::createBuffer(JSC::ArrayBufferView& data)
 {
-    return WebGPUBuffer::create(*this, data);
+    return WebGPUBuffer::create(GPUBuffer { m_device, data });
 }
 
 Ref<WebGPUTexture> WebGPURenderingContext::createTexture(WebGPUTextureDescriptor& descriptor)
 {
-    return WebGPUTexture::create(*this, descriptor.descriptor());
+    return WebGPUTexture::create(GPUTexture { m_device, descriptor.descriptor() });
 }
 
 } // namespace WebCore

@@ -28,19 +28,15 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPURenderPipelineDescriptor.h"
-#include "WebGPURenderingContext.h"
-
 namespace WebCore {
 
-Ref<WebGPURenderPipelineState> WebGPURenderPipelineState::create(WebGPURenderingContext& context, const GPURenderPipelineDescriptor& descriptor)
+Ref<WebGPURenderPipelineState> WebGPURenderPipelineState::create(GPURenderPipelineState&& state)
 {
-    return adoptRef(*new WebGPURenderPipelineState(context, descriptor));
+    return adoptRef(*new WebGPURenderPipelineState(WTFMove(state)));
 }
 
-WebGPURenderPipelineState::WebGPURenderPipelineState(WebGPURenderingContext& context, const GPURenderPipelineDescriptor& descriptor)
-    : WebGPUObject { &context }
-    , m_state { context.device(), descriptor }
+WebGPURenderPipelineState::WebGPURenderPipelineState(GPURenderPipelineState&& state)
+    : m_state { WTFMove(state) }
 {
 }
 

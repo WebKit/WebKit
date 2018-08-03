@@ -26,7 +26,8 @@
 [
     Constructor,
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
 ] interface WebGPURenderPipelineDescriptor {
 
     attribute WebGPUFunction? vertexFunction;

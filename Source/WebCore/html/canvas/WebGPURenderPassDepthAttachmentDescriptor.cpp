@@ -28,19 +28,17 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPURenderingContext.h"
 #include "WebGPUTexture.h"
 
 namespace WebCore {
 
-Ref<WebGPURenderPassDepthAttachmentDescriptor> WebGPURenderPassDepthAttachmentDescriptor::create(WebGPURenderingContext& context, GPURenderPassDepthAttachmentDescriptor&& descriptor)
+Ref<WebGPURenderPassDepthAttachmentDescriptor> WebGPURenderPassDepthAttachmentDescriptor::create(GPURenderPassDepthAttachmentDescriptor&& descriptor)
 {
-    return adoptRef(*new WebGPURenderPassDepthAttachmentDescriptor(context, WTFMove(descriptor)));
+    return adoptRef(*new WebGPURenderPassDepthAttachmentDescriptor(WTFMove(descriptor)));
 }
 
-WebGPURenderPassDepthAttachmentDescriptor::WebGPURenderPassDepthAttachmentDescriptor(WebGPURenderingContext& context, GPURenderPassDepthAttachmentDescriptor&& descriptor)
-    : WebGPURenderPassAttachmentDescriptor(context)
-    , m_descriptor(WTFMove(descriptor))
+WebGPURenderPassDepthAttachmentDescriptor::WebGPURenderPassDepthAttachmentDescriptor(GPURenderPassDepthAttachmentDescriptor&& descriptor)
+    : m_descriptor { WTFMove(descriptor) }
 {
 }
 

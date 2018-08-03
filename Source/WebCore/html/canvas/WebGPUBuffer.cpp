@@ -28,19 +28,16 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPURenderingContext.h"
-
 namespace WebCore {
 
-RefPtr<WebGPUBuffer> WebGPUBuffer::create(WebGPURenderingContext& context, const JSC::ArrayBufferView& data)
+RefPtr<WebGPUBuffer> WebGPUBuffer::create(GPUBuffer&& buffer)
 {
     // FIXME: Consider returning null rather than a buffer with length 0 and contents null when creation fails.
-    return adoptRef(*new WebGPUBuffer(context, data));
+    return adoptRef(*new WebGPUBuffer(WTFMove(buffer)));
 }
 
-WebGPUBuffer::WebGPUBuffer(WebGPURenderingContext& context, const JSC::ArrayBufferView& data)
-    : WebGPUObject { &context }
-    , m_buffer { context.device(), data }
+WebGPUBuffer::WebGPUBuffer(GPUBuffer&& buffer)
+    : m_buffer { WTFMove(buffer) }
 {
 }
 

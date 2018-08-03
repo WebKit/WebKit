@@ -28,19 +28,20 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPipelineColorAttachmentDescriptor.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGPURenderPipelineColorAttachmentDescriptor : public WebGPUObject {
+class WebGPURenderPipelineColorAttachmentDescriptor : public RefCounted<WebGPURenderPipelineColorAttachmentDescriptor> {
 public:
-    static Ref<WebGPURenderPipelineColorAttachmentDescriptor> create(WebGPURenderingContext&, GPURenderPipelineColorAttachmentDescriptor&&);
+    static Ref<WebGPURenderPipelineColorAttachmentDescriptor> create(GPURenderPipelineColorAttachmentDescriptor&&);
 
     unsigned pixelFormat() const;
     void setPixelFormat(unsigned);
 
 private:
-    WebGPURenderPipelineColorAttachmentDescriptor(WebGPURenderingContext&, GPURenderPipelineColorAttachmentDescriptor&&);
+    explicit WebGPURenderPipelineColorAttachmentDescriptor(GPURenderPipelineColorAttachmentDescriptor&&);
 
     GPURenderPipelineColorAttachmentDescriptor m_descriptor;
 };

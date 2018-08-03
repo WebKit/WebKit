@@ -1113,7 +1113,6 @@ html/canvas/WebGPUDrawable.cpp
 html/canvas/WebGPUEnums.cpp
 html/canvas/WebGPUFunction.cpp
 html/canvas/WebGPULibrary.cpp
-html/canvas/WebGPUObject.cpp
 html/canvas/WebGPURenderCommandEncoder.cpp
 html/canvas/WebGPURenderPassAttachmentDescriptor.cpp
 html/canvas/WebGPURenderPassColorAttachmentDescriptor.cpp

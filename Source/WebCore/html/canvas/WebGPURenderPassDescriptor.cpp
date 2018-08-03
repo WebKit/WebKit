@@ -42,7 +42,7 @@ WebGPURenderPassDescriptor::~WebGPURenderPassDescriptor() = default;
 WebGPURenderPassDepthAttachmentDescriptor& WebGPURenderPassDescriptor::depthAttachment()
 {
     if (!m_depthAttachment)
-        m_depthAttachment = WebGPURenderPassDepthAttachmentDescriptor::create(*context(), m_descriptor.depthAttachment());
+        m_depthAttachment = WebGPURenderPassDepthAttachmentDescriptor::create(m_descriptor.depthAttachment());
     return *m_depthAttachment;
 }
 
@@ -53,7 +53,7 @@ const Vector<RefPtr<WebGPURenderPassColorAttachmentDescriptor>>& WebGPURenderPas
         ASSERT(!attachments.isEmpty());
         m_colorAttachments.reserveInitialCapacity(attachments.size());
         for (auto& attachment : attachments)
-            m_colorAttachments.uncheckedAppend(WebGPURenderPassColorAttachmentDescriptor::create(*context(), WTFMove(attachment)));
+            m_colorAttachments.uncheckedAppend(WebGPURenderPassColorAttachmentDescriptor::create(WTFMove(attachment)));
     }
     return m_colorAttachments;
 }

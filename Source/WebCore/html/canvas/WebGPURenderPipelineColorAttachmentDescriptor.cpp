@@ -30,14 +30,13 @@
 
 namespace WebCore {
 
-Ref<WebGPURenderPipelineColorAttachmentDescriptor> WebGPURenderPipelineColorAttachmentDescriptor::create(WebGPURenderingContext& context, GPURenderPipelineColorAttachmentDescriptor&& descriptor)
+Ref<WebGPURenderPipelineColorAttachmentDescriptor> WebGPURenderPipelineColorAttachmentDescriptor::create(GPURenderPipelineColorAttachmentDescriptor&& descriptor)
 {
-    return adoptRef(*new WebGPURenderPipelineColorAttachmentDescriptor(context, WTFMove(descriptor)));
+    return adoptRef(*new WebGPURenderPipelineColorAttachmentDescriptor(WTFMove(descriptor)));
 }
 
-WebGPURenderPipelineColorAttachmentDescriptor::WebGPURenderPipelineColorAttachmentDescriptor(WebGPURenderingContext& context, GPURenderPipelineColorAttachmentDescriptor&& descriptor)
-    : WebGPUObject { &context }
-    , m_descriptor { WTFMove(descriptor) }
+WebGPURenderPipelineColorAttachmentDescriptor::WebGPURenderPipelineColorAttachmentDescriptor(GPURenderPipelineColorAttachmentDescriptor&& descriptor)
+    : m_descriptor { WTFMove(descriptor) }
 {
 }
 

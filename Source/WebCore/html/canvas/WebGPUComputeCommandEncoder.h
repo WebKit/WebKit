@@ -28,17 +28,18 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUComputeCommandEncoder.h"
-#include "WebGPUObject.h"
 #include "WebGPUSize.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class WebGPUBuffer;
 class WebGPUComputePipelineState;
 
-class WebGPUComputeCommandEncoder : public WebGPUObject {
+class WebGPUComputeCommandEncoder : public RefCounted<WebGPUComputeCommandEncoder> {
 public:
-    static Ref<WebGPUComputeCommandEncoder> create(WebGPURenderingContext&, const GPUCommandBuffer&);
+    static Ref<WebGPUComputeCommandEncoder> create(GPUComputeCommandEncoder&&);
 
     void setComputePipelineState(WebGPUComputePipelineState&);
     void setBuffer(WebGPUBuffer&, unsigned, unsigned);
@@ -46,7 +47,7 @@ public:
     void endEncoding();
 
 private:
-    WebGPUComputeCommandEncoder(WebGPURenderingContext&, const GPUCommandBuffer&);
+    explicit WebGPUComputeCommandEncoder(GPUComputeCommandEncoder&&);
 
     GPUComputeCommandEncoder m_encoder;
 };

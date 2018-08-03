@@ -29,11 +29,12 @@
 
 #include "GPUDepthStencilDescriptor.h"
 #include "WebGPUEnums.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGPUDepthStencilDescriptor : public WebGPUObject {
+class WebGPUDepthStencilDescriptor : public RefCounted<WebGPUDepthStencilDescriptor> {
 public:
     static Ref<WebGPUDepthStencilDescriptor> create();
 

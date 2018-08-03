@@ -35,18 +35,16 @@
 #include "WebGPUDepthStencilState.h"
 #include "WebGPURenderPassDescriptor.h"
 #include "WebGPURenderPipelineState.h"
-#include "WebGPURenderingContext.h"
 
 namespace WebCore {
 
-Ref<WebGPURenderCommandEncoder> WebGPURenderCommandEncoder::create(WebGPURenderingContext& context, const GPUCommandBuffer& buffer, const GPURenderPassDescriptor& descriptor)
+Ref<WebGPURenderCommandEncoder> WebGPURenderCommandEncoder::create(GPURenderCommandEncoder&& encoder)
 {
-    return adoptRef(*new WebGPURenderCommandEncoder(context, buffer, descriptor));
+    return adoptRef(*new WebGPURenderCommandEncoder(WTFMove(encoder)));
 }
 
-WebGPURenderCommandEncoder::WebGPURenderCommandEncoder(WebGPURenderingContext& context, const GPUCommandBuffer& buffer, const GPURenderPassDescriptor& descriptor)
-    : WebGPUObject { &context }
-    , m_encoder { buffer, descriptor }
+WebGPURenderCommandEncoder::WebGPURenderCommandEncoder(GPURenderCommandEncoder&& encoder)
+    : m_encoder { WTFMove(encoder) }
 {
 }
 

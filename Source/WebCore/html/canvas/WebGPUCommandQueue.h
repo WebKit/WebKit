@@ -28,16 +28,17 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUCommandQueue.h"
-#include "WebGPUObject.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class WebGPUCommandBuffer;
 
-class WebGPUCommandQueue : public WebGPUObject {
+class WebGPUCommandQueue : public RefCounted<WebGPUCommandQueue> {
 public:
-    virtual ~WebGPUCommandQueue();
-    static Ref<WebGPUCommandQueue> create(WebGPURenderingContext&);
+    ~WebGPUCommandQueue();
+    static Ref<WebGPUCommandQueue> create(GPUCommandQueue&&);
 
     String label() const { return m_queue.label(); }
     void setLabel(const String& label) { m_queue.setLabel(label); }
@@ -45,7 +46,7 @@ public:
     Ref<WebGPUCommandBuffer> createCommandBuffer();
 
 private:
-    explicit WebGPUCommandQueue(WebGPURenderingContext&);
+    explicit WebGPUCommandQueue(GPUCommandQueue&&);
 
     GPUCommandQueue m_queue;
 };
