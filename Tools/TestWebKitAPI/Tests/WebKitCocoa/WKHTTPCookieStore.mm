@@ -534,10 +534,6 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
     TestWebKitAPI::Util::run(&finished);
     
     // DefaultDataStore
-    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto processPool = adoptNS([[WKProcessPool alloc] init]);
-    [configuration setProcessPool:processPool.get()];
-
     auto defaultStore = [WKWebsiteDataStore defaultDataStore];
     finished = false;
     [defaultStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
@@ -564,6 +560,7 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
     TestWebKitAPI::Util::run(&finished);
 
     finished = false;
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = defaultStore;
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     webView.get().UIDelegate = delegate.get();

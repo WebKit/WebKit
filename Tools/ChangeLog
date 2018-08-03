@@ -1,3 +1,16 @@
+2018-08-03  David Fenton  <david_fenton@apple.com>
+
+        Unreviewed, rolling out r234517.
+
+        Caused API test failures on iOS
+
+        Reverted changeset:
+
+        "[Cocoa] setCookie API fails to set session cookies for
+        defaultDataStore if processPool created but not used"
+        https://bugs.webkit.org/show_bug.cgi?id=188209
+        https://trac.webkit.org/changeset/234517
+
 2018-08-03  Ben Richards  <benton_richards@apple.com>
 
         Add configuration for automatic process pre-warming
