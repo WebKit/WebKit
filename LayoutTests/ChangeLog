@@ -1,5 +1,17 @@
 2018-08-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [LayoutTests][PHP] Fix old-style script which uses function name as a keyword.
+        https://bugs.webkit.org/show_bug.cgi?id=188289
+
+        Reviewed by Alex Christensen.
+
+        Function name should be passed as a string literal. In PHP, named function is
+        not the first class citizen.
+
+        * http/tests/cookies/resources/echo-cookies.php:
+
+2018-08-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [LayoutTests] Suppress PHP Error message by removing an execution time limit.
         https://bugs.webkit.org/show_bug.cgi?id=188288
 
