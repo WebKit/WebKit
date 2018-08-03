@@ -1,3 +1,56 @@
+2018-08-02  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234463. rdar://problem/42882308
+
+    [iOS] Remove the delay before setting audio session category added in r233535
+    https://bugs.webkit.org/show_bug.cgi?id=188225
+    
+    Reviewed by Jer Noble.
+    
+    * platform/audio/PlatformMediaSessionManager.cpp:
+    (WebCore::PlatformMediaSessionManager::beginInterruption): scheduleUpdateSessionState -> updateSessionState.
+    (WebCore::PlatformMediaSessionManager::addSession): Ditto.
+    (WebCore::PlatformMediaSessionManager::removeSession): Ditto.
+    (WebCore::PlatformMediaSessionManager::sessionStateChanged): Ditto.
+    (WebCore::PlatformMediaSessionManager::sessionCanProduceAudioChanged): Ditto.
+    (WebCore::PlatformMediaSessionManager::updateSessionState): Ditto.
+    (WebCore::PlatformMediaSessionManager::audioOutputDeviceChanged): Ditto.
+    (WebCore::PlatformMediaSessionManager::scheduleUpdateSessionState): Deleted.
+    * platform/audio/PlatformMediaSessionManager.h:
+    
+    * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+    (PlatformMediaSessionManager::updateSessionState):
+    (PlatformMediaSessionManager::scheduleUpdateSessionState): Deleted.
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::updateClipRects):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234463 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-01  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] Remove the delay before setting audio session category added in r233535
+            https://bugs.webkit.org/show_bug.cgi?id=188225
+
+            Reviewed by Jer Noble.
+
+            * platform/audio/PlatformMediaSessionManager.cpp:
+            (WebCore::PlatformMediaSessionManager::beginInterruption): scheduleUpdateSessionState -> updateSessionState.
+            (WebCore::PlatformMediaSessionManager::addSession): Ditto.
+            (WebCore::PlatformMediaSessionManager::removeSession): Ditto.
+            (WebCore::PlatformMediaSessionManager::sessionStateChanged): Ditto.
+            (WebCore::PlatformMediaSessionManager::sessionCanProduceAudioChanged): Ditto.
+            (WebCore::PlatformMediaSessionManager::updateSessionState): Ditto.
+            (WebCore::PlatformMediaSessionManager::audioOutputDeviceChanged): Ditto.
+            (WebCore::PlatformMediaSessionManager::scheduleUpdateSessionState): Deleted.
+            * platform/audio/PlatformMediaSessionManager.h:
+
+            * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+            (PlatformMediaSessionManager::updateSessionState):
+            (PlatformMediaSessionManager::scheduleUpdateSessionState): Deleted.
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::updateClipRects):
+
 2018-08-01  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234466. rdar://problem/42843690

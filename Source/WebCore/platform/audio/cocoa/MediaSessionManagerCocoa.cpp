@@ -37,9 +37,8 @@ using namespace WebCore;
 
 static const size_t kWebAudioBufferSize = 128;
 static const size_t kLowPowerVideoBufferSize = 4096;
-static const Seconds updateSessionStateDelay { 100_ms };
 
-void PlatformMediaSessionManager::scheduleUpdateSessionState()
+void PlatformMediaSessionManager::updateSessionState()
 {
     LOG(Media, "PlatformMediaSessionManager::scheduleUpdateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
 
@@ -65,34 +64,25 @@ void PlatformMediaSessionManager::scheduleUpdateSessionState()
     if (!DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
         return;
 
-    if (!m_updateStateTimer) {
-        auto updateSessionState = [this] () mutable {
+    bool hasWebAudioType = false;
+    bool hasAudibleAudioOrVideoMediaType = false;
+    bool hasAudioCapture = anyOfSessions([&hasWebAudioType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
+        auto type = session.mediaType();
+        if (type == PlatformMediaSession::WebAudio)
+            hasWebAudioType = true;
+        if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.state() == PlatformMediaSession::Playing)
+            hasAudibleAudioOrVideoMediaType = true;
+        return (type == PlatformMediaSession::MediaStreamCapturingAudio);
+    });
 
-            bool hasWebAudioType = false;
-            bool hasAudibleAudioOrVideoMediaType = false;
-            bool hasAudioCapture = anyOfSessions([&hasWebAudioType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
-                auto type = session.mediaType();
-                if (type == PlatformMediaSession::WebAudio)
-                    hasWebAudioType = true;
-                if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.state() == PlatformMediaSession::Playing)
-                    hasAudibleAudioOrVideoMediaType = true;
-                return (type == PlatformMediaSession::MediaStreamCapturingAudio);
-            });
-
-            if (hasAudioCapture)
-                AudioSession::sharedSession().setCategory(AudioSession::PlayAndRecord);
-            else if (hasAudibleAudioOrVideoMediaType)
-                AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
-            else if (hasWebAudioType)
-                AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
-            else
-                AudioSession::sharedSession().setCategory(AudioSession::None);
-        };
-
-        m_updateStateTimer = std::make_unique<DeferrableOneShotTimer>(WTFMove(updateSessionState), updateSessionStateDelay);
-    }
-
-    m_updateStateTimer->restart();
+    if (hasAudioCapture)
+        AudioSession::sharedSession().setCategory(AudioSession::PlayAndRecord);
+    else if (hasAudibleAudioOrVideoMediaType)
+        AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
+    else if (hasWebAudioType)
+        AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
+    else
+        AudioSession::sharedSession().setCategory(AudioSession::None);
 }
 
 #endif // USE(AUDIO_SESSION)
