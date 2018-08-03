@@ -1,3 +1,23 @@
+2018-08-03  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r234547. rdar://problem/42902608
+
+    Unreviewed gardening; r234534 changed the policy for what audio session is set when a
+    media element is paused. Updating the test to reflect the new policy.
+    
+    * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234547 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-03  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed gardening; r234534 changed the policy for what audio session is set when a
+            media element is paused. Updating the test to reflect the new policy.
+
+            * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+            (TestWebKitAPI::TEST):
+
 2018-08-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r234521. rdar://problem/42387347
