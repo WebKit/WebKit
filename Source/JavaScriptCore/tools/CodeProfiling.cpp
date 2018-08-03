@@ -71,9 +71,11 @@ static void setProfileTimer(unsigned usec)
 static void profilingTimer(int, siginfo_t*, void* uap)
 {
     PlatformRegisters& platformRegisters = WTF::registersFromUContext(static_cast<ucontext_t*>(uap));
-    CodeProfiling::sample(
-        MachineContext::instructionPointer(platformRegisters).untaggedExecutableAddress(),
-        reinterpret_cast<void**>(MachineContext::framePointer(platformRegisters)));
+    if (auto instructionPointer = MachineContext::instructionPointer(platformRegisters)) {
+        CodeProfiling::sample(
+            instructionPointer->untaggedExecutableAddress(),
+            reinterpret_cast<void**>(MachineContext::framePointer(platformRegisters)));
+    }
 }
 #endif
 

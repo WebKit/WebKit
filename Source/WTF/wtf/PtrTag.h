@@ -154,8 +154,12 @@ template<typename PtrType> void assertIsNotTagged(PtrType) { }
 template<typename PtrType> void assertIsTagged(PtrType) { }
 template<typename PtrType> void assertIsNullOrTagged(PtrType) { }
 
+template<typename PtrType> bool isTaggedWith(PtrType, PtrTag) { return false; }
+
 template<typename PtrType> void assertIsTaggedWith(PtrType, PtrTag) { }
 template<typename PtrType> void assertIsNullOrTaggedWith(PtrType, PtrTag) { }
+
+inline bool usesPointerTagging() { return false; }
 
 #define CALL_WITH_PTRTAG(callInstructionString, targetRegisterString, tag) \
     callInstructionString " " targetRegisterString "\n"
@@ -186,5 +190,7 @@ using WTF::assertIsNullOrCFunctionPtr;
 using WTF::assertIsNotTagged;
 using WTF::assertIsTagged;
 using WTF::assertIsNullOrTagged;
+using WTF::isTaggedWith;
 using WTF::assertIsTaggedWith;
 using WTF::assertIsNullOrTaggedWith;
+using WTF::usesPointerTagging;
