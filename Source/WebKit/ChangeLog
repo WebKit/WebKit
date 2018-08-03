@@ -1,3 +1,22 @@
+2018-08-02  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Context menus in RTL are left-aligned
+        https://bugs.webkit.org/show_bug.cgi?id=188292
+        <rdar://problem/32293787>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        Add some SPI.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+        Translate UI layout direction back into the platform enum, and pass it to PDFKit.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userInterfaceLayoutDirection const):
+        Add a getter for UI layout direction.
+
 2018-08-02  Chris Dumez  <cdumez@apple.com>
 
         Regression(r234486): assertion hit in ~CallbackAggregator()

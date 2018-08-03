@@ -1086,6 +1086,8 @@ public:
 
     UserContentControllerIdentifier userContentControllerIdentifier() const { return m_userContentController->identifier(); }
 
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const { return m_userInterfaceLayoutDirection; }
+
     bool isSuspended() const { return m_isSuspended; }
 
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
