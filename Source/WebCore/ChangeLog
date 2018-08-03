@@ -1,3 +1,22 @@
+2018-08-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Add FloatingState::bottom() to enable content height computation for formatting roots.
+        https://bugs.webkit.org/show_bug.cgi?id=188294
+
+        Reviewed by Simon Fraser.
+
+        "10.6.7 'Auto' heights for block formatting context roots
+        ...
+        In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
+        then the height is increased to include those edges. Only floats that participate in this block formatting context are taken into
+        account, e.g., floats inside absolutely positioned descendants or other floats are not..."
+
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/FloatingState.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+
 2018-08-02  Jer Noble  <jer.noble@apple.com>
 
         Control center controls disappear when pausing, locking device.

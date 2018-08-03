@@ -90,6 +90,29 @@ void FloatingState::append(const Box& layoutBox)
     m_floats.append({ layoutBox, *this });
 }
 
+std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot) const
+{
+    if (m_floats.isEmpty())
+        return { };
+
+    // TODO: Currently this is only called once for each formatting context root with floats per layout.
+    // Cache the value if we end up calling it more frequently (and update it at append/remove).
+    std::optional<LayoutUnit> bottom;
+    for (auto& floatItem : m_floats) {
+        // Ignore floats from other formatting contexts when the floating state is inherited.
+        if (&formattingContextRoot != &floatItem.layoutBox().formattingContextRoot())
+            continue;
+
+        auto floatsBottom = floatItem.displayBox().rectWithMargin().bottom();
+        if (bottom) {
+            bottom = std::max(*bottom, floatsBottom);
+            continue;
+        }
+        bottom = floatsBottom;
+    }
+    return bottom;
+}
+
 }
 }
 #endif

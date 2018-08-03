@@ -51,6 +51,7 @@ public:
     void remove(const Box& layoutBox);
 
     bool isEmpty() const { return m_floats.isEmpty(); }
+    std::optional<LayoutUnit> bottom(const Box& formattingContextRoot) const;
 
     class FloatItem {
     public:

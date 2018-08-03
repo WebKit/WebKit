@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
+#include "FloatingState.h"
 #include "FormattingContext.h"
+#include "FormattingState.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -53,10 +55,12 @@ static LayoutUnit contentHeightForFormattingContextRoot(LayoutContext& layoutCon
 
     auto* firstDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
     auto* lastDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
+    auto floatsBottom = layoutContext.establishedFormattingState(layoutBox).floatingState().bottom(layoutBox);
 
     auto top = firstDisplayBox->marginBox().top();
     auto bottom = lastDisplayBox->marginBox().bottom();
-    // FIXME: add floating support.
+    if (floatsBottom)
+        bottom = std::max(*floatsBottom, bottom);
     auto computedHeight = bottom - top;
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height] -> content height for formatting context root -> height(" << computedHeight << "px) layoutBox("<< &layoutBox << ")");
     return computedHeight;
