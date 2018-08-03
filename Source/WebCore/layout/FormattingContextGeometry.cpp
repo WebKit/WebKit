@@ -35,7 +35,7 @@ namespace Layout {
 
 static LayoutUnit contentHeightForFormattingContextRoot(LayoutContext& layoutContext, const Box& layoutBox)
 {
-    ASSERT(layoutBox.style().logicalHeight().isAuto() && layoutBox.establishesFormattingContext());
+    ASSERT(layoutBox.style().logicalHeight().isAuto() && (layoutBox.establishesFormattingContext() || layoutBox.isDocumentBox()));
 
     // 10.6.7 'Auto' heights for block formatting context roots
 
@@ -55,7 +55,13 @@ static LayoutUnit contentHeightForFormattingContextRoot(LayoutContext& layoutCon
 
     auto* firstDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
     auto* lastDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
-    auto floatsBottom = layoutContext.establishedFormattingState(layoutBox).floatingState().bottom(layoutBox);
+    auto* formattingContextRoot = &layoutBox;
+    // TODO: The document renderer is not a formatting context root by default at all. Need to find out what it is.
+    if (!layoutBox.establishesFormattingContext()) {
+        ASSERT(layoutBox.isDocumentBox());
+        formattingContextRoot = &layoutBox.formattingContextRoot();
+    }
+    auto floatsBottom = layoutContext.establishedFormattingState(*formattingContextRoot).floatingState().bottom(*formattingContextRoot);
 
     auto top = firstDisplayBox->marginBox().top();
     auto bottom = lastDisplayBox->marginBox().bottom();

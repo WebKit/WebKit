@@ -1,5 +1,20 @@
 2018-08-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Special case the document renderer when computing the height and margin
+        https://bugs.webkit.org/show_bug.cgi?id=188313
+
+        Reviewed by Antti Koivisto.
+
+        The document renderer is certainly special and its geometry is likely to be computed as part of "10.6.6 Complicated cases" (spec is unclear) but probably not by
+        making the it a formatting root. Let's just special case it at contentHeightForFormattingContextRoot(), since having the document renderer as a context root has unwanted side effect. 
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::establishesBlockFormattingContext const):
+
+2018-08-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Layout out-of-flow descendants only on the formatting context root.
         https://bugs.webkit.org/show_bug.cgi?id=188312
 

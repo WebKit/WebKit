@@ -71,9 +71,6 @@ bool Box::establishesBlockFormattingContext() const
     if (isBlockLevelBox() && !isOverflowVisible())
         return true;
 
-    if (isDocumentBox())
-        return true;
-
     return false;
 }
 
