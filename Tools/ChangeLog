@@ -1,5 +1,31 @@
 2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Implement MouseEvent.buttons
+        https://bugs.webkit.org/show_bug.cgi?id=187998
+
+        Reviewed by Žan Doberšek.
+
+        Pass modifiers to mouse events.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::senderButtonToWPEButton):
+        (WTR::modifierForButton):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::wkEventModifiersToWPE):
+        (WTR::wpeKeySymForKeyRef):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::prepareAndDispatchTouchEvent):
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::handleKeyEvent):
+        (WPEToolingBackends::WindowViewBackend::modifiers const):
+        * wpe/backends/WindowViewBackend.h:
+
+2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Use WPE key symbols and new API instead of xkbcommon and the key mapper
         https://bugs.webkit.org/show_bug.cgi?id=188093
 

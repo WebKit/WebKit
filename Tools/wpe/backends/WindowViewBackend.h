@@ -57,6 +57,7 @@ private:
     static const struct zxdg_toplevel_v6_listener s_xdgToplevelListener;
 
     void handleKeyEvent(uint32_t key, uint32_t state, uint32_t time);
+    uint32_t modifiers() const;
 
     struct SeatData {
         struct {
@@ -65,6 +66,7 @@ private:
             std::pair<int, int> coords { 0, 0 };
             uint32_t button { 0 };
             uint32_t state { 0 };
+            uint32_t modifiers { 0 };
         } pointer;
 
         struct {
@@ -87,7 +89,7 @@ private:
                 xkb_mod_index_t alt { 0 };
                 xkb_mod_index_t shift { 0 };
             } indexes;
-            uint8_t modifiers { 0 };
+            uint32_t modifiers { 0 };
             struct xkb_compose_table* composeTable { nullptr };
             struct xkb_compose_state* composeState { nullptr };
         } xkb;

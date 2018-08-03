@@ -129,8 +129,10 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
     [](void* data, struct wl_pointer*, uint32_t /*serial*/, struct wl_surface* surface, wl_fixed_t, wl_fixed_t)
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
-        if (window.m_surface == surface)
+        if (window.m_surface == surface) {
             window.m_seatData.pointer.target = surface;
+            window.m_seatData.pointer.modifiers = 0;
+        }
     },
     // leave
     [](void* data, struct wl_pointer*, uint32_t /*serial*/, struct wl_surface* surface)
@@ -149,7 +151,7 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
 
         if (window.m_seatData.pointer.target) {
             struct wpe_input_pointer_event event = { wpe_input_pointer_event_type_motion,
-                time, x, y, window.m_seatData.pointer.button, window.m_seatData.pointer.state };
+                time, x, y, window.m_seatData.pointer.button, window.m_seatData.pointer.state, window.modifiers() };
             window.dispatchInputPointerEvent(&event);
         }
     },
@@ -165,9 +167,35 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
         window.m_seatData.pointer.button = !!state ? button : 0;
         window.m_seatData.pointer.state = state;
 
+        uint32_t modifier = 0;
+        switch (button) {
+        case 1:
+            modifier = wpe_input_pointer_modifier_button1;
+            break;
+        case 2:
+            modifier = wpe_input_pointer_modifier_button2;
+            break;
+        case 3:
+            modifier = wpe_input_pointer_modifier_button3;
+            break;
+        case 4:
+            modifier = wpe_input_pointer_modifier_button4;
+            break;
+        case 5:
+            modifier = wpe_input_pointer_modifier_button5;
+            break;
+        default:
+            break;
+        }
+
+        if (state)
+            window.m_seatData.pointer.modifiers |= modifier;
+        else
+            window.m_seatData.pointer.modifiers &= ~modifier;
+
         if (window.m_seatData.pointer.target) {
             struct wpe_input_pointer_event event = { wpe_input_pointer_event_type_button,
-                time, window.m_seatData.pointer.coords.first, window.m_seatData.pointer.coords.second, button, state };
+                time, window.m_seatData.pointer.coords.first, window.m_seatData.pointer.coords.second, button, state, window.modifiers() };
             window.dispatchInputPointerEvent(&event);
         }
     },
@@ -177,7 +205,7 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
         auto& window = *static_cast<WindowViewBackend*>(data);
         if (window.m_seatData.pointer.target) {
             struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion,
-                time, window.m_seatData.pointer.coords.first, window.m_seatData.pointer.coords.second, axis, -wl_fixed_to_int(value) };
+                time, window.m_seatData.pointer.coords.first, window.m_seatData.pointer.coords.second, axis, -wl_fixed_to_int(value), window.modifiers() };
             window.dispatchInputAxisEvent(&event);
         }
     },
@@ -325,7 +353,7 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
         memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
 
         struct wpe_input_touch_event event = { seatData.touch.points, 10,
-            rawEvent.type, rawEvent.id, rawEvent.time };
+            rawEvent.type, rawEvent.id, rawEvent.time, window.modifiers() };
         window.dispatchInputTouchEvent(&event);
     },
     // up
@@ -343,7 +371,7 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
         memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
 
         struct wpe_input_touch_event event = { seatData.touch.points, 10,
-            rawEvent.type, rawEvent.id, rawEvent.time };
+            rawEvent.type, rawEvent.id, rawEvent.time, window.modifiers() };
         window.dispatchInputTouchEvent(&event);
 
         memset(&seatData.touch.points[id], 0x00, sizeof(struct wpe_input_touch_event_raw));
@@ -361,7 +389,7 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
         memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
 
         struct wpe_input_touch_event event = { seatData.touch.points, 10,
-            rawEvent.type, rawEvent.id, rawEvent.time };
+            rawEvent.type, rawEvent.id, rawEvent.time, window.modifiers() };
         window.dispatchInputTouchEvent(&event);
     },
     // frame
@@ -660,9 +688,17 @@ void WindowViewBackend::handleKeyEvent(uint32_t key, uint32_t state, uint32_t ti
     }
 
     if (m_seatData.keyboard.target) {
-        struct wpe_input_keyboard_event event = { time, keysym, key, !!state, xkb.modifiers };
+        struct wpe_input_keyboard_event event = { time, keysym, key, !!state, modifiers() };
         dispatchInputKeyboardEvent(&event);
     }
+}
+
+uint32_t WindowViewBackend::modifiers() const
+{
+    uint32_t mask = m_seatData.xkb.modifiers;
+    if (m_seatData.pointer.object)
+        mask |= m_seatData.pointer.modifiers;
+    return mask;
 }
 
 } // namespace WPEToolingBackends

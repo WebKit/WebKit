@@ -68,7 +68,7 @@ EventSenderProxy::~EventSenderProxy()
 {
 }
 
-unsigned senderButtonToWPEButton(unsigned senderButton)
+static unsigned senderButtonToWPEButton(unsigned senderButton)
 {
     // Tests using the EventSender have a different numbering ordering than the one
     // that the WPE port expects. Shuffle these here.
@@ -84,6 +84,26 @@ unsigned senderButtonToWPEButton(unsigned senderButton)
     }
 }
 
+static uint32_t modifierForButton(unsigned button)
+{
+    switch (button) {
+    case 1:
+        return wpe_input_pointer_modifier_button1;
+    case 2:
+        return wpe_input_pointer_modifier_button2;
+    case 3:
+        return wpe_input_pointer_modifier_button3;
+    case 4:
+        return wpe_input_pointer_modifier_button4;
+    case 5:
+        return wpe_input_pointer_modifier_button5;
+    default:
+        return 0;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
 {
     m_clickButton = button;
@@ -91,7 +111,10 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
     m_clickTime = m_time;
     m_buttonState = ButtonPressed;
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), senderButtonToWPEButton(button), m_buttonState};
+    auto wpeButton = senderButtonToWPEButton(button);
+    m_mouseButtonsCurrentlyDown |= modifierForButton(wpeButton);
+
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown };
     wpe_view_backend_dispatch_pointer_event(m_viewBackend, &event);
 }
 
@@ -100,7 +123,10 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
     m_buttonState = ButtonReleased;
     m_clickButton = kWKEventMouseButtonNoButton;
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), senderButtonToWPEButton(button), m_buttonState};
+    auto wpeButton = senderButtonToWPEButton(button);
+    m_mouseButtonsCurrentlyDown &= ~modifierForButton(wpeButton);
+
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown };
     wpe_view_backend_dispatch_pointer_event(m_viewBackend, &event);
 }
 
@@ -109,7 +135,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     m_position.x = x;
     m_position.y = y;
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), static_cast<uint32_t>(m_clickButton), m_buttonState};
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), static_cast<uint32_t>(m_clickButton), m_buttonState, m_mouseButtonsCurrentlyDown };
     wpe_view_backend_dispatch_pointer_event(m_viewBackend, &event);
 }
 
@@ -120,11 +146,11 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
         return;
 
     if (horizontal) {
-        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), HorizontalScroll, horizontal};
+        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), HorizontalScroll, horizontal, 0};
         wpe_view_backend_dispatch_axis_event(m_viewBackend, &event);
     }
     if (vertical) {
-        struct wpe_input_axis_event event =  { wpe_input_axis_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), VerticalScroll, vertical};
+        struct wpe_input_axis_event event =  { wpe_input_axis_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), VerticalScroll, vertical, 0};
         wpe_view_backend_dispatch_axis_event(m_viewBackend, &event);
     }
 }
@@ -143,9 +169,9 @@ void EventSenderProxy::leapForward(int milliseconds)
     m_time += milliseconds / 1000.0;
 }
 
-static uint8_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
+static uint32_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
 {
-    uint8_t modifiers = 0;
+    uint32_t modifiers = 0;
     if (wkModifiers & kWKEventModifiersShiftKey)
         modifiers |=  wpe_input_keyboard_modifier_shift;
     if (wkModifiers & kWKEventModifiersControlKey)
@@ -158,7 +184,7 @@ static uint8_t wkEventModifiersToWPE(WKEventModifiers wkModifiers)
     return modifiers;
 }
 
-static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint8_t* modifiers)
+static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint32_t* modifiers)
 {
     if (location == DOMKeyLocationNumpad) {
         if (WKStringIsEqualToUTF8CString(keyRef, "leftArrow"))
@@ -268,7 +294,7 @@ static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint8_
 
 void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers, unsigned location)
 {
-    uint8_t modifiers = wkEventModifiersToWPE(wkModifiers);
+    uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
     uint32_t keySym = wpeKeySymForKeyRef(keyRef, location, &modifiers);
     // FIXME: we don't have a way to get hardware key code in WPE.
     struct wpe_input_keyboard_event event { static_cast<uint32_t>(m_time), keySym, 0, true, modifiers};
@@ -326,7 +352,7 @@ void EventSenderProxy::removeUpdatedTouchEvents()
 void EventSenderProxy::prepareAndDispatchTouchEvent(enum wpe_input_touch_event_type eventType)
 {
     auto updatedEvents = getUpdatedTouchEvents();
-    struct wpe_input_touch_event event = { updatedEvents.data(), updatedEvents.size(), eventType, 0, static_cast<uint32_t>(m_time) };
+    struct wpe_input_touch_event event = { updatedEvents.data(), updatedEvents.size(), eventType, 0, static_cast<uint32_t>(m_time), 0 };
     wpe_view_backend_dispatch_touch_event(m_viewBackend, &event);
     if (eventType == wpe_input_touch_event_type_up)
         removeUpdatedTouchEvents();

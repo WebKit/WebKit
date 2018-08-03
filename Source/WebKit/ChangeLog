@@ -1,5 +1,20 @@
 2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Implement MouseEvent.buttons
+        https://bugs.webkit.org/show_bug.cgi?id=187998
+
+        Reviewed by Žan Doberšek.
+
+        Pass buttons currently pressed to WebMouseEvent.
+
+        * Shared/wpe/WebEventFactory.cpp:
+        (WebKit::pressedMouseButtons): Helper to get the pressed buttons mask for the WPE modifiers.
+        (WebKit::WebEventFactory::createWebMouseEvent): Use pressedMouseButtons().
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent): Update the event modifiers.
+
+2018-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Use WPE key symbols and new API instead of xkbcommon and the key mapper
         https://bugs.webkit.org/show_bug.cgi?id=188093
 
