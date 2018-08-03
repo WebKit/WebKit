@@ -56,7 +56,10 @@ static bool fastHandlerInstalled { false };
 
 static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& context)
 {
-    void* faultingInstruction = MachineContext::instructionPointer(context).untaggedExecutableAddress();
+    auto instructionPointer = MachineContext::instructionPointer(context);
+    if (!instructionPointer)
+        return SignalAction::NotHandled;
+    void* faultingInstruction = instructionPointer->untaggedExecutableAddress();
     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
 
     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "JIT memory start: ", RawPointer(startOfFixedExecutableMemoryPool()), " end: ", RawPointer(endOfFixedExecutableMemoryPool()));

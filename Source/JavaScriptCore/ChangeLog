@@ -1,3 +1,31 @@
+2018-08-02  Saam Barati  <sbarati@apple.com>
+
+        Reading instructionPointer from PlatformRegisters may fail when using pointer profiling
+        https://bugs.webkit.org/show_bug.cgi?id=188271
+        <rdar://problem/42850884>
+
+        Reviewed by Michael Saboff.
+
+        This patch defends against the instructionPointer containing garbage bits.
+        See radar for details.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::instructionPointer):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::tryCreate):
+        * tools/CodeProfiling.cpp:
+        (JSC::profilingTimer):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::SignalContext::tryCreate):
+        (JSC::SignalContext::dump):
+        (JSC::installCrashHandler):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+
 2018-08-02  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r234489.

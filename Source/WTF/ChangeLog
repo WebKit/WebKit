@@ -1,3 +1,15 @@
+2018-08-02  Saam Barati  <sbarati@apple.com>
+
+        Reading instructionPointer from PlatformRegisters may fail when using pointer tagging
+        https://bugs.webkit.org/show_bug.cgi?id=188271
+        <rdar://problem/42850884>
+
+        Reviewed by Michael Saboff.
+
+        * wtf/PtrTag.h:
+        (WTF::isTaggedWith):
+        (WTF::usesPointerTagging):
+
 2018-08-02  Alex Christensen  <achristensen@webkit.org>
 
         Add some Variant types to Forward.h
