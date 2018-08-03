@@ -97,6 +97,8 @@ protected:
         static WidthAndMargin inlineReplacedWidthAndMargin(LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedMarginLeft = { },
             std::optional<LayoutUnit> precomputedMarginRight = { });
 
+        static HeightAndMargin complicatedCases(LayoutContext&, const Box&);
+
         static Edges computedBorder(LayoutContext&, const Box&);
         static std::optional<Edges> computedPadding(LayoutContext&, const Box&);
 
@@ -116,7 +118,6 @@ protected:
         static HeightAndMargin floatingReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingReplacedWidthAndMargin(LayoutContext&, const Box&);
 
-        static HeightAndMargin floatingNonReplacedHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutContext&, const FormattingContext&, const Box&);
 
         static LayoutUnit shrinkToFitWidth(LayoutContext&, const FormattingContext&, const Box&);

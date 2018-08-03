@@ -95,6 +95,7 @@ public:
     bool isInlineContainer() const { return m_baseTypeFlags & InlineContainerFlag; }
 
     bool isPaddingApplicable() const;
+    bool isOverflowVisible() const;
 
     const RenderStyle& style() const { return m_style; }
 
@@ -124,8 +125,6 @@ protected:
         InlineContainerFlag   = 1 << 3
     };
     Box(std::optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
-
-    bool isOverflowVisible() const;
 
 private:
     void setParent(Container& parent) { m_parent = &parent; }

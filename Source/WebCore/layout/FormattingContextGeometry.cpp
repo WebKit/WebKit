@@ -574,9 +574,11 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     return { *left, *right, { width, { *marginLeft, *marginRight } } };
 }
 
-HeightAndMargin FormattingContext::Geometry::floatingNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
+HeightAndMargin FormattingContext::Geometry::complicatedCases(LayoutContext& layoutContext, const Box& layoutBox)
 {
-    ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
+    ASSERT(!layoutBox.replaced());
+    // TODO: Use complicated-case for document renderer for now (see BlockFormattingContext::Geometry::inFlowHeightAndMargin).
+    ASSERT((layoutBox.isBlockLevelBox() && layoutBox.isInFlow() && !layoutBox.isOverflowVisible()) || layoutBox.isInlineBlockBox() || layoutBox.isFloatingPositioned() || layoutBox.isDocumentBox());
 
     // 10.6.6 Complicated cases
     //
@@ -685,7 +687,7 @@ HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(LayoutConte
     ASSERT(layoutBox.isFloatingPositioned());
 
     if (!layoutBox.replaced())
-        return floatingNonReplacedHeightAndMargin(layoutContext, layoutBox);
+        return complicatedCases(layoutContext, layoutBox);
     return floatingReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 

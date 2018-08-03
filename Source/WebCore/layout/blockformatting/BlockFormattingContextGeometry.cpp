@@ -60,6 +60,7 @@ static const Container& initialContainingBlock(const Box& layoutBox)
 HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
+    ASSERT(layoutBox.isOverflowVisible());
 
     auto compute = [&]() -> HeightAndMargin {
 
@@ -364,11 +365,18 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(LayoutCo
 {
     ASSERT(layoutBox.isInFlow());
 
-    if (!layoutBox.replaced())
-        return inFlowNonReplacedHeightAndMargin(layoutContext, layoutBox);
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
-    return FormattingContext::Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+    if (layoutBox.replaced())
+        return FormattingContext::Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+
+    // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
+    if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox())
+        return inFlowNonReplacedHeightAndMargin(layoutContext, layoutBox);
+
+    // 10.6.6 Complicated cases
+    // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
+    return FormattingContext::Geometry::complicatedCases(layoutContext, layoutBox);
 }
 
 WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
