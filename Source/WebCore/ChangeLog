@@ -1,5 +1,32 @@
 2018-08-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234469. rdar://problem/42882308
+
+    Always use MediaPlayback audio category when playing to AppleTV
+    https://bugs.webkit.org/show_bug.cgi?id=188230
+    <rdar://problem/42497809>
+    
+    Reviewed by Jer Noble.
+    
+    * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+    (PlatformMediaSessionManager::updateSessionState): Check session.isPlayingToWirelessPlaybackTarget().
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234469 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-01  Eric Carlson  <eric.carlson@apple.com>
+
+            Always use MediaPlayback audio category when playing to AppleTV
+            https://bugs.webkit.org/show_bug.cgi?id=188230
+            <rdar://problem/42497809>
+
+            Reviewed by Jer Noble.
+
+            * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+            (PlatformMediaSessionManager::updateSessionState): Check session.isPlayingToWirelessPlaybackTarget().
+
+2018-08-02  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234463. rdar://problem/42882308
 
     [iOS] Remove the delay before setting audio session category added in r233535
