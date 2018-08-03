@@ -3951,6 +3951,7 @@
 		CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */; };
 		CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD225C091C46FBF400140761 /* WebCoreNSURLSession.mm */; };
 		CD225C0C1C46FBF400140761 /* WebCoreNSURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD225C0A1C46FBF400140761 /* WebCoreNSURLSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD227E3A2113C86200D285AF /* MediaSessionManagerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CD227E362113AEFA00D285AF /* MediaSessionManagerCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD2F4A2418D89F700063746D /* AudioHardwareListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2F4A2218D89F700063746D /* AudioHardwareListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD2F4A2818D8A3490063746D /* AudioHardwareListenerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2F4A2618D8A3490063746D /* AudioHardwareListenerMac.h */; };
 		CD318622199F1E2A0030A0F7 /* CDMPrivateMediaSourceAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD318620199F1E2A0030A0F7 /* CDMPrivateMediaSourceAVFObjC.mm */; };
@@ -13186,6 +13187,7 @@
 		CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackRepresentation.cpp; sourceTree = "<group>"; };
 		CD225C091C46FBF400140761 /* WebCoreNSURLSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSURLSession.mm; sourceTree = "<group>"; };
 		CD225C0A1C46FBF400140761 /* WebCoreNSURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSURLSession.h; sourceTree = "<group>"; };
+		CD227E362113AEFA00D285AF /* MediaSessionManagerCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MediaSessionManagerCocoa.h; path = cocoa/MediaSessionManagerCocoa.h; sourceTree = "<group>"; };
 		CD27F6E014575C1B0078207D /* MediaController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaController.idl; sourceTree = "<group>"; };
 		CD27F6E2145767580078207D /* JSMediaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaController.cpp; sourceTree = "<group>"; };
 		CD27F6E3145767580078207D /* JSMediaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaController.h; sourceTree = "<group>"; };
@@ -24670,6 +24672,7 @@
 			isa = PBXGroup;
 			children = (
 				CD669D661D232DFF004D1866 /* MediaSessionManagerCocoa.cpp */,
+				CD227E362113AEFA00D285AF /* MediaSessionManagerCocoa.h */,
 				CDE667A21E4BBF1500E8154A /* WebAudioBufferList.cpp */,
 				CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */,
 			);
@@ -27867,6 +27870,7 @@
 				8371AC3B1F509BE400FBF284 /* ErrorCallback.h in Headers */,
 				2ECF7AE210162B5800427DE7 /* ErrorEvent.h in Headers */,
 				85031B420A44EFC700F992E0 /* Event.h in Headers */,
+				CD227E3A2113C86200D285AF /* MediaSessionManagerCocoa.h in Headers */,
 				4138D3351244054800323D33 /* EventContext.h in Headers */,
 				418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */,
 				93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */,

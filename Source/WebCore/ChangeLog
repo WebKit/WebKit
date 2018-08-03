@@ -1,3 +1,51 @@
+2018-08-02  Jer Noble  <jer.noble@apple.com>
+
+        Control center controls disappear when pausing, locking device.
+        https://bugs.webkit.org/show_bug.cgi?id=188282
+        <rdar://problem/42497809>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/media/audio-session-category-video-paused.html
+
+        MediaRemote will set any app whose audio session category changes from MediaPlayback to
+        Ambient as not eligable for being the "now playing" app. Previously, due to the ordering of
+        events, we never moved from MediaPlayback to Ambient when pausing <video>, even though that
+        was the intention. Now that that bug is fixed, it exposed this new issue with MediaRemote.
+
+        To solve the new issue, make our audio session category policy more explicit: once we are in
+        MediaPlayback category, we will remain so as long as the media element in queston stays
+        loaded, has played, and is never interrupted by the system.
+
+        Make MediaSessionManagerCocoa a proper subclass of PlatformMediaSessionManager, and make
+        MediaSessionManageriOS and -Mac subclasses of the -Cocoa class. Add a new
+        m_hasPlayedSinceLastInterruption ivar to PlatformMediaSession, set when the state() changes
+        to Playing, and cleared during an interruption. Check this flag when deciding what audio 
+        sessino category to set in MediaSessionManagerCocoa.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::setState):
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSession::hasPlayedSinceLastInterruption const):
+        (WebCore::PlatformMediaSession::clearHasPlayedSinceLastInterruption):
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::updateSessionState): Deleted.
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::audioHardwareListener):
+        (WebCore::PlatformMediaSessionManager::updateSessionState):
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (MediaSessionManagerCocoa::updateSessionState):
+        (MediaSessionManagerCocoa::beginInterruption):
+        (PlatformMediaSessionManager::updateSessionState): Deleted.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h: Added.
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::MediaSessionManageriOS):
+        * platform/audio/mac/MediaSessionManagerMac.h:
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::MediaSessionManagerMac):
+
 2018-08-02  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] add support to return the attributed string under the element

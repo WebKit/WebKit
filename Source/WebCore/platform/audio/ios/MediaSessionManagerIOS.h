@@ -27,7 +27,7 @@
 
 #if PLATFORM(IOS)
 
-#include "PlatformMediaSessionManager.h"
+#include "MediaSessionManagerCocoa.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS WebMediaSessionHelper;
@@ -41,7 +41,7 @@ extern NSString* WebUIApplicationDidEnterBackgroundNotification;
 
 namespace WebCore {
 
-class MediaSessionManageriOS : public PlatformMediaSessionManager {
+class MediaSessionManageriOS : public MediaSessionManagerCocoa {
 public:
     virtual ~MediaSessionManageriOS();
 

@@ -117,6 +117,8 @@ void PlatformMediaSession::setState(State state)
 
     INFO_LOG(LOGIDENTIFIER, state);
     m_state = state;
+    if (m_state == State::Playing)
+        m_hasPlayedSinceLastInterruption = true;
     PlatformMediaSessionManager::sharedManager().sessionStateChanged(*this);
 }
 
