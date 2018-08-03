@@ -66,7 +66,7 @@ public:
     bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
     void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }
 
-    WEBCORE_EXPORT void beginInterruption(PlatformMediaSession::InterruptionType);
+    WEBCORE_EXPORT virtual void beginInterruption(PlatformMediaSession::InterruptionType);
     WEBCORE_EXPORT void endInterruption(PlatformMediaSession::EndInterruptionFlags);
 
     WEBCORE_EXPORT void applicationWillBecomeInactive() const;
@@ -123,10 +123,12 @@ protected:
     PlatformMediaSession* findSession(const Function<bool(PlatformMediaSession&, size_t)>&) const;
     bool anyOfSessions(const Function<bool(PlatformMediaSession&, size_t)>& predicate) const { return findSession(predicate); }
 
+    AudioHardwareListener* audioHardwareListener() { return m_audioHardwareListener.get(); }
+
 private:
     friend class Internals;
 
-    void updateSessionState();
+    virtual void updateSessionState() { }
 
     // RemoteCommandListenerClient
     WEBCORE_EXPORT void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override;
