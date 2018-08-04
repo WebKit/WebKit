@@ -39,22 +39,19 @@
 namespace WebKit {
 
 class SandboxInitializationParameters;
-
-struct ChildProcessInitializationParameters {
-    String uiProcessName;
-    String clientIdentifier;
-    std::optional<WebCore::ProcessIdentifier> processIdentifier;
-    IPC::Connection::Identifier connectionIdentifier;
-    HashMap<String, String> extraInitializationData;
-#if PLATFORM(COCOA)
-    OSObjectPtr<xpc_object_t> priorityBoostMessage;
-#endif
-};
+struct ChildProcessInitializationParameters;
 
 class ChildProcess : protected IPC::Connection::Client, public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(ChildProcess);
 
 public:
+    enum class ProcessType : uint8_t {
+        WebContent,
+        Network,
+        Storage,
+        Plugin
+    };
+
     void initialize(const ChildProcessInitializationParameters&);
 
     // disable and enable termination of the process. when disableTermination is called, the
@@ -147,6 +144,18 @@ private:
 
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> m_priorityBoostMessage;
+#endif
+};
+
+struct ChildProcessInitializationParameters {
+    String uiProcessName;
+    String clientIdentifier;
+    std::optional<WebCore::ProcessIdentifier> processIdentifier;
+    IPC::Connection::Identifier connectionIdentifier;
+    HashMap<String, String> extraInitializationData;
+    ChildProcess::ProcessType processType;
+#if PLATFORM(COCOA)
+    OSObjectPtr<xpc_object_t> priorityBoostMessage;
 #endif
 };
 
