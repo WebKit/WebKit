@@ -122,8 +122,8 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
 
     Util::run(&didBeginPlaying);
 
-    waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryPlayback());
-    EXPECT_WK_STREQ(getAVAudioSessionCategoryPlayback(), [[getAVAudioSessionClass() sharedInstance] category]);
+    waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryAmbient());
+    EXPECT_WK_STREQ(getAVAudioSessionCategoryAmbient(), [[getAVAudioSessionClass() sharedInstance] category]);
 }
 
 }
