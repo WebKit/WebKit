@@ -1,3 +1,30 @@
+2018-08-03  Justin Fan  <justin_fan@apple.com>
+
+        WebGL 2 conformance: vertex_arrays/vertex_array_object.html
+        https://bugs.webkit.org/show_bug.cgi?id=188291
+        <rdar://problem/42792709>
+
+        Reviewed by Dean Jackson.
+
+        Get https://www.khronos.org/registry/webgl/conformance-suites/2.0.0/conformance2/vertex_arrays/vertex-array-object.html 
+        working on Mac OS and iOS, and check in the new test expectations.
+
+        Existing test: webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::initializeVertexArrayObjects):
+        (WebCore::WebGL2RenderingContext::deleteVertexArray):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::deleteObject):
+        * html/canvas/WebGLVertexArrayObject.cpp:
+        (WebCore::WebGLVertexArrayObject::WebGLVertexArrayObject):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking const):
+        (WebCore::GraphicsContext3D::createVertexArray):
+        (WebCore::GraphicsContext3D::deleteVertexArray):
+        (WebCore::GraphicsContext3D::isVertexArray):
+        (WebCore::GraphicsContext3D::bindVertexArray):
+
 2018-08-03  Sam Weinig  <sam@webkit.org>
 
         Remove WebGPUObject

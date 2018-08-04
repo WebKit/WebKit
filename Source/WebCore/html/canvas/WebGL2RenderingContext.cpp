@@ -95,7 +95,11 @@ void WebGL2RenderingContext::initializeVertexArrayObjects()
 {
     m_defaultVertexArrayObject = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::Default);
     addContextObject(*m_defaultVertexArrayObject);
+#if USE(OPENGL_ES)
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
+#else
+    bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
+#endif
     if (!isGLES2Compliant())
         initVertexAttrib0();
 }
@@ -1063,7 +1067,11 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
         return;
     
     if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject)
+#if USE(OPENGL_ES)
         setBoundVertexArrayObject(nullptr);
+#else
+        bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
+#endif
     
     arrayObject->deleteObject(graphicsContext3D());
 }

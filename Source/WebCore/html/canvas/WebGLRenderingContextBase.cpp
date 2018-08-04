@@ -1768,6 +1768,8 @@ bool WebGLRenderingContextBase::deleteObject(WebGLObject* object)
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "delete", "object does not belong to this context");
         return false;
     }
+    if (object->isDeleted())
+        return false;
     if (object->object())
         // We need to pass in context here because we want
         // things in this context unbound.

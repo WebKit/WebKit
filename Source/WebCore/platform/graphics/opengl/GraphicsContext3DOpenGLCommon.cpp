@@ -399,7 +399,9 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
         variables.push_back(varyingSymbol);
 
     GC3Dint maxVaryingVectors = 0;
-#if !USE(OPENGL_ES)
+#if USE(OPENGL_ES)
+    ::glGetIntegerv(MAX_VARYING_VECTORS, &maxVaryingVectors);
+#else
     if (m_isForWebGL2)
         ::glGetIntegerv(GL_MAX_VARYING_VECTORS, &maxVaryingVectors);
     else {
@@ -407,8 +409,6 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
         ::glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryingFloats);
         maxVaryingVectors = maxVaryingFloats / 4;
     }
-#else
-    ::glGetIntegerv(MAX_VARYING_VECTORS, &maxVaryingVectors);
 #endif
     return sh::CheckVariablesWithinPackingLimits(maxVaryingVectors, variables);
 }
@@ -1525,10 +1525,8 @@ Platform3DObject GraphicsContext3D::createVertexArray()
 {
     makeContextCurrent();
     GLuint array = 0;
-#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
-    glGenVertexArrays(1, &array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    glGenVertexArraysAPPLE(1, &array);
+#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
+    ::glGenVertexArrays(1, &array);
 #endif
     return array;
 }
@@ -1539,10 +1537,8 @@ void GraphicsContext3D::deleteVertexArray(Platform3DObject array)
         return;
     
     makeContextCurrent();
-#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
-    glDeleteVertexArrays(1, &array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    glDeleteVertexArraysAPPLE(1, &array);
+#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
+    ::glDeleteVertexArrays(1, &array);
 #endif
 }
 
@@ -1552,10 +1548,8 @@ GC3Dboolean GraphicsContext3D::isVertexArray(Platform3DObject array)
         return GL_FALSE;
     
     makeContextCurrent();
-#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
-    return glIsVertexArray(array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    return glIsVertexArrayAPPLE(array);
+#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
+    return ::glIsVertexArray(array);
 #endif
     return GL_FALSE;
 }
@@ -1563,12 +1557,8 @@ GC3Dboolean GraphicsContext3D::isVertexArray(Platform3DObject array)
 void GraphicsContext3D::bindVertexArray(Platform3DObject array)
 {
     makeContextCurrent();
-#if !USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))
-    glBindVertexArray(array);
-#elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
-    glBindVertexArrayAPPLE(array);
-#else
-    UNUSED_PARAM(array);
+#if (!USE(OPENGL_ES) && (PLATFORM(GTK) || PLATFORM(WIN))) || PLATFORM(COCOA)
+    ::glBindVertexArray(array);
 #endif
 }
 
