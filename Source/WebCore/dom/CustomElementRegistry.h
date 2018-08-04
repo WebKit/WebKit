@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContextDestructionObserver.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
@@ -47,9 +48,9 @@ class JSCustomElementInterface;
 class Node;
 class QualifiedName;
 
-class CustomElementRegistry : public RefCounted<CustomElementRegistry> {
+class CustomElementRegistry : public RefCounted<CustomElementRegistry>, public ContextDestructionObserver {
 public:
-    static Ref<CustomElementRegistry> create(DOMWindow&);
+    static Ref<CustomElementRegistry> create(DOMWindow&, ScriptExecutionContext*);
     ~CustomElementRegistry();
 
     void addElementDefinition(Ref<JSCustomElementInterface>&&);
@@ -68,7 +69,7 @@ public:
     HashMap<AtomicString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
 
 private:
-    CustomElementRegistry(DOMWindow&);
+    CustomElementRegistry(DOMWindow&, ScriptExecutionContext*);
 
     DOMWindow& m_window;
     HashMap<AtomicString, Ref<JSCustomElementInterface>> m_nameMap;

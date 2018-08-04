@@ -1,3 +1,26 @@
+2018-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Properties set on window.customElements can disappear due to GC
+        https://bugs.webkit.org/show_bug.cgi?id=172575
+        <rdar://problem/32440668>
+
+        Reviewed by Saam Barati.
+
+        Fixed the bug that JS wrapper of CustomElementsRegistry can erroneously get collected during GC
+        by keeping it alive as long as the global object is alive.
+
+        Test: fast/custom-elements/custom-element-registry-wrapper-should-stay-alive.html
+
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::CustomElementRegistry::create):
+        (WebCore::CustomElementRegistry::CustomElementRegistry):
+        * dom/CustomElementRegistry.h:
+        (WebCore::CustomElementRegistry): Make this inherited from ContextDestructionObserver.
+        * dom/CustomElementRegistry.idl: Set GenerateIsReachable=ImplScriptExecutionContext in IDL. This will
+        make CustomElementRegistry reachable from the global object.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::ensureCustomElementRegistry):
+
 2018-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         innerHTML should not synchronously create a custom element

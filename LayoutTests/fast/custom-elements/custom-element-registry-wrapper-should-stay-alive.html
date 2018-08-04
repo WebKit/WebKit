@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests that the property added on window.customElements persist after a lot of memory allocation');
+
+for (let i = 0; i < 10; i++) {
+    // Using iframe makes this test more reliable.
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.contentWindow.eval(`
+        window.customElements.someProperty = 'storedValue';
+        const a = [];
+        for (let i = 0; i < 1000000; i++)
+            a.push({});
+        if (window.GCController)
+            GCController.collect();
+        top.check(window.customElements.someProperty);`);
+    iframe.remove();
+}
+
+function check(value) {
+    if (value == 'storedValue')
+        testPassed('The property was present - the JS wrapper of customElements was not collected');
+    else
+        testFailed('The property was not present - the JS wrapper of customElements was erroneously collected');
+}
+
+</script>
+</body>
+</html>

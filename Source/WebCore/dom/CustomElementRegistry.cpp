@@ -41,13 +41,14 @@
 
 namespace WebCore {
 
-Ref<CustomElementRegistry> CustomElementRegistry::create(DOMWindow& window)
+Ref<CustomElementRegistry> CustomElementRegistry::create(DOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
 {
-    return adoptRef(*new CustomElementRegistry(window));
+    return adoptRef(*new CustomElementRegistry(window, scriptExecutionContext));
 }
 
-CustomElementRegistry::CustomElementRegistry(DOMWindow& window)
-    : m_window(window)
+CustomElementRegistry::CustomElementRegistry(DOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
+    : ContextDestructionObserver(scriptExecutionContext)
+    , m_window(window)
 {
 }
 
