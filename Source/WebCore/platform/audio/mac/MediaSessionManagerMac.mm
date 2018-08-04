@@ -55,7 +55,7 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 }
 
 MediaSessionManagerMac::MediaSessionManagerMac()
-    : PlatformMediaSessionManager()
+    : MediaSessionManagerCocoa()
 {
     resetRestrictions();
 }
