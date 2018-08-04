@@ -185,6 +185,8 @@ inline bool TimerHeapLessThanFunction::operator()(const TimerBase* a, const Time
 // ----------------
 
 TimerBase::TimerBase()
+    : m_heapIndex(-1)
+    , m_wasDeleted(false)
 {
 }
 

@@ -1,3 +1,17 @@
+2018-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Make WebCore::Timer more space-efficient
+        https://bugs.webkit.org/show_bug.cgi?id=187455
+
+        Reviewed by Brent Fulgham.
+
+        Steal a bit from m_heapIndex for m_wasDeleted to eliminate padding in Timer.
+        This reduces the size of Document, which has 8 Timers, from 3360 to 3296 bytes (saving 64 bytes).
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::TimerBase):
+        * platform/Timer.h:
+
 2018-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Properties set on window.customElements can disappear due to GC
