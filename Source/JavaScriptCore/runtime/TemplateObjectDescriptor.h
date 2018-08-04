@@ -81,7 +81,7 @@ private:
 inline TemplateObjectDescriptor::TemplateObjectDescriptor(StringVector&& rawStrings, OptionalStringVector&& cookedStrings)
     : m_rawStrings(WTFMove(rawStrings))
     , m_cookedStrings(WTFMove(cookedStrings))
-    , m_hash(calculateHash(rawStrings))
+    , m_hash(calculateHash(m_rawStrings))
 {
 }
 

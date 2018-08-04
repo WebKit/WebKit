@@ -1,3 +1,14 @@
+2018-08-04  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r208953): TemplateObjectDescriptor constructor calculates m_hash on use-after-move variable
+        <https://webkit.org/b/188331>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/TemplateObjectDescriptor.h:
+        (JSC::TemplateObjectDescriptor::TemplateObjectDescriptor):
+        Use `m_rawstrings` instead of `rawStrings` to calculate hash.
+
 2018-08-03  Saam Barati  <sbarati@apple.com>
 
         Give the `jsc` shell the JIT entitlement
