@@ -144,7 +144,7 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 }
 
 MediaSessionManageriOS::MediaSessionManageriOS()
-    : MediaSessionManagerCocoa()
+    : PlatformMediaSessionManager()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_objcObserver = adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]);

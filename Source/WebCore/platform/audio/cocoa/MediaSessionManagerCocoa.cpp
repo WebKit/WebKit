@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MediaSessionManagerCocoa.h"
+#include "PlatformMediaSessionManager.h"
 
 #if USE(AUDIO_SESSION)
 
@@ -38,7 +38,7 @@ using namespace WebCore;
 static const size_t kWebAudioBufferSize = 128;
 static const size_t kLowPowerVideoBufferSize = 4096;
 
-void MediaSessionManagerCocoa::updateSessionState()
+void PlatformMediaSessionManager::updateSessionState()
 {
     LOG(Media, "PlatformMediaSessionManager::scheduleUpdateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
 
@@ -53,7 +53,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         // causes media LayoutTests to fail on 10.8.
 
         size_t bufferSize;
-        if (audioHardwareListener() && audioHardwareListener()->outputDeviceSupportsLowPowerMode())
+        if (m_audioHardwareListener && m_audioHardwareListener->outputDeviceSupportsLowPowerMode())
             bufferSize = kLowPowerVideoBufferSize;
         else
             bufferSize = kWebAudioBufferSize;
@@ -70,7 +70,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         auto type = session.mediaType();
         if (type == PlatformMediaSession::WebAudio)
             hasWebAudioType = true;
-        if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
+        if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.state() == PlatformMediaSession::Playing)
             hasAudibleAudioOrVideoMediaType = true;
         if (session.isPlayingToWirelessPlaybackTarget())
             hasAudibleAudioOrVideoMediaType = true;
@@ -85,17 +85,6 @@ void MediaSessionManagerCocoa::updateSessionState()
         AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
     else
         AudioSession::sharedSession().setCategory(AudioSession::None);
-}
-
-void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::InterruptionType type)
-{
-    if (type == PlatformMediaSession::InterruptionType::SystemInterruption) {
-        forEachSession([] (PlatformMediaSession& session, size_t) {
-            session.clearHasPlayedSinceLastInterruption();
-        });
-    }
-
-    PlatformMediaSessionManager::beginInterruption(type);
 }
 
 #endif // USE(AUDIO_SESSION)

@@ -28,11 +28,11 @@
 #if PLATFORM(MAC)
 
 #include "GenericTaskQueue.h"
-#include "MediaSessionManagerCocoa.h"
+#include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
 
-class MediaSessionManagerMac : public MediaSessionManagerCocoa {
+class MediaSessionManagerMac : public PlatformMediaSessionManager {
 public:
     virtual ~MediaSessionManagerMac();
 

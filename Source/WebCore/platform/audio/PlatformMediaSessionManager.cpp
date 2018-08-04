@@ -357,6 +357,12 @@ void PlatformMediaSessionManager::sessionCanProduceAudioChanged(PlatformMediaSes
     updateSessionState();
 }
 
+#if !PLATFORM(COCOA)
+void PlatformMediaSessionManager::updateSessionState()
+{
+}
+#endif
+
 void PlatformMediaSessionManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
 {
     PlatformMediaSession* activeSession = currentSession();

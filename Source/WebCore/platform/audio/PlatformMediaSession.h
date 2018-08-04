@@ -176,9 +176,6 @@ public:
 
     virtual bool allowsNowPlayingControlsVisibility() const { return false; }
 
-    bool hasPlayedSinceLastInterruption() const { return m_hasPlayedSinceLastInterruption; }
-    void clearHasPlayedSinceLastInterruption() { m_hasPlayedSinceLastInterruption = false; }
-
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
 
@@ -197,7 +194,6 @@ private:
     int m_interruptionCount { 0 };
     bool m_notifyingClient;
     bool m_isPlayingToWirelessPlaybackTarget { false };
-    bool m_hasPlayedSinceLastInterruption { false };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
