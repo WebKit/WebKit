@@ -49,7 +49,7 @@ public:
     CustomElementReactionQueue(JSCustomElementInterface&);
     ~CustomElementReactionQueue();
 
-    static void enqueueElementUpgrade(Element&);
+    static void enqueueElementUpgrade(Element&, bool alreadyScheduledToUpgrade);
     static void enqueueElementUpgradeIfDefined(Element&);
     static void enqueueConnectedCallbackIfNeeded(Element&);
     static void enqueueDisconnectedCallbackIfNeeded(Element&);

@@ -1,3 +1,50 @@
+2018-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        innerHTML should not synchronously create a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=188327
+        <rdar://problem/42923114>
+
+        Reviewed by Daniel Bates.
+
+        Fixed the bug that the fragment parsing algorithm was synchronously constructing a custom element instead of
+        enqueuing an element to upgrade.
+
+        The fragment parsing algorithm creates an element for a token with *will execute script* flag set to false:
+        https://html.spec.whatwg.org/multipage/parsing.html#create-an-element-for-the-token
+        which results in creating an element with synchronous custom elements flag *not* set:
+        https://dom.spec.whatwg.org/#concept-create-element
+
+        When synchronous custom elements flag is false, we're supposed to create an element and enqueue a custom element
+        upgrade reaction. createHTMLElementOrFindCustomElementInterface was missing this last logic. 
+
+        Also fixed a bug that Element::enqueueToUpgrade would hit a debug assertion when a custom element which has been
+        enqueued to upgrade is enqueued to upgrade for the second time. In this case, we need to put the element into the
+        current element queue (https://html.spec.whatwg.org/multipage/custom-elements.html#current-element-queue) again.
+
+        While the specification simply enqueues another upgrade reaction and bails out immediately in the first step of
+        the upgrade, WebKit's implementation simply avoids this redundancy in the first place:
+        https://html.spec.whatwg.org/multipage/custom-elements.html#concept-upgrade-an-element
+
+        Existing tests such as imported/w3c/web-platform-tests/custom-elements/reactions/Document.html exercises this
+        code path after the fragment parsing algorithm fix.
+
+        Tests: imported/w3c/web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing.html
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueueItem::type const): Added for an assertion.
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgrade): Enqueue this element to the current element queue
+        by calling ensureCurrentQueue and avoid inserting a redundant upgrade reaction.
+        * dom/CustomElementReactionQueue.h:
+        * dom/Element.cpp:
+        (WebCore::Element::enqueueToUpgrade): Handle the case when a custom element is enqueued to upgrade for the second
+        time while it had been waiting in some element queue. In this case, the reaction queue for this element has
+        already been created and we simply need to put this element back into the current element queue (i.e. this element
+        now belongs to both element queues).
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::findCustomElementInterface): Extracted out of createHTMLElementOrFindCustomElementInterface.
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface): Fixed the bug that the HTML parser
+        was synchronously constructing a custom element even for the fragment parsing algorithm.
+
 2018-08-03  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault

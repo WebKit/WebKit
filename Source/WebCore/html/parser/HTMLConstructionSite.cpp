@@ -649,6 +649,19 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     return currentNode().document();
 }
 
+static inline JSCustomElementInterface* findCustomElementInterface(Document& ownerDocument, const AtomicString& localName)
+{
+    auto* window = ownerDocument.domWindow();
+    if (!window)
+        return nullptr;
+
+    auto* registry = window->customElementRegistry();
+    if (LIKELY(!registry))
+        return nullptr;
+
+    return registry->findInterface(localName);
+}
+
 RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomicHTMLToken& token, JSCustomElementInterface** customElementInterface)
 {
     auto& localName = token.name();
@@ -660,23 +673,22 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
     bool insideTemplateElement = !ownerDocument.frame();
     RefPtr<Element> element = HTMLElementFactory::createKnownElement(localName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
-        auto window = makeRefPtr(ownerDocument.domWindow());
-        if (customElementInterface && window) {
-            auto registry = makeRefPtr(window->customElementRegistry());
-            if (UNLIKELY(registry)) {
-                if (auto elementInterface = makeRefPtr(registry->findInterface(localName))) {
-                    *customElementInterface = elementInterface.get();
-                    return nullptr;
-                }
+        if (auto* elementInterface = findCustomElementInterface(ownerDocument, localName)) {
+            if (!m_isParsingFragment) {
+                *customElementInterface = elementInterface;
+                return nullptr;
             }
-        }
-
-        QualifiedName qualifiedName(nullAtom(), localName, xhtmlNamespaceURI);
-        if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
-            element = HTMLElement::create(qualifiedName, ownerDocument);
+            element = HTMLElement::create(QualifiedName { nullAtom(), localName, xhtmlNamespaceURI }, ownerDocument);
             element->setIsCustomElementUpgradeCandidate();
-        } else
-            element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
+            element->enqueueToUpgrade(*elementInterface);
+        } else {
+            QualifiedName qualifiedName { nullAtom(), localName, xhtmlNamespaceURI };
+            if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
+                element = HTMLElement::create(qualifiedName, ownerDocument);
+                element->setIsCustomElementUpgradeCandidate();
+            } else
+                element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
+        }
     }
     ASSERT(element);
 

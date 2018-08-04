@@ -2009,10 +2009,10 @@ void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
     InspectorInstrumentation::didChangeCustomElementState(*this);
 
     auto& data = ensureElementRareData();
-    ASSERT(!data.customElementReactionQueue());
-
-    data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
-    data.customElementReactionQueue()->enqueueElementUpgrade(*this);
+    bool alreadyScheduledToUpgrade = data.customElementReactionQueue();
+    if (!alreadyScheduledToUpgrade)
+        data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
+    data.customElementReactionQueue()->enqueueElementUpgrade(*this, alreadyScheduledToUpgrade);
 }
 
 CustomElementReactionQueue* Element::reactionQueue() const

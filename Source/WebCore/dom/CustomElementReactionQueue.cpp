@@ -70,6 +70,8 @@ public:
         , m_newValue(newValue)
     { }
 
+    Type type() const { return m_type; }
+
     void invoke(Element& element, JSCustomElementInterface& elementInterface)
     {
         switch (m_type) {
@@ -115,10 +117,14 @@ void CustomElementReactionQueue::clear()
     m_items.clear();
 }
 
-void CustomElementReactionQueue::enqueueElementUpgrade(Element& element)
+void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, bool alreadyScheduledToUpgrade)
 {
     auto& queue = ensureCurrentQueue(element);
-    queue.m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade});
+    if (alreadyScheduledToUpgrade) {
+        ASSERT(queue.m_items.size() == 1);
+        ASSERT(queue.m_items[0].type() == CustomElementReactionQueueItem::Type::ElementUpgrade);
+    } else
+        queue.m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade});
 }
 
 void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element)

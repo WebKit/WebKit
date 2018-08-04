@@ -1,3 +1,15 @@
+2018-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        innerHTML should not synchronously create a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=188327
+        <rdar://problem/42923114>
+
+        Reviewed by Daniel Bates.
+
+        Rebaselined the test now that all test cases are passing.
+
+        * web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing-expected.txt:
+
 2018-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert when throwing exceptions in custom element reactions
