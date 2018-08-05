@@ -938,7 +938,6 @@ bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(Graphics
     std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation), true);
 
     auto textureID = frameHolder->textureID();
-    ASSERT(textureID);
     if (!textureID)
         return false;
 
@@ -966,7 +965,6 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation), true);
 
     auto textureID = frameHolder->textureID();
-    ASSERT(textureID);
     if (!textureID)
         return nullptr;
 

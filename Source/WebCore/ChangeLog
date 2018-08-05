@@ -1,3 +1,20 @@
+2018-08-05  Ms2ger  <Ms2ger@igalia.com>
+
+        [GStreamer] Remove unsound assertions in MediaPlayerPrivateGStreamerBase.
+        https://bugs.webkit.org/show_bug.cgi?id=188162
+
+        Reviewed by Philippe Normand.
+
+        These assertions sometimes fail, and there's a runtime check right
+        after them anyway.
+
+        Tests: fast/canvas/webgl/texImage2D-video-flipY-false.html
+               fast/canvas/webgl/texImage2D-video-flipY-true.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+
 2018-08-05  Philippe Normand  <pnormand@igalia.com>
 
         [MediaCapabilities] Platform integration
