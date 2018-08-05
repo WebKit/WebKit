@@ -487,3 +487,9 @@ function handlePromise(promise) {
     function handle() { }
     return promise.then(handle, handle);
 }
+
+function checkMediaCapabilitiesInfo(info, expectedSupported, expectedSmooth, expectedPowerEfficient) {
+    logResult(info.supported == expectedSupported, "info.supported == " + expectedSupported);
+    logResult(info.smooth == expectedSmooth, "info.smooth == " + expectedSmooth);
+    logResult(info.powerEfficient == expectedPowerEfficient, "info.powerEfficient == " + expectedPowerEfficient);
+}

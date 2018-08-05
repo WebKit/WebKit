@@ -474,6 +474,8 @@ public:
     Ref<MockCDMFactory> registerMockCDM();
 #endif
 
+    void enableMockMediaCapabilities();
+
 #if ENABLE(SPEECH_SYNTHESIS)
     void enableMockSpeechSynthesizer();
 #endif

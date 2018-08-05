@@ -1720,6 +1720,9 @@ platform/graphics/transforms/TransformState.cpp
 platform/graphics/transforms/TransformationMatrix.cpp
 platform/graphics/transforms/TranslateTransformOperation.cpp
 
+platform/mediacapabilities/MediaEngineConfiguration.cpp
+platform/mediacapabilities/MediaEngineConfigurationFactory.cpp
+
 platform/mediastream/CaptureDeviceManager.cpp
 platform/mediastream/MediaConstraints.cpp
 platform/mediastream/MediaEndpointConfiguration.cpp
@@ -1740,6 +1743,8 @@ platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
 
 platform/mock/DeviceOrientationClientMock.cpp
 platform/mock/GeolocationClientMock.cpp
+platform/mock/MediaEngineDecodingConfigurationMock.cpp
+platform/mock/MediaEngineEncodingConfigurationMock.cpp
 platform/mock/MockRealtimeAudioSource.cpp
 platform/mock/MockRealtimeMediaSource.cpp
 platform/mock/MockRealtimeMediaSourceCenter.cpp

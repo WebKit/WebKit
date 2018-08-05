@@ -1,3 +1,77 @@
+2018-08-05  Philippe Normand  <pnormand@igalia.com>
+
+        [MediaCapabilities] Platform integration
+        https://bugs.webkit.org/show_bug.cgi?id=187850
+
+        Reviewed by Eric Carlson.
+
+        Mock platform support for the MediaCapabilities specification.
+
+        Test: media/mediacapabilities/mock-decodingInfo.html
+              media/mediacapabilities/mock-encodingInfo.html
+
+        * Modules/mediacapabilities/MediaCapabilities.cpp:
+        (WebCore::MediaCapabilities::decodingInfo):
+        (WebCore::MediaCapabilities::encodingInfo):
+        * Modules/mediacapabilities/MediaCapabilitiesInfo.h:
+        (WebCore::MediaCapabilitiesInfo::create):
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediacapabilities/MediaEngineConfiguration.cpp: Added.
+        (WebCore::MediaEngineVideoConfiguration::MediaEngineVideoConfiguration):
+        (WebCore::MediaEngineAudioConfiguration::MediaEngineAudioConfiguration):
+        (WebCore::MediaEngineConfiguration::MediaEngineConfiguration):
+        * platform/mediacapabilities/MediaEngineConfiguration.h: Added.
+        (WebCore::MediaEngineVideoConfiguration::create):
+        (WebCore::MediaEngineVideoConfiguration::contentType const):
+        (WebCore::MediaEngineVideoConfiguration::size const):
+        (WebCore::MediaEngineVideoConfiguration::bitrate const):
+        (WebCore::MediaEngineVideoConfiguration::framerate const):
+        (WebCore::MediaEngineAudioConfiguration::create):
+        (WebCore::MediaEngineAudioConfiguration::contentType const):
+        (WebCore::MediaEngineAudioConfiguration::channels const):
+        (WebCore::MediaEngineAudioConfiguration::bitrate const):
+        (WebCore::MediaEngineAudioConfiguration::samplerate const):
+        (WebCore::MediaEngineConfiguration::audioConfiguration const):
+        (WebCore::MediaEngineConfiguration::videoConfiguration const):
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.cpp: Added.
+        (WebCore::mockEnabled):
+        (WebCore::MediaEngineConfigurationFactory::createDecodingConfiguration):
+        (WebCore::MediaEngineConfigurationFactory::createEncodingConfiguration):
+        (WebCore::MediaEngineConfigurationFactory::enableMock):
+        (WebCore::MediaEngineConfigurationFactory::disableMock):
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.h: Added.
+        * platform/mediacapabilities/MediaEngineDecodingConfiguration.h: Added.
+        (WebCore::MediaEngineDecodingConfiguration::MediaEngineDecodingConfiguration):
+        (WebCore::MediaEngineDecodingConfiguration::canDecodeMedia):
+        (WebCore::MediaEngineDecodingConfiguration::canSmoothlyDecodeMedia):
+        (WebCore::MediaEngineDecodingConfiguration::canPowerEfficientlyDecodeMedia):
+        (WebCore::MediaEngineDecodingConfiguration::decodingType const):
+        * platform/mediacapabilities/MediaEngineEncodingConfiguration.h: Added.
+        (WebCore::MediaEngineEncodingConfiguration::MediaEngineEncodingConfiguration):
+        (WebCore::MediaEngineEncodingConfiguration::canEncodeMedia):
+        (WebCore::MediaEngineEncodingConfiguration::canSmoothlyEncodeMedia):
+        (WebCore::MediaEngineEncodingConfiguration::canPowerEfficientlyEncodeMedia):
+        (WebCore::MediaEngineEncodingConfiguration::encodingType const):
+        * platform/mock/MediaEngineDecodingConfigurationMock.cpp: Added.
+        (WebCore::MediaEngineDecodingConfigurationMock::canDecodeMedia):
+        (WebCore::MediaEngineDecodingConfigurationMock::canSmoothlyDecodeMedia):
+        (WebCore::MediaEngineDecodingConfigurationMock::canPowerEfficientlyDecodeMedia):
+        * platform/mock/MediaEngineDecodingConfigurationMock.h: Added.
+        * platform/mock/MediaEngineEncodingConfigurationMock.cpp: Added.
+        (WebCore::MediaEngineEncodingConfigurationMock::canEncodeMedia):
+        (WebCore::MediaEngineEncodingConfigurationMock::canSmoothlyEncodeMedia):
+        (WebCore::MediaEngineEncodingConfigurationMock::canPowerEfficientlyEncodeMedia):
+        * platform/mock/MediaEngineEncodingConfigurationMock.h: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::enableMockMediaCapabilities):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Make WebCore::Timer more space-efficient

@@ -27,8 +27,10 @@
 #include "MediaCapabilities.h"
 
 #include "ContentType.h"
+#include "JSMediaCapabilitiesInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
+#include "MediaEngineConfigurationFactory.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -195,8 +197,36 @@ void MediaCapabilities::decodingInfo(MediaDecodingConfiguration&& configuration,
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
     m_taskQueue.enqueueTask([configuration = WTFMove(configuration), promise = WTFMove(promise)] () mutable {
-        UNUSED_PARAM(configuration);
-        UNUSED_PARAM(promise);
+
+        // 2.2.3 If configuration is of type MediaDecodingConfiguration, run the following substeps:
+        MediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTFMove(promise)] (auto engineConfiguration) mutable {
+            auto info = MediaCapabilitiesInfo::create();
+
+            if (engineConfiguration) {
+                // 2.2.3.1. If the user agent is able to decode the media represented by
+                // configuration, set supported to true. Otherwise set it to false.
+                info->setSupported(engineConfiguration->canDecodeMedia());
+
+                if (info->supported()) {
+                    // 2.2.3.2. If the user agent is able to decode the media represented by
+                    // configuration at a pace that allows a smooth playback, set smooth to
+                    // true. Otherwise set it to false.
+                    info->setSmooth(engineConfiguration->canSmoothlyDecodeMedia());
+
+                    // 2.2.3.3. If the user agent is able to decode the media represented by
+                    // configuration in a power efficient manner, set powerEfficient to
+                    // true. Otherwise set it to false. The user agent SHOULD NOT take into
+                    // consideration the current power source in order to determine the
+                    // decoding power efficiency unless the device’s power source has side
+                    // effects such as enabling different decoding modules.
+                    info->setPowerEfficient(engineConfiguration->canPowerEfficientlyDecodeMedia());
+                }
+            }
+
+            promise->resolveWithNewlyCreated<IDLInterface<MediaCapabilitiesInfo>>(WTFMove(info));
+        };
+
+        MediaEngineConfigurationFactory::createDecodingConfiguration(configuration, callback);
     });
 }
 
@@ -217,8 +247,40 @@ void MediaCapabilities::encodingInfo(MediaEncodingConfiguration&& configuration,
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
     m_taskQueue.enqueueTask([configuration = WTFMove(configuration), promise = WTFMove(promise)] () mutable {
-        UNUSED_PARAM(configuration);
-        UNUSED_PARAM(promise);
+
+        // 2.2.4. If configuration is of type MediaEncodingConfiguration, run the following substeps:
+        MediaEngineConfigurationFactory::EncodingConfigurationCallback callback = [promise = WTFMove(promise)] (auto engineConfiguration) mutable {
+            auto info = MediaCapabilitiesInfo::create();
+
+            if (engineConfiguration) {
+                // 2.2.4.1. If the user agent is able to encode the media
+                // represented by configuration, set supported to true. Otherwise
+                // set it to false.
+                info->setSupported(engineConfiguration->canEncodeMedia());
+
+                if (info->supported()) {
+                    // 2.2.4.2. If the user agent is able to encode the media
+                    // represented by configuration at a pace that allows encoding
+                    // frames at the same pace as they are sent to the encoder, set
+                    // smooth to true. Otherwise set it to false.
+                    info->setSmooth(engineConfiguration->canSmoothlyEncodeMedia());
+
+                    // 2.2.4.3. If the user agent is able to encode the media
+                    // represented by configuration in a power efficient manner, set
+                    // powerEfficient to true. Otherwise set it to false. The user agent
+                    // SHOULD NOT take into consideration the current power source in
+                    // order to determine the encoding power efficiency unless the
+                    // device’s power source has side effects such as enabling different
+                    // encoding modules.
+                    info->setPowerEfficient(engineConfiguration->canPowerEfficientlyEncodeMedia());
+                }
+            }
+
+            promise->resolveWithNewlyCreated<IDLInterface<MediaCapabilitiesInfo>>(WTFMove(info));
+        };
+
+        MediaEngineConfigurationFactory::createEncodingConfiguration(configuration, callback);
+
     });
 }
 

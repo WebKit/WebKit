@@ -55,7 +55,7 @@ list(APPEND WebCoreTestSupport_LIBRARIES
 )
 
 list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
+    platform/mediacapabilities
     platform/graphics/cairo
-
     platform/network/curl
 )

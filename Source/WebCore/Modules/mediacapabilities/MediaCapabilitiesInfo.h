@@ -31,6 +31,14 @@ namespace WebCore {
 
 class MediaCapabilitiesInfo : public RefCounted<MediaCapabilitiesInfo> {
 public:
+
+    static Ref<MediaCapabilitiesInfo> create()
+    {
+        return adoptRef(*new MediaCapabilitiesInfo());
+    }
+
+    ~MediaCapabilitiesInfo() = default;
+
     bool supported() const { return m_supported; }
     void setSupported(bool supported) { m_supported = supported; }
 
@@ -41,6 +49,8 @@ public:
     void setPowerEfficient(bool powerEfficient) { m_powerEfficient = powerEfficient; }
 
 private:
+    MediaCapabilitiesInfo() = default;
+
     bool m_supported { false };
     bool m_smooth { false };
     bool m_powerEfficient { false };

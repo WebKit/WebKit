@@ -1,3 +1,19 @@
+2018-08-05  Philippe Normand  <pnormand@igalia.com>
+
+        [MediaCapabilities] Platform integration
+        https://bugs.webkit.org/show_bug.cgi?id=187850
+
+        Reviewed by Eric Carlson.
+
+        Mock tests for the MediaCapabilities specification.
+
+        * media/mediacapabilities/mock-decodingInfo-expected.txt: Added.
+        * media/mediacapabilities/mock-decodingInfo.html: Added.
+        * media/mediacapabilities/mock-encodingInfo-expected.txt: Added.
+        * media/mediacapabilities/mock-encodingInfo.html: Added.
+        * media/video-test.js:
+        (checkMediaCapabilitiesInfo):
+
 2018-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Properties set on window.customElements can disappear due to GC
