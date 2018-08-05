@@ -1,3 +1,16 @@
+2018-08-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] contentHeightForFormattingContextRoot uses the wrong coordinate system to compute the height.
+        https://bugs.webkit.org/show_bug.cgi?id=188319
+
+        Reviewed by Antti Koivisto.
+
+        Display::Box::marginBox() is in the coordinate system of the box itself (8px top margin translates to y = -8px).
+        What we need instead to compute the content height is the top/bottom position in the containing block's coordinate system (rect and rectWithMargin).
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+
 2018-08-05  Ms2ger  <Ms2ger@igalia.com>
 
         [GStreamer] Remove unsound assertions in MediaPlayerPrivateGStreamerBase.

@@ -55,18 +55,20 @@ static LayoutUnit contentHeightForFormattingContextRoot(LayoutContext& layoutCon
 
     auto* firstDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild());
     auto* lastDisplayBox = layoutContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild());
+    auto top = firstDisplayBox->rectWithMargin().top();
+    auto bottom = lastDisplayBox->rectWithMargin().bottom();
+
     auto* formattingContextRoot = &layoutBox;
     // TODO: The document renderer is not a formatting context root by default at all. Need to find out what it is.
     if (!layoutBox.establishesFormattingContext()) {
         ASSERT(layoutBox.isDocumentBox());
         formattingContextRoot = &layoutBox.formattingContextRoot();
     }
-    auto floatsBottom = layoutContext.establishedFormattingState(*formattingContextRoot).floatingState().bottom(*formattingContextRoot);
 
-    auto top = firstDisplayBox->marginBox().top();
-    auto bottom = lastDisplayBox->marginBox().bottom();
+    auto floatsBottom = layoutContext.establishedFormattingState(*formattingContextRoot).floatingState().bottom(*formattingContextRoot);
     if (floatsBottom)
         bottom = std::max(*floatsBottom, bottom);
+
     auto computedHeight = bottom - top;
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height] -> content height for formatting context root -> height(" << computedHeight << "px) layoutBox("<< &layoutBox << ")");
     return computedHeight;
