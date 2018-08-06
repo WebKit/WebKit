@@ -59,17 +59,26 @@ namespace WTF {
 
 MD5::MD5()
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CC_MD5_Init(&m_context);
+#pragma clang diagnostic pop
 }
 
 void MD5::addBytes(const uint8_t* input, size_t length)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CC_MD5_Update(&m_context, input, length);
+#pragma clang diagnostic pop
 }
 
 void MD5::checksum(Digest& hash)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CC_MD5_Final(hash.data(), &m_context);
+#pragma clang diagnostic pop
 }
     
 #else
