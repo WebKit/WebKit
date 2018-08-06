@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.20.2
+=================
+
+What's new in WPE WebKit 2.20.1?
+
+  - Fix a rendering bug which would occasionally cause frames to be dropped when animating
+    elements using requestAnimationFrame().
+  - Security fixes: CVE-2018-4261, CVE-2018-4262, CVE-2018-4263, CVE-2018-4264, CVE-2018-4265, CVE-2018-4266,
+    CVE-2018-4267, CVE-2018-4270, CVE-2018-4272, CVE-2018-4273, CVE-2018-4278, CVE-2018-4284.
+
+=================
 WPE WebKit 2.20.1
 =================
 
