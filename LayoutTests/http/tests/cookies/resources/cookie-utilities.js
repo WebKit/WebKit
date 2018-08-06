@@ -32,6 +32,8 @@ function getDOMCookies()
 {
     if (!g_baseDocumentWhenFetchingDOMCookies)
         g_baseDocumentWhenFetchingDOMCookies = document;
+    if (!g_baseDocumentWhenFetchingDOMCookies.cookie)
+        return {};
     let cookies = g_baseDocumentWhenFetchingDOMCookies.cookie.split("; ");
     let result = {};
     for (let keyAndValuePair of cookies) {

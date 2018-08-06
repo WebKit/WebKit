@@ -1,3 +1,23 @@
+2018-08-06  Daniel Bates  <dabates@apple.com>
+
+        Add tests to ensure that Same-Site cookies are stored when set as the first party
+        https://bugs.webkit.org/show_bug.cgi?id=188080
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/cookies/resources/cookie-utilities.js:
+        (getDOMCookies): Return an empty dictionary when there are no DOM cookies. Currently we
+        return {"": undefined}.
+        * http/tests/cookies/resources/cookie-utilities.php: Added.
+        * http/tests/cookies/resources/echo-http-and-dom-cookies-and-notify-done.php: Added.
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies-expected.txt: Added.
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies.php: Added.
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies-expected.txt: Added.
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies.php: Added.
+        * platform/ios-12/TestExpectations: Skip the tests until the fix for <rdar://problem/42255251>
+        is shipped.
+        * platform/mac/TestExpectations: Ditto.
+
 2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         fast/custom-elements/custom-element-registry-wrapper-should-stay-alive.html always timeouts on debug bots

@@ -1,4 +1,9 @@
 http/tests/cookies/same-site [ Pass ]
+
+# FIXME: Mark as Pass once the fix for <rdar://problem/42255251> is shipped.
+http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Skip ]
+http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Skip ]
+
 system-preview [ Pass ]
 editing/selection/character-granularity-rect.html [ Pass ]
 
