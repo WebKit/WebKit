@@ -1109,11 +1109,11 @@ private:
 
     RenderLayerModelObject& m_renderer;
 
-    RenderLayer* m_parent;
-    RenderLayer* m_previous;
-    RenderLayer* m_next;
-    RenderLayer* m_first;
-    RenderLayer* m_last;
+    RenderLayer* m_parent { nullptr };
+    RenderLayer* m_previous { nullptr };
+    RenderLayer* m_next { nullptr };
+    RenderLayer* m_first { nullptr };
+    RenderLayer* m_last { nullptr };
 
     // Our current relative position offset.
     LayoutSize m_offsetForInFlowPosition;

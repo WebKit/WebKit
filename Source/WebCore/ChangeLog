@@ -1,3 +1,16 @@
+2018-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up initialization of some RenderLayer members
+        https://bugs.webkit.org/show_bug.cgi?id=188330
+
+        Reviewed by Dean Jackson.
+
+        Use initializers for the pointers. No need to initialize LayoutUnits, which initialize to zero.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        * rendering/RenderLayer.h:
+
 2018-08-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG elements' attributes macros

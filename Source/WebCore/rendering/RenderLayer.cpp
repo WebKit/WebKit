@@ -319,13 +319,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_hasNotIsolatedBlendingDescendantsStatusDirty(false)
 #endif
     , m_renderer(rendererLayerModelObject)
-    , m_parent(nullptr)
-    , m_previous(nullptr)
-    , m_next(nullptr)
-    , m_first(nullptr)
-    , m_last(nullptr)
-    , m_staticInlinePosition(0)
-    , m_staticBlockPosition(0)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
     m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
