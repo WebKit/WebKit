@@ -164,7 +164,7 @@ void GraphicsContextImplCairo::fillRect(const FloatRect& rect, const Color& colo
 
     Cairo::State::setCompositeOperation(m_platformContext, compositeOperator, blendMode);
     Cairo::fillRect(m_platformContext, rect, color, Cairo::ShadowState(state));
-    Cairo::State::setCompositeOperation(m_platformContext, previousOperator, BlendModeNormal);
+    Cairo::State::setCompositeOperation(m_platformContext, previousOperator, BlendMode::Normal);
 }
 
 void GraphicsContextImplCairo::fillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode blendMode)
@@ -180,7 +180,7 @@ void GraphicsContextImplCairo::fillRoundedRect(const FloatRoundedRect& rect, con
     else
         Cairo::fillRect(m_platformContext, rect.rect(), color, shadowState);
 
-    Cairo::State::setCompositeOperation(m_platformContext, previousOperator, BlendModeNormal);
+    Cairo::State::setCompositeOperation(m_platformContext, previousOperator, BlendMode::Normal);
 }
 
 void GraphicsContextImplCairo::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color&)

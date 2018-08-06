@@ -3903,58 +3903,58 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BlendMode blendMode)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (blendMode) {
-    case BlendModeNormal:
+    case BlendMode::Normal:
         m_value.valueID = CSSValueNormal;
         break;
-    case BlendModeMultiply:
+    case BlendMode::Multiply:
         m_value.valueID = CSSValueMultiply;
         break;
-    case BlendModeScreen:
+    case BlendMode::Screen:
         m_value.valueID = CSSValueScreen;
         break;
-    case BlendModeOverlay:
+    case BlendMode::Overlay:
         m_value.valueID = CSSValueOverlay;
         break;
-    case BlendModeDarken:
+    case BlendMode::Darken:
         m_value.valueID = CSSValueDarken;
         break;
-    case BlendModeLighten:
+    case BlendMode::Lighten:
         m_value.valueID = CSSValueLighten;
         break;
-    case BlendModeColorDodge:
+    case BlendMode::ColorDodge:
         m_value.valueID = CSSValueColorDodge;
         break;
-    case BlendModeColorBurn:
+    case BlendMode::ColorBurn:
         m_value.valueID = CSSValueColorBurn;
         break;
-    case BlendModeHardLight:
+    case BlendMode::HardLight:
         m_value.valueID = CSSValueHardLight;
         break;
-    case BlendModeSoftLight:
+    case BlendMode::SoftLight:
         m_value.valueID = CSSValueSoftLight;
         break;
-    case BlendModeDifference:
+    case BlendMode::Difference:
         m_value.valueID = CSSValueDifference;
         break;
-    case BlendModeExclusion:
+    case BlendMode::Exclusion:
         m_value.valueID = CSSValueExclusion;
         break;
-    case BlendModeHue:
+    case BlendMode::Hue:
         m_value.valueID = CSSValueHue;
         break;
-    case BlendModeSaturation:
+    case BlendMode::Saturation:
         m_value.valueID = CSSValueSaturation;
         break;
-    case BlendModeColor:
+    case BlendMode::Color:
         m_value.valueID = CSSValueColor;
         break;
-    case BlendModeLuminosity:
+    case BlendMode::Luminosity:
         m_value.valueID = CSSValueLuminosity;
         break;
-    case BlendModePlusDarker:
+    case BlendMode::PlusDarker:
         m_value.valueID = CSSValuePlusDarker;
         break;
-    case BlendModePlusLighter:
+    case BlendMode::PlusLighter:
         m_value.valueID = CSSValuePlusLighter;
         break;
     }
@@ -3966,47 +3966,47 @@ template<> inline CSSPrimitiveValue::operator BlendMode() const
 
     switch (m_value.valueID) {
     case CSSValueNormal:
-        return BlendModeNormal;
+        return BlendMode::Normal;
     case CSSValueMultiply:
-        return BlendModeMultiply;
+        return BlendMode::Multiply;
     case CSSValueScreen:
-        return BlendModeScreen;
+        return BlendMode::Screen;
     case CSSValueOverlay:
-        return BlendModeOverlay;
+        return BlendMode::Overlay;
     case CSSValueDarken:
-        return BlendModeDarken;
+        return BlendMode::Darken;
     case CSSValueLighten:
-        return BlendModeLighten;
+        return BlendMode::Lighten;
     case CSSValueColorDodge:
-        return BlendModeColorDodge;
+        return BlendMode::ColorDodge;
     case CSSValueColorBurn:
-        return BlendModeColorBurn;
+        return BlendMode::ColorBurn;
     case CSSValueHardLight:
-        return BlendModeHardLight;
+        return BlendMode::HardLight;
     case CSSValueSoftLight:
-        return BlendModeSoftLight;
+        return BlendMode::SoftLight;
     case CSSValueDifference:
-        return BlendModeDifference;
+        return BlendMode::Difference;
     case CSSValueExclusion:
-        return BlendModeExclusion;
+        return BlendMode::Exclusion;
     case CSSValueHue:
-        return BlendModeHue;
+        return BlendMode::Hue;
     case CSSValueSaturation:
-        return BlendModeSaturation;
+        return BlendMode::Saturation;
     case CSSValueColor:
-        return BlendModeColor;
+        return BlendMode::Color;
     case CSSValueLuminosity:
-        return BlendModeLuminosity;
+        return BlendMode::Luminosity;
     case CSSValuePlusDarker:
-        return BlendModePlusDarker;
+        return BlendMode::PlusDarker;
     case CSSValuePlusLighter:
-        return BlendModePlusLighter;
+        return BlendMode::PlusLighter;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return BlendModeNormal;
+    return BlendMode::Normal;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Isolation isolation)

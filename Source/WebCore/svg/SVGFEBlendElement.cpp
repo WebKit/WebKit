@@ -46,7 +46,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
-    , m_mode(BlendModeNormal)
+    , m_mode(BlendMode::Normal)
 {
     ASSERT(hasTagName(SVGNames::feBlendTag));
     registerAnimatedPropertiesForSVGFEBlendElement();
@@ -60,7 +60,7 @@ Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, D
 void SVGFEBlendElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::modeAttr) {
-        BlendMode mode = BlendModeNormal;
+        BlendMode mode = BlendMode::Normal;
         if (parseBlendMode(value, mode))
             setModeBaseValue(mode);
         return;

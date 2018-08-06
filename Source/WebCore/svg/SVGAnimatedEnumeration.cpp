@@ -87,9 +87,9 @@ static inline unsigned enumerationValueForTargetAttribute(SVGElement* targetElem
     }
 
     if (attrName == SVGNames::modeAttr) {
-        BlendMode mode = BlendModeNormal;
+        BlendMode mode = BlendMode::Normal;
         parseBlendMode(value, mode);
-        return mode;
+        return static_cast<unsigned>(mode);
     }
     if (attrName == SVGNames::stitchTilesAttr)
         return SVGPropertyTraits<SVGStitchOptions>::fromString(value);

@@ -221,7 +221,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
             treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
     } else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
-        BlendMode blendOp = BlendModeNormal;
+        BlendMode blendOp = BlendMode::Normal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeSourceOver;
 #if ENABLE(SERVICE_CONTROLS)

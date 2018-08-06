@@ -305,7 +305,7 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color,
 
             Cairo::State::setCompositeOperation(platformContext, arg<2>(), arg<3>());
             Cairo::fillRect(platformContext, arg<0>(), arg<1>(), arg<4>());
-            Cairo::State::setCompositeOperation(platformContext, arg<5>(), BlendModeNormal);
+            Cairo::State::setCompositeOperation(platformContext, arg<5>(), BlendMode::Normal);
         }
 
         void dump(TextStream& ts) override
@@ -335,7 +335,7 @@ void CairoOperationRecorder::fillRoundedRect(const FloatRoundedRect& roundedRect
             else
                 Cairo::fillRect(platformContext, rect.rect(), arg<1>(), arg<4>());
 
-            Cairo::State::setCompositeOperation(platformContext, arg<2>(), BlendModeNormal);
+            Cairo::State::setCompositeOperation(platformContext, arg<2>(), BlendMode::Normal);
         }
 
         void dump(TextStream& ts) override

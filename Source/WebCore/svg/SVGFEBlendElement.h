@@ -29,11 +29,11 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<BlendMode> {
-    static unsigned highestEnumValue() { return BlendModeLuminosity; }
+    static unsigned highestEnumValue() { return static_cast<unsigned>(BlendMode::Luminosity); }
 
     static String toString(BlendMode type)
     {
-        if (type < BlendModePlusDarker)
+        if (type < BlendMode::PlusDarker)
             return blendModeName(type);
 
         return emptyString();

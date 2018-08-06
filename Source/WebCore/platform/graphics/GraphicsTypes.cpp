@@ -72,13 +72,13 @@ static const char* const blendOperatorNames[] = {
     "plus-lighter"
 };
 const int numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
-const int numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);
+const unsigned numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);
 
 bool parseBlendMode(const String& s, BlendMode& blendMode)
 {
-    for (int i = 0; i < numBlendOperatorNames; i++) {
+    for (unsigned i = 0; i < numBlendOperatorNames; i++) {
         if (s == blendOperatorNames[i]) {
-            blendMode = static_cast<BlendMode>(i + BlendModeNormal);
+            blendMode = static_cast<BlendMode>(i + static_cast<unsigned>(BlendMode::Normal));
             return true;
         }
     }
@@ -91,7 +91,7 @@ bool parseCompositeAndBlendOperator(const String& s, CompositeOperator& op, Blen
     for (int i = 0; i < numCompositeOperatorNames; i++) {
         if (s == compositeOperatorNames[i]) {
             op = static_cast<CompositeOperator>(i);
-            blendOp = BlendModeNormal;
+            blendOp = BlendMode::Normal;
             return true;
         }
     }
@@ -111,23 +111,23 @@ String compositeOperatorName(CompositeOperator op, BlendMode blendOp)
 {
     ASSERT(op >= 0);
     ASSERT(op < numCompositeOperatorNames);
-    ASSERT(blendOp >= BlendModeNormal);
-    ASSERT(blendOp <= numBlendOperatorNames);
-    if (blendOp > BlendModeNormal)
-        return blendOperatorNames[blendOp - BlendModeNormal];
+    ASSERT(blendOp >= BlendMode::Normal);
+    ASSERT(static_cast<unsigned>(blendOp) <= numBlendOperatorNames);
+    if (blendOp > BlendMode::Normal)
+        return blendOperatorNames[static_cast<unsigned>(blendOp) - static_cast<unsigned>(BlendMode::Normal)];
     return compositeOperatorNames[op];
 }
 
 String blendModeName(BlendMode blendOp)
 {
-    ASSERT(blendOp >= BlendModeNormal);
-    ASSERT(blendOp <= BlendModePlusLighter);
-    return blendOperatorNames[blendOp - BlendModeNormal];
+    ASSERT(blendOp >= BlendMode::Normal);
+    ASSERT(blendOp <= BlendMode::PlusLighter);
+    return blendOperatorNames[static_cast<unsigned>(blendOp) - static_cast<unsigned>(BlendMode::Normal)];
 }
 
 TextStream& operator<<(TextStream& ts, CompositeOperator op)
 {
-    return ts << compositeOperatorName(op, BlendModeNormal);
+    return ts << compositeOperatorName(op, BlendMode::Normal);
 }
 
 TextStream& operator<<(TextStream& ts, BlendMode blendMode)

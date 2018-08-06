@@ -761,7 +761,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
         ts << indent << "(opacity " << m_opacity << ")\n";
 
 #if ENABLE(CSS_COMPOSITING)
-    if (m_blendMode != BlendModeNormal)
+    if (m_blendMode != BlendMode::Normal)
         ts << indent << "(blendMode " << compositeOperatorName(CompositeSourceOver, m_blendMode) << ")\n";
 #endif
 

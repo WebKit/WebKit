@@ -199,7 +199,7 @@ CanvasRenderingContext2DBase::State::State()
     , shadowColor(Color::transparent)
     , globalAlpha(1)
     , globalComposite(CompositeSourceOver)
-    , globalBlend(BlendModeNormal)
+    , globalBlend(BlendMode::Normal)
     , hasInvertibleTransform(true)
     , lineDashOffset(0)
     , imageSmoothingEnabled(true)
@@ -774,7 +774,7 @@ String CanvasRenderingContext2DBase::globalCompositeOperation() const
 void CanvasRenderingContext2DBase::setGlobalCompositeOperation(const String& operation)
 {
     CompositeOperator op = CompositeSourceOver;
-    BlendMode blendMode = BlendModeNormal;
+    BlendMode blendMode = BlendMode::Normal;
     if (!parseCompositeAndBlendOperator(operation, op, blendMode))
         return;
     if ((state().globalComposite == op) && (state().globalBlend == blendMode))
@@ -1714,10 +1714,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
 void CanvasRenderingContext2DBase::drawImageFromRect(HTMLImageElement& imageElement, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, const String& compositeOperation)
 {
     CompositeOperator op;
-    auto blendOp = BlendModeNormal;
-    if (!parseCompositeAndBlendOperator(compositeOperation, op, blendOp) || blendOp != BlendModeNormal)
+    auto blendOp = BlendMode::Normal;
+    if (!parseCompositeAndBlendOperator(compositeOperation, op, blendOp) || blendOp != BlendMode::Normal)
         op = CompositeSourceOver;
-    drawImage(imageElement, FloatRect { sx, sy, sw, sh }, FloatRect { dx, dy, dw, dh }, op, BlendModeNormal);
+    drawImage(imageElement, FloatRect { sx, sy, sw, sh }, FloatRect { dx, dy, dw, dh }, op, BlendMode::Normal);
 }
 
 void CanvasRenderingContext2DBase::clearCanvas()

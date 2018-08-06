@@ -91,7 +91,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , textDecorationStyle(static_cast<unsigned>(RenderStyle::initialTextDecorationStyle()))
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
 #if ENABLE(CSS_COMPOSITING)
-    , effectiveBlendMode(RenderStyle::initialBlendMode())
+    , effectiveBlendMode(static_cast<unsigned>(RenderStyle::initialBlendMode()))
     , isolation(static_cast<unsigned>(RenderStyle::initialIsolation()))
 #endif
 #if ENABLE(APPLE_PAY)

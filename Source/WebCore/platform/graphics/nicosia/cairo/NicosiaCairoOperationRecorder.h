@@ -68,7 +68,7 @@ private:
     WebCore::ImageDrawResult drawTiledImage(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatPoint&, const WebCore::FloatSize&, const WebCore::FloatSize&, const WebCore::ImagePaintingOptions&) override;
     WebCore::ImageDrawResult drawTiledImage(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::FloatSize&, WebCore::Image::TileRule, WebCore::Image::TileRule, const WebCore::ImagePaintingOptions&) override;
     void drawNativeImage(const WebCore::NativeImagePtr&, const WebCore::FloatSize&, const WebCore::FloatRect&, const WebCore::FloatRect&, WebCore::CompositeOperator, WebCore::BlendMode, WebCore::ImageOrientation) override;
-    void drawPattern(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize&, WebCore::CompositeOperator, WebCore::BlendMode = WebCore::BlendModeNormal) override;
+    void drawPattern(WebCore::Image&, const WebCore::FloatRect&, const WebCore::FloatRect&, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize&, WebCore::CompositeOperator, WebCore::BlendMode = WebCore::BlendMode::Normal) override;
 
     void drawRect(const WebCore::FloatRect&, float) override;
     void drawLine(const WebCore::FloatPoint&, const WebCore::FloatPoint&) override;

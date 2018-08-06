@@ -196,7 +196,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
             visibleSrcRect.setWidth(1);
             visibleSrcRect.setHeight(destRect.height() / scale.height());
-            return draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, decodingMode, ImageOrientationDescription());
+            return draw(ctxt, destRect, visibleSrcRect, op, BlendMode::Normal, decodingMode, ImageOrientationDescription());
         }
         if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
             FloatRect visibleSrcRect;
@@ -204,7 +204,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             visibleSrcRect.setY(0);
             visibleSrcRect.setWidth(destRect.width() / scale.width());
             visibleSrcRect.setHeight(1);
-            return draw(ctxt, destRect, visibleSrcRect, op, BlendModeNormal, decodingMode, ImageOrientationDescription());
+            return draw(ctxt, destRect, visibleSrcRect, op, BlendMode::Normal, decodingMode, ImageOrientationDescription());
         }
     }
 #endif
@@ -236,7 +236,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
                 FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
                 fromRect.scale(1 / scale.width(), 1 / scale.height());
 
-                result = draw(ctxt, toRect, fromRect, op, BlendModeNormal, decodingMode, ImageOrientationDescription());
+                result = draw(ctxt, toRect, fromRect, op, BlendMode::Normal, decodingMode, ImageOrientationDescription());
                 if (result == ImageDrawResult::DidRequestDecoding)
                     return result;
                 toX += currentTileRect.width();

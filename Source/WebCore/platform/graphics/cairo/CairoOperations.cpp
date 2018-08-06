@@ -178,8 +178,7 @@ static void drawShadowLayerBuffer(PlatformContextCairo& platformContext, ImageBu
         return;
 
     if (auto surface = image->nativeImageForCurrentFrame()) {
-        drawNativeImage(platformContext, surface.get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize),
-            shadowState.globalCompositeOperator, BlendModeNormal, ImageOrientation(),
+        drawNativeImage(platformContext, surface.get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize), shadowState.globalCompositeOperator, BlendMode::Normal, ImageOrientation(),
             InterpolationDefault, shadowState.globalAlpha, ShadowState());
     }
 }
@@ -837,8 +836,8 @@ void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* sur
     platformContext.save();
 
     // Set the compositing operation.
-    if (compositeOperator == CompositeSourceOver && blendMode == BlendModeNormal && !cairoSurfaceHasAlpha(surface))
-        Cairo::State::setCompositeOperation(platformContext, CompositeCopy, BlendModeNormal);
+    if (compositeOperator == CompositeSourceOver && blendMode == BlendMode::Normal && !cairoSurfaceHasAlpha(surface))
+        Cairo::State::setCompositeOperation(platformContext, CompositeCopy, BlendMode::Normal);
     else
         Cairo::State::setCompositeOperation(platformContext, compositeOperator, blendMode);
 

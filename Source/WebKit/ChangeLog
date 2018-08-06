@@ -1,3 +1,13 @@
+2018-08-06  Alex Christensen  <achristensen@webkit.org>
+
+        Make BlendMode an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=188325
+
+        Reviewed by Darin Adler.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+
 2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained

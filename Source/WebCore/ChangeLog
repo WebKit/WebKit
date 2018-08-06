@@ -1,3 +1,87 @@
+2018-08-06  Alex Christensen  <achristensen@webkit.org>
+
+        Make BlendMode an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=188325
+
+        Reviewed by Darin Adler.
+
+        No change in behavior.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator BlendMode const):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::State::State):
+        (WebCore::CanvasRenderingContext2DBase::setGlobalCompositeOperation):
+        (WebCore::CanvasRenderingContext2DBase::drawImageFromRect):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::ImagePaintingOptions::ImagePaintingOptions):
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::parseBlendMode):
+        (WebCore::parseCompositeAndBlendOperator):
+        (WebCore::compositeOperatorName):
+        (WebCore::blendModeName):
+        (WebCore::operator<<):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        (PlatformCAFilters::setBlendingFiltersOnLayer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::selectCGBlendMode):
+        * platform/graphics/cpu/arm/filters/FEBlendNEON.h:
+        (WebCore::FEBlend::platformApplyNEON):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::externalRepresentation const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateBlendMode):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateBlendMode):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::hasOpaqueImage const):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::initialFillBlendMode):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setBlendMode):
+        (WebCore::RenderStyle::hasBlendMode const):
+        (WebCore::RenderStyle::blendMode const):
+        (WebCore::RenderStyle::initialBlendMode):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * svg/SVGAnimatedEnumeration.cpp:
+        (WebCore::enumerationValueForTargetAttribute):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::parseAttribute):
+        * svg/SVGFEBlendElement.h:
+        (WebCore::SVGPropertyTraits<BlendMode>::highestEnumValue):
+        (WebCore::SVGPropertyTraits<BlendMode>::toString):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        (WebCore::SVGImage::nativeImage):
+        (WebCore::SVGImage::drawPatternForContainer):
+        (WebCore::SVGImage::draw):
+
 2018-08-06  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Indeterminate checkboxes appear unchecked

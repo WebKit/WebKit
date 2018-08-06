@@ -162,7 +162,7 @@ public:
     static FillRepeat initialFillRepeatX(FillLayerType) { return FillRepeat::Repeat; }
     static FillRepeat initialFillRepeatY(FillLayerType) { return FillRepeat::Repeat; }
     static CompositeOperator initialFillComposite(FillLayerType) { return CompositeSourceOver; }
-    static BlendMode initialFillBlendMode(FillLayerType) { return BlendModeNormal; }
+    static BlendMode initialFillBlendMode(FillLayerType) { return BlendMode::Normal; }
     static FillSize initialFillSize(FillLayerType) { return { }; }
     static Length initialFillXPosition(FillLayerType) { return Length(0.0f, Percent); }
     static Length initialFillYPosition(FillLayerType) { return Length(0.0f, Percent); }

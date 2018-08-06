@@ -648,7 +648,7 @@ protected:
     FilterOperations m_backdropFilters;
 
 #if ENABLE(CSS_COMPOSITING)
-    BlendMode m_blendMode { BlendModeNormal };
+    BlendMode m_blendMode { BlendMode::Normal };
 #endif
 
     const Type m_type;

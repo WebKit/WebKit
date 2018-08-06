@@ -158,7 +158,7 @@ static InterpolationQuality convertInterpolationQuality(CGInterpolationQuality q
 static CGBlendMode selectCGBlendMode(CompositeOperator compositeOperator, BlendMode blendMode)
 {
     switch (blendMode) {
-    case BlendModeNormal:
+    case BlendMode::Normal:
         switch (compositeOperator) {
         case CompositeClear:
             return kCGBlendModeClear;
@@ -190,39 +190,39 @@ static CGBlendMode selectCGBlendMode(CompositeOperator compositeOperator, BlendM
             return kCGBlendModeDifference;
         }
         break;
-    case BlendModeMultiply:
+    case BlendMode::Multiply:
         return kCGBlendModeMultiply;
-    case BlendModeScreen:
+    case BlendMode::Screen:
         return kCGBlendModeScreen;
-    case BlendModeOverlay:
+    case BlendMode::Overlay:
         return kCGBlendModeOverlay;
-    case BlendModeDarken:
+    case BlendMode::Darken:
         return kCGBlendModeDarken;
-    case BlendModeLighten:
+    case BlendMode::Lighten:
         return kCGBlendModeLighten;
-    case BlendModeColorDodge:
+    case BlendMode::ColorDodge:
         return kCGBlendModeColorDodge;
-    case BlendModeColorBurn:
+    case BlendMode::ColorBurn:
         return kCGBlendModeColorBurn;
-    case BlendModeHardLight:
+    case BlendMode::HardLight:
         return kCGBlendModeHardLight;
-    case BlendModeSoftLight:
+    case BlendMode::SoftLight:
         return kCGBlendModeSoftLight;
-    case BlendModeDifference:
+    case BlendMode::Difference:
         return kCGBlendModeDifference;
-    case BlendModeExclusion:
+    case BlendMode::Exclusion:
         return kCGBlendModeExclusion;
-    case BlendModeHue:
+    case BlendMode::Hue:
         return kCGBlendModeHue;
-    case BlendModeSaturation:
+    case BlendMode::Saturation:
         return kCGBlendModeSaturation;
-    case BlendModeColor:
+    case BlendMode::Color:
         return kCGBlendModeColor;
-    case BlendModeLuminosity:
+    case BlendMode::Luminosity:
         return kCGBlendModeLuminosity;
-    case BlendModePlusDarker:
+    case BlendMode::PlusDarker:
         return kCGBlendModePlusDarker;
-    case BlendModePlusLighter:
+    case BlendMode::PlusLighter:
         return kCGBlendModePlusLighter;
     }
 

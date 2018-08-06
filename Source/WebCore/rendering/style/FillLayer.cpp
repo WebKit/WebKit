@@ -54,7 +54,7 @@ FillLayer::FillLayer(FillLayerType type)
     , m_repeatY(static_cast<unsigned>(FillLayer::initialFillRepeatY(type)))
     , m_composite(FillLayer::initialFillComposite(type))
     , m_sizeType(static_cast<unsigned>(FillSizeType::None))
-    , m_blendMode(FillLayer::initialFillBlendMode(type))
+    , m_blendMode(static_cast<unsigned>(FillLayer::initialFillBlendMode(type)))
     , m_maskSourceType(static_cast<unsigned>(FillLayer::initialFillMaskSourceType(type)))
     , m_imageSet(false)
     , m_attachmentSet(false)
@@ -357,7 +357,7 @@ bool FillLayer::hasOpaqueImage(const RenderElement& renderer) const
     if (m_composite == CompositeClear || m_composite == CompositeCopy)
         return true;
 
-    return m_blendMode == BlendModeNormal && m_composite == CompositeSourceOver && m_image->knownToBeOpaque(&renderer);
+    return static_cast<BlendMode>(m_blendMode) == BlendMode::Normal && m_composite == CompositeSourceOver && m_image->knownToBeOpaque(&renderer);
 }
 
 bool FillLayer::hasRepeatXY() const

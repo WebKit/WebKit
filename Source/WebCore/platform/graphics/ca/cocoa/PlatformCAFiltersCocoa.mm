@@ -556,52 +556,52 @@ void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformLayer* layer, const Bl
     CAFilter* filter = nil;
 
     switch (blendMode) {
-    case BlendModeNormal:
+    case BlendMode::Normal:
         // No need to set an actual filter object in this case.
         break;
-    case BlendModeOverlay:
+    case BlendMode::Overlay:
         filter = [CAFilter filterWithType:kCAFilterOverlayBlendMode];
         break;
-    case BlendModeColorDodge:
+    case BlendMode::ColorDodge:
         filter = [CAFilter filterWithType:kCAFilterColorDodgeBlendMode];
         break;
-    case BlendModeColorBurn:
+    case BlendMode::ColorBurn:
         filter = [CAFilter filterWithType:kCAFilterColorBurnBlendMode];
         break;
-    case BlendModeDarken:
+    case BlendMode::Darken:
         filter = [CAFilter filterWithType:kCAFilterDarkenBlendMode];
         break;
-    case BlendModeDifference:
+    case BlendMode::Difference:
         filter = [CAFilter filterWithType:kCAFilterDifferenceBlendMode];
         break;
-    case BlendModeExclusion:
+    case BlendMode::Exclusion:
         filter = [CAFilter filterWithType:kCAFilterExclusionBlendMode];
         break;
-    case BlendModeHardLight:
+    case BlendMode::HardLight:
         filter = [CAFilter filterWithType:kCAFilterHardLightBlendMode];
         break;
-    case BlendModeMultiply:
+    case BlendMode::Multiply:
         filter = [CAFilter filterWithType:kCAFilterMultiplyBlendMode];
         break;
-    case BlendModeLighten:
+    case BlendMode::Lighten:
         filter = [CAFilter filterWithType:kCAFilterLightenBlendMode];
         break;
-    case BlendModeSoftLight:
+    case BlendMode::SoftLight:
         filter = [CAFilter filterWithType:kCAFilterSoftLightBlendMode];
         break;
-    case BlendModeScreen:
+    case BlendMode::Screen:
         filter = [CAFilter filterWithType:kCAFilterScreenBlendMode];
         break;
-    case BlendModePlusDarker:
+    case BlendMode::PlusDarker:
         filter = [CAFilter filterWithType:kCAFilterPlusD];
         break;
-    case BlendModePlusLighter:
+    case BlendMode::PlusLighter:
         filter = [CAFilter filterWithType:kCAFilterPlusL];
         break;
-    case BlendModeHue:
-    case BlendModeSaturation:
-    case BlendModeColor:
-    case BlendModeLuminosity:
+    case BlendMode::Hue:
+    case BlendMode::Saturation:
+    case BlendMode::Color:
+    case BlendMode::Luminosity:
         // FIXME: CA does't support non-separable blend modes on compositing filters.
         break;
     default:

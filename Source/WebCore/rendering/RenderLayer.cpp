@@ -313,7 +313,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 #endif
     , m_hasFilterInfo(false)
 #if ENABLE(CSS_COMPOSITING)
-    , m_blendMode(BlendModeNormal)
+    , m_blendMode(static_cast<unsigned>(BlendMode::Normal))
     , m_hasNotIsolatedCompositedBlendingDescendants(false)
     , m_hasNotIsolatedBlendingDescendants(false)
     , m_hasNotIsolatedBlendingDescendantsStatusDirty(false)
@@ -926,7 +926,7 @@ void RenderLayer::positionNewlyCreatedOverflowControls()
 
 void RenderLayer::updateBlendMode()
 {
-    bool hadBlendMode = m_blendMode != BlendModeNormal;
+    bool hadBlendMode = static_cast<BlendMode>(m_blendMode) != BlendMode::Normal;
     if (parent() && hadBlendMode != hasBlendMode()) {
         if (hasBlendMode())
             parent()->updateAncestorChainHasBlendingDescendants();
@@ -935,8 +935,8 @@ void RenderLayer::updateBlendMode()
     }
 
     BlendMode newBlendMode = renderer().style().blendMode();
-    if (newBlendMode != m_blendMode)
-        m_blendMode = newBlendMode;
+    if (newBlendMode != static_cast<BlendMode>(m_blendMode))
+        m_blendMode = static_cast<unsigned>(newBlendMode);
 }
 
 void RenderLayer::updateAncestorChainHasBlendingDescendants()
@@ -1827,7 +1827,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
 
 #if ENABLE(CSS_COMPOSITING)
         if (usesCompositeOperation)
-            context.setCompositeOperation(context.compositeOperation(), BlendModeNormal);
+            context.setCompositeOperation(context.compositeOperation(), BlendMode::Normal);
 #endif
 
 #ifdef REVEAL_TRANSPARENCY_LAYERS

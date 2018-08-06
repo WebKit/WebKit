@@ -1581,7 +1581,7 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, 
     for (auto* layer = &fillLayer; layer; layer = layer->next()) {
         layers.append(layer);
 
-        if (layer->blendMode() != BlendModeNormal)
+        if (layer->blendMode() != BlendMode::Normal)
             shouldDrawBackgroundInSeparateBuffer = true;
 
         // Stop traversal when an opaque layer is encountered.
@@ -1593,7 +1593,7 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, 
         // and pass it down.
 
         // The clipOccludesNextLayers condition must be evaluated first to avoid short-circuiting.
-        if (layer->clipOccludesNextLayers(layer == &fillLayer) && layer->hasOpaqueImage(*this) && layer->image()->canRender(this, style().effectiveZoom()) && layer->hasRepeatXY() && layer->blendMode() == BlendModeNormal)
+        if (layer->clipOccludesNextLayers(layer == &fillLayer) && layer->hasOpaqueImage(*this) && layer->image()->canRender(this, style().effectiveZoom()) && layer->hasRepeatXY() && layer->blendMode() == BlendMode::Normal)
             break;
     }
 

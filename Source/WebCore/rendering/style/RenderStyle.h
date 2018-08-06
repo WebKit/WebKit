@@ -766,14 +766,14 @@ public:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return static_cast<BlendMode>(m_rareNonInheritedData->effectiveBlendMode); }
-    void setBlendMode(BlendMode mode) { SET_VAR(m_rareNonInheritedData, effectiveBlendMode, mode); }
-    bool hasBlendMode() const { return static_cast<BlendMode>(m_rareNonInheritedData->effectiveBlendMode) != BlendModeNormal; }
+    void setBlendMode(BlendMode mode) { SET_VAR(m_rareNonInheritedData, effectiveBlendMode, static_cast<unsigned>(mode)); }
+    bool hasBlendMode() const { return static_cast<BlendMode>(m_rareNonInheritedData->effectiveBlendMode) != BlendMode::Normal; }
 
     Isolation isolation() const { return static_cast<Isolation>(m_rareNonInheritedData->isolation); }
     void setIsolation(Isolation isolation) { SET_VAR(m_rareNonInheritedData, isolation, static_cast<unsigned>(isolation)); }
     bool hasIsolation() const { return isolation() != Isolation::Auto; }
 #else
-    BlendMode blendMode() const { return BlendModeNormal; }
+    BlendMode blendMode() const { return BlendMode::Normal; }
     bool hasBlendMode() const { return false; }
 
     Isolation isolation() const { return Isolation::Auto; }
@@ -1671,7 +1671,7 @@ public:
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    static BlendMode initialBlendMode() { return BlendModeNormal; }
+    static BlendMode initialBlendMode() { return BlendMode::Normal; }
     static Isolation initialIsolation() { return Isolation::Auto; }
 #endif
 
