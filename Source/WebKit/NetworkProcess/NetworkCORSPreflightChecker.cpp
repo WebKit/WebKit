@@ -29,6 +29,7 @@
 #include "AuthenticationManager.h"
 #include "Logging.h"
 #include "NetworkLoadParameters.h"
+#include "NetworkProcess.h"
 #include "SessionTracker.h"
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/SecurityOrigin.h>
@@ -90,15 +91,18 @@ void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceRe
 
 void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
+    RELEASE_LOG_IF_ALLOWED("didReceiveChallenge, authentication scheme: %u", challenge.protectionSpace().authenticationScheme());
 
-    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
+    auto scheme = challenge.protectionSpace().authenticationScheme();
+    bool isTLSHandshake = scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
+        || scheme == ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+
+    if (!isTLSHandshake) {
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
 
-    completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response is not successful"_s, ResourceError::Type::AccessControl });
+    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)

@@ -1,3 +1,40 @@
+2018-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Regression(NetworkLoadChecker): CORS preflights are no longer able to deal with client certificate authentication
+        https://bugs.webkit.org/show_bug.cgi?id=188355
+        <rdar://problem/42546319>
+
+        Reviewed by Alex Christensen.
+
+        Before we started using the NetworkLoadChecker to do CORS-preflighting in the Network process, challenges would
+        use the NetworkLoad::completeAuthenticationChallenge() code path with isAllowedToAskUserForCredentials to set
+        to false. This would call:
+        1. completionHandler(AuthenticationChallengeDisposition::UseCredential, { }); for TLS handshakes (server trust
+           evaluation & client certification authentication)
+        2. NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge() otherwise
+
+        However, NetworkCORSPreflightChecker::didReceiveChallenge() was behaving differently and calling:
+        1. completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { }); for server trust evaluations
+        2. completionHandler(AuthenticationChallengeDisposition::Cancel, { }); otherwise
+
+        Restore previous behavior by aligning NetworkCORSPreflightChecker::didReceiveChallenge() with
+        NetworkLoad::completeAuthenticationChallenge() when isAllowedToAskUserForCredentials is set to false. This means
+        we end up asking the AuthenticationManager for client certificate authentication instead or cancelling the
+        preflight.
+
+        This fixes CORS-preflighting on some internal sites.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+
 2018-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Use enum classes and OptionSets for PaintPhase and PaintBehavior
