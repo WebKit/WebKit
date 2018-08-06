@@ -156,6 +156,8 @@ public:
     
     JSObjectRef selectionRangeViewRects() const;
     JSObjectRef textSelectionCaretRect() const;
+    JSObjectRef selectionStartGrabberViewRect() const;
+    JSObjectRef selectionEndGrabberViewRect() const;
     JSObjectRef inputViewBounds() const;
 
     void replaceTextAtRange(JSStringRef, int location, int length);

@@ -1,0 +1,11 @@
+WK
+
+Selection rects before touchend:
+{ left = 0, top = 0, width = 250, height = 170 }
+Selection start handle before touchend: { left = 0, top = 0, width = 0, height = 0 }
+Selection end handle before touchend: { left = 0, top = 0, width = 0, height = 0 }
+
+Selection rects after touchend:
+{ left = 0, top = 0, width = 250, height = 170 }
+Selection start handle after touchend: { left = 0, top = 0, width = 2, height = 170 }
+Selection end handle after touchend: { left = 249, top = 0, width = 2, height = 170 }

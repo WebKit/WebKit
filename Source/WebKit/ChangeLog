@@ -1,3 +1,46 @@
+2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained
+        https://bugs.webkit.org/show_bug.cgi?id=188322
+        <rdar://problem/42455270>
+
+        Reviewed by Tim Horton.
+
+        Prior to r230745, when a user selects a word in non-editable web content without a prior selection, we would
+        always try to activate the text interaction assistant, creating a selection view (a UITextSelectionView). After
+        the long press is recognized, this text selection view is configured for "highlight mode", which is a special
+        mode for presenting selection UI where the grabber handles at the start and end of the selection are suppressed.
+        UIKit then prepares to show the selection by asking WKContentView for the number of selection rects; if this
+        number is zero, the UITextSelectionView is removed from the superview, and state that keeps track of whether the
+        selection view is in "highlight mode" is reset.
+
+        In the case where there's no prior selection, our cached EditorState in the UI process will not be up to date
+        yet when the gesture is recognized. This means that when UIKit asks us for the number of selection rects, we'll
+        return 0, which causes any state tracking "highlight mode" for the selection to be reset, subsequently resulting
+        in selection handles showing up before the user has ended the initial loupe gesture.
+
+        r230745 addressed this bug by removing logic to activate the text selection when becoming first responder,
+        instead deferring until the next `-_selectionChanged` call with post-layout editor state data to activate the
+        selection. While this does ensure that selection handles don't erroneously appear, it also means that clients
+        that call -becomeFirstResponder to show selection UI and the keyboard in a web view while an element is already
+        focused will not have an active selection assistant (i.e. the selection view will still be hidden). One way this
+        happens is when Safari uses `-_retainActiveFocusedState` in combination with `-resignFirstResponder` and
+        `-becomeFirstResponder` to temporarily switch focus away from the web view when the URL bar is tapped.
+
+        To fix both the inactive selection after `-becomeFirstResponder` as well as the selection handles showing up
+        when performing a loupe gesture, we simply make the check in `-becomeFirstResponderForWebView` more nuanced.
+        Instead of always activating the selection or never activating the selection, only activate the selection if the
+        current editor state has information about a selection to avoid causing the selection view to be immediately
+        removed and "highlight mode" to be reset when selecting a word via loupe gesture for the first time.
+
+        Tests:  KeyboardInputTests.CaretSelectionRectAfterRestoringFirstResponder
+                KeyboardInputTests.RangedSelectionRectAfterRestoringFirstResponder
+                editing/selection/ios/selection-handles-after-touch-end.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView canShowNonEmptySelectionView]):
+
 2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add Nicosia::Scene

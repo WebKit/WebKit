@@ -384,6 +384,16 @@ JSObjectRef UIScriptController::textSelectionCaretRect() const
     return nullptr;
 }
 
+JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
+{
+    return nullptr;
+}
+
 JSObjectRef UIScriptController::inputViewBounds() const
 {
     return nullptr;

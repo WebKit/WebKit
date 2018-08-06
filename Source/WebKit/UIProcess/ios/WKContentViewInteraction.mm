@@ -974,6 +974,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         didBecomeFirstResponder = [super becomeFirstResponder];
     }
 
+    if (didBecomeFirstResponder && [self canShowNonEmptySelectionView])
+        [_textSelectionAssistant activateSelection];
+
     return didBecomeFirstResponder;
 }
 
@@ -1674,6 +1677,15 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
                          if (finished)
                              [_highlightView removeFromSuperview];
                      }];
+}
+
+- (BOOL)canShowNonEmptySelectionView
+{
+    if (self.suppressAssistantSelectionView)
+        return NO;
+
+    auto& state = _page->editorState();
+    return !state.isMissingPostLayoutData && !state.selectionIsNone;
 }
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point

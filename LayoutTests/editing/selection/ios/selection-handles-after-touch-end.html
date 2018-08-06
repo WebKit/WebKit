@@ -1,0 +1,75 @@
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width">
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    #target {
+        font-size: 150px;
+    }
+</style>
+</head>
+
+<body>
+<p id="target">WK</p>
+<pre id="output"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function appendOutput(s)
+{
+    const paragraph = document.createElement("div");
+    paragraph.textContent = s;
+    output.appendChild(paragraph);
+}
+
+function toString(rect)
+{
+    return `{ left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)} }`;
+}
+
+function checkDone() {
+    if (!window.doneCount)
+        doneCount = 0;
+    if (++doneCount == 3)
+        testRunner.notifyDone();
+}
+
+document.addEventListener("selectionchange", async () => {
+    if (!getSelection().rangeCount || getSelection().getRangeAt(0).collapsed)
+        return;
+
+    appendOutput("Selection rects before touchend:");
+    (await UIHelper.getUISelectionRects()).map(toString).map(appendOutput);
+    appendOutput(`Selection start handle before touchend: ${toString(await UIHelper.getSelectionStartGrabberViewRect())}`);
+    appendOutput(`Selection end handle before touchend: ${toString(await UIHelper.getSelectionEndGrabberViewRect())}`);
+    appendOutput("\n");
+    testRunner.runUIScript("uiController.liftUpAtPoint(100, 75, 1, () => uiController.uiScriptComplete(''));", checkDone);
+});
+
+document.addEventListener("touchend", async () => {
+    appendOutput("Selection rects after touchend:");
+    (await UIHelper.getUISelectionRects()).map(toString).map(appendOutput);
+    appendOutput(`Selection start handle after touchend: ${toString(await UIHelper.getSelectionStartGrabberViewRect())}`);
+    appendOutput(`Selection end handle after touchend: ${toString(await UIHelper.getSelectionEndGrabberViewRect())}`);
+    checkDone();
+});
+
+if (window.testRunner && testRunner.runUIScript)
+    testRunner.runUIScript("uiController.touchDownAtPoint(100, 75, 1, () => uiController.uiScriptComplete(''));", checkDone);
+else {
+    appendOutput(`This test verifies that selection handles are not present when selecting a word via long press,
+        before ending the long press. To manually test, long press the word "WK" until a selection highlight is shown,
+        and verify that there are no selection handles. Upon release, selection handles should appear.`);
+}
+</script>
+</body>
+</html>

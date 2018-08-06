@@ -1,5 +1,43 @@
 2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained
+        https://bugs.webkit.org/show_bug.cgi?id=188322
+        <rdar://problem/42455270>
+
+        Reviewed by Tim Horton.
+
+        Adds plumbing in UIScriptController to grab the start and end selection handle rects for use in the new layout
+        test. Also adds new API tests to verify that when a web view resigns first responder, both caret and range
+        selection views are hidden, and when first responder status is restored, both caret and range selection views
+        are made visible again.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectionStartGrabberViewRect const):
+        (WTR::UIScriptController::selectionEndGrabberViewRect const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::selectionStartGrabberViewRect const):
+        (WTR::UIScriptController::selectionEndGrabberViewRect const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (-[TestWKWebView waitForCaretViewFrameToBecome:]):
+        (-[TestWKWebView waitForSelectionViewRectsToBecome:]):
+        (webViewWithAutofocusedInput):
+
+        Pull out some common logic for creating a web view that allows programmatic focus to present the keyboard, and
+        immediately loading a web page with an autofocusing text field.
+
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView caretViewRectInContentCoordinates]):
+        (-[TestWKWebView selectionViewRectsInContentCoordinates]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectionStartGrabberViewRect const):
+        (WTR::UIScriptController::selectionEndGrabberViewRect const):
+
+2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Layout tests that send HID events cause WebKitTestRunner to crash on recent SDKs
         https://bugs.webkit.org/show_bug.cgi?id=188334
         <rdar://problem/40630074>

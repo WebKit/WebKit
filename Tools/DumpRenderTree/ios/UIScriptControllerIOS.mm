@@ -366,6 +366,16 @@ void UIScriptController::completeBackSwipe(JSValueRef callback)
 {
 }
 
+JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
+{
+    return nullptr;
+}
+
 }
 
 #endif // PLATFORM(IOS)

@@ -337,6 +337,22 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     return selectionRects;
 }
 
+- (CGRect)caretViewRectInContentCoordinates
+{
+    UIView *selectionView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView"];
+    CGRect caretFrame = [[selectionView valueForKeyPath:@"caretView.frame"] CGRectValue];
+    return [selectionView convertRect:caretFrame toView:self.textInputContentView];
+}
+
+- (NSArray<NSValue *> *)selectionViewRectsInContentCoordinates
+{
+    NSMutableArray *selectionRects = [NSMutableArray array];
+    NSArray<UITextSelectionRect *> *rects = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.rects"];
+    for (UITextSelectionRect *rect in rects)
+        [selectionRects addObject:[NSValue valueWithCGRect:rect.rect]];
+    return selectionRects;
+}
+
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position
 {
     __block RetainPtr<_WKActivatedElementInfo> info;

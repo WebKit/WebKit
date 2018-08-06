@@ -1,3 +1,31 @@
+2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained
+        https://bugs.webkit.org/show_bug.cgi?id=188322
+        <rdar://problem/42455270>
+
+        Reviewed by Tim Horton.
+
+        Adds a new layout test to verify that (1) selection handles are not shown when selecting a word by long
+        pressing prior to ending the touch, and (2) selection handles are shown after ending the touch.
+
+        * editing/selection/ios/selection-handles-after-touch-end-expected.txt: Added.
+        * editing/selection/ios/selection-handles-after-touch-end.html: Added.
+        * platform/win/TestExpectations:
+
+        Skip iOS selection tests on Windows.
+
+        * resources/ui-helper.js:
+
+        Introduces new hooks in UIHelper to grab the frames of the start and end selection handle views.
+
+        (window.UIHelper.getSelectionStartGrabberViewRect.return.new.Promise.):
+        (window.UIHelper.getSelectionStartGrabberViewRect.return.new.Promise):
+        (window.UIHelper.getSelectionStartGrabberViewRect):
+        (window.UIHelper.getSelectionEndGrabberViewRect.return.new.Promise.):
+        (window.UIHelper.getSelectionEndGrabberViewRect.return.new.Promise):
+        (window.UIHelper.getSelectionEndGrabberViewRect):
+
 2018-08-06  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] New webgl 2.0 failures.

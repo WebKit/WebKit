@@ -34,9 +34,54 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKitLegacy/WebEvent.h>
 
-namespace TestWebKitAPI {
+@implementation TestWKWebView (KeyboardInputTests)
 
-TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
+- (void)waitForCaretViewFrameToBecome:(CGRect)frame
+{
+    BOOL hasEmittedWarning = NO;
+    NSTimeInterval secondsToWaitUntilWarning = 2;
+    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        CGRect currentFrame = self.caretViewRectInContentCoordinates;
+        if (CGRectEqualToRect(currentFrame, frame))
+            break;
+
+        if (hasEmittedWarning || startTime + secondsToWaitUntilWarning >= [NSDate timeIntervalSinceReferenceDate])
+            continue;
+
+        NSLog(@"Expected a caret rect of %@, but still observed %@", NSStringFromCGRect(frame), NSStringFromCGRect(currentFrame));
+        hasEmittedWarning = YES;
+    }
+}
+
+- (void)waitForSelectionViewRectsToBecome:(NSArray<NSValue *> *)selectionRects
+{
+    BOOL hasEmittedWarning = NO;
+    NSTimeInterval secondsToWaitUntilWarning = 2;
+    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        NSArray<NSValue *> *currentRects = self.selectionViewRectsInContentCoordinates;
+        BOOL selectionRectsMatch = YES;
+        if (currentRects.count == selectionRects.count) {
+            for (NSUInteger index = 0; index < selectionRects.count; ++index)
+                selectionRectsMatch |= [selectionRects[index] isEqualToValue:currentRects[index]];
+        } else
+            selectionRectsMatch = NO;
+
+        if (selectionRectsMatch)
+            break;
+
+        if (hasEmittedWarning || startTime + secondsToWaitUntilWarning >= [NSDate timeIntervalSinceReferenceDate])
+            continue;
+
+        NSLog(@"Expected a selection rects of %@, but still observed %@", selectionRects, currentRects);
+        hasEmittedWarning = YES;
+    }
+}
+
+@end
+
+static RetainPtr<TestWKWebView> webViewWithAutofocusedInput()
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
@@ -47,10 +92,19 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
     [webView _setInputDelegate:inputDelegate.get()];
-    [webView synchronouslyLoadHTMLString:@"<input autofocus>"];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><input autofocus>"];
 
     TestWebKitAPI::Util::run(&doneWaiting);
     doneWaiting = false;
+    return webView;
+}
+
+namespace TestWebKitAPI {
+
+TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
+{
+    auto webView = webViewWithAutofocusedInput();
+    bool doneWaiting = false;
 
     id <UITextInputPrivate> contentView = (id <UITextInputPrivate>)[webView firstResponder];
     auto firstWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
@@ -66,6 +120,41 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
 
     TestWebKitAPI::Util::run(&doneWaiting);
     EXPECT_WK_STREQ("a", [webView stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
+}
+
+TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
+{
+    auto expectedCaretRect = CGRectMake(16, 13, 3, 15);
+    auto webView = webViewWithAutofocusedInput();
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+
+    dispatch_block_t restoreActiveFocusState = [webView _retainActiveFocusedState];
+    [webView resignFirstResponder];
+    restoreActiveFocusState();
+    [webView waitForCaretViewFrameToBecome:CGRectZero];
+
+    [webView becomeFirstResponder];
+    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+}
+
+TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponder)
+{
+    NSArray *expectedSelectionRects = @[ [NSValue valueWithCGRect:CGRectMake(16, 13, 24, 15)] ];
+
+    auto webView = webViewWithAutofocusedInput();
+    [[webView textInputContentView] insertText:@"hello"];
+    [webView selectAll:nil];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView waitForSelectionViewRectsToBecome:expectedSelectionRects];
+
+    dispatch_block_t restoreActiveFocusState = [webView _retainActiveFocusedState];
+    [webView resignFirstResponder];
+    restoreActiveFocusState();
+    [webView waitForSelectionViewRectsToBecome:@[ ]];
+
+    [webView becomeFirstResponder];
+    [webView waitForSelectionViewRectsToBecome:expectedSelectionRects];
 }
 
 } // namespace TestWebKitAPI
