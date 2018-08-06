@@ -1,3 +1,12 @@
+2018-08-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Properties set on window.customElements can disappear due to GC
+        https://bugs.webkit.org/show_bug.cgi?id=172575
+
+        Lexicologically sort the IDL attributes per Darin's comment.
+
+        * dom/CustomElementRegistry.idl:
+
 2018-08-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] contentHeightForFormattingContextRoot uses the wrong coordinate system to compute the height.
