@@ -1,3 +1,18 @@
+2018-08-06  David Quesada  <david_quesada@apple.com>
+
+        webkitdirs.pm should default to iPhone SE for 64-bit testing
+        https://bugs.webkit.org/show_bug.cgi?id=188361
+
+        Reviewed by Daniel Bates.
+
+        Use iPhone SE as the default iOS Simulator device type. This corresponds to the change to webkitpy in r234467.
+
+        * Scripts/webkitdirs.pm:
+        (findOrCreateSimulatorForIOSDevice):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+            Update the help text for --device-type to reflect the new default device.
+
 2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained
