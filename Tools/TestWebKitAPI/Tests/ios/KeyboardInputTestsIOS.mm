@@ -36,13 +36,18 @@
 
 @implementation TestWKWebView (KeyboardInputTests)
 
+static CGRect rounded(CGRect rect)
+{
+    return CGRectMake(roundl(rect.origin.x), roundl(rect.origin.y), roundl(rect.size.width), roundl(rect.size.height));
+}
+
 - (void)waitForCaretViewFrameToBecome:(CGRect)frame
 {
     BOOL hasEmittedWarning = NO;
     NSTimeInterval secondsToWaitUntilWarning = 2;
     NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
-        CGRect currentFrame = self.caretViewRectInContentCoordinates;
+        CGRect currentFrame = rounded(self.caretViewRectInContentCoordinates);
         if (CGRectEqualToRect(currentFrame, frame))
             break;
 
@@ -64,7 +69,7 @@
         BOOL selectionRectsMatch = YES;
         if (currentRects.count == selectionRects.count) {
             for (NSUInteger index = 0; index < selectionRects.count; ++index)
-                selectionRectsMatch |= [selectionRects[index] isEqualToValue:currentRects[index]];
+                selectionRectsMatch |= CGRectEqualToRect(selectionRects[index].CGRectValue, rounded(currentRects[index].CGRectValue));
         } else
             selectionRectsMatch = NO;
 
@@ -124,7 +129,7 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
 
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
 {
-    auto expectedCaretRect = CGRectMake(16, 13, 3, 15);
+    auto expectedCaretRect = CGRectMake(16, 13, 2, 15);
     auto webView = webViewWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForCaretViewFrameToBecome:expectedCaretRect];

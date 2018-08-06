@@ -1,3 +1,20 @@
+2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained
+        https://bugs.webkit.org/show_bug.cgi?id=188322
+        <rdar://problem/42455270>
+
+        Reviewed by Tim Horton.
+
+        Fixes an API test added in r234600, which had incorrect test expectations — namely, the width of the caret rect
+        was not in content view coordinates, unlike the x, y, and height.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (rounded):
+        (-[TestWKWebView waitForCaretViewFrameToBecome:]):
+        (-[TestWKWebView waitForSelectionViewRectsToBecome:]):
+        (TestWebKitAPI::TEST):
+
 2018-08-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234569.
