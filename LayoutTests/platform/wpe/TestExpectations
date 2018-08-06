@@ -213,6 +213,10 @@ webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-res
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
 
+# webgl 2.0
+webkit.org/b/188346 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html [ Failure ]
+webkit.org/b/188346 webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object.html [ Failure ]
+
 # fast/canvas/
 fast/canvas/canvas-blend-image.html [ Failure ]
 fast/canvas/canvas-blend-solid.html [ Failure ]

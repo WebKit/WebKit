@@ -1,5 +1,13 @@
 2018-08-06  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] New webgl 2.0 failures.
+
+        Unreviewed gardening.
+        * platform/wpe/TestExpectations: Two webgl 2.0 tests are failing,
+        mark them.
+
+2018-08-06  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK] Skip new webgl 2.0 tests. Unreviewed gardening.
 
         * platform/gtk/TestExpectations: Expanded webgl 2.0 skipped
