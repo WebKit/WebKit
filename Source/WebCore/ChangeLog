@@ -1,3 +1,25 @@
+2018-08-06  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GTK] Buttons are drawn too large, text not centered
+        https://bugs.webkit.org/show_bug.cgi?id=185854
+
+        Reviewed by Carlos Garcia Campos.
+
+        Some pages require small buttons and the GTK theme was
+        drawing only down to a minimum size.
+
+        No new tests required. Current layout tests and ManualTests/gtk/theme.html
+        already cover it.
+
+        * platform/gtk/RenderThemeGadget.cpp:
+        (WebCore::RenderThemeGadget::create):
+        (WebCore::RenderThemeButtonGadget::RenderThemeButtonGadget): Added
+        (WebCore::RenderThemeButtonGadget::minimumSize const):
+        Allow sizes smaller than the minimum size.
+        * platform/gtk/RenderThemeGadget.h:
+        * platform/gtk/RenderThemeWidget.cpp:
+        (WebCore::RenderThemeButton::RenderThemeButton):
+
 2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement self.queueMicrotask in Workers

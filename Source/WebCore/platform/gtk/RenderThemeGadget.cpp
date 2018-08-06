@@ -49,6 +49,8 @@ std::unique_ptr<RenderThemeGadget> RenderThemeGadget::create(const RenderThemeGa
         return std::make_unique<RenderThemeIconGadget>(info, parent, siblings, position);
     case RenderThemeGadget::Type::Scrollbar:
         return std::make_unique<RenderThemeScrollbarGadget>(info, parent, siblings, position);
+    case RenderThemeGadget::Type::Button:
+        return std::make_unique<RenderThemeButtonGadget>(info, parent, siblings, position);
     }
 
     ASSERT_NOT_REACHED();
@@ -384,6 +386,17 @@ void RenderThemeScrollbarGadget::renderStepper(cairo_t* cr, const FloatRect& pai
     int stepperSize = std::max(contentsRect.width(), contentsRect.height());
     gtk_render_arrow(stepperGadget->context(), cr, angle, contentsRect.x() + (contentsRect.width() - stepperSize) / 2,
         contentsRect.y() + (contentsRect.height() - stepperSize) / 2, stepperSize);
+}
+
+RenderThemeButtonGadget::RenderThemeButtonGadget(const Info& info, RenderThemeGadget* parent, const Vector<RenderThemeGadget::Info> siblings, unsigned position)
+    : RenderThemeGadget(info, parent, siblings, position)
+{
+}
+
+IntSize RenderThemeButtonGadget::minimumSize() const
+{
+    // Allow buttons to be smaller than the minimum size
+    return IntSize();
 }
 
 } // namespace WebCore
