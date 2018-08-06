@@ -1,3 +1,36 @@
+2018-08-06  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r234576. rdar://problem/42973449
+
+    Give the `jsc` shell the JIT entitlement
+    https://bugs.webkit.org/show_bug.cgi?id=188324
+    <rdar://problem/42885806>
+    
+    Reviewed by Dan Bernstein.
+    
+    This should help us in ensuring the system jsc is able to JIT.
+    
+    * Configurations/JSC.xcconfig:
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * allow-jit-macOS.entitlements: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234576 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-03  Saam Barati  <sbarati@apple.com>
+
+            Give the `jsc` shell the JIT entitlement
+            https://bugs.webkit.org/show_bug.cgi?id=188324
+            <rdar://problem/42885806>
+
+            Reviewed by Dan Bernstein.
+
+            This should help us in ensuring the system jsc is able to JIT.
+
+            * Configurations/JSC.xcconfig:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * allow-jit-macOS.entitlements: Added.
+
 2018-08-02  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234528. rdar://problem/42883788
