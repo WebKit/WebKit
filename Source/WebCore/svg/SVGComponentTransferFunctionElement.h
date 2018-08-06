@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -74,26 +75,45 @@ class SVGComponentTransferFunctionElement : public SVGElement {
 public:
     ComponentTransferFunction transferFunction() const;
 
+    ComponentTransferType type() const { return m_type.currentValue(attributeOwnerProxy()); }
+    const SVGNumberListValues& tableValues() const { return m_tableValues.currentValue(attributeOwnerProxy()); }
+    float slope() const { return m_slope.currentValue(attributeOwnerProxy()); }
+    float intercept() const { return m_intercept.currentValue(attributeOwnerProxy()); }
+    float amplitude() const { return m_amplitude.currentValue(attributeOwnerProxy()); }
+    float exponent() const { return m_exponent.currentValue(attributeOwnerProxy()); }
+    float offset() const { return m_offset.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumberList> tableValuesAnimated() { return m_tableValues.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> slopeAnimated() { return m_slope.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> interceptAnimated() { return m_intercept.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> amplitudeAnimated() { return m_amplitude.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> exponentAnimated() { return m_exponent.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> offsetAnimated() { return m_offset.animatedProperty(attributeOwnerProxy()); }
+
 protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGComponentTransferFunctionElement, SVGElement>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
     
 private:
-    static bool isSupportedAttribute(const QualifiedName&);
-
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGComponentTransferFunctionElement)
-        DECLARE_ANIMATED_ENUMERATION(Type, type, ComponentTransferType)
-        DECLARE_ANIMATED_NUMBER_LIST(TableValues, tableValues)
-        DECLARE_ANIMATED_NUMBER(Slope, slope)
-        DECLARE_ANIMATED_NUMBER(Intercept, intercept)
-        DECLARE_ANIMATED_NUMBER(Amplitude, amplitude)
-        DECLARE_ANIMATED_NUMBER(Exponent, exponent)
-        DECLARE_ANIMATED_NUMBER(Offset, offset)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedEnumerationAttribute<ComponentTransferType> m_type { FECOMPONENTTRANSFER_TYPE_IDENTITY };
+    SVGAnimatedNumberListAttribute m_tableValues;
+    SVGAnimatedNumberAttribute m_slope { 1 };
+    SVGAnimatedNumberAttribute m_intercept;
+    SVGAnimatedNumberAttribute m_amplitude { 1 };
+    SVGAnimatedNumberAttribute m_exponent { 1 };
+    SVGAnimatedNumberAttribute m_offset;
 };
 
 } // namespace WebCore

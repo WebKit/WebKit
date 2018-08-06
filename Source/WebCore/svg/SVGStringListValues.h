@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,16 +22,24 @@
 #pragma once
 
 #include "QualifiedName.h"
+#include "SVGAttributeAccessor.h"
 #include "SVGPropertyTraits.h"
+
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class SVGElement;
 class SVGStringList;
+class SVGStringListValues;
 
 template<typename T> 
 class SVGPropertyTearOff;
+
+using SVGStringListValuesAttribute = SVGPropertyAttribute<SVGStringListValues>;
+
+template<typename OwnerType>
+using SVGStringListValuesAttributeAccessor = SVGPropertyAttributeAccessor<OwnerType, SVGStringListValuesAttribute>;
 
 class SVGStringListValues final : public Vector<String> {
 public:
@@ -52,6 +61,8 @@ private:
 };
 
 template<> struct SVGPropertyTraits<SVGStringListValues> {
+    static String toString(const SVGStringListValues& list) { return list.valueAsString(); }
+
     using ListItemType = String;
     using ListItemTearOff = SVGPropertyTearOff<String>;
     using ListPropertyTearOff = SVGStringList;

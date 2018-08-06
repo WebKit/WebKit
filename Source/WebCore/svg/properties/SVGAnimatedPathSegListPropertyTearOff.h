@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010, 2012. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +22,6 @@
 
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGPathByteStream.h"
-#include "SVGPathElement.h"
 #include "SVGPathSegList.h"
 #include "SVGPathUtilities.h"
 
@@ -87,39 +87,15 @@ public:
         Base::animationEnded();
     }
 
-    void animValDidChange()
-    {
-        ASSERT(m_animatedPathByteStream);
-        auto pathElement = makeRefPtr(downcast<SVGPathElement>(contextElement()));
-
-        // If the animVal is observed from JS, we have to update it on each animation step.
-        // This is an expensive operation and only done, if someone actually observes the animatedPathSegList() while an animation is running.
-        if (pathElement->isAnimValObserved()) {
-            auto& animatedList = currentAnimatedValue();
-            animatedList.clear();
-            buildSVGPathSegListValuesFromByteStream(*m_animatedPathByteStream, *pathElement, animatedList, UnalteredParsing);
-        }
-
-        Base::animValDidChange();
-    }
+    void animValDidChange();
 
     SVGPathByteStream* animatedPathByteStream() const { return m_animatedPathByteStream; }
 
 private:
-    SVGAnimatedPathSegListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, SVGPathSegListValues& values)
-        : Base(contextElement, attributeName, animatedPropertyType, values)
-        , m_animatedPathByteStream(nullptr)
-    {
-        ASSERT(contextElement);
-        ASSERT(is<SVGPathElement>(contextElement));
-    }
+    SVGAnimatedPathSegListPropertyTearOff(SVGElement*, const QualifiedName&, AnimatedPropertyType, SVGPathSegListValues&);
+    virtual ~SVGAnimatedPathSegListPropertyTearOff();
 
-    virtual ~SVGAnimatedPathSegListPropertyTearOff()
-    {
-        downcast<SVGPathElement>(contextElement())->animatedPropertyWillBeDeleted();
-    }
-
-    SVGPathByteStream* m_animatedPathByteStream;
+    SVGPathByteStream* m_animatedPathByteStream { nullptr };
 };
 
 } // namespace WebCore

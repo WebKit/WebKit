@@ -1,3 +1,852 @@
+2018-08-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG elements' attributes macros
+        https://bugs.webkit.org/show_bug.cgi?id=186751
+
+        Reviewed by Simon Fraser.
+
+        This is how the SVG attributes are implemented after removing the SVG macros:
+
+        1) The SVG attribute is defined as a super class of SVGAttribute. The super
+           classes of SVGAttribute are template classes. The type of these template
+           are the property type or the TearOff type.
+
+        2) To unify accessing attributes of the SVGElements and its super classes
+           an SVGAttributeAccessor template class is added. It is inherited by other
+           template classes. The types of these templates are the owner and the
+           attributes types. The main functions of these classes is to synchronize 
+           the new property value with the document attributes pool and to create
+           and cache the TearOff objects.
+
+        3) To make code shorter and more readable, attribute types and attribute
+           accessors are defined for every SVG TearOff type, e.g. 
+           -- SVGLength: 
+                SVGAnimatedLengthAttribute and SVGAnimatedLengthAttributeAccessor
+           -- SVGAnimatedNumber: 
+                SVGAnimatedNumberAttribute and SVGAnimatedNumberAttributeAccessor
+
+        4) A special accessor is defined for animated pair and optional attributes:
+           SVGAnimatedPairAttributeAccessor, e.g.
+           -- SVGMarkerElement:
+                orient attribute: "angle" or "type"
+           -- SVGFEGaussianBlurElement:
+                stdDeviation attribute: "x" and "y"
+
+        5) The SVG attributes have to be registered into an singleton SVGAttributeRegistry.
+           The SVGAttributeRegistry is a template class. The types of this template
+           class are the the type of the owner and the base classes of this owner.
+           This registry holds a map from "attribute name" to  "attribute accessor".
+
+        6) To make the code easier to read, the SVGAttributeRegistry implements
+           registerAttribute() for different attribute types. The owner needs only
+           to provide the attribute name and a pointer to the class member of this
+           attribute to the same function "registerAttribute()". The compiler will
+           pick the right function to call based on the type of the attribute.
+
+        7) Given a reference to the owner element, SVGAttributeRegistry can loop
+           through the attributes of this owner and through the attributes of its
+           base classes as well to do operations like synchronizing all the attributes
+           or creating the TearOff object of a certain attribute.
+
+        8) To make the base class SVGElement have the ability to access the attributes
+           of any of its super classes, SVGAttributeOwnerProxy will be used.
+           SVGAttributeOwnerProxy is a base class which have all the functions that
+           SVGElement needs as pure virtual functions.
+
+        9) SVGAttributeOwnerProxyImpl is a template class which implements 
+           SVGAttributeOwnerProxy and whose types are the owner and its base classes.
+           SVGAttributeOwnerProxyImpl keeps a reference to the owner and the context
+           SVGElement.
+
+        10) All the SVG attribute owners have to implement the virtual function
+            attributeOwnerProxy() which returns a reference to SVGAttributeOwnerProxy.
+            The local attributeOwnerProxy() returns a reference to a local
+            SVGAttributeOwnerProxyImpl. Its type and base types are the class
+            hierarchy of this element.
+
+        All the attributes of the non-SVGElement-based classes are moved as members
+        of these classes instead of adding them to all the super classes. These
+        classes are:
+           -- SVGExternalResourcesRequired
+           -- SVGURIReference
+           -- SVGFitToViewBox
+           -- SVGZoomAndPan
+           -- SVGLangSpace
+
+        The svgAttributeChanged() of all the SVGElement-based classes are now 
+        simplified by distributing the responsibilities of changing an attribute
+        to the base classes. One exception is the SVGURIReference since the action
+        to be taken when changing the "href" is different for every super class.
+
+        Other work will be done in separate patches.
+           -- Shrinking the memory of the SVGElements.
+           -- Making all the attributes RefCounted objects.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::draw):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        (WebCore::SVGAElement::registerAttributes):
+        (WebCore::SVGAElement::parseAttribute):
+        (WebCore::SVGAElement::svgAttributeChanged):
+        * svg/SVGAElement.h:
+        * svg/SVGAElement.idl:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::SVGAltGlyphElement):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAnimatedAngle.h:
+        * svg/SVGAnimatedBoolean.h:
+        * svg/SVGAnimatedEnumeration.h:
+        * svg/SVGAnimatedInteger.h:
+        * svg/SVGAnimatedLength.h:
+        * svg/SVGAnimatedLengthList.h:
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimatedNumberList.h:
+        * svg/SVGAnimatedPath.h:
+        * svg/SVGAnimatedPointList.h:
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        * svg/SVGAnimatedRect.h:
+        * svg/SVGAnimatedString.h:
+        * svg/SVGAnimatedTransformList.h:
+        * svg/SVGAnimatedTypeAnimator.cpp:
+        (WebCore::SVGAnimatedTypeAnimator::findAnimatedPropertiesForAttributeName):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::requiredFeatures): Deleted.
+        (WebCore::SVGAnimationElement::requiredExtensions): Deleted.
+        (WebCore::SVGAnimationElement::systemLanguage): Deleted.
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::attributeRegistry):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        (WebCore::SVGCircleElement::registerAttributes):
+        (WebCore::SVGCircleElement::parseAttribute):
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        (WebCore::SVGClipPathElement::registerAttributes):
+        (WebCore::SVGClipPathElement::parseAttribute):
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::isSupportedAttribute): Deleted.
+        * svg/SVGClipPathElement.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (WebCore::SVGComponentTransferFunctionElement::registerAttributes):
+        (WebCore::SVGComponentTransferFunctionElement::parseAttribute):
+        (WebCore::SVGComponentTransferFunctionElement::svgAttributeChanged):
+        (WebCore::SVGComponentTransferFunctionElement::transferFunction const):
+        (WebCore::SVGComponentTransferFunctionElement::isSupportedAttribute): Deleted.
+        * svg/SVGComponentTransferFunctionElement.h:
+        (WebCore::SVGComponentTransferFunctionElement::type const):
+        (WebCore::SVGComponentTransferFunctionElement::tableValues const):
+        (WebCore::SVGComponentTransferFunctionElement::slope const):
+        (WebCore::SVGComponentTransferFunctionElement::intercept const):
+        (WebCore::SVGComponentTransferFunctionElement::amplitude const):
+        (WebCore::SVGComponentTransferFunctionElement::exponent const):
+        (WebCore::SVGComponentTransferFunctionElement::offset const):
+        (WebCore::SVGComponentTransferFunctionElement::typeAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::tableValuesAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::slopeAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::interceptAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::amplitudeAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::exponentAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::offsetAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::attributeRegistry):
+        (WebCore::SVGComponentTransferFunctionElement::isKnownAttribute):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        (WebCore::SVGCursorElement::registerAttributes):
+        (WebCore::SVGCursorElement::parseAttribute):
+        (WebCore::SVGCursorElement::svgAttributeChanged):
+        (WebCore::SVGCursorElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGCursorElement::requiredFeatures): Deleted.
+        (WebCore::SVGCursorElement::requiredExtensions): Deleted.
+        (WebCore::SVGCursorElement::systemLanguage): Deleted.
+        * svg/SVGCursorElement.h:
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement):
+        * svg/SVGDefsElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::registerAttributes):
+        (WebCore::SVGElement::parseAttribute):
+        (WebCore::SVGElement::animatedPropertyTypesForAttribute):
+        (WebCore::SVGElement::synchronizeAllAnimatedSVGAttribute):
+        (WebCore::SVGElement::synchronizeAnimatedSVGAttribute const):
+        (WebCore::SVGElement::isPresentationAttributeWithSVGDOM):
+        (WebCore::SVGElement::svgAttributeChanged):
+        (WebCore::SVGElement::synchronizeRequiredFeatures): Deleted.
+        (WebCore::SVGElement::synchronizeRequiredExtensions): Deleted.
+        (WebCore::SVGElement::synchronizeSystemLanguage): Deleted.
+        (WebCore::SVGElement::isKnownAttribute): Deleted.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::attributeRegistry):
+        (WebCore::SVGElement::isKnownAttribute):
+        (WebCore::SVGElement::attributeOwnerProxy const):
+        (WebCore::SVGElement::synchronizeAttribute):
+        (WebCore::SVGElement::synchronizeAttributes):
+        (WebCore::SVGElement::animatedTypes const):
+        (WebCore::SVGElement::lookupAnimatedProperty const):
+        (WebCore::SVGElement::lookupOrCreateAnimatedProperty):
+        (WebCore::SVGElement::lookupOrCreateAnimatedProperties):
+        (WebCore::SVGElement::className const):
+        (WebCore::SVGElement::classNameAnimated):
+        (WebCore::SVGElement::synchronizeRequiredFeatures): Deleted.
+        (WebCore::SVGElement::synchronizeRequiredExtensions): Deleted.
+        (WebCore::SVGElement::synchronizeSystemLanguage): Deleted.
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        (WebCore::SVGEllipseElement::registerAttributes):
+        (WebCore::SVGEllipseElement::parseAttribute):
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::SVGExternalResourcesRequired):
+        (WebCore::SVGExternalResourcesRequired::registerAttributes):
+        (WebCore::SVGExternalResourcesRequired::parseAttribute):
+        (WebCore::SVGExternalResourcesRequired::svgAttributeChanged):
+        (WebCore::SVGExternalResourcesRequired::addSupportedAttributes):
+        (WebCore::SVGExternalResourcesRequired::dispatchLoadEvent):
+        (WebCore::SVGExternalResourcesRequired::insertedIntoDocument):
+        (WebCore::SVGExternalResourcesRequired::finishParsingChildren):
+        (WebCore::SVGExternalResourcesRequired::haveLoadedRequiredResources const):
+        (WebCore::SVGExternalResourcesRequired::isKnownAttribute): Deleted.
+        (WebCore::SVGExternalResourcesRequired::handleAttributeChange): Deleted.
+        * svg/SVGExternalResourcesRequired.h:
+        (WebCore::SVGExternalResourcesRequired::attributeRegistry):
+        (WebCore::SVGExternalResourcesRequired::externalResourcesRequiredAnimated):
+        (WebCore::SVGExternalResourcesRequired::externalResourcesRequired const):
+        (WebCore::SVGExternalResourcesRequired::setExternalResourcesRequired):
+        (WebCore::SVGExternalResourcesRequired::isKnownAttribute):
+        (WebCore::SVGExternalResourcesRequired::attributeOwnerProxy):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::registerAttributes):
+        (WebCore::SVGFEBlendElement::parseAttribute):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::registerAttributes):
+        (WebCore::SVGFEColorMatrixElement::parseAttribute):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        (WebCore::SVGFEComponentTransferElement::registerAttributes):
+        (WebCore::SVGFEComponentTransferElement::parseAttribute):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::registerAttributes):
+        (WebCore::SVGFECompositeElement::parseAttribute):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::registerAttributes):
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::setFilterEffectAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::setOrder):
+        (WebCore::SVGFEConvolveMatrixElement::setKernelUnitLength):
+        * svg/SVGFEConvolveMatrixElement.h:
+        (WebCore::SVGPropertyTraits<EdgeModeType>::initialValue):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::registerAttributes):
+        (WebCore::SVGFEDiffuseLightingElement::parseAttribute):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::registerAttributes):
+        (WebCore::SVGFEDisplacementMapElement::parseAttribute):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::SVGFEDropShadowElement):
+        (WebCore::SVGFEDropShadowElement::setStdDeviation):
+        (WebCore::SVGFEDropShadowElement::registerAttributes):
+        (WebCore::SVGFEDropShadowElement::parseAttribute):
+        (WebCore::SVGFEDropShadowElement::svgAttributeChanged):
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::setStdDeviation):
+        (WebCore::SVGFEGaussianBlurElement::registerAttributes):
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        (WebCore::SVGFEImageElement::registerAttributes):
+        (WebCore::SVGFEImageElement::parseAttribute):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::SVGFELightElement):
+        (WebCore::SVGFELightElement::registerAttributes):
+        (WebCore::SVGFELightElement::parseAttribute):
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        * svg/SVGFELightElement.h:
+        (WebCore::SVGFELightElement::azimuth const):
+        (WebCore::SVGFELightElement::elevation const):
+        (WebCore::SVGFELightElement::x const):
+        (WebCore::SVGFELightElement::y const):
+        (WebCore::SVGFELightElement::z const):
+        (WebCore::SVGFELightElement::pointsAtX const):
+        (WebCore::SVGFELightElement::pointsAtY const):
+        (WebCore::SVGFELightElement::pointsAtZ const):
+        (WebCore::SVGFELightElement::specularExponent const):
+        (WebCore::SVGFELightElement::limitingConeAngle const):
+        (WebCore::SVGFELightElement::azimuthAnimated):
+        (WebCore::SVGFELightElement::elevationAnimated):
+        (WebCore::SVGFELightElement::xAnimated):
+        (WebCore::SVGFELightElement::yAnimated):
+        (WebCore::SVGFELightElement::zAnimated):
+        (WebCore::SVGFELightElement::pointsAtXAnimated):
+        (WebCore::SVGFELightElement::pointsAtYAnimated):
+        (WebCore::SVGFELightElement::pointsAtZAnimated):
+        (WebCore::SVGFELightElement::specularExponentAnimated):
+        (WebCore::SVGFELightElement::limitingConeAngleAnimated):
+        (WebCore::SVGFELightElement::attributeRegistry):
+        (WebCore::SVGFELightElement::isKnownAttribute):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::SVGFEMergeNodeElement):
+        (WebCore::SVGFEMergeNodeElement::registerAttributes):
+        (WebCore::SVGFEMergeNodeElement::parseAttribute):
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        (WebCore::SVGFEMorphologyElement::setRadius):
+        (WebCore::SVGFEMorphologyElement::registerAttributes):
+        (WebCore::SVGFEMorphologyElement::parseAttribute):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        (WebCore::SVGFEOffsetElement::registerAttributes):
+        (WebCore::SVGFEOffsetElement::parseAttribute):
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::registerAttributes):
+        (WebCore::SVGFESpecularLightingElement::parseAttribute):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        (WebCore::SVGFETileElement::registerAttributes):
+        (WebCore::SVGFETileElement::parseAttribute):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::registerAttributes):
+        (WebCore::SVGFETurbulenceElement::parseAttribute):
+        (WebCore::SVGFETurbulenceElement::setFilterEffectAttribute):
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        (WebCore::SVGFilterElement::setFilterRes):
+        (WebCore::SVGFilterElement::registerAttributes):
+        (WebCore::SVGFilterElement::parseAttribute):
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        (WebCore::SVGFilterElement::isSupportedAttribute): Deleted.
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::registerAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseAttribute):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isSupportedAttribute): Deleted.
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::attributeRegistry):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::x const):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::y const):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::width const):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::height const):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::result const):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::xAnimated):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::yAnimated):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::widthAnimated):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::heightAnimated):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::resultAnimated):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isKnownAttribute):
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::SVGFitToViewBox):
+        (WebCore::SVGFitToViewBox::registerAttributes):
+        (WebCore::SVGFitToViewBox::setViewBox):
+        (WebCore::SVGFitToViewBox::resetViewBox):
+        (WebCore::SVGFitToViewBox::reset):
+        (WebCore::SVGFitToViewBox::parseAttribute):
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::isKnownAttribute): Deleted.
+        (WebCore::SVGFitToViewBox::addSupportedAttributes): Deleted.
+        * svg/SVGFitToViewBox.h:
+        (WebCore::SVGFitToViewBox::attributeRegistry):
+        (WebCore::SVGFitToViewBox::viewBox const):
+        (WebCore::SVGFitToViewBox::preserveAspectRatio const):
+        (WebCore::SVGFitToViewBox::viewBoxAnimated):
+        (WebCore::SVGFitToViewBox::preserveAspectRatioAnimated):
+        (WebCore::SVGFitToViewBox::setPreserveAspectRatio):
+        (WebCore::SVGFitToViewBox::resetPreserveAspectRatio):
+        (WebCore::SVGFitToViewBox::viewBoxString const):
+        (WebCore::SVGFitToViewBox::preserveAspectRatioString const):
+        (WebCore::SVGFitToViewBox::hasValidViewBox const):
+        (WebCore::SVGFitToViewBox::hasEmptyViewBox const):
+        (WebCore::SVGFitToViewBox::isKnownAttribute):
+        (WebCore::SVGFitToViewBox::parseAttribute): Deleted.
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        * svg/SVGFontElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        (WebCore::SVGForeignObjectElement::registerAttributes):
+        (WebCore::SVGForeignObjectElement::parseAttribute):
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        (WebCore::SVGForeignObjectElement::isSupportedAttribute): Deleted.
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        (WebCore::SVGGElement::svgAttributeChanged):
+        (WebCore::SVGGElement::isSupportedAttribute): Deleted.
+        * svg/SVGGElement.h:
+        * svg/SVGGeometryElement.cpp:
+        (WebCore::SVGGeometryElement::SVGGeometryElement):
+        (WebCore::SVGGeometryElement::registerAttributes):
+        (WebCore::SVGGeometryElement::parseAttribute):
+        (WebCore::SVGGeometryElement::svgAttributeChanged):
+        (WebCore::SVGGeometryElement::isSupportedAttribute): Deleted.
+        * svg/SVGGeometryElement.h:
+        (WebCore::SVGGeometryElement::attributeRegistry):
+        (WebCore::SVGGeometryElement::pathLengthAnimated):
+        (WebCore::SVGGeometryElement::isKnownAttribute):
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::SVGGlyphRefElement):
+        * svg/SVGGlyphRefElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::registerAttributes):
+        (WebCore::SVGGradientElement::parseAttribute):
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+        (WebCore::SVGGradientElement::isSupportedAttribute): Deleted.
+        * svg/SVGGradientElement.h:
+        (WebCore::SVGGradientElement::attributeRegistry):
+        (WebCore::SVGGradientElement::spreadMethod const):
+        (WebCore::SVGGradientElement::gradientUnits const):
+        (WebCore::SVGGradientElement::gradientTransform const):
+        (WebCore::SVGGradientElement::spreadMethodAnimated):
+        (WebCore::SVGGradientElement::gradientUnitsAnimated):
+        (WebCore::SVGGradientElement::gradientTransformAnimated):
+        (WebCore::SVGGradientElement::isKnownAttribute):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::SVGGraphicsElement):
+        (WebCore::SVGGraphicsElement::registerAttributes):
+        (WebCore::SVGGraphicsElement::parseAttribute):
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        (WebCore::SVGGraphicsElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGGraphicsElement::requiredFeatures): Deleted.
+        (WebCore::SVGGraphicsElement::requiredExtensions): Deleted.
+        (WebCore::SVGGraphicsElement::systemLanguage): Deleted.
+        * svg/SVGGraphicsElement.h:
+        (WebCore::SVGGraphicsElement::attributeRegistry):
+        (WebCore::SVGGraphicsElement::transform const):
+        (WebCore::SVGGraphicsElement::transformAnimated):
+        (WebCore::SVGGraphicsElement::isKnownAttribute):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        (WebCore::SVGImageElement::registerAttributes):
+        (WebCore::SVGImageElement::parseAttribute):
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        (WebCore::SVGImageElement::haveLoadedRequiredResources):
+        (WebCore::SVGImageElement::isSupportedAttribute): Deleted.
+        * svg/SVGImageElement.h:
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::SVGLangSpace):
+        (WebCore::SVGLangSpace::registerAttributes):
+        (WebCore::SVGLangSpace::xmlspace const):
+        (WebCore::SVGLangSpace::svgAttributeChanged):
+        (WebCore::SVGLangSpace::setXmllang): Deleted.
+        (WebCore::SVGLangSpace::setXmlspace): Deleted.
+        (WebCore::SVGLangSpace::isKnownAttribute): Deleted.
+        (WebCore::addWithAndWithoutXMLPrefix): Deleted.
+        (WebCore::SVGLangSpace::addSupportedAttributes): Deleted.
+        * svg/SVGLangSpace.h:
+        (WebCore::SVGLangSpace::xmllang const):
+        (WebCore::SVGLangSpace::setXmllang):
+        (WebCore::SVGLangSpace::setXmlspace):
+        (WebCore::SVGLangSpace::attributeRegistry):
+        (WebCore::SVGLangSpace::isKnownAttribute):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        (WebCore::SVGLineElement::registerAttributes):
+        (WebCore::SVGLineElement::parseAttribute):
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        (WebCore::SVGLineElement::isSupportedAttribute): Deleted.
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement):
+        (WebCore::SVGLinearGradientElement::registerAttributes):
+        (WebCore::SVGLinearGradientElement::parseAttribute):
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged):
+        (WebCore::SVGLinearGradientElement::isSupportedAttribute): Deleted.
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::SVGMPathElement):
+        (WebCore::SVGMPathElement::svgAttributeChanged):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::registerAttributes):
+        (WebCore::SVGMarkerElement::parseAttribute):
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::setOrient):
+        (WebCore::SVGMarkerElement::orientTypePropertyInfo): Deleted.
+        (WebCore::SVGMarkerElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGMarkerElement::synchronizeOrientType): Deleted.
+        (WebCore::SVGMarkerElement::lookupOrCreateOrientTypeWrapper): Deleted.
+        (WebCore::SVGMarkerElement::orientType const): Deleted.
+        (WebCore::SVGMarkerElement::orientTypeAnimated): Deleted.
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::registerAttributes):
+        (WebCore::SVGMaskElement::parseAttribute):
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGMaskElement::requiredFeatures): Deleted.
+        (WebCore::SVGMaskElement::requiredExtensions): Deleted.
+        (WebCore::SVGMaskElement::systemLanguage): Deleted.
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::registerAttributes):
+        (WebCore::SVGPathElement::parseAttribute):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::pathByteStream const):
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        (WebCore::SVGPathElement::animatedPropertyWillBeDeleted):
+        (WebCore::SVGPathElement::pathSegList):
+        (WebCore::SVGPathElement::animatedPathSegList):
+        (WebCore::SVGPathElement::pathSegListChanged):
+        (WebCore::SVGPathElement::dPropertyInfo): Deleted.
+        (WebCore::SVGPathElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGPathElement::synchronizeD): Deleted.
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSegListValues.h:
+        (WebCore::SVGPropertyTraits<SVGPathSegListValues>::toString):
+        * svg/SVGPathSegWithContext.h:
+        (WebCore::SVGPathSegWithContext::animatedProperty const):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::registerAttributes):
+        (WebCore::SVGPatternElement::parseAttribute):
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::collectPatternAttributes const):
+        (WebCore::SVGPatternElement::isSupportedAttribute): Deleted.
+        (WebCore::SVGPatternElement::requiredFeatures): Deleted.
+        (WebCore::SVGPatternElement::requiredExtensions): Deleted.
+        (WebCore::SVGPatternElement::systemLanguage): Deleted.
+        * svg/SVGPatternElement.h:
+        * svg/SVGPointListValues.h:
+        (WebCore::SVGPropertyTraits<SVGPointListValues>::toString):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::registerAttributes):
+        (WebCore::SVGPolyElement::parseAttribute):
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        (WebCore::SVGPolyElement::pointsPropertyInfo): Deleted.
+        (WebCore::SVGPolyElement::synchronizePoints): Deleted.
+        (WebCore::SVGPolyElement::lookupOrCreatePointsWrapper): Deleted.
+        * svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::pointList const):
+        (WebCore::SVGPolyElement::attributeRegistry):
+        (WebCore::SVGPolyElement::isKnownAttribute):
+        * svg/SVGPreserveAspectRatioValue.cpp:
+        (WebCore::SVGPreserveAspectRatioValue::transformRect const):
+        (WebCore::SVGPreserveAspectRatioValue::transformRect): Deleted.
+        * svg/SVGPreserveAspectRatioValue.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::registerAttributes):
+        (WebCore::SVGRadialGradientElement::parseAttribute):
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        (WebCore::SVGRadialGradientElement::isSupportedAttribute): Deleted.
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        (WebCore::SVGRectElement::registerAttributes):
+        (WebCore::SVGRectElement::parseAttribute):
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::registerAttributes):
+        (WebCore::SVGSVGElement::parseAttribute):
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform const):
+        (WebCore::SVGSVGElement::resetScrollAnchor):
+        (WebCore::SVGSVGElement::inheritViewAttributes):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::useCurrentView const): Deleted.
+        (WebCore::SVGSVGElement::currentTranslateValue): Deleted.
+        (WebCore::SVGSVGElement::zoomAndPan const): Deleted.
+        (WebCore::SVGSVGElement::setZoomAndPan): Deleted.
+        (WebCore::SVGSVGElement::timeContainer): Deleted.
+        (WebCore::SVGSVGElement::hasEmptyViewBox const): Deleted.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        (WebCore::SVGScriptElement::svgAttributeChanged):
+        (WebCore::SVGScriptElement::insertedIntoAncestor):
+        (WebCore::SVGScriptElement::addSubresourceAttributeURLs const):
+        (WebCore::SVGScriptElement::isURLAttribute const): Deleted.
+        (WebCore::SVGScriptElement::sourceAttributeValue const): Deleted.
+        (WebCore::SVGScriptElement::charsetAttributeValue const): Deleted.
+        (WebCore::SVGScriptElement::typeAttributeValue const): Deleted.
+        (WebCore::SVGScriptElement::languageAttributeValue const): Deleted.
+        (WebCore::SVGScriptElement::forAttributeValue const): Deleted.
+        (WebCore::SVGScriptElement::eventAttributeValue const): Deleted.
+        (WebCore::SVGScriptElement::hasAsyncAttribute const): Deleted.
+        (WebCore::SVGScriptElement::hasDeferAttribute const): Deleted.
+        (WebCore::SVGScriptElement::hasNoModuleAttribute const): Deleted.
+        (WebCore::SVGScriptElement::hasSourceAttribute const): Deleted.
+        (WebCore::SVGScriptElement::filterOutAnimatableAttribute const): Deleted.
+        * svg/SVGScriptElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::SVGStopElement):
+        (WebCore::SVGStopElement::registerAttributes):
+        (WebCore::SVGStopElement::parseAttribute):
+        * svg/SVGStopElement.h:
+        * svg/SVGStringListValues.h:
+        (WebCore::SVGPropertyTraits<SVGStringListValues>::toString):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::SVGSwitchElement):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        (WebCore::SVGSymbolElement::parseAttribute):
+        (WebCore::SVGSymbolElement::svgAttributeChanged):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::SVGTRefElement):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::SVGTests):
+        (WebCore::SVGTests::registerAttributes):
+        (WebCore::SVGTests::attributeRegistry):
+        (WebCore::SVGTests::isKnownAttribute):
+        (WebCore::SVGTests::isValid const):
+        (WebCore::SVGTests::parseAttribute):
+        (WebCore::SVGTests::svgAttributeChanged):
+        (WebCore::SVGTests::requiredFeatures):
+        (WebCore::SVGTests::requiredExtensions):
+        (WebCore::SVGTests::systemLanguage):
+        (WebCore::createSVGTestPropertyInfo): Deleted.
+        (WebCore::createSVGTextAttributeToPropertyMap): Deleted.
+        (WebCore::SVGTests::attributeToPropertyMap): Deleted.
+        (WebCore::SVGTests::handleAttributeChange): Deleted.
+        (WebCore::SVGTests::synchronizeAttribute): Deleted.
+        (WebCore::SVGTests::synchronizeRequiredFeatures): Deleted.
+        (WebCore::SVGTests::synchronizeRequiredExtensions): Deleted.
+        (WebCore::SVGTests::synchronizeSystemLanguage): Deleted.
+        * svg/SVGTests.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::registerAttributes):
+        (WebCore::SVGTextContentElement::parseAttribute):
+        (WebCore::SVGTextContentElement::svgAttributeChanged):
+        (WebCore::SVGTextContentElement::textLengthPropertyInfo): Deleted.
+        (WebCore::SVGTextContentElement::synchronizeTextLength): Deleted.
+        (WebCore::SVGTextContentElement::lookupOrCreateTextLengthWrapper): Deleted.
+        (WebCore::SVGTextContentElement::textLengthAnimated): Deleted.
+        (WebCore::SVGTextContentElement::isSupportedAttribute): Deleted.
+        * svg/SVGTextContentElement.h:
+        (WebCore::SVGTextContentElement::specifiedTextLength):
+        (WebCore::SVGTextContentElement::attributeRegistry):
+        (WebCore::SVGTextContentElement::textLength const):
+        (WebCore::SVGTextContentElement::lengthAdjust const):
+        (WebCore::SVGTextContentElement::textLengthAnimated):
+        (WebCore::SVGTextContentElement::lengthAdjustAnimated):
+        (WebCore::SVGTextContentElement::isKnownAttribute):
+        (WebCore::SVGTextContentElement::SVGAnimatedCustomLengthAttribute::SVGAnimatedCustomLengthAttribute):
+        (WebCore::SVGTextContentElement::SVGAnimatedCustomLengthAttribute::synchronize):
+        (WebCore::SVGTextContentElement::SVGAnimatedCustomLengthAttribute::animatedProperty):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        (WebCore::SVGTextPathElement::registerAttributes):
+        (WebCore::SVGTextPathElement::parseAttribute):
+        (WebCore::SVGTextPathElement::svgAttributeChanged):
+        (WebCore::SVGTextPathElement::isSupportedAttribute): Deleted.
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::SVGTextPositioningElement):
+        (WebCore::SVGTextPositioningElement::registerAttributes):
+        (WebCore::SVGTextPositioningElement::parseAttribute):
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+        * svg/SVGTextPositioningElement.h:
+        (WebCore::SVGTextPositioningElement::attributeRegistry):
+        (WebCore::SVGTextPositioningElement::x const):
+        (WebCore::SVGTextPositioningElement::y const):
+        (WebCore::SVGTextPositioningElement::dx const):
+        (WebCore::SVGTextPositioningElement::dy const):
+        (WebCore::SVGTextPositioningElement::rotate const):
+        (WebCore::SVGTextPositioningElement::xAnimated):
+        (WebCore::SVGTextPositioningElement::yAnimated):
+        (WebCore::SVGTextPositioningElement::dxAnimated):
+        (WebCore::SVGTextPositioningElement::dyAnimated):
+        (WebCore::SVGTextPositioningElement::rotateAnimated):
+        (WebCore::SVGTextPositioningElement::isKnownAttribute):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::SVGURIReference):
+        (WebCore::SVGURIReference::registerAttributes):
+        (WebCore::SVGURIReference::attributeRegistry):
+        (WebCore::SVGURIReference::isKnownAttribute):
+        (WebCore::SVGURIReference::parseAttribute):
+        (WebCore::SVGURIReference::href const):
+        (WebCore::SVGURIReference::hrefAnimated):
+        (WebCore::SVGURIReference::addSupportedAttributes): Deleted.
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::registerAttributes):
+        (WebCore::SVGUseElement::parseAttribute):
+        (WebCore::SVGUseElement::insertedIntoAncestor):
+        (WebCore::SVGUseElement::transferSizeAttributesToTargetClone const):
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::notifyFinished):
+        * svg/SVGUseElement.h:
+        * svg/SVGValue.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        (WebCore::SVGViewElement::parseAttribute):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        (WebCore::SVGViewSpec::registerAttributes):
+        (WebCore::SVGViewSpec::transform):
+        (WebCore::SVGViewSpec::reset):
+        (WebCore::SVGViewSpec::parseViewSpec):
+        (WebCore::SVGViewSpec::viewBoxPropertyInfo): Deleted.
+        (WebCore::SVGViewSpec::preserveAspectRatioPropertyInfo): Deleted.
+        (WebCore::SVGViewSpec::transformPropertyInfo): Deleted.
+        (WebCore::SVGViewSpec::viewBoxIdentifier): Deleted.
+        (WebCore::SVGViewSpec::preserveAspectRatioIdentifier): Deleted.
+        (WebCore::SVGViewSpec::transformIdentifier): Deleted.
+        (WebCore::SVGViewSpec::setZoomAndPan): Deleted.
+        (WebCore::SVGViewSpec::transformString const): Deleted.
+        (WebCore::SVGViewSpec::viewBoxString const): Deleted.
+        (WebCore::SVGViewSpec::preserveAspectRatioString const): Deleted.
+        (WebCore::SVGViewSpec::viewBoxAnimated): Deleted.
+        (WebCore::SVGViewSpec::preserveAspectRatioAnimated): Deleted.
+        (WebCore::SVGViewSpec::lookupOrCreateViewBoxWrapper): Deleted.
+        (WebCore::SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper): Deleted.
+        (WebCore::SVGViewSpec::lookupOrCreateTransformWrapper): Deleted.
+        * svg/SVGViewSpec.h:
+        * svg/SVGViewSpec.idl:
+        * svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::SVGZoomAndPan):
+        (WebCore::SVGZoomAndPan::registerAttributes):
+        (WebCore::SVGZoomAndPan::parseZoomAndPan):
+        (WebCore::SVGZoomAndPan::parseAttribute):
+        (WebCore::SVGZoomAndPan::parse): Deleted.
+        (WebCore::SVGZoomAndPan::parseAttributeValue): Deleted.
+        * svg/SVGZoomAndPan.h:
+        (WebCore::SVGZoomAndPan::zoomAndPan const):
+        (WebCore::SVGZoomAndPan::setZoomAndPan):
+        (WebCore::SVGZoomAndPan::reset):
+        (WebCore::SVGZoomAndPan::attributeRegistry):
+        (WebCore::SVGZoomAndPan::isKnownAttribute):
+        (WebCore::SVGZoomAndPan::parseFromNumber): Deleted.
+        (WebCore::SVGZoomAndPan::parseAttribute): Deleted.
+        * svg/SVGZoomAndPanType.h: Copied from Source/WebCore/svg/SVGValue.h.
+        (WebCore::SVGPropertyTraits<SVGZoomAndPanType>::initialValue):
+        (WebCore::SVGPropertyTraits<SVGZoomAndPanType>::toString):
+        (WebCore::SVGPropertyTraits<SVGZoomAndPanType>::fromString):
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h:
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp: Copied from Source/WebCore/svg/SVGValue.h.
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::SVGAnimatedPathSegListPropertyTearOff):
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::~SVGAnimatedPathSegListPropertyTearOff):
+        (WebCore::SVGAnimatedPathSegListPropertyTearOff::animValDidChange):
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        * svg/properties/SVGAnimatedProperty.cpp:
+        (WebCore::SVGAnimatedProperty::SVGAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::~SVGAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::animatedPropertyCache): Deleted.
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::isAnimating const):
+        (WebCore::SVGAnimatedProperty::isAnimatedListTearOff const):
+        (WebCore::SVGAnimatedProperty::lookupOrCreateAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::lookupAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::animatedPropertyCache):
+        (WebCore::SVGAnimatedProperty::lookupOrCreateWrapper): Deleted.
+        (WebCore::SVGAnimatedProperty::lookupWrapper): Deleted.
+        * svg/properties/SVGAnimatedPropertyMacros.h: Removed.
+        * svg/properties/SVGAnimatedPropertyType.h: Copied from Source/WebCore/svg/SVGAElement.idl.
+        * svg/properties/SVGAttribute.h: Added.
+        (WebCore::SVGPropertyAttribute::SVGPropertyAttribute):
+        (WebCore::SVGPropertyAttribute::value):
+        (WebCore::SVGPropertyAttribute::value const):
+        (WebCore::SVGPropertyAttribute::setValue):
+        (WebCore::SVGPropertyAttribute::resetValue):
+        (WebCore::SVGPropertyAttribute::toString const):
+        (WebCore::SVGPropertyAttribute::setShouldSynchronize):
+        (WebCore::SVGPropertyAttribute::shouldSynchronize const):
+        (WebCore::SVGPropertyAttribute::synchronize):
+        (WebCore::SVGAnimatedAttribute::SVGAnimatedAttribute):
+        (WebCore::SVGAnimatedAttribute::currentValue const):
+        (WebCore::SVGAnimatedAttribute::animatedProperty):
+        (WebCore::SVGAnimatedAttributeList::SVGAnimatedAttributeList):
+        (WebCore::SVGAnimatedAttributeList::detachAnimatedListWrappers):
+        * svg/properties/SVGAttributeAccessor.h: Added.
+        (WebCore::SVGAttributeAccessor::SVGAttributeAccessor):
+        (WebCore::SVGAttributeAccessor::attributeName const):
+        (WebCore::SVGAttributeAccessor::isAnimatedLengthAttribute const):
+        (WebCore::SVGAttributeAccessor::animatedType const):
+        (WebCore::SVGAttributeAccessor::animatedTypes const):
+        (WebCore::SVGAttributeAccessor::lookupOrCreateAnimatedProperty const):
+        (WebCore::SVGAttributeAccessor::lookupAnimatedProperty const):
+        (WebCore::SVGAttributeAccessor::lookupOrCreateAnimatedProperties const):
+        (WebCore::SVGPropertyAttributeAccessor::singleton):
+        (WebCore::SVGPropertyAttributeAccessor::SVGPropertyAttributeAccessor):
+        (WebCore::SVGPropertyAttributeAccessor::attribute const):
+        (WebCore::SVGAnimatedAttributeAccessor::singleton):
+        (WebCore::SVGAnimatedAttributeAccessor::SVGAnimatedAttributeAccessor):
+        (WebCore::SVGAnimatedAttributeAccessor::lookupOrCreateAnimatedProperty):
+        (WebCore::SVGAnimatedAttributeAccessor::lookupAnimatedProperty):
+        (WebCore::SVGAnimatedPairAttributeAccessor::SVGAnimatedPairAttributeAccessor):
+        (WebCore::SVGAnimatedPairAttributeAccessor::secondAttribute const):
+        * svg/properties/SVGAttributeOwnerProxy.h: Copied from Source/WebCore/svg/SVGValue.h.
+        (WebCore::SVGAttributeOwnerProxy::SVGAttributeOwnerProxy):
+        (WebCore::SVGAttributeOwnerProxy::element const):
+        * svg/properties/SVGAttributeOwnerProxyImpl.h: Added.
+        (WebCore::SVGAttributeOwnerProxyImpl::SVGAttributeOwnerProxyImpl):
+        (WebCore::SVGAttributeOwnerProxyImpl::attributeRegistry):
+        (WebCore::SVGAttributeOwnerProxyImpl::isKnownAttribute):
+        (WebCore::SVGAttributeOwnerProxyImpl::isAnimatedLengthAttribute):
+        * svg/properties/SVGAttributeRegistry.h: Added.
+        (WebCore::SVGAttributeRegistry::registerAttribute):
+        (WebCore::SVGAttributeRegistry::isEmpty const):
+        (WebCore::SVGAttributeRegistry::isKnownAttribute const):
+        (WebCore::SVGAttributeRegistry::isAnimatedLengthAttribute const):
+        (WebCore::SVGAttributeRegistry::animatedTypes const):
+        (WebCore::SVGAttributeRegistry::synchronizeAttributes const):
+        (WebCore::SVGAttributeRegistry::synchronizeAttribute const):
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedProperty const):
+        (WebCore::SVGAttributeRegistry::lookupAnimatedProperty const):
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedProperties const):
+        (WebCore::SVGAttributeRegistry::animatedTypesBaseTypes):
+        (WebCore::SVGAttributeRegistry::synchronizeAttributesBaseTypes):
+        (WebCore::SVGAttributeRegistry::synchronizeAttributeBaseTypes):
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedPropertyBaseTypes):
+        (WebCore::SVGAttributeRegistry::lookupAnimatedPropertyBaseTypes):
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedPropertiesBaseTypes):
+        (WebCore::SVGAttributeRegistry::findAttributeAccessor const):
+        * svg/properties/SVGAttributeToPropertyMap.cpp: Removed.
+        * svg/properties/SVGAttributeToPropertyMap.h: Removed.
+        * svg/properties/SVGPropertyInfo.cpp: Removed.
+        * svg/properties/SVGPropertyInfo.h: Removed.
+
 2018-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Use enum classes and OptionSets for PaintPhase and PaintBehavior

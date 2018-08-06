@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,27 +34,44 @@ class SVGRectElement final : public SVGGeometryElement, public SVGExternalResour
 public:
     static Ref<SVGRectElement> create(const QualifiedName&, Document&);
 
+    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& rx() const { return m_rx.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& ry() const { return m_ry.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> rxAnimated() { return m_rx.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> ryAnimated() { return m_ry.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGRectElement(const QualifiedName&, Document&);
-    
-    bool isValid() const final { return SVGTests::isValid(); }
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGRectElement, SVGGeometryElement, SVGExternalResourcesRequired>;
+    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
+    bool isValid() const final { return SVGTests::isValid(); }
     bool selfHasRelativeLengths() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGRectElement)
-        DECLARE_ANIMATED_LENGTH(X, x)
-        DECLARE_ANIMATED_LENGTH(Y, y)
-        DECLARE_ANIMATED_LENGTH(Width, width)
-        DECLARE_ANIMATED_LENGTH(Height, height)
-        DECLARE_ANIMATED_LENGTH(Rx, rx)
-        DECLARE_ANIMATED_LENGTH(Ry, ry)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_x { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_y { LengthModeHeight };
+    SVGAnimatedLengthAttribute m_width { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_height { LengthModeHeight };
+    SVGAnimatedLengthAttribute m_rx { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_ry { LengthModeHeight};
 };
 
 } // namespace WebCore

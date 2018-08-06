@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,43 +22,20 @@
 #include "config.h"
 #include "SVGEllipseElement.h"
 
-#include "FloatPoint.h"
 #include "RenderSVGEllipse.h"
-#include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
-#include "SVGLengthValue.h"
-#include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGEllipseElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_LENGTH(SVGEllipseElement, SVGNames::cxAttr, Cx, cx)
-DEFINE_ANIMATED_LENGTH(SVGEllipseElement, SVGNames::cyAttr, Cy, cy)
-DEFINE_ANIMATED_LENGTH(SVGEllipseElement, SVGNames::rxAttr, Rx, rx)
-DEFINE_ANIMATED_LENGTH(SVGEllipseElement, SVGNames::ryAttr, Ry, ry)
-DEFINE_ANIMATED_BOOLEAN(SVGEllipseElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGEllipseElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(cx)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(cy)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(rx)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(ry)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGeometryElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
-    , m_cx(LengthModeWidth)
-    , m_cy(LengthModeHeight)
-    , m_rx(LengthModeWidth)
-    , m_ry(LengthModeHeight)
+    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::ellipseTag));
-    registerAnimatedPropertiesForSVGEllipseElement();
+    registerAttributes();
 }    
 
 Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)
@@ -65,42 +43,46 @@ Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGEllipseElement(tagName, document));
 }
 
+void SVGEllipseElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::cxAttr, &SVGEllipseElement::m_cx>();
+    registry.registerAttribute<SVGNames::cyAttr, &SVGEllipseElement::m_cy>();
+    registry.registerAttribute<SVGNames::rxAttr, &SVGEllipseElement::m_rx>();
+    registry.registerAttribute<SVGNames::ryAttr, &SVGEllipseElement::m_ry>();
+}
+
 void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::cxAttr)
-        setCxBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_cx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::cyAttr)
-        setCyBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_cy.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::rxAttr)
-        setRxBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
+        m_rx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::ryAttr)
-        setRyBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
+        m_ry.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
-    SVGGraphicsElement::parseAttribute(name, value);
+    SVGGeometryElement::parseAttribute(name, value);
     SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::cxAttr || attrName == SVGNames::cyAttr || attrName == SVGNames::rxAttr || attrName == SVGNames::ryAttr) {
+    if (isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        if (auto* renderer = downcast<RenderSVGShape>(this->renderer())) {
-            InstanceInvalidationGuard guard(*this);
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
-        return;
-    }
-
-    SVGGraphicsElement::svgAttributeChanged(attrName);
+    SVGGeometryElement::svgAttributeChanged(attrName);
+    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

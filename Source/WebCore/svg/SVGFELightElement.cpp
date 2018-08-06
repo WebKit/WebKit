@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Oliver Hunt <oliver@nerget.com>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,36 +40,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFELightElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::azimuthAttr, Azimuth, azimuth)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::elevationAttr, Elevation, elevation)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::xAttr, X, x)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::yAttr, Y, y)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::zAttr, Z, z)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::pointsAtXAttr, PointsAtX, pointsAtX)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::pointsAtYAttr, PointsAtY, pointsAtY)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::pointsAtZAttr, PointsAtZ, pointsAtZ)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::specularExponentAttr, SpecularExponent, specularExponent)
-DEFINE_ANIMATED_NUMBER(SVGFELightElement, SVGNames::limitingConeAngleAttr, LimitingConeAngle, limitingConeAngle)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFELightElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(azimuth)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(elevation)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(z)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(pointsAtX)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(pointsAtY)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(pointsAtZ)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(specularExponent)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(limitingConeAngle)
-END_REGISTER_ANIMATED_PROPERTIES
-
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , m_specularExponent(1)
 {
-    registerAnimatedPropertiesForSVGFELightElement();
+    registerAttributes();
 }
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
@@ -80,55 +55,72 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
     return nullptr;
 }
 
+void SVGFELightElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::azimuthAttr, &SVGFELightElement::m_azimuth>();
+    registry.registerAttribute<SVGNames::elevationAttr, &SVGFELightElement::m_elevation>();
+    registry.registerAttribute<SVGNames::xAttr, &SVGFELightElement::m_x>();
+    registry.registerAttribute<SVGNames::yAttr, &SVGFELightElement::m_y>();
+    registry.registerAttribute<SVGNames::zAttr, &SVGFELightElement::m_z>();
+    registry.registerAttribute<SVGNames::pointsAtXAttr, &SVGFELightElement::m_pointsAtX>();
+    registry.registerAttribute<SVGNames::pointsAtYAttr, &SVGFELightElement::m_pointsAtY>();
+    registry.registerAttribute<SVGNames::pointsAtZAttr, &SVGFELightElement::m_pointsAtZ>();
+    registry.registerAttribute<SVGNames::specularExponentAttr, &SVGFELightElement::m_specularExponent>();
+    registry.registerAttribute<SVGNames::limitingConeAngleAttr, &SVGFELightElement::m_limitingConeAngle>();
+}
+
 void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::azimuthAttr) {
-        setAzimuthBaseValue(value.toFloat());
+        m_azimuth.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::elevationAttr) {
-        setElevationBaseValue(value.toFloat());
+        m_elevation.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::xAttr) {
-        setXBaseValue(value.toFloat());
+        m_x.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::yAttr) {
-        setYBaseValue(value.toFloat());
+        m_y.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::zAttr) {
-        setZBaseValue(value.toFloat());
+        m_z.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::pointsAtXAttr) {
-        setPointsAtXBaseValue(value.toFloat());
+        m_pointsAtX.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::pointsAtYAttr) {
-        setPointsAtYBaseValue(value.toFloat());
+        m_pointsAtY.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::pointsAtZAttr) {
-        setPointsAtZBaseValue(value.toFloat());
+        m_pointsAtZ.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::specularExponentAttr) {
-        setSpecularExponentBaseValue(value.toFloat());
+        m_specularExponent.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::limitingConeAngleAttr) {
-        setLimitingConeAngleBaseValue(value.toFloat());
+        m_limitingConeAngle.setValue(value.toFloat());
         return;
     }
 
@@ -137,11 +129,7 @@ void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::azimuthAttr || attrName == SVGNames::elevationAttr
-        || attrName == SVGNames::xAttr || attrName == SVGNames::yAttr || attrName == SVGNames::zAttr
-        || attrName == SVGNames::pointsAtXAttr || attrName == SVGNames::pointsAtYAttr || attrName == SVGNames::pointsAtZAttr
-        || attrName == SVGNames::specularExponentAttr || attrName == SVGNames::limitingConeAngleAttr) {
-
+    if (isKnownAttribute(attrName)) {
         auto parent = makeRefPtr(parentElement());
         if (!parent)
             return;

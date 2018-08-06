@@ -60,7 +60,7 @@ public:
     ExceptionOr<void> setMeetOrSlice(unsigned short);
     unsigned short meetOrSlice() const { return m_meetOrSlice; }
 
-    void transformRect(FloatRect& destRect, FloatRect& srcRect);
+    void transformRect(FloatRect& destRect, FloatRect& srcRect) const;
 
     AffineTransform getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
 

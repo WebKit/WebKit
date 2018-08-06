@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,26 +39,22 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextPositioningElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_LENGTH_LIST(SVGTextPositioningElement, SVGNames::xAttr, X, x)
-DEFINE_ANIMATED_LENGTH_LIST(SVGTextPositioningElement, SVGNames::yAttr, Y, y)
-DEFINE_ANIMATED_LENGTH_LIST(SVGTextPositioningElement, SVGNames::dxAttr, Dx, dx)
-DEFINE_ANIMATED_LENGTH_LIST(SVGTextPositioningElement, SVGNames::dyAttr, Dy, dy)
-DEFINE_ANIMATED_NUMBER_LIST(SVGTextPositioningElement, SVGNames::rotateAttr, Rotate, rotate)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextPositioningElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(dx)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(dy)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(rotate)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextContentElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document& document)
     : SVGTextContentElement(tagName, document)
 {
-    registerAnimatedPropertiesForSVGTextPositioningElement();
+    registerAttributes();
+}
+
+void SVGTextPositioningElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::xAttr, &SVGTextPositioningElement::m_x>();
+    registry.registerAttribute<SVGNames::yAttr, &SVGTextPositioningElement::m_y>();
+    registry.registerAttribute<SVGNames::dxAttr, &SVGTextPositioningElement::m_dx>();
+    registry.registerAttribute<SVGNames::dyAttr, &SVGTextPositioningElement::m_dy>();
+    registry.registerAttribute<SVGNames::rotateAttr, &SVGTextPositioningElement::m_rotate>();
 }
 
 void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -65,40 +62,40 @@ void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const 
     if (name == SVGNames::xAttr) {
         SVGLengthListValues newList;
         newList.parse(value, LengthModeWidth);
-        detachAnimatedXListWrappers(newList.size());
-        setXBaseValue(newList);
+        m_x.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
+        m_x.setValue(WTFMove(newList));
         return;
     }
 
     if (name == SVGNames::yAttr) {
         SVGLengthListValues newList;
         newList.parse(value, LengthModeHeight);
-        detachAnimatedYListWrappers(newList.size());
-        setYBaseValue(newList);
+        m_y.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
+        m_y.setValue(WTFMove(newList));
         return;
     }
 
     if (name == SVGNames::dxAttr) {
         SVGLengthListValues newList;
         newList.parse(value, LengthModeWidth);
-        detachAnimatedDxListWrappers(newList.size());
-        setDxBaseValue(newList);
+        m_dx.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
+        m_dx.setValue(WTFMove(newList));
         return;
     }
 
     if (name == SVGNames::dyAttr) {
         SVGLengthListValues newList;
         newList.parse(value, LengthModeHeight);
-        detachAnimatedDyListWrappers(newList.size());
-        setDyBaseValue(newList);
+        m_dy.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
+        m_dy.setValue(WTFMove(newList));
         return;
     }
 
     if (name == SVGNames::rotateAttr) {
         SVGNumberListValues newList;
         newList.parse(value);
-        detachAnimatedRotateListWrappers(newList.size());
-        setRotateBaseValue(newList);
+        m_rotate.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
+        m_rotate.setValue(WTFMove(newList));
         return;
     }
 
@@ -121,7 +118,7 @@ bool SVGTextPositioningElement::isPresentationAttribute(const QualifiedName& nam
 
 void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr || attrName == SVGNames::dxAttr || attrName == SVGNames::dyAttr || attrName == SVGNames::rotateAttr) {
+    if (isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
 
         if (attrName != SVGNames::rotateAttr)

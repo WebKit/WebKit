@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +32,21 @@ class SVGTextPositioningElement : public SVGTextContentElement {
 public:
     static SVGTextPositioningElement* elementFromRenderer(RenderBoxModelObject&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTextPositioningElement, SVGTextContentElement>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+
+    const SVGLengthListValues& x() const { return m_x.currentValue(attributeOwnerProxy()); }
+    const SVGLengthListValues& y() const { return m_y.currentValue(attributeOwnerProxy()); }
+    const SVGLengthListValues& dx() const { return m_dx.currentValue(attributeOwnerProxy()); }
+    const SVGLengthListValues& dy() const { return m_dy.currentValue(attributeOwnerProxy()); }
+    const SVGNumberListValues& rotate() const { return m_rotate.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLengthList> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLengthList> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLengthList> dxAnimated() { return m_dx.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLengthList> dyAnimated() { return m_dy.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumberList> rotateAnimated() { return m_rotate.animatedProperty(attributeOwnerProxy()); }
+
 protected:
     SVGTextPositioningElement(const QualifiedName&, Document&);
 
@@ -41,13 +57,17 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTextPositioningElement)
-        DECLARE_ANIMATED_LENGTH_LIST(X, x)
-        DECLARE_ANIMATED_LENGTH_LIST(Y, y)
-        DECLARE_ANIMATED_LENGTH_LIST(Dx, dx)
-        DECLARE_ANIMATED_LENGTH_LIST(Dy, dy)
-        DECLARE_ANIMATED_NUMBER_LIST(Rotate, rotate)
-    END_DECLARE_ANIMATED_PROPERTIES
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
+
+    static void registerAttributes();
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthListAttribute m_x;
+    SVGAnimatedLengthListAttribute m_y;
+    SVGAnimatedLengthListAttribute m_dx;
+    SVGAnimatedLengthListAttribute m_dy;
+    SVGAnimatedNumberListAttribute m_rotate;
 };
 
 } // namespace WebCore

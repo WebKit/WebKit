@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,22 +22,17 @@
 
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttributeAccessor.h"
 
 namespace WebCore {
 
-typedef SVGAnimatedStaticPropertyTearOff<bool> SVGAnimatedBoolean;
-
-// Helper macros to declare/define a SVGAnimatedBoolean object
-#define DECLARE_ANIMATED_BOOLEAN(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedBoolean, bool, UpperProperty, LowerProperty, )
-
-#define DECLARE_ANIMATED_BOOLEAN_OVERRIDE(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedBoolean, bool, UpperProperty, LowerProperty, override)
-
-#define DEFINE_ANIMATED_BOOLEAN(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedBoolean, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
-
 class SVGAnimationElement;
+
+using SVGAnimatedBoolean = SVGAnimatedStaticPropertyTearOff<bool>;
+using SVGAnimatedBooleanAttribute = SVGAnimatedAttribute<SVGAnimatedBoolean>;
+
+template<typename OwnerType>
+using SVGAnimatedBooleanAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedBooleanAttribute, AnimatedBoolean>;
 
 class SVGAnimatedBooleanAnimator final : public SVGAnimatedTypeAnimator {
 public:

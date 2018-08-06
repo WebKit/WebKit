@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,20 +24,50 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "SVGAttributeOwnerProxy.h"
 #include "URL.h"
 #include "XLinkNames.h"
 
 namespace WebCore {
 
+SVGURIReference::SVGURIReference(SVGElement* contextElement)
+    : m_attributeOwnerProxy(std::make_unique<AttributeOwnerProxy>(*this, *contextElement))
+{
+    registerAttributes();
+}
+
+void SVGURIReference::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<XLinkNames::hrefAttr, &SVGURIReference::m_href>();
+}
+
+SVGURIReference::AttributeRegistry& SVGURIReference::attributeRegistry()
+{
+    return AttributeOwnerProxy::attributeRegistry();
+}
+
+bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
+{
+    return AttributeOwnerProxy::isKnownAttribute(attributeName);
+}
+
 void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name.matches(XLinkNames::hrefAttr))
-        setHrefBaseValue(value);
+        m_href.setValue(value);
 }
 
-bool SVGURIReference::isKnownAttribute(const QualifiedName& attrName)
+const String& SVGURIReference::href() const
 {
-    return attrName.matches(XLinkNames::hrefAttr);
+    return m_href.currentValue(*m_attributeOwnerProxy);
+}
+
+RefPtr<SVGAnimatedString> SVGURIReference::hrefAnimated()
+{
+    return m_href.animatedProperty(*m_attributeOwnerProxy);
 }
 
 String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)
@@ -96,11 +127,6 @@ Element* SVGURIReference::targetElementFromIRIString(const String& iri, const Do
         return 0;
 
     return document.getElementById(id);
-}
-
-void SVGURIReference::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
-{
-    supportedAttributes.add(XLinkNames::hrefAttr);
 }
 
 }

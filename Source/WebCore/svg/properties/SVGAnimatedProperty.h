@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,8 +21,9 @@
 
 #pragma once
 
+#include "QualifiedName.h"
 #include "SVGAnimatedPropertyDescription.h"
-#include "SVGPropertyInfo.h"
+#include "SVGAnimatedPropertyType.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -32,6 +33,10 @@ class SVGProperty;
 
 class SVGAnimatedProperty : public RefCounted<SVGAnimatedProperty> {
 public:
+    virtual ~SVGAnimatedProperty();
+    virtual bool isAnimating() const { return false; }
+    virtual bool isAnimatedListTearOff() const { return false; }
+
     SVGElement* contextElement() const { return m_contextElement.get(); }
     const QualifiedName& attributeName() const { return m_attributeName; }
     AnimatedPropertyType animatedPropertyType() const { return m_animatedPropertyType; }
@@ -40,60 +45,49 @@ public:
 
     void commitChange();
 
-    virtual bool isAnimating() const { return false; }
-    virtual bool isAnimatedListTearOff() const { return false; }
-
-    // Caching facilities.
-    typedef HashMap<SVGAnimatedPropertyDescription, SVGAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
-
-    virtual ~SVGAnimatedProperty();
-
-    template<typename OwnerType, typename TearOffType, typename PropertyType>
-    static Ref<TearOffType> lookupOrCreateWrapper(OwnerType* element, const SVGPropertyInfo* info, PropertyType& property)
+    template<typename TearOffType, typename PropertyType, AnimatedPropertyType animatedType>
+    static RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(SVGElement& element, const QualifiedName& attributeName, const AtomicString& identifier, PropertyType& property, AnimatedPropertyState animatedState)
     {
-        ASSERT(info);
-        SVGAnimatedPropertyDescription key(element, info->propertyIdentifier);
+        SVGAnimatedPropertyDescription key(&element, identifier);
 
-        auto result = animatedPropertyCache()->add(key, nullptr);
+        auto result = animatedPropertyCache().add(key, nullptr);
         if (!result.isNewEntry)
-            return static_cast<TearOffType&>(*result.iterator->value);
+            return result.iterator->value;
 
-        Ref<SVGAnimatedProperty> wrapper = TearOffType::create(element, info->attributeName, info->animatedPropertyType, property);
-        if (info->animatedPropertyState == PropertyIsReadOnly)
+        auto wrapper = TearOffType::create(&element, attributeName, animatedType, property);
+        if (animatedState == PropertyIsReadOnly)
             wrapper->setIsReadOnly();
 
-        // Cache the raw pointer but return a Ref<>. This will break the cyclic reference
+        // Cache the raw pointer but return a RefPtr<>. This will break the cyclic reference
         // between SVGAnimatedProperty and SVGElement once the property pointer is not needed.
         result.iterator->value = wrapper.ptr();
-        return static_reference_cast<TearOffType>(wrapper);
+        return static_reference_cast<SVGAnimatedProperty>(wrapper);
     }
 
-    template<typename OwnerType, typename TearOffType>
-    static RefPtr<TearOffType> lookupWrapper(OwnerType* element, const SVGPropertyInfo* info)
+    static RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const SVGElement& element, const AtomicString& identifier)
     {
-        ASSERT(info);
-        SVGAnimatedPropertyDescription key(element, info->propertyIdentifier);
-        return static_cast<TearOffType*>(animatedPropertyCache()->get(key));
-    }
-
-    template<typename OwnerType, typename TearOffType>
-    static RefPtr<TearOffType> lookupWrapper(const OwnerType* element, const SVGPropertyInfo* info)
-    {
-        return lookupWrapper<OwnerType, TearOffType>(const_cast<OwnerType*>(element), info);
+        SVGAnimatedPropertyDescription key(const_cast<SVGElement*>(&element), identifier);
+        return animatedPropertyCache().get(key);
     }
 
 protected:
     SVGAnimatedProperty(SVGElement*, const QualifiedName&, AnimatedPropertyType);
 
 private:
-    static Cache* animatedPropertyCache();
+    // Caching facilities.
+    using Cache = HashMap<SVGAnimatedPropertyDescription, SVGAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits>;
+    static Cache& animatedPropertyCache()
+    {
+        static NeverDestroyed<Cache> cache;
+        return cache;
+    }
 
     RefPtr<SVGElement> m_contextElement;
     const QualifiedName& m_attributeName;
     AnimatedPropertyType m_animatedPropertyType;
 
 protected:
-    bool m_isReadOnly;
+    bool m_isReadOnly { false };
 };
 
 } // namespace WebCore

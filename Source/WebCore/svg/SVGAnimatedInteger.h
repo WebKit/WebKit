@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,25 +20,22 @@
 
 #pragma once
 
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttributeAccessor.h"
 
 namespace WebCore {
 
-typedef SVGAnimatedStaticPropertyTearOff<int> SVGAnimatedInteger;
-
-// Helper macros to declare/define a SVGAnimatedInteger object
-#define DECLARE_ANIMATED_INTEGER(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedInteger, int, UpperProperty, LowerProperty, )
-
-#define DEFINE_ANIMATED_INTEGER(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedInteger, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
-
-#define DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedIntegerOptionalInteger, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
-
 class SVGAnimationElement;
+
+using SVGAnimatedInteger = SVGAnimatedStaticPropertyTearOff<int>;
+using SVGAnimatedIntegerAttribute = SVGAnimatedAttribute<SVGAnimatedInteger>;
+
+template<typename OwnerType>
+using SVGAnimatedIntegerAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedIntegerAttribute, AnimatedInteger>;
+
+template<typename OwnerType>
+using SVGAnimatedOptionalIntegerAttributeAccessor = SVGAnimatedOptionalAttributeAccessor<OwnerType, SVGAnimatedIntegerAttribute, AnimatedIntegerOptionalInteger>;
 
 class SVGAnimatedIntegerAnimator final : public SVGAnimatedTypeAnimator {
 public:

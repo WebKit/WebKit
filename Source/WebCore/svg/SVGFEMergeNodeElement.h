@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,16 +31,25 @@ class SVGFEMergeNodeElement final : public SVGElement {
 public:
     static Ref<SVGFEMergeNodeElement> create(const QualifiedName&, Document&);
 
+    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGFEMergeNodeElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEMergeNodeElement, SVGElement>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
+
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMergeNodeElement)
-        DECLARE_ANIMATED_STRING(In1, in1)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedStringAttribute m_in1;
 };
 
 } // namespace WebCore

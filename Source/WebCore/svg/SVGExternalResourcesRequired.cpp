@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,15 +27,48 @@
 
 namespace WebCore {
 
+SVGExternalResourcesRequired::SVGExternalResourcesRequired(SVGElement* contextElement)
+    : m_contextElement(*contextElement)
+{
+    registerAttributes();
+}
+
+void SVGExternalResourcesRequired::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::externalResourcesRequiredAttr, &SVGEllipseElement::m_externalResourcesRequired>();
+}
+
 void SVGExternalResourcesRequired::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::externalResourcesRequiredAttr)
-        setExternalResourcesRequiredBaseValue(value == "true");
+        setExternalResourcesRequired(value == "true");
 }
 
-bool SVGExternalResourcesRequired::isKnownAttribute(const QualifiedName& attrName)
+void SVGExternalResourcesRequired::svgAttributeChanged(const QualifiedName& attrName)
 {
-    return attrName == SVGNames::externalResourcesRequiredAttr;
+    if (!isKnownAttribute(attrName))
+        return;
+    if (!m_contextElement.isConnected())
+        return;
+
+    // Handle dynamic updates of the 'externalResourcesRequired' attribute. Only possible case: changing from 'true' to 'false'
+    // causes an immediate dispatch of the SVGLoad event. If the attribute value was 'false' before inserting the script element
+    // in the document, the SVGLoad event has already been dispatched.
+    if (!externalResourcesRequired() && !haveFiredLoadEvent() && !isParserInserted()) {
+        setHaveFiredLoadEvent(true);
+
+        ASSERT(m_contextElement.haveLoadedRequiredResources());
+        m_contextElement.sendSVGLoadEventIfPossible();
+    }
+
+    auto* renderer = m_contextElement.renderer();
+    if (renderer && is<RenderSVGShape>(renderer)) {
+        SVGElement::InstanceInvalidationGuard guard(m_contextElement);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+    }
 }
 
 void SVGExternalResourcesRequired::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
@@ -42,33 +76,10 @@ void SVGExternalResourcesRequired::addSupportedAttributes(HashSet<QualifiedName>
     supportedAttributes.add(SVGNames::externalResourcesRequiredAttr);
 }
 
-bool SVGExternalResourcesRequired::handleAttributeChange(SVGElement* targetElement, const QualifiedName& attrName)
+void SVGExternalResourcesRequired::dispatchLoadEvent()
 {
-    ASSERT(targetElement);
-    if (!isKnownAttribute(attrName))
-        return false;
-    if (!targetElement->isConnected())
-        return true;
-
-    // Handle dynamic updates of the 'externalResourcesRequired' attribute. Only possible case: changing from 'true' to 'false'
-    // causes an immediate dispatch of the SVGLoad event. If the attribute value was 'false' before inserting the script element
-    // in the document, the SVGLoad event has already been dispatched.
-    if (!externalResourcesRequiredBaseValue() && !haveFiredLoadEvent() && !isParserInserted()) {
-        setHaveFiredLoadEvent(true);
-        ASSERT(targetElement->haveLoadedRequiredResources());
-
-        targetElement->sendSVGLoadEventIfPossible();
-    }
-
-    return true;
-}
-
-void SVGExternalResourcesRequired::dispatchLoadEvent(SVGElement* targetElement)
-{
-    bool externalResourcesRequired = externalResourcesRequiredBaseValue();
-
     if (isParserInserted())
-        ASSERT(externalResourcesRequired != haveFiredLoadEvent());
+        ASSERT(externalResourcesRequired() != haveFiredLoadEvent());
     else if (haveFiredLoadEvent())
         return;
 
@@ -76,40 +87,40 @@ void SVGExternalResourcesRequired::dispatchLoadEvent(SVGElement* targetElement)
     // HTML fires the 'load' event after it sucessfully loaded a remote resource, otherwise an error event.
     // SVG fires the SVGLoad event immediately after parsing the <script> element, if externalResourcesRequired
     // is set to 'false', otherwise it dispatches the 'SVGLoad' event just after loading the remote resource.
-    if (!externalResourcesRequired)
+    if (!externalResourcesRequired())
         return;
 
     ASSERT(!haveFiredLoadEvent());
 
     // Dispatch SVGLoad event
     setHaveFiredLoadEvent(true);
-    ASSERT(targetElement->haveLoadedRequiredResources());
+    ASSERT(m_contextElement.haveLoadedRequiredResources());
 
-    targetElement->sendSVGLoadEventIfPossible();
+    m_contextElement.sendSVGLoadEventIfPossible();
 }
 
-void SVGExternalResourcesRequired::insertedIntoDocument(SVGElement* targetElement)
+void SVGExternalResourcesRequired::insertedIntoDocument()
 {
     if (isParserInserted())
         return;
 
     // Eventually send SVGLoad event now for the dynamically inserted script element.
-    if (externalResourcesRequiredBaseValue())
+    if (externalResourcesRequired())
         return;
     setHaveFiredLoadEvent(true);
-    targetElement->sendSVGLoadEventIfPossibleAsynchronously();
+    m_contextElement.sendSVGLoadEventIfPossibleAsynchronously();
 }
 
 void SVGExternalResourcesRequired::finishParsingChildren()
 {
     // A SVGLoad event has been fired by SVGElement::finishParsingChildren.
-    if (!externalResourcesRequiredBaseValue())
+    if (!externalResourcesRequired())
         setHaveFiredLoadEvent(true);
 }
 
 bool SVGExternalResourcesRequired::haveLoadedRequiredResources() const
 {
-    return !externalResourcesRequiredBaseValue() || haveFiredLoadEvent();
+    return !externalResourcesRequired() || haveFiredLoadEvent();
 }
 
 }

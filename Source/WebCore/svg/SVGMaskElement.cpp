@@ -5,6 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,40 +39,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMaskElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_ENUMERATION(SVGMaskElement, SVGNames::maskUnitsAttr, MaskUnits, maskUnits, SVGUnitTypes::SVGUnitType)
-DEFINE_ANIMATED_ENUMERATION(SVGMaskElement, SVGNames::maskContentUnitsAttr, MaskContentUnits, maskContentUnits, SVGUnitTypes::SVGUnitType)
-DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::xAttr, X, x)
-DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::yAttr, Y, y)
-DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::widthAttr, Width, width)
-DEFINE_ANIMATED_LENGTH(SVGMaskElement, SVGNames::heightAttr, Height, height)
-DEFINE_ANIMATED_BOOLEAN(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGMaskElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(maskUnits)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(maskContentUnits)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(LengthModeWidth, "-10%")
-    , m_y(LengthModeHeight, "-10%")
-    , m_width(LengthModeWidth, "120%")
-    , m_height(LengthModeHeight, "120%")
+    , SVGExternalResourcesRequired(this)
+    , SVGTests(this)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
     ASSERT(hasTagName(SVGNames::maskTag));
-    registerAnimatedPropertiesForSVGMaskElement();
+    registerAttributes();
 }
 
 Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document& document)
@@ -79,25 +55,17 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGMaskElement(tagName, document));
 }
 
-bool SVGMaskElement::isSupportedAttribute(const QualifiedName& attrName)
+void SVGMaskElement::registerAttributes()
 {
-    static const auto supportedAttributes = makeNeverDestroyed([] {
-        HashSet<QualifiedName> set;
-        SVGTests::addSupportedAttributes(set);
-        SVGLangSpace::addSupportedAttributes(set);
-        SVGExternalResourcesRequired::addSupportedAttributes(set);
-        set.add({
-            SVGNames::maskUnitsAttr.get(),
-            SVGNames::maskContentUnitsAttr.get(),
-            SVGNames::refYAttr.get(),
-            SVGNames::xAttr.get(),
-            SVGNames::yAttr.get(),
-            SVGNames::widthAttr.get(),
-            SVGNames::heightAttr.get(),
-        });
-        return set;
-    }());
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::xAttr, &SVGMaskElement::m_x>();
+    registry.registerAttribute<SVGNames::yAttr, &SVGMaskElement::m_y>();
+    registry.registerAttribute<SVGNames::widthAttr, &SVGMaskElement::m_width>();
+    registry.registerAttribute<SVGNames::heightAttr, &SVGMaskElement::m_height>();
+    registry.registerAttribute<SVGNames::maskUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskUnits>();
+    registry.registerAttribute<SVGNames::maskContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskContentUnits>();
 }
 
 void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -105,26 +73,26 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     if (name == SVGNames::maskUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            setMaskUnitsBaseValue(propertyValue);
+            m_maskUnits.setValue(propertyValue);
         return;
     }
     if (name == SVGNames::maskContentUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            setMaskContentUnitsBaseValue(propertyValue);
+            m_maskContentUnits.setValue(propertyValue);
         return;
     }
 
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        setXBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        setYBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_width.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -135,23 +103,20 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
-    if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr) {
+    if (isAnimatedLengthAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+    if (isKnownAttribute(attrName)) {
+        if (auto* renderer = this->renderer())
+            renderer->setNeedsLayout();
+        return;
+    }
+
+    SVGElement::svgAttributeChanged(attrName);
+    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 void SVGMaskElement::childrenChanged(const ChildChange& change)
@@ -168,21 +133,6 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGResourceMasker>(*this, WTFMove(style));
-}
-
-Ref<SVGStringList> SVGMaskElement::requiredFeatures()
-{
-    return SVGTests::requiredFeatures(*this);
-}
-
-Ref<SVGStringList> SVGMaskElement::requiredExtensions()
-{ 
-    return SVGTests::requiredExtensions(*this);
-}
-
-Ref<SVGStringList> SVGMaskElement::systemLanguage()
-{
-    return SVGTests::systemLanguage(*this);
 }
 
 }

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2010 Rob Buis <rwlbuis@gmail.com>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,28 +34,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextPathElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_LENGTH(SVGTextPathElement, SVGNames::startOffsetAttr, StartOffset, startOffset)
-DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::methodAttr, Method, method, SVGTextPathMethodType)
-DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::spacingAttr, Spacing, spacing, SVGTextPathSpacingType)
-DEFINE_ANIMATED_STRING(SVGTextPathElement, XLinkNames::hrefAttr, Href, href)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextPathElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(startOffset)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(method)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(spacing)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextContentElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document& document)
     : SVGTextContentElement(tagName, document)
-    , m_startOffset(LengthModeOther)
-    , m_method(SVGTextPathMethodAlign)
-    , m_spacing(SVGTextPathSpacingExact)
+    , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::textPathTag));
-    registerAnimatedPropertiesForSVGTextPathElement();
+    registerAttributes();
 }
 
 Ref<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document& document)
@@ -72,15 +57,14 @@ void SVGTextPathElement::clearResourceReferences()
     document().accessSVGExtensions().removeAllTargetReferencesForElement(this);
 }
 
-bool SVGTextPathElement::isSupportedAttribute(const QualifiedName& attrName)
+void SVGTextPathElement::registerAttributes()
 {
-    static const auto supportedAttributes = makeNeverDestroyed([] {
-        HashSet<QualifiedName> set;
-        SVGURIReference::addSupportedAttributes(set);
-        set.add({ SVGNames::startOffsetAttr.get(), SVGNames::methodAttr.get(), SVGNames::spacingAttr.get() });
-        return set;
-    }());
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::startOffsetAttr, &SVGTextPathElement::m_startOffset>();
+    registry.registerAttribute<SVGNames::methodAttr, SVGTextPathMethodType, &SVGTextPathElement::m_method>();
+    registry.registerAttribute<SVGNames::spacingAttr, SVGTextPathSpacingType, &SVGTextPathElement::m_spacing>();
 }
 
 void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -88,15 +72,15 @@ void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomicS
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::startOffsetAttr)
-        setStartOffsetBaseValue(SVGLengthValue::construct(LengthModeOther, value, parseError));
+        m_startOffset.setValue(SVGLengthValue::construct(LengthModeOther, value, parseError));
     else if (name == SVGNames::methodAttr) {
         SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(value);
         if (propertyValue > 0)
-            setMethodBaseValue(propertyValue);
+            m_method.setValue(propertyValue);
     } else if (name == SVGNames::spacingAttr) {
         SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(value);
         if (propertyValue > 0)
-            setSpacingBaseValue(propertyValue);
+            m_spacing.setValue(propertyValue);
     }
 
     reportAttributeParsingError(parseError, name, value);
@@ -107,23 +91,23 @@ void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGTextContentElement::svgAttributeChanged(attrName);
+    if (isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
+
+        if (attrName == SVGNames::startOffsetAttr)
+            updateRelativeLengthsInformation();
+
+        if (auto renderer = this->renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
-
-    InstanceInvalidationGuard guard(*this);
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         buildPendingResource();
         return;
     }
 
-    if (attrName == SVGNames::startOffsetAttr)
-        updateRelativeLengthsInformation();
-
-    if (auto renderer = this->renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+    SVGTextContentElement::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

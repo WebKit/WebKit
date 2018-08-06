@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,17 +44,6 @@ class SVGViewSpec;
 
 class SVGSVGElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
     WTF_MAKE_ISO_ALLOCATED(SVGSVGElement);
-
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGSVGElement)
-        DECLARE_ANIMATED_LENGTH(X, x)
-        DECLARE_ANIMATED_LENGTH(Y, y)
-        DECLARE_ANIMATED_LENGTH(Width, width)
-        DECLARE_ANIMATED_LENGTH(Height, height)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-        DECLARE_ANIMATED_RECT(ViewBox, viewBox)
-        DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
-    END_DECLARE_ANIMATED_PROPERTIES
-
 public: // DOM
     const AtomicString& contentScriptType() const;
     void setContentScriptType(const AtomicString&);
@@ -69,14 +58,14 @@ public: // DOM
     float screenPixelToMillimeterX() const;
     float screenPixelToMillimeterY() const;
 
-    bool useCurrentView() const;
+    bool useCurrentView() const { return m_useCurrentView; }
     SVGViewSpec& currentView();
 
     float currentScale() const;
     void setCurrentScale(float);
 
     Ref<SVGPoint> currentTranslate();
-    FloatPoint currentTranslateValue();
+    FloatPoint currentTranslateValue() { return m_currentTranslate; }
 
     unsigned suspendRedraw(unsigned maxWaitMilliseconds);
     void unsuspendRedraw(unsigned suspendHandleId);
@@ -108,9 +97,6 @@ public: // DOM
 
     Element* getElementById(const AtomicString&);
 
-    SVGZoomAndPanType zoomAndPan() const;
-    void setZoomAndPan(unsigned short);
-
 public:
     static Ref<SVGSVGElement> create(const QualifiedName&, Document&);
     static Ref<SVGSVGElement> create(Document&);
@@ -120,7 +106,7 @@ public:
     using SVGGraphicsElement::ref;
     using SVGGraphicsElement::deref;
 
-    SMILTimeContainer& timeContainer();
+    SMILTimeContainer& timeContainer() { return m_timeContainer.get(); }
 
     void setCurrentTranslate(const FloatPoint&); // Used to pan.
     void updateCurrentTranslate(); // Used from DOM bindings to create an SVGStaticPropertyTearOff for currentTranslate.
@@ -133,26 +119,42 @@ public:
     FloatSize currentViewportSize() const;
     FloatRect currentViewBoxRect() const;
 
-    bool hasEmptyViewBox() const;
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+
+    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
 
 private:
     SVGSVGElement(const QualifiedName&, Document&);
     virtual ~SVGSVGElement();
 
-    bool isValid() const override;
-    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGSVGElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGZoomAndPan>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    void svgAttributeChanged(const QualifiedName&) override;
+    bool selfHasRelativeLengths() const override;
+    bool isValid() const override;
+
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
-    void svgAttributeChanged(const QualifiedName&) override;
-    bool selfHasRelativeLengths() const override;
     void prepareForDocumentSuspension() override;
     void resumeFromDocumentSuspension() override;
-    AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
+    AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
     RefPtr<Frame> frameForCurrentScale() const;
     void inheritViewAttributes(const SVGViewElement&);
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
@@ -162,41 +164,16 @@ private:
     SVGSVGElement* findRootAnchor(const String&) const;
 
     bool m_useCurrentView { false };
-    SVGZoomAndPanType m_zoomAndPan { SVGZoomAndPanMagnify };
     Ref<SMILTimeContainer> m_timeContainer;
     FloatPoint m_currentTranslate;
     RefPtr<SVGViewSpec> m_viewSpec;
     String m_currentViewFragmentIdentifier;
+
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_x { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_y { LengthModeHeight};
+    SVGAnimatedLengthAttribute m_width { LengthModeWidth, "100%"_s };
+    SVGAnimatedLengthAttribute m_height { LengthModeHeight, "100%"_s };
 };
-
-inline bool SVGSVGElement::useCurrentView() const
-{
-    return m_useCurrentView;
-}
-
-inline FloatPoint SVGSVGElement::currentTranslateValue()
-{
-    return m_currentTranslate;
-}
-
-inline SVGZoomAndPanType SVGSVGElement::zoomAndPan() const
-{
-    return m_zoomAndPan;
-}
-
-inline void SVGSVGElement::setZoomAndPan(unsigned short zoomAndPan)
-{
-    m_zoomAndPan = parseFromNumber(zoomAndPan);
-}
-
-inline SMILTimeContainer& SVGSVGElement::timeContainer()
-{
-    return m_timeContainer.get();
-}
-
-inline bool SVGSVGElement::hasEmptyViewBox() const
-{
-    return viewBoxIsValid() && viewBox().isEmpty();
-}
 
 } // namespace WebCore

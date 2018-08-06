@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,7 +45,7 @@ struct SVGPropertyTraits<SVGPointListValues> {
         return list;
     }
     static std::optional<SVGPointListValues> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return { }; }
-    static String toString(const SVGPointListValues&) { ASSERT_NOT_REACHED(); return emptyString(); }
+    static String toString(const SVGPointListValues& list) { return list.valueAsString(); }
 
     using ListItemType = FloatPoint;
     using ListItemTearOff = SVGPoint;

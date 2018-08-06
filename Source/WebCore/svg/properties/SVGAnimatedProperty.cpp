@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,22 +30,23 @@ SVGAnimatedProperty::SVGAnimatedProperty(SVGElement* contextElement, const Quali
     : m_contextElement(contextElement)
     , m_attributeName(attributeName)
     , m_animatedPropertyType(animatedPropertyType)
-    , m_isReadOnly(false)
 {
 }
 
 SVGAnimatedProperty::~SVGAnimatedProperty()
 {
+    // Assure that animationEnded() was called, if animationStarted() was called before.
+    ASSERT(!isAnimating());
+
     // Remove wrapper from cache.
-    for (auto& cache : *animatedPropertyCache()) {
+    for (auto& cache : animatedPropertyCache()) {
         if (cache.value == this) {
-            animatedPropertyCache()->remove(cache.key);
-            break;
+            animatedPropertyCache().remove(cache.key);
+            return;
         }
     }
 
-    // Assure that animationEnded() was called, if animationStarted() was called before.
-    ASSERT(!isAnimating());
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void SVGAnimatedProperty::commitChange()
@@ -56,12 +57,6 @@ void SVGAnimatedProperty::commitChange()
     m_contextElement->svgAttributeChanged(m_attributeName);
     // Needed to synchronize with CSSOM for presentation attributes with SVG DOM.
     m_contextElement->synchronizeAnimatedSVGAttribute(m_attributeName);
-}
-
-SVGAnimatedProperty::Cache* SVGAnimatedProperty::animatedPropertyCache()
-{
-    static Cache* s_cache = new Cache;
-    return s_cache;
 }
 
 } // namespace WebCore

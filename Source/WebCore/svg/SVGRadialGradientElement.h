@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,10 +36,28 @@ public:
 
     bool collectGradientAttributes(RadialGradientAttributes&);
 
+    const SVGLengthValue& cx() const { return m_cx.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& cy() const { return m_cy.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& r() const { return m_r.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& fx() const { return m_fx.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& fy() const { return m_fy.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& fr() const { return m_fr.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> cxAnimated() { return m_cx.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> cyAnimated() { return m_cy.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> rAnimated() { return m_r.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> fxAnimated() { return m_fx.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> fyAnimated() { return m_fy.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> frAnimated() { return m_fr.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGRadialGradientElement(const QualifiedName&, Document&);
 
-    static bool isSupportedAttribute(const QualifiedName&);
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGRadialGradientElement, SVGGradientElement>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -46,14 +65,13 @@ private:
 
     bool selfHasRelativeLengths() const override;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGRadialGradientElement)
-        DECLARE_ANIMATED_LENGTH(Cx, cx)
-        DECLARE_ANIMATED_LENGTH(Cy, cy)
-        DECLARE_ANIMATED_LENGTH(R, r)
-        DECLARE_ANIMATED_LENGTH(Fx, fx)
-        DECLARE_ANIMATED_LENGTH(Fy, fy)
-        DECLARE_ANIMATED_LENGTH(Fr, fr)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_cx { LengthModeWidth, "50%" };
+    SVGAnimatedLengthAttribute m_cy { LengthModeHeight, "50%" };
+    SVGAnimatedLengthAttribute m_r { LengthModeOther, "50%" };
+    SVGAnimatedLengthAttribute m_fx { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_fy { LengthModeHeight };
+    SVGAnimatedLengthAttribute m_fr { LengthModeOther, "0%" };
 };
 
 } // namespace WebCore

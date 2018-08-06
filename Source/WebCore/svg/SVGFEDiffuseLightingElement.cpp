@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,29 +34,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEDiffuseLightingElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_STRING(SVGFEDiffuseLightingElement, SVGNames::inAttr, In1, in1)
-DEFINE_ANIMATED_NUMBER(SVGFEDiffuseLightingElement, SVGNames::diffuseConstantAttr, DiffuseConstant, diffuseConstant)
-DEFINE_ANIMATED_NUMBER(SVGFEDiffuseLightingElement, SVGNames::surfaceScaleAttr, SurfaceScale, surfaceScale)
-DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), KernelUnitLengthX, kernelUnitLengthX)
-DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), KernelUnitLengthY, kernelUnitLengthY)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEDiffuseLightingElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(diffuseConstant)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(surfaceScale)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthX)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(kernelUnitLengthY)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
-    , m_diffuseConstant(1)
-    , m_surfaceScale(1)
 {
     ASSERT(hasTagName(SVGNames::feDiffuseLightingTag));
-    registerAnimatedPropertiesForSVGFEDiffuseLightingElement();
+    registerAttributes();
 }
 
 Ref<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const QualifiedName& tagName, Document& document)
@@ -75,28 +58,41 @@ const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier()
     return s_identifier;
 }
 
+void SVGFEDiffuseLightingElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::inAttr, &SVGFEDiffuseLightingElement::m_in1>();
+    registry.registerAttribute<SVGNames::diffuseConstantAttr, &SVGFEDiffuseLightingElement::m_diffuseConstant>();
+    registry.registerAttribute<SVGNames::surfaceScaleAttr, &SVGFEDiffuseLightingElement::m_surfaceScale>();
+    registry.registerAttribute<SVGNames::kernelUnitLengthAttr,
+        &SVGFEDiffuseLightingElement::kernelUnitLengthXIdentifier, &SVGFEDiffuseLightingElement::m_kernelUnitLengthX,
+        &SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier, &SVGFEDiffuseLightingElement::m_kernelUnitLengthY>();
+}
+
 void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::inAttr) {
-        setIn1BaseValue(value);
+        m_in1.setValue(value);
         return;
     }
 
     if (name == SVGNames::surfaceScaleAttr) {
-        setSurfaceScaleBaseValue(value.toFloat());
+        m_surfaceScale.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::diffuseConstantAttr) {
-        setDiffuseConstantBaseValue(value.toFloat());
+        m_diffuseConstant.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            setKernelUnitLengthXBaseValue(x);
-            setKernelUnitLengthYBaseValue(y);
+            m_kernelUnitLengthX.setValue(x);
+            m_kernelUnitLengthY.setValue(y);
         }
         return;
     }

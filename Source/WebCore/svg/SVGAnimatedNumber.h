@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,25 +20,22 @@
 
 #pragma once
 
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttributeAccessor.h"
 
 namespace WebCore {
 
-typedef SVGAnimatedStaticPropertyTearOff<float> SVGAnimatedNumber;
-
-// Helper macros to declare/define a SVGAnimatedNumber object
-#define DECLARE_ANIMATED_NUMBER(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedNumber, float, UpperProperty, LowerProperty, )
-
-#define DEFINE_ANIMATED_NUMBER(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedNumber, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
-
-#define DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedNumberOptionalNumber, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
-
 class SVGAnimationElement;
+
+using SVGAnimatedNumber = SVGAnimatedStaticPropertyTearOff<float>;
+using SVGAnimatedNumberAttribute = SVGAnimatedAttribute<SVGAnimatedNumber>;
+
+template<typename OwnerType>
+using SVGAnimatedNumberAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedNumberAttribute, AnimatedNumber>;
+
+template<typename OwnerType>
+using SVGAnimatedOptionalNumberAttributeAccessor = SVGAnimatedOptionalAttributeAccessor<OwnerType, SVGAnimatedNumberAttribute, AnimatedNumberOptionalNumber>;
 
 class SVGAnimatedNumberAnimator final : public SVGAnimatedTypeAnimator {
 public:

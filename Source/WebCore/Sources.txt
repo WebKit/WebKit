@@ -2274,9 +2274,8 @@ svg/graphics/filters/SVGFEImage.cpp
 svg/graphics/filters/SVGFilter.cpp
 svg/graphics/filters/SVGFilterBuilder.cpp
 
+svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp
 svg/properties/SVGAnimatedProperty.cpp
-svg/properties/SVGAttributeToPropertyMap.cpp
-svg/properties/SVGPropertyInfo.cpp
 
 workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp

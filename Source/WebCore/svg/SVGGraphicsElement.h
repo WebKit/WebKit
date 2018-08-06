@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -62,10 +63,11 @@ public:
 
     size_t approximateMemoryCost() const override { return sizeof(*this); }
 
-    // SVGTests
-    Ref<SVGStringList> requiredFeatures();
-    Ref<SVGStringList> requiredExtensions();
-    Ref<SVGStringList> systemLanguage();
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGGraphicsElement, SVGElement, SVGTests>;
+    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+
+    const auto& transform() const { return m_transform.currentValue(attributeOwnerProxy()); }
+    auto transformAnimated() { return m_transform.animatedProperty(attributeOwnerProxy()); }
 
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&);
@@ -75,25 +77,22 @@ protected:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGraphicsElement)
-        DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
-    END_DECLARE_ANIMATED_PROPERTIES
-
 private:
     bool isSVGGraphicsElement() const override { return true; }
 
-    static bool isSupportedAttribute(const QualifiedName&);
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
 
-    // SVGTests
-    void synchronizeRequiredFeatures() final { SVGTests::synchronizeRequiredFeatures(*this); }
-    void synchronizeRequiredExtensions() final { SVGTests::synchronizeRequiredExtensions(*this); }
-    void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(*this); }
+    static void registerAttributes();
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
 
     // Used by <animateMotion>
     std::unique_ptr<AffineTransform> m_supplementalTransform;
 
     // Used to isolate blend operations caused by masking.
     bool m_shouldIsolateBlending;
+
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedTransformListAttribute m_transform;
 };
 
 } // namespace WebCore

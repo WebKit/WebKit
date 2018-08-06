@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,16 +30,25 @@ class SVGFETileElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static Ref<SVGFETileElement> create(const QualifiedName&, Document&);
 
+    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGFETileElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFETileElement, SVGFilterPrimitiveStandardAttributes>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFETileElement)
-        DECLARE_ANIMATED_STRING(In1, in1)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedStringAttribute m_in1;
 };
 
 } // namespace WebCore

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2010 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +23,7 @@
 
 #include "FloatRect.h"
 #include "QualifiedName.h"
+#include "SVGAttributeRegistry.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include <wtf/HashSet.h>
@@ -29,40 +31,50 @@
 namespace WebCore {
 
 class AffineTransform;
-class Document;
 
 class SVGFitToViewBox {
+    WTF_MAKE_NONCOPYABLE(SVGFitToViewBox);
 public:
     static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue&, float viewWidth, float viewHeight);
 
-    static bool isKnownAttribute(const QualifiedName&);
-    static void addSupportedAttributes(HashSet<QualifiedName>&);
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFitToViewBox>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
 
-    template<class SVGElementTarget>
-    static bool parseAttribute(SVGElementTarget* target, const QualifiedName& name, const AtomicString& value)
-    {
-        ASSERT(target);
-        if (name == SVGNames::viewBoxAttr) {
-            FloatRect viewBox;
-            bool valueIsValid = !value.isNull() && parseViewBox(&target->document(), value, viewBox);
-            target->setViewBoxBaseValue(viewBox, valueIsValid);
-            return true;
-        }
+    const FloatRect& viewBox() const { return m_viewBox.currentValue(m_attributeOwnerProxy); }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio.currentValue(m_attributeOwnerProxy); }
 
-        if (name == SVGNames::preserveAspectRatioAttr) {
-            SVGPreserveAspectRatioValue preserveAspectRatio;
-            preserveAspectRatio.parse(value);
-            target->setPreserveAspectRatioBaseValue(preserveAspectRatio);
-            return true;
-        }
+    RefPtr<SVGAnimatedRect> viewBoxAnimated() { return m_viewBox.animatedProperty(m_attributeOwnerProxy); }
+    RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated() { return m_preserveAspectRatio.animatedProperty(m_attributeOwnerProxy); }
 
-        return false;
-    }
+    void setViewBox(const FloatRect&);
+    void resetViewBox();
 
-    static bool parseViewBox(Document*, const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
+    void setPreserveAspectRatio(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio.setValue(preserveAspectRatio); }
+    void resetPreserveAspectRatio() { m_preserveAspectRatio.resetValue(); }
+
+    String viewBoxString() const { return m_viewBox.toString(); }
+    String preserveAspectRatioString() const { return m_preserveAspectRatio.toString(); }
+
+    bool hasValidViewBox() const { return m_isViewBoxValid; }
+    bool hasEmptyViewBox() const { return m_isViewBoxValid && viewBox().isEmpty(); }
+
+protected:
+    SVGFitToViewBox(SVGElement* contextElement, AnimatedPropertyState = PropertyIsReadWrite);
+
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+
+    void reset();
+    bool parseAttribute(const QualifiedName&, const AtomicString&);
+    bool parseViewBox(const AtomicString& value, FloatRect& viewBox);
+    bool parseViewBox(const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
 
 private:
-    static bool parseViewBox(Document*, const String&, FloatRect&);
+    static void registerAttributes();
+
+    AttributeOwnerProxy m_attributeOwnerProxy;
+    SVGAnimatedRectAttribute m_viewBox;
+    SVGAnimatedPreserveAspectRatioAttribute m_preserveAspectRatio;
+    bool m_isViewBoxValid { false };
 };
 
 } // namespace WebCore

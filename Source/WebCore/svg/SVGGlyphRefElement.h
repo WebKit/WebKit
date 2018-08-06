@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Leo Yang <leoyang@webkit.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,17 +46,17 @@ public:
 private:
     SVGGlyphRefElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGGlyphRefElement, SVGElement, SVGURIReference>;
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
-    bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGlyphRefElement)
-        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
-    END_DECLARE_ANIMATED_PROPERTIES
+    bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     float m_x { 0 };
     float m_y { 0 };
     float m_dx { 0 };
     float m_dy { 0 };
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
 };
 
 }

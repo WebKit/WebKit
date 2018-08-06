@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -63,13 +63,6 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
-
-// Animated property definitions
-DEFINE_ANIMATED_STRING(SVGElement, HTMLNames::classAttr, ClassName, className)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(className)
-END_REGISTER_ANIMATED_PROPERTIES
 
 static NEVER_INLINE HashMap<AtomicStringImpl*, CSSPropertyID> createAttributeNameToCSSPropertyIDMap()
 {
@@ -282,8 +275,9 @@ static inline const HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyT
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document)
     : StyledElement(tagName, document, CreateSVGElement)
+    , SVGLangSpace(this)
 {
-    registerAnimatedPropertiesForSVGElement();
+    registerAttributes();
 }
 
 SVGElement::~SVGElement()
@@ -458,10 +452,18 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
         correspondingElement->ensureSVGRareData().instances().add(this);
 }
 
+void SVGElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<HTMLNames::classAttr, &SVGElement::m_className>();
+}
+
 void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == HTMLNames::classAttr) {
-        setClassNameBaseValue(value);
+        m_className.setValue(value);
         return;
     }
 
@@ -484,7 +486,7 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
 
 Vector<AnimatedPropertyType> SVGElement::animatedPropertyTypesForAttribute(const QualifiedName& attributeName)
 {
-    auto types = localAttributeToPropertyMap().types(attributeName);
+    auto types = animatedTypes(attributeName);
     if (!types.isEmpty())
         return types;
 
@@ -695,7 +697,7 @@ void SVGElement::synchronizeAllAnimatedSVGAttribute(SVGElement* svgElement)
     ASSERT(svgElement->elementData());
     ASSERT(svgElement->elementData()->animatedSVGAttributesAreDirty());
 
-    svgElement->localAttributeToPropertyMap().synchronizeProperties(*svgElement);
+    svgElement->synchronizeAttributes();
     svgElement->elementData()->setAnimatedSVGAttributesAreDirty(false);
 }
 
@@ -708,25 +710,7 @@ void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) cons
     if (name == anyQName())
         synchronizeAllAnimatedSVGAttribute(nonConstThis);
     else
-        nonConstThis->localAttributeToPropertyMap().synchronizeProperty(*nonConstThis, name);
-}
-
-void SVGElement::synchronizeRequiredFeatures(SVGElement* contextElement)
-{
-    ASSERT(contextElement);
-    contextElement->synchronizeRequiredFeatures();
-}
-
-void SVGElement::synchronizeRequiredExtensions(SVGElement* contextElement)
-{
-    ASSERT(contextElement);
-    contextElement->synchronizeRequiredExtensions();
-}
-
-void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
-{
-    ASSERT(contextElement);
-    contextElement->synchronizeSystemLanguage();
+        nonConstThis->synchronizeAttribute(name);
 }
 
 std::optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
@@ -939,7 +923,7 @@ bool SVGElement::isAnimatableCSSProperty(const QualifiedName& attributeName)
 
 bool SVGElement::isPresentationAttributeWithSVGDOM(const QualifiedName& attributeName)
 {
-    return !localAttributeToPropertyMap().types(attributeName).isEmpty();
+    return !animatedTypes(attributeName).isEmpty();
 }
 
 bool SVGElement::isPresentationAttribute(const QualifiedName& name) const
@@ -954,11 +938,6 @@ void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name,
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID > 0)
         addPropertyToPresentationAttributeStyle(style, propertyID, value);
-}
-
-bool SVGElement::isKnownAttribute(const QualifiedName& attrName)
-{
-    return attrName == HTMLNames::idAttr;
 }
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -985,6 +964,8 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
         invalidateInstances();
         return;
     }
+
+    SVGLangSpace::svgAttributeChanged(attrName);
 }
 
 Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

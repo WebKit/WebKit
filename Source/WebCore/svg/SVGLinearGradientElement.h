@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,10 +36,25 @@ public:
 
     bool collectGradientAttributes(LinearGradientAttributes&);
 
+    const SVGLengthValue& x1() const { return m_x1.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y1() const { return m_y1.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& x2() const { return m_x2.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y2() const { return m_y2.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> x1Animated() { return m_x1.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> y1Animated() { return m_y1.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> x2Animated() { return m_x2.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> y2Animated() { return m_y2.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGLinearGradientElement(const QualifiedName&, Document&);
 
-    static bool isSupportedAttribute(const QualifiedName&);
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGLinearGradientElement, SVGGradientElement>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -46,12 +62,11 @@ private:
 
     bool selfHasRelativeLengths() const override;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGLinearGradientElement)
-        DECLARE_ANIMATED_LENGTH(X1, x1)
-        DECLARE_ANIMATED_LENGTH(Y1, y1)
-        DECLARE_ANIMATED_LENGTH(X2, x2)
-        DECLARE_ANIMATED_LENGTH(Y2, y2)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_x1 { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_y1 { LengthModeHeight };
+    SVGAnimatedLengthAttribute m_x2 { LengthModeWidth, "100%" };
+    SVGAnimatedLengthAttribute m_y2 { LengthModeHeight };
 };
 
 } // namespace WebCore

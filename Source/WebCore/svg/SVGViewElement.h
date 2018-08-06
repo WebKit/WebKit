@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,13 +21,9 @@
 
 #pragma once
 
-#include "SVGAnimatedBoolean.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedRect.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGStringListValues.h"
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
@@ -42,24 +39,18 @@ public:
     using SVGElement::deref;
 
     Ref<SVGStringList> viewTarget();
-    SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
-    void setZoomAndPan(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
 
 private:
     SVGViewElement(const QualifiedName&, Document&);
 
     // FIXME: svgAttributeChanged missing.
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGViewElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGZoomAndPan>;
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGViewElement)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-        DECLARE_ANIMATED_RECT(ViewBox, viewBox)
-        DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
-    END_DECLARE_ANIMATED_PROPERTIES
-
-    SVGZoomAndPanType m_zoomAndPan;
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     SVGStringListValues m_viewTarget;
 };
 

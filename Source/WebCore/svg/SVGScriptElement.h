@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,10 +27,11 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGURIReference.h"
 #include "ScriptElement.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 
-class SVGScriptElement final : public SVGElement, public SVGURIReference, public SVGExternalResourcesRequired, public ScriptElement {
+class SVGScriptElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGURIReference, public ScriptElement {
     WTF_MAKE_ISO_ALLOCATED(SVGScriptElement);
 public:
     static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
@@ -41,31 +42,34 @@ public:
 private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGScriptElement, SVGElement, SVGExternalResourcesRequired, SVGURIReference>;
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    void svgAttributeChanged(const QualifiedName&) final;
+
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
 
-    void svgAttributeChanged(const QualifiedName&) final;
-    bool isURLAttribute(const Attribute&) const final;
+    bool isURLAttribute(const Attribute& attribute) const final { return attribute.name() == sourceAttributeValue(); }
     void finishParsingChildren() final;
-
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     bool haveLoadedRequiredResources() final { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
 
-    String sourceAttributeValue() const final;
-    String charsetAttributeValue() const final;
-    String typeAttributeValue() const final;
-    String languageAttributeValue() const final;
-    String forAttributeValue() const final;
-    String eventAttributeValue() const final;
-    bool hasAsyncAttribute() const final;
-    bool hasDeferAttribute() const final;
-    bool hasNoModuleAttribute() const final;
-    bool hasSourceAttribute() const final;
+    String sourceAttributeValue() const final { return href(); }
+    String charsetAttributeValue() const final { return String(); }
+    String typeAttributeValue() const final { return getAttribute(SVGNames::typeAttr).string(); }
+    String languageAttributeValue() const final { return String(); }
+    String forAttributeValue() const final { return String(); }
+    String eventAttributeValue() const final { return String(); }
+    bool hasAsyncAttribute() const final { return false; }
+    bool hasDeferAttribute() const final { return false; }
+    bool hasNoModuleAttribute() const final { return false; }
+    bool hasSourceAttribute() const final { return hasAttribute(XLinkNames::hrefAttr); }
 
-    void dispatchLoadEvent() final { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
+    void dispatchLoadEvent() final { SVGExternalResourcesRequired::dispatchLoadEvent(); }
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
@@ -77,14 +81,10 @@ private:
     Timer* svgLoadEventTimer() final { return &m_svgLoadEventTimer; }
 
 #ifndef NDEBUG
-    bool filterOutAnimatableAttribute(const QualifiedName&) const final;
+    bool filterOutAnimatableAttribute(const QualifiedName& name) const final { return name == SVGNames::typeAttr; }
 #endif
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)
-        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
-
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     Timer m_svgLoadEventTimer;
 };
 

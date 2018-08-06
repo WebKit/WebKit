@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Oliver Hunt <oliver@nerget.com>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,24 +36,42 @@ public:
     static Ref<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document&);
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
+    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    float diffuseConstant() const { return m_diffuseConstant.currentValue(attributeOwnerProxy()); }
+    float surfaceScale() const { return m_surfaceScale.currentValue(attributeOwnerProxy()); }
+    float kernelUnitLengthX() const { return m_kernelUnitLengthX.currentValue(attributeOwnerProxy()); }
+    float kernelUnitLengthY() const { return m_kernelUnitLengthY.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> diffuseConstantAnimated() { return m_diffuseConstant.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> surfaceScaleAnimated() { return m_surfaceScale.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> kernelUnitLengthXAnimated() { return m_kernelUnitLengthX.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> kernelUnitLengthYAnimated() { return m_kernelUnitLengthY.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEDiffuseLightingElement, SVGFilterPrimitiveStandardAttributes>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
+    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEDiffuseLightingElement)
-        DECLARE_ANIMATED_STRING(In1, in1)
-        DECLARE_ANIMATED_NUMBER(DiffuseConstant, diffuseConstant)
-        DECLARE_ANIMATED_NUMBER(SurfaceScale, surfaceScale)
-        DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
-        DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedStringAttribute m_in1;
+    SVGAnimatedNumberAttribute m_diffuseConstant { 1 };
+    SVGAnimatedNumberAttribute m_surfaceScale { 1 };
+    SVGAnimatedNumberAttribute m_kernelUnitLengthX;
+    SVGAnimatedNumberAttribute m_kernelUnitLengthY;
 };
 
 } // namespace WebCore

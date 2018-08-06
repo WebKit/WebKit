@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -97,25 +98,45 @@ class SVGFETurbulenceElement final : public SVGFilterPrimitiveStandardAttributes
 public:
     static Ref<SVGFETurbulenceElement> create(const QualifiedName&, Document&);
 
+    float baseFrequencyX() const { return m_baseFrequencyX.currentValue(attributeOwnerProxy()); }
+    float baseFrequencyY() const { return m_baseFrequencyY.currentValue(attributeOwnerProxy()); }
+    int numOctaves() const { return m_numOctaves.currentValue(attributeOwnerProxy()); }
+    float seed() const { return m_seed.currentValue(attributeOwnerProxy()); }
+    SVGStitchOptions stitchTiles() const { return m_stitchTiles.currentValue(attributeOwnerProxy()); }
+    TurbulenceType type() const { return m_type.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedNumber> baseFrequencyXAnimated() { return m_baseFrequencyX.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> baseFrequencyYAnimated() { return m_baseFrequencyY.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedInteger> numOctavesAnimated() { return m_numOctaves.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> seedAnimated() { return m_seed.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> stitchTilesAnimated() { return m_stitchTiles.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGFETurbulenceElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFETurbulenceElement, SVGFilterPrimitiveStandardAttributes>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
+    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     static const AtomicString& baseFrequencyXIdentifier();
     static const AtomicString& baseFrequencyYIdentifier();
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFETurbulenceElement)
-        DECLARE_ANIMATED_NUMBER(BaseFrequencyX, baseFrequencyX)
-        DECLARE_ANIMATED_NUMBER(BaseFrequencyY, baseFrequencyY)
-        DECLARE_ANIMATED_INTEGER(NumOctaves, numOctaves)
-        DECLARE_ANIMATED_NUMBER(Seed, seed)
-        DECLARE_ANIMATED_ENUMERATION(StitchTiles, stitchTiles, SVGStitchOptions)
-        DECLARE_ANIMATED_ENUMERATION(Type, type, TurbulenceType)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedNumberAttribute m_baseFrequencyX;
+    SVGAnimatedNumberAttribute m_baseFrequencyY;
+    SVGAnimatedIntegerAttribute m_numOctaves { 1 };
+    SVGAnimatedNumberAttribute m_seed;
+    SVGAnimatedEnumerationAttribute<SVGStitchOptions> m_stitchTiles { SVG_STITCHTYPE_NOSTITCH };
+    SVGAnimatedEnumerationAttribute<TurbulenceType> m_type { TurbulenceType::Turbulence };
 };
 
 } // namespace WebCore

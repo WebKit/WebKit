@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,31 +25,49 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
-    
+
 class SVGFEDropShadowElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_ISO_ALLOCATED(SVGFEDropShadowElement);
 public:
     static Ref<SVGFEDropShadowElement> create(const QualifiedName&, Document&);
     
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
-    
+
+    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    float dx() const { return m_dx.currentValue(attributeOwnerProxy()); }
+    float dy() const { return m_dy.currentValue(attributeOwnerProxy()); }
+    float stdDeviationX() const { return m_stdDeviationX.currentValue(attributeOwnerProxy()); }
+    float stdDeviationY() const { return m_stdDeviationY.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> dxAnimated() { return m_dx.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> dyAnimated() { return m_dy.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> stdDeviationXAnimated() { return m_stdDeviationX.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> stdDeviationYAnimated() { return m_stdDeviationY.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGFEDropShadowElement(const QualifiedName&, Document&);
-    
+
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
-    
+
     static const AtomicString& stdDeviationXIdentifier();
     static const AtomicString& stdDeviationYIdentifier();
-    
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEDropShadowElement)
-        DECLARE_ANIMATED_STRING(In1, in1)
-        DECLARE_ANIMATED_NUMBER(Dx, dx)
-        DECLARE_ANIMATED_NUMBER(Dy, dy)
-        DECLARE_ANIMATED_NUMBER(StdDeviationX, stdDeviationX)
-        DECLARE_ANIMATED_NUMBER(StdDeviationY, stdDeviationY)
-    END_DECLARE_ANIMATED_PROPERTIES
+
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedStringAttribute m_in1;
+    SVGAnimatedNumberAttribute m_dx { 2 };
+    SVGAnimatedNumberAttribute m_dy { 2 };
+    SVGAnimatedNumberAttribute m_stdDeviationX { 2 };
+    SVGAnimatedNumberAttribute m_stdDeviationY { 2 };
 };
     
 } // namespace WebCore

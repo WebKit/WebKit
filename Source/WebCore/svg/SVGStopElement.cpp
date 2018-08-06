@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,20 +33,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGStopElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_NUMBER(SVGStopElement, SVGNames::offsetAttr, Offset, offset)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStopElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(offset)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , m_offset(0)
 {
     ASSERT(hasTagName(SVGNames::stopTag));
-    registerAnimatedPropertiesForSVGStopElement();
+    registerAttributes();
 }
 
 Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document& document)
@@ -53,13 +45,21 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGStopElement(tagName, document));
 }
 
+void SVGStopElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::offsetAttr, &SVGStopElement::m_offset>();
+}
+
 void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::offsetAttr) {
         if (value.endsWith('%'))
-            setOffsetBaseValue(value.string().left(value.length() - 1).toFloat() / 100.0f);
+            m_offset.setValue(value.string().left(value.length() - 1).toFloat() / 100.0f);
         else
-            setOffsetBaseValue(value.toFloat());
+            m_offset.setValue(value.toFloat());
         return;
     }
 

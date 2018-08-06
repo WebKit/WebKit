@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,25 +30,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGViewElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_BOOLEAN(SVGViewElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
-DEFINE_ANIMATED_RECT(SVGViewElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
-DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGViewElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGViewElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , m_zoomAndPan(SVGZoomAndPanMagnify)
+    , SVGExternalResourcesRequired(this)
+    , SVGFitToViewBox(this)
     , m_viewTarget(SVGNames::viewTargetAttr)
 {
     ASSERT(hasTagName(SVGNames::viewTag));
-    registerAnimatedPropertiesForSVGViewElement();
 }
 
 Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document& document)
@@ -65,10 +54,10 @@ void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     if (name == SVGNames::viewTargetAttr)
         m_viewTarget.reset(value);
 
-    SVGExternalResourcesRequired::parseAttribute(name, value);
-    SVGFitToViewBox::parseAttribute(this, name, value);
-    SVGZoomAndPan::parseAttribute(*this, name, value);
     SVGElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
+    SVGFitToViewBox::parseAttribute(name, value);
+    SVGZoomAndPan::parseAttribute(name, value);
 }
 
 }

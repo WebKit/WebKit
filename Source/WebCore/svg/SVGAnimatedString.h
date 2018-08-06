@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,25 +20,19 @@
 
 #pragma once
 
-#include "SVGAnimatedPropertyMacros.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttributeAccessor.h"
 
 namespace WebCore {
 
-typedef SVGAnimatedStaticPropertyTearOff<String> SVGAnimatedString;
-
-// Helper macros to declare/define a SVGAnimatedString object
-#define DECLARE_ANIMATED_STRING(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedString, String, UpperProperty, LowerProperty, )
-
-#define DECLARE_ANIMATED_STRING_OVERRIDE(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedString, String, UpperProperty, LowerProperty, override)
-
-#define DEFINE_ANIMATED_STRING(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedString, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
-
 class SVGAnimationElement;
+
+using SVGAnimatedString = SVGAnimatedStaticPropertyTearOff<String>;
+using SVGAnimatedStringAttribute = SVGAnimatedAttribute<SVGAnimatedString>;
+
+template<typename OwnerType>
+using SVGAnimatedStringAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedStringAttribute, AnimatedString>;
 
 class SVGAnimatedStringAnimator final : public SVGAnimatedTypeAnimator {
 public:

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,32 +30,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFETurbulenceElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, baseFrequencyXIdentifier(), BaseFrequencyX, baseFrequencyX)
-DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, baseFrequencyYIdentifier(), BaseFrequencyY, baseFrequencyY)
-DEFINE_ANIMATED_INTEGER(SVGFETurbulenceElement, SVGNames::numOctavesAttr, NumOctaves, numOctaves)
-DEFINE_ANIMATED_NUMBER(SVGFETurbulenceElement, SVGNames::seedAttr, Seed, seed)
-DEFINE_ANIMATED_ENUMERATION(SVGFETurbulenceElement, SVGNames::stitchTilesAttr, StitchTiles, stitchTiles, SVGStitchOptions)
-DEFINE_ANIMATED_ENUMERATION(SVGFETurbulenceElement, SVGNames::typeAttr, Type, type, TurbulenceType)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFETurbulenceElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(baseFrequencyX)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(baseFrequencyY)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(numOctaves)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(seed)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(stitchTiles)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(type)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
-    , m_numOctaves(1)
-    , m_stitchTiles(SVG_STITCHTYPE_NOSTITCH)
-    , m_type(TurbulenceType::Turbulence)
 {
     ASSERT(hasTagName(SVGNames::feTurbulenceTag));
-    registerAnimatedPropertiesForSVGFETurbulenceElement();
+    registerAttributes();
 }
 
 Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document& document)
@@ -74,38 +54,52 @@ const AtomicString& SVGFETurbulenceElement::baseFrequencyYIdentifier()
     return s_identifier;
 }
 
+void SVGFETurbulenceElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::baseFrequencyAttr,
+        &SVGFETurbulenceElement::baseFrequencyXIdentifier, &SVGFETurbulenceElement::m_baseFrequencyX,
+        &SVGFETurbulenceElement::baseFrequencyYIdentifier, &SVGFETurbulenceElement::m_baseFrequencyY>();
+    registry.registerAttribute<SVGNames::numOctavesAttr, &SVGFETurbulenceElement::m_numOctaves>();
+    registry.registerAttribute<SVGNames::seedAttr, &SVGFETurbulenceElement::m_seed>();
+    registry.registerAttribute<SVGNames::stitchTilesAttr, SVGStitchOptions, &SVGFETurbulenceElement::m_stitchTiles>();
+    registry.registerAttribute<SVGNames::typeAttr, TurbulenceType, &SVGFETurbulenceElement::m_type>();
+}
+
 void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::typeAttr) {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(value);
         if (propertyValue != TurbulenceType::Unknown)
-            setTypeBaseValue(propertyValue);
+            m_type.setValue(propertyValue);
         return;
     }
 
     if (name == SVGNames::stitchTilesAttr) {
         SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(value);
         if (propertyValue > 0)
-            setStitchTilesBaseValue(propertyValue);
+            m_stitchTiles.setValue(propertyValue);
         return;
     }
 
     if (name == SVGNames::baseFrequencyAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            setBaseFrequencyXBaseValue(x);
-            setBaseFrequencyYBaseValue(y);
+            m_baseFrequencyX.setValue(x);
+            m_baseFrequencyY.setValue(y);
         }
         return;
     }
 
     if (name == SVGNames::seedAttr) {
-        setSeedBaseValue(value.toFloat());
+        m_seed.setValue(value.toFloat());
         return;
     }
 
     if (name == SVGNames::numOctavesAttr) {
-        setNumOctavesBaseValue(value.string().toUIntStrict());
+        m_numOctaves.setValue(value.string().toUIntStrict());
         return;
     }
 
@@ -124,7 +118,7 @@ bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, cons
     if (attrName == SVGNames::seedAttr)
         return turbulence->setSeed(seed());
     if (attrName == SVGNames::numOctavesAttr)
-       return turbulence->setNumOctaves(numOctaves());
+        return turbulence->setNumOctaves(numOctaves());
 
     ASSERT_NOT_REACHED();
     return false;
@@ -132,7 +126,7 @@ bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::baseFrequencyAttr || attrName == SVGNames::numOctavesAttr || attrName == SVGNames::seedAttr || attrName == SVGNames::stitchTilesAttr || attrName == SVGNames::typeAttr) {
+    if (isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;

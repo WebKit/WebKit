@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +31,7 @@ namespace WebCore {
 class SVGElement;
 class SVGTransformList;
 
-class SVGViewSpec final : public RefCounted<SVGViewSpec>, public SVGZoomAndPan, public SVGFitToViewBox {
+class SVGViewSpec final : public RefCounted<SVGViewSpec>, public SVGFitToViewBox, public SVGZoomAndPan {
 public:
     static Ref<SVGViewSpec> create(SVGElement& contextElement)
     {
@@ -39,55 +40,28 @@ public:
 
     bool parseViewSpec(const String&);
     void reset();
-
-    SVGElement* viewTarget() const;
-
-    String transformString() const;
-    String viewBoxString() const;
-    String preserveAspectRatioString() const;
-    const String& viewTargetString() const { return m_viewTargetString; }
-
-    SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
-    ExceptionOr<void> setZoomAndPan(unsigned short);
-    void setZoomAndPanBaseValue(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
-
     void resetContextElement() { m_contextElement = nullptr; }
 
-    // Custom non-animated 'transform' property.
+    SVGElement* viewTarget() const;
+    const String& viewTargetString() const { return m_viewTargetString; }
+
+    String transformString() const { return m_transform.toString(); }
     RefPtr<SVGTransformList> transform();
-    SVGTransformListValues transformBaseValue() const { return m_transform; }
-
-    // Custom animated 'viewBox' property.
-    RefPtr<SVGAnimatedRect> viewBoxAnimated();
-    FloatRect& viewBox() { return m_viewBox; }
-    void setViewBoxBaseValue(const FloatRect& viewBox) { m_viewBox = viewBox; }
-
-    // Custom animated 'preserveAspectRatio' property.
-    RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated();
-    SVGPreserveAspectRatioValue& preserveAspectRatio() { return m_preserveAspectRatio; }
-    void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio = preserveAspectRatio; }
+    SVGTransformListValues transformValue() const { return m_transform.value(); }
 
 private:
     explicit SVGViewSpec(SVGElement&);
 
-    static const SVGPropertyInfo* transformPropertyInfo();
-    static const SVGPropertyInfo* viewBoxPropertyInfo();
-    static const SVGPropertyInfo* preserveAspectRatioPropertyInfo();
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGViewSpec, SVGFitToViewBox, SVGZoomAndPan>;
+    static void registerAttributes();
 
-    static const AtomicString& transformIdentifier();
-    static const AtomicString& viewBoxIdentifier();
-    static const AtomicString& preserveAspectRatioIdentifier();
-
-    static Ref<SVGAnimatedProperty> lookupOrCreateTransformWrapper(SVGViewSpec* contextElement);
-    static Ref<SVGAnimatedProperty> lookupOrCreateViewBoxWrapper(SVGViewSpec* contextElement);
-    static Ref<SVGAnimatedProperty> lookupOrCreatePreserveAspectRatioWrapper(SVGViewSpec* contextElement);
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
 
     SVGElement* m_contextElement;
-    SVGZoomAndPanType m_zoomAndPan { SVGZoomAndPanMagnify };
-    SVGTransformListValues m_transform;
-    FloatRect m_viewBox;
-    SVGPreserveAspectRatioValue m_preserveAspectRatio;
     String m_viewTargetString;
+    AttributeOwnerProxy m_attributeOwnerProxy;
+    SVGAnimatedTransformListAttribute m_transform;
 };
 
 } // namespace WebCore

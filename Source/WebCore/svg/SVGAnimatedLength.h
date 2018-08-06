@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,20 +22,18 @@
 
 #include "SVGAnimatedPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttributeAccessor.h"
 #include "SVGLength.h"
 
 namespace WebCore {
 
-using SVGAnimatedLength = SVGAnimatedPropertyTearOff<SVGLength>;
-
-// Helper macros to declare/define a SVGAnimatedLength object
-#define DECLARE_ANIMATED_LENGTH(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedLength, SVGLengthValue, UpperProperty, LowerProperty, )
-
-#define DEFINE_ANIMATED_LENGTH(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedLength, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
-
 class SVGAnimationElement;
+
+using SVGAnimatedLength = SVGAnimatedPropertyTearOff<SVGLength>;
+using SVGAnimatedLengthAttribute = SVGAnimatedAttribute<SVGAnimatedLength>;
+
+template<typename OwnerType>
+using SVGAnimatedLengthAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedLengthAttribute, AnimatedLength>;
 
 class SVGAnimatedLengthAnimator final : public SVGAnimatedTypeAnimator {
 public:

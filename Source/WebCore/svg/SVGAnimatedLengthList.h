@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,21 +22,19 @@
 
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttributeAccessor.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
 
 namespace WebCore {
 
-using SVGAnimatedLengthList = SVGAnimatedListPropertyTearOff<SVGLengthListValues>;
-
-// Helper macros to declare/define a SVGAnimatedLengthList object
-#define DECLARE_ANIMATED_LENGTH_LIST(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedLengthList, SVGLengthListValues, UpperProperty, LowerProperty)
-
-#define DEFINE_ANIMATED_LENGTH_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedLengthList, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
-
 class SVGAnimationElement;
+
+using SVGAnimatedLengthList = SVGAnimatedListPropertyTearOff<SVGLengthListValues>;
+using SVGAnimatedLengthListAttribute = SVGAnimatedAttributeList<SVGAnimatedLengthList>;
+
+template<typename OwnerType>
+using SVGAnimatedLengthListAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedLengthListAttribute, AnimatedLengthList>;
 
 class SVGAnimatedLengthListAnimator final : public SVGAnimatedTypeAnimator {
 public:

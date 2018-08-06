@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -52,36 +52,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSVGElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::xAttr, X, x)
-DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::yAttr, Y, y)
-DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::widthAttr, Width, width)
-DEFINE_ANIMATED_LENGTH(SVGSVGElement, SVGNames::heightAttr, Height, height)
-DEFINE_ANIMATED_BOOLEAN(SVGSVGElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
-DEFINE_ANIMATED_PRESERVEASPECTRATIO(SVGSVGElement, SVGNames::preserveAspectRatioAttr, PreserveAspectRatio, preserveAspectRatio)
-DEFINE_ANIMATED_RECT(SVGSVGElement, SVGNames::viewBoxAttr, ViewBox, viewBox)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGSVGElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth, "100%"_s)
-    , m_height(LengthModeHeight, "100%"_s)
+    , SVGExternalResourcesRequired(this)
+    , SVGFitToViewBox(this)
     , m_timeContainer(SMILTimeContainer::create(*this))
 {
     ASSERT(hasTagName(SVGNames::svgTag));
-    registerAnimatedPropertiesForSVGSVGElement();
+    registerAttributes();
     document.registerForDocumentSuspensionCallbacks(this);
 }
 
@@ -214,6 +192,17 @@ void SVGSVGElement::updateCurrentTranslate()
         document().renderView()->repaint();
 }
 
+void SVGSVGElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::xAttr, &SVGSVGElement::m_x>();
+    registry.registerAttribute<SVGNames::yAttr, &SVGSVGElement::m_y>();
+    registry.registerAttribute<SVGNames::widthAttr, &SVGSVGElement::m_width>();
+    registry.registerAttribute<SVGNames::heightAttr, &SVGSVGElement::m_height>();
+}
+
 void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!nearestViewportElement()) {
@@ -252,9 +241,9 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        setXBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        setYBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::widthAttr) {
         auto length = SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths);
         if (parseError != NoError || value.isEmpty()) {
@@ -262,7 +251,7 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
             // Not sure it's correct for the empty string or for something that can't be parsed.
             length = SVGLengthValue(LengthModeWidth, "100%"_s);
         }
-        setWidthBaseValue(length);
+        m_width.setValue(length);
     } else if (name == SVGNames::heightAttr) {
         auto length = SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths);
         if (parseError != NoError || value.isEmpty()) {
@@ -270,43 +259,38 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
             // Not sure it's correct for the empty string or for something that can't be parsed.
             length = SVGLengthValue(LengthModeHeight, "100%"_s);
         }
-        setHeightBaseValue(length);
+        m_height.setValue(length);
     }
 
     reportAttributeParsingError(parseError, name, value);
 
-    SVGExternalResourcesRequired::parseAttribute(name, value);
-    SVGFitToViewBox::parseAttribute(this, name, value);
-    SVGZoomAndPan::parseAttribute(*this, name, value);
     SVGGraphicsElement::parseAttribute(name, value);
+    SVGExternalResourcesRequired::parseAttribute(name, value);
+    SVGFitToViewBox::parseAttribute(name, value);
+    SVGZoomAndPan::parseAttribute(name, value);
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    bool updateRelativeLengthsOrViewBox = false;
-    if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr || attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
+    if (isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
-        updateRelativeLengthsOrViewBox = true;
-    }
 
-    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        updateRelativeLengthsOrViewBox = true; 
-        if (auto* renderer = this->renderer())
-            renderer->setNeedsTransformUpdate();
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
-    if (updateRelativeLengthsOrViewBox
-        || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGZoomAndPan::isKnownAttribute(attrName)) {
         if (auto renderer = this->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
+    
+    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+        if (auto* renderer = this->renderer()) {
+            renderer->setNeedsTransformUpdate();
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        }
+        return;
+    }
 
     SVGGraphicsElement::svgAttributeChanged(attrName);
+    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 unsigned SVGSVGElement::suspendRedraw(unsigned)
@@ -634,7 +618,7 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
         return SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), preserveAspectRatio(), viewWidth, viewHeight);
 
     AffineTransform transform = SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), m_viewSpec->preserveAspectRatio(), viewWidth, viewHeight);
-    m_viewSpec->transformBaseValue().concatenate(transform);
+    m_viewSpec->transformValue().concatenate(transform);
     return transform;
 }
 
@@ -716,9 +700,9 @@ void SVGSVGElement::resetScrollAnchor()
     if (!m_currentViewFragmentIdentifier.isEmpty()) {
         if (auto* rootElement = findRootAnchor(m_currentViewFragmentIdentifier)) {
             SVGViewSpec& view = rootElement->currentView();
-            view.setViewBoxBaseValue(viewBox());
-            view.setPreserveAspectRatioBaseValue(preserveAspectRatioBaseValue());
-            view.setZoomAndPanBaseValue(zoomAndPan());
+            view.setViewBox(viewBox());
+            view.setPreserveAspectRatio(preserveAspectRatio());
+            view.setZoomAndPan(zoomAndPan());
             m_currentViewFragmentIdentifier = { };
         }
     }
@@ -734,19 +718,19 @@ void SVGSVGElement::inheritViewAttributes(const SVGViewElement& viewElement)
     m_useCurrentView = true;
 
     if (viewElement.hasAttribute(SVGNames::viewBoxAttr))
-        view.setViewBoxBaseValue(viewElement.viewBox());
+        view.setViewBox(viewElement.viewBox());
     else
-        view.setViewBoxBaseValue(viewBox());
+        view.setViewBox(viewBox());
 
     if (viewElement.hasAttribute(SVGNames::preserveAspectRatioAttr))
-        view.setPreserveAspectRatioBaseValue(viewElement.preserveAspectRatioBaseValue());
+        view.setPreserveAspectRatio(viewElement.preserveAspectRatio());
     else
-        view.setPreserveAspectRatioBaseValue(preserveAspectRatioBaseValue());
+        view.setPreserveAspectRatio(preserveAspectRatio());
 
     if (viewElement.hasAttribute(SVGNames::zoomAndPanAttr))
-        view.setZoomAndPanBaseValue(viewElement.zoomAndPan());
+        view.setZoomAndPan(viewElement.zoomAndPan());
     else
-        view.setZoomAndPanBaseValue(zoomAndPan());
+        view.setZoomAndPan(zoomAndPan());
 }
 
 void SVGSVGElement::prepareForDocumentSuspension()

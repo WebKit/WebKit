@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "SVGAnimatedPathSegListPropertyTearOff.h"
+#include "SVGPathElement.h"
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ public:
         case PathSegUndefinedRole:
             return nullptr;
         case PathSegUnalteredRole:
-            return SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(m_element.get(), SVGPathElement::dPropertyInfo());
+            return m_element->pathSegListAnimated();
         case PathSegNormalizedRole:
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
             return nullptr;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +36,7 @@
     readonly attribute DOMString preserveAspectRatioString;
     readonly attribute DOMString transformString;
     readonly attribute DOMString viewTargetString;
-
-    // SVGZoomAndPan
-    attribute unsigned short zoomAndPan;
 };
 
 SVGViewSpec implements SVGFitToViewBox;
+SVGViewSpec implements SVGZoomAndPan;

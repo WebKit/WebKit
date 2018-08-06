@@ -5,6 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,44 +39,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFilterElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::filterUnitsAttr, FilterUnits, filterUnits, SVGUnitTypes::SVGUnitType)
-DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::primitiveUnitsAttr, PrimitiveUnits, primitiveUnits, SVGUnitTypes::SVGUnitType)
-DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::xAttr, X, x)
-DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::yAttr, Y, y)
-DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::widthAttr, Width, width)
-DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::heightAttr, Height, height)
-DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(SVGFilterElement, SVGNames::filterResAttr, filterResXIdentifier(), FilterResX, filterResX)
-DEFINE_ANIMATED_INTEGER_MULTIPLE_WRAPPERS(SVGFilterElement, SVGNames::filterResAttr, filterResYIdentifier(), FilterResY, filterResY)
-DEFINE_ANIMATED_STRING(SVGFilterElement, XLinkNames::hrefAttr, Href, href)
-DEFINE_ANIMATED_BOOLEAN(SVGFilterElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFilterElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(filterUnits)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(primitiveUnits)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(x)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(y)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(width)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(height)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(filterResX)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(filterResY)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , m_filterUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_primitiveUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(LengthModeWidth, "-10%")
-    , m_y(LengthModeHeight, "-10%")
-    , m_width(LengthModeWidth, "120%")
-    , m_height(LengthModeHeight, "120%")
+    , SVGExternalResourcesRequired(this)
+    , SVGURIReference(this)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
     ASSERT(hasTagName(SVGNames::filterTag));
-    registerAnimatedPropertiesForSVGFilterElement();
+    registerAttributes();
 }
 
 Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document& document)
@@ -97,32 +69,27 @@ const AtomicString& SVGFilterElement::filterResYIdentifier()
 
 void SVGFilterElement::setFilterRes(unsigned filterResX, unsigned filterResY)
 {
-    setFilterResXBaseValue(filterResX);
-    setFilterResYBaseValue(filterResY);
+    m_filterResX.setValue(filterResX);
+    m_filterResY.setValue(filterResY);
 
     if (RenderObject* object = renderer())
         object->setNeedsLayout();
 }
 
-bool SVGFilterElement::isSupportedAttribute(const QualifiedName& attrName)
+void SVGFilterElement::registerAttributes()
 {
-    static const auto supportedAttributes = makeNeverDestroyed([] {
-        HashSet<QualifiedName> set;
-        SVGURIReference::addSupportedAttributes(set);
-        SVGLangSpace::addSupportedAttributes(set);
-        SVGExternalResourcesRequired::addSupportedAttributes(set);
-        set.add({
-            SVGNames::filterUnitsAttr.get(),
-            SVGNames::primitiveUnitsAttr.get(),
-            SVGNames::xAttr.get(),
-            SVGNames::yAttr.get(),
-            SVGNames::widthAttr.get(),
-            SVGNames::heightAttr.get(),
-            SVGNames::filterResAttr.get(),
-        });
-        return set;
-    }());
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::filterUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_filterUnits>();
+    registry.registerAttribute<SVGNames::primitiveUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_primitiveUnits>();
+    registry.registerAttribute<SVGNames::xAttr, &SVGFilterElement::m_x>();
+    registry.registerAttribute<SVGNames::yAttr, &SVGFilterElement::m_y>();
+    registry.registerAttribute<SVGNames::widthAttr, &SVGFilterElement::m_width>();
+    registry.registerAttribute<SVGNames::heightAttr, &SVGFilterElement::m_height>();
+    registry.registerAttribute<SVGNames::filterResAttr,
+        &SVGFilterElement::filterResXIdentifier, &SVGFilterElement::m_filterResX,
+        &SVGFilterElement::filterResYIdentifier, &SVGFilterElement::m_filterResY>();
 }
 
 void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -132,24 +99,24 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
     if (name == SVGNames::filterUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            setFilterUnitsBaseValue(propertyValue);
+            m_filterUnits.setValue(propertyValue);
     } else if (name == SVGNames::primitiveUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            setPrimitiveUnitsBaseValue(propertyValue);
+            m_primitiveUnits.setValue(propertyValue);
     } else if (name == SVGNames::xAttr)
-        setXBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        setYBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_width.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::filterResAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            setFilterResXBaseValue(x);
-            setFilterResYBaseValue(y);
+            m_filterResX.setValue(x);
+            m_filterResY.setValue(y);
         }
     }
 
@@ -162,20 +129,20 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGElement::svgAttributeChanged(attrName);
-        return;
-    }
-
-    InstanceInvalidationGuard guard(*this);
-
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr || attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
+    if (isAnimatedLengthAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    if (auto* renderer = this->renderer())
-        renderer->setNeedsLayout();
+    if (isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
+        if (auto* renderer = this->renderer())
+            renderer->setNeedsLayout();
+        return;
+    }
+
+    SVGElement::svgAttributeChanged(attrName);
+    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 void SVGFilterElement::childrenChanged(const ChildChange& change)

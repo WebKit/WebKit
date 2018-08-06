@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,9 +53,10 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFontElement)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFontElement, SVGElement, SVGExternalResourcesRequired>;
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
+
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
 };
 
 } // namespace WebCore

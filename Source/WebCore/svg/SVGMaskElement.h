@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Alexander Kellett <lypanov@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,45 +31,52 @@
 
 namespace WebCore {
 
-class SVGMaskElement final : public SVGElement, public SVGTests, public SVGExternalResourcesRequired {
+class SVGMaskElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGTests {
     WTF_MAKE_ISO_ALLOCATED(SVGMaskElement);
 public:
     static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
 
-    // SVGTests
-    Ref<SVGStringList> requiredFeatures();
-    Ref<SVGStringList> requiredExtensions();
-    Ref<SVGStringList> systemLanguage();
+    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType maskUnits() const { return m_maskUnits.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType maskContentUnits() const { return m_maskContentUnits.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> maskUnitsAnimated() { return m_maskUnits.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> maskContentUnitsAnimated() { return m_maskContentUnits.animatedProperty(attributeOwnerProxy()); }
 
 private:
     SVGMaskElement(const QualifiedName&, Document&);
 
-    bool isValid() const final { return SVGTests::isValid(); }
-    bool needsPendingResourceHandling() const final { return false; }
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGMaskElement, SVGElement, SVGExternalResourcesRequired, SVGTests>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static bool isAnimatedLengthAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isAnimatedLengthAttribute(attributeName); }
+    static void registerAttributes();
 
-    static bool isSupportedAttribute(const QualifiedName&);
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
+    bool isValid() const final { return SVGTests::isValid(); }
+    bool needsPendingResourceHandling() const final { return false; }
     bool selfHasRelativeLengths() const final { return true; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGMaskElement)
-        DECLARE_ANIMATED_ENUMERATION(MaskUnits, maskUnits, SVGUnitTypes::SVGUnitType)
-        DECLARE_ANIMATED_ENUMERATION(MaskContentUnits, maskContentUnits, SVGUnitTypes::SVGUnitType)
-        DECLARE_ANIMATED_LENGTH(X, x)
-        DECLARE_ANIMATED_LENGTH(Y, y)
-        DECLARE_ANIMATED_LENGTH(Width, width)
-        DECLARE_ANIMATED_LENGTH(Height, height)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
-
-    // SVGTests
-    void synchronizeRequiredFeatures() final { SVGTests::synchronizeRequiredFeatures(*this); }
-    void synchronizeRequiredExtensions() final { SVGTests::synchronizeRequiredExtensions(*this); }
-    void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(*this); }
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_x { LengthModeWidth, "-10%" };
+    SVGAnimatedLengthAttribute m_y { LengthModeHeight, "-10%" };
+    SVGAnimatedLengthAttribute m_width { LengthModeWidth, "120%" };
+    SVGAnimatedLengthAttribute m_height { LengthModeHeight, "120%" };
+    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_maskUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
+    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_maskContentUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
 };
 
 } // namespace WebCore

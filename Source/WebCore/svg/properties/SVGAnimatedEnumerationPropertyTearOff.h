@@ -27,6 +27,8 @@ namespace WebCore {
 template<typename EnumType>
 class SVGAnimatedEnumerationPropertyTearOff final : public SVGAnimatedStaticPropertyTearOff<unsigned> {
 public:
+    using ContentType = EnumType;
+
     const unsigned& baseVal() final
     {
         const unsigned& baseVal = SVGAnimatedStaticPropertyTearOff::baseVal();

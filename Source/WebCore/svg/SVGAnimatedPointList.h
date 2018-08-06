@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,9 +26,13 @@
 
 namespace WebCore {
 
-using SVGAnimatedPointList = SVGAnimatedListPropertyTearOff<SVGPointListValues>;
-
 class SVGAnimationElement;
+
+using SVGAnimatedPointList = SVGAnimatedListPropertyTearOff<SVGPointListValues>;
+using SVGAnimatedPointListAttribute = SVGAnimatedAttributeList<SVGAnimatedPointList>;
+
+template<typename OwnerType>
+using SVGAnimatedPointListAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedPointListAttribute, AnimatedPoints>;
 
 class SVGAnimatedPointListAnimator final : public SVGAnimatedTypeAnimator {
 public:

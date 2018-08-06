@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,40 +22,20 @@
 #include "config.h"
 #include "SVGCircleElement.h"
 
-#include "FloatPoint.h"
 #include "RenderSVGEllipse.h"
-#include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
-#include "SVGLengthValue.h"
-#include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGCircleElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::cxAttr, Cx, cx)
-DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::cyAttr, Cy, cy)
-DEFINE_ANIMATED_LENGTH(SVGCircleElement, SVGNames::rAttr, R, r)
-DEFINE_ANIMATED_BOOLEAN(SVGCircleElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGCircleElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(cx)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(cy)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(r)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGeometryElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
-    , m_cx(LengthModeWidth)
-    , m_cy(LengthModeHeight)
-    , m_r(LengthModeOther)
+    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::circleTag));
-    registerAnimatedPropertiesForSVGCircleElement();
+    registerAttributes();
 }
 
 Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document& document)
@@ -62,41 +43,43 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
+void SVGCircleElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::cxAttr, &SVGCircleElement::m_cx>();
+    registry.registerAttribute<SVGNames::cyAttr, &SVGCircleElement::m_cy>();
+    registry.registerAttribute<SVGNames::rAttr, &SVGCircleElement::m_r>();
+}
+
 void SVGCircleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::cxAttr)
-        setCxBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_cx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::cyAttr)
-        setCyBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_cy.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::rAttr)
-        setRBaseValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
+        m_r.setValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
-    SVGGraphicsElement::parseAttribute(name, value);
+    SVGGeometryElement::parseAttribute(name, value);
     SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGGraphicsElement::svgAttributeChanged(attrName);
-
-    if (attrName == SVGNames::cxAttr || attrName == SVGNames::cyAttr || attrName == SVGNames::rAttr) {
+    if (isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
-    if (!renderer)
-        return;
-
-    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
-        InstanceInvalidationGuard guard(*this);
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-    }
+    SVGGeometryElement::svgAttributeChanged(attrName);
+    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

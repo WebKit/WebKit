@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,26 +31,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEMorphologyElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_STRING(SVGFEMorphologyElement, SVGNames::inAttr, In1, in1)
-DEFINE_ANIMATED_ENUMERATION(SVGFEMorphologyElement, SVGNames::operatorAttr, SVGOperator, svgOperator, MorphologyOperatorType)
-DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusXIdentifier(), RadiusX, radiusX)
-DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusYIdentifier(), RadiusY, radiusY)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEMorphologyElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(svgOperator)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(radiusX)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(radiusY)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
-    , m_svgOperator(FEMORPHOLOGY_OPERATOR_ERODE)
 {
     ASSERT(hasTagName(SVGNames::feMorphologyTag));
-    registerAnimatedPropertiesForSVGFEMorphologyElement();
+    registerAttributes();
 }
 
 Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document& document)
@@ -71,9 +57,21 @@ const AtomicString& SVGFEMorphologyElement::radiusYIdentifier()
 
 void SVGFEMorphologyElement::setRadius(float x, float y)
 {
-    setRadiusXBaseValue(x);
-    setRadiusYBaseValue(y);
+    m_radiusX.setValue(x);
+    m_radiusY.setValue(y);
     invalidate();
+}
+
+void SVGFEMorphologyElement::registerAttributes()
+{
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::inAttr, &SVGFEMorphologyElement::m_in1>();
+    registry.registerAttribute<SVGNames::operatorAttr, MorphologyOperatorType, &SVGFEMorphologyElement::m_svgOperator>();
+    registry.registerAttribute<SVGNames::radiusAttr,
+        &SVGFEMorphologyElement::radiusXIdentifier, &SVGFEMorphologyElement::m_radiusX,
+        &SVGFEMorphologyElement::radiusYIdentifier, &SVGFEMorphologyElement::m_radiusY>();
 }
 
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -81,20 +79,20 @@ void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const Ato
     if (name == SVGNames::operatorAttr) {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);
         if (propertyValue > 0)
-            setSVGOperatorBaseValue(propertyValue);
+            m_svgOperator.setValue(propertyValue);
         return;
     }
 
     if (name == SVGNames::inAttr) {
-        setIn1BaseValue(value);
+        m_in1.setValue(value);
         return;
     }
 
     if (name == SVGNames::radiusAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            setRadiusXBaseValue(x);
-            setRadiusYBaseValue(y);
+            m_radiusX.setValue(x);
+            m_radiusY.setValue(y);
         }
         return;
     }

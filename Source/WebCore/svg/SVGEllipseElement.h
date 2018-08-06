@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,10 +21,10 @@
 
 #pragma once
 
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGeometryElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -32,25 +33,38 @@ class SVGEllipseElement final : public SVGGeometryElement, public SVGExternalRes
 public:
     static Ref<SVGEllipseElement> create(const QualifiedName&, Document&);
 
+    const SVGLengthValue& cx() const { return m_cx.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& cy() const { return m_cy.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& rx() const { return m_rx.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& ry() const { return m_ry.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> cxAnimated() { return m_cx.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> cyAnimated() { return m_cy.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> rxAnimated() { return m_rx.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> ryAnimated() { return m_ry.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGEllipseElement(const QualifiedName&, Document&);
-    
-    bool isValid() const final { return SVGTests::isValid(); }
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGEllipseElement, SVGGeometryElement, SVGExternalResourcesRequired>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
+    bool isValid() const final { return SVGTests::isValid(); }
     bool selfHasRelativeLengths() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGEllipseElement)
-        DECLARE_ANIMATED_LENGTH(Cx, cx)
-        DECLARE_ANIMATED_LENGTH(Cy, cy)
-        DECLARE_ANIMATED_LENGTH(Rx, rx)
-        DECLARE_ANIMATED_LENGTH(Ry, ry)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_cx { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_cy { LengthModeHeight };
+    SVGAnimatedLengthAttribute m_rx { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_ry { LengthModeHeight };
 };
 
 } // namespace WebCore

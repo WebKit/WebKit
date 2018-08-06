@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -62,23 +63,39 @@ public:
 
     void setRadius(float radiusX, float radiusY);
 
+    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    MorphologyOperatorType svgOperator() const { return m_svgOperator.currentValue(attributeOwnerProxy()); }
+    float radiusX() const { return m_radiusX.currentValue(attributeOwnerProxy()); }
+    float radiusY() const { return m_radiusY.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> svgOperatorAnimated() { return m_svgOperator.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> radiusXAnimated() { return m_radiusX.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> radiusYAnimated() { return m_radiusY.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGFEMorphologyElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEMorphologyElement, SVGFilterPrimitiveStandardAttributes>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
+    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     static const AtomicString& radiusXIdentifier();
     static const AtomicString& radiusYIdentifier();
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMorphologyElement)
-        DECLARE_ANIMATED_STRING(In1, in1)
-        DECLARE_ANIMATED_ENUMERATION(SVGOperator, svgOperator, MorphologyOperatorType)
-        DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
-        DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedStringAttribute m_in1;
+    SVGAnimatedEnumerationAttribute<MorphologyOperatorType> m_svgOperator { FEMORPHOLOGY_OPERATOR_ERODE };
+    SVGAnimatedNumberAttribute m_radiusX;
+    SVGAnimatedNumberAttribute m_radiusY;
 };
 
 } // namespace WebCore

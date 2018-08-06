@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,7 +39,7 @@ namespace WebCore {
 
 struct PatternAttributes;
  
-class SVGPatternElement final : public SVGElement, public SVGURIReference, public SVGTests, public SVGExternalResourcesRequired, public SVGFitToViewBox {
+class SVGPatternElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGTests, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGPatternElement);
 public:
     static Ref<SVGPatternElement> create(const QualifiedName&, Document&);
@@ -47,44 +48,50 @@ public:
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const final;
 
-    // SVGTests
-    Ref<SVGStringList> requiredFeatures();
-    Ref<SVGStringList> requiredExtensions();
-    Ref<SVGStringList> systemLanguage();
+    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits.currentValue(attributeOwnerProxy()); }
+    const SVGTransformListValues& patternTransform() const { return m_patternTransform.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> patternUnitsAnimated() { return m_patternUnits.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> patternContentUnitsAnimated() { return m_patternContentUnits.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedTransformList> patternTransformAnimated() { return m_patternTransform.animatedProperty(attributeOwnerProxy()); }
 
 private:
     SVGPatternElement(const QualifiedName&, Document&);
-    
-    bool isValid() const final { return SVGTests::isValid(); }
-    bool needsPendingResourceHandling() const final { return false; }
 
-    static bool isSupportedAttribute(const QualifiedName&);
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGPatternElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGTests, SVGURIReference>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static bool isAnimatedLengthAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isAnimatedLengthAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
     void childrenChanged(const ChildChange&) final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
+    bool isValid() const final { return SVGTests::isValid(); }
+    bool needsPendingResourceHandling() const final { return false; }
     bool selfHasRelativeLengths() const final { return true; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGPatternElement)
-        DECLARE_ANIMATED_LENGTH(X, x)
-        DECLARE_ANIMATED_LENGTH(Y, y)
-        DECLARE_ANIMATED_LENGTH(Width, width)
-        DECLARE_ANIMATED_LENGTH(Height, height)
-        DECLARE_ANIMATED_ENUMERATION(PatternUnits, patternUnits, SVGUnitTypes::SVGUnitType)
-        DECLARE_ANIMATED_ENUMERATION(PatternContentUnits, patternContentUnits, SVGUnitTypes::SVGUnitType)
-        DECLARE_ANIMATED_TRANSFORM_LIST(PatternTransform, patternTransform)
-        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-        DECLARE_ANIMATED_RECT(ViewBox, viewBox)
-        DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio) 
-    END_DECLARE_ANIMATED_PROPERTIES
-
-    // SVGTests
-    void synchronizeRequiredFeatures() final { SVGTests::synchronizeRequiredFeatures(*this); }
-    void synchronizeRequiredExtensions() final { SVGTests::synchronizeRequiredExtensions(*this); }
-    void synchronizeSystemLanguage() final { SVGTests::synchronizeSystemLanguage(*this); }
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_x { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_y { LengthModeHeight };
+    SVGAnimatedLengthAttribute m_width { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_height { LengthModeHeight };
+    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_patternUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
+    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_patternContentUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
+    SVGAnimatedTransformListAttribute m_patternTransform;
 };
 
 } // namespace WebCore

@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,14 +42,6 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTRefElement);
-
-// Animated property definitions
-DEFINE_ANIMATED_STRING(SVGTRefElement, XLinkNames::hrefAttr, Href, href)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTRefElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextPositioningElement)
-END_REGISTER_ANIMATED_PROPERTIES
 
 Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document& document)
 {
@@ -131,10 +124,10 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext&, Event& eve
 
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
     : SVGTextPositioningElement(tagName, document)
+    , SVGURIReference(this)
     , m_targetListener(SVGTRefTargetEventListener::create(*this))
 {
     ASSERT(hasTagName(SVGNames::trefTag));
-    registerAnimatedPropertiesForSVGTRefElement();
 }
 
 SVGTRefElement::~SVGTRefElement()

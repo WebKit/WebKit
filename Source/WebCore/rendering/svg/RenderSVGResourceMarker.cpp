@@ -115,7 +115,7 @@ AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& 
 void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& transform)
 {
     // An empty viewBox disables rendering.
-    if (markerElement().hasAttribute(SVGNames::viewBoxAttr) && markerElement().viewBoxIsValid() && markerElement().viewBox().isEmpty())
+    if (markerElement().hasAttribute(SVGNames::viewBoxAttr) && markerElement().hasEmptyViewBox())
         return;
 
     PaintInfo info(paintInfo);

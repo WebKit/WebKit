@@ -4,6 +4,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,36 +39,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGRadialGradientElement);
 
-// Animated property definitions
-DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::cxAttr, Cx, cx)
-DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::cyAttr, Cy, cy)
-DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::rAttr, R, r)
-DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::fxAttr, Fx, fx)
-DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::fyAttr, Fy, fy)
-DEFINE_ANIMATED_LENGTH(SVGRadialGradientElement, SVGNames::frAttr, Fr, fr)
-
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGRadialGradientElement)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(cx)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(cy)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(r)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(fx)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(fy)
-    REGISTER_LOCAL_ANIMATED_PROPERTY(fr)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGradientElement)
-END_REGISTER_ANIMATED_PROPERTIES
-
 inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document& document)
     : SVGGradientElement(tagName, document)
-    , m_cx(LengthModeWidth, "50%")
-    , m_cy(LengthModeHeight, "50%")
-    , m_r(LengthModeOther, "50%")
-    , m_fx(LengthModeWidth)
-    , m_fy(LengthModeHeight)
-    , m_fr(LengthModeOther, "0%")
 {
     // Spec: If the cx/cy/r/fr attribute is not specified, the effect is as if a value of "50%" were specified.
     ASSERT(hasTagName(SVGNames::radialGradientTag));
-    registerAnimatedPropertiesForSVGRadialGradientElement();
+    registerAttributes();
 }
 
 Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document& document)
@@ -75,12 +52,17 @@ Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGRadialGradientElement(tagName, document));
 }
 
-bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrName)
+void SVGRadialGradientElement::registerAttributes()
 {
-    static const auto supportedAttributes = makeNeverDestroyed(HashSet<QualifiedName> {
-        SVGNames::cxAttr.get(), SVGNames::cyAttr.get(), SVGNames::fxAttr.get(), SVGNames::fyAttr.get(), SVGNames::rAttr.get(), SVGNames::frAttr.get(),
-    });
-    return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
+    auto& registry = attributeRegistry();
+    if (!registry.isEmpty())
+        return;
+    registry.registerAttribute<SVGNames::cxAttr, &SVGRadialGradientElement::m_cx>();
+    registry.registerAttribute<SVGNames::cyAttr, &SVGRadialGradientElement::m_cy>();
+    registry.registerAttribute<SVGNames::rAttr, &SVGRadialGradientElement::m_r>();
+    registry.registerAttribute<SVGNames::fxAttr, &SVGRadialGradientElement::m_fx>();
+    registry.registerAttribute<SVGNames::fyAttr, &SVGRadialGradientElement::m_fy>();
+    registry.registerAttribute<SVGNames::frAttr, &SVGRadialGradientElement::m_fr>();
 }
 
 void SVGRadialGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -88,17 +70,17 @@ void SVGRadialGradientElement::parseAttribute(const QualifiedName& name, const A
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::cxAttr)
-        setCxBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_cx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::cyAttr)
-        setCyBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_cy.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::rAttr)
-        setRBaseValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
+        m_r.setValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::fxAttr)
-        setFxBaseValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_fx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::fyAttr)
-        setFyBaseValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_fy.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::frAttr)
-        setFrBaseValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
+        m_fr.setValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -107,17 +89,15 @@ void SVGRadialGradientElement::parseAttribute(const QualifiedName& name, const A
 
 void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isSupportedAttribute(attrName)) {
-        SVGGradientElement::svgAttributeChanged(attrName);
+    if (isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
+        updateRelativeLengthsInformation();
+        if (RenderObject* object = renderer())
+            object->setNeedsLayout();
         return;
     }
 
-    InstanceInvalidationGuard guard(*this);
-    
-    updateRelativeLengthsInformation();
-        
-    if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+    SVGGradientElement::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

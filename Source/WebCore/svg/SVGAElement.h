@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,32 +22,36 @@
 
 #pragma once
 
-#include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
 
-class SVGAElement final : public SVGGraphicsElement, public SVGURIReference, public SVGExternalResourcesRequired {
+class SVGAElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGAElement);
 public:
     static Ref<SVGAElement> create(const QualifiedName&, Document&);
 
+    String target() const final { return m_target.currentValue(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedString> targetAnimated() { return m_target.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGAElement(const QualifiedName&, Document&);
 
-    bool isValid() const final { return SVGTests::isValid(); }
-    
-    String title() const final;
-    String target() const final { return svgTarget(); }
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGAElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static void registerAttributes();
 
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
 
+    bool isValid() const final { return SVGTests::isValid(); }
+    String title() const final;
     void defaultEventHandler(Event&) final;
     
     bool supportsFocus() const final;
@@ -58,13 +63,8 @@ private:
 
     bool willRespondToMouseClickEvents() final;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAElement)
-        // This declaration used to define a non-virtual "String& target() const" method, that clashes with "virtual String Element::target() const".
-        // That's why it has been renamed to "svgTarget", the CodeGenerators take care of calling svgTargetAnimated() instead of targetAnimated(), see CodeGenerator.pm.
-        DECLARE_ANIMATED_STRING(SVGTarget, svgTarget)
-        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedStringAttribute m_target;
 };
 
 } // namespace WebCore

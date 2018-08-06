@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,22 +36,38 @@ public:
 
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
+    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    float stdDeviationX() const { return m_stdDeviationX.currentValue(attributeOwnerProxy()); }
+    float stdDeviationY() const { return m_stdDeviationY.currentValue(attributeOwnerProxy()); }
+    EdgeModeType edgeMode() const { return m_edgeMode.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> stdDeviationXAnimated() { return m_stdDeviationX.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedNumber> stdDeviationYAnimated() { return m_stdDeviationY.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> edgeModeAnimated() { return m_edgeMode.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGFEGaussianBlurElement(const QualifiedName&, Document&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEGaussianBlurElement, SVGFilterPrimitiveStandardAttributes>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     static const AtomicString& stdDeviationXIdentifier();
     static const AtomicString& stdDeviationYIdentifier();
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEGaussianBlurElement)
-        DECLARE_ANIMATED_STRING(In1, in1)
-        DECLARE_ANIMATED_NUMBER(StdDeviationX, stdDeviationX)
-        DECLARE_ANIMATED_NUMBER(StdDeviationY, stdDeviationY)
-        DECLARE_ANIMATED_ENUMERATION(EdgeMode, edgeMode, EdgeModeType)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedStringAttribute m_in1;
+    SVGAnimatedNumberAttribute m_stdDeviationX;
+    SVGAnimatedNumberAttribute m_stdDeviationY;
+    SVGAnimatedEnumerationAttribute<EdgeModeType> m_edgeMode { EDGEMODE_NONE };
 };
 
 } // namespace WebCore

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,16 +36,6 @@ class SVGGElement;
 
 class SVGUseElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGURIReference, private CachedSVGDocumentClient {
     WTF_MAKE_ISO_ALLOCATED(SVGUseElement);
-
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGUseElement)
-        DECLARE_ANIMATED_LENGTH(X, x)
-        DECLARE_ANIMATED_LENGTH(Y, y)
-        DECLARE_ANIMATED_LENGTH(Width, width)
-        DECLARE_ANIMATED_LENGTH(Height, height)
-        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
-
 public:
     static Ref<SVGUseElement> create(const QualifiedName&, Document&);
     virtual ~SVGUseElement();
@@ -56,6 +46,16 @@ public:
 
     RenderElement* rendererClipChild() const;
 
+    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
+
 private:
     SVGUseElement(const QualifiedName&, Document&);
 
@@ -64,8 +64,16 @@ private:
     void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void buildPendingResource() override;
+
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGUseElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static void registerAttributes();
+
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
+
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     Path toClipPath() override;
     bool haveLoadedRequiredResources() override;
@@ -91,6 +99,12 @@ private:
 
     void clearShadowTree();
     void invalidateDependentShadowTrees();
+
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedLengthAttribute m_x { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_y { LengthModeHeight };
+    SVGAnimatedLengthAttribute m_width { LengthModeWidth };
+    SVGAnimatedLengthAttribute m_height { LengthModeHeight };
 
     bool m_haveFiredLoadEvent { false };
     bool m_shadowTreeNeedsUpdate { true };

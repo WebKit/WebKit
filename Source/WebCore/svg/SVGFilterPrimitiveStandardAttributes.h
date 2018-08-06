@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +26,7 @@
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
 #include "SVGElement.h"
+#include "SVGNames.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -42,6 +44,21 @@ public:
     // Returns true, if the new value is different from the old one.
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
 
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFilterPrimitiveStandardAttributes, SVGElement>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+
+    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+    const String& result() const { return m_result.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedString> resultAnimated() { return m_result.animatedProperty(attributeOwnerProxy()); }
+
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
 
@@ -53,21 +70,26 @@ protected:
     void primitiveAttributeChanged(const QualifiedName& attributeName);
 
 private:
+    static void registerAttributes();
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+
     bool isFilterEffect() const override { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override { return false; }
 
-    static bool isSupportedAttribute(const QualifiedName&);
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
-        DECLARE_ANIMATED_LENGTH(X, x)
-        DECLARE_ANIMATED_LENGTH(Y, y)
-        DECLARE_ANIMATED_LENGTH(Width, width)
-        DECLARE_ANIMATED_LENGTH(Height, height)
-        DECLARE_ANIMATED_STRING(Result, result)
-    END_DECLARE_ANIMATED_PROPERTIES
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+
+    // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
+    // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
+    SVGAnimatedLengthAttribute m_x { LengthModeWidth, "0%" };
+    SVGAnimatedLengthAttribute m_y { LengthModeHeight, "0%" };
+    SVGAnimatedLengthAttribute m_width { LengthModeWidth, "100%" };
+    SVGAnimatedLengthAttribute m_height { LengthModeHeight, "100%" };
+    SVGAnimatedStringAttribute m_result;
 };
 
 void invalidateFilterPrimitiveParent(SVGElement*);

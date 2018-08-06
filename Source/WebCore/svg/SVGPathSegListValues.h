@@ -77,6 +77,7 @@ private:
 
 template<> struct SVGPropertyTraits<SVGPathSegListValues> {
     static SVGPathSegListValues initialValue() { return SVGPathSegListValues(PathSegUndefinedRole); }
+    static String toString(const SVGPathSegListValues& list) { return list.valueAsString(); }
 
     using ListItemType = RefPtr<SVGPathSeg>;
     using ListItemTearOff = SVGPropertyTearOff<RefPtr<SVGPathSeg>>;

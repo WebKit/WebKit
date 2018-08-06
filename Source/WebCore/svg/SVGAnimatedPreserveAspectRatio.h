@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,23 +22,18 @@
 
 #include "SVGAnimatedPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttributeAccessor.h"
 #include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 
-template<typename T> 
-class SVGPropertyTearOff;
+class SVGAnimationElement;
 
 using SVGAnimatedPreserveAspectRatio = SVGAnimatedPropertyTearOff<SVGPreserveAspectRatio>;
+using SVGAnimatedPreserveAspectRatioAttribute = SVGAnimatedAttribute<SVGAnimatedPreserveAspectRatio>;
 
-// Helper macros to declare/define a SVGAnimatedPreserveAspectRatio object
-#define DECLARE_ANIMATED_PRESERVEASPECTRATIO(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatioValue, UpperProperty, LowerProperty, )
-
-#define DEFINE_ANIMATED_PRESERVEASPECTRATIO(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedPreserveAspectRatio, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
-
-class SVGAnimationElement;
+template<typename OwnerType>
+using SVGAnimatedPreserveAspectRatioAttributeAccessor = SVGAnimatedAttributeAccessor<OwnerType, SVGAnimatedPreserveAspectRatioAttribute, AnimatedPreserveAspectRatio>;
 
 class SVGAnimatedPreserveAspectRatioAnimator final : public SVGAnimatedTypeAnimator {
 public:

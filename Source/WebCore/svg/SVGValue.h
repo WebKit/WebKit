@@ -35,7 +35,6 @@
 #include "SVGPathByteStream.h"
 #include "SVGPointListValues.h"
 #include "SVGPreserveAspectRatioValue.h"
-#include "SVGPropertyInfo.h"
 #include "SVGPropertyTraits.h"
 #include "SVGTransformListValues.h"
 

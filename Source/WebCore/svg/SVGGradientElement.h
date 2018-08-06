@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,7 +73,7 @@ struct SVGPropertyTraits<SVGSpreadMethodType> {
     }
 };
 
-class SVGGradientElement : public SVGElement, public SVGURIReference, public SVGExternalResourcesRequired {
+class SVGGradientElement : public SVGElement, public SVGExternalResourcesRequired, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGGradientElement);
 public:
     enum {
@@ -83,26 +84,36 @@ public:
     };
 
     Vector<Gradient::ColorStop> buildStops();
- 
+
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGGradientElement, SVGElement, SVGExternalResourcesRequired, SVGURIReference>;
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+
+    SVGSpreadMethodType spreadMethod() const { return m_spreadMethod.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType gradientUnits() const { return m_gradientUnits.currentValue(attributeOwnerProxy()); }
+    const SVGTransformListValues& gradientTransform() const { return m_gradientTransform.currentValue(attributeOwnerProxy()); }
+
+    RefPtr<SVGAnimatedEnumeration> spreadMethodAnimated() { return m_spreadMethod.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedEnumeration> gradientUnitsAnimated() { return m_gradientUnits.animatedProperty(attributeOwnerProxy()); }
+    RefPtr<SVGAnimatedTransformList> gradientTransformAnimated() { return m_gradientTransform.animatedProperty(attributeOwnerProxy()); }
+
 protected:
     SVGGradientElement(const QualifiedName&, Document&);
 
-    static bool isSupportedAttribute(const QualifiedName&);
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
 private:
     bool needsPendingResourceHandling() const override { return false; }
-
     void childrenChanged(const ChildChange&) override;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGradientElement)
-        DECLARE_ANIMATED_ENUMERATION(SpreadMethod, spreadMethod, SVGSpreadMethodType)
-        DECLARE_ANIMATED_ENUMERATION(GradientUnits, gradientUnits, SVGUnitTypes::SVGUnitType)
-        DECLARE_ANIMATED_TRANSFORM_LIST(GradientTransform, gradientTransform)
-        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
-        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
-    END_DECLARE_ANIMATED_PROPERTIES
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
+    static void registerAttributes();
+
+    AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    SVGAnimatedEnumerationAttribute<SVGSpreadMethodType> m_spreadMethod { SVGSpreadMethodPad };
+    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_gradientUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
+    SVGAnimatedTransformListAttribute m_gradientTransform;
 };
 
 } // namespace WebCore
