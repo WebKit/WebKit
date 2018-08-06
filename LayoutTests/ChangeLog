@@ -3,6 +3,18 @@
         fast/custom-elements/custom-element-registry-wrapper-should-stay-alive.html always timeouts on debug bots
         https://bugs.webkit.org/show_bug.cgi?id=188353
 
+        Reviewed by Saam Barati.
+
+        Rely on GCController.collect() instead of allocating 1,000,000 objects in WebKitTestRunner / DumpRenderTree
+        so that debug builders won't timeout.
+
+        * fast/custom-elements/custom-element-registry-wrapper-should-stay-alive.html:
+
+2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fast/custom-elements/custom-element-registry-wrapper-should-stay-alive.html always timeouts on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=188353
+
         Add a timeout expectation to the test while I verify the fix for the test.
 
         * TestExpectations:

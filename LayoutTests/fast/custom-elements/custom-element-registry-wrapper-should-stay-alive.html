@@ -13,10 +13,12 @@ for (let i = 0; i < 10; i++) {
     iframe.contentWindow.eval(`
         window.customElements.someProperty = 'storedValue';
         const a = [];
-        for (let i = 0; i < 1000000; i++)
-            a.push({});
         if (window.GCController)
             GCController.collect();
+        else {
+            for (let i = 0; i < 1000000; i++)
+                a.push({});
+        }
         top.check(window.customElements.someProperty);`);
     iframe.remove();
 }
