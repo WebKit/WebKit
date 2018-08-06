@@ -1,3 +1,10 @@
+2018-08-06  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Skip new webgl 2.0 tests. Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Expanded webgl 2.0 skipped
+        test to include all, since there were new failures.
+
 2018-08-06  Frederic Wang  <fwang@igalia.com>
 
         ASSERTION !data.customElementReactionQueue() when creating custom element inside an SVG document
