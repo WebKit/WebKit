@@ -732,7 +732,7 @@ http/tests/navigation/process-swap-window-open.html [ Pass ]
 http/wpt/cross-origin-resource-policy/ [ Pass ]
 
 http/tests/navigation/useragent-reload.php [ Pass ]
-storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Pass ]
+webkit.org/b/187931 storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Skip ]
 
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
