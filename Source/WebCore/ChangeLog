@@ -1,3 +1,39 @@
+2018-08-06  Frederic Wang  <fwang@igalia.com>
+
+        Make two-arguments versions of scrollBy/scrollTo depend on the one-argument versions
+        https://bugs.webkit.org/show_bug.cgi?id=188300
+
+        Reviewed by Darin Adler.
+
+        This patch refactors a bit the scrollBy/scrollTo code, so that the two-arguments versions
+        share the same code path as the more generic one-argument versions. In particular, this
+        helps to implement the ScrollBehavior option (bug 188043) since the one-argument versions
+        will require to distinguish between smooth and instant scrolling. The logic to normalize
+        non finite left/right values or to use a fallback when they are absent is also factored out
+        into ScrollToOptions.
+
+        References:
+        https://drafts.csswg.org/cssom-view/#dom-element-scroll
+        https://drafts.csswg.org/cssom-view/#dom-element-scrollby
+        https://drafts.csswg.org/cssom-view/#dom-window-scroll
+        https://drafts.csswg.org/cssom-view/#dom-window-scrollby
+
+        No new tests, behavior is unchanged.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollBy): Make two-parameter version depends on one-parameter version
+        and rewrite the normalize / fallback logic.
+        (WebCore::Element::scrollTo): Rewrite the normalize / fallback logic.
+        (WebCore::normalizeNonFiniteValue): Deleted. The logic is moved to ScrollToOptions.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollBy const): Make two-parameter version depends on one-parameter
+        version and rewrite the normalize / fallback logic.
+        (WebCore::DOMWindow::scrollTo const): Make two-parameter version depends on one-parameter
+        version and rewrite the normalize / fallback logic.
+        * page/ScrollToOptions.h: Add <cmath> to use std::isfinite
+        (WebCore::ScrollToOptions::normalizeNonFiniteCoordinatesOrFallBackTo): New function to
+        normalize left/right values or fallback to the specified value if it is missing.
+
 2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r234594.

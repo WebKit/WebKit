@@ -1574,12 +1574,12 @@ double DOMWindow::devicePixelRatio() const
     return page->deviceScaleFactor();
 }
 
-void DOMWindow::scrollBy(const ScrollToOptions& options) const
+void DOMWindow::scrollBy(double x, double y) const
 {
-    return scrollBy(options.left.value_or(0), options.top.value_or(0));
+    scrollBy({ x, y });
 }
 
-void DOMWindow::scrollBy(double x, double y) const
+void DOMWindow::scrollBy(const ScrollToOptions& options) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1590,29 +1590,17 @@ void DOMWindow::scrollBy(double x, double y) const
     if (!view)
         return;
 
-    // Normalize non-finite values (https://drafts.csswg.org/cssom-view/#normalize-non-finite-values).
-    x = std::isfinite(x) ? x : 0;
-    y = std::isfinite(y) ? y : 0;
-
-    IntSize scaledOffset(view->mapFromCSSToLayoutUnits(x), view->mapFromCSSToLayoutUnits(y));
+    ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options, 0, 0);
+    IntSize scaledOffset(view->mapFromCSSToLayoutUnits(scrollToOptions.left.value()), view->mapFromCSSToLayoutUnits(scrollToOptions.top.value()));
     view->setContentsScrollPosition(view->contentsScrollPosition() + scaledOffset);
 }
 
-void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping) const
+void DOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return;
-
-    RefPtr<FrameView> view = m_frame->view();
-    if (!view)
-        return;
-
-    double x = options.left ? options.left.value() : view->contentsScrollPosition().x();
-    double y = options.top ? options.top.value() : view->contentsScrollPosition().y();
-    return scrollTo(x, y, clamping);
+    scrollTo({ x, y }, clamping);
 }
 
-void DOMWindow::scrollTo(double x, double y, ScrollClamping) const
+void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1621,16 +1609,16 @@ void DOMWindow::scrollTo(double x, double y, ScrollClamping) const
     if (!view)
         return;
 
-    // Normalize non-finite values (https://drafts.csswg.org/cssom-view/#normalize-non-finite-values).
-    x = std::isfinite(x) ? x : 0;
-    y = std::isfinite(y) ? y : 0;
+    ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options,
+        view->contentsScrollPosition().x(), view->contentsScrollPosition().y()
+    );
 
-    if (!x && !y && view->contentsScrollPosition() == IntPoint(0, 0))
+    if (!scrollToOptions.left.value() && !scrollToOptions.top.value() && view->contentsScrollPosition() == IntPoint(0, 0))
         return;
 
     document()->updateLayoutIgnorePendingStylesheets();
 
-    IntPoint layoutPos(view->mapFromCSSToLayoutUnits(x), view->mapFromCSSToLayoutUnits(y));
+    IntPoint layoutPos(view->mapFromCSSToLayoutUnits(scrollToOptions.left.value()), view->mapFromCSSToLayoutUnits(scrollToOptions.top.value()));
     view->setContentsScrollPosition(layoutPos);
 }
 
