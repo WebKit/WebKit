@@ -318,11 +318,11 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     }
 #endif
 
-    // We want redirect responses to be processed through willSendRequestInternal.
-    // The only exception is redirection with no Location headers. Or in rare circumstances,
+    // We want redirect responses to be processed through willSendRequestInternal. Exceptions are
+    // redirection with no Location headers and fetch in manual redirect mode. Or in rare circumstances,
     // cases of too many redirects from CFNetwork (<rdar://problem/30610988>).
 #if !PLATFORM(COCOA)
-    ASSERT(response.httpStatusCode() < 300 || response.httpStatusCode() >= 400 || response.httpStatusCode() == 304 || !response.httpHeaderField(HTTPHeaderName::Location));
+    ASSERT(response.httpStatusCode() < 300 || response.httpStatusCode() >= 400 || response.httpStatusCode() == 304 || !response.httpHeaderField(HTTPHeaderName::Location) || response.type() == ResourceResponse::Type::Opaqueredirect);
 #endif
 
     // Reference the object in this method since the additional processing can do

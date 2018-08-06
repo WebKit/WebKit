@@ -1328,10 +1328,3 @@ webkit.org/b/188161 [ Debug ] webgl/1.0.2/conformance/context/context-lost-resto
 
 webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Crash ]
 webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-true.html [ Crash ]
-
-webkit.org/b/188163 [ Debug ] http/tests/fetch/caching-with-different-options.html [ Crash ]
-webkit.org/b/188163 [ Debug ] http/tests/fetch/redirectmode-and-preload.html [ Crash ]
-webkit.org/b/188163 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker.html [ Crash ]
-webkit.org/b/188163 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Crash ]
-webkit.org/b/188163 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ Crash ]
-webkit.org/b/188163 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.html[ Crash ]
