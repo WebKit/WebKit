@@ -1,3 +1,27 @@
+2018-08-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Indeterminate checkboxes appear unchecked
+        https://bugs.webkit.org/show_bug.cgi?id=160484
+        <rdar://problem/31143185>
+
+        Reviewed by Wenson Hsieh.
+
+        Add support for rendering indeterminate checkboxes on iOS.
+
+        We now paint the unchecked appearance only if the checkbox is not checked and is
+        not indeterminate. Otherwise, we draw a checkmark if the checkbox is in the
+        checked state and a dash if the checkbox is in the indeterminate state. Both of
+        these states share the same dark background.
+
+        Test: fast/forms/ios/render-indeterminate-checkbox.html
+
+        * css/html.css:
+        (input[type="checkbox"]:indeterminate):
+        (input[type="checkbox"]:indeterminate:disabled):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::drawJoinedLines):
+        (WebCore::RenderThemeIOS::paintCheckboxDecorations):
+
 2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTML parser should execute custom element reactions for setting attributes immediately after creating a custom element

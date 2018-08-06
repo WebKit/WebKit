@@ -1,3 +1,18 @@
+2018-08-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Indeterminate checkboxes appear unchecked
+        https://bugs.webkit.org/show_bug.cgi?id=160484
+        <rdar://problem/31143185>
+
+        Reviewed by Wenson Hsieh.
+
+        Added reftest to ensure that the indeterminate checkbox does not appear the same
+        as an unchecked checkbox.  
+
+        * fast/forms/ios/render-indeterminate-checkbox-expected-mismatch.html: Added.
+        * fast/forms/ios/render-indeterminate-checkbox.html: Added.
+        * platform/ios/fast/forms/indeterminate-expected.txt: Rebaseline.
+
 2018-08-06  Truitt Savell  <tsavell@apple.com>
 
         storage/indexeddb/modern/opendatabase-after-storage-crash.html is causing tests in directory svg/ to timeout at random
