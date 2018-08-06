@@ -1,0 +1,47 @@
+Tests for truncating async stack traces that exceed the maximum async stack trace depth.
+
+
+== Running test suite: AsyncStackTrace.Truncate
+-- Running test setup.
+Set maximum stack trace depth = 0.
+-- Running test case: AsyncStackTrace.DisableAsyncStackTrace
+PAUSED
+CALL STACK:
+0: [F] handleAnimationFrame
+PASS: Async stack trace should be null.
+-- Running test teardown.
+-- Running test setup.
+Set maximum stack trace depth = 10.
+
+-- Running test case: AsyncStackTrace.CheckTruncated
+PAUSED
+CALL STACK:
+0: [F] handleAnimationFrame
+ASYNC CALL STACK:
+1: --- requestAnimationFrame ---
+2: [F] handleAnimationFrame
+3: --- requestAnimationFrame ---
+4: [F] handleAnimationFrame
+5: --- requestAnimationFrame ---
+6: [F] handleAnimationFrame
+7: --- requestAnimationFrame ---
+8: [F] handleAnimationFrame
+9: --- requestAnimationFrame ---
+10: [F] handleAnimationFrame
+(remaining call frames truncated)
+PASS: Async stack trace should be truncated.
+-- Running test teardown.
+-- Running test setup.
+Set maximum stack trace depth = 10.
+
+-- Running test case: AsyncStackTrace.CheckNotTruncated
+PAUSED
+CALL STACK:
+0: [F] handleAnimationFrame
+ASYNC CALL STACK:
+1: --- requestAnimationFrame ---
+2: [F] triggerChainedRequestAnimationFrame
+3: [P] Global Code
+PASS: Async stack trace should not be truncated.
+-- Running test teardown.
+

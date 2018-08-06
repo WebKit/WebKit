@@ -1,3 +1,43 @@
+2018-08-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: split-up async stack trace test suite to improve clarity and maintainability
+        https://bugs.webkit.org/show_bug.cgi?id=185398
+        <rdar://problem/40040289>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/debugger/async-stack-trace-basic-expected.txt: Added.
+        * inspector/debugger/async-stack-trace-basic.html: Added.
+        Basic tests that check for the existence of an asynchronous stack trace
+        when pausing inside an asynchronous callback function.
+
+        * inspector/debugger/async-stack-trace-event-listener-expected.txt: Added.
+        * inspector/debugger/async-stack-trace-event-listener.html: Added.
+        * inspector/debugger/async-stack-trace-expected.txt: Removed.
+
+        * inspector/debugger/async-stack-trace-truncate-expected.txt: Added.
+        * inspector/debugger/async-stack-trace-truncate.html: Added.
+        Test scenarios where the number of call frames in the async stack trace
+        exceeds the maximum depth and is truncated.
+
+        * inspector/debugger/async-stack-trace.html: Removed.
+
+        * inspector/debugger/resources/async-stack-trace-test.js: Added.
+        (TestPage.registerInitializer.window.getAsyncStackTrace):
+        (TestPage.registerInitializer.logCallFrame):
+        (TestPage.registerInitializer.window.logAsyncStackTrace):
+        (TestPage.registerInitializer.window.addAsyncStackTraceTestCase):
+        (TestPage.registerInitializer):
+        Utility functions used across tests.
+
+        * inspector/debugger/resources/postMessage-echo.html: Removed.
+        This was unnecessary. To check that an async stack trace exists when
+        pausing in a postMessage handler, all we need is an iframe that posts a
+        message to its parent as soon as it is created. The iframe is now created
+        inline in async-stack-trace-basic.html.
+
+        * platform/mac/TestExpectations:
+
 2018-08-06  Daniel Bates  <dabates@apple.com>
 
         Setting table layout to fixed causes incorrect cell width calculations
