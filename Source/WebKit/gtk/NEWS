@@ -1,4 +1,15 @@
 ==================
+WebKitGTK+  2.20.4
+==================
+
+What's new in WebKitGTK+ 2.20.4?
+
+  - Fix a crash when leaving accelerated compositing mode.
+  - Fix non-deterministic build failure due to missing JavaScriptCore/JSContextRef.h.
+  - Security fixes: CVE-2018-4261, CVE-2018-4262, CVE-2018-4263, CVE-2018-4264, CVE-2018-4265, CVE-2018-4266,
+    CVE-2018-4267, CVE-2018-4270, CVE-2018-4272, CVE-2018-4273, CVE-2018-4278, CVE-2018-4284.
+
+==================
 WebKitGTK+  2.20.3
 ==================
 
