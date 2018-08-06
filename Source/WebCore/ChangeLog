@@ -1,5 +1,17 @@
 2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed follow-up to r234594.
+
+        Add missing constructor and destructor definitions for the bunch of new
+        classes that were added in that revision.
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.cpp:
+        (Nicosia::ContentLayer::ContentLayer):
+        (Nicosia::BackingStore::BackingStore):
+        (Nicosia::ImageBacking::ImageBacking):
+
+2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [Nicosia] Add additional layer state classes, use impl-based approach to make them extendable
         https://bugs.webkit.org/show_bug.cgi?id=188341
 
