@@ -46,6 +46,8 @@ typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
     [CallWith=ScriptState, MayThrowException] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
     void clearInterval(optional long handle = 0);
 
+    [Custom] void queueMicrotask(VoidCallback callback);
+
     // Base64 utility methods.
     [MayThrowException] DOMString atob(DOMString string);
     [MayThrowException] DOMString btoa(DOMString string);

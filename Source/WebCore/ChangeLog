@@ -1,3 +1,21 @@
+2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement self.queueMicrotask in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=188247
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds support for self.queueMicrotask to workers.
+
+        Tests: http/wpt/workers/queue-microtask.any.html
+               http/wpt/workers/queue-microtask.any.worker.html
+
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::queueMicrotask):
+        * page/DOMWindow.idl:
+        Move queueMicrotask declaration to WindowOrWorkerGlobalScope.idl.
+        * page/WindowOrWorkerGlobalScope.idl:
+
 2018-08-05  Rob Buis  <rbuis@igalia.com>
 
         [GTK][WPE] Fetch tests assert in SubresourceLoader::didReceiveResponse()

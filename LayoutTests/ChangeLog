@@ -1,3 +1,20 @@
+2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement self.queueMicrotask in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=188247
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/wpt/workers/queue-microtask.any-expected.txt: Added.
+        * http/wpt/workers/queue-microtask.any.html: Added.
+        * http/wpt/workers/queue-microtask.any.js: Added.
+        (promise_test):
+        (promise_test.):
+        (queueMicrotask.promise_test):
+        (test):
+        * http/wpt/workers/queue-microtask.any.worker-expected.txt: Added.
+        * http/wpt/workers/queue-microtask.any.worker.html: Added.
+
 2018-08-05  Rob Buis  <rbuis@igalia.com>
 
         [GTK][WPE] Fetch tests assert in SubresourceLoader::didReceiveResponse()
