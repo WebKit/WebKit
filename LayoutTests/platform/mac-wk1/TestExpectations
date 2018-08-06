@@ -606,3 +606,6 @@ webkit.org/b/187711 [ Debug ] svg/custom/linking-uri-01-b.svg [ Pass Failure ]
 [ Mojave+ ] displaylists/extent-includes-transforms.html [ Failure ]
 [ Mojave+ ] displaylists/layer-dispay-list.html [ Failure ]
 [ Mojave+ ] displaylists/replay-skip-clipped-rect.html [ Failure ]
+
+# <rdar://problem/42920617>
+[ Mojave+ ] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Pass Failure ]
