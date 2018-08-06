@@ -1,5 +1,40 @@
 2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] Tests that try to interact with the QuickType bar time out on iOS 11+
+        https://bugs.webkit.org/show_bug.cgi?id=188335
+        <rdar://problem/32542437> and <rdar://problem/32542433>
+
+        Reviewed by Tim Horton.
+
+        Refactors a couple of tests that currently rely on the QuickType bar being shown when the hardware keyboard is
+        presented in the iOS simulator, so that it can insert text suggestions by tapping QuickType bar buttons; in the
+        first place, it was never guaranteed that this bar would show up, or even have more than 1 text suggestion.
+        Instead, we use the existing UIScriptController::applyAutocorrection method to trigger text replacement in the
+        same way tapping a button on the QuickType bar would replace the current word with the suggested word.
+
+        * fast/events/ios/before-input-events-prevent-candidate-insertion-expected.txt:
+        * fast/events/ios/before-input-events-prevent-candidate-insertion.html:
+        * fast/events/ios/input-events-insert-replacement-text-expected.txt:
+        * fast/events/ios/input-events-insert-replacement-text.html:
+        * platform/ios/TestExpectations:
+
+        Removes a [Timeout] expectation.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.typeCharacter):
+
+        Add a new UIHelper method to type a character using the keyboard. Sends hardware keyboard events on the WebKit2
+        port of iOS, and uses EventSender elsewhere.
+
+        (window.UIHelper.applyAutocorrection):
+
+        Add a new UIHelper method that wraps UIScriptController::applyAutocorrection. Only supported in WebKit2
+        currently.
+
+        (window.UIHelper):
+
+2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained
         https://bugs.webkit.org/show_bug.cgi?id=188322
         <rdar://problem/42455270>

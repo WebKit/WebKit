@@ -1,92 +1,63 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 
 <html>
-
 <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <script id="ui-script" type="text/plain">
-        (function() {
-            uiController.didShowKeyboardCallback = function() {
-                uiController.typeCharacterUsingHardwareKeyboard("t", function() {
-                    uiController.selectTextCandidateAtIndex(1, function() {
-                        uiController.uiScriptComplete();
-                    });
-                });
-            }
-            uiController.singleTapAtPoint($x, $y, function() {});
-        })();
-    </script>
-
-    <script>
-        var progress = 0;
-        var replacementText = "";
-        let write = (message) => output.innerHTML += (message + "<br>");
-        function getUIScript() {
-            let rect = editable.getBoundingClientRect();
-            let script = document.getElementById("ui-script").text;
-            script = script.replace("$x", rect.left + rect.width / 2);
-            return script.replace("$y", rect.top + rect.height / 2);
-        }
-
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-            internals.settings.setInputEventsEnabled(true);
-        }
-
-        function incrementProgress()
-        {
-            progress++;
-            if (!window.testRunner || progress !== 2)
-                return;
-
-            setTimeout(function() {
-                if (editable.value.indexOf(replacementText) == -1)
-                    write(`PASS: The replacement text was prevented.`);
-                else
-                    write(`FAIL: The input value ${editable.value} should not contain replacement text ${replacementText}.`);
-                testRunner.notifyDone();
-            }, 0);
-        }
-
-        function runTest()
-        {
-            editable.addEventListener("beforeinput", preventBeforeInput);
-            if (!window.testRunner || !testRunner.runUIScript)
-                return;
-
-            testRunner.runUIScript(getUIScript(), function(result) {
-                incrementProgress();
-            });
-        }
-
-        function preventBeforeInput(event)
-        {
-            if (event.inputType === "insertReplacementText") {
-                replacementText = event.data;
-                if (!replacementText)
-                    write("FAIL: The replacement text input event lacks data.");
-                event.preventDefault();
-                incrementProgress();
-            }
-        }
-
-    </script>
-    <style>
-    #editable {
-        width: 200px;
-        height: 100px;
-        top: 0;
-        left: 0;
-        position: absolute;
-    }
-    </style>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+#editable {
+    width: 320px;
+    height: 320px;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+</style>
 </head>
 
-<body style="margin: 0;" onload=runTest()>
-    <input contenteditable id="editable"></input>
-    <p>To manually test, type 't' into the contenteditable and try to select a candidate. The replacement text should not be inserted.</p>
-    <div id="output"></div>
+<body style="margin: 0;">
+<input contenteditable id="editable"></input>
+<p>This test verifies that <code>beforeinput</code> events of inputType "insertReplacementText" can be prevented.</p>
+<p>To manually test, type 'T' into the text field and try to select a candidate. The replacement text should not be inserted.</p>
+<pre id="output"></pre>
+<script>
+let write = (message) => output.innerHTML += (message + "<br>");
+
+function checkForCompletion() {
+    doneCount = window.doneCount ? doneCount : 0;
+    if (++doneCount == 2 && window.testRunner)
+        testRunner.notifyDone();
+}
+
+function handleBeforeInput(event) {
+    if (event.inputType !== "insertReplacementText")
+        return;
+
+    event.preventDefault();
+
+    write(`Prevented "insertReplacementText" with data: "${event.data}"`);
+    setTimeout(() => {
+        write(`Does the input value contain replacement text? ${editable.value.includes("The")}`);
+        checkForCompletion();
+    }, 0);
+}
+
+function triggerAutocorrectionAfterFirstInput() {
+    editable.removeEventListener("input", triggerAutocorrectionAfterFirstInput);
+    write(`Replacing "T" with "The"...`);
+    editable.setSelectionRange(0, 1);
+    UIHelper.applyAutocorrection("The", "T").then(checkForCompletion);
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+editable.addEventListener("beforeinput", handleBeforeInput);
+editable.addEventListener("input", triggerAutocorrectionAfterFirstInput);
+UIHelper.activateAndWaitForInputSessionAt(160, 160).then(() => UIHelper.typeCharacter("T"));
+</script>
 </body>
 
 </html>

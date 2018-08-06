@@ -1,5 +1,32 @@
 2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] Tests that try to interact with the QuickType bar time out on iOS 11+
+        https://bugs.webkit.org/show_bug.cgi?id=188335
+        <rdar://problem/32542437> and <rdar://problem/32542433>
+
+        Reviewed by Tim Horton.
+
+        Remove a UIScriptController helper method that attempted to wait for QuickType buttons to appear, and then send
+        touch events to the buttons. These were only used for the two tests which this patch refactors. See the
+        LayoutTests ChangeLog for more detail.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectTextCandidateAtIndex): Deleted.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::selectTextCandidateAtIndex): Deleted.
+        (WTR::UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * TestRunnerShared/spi/UIKitTestSPI.h:
+
+        Remove an internal class declaration that is now unnecessary.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectTextCandidateAtIndex): Deleted.
+        (WTR::UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex): Deleted.
+
+2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Caret disappears after resigning and becoming first responder if active focus state is retained
         https://bugs.webkit.org/show_bug.cgi?id=188322
         <rdar://problem/42455270>

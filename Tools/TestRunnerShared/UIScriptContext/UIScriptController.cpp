@@ -282,14 +282,6 @@ void UIScriptController::keyUpUsingHardwareKeyboard(JSStringRef, JSValueRef)
 {
 }
 
-void UIScriptController::selectTextCandidateAtIndex(long, JSValueRef)
-{
-}
-
-void UIScriptController::waitForTextPredictionsViewAndSelectCandidateAtIndex(long, unsigned, float)
-{
-}
-
 void UIScriptController::keyDownUsingHardwareKeyboard(JSStringRef, JSValueRef)
 {
 }

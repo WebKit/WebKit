@@ -278,4 +278,26 @@ window.UIHelper = class UIHelper {
             })()`, resolve);
         });
     }
+
+    static typeCharacter(characterString)
+    {
+        if (!this.isWebKit2() || !this.isIOS()) {
+            eventSender.keyDown(key);
+            return;
+        }
+
+        const escapedString = characterString.replace(/`/g, "\\`");
+        const uiScript = `uiController.typeCharacterUsingHardwareKeyboard(\`${escapedString}\`, () => uiController.uiScriptComplete())`;
+        return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
+    }
+
+    static applyAutocorrection(newText, oldText)
+    {
+        if (!this.isWebKit2())
+            return;
+
+        const [escapedNewText, escapedOldText] = [newText.replace(/`/g, "\\`"), oldText.replace(/`/g, "\\`")];
+        const uiScript = `uiController.applyAutocorrection(\`${escapedNewText}\`, \`${escapedOldText}\`, () => uiController.uiScriptComplete())`;
+        return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
+    }
 }

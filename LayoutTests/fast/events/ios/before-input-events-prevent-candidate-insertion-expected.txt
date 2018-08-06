@@ -1,5 +1,9 @@
 
-To manually test, type 't' into the contenteditable and try to select a candidate. The replacement text should not be inserted.
+This test verifies that beforeinput events of inputType "insertReplacementText" can be prevented.
 
-PASS: The replacement text was prevented.
+To manually test, type 'T' into the text field and try to select a candidate. The replacement text should not be inserted.
+
+Replacing "T" with "The"...
+Prevented "insertReplacementText" with data: "The"
+Does the input value contain replacement text? false
 

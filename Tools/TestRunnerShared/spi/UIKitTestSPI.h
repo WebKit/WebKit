@@ -41,11 +41,6 @@
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
 
-@interface UIKeyboardPredictionView : UIView
-+ (UIKeyboardPredictionView *)activeInstance;
-- (BOOL)hasPredictions;
-@end
-
 #else
 
 #import "IOKitSPI.h"

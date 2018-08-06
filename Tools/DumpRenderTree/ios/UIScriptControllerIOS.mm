@@ -143,10 +143,6 @@ void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef characte
 {
 }
 
-void UIScriptController::selectTextCandidateAtIndex(long, JSValueRef)
-{
-}
-
 void UIScriptController::keyDownUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {
 }
