@@ -178,8 +178,6 @@ CommandLineOptions parseCommandLine()
             options.useFullDesktop = true;
         else if (!wcsicmp(argv[i], L"--performance"))
             options.pageLoadTesting = true;
-        else if (!wcsicmp(argv[i], L"--highDPI"))
-            continue; // ignore
         else if (!wcsicmp(argv[i], L"--wk1") || !wcsicmp(argv[i], L"--legacy"))
             options.windowType = MainWindow::BrowserWindowType::WebKitLegacy;
 #if ENABLE(WEBKIT)

@@ -1,3 +1,23 @@
+2018-08-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DLLLauncher] Remove --highDPI switch
+        https://bugs.webkit.org/show_bug.cgi?id=188255
+
+        Reviewed by Yusuke Suzuki.
+
+        Bug 149417 has added `--highDPI` switch to make MiniBrowser DPI
+        aware. But, Bug 158733 has made MiniBrowser always DPI aware. It
+        became useless since the change. Remove the switch.
+
+        This change fixes the issue all dump render tree tests are failing
+        in WinCairo port if high DPI display is connected.
+
+        * MiniBrowser/win/Common.cpp:
+        (parseCommandLine): Removed `--highDPI` switch.
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (wWinMain): Do not call SetProcessDPIAware.
+        (shouldUseHighDPI): Deleted.
+
 2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Tests that try to interact with the QuickType bar time out on iOS 11+
