@@ -1,3 +1,17 @@
+2018-08-06  Frederic Wang  <fwang@igalia.com>
+
+        ASSERTION !data.customElementReactionQueue() when creating custom element inside an SVG document
+        https://bugs.webkit.org/show_bug.cgi?id=187802
+
+        The assertion has been removed in bug 188327. This patch updates the test expectations and
+        add some non-regression test to verify different cases of XML custom element construction.
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: This test no longer crashes but times out because of bug 187800.
+        * fast/custom-elements/xml-parsing-create-and-element-for-a-token-expected.txt: Added.
+        * fast/custom-elements/xml-parsing-create-and-element-for-a-token.svg: Added.
+
 2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement self.queueMicrotask in Workers

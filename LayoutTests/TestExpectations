@@ -570,7 +570,7 @@ imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-elemen
 
 # WPT tests for custom elements
 webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg [ Skip ]
-webkit.org/b/187802 imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg [ Skip ]
+webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg [ Skip ]
 
 # selectors
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
