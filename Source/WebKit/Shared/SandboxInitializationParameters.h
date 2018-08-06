@@ -54,7 +54,7 @@ public:
     const char* name(size_t index) const;
     const char* value(size_t index) const;
 
-    enum class ProfileSelectionMode : uint8_t {
+    enum ProfileSelectionMode {
         UseDefaultSandboxProfilePath,
         UseOverrideSandboxProfilePath,
         UseSandboxProfile
@@ -64,25 +64,25 @@ public:
 
     void setOverrideSandboxProfilePath(const String& path)
     {
-        m_profileSelectionMode = ProfileSelectionMode::UseOverrideSandboxProfilePath;
+        m_profileSelectionMode = UseOverrideSandboxProfilePath;
         m_overrideSandboxProfilePathOrSandboxProfile = path;
     }
 
     const String& overrideSandboxProfilePath() const
     {
-        ASSERT(m_profileSelectionMode == ProfileSelectionMode::UseOverrideSandboxProfilePath);
+        ASSERT(m_profileSelectionMode == UseOverrideSandboxProfilePath);
         return m_overrideSandboxProfilePathOrSandboxProfile;
     }
 
     void setSandboxProfile(const String& profile)
     {
-        m_profileSelectionMode = ProfileSelectionMode::UseSandboxProfile;
+        m_profileSelectionMode = UseSandboxProfile;
         m_overrideSandboxProfilePathOrSandboxProfile = profile;
     }
 
     const String& sandboxProfile() const
     {
-        ASSERT(m_profileSelectionMode == ProfileSelectionMode::UseSandboxProfile);
+        ASSERT(m_profileSelectionMode == UseSandboxProfile);
         return m_overrideSandboxProfilePathOrSandboxProfile;
     }
 

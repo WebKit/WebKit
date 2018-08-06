@@ -109,7 +109,6 @@ struct WebsiteDataStoreParameters;
 class WebProcess : public ChildProcess {
 public:
     static WebProcess& singleton();
-    static constexpr ProcessType processType = ProcessType::WebContent;
 
     template <typename T>
     T* supplement()

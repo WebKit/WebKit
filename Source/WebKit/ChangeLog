@@ -1,3 +1,15 @@
+2018-08-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r234569.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "We should cache the compiled sandbox profile in a data vault"
+        https://bugs.webkit.org/show_bug.cgi?id=184991
+        https://trac.webkit.org/changeset/234569
+
 2018-08-06  Chris Dumez  <cdumez@apple.com>
 
         Fix IPC::Connection leak in StorageManager
