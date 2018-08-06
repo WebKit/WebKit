@@ -36,6 +36,7 @@
 #include "FloatSize.h"
 #include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
+#include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
@@ -47,6 +48,7 @@ public:
     virtual ~PlatformLayer();
 
     virtual bool isCompositionLayer() const { return false; }
+    virtual bool isContentLayer() const { return false; }
 
     uint64_t id() const { return m_id; }
 
@@ -60,15 +62,28 @@ protected:
     } m_state;
 };
 
+class ContentLayer;
+class BackingStore;
+class ImageBacking;
+
 class CompositionLayer : public PlatformLayer {
 public:
-    static Ref<CompositionLayer> create(uint64_t id)
+    class Impl {
+    public:
+        using Factory = WTF::Function<std::unique_ptr<Impl>(uint64_t, CompositionLayer&)>;
+
+        virtual ~Impl();
+        virtual bool isTextureMapperImpl() const { return false; }
+    };
+
+    static Ref<CompositionLayer> create(uint64_t id, const Impl::Factory& factory)
     {
-        return adoptRef(*new CompositionLayer(id));
+        return adoptRef(*new CompositionLayer(id, factory));
     }
     virtual ~CompositionLayer();
-
     bool isCompositionLayer() const override { return true; }
+
+    Impl& impl() const { return *m_impl; }
 
     struct LayerState {
         struct Delta {
@@ -91,6 +106,9 @@ public:
                     bool maskChanged : 1;
                     bool replicaChanged : 1;
                     bool flagsChanged : 1;
+                    bool contentLayerChanged : 1;
+                    bool backingStoreChanged : 1;
+                    bool imageBackingChanged : 1;
                     bool repaintCounterChanged : 1;
                     bool debugBorderChanged : 1;
                 };
@@ -140,6 +158,10 @@ public:
         RefPtr<CompositionLayer> replica;
         RefPtr<CompositionLayer> mask;
 
+        RefPtr<ContentLayer> contentLayer;
+        RefPtr<BackingStore> backingStore;
+        RefPtr<ImageBacking> imageBacking;
+
         struct RepaintCounter {
             unsigned count { 0 };
             bool visible { false };
@@ -159,11 +181,86 @@ public:
     }
 
 private:
-    explicit CompositionLayer(uint64_t);
+    CompositionLayer(uint64_t, const Impl::Factory&);
+
+    std::unique_ptr<Impl> m_impl;
 
     struct {
         LayerState pending;
     } m_state;
+};
+
+class ContentLayer : public PlatformLayer {
+public:
+    class Impl {
+    public:
+        using Factory = WTF::Function<std::unique_ptr<Impl>(ContentLayer&)>;
+
+        virtual ~Impl();
+        virtual bool isTextureMapperImpl() const { return false; }
+    };
+
+    static Ref<ContentLayer> create(const Impl::Factory& factory)
+    {
+        return adoptRef(*new ContentLayer(factory));
+    }
+    virtual ~ContentLayer();
+    bool isContentLayer() const override { return true; }
+
+    Impl& impl() const { return *m_impl; }
+
+private:
+    ContentLayer(const Impl::Factory&);
+
+    std::unique_ptr<Impl> m_impl;
+};
+
+class BackingStore : public ThreadSafeRefCounted<BackingStore> {
+public:
+    class Impl {
+    public:
+        using Factory = WTF::Function<std::unique_ptr<Impl>(BackingStore&)>;
+
+        virtual ~Impl();
+        virtual bool isTextureMapperImpl() const { return false; }
+    };
+
+    static Ref<BackingStore> create(const Impl::Factory& factory)
+    {
+        return adoptRef(*new BackingStore(factory));
+    }
+    virtual ~BackingStore();
+
+    Impl& impl() const { return *m_impl; }
+
+private:
+    BackingStore(const Impl::Factory&);
+
+    std::unique_ptr<Impl> m_impl;
+};
+
+class ImageBacking : public ThreadSafeRefCounted<ImageBacking> {
+public:
+    class Impl {
+    public:
+        using Factory = WTF::Function<std::unique_ptr<Impl>(ImageBacking&)>;
+
+        virtual ~Impl();
+        virtual bool isTextureMapperImpl() const { return false; }
+    };
+
+    static Ref<ImageBacking> create(const Impl::Factory& factory)
+    {
+        return adoptRef(*new ImageBacking(factory));
+    }
+    virtual ~ImageBacking();
+
+    Impl& impl() const { return *m_impl; }
+
+private:
+    ImageBacking(const Impl::Factory&);
+
+    std::unique_ptr<Impl> m_impl;
 };
 
 } // namespace Nicosia
@@ -174,3 +271,24 @@ private:
     SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_NICOSIA_PLATFORMLAYER(CompositionLayer, isCompositionLayer());
+SPECIALIZE_TYPE_TRAITS_NICOSIA_PLATFORMLAYER(ContentLayer, isContentLayer());
+
+#define SPECIALIZE_TYPE_TRAITS_NICOSIA_COMPOSITIONLAYER_IMPL(ToClassName, predicate) \
+    SPECIALIZE_TYPE_TRAITS_BEGIN(Nicosia::ToClassName) \
+    static bool isType(const Nicosia::CompositionLayer::Impl& impl) { return impl.predicate; } \
+    SPECIALIZE_TYPE_TRAITS_END()
+
+#define SPECIALIZE_TYPE_TRAITS_NICOSIA_CONTENTLAYER_IMPL(ToClassName, predicate) \
+    SPECIALIZE_TYPE_TRAITS_BEGIN(Nicosia::ToClassName) \
+    static bool isType(const Nicosia::ContentLayer::Impl& impl) { return impl.predicate; } \
+    SPECIALIZE_TYPE_TRAITS_END()
+
+#define SPECIALIZE_TYPE_TRAITS_NICOSIA_BACKINGSTORE_IMPL(ToClassName, predicate) \
+    SPECIALIZE_TYPE_TRAITS_BEGIN(Nicosia::ToClassName) \
+    static bool isType(const Nicosia::BackingStore::Impl& impl) { return impl.predicate; } \
+    SPECIALIZE_TYPE_TRAITS_END()
+
+#define SPECIALIZE_TYPE_TRAITS_NICOSIA_IMAGEBACKING_IMPL(ToClassName, predicate) \
+    SPECIALIZE_TYPE_TRAITS_BEGIN(Nicosia::ToClassName) \
+    static bool isType(const Nicosia::ImageBacking::Impl& impl) { return impl.predicate; } \
+    SPECIALIZE_TYPE_TRAITS_END()

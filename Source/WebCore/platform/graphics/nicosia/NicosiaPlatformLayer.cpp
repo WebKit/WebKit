@@ -38,11 +38,14 @@ PlatformLayer::PlatformLayer(uint64_t id)
 
 PlatformLayer::~PlatformLayer() = default;
 
-CompositionLayer::CompositionLayer(uint64_t id)
+
+CompositionLayer::CompositionLayer(uint64_t id, const Impl::Factory& factory)
     : PlatformLayer(id)
+    , m_impl(factory(id, *this))
 {
 }
 
 CompositionLayer::~CompositionLayer() = default;
+CompositionLayer::Impl::~Impl() = default;
 
 } // namespace Nicosia

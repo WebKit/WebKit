@@ -1,5 +1,57 @@
 2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] Add additional layer state classes, use impl-based approach to make them extendable
+        https://bugs.webkit.org/show_bug.cgi?id=188341
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the ContentLayer, BackingStore and ImageBacking classes in the
+        Nicosia namespace. State objects of CompositionLayer instances keep
+        references to objects of these classes depending on the content that's
+        presented in the associated GraphicsLayer.
+
+        ContentLayer derives from the PlatformLayer class. It's used for layers
+        that display things like WebGL and HTML5 canvas and media content in a
+        platform-specific way. In case of TextureMapper the hardware-accelerated
+        content is piped into that rendering pipeline.
+
+        BackingStore is meant to represent the painted contents of a layer. The
+        equivalent current functionality is using a tiled backing store that
+        has its contents copied into the CoordinatedBackingStore instance.
+
+        ImageBacking is used for a layer whose content is a simple Image object.
+        Image's pixel data is rasterized and again managed through
+        CoordinatedBackingStore for rendering.
+
+        All these classes, along with the CompositionLayer class, should now be
+        constructed with a factory function that returns an object that derives
+        the class-specific Impl interface. This will allow for simpler
+        implementation of different approaches in parallel. The TextureMapper
+        variants will be the first ones, replicating the current behavior as it
+        is implemented across classes in the CoordinatedGraphics and
+        TextureMapper layers.
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.cpp:
+        (Nicosia::CompositionLayer::CompositionLayer):
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::PlatformLayer::isContentLayer const):
+        (Nicosia::CompositionLayer::Impl::isTextureMapperImpl const):
+        (Nicosia::CompositionLayer::create):
+        (Nicosia::CompositionLayer::impl const):
+        (Nicosia::ContentLayer::Impl::isTextureMapperImpl const):
+        (Nicosia::ContentLayer::create):
+        (Nicosia::ContentLayer::impl const):
+        (Nicosia::BackingStore::Impl::isTextureMapperImpl const):
+        (Nicosia::BackingStore::create):
+        (Nicosia::BackingStore::impl const):
+        (Nicosia::ImageBacking::Impl::isTextureMapperImpl const):
+        (Nicosia::ImageBacking::create):
+        (Nicosia::ImageBacking::impl const):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+
+2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [Nicosia] Add Nicosia::Scene
         https://bugs.webkit.org/show_bug.cgi?id=188340
 

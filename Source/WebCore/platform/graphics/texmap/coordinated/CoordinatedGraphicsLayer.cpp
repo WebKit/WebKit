@@ -121,6 +121,13 @@ void CoordinatedGraphicsLayer::didChangeGeometry()
     setShouldUpdateVisibleRect();
 }
 
+// FIXME: this is a temporary helper class to keep Nicosia::CompositionLayer creation working.
+class CompositionLayerNoopImpl final : public Nicosia::CompositionLayer::Impl {
+public:
+    CompositionLayerNoopImpl() = default;
+    virtual ~CompositionLayerNoopImpl() = default;
+};
+
 CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
 #ifndef NDEBUG
@@ -147,7 +154,11 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     static CoordinatedLayerID nextLayerID = 1;
     m_id = nextLayerID++;
 
-    m_nicosia.layer = Nicosia::CompositionLayer::create(m_id);
+    m_nicosia.layer = Nicosia::CompositionLayer::create(m_id,
+        [](uint64_t, Nicosia::CompositionLayer&)
+        {
+            return std::make_unique<CompositionLayerNoopImpl>();
+        });
 }
 
 CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
