@@ -38,6 +38,7 @@
 #include "IntSize.h"
 #include "NicosiaBuffer.h"
 #include "NicosiaPlatformLayer.h"
+#include "NicosiaScene.h"
 #include "SurfaceUpdateInfo.h"
 #include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
@@ -171,8 +172,7 @@ struct CoordinatedGraphicsLayerState {
 
 struct CoordinatedGraphicsState {
     struct NicosiaState {
-        HashSet<RefPtr<Nicosia::CompositionLayer>> layers;
-        RefPtr<Nicosia::CompositionLayer> rootLayer;
+        RefPtr<Nicosia::Scene> scene;
     } nicosia;
 
     uint32_t rootCompositingLayer;

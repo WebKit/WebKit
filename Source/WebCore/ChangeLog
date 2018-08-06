@@ -1,3 +1,27 @@
+2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add Nicosia::Scene
+        https://bugs.webkit.org/show_bug.cgi?id=188340
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the Nicosia::Scene class that controls the scene's state and enables
+        thread-safe updates to that state.
+
+        The State struct itself holds a set of all the layers in the scene, and
+        separates out the root layer specifically. An ID counter is also present
+        there, allowing consumers of this state to easily check for any updates.
+
+        A reference to the Nicosia::Scene object now replaces the
+        HashSet-and-root-layer pair in the CoordinatedGraphicsState struct.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/NicosiaScene.cpp: Added.
+        * platform/graphics/nicosia/NicosiaScene.h: Added.
+        (Nicosia::Scene::create):
+        (Nicosia::Scene::accessState):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+
 2018-08-06  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [GTK] Buttons are drawn too large, text not centered

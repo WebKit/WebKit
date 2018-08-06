@@ -128,6 +128,10 @@ private:
     WebCore::GraphicsLayer* m_rootCompositingLayer { nullptr };
     WebCore::GraphicsLayer* m_overlayCompositingLayer { nullptr };
 
+    struct {
+        RefPtr<Nicosia::Scene> scene;
+        Nicosia::Scene::State state;
+    } m_nicosia;
     WebCore::CoordinatedGraphicsState m_state;
 
     HashMap<WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;

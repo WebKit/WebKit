@@ -1,3 +1,30 @@
+2018-08-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add Nicosia::Scene
+        https://bugs.webkit.org/show_bug.cgi?id=188340
+
+        Reviewed by Carlos Garcia Campos.
+
+        CompositingCoordinator spawns a Nicosia::Scene object that it shares
+        with the CoordinatedGraphicsSceneState instance. All the
+        Nicosia::CompositionLayer objects indirectly managed by
+        CompositingCoordinator are now stored in a local Nicosia::Scene::State
+        member object. Upon each flush that requires frame synchronization the
+        Nicosia::Scene object is updated in a thread-safe manner, increasing
+        the scene ID value as well as copying the local HashSet and root layer
+        values into the shared Scene object, allowing for the consumer (which
+        currently is the related CoordinatedGraphicsScene instance) to update
+        its output accordingly.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::initializeRootCompositingLayerIfNeeded):
+        (WebKit::CompositingCoordinator::createGraphicsLayer):
+        (WebKit::CompositingCoordinator::detachLayer):
+        (WebKit::CompositingCoordinator::attachLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+
 2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add support for microtasks in workers
