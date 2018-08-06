@@ -668,21 +668,21 @@ void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
-    if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasVisibleBoxDecorations() && style().visibility() == Visibility::Visible)
+    if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && hasVisibleBoxDecorations() && style().visibility() == Visibility::Visible)
         paintBoxDecorations(paintInfo, paintOffset);
 
-    if (paintPhase == PaintPhaseMask) {
+    if (paintPhase == PaintPhase::Mask) {
         paintMask(paintInfo, paintOffset);
         return;
     }
 
     // We're done.  We don't bother painting any children.
-    if (paintPhase == PaintPhaseBlockBackground)
+    if (paintPhase == PaintPhase::BlockBackground)
         return;
     
     // We don't paint our own background, but we do let the kids paint their backgrounds.
-    if (paintPhase == PaintPhaseChildBlockBackgrounds)
-        paintPhase = PaintPhaseChildBlockBackground;
+    if (paintPhase == PaintPhase::ChildBlockBackgrounds)
+        paintPhase = PaintPhase::ChildBlockBackground;
 
     PaintInfo info(paintInfo);
     info.phase = paintPhase;
@@ -695,11 +695,11 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         }
     }
     
-    if (collapseBorders() && paintPhase == PaintPhaseChildBlockBackground && style().visibility() == Visibility::Visible) {
+    if (collapseBorders() && paintPhase == PaintPhase::ChildBlockBackground && style().visibility() == Visibility::Visible) {
         recalcCollapsedBorders();
         // Using our cached sorted styles, we then do individual passes,
         // painting each style of border from lowest precedence to highest precedence.
-        info.phase = PaintPhaseCollapsedTableBorders;
+        info.phase = PaintPhase::CollapsedTableBorders;
         size_t count = m_collapsedBorders.size();
         for (size_t i = 0; i < count; ++i) {
             m_currentBorder = &m_collapsedBorders[i];
@@ -712,7 +712,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // Paint outline.
-    if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style().visibility() == Visibility::Visible)
+    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && style().visibility() == Visibility::Visible)
         paintOutline(paintInfo, LayoutRect(paintOffset, size()));
 }
 
@@ -755,7 +755,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
 
 void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseMask)
+    if (style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
         return;
 
     LayoutRect rect(paintOffset, size());
@@ -1473,7 +1473,7 @@ LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderFrag
     LayoutRect rect;
     // Don't clip out the table's side of the collapsed borders if we're in the paint phase that will ask the sections to paint them.
     // Likewise, if we're self-painting we avoid clipping them out as the clip rect that will be passed down to child layers from RenderLayer will do that instead.
-    if (phase == PaintPhaseChildBlockBackgrounds || layer()->isSelfPaintingLayer()) {
+    if (phase == PaintPhase::ChildBlockBackgrounds || layer()->isSelfPaintingLayer()) {
         rect = borderBoxRectInFragment(fragment);
         rect.setLocation(location + rect.location());
     } else

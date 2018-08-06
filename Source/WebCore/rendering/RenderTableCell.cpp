@@ -1107,7 +1107,7 @@ LayoutUnit RenderTableCell::borderHalfAfter(bool outer) const
 
 void RenderTableCell::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    ASSERT(paintInfo.phase != PaintPhaseCollapsedTableBorders);
+    ASSERT(paintInfo.phase != PaintPhase::CollapsedTableBorders);
     RenderBlockFlow::paint(paintInfo, paintOffset);
 }
 
@@ -1198,7 +1198,7 @@ void RenderTableCell::sortBorderValues(RenderTable::CollapsedBorderValues& borde
 
 void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    ASSERT(paintInfo.phase == PaintPhaseCollapsedTableBorders);
+    ASSERT(paintInfo.phase == PaintPhase::CollapsedTableBorders);
 
     if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible)
         return;
@@ -1335,7 +1335,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseMask)
+    if (style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
         return;
 
     RenderTable* tableElt = table();

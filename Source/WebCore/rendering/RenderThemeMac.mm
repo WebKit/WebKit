@@ -2091,7 +2091,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
 
 bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect&)
 {
-    if (paintInfo.phase != PaintPhaseBlockBackground)
+    if (paintInfo.phase != PaintPhase::BlockBackground)
         return true;
 
     if (!is<RenderBlock>(renderer))
@@ -2303,7 +2303,7 @@ NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
 
 bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (paintInfo.phase != PaintPhaseBlockBackground)
+    if (paintInfo.phase != PaintPhase::BlockBackground)
         return true;
 
 #if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)

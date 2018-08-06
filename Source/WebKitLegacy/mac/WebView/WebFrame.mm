@@ -591,30 +591,30 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return plainText(core(range), TextIteratorDefaultBehavior, true);
 }
 
-- (PaintBehavior)_paintBehaviorForDestinationContext:(CGContextRef)context
+- (OptionSet<PaintBehavior>)_paintBehaviorForDestinationContext:(CGContextRef)context
 {
 #if PLATFORM(MAC)
     // -currentContextDrawingToScreen returns YES for bitmap contexts.
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
     if (isPrinting)
-        return PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;
+        return OptionSet<PaintBehavior>(PaintBehavior::FlattenCompositingLayers) | PaintBehavior::Snapshotting;
 #endif
 
     if (CGContextGetType(context) != kCGContextTypeBitmap)
-        return PaintBehaviorNormal;
+        return PaintBehavior::Normal;
 
     // If we're drawing into a bitmap, we could be snapshotting or drawing into a layer-backed view.
     if (WebHTMLView *documentView = [self _webHTMLDocumentView]) {
 #if PLATFORM(IOS)
-        return [[documentView window] isInSnapshottingPaint] ? PaintBehaviorSnapshotting : PaintBehaviorNormal;
+        return [[documentView window] isInSnapshottingPaint] ? PaintBehavior::Snapshotting : PaintBehavior::Normal;
 #endif
 #if PLATFORM(MAC)
         if ([documentView _web_isDrawingIntoLayer])
-            return PaintBehaviorNormal;
+            return PaintBehavior::Normal;
 #endif
     }
     
-    return PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;
+    return OptionSet<PaintBehavior>(PaintBehavior::FlattenCompositingLayers) | PaintBehavior::Snapshotting;
 }
 
 - (void)_drawRect:(NSRect)rect contentsOnly:(BOOL)contentsOnly
@@ -642,20 +642,20 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     FrameView* view = _private->coreFrame->view();
     
-    PaintBehavior oldBehavior = view->paintBehavior();
-    PaintBehavior paintBehavior = oldBehavior;
+    OptionSet<PaintBehavior> oldBehavior = view->paintBehavior();
+    OptionSet<PaintBehavior> paintBehavior = oldBehavior;
     
     if (Frame* parentFrame = _private->coreFrame->tree().parent()) {
         // For subframes, we need to inherit the paint behavior from our parent
         if (FrameView* parentView = parentFrame ? parentFrame->view() : nullptr) {
-            if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
-                paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+            if (parentView->paintBehavior().contains(PaintBehavior::FlattenCompositingLayers))
+                paintBehavior |= PaintBehavior::FlattenCompositingLayers;
             
-            if (parentView->paintBehavior() & PaintBehaviorSnapshotting)
-                paintBehavior |= PaintBehaviorSnapshotting;
+            if (parentView->paintBehavior().contains(PaintBehavior::Snapshotting))
+                paintBehavior |= PaintBehavior::Snapshotting;
             
-            if (parentView->paintBehavior() & PaintBehaviorTileFirstPaint)
-                paintBehavior |= PaintBehaviorTileFirstPaint;
+            if (parentView->paintBehavior().contains(PaintBehavior::TileFirstPaint))
+                paintBehavior |= PaintBehavior::TileFirstPaint;
         }
     } else
         paintBehavior |= [self _paintBehaviorForDestinationContext:ctx];

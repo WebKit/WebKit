@@ -481,8 +481,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
     if (paintInfo.context().paintingDisabled())
         return;
 
-    if (paintInfo.phase != PaintPhaseForeground
-     && paintInfo.phase != PaintPhaseSelection)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
          return;
 
     PaintInfo blockInfo(paintInfo);
@@ -491,8 +490,8 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
     RenderBlock::paint(blockInfo, LayoutPoint());
 
     // Paint the outlines, if any
-    if (paintInfo.phase == PaintPhaseForeground) {
-        blockInfo.phase = PaintPhaseSelfOutline;
+    if (paintInfo.phase == PaintPhase::Foreground) {
+        blockInfo.phase = PaintPhase::SelfOutline;
         RenderBlock::paint(blockInfo, LayoutPoint());
     }
 }

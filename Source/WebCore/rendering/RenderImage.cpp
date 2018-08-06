@@ -412,10 +412,10 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
     if (!imageResource().cachedImage() || imageResource().errorOccurred()) {
-        if (paintInfo.phase == PaintPhaseSelection)
+        if (paintInfo.phase == PaintPhase::Selection)
             return;
 
-        if (paintInfo.phase == PaintPhaseForeground)
+        if (paintInfo.phase == PaintPhase::Foreground)
             page().addRelevantUnpaintedObject(this, visualOverflowRect());
 
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
@@ -490,7 +490,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (showBorderForIncompleteImage)
             paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
-        if (paintInfo.phase == PaintPhaseForeground)
+        if (paintInfo.phase == PaintPhase::Foreground)
             page().addRelevantUnpaintedObject(this, visualOverflowRect());
         return;
     }
@@ -509,7 +509,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (cachedImage() && cachedImage()->isLoading())))
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
     
-    if (cachedImage() && paintInfo.phase == PaintPhaseForeground) {
+    if (cachedImage() && paintInfo.phase == PaintPhase::Foreground) {
         // For now, count images as unpainted if they are still progressively loading. We may want 
         // to refine this in the future to account for the portion of the image that has painted.
         LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
@@ -524,7 +524,7 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     RenderReplaced::paint(paintInfo, paintOffset);
     
-    if (paintInfo.phase == PaintPhaseOutline)
+    if (paintInfo.phase == PaintPhase::Outline)
         paintAreaElementFocusRing(paintInfo, paintOffset);
 }
     

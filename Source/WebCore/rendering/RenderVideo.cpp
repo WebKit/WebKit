@@ -177,20 +177,20 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     bool displayingPoster = videoElement().shouldDisplayPosterImage();
 
     if (!displayingPoster && !mediaPlayer) {
-        if (paintInfo.phase == PaintPhaseForeground)
+        if (paintInfo.phase == PaintPhase::Foreground)
             page().addRelevantUnpaintedObject(this, visualOverflowRect());
         return;
     }
 
     LayoutRect rect = videoBox();
     if (rect.isEmpty()) {
-        if (paintInfo.phase == PaintPhaseForeground)
+        if (paintInfo.phase == PaintPhase::Foreground)
             page().addRelevantUnpaintedObject(this, visualOverflowRect());
         return;
     }
     rect.moveBy(paintOffset);
 
-    if (paintInfo.phase == PaintPhaseForeground)
+    if (paintInfo.phase == PaintPhase::Foreground)
         page().addRelevantRepaintedObject(this, rect);
 
     LayoutRect contentRect = contentBoxRect();
@@ -204,7 +204,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (displayingPoster)
         paintIntoRect(paintInfo, rect);
     else if (!videoElement().isFullscreen() || !mediaPlayer->supportsAcceleratedRendering()) {
-        if (paintInfo.paintBehavior & PaintBehaviorFlattenCompositingLayers)
+        if (paintInfo.paintBehavior.contains(PaintBehavior::FlattenCompositingLayers))
             mediaPlayer->paintCurrentFrameInContext(context, rect);
         else
             mediaPlayer->paint(context, rect);

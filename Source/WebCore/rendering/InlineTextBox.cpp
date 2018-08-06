@@ -437,10 +437,10 @@ static MarkedText createMarkedTextFromSelectionInBox(const InlineTextBox& box)
 void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
-        || m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
+        || m_truncation == cFullTruncation || paintInfo.phase == PaintPhase::Outline || !m_len)
         return;
 
-    ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
+    ASSERT(paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines);
 
     LayoutUnit logicalLeftSide = logicalLeftVisualOverflow();
     LayoutUnit logicalRightSide = logicalRightVisualOverflow();
@@ -458,10 +458,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     bool isPrinting = renderer().document().printing();
     
     // Determine whether or not we're selected.
-    bool haveSelection = !isPrinting && paintInfo.phase != PaintPhaseTextClip && selectionState() != RenderObject::SelectionNone;
-    if (!haveSelection && paintInfo.phase == PaintPhaseSelection)
+    bool haveSelection = !isPrinting && paintInfo.phase != PaintPhase::TextClip && selectionState() != RenderObject::SelectionNone;
+    if (!haveSelection && paintInfo.phase == PaintPhase::Selection) {
         // When only painting the selection, don't bother to paint if there is none.
         return;
+    }
 
     if (m_truncation != cNoTruncation) {
         if (renderer().containingBlock()->style().isLeftToRightDirection() != isLeftToRightDirection()) {
@@ -504,7 +505,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
-    if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
+    if (paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::TextClip && !isPrinting) {
         if (containsComposition && !useCustomUnderlines)
             paintCompositionBackground(paintInfo, boxOrigin);
 
@@ -528,19 +529,19 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
     // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
     // renderers and Page currently relies on each unpainted object having a unique renderer.
-    if (paintInfo.phase == PaintPhaseForeground)
+    if (paintInfo.phase == PaintPhase::Foreground)
         renderer().page().addRelevantRepaintedObject(&renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
 
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
     bool shouldPaintSelectionForeground = haveSelection && !useCustomUnderlines;
     Vector<MarkedText> markedTexts;
-    if (paintInfo.phase != PaintPhaseSelection) {
+    if (paintInfo.phase != PaintPhase::Selection) {
         // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
         markedTexts.append({ clampedOffset(m_start), clampedOffset(end() + 1), MarkedText::Unmarked });
         if (!isPrinting) {
             markedTexts.appendVector(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Foreground));
 
-            bool shouldPaintDraggedContent = !(paintInfo.paintBehavior & PaintBehaviorExcludeSelection);
+            bool shouldPaintDraggedContent = !(paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection));
             if (shouldPaintDraggedContent) {
                 auto markedTextsForDraggedContent = collectMarkedTextsForDraggedContent();
                 if (!markedTextsForDraggedContent.isEmpty()) {
@@ -561,7 +562,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, unmarkedStyle, paintInfo);
 
     // ... now remove the selection marked text if we are excluding selection.
-    if (!isPrinting && paintInfo.paintBehavior & PaintBehaviorExcludeSelection)
+    if (!isPrinting && paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection))
         styledMarkedTexts.removeAllMatching([] (const StyledMarkedText& markedText) { return markedText.type == MarkedText::Selection; });
 
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
@@ -571,7 +572,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     // Paint decorations
     auto textDecorations = lineStyle.textDecorationsInEffect();
-    if (!textDecorations.isEmpty() && paintInfo.phase != PaintPhaseSelection) {
+    if (!textDecorations.isEmpty() && paintInfo.phase != PaintPhase::Selection) {
         TextRun textRun = createTextRun();
         unsigned length = textRun.length();
         if (m_truncation != cNoTruncation)
@@ -582,7 +583,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             std::tie(selectionStart, selectionEnd) = selectionStartEnd();
 
         FloatRect textDecorationSelectionClipOutRect;
-        if ((paintInfo.paintBehavior & PaintBehaviorExcludeSelection) && selectionStart < selectionEnd && selectionEnd <= length) {
+        if ((paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) && selectionStart < selectionEnd && selectionEnd <= length) {
             textDecorationSelectionClipOutRect = logicalOverflowRect();
             textDecorationSelectionClipOutRect.moveBy(localPaintOffset);
             float logicalWidthBeforeRange;
@@ -608,7 +609,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     // 3. Paint fancy decorations, including composition underlines and platform-specific underlines for spelling errors, grammar errors, et cetera.
-    if (paintInfo.phase == PaintPhaseForeground) {
+    if (paintInfo.phase == PaintPhase::Foreground) {
         paintPlatformDocumentMarkers(context, boxOrigin);
 
         if (useCustomUnderlines)

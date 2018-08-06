@@ -2520,7 +2520,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext& context,
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
-    PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
+    OptionSet<PaintBehavior> paintBehavior, GraphicsLayerPaintingPhase paintingPhase)
 {
     if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && paintingPhase != GraphicsLayerPaintChildClippingMask) {
 #if !PLATFORM(IOS) && !OS(WINDOWS)
@@ -2607,12 +2607,12 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
-        PaintBehavior behavior = PaintBehaviorNormal;
+        OptionSet<PaintBehavior> behavior = PaintBehavior::Normal;
         if (layerPaintBehavior == GraphicsLayerPaintSnapshotting)
-            behavior |= PaintBehaviorSnapshotting;
+            behavior |= PaintBehavior::Snapshotting;
         
         if (layerPaintBehavior == GraphicsLayerPaintFirstTilePaint)
-            behavior |= PaintBehaviorTileFirstPaint;
+            behavior |= PaintBehavior::TileFirstPaint;
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior, paintingPhase);
 

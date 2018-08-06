@@ -170,29 +170,29 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();
     
-    if (hasVisibleBoxDecorations() && paintInfo.phase == PaintPhaseForeground)
+    if (hasVisibleBoxDecorations() && paintInfo.phase == PaintPhase::Foreground)
         paintBoxDecorations(paintInfo, adjustedPaintOffset);
     
-    if (paintInfo.phase == PaintPhaseMask) {
+    if (paintInfo.phase == PaintPhase::Mask) {
         paintMask(paintInfo, adjustedPaintOffset);
         return;
     }
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
-    if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) {
+    if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
         if (style().outlineWidth())
             paintOutline(paintInfo, paintRect);
         return;
     }
 
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
         return;
     
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
     
     bool drawSelectionTint = shouldDrawSelectionTint();
-    if (paintInfo.phase == PaintPhaseSelection) {
+    if (paintInfo.phase == PaintPhase::Selection) {
         if (selectionState() == SelectionNone)
             return;
         drawSelectionTint = false;
@@ -231,11 +231,14 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if ((paintInfo.paintBehavior & PaintBehaviorExcludeSelection) && isSelected())
+    if ((paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) && isSelected())
         return false;
 
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline 
-            && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseMask)
+    if (paintInfo.phase != PaintPhase::Foreground
+        && paintInfo.phase != PaintPhase::Outline
+        && paintInfo.phase != PaintPhase::SelfOutline
+        && paintInfo.phase != PaintPhase::Selection
+        && paintInfo.phase != PaintPhase::Mask)
         return false;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))

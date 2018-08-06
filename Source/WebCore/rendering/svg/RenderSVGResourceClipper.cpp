@@ -193,8 +193,8 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(const ClipperMaskImage& 
     // - masker/filter not applied when rendering the children
     // - fill is set to the initial fill paint server (solid, black)
     // - stroke is set to the initial stroke paint server (none)
-    PaintBehavior oldBehavior = view().frameView().paintBehavior();
-    view().frameView().setPaintBehavior(oldBehavior | PaintBehaviorRenderingSVGMask);
+    auto oldBehavior = view().frameView().paintBehavior();
+    view().frameView().setPaintBehavior(oldBehavior | PaintBehavior::RenderingSVGMask);
 
     // Draw all clipPath children into a global mask.
     for (auto& child : childrenOfType<SVGElement>(clipPathElement())) {

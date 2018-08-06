@@ -277,7 +277,7 @@ void FrameView::reset()
     m_isTrackingRepaints = false;
     m_trackedRepaintRects.clear();
     m_lastPaintTime = MonotonicTime();
-    m_paintBehavior = PaintBehaviorNormal;
+    m_paintBehavior = PaintBehavior::Normal;
     m_isPainting = false;
     m_visuallyNonEmptyCharacterCount = 0;
     m_visuallyNonEmptyPixelCount = 0;
@@ -4062,20 +4062,22 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, Pain
     paintingState.paintBehavior = m_paintBehavior;
     
     if (FrameView* parentView = parentFrameView()) {
-        if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
-            m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+        if (parentView->paintBehavior() & PaintBehavior::FlattenCompositingLayers)
+            m_paintBehavior |= PaintBehavior::FlattenCompositingLayers;
         
-        if (parentView->paintBehavior() & PaintBehaviorSnapshotting)
-            m_paintBehavior |= PaintBehaviorSnapshotting;
+        if (parentView->paintBehavior() & PaintBehavior::Snapshotting)
+            m_paintBehavior |= PaintBehavior::Snapshotting;
         
-        if (parentView->paintBehavior() & PaintBehaviorTileFirstPaint)
-            m_paintBehavior |= PaintBehaviorTileFirstPaint;
+        if (parentView->paintBehavior() & PaintBehavior::TileFirstPaint)
+            m_paintBehavior |= PaintBehavior::TileFirstPaint;
     }
 
-    if (document->printing())
-        m_paintBehavior |= (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting);
+    if (document->printing()) {
+        m_paintBehavior |= PaintBehavior::FlattenCompositingLayers;
+        m_paintBehavior |= PaintBehavior::Snapshotting;
+    }
 
-    paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehaviorFlattenCompositingLayers) && !frame().ownerElement();
+    paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehavior::FlattenCompositingLayers) && !frame().ownerElement();
     if (paintingState.isFlatteningPaintOfRootFrame)
         notifyWidgetsInAllFrames(WillPaintFlattened);
 
@@ -4119,7 +4121,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
         fillWithWarningColor = false; // Subframe, don't fill with red.
     else if (isTransparent())
         fillWithWarningColor = false; // Transparent, don't fill with red.
-    else if (m_paintBehavior & PaintBehaviorSelectionOnly)
+    else if (m_paintBehavior & PaintBehavior::SelectionOnly)
         fillWithWarningColor = false; // Selections are transparent, don't fill with red.
     else if (m_nodeToDraw)
         fillWithWarningColor = false; // Element images are transparent, don't fill with red.
@@ -4168,12 +4170,12 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
     didPaintContents(context, dirtyRect, paintingState);
 }
 
-void FrameView::setPaintBehavior(PaintBehavior behavior)
+void FrameView::setPaintBehavior(OptionSet<PaintBehavior> behavior)
 {
     m_paintBehavior = behavior;
 }
 
-PaintBehavior FrameView::paintBehavior() const
+OptionSet<PaintBehavior> FrameView::paintBehavior() const
 {
     return m_paintBehavior;
 }
@@ -4194,8 +4196,8 @@ void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect
     updateLayoutAndStyleIfNeededRecursive();
 
     // Cache paint behavior and set a new behavior appropriate for snapshots.
-    PaintBehavior oldBehavior = paintBehavior();
-    setPaintBehavior(oldBehavior | (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting));
+    auto oldBehavior = paintBehavior();
+    setPaintBehavior(oldBehavior | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting);
 
     // If the snapshot should exclude selection, then we'll clear the current selection
     // in the render tree only. This will allow us to restore the selection from the DOM

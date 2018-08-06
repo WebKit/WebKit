@@ -215,8 +215,8 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     if (paintInfo.context().paintingDisabled())
         return;
 
-    // SVG outlines are painted during PaintPhaseForeground.
-    if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline)
+    // SVG outlines are painted during PaintPhase::Foreground.
+    if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline)
         return;
 
     // An empty viewBox also disables rendering.
@@ -228,13 +228,13 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     if (!firstChild()) {
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
-            if (paintInfo.phase == PaintPhaseForeground)
+            if (paintInfo.phase == PaintPhase::Foreground)
                 page().addRelevantUnpaintedObject(this, visualOverflowRect());
             return;
         }
     }
 
-    if (paintInfo.phase == PaintPhaseForeground)
+    if (paintInfo.phase == PaintPhase::Foreground)
         page().addRelevantRepaintedObject(this, visualOverflowRect());
 
     // Make a copy of the PaintInfo because applyTransform will modify the damage rect.
@@ -255,7 +255,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     {
         SVGRenderingContext renderingContext;
         bool continueRendering = true;
-        if (childPaintInfo.phase == PaintPhaseForeground) {
+        if (childPaintInfo.phase == PaintPhase::Foreground) {
             renderingContext.prepareToRenderSVGContent(*this, childPaintInfo);
             continueRendering = renderingContext.isRenderingPrepared();
         }

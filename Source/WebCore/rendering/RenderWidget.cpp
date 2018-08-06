@@ -231,11 +231,11 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     // to paint itself. That way it will composite properly with z-indexed layers.
     LayoutRect paintRect = paintInfo.rect;
 
-    PaintBehavior oldBehavior = PaintBehaviorNormal;
-    if (is<FrameView>(*m_widget) && (paintInfo.paintBehavior & PaintBehaviorTileFirstPaint)) {
+    OptionSet<PaintBehavior> oldBehavior = PaintBehavior::Normal;
+    if (is<FrameView>(*m_widget) && (paintInfo.paintBehavior & PaintBehavior::TileFirstPaint)) {
         FrameView& frameView = downcast<FrameView>(*m_widget);
         oldBehavior = frameView.paintBehavior();
-        frameView.setPaintBehavior(oldBehavior | PaintBehaviorTileFirstPaint);
+        frameView.setPaintBehavior(oldBehavior | PaintBehavior::TileFirstPaint);
     }
 
     IntPoint widgetLocation = m_widget->frameRect().location();
@@ -259,7 +259,7 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
             ASSERT(!paintInfo.overlapTestRequests->contains(this) || (paintInfo.overlapTestRequests->get(this) == m_widget->frameRect()));
             paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
         }
-        if (paintInfo.paintBehavior & PaintBehaviorTileFirstPaint)
+        if (paintInfo.paintBehavior & PaintBehavior::TileFirstPaint)
             frameView.setPaintBehavior(oldBehavior);
     }
 }
@@ -271,18 +271,18 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
-    if (hasVisibleBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection))
+    if (hasVisibleBoxDecorations() && (paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection))
         paintBoxDecorations(paintInfo, adjustedPaintOffset);
 
-    if (paintInfo.phase == PaintPhaseMask) {
+    if (paintInfo.phase == PaintPhase::Mask) {
         paintMask(paintInfo, adjustedPaintOffset);
         return;
     }
 
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && hasOutline())
+    if ((paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) && hasOutline())
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 
-    if (paintInfo.phase != PaintPhaseForeground)
+    if (paintInfo.phase != PaintPhase::Foreground)
         return;
 
     if (style().hasBorderRadius()) {

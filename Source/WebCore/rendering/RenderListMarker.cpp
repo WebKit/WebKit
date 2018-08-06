@@ -1183,7 +1183,7 @@ LayoutRect RenderListMarker::localSelectionRect()
 
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhaseForeground)
+    if (paintInfo.phase != PaintPhase::Foreground)
         return;
     
     if (style().visibility() != Visibility::Visible)

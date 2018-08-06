@@ -51,7 +51,7 @@ static inline RenderSVGResource* requestPaintingResource(OptionSet<RenderSVGReso
 {
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
-    bool isRenderingMask = renderer.view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
+    bool isRenderingMask = renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask);
 
     // If we have no fill/stroke, return nullptr.
     if (mode == RenderSVGResourceMode::ApplyToFill) {

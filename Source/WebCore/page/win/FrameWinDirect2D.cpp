@@ -47,8 +47,8 @@ GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
     if (!frame)
         return nullptr;
 
-    PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
-    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
+    auto oldPaintBehavior = frame->view()->paintBehavior();
+    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehavior::FlattenCompositingLayers);
 
     void* bits = nullptr;
     auto hdc = adoptGDIObject(::CreateCompatibleDC(0));

@@ -1,3 +1,179 @@
+2018-08-06  Alex Christensen  <achristensen@webkit.org>
+
+        Use enum classes and OptionSets for PaintPhase and PaintBehavior
+        https://bugs.webkit.org/show_bug.cgi?id=188323
+
+        Reviewed by Simon Fraser.
+
+        No change in behaviour.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRectWithClip):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::setPaintBehavior):
+        (WebCore::FrameView::paintBehavior const):
+        (WebCore::FrameView::paintContentsForSnapshot):
+        * page/FrameView.h:
+        * rendering/InlineElementBox.cpp:
+        (WebCore::InlineElementBox::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::PaintInfo):
+        (WebCore::PaintInfo::forceBlackText const):
+        (WebCore::PaintInfo::forceWhiteText const):
+        (WebCore::PaintInfo::skipRootBackground const):
+        (WebCore::PaintInfo::paintRootBackgroundOnly const):
+        * rendering/PaintPhase.h:
+        (): Deleted.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintSelection):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::paintFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::paintClippingMask):
+        (WebCore::RenderBox::paintMaskImages):
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::popContentsClip):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::decodingModeForImageDraw const):
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates const):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintAsInlineBlock):
+        (WebCore::RenderElement::selectionColor const):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paint):
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::renderableTransform const):
+        (WebCore::transparencyClipBox):
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::paintingExtent):
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintOverlayScrollbars):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintBackgroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase):
+        (WebCore::RenderLayer::paintOutlineForFragments):
+        (WebCore::RenderLayer::paintMaskForFragments):
+        (WebCore::RenderLayer::paintChildClippingMaskForFragments):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::paintMask):
+        (WebCore::RenderTable::overflowClipRect):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        (WebCore::RenderTableCell::paintMask):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paintOutlineForRowIfNeeded):
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        (WebCore::RenderTableSection::paintCell):
+        (WebCore::RenderTableSection::paintObject):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        (WebCore::RenderThemeMac::paintImageControlsButton):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paintContents):
+        (WebCore::RenderWidget::paint):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox const):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/mathml/MathOperator.cpp:
+        (WebCore::MathOperator::paint):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::paint):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::paint):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::paint):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::paint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+        (WebCore::RenderSVGResourceSolidColor::applyResource):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::paint):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paintSelectionBackground):
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::isRenderingMaskImage):
+        (WebCore::SVGRenderingContext::renderSubtreeToImageBuffer):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+
 2018-08-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234569.

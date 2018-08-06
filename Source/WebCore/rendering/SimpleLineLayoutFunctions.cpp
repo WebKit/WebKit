@@ -76,7 +76,7 @@ FloatRect computeOverflow(const RenderBlockFlow& flow, const FloatRect& layoutRe
 
 void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhaseForeground)
+    if (paintInfo.phase != PaintPhase::Foreground)
         return;
 
     auto& style = flow.style();

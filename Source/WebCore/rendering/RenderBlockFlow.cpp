@@ -2174,17 +2174,17 @@ void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paint
         // Only paint the object if our m_shouldPaint flag is set.
         if (floatingObject.shouldPaint() && !renderer.hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
-            currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
+            currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhase::BlockBackground;
             LayoutPoint childPoint = flipFloatForWritingModeForChild(floatingObject, paintOffset + floatingObject.translationOffsetToAncestor());
             renderer.paint(currentPaintInfo, childPoint);
             if (!preservePhase) {
-                currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
+                currentPaintInfo.phase = PaintPhase::ChildBlockBackgrounds;
                 renderer.paint(currentPaintInfo, childPoint);
-                currentPaintInfo.phase = PaintPhaseFloat;
+                currentPaintInfo.phase = PaintPhase::Float;
                 renderer.paint(currentPaintInfo, childPoint);
-                currentPaintInfo.phase = PaintPhaseForeground;
+                currentPaintInfo.phase = PaintPhase::Foreground;
                 renderer.paint(currentPaintInfo, childPoint);
-                currentPaintInfo.phase = PaintPhaseOutline;
+                currentPaintInfo.phase = PaintPhase::Outline;
                 renderer.paint(currentPaintInfo, childPoint);
             }
         }

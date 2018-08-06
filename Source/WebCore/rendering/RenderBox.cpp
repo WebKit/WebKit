@@ -1500,7 +1500,7 @@ bool RenderBox::backgroundHasOpaqueTopLayer() const
 
 void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseMask || paintInfo.context().paintingDisabled())
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Mask || paintInfo.context().paintingDisabled())
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
@@ -1510,7 +1510,7 @@ void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBox::paintClippingMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseClippingMask || paintInfo.context().paintingDisabled())
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::ClippingMask || paintInfo.context().paintingDisabled())
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
@@ -1522,7 +1522,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;
     bool compositedMask = hasLayer() && layer()->hasCompositedMask();
-    bool flattenCompositingLayers = paintInfo.paintBehavior & PaintBehaviorFlattenCompositingLayers;
+    bool flattenCompositingLayers = paintInfo.paintBehavior.contains(PaintBehavior::FlattenCompositingLayers);
     CompositeOperator compositeOp = CompositeSourceOver;
 
     bool allMaskImagesLoaded = true;
@@ -1722,21 +1722,21 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
 
 bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
 {
-    if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseSelfOutline || paintInfo.phase == PaintPhaseMask)
+    if (paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::SelfOutline || paintInfo.phase == PaintPhase::Mask)
         return false;
-        
+
     bool isControlClip = hasControlClip();
     bool isOverflowClip = hasOverflowClip() && !layer()->isSelfPaintingLayer();
     
     if (!isControlClip && !isOverflowClip)
         return false;
     
-    if (paintInfo.phase == PaintPhaseOutline)
-        paintInfo.phase = PaintPhaseChildOutlines;
-    else if (paintInfo.phase == PaintPhaseChildBlockBackground) {
-        paintInfo.phase = PaintPhaseBlockBackground;
+    if (paintInfo.phase == PaintPhase::Outline)
+        paintInfo.phase = PaintPhase::ChildOutlines;
+    else if (paintInfo.phase == PaintPhase::ChildBlockBackground) {
+        paintInfo.phase = PaintPhase::BlockBackground;
         paintObject(paintInfo, accumulatedOffset);
-        paintInfo.phase = PaintPhaseChildBlockBackgrounds;
+        paintInfo.phase = PaintPhase::ChildBlockBackgrounds;
     }
     float deviceScaleFactor = document().deviceScaleFactor();
     FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
@@ -1752,11 +1752,11 @@ void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, 
     ASSERT(hasControlClip() || (hasOverflowClip() && !layer()->isSelfPaintingLayer()));
 
     paintInfo.context().restore();
-    if (originalPhase == PaintPhaseOutline) {
-        paintInfo.phase = PaintPhaseSelfOutline;
+    if (originalPhase == PaintPhase::Outline) {
+        paintInfo.phase = PaintPhase::SelfOutline;
         paintObject(paintInfo, accumulatedOffset);
         paintInfo.phase = originalPhase;
-    } else if (originalPhase == PaintPhaseChildBlockBackground)
+    } else if (originalPhase == PaintPhase::ChildBlockBackground)
         paintInfo.phase = originalPhase;
 }
 

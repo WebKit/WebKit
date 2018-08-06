@@ -119,7 +119,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
     
     // Push a clip.
     GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
-    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
+    if (paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::ChildBlockBackgrounds) {
         IntRect clipRect = enclosingIntRect(LayoutRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(),
                          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop() + buttonShadowHeight));
         if (clipRect.isEmpty())
@@ -128,7 +128,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         paintInfo.context().clip(clipRect);
     }
 
-    if (paintInfo.phase == PaintPhaseForeground) {
+    if (paintInfo.phase == PaintPhase::Foreground) {
         const String& displayedFilename = fileTextValue();
         const FontCascade& font = style().fontCascade();
         TextRun textRun = constructTextRun(displayedFilename, style(), AllowTrailingExpansion, RespectDirection | RespectDirectionOverride);

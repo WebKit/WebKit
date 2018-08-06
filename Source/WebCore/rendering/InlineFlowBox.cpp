@@ -1141,7 +1141,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines && paintInfo.phase != PaintPhaseTextClip && paintInfo.phase != PaintPhaseMask)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::Outline && paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines && paintInfo.phase != PaintPhase::TextClip && paintInfo.phase != PaintPhase::Mask)
         return;
 
     LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
@@ -1151,8 +1151,8 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (!paintInfo.rect.intersects(snappedIntRect(overflowRect)))
         return;
 
-    if (paintInfo.phase != PaintPhaseChildOutlines) {
-        if (paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) {
+    if (paintInfo.phase != PaintPhase::ChildOutlines) {
+        if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
             if (renderer().style().visibility() == Visibility::Visible && renderer().hasOutline() && !isRootInlineBox()) {
@@ -1185,7 +1185,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 } else if (!inlineFlow.isContinuation())
                     paintInfo.outlineObjects->add(&inlineFlow);
             }
-        } else if (paintInfo.phase == PaintPhaseMask)
+        } else if (paintInfo.phase == PaintPhase::Mask)
             paintMask(paintInfo, paintOffset);
         else {
             // Paint our background, border and box-shadow.
@@ -1193,16 +1193,16 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         }
     }
 
-    if (paintInfo.phase == PaintPhaseMask)
+    if (paintInfo.phase == PaintPhase::Mask)
         return;
 
-    PaintPhase paintPhase = paintInfo.phase == PaintPhaseChildOutlines ? PaintPhaseOutline : paintInfo.phase;
+    PaintPhase paintPhase = paintInfo.phase == PaintPhase::ChildOutlines ? PaintPhase::Outline : paintInfo.phase;
     PaintInfo childInfo(paintInfo);
     childInfo.phase = paintPhase;
     childInfo.updateSubtreePaintRootForChildren(&renderer());
     
     // Paint our children.
-    if (paintPhase != PaintPhaseSelfOutline) {
+    if (paintPhase != PaintPhase::SelfOutline) {
         for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
             if (curr->renderer().isText() || !curr->boxModelObject()->hasSelfPaintingLayer())
                 curr->paint(childInfo, paintOffset, lineTop, lineBottom);
@@ -1335,7 +1335,7 @@ static LayoutRect clipRectForNinePieceImageStrip(InlineFlowBox* box, const NineP
 
 void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseForeground)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Foreground)
         return;
 
     LayoutRect frameRect(this->frameRect());
@@ -1414,7 +1414,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
 
 void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhaseMask)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
         return;
 
     LayoutRect frameRect(this->frameRect());
@@ -1431,7 +1431,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;
     bool compositedMask = renderer().hasLayer() && renderer().layer()->hasCompositedMask();
-    bool flattenCompositingLayers = renderer().view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers;
+    bool flattenCompositingLayers = renderer().view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
     CompositeOperator compositeOp = CompositeSourceOver;
     if (!compositedMask || flattenCompositingLayers) {
         if ((maskBoxImage && renderer().style().maskLayers().hasImage()) || renderer().style().maskLayers().next())

@@ -178,7 +178,7 @@ static inline bool textShouldBePainted(const RenderSVGInlineText& textRenderer)
 void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 {
     ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
-    ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
+    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
     ASSERT(truncation() == cNoTruncation);
 
     if (renderer().style().visibility() != Visibility::Visible)
@@ -188,7 +188,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
     ASSERT(!parentRenderer.document().printing());
 
     // Determine whether or not we're selected.
-    bool paintSelectedTextOnly = paintInfo.phase == PaintPhaseSelection;
+    bool paintSelectedTextOnly = paintInfo.phase == PaintPhase::Selection;
     bool hasSelection = selectionState() != RenderObject::SelectionNone;
     if (!hasSelection || paintSelectedTextOnly)
         return;
@@ -236,7 +236,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
 {
     ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
-    ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
+    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
     ASSERT(truncation() == cNoTruncation);
 
     if (renderer().style().visibility() != Visibility::Visible)
@@ -247,8 +247,8 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     auto& parentRenderer = parent()->renderer();
 
-    bool paintSelectedTextOnly = paintInfo.phase == PaintPhaseSelection;
-    bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior & PaintBehaviorSkipSelectionHighlight);
+    bool paintSelectedTextOnly = paintInfo.phase == PaintPhase::Selection;
+    bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
     bool hasSelection = !parentRenderer.document().printing() && selectionState() != RenderObject::SelectionNone;
     if (!hasSelection && paintSelectedTextOnly)
         return;
@@ -277,7 +277,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             selectionStyle = &style;
     }
 
-    if (renderer().view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask) {
+    if (renderer().view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask)) {
         hasFill = true;
         hasVisibleStroke = false;
     }

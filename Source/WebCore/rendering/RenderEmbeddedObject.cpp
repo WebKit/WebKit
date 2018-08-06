@@ -249,7 +249,7 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
 void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // The relevant repainted object heuristic is not tuned for plugin documents.
-    bool countsTowardsRelevantObjects = !document().isPluginDocument() && paintInfo.phase == PaintPhaseForeground;
+    bool countsTowardsRelevantObjects = !document().isPluginDocument() && paintInfo.phase == PaintPhase::Foreground;
 
     if (isPluginUnavailable()) {
         if (countsTowardsRelevantObjects)
@@ -292,7 +292,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     if (!showsUnavailablePluginIndicator())
         return;
 
-    if (paintInfo.phase == PaintPhaseSelection)
+    if (paintInfo.phase == PaintPhase::Selection)
         return;
 
     GraphicsContext& context = paintInfo.context();

@@ -916,7 +916,7 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
     if (pushedClip)
         popContentsClip(paintInfo, phase, adjustedPaintOffset);
 
-    if ((phase == PaintPhaseOutline || phase == PaintPhaseSelfOutline) && style().visibility() == Visibility::Visible)
+    if ((phase == PaintPhase::Outline || phase == PaintPhase::SelfOutline) && style().visibility() == Visibility::Visible)
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 }
 
@@ -941,7 +941,7 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
     PaintPhase paintPhase = paintInfo.phase;
     RenderTableRow& row = downcast<RenderTableRow>(*cell->parent());
 
-    if (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) {
+    if (paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) {
         // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
         // the column group, column, row group, row, and then the cell.
         RenderTableCol* column = table()->colElement(cell->col());
@@ -1200,7 +1200,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 
     if (dirtiedColumns.start < dirtiedColumns.end) {
         if (!m_hasMultipleCellLevels && !m_overflowingCells.size()) {
-            if (paintInfo.phase == PaintPhaseCollapsedTableBorders) {
+            if (paintInfo.phase == PaintPhase::CollapsedTableBorders) {
                 // Collapsed borders are painted from the bottom right to the top left so that precedence
                 // due to cell position is respected. We need to paint one row beyond the topmost dirtied
                 // row to calculate its collapsed border value.
@@ -1293,7 +1293,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             else
                 std::sort(cells.begin(), cells.end(), compareCellPositionsWithOverflowingCells);
 
-            if (paintInfo.phase == PaintPhaseCollapsedTableBorders) {
+            if (paintInfo.phase == PaintPhase::CollapsedTableBorders) {
                 for (unsigned i = cells.size(); i > 0; --i) {
                     LayoutPoint cellPoint = flipForWritingModeForChild(cells[i - 1], paintOffset);
                     cells[i - 1]->paintCollapsedBorders(paintInfo, cellPoint);

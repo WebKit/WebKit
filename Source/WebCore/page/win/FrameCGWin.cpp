@@ -54,8 +54,8 @@ static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext& 
 
 GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
 {
-    PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
-    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
+    auto oldPaintBehavior = frame->view()->paintBehavior();
+    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehavior::FlattenCompositingLayers);
 
     void* bits = nullptr;
     auto hdc = adoptGDIObject(::CreateCompatibleDC(0));

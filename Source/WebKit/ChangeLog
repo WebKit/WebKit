@@ -1,3 +1,17 @@
+2018-08-06  Alex Christensen  <achristensen@webkit.org>
+
+        Use enum classes and OptionSets for PaintPhase and PaintBehavior
+        https://bugs.webkit.org/show_bug.cgi?id=188323
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::shouldCreateTransientPaintingSnapshot const):
+
 2018-08-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234552.

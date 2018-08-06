@@ -261,7 +261,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
         }
     }
 
-    if (info.phase == PaintPhaseOutline || info.phase == PaintPhaseSelfOutline || info.phase == PaintPhaseChildOutlines) {
+    if (info.phase == PaintPhase::Outline || info.phase == PaintPhase::SelfOutline || info.phase == PaintPhase::ChildOutlines) {
         ListHashSet<RenderInline*>::iterator end = info.outlineObjects->end();
         for (ListHashSet<RenderInline*>::iterator it = info.outlineObjects->begin(); it != end; ++it) {
             RenderInline* flow = *it;

@@ -42,6 +42,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -166,7 +167,7 @@ public:
     // Returns true if the flush was completed.
     WEBCORE_EXPORT bool flushCompositingStateIncludingSubframes();
 
-    // Returns true when a paint with the PaintBehaviorFlattenCompositingLayers flag set gives
+    // Returns true when a paint with the PaintBehavior::FlattenCompositingLayers flag set gives
     // a faithful representation of the content.
     WEBCORE_EXPORT bool isSoftwareRenderable() const;
 
@@ -347,7 +348,7 @@ public:
     WEBCORE_EXPORT void paintContents(GraphicsContext&, const IntRect& dirtyRect, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin) final;
 
     struct PaintingState {
-        PaintBehavior paintBehavior;
+        OptionSet<PaintBehavior> paintBehavior;
         bool isTopLevelPainter;
         bool isFlatteningPaintOfRootFrame;
         PaintingState()
@@ -365,8 +366,8 @@ public:
     WEBCORE_EXPORT void didReplaceMultipartContent();
 #endif
 
-    WEBCORE_EXPORT void setPaintBehavior(PaintBehavior);
-    WEBCORE_EXPORT PaintBehavior paintBehavior() const;
+    WEBCORE_EXPORT void setPaintBehavior(OptionSet<PaintBehavior>);
+    WEBCORE_EXPORT OptionSet<PaintBehavior> paintBehavior() const;
     bool isPainting() const;
     bool hasEverPainted() const { return !!m_lastPaintTime; }
     void setLastPaintTime(MonotonicTime lastPaintTime) { m_lastPaintTime = lastPaintTime; }
@@ -854,7 +855,7 @@ private:
     std::optional<LayoutRect> m_visualViewportOverrideRect; // Used when the iOS keyboard is showing.
 
     RefPtr<Node> m_nodeToDraw;
-    PaintBehavior m_paintBehavior;
+    OptionSet<PaintBehavior> m_paintBehavior;
     bool m_isPainting;
 
     unsigned m_visuallyNonEmptyCharacterCount;

@@ -43,7 +43,7 @@ namespace WebCore {
 
 static inline bool isRenderingMaskImage(const RenderObject& object)
 {
-    return object.view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
+    return object.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask);
 }
 
 SVGRenderingContext::~SVGRenderingContext()
@@ -285,7 +285,7 @@ void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderE
 
     // Rendering into a buffer implies we're being used for masking, clipping, patterns or filters. In each of these
     // cases we don't want to paint the selection.
-    PaintInfo info(image->context(), LayoutRect::infiniteRect(), PaintPhaseForeground, PaintBehaviorSkipSelectionHighlight);
+    PaintInfo info(image->context(), LayoutRect::infiniteRect(), PaintPhase::Foreground, PaintBehavior::SkipSelectionHighlight);
 
     AffineTransform& contentTransformation = currentContentTransformation();
     AffineTransform savedContentTransformation = contentTransformation;

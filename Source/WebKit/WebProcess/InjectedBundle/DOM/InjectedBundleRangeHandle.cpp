@@ -150,12 +150,12 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 
     graphicsContext->translate(-paintRect.location());
 
-    PaintBehavior oldPaintBehavior = frameView->paintBehavior();
-    PaintBehavior paintBehavior = oldPaintBehavior | PaintBehaviorSelectionOnly | PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;
+    OptionSet<PaintBehavior> oldPaintBehavior = frameView->paintBehavior();
+    OptionSet<PaintBehavior> paintBehavior = oldPaintBehavior | PaintBehavior::SelectionOnly | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting;
     if (options & SnapshotOptionsForceBlackText)
-        paintBehavior |= PaintBehaviorForceBlackText;
+        paintBehavior |= PaintBehavior::ForceBlackText;
     if (options & SnapshotOptionsForceWhiteText)
-        paintBehavior |= PaintBehaviorForceWhiteText;
+        paintBehavior |= PaintBehavior::ForceWhiteText;
 
     frameView->setPaintBehavior(paintBehavior);
     ownerDocument.updateLayout();

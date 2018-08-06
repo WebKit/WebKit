@@ -49,11 +49,11 @@ GDIObject<HBITMAP> imageFromSelection(Frame* frame, bool forceBlackText)
 {
     frame->document()->updateLayout();
 
-    frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
+    frame->view()->setPaintBehavior(OptionSet<PaintBehavior>(PaintBehavior::SelectionOnly) | (forceBlackText ? OptionSet<PaintBehavior>(PaintBehavior::ForceBlackText) : OptionSet<PaintBehavior>()));
     FloatRect fr = frame->selection().selectionBounds();
     IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()), static_cast<int>(fr.width()), static_cast<int>(fr.height()));
     GDIObject<HBITMAP> image = imageFromRect(frame, ir);
-    frame->view()->setPaintBehavior(PaintBehaviorNormal);
+    frame->view()->setPaintBehavior(PaintBehavior::Normal);
     return image;
 }
 

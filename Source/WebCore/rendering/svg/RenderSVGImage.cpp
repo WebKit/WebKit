@@ -139,7 +139,7 @@ void RenderSVGImage::layout()
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhaseForeground
+    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground
         || style().visibility() == Visibility::Hidden || !imageResource().cachedImage())
         return;
 
@@ -151,7 +151,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
     GraphicsContextStateSaver stateSaver(childPaintInfo.context());
     childPaintInfo.applyTransform(m_localTransform);
 
-    if (childPaintInfo.phase == PaintPhaseForeground) {
+    if (childPaintInfo.phase == PaintPhase::Foreground) {
         SVGRenderingContext renderingContext(*this, childPaintInfo);
 
         if (renderingContext.isRenderingPrepared()) {

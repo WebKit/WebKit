@@ -35,7 +35,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGInlineFlowBox);
 
 void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
 {
-    ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
+    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
     ASSERT(!paintInfo.context().paintingDisabled());
 
     PaintInfo childPaintInfo(paintInfo);
@@ -49,7 +49,7 @@ void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
 
 void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
 {
-    ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
+    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
     ASSERT(!paintInfo.context().paintingDisabled());
 
     SVGRenderingContext renderingContext(renderer(), paintInfo, SVGRenderingContext::SaveGraphicsContext);

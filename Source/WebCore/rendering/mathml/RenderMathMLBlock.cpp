@@ -110,7 +110,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderBlock::paint(info, paintOffset);
 
-    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground)
+    if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground)
         return;
 
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());

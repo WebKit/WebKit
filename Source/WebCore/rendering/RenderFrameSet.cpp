@@ -126,7 +126,7 @@ void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& b
 
 void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhaseForeground)
+    if (paintInfo.phase != PaintPhase::Foreground)
         return;
     
     RenderObject* child = firstChild();

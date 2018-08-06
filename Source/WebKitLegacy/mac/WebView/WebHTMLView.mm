@@ -7011,8 +7011,8 @@ static CGImageRef imageFromRect(Frame* frame, CGRect rect)
     
     WebHTMLView *view = (WebHTMLView *)documentView;
     
-    PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
-    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting);
+    OptionSet<PaintBehavior> oldPaintBehavior = frame->view()->paintBehavior();
+    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -7067,10 +7067,10 @@ static CGImageRef imageFromRect(Frame* frame, CGRect rect)
 static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
 {
     ASSERT(!WebThreadIsEnabled() || WebThreadIsLocked());
-    frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
+    frame->view()->setPaintBehavior(PaintBehavior::SelectionOnly | (forceBlackText ? OptionSet<PaintBehavior>(PaintBehavior::ForceBlackText) : OptionSet<PaintBehavior>()));
     frame->document()->updateLayout();
     CGImageRef result = imageFromRect(frame, frame->selection().selectionBounds());
-    frame->view()->setPaintBehavior(PaintBehaviorNormal);
+    frame->view()->setPaintBehavior(PaintBehavior::Normal);
     return result;
 }
 

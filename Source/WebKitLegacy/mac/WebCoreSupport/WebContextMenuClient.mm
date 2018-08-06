@@ -213,8 +213,8 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     RefPtr<Range> range = Range::create(node->document(), Position(node, Position::PositionIsBeforeAnchor), Position(node, Position::PositionIsAfterAnchor));
     frameView->frame().selection().setSelection(VisibleSelection(*range), FrameSelection::DoNotSetFocus);
 
-    PaintBehavior oldPaintBehavior = frameView->paintBehavior();
-    frameView->setPaintBehavior(PaintBehaviorSelectionOnly);
+    OptionSet<PaintBehavior> oldPaintBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(PaintBehavior::SelectionOnly);
 
     buffer->context().translate(-toFloatSize(rect.location()));
     frameView->paintContents(buffer->context(), roundedIntRect(rect));

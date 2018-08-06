@@ -88,7 +88,7 @@ public:
     OptionSet(T t)
         : m_storage(static_cast<StorageType>(t))
     {
-        ASSERT_WITH_MESSAGE(hasOneBitSet(static_cast<StorageType>(t)), "Enumerator is not a positive power of two.");
+        ASSERT_WITH_MESSAGE(!m_storage || hasOneBitSet(static_cast<StorageType>(t)), "Enumerator is not a zero or a positive power of two.");
     }
 
     OptionSet(std::initializer_list<T> initializerList)

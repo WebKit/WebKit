@@ -71,7 +71,7 @@ void InlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (!paintInfo.shouldPaintWithinRoot(renderer()))
         return;
 
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
         return;
 
     LayoutPoint childPoint = paintOffset;

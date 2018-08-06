@@ -1437,7 +1437,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
     if (!buffer)
         return nullptr;
 
-    layer->paint(buffer->context(), paintingRect, LayoutSize(), PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting, nullptr, RenderLayer::PaintLayerPaintingCompositingAllPhases);
+    layer->paint(buffer->context(), paintingRect, LayoutSize(), OptionSet<PaintBehavior>(PaintBehavior::FlattenCompositingLayers) | PaintBehavior::Snapshotting, nullptr, RenderLayer::PaintLayerPaintingCompositingAllPhases);
 
     return ImageBuffer::sinkIntoImage(WTFMove(buffer));
 }
