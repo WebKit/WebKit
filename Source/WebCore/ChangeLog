@@ -1,3 +1,47 @@
+2018-08-06  Charlie Turner  <cturner@igalia.com>
+
+        Return extracted key ids as an optional
+        https://bugs.webkit.org/show_bug.cgi?id=188303
+
+        Reviewed by Darin Adler.
+
+        An empty list of extracted key ids was being considered a failure
+        case before this patch. In the PSSH boxes from the CENC standard,
+        it's not uncommon for the box to be version 0, meaning it has no
+        embedded key ids, so the case when there's an empty list should
+        not be treated as an error. Given this, the interface should be
+        more general and allow for a sentinel value indicating a parsing
+        error rather than an absence of key ids.
+
+        Covered by existing tests.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsKeyids): Change return type to be wrapped
+        in an optional, and make parsing errors return a nullopt rather
+        than an empty vector.
+        (WebCore::sanitizeKeyids): Use the new optional interface, return
+        a null RefPtr in the case of a parsing error, this method may now
+        return an empty vector.
+        (WebCore::extractKeyIDsCenc): Not implemented, so return an error
+        value rather than an empty vector.
+        (WebCore::extractKeyIDsWebM): Ditto.
+        (WebCore::InitDataRegistry::extractKeyIDs): Ditto.
+        * Modules/encryptedmedia/InitDataRegistry.h: Update the interface
+        to use an optional return type.
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsSinf): Update
+        to use the new interface.
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsSkd): Ditto.
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h: Ditto.
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::keyIDs): Convert
+        the optional value into a vector, since it is assumed you can not
+        have an empty vector of key ids in the init datas FPS supports.
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::requestLicense): Only return an error
+        if there really was a parsing error, rather than the case of there
+        being zero key ids in the init data payload.
+
 2018-08-06  Frederic Wang  <fwang@igalia.com>
 
         Make two-arguments versions of scrollBy/scrollTo depend on the one-argument versions

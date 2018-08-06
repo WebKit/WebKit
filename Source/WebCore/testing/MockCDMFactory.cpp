@@ -283,13 +283,13 @@ void MockCDMInstance::requestLicense(LicenseType licenseType, const AtomicString
     }
 
     auto keyIDs = InitDataRegistry::shared().extractKeyIDs(initDataType, initData);
-    if (keyIDs.isEmpty()) {
+    if (!keyIDs || keyIDs.value().isEmpty()) {
         callback(SharedBuffer::create(), emptyString(), false, SuccessValue::Failed);
         return;
     }
 
     String sessionID = createCanonicalUUIDString();
-    factory->addKeysToSessionWithID(sessionID, WTFMove(keyIDs));
+    factory->addKeysToSessionWithID(sessionID, WTFMove(keyIDs.value()));
 
     CString license { "license" };
     callback(SharedBuffer::create(license.data(), license.length()), sessionID, false, SuccessValue::Succeeded);

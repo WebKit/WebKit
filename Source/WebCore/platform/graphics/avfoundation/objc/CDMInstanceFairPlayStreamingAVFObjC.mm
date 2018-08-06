@@ -241,8 +241,12 @@ Vector<Ref<SharedBuffer>> CDMInstanceFairPlayStreamingAVFObjC::keyIDs()
         return Vector<Ref<SharedBuffer>>::from(SharedBuffer::create([(NSString *)m_request.get().identifier dataUsingEncoding:NSUTF8StringEncoding]));
     if ([m_request.get().identifier isKindOfClass:[NSData class]])
         return Vector<Ref<SharedBuffer>>::from(SharedBuffer::create((NSData *)m_request.get().identifier));
-    if (m_request.get().initializationData)
-        return CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(m_request.get().initializationData));
+    if (m_request.get().initializationData) {
+        auto sinfKeyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(m_request.get().initializationData));
+        if (!sinfKeyIDs)
+            return { };
+        return WTFMove(sinfKeyIDs.value());
+    }
     return { };
 }
 

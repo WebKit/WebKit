@@ -29,6 +29,7 @@
 
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -45,11 +46,11 @@ public:
     friend class NeverDestroyed<InitDataRegistry>;
 
     RefPtr<SharedBuffer> sanitizeInitData(const AtomicString& initDataType, const SharedBuffer&);
-    WEBCORE_EXPORT Vector<Ref<SharedBuffer>> extractKeyIDs(const AtomicString& initDataType, const SharedBuffer&);
+    WEBCORE_EXPORT std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDs(const AtomicString& initDataType, const SharedBuffer&);
 
     struct InitDataTypeCallbacks {
         using SanitizeInitDataCallback = Function<RefPtr<SharedBuffer>(const SharedBuffer&)>;
-        using ExtractKeyIDsCallback = Function<Vector<Ref<SharedBuffer>>(const SharedBuffer&)>;
+        using ExtractKeyIDsCallback = Function<std::optional<Vector<Ref<SharedBuffer>>>(const SharedBuffer&)>;
 
         SanitizeInitDataCallback sanitizeInitData;
         ExtractKeyIDsCallback extractKeyIDs;
