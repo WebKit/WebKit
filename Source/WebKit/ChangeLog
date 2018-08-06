@@ -1,3 +1,59 @@
+2018-08-06  Chris Dumez  <cdumez@apple.com>
+
+        Fix IPC::Connection leak in StorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=188321
+        <rdar://problem/42748485>
+
+        Reviewed by Alex Christensen.
+
+        When a StorageMap is destroyed on WebContent process side, StorageManager::destroyStorageMap()
+        gets called via IPC with a (IPC::Connection, StorageMapID) pair. Normally, it removes this
+        pair from m_storageAreasByConnection. However, if this is a *transient* StorageMap (sessionStorage),
+        then we keep the pair in the map and we merely remove the StorageMapID as a listener from the
+        StorageArea. We do this so that:
+        1. The StorageArea stays alive so that it can be reused later on for the same security origin, on
+           the same IPC::Connection (logic for this is in StorageManager::createTransientLocalStorageMap()
+        2. Removing the StorageMapID as a listener from the StorageArea is important because
+           StorageArea::m_eventListeners holds a strong reference to the IPC::Connection in a std::pair
+           with the StorageMapID (HashSet<std::pair<RefPtr<IPC::Connection>, uint64_t>> m_eventListeners).
+
+        As mentioned in 1 above, in StorageManager::createTransientLocalStorageMap(), there is logic to
+        check if there is already an existing StorageArea for the given IPC::Connection that is transient
+        and is for the same security origin. In this case, we could avoid constructing a new StorageArea
+        and we would:
+        1. Add a new entry to m_storageAreasByConnection with the key (connection, newStorageMapID), using
+           same same StorageArea as value.
+        2. Remove the previous (connection, oldStorageMapID) key from m_storageAreasByConnection.
+
+        Step 2 here is wrong and is updated in this patch. It is only safe to remove the previous 
+        (connection, oldStorageMapID) if this oldStorageMapID no longer exists (i.e. destroyStorageMap()
+        was already called for it). This patch thus adds a check before removing (connection, oldStorageMapID)
+        from the HashMap to make sure that the oldStorageMapID is no longer a listener of the StorageArea).
+
+        This would cause leaks in the following case:
+        1. We construct a StorageArea for (connection1, storageMapId1)
+        2. We ask for a StorageArea for (connection1, storageMapId2) and decide to reuse the existing StorageArea
+           since it has the same SecurityOrigin.
+        3. As a result of step2, we would remove (connection1, storageMapId1) from m_storageAreasByConnection
+           and add (connection1, storageMapId2), even though there is still a StorageMap with storageMapId1
+           on WebContent process side.
+        4. Later on, we would try to call destroyStorageMap(connection1, storageMap1), it would fail to find
+           it in m_storageAreasByConnection and return early. It would therefore fail to remove storageMapId1
+           as a listener of the StorageArea which still exists.
+        -> This would leak the IPC::Connection that there would be a std::pair<RefPtr<IPC::Connection>, StorageMapID>
+           with value (connection1, storageMap1) which would get leaked and it would ref the IPC::Connection.
+
+        This code should really be refactored to be less leak prone but I have kept the patch minimal for now
+        to facilitate cherry-picking.
+
+        Note that this would reproduce very easily on sina.com.cn, when clicking bold links at the top, which
+        opens new tabs to different pages in the same WebContent process. When closing all Safari windows, the
+        IPC::Connection for this WebContent process would stay alive.
+
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::hasListener const):
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+
 2018-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Make BlendMode an enum class
