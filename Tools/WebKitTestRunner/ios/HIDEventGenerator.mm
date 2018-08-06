@@ -171,9 +171,9 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     return eventGenerator;
 }
 
-+ (unsigned)nextEventCallbackID
++ (CFIndex)nextEventCallbackID
 {
-    static unsigned callbackID = 0;
+    static CFIndex callbackID = 0;
     return ++callbackID;
 }
 
@@ -479,24 +479,21 @@ static InterpolationType interpolationFromString(NSString *string)
 
 - (BOOL)_sendMarkerHIDEventWithCompletionBlock:(void (^)(void))completionBlock
 {
-    unsigned callbackID = [HIDEventGenerator nextEventCallbackID];
-    void (^completionBlockCopy)() = Block_copy(completionBlock);
-    [_eventCallbacks setObject:completionBlockCopy forKey:@(callbackID)];
+    auto callbackID = [HIDEventGenerator nextEventCallbackID];
+    [_eventCallbacks setObject:Block_copy(completionBlock) forKey:@(callbackID)];
 
-    uint64_t machTime = mach_absolute_time();
-    RetainPtr<IOHIDEventRef> markerEvent = adoptCF(IOHIDEventCreateVendorDefinedEvent(kCFAllocatorDefault,
-        machTime,
+    auto markerEvent = adoptCF(IOHIDEventCreateVendorDefinedEvent(kCFAllocatorDefault,
+        mach_absolute_time(),
         kHIDPage_VendorDefinedStart + 100,
         0,
         1,
         (uint8_t*)&callbackID,
-        sizeof(unsigned),
+        sizeof(CFIndex),
         kIOHIDEventOptionNone));
     
     if (markerEvent) {
-        markerEvent.get();
-        dispatch_async(dispatch_get_main_queue(), ^{
-            uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
+        dispatch_async(dispatch_get_main_queue(), [markerEvent = WTFMove(markerEvent)] {
+            auto contextID = [UIApplication sharedApplication].keyWindow._contextId;
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextID, false, false, NULL, 0, 0);
             [[UIApplication sharedApplication] _enqueueHIDEvent:markerEvent.get()];

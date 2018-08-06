@@ -1,3 +1,37 @@
+2018-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Layout tests that send HID events cause WebKitTestRunner to crash on recent SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=188334
+        <rdar://problem/40630074>
+
+        Reviewed by Tim Horton.
+
+        To mark the end of previously dispatched IOHID events, HIDEventGenerator currently sends a vendor-defined event
+        and stores the completion callback ID for the previously dispatched events as vendor-defined data. When this
+        vendor-defined marker event is handled by the application, we then read the callback ID back from the event, map
+        it to a completion block, and invoke the completion block to signal that the previous HID event has been
+        processed.
+
+        This callback ID is an unsigned, so we tell IOKit that we need `sizeof(unsigned)` (4 bytes) to store it. On
+        shipping software, IOKit clamps this to a minimum of 8 bytes, i.e. `sizeof(CFIndex)`. When we later call
+        IOHIDEventGetIntegerValue to read the value of our vendor-defined data as a CFIndex, we get our expected
+        callback ID because the buffer was clamped to 8 bytes.
+
+        However, on recent iOS SDKs that contain the fix for <rdar://problem/20082284>, IOKit no longer clamps the size
+        of the vendor-defined data buffer to 8 bytes. This means that when we try to use IOHIDEventGetIntegerValue to
+        read our callback ID back, we end up getting a CFIndex where the lower 4 bytes are the callback ID we wrote, and
+        the upper 4 bytes are garbage. In the case where any of these upper 4 bytes are non-zero, we fail to map the
+        callback ID to a completion handler, and so we never finish dispatching the HID event, causing an exception to
+        be thrown.
+
+        To fix this, we adjust callback ID to be a CFIndex, which matches IOHIDEventGetIntegerValue's return type.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (+[HIDEventGenerator nextEventCallbackID]):
+        (-[HIDEventGenerator _sendMarkerHIDEventWithCompletionBlock:]):
+
+        Also refactor a bit of `-_sendMarkerHIDEventWithCompletionBlock:` by using auto and move semantics.
+
 2018-08-03  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault
