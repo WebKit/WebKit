@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(SAFE_BROWSING)
+#if WK_API_ENABLED && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
 
 #import <Foundation/Foundation.h>
 
@@ -73,3 +73,4 @@ WTF_EXTERN_C_END
 #endif
 
 #endif
+
