@@ -27,7 +27,7 @@
 #include "GObjectEventListener.h"
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLOptGroupElement.h>
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
 #include "WebKitDOMHTMLCollectionPrivate.h"

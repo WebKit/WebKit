@@ -26,7 +26,7 @@
 #include <WebCore/Document.h>
 #include "GObjectEventListener.h"
 #include <WebCore/HTMLNames.h>
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include <WebCore/StyledElement.h>
 #include "WebKitDOMAttrPrivate.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"

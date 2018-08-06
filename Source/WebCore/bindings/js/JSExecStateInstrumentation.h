@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +24,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSMainThreadExecState.h"
+#pragma once
 
-#include "Microtasks.h"
-#include "RejectedPromiseTracker.h"
-#include "ScriptExecutionContext.h"
-#include "ScriptState.h"
+#include "InspectorInstrumentation.h"
+#include "JSExecState.h"
+#include <JavaScriptCore/FunctionExecutable.h>
 
 namespace WebCore {
 
-JSC::ExecState* JSMainThreadExecState::s_mainThreadState = 0;
-
-void JSMainThreadExecState::didLeaveScriptContext(JSC::ExecState* exec)
+template<typename Type, Type jsType, class DataType>
+inline InspectorInstrumentationCookie JSExecState::instrumentFunctionInternal(ScriptExecutionContext* context, Type callType, const DataType& callData)
 {
-    MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
-    scriptExecutionContextFromExecState(exec)->ensureRejectedPromiseTracker().processQueueSoon();
+    if (!InspectorInstrumentation::timelineAgentEnabled(context))
+        return InspectorInstrumentationCookie();
+    String resourceName;
+    int lineNumber = 1;
+    if (callType == jsType) {
+        resourceName = callData.js.functionExecutable->sourceURL();
+        lineNumber = callData.js.functionExecutable->firstLine();
+    } else
+        resourceName = "undefined";
+    return InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
 }
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
+inline InspectorInstrumentationCookie JSExecState::instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType type, const JSC::CallData& data)
 {
-    if (isMainThread())
-        return JSMainThreadExecState::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
-    return JSC::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
+    return instrumentFunctionInternal<JSC::CallType, JSC::CallType::JS, JSC::CallData>(context, type, data);
 }
 
-JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
+inline InspectorInstrumentationCookie JSExecState::instrumentFunctionConstruct(ScriptExecutionContext* context, JSC::ConstructType type, const JSC::ConstructData& data)
 {
-    if (isMainThread())
-        return JSMainThreadExecState::evaluate(exec, source, thisValue, returnedException);
-    return JSC::evaluate(exec, source, thisValue, returnedException);
+    return instrumentFunctionInternal<JSC::ConstructType, JSC::ConstructType::JS, JSC::ConstructData>(context, type, data);
 }
 
 } // namespace WebCore

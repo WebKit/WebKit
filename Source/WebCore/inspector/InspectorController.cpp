@@ -58,7 +58,7 @@
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include "Page.h"
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"

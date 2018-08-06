@@ -32,8 +32,8 @@
 #include "FrameLoader.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
-#include "JSMainThreadExecState.h"
-#include "JSMainThreadExecStateInstrumentation.h"
+#include "JSExecState.h"
+#include "JSExecStateInstrumentation.h"
 #include "JSWorkerGlobalScope.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
@@ -112,13 +112,10 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
         return;
     }
 
-    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(&context, callType, callData);
+    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(&context, callType, callData);
 
     NakedPtr<JSC::Exception> exception;
-    if (is<Document>(context))
-        JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
-    else
-        JSC::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
+    JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
 
     InspectorInstrumentation::didCallFunction(cookie, &context);
 

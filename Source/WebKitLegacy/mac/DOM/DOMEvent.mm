@@ -30,7 +30,7 @@
 #import "DOMNodeInternal.h"
 #import <WebCore/Event.h>
 #import "ExceptionHandlers.h"
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/Node.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/URL.h>

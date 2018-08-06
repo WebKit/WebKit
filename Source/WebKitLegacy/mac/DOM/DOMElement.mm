@@ -37,7 +37,7 @@
 #import <WebCore/Element.h>
 #import <WebCore/HTMLCollection.h>
 #import <WebCore/HTMLNames.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/NameNodeList.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/StyleProperties.h>

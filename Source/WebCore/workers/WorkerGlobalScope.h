@@ -44,6 +44,7 @@ namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
+class MicrotaskQueue;
 class Performance;
 class ScheduledAction;
 class WorkerInspectorController;
@@ -77,6 +78,8 @@ public:
     void clearScript() { m_script = nullptr; }
 
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
+
+    MicrotaskQueue& microtaskQueue() const { return *m_microtaskQueue; }
 
     WorkerThread& thread() const { return m_thread; }
 
@@ -115,6 +118,8 @@ public:
     Performance& performance() const;
 
     void removeAllEventListeners() final;
+
+    void removeMicrotaskQueue();
 
     void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     void createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
@@ -179,6 +184,7 @@ private:
     WorkerThread& m_thread;
     std::unique_ptr<WorkerScriptController> m_script;
     std::unique_ptr<WorkerInspectorController> m_inspectorController;
+    std::unique_ptr<MicrotaskQueue> m_microtaskQueue;
 
     bool m_closing { false };
     bool m_isOnline;

@@ -30,6 +30,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
+namespace JSC {
+class ExecState;
+}
+
 namespace WebCore {
 
     class QualifiedNameCache;
@@ -58,6 +62,9 @@ namespace WebCore {
 
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 
+        JSC::ExecState* currentState() const { return m_currentState; }
+        void setCurrentState(JSC::ExecState* state) { m_currentState = state; }
+
 #if USE(WEB_THREAD)
         void setWebCoreThreadData();
 #endif
@@ -70,6 +77,7 @@ namespace WebCore {
         std::unique_ptr<EventNames> m_eventNames;
         std::unique_ptr<ThreadTimers> m_threadTimers;
         std::unique_ptr<QualifiedNameCache> m_qualifiedNameCache;
+        JSC::ExecState* m_currentState { nullptr };
 
 #ifndef NDEBUG
         bool m_isMainThread;

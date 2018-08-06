@@ -53,7 +53,7 @@
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "IntSize.h"
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "OESElementIndexUint.h"
@@ -1534,7 +1534,7 @@ void WebGLRenderingContextBase::compileShader(WebGLShader* shader)
     auto* canvas = htmlCanvas();
 
     if (canvas && m_synthesizedErrorsToConsole && !value) {
-        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState());
+        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
 
         for (auto& error : getShaderInfoLog(shader).split('\n'))
             canvas->document().addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, "WebGL: " + error, stackTrace.copyRef()));
@@ -5658,7 +5658,7 @@ void WebGLRenderingContextBase::printToConsole(MessageLevel level, const String&
 
     // Error messages can occur during function calls, so show stack traces for them.
     if (level == MessageLevel::Error) {
-        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState());
+        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
         consoleMessage = std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message, WTFMove(stackTrace));
     } else
         consoleMessage = std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message);

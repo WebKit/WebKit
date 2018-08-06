@@ -1,3 +1,129 @@
+2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add support for microtasks in workers
+        https://bugs.webkit.org/show_bug.cgi?id=188246
+
+        Reviewed by Darin Adler.
+
+        Rename JSMainThreadExecState.h to JSExecState.h.
+
+        * DOM/DOMAttr.mm:
+        * DOM/DOMBlob.mm:
+        * DOM/DOMCDATASection.mm:
+        * DOM/DOMCSSCharsetRule.mm:
+        * DOM/DOMCSSFontFaceRule.mm:
+        * DOM/DOMCSSImportRule.mm:
+        * DOM/DOMCSSMediaRule.mm:
+        * DOM/DOMCSSPageRule.mm:
+        * DOM/DOMCSSPrimitiveValue.mm:
+        * DOM/DOMCSSRule.mm:
+        * DOM/DOMCSSRuleList.mm:
+        * DOM/DOMCSSStyleDeclaration.mm:
+        * DOM/DOMCSSStyleRule.mm:
+        * DOM/DOMCSSStyleSheet.mm:
+        * DOM/DOMCSSUnknownRule.mm:
+        * DOM/DOMCSSValue.mm:
+        * DOM/DOMCSSValueList.mm:
+        * DOM/DOMCharacterData.mm:
+        * DOM/DOMComment.mm:
+        * DOM/DOMCounter.mm:
+        * DOM/DOMDocument.mm:
+        * DOM/DOMDocumentFragment.mm:
+        * DOM/DOMDocumentType.mm:
+        * DOM/DOMElement.mm:
+        * DOM/DOMEvent.mm:
+        * DOM/DOMFile.mm:
+        * DOM/DOMFileList.mm:
+        * DOM/DOMHTML.mm:
+        * DOM/DOMHTMLAnchorElement.mm:
+        * DOM/DOMHTMLAppletElement.mm:
+        * DOM/DOMHTMLAreaElement.mm:
+        * DOM/DOMHTMLBRElement.mm:
+        * DOM/DOMHTMLBaseElement.mm:
+        * DOM/DOMHTMLBaseFontElement.mm:
+        * DOM/DOMHTMLBodyElement.mm:
+        * DOM/DOMHTMLButtonElement.mm:
+        * DOM/DOMHTMLCanvasElement.mm:
+        * DOM/DOMHTMLCollection.mm:
+        * DOM/DOMHTMLDListElement.mm:
+        * DOM/DOMHTMLDirectoryElement.mm:
+        * DOM/DOMHTMLDivElement.mm:
+        * DOM/DOMHTMLDocument.mm:
+        * DOM/DOMHTMLElement.mm:
+        * DOM/DOMHTMLEmbedElement.mm:
+        * DOM/DOMHTMLFieldSetElement.mm:
+        * DOM/DOMHTMLFontElement.mm:
+        * DOM/DOMHTMLFormElement.mm:
+        * DOM/DOMHTMLFrameElement.mm:
+        * DOM/DOMHTMLFrameSetElement.mm:
+        * DOM/DOMHTMLHRElement.mm:
+        * DOM/DOMHTMLHeadElement.mm:
+        * DOM/DOMHTMLHeadingElement.mm:
+        * DOM/DOMHTMLHtmlElement.mm:
+        * DOM/DOMHTMLIFrameElement.mm:
+        * DOM/DOMHTMLImageElement.mm:
+        * DOM/DOMHTMLInputElement.mm:
+        * DOM/DOMHTMLLIElement.mm:
+        * DOM/DOMHTMLLabelElement.mm:
+        * DOM/DOMHTMLLegendElement.mm:
+        * DOM/DOMHTMLLinkElement.mm:
+        * DOM/DOMHTMLMapElement.mm:
+        * DOM/DOMHTMLMarqueeElement.mm:
+        * DOM/DOMHTMLMediaElement.mm:
+        * DOM/DOMHTMLMenuElement.mm:
+        * DOM/DOMHTMLMetaElement.mm:
+        * DOM/DOMHTMLModElement.mm:
+        * DOM/DOMHTMLOListElement.mm:
+        * DOM/DOMHTMLObjectElement.mm:
+        * DOM/DOMHTMLOptGroupElement.mm:
+        * DOM/DOMHTMLOptionElement.mm:
+        * DOM/DOMHTMLOptionsCollection.mm:
+        * DOM/DOMHTMLParagraphElement.mm:
+        * DOM/DOMHTMLParamElement.mm:
+        * DOM/DOMHTMLPreElement.mm:
+        * DOM/DOMHTMLQuoteElement.mm:
+        * DOM/DOMHTMLScriptElement.mm:
+        * DOM/DOMHTMLSelectElement.mm:
+        * DOM/DOMHTMLStyleElement.mm:
+        * DOM/DOMHTMLTableCaptionElement.mm:
+        * DOM/DOMHTMLTableCellElement.mm:
+        * DOM/DOMHTMLTableColElement.mm:
+        * DOM/DOMHTMLTableElement.mm:
+        * DOM/DOMHTMLTableRowElement.mm:
+        * DOM/DOMHTMLTableSectionElement.mm:
+        * DOM/DOMHTMLTextAreaElement.mm:
+        * DOM/DOMHTMLTitleElement.mm:
+        * DOM/DOMHTMLUListElement.mm:
+        * DOM/DOMHTMLVideoElement.mm:
+        * DOM/DOMImplementation.mm:
+        * DOM/DOMKeyboardEvent.mm:
+        * DOM/DOMMediaError.mm:
+        * DOM/DOMMediaList.mm:
+        * DOM/DOMMouseEvent.mm:
+        * DOM/DOMMutationEvent.mm:
+        * DOM/DOMNamedNodeMap.mm:
+        * DOM/DOMNode.mm:
+        * DOM/DOMNodeIterator.mm:
+        * DOM/DOMNodeList.mm:
+        * DOM/DOMOverflowEvent.mm:
+        * DOM/DOMProcessingInstruction.mm:
+        * DOM/DOMProgressEvent.mm:
+        * DOM/DOMRGBColor.mm:
+        * DOM/DOMRange.mm:
+        * DOM/DOMRect.mm:
+        * DOM/DOMStyleSheet.mm:
+        * DOM/DOMStyleSheetList.mm:
+        * DOM/DOMText.mm:
+        * DOM/DOMTextEvent.mm:
+        * DOM/DOMTimeRanges.mm:
+        * DOM/DOMTokenList.mm:
+        * DOM/DOMTreeWalker.mm:
+        * DOM/DOMUIEvent.mm:
+        * DOM/DOMWheelEvent.mm:
+        * DOM/DOMXPathExpression.mm:
+        * DOM/DOMXPathResult.mm:
+        * DOM/ObjCEventListener.mm:
+
 2018-08-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix spelling of "overridden"

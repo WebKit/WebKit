@@ -33,7 +33,7 @@
 #import "ExceptionHandlers.h"
 #import <WebCore/HTMLFrameElement.h>
 #import <WebCore/HTMLNames.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>

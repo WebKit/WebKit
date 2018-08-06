@@ -31,7 +31,7 @@
 #import "ExceptionHandlers.h"
 #import <WebCore/File.h>
 #import <WebCore/FileList.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>

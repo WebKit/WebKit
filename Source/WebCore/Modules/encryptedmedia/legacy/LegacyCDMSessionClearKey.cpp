@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LegacyCDMSessionClearKey.h"
 
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include "Logging.h"
 #include "TextEncoding.h"
 #include "WebKitMediaKeyError.h"

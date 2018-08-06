@@ -28,9 +28,11 @@
 
 #include "CustomElementReactionQueue.h"
 #include "JSDOMBinding.h"
+#include "ThreadGlobalData.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/Microtask.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -38,25 +40,25 @@ namespace WebCore {
 class InspectorInstrumentationCookie;
 class ScriptExecutionContext;
 
-class JSMainThreadExecState {
-    WTF_MAKE_NONCOPYABLE(JSMainThreadExecState);
+class JSExecState {
+    WTF_MAKE_NONCOPYABLE(JSExecState);
+    WTF_FORBID_HEAP_ALLOCATION;
     friend class JSMainThreadNullState;
 public:
     static JSC::ExecState* currentState()
     {
-        ASSERT(isMainThread());
-        return s_mainThreadState;
+        return threadGlobalData().currentState();
     };
     
     static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSMainThreadExecState currentState(exec);
+        JSExecState currentState(exec);
         return JSC::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
     };
 
     static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSMainThreadExecState currentState(exec);
+        JSExecState currentState(exec);
         return JSC::evaluate(exec, source, thisValue, returnedException);
     };
 
@@ -68,13 +70,13 @@ public:
 
     static JSC::JSValue profiledCall(JSC::ExecState* exec, JSC::ProfilingReason reason, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSMainThreadExecState currentState(exec);
+        JSExecState currentState(exec);
         return JSC::profiledCall(exec, reason, functionObject, callType, callData, thisValue, args, returnedException);
     }
 
     static JSC::JSValue profiledEvaluate(JSC::ExecState* exec, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSMainThreadExecState currentState(exec);
+        JSExecState currentState(exec);
         return JSC::profiledEvaluate(exec, reason, source, thisValue, returnedException);
     }
 
@@ -86,19 +88,19 @@ public:
 
     static void runTask(JSC::ExecState* exec, JSC::Microtask& task)
     {
-        JSMainThreadExecState currentState(exec);
+        JSExecState currentState(exec);
         task.run(exec);
     }
 
     static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const String& moduleName, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
     {
-        JSMainThreadExecState currentState(&state);
+        JSExecState currentState(&state);
         return *JSC::loadModule(&state, moduleName, parameters, scriptFetcher);
     }
 
     static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const JSC::SourceCode& sourceCode, JSC::JSValue scriptFetcher)
     {
-        JSMainThreadExecState currentState(&state);
+        JSExecState currentState(&state);
         return *JSC::loadModule(&state, sourceCode, scriptFetcher);
     }
 
@@ -107,7 +109,7 @@ public:
         JSC::VM& vm = state.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
     
-        JSMainThreadExecState currentState(&state);
+        JSExecState currentState(&state);
         auto returnValue = JSC::linkAndEvaluateModule(&state, moduleKey, scriptFetcher);
         if (UNLIKELY(scope.exception())) {
             returnedException = scope.exception();
@@ -121,33 +123,35 @@ public:
     static InspectorInstrumentationCookie instrumentFunctionConstruct(ScriptExecutionContext*, JSC::ConstructType, const JSC::ConstructData&);
 
 private:
-    explicit JSMainThreadExecState(JSC::ExecState* exec)
-        : m_previousState(s_mainThreadState)
+    explicit JSExecState(JSC::ExecState* exec)
+        : m_previousState(currentState())
         , m_lock(exec)
     {
-        ASSERT(isMainThread());
-        s_mainThreadState = exec;
+        setCurrentState(exec);
     };
 
-    ~JSMainThreadExecState()
+    ~JSExecState()
     {
-        JSC::VM& vm = s_mainThreadState->vm();
+        JSC::VM& vm = currentState()->vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        ASSERT(isMainThread());
         scope.assertNoException();
 
-        JSC::ExecState* state = s_mainThreadState;
-        bool didExitJavaScript = s_mainThreadState && !m_previousState;
+        JSC::ExecState* state = currentState();
+        bool didExitJavaScript = state && !m_previousState;
 
-        s_mainThreadState = m_previousState;
+        setCurrentState(m_previousState);
 
         if (didExitJavaScript)
             didLeaveScriptContext(state);
     }
 
+    static void setCurrentState(JSC::ExecState* state)
+    {
+        threadGlobalData().setCurrentState(state);
+    }
+
     template<typename Type, Type jsType, typename DataType> static InspectorInstrumentationCookie instrumentFunctionInternal(ScriptExecutionContext*, Type, const DataType&);
 
-    WEBCORE_EXPORT static JSC::ExecState* s_mainThreadState;
     JSC::ExecState* m_previousState;
     JSC::JSLockHolder m_lock;
 
@@ -158,19 +162,20 @@ private:
 // Used by non-JavaScript bindings (ObjC, GObject).
 class JSMainThreadNullState {
     WTF_MAKE_NONCOPYABLE(JSMainThreadNullState);
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     explicit JSMainThreadNullState()
-        : m_previousState(JSMainThreadExecState::s_mainThreadState)
+        : m_previousState(JSExecState::currentState())
         , m_customElementReactionStack(m_previousState)
     {
         ASSERT(isMainThread());
-        JSMainThreadExecState::s_mainThreadState = nullptr;
+        JSExecState::setCurrentState(nullptr);
     }
 
     ~JSMainThreadNullState()
     {
         ASSERT(isMainThread());
-        JSMainThreadExecState::s_mainThreadState = m_previousState;
+        JSExecState::setCurrentState(m_previousState);
     }
 
 private:

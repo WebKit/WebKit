@@ -29,7 +29,7 @@
 #import "ExceptionHandlers.h"
 #import <WebCore/HTMLHtmlElement.h>
 #import <WebCore/HTMLNames.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>

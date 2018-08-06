@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "JSDOMPromise.h"
+#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Microtask.h>
 
 namespace WebCore {
@@ -85,19 +86,25 @@ private:
 void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
 {
     promise->whenSettled([this, protectedThis = makeRefPtr(this), settledPromise = promise.ptr()] () mutable {
-        settledPromise->globalObject()->queueMicrotask(FunctionMicrotask::create([this, protectedThis = WTFMove(protectedThis)] {
+        auto& globalObject = *settledPromise->globalObject();
+        globalObject.queueMicrotask(FunctionMicrotask::create([this, protectedThis = WTFMove(protectedThis), settledPromise = WTFMove(settledPromise)] () mutable {
             --m_pendingPromiseCount;
 
             // FIXME: Let registration be the context object's relevant global object's associated service worker's containing service worker registration.
             // FIXME: If registration's uninstalling flag is set, invoke Try Clear Registration with registration.
             // FIXME: If registration is not null, invoke Try Activate with registration.
 
-            if (m_pendingPromiseCount)
+            auto* context = settledPromise->globalObject()->scriptExecutionContext();
+            if (!context)
                 return;
+            context->postTask([this, protectedThis = WTFMove(protectedThis)] (ScriptExecutionContext&) mutable {
+                if (m_pendingPromiseCount)
+                    return;
 
-            auto settledPromises = WTFMove(m_extendLifetimePromises);
-            if (auto handler = WTFMove(m_whenAllExtendLifetimePromisesAreSettledHandler))
-                handler(WTFMove(settledPromises));
+                auto settledPromises = WTFMove(m_extendLifetimePromises);
+                if (auto handler = WTFMove(m_whenAllExtendLifetimePromisesAreSettledHandler))
+                    handler(WTFMove(settledPromises));
+            });
         }));
     });
 

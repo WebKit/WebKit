@@ -23,7 +23,7 @@
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
 #include <WebCore/Document.h>
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include "WebKitDOMCSSRuleListPrivate.h"
 #include "WebKitDOMCSSRulePrivate.h"
 #include "WebKitDOMPrivate.h"

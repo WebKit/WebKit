@@ -299,6 +299,9 @@ void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
             // which become dangling once Heap is destroyed.
             workerGlobalScope.removeAllEventListeners();
 
+            // MicrotaskQueue references Heap.
+            workerGlobalScope.removeMicrotaskQueue();
+
             // Stick a shutdown command at the end of the queue, so that we deal
             // with all the cleanup tasks the databases post first.
             workerGlobalScope.postTask({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context) {

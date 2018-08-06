@@ -28,7 +28,7 @@
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
 #import <WebCore/HTMLCanvasElement.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/StringAdaptors.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/URL.h>

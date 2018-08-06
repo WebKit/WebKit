@@ -51,8 +51,8 @@
 #include "JSCanvasLineJoin.h"
 #include "JSCanvasTextAlign.h"
 #include "JSCanvasTextBaseline.h"
+#include "JSExecState.h"
 #include "JSImageSmoothingQuality.h"
-#include "JSMainThreadExecState.h"
 #include "Path2D.h"
 #include "Pattern.h"
 #include "RecordingSwizzleTypes.h"
@@ -289,7 +289,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
     }
 
     if (captureBacktrace) {
-        auto stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+        auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
         canvas->setBacktrace(stackTrace->buildInspectorArray());
     }
 
@@ -602,7 +602,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
     action->addItem(WTFMove(swizzleTypes));
 
     auto trace = JSON::ArrayOf<double>::create();
-    auto stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+    auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
     for (size_t i = 0; i < stackTrace->size(); ++i)
         trace->addItem(indexForData(stackTrace->at(i)));
     action->addItem(WTFMove(trace));

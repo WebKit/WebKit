@@ -31,7 +31,7 @@
 #import "DOMEventListener.h"
 #import <WebCore/Event.h>
 #import <WebCore/EventListener.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <wtf/HashMap.h>
 
 namespace WebCore {

@@ -401,6 +401,7 @@ bindings/js/JSErrorHandler.cpp
 bindings/js/JSEventCustom.cpp
 bindings/js/JSEventListener.cpp
 bindings/js/JSEventTargetCustom.cpp
+bindings/js/JSExecState.cpp
 bindings/js/JSExtendableMessageEventCustom.cpp
 bindings/js/JSFetchEventCustom.cpp
 bindings/js/JSFileSystemEntryCustom.cpp
@@ -417,7 +418,6 @@ bindings/js/JSIDBTransactionCustom.cpp
 bindings/js/JSImageDataCustom.cpp
 bindings/js/JSLazyEventListener.cpp
 bindings/js/JSLocationCustom.cpp
-bindings/js/JSMainThreadExecState.cpp
 bindings/js/JSMediaStreamTrackCustom.cpp
 bindings/js/JSMessageChannelCustom.cpp
 bindings/js/JSMessageEventCustom.cpp

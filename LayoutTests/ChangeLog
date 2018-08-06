@@ -1,3 +1,17 @@
+2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add support for microtasks in workers
+        https://bugs.webkit.org/show_bug.cgi?id=188246
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/workers/microtasks.any-expected.txt: Added.
+        * http/wpt/workers/microtasks.any.html: Added.
+        * http/wpt/workers/microtasks.any.js: Added.
+        (promise_test):
+        * http/wpt/workers/microtasks.any.worker-expected.txt: Added.
+        * http/wpt/workers/microtasks.any.worker.html: Added.
+
 2018-08-05  Philippe Normand  <pnormand@igalia.com>
 
         [MediaCapabilities] Platform integration

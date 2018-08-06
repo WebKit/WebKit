@@ -30,7 +30,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMNodeIteratorInternal.h"
 #import "ExceptionHandlers.h"
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/NativeNodeFilter.h>
 #import <WebCore/Node.h>
 #import <WebCore/NodeIterator.h>

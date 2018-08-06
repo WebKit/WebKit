@@ -68,7 +68,7 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLHeadElement.h>
 #import <WebCore/HTMLScriptElement.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/NameNodeList.h>
 #import <WebCore/NativeNodeFilter.h>
 #import <WebCore/Node.h>

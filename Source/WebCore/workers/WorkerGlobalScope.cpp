@@ -33,6 +33,7 @@
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
+#include "Microtasks.h"
 #include "Performance.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
@@ -60,6 +61,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
     , m_thread(thread)
     , m_script(std::make_unique<WorkerScriptController>(this))
     , m_inspectorController(std::make_unique<WorkerInspectorController>(*this))
+    , m_microtaskQueue(std::make_unique<MicrotaskQueue>())
     , m_isOnline(isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
     , m_eventQueue(*this)
@@ -108,6 +110,11 @@ void WorkerGlobalScope::removeAllEventListeners()
     EventTarget::removeAllEventListeners();
     m_performance->removeAllEventListeners();
     m_performance->removeAllObservers();
+}
+
+void WorkerGlobalScope::removeMicrotaskQueue()
+{
+    m_microtaskQueue = nullptr;
 }
 
 bool WorkerGlobalScope::isSecureContext() const

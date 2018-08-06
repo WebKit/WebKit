@@ -25,7 +25,7 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include "GObjectEventListener.h"
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
 #include "WebKitDOMHTMLCanvasElementPrivate.h"

@@ -31,7 +31,7 @@
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include <WebCore/SVGTests.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>

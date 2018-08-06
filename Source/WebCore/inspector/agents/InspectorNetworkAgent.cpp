@@ -47,7 +47,7 @@
 #include "HTTPHeaderNames.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include "JSWebSocket.h"
 #include "LoaderStrategy.h"
 #include "MIMETypeRegistry.h"
@@ -641,7 +641,7 @@ RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInit
             .release();
     }
 
-    Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState());
+    Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSExecState::currentState());
     if (stackTrace->size() > 0) {
         auto initiatorObject = Inspector::Protocol::Network::Initiator::create()
             .setType(Inspector::Protocol::Network::Initiator::Type::Script)

@@ -34,7 +34,7 @@
 
 #include "Event.h"
 #include "FloatQuad.h"
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/ScriptBreakpoint.h>
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -50,7 +50,7 @@ Ref<JSON::Object> TimelineRecordFactory::createGenericRecord(double startTime, i
     record->setDouble("startTime"_s, startTime);
 
     if (maxCallStackDepth) {
-        Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), maxCallStackDepth);
+        Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSExecState::currentState(), maxCallStackDepth);
         if (stackTrace->size())
             record->setValue("stackTrace"_s, stackTrace->buildInspectorArray());
     }

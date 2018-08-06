@@ -35,7 +35,7 @@
 #import <WebCore/DOMImplementation.h>
 #import <WebCore/DocumentType.h>
 #import <WebCore/HTMLDocument.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/SVGTests.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>

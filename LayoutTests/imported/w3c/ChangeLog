@@ -1,3 +1,17 @@
+2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add support for microtasks in workers
+        https://bugs.webkit.org/show_bug.cgi?id=188246
+
+        Reviewed by Darin Adler.
+
+        This test is wrong[1,2]. It starts failing since our worker starts using correct microtask queues.
+
+        [1]: https://github.com/web-platform-tests/wpt/pull/8936
+        [2]: https://github.com/w3c/ServiceWorker/issues/1213#issuecomment-342640579
+
+        * web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https-expected.txt:
+
 2018-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         innerHTML should not synchronously create a custom element

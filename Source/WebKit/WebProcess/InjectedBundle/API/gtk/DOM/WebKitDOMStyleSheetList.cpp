@@ -24,7 +24,7 @@
 #include "DOMObjectCache.h"
 #include <WebCore/Document.h>
 #include <WebCore/ExceptionCode.h>
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMStyleSheetListPrivate.h"
 #include "WebKitDOMStyleSheetPrivate.h"

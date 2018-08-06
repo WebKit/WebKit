@@ -31,7 +31,7 @@
 #import "DOMStyleSheetInternal.h"
 #import "DOMStyleSheetListInternal.h"
 #import "ExceptionHandlers.h"
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/StyleSheet.h>
 #import <WebCore/StyleSheetList.h>
 #import <WebCore/ThreadCheck.h>

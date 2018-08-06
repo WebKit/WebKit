@@ -21,7 +21,7 @@
 
 #include "DOMObjectCache.h"
 #include "GObjectXPathNSResolver.h"
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include "WebKitDOMObject.h"
 #include "WebKitDOMXPathNSResolverPrivate.h"
 #include "ConvertToUTF8String.h"

@@ -28,9 +28,11 @@
 #include "config.h"
 #include "JSWorkerGlobalScopeBase.h"
 
+#include "ActiveDOMCallbackMicrotask.h"
 #include "DOMWrapperWorld.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDedicatedWorkerGlobalScope.h"
+#include "JSMicrotaskCallback.h"
 #include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
@@ -129,7 +131,14 @@ RuntimeFlags JSWorkerGlobalScopeBase::javaScriptRuntimeFlags(const JSGlobalObjec
 void JSWorkerGlobalScopeBase::queueTaskToEventLoop(JSGlobalObject& object, Ref<JSC::Microtask>&& task)
 {
     JSWorkerGlobalScopeBase& thisObject = static_cast<JSWorkerGlobalScopeBase&>(object);
-    thisObject.scriptExecutionContext()->postTask(JSGlobalObjectTask(thisObject, WTFMove(task)));
+
+    RefPtr<JSMicrotaskCallback> callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
+    auto& context = thisObject.wrapped();
+    auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(context.microtaskQueue(), context, [callback]() mutable {
+        callback->call();
+    });
+
+    context.microtaskQueue().append(WTFMove(microtask));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope& workerGlobalScope)

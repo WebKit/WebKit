@@ -29,7 +29,7 @@
 #import "DOMInternal.h"
 #import "ExceptionHandlers.h"
 #import <WebCore/Attr.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/NamedNodeMap.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/URL.h>

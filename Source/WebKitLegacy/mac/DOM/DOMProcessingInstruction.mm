@@ -28,7 +28,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "ExceptionHandlers.h"
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/ProcessingInstruction.h>
 #import <WebCore/StyleSheet.h>
 #import <WebCore/ThreadCheck.h>

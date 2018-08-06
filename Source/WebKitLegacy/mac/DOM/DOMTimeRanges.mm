@@ -33,7 +33,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMTimeRangesInternal.h"
 #import "ExceptionHandlers.h"
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreObjCExtras.h>

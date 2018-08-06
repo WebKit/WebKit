@@ -28,7 +28,7 @@
 
 #include "CommandLineAPIHost.h"
 #include "InstrumentingAgents.h"
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include "WebHeapAgent.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"

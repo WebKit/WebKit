@@ -42,7 +42,7 @@
 #include "Frame.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include "JSWindowProxy.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
@@ -691,7 +691,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
         info.documentURI = document.url().strippedForUseAsReferrer();
 
-        auto stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
+        auto stack = createScriptCallStack(JSExecState::currentState(), 2);
         auto* callFrame = stack->firstNonNativeCallFrame();
         if (callFrame && callFrame->lineNumber()) {
             info.sourceFile = deprecatedURLForReporting(URL { URL { }, callFrame->sourceURL() });

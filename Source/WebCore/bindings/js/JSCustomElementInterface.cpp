@@ -35,9 +35,9 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMWindow.h"
 #include "JSElement.h"
+#include "JSExecState.h"
+#include "JSExecStateInstrumentation.h"
 #include "JSHTMLElement.h"
-#include "JSMainThreadExecState.h"
-#include "JSMainThreadExecStateInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/WeakInlines.h>
@@ -124,7 +124,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
         return nullptr;
     }
 
-    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(&document, constructType, constructData);
+    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionConstruct(&document, constructType, constructData);
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
     JSValue newElement = construct(&state, constructor, constructType, constructData, args);
@@ -199,7 +199,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
-    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(context, constructType, constructData);
+    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionConstruct(context, constructType, constructData);
     JSValue returnedElement = construct(state, m_constructor.get(), constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(cookie, context);
 
@@ -248,10 +248,10 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     addArguments(state, globalObject, args);
     RELEASE_ASSERT(!args.hasOverflowed());
 
-    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
+    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(context, callType, callData);
 
     NakedPtr<JSC::Exception> exception;
-    JSMainThreadExecState::call(state, callback, callType, callData, jsElement, args, exception);
+    JSExecState::call(state, callback, callType, callData, jsElement, args, exception);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
 

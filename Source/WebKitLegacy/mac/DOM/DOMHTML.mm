@@ -51,7 +51,7 @@
 #import "DOMHTMLElementInternal.h"
 #import <WebCore/Autocapitalize.h>
 #import <WebCore/HTMLTextFormControlElement.h>
-#import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/JSExecState.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>

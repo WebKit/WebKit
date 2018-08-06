@@ -1,3 +1,136 @@
+2018-08-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add support for microtasks in workers
+        https://bugs.webkit.org/show_bug.cgi?id=188246
+
+        Reviewed by Darin Adler.
+
+        This patch adds the microtask mechanism to workers. To adopt the existing microtask mechanism from the main thread,
+        we extend JSMainThreadExecState for non-main-threads. We rename it to JSExecState, and store stacked
+        ExecState* data in thread local storage in ThreadGlobalData instead of a static variable s_mainThreadState.
+
+        We add MicrotaskQueue to WorkerGlobalScope since each worker has its own thread and it should have its
+        own microtask queue.
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::constructCustomElementSynchronously):
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        (WebCore::JSCustomElementInterface::invokeCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueTaskToEventLoop):
+        Queue a microtask to MicrotaskQueue instead of posting a macrotask.
+
+        (WebCore::JSDOMWindowMicrotaskCallback::create): Deleted.
+        (WebCore::JSDOMWindowMicrotaskCallback::call): Deleted.
+        (WebCore::JSDOMWindowMicrotaskCallback::JSDOMWindowMicrotaskCallback): Deleted.
+        (): Deleted.
+        Extract JSDOMWindowMicrotaskCallback as JSMicrotaskCallback and create a new file for it.
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSExecState.cpp: Renamed from Source/WebCore/bindings/js/JSMainThreadExecState.cpp.
+        (WebCore::JSExecState::didLeaveScriptContext):
+        If we are in a main thread, we consume main thread microtask queue. If we are in worker thread,
+        we consume a microtask queue per worker.
+
+        (WebCore::functionCallHandlerFromAnyThread):
+        (WebCore::evaluateHandlerFromAnyThread):
+        * bindings/js/JSExecState.h: Renamed from Source/WebCore/bindings/js/JSMainThreadExecState.h.
+        (WebCore::JSExecState::currentState):
+        (WebCore::JSExecState::call):
+        (WebCore::JSExecState::evaluate):
+        (WebCore::JSExecState::profiledCall):
+        (WebCore::JSExecState::profiledEvaluate):
+        (WebCore::JSExecState::runTask):
+        (WebCore::JSExecState::loadModule):
+        (WebCore::JSExecState::linkAndEvaluateModule):
+        (WebCore::JSExecState::JSExecState):
+        (WebCore::JSExecState::~JSExecState):
+        (WebCore::JSExecState::setCurrentState):
+        Store and load ExecState in thread local storage, ThreadGlobalData. This allows us to use it for workers.
+
+        (WebCore::JSMainThreadNullState::JSMainThreadNullState):
+        (WebCore::JSMainThreadNullState::~JSMainThreadNullState):
+        We keep this name "JSMainThreadNullState" since CustomElementReactionStack should be stick to the main thread.
+        And this class is only used in the main thread.
+
+        * bindings/js/JSExecStateInstrumentation.h: Renamed from Source/WebCore/bindings/js/JSMainThreadExecStateInstrumentation.h.
+        (WebCore::JSExecState::instrumentFunctionInternal):
+        (WebCore::JSExecState::instrumentFunctionCall):
+        (WebCore::JSExecState::instrumentFunctionConstruct):
+        * bindings/js/JSMicrotaskCallback.h: Copied from Source/WebKitLegacy/mac/DOM/DOMHTMLBaseElement.mm.
+        (WebCore::JSMicrotaskCallback::create):
+        (WebCore::JSMicrotaskCallback::call):
+        (WebCore::JSMicrotaskCallback::JSMicrotaskCallback):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::queueTaskToEventLoop):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::loadModuleScriptInWorld):
+        (WebCore::ScriptController::linkAndEvaluateModuleScriptInWorld):
+        (WebCore::ScriptController::canAccessFromCurrentOrigin):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::compileShader):
+        (WebCore::WebGLRenderingContextBase::printToConsole):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        (WebCore::InspectorCanvas::buildAction):
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildInitiatorObject):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::addMessage):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        * platform/ThreadGlobalData.h:
+        (WebCore::ThreadGlobalData::ThreadGlobalData::currentState const):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::setCurrentState):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::removeMicrotaskQueue):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::microtaskQueue const):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop):
+        * workers/service/ExtendableEvent.cpp:
+        (WebCore::ExtendableEvent::addExtendLifetimePromise):
+        When dispatching an "install" event from service worker, we first create an event,
+        dispatch it, and set a handler which is called when a pending promise count becomes zero.
+        However, the old code checked pending promise count in a queued microtask. It worked
+        previously because microtask is actually a macrotask in the service worker. So this check
+        is done after a handler is set. But this patch introduces real microtask, and this check
+        happens before a handler is set because dispatching an event can exhaust microtask queue.
+        According to the spec, this check should not be done in microtask[1]. We make this checking
+        part as a macrotask. We note that algorithm noted as FIXMEs should be done in this
+        microtask while the checking part should not be done.
+
+        [1]: https://w3c.github.io/ServiceWorker/#installation-algorithm
+
 2018-08-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Properties set on window.customElements can disappear due to GC

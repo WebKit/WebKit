@@ -67,7 +67,7 @@
 #include "History.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMWindowBase.h"
-#include "JSMainThreadExecState.h"
+#include "JSExecState.h"
 #include "Location.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
@@ -956,7 +956,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& incum
     // Capture stack trace only when inspector front-end is loaded as it may be time consuming.
     RefPtr<ScriptCallStack> stackTrace;
     if (InspectorInstrumentation::consoleAgentEnabled(sourceDocument))
-        stackTrace = createScriptCallStack(JSMainThreadExecState::currentState());
+        stackTrace = createScriptCallStack(JSExecState::currentState());
 
     MessageWithMessagePorts message { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
 

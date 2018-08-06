@@ -32,7 +32,7 @@
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
-#include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSExecState.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/SVGTests.h>
 #include <wtf/GetPtr.h>

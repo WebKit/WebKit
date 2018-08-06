@@ -38,8 +38,8 @@
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "JSCanvasRenderingContext2D.h"
+#include "JSExecState.h"
 #include "JSHTMLCanvasElement.h"
-#include "JSMainThreadExecState.h"
 #include "JSOffscreenCanvas.h"
 #include "OffscreenCanvas.h"
 #include "Page.h"
@@ -134,7 +134,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     unsigned column = 0;
     getParserLocationForConsoleMessage(document, url, line, column);
 
-    addMessage(source, level, message, url, line, column, 0, JSMainThreadExecState::currentState(), requestIdentifier);
+    addMessage(source, level, message, url, line, column, 0, JSExecState::currentState(), requestIdentifier);
 }
 
 void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, Ref<ScriptCallStack>&& callStack)
