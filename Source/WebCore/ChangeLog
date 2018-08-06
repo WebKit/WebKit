@@ -1,3 +1,24 @@
+2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTML parser should execute custom element reactions for setting attributes immediately after creating a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=188336
+
+        Reviewed by Frédéric Wang.
+
+        Push and pop an element queue from the custom element reactions stack when constructing a custom element:
+        https://html.spec.whatwg.org/multipage/parsing.html#create-an-element-for-the-token
+
+        To do this, we instantiate CustomElementReactionStack in HTMLDocumentParser::runScriptsForPausedTreeBuilder
+        where we synchronously construct a custom element. We don't have to worry about whether *will execute script*
+        is set or not since the presence of an element queue should not be observable in the case where we're constructing
+        a fallback element (since it would not enqueue any new custom element reaction).
+
+        Tests: imported/w3c/web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children.html
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder): Instantiate CustomElementReactionStack. Note that we
+        don't insert the custom element into the parser until we finish processing the custom element reactions.
+
 2018-08-06  Charlie Turner  <cturner@igalia.com>
 
         Return extracted key ids as an optional

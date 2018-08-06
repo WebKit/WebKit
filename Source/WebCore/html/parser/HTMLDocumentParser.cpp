@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
+#include "CustomElementReactionQueue.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -208,9 +209,12 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
         ASSERT(!m_treeBuilder->hasParserBlockingScriptWork());
 
         // https://html.spec.whatwg.org/#create-an-element-for-the-token
-        auto& elementInterface = constructionData->elementInterface.get();
-        auto newElement = elementInterface.constructElementWithFallback(*document(), constructionData->name);
-        m_treeBuilder->didCreateCustomOrFallbackElement(WTFMove(newElement), *constructionData);
+        {
+            CustomElementReactionStack reactionStack(document()->execState());
+            auto& elementInterface = constructionData->elementInterface.get();
+            auto newElement = elementInterface.constructElementWithFallback(*document(), constructionData->name);
+            m_treeBuilder->didCreateCustomOrFallbackElement(WTFMove(newElement), *constructionData);
+        }
         return;
     }
 
