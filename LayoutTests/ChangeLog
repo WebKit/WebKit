@@ -1,3 +1,19 @@
+2018-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        De-flake some animation tests
+        https://bugs.webkit.org/show_bug.cgi?id=188356
+
+        Reviewed by Dean Jackson.
+        
+        The tests in legacy-animation-engine were flakey because the animation can start before
+        we get a chance to register the event listener. Fix by starting the animation after the
+        load event fires. Make the non-legacy tests match.
+
+        * compositing/visible-rect/animated-from-none.html:
+        * compositing/visible-rect/animated.html:
+        * legacy-animation-engine/compositing/visible-rect/animated-from-none.html:
+        * legacy-animation-engine/compositing/visible-rect/animated.html:
+
 2018-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Check with SafeBrowsing during navigation in WKWebView

@@ -18,6 +18,9 @@
             width: 200px;
             height: 200px;
             background-color: blue;
+        }
+        
+        .box.animating {
             -webkit-animation: move 20000000s linear;
         }
         
@@ -34,13 +37,16 @@
 
         function doTest()
         {
-            document.getElementById('animated').addEventListener('webkitAnimationStart', function() {
+            let animated = document.getElementById('animated');
+            animated.addEventListener('webkitAnimationStart', function() {
                 if (window.internals)
                     document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
 
                 if (window.testRunner)
                     testRunner.notifyDone();
             }, false);
+            
+            animated.classList.add('animating');
         }
         window.addEventListener('load', doTest, false);
     </script>
