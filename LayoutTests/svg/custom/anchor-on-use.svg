@@ -3,13 +3,16 @@
         if (window.testRunner)
             window.testRunner.waitUntilDone();
 
+        window.onunload = ()=>{
+            if (window.testRunner)
+                testRunner.notifyDone();
+        };
+
         function clickLinkNow() {
             if (window.eventSender) {
                 eventSender.mouseMoveTo(20, 20);
                 eventSender.mouseDown();
                 eventSender.mouseUp();
-                if (window.testRunner)
-                    testRunner.notifyDone();
             }
         }
     </script>

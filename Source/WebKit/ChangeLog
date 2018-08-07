@@ -1,3 +1,47 @@
+2018-08-06  Alex Christensen  <achristensen@webkit.org>
+
+        Check with SafeBrowsing during navigation in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=188133
+
+        Reviewed by Chris Dumez.
+
+        This turns WebFramePolicyListenerProxy into an object that now listens for the results
+        of two processes happening in parallel: the API::NavigationClient's decidePolicyForNavigation{Action, Response}
+        (which it was already waiting for) and, on platforms that support it, the SafariSafeBrowsing framework's check.
+        The first result is stored as it waits for the second result unless the first result is the API::NavigationClient
+        saying to cancel or convert the navigation to a download, in which cases we don't care what the safe browsing
+        framework results are because we won't show the URL in the browser.
+
+        Nothing is done with the safe browsing results yet.
+
+        * UIProcess/Cocoa/SafeBrowsingResultCocoa.mm: Added.
+        (WebKit::SafeBrowsingResult::SafeBrowsingResult):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::beginSafeBrowsingCheck):
+        * UIProcess/SafeBrowsingResult.h: Added.
+        (WebKit::SafeBrowsingResult::provider const):
+        (WebKit::SafeBrowsingResult::isPhishing const):
+        (WebKit::SafeBrowsingResult::isMalware const):
+        (WebKit::SafeBrowsingResult::isUnwantedSoftware const):
+        (WebKit::SafeBrowsingResult::isKnownToBeUnsafe const):
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::WebFramePolicyListenerProxy):
+        (WebKit::WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults):
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::download):
+        (WebKit::WebFramePolicyListenerProxy::ignore):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::create):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::setUpPolicyListenerProxy):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(NetworkLoadChecker): CORS preflights are no longer able to deal with client certificate authentication

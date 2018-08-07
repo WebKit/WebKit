@@ -1,3 +1,21 @@
+2018-08-06  Alex Christensen  <achristensen@webkit.org>
+
+        Check with SafeBrowsing during navigation in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=188133
+
+        Reviewed by Andy Estes.
+
+        * platform/wk2/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt: Copied from http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt.
+        This test verifies that keys cannot be entered during navigation, and the keys seen in WebKitTestRunner
+        are before the navigation.  This is seen now because there is a brief moment in time between when
+        WebKitTestRunner calls decidePolicyForNavigationAction and when the WebContent receives it.
+        * svg/custom/anchor-on-use.svg:
+        This test verifies what the page looks like after navigation.  It used to just call testRunner.notifyDone
+        when the link was clicked and because of the timing of messages sent with the UIProcess, WebKitTestRunner
+        would see the results after the page navigated.  Because we are adding a delay during navigation, the
+        message order can no longer be relied on in this way.  To fix this, we are just calling notifyDone in an
+        unload handler.
+
 2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         fast/custom-elements/custom-element-registry-wrapper-should-stay-alive.html always timeouts on debug bots
