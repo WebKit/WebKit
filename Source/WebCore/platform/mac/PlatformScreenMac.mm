@@ -130,7 +130,8 @@ ScreenProperties collectScreenProperties()
         IORegistryGPUID gpuID = 0;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-        gpuID = gpuIDForDisplayMask(displayMask);
+        if (displayMask)
+            gpuID = gpuIDForDisplayMask(displayMask);
 #endif
 
         screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome, displayMask, gpuID });

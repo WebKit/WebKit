@@ -1,3 +1,18 @@
+2018-08-07  Justin Fan  <justin_fan@apple.com>
+
+        Prevent querying for renderer info for disconnected or uninitialized displays
+        https://bugs.webkit.org/show_bug.cgi?id=188387
+        <rdar://problem/42588769>
+
+        Reviewed by Simon Fraser.
+
+        Calling CGL functions with a NULL displayMask crashes the process.
+
+        No tests; requires multiple displays.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::collectScreenProperties):
+
 2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.open and document.write must throw while the HTML parser is synchronously constructing a custom element
