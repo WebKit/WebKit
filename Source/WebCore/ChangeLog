@@ -1,5 +1,35 @@
 2018-08-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] Add Nicosia::CompositionLayerTextureMapperImpl
+        https://bugs.webkit.org/show_bug.cgi?id=188348
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the Nicosia::CompositionLayerTextureMapperImpl class, the
+        TextureMapper-specific implementation that will extend the
+        CompositionLayer class.
+
+        The important deatil of this implementation is the TextureMapperLayer
+        object that's expected to be managed by the composition controller. As
+        such, it is placed inside the CompositionState struct to clearly
+        indicate its utility and expected place of management. In the current
+        setup, this place would be the CoordinatedGraphicsScene class.
+
+        The Nicosia::CompositionLayer object that's spawned for each
+        CoordinatedGraphicsLayer instance is now switched to using the
+        CompositionLayerTextureMapperImpl object, with the local temporary no-op
+        CompositionLayer::Impl class removed.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/texmap/NicosiaCompositionLayerTextureMapperImpl.cpp: Added.
+        (Nicosia::CompositionLayerTextureMapperImpl::createFactory):
+        * platform/graphics/nicosia/texmap/NicosiaCompositionLayerTextureMapperImpl.h: Added.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (): Deleted.
+
+2018-08-07  Zan Dobersek  <zdobersek@igalia.com>
+
         [Nicosia] Add the TextureMapper-specific ContentLayer::Impl derivative
         https://bugs.webkit.org/show_bug.cgi?id=188344
 
