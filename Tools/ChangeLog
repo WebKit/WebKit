@@ -1,3 +1,18 @@
+2018-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Add a test for using SafeBrowsing
+        https://bugs.webkit.org/show_bug.cgi?id=188290
+
+        Reviewed by Chris Dumez.
+
+        Swizzle out SSBLookupContext to write tests for how WebKit responds when it responds in different ways.
+        We don't do anything with its results in WebKit yet, but when we do I'll add the expected behavior to this test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm: Added.
+        (-[SafeBrowsingDelegate webView:didFinishNavigation:]):
+        (TestWebKitAPI::TEST):
+
 2018-08-07  Lucas Forschler  <lforschler@apple.com>
 
         If there's a Radar in the ChangeLog, webkit-patch upload/create-bug should put the radar in the bug and set InRadar
