@@ -1,3 +1,43 @@
+2018-08-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add the TextureMapper-specific ContentLayer::Impl derivative
+        https://bugs.webkit.org/show_bug.cgi?id=188344
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add Nicosia::ContentLayerTextureMapperImpl class, providing the
+        TextureMapper-specific implementation that derives from the
+        ContentLayer::Impl class and which can be used by the
+        Nicosia::ContentLayer instances.
+
+        Internally a TextureMapperPlatformLayerProxy is created, and is
+        accessible to others through a getter. This way the content producers
+        can push new buffers into this proxy object, and the scene compositor
+        can take these buffers for display purposes.
+
+        Nicosia::ContentLayerTextureMapperImpl::swapBuffersIfNeeded() will be
+        called during layer flushes, and the call will cause the content layer
+        clients to take their texture, wrap it into a buffer, and push it into
+        the TextureMapperPlatformLayerProxy object. At the moment this operation
+        is required by the ImageBuffer and GraphicsContext3D producers.
+
+        The Client object is managed under its own lock. While the producers
+        will only live on the main thread, the thread-safe check in the
+        destructor is necessary in case the ContentLayerTextureMapperImpl object
+        ends up being destroyed on some other thread.
+
+        The patch only adds the class implementation. It will be integrated into
+        the layer tree later, once all the other pieces of the puzzle land.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.cpp: Added.
+        (Nicosia::ContentLayerTextureMapperImpl::createFactory):
+        (Nicosia::ContentLayerTextureMapperImpl::ContentLayerTextureMapperImpl):
+        (Nicosia::ContentLayerTextureMapperImpl::~ContentLayerTextureMapperImpl):
+        (Nicosia::ContentLayerTextureMapperImpl::invalidateClient):
+        (Nicosia::ContentLayerTextureMapperImpl::swapBuffersIfNeeded):
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.h: Added.
+
 2018-08-07  Frederic Wang  <fwang@igalia.com>
 
         Make DOMWindow::scrollBy rely on DOMWindow::scrollTo
