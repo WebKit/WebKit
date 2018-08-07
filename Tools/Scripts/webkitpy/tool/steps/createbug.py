@@ -52,6 +52,7 @@ class CreateBug(AbstractStep):
             blocked_bugs = state.get("bug_id_list", [])
         blocks = ", ".join(str(bug) for bug in blocked_bugs if bug)
         state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=blocks, component=self._options.component, cc=cc)
+        state["created_new_bug"] = True
         for blocked_bug in blocked_bugs:
             if blocked_bug:
                 status = self._tool.bugs.fetch_bug(blocked_bug).status()

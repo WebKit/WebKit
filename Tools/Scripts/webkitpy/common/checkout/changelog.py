@@ -66,6 +66,8 @@ class ChangeLogEntry(object):
     # e.g. (ChangeLogEntry.touched_functions): Added.
     touched_functions_regexp = r'^\s*\((?P<function>[^)]*)\):'
 
+    radar_id_regexp = r'^\s*(<?rdar://problems?/)?(?P<radar_id>-?\d{7,})>?'
+
     # e.g. Reviewed by Darin Adler.
     # (Discard everything after the first period to match more invalid lines.)
     reviewed_by_regexp = r'^\s*((\w+\s+)+and\s+)?(Review|Rubber(\s*|-)stamp)(s|ed)?\s+([a-z]+\s+)*?by\s+(?P<reviewer>.*?)[\.,]?\s*$'
@@ -110,6 +112,19 @@ class ChangeLogEntry(object):
         self._committer_list = committer_list
         self._revision = revision
         self._parse_entry()
+
+    @classmethod
+    def _parse_radar_id(cls, text):
+        if not text:
+            return None
+        match = re.search(ChangeLogEntry.radar_id_regexp, text, re.MULTILINE | re.IGNORECASE)
+        if not match:
+            return None
+        radar_id = int(match.group('radar_id'))
+        if radar_id < 0:
+            return None
+
+        return radar_id
 
     @classmethod
     def _parse_reviewer_text(cls, text):

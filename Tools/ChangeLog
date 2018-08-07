@@ -1,3 +1,24 @@
+2018-08-07  Lucas Forschler  <lforschler@apple.com>
+
+        If there's a Radar in the ChangeLog, webkit-patch upload/create-bug should put the radar in the bug and set InRadar
+        https://bugs.webkit.org/show_bug.cgi?id=188235
+
+        Reviewed by Daniel Bates, Kocsen Chung, and Aakash Jain.
+
+        * Scripts/webkitpy/common/checkout/changelog.py: 
+        (ChangeLogEntry): Teach the ChangeLog tools how to parse a radar_id
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py: Test out the new _parse_radar_id functionality
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.add_keyword_to_bug): Add logic to add keywords using the changeform
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (Upload): Teach the upload step how to add radar information when creating a new bug.
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/addradar.py: Added.
+        (AddRadar):
+        (AddRadar.run): Contains the logic to add the radar information to bugzilla.
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        (CreateBug.run): set a "created_new_bug" state when creating a new bugzilla bug.
+
 2018-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Post-review feedback after r234614.

@@ -851,6 +851,15 @@ class Bugzilla(object):
         self.browser["newcc"] = ", ".join(email_address_list)
         self.browser.submit()
 
+    def add_keyword_to_bug(self, bug_id, keyword):
+        self.authenticate()
+
+        _log.info("Adding %s to the keyword list for bug %s" % (keyword, bug_id))
+        self.open_url(self.bug_url_for_bug_id(bug_id))
+        self.browser.select_form(name="changeform")
+        self.browser["keywords"] = keyword
+        self.browser.submit()
+
     def post_comment_to_bug(self, bug_id, comment_text, cc=None):
         self.authenticate()
 

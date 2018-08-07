@@ -407,6 +407,116 @@ class ChangeLogTest(unittest.TestCase):
     def _contributors(self, names):
         return [CommitterList().contributor_by_name(name) for name in names]
 
+    def _assert_fuzzy_radar_match(self, radar_text, expected_radar_id):
+        parsed_radar_id = ChangeLogEntry._parse_radar_id(radar_text)
+        self.assertEqual(parsed_radar_id, expected_radar_id)
+
+    def test_fuzzy_radar_match__none(self):
+        self._assert_fuzzy_radar_match(None, None)
+        self._assert_fuzzy_radar_match('', None)
+
+        self._assert_fuzzy_radar_match('rdar://1', None)
+        self._assert_fuzzy_radar_match('rdar://12', None)
+        self._assert_fuzzy_radar_match('rdar://123', None)
+        self._assert_fuzzy_radar_match('rdar://1234', None)
+        self._assert_fuzzy_radar_match('rdar://12345', None)
+        self._assert_fuzzy_radar_match('rdar://123456', None)
+        self._assert_fuzzy_radar_match('rdar://1234567', None)
+        self._assert_fuzzy_radar_match('rdar://12345678', None)
+
+        self._assert_fuzzy_radar_match('<rdar://1>', None)
+        self._assert_fuzzy_radar_match('<rdar://12>', None)
+        self._assert_fuzzy_radar_match('<rdar://123>', None)
+        self._assert_fuzzy_radar_match('<rdar://1234>', None)
+        self._assert_fuzzy_radar_match('<rdar://12345>', None)
+        self._assert_fuzzy_radar_match('<rdar://123456>', None)
+        self._assert_fuzzy_radar_match('<rdar://1234567>', None)
+        self._assert_fuzzy_radar_match('<rdar://12345678>', None)
+
+        self._assert_fuzzy_radar_match('<rdar://problem/1>', None)
+        self._assert_fuzzy_radar_match('<rdar://problem/12>', None)
+        self._assert_fuzzy_radar_match('<rdar://problem/123>', None)
+        self._assert_fuzzy_radar_match('<rdar://problem/1234>', None)
+        self._assert_fuzzy_radar_match('<rdar://problem/12345>', None)
+        self._assert_fuzzy_radar_match('<rdar://problem/123456>', None)
+
+        self._assert_fuzzy_radar_match('<rdar://problems/1>', None)
+        self._assert_fuzzy_radar_match('<rdar://problems/12>', None)
+        self._assert_fuzzy_radar_match('<rdar://problems/123>', None)
+        self._assert_fuzzy_radar_match('<rdar://problems/1234>', None)
+        self._assert_fuzzy_radar_match('<rdar://problems/12345>', None)
+        self._assert_fuzzy_radar_match('<rdar://problems/123456>', None)
+
+        self._assert_fuzzy_radar_match('rdar://problem/1', None)
+        self._assert_fuzzy_radar_match('rdar://problem/12', None)
+        self._assert_fuzzy_radar_match('rdar://problem/123', None)
+        self._assert_fuzzy_radar_match('rdar://problem/1234', None)
+        self._assert_fuzzy_radar_match('rdar://problem/12345', None)
+        self._assert_fuzzy_radar_match('rdar://problem/123456', None)
+
+        self._assert_fuzzy_radar_match('rdar://problems/1', None)
+        self._assert_fuzzy_radar_match('rdar://problems/12', None)
+        self._assert_fuzzy_radar_match('rdar://problems/123', None)
+        self._assert_fuzzy_radar_match('rdar://problems/1234', None)
+        self._assert_fuzzy_radar_match('rdar://problems/12345', None)
+        self._assert_fuzzy_radar_match('rdar://problems/123456', None)
+
+        self._assert_fuzzy_radar_match('There is no rdar link here', None)
+        self._assert_fuzzy_radar_match('There is no rdar:// link here', None)
+        self._assert_fuzzy_radar_match('There is no malformed <rdar://abcd link here', None)
+        self._assert_fuzzy_radar_match('There is no malformed <rdar://problem> link here', None)
+        self._assert_fuzzy_radar_match('There is no malformed <rdar://problem/abcdefgh> link here', None)
+        self._assert_fuzzy_radar_match('There is no malformed <rdar://problem/1234> link here', None)
+        self._assert_fuzzy_radar_match('                fixed in <rdar://problem/2345678>', None)
+        self._assert_fuzzy_radar_match('                whitespace here <rdar://problem/12345678>', None)
+
+    def test_fuzzy_radar_match_format_1(self):
+        self._assert_fuzzy_radar_match('<rdar://problem/1234567>', 1234567)
+        self._assert_fuzzy_radar_match('<rdar://problem/12345678>', 12345678)
+
+        self._assert_fuzzy_radar_match('<rdar://problems/1234567>', 1234567)
+        self._assert_fuzzy_radar_match('<rdar://problems/12345678>', 12345678)
+
+    def test_fuzzy_radar_match_format_2(self):
+        self._assert_fuzzy_radar_match('rdar://problem/1234567', 1234567)
+        self._assert_fuzzy_radar_match('rdar://problem/12345678', 12345678)
+
+        self._assert_fuzzy_radar_match('rdar://problems/1234567', 1234567)
+        self._assert_fuzzy_radar_match('rdar://problems/12345678', 12345678)
+
+    def test_fuzzy_radar_match_format_3(self):
+        contents = """
+        2011-03-23  Ojan Vafai  <ojan@chromium.org>
+
+                Add failing result for WebKit2. All tests that require
+                focus fail on WebKit2. See https://bugs.webkit.org/show_bug.cgi?id=56988.
+                <rdar://problem/42824228>
+
+                * platform/mac-wk2/fast/css/pseudo-any-expected.txt: Added.
+
+               '''"""
+        self._assert_fuzzy_radar_match(contents, 42824228)
+
+        contents = """
+        2018-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+                [iOS] Keyboard becomes unresponsive after pressing delete while pressing down on a character key with accents
+                https://bugs.webkit.org/show_bug.cgi?id=188251
+                <rdar://problem/37842108>
+        """
+        self._assert_fuzzy_radar_match(contents, 37842108)
+
+        contents = """
+        2017-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+                Refactor drag start codepaths to plumb a DragItem to client layers
+                https://bugs.webkit.org/show_bug.cgi?id=173832
+                Work towards <rdar://problem/32236827>
+
+                Reviewed by Ryosuke Niwa and Tim Horton.
+        """
+        self._assert_fuzzy_radar_match(contents, None)
+
     def _assert_fuzzy_reviewer_match(self, reviewer_text, expected_text_list, expected_contributors):
         unused, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(reviewer_text)
         self.assertEqual(reviewer_text_list, expected_text_list)

@@ -285,6 +285,7 @@ class Upload(AbstractPatchUploadingCommand):
         steps.SuggestReviewers,
         steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiff,
+        steps.AddRadar,
         steps.SubmitToEWS,
         steps.WPTChangeExport,
     ]
