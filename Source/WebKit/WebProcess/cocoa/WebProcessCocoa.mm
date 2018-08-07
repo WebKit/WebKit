@@ -87,6 +87,7 @@
 
 #if PLATFORM(MAC)
 #import <WebCore/ScrollbarThemeMac.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
 
 #if USE(OS_STATE)
@@ -197,6 +198,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 
 #if PLATFORM(MAC)
     WebCore::setScreenProperties(parameters.screenProperties);
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
+#endif
 #endif
 }
 
@@ -592,6 +596,9 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
         return;
 
     static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
+    
+    NSScrollerStyle style = useOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
+    [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
 }
 #endif    
 

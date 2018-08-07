@@ -1,3 +1,15 @@
+2018-08-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Scrollbars are not visible when using 3rd party mouse
+        https://bugs.webkit.org/show_bug.cgi?id=188372
+
+        Reviewed by Simon Fraser.
+
+        Added declaration of NSScrollerImpPair class method. This method updates all NSScrollerImpPairs
+        with a new recommended scroller style.
+
+        * pal/spi/mac/NSScrollerImpSPI.h:
+
 2018-08-02  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r234489.

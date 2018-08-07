@@ -38,6 +38,7 @@
 
 @interface NSScrollerImpPair ()
 + (NSUserInterfaceLayoutDirection)scrollerLayoutDirection;
++ (void)_updateAllScrollerImpPairsForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle;
 @end
 
 #else
@@ -133,6 +134,7 @@ typedef NSUInteger NSOverlayScrollerState;
 - (void)endLiveResize;
 - (void)beginScrollGesture;
 - (void)endScrollGesture;
++ (void)_updateAllScrollerImpPairsForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle;
 @end
 
 @protocol NSScrollerImpPairDelegate

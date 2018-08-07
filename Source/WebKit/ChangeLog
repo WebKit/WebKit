@@ -1,3 +1,31 @@
+2018-08-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Scrollbars are not visible when using 3rd party mouse
+        https://bugs.webkit.org/show_bug.cgi?id=188372
+
+        Reviewed by Simon Fraser.
+
+        The scrollbars are not visible because they are not updated with the recommended scroller style
+        when a 3rd party mouse is used. They still have the overlay style, but the system is
+        recommending the legacy style in this case. The UI process is currently notifying the WebProcess
+        about changes in the scroller style, but the current style is not set in the WebProcess on
+        startup. This patch sets the initial scroller style in the WebProcess by passing it as part of
+        the WebProcess creation parameters. Also, to make sure hot-plugging of a 3rd party mouse is
+        is visually changing the scroller style of the current page, a class method in NSScrollerImpPair
+        is called to update all NSScrollerImpPairs with the new recommended style. This method was
+        previously called by AppKit, but after blocking WindowServer access, AppKit is no longer calling
+        this method. This has been manually tested by using a 3rd party mouse.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::scrollerStylePreferenceChanged):
+
 2018-08-06  Andy Estes  <aestes@apple.com>
 
         [Wi-Fi Assertions] suspendWiFiAssertions() should be able to delay sending ProcessReadyToSuspend

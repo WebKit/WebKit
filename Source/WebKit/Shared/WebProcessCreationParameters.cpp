@@ -159,6 +159,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 #if PLATFORM(MAC)
     encoder << screenProperties;
+    encoder << useOverlayScrollbars;
 #endif
 }
 
@@ -417,6 +418,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!screenProperties)
         return false;
     parameters.screenProperties = WTFMove(*screenProperties);
+    if (!decoder.decode(parameters.useOverlayScrollbars))
+        return false;
 #endif
 
     return true;

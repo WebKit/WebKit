@@ -198,6 +198,7 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(MAC)
     WebCore::ScreenProperties screenProperties;
+    bool useOverlayScrollbars { true };
 #endif
 };
 
