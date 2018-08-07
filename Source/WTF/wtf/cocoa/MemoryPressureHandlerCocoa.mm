@@ -30,6 +30,7 @@
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
 #import <notify.h>
+#import <wtf/spi/darwin/DispatchSPI.h>
 
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0
 
@@ -46,9 +47,9 @@ void MemoryPressureHandler::platformReleaseMemory(Critical critical)
     }
 }
 
-static dispatch_source_t _cache_event_source = 0;
-static dispatch_source_t _timer_event_source = 0;
-static int _notifyTokens[3];
+static dispatch_source_t memoryPressureEventSource = nullptr;
+static dispatch_source_t timerEventSource = nullptr;
+static int notifyTokens[3];
 
 // Disable memory event reception for a minimum of s_minimumHoldOffTime
 // seconds after receiving an event. Don't let events fire any sooner than
@@ -63,41 +64,51 @@ static const unsigned s_holdOffMultiplier = 20;
 
 void MemoryPressureHandler::install()
 {
-    if (m_installed || _timer_event_source)
+    if (m_installed || timerEventSource)
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
 #if PLATFORM(IOS)
-        _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL, dispatch_get_main_queue());
-#elif PLATFORM(MAC)
-        _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_CRITICAL, dispatch_get_main_queue());
+        auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL;
+#else // PLATFORM(MAC)
+        auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_CRITICAL;
 #endif
+        memoryPressureEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, dispatch_get_main_queue());
 
-        dispatch_set_context(_cache_event_source, this);
-        dispatch_source_set_event_handler(_cache_event_source, ^{
-            bool critical = true;
+        dispatch_source_set_event_handler(memoryPressureEventSource, ^{
+            auto status = dispatch_source_get_data(memoryPressureEventSource);
 #if PLATFORM(IOS)
-            unsigned long status = dispatch_source_get_data(_cache_event_source);
-            critical = status == DISPATCH_MEMORYPRESSURE_CRITICAL;
-            auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-            bool wasCritical = memoryPressureHandler.isUnderMemoryPressure();
-            memoryPressureHandler.setUnderMemoryPressure(critical);
-            if (status == DISPATCH_MEMORYPRESSURE_NORMAL) {
-                if (ReliefLogger::loggingEnabled())
-                    NSLog(@"System is no longer under (%s) memory pressure.", wasCritical ? "critical" : "non-critical");
-                return;
+            switch (status) {
+            // VM pressure events.
+            case DISPATCH_MEMORYPRESSURE_NORMAL:
+                setUnderMemoryPressure(false);
+                break;
+            case DISPATCH_MEMORYPRESSURE_WARN:
+                setUnderMemoryPressure(false);
+                respondToMemoryPressure(Critical::No);
+                break;
+            case DISPATCH_MEMORYPRESSURE_CRITICAL:
+                setUnderMemoryPressure(true);
+                respondToMemoryPressure(Critical::Yes);
+                break;
+            // Process memory limit events.
+            case DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN:
+                respondToMemoryPressure(Critical::No);
+                break;
+            case DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL:
+                respondToMemoryPressure(Critical::Yes);
+                break;
             }
-
-            if (ReliefLogger::loggingEnabled())
-                NSLog(@"Got memory pressure notification (%s)", critical ? "critical" : "non-critical");
+#else // PLATFORM(MAC)
+            respondToMemoryPressure(Critical::Yes);
 #endif
-            MemoryPressureHandler::singleton().respondToMemoryPressure(critical ? Critical::Yes : Critical::No);
+            WTFLogAlways("Received memory pressure event %lu vm pressure %d", status, isUnderMemoryPressure());
         });
-        dispatch_resume(_cache_event_source);
+        dispatch_resume(memoryPressureEventSource);
     });
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
-    notify_register_dispatch("org.WebKit.lowMemory", &_notifyTokens[0], dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch("org.WebKit.lowMemory", &notifyTokens[0], dispatch_get_main_queue(), ^(int) {
 #if ENABLE(FMW_FOOTPRINT_COMPARISON)
         auto footprintBefore = pagesPerVMTag();
 #endif
@@ -116,10 +127,10 @@ void MemoryPressureHandler::install()
         });
     });
 
-    notify_register_dispatch("org.WebKit.lowMemory.begin", &_notifyTokens[1], dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch("org.WebKit.lowMemory.begin", &notifyTokens[1], dispatch_get_main_queue(), ^(int) {
         beginSimulatedMemoryPressure();
     });
-    notify_register_dispatch("org.WebKit.lowMemory.end", &_notifyTokens[2], dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch("org.WebKit.lowMemory.end", &notifyTokens[2], dispatch_get_main_queue(), ^(int) {
         endSimulatedMemoryPressure();
     });
 
@@ -132,40 +143,40 @@ void MemoryPressureHandler::uninstall()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (_cache_event_source) {
-            dispatch_source_cancel(_cache_event_source);
-            _cache_event_source = 0;
+        if (memoryPressureEventSource) {
+            dispatch_source_cancel(memoryPressureEventSource);
+            memoryPressureEventSource = nullptr;
         }
 
-        if (_timer_event_source) {
-            dispatch_source_cancel(_timer_event_source);
-            _timer_event_source = 0;
+        if (timerEventSource) {
+            dispatch_source_cancel(timerEventSource);
+            timerEventSource = nullptr;
         }
     });
 
     m_installed = false;
 
-    for (auto& token : _notifyTokens)
+    for (auto& token : notifyTokens)
         notify_cancel(token);
 }
 
 void MemoryPressureHandler::holdOff(Seconds seconds)
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        _timer_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-        if (_timer_event_source) {
-            dispatch_set_context(_timer_event_source, this);
+        timerEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+        if (timerEventSource) {
+            dispatch_set_context(timerEventSource, this);
             // FIXME: The final argument `s_minimumHoldOffTime.seconds()` seems wrong.
             // https://bugs.webkit.org/show_bug.cgi?id=183277
-            dispatch_source_set_timer(_timer_event_source, dispatch_time(DISPATCH_TIME_NOW, seconds.seconds() * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, s_minimumHoldOffTime.seconds());
-            dispatch_source_set_event_handler(_timer_event_source, ^{
-                if (_timer_event_source) {
-                    dispatch_source_cancel(_timer_event_source);
-                    _timer_event_source = 0;
+            dispatch_source_set_timer(timerEventSource, dispatch_time(DISPATCH_TIME_NOW, seconds.seconds() * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, s_minimumHoldOffTime.seconds());
+            dispatch_source_set_event_handler(timerEventSource, ^{
+                if (timerEventSource) {
+                    dispatch_source_cancel(timerEventSource);
+                    timerEventSource = nullptr;
                 }
                 MemoryPressureHandler::singleton().install();
             });
-            dispatch_resume(_timer_event_source);
+            dispatch_resume(timerEventSource);
         }
     });
 }

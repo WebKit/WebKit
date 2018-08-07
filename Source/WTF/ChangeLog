@@ -1,3 +1,30 @@
+2018-08-07  Antti Koivisto  <antti@apple.com>
+
+        Web process never leaves memory pressured state if caused by process size limit
+        https://bugs.webkit.org/show_bug.cgi?id=188299
+        <rdar://problem/42157442>
+
+        Reviewed by Darin Adler.
+
+        For vm memory pressure warnings we get notified when exiting the state and we can clear
+        the isUnderMemoryPressure bit. However as a compatibility behavior we were also notified using
+        the same event when approaching the process size limit. In this case there is no "all clear"
+        event so we'd stay in pressured state forever, leading to unnecessarily degraded user experience.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+
+        Install a handler for process size limit events. This disables the compatibility behavior,
+        vm pressure events will be received for vm pressure only.
+
+        Process size limit events are treated as one-shot. We do cleanups based on criticality but
+        don't enter the pressured state.
+
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+        * wtf/spi/darwin/DispatchSPI.h: Added.
+
 2018-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Use enum classes and OptionSets for PaintPhase and PaintBehavior
