@@ -199,6 +199,10 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 
+# This test seems wrong as the order of setting ServiceWorker#state to 'activated' and resolving skipWaiting() promise is not deterministic.
+# Run this test to ensure this test does not crash.
+webkit.org/b/188246 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html [ Pass Failure ]
+
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
