@@ -1,3 +1,13 @@
+2018-08-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] [2.20.4] Occasional rendering artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=188377
+
+        Unreviewed manual rollout of r234420, which is causing issues on this branch.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::handleDisplayRefreshMonitorUpdate):
+
 2018-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.20.4 release.
