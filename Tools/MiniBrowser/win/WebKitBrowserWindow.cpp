@@ -163,11 +163,6 @@ void WebKitBrowserWindow::launchInspector()
     WKInspectorShow(inspector);
 }
 
-void WebKitBrowserWindow::setUserAgent(UINT menuID)
-{
-    // This method should be removed.
-}
-
 void WebKitBrowserWindow::setUserAgent(_bstr_t& customUAString)
 {
     auto page = WKViewGetPage(m_view.get());

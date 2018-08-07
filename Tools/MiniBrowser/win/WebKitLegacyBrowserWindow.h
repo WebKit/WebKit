@@ -96,7 +96,6 @@ private:
     bool goBack();
     bool goForward();
 
-    void setUserAgent(UINT menuID);
     void setUserAgent(_bstr_t& customUAString);
     _bstr_t userAgent();
 

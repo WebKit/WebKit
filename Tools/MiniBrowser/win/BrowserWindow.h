@@ -46,7 +46,7 @@ public:
     virtual void launchInspector() = 0;
 
     virtual _bstr_t userAgent() = 0;
-    virtual void setUserAgent(UINT menuID) = 0;
+    void setUserAgent(UINT menuID);
     virtual void setUserAgent(_bstr_t& customUAString) = 0;
 
     virtual void showLayerTree() = 0;

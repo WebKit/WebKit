@@ -1,3 +1,31 @@
+2018-08-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [MiniBrowser][Win] Allow selection of recent user agents
+        https://bugs.webkit.org/show_bug.cgi?id=188371
+
+        Reviewed by Fujii Hironori.
+
+        Updates the user agent spoofing strings to the latest released
+        versions and adds Microsoft Edge's user agent.
+
+        Moves the menu item selection to the common base class, BrowserWindow
+        to support user agent spoofing in a WebKitLegacyBrowserWindow and
+        WebKitBrowserWindow.
+
+        * MiniBrowser/win/BrowserWindow.cpp: Added.
+        (BrowserWindow::setUserAgent):
+        * MiniBrowser/win/BrowserWindow.h:
+        * MiniBrowser/win/CMakeLists.txt:
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::toggleMenuItem):
+        * MiniBrowser/win/MiniBrowserLib.rc:
+        * MiniBrowser/win/MiniBrowserLibResource.h:
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        * MiniBrowser/win/WebKitBrowserWindow.h:
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::setUserAgent):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+
 2018-08-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, add a new address to my configuration

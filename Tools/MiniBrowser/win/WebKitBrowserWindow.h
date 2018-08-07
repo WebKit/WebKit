@@ -48,7 +48,6 @@ private:
     void launchInspector() override;
 
     _bstr_t userAgent() override;
-    void setUserAgent(UINT menuID) override;
     void setUserAgent(_bstr_t&) override;
 
     void showLayerTree() override;

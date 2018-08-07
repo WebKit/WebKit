@@ -77,11 +77,12 @@ BEGIN
         BEGIN
             MENUITEM "Default (Automatically Chosen)", IDM_UA_DEFAULT
             MENUITEM SEPARATOR
-            MENUITEM "Safari 8.0",                  IDM_UA_SAFARI_8_0
+            MENUITEM "Safari",                      IDM_UA_SAFARI
             MENUITEM SEPARATOR
-            MENUITEM "Safari iOS 8 - iPhone",       IDM_UA_SAFARI_IOS_8_IPHONE
-            MENUITEM "Safari iOS 8 - iPad",         IDM_UA_SAFARI_IOS_8_IPAD
+            MENUITEM "Safari iOS - iPhone",         IDM_UA_SAFARI_IOS_IPHONE
+            MENUITEM "Safari iOS - iPad",           IDM_UA_SAFARI_IOS_IPAD
             MENUITEM SEPARATOR
+            MENUITEM "Microsoft Edge",              IDM_UA_EDGE
             MENUITEM "Internet Explorer 11.0",      IDM_UA_IE_11
             MENUITEM SEPARATOR
             MENUITEM "Google Chrome - Mac",         IDM_UA_CHROME_MAC
