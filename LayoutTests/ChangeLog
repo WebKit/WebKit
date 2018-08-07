@@ -1,3 +1,20 @@
+2018-08-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.open and document.write must throw while the HTML parser is synchronously constructing a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=187319
+        <rdar://problem/42843012>
+
+        Reviewed by Frédéric Wang.
+
+        Added W3C style testharness.js tests. The WPT test added by https://github.com/web-platform-tests/wpt/pull/12037
+        doesn't test nearly as many edge cases.
+
+        * fast/custom-elements/resources/navigation-destination.html: Added.
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-construct-expected.txt: Added.
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-construct.html: Added.
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions-expected.txt: Added.
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions.html: Added.
+
 2018-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r233778): Text selection sometimes cannot be extended in iframes
