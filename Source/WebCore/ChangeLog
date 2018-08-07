@@ -1,3 +1,33 @@
+2018-08-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.open and document.write must throw while the HTML parser is synchronously constructing a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=187319
+        <rdar://problem/42843012>
+
+        Reviewed by Frédéric Wang.
+
+        Make document.open, document.write, document.writeln, and document.close throw InvalidStateError during
+        a synchronous custom element construction as specified:
+        https://html.spec.whatwg.org/multipage/parsing.html#create-an-element-for-the-token
+        https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#throw-on-dynamic-markup-insertion-counter
+
+        Tests: fast/custom-elements/throw-on-dynamic-markup-insertion-counter-construct.html
+               fast/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::openForBindings): Throw InvalidStateError when m_throwOnDynamicMarkupInsertionCount is non-zero.
+        (WebCore::Document::closeForBindings): Ditto.
+        (WebCore::Document::write): Ditto.
+        (WebCore::Document::writeln): Ditto.
+        * dom/Document.h: Re-ordered the related instance variables in the order they appear in the spec, and updated spec URLs.
+        * dom/ThrowOnDynamicMarkupInsertionCountIncrementer.h: Added.
+        (WebCore::ThrowOnDynamicMarkupInsertionCountIncrementer): Added.
+        (WebCore::ThrowOnDynamicMarkupInsertionCountIncrementer::ThrowOnDynamicMarkupInsertionCountIncrementer):
+        (WebCore::ThrowOnDynamicMarkupInsertionCountIncrementer::~ThrowOnDynamicMarkupInsertionCountIncrementer):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder): Instantiate ThrowOnDynamicMarkupInsertionCountIncrementer.
+
 2018-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Use 1-byte enum class for Document::StandaloneStatus

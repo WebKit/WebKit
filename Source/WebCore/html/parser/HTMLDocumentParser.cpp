@@ -41,6 +41,7 @@
 #include "LinkLoader.h"
 #include "NavigationScheduler.h"
 #include "ScriptElement.h"
+#include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
 
 namespace WebCore {
 
@@ -210,6 +211,8 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 
         // https://html.spec.whatwg.org/#create-an-element-for-the-token
         {
+            // Prevent document.open/write during reactions by allocating the incrementer before the reactions stack.
+            ThrowOnDynamicMarkupInsertionCountIncrementer incrementer(*document());
             CustomElementReactionStack reactionStack(document()->execState());
             auto& elementInterface = constructionData->elementInterface.get();
             auto newElement = elementInterface.constructElementWithFallback(*document(), constructionData->name);

@@ -10859,6 +10859,7 @@
 		9B32CDA813DF7FA900F34D13 /* RenderedPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderedPosition.cpp; sourceTree = "<group>"; };
 		9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplyBlockElementCommand.h; sourceTree = "<group>"; };
 		9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyBlockElementCommand.cpp; sourceTree = "<group>"; };
+		9B4376EF2117E872009D03A0 /* ThrowOnDynamicMarkupInsertionCountIncrementer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThrowOnDynamicMarkupInsertionCountIncrementer.h; sourceTree = "<group>"; };
 		9B50B1DC17CD4C0F0087F63C /* FormNamedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormNamedItem.h; sourceTree = "<group>"; };
 		9B532EA11BA928570038A827 /* SlotAssignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlotAssignment.cpp; sourceTree = "<group>"; };
 		9B532EA21BA928570038A827 /* SlotAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotAssignment.h; sourceTree = "<group>"; };
@@ -26575,6 +26576,7 @@
 				A77B419F12E675A90054343D /* TextEventInputType.h */,
 				E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */,
 				E4D988B317BFD1F60084FB88 /* TextNodeTraversal.h */,
+				9B4376EF2117E872009D03A0 /* ThrowOnDynamicMarkupInsertionCountIncrementer.h */,
 				0F54DD051881D5F5003EEDBB /* Touch.h */,
 				0F54DD061881D5F5003EEDBB /* TouchEvent.h */,
 				0F54DD071881D5F5003EEDBB /* TouchList.h */,

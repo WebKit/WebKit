@@ -2609,11 +2609,8 @@ ExceptionOr<RefPtr<WindowProxy>> Document::openForBindings(DOMWindow& activeWind
 // FIXME: Add support for the 'type' and 'replace' parameters.
 ExceptionOr<Document&> Document::openForBindings(Document* responsibleDocument, const String&, const String&)
 {
-    if (!isHTMLDocument())
+    if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
-
-    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
-    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     open(responsibleDocument);
     return *this;
@@ -2753,11 +2750,8 @@ ExceptionOr<void> Document::closeForBindings()
     // FIXME: We should follow the specification more closely:
     //        http://www.whatwg.org/specs/web-apps/current-work/#dom-document-close
 
-    if (!isHTMLDocument())
+    if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
-
-    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
-    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     close();
     return { };
@@ -2984,11 +2978,8 @@ void Document::write(Document* responsibleDocument, SegmentedString&& text)
 
 ExceptionOr<void> Document::write(Document* responsibleDocument, Vector<String>&& strings)
 {
-    if (!isHTMLDocument())
+    if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
-
-    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
-    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     SegmentedString text;
     for (auto& string : strings)
@@ -3001,11 +2992,8 @@ ExceptionOr<void> Document::write(Document* responsibleDocument, Vector<String>&
 
 ExceptionOr<void> Document::writeln(Document* responsibleDocument, Vector<String>&& strings)
 {
-    if (!isHTMLDocument())
+    if (!isHTMLDocument() || m_throwOnDynamicMarkupInsertionCount)
         return Exception { InvalidStateError };
-
-    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
-    // https://bugs.webkit.org/show_bug.cgi?id=187319
 
     SegmentedString text;
     for (auto& string : strings)

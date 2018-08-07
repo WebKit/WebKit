@@ -1480,8 +1480,9 @@ protected:
 private:
     friend class DocumentParserYieldToken;
     friend class Node;
-    friend class IgnoreDestructiveWriteCountIncrementer;
+    friend class ThrowOnDynamicMarkupInsertionCountIncrementer;
     friend class IgnoreOpensDuringUnloadCountIncrementer;
+    friend class IgnoreDestructiveWriteCountIncrementer;
 
     bool shouldInheritContentSecurityPolicyFromOwner() const;
 
@@ -1854,11 +1855,14 @@ private:
     int m_loadEventDelayCount { 0 };
     unsigned m_lastStyleUpdateSizeForTesting { 0 };
 
-    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-destructive-writes-counter
-    unsigned m_ignoreDestructiveWriteCount { 0 };
+    // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#throw-on-dynamic-markup-insertion-counter
+    unsigned m_throwOnDynamicMarkupInsertionCount { 0 };
 
-    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-opens-during-unload-counter
+    // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#ignore-opens-during-unload-counter
     unsigned m_ignoreOpensDuringUnloadCount { 0 };
+
+    // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#ignore-destructive-writes-counter
+    unsigned m_ignoreDestructiveWriteCount { 0 };
 
     unsigned m_activeParserCount { 0 };
     unsigned m_styleRecalcCount { 0 };
