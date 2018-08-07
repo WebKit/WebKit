@@ -28,4 +28,5 @@
 
 interface TestCEReactionsStringifier {
     [CEReactions] stringifier attribute DOMString value;
+    [CEReactions=NotNeeded] stringifier attribute DOMString valueWithoutReactions;
 };

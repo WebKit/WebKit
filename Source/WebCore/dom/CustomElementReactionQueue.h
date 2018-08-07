@@ -84,7 +84,55 @@ private:
     Vector<CustomElementReactionQueueItem> m_items;
 };
 
-class CustomElementReactionStack {
+class CustomElementReactionDisallowedScope {
+public:
+    CustomElementReactionDisallowedScope()
+    {
+#if !ASSERT_DISABLED
+        s_customElementReactionDisallowedCount++;
+#endif
+    }
+
+    ~CustomElementReactionDisallowedScope()
+    {
+#if !ASSERT_DISABLED
+        ASSERT(s_customElementReactionDisallowedCount);
+        s_customElementReactionDisallowedCount--;
+#endif
+    }
+
+#if !ASSERT_DISABLED
+    static bool isReactionAllowed() { return !s_customElementReactionDisallowedCount; }
+#endif
+
+    class AllowedScope {
+#if !ASSERT_DISABLED
+    public:
+        AllowedScope()
+            : m_originalCount(s_customElementReactionDisallowedCount)
+        {
+            s_customElementReactionDisallowedCount = 0;
+        }
+
+        ~AllowedScope()
+        {
+            s_customElementReactionDisallowedCount = m_originalCount;
+        }
+
+    private:
+        unsigned m_originalCount;
+#endif
+    };
+
+private:
+#if !ASSERT_DISABLED
+    WEBCORE_EXPORT static unsigned s_customElementReactionDisallowedCount;
+
+    friend class AllowedScope;
+#endif
+};
+
+class CustomElementReactionStack : public CustomElementReactionDisallowedScope::AllowedScope {
 public:
     ALWAYS_INLINE CustomElementReactionStack(JSC::ExecState* state)
         : m_previousProcessingStack(s_currentProcessingStack)

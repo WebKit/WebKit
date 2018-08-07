@@ -32,5 +32,11 @@ interface TestCEReactions {
     [CEReactions, Reflect] attribute DOMString reflectAttributeWithCEReactions;
 
     [PutForwards=value] attribute TestCEReactionsStringifier stringifierAttribute;
+
+    [CEReactions=NotNeeded] void methodWithCEReactionsNotNeeded();
+    [CEReactions=NotNeeded] attribute DOMString attributeWithCEReactionsNotNeeded;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString reflectAttributeWithCEReactionsNotNeeded;
+
+    [PutForwards=valueWithoutReactions] attribute TestCEReactionsStringifier stringifierAttributeNotNeeded;
 };
 

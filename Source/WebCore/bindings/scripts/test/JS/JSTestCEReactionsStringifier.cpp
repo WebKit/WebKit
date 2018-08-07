@@ -48,6 +48,8 @@ JSC::EncodedJSValue jsTestCEReactionsStringifierConstructor(JSC::ExecState*, JSC
 bool setJSTestCEReactionsStringifierConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestCEReactionsStringifierValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestCEReactionsStringifierValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestCEReactionsStringifierValueWithoutReactions(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestCEReactionsStringifierPrototype : public JSC::JSNonFinalObject {
 public:
@@ -97,6 +99,7 @@ static const HashTableValue JSTestCEReactionsStringifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierConstructor) } },
     { "value", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierValue) } },
+    { "valueWithoutReactions", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierValueWithoutReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierValueWithoutReactions) } },
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsStringifierPrototypeFunctionToString), (intptr_t) (0) } },
 };
 
@@ -206,6 +209,38 @@ static inline bool setJSTestCEReactionsStringifierValueSetter(ExecState& state, 
 bool setJSTestCEReactionsStringifierValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueSetter>(*state, thisValue, encodedValue, "value");
+}
+
+static inline JSValue jsTestCEReactionsStringifierValueWithoutReactionsGetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.valueWithoutReactions());
+    return result;
+}
+
+EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueWithoutReactionsGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "valueWithoutReactions");
+}
+
+static inline bool setJSTestCEReactionsStringifierValueWithoutReactionsSetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(state, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(state, throwScope, [&] {
+        return impl.setValueWithoutReactions(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+bool setJSTestCEReactionsStringifierValueWithoutReactions(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueWithoutReactionsSetter>(*state, thisValue, encodedValue, "valueWithoutReactions");
 }
 
 static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringBody(JSC::ExecState* state, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

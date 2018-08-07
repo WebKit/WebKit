@@ -19,22 +19,22 @@
  */
 
 interface HTMLIFrameElement : HTMLElement {
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute DOMString frameBorder;
-    [Reflect] attribute DOMString height;
-    [Reflect, URL] attribute USVString longDesc;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginHeight;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginWidth;
-    [Reflect] attribute DOMString name;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString align;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString frameBorder;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString height;
+    [Reflect, URL, CEReactions=NotNeeded] attribute USVString longDesc;
+    [Reflect, CEReactions=NotNeeded] attribute [TreatNullAs=EmptyString] DOMString marginHeight;
+    [Reflect, CEReactions=NotNeeded] attribute [TreatNullAs=EmptyString] DOMString marginWidth;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString name;
 
     [PutForwards=value] readonly attribute DOMTokenList sandbox;
-    [Reflect] attribute boolean allowFullscreen;
-    [CEReactions, Reflect] attribute DOMString allow;
+    [Reflect, CEReactions=NotNeeded] attribute boolean allowFullscreen;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString allow;
 
-    [Reflect] attribute DOMString scrolling;
-    [Reflect, URL] attribute USVString src;
-    [Reflect] attribute DOMString srcdoc;
-    [Reflect] attribute DOMString width;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString scrolling;
+    [Reflect, URL, CEReactions=NotNeeded] attribute USVString src;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString srcdoc;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString width;
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 

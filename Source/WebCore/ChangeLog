@@ -1,3 +1,57 @@
+2018-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CEReactions=NotNeeded for reactions only needed for customized builtins
+        https://bugs.webkit.org/show_bug.cgi?id=187851
+
+        Reviewed by Chris Dumez.
+
+        Because WebKit doesn't and will not support customized builtin elements, there are many DOM APIs marked with
+        [CEReactions] which don't actually need CustomElementReactionStack.
+
+        To clarify and document this difference, this patch introduces WebKit extention: [CEReactions=NotNeeded].
+        When this IDL attribute is specified, we generate CustomElementReactionDisallowedScope in the bindings code
+        to assert that there are no custom elements reactions being enqueued within the DOM API.
+
+        We suppress this assertion in CustomElementReactionStack since a DOM API with [CEReactions=NotNeeded] can
+        synchronously fire an event and otherwise execute arbirary scripts, which in turn could invoke a DOM API
+        with [CEReactions].
+
+        This patch deployes this change to HTMLIFrameElement since "src" IDL attribute triggers this second scenario.
+
+        Test: fast/custom-elements/custom-element-reaction-within-disallowed-scope.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePut):
+        (GeneratePutByIndex):
+        (GenerateDefineOwnProperty):
+        (GenerateDeletePropertyCommon):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateCustomElementReactionsStackIfNeeded): Added. Generate CustomElementReactionStack for [CEReactions]
+        and CustomElementReactionDisallowedScope for [CEReactions=NotNeeded].
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/TestCEReactions.idl: Added test cases for [CEReactions=NotNeeded].
+        * bindings/scripts/test/TestCEReactionsStringifier.idl: Ditto.
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgrade): Added an assertion to catch cases where
+        a DOM API with [CEReactions=NotNeeded] enqueues a custom element reaction; i.e. cases where [CEReactions]
+        should have been used.
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgradeIfDefined): Ditto.
+        (WebCore::CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded): Ditto.
+        (WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded): Ditto.
+        (WebCore::CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded): Ditto.
+        (WebCore::CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded): Ditto.
+        (WebCore::CustomElementReactionQueue::enqueuePostUpgradeReactions): Ditto.
+        * dom/CustomElementReactionQueue.h:
+        (WebCore::CustomElementReactionDisallowedScope): Added. Enables the assertion in enqueue* functions above.
+        (WebCore::CustomElementReactionDisallowedScope::CustomElementReactionDisallowedScope): Added.
+        (WebCore::CustomElementReactionDisallowedScope::~CustomElementReactionDisallowedScope): Added.
+        (WebCore::CustomElementReactionDisallowedScope::isReactionAllowed): Added.
+        (WebCore::CustomElementReactionDisallowedScope::AllowedScope): Added.
+        (WebCore::CustomElementReactionDisallowedScope::AllowedScope::AllowedScope): Added.
+        (WebCore::CustomElementReactionDisallowedScope::AllowedScope::~AllowedScope): Added.
+        (WebCore::CustomElementReactionStack): Suppress the assertion. See above for why this is needed.
+        * html/HTMLIFrameElement.idl:
+
 2018-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up initialization of some RenderLayer members

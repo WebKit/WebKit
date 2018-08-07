@@ -1,3 +1,17 @@
+2018-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CEReactions=NotNeeded for reactions only needed for customized builtins
+        https://bugs.webkit.org/show_bug.cgi?id=187851
+
+        Reviewed by Chris Dumez.
+
+        Added a regression test for enqueuing a custom element reaction in a DOM API marked as [CEReaction]
+        inside another DOM API with [CEReaction=NotNeeded]. WebKit should not hit a debug assertion added
+        by this patch.
+
+        * fast/custom-elements/custom-element-reaction-within-disallowed-scope-expected.txt: Added.
+        * fast/custom-elements/custom-element-reaction-within-disallowed-scope.html: Added.
+
 2018-08-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: split-up async stack trace test suite to improve clarity and maintainability

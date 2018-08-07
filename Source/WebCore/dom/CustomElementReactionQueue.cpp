@@ -119,6 +119,7 @@ void CustomElementReactionQueue::clear()
 
 void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, bool alreadyScheduledToUpgrade)
 {
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     auto& queue = ensureCurrentQueue(element);
     if (alreadyScheduledToUpgrade) {
         ASSERT(queue.m_items.size() == 1);
@@ -129,6 +130,7 @@ void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, bool al
 
 void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element)
 {
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isCustomElementUpgradeCandidate());
     auto* window = element.document().domWindow();
     if (!window)
@@ -147,6 +149,7 @@ void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element
 
 void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& element)
 {
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
     auto& queue = ensureCurrentQueue(element);
@@ -156,6 +159,7 @@ void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& eleme
 
 void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
 {
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     if (element.document().refCount() <= 0)
         return; // Don't enqueue disconnectedCallback if the entire document is getting destructed.
@@ -166,6 +170,7 @@ void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& el
 
 void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element, Document& oldDocument, Document& newDocument)
 {
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
     auto& queue = ensureCurrentQueue(element);
@@ -175,6 +180,7 @@ void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element
 
 void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
     auto& queue = ensureCurrentQueue(element);
@@ -184,6 +190,7 @@ void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element
 
 void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element)
 {
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isCustomElementUpgradeCandidate());
     if (!element.hasAttributes() && !element.isConnected())
         return;
@@ -279,6 +286,10 @@ CustomElementReactionQueue& CustomElementReactionQueue::ensureCurrentQueue(Eleme
     queue->add(element);
     return *element.reactionQueue();
 }
+
+#if !ASSERT_DISABLED
+unsigned CustomElementReactionDisallowedScope::s_customElementReactionDisallowedCount = 0;
+#endif
 
 CustomElementReactionStack* CustomElementReactionStack::s_currentProcessingStack = nullptr;
 

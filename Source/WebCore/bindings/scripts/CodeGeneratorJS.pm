@@ -930,10 +930,14 @@ sub GeneratePut
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
-    
-    if (($namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}) || ($indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions})) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n\n");
-        AddToImplIncludes("CustomElementReactionQueue.h");
+
+    assert("CEReactions is not supported on having both named setters and indexed setters") if $namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}
+        && $indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions};
+    if ($namedSetterOperation) {
+        GenerateCustomElementReactionsStackIfNeeded($outputArray, $namedSetterOperation, "*state");
+    }
+    if ($indexedSetterOperation) {
+        GenerateCustomElementReactionsStackIfNeeded($outputArray, $indexedSetterOperation, "*state");
     }
     
     if ($indexedSetterOperation) {
@@ -1002,10 +1006,14 @@ sub GeneratePutByIndex
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
-    
-    if (($namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}) || ($indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions})) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n\n");
-        AddToImplIncludes("CustomElementReactionQueue.h");
+
+    assert("CEReactions is not supported on having both named setters and indexed setters") if $namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}
+        && $indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions};
+    if ($namedSetterOperation) {
+        GenerateCustomElementReactionsStackIfNeeded($outputArray, $namedSetterOperation, "*state");
+    }
+    if ($indexedSetterOperation) {
+        GenerateCustomElementReactionsStackIfNeeded($outputArray, $indexedSetterOperation, "*state");
     }
     
     if ($indexedSetterOperation ) {
@@ -1098,10 +1106,14 @@ sub GenerateDefineOwnProperty
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(object);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
-    
-    if (($namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}) || ($indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions})) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n\n");
-        AddToImplIncludes("CustomElementReactionQueue.h");
+
+    assert("CEReactions is not supported on having both named setters and indexed setters") if $namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}
+        && $indexedSetterOperation && $indexedSetterOperation->extendedAttributes->{CEReactions};
+    if ($namedSetterOperation) {
+        GenerateCustomElementReactionsStackIfNeeded($outputArray, $namedSetterOperation, "*state");
+    }
+    if ($indexedSetterOperation) {
+        GenerateCustomElementReactionsStackIfNeeded($outputArray, $indexedSetterOperation, "*state");
     }
     
     # 1. If O supports indexed properties and P is an array index property name, then:
@@ -1223,10 +1235,7 @@ sub GenerateDeletePropertyCommon
     my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins") ? "OverrideBuiltins::Yes" : "OverrideBuiltins::No";
     push(@$outputArray, "    if (isVisibleNamedProperty<${overrideBuiltin}>(*state, thisObject, propertyName)) {\n");
 
-    if ($operation->extendedAttributes->{CEReactions}) {
-        push(@$outputArray, "        CustomElementReactionStack customElementReactionStack(*state);\n");
-        AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
-    }
+    GenerateCustomElementReactionsStackIfNeeded($outputArray, $operation, "*state");
 
     # 2.1. If O does not implement an interface with a named property deleter, then return false.
     # 2.2. Let operation be the operation used to declare the named property deleter.
@@ -4842,12 +4851,9 @@ sub GenerateAttributeSetterBodyDefinition
     push(@$outputArray, "static inline bool ${attributeSetterBodyName}(" . join(", ", @signatureArguments) . ")\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
-    
-    if ($attribute->extendedAttributes->{CEReactions}) {
-        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(state);\n");
-        AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
-    }
-    
+
+    GenerateCustomElementReactionsStackIfNeeded($outputArray, $attribute, "state");
+
     if ($interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnSetter}) {
         AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
@@ -5068,10 +5074,7 @@ sub GenerateOperationBodyDefinition
     push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
 
     if (!$generatingOverloadDispatcher) {
-        if ($operation->extendedAttributes->{CEReactions}) {
-            AddToImplIncludes("CustomElementReactionQueue.h", $conditional);
-            push(@$outputArray, "    CustomElementReactionStack customElementReactionStack(*state);\n");
-        }
+        GenerateCustomElementReactionsStackIfNeeded($outputArray, $operation, "*state");
 
         if ($interface->extendedAttributes->{CheckSecurity} and !$operation->extendedAttributes->{DoNotCheckSecurity}) {
             assert("Security checks are not supported for static operations.") if $operation->isStatic;
@@ -7407,6 +7410,23 @@ sub GenerateCallTracer()
     push(@$outputArray, ");\n");
     if ($count) {
         push(@$outputArray, $indent . "}\n")
+    }
+}
+
+sub GenerateCustomElementReactionsStackIfNeeded
+{
+    my ($outputArray, $context, $stateVariable) = @_;
+
+    my $CEReactions = $context->extendedAttributes->{CEReactions};
+
+    return if !$CEReactions;
+
+    AddToImplIncludes("CustomElementReactionQueue.h");
+
+    if ($CEReactions eq "NotNeeded") {
+        push(@$outputArray, "    CustomElementReactionDisallowedScope customElementReactionDisallowedScope;\n");
+    } else {
+        push(@$outputArray, "    CustomElementReactionStack customElementReactionStack($stateVariable);\n");
     }
 }
 
