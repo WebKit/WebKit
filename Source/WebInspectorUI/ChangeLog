@@ -1,3 +1,16 @@
+2018-08-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Global search sometimes returns duplicate results for a resource
+        https://bugs.webkit.org/show_bug.cgi?id=188270
+        <rdar://problem/42867498>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch.resourcesCallback):
+        Avoid duplicate search results in the frontend. We should also fix the backend
+        but a frontend fix will also be desired for backends that have the issue.
+
 2018-08-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix spelling of "overridden"

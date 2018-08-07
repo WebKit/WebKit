@@ -170,10 +170,20 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                 updateEmptyContentPlaceholder.call(this);
             }
 
-            for (var i = 0; i < result.length; ++i) {
-                var searchResult = result[i];
+            let preventDuplicates = new Set;
+
+            for (let i = 0; i < result.length; ++i) {
+                let searchResult = result[i];
                 if (!searchResult.url || !searchResult.frameId)
                     continue;
+
+                // FIXME: Backend sometimes searches files twice.
+                // <https://webkit.org/b/188287> Web Inspector: [Backend] Page.searchInResources sometimes returns duplicate results for a resource
+                // Note we will still want this to fix legacy backends.
+                let key = searchResult.frameId + ":" + searchResult.url;
+                if (preventDuplicates.has(key))
+                    continue;
+                preventDuplicates.add(key);
 
                 // COMPATIBILITY (iOS 9): Page.searchInResources did not have the optional requestId parameter.
                 PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchQuery, isCaseSensitive, isRegex, searchResult.requestId, resourceCallback.bind(this, searchResult.frameId, searchResult.url));
