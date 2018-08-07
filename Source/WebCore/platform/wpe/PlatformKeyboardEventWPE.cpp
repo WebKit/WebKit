@@ -301,7 +301,26 @@ String PlatformKeyboardEvent::keyValueForWPEKeyCode(unsigned keyCode)
     case WPE_KEY_Zenkaku_Hankaku:
         return "ZenkakuHanaku"_s;
 
-    // Multimedia keys.
+    // Application Keys
+    case WPE_KEY_AudioMedia:
+        return "LaunchMediaPlayer"_s;
+
+    // Browser Keys
+    case WPE_KEY_Back:
+        return "BrowserBack"_s;
+    case WPE_KEY_Favorites:
+        return "BrowserFavorites"_s;
+    case WPE_KEY_Forward:
+        return "BrowserForward"_s;
+    case WPE_KEY_HomePage:
+        return "BrowserHome"_s;
+    case WPE_KEY_Refresh:
+        return "BrowserRefresh"_s;
+    case WPE_KEY_Search:
+        return "BrowserSearch"_s;
+    case WPE_KEY_Stop:
+        return "BrowserStop"_s;
+
     // ChannelDown.
     // ChannelUp.
     case WPE_KEY_Close:
@@ -333,6 +352,29 @@ String PlatformKeyboardEvent::keyValueForWPEKeyCode(unsigned keyCode)
         return "New"_s;
     case WPE_KEY_Open:
         return "Open"_s;
+    case WPE_KEY_AudioLowerVolume:
+        return "AudioVolumeDown"_s;
+    case WPE_KEY_AudioRaiseVolume:
+        return "AudioVolumeUp"_s;
+    case WPE_KEY_AudioMute:
+        return "AudioVolumeMute"_s;
+
+    // Media Controller Keys
+    case WPE_KEY_Red:
+        return "ColorF0Red"_s;
+    case WPE_KEY_Green:
+        return "ColorF1Green"_s;
+    case WPE_KEY_Yellow:
+        return "ColorF2Yellow"_s;
+    case WPE_KEY_Blue:
+        return "ColorF3Blue"_s;
+    case WPE_KEY_Display:
+        return "DisplaySwap"_s;
+    case WPE_KEY_Video:
+        return "OnDemand"_s;
+    case WPE_KEY_Subtitle:
+        return "Subtitle"_s;
+
     // Print.
     case WPE_KEY_Save:
         return "Save"_s;
@@ -834,6 +876,8 @@ String PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(unsigned keyCode)
 int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)
 {
     switch (keycode) {
+    case WPE_KEY_Cancel:
+        return 0x03; // (03) The Cancel key
     case WPE_KEY_KP_0:
         return VK_NUMPAD0; // (60) Numeric keypad 0 key
     case WPE_KEY_KP_1:
@@ -904,6 +948,7 @@ int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)
         // VK_MENU (12) ALT key
 
     case WPE_KEY_Pause:
+    case WPE_KEY_AudioPause:
         return VK_PAUSE; // (13) PAUSE key
     case WPE_KEY_Caps_Lock:
         return VK_CAPITAL; // (14) CAPS LOCK key
@@ -1068,7 +1113,8 @@ int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)
         return VK_LWIN; // (5B) Left Windows key (Microsoft Natural keyboard)
     case WPE_KEY_Meta_R:
         return VK_RWIN; // (5C) Right Windows key (Natural keyboard)
-        // VK_SLEEP (5F) Computer Sleep key
+    case WPE_KEY_Sleep:
+        return VK_SLEEP; // (5F) Computer Sleep key
         // VK_SEPARATOR (6C) Separator key
         // VK_SUBTRACT (6D) Subtract key
         // VK_DECIMAL (6E) Decimal key
@@ -1094,22 +1140,36 @@ int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)
     case WPE_KEY_Alt_R:
         return VK_RMENU; // (A5) Right MENU key
 
-        // VK_BROWSER_BACK (A6) Windows 2000/XP: Browser Back key
-        // VK_BROWSER_FORWARD (A7) Windows 2000/XP: Browser Forward key
-        // VK_BROWSER_REFRESH (A8) Windows 2000/XP: Browser Refresh key
-        // VK_BROWSER_STOP (A9) Windows 2000/XP: Browser Stop key
-        // VK_BROWSER_SEARCH (AA) Windows 2000/XP: Browser Search key
-        // VK_BROWSER_FAVORITES (AB) Windows 2000/XP: Browser Favorites key
-        // VK_BROWSER_HOME (AC) Windows 2000/XP: Browser Start and Home key
-        // VK_VOLUME_MUTE (AD) Windows 2000/XP: Volume Mute key
-        // VK_VOLUME_DOWN (AE) Windows 2000/XP: Volume Down key
-        // VK_VOLUME_UP (AF) Windows 2000/XP: Volume Up key
-        // VK_MEDIA_NEXT_TRACK (B0) Windows 2000/XP: Next Track key
-        // VK_MEDIA_PREV_TRACK (B1) Windows 2000/XP: Previous Track key
-        // VK_MEDIA_STOP (B2) Windows 2000/XP: Stop Media key
+    case WPE_KEY_Back:
+        return VK_BROWSER_BACK; // VK_BROWSER_BACK (A6) Windows 2000/XP: Browser Back key
+    case WPE_KEY_Forward:
+        return VK_BROWSER_FORWARD; // (A7) Windows 2000/XP: Browser Forward key
+    case WPE_KEY_Refresh:
+        return VK_BROWSER_REFRESH; // (A8) Windows 2000/XP: Browser Refresh key
+    case WPE_KEY_Stop:
+        return VK_BROWSER_STOP; // (A9) Windows 2000/XP: Browser Stop key
+    case WPE_KEY_Search:
+        return VK_BROWSER_SEARCH; // (AA) Windows 2000/XP: Browser Search key
+    case WPE_KEY_Favorites:
+        return VK_BROWSER_FAVORITES; // (AB) Windows 2000/XP: Browser Favorites key
+    case WPE_KEY_HomePage:
+        return VK_BROWSER_HOME; // (AC) Windows 2000/XP: Browser Start and Home key
+    case WPE_KEY_AudioMute:
+        return VK_VOLUME_MUTE; // (AD) Windows 2000/XP: Volume Mute key
+    case WPE_KEY_AudioLowerVolume:
+        return VK_VOLUME_DOWN; // (AE) Windows 2000/XP: Volume Down key
+    case WPE_KEY_AudioRaiseVolume:
+        return VK_VOLUME_UP; // (AF) Windows 2000/XP: Volume Up key
+    case WPE_KEY_AudioNext:
+        return VK_MEDIA_NEXT_TRACK; // (B0) Windows 2000/XP: Next Track key
+    case WPE_KEY_AudioPrev:
+        return VK_MEDIA_PREV_TRACK; // (B1) Windows 2000/XP: Previous Track key
+    case WPE_KEY_AudioStop:
+        return VK_MEDIA_STOP; // (B2) Windows 2000/XP: Stop Media key
         // VK_MEDIA_PLAY_PAUSE (B3) Windows 2000/XP: Play/Pause Media key
         // VK_LAUNCH_MAIL (B4) Windows 2000/XP: Start Mail key
-        // VK_LAUNCH_MEDIA_SELECT (B5) Windows 2000/XP: Select Media key
+    case WPE_KEY_AudioMedia:
+        return VK_MEDIA_LAUNCH_MEDIA_SELECT; // (B5) Windows 2000/XP: Select Media key
         // VK_LAUNCH_APP1 (B6) Windows 2000/XP: Start Application 1 key
         // VK_LAUNCH_APP2 (B7) Windows 2000/XP: Start Application 2 key
 
@@ -1159,13 +1219,18 @@ int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)
         return VK_OEM_7; // case '\'': case '"': return 0xDE;
         // VK_OEM_8 (DF) Used for miscellaneous characters; it can vary by keyboard.
         // VK_OEM_102 (E2) Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
+    case WPE_KEY_AudioRewind:
+        return 0xE3; // (E3) Android/GoogleTV: Rewind media key (Windows: VK_ICO_HELP Help key on 1984 Olivetti M24 deluxe keyboard)
+    case WPE_KEY_AudioForward:
+        return 0xE4; // (E4) Android/GoogleTV: Fast forward media key  (Windows: VK_ICO_00 '00' key on 1984 Olivetti M24 deluxe keyboard)
         // VK_PROCESSKEY (E5) Windows 95/98/Me, Windows NT 4.0, Windows 2000/XP: IME PROCESS key
         // VK_PACKET (E7) Windows 2000/XP: Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in KEYBDINPUT,SendInput, WM_KEYDOWN, and WM_KEYUP
         // VK_ATTN (F6) Attn key
         // VK_CRSEL (F7) CrSel key
         // VK_EXSEL (F8) ExSel key
         // VK_EREOF (F9) Erase EOF key
-        // VK_PLAY (FA) Play key
+    case WPE_KEY_AudioPlay:
+        return VK_PLAY; // VK_PLAY (FA) Play key
         // VK_ZOOM (FB) Zoom key
         // VK_NONAME (FC) Reserved for future use
         // VK_PA1 (FD) PA1 key
@@ -1197,6 +1262,26 @@ int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)
         return VK_F1 + (keycode - WPE_KEY_F1);
     case WPE_KEY_VoidSymbol:
         return VK_PROCESSKEY;
+
+    // TV keycodes from DASE / OCAP / CE-HTML standards.
+    case WPE_KEY_Red:
+        return 0x193; // General purpose color-coded media function key, as index 0 (red)
+    case WPE_KEY_Green:
+        return 0x194; // General purpose color-coded media function key, as index 1 (green)
+    case WPE_KEY_Yellow:
+        return 0x195; // General purpose color-coded media function key, as index 2 (yellow)
+    case WPE_KEY_Blue:
+        return 0x196; // General purpose color-coded media function key, as index 3 (blue)
+    case WPE_KEY_PowerOff:
+        return 0x199; // Toggle power state
+    case WPE_KEY_AudioRecord:
+        return 0x1A0; // Initiate or resume recording of currently selected media
+    case WPE_KEY_Display:
+        return 0x1BC; // Swap video sources
+    case WPE_KEY_Subtitle:
+        return 0x1CC; // Toggle display of subtitles, if available
+    case WPE_KEY_Video:
+        return 0x26F; // Access on-demand content or programs
     default:
         break;
     }
