@@ -1350,7 +1350,7 @@ ExceptionOr<void> Document::setXMLVersion(const String& version)
 
 void Document::setXMLStandalone(bool standalone)
 {
-    m_xmlStandalone = standalone ? Standalone : NotStandalone;
+    m_xmlStandalone = standalone ? StandaloneStatus::Standalone : StandaloneStatus::NotStandalone;
 }
 
 void Document::setDocumentURI(const String& uri)

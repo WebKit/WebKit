@@ -1,3 +1,17 @@
+2018-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use 1-byte enum class for Document::StandaloneStatus
+        https://bugs.webkit.org/show_bug.cgi?id=188352
+
+        Reviewed by Chris Dumez.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setXMLStandalone):
+        * dom/Document.h:
+        (WebCore::Document::xmlStandalone const):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendXMLDeclaration):
+
 2018-08-07  Rob Buis  <rbuis@igalia.com>
 
         fetch() with subresource integrity crashes on zero length body

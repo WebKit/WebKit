@@ -475,8 +475,8 @@ public:
 
     String xmlEncoding() const { return m_xmlEncoding; }
     String xmlVersion() const { return m_xmlVersion; }
-    enum StandaloneStatus { StandaloneUnspecified, Standalone, NotStandalone };
-    bool xmlStandalone() const { return m_xmlStandalone == Standalone; }
+    enum class StandaloneStatus : uint8_t { Unspecified, Standalone, NotStandalone };
+    bool xmlStandalone() const { return m_xmlStandalone == StandaloneStatus::Standalone; }
     StandaloneStatus xmlStandaloneStatus() const { return m_xmlStandalone; }
     bool hasXMLDeclaration() const { return m_hasXMLDeclaration; }
 
@@ -1682,7 +1682,7 @@ private:
 
     String m_xmlEncoding;
     String m_xmlVersion;
-    StandaloneStatus m_xmlStandalone { StandaloneUnspecified };
+    StandaloneStatus m_xmlStandalone { StandaloneStatus::Unspecified };
     bool m_hasXMLDeclaration { false };
 
     String m_contentLanguage;

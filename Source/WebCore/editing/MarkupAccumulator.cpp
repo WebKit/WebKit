@@ -376,7 +376,7 @@ void MarkupAccumulator::appendXMLDeclaration(StringBuilder& result, const Docume
         result.appendLiteral("\" encoding=\"");
         result.append(encoding);
     }
-    if (document.xmlStandaloneStatus() != Document::StandaloneUnspecified) {
+    if (document.xmlStandaloneStatus() != Document::StandaloneStatus::Unspecified) {
         result.appendLiteral("\" standalone=\"");
         if (document.xmlStandalone())
             result.appendLiteral("yes");
