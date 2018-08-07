@@ -1,3 +1,22 @@
+2018-08-06  Andy Estes  <aestes@apple.com>
+
+        [Wi-Fi Assertions] suspendWiFiAssertions() should be able to delay sending ProcessReadyToSuspend
+        https://bugs.webkit.org/show_bug.cgi?id=188373
+        <rdar://problem/42857398>
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::actualPrepareToSuspend):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformPrepareToSuspend):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformPrepareToSuspend):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformPrepareToSuspend):
+
 2018-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Check with SafeBrowsing during navigation in WKWebView

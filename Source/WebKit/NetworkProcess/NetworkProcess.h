@@ -180,7 +180,7 @@ private:
 
     enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
     void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
-    void platformPrepareToSuspend();
+    void platformPrepareToSuspend(CompletionHandler<void()>&&);
     void platformProcessDidResume();
 
     // ChildProcess

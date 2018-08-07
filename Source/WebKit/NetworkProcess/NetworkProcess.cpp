@@ -844,7 +844,6 @@ private:
 
 void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
-    platformPrepareToSuspend();
     lowMemoryHandler(Critical::Yes);
 
     RefPtr<TaskCounter> delayedTaskCounter;
@@ -856,6 +855,7 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
         }));
     }
 
+    platformPrepareToSuspend([delayedTaskCounter] { });
     platformSyncAllCookies([delayedTaskCounter] { });
 
     for (auto& connection : m_webProcessConnections)
