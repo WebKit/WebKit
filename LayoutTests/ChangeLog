@@ -1,3 +1,17 @@
+2018-08-07  Rob Buis  <rbuis@igalia.com>
+
+        fetch() with subresource integrity crashes on zero length body
+        https://bugs.webkit.org/show_bug.cgi?id=184325
+
+        Reviewed by Alex Christensen.
+
+        Add a subtest for zero length resources.
+
+        * http/tests/subresource-integrity/resources/empty-resource.txt: Added.
+        * http/tests/subresource-integrity/sri-fetch-expected.txt:
+        * http/tests/subresource-integrity/sri-fetch-worker-expected.txt:
+        * http/tests/subresource-integrity/sri-fetch.js:
+
 2018-08-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234669.

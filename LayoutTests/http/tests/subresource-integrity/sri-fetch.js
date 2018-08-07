@@ -10,6 +10,7 @@ var main_host_and_port = main_host + ':' + port_string;
 var remote_host_and_port = remote_host + ':' + port_string;
 
 var resource = "resources/resource.txt";
+var empty_resource = "resources/empty-resource.txt";
 var crossorigin_anon_resource = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-anon-resource.txt';
 var crossorigin_creds_resource = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-creds-resource.txt';
 var crossorigin_ineligible_resource = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-ineligible-resource.txt';
@@ -59,5 +60,6 @@ integrity("Ineligible CORS empty integrity", crossorigin_ineligible_resource, { 
 integrity("Ineligible CORS SHA-512 integrity", crossorigin_ineligible_resource, { 'integrity': topSha512 }, new TypeError());
 integrity("Ineligible CORS invalid integrity", crossorigin_ineligible_resource, { 'integrity': invalidSha512 }, new TypeError());
 integrity("SHA-256 integrity with 'no-cors' mode", resource, { 'integrity': topSha256, 'mode': 'no-cors' }, new TypeError());
+integrity("Resource with zero length body", empty_resource, { 'integrity': "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=" });
 
 done();

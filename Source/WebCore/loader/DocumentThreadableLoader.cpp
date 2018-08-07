@@ -449,12 +449,14 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
 
         if (options().filteringPolicy == ResponseFilteringPolicy::Disable) {
             m_client->didReceiveResponse(identifier, response);
-            m_client->didReceiveData(m_resource->resourceBuffer()->data(), m_resource->resourceBuffer()->size());
+            if (m_resource->resourceBuffer())
+                m_client->didReceiveData(m_resource->resourceBuffer()->data(), m_resource->resourceBuffer()->size());
         } else {
             ASSERT(response.type() == ResourceResponse::Type::Default);
 
             m_client->didReceiveResponse(identifier, ResourceResponseBase::filter(response));
-            m_client->didReceiveData(m_resource->resourceBuffer()->data(), m_resource->resourceBuffer()->size());
+            if (m_resource->resourceBuffer())
+                m_client->didReceiveData(m_resource->resourceBuffer()->data(), m_resource->resourceBuffer()->size());
         }
     }
 
