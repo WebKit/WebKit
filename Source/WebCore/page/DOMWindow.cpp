@@ -1591,8 +1591,9 @@ void DOMWindow::scrollBy(const ScrollToOptions& options) const
         return;
 
     ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options, 0, 0);
-    IntSize scaledOffset(view->mapFromCSSToLayoutUnits(scrollToOptions.left.value()), view->mapFromCSSToLayoutUnits(scrollToOptions.top.value()));
-    view->setContentsScrollPosition(view->contentsScrollPosition() + scaledOffset);
+    scrollToOptions.left.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().x());
+    scrollToOptions.top.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y());
+    scrollTo(scrollToOptions);
 }
 
 void DOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const

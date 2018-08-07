@@ -1,3 +1,21 @@
+2018-08-07  Frederic Wang  <fwang@igalia.com>
+
+        Make DOMWindow::scrollBy rely on DOMWindow::scrollTo
+        https://bugs.webkit.org/show_bug.cgi?id=188343
+
+        Reviewed by Darin Adler.
+
+        This patch makes DOMWindow::scrollBy rely on DOMWindow::scrollTo in order to perform actual
+        scrolling of the view. In particular, this reduces the number of code path to modify in order
+        to implement the ScrollBehavior option (bug 188043). The only change is an optimization when
+        scrolling to position (0, 0) but it is not observable.
+
+        No new tests, behavior unchanged and already tested.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollBy const): Add the current view position to the scrollBy offset in
+        order to obtain the scrollTo offset.
+
 2018-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CEReactions=NotNeeded for reactions only needed for customized builtins
