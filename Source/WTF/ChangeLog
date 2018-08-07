@@ -1,3 +1,12 @@
+2018-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, suppress warnings to fix the build.
+
+        * wtf/SHA1.cpp:
+        (WTF::SHA1::SHA1):
+        (WTF::SHA1::addBytes):
+        (WTF::SHA1::computeHash):
+
 2018-08-07  Karo Gyoker  <karogyoker2+webkit@gmail.com>
 
         Hardcoded LFENCE instruction

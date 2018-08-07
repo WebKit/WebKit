@@ -41,17 +41,26 @@ namespace WTF {
 
 SHA1::SHA1()
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CC_SHA1_Init(&m_context);
+#pragma clang diagnostic pop
 }
 
 void SHA1::addBytes(const uint8_t* input, size_t length)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CC_SHA1_Update(&m_context, input, length);
+#pragma clang diagnostic pop
 }
 
 void SHA1::computeHash(Digest& hash)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CC_SHA1_Final(hash.data(), &m_context);
+#pragma clang diagnostic pop
 }
 
 #else

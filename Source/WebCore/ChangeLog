@@ -1,3 +1,10 @@
+2018-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, suppress warnings to fix the build.
+
+        * crypto/CommonCryptoUtilities.cpp:
+        (WebCore::getCommonCryptoDigestAlgorithm):
+
 2018-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Removed unused *AllInOne.cpp

@@ -97,7 +97,10 @@ std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algor
     case CryptoDigest::Algorithm::SHA_1: {
         CC_SHA1_CTX* context = new CC_SHA1_CTX;
         digest->m_context->ccContext = context;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CC_SHA1_Init(context);
+#pragma clang diagnostic pop
         return digest;
     }
     case CryptoDigest::Algorithm::SHA_224: {
@@ -131,7 +134,10 @@ void CryptoDigest::addBytes(const void* input, size_t length)
 {
     switch (m_context->algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CC_SHA1_Update(toSHA1Context(m_context.get()), input, length);
+#pragma clang diagnostic pop
         return;
     case CryptoDigest::Algorithm::SHA_224:
         CC_SHA224_Update(toSHA224Context(m_context.get()), input, length);
@@ -154,7 +160,10 @@ Vector<uint8_t> CryptoDigest::computeHash()
     switch (m_context->algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
         result.resize(CC_SHA1_DIGEST_LENGTH);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CC_SHA1_Final(result.data(), toSHA1Context(m_context.get()));
+#pragma clang diagnostic pop
         break;
     case CryptoDigest::Algorithm::SHA_224:
         result.resize(CC_SHA224_DIGEST_LENGTH);

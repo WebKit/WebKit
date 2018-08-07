@@ -1,3 +1,12 @@
+2018-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, suppress warnings to fix the build.
+
+        * pal/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp:
+        (PAL::CryptoDigest::create):
+        (PAL::CryptoDigest::addBytes):
+        (PAL::CryptoDigest::computeHash):
+
 2018-08-07  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Scrollbars are not visible when using 3rd party mouse
