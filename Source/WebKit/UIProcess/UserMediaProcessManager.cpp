@@ -44,18 +44,25 @@ public:
     void removeRequestManager(UserMediaPermissionRequestManagerProxy&);
     Vector<UserMediaPermissionRequestManagerProxy*>& managers() { return m_managers; }
 
-    enum SandboxExtensionsGranted {
+    enum SandboxExtensionType : uint32_t {
         None = 0,
         Video = 1 << 0,
         Audio = 1 << 1
     };
+    typedef uint32_t SandboxExtensionsGranted;
 
-    SandboxExtensionsGranted sandboxExtensionsGranted() { return m_pageSandboxExtensionsGranted; }
-    void setSandboxExtensionsGranted(unsigned granted) { m_pageSandboxExtensionsGranted = static_cast<SandboxExtensionsGranted>(granted); }
+    bool hasVideoExtension() const { return m_pageSandboxExtensionsGranted & Video; }
+    void grantVideoExtension()  { m_pageSandboxExtensionsGranted |= Video; }
+    void revokeVideoExtension()  { m_pageSandboxExtensionsGranted &= ~Video; }
+
+    bool hasAudioExtension() const { return m_pageSandboxExtensionsGranted & Audio; }
+    void grantAudioExtension()  { m_pageSandboxExtensionsGranted |= Audio; }
+    void revokeAudioExtension()  { m_pageSandboxExtensionsGranted &= ~Audio; }
 
 private:
+
     Vector<UserMediaPermissionRequestManagerProxy*> m_managers;
-    SandboxExtensionsGranted m_pageSandboxExtensionsGranted { SandboxExtensionsGranted::None };
+    SandboxExtensionsGranted m_pageSandboxExtensionsGranted { SandboxExtensionType::None };
 };
 
 static HashMap<WebProcessProxy*, std::unique_ptr<ProcessState>>& stateMap()
@@ -128,6 +135,8 @@ void UserMediaProcessManager::muteCaptureMediaStreamsExceptIn(WebPageProxy& page
 
 bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestManagerProxy& proxy, bool withAudio, bool withVideo)
 {
+    ASSERT(withAudio || withVideo);
+
     if (m_denyNextRequest) {
         m_denyNextRequest = false;
         return false;
@@ -143,46 +152,39 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 
     auto& state = processState(processStartingCapture);
     size_t extensionCount = 0;
-    unsigned requiredExtensions = ProcessState::SandboxExtensionsGranted::None;
 
-    if (withAudio) {
-        requiredExtensions |= ProcessState::SandboxExtensionsGranted::Audio;
+    if (withAudio && !state.hasAudioExtension())
         extensionCount++;
-    }
-    if (withVideo) {
-        requiredExtensions |= ProcessState::SandboxExtensionsGranted::Video;
+    else
+        withAudio = false;
+
+    if (withVideo && !state.hasVideoExtension())
         extensionCount++;
-    }
+    else
+        withVideo = false;
 
-    unsigned currentExtensions = state.sandboxExtensionsGranted();
-
-    if (!(requiredExtensions & currentExtensions)) {
+    if (extensionCount) {
         SandboxExtension::HandleArray handles;
         handles.allocate(extensionCount);
 
         Vector<String> ids;
         ids.reserveCapacity(extensionCount);
 
-        if (withAudio && requiredExtensions & ProcessState::SandboxExtensionsGranted::Audio) {
-            if (SandboxExtension::createHandleForGenericExtension(audioExtensionPath, handles[--extensionCount])) {
-                ids.append(audioExtensionPath);
-                currentExtensions |= ProcessState::SandboxExtensionsGranted::Audio;
-            }
-        }
+        if (withAudio && SandboxExtension::createHandleForGenericExtension(audioExtensionPath, handles[--extensionCount]))
+            ids.append(audioExtensionPath);
 
-        if (withVideo && requiredExtensions & ProcessState::SandboxExtensionsGranted::Video) {
-            if (SandboxExtension::createHandleForGenericExtension(videoExtensionPath, handles[--extensionCount])) {
-                ids.append(videoExtensionPath);
-                currentExtensions |= ProcessState::SandboxExtensionsGranted::Video;
-            }
-        }
+        if (withVideo && SandboxExtension::createHandleForGenericExtension(videoExtensionPath, handles[--extensionCount]))
+            ids.append(videoExtensionPath);
 
         if (ids.size() != handles.size()) {
             WTFLogAlways("Could not create a required sandbox extension, capture will fail!");
             return false;
         }
 
-        state.setSandboxExtensionsGranted(currentExtensions);
+        if (withAudio)
+            state.grantAudioExtension();
+        if (withVideo)
+            state.grantVideoExtension();
         processStartingCapture.send(Messages::WebPage::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), proxy.page().pageID());
     }
 #else
@@ -220,20 +222,18 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
         return;
 
     Vector<String> params;
-    unsigned currentExtensions = state.sandboxExtensionsGranted();
-    if (!hasAudioCapture && currentExtensions & ProcessState::SandboxExtensionsGranted::Audio) {
+    if (!hasAudioCapture && state.hasAudioExtension()) {
         params.append(audioExtensionPath);
-        currentExtensions &= ~ProcessState::SandboxExtensionsGranted::Audio;
+        state.revokeAudioExtension();
     }
-    if (!hasVideoCapture && currentExtensions & ProcessState::SandboxExtensionsGranted::Video) {
+    if (!hasVideoCapture && state.hasVideoExtension()) {
         params.append(videoExtensionPath);
-        currentExtensions &= ~ProcessState::SandboxExtensionsGranted::Video;
+        state.revokeVideoExtension();
     }
 
     if (params.isEmpty())
         return;
 
-    state.setSandboxExtensionsGranted(currentExtensions);
     proxy.page().process().send(Messages::WebPage::RevokeUserMediaDeviceSandboxExtensions(params), proxy.page().pageID());
 #endif
 }

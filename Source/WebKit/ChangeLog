@@ -1,3 +1,16 @@
+2018-08-07  Eric Carlson  <eric.carlson@apple.com>
+
+        NotReadableError when calling getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=188309
+        <rdar://problem/42916838>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream): Deal with audio and video sandbox
+        extensions being issued at different times. Use new ProcessState methods.
+        (WebKit::UserMediaProcessManager::endedCaptureSession): Use new ProcessState methods.
+
 2018-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r233778): Text selection sometimes cannot be extended in iframes
