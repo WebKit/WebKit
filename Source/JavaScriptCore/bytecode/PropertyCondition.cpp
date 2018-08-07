@@ -43,19 +43,19 @@ void PropertyCondition::dumpInContext(PrintStream& out, DumpContext* context) co
         return;
     }
     
-    switch (m_kind) {
+    switch (m_header.type()) {
     case Presence:
-        out.print(m_kind, " of ", m_uid, " at ", offset(), " with attributes ", attributes());
+        out.print(m_header.type(), " of ", m_header.pointer(), " at ", offset(), " with attributes ", attributes());
         return;
     case Absence:
     case AbsenceOfSetEffect:
-        out.print(m_kind, " of ", m_uid, " with prototype ", inContext(JSValue(prototype()), context));
+        out.print(m_header.type(), " of ", m_header.pointer(), " with prototype ", inContext(JSValue(prototype()), context));
         return;
     case Equivalence:
-        out.print(m_kind, " of ", m_uid, " with ", inContext(requiredValue(), context));
+        out.print(m_header.type(), " of ", m_header.pointer(), " with ", inContext(requiredValue(), context));
         return;
     case HasPrototype:
-        out.print(m_kind, " with prototype ", inContext(JSValue(prototype()), context));
+        out.print(m_header.type(), " with prototype ", inContext(JSValue(prototype()), context));
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -81,7 +81,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         return false;
     }
 
-    switch (m_kind) {
+    switch (m_header.type()) {
     case Presence:
     case Absence:
     case AbsenceOfSetEffect:
@@ -102,7 +102,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         break;
     }
     
-    switch (m_kind) {
+    switch (m_header.type()) {
     case Presence: {
         unsigned currentAttributes;
         PropertyOffset currentOffset = structure->getConcurrently(uid(), currentAttributes);
@@ -259,7 +259,7 @@ bool PropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* stru
     if (!*this)
         return false;
     
-    switch (m_kind) {
+    switch (m_header.type()) {
     case Presence:
     case Absence:
     case Equivalence:
@@ -281,7 +281,7 @@ bool PropertyCondition::isStillValid(Structure* structure, JSObject* base) const
     // Currently we assume that an impure property can cause a property to appear, and can also
     // "shadow" an existing JS property on the same object. Hence it affects both presence and
     // absence. It doesn't affect AbsenceOfSetEffect because impure properties aren't ever setters.
-    switch (m_kind) {
+    switch (m_header.type()) {
     case Absence:
         if (structure->typeInfo().getOwnPropertySlotIsImpure() || structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
             return false;
@@ -304,7 +304,7 @@ bool PropertyCondition::isWatchableWhenValid(
     if (structure->transitionWatchpointSetHasBeenInvalidated())
         return false;
     
-    switch (m_kind) {
+    switch (m_header.type()) {
     case Equivalence: {
         PropertyOffset offset = structure->getConcurrently(uid());
         

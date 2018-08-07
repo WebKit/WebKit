@@ -28,6 +28,7 @@ set(WTF_PUBLIC_HEADERS
     CheckedBoolean.h
     ClockType.h
     CommaPrinter.h
+    CompactPointerTuple.h
     CompilationThread.h
     Compiler.h
     CompletionHandler.h

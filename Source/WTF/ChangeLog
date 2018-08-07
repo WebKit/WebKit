@@ -1,3 +1,28 @@
+2018-08-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Shrink size of PropertyCondition by packing UniquedStringImpl* and Kind
+        https://bugs.webkit.org/show_bug.cgi?id=188328
+
+        Reviewed by Saam Barati.
+
+        This patch adds CompactPointerTuple, which can pack a pointer and 8bit value into 8bytes.
+        In 32bit architecture, it just has two fields for a pointer and 8bit value. In 64bit architecture,
+        we use upper 5bits (zeros because of the effective width of virtual address) and lower 3bits (zeros
+        because of the alignment ensured by static_assert) to pack 8bit value into the pointer data. Since
+        even the 5-level page tables use 57bit effective address, this strategy works well.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CompactPointerTuple.h: Added.
+        (WTF::CompactPointerTuple::encodeType):
+        (WTF::CompactPointerTuple::decodeType):
+        (WTF::CompactPointerTuple::CompactPointerTuple):
+        (WTF::CompactPointerTuple::pointer const):
+        (WTF::CompactPointerTuple::setPointer):
+        (WTF::CompactPointerTuple::type const):
+        (WTF::CompactPointerTuple::setType):
+        * wtf/Platform.h:
+
 2018-08-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, suppress warnings to fix the build.

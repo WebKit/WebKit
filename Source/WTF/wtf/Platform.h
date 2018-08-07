@@ -327,6 +327,32 @@
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 
+#if COMPILER(GCC_OR_CLANG)
+/* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
+#if __SIZEOF_POINTER__ == 8
+#define WTF_CPU_ADDRESS64 1
+#elif __SIZEOF_POINTER__ == 4
+#define WTF_CPU_ADDRESS32 1
+#else
+#error "Unsupported pointer width"
+#endif
+#elif COMPILER(MSVC)
+#if defined(_WIN64)
+#define WTF_CPU_ADDRESS64 1
+#else
+#define WTF_CPU_ADDRESS32 1
+#endif
+#else
+/* This is the most generic way. But in OS(DARWIN), Platform.h can be included by sandbox definition file (.sb).
+ * At that time, we cannot include "stdint.h" header. So in the case of known compilers, we use predefined constants instead. */
+#include <stdint.h>
+#if UINTPTR_MAX > UINT32_MAX
+#define WTF_CPU_ADDRESS64 1
+#else
+#define WTF_CPU_ADDRESS32 1
+#endif
+#endif
+
 /* ==== OS() - underlying operating system; only to be used for mandated low-level services like 
    virtual memory, not to choose a GUI toolkit ==== */
 
@@ -705,30 +731,10 @@
 #endif
 
 #if !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64)
-#if COMPILER(GCC_OR_CLANG)
-/* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
-#if __SIZEOF_POINTER__ == 8
-#define USE_JSVALUE64 1
-#elif __SIZEOF_POINTER__ == 4
-#define USE_JSVALUE32_64 1
-#else
-#error "Unsupported pointer width"
-#endif
-#elif COMPILER(MSVC)
-#if defined(_WIN64)
+#if CPU(ADDRESS64)
 #define USE_JSVALUE64 1
 #else
 #define USE_JSVALUE32_64 1
-#endif
-#else
-/* This is the most generic way. But in OS(DARWIN), Platform.h can be included by sandbox definition file (.sb).
- * At that time, we cannot include "stdint.h" header. So in the case of known compilers, we use predefined constants instead. */
-#include <stdint.h>
-#if UINTPTR_MAX > UINT32_MAX
-#define USE_JSVALUE64 1
-#else
-#define USE_JSVALUE32_64 1
-#endif
 #endif
 #endif /* !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64) */
 

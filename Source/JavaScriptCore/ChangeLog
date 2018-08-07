@@ -1,3 +1,48 @@
+2018-08-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Shrink size of PropertyCondition by packing UniquedStringImpl* and Kind
+        https://bugs.webkit.org/show_bug.cgi?id=188328
+
+        Reviewed by Saam Barati.
+
+        Shrinking the size of PropertyCondition can improve memory consumption by a lot.
+        For example, cnn.com can show 7000 persistent StructureStubClearingWatchpoint
+        and 6000 LLIntPrototypeLoadAdaptiveStructureWatchpoint which have PropertyCondition
+        as a member field.
+
+        This patch shrinks the size of PropertyCondition by packing UniquedStringImpl* and
+        PropertyCondition::Kind into uint64_t data in 64bit architecture. Since our address
+        are within 48bit, we can put PropertyCondition::Kind in this unused bits.
+        To make it easy, we add WTF::CompactPointerTuple<PointerType, Type>, which automatically
+        folds a pointer and 1byte type into 64bit data.
+
+        This change shrinks PropertyCondition from 24bytes to 16bytes.
+
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::dumpInContext const):
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::validityRequiresImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::isStillValid const):
+        (JSC::PropertyCondition::isWatchableWhenValid const):
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::PropertyCondition):
+        (JSC::PropertyCondition::presenceWithoutBarrier):
+        (JSC::PropertyCondition::absenceWithoutBarrier):
+        (JSC::PropertyCondition::absenceOfSetEffectWithoutBarrier):
+        (JSC::PropertyCondition::equivalenceWithoutBarrier):
+        (JSC::PropertyCondition::hasPrototypeWithoutBarrier):
+        (JSC::PropertyCondition::operator bool const):
+        (JSC::PropertyCondition::kind const):
+        (JSC::PropertyCondition::uid const):
+        (JSC::PropertyCondition::hasOffset const):
+        (JSC::PropertyCondition::hasAttributes const):
+        (JSC::PropertyCondition::hasPrototype const):
+        (JSC::PropertyCondition::hasRequiredValue const):
+        (JSC::PropertyCondition::hash const):
+        (JSC::PropertyCondition::operator== const):
+        (JSC::PropertyCondition::isHashTableDeletedValue const):
+        (JSC::PropertyCondition::watchingRequiresReplacementWatchpoint const):
+
 2018-08-07  Mark Lam  <mark.lam@apple.com>
 
         Use a more specific PtrTag for PlatformRegisters PC and LR.

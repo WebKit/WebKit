@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSObject.h"
+#include <wtf/CompactPointerTuple.h>
 #include <wtf/HashMap.h>
 
 namespace JSC {
@@ -34,24 +35,24 @@ class TrackedReferences;
 
 class PropertyCondition {
 public:
-    enum Kind {
+    enum Kind : uint8_t {
         Presence,
         Absence,
         AbsenceOfSetEffect,
         Equivalence, // An adaptive watchpoint on this will be a pair of watchpoints, and when the structure transitions, we will set the replacement watchpoint on the new structure.
         HasPrototype
     };
+
+    using Header = CompactPointerTuple<UniquedStringImpl*, Kind>;
     
     PropertyCondition()
-        : m_uid(nullptr)
-        , m_kind(Presence)
+        : m_header(nullptr, Presence)
     {
         memset(&u, 0, sizeof(u));
     }
     
     PropertyCondition(WTF::HashTableDeletedValueType)
-        : m_uid(nullptr)
-        , m_kind(Absence)
+        : m_header(nullptr, Absence)
     {
         memset(&u, 0, sizeof(u));
     }
@@ -59,8 +60,7 @@ public:
     static PropertyCondition presenceWithoutBarrier(UniquedStringImpl* uid, PropertyOffset offset, unsigned attributes)
     {
         PropertyCondition result;
-        result.m_uid = uid;
-        result.m_kind = Presence;
+        result.m_header = Header(uid, Presence);
         result.u.presence.offset = offset;
         result.u.presence.attributes = attributes;
         return result;
@@ -76,8 +76,7 @@ public:
     static PropertyCondition absenceWithoutBarrier(UniquedStringImpl* uid, JSObject* prototype)
     {
         PropertyCondition result;
-        result.m_uid = uid;
-        result.m_kind = Absence;
+        result.m_header = Header(uid, Absence);
         result.u.prototype.prototype = prototype;
         return result;
     }
@@ -94,8 +93,7 @@ public:
         UniquedStringImpl* uid, JSObject* prototype)
     {
         PropertyCondition result;
-        result.m_uid = uid;
-        result.m_kind = AbsenceOfSetEffect;
+        result.m_header = Header(uid, AbsenceOfSetEffect);
         result.u.prototype.prototype = prototype;
         return result;
     }
@@ -112,8 +110,7 @@ public:
         UniquedStringImpl* uid, JSValue value)
     {
         PropertyCondition result;
-        result.m_uid = uid;
-        result.m_kind = Equivalence;
+        result.m_header = Header(uid, Equivalence);
         result.u.equivalence.value = JSValue::encode(value);
         return result;
     }
@@ -129,7 +126,7 @@ public:
     static PropertyCondition hasPrototypeWithoutBarrier(JSObject* prototype)
     {
         PropertyCondition result;
-        result.m_kind = HasPrototype;
+        result.m_header = Header(nullptr, HasPrototype);
         result.u.prototype.prototype = prototype;
         return result;
     }
@@ -141,18 +138,18 @@ public:
         return hasPrototypeWithoutBarrier(prototype);
     }
     
-    explicit operator bool() const { return m_uid || m_kind != Presence; }
+    explicit operator bool() const { return m_header.pointer() || m_header.type() != Presence; }
     
-    Kind kind() const { return m_kind; }
-    UniquedStringImpl* uid() const { return m_uid; }
+    Kind kind() const { return m_header.type(); }
+    UniquedStringImpl* uid() const { return m_header.pointer(); }
     
-    bool hasOffset() const { return !!*this && m_kind == Presence; };
+    bool hasOffset() const { return !!*this && m_header.type() == Presence; };
     PropertyOffset offset() const
     {
         ASSERT(hasOffset());
         return u.presence.offset;
     }
-    bool hasAttributes() const { return !!*this && m_kind == Presence; };
+    bool hasAttributes() const { return !!*this && m_header.type() == Presence; };
     unsigned attributes() const
     {
         ASSERT(hasAttributes());
@@ -162,7 +159,7 @@ public:
     bool hasPrototype() const
     {
         return !!*this
-            && (m_kind == Absence || m_kind == AbsenceOfSetEffect || m_kind == HasPrototype);
+            && (m_header.type() == Absence || m_header.type() == AbsenceOfSetEffect || m_header.type() == HasPrototype);
     }
     JSObject* prototype() const
     {
@@ -170,7 +167,7 @@ public:
         return u.prototype.prototype;
     }
     
-    bool hasRequiredValue() const { return !!*this && m_kind == Equivalence; }
+    bool hasRequiredValue() const { return !!*this && m_header.type() == Equivalence; }
     JSValue requiredValue() const
     {
         ASSERT(hasRequiredValue());
@@ -182,8 +179,8 @@ public:
     
     unsigned hash() const
     {
-        unsigned result = WTF::PtrHash<UniquedStringImpl*>::hash(m_uid) + static_cast<unsigned>(m_kind);
-        switch (m_kind) {
+        unsigned result = WTF::PtrHash<UniquedStringImpl*>::hash(m_header.pointer()) + static_cast<unsigned>(m_header.type());
+        switch (m_header.type()) {
         case Presence:
             result ^= u.presence.offset;
             result ^= u.presence.attributes;
@@ -202,11 +199,11 @@ public:
     
     bool operator==(const PropertyCondition& other) const
     {
-        if (m_uid != other.m_uid)
+        if (m_header.pointer() != other.m_header.pointer())
             return false;
-        if (m_kind != other.m_kind)
+        if (m_header.type() != other.m_header.type())
             return false;
-        switch (m_kind) {
+        switch (m_header.type()) {
         case Presence:
             return u.presence.offset == other.u.presence.offset
                 && u.presence.attributes == other.u.presence.attributes;
@@ -223,7 +220,7 @@ public:
     
     bool isHashTableDeletedValue() const
     {
-        return !m_uid && m_kind == Absence;
+        return !m_header.pointer() && m_header.type() == Absence;
     }
     
     // Two conditions are compatible if they are identical or if they speak of different uids. If
@@ -296,7 +293,7 @@ public:
     }
     bool watchingRequiresReplacementWatchpoint() const
     {
-        return !!*this && m_kind == Equivalence;
+        return !!*this && m_header.type() == Equivalence;
     }
     
     // This means that the objects involved in this are still live.
@@ -313,8 +310,7 @@ public:
 private:
     bool isWatchableWhenValid(Structure*, WatchabilityEffort) const;
 
-    UniquedStringImpl* m_uid;
-    Kind m_kind;
+    Header m_header;
     union {
         struct {
             PropertyOffset offset;
