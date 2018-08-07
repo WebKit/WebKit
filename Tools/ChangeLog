@@ -1,3 +1,9 @@
+2018-08-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, add a new address to my configuration
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-08-06  David Quesada  <david_quesada@apple.com>
 
         webkitdirs.pm should default to iPhone SE for 64-bit testing

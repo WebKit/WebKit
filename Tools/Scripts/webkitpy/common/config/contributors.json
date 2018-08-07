@@ -5964,6 +5964,7 @@
    },
    "Yusuke Suzuki" : {
       "emails" : [
+         "yusukesuzuki@slowstart.org",
          "utatane.tea@gmail.com"
       ],
       "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript",
