@@ -1,3 +1,16 @@
+2018-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Post-review feedback after r234614.
+        https://bugs.webkit.org/show_bug.cgi?id=188322
+        <rdar://problem/42455270>
+
+        Reviewed by Sam Weinig.
+
+        Use std::round instead of roundl — there's no reason to go from double to long double precision when rounding.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (rounded):
+
 2018-08-07  Don Olmstead  <don.olmstead@sony.com>
 
         [MiniBrowser][Win] Allow selection of recent user agents

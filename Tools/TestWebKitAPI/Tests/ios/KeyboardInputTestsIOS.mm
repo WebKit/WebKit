@@ -33,12 +33,13 @@
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKitLegacy/WebEvent.h>
+#import <cmath>
 
 @implementation TestWKWebView (KeyboardInputTests)
 
 static CGRect rounded(CGRect rect)
 {
-    return CGRectMake(roundl(rect.origin.x), roundl(rect.origin.y), roundl(rect.size.width), roundl(rect.size.height));
+    return CGRectMake(std::round(rect.origin.x), std::round(rect.origin.y), std::round(rect.size.width), std::round(rect.size.height));
 }
 
 - (void)waitForCaretViewFrameToBecome:(CGRect)frame
