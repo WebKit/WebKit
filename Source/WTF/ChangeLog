@@ -1,3 +1,18 @@
+2018-08-07  Karo Gyoker  <karogyoker2+webkit@gmail.com>
+
+        Hardcoded LFENCE instruction
+        https://bugs.webkit.org/show_bug.cgi?id=188145
+
+        Reviewed by Filip Pizlo.
+
+        Remove lfence instruction because it is crashing systems without SSE2 and
+        this is not the way how WebKit mitigates Spectre.
+
+        * wtf/Atomics.h:
+        (WTF::crossModifyingCodeFence):
+        (WTF::speculationFence): Deleted.
+        (WTF::x86_lfence): Deleted.
+
 2018-08-07  Antti Koivisto  <antti@apple.com>
 
         Web process never leaves memory pressured state if caused by process size limit

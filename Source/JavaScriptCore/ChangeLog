@@ -1,3 +1,17 @@
+2018-08-07  Karo Gyoker  <karogyoker2+webkit@gmail.com>
+
+        Hardcoded LFENCE instruction
+        https://bugs.webkit.org/show_bug.cgi?id=188145
+
+        Reviewed by Filip Pizlo.
+
+        Remove lfence instruction because it is crashing systems without SSE2 and
+        this is not the way how WebKit mitigates Spectre.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        (JSC::JSLock::willReleaseLock):
+
 2018-08-04  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r208953): TemplateObjectDescriptor constructor calculates m_hash on use-after-move variable

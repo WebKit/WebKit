@@ -122,9 +122,7 @@ void JSLock::lock(intptr_t lockCount)
 }
 
 void JSLock::didAcquireLock()
-{
-    WTF::speculationFence();
-    
+{  
     // FIXME: What should happen to the per-thread identifier table if we don't have a VM?
     if (!m_vm)
         return;
@@ -192,9 +190,7 @@ void JSLock::unlock(intptr_t unlockCount)
 }
 
 void JSLock::willReleaseLock()
-{
-    WTF::speculationFence();
-    
+{   
     RefPtr<VM> vm = m_vm;
     if (vm) {
         vm->drainMicrotasks();
