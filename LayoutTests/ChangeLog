@@ -1,3 +1,12 @@
+2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fast/custom-elements/custom-element-registry-wrapper-should-stay-alive.html always timeouts on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=188353
+
+        Remove the timeout expectation now that the test is passing on debug bots.
+
+        * TestExpectations:
+
 2018-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CEReactions=NotNeeded for reactions only needed for customized builtins
