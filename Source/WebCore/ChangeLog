@@ -1,3 +1,25 @@
+2018-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Removed unused *AllInOne.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=188369
+
+        Reviewed by Yusuke Suzuki.
+
+        * accessibility/AccessibilityAllInOne.cpp: Removed.
+        * bindings/js/JSBindingsAllInOne.cpp: Removed.
+        * css/CSSAllInOne.cpp: Removed.
+        * dom/DOMAllInOne.cpp: Removed.
+        * editing/EditingAllInOne.cpp: Removed.
+        * html/HTMLElementsAllInOne.cpp: Removed.
+        * inspector/InspectorAllInOne.cpp: Removed.
+        * loader/appcache/ApplicationCacheAllInOne.cpp: Removed.
+        * mathml/MathMLAllInOne.cpp: Removed.
+        * platform/text/TextAllInOne.cpp: Removed.
+        * rendering/RenderingAllInOne.cpp: Removed.
+        * rendering/style/StyleAllInOne.cpp: Removed.
+        * rendering/svg/RenderSVGAllInOne.cpp: Removed.
+        * svg/SVGAllInOne.cpp: Removed.
+
 2018-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] Handle some virtual keys commonly used on TVs
