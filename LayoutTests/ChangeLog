@@ -1,3 +1,11 @@
+2018-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Fix things after r234640
+        https://bugs.webkit.org/show_bug.cgi?id=188133
+
+        * platform/mac-sierra-wk2/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt: Added.
+        Added test expectation for Sierra, which has no safe browsing framework.
+
 2018-08-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html is flaky

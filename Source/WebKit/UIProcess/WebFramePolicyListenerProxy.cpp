@@ -57,24 +57,21 @@ void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(Vector<SafeBrows
 
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ShouldProcessSwapIfPossible swap)
 {
-    ASSERT(!m_policyResult);
     if (m_safeBrowsingResults) {
         if (m_reply)
             m_reply(WebCore::PolicyAction::Use, policies, swap, WTFMove(*m_safeBrowsingResults));
-    } else
+    } else if (!m_policyResult)
         m_policyResult = {{ policies, swap }};
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    ASSERT(!m_policyResult);
     if (m_reply)
         m_reply(WebCore::PolicyAction::Download, nullptr, ShouldProcessSwapIfPossible::No, { });
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    ASSERT(!m_policyResult);
     if (m_reply)
         m_reply(WebCore::PolicyAction::Ignore, nullptr, ShouldProcessSwapIfPossible::No, { });
 }

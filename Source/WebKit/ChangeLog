@@ -1,3 +1,16 @@
+2018-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Fix things after r234640
+        https://bugs.webkit.org/show_bug.cgi?id=188133
+
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::download):
+        (WebKit::WebFramePolicyListenerProxy::ignore):
+        Fix assertions as I had in r234552.  Also fix a possible race condition with fragment navigations by only keeping the first "use" response.
+        * config.h:
+        Fix IOSMAC build.
+
 2018-08-07  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Scrollbars are not visible when using 3rd party mouse
