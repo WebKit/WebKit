@@ -231,8 +231,15 @@ Ref<Connection> Connection::createClientConnection(Identifier identifier, Client
     return adoptRef(*new Connection(identifier, false, client));
 }
 
+static HashMap<IPC::Connection::UniqueID, Connection*>& allConnections()
+{
+    static NeverDestroyed<HashMap<IPC::Connection::UniqueID, Connection*>> map;
+    return map;
+}
+
 Connection::Connection(Identifier identifier, bool isServer, Client& client)
     : m_client(client)
+    , m_uniqueID(generateObjectIdentifier<UniqueIDType>())
     , m_isServer(isServer)
     , m_syncRequestID(0)
     , m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(false)
@@ -248,6 +255,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     , m_shouldWaitForSyncReplies(true)
 {
     ASSERT(RunLoop::isMain());
+    allConnections().add(m_uniqueID, this);
 
     platformInitialize(identifier);
 
@@ -259,7 +267,16 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
 
 Connection::~Connection()
 {
+    ASSERT(RunLoop::isMain());
     ASSERT(!isValid());
+
+    allConnections().remove(m_uniqueID);
+}
+
+Connection* Connection::connection(UniqueID uniqueID)
+{
+    ASSERT(RunLoop::isMain());
+    return allConnections().get(uniqueID);
 }
 
 void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)

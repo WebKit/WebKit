@@ -1,3 +1,43 @@
+2018-08-07  Chris Dumez  <cdumez@apple.com>
+
+        StorageManager should stop ref'ing IPC::Connections as this is leak-prone
+        https://bugs.webkit.org/show_bug.cgi?id=188380
+
+        Reviewed by Alex Christensen.
+
+        StorageManager should stop ref'ing IPC::Connections as this is leak-prone. Instead, assign a unique identifier
+        to each IPC::Connection and store this identifier intead of a RefPtr<IPC::Connection>. When the StorageManager
+        needs an actual IPC::Connection, it can look it up from the identifier.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::~Connection):
+        (IPC::Connection::connection):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::uniqueID const):
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::addListener):
+        (WebKit::StorageManager::StorageArea::removeListener):
+        (WebKit::StorageManager::StorageArea::hasListener const):
+        (WebKit::StorageManager::StorageArea::setItem):
+        (WebKit::StorageManager::StorageArea::removeItem):
+        (WebKit::StorageManager::StorageArea::clear):
+        (WebKit::StorageManager::StorageArea::dispatchEvents const):
+        (WebKit::StorageManager::SessionStorageNamespace::allowedConnection const):
+        (WebKit::StorageManager::SessionStorageNamespace::setAllowedConnection):
+        (WebKit::StorageManager::setAllowedSessionStorageNamespaceConnection):
+        (WebKit::StorageManager::processDidCloseConnection):
+        (WebKit::StorageManager::createLocalStorageMap):
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+        (WebKit::StorageManager::createSessionStorageMap):
+        (WebKit::StorageManager::destroyStorageMap):
+        (WebKit::StorageManager::setItem):
+        (WebKit::StorageManager::removeItem):
+        (WebKit::StorageManager::clear):
+        (WebKit::StorageManager::applicationWillTerminate):
+        (WebKit::StorageManager::findStorageArea const):
+        * UIProcess/WebStorage/StorageManager.h:
+
 2018-08-07  Eric Carlson  <eric.carlson@apple.com>
 
         NotReadableError when calling getUserMedia

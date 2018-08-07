@@ -39,6 +39,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
@@ -86,7 +87,7 @@ while (0)
 class MachMessage;
 class UnixMessage;
 
-class Connection : public ThreadSafeRefCounted<Connection> {
+class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::Main> {
 public:
     class Client : public MessageReceiver {
     public:
@@ -150,6 +151,12 @@ public:
     ~Connection();
 
     Client& client() const { return m_client; }
+
+    enum UniqueIDType { };
+    using UniqueID = ObjectIdentifier<UniqueIDType>;
+
+    static Connection* connection(UniqueID);
+    UniqueID uniqueID() const { return m_uniqueID; }
 
     void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
     void setShouldExitOnSyncMessageSendFailure(bool);
@@ -271,6 +278,7 @@ private:
     };
 
     Client& m_client;
+    UniqueID m_uniqueID;
     bool m_isServer;
     std::atomic<bool> m_isValid { true };
     std::atomic<uint64_t> m_syncRequestID;
