@@ -115,6 +115,8 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     XPCServiceType::singleton().initialize(parameters);
 }
 
+int XPCServiceMain();
+
 void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage);
 
 } // namespace WebKit

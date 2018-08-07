@@ -159,6 +159,9 @@ public:
     void setMaximumNumberOfPrewarmedProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfPrewarmedProcesses() const { return m_configuration->maximumPrewarmedProcessCount(); }
 
+    void setCustomWebContentServiceBundleIdentifier(const String&);
+    const String& customWebContentServiceBundleIdentifier() { return m_configuration->customWebContentServiceBundleIdentifier(); }
+
     const Vector<RefPtr<WebProcessProxy>>& processes() const { return m_processes; }
 
     // WebProcess or NetworkProcess as approporiate for current process model. The connection must be non-null.

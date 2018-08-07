@@ -1,3 +1,39 @@
+2018-08-07  Ben Richards  <benton_richards@apple.com>
+
+        Add SPI for launching WebContent process with pre-linked injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=188367
+
+        Reviewed by Ryosuke Niwa.
+
+        Added SPI to allow applications to set a "customWebContentServiceBundleIdentifier" which will be launched instead of the default WebContent XPC service.
+        The "customWebContentServiceBundleIdentifier" should be the bundle identifier for an XPC service that calls [WKProcessPool _webContentProcessXPCMain].
+        The new XPC service should be hard linked to the application's injected bundle in order to receive the intended performance benefit.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        (main):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetCustomWebContentServiceBundleIdentifier):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _webContentProcessXPCMain]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration customWebContentServiceBundleIdentifier]):
+        (-[_WKProcessPoolConfiguration setCustomWebContentServiceBundleIdentifier:]):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setCustomWebContentServiceBundleIdentifier):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-07  Chris Dumez  <cdumez@apple.com>
 
         StorageManager should stop ref'ing IPC::Connections as this is leak-prone

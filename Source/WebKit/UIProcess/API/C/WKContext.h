@@ -165,6 +165,8 @@ WK_EXPORT void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArr
 WK_EXPORT void WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(WKContextRef contextRef, WKDictionaryRef dictionaryRef, double time);
 WK_EXPORT void WKContextRefreshPlugIns(WKContextRef context);
 
+WK_EXPORT void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name);
+
 #ifdef __cplusplus
 }
 #endif

@@ -418,6 +418,15 @@ void WebProcessPool::setMaximumNumberOfPrewarmedProcesses(unsigned maximumNumber
     m_configuration->setMaximumPrewarmedProcessCount(maximumNumberOfProcesses);
 }
 
+void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& customWebContentServiceBundleIdentifier)
+{
+    // Guard against API misuse.
+    if (m_processes.size() || !customWebContentServiceBundleIdentifier.isAllASCII())
+        CRASH();
+
+    m_configuration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
+}
+
 IPC::Connection* WebProcessPool::networkingProcessConnection()
 {
     return m_networkProcess->connection();

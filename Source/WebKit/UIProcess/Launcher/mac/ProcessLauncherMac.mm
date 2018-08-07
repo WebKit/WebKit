@@ -101,7 +101,13 @@ void ProcessLauncher::launchProcess()
 {
     ASSERT(!m_xpcConnection);
 
-    m_xpcConnection = adoptOSObject(xpc_connection_create(serviceName(m_launchOptions), dispatch_get_main_queue()));
+    const char* name;
+    if (!m_launchOptions.customWebContentServiceBundleIdentifier.isNull())
+        name = m_launchOptions.customWebContentServiceBundleIdentifier.data();
+    else
+        name = serviceName(m_launchOptions);
+
+    m_xpcConnection = adoptOSObject(xpc_connection_create(name, dispatch_get_main_queue()));
 
     uuid_t uuid;
     uuid_generate(uuid);

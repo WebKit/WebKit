@@ -359,6 +359,16 @@
     return wrapper(_processPoolConfiguration->copy().leakRef());
 }
 
+- (NSString *)customWebContentServiceBundleIdentifier
+{
+    return _processPoolConfiguration->customWebContentServiceBundleIdentifier();
+}
+
+- (void)setCustomWebContentServiceBundleIdentifier:(NSString *)customWebContentServiceBundleIdentifier
+{
+    _processPoolConfiguration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

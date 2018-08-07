@@ -407,6 +407,11 @@ void WKContextSetMaximumNumberOfPrewarmedProcesses(WKContextRef contextRef, unsi
     toImpl(contextRef)->setMaximumNumberOfPrewarmedProcesses(value);
 }
 
+void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name)
+{
+    toImpl(contextRef)->setCustomWebContentServiceBundleIdentifier(toImpl(name)->string());
+}
+
 void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, bool value)
 {
     toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
