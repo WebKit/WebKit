@@ -1,3 +1,34 @@
+2018-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r233778): Text selection sometimes cannot be extended in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=188374
+        <rdar://problem/42928657>
+
+        Reviewed by Simon Fraser.
+
+        rangeForPoint contains logic for converting a selection handle location in root view coordinates to an updated
+        selection. In doing so, we first convert the selection handle location to content coordinates; however, the call
+        site to EventHandler::hitTestResultAtPoint still hit-tests using the location in root view coordinates rather
+        than content coordinates, which means that when the focused frame is a subframe, hit-testing will fail to find
+        nodes within the subframe under the selection handle. This manifests in behaviors such as snapping to a single
+        character when selecting text in subframes.
+
+        To fix this, we just need to pass in the point in the frame's content coordinates when hit-testing.
+
+        Tests:  editing/selection/ios/selection-handles-in-iframe.html
+                editing/selection/ios/selection-handles-in-readonly-input.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
+        Make a couple of other minor adjustments:
+        1.  Take a Frame& instead of a Frame*, since Frame& is assumed to be non-null here.
+        2.  Rename rangeForPoint to rangeForPointInRootViewCoordinates, as well as the point argument to
+            pointInRootViewCoordinates.
+
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::rangeForPoint): Deleted.
+
 2018-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix things after r234640

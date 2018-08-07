@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<meta name=viewport content="width=device-width">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#output {
+    width: 320px;
+    height: 160px;
+    overflow: scroll;
+    color: green;
+    border: 1px green solid;
+}
+
+input {
+    font-size: 150px;
+    width: 300px;
+    height: 100px;
+    padding-left: 0;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function appendOutput(s) {
+    const paragraph = document.createElement("div");
+    paragraph.textContent = s;
+    output.appendChild(paragraph);
+}
+
+async function runTest() {
+    await UIHelper.activateAndWaitForInputSessionAt(100, 50);
+    input.setSelectionRange(0, 2);
+    let grabberEndRect = null;
+    while (!grabberEndRect || !grabberEndRect.width || !grabberEndRect.height)
+        grabberEndRect = await UIHelper.getSelectionEndGrabberViewRect();
+
+    const [midX, midY] = [grabberEndRect.left + (grabberEndRect.width / 2), grabberEndRect.top + (grabberEndRect.height / 2)];
+    appendOutput(`Initial selected range: (${input.selectionStart}, ${input.selectionEnd})`);
+    await touchAndDragFromPointToPoint(midX, midY, midX + 25, midY + 150);
+    await liftUpAtPoint(midX + 25, midY + 150);
+    appendOutput(`Final selected range: (${input.selectionStart}, ${input.selectionEnd})`);
+    testRunner.notifyDone();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<input id="input" readonly value="aa">
+<pre id="output"></pre>
+<p>Verifies that dragging a selection handle outside of a readonly input does not cause the selection to jump outside of the input.</p>
+<p>To manually test, double-tap to select the word "aa", drag the selection end handle out of the bounds of the input, and then drag the selection handle back in.</p>
+<p>"aa" should remain selected.</p>
+<p>This test is best run under WebKitTestRunner.</p></body>
+</html>

@@ -1215,17 +1215,19 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, static_cast<uint32_t>(flags), callbackID));
 }
 
-static RefPtr<Range> rangeForPoint(Frame* frame, const IntPoint& point, bool baseIsStart)
+static RefPtr<Range> rangeForPointInRootViewCoordinates(Frame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart)
 {
-    IntPoint pointInDocument = frame->view()->rootViewToContents(point);
-    Position result = frame->visiblePositionForPoint(pointInDocument).deepEquivalent();
+    IntPoint pointInDocument = frame.view()->rootViewToContents(pointInRootViewCoordinates);
+    Position result;
     RefPtr<Range> range;
     
-    HitTestResult hitTest = frame->eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
+    HitTestResult hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
     if (hitTest.targetNode())
-        result = frame->eventHandler().selectionExtentRespectingEditingBoundary(frame->selection().selection(), hitTest.localPoint(), hitTest.targetNode()).deepEquivalent();
+        result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), hitTest.targetNode()).deepEquivalent();
+    else
+        result = frame.visiblePositionForPoint(pointInDocument).deepEquivalent();
     
-    VisibleSelection existingSelection = frame->selection().selection();
+    VisibleSelection existingSelection = frame.selection().selection();
     Position selectionStart = existingSelection.visibleStart().deepEquivalent();
     Position selectionEnd = existingSelection.visibleEnd().deepEquivalent();
     
@@ -1235,14 +1237,14 @@ static RefPtr<Range> rangeForPoint(Frame* frame, const IntPoint& point, bool bas
         else if (&selectionStart.anchorNode()->treeScope() != &hitTest.targetNode()->treeScope())
             result = VisibleSelection::adjustPositionForEnd(result, selectionStart.containerNode());
         if (result.isNotNull())
-            range = Range::create(*frame->document(), selectionStart, result);
+            range = Range::create(*frame.document(), selectionStart, result);
     } else {
         if (comparePositions(selectionEnd, result) <= 0)
             result = selectionEnd.previous();
         else if (&hitTest.targetNode()->treeScope() != &selectionEnd.anchorNode()->treeScope())
             result = VisibleSelection::adjustPositionForStart(result, selectionEnd.containerNode());
         if (result.isNotNull())
-            range = Range::create(*frame->document(), result, selectionEnd);
+            range = Range::create(*frame.document(), result, selectionEnd);
     }
     
     return range;
@@ -1329,7 +1331,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
             if (result.isNotNull())
                 range = Range::create(*frame.document(), result, result);
         } else
-            range = rangeForPoint(&frame, point, baseIsStart);
+            range = rangeForPointInRootViewCoordinates(frame, point, baseIsStart);
         break;
 
     case SelectionTouch::EndedMovingForward:
@@ -1341,7 +1343,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
         break;
 
     case SelectionTouch::Moved:
-        range = rangeForPoint(&frame, point, baseIsStart);
+        range = rangeForPointInRootViewCoordinates(frame, point, baseIsStart);
         break;
     }
     if (range)

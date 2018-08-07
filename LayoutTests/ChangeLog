@@ -1,3 +1,24 @@
+2018-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r233778): Text selection sometimes cannot be extended in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=188374
+        <rdar://problem/42928657>
+
+        Reviewed by Simon Fraser.
+
+        Add 2 new layout tests to cover the original bug that r233778 fixed, as well as the regression in this bug.
+
+        * editing/selection/ios/selection-handles-in-iframe-expected.txt: Added.
+        * editing/selection/ios/selection-handles-in-iframe.html: Added.
+
+        Add a test to verify that the user can select text in an iframe by dragging selection handles.
+
+        * editing/selection/ios/selection-handles-in-readonly-input-expected.txt: Added.
+        * editing/selection/ios/selection-handles-in-readonly-input.html: Added.
+
+        Add a test to verify that dragging a selection handle outside of a readonly input does not cause the selection
+        to jump outside of the input and clear out the selection in the input.
+
 2018-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix things after r234640
