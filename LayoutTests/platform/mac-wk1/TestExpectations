@@ -539,7 +539,7 @@ webkit.org/b/179643 media/W3C/video/networkState/networkState_during_loadstart.h
 
 webkit.org/b/181862 [ Debug ] http/tests/images/image-supports-video.html [ Pass Failure ]
 
-webkit.org/b/179853 [ Debug ] imported/blink/fast/text/international-iteration-simple-text.html [ Pass Failure ]
+webkit.org/b/179853 imported/blink/fast/text/international-iteration-simple-text.html [ Pass Failure ]
 
 # Skip anything related to WebAuthN
 http/tests/webauthn/ [ Skip ]
