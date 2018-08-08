@@ -50,6 +50,7 @@
 @property (nonatomic, assign) UIEdgeInsets overrideSafeAreaInsets;
 
 @property (nonatomic, assign) BOOL usesSafariLikeRotation;
+@property (nonatomic, readonly, getter=isInteractingWithFormControl) BOOL interactingWithFormControl;
 
 #endif
 

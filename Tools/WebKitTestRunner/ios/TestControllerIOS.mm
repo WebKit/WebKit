@@ -45,6 +45,18 @@
 
 namespace WTR {
 
+static bool isDoneWaitingForKeyboardToDismiss = true;
+
+static void handleKeyboardWillHideNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+    isDoneWaitingForKeyboardToDismiss = false;
+}
+
+static void handleKeyboardDidHideNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+    isDoneWaitingForKeyboardToDismiss = true;
+}
+
 void TestController::notifyDone()
 {
 }
@@ -56,11 +68,19 @@ void TestController::platformInitialize()
 
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [[UIScreen mainScreen] _setScale:2.0];
+
+    auto center = CFNotificationCenterGetLocalCenter();
+    CFNotificationCenterAddObserver(center, this, handleKeyboardWillHideNotification, (CFStringRef)UIKeyboardWillHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, this, handleKeyboardDidHideNotification, (CFStringRef)UIKeyboardDidHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 void TestController::platformDestroy()
 {
     tearDownIOSLayoutTestCommunication();
+
+    auto center = CFNotificationCenterGetLocalCenter();
+    CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIKeyboardWillHideNotification, nullptr);
+    CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIKeyboardDidHideNotification, nullptr);
 }
 
 void TestController::initializeInjectedBundlePath()
@@ -98,7 +118,12 @@ void TestController::platformResetStateToConsistentValues()
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];
         [scrollView setContentOffset:CGPointZero];
+
+        if (webView.interactingWithFormControl)
+            [webView resignFirstResponder];
     }
+
+    runUntil(isDoneWaitingForKeyboardToDismiss, m_currentInvocation->shortTimeout());
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

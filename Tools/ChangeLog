@@ -1,3 +1,44 @@
+2018-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] fast/events/ios/contenteditable-autocapitalize.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=188401
+        <rdar://problem/32542300>
+
+        Reviewed by Ryosuke Niwa.
+
+        When run individually, fast/events/ios/contenteditable-autocapitalize.html passes consistently; however, when
+        run right after another layout test that finishes while the keyboard is shown, this test sometimes fails. This
+        is because each of the three steps of this test ends when UIScriptController's `didHideKeyboardCallback` is
+        invoked, and if the keyboard only begins to dismiss after the previous test completes, we have a race. When the
+        keyboard finishes dismissing after the UI script is evaluated, it will trigger UI script completion early and
+        skip over one of the steps in the layout test, resulting in a text diff failure.
+
+        To fix this, add a mechanism in WebKitTestRunner to wait until the keyboard is dismissed (with a short timeout)
+        as a part of resetting test controller state, before moving on to the next layout test.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView didStartFormControlInteraction]):
+        (-[TestRunnerWKWebView didEndFormControlInteraction]):
+
+        Use these hooks to keep track of whether the previous test is presenting any form input UI.
+
+        (-[TestRunnerWKWebView isInteractingWithFormControl]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::handleKeyboardWillHideNotification):
+        (WTR::handleKeyboardDidHideNotification):
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformDestroy):
+
+        Register during initialization (and unregister during teardown) for keyboard hiding notifications, to keep track
+        of when the keyboard dismissal animation ends.
+
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Make a couple of tweaks here: (1) if form input UI is being shown, tell the web view to resign first responder,
+        which causes the field to lose focus. (2) If necessary, wait for the current keyboard dismissal animation to
+        finish. This includes any keyboard dismissal animations triggered as a result of step (1).
+
 2018-08-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] More tweaks and refactoring to prepare for ARC

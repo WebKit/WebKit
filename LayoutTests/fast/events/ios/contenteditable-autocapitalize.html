@@ -19,12 +19,12 @@
                 resolveExpectedInputEvents();
         }
 
-        function runUIScriptAndExpectInputEvents(inputEventCount, nextAutocapitalizeType)
+        function runTestWithAutocapitalizeType(autocapitalizeType, inputEventCount)
         {
+            editable.autocapitalize = autocapitalizeType;
             remainingInputEventCount = inputEventCount;
             resolveExpectedInputEvents = () => {
                 write(`With autocapitalize: ${editable.autocapitalize}, the output is: "${editable.textContent}"`);
-                editable.autocapitalize = nextAutocapitalizeType;
                 editable.textContent = "";
                 editable.blur();
             };
@@ -45,15 +45,15 @@
             });
         }
 
-        function runTest()
+        async function runTest()
         {
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 
-            runUIScriptAndExpectInputEvents(2, "sentences")
-                .then(() => runUIScriptAndExpectInputEvents(2, "characters"))
-                .then(() => runUIScriptAndExpectInputEvents(2, null))
-                .then(() => testRunner.notifyDone());
+            await runTestWithAutocapitalizeType("none", 2);
+            await runTestWithAutocapitalizeType("sentences", 2);
+            await runTestWithAutocapitalizeType("characters", 2);
+            testRunner.notifyDone();
         }
     </script>
     <style>
@@ -68,7 +68,7 @@
 </head>
 
 <body onload=runTest()>
-    <div contenteditable autocapitalize="none" id="editable" oninput=handleInput()></div>
+    <div contenteditable id="editable" oninput=handleInput()></div>
     <p>To manually test, type 't' into the contenteditable. The 't' should not be autocapitalized.</p>
     <div id="output"></div>
 </body>
