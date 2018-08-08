@@ -26,7 +26,6 @@
 #include "RenderSVGTextPath.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
-#include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

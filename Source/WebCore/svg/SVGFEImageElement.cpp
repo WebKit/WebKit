@@ -32,7 +32,6 @@
 #include "RenderSVGResource.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
-#include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #include "Document.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
-#include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

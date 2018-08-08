@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "HTMLAnchorElement.h"
 #include "Page.h"
+#include "SVGNames.h"
 #include "VisitedLinkStore.h"
 #include "XLinkNames.h"
 
@@ -47,7 +48,7 @@ inline static const AtomicString* linkAttribute(const Element& element)
     if (element.isHTMLElement())
         return &element.attributeWithoutSynchronization(HTMLNames::hrefAttr);
     if (element.isSVGElement())
-        return &element.getAttribute(XLinkNames::hrefAttr);
+        return &element.getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     return 0;
 }
 

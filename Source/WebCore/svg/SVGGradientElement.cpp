@@ -32,7 +32,6 @@
 #include "SVGTransformListValues.h"
 #include "SVGTransformable.h"
 #include "StyleResolver.h"
-#include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

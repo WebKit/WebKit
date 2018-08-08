@@ -167,7 +167,7 @@ Node::InsertedIntoAncestorResult SVGImageElement::insertedIntoAncestor(Insertion
 
 const AtomicString& SVGImageElement::imageSourceURL() const
 {
-    return getAttribute(XLinkNames::hrefAttr);
+    return getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
 }
 
 void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

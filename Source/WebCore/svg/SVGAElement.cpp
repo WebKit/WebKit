@@ -171,7 +171,7 @@ bool SVGAElement::supportsFocus() const
 
 bool SVGAElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name().localName() == XLinkNames::hrefAttr || SVGGraphicsElement::isURLAttribute(attribute);
+    return SVGURIReference::isKnownAttribute(attribute.name()) || SVGGraphicsElement::isURLAttribute(attribute);
 }
 
 bool SVGAElement::isMouseFocusable() const

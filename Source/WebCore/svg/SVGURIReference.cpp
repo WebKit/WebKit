@@ -41,6 +41,7 @@ void SVGURIReference::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
+    registry.registerAttribute<SVGNames::hrefAttr, &SVGURIReference::m_href>();
     registry.registerAttribute<XLinkNames::hrefAttr, &SVGURIReference::m_href>();
 }
 
@@ -56,7 +57,7 @@ bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
 
 void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name.matches(XLinkNames::hrefAttr))
+    if (isKnownAttribute(name))
         m_href.setValue(value);
 }
 

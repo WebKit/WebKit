@@ -3,7 +3,7 @@ Test the basic matching of the :any-link selector.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.querySelectorAll(":any-link").length is 21
+PASS document.querySelectorAll(":any-link").length is 25
 PASS document.querySelectorAll(":any-link")[0] is document.getElementById("target-tag-2")
 PASS document.querySelectorAll(":any-link")[1] is document.getElementById("target-tag-3")
 PASS document.querySelectorAll(":any-link")[2] is document.getElementById("target-tag-4")
@@ -21,10 +21,14 @@ PASS document.querySelectorAll(":any-link")[13] is document.getElementById("targ
 PASS document.querySelectorAll(":any-link")[14] is document.getElementById("target-tag-23")
 PASS document.querySelectorAll(":any-link")[15] is document.getElementById("target-tag-24")
 PASS document.querySelectorAll(":any-link")[16] is document.getElementById("target-tag-25")
-PASS document.querySelectorAll(":any-link")[17] is document.getElementById("target-tag-31")
-PASS document.querySelectorAll(":any-link")[18] is document.getElementById("target-tag-32")
-PASS document.querySelectorAll(":any-link")[19] is document.getElementById("target-tag-33")
-PASS document.querySelectorAll(":any-link")[20] is document.getElementById("target-tag-34")
+PASS document.querySelectorAll(":any-link")[17] is document.getElementById("target-tag-27")
+PASS document.querySelectorAll(":any-link")[18] is document.getElementById("target-tag-28")
+PASS document.querySelectorAll(":any-link")[19] is document.getElementById("target-tag-29")
+PASS document.querySelectorAll(":any-link")[20] is document.getElementById("target-tag-30")
+PASS document.querySelectorAll(":any-link")[21] is document.getElementById("target-tag-31")
+PASS document.querySelectorAll(":any-link")[22] is document.getElementById("target-tag-32")
+PASS document.querySelectorAll(":any-link")[23] is document.getElementById("target-tag-33")
+PASS document.querySelectorAll(":any-link")[24] is document.getElementById("target-tag-34")
 PASS getComputedStyle(document.getElementById("target-tag-1")).backgroundColor is "rgb(255, 255, 255)"
 PASS getComputedStyle(document.getElementById("target-tag-2")).backgroundColor is "rgb(1, 2, 3)"
 PASS getComputedStyle(document.getElementById("target-tag-3")).backgroundColor is "rgb(1, 2, 3)"
@@ -51,10 +55,10 @@ PASS getComputedStyle(document.getElementById("target-tag-23")).backgroundColor 
 PASS getComputedStyle(document.getElementById("target-tag-24")).backgroundColor is "rgb(1, 2, 3)"
 PASS getComputedStyle(document.getElementById("target-tag-25")).backgroundColor is "rgb(1, 2, 3)"
 PASS getComputedStyle(document.getElementById("target-tag-26")).backgroundColor is "rgb(255, 255, 255)"
-PASS getComputedStyle(document.getElementById("target-tag-27")).backgroundColor is "rgb(255, 255, 255)"
-PASS getComputedStyle(document.getElementById("target-tag-28")).backgroundColor is "rgb(255, 255, 255)"
-PASS getComputedStyle(document.getElementById("target-tag-29")).backgroundColor is "rgb(255, 255, 255)"
-PASS getComputedStyle(document.getElementById("target-tag-30")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("target-tag-27")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("target-tag-28")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("target-tag-29")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("target-tag-30")).backgroundColor is "rgb(1, 2, 3)"
 PASS getComputedStyle(document.getElementById("target-tag-31")).backgroundColor is "rgb(1, 2, 3)"
 PASS getComputedStyle(document.getElementById("target-tag-32")).backgroundColor is "rgb(1, 2, 3)"
 PASS getComputedStyle(document.getElementById("target-tag-33")).backgroundColor is "rgb(1, 2, 3)"

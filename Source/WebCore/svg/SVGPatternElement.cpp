@@ -38,7 +38,6 @@
 #include "SVGRenderSupport.h"
 #include "SVGStringList.h"
 #include "SVGTransformable.h"
-#include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

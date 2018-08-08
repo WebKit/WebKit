@@ -36,7 +36,6 @@
 #include "ScriptDisallowedScope.h"
 #include "StyleInheritedData.h"
 #include "Text.h"
-#include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

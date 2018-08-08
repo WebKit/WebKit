@@ -1472,7 +1472,7 @@ URL Element::absoluteLinkURL() const
 
     AtomicString linkAttribute;
     if (hasTagName(SVGNames::aTag))
-        linkAttribute = getAttribute(XLinkNames::hrefAttr);
+        linkAttribute = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     else
         linkAttribute = getAttribute(HTMLNames::hrefAttr);
 

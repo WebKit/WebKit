@@ -27,7 +27,6 @@
 #include "RenderSVGResource.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
-#include "XLinkNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>

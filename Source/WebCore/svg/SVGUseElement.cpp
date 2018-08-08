@@ -480,6 +480,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
         replacementClone->removeAttribute(SVGNames::yAttr);
         replacementClone->removeAttribute(SVGNames::widthAttr);
         replacementClone->removeAttribute(SVGNames::heightAttr);
+        replacementClone->removeAttribute(SVGNames::hrefAttr);
         replacementClone->removeAttribute(XLinkNames::hrefAttr);
 
         if (target)

@@ -1,3 +1,76 @@
+2018-08-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Allow href attribute without xlink on SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=153854
+
+        Reviewed by Dean Jackson.
+
+        SVG 2 has moved the href attribute from xlink namespace to svg namespace.
+        Instead of using xlink:href, svg:href should be used or simply use href 
+        if the svg namespace is defined.
+
+        See https://www.w3.org/TR/SVG2/linking.html#XLinkRefAttrs.
+
+        For backward compatibility, xlink:href will be treated as an alias to href
+        till it is acceptable to completely remove the support for the deprecated 
+        xlink:href.
+
+        Tests: svg/custom/href-svg-namespace-animate.svg
+               svg/custom/href-svg-namespace-dynamic.svg
+               svg/custom/href-svg-namespace-elements.html
+               svg/custom/href-svg-namespace-expected.svg
+               svg/custom/href-svg-namespace-static.svg
+
+        * dom/Element.cpp:
+        (WebCore::Element::absoluteLinkURL const):
+        * dom/Element.h:
+        (WebCore::Element::getAttribute const): This new template function with
+        template pack parameter QualifiedNames is added to return the first none
+        empty attribute value given a set of attributes' names. This should be
+        useful for deprecated attributes. When we decide to remove the support 
+        for the deprecated attribute, all we need is to remove it as a parameter
+        to getAttribute(). In this case, the none template function will be called.
+        * dom/VisitedLinkState.cpp:
+        (WebCore::linkAttribute):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterScriptToken):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isURLAttribute const):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements const):
+        * svg/SVGCursorElement.cpp:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::rebuildElements):
+        (WebCore::SVGDocumentExtensions::rebuildAllElementReferencesForTarget):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::animatableAttributeForName):
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue const):
+        (WebCore::SVGFontFaceUriElement::parseAttribute):
+        (WebCore::SVGFontFaceUriElement::loadFont):
+        * svg/SVGForeignObjectElement.cpp:
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::hasValidGlyphElement const):
+        * svg/SVGGradientElement.cpp:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::imageSourceURL const):
+        * svg/SVGMPathElement.cpp:
+        * svg/SVGPatternElement.cpp:
+        * svg/SVGScriptElement.h:
+        * svg/SVGTRefElement.cpp:
+        * svg/SVGTextPathElement.cpp:
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::registerAttributes):
+        (WebCore::SVGURIReference::parseAttribute):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree const):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::isSupportedAttribute):
+        (WebCore::SVGSMILElement::svgAttributeChanged):
+        * svg/svgattrs.in:
+
 2018-08-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.open and document.write must throw while the HTML parser is synchronously constructing a custom element

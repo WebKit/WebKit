@@ -50,7 +50,6 @@
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
 #include "ShadowRoot.h"
-#include "XLinkNames.h"
 #include "XMLNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -854,7 +853,7 @@ QualifiedName SVGElement::animatableAttributeForName(const AtomicString& localNa
             &SVGNames::yAttr.get(),
             &SVGNames::yChannelSelectorAttr.get(),
             &SVGNames::zAttr.get(),
-            &XLinkNames::hrefAttr.get(),
+            &SVGNames::hrefAttr.get(),
         };
         HashMap<AtomicString, QualifiedName> map;
         for (auto& name : names) {

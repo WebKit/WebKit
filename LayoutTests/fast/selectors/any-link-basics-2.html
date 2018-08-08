@@ -76,8 +76,6 @@
 <script>
 description('Test the basic matching of the :any-link selector.');
 
-shouldBe('document.querySelectorAll(":any-link").length', '21');
-
 // Query Selector.
 var expectedIds = ['target-tag-2',
                    'target-tag-3',
@@ -96,10 +94,16 @@ var expectedIds = ['target-tag-2',
                    'target-tag-23',
                    'target-tag-24',
                    'target-tag-25',
+                   'target-tag-27',
+                   'target-tag-28',
+                   'target-tag-29',
+                   'target-tag-30',
                    'target-tag-31',
                    'target-tag-32',
                    'target-tag-33',
                    'target-tag-34'];
+
+shouldBe('document.querySelectorAll(":any-link").length', expectedIds.length.toString());
 
 for (var i = 0; i < expectedIds.length; ++i)
     shouldBe('document.querySelectorAll(":any-link")[' + i + ']', 'document.getElementById("' + expectedIds[i] + '")');
@@ -131,10 +135,10 @@ var expectedStyles = [['target-tag-1', 'rgb(255, 255, 255)'],
                       ['target-tag-24', 'rgb(1, 2, 3)'],
                       ['target-tag-25', 'rgb(1, 2, 3)'],
                       ['target-tag-26', 'rgb(255, 255, 255)'],
-                      ['target-tag-27', 'rgb(255, 255, 255)'],
-                      ['target-tag-28', 'rgb(255, 255, 255)'],
-                      ['target-tag-29', 'rgb(255, 255, 255)'],
-                      ['target-tag-30', 'rgb(255, 255, 255)'],
+                      ['target-tag-27', 'rgb(1, 2, 3)'],
+                      ['target-tag-28', 'rgb(1, 2, 3)'],
+                      ['target-tag-29', 'rgb(1, 2, 3)'],
+                      ['target-tag-30', 'rgb(1, 2, 3)'],
                       ['target-tag-31', 'rgb(1, 2, 3)'],
                       ['target-tag-32', 'rgb(1, 2, 3)'],
                       ['target-tag-33', 'rgb(1, 2, 3)'],

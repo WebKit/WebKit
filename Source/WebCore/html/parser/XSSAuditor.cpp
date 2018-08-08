@@ -447,6 +447,7 @@ bool XSSAuditor::filterScriptToken(const FilterTokenRequest& request)
     bool didBlockScript = false;
     if (m_wasScriptTagFoundInRequest) {
         didBlockScript |= eraseAttributeIfInjected(request, srcAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(request, SVGNames::hrefAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
         didBlockScript |= eraseAttributeIfInjected(request, XLinkNames::hrefAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
     }
 

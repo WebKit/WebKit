@@ -76,6 +76,8 @@ public:
 
     WEBCORE_EXPORT bool hasAttribute(const QualifiedName&) const;
     WEBCORE_EXPORT const AtomicString& getAttribute(const QualifiedName&) const;
+    template<typename... QualifiedNames>
+    const AtomicString& getAttribute(const QualifiedName&, const QualifiedNames&...) const;
     WEBCORE_EXPORT void setAttribute(const QualifiedName&, const AtomicString& value);
     WEBCORE_EXPORT void setAttributeWithoutSynchronization(const QualifiedName&, const AtomicString& value);
     void setSynchronizedLazyAttribute(const QualifiedName&, const AtomicString& value);
@@ -815,6 +817,15 @@ inline void Element::setHasFocusWithin(bool flag)
     setFlag(flag, HasFocusWithin);
     if (styleAffectedByFocusWithin())
         invalidateStyleForSubtree();
+}
+
+template<typename... QualifiedNames>
+inline const AtomicString& Element::getAttribute(const QualifiedName& name, const QualifiedNames&... names) const
+{
+    const AtomicString& value = getAttribute(name);
+    if (!value.isEmpty())
+        return value;
+    return getAttribute(names...);
 }
 
 } // namespace WebCore

@@ -35,7 +35,6 @@
 #include "SVGSVGElement.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
-#include "XLinkNames.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -326,7 +325,7 @@ void SVGDocumentExtensions::rebuildElements()
 {
     Vector<SVGElement*> shadowRebuildElements = WTFMove(m_rebuildElements);
     for (auto* element : shadowRebuildElements)
-        element->svgAttributeChanged(XLinkNames::hrefAttr);
+        element->svgAttributeChanged(SVGNames::hrefAttr);
 }
 
 void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElement)
@@ -356,7 +355,7 @@ void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement& ref
         elementsToRebuild.uncheckedAppend(element);
 
     for (auto* element : elementsToRebuild)
-        element->svgAttributeChanged(XLinkNames::hrefAttr);
+        element->svgAttributeChanged(SVGNames::hrefAttr);
 }
 
 void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* referencedElement)
