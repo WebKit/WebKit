@@ -1,3 +1,12 @@
+2018-08-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Follow-up build fix for r234685
+        https://bugs.webkit.org/show_bug.cgi?id=188245
+
+        Unreviewed build fix.
+
+        * WebCoreSupport/WebSecurityOriginPrivate.h:
+
 2018-08-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] More tweaks and refactoring to prepare for ARC
