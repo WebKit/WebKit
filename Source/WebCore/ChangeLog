@@ -1,3 +1,18 @@
+2018-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a WebKit2 logging channel for ActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=188411
+
+        Reviewed by Tim Horton.
+
+        Add logging for ActivityState changes and the entrypoints that affect ActivityState.
+        
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ActivityState.cpp: Added.
+        (WebCore::activityStateFlagsToString):
+        * page/ActivityState.h:
+
 2018-08-08  Eric Carlson  <eric.carlson@apple.com>
 
         Add LogArgument template for PlatformMediaSession::RemoteControlCommandType

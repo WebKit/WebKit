@@ -5645,6 +5645,7 @@
 		0F6383DC18615B29003E5DB5 /* ThreadedScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadedScrollingTree.h; sourceTree = "<group>"; };
 		0F6A12BB1A00923700C6DE72 /* DebugPageOverlays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugPageOverlays.cpp; sourceTree = "<group>"; };
 		0F6A12BC1A00923700C6DE72 /* DebugPageOverlays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugPageOverlays.h; sourceTree = "<group>"; };
+		0F70495D211B524200369968 /* ActivityState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ActivityState.cpp; sourceTree = "<group>"; };
 		0F7DF1471E2BF1A60095951B /* WebCoreJSClientData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreJSClientData.cpp; sourceTree = "<group>"; };
 		0F850FE21ED7C18300FB77A7 /* PerformanceLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceLoggingClient.h; sourceTree = "<group>"; };
 		0F87166D1C869D83004FF0DE /* LengthPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthPoint.cpp; sourceTree = "<group>"; };
@@ -5813,6 +5814,7 @@
 		11EA57FB20FFAFB600311EBB /* SimpleTextRunGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleTextRunGenerator.cpp; sourceTree = "<group>"; };
 		11EA57FC20FFAFB700311EBB /* SimpleTextRunGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleTextRunGenerator.h; sourceTree = "<group>"; };
 		11FF02D520BA3C810083F25B /* Verification.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Verification.cpp; sourceTree = "<group>"; };
+		12F75A9A86EA03DAF24B7971 /* ISOProtectionSystemSpecificHeaderBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOProtectionSystemSpecificHeaderBox.h; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
@@ -7519,6 +7521,7 @@
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
 		4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinButtonElement.cpp; sourceTree = "<group>"; };
 		4512502115DCE37D002F84E2 /* SpinButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinButtonElement.h; sourceTree = "<group>"; };
+		451A49F8F8726BE071518BE2 /* ISOProtectionSystemSpecificHeaderBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOProtectionSystemSpecificHeaderBox.cpp; sourceTree = "<group>"; };
 		453EB635159C570400001BB7 /* DateTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFormat.h; sourceTree = "<group>"; };
 		45830D4B1679B4F800ACF8C3 /* AutoscrollController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutoscrollController.cpp; sourceTree = "<group>"; };
 		45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoscrollController.h; sourceTree = "<group>"; };
@@ -13280,8 +13283,6 @@
 		CD871C621FB52B6500F0B965 /* ISOBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOBox.h; sourceTree = "<group>"; };
 		CD871C631FB52B6600F0B965 /* ISOSchemeInformationBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOSchemeInformationBox.cpp; sourceTree = "<group>"; };
 		CD871C641FB52B6700F0B965 /* ISOSchemeInformationBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOSchemeInformationBox.h; sourceTree = "<group>"; };
-		451A49F8F8726BE071518BE2 /* ISOProtectionSystemSpecificHeaderBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOProtectionSystemSpecificHeaderBox.cpp; sourceTree = "<group>"; };
-		12F75A9A86EA03DAF24B7971 /* ISOProtectionSystemSpecificHeaderBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOProtectionSystemSpecificHeaderBox.h; sourceTree = "<group>"; };
 		CD871C651FB52B6700F0B965 /* ISOVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOVTTCue.h; sourceTree = "<group>"; };
 		CD871C661FB52B6800F0B965 /* ISOTrackEncryptionBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOTrackEncryptionBox.h; sourceTree = "<group>"; };
 		CD871C671FB52B6800F0B965 /* ISOOriginalFormatBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOOriginalFormatBox.h; sourceTree = "<group>"; };
@@ -19265,6 +19266,7 @@
 				46B9518A207D632800A7D2DD /* AbstractDOMWindow.h */,
 				46B95194207D633000A7D2DD /* AbstractFrame.cpp */,
 				46B9518F207D632B00A7D2DD /* AbstractFrame.h */,
+				0F70495D211B524200369968 /* ActivityState.cpp */,
 				724EE54E1DC7F25B00A91FFB /* ActivityState.h */,
 				724EE54F1DC7F25B00A91FFB /* ActivityStateChangeObserver.h */,
 				BCF48CE61370D114004E87D6 /* AdjustViewSizeOrNot.h */,

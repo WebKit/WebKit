@@ -1890,11 +1890,13 @@ float WebViewImpl::intrinsicDeviceScaleFactor() const
 
 void WebViewImpl::windowDidOrderOffScreen()
 {
+    LOG(ActivityState, "WebViewImpl %p (page %llu) windowDidOrderOffScreen", this, m_page->pageID());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible | WebCore::ActivityState::WindowIsActive);
 }
 
 void WebViewImpl::windowDidOrderOnScreen()
 {
+    LOG(ActivityState, "WebViewImpl %p (page %llu) windowDidOrderOnScreen", this, m_page->pageID());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible | WebCore::ActivityState::WindowIsActive);
 }
 
@@ -1962,6 +1964,7 @@ void WebViewImpl::windowDidChangeLayerHosting()
 
 void WebViewImpl::windowDidChangeOcclusionState()
 {
+    LOG(ActivityState, "WebViewImpl %p (page %llu) windowDidChangeOcclusionState", this, m_page->pageID());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
 }
 
@@ -2055,6 +2058,8 @@ void WebViewImpl::viewDidMoveToWindow()
 {
     NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation : [m_view window];
 
+    LOG(ActivityState, "WebViewImpl %p viewDidMoveToWindow %p", this, window);
+
     if (window) {
         windowDidChangeScreen();
 
@@ -2119,16 +2124,19 @@ void WebViewImpl::viewDidChangeBackingProperties()
 
 void WebViewImpl::viewDidHide()
 {
+    LOG(ActivityState, "WebViewImpl %p (page %llu) viewDidHide", this, m_page->pageID());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
 }
 
 void WebViewImpl::viewDidUnhide()
 {
+    LOG(ActivityState, "WebViewImpl %p (page %llu) viewDidUnhide", this, m_page->pageID());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
 }
 
 void WebViewImpl::activeSpaceDidChange()
 {
+    LOG(ActivityState, "WebViewImpl %p (page %llu) activeSpaceDidChange", this, m_page->pageID());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
 }
 

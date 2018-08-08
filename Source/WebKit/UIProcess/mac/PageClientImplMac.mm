@@ -33,6 +33,7 @@
 #import "DataReference.h"
 #import "DownloadProxy.h"
 #import "DrawingAreaProxy.h"
+#import "Logging.h"
 #import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
@@ -198,6 +199,13 @@ bool PageClientImpl::isViewVisible()
     NSView *activeView = this->activeView();
     NSWindow *activeViewWindow = activeWindow();
 
+    auto windowIsOccluded = [&]()->bool {
+        return m_impl && m_impl->windowOcclusionDetectionEnabled() && (activeViewWindow.occlusionState & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible;
+    };
+
+    LOG_WITH_STREAM(ActivityState, stream << "PageClientImpl " << this << " isViewVisible(): activeViewWindow " << activeViewWindow
+        << " (window visible " << activeViewWindow.isVisible << ", view hidden " << activeView.isHiddenOrHasHiddenAncestor << ", window occluded " << windowIsOccluded() << ")");
+
     if (!activeViewWindow)
         return false;
 
@@ -207,7 +215,7 @@ bool PageClientImpl::isViewVisible()
     if (activeView.isHiddenOrHasHiddenAncestor)
         return false;
 
-    if (m_impl->windowOcclusionDetectionEnabled() && (activeViewWindow.occlusionState & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible)
+    if (windowIsOccluded())
         return false;
 
     return true;

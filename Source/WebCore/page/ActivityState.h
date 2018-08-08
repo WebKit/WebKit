@@ -25,6 +25,10 @@
 
 #pragma once
 
+namespace WTF {
+class String;
+}
+
 namespace WebCore {
 
 struct ActivityState {
@@ -51,5 +55,8 @@ enum class ActivityStateForCPUSampling {
     VisibleNonActive,
     VisibleAndActive
 };
+
+// Ideally this would be operator<<(WTF::TextStream&, ActivityState::Flags) but ActivityState::Flags needs to be strongly typed to avoid ambiguous overloads.
+WEBCORE_EXPORT WTF::String activityStateFlagsToString(ActivityState::Flags);
 
 } // namespace WebCore

@@ -157,6 +157,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
 #include "APIApplicationManifest.h"
@@ -1516,6 +1517,8 @@ void WebPageProxy::updateActivityState(ActivityState::Flags flagsToUpdate)
 
 void WebPageProxy::activityStateDidChange(ActivityState::Flags mayHaveChanged, bool wantsSynchronousReply, ActivityStateChangeDispatchMode dispatchMode)
 {
+    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " activityStateDidChange - mayHaveChanged " <<  activityStateFlagsToString(mayHaveChanged));
+
     m_potentiallyChangedActivityStateFlags |= mayHaveChanged;
     m_activityStateChangeWantsSynchronousReply = m_activityStateChangeWantsSynchronousReply || wantsSynchronousReply;
 
@@ -1563,6 +1566,8 @@ void WebPageProxy::dispatchActivityStateChange()
     if (!isValid())
         return;
 
+    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " dispatchActivityStateChange - potentiallyChangedActivityStateFlags " << activityStateFlagsToString(m_potentiallyChangedActivityStateFlags));
+
     // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
     if (m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible)
         m_potentiallyChangedActivityStateFlags |= ActivityState::IsVisibleOrOccluded | ActivityState::IsVisuallyIdle;
@@ -1572,6 +1577,9 @@ void WebPageProxy::dispatchActivityStateChange()
     ActivityState::Flags previousActivityState = m_activityState;
     updateActivityState(m_potentiallyChangedActivityStateFlags);
     ActivityState::Flags changed = m_activityState ^ previousActivityState;
+
+    if (changed)
+        LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " dispatchActivityStateChange: state changed from " << activityStateFlagsToString(previousActivityState) << " to " << activityStateFlagsToString(m_activityState));
 
     if ((m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible) && isViewVisible())
         viewIsBecomingVisible();

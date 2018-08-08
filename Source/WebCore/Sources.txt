@@ -1349,6 +1349,7 @@ mathml/MathMLUnknownElement.cpp
 
 page/AbstractDOMWindow.cpp
 page/AbstractFrame.cpp
+page/ActivityState.cpp
 page/AutoscrollController.cpp
 page/BarProp.cpp
 page/Base64Utilities.cpp

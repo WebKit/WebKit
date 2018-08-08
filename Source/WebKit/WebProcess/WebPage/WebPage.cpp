@@ -2796,6 +2796,8 @@ void WebPage::visibilityDidChange()
 
 void WebPage::setActivityState(ActivityState::Flags activityState, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& callbackIDs)
 {
+    LOG_WITH_STREAM(ActivityState, stream << "WebPage " << pageID() << " setActivityState to " << activityStateFlagsToString(activityState));
+
     ActivityState::Flags changed = m_activityState ^ activityState;
     m_activityState = activityState;
 
