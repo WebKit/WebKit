@@ -1,0 +1,27 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc
+index 6281d57e3db..1bebb0509a1 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc
+@@ -226,18 +226,19 @@ uint32_t ConvertIceTransportTypeToCandidateFilter(
+ }
+ 
+ // Helper to set an error and return from a method.
+-bool SafeSetError(webrtc::RTCErrorType type, webrtc::RTCError* error) {
++static bool SafeSetError(webrtc::RTCErrorType type, webrtc::RTCError* error) {
+   if (error) {
+     error->set_type(type);
+   }
+   return type == webrtc::RTCErrorType::NONE;
+ }
+ 
+-bool SafeSetError(webrtc::RTCError error, webrtc::RTCError* error_out) {
++static bool SafeSetError(webrtc::RTCError&& error, webrtc::RTCError* error_out) {
++  bool result = error.ok();
+   if (error_out) {
+     *error_out = std::move(error);
+   }
+-  return error.ok();
++  return result;
+ }
+ 
+ std::string GetSignalingStateString(

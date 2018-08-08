@@ -1,3 +1,20 @@
+2018-08-06  David Kilzer  <ddkilzer@apple.com>
+
+        [libwebrtc] SafeSetError() in peerconnection.cc contains use-after-move of webrtc::RTCError variable
+        <https://webkit.org/b/188337>
+        <rdar://problem/42882908>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/pc/peerconnection.cc:
+        (webrtc::SafeSetError): Make static since it's not used outside
+        this translation unit.
+        (webrtc::SafeSetError): Ditto.  Change first argument to
+        webrtc::RTCError&& to prevent unnecessary copying of std::move()
+        argument.  Fix bug by saving value of `error.ok()` before moving
+        to `*error_out`.
+        * WebKit/0013-Fix-SafeSetError-use-after-move.patch: Add patch.
+
 2018-08-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix spelling of "overridden"
