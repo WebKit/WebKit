@@ -116,6 +116,10 @@ public:
     std::optional<LayoutUnit> availableSpace(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_availableSpaceColumns : m_availableSpaceRows; }
     void setAvailableSpace(GridTrackSizingDirection, std::optional<LayoutUnit>);
 
+    LayoutUnit computeTrackBasedSize() const;
+
+    bool hasAnyPercentSizedRowsIndefiniteHeight() const { return m_hasPercentSizedRowsIndefiniteHeight; }
+
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth() const;
 #endif
@@ -124,7 +128,6 @@ private:
     std::optional<LayoutUnit> availableSpace() const { return availableSpace(m_direction); }
     const GridTrackSize& rawGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
     LayoutUnit assumedRowsSizeForOrthogonalChild(const RenderBox&) const;
-    LayoutUnit computeTrackBasedSize() const;
 
     // Helper methods for step 1. initializeTrackSizes().
     LayoutUnit initialBaseSize(const GridTrackSize&) const;
@@ -160,6 +163,7 @@ private:
     bool isValidTransition() const;
 
     bool m_needsSetup { true };
+    bool m_hasPercentSizedRowsIndefiniteHeight { false };
     std::optional<LayoutUnit> m_availableSpaceRows;
     std::optional<LayoutUnit> m_availableSpaceColumns;
 

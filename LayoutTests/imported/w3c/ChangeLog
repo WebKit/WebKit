@@ -1,3 +1,24 @@
+2018-08-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Update behavior of percentage row tracks and gutters
+        https://bugs.webkit.org/show_bug.cgi?id=188403
+
+        Reviewed by Sergio Villar Senin.
+
+        Import tests from WPT related to this issue.
+
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-layout-properties.html: Update test to reflect the new behavior.
+
 2018-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTML parser should execute custom element reactions for setting attributes immediately after creating a custom element

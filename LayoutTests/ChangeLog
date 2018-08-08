@@ -1,3 +1,28 @@
+2018-08-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Update behavior of percentage row tracks and gutters
+        https://bugs.webkit.org/show_bug.cgi?id=188403
+
+        Reviewed by Sergio Villar Senin.
+
+        Update tests as needed according to the new behavior.
+
+        * TestExpectations: Two grid gutters tests from WPT css-align suite are passing now.
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-gutters-as-percentage-expected.txt:
+        * fast/css-grid-layout/grid-gutters-as-percentage.html:
+        * fast/css-grid-layout/grid-track-sizing-with-percentages-and-orthogonal-flows-expected.txt:
+        * fast/css-grid-layout/grid-track-sizing-with-percentages-and-orthogonal-flows.html:
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/nested-grid-expected.html:
+        * fast/css-grid-layout/percent-track-breadths-regarding-container-size.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+
 2018-08-07  Chris Dumez  <cdumez@apple.com>
 
         navigator.sendBeacon does not work in pagehide callbacks

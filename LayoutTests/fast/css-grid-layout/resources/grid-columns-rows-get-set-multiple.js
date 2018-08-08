@@ -2,15 +2,15 @@ description('Test that setting and getting grid-template-columns and grid-templa
 
 debug("Test getting |grid-template-columns| and |grid-template-rows| set through CSS");
 testGridTemplatesValues(document.getElementById("gridWithFixedElement"), "7px 11px", "17px 2px");
-testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "50% 100%", "27% 52%", "400px 800px", "162px 312px");
-testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSize"), "50% 100%", "27% 52%", "3.5px 7px", "11px 0px");
+testGridTemplatesValues(document.getElementById("gridWithPercentElement"), "50% 100%", "27% 52%", "400px 800px", "150px 450px");
+testGridTemplatesValues(document.getElementById("gridWithPercentWithoutSize"), "50% 100%", "27% 52%", "3.5px 7px", "4px 12px");
 testGridTemplatesValues(document.getElementById("gridWithAutoElement"), "auto auto", "auto auto", "0px 17px", "0px 3px");
 testGridTemplatesValues(document.getElementById("gridWithEMElement"), "100px 120px", "150px 170px");
 testGridTemplatesValues(document.getElementById("gridWithThreeItems"), "15px auto 100px", "120px 18px auto", "15px 0px 100px", "120px 18px 0px");
 testGridTemplatesValues(document.getElementById("gridWithPercentAndViewportPercent"), "50% 120px", "35% 168px", "400px 120px", "210px 168px");
 testGridTemplatesValues(document.getElementById("gridWithFitContentAndFitAvailable"), "none", "none");
 testGridTemplatesValues(document.getElementById("gridWithMinMaxContent"), "min-content max-content", "max-content min-content", "0px 0px", "0px 0px");
-testGridTemplatesValues(document.getElementById("gridWithMinMaxContentWithChildrenElement"), "min-content max-content", "max-content min-content", "7px 17px", "11px 3px");
+testGridTemplatesValues(document.getElementById("gridWithMinMaxContentWithChildrenElement"), "min-content max-content", "max-content min-content", "7px 17px", "16px 3px");
 testGridTemplatesValues(document.getElementById("gridWithMinMaxAndFixed"), "minmax(45px, 30%) 15px", "120px minmax(35%, 10px)", "240px 15px", "120px 210px");
 testGridTemplatesValues(document.getElementById("gridWithMinMaxAndMinMaxContent"), "minmax(min-content, 30%) 15px", "120px minmax(35%, max-content)", "240px 15px", "120px 210px");
 testGridTemplatesValues(document.getElementById("gridWithFractionFraction"), "1fr 2fr", "3fr 4fr", "320px 480px", "225px 375px");

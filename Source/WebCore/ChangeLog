@@ -1,3 +1,43 @@
+2018-08-08  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Update behavior of percentage row tracks and gutters
+        https://bugs.webkit.org/show_bug.cgi?id=188403
+
+        Reviewed by Sergio Villar Senin.
+
+        The CSSWG decided to change how percentage row tracks and gutters
+        in a grid container with indefinite height are resolved.
+
+        The CSSWG issues are:
+        - https://github.com/w3c/csswg-drafts/issues/1921
+        - https://github.com/w3c/csswg-drafts/issues/509
+
+        So far they were resolved as "auto", like it happens with
+        percentage heights in regular blocks. But now they're going to behave
+        similar to what happens in the columns axis, they would be ignored
+        to compute the intrinsic height.
+        This causes that we need to repeat the track sizing algorithm
+        when we have a grid container with indefinite height
+        that has some percentage rows using the intrinsic height
+        calculated on the first pass. Then the percentages will be resolved
+        against the intrinsic height.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-001.html
+               imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-second-pass-002.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-percentage-rows-indefinite-height-002.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::gridTrackSize const):
+        (WebCore::GridTrackSizingAlgorithm::initializeTrackSizes):
+        (WebCore::GridTrackSizingAlgorithm::setup):
+        (WebCore::GridTrackSizingAlgorithm::reset):
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::availableSpaceForGutters const):
+        (WebCore::RenderGrid::repeatTracksSizingIfNeeded):
+        (WebCore::RenderGrid::layoutBlock):
+
 2018-08-07  Saam Barati  <sbarati@apple.com>
 
         ResourceUsageOverlay should use physical footprint for its "Footprint" label

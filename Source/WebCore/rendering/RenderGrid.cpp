@@ -144,20 +144,7 @@ std::optional<LayoutUnit> RenderGrid::availableSpaceForGutters(GridTrackSizingDi
     if (gapLength.isNormal() || !gapLength.length().isPercentOrCalculated())
         return std::nullopt;
 
-    return isRowAxis ? availableLogicalWidth() : availableLogicalHeightForPercentageComputation();
-}
-
-LayoutUnit RenderGrid::computeTrackBasedLogicalHeight() const
-{
-    LayoutUnit logicalHeight;
-
-    auto& allRows = m_trackSizingAlgorithm.tracks(ForRows);
-    for (const auto& row : allRows)
-        logicalHeight += row.baseSize();
-
-    logicalHeight += guttersSize(m_grid, ForRows, 0, allRows.size(), availableSpaceForGutters(ForRows));
-
-    return logicalHeight;
+    return isRowAxis ? availableLogicalWidth() : contentLogicalHeight();
 }
 
 void RenderGrid::computeTrackSizesForDefiniteSize(GridTrackSizingDirection direction, LayoutUnit availableSpace)
@@ -181,7 +168,7 @@ void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns,
     // a new cycle of the sizing algorithm; there may be more. In addition, not all the
     // cases with orthogonal flows require this extra cycle; we need a more specific
     // condition to detect whether child's min-content contribution has changed or not.
-    if (m_grid.hasAnyOrthogonalGridItem()) {
+    if (m_grid.hasAnyOrthogonalGridItem() || m_trackSizingAlgorithm.hasAnyPercentSizedRowsIndefiniteHeight()) {
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
         computeTrackSizesForDefiniteSize(ForRows, availableSpaceForRows);
     }
@@ -258,7 +245,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             *m_maxContentHeight += scrollbarHeight;
         } else
             computeTrackSizesForDefiniteSize(ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
-        LayoutUnit trackBasedLogicalHeight = computeTrackBasedLogicalHeight() + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
+        LayoutUnit trackBasedLogicalHeight = m_trackSizingAlgorithm.computeTrackBasedSize() + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         setLogicalHeight(trackBasedLogicalHeight);
 
         LayoutUnit oldClientAfterEdge = clientLogicalBottom();
