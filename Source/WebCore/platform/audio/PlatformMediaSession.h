@@ -255,7 +255,7 @@ protected:
 
 String convertEnumerationToString(PlatformMediaSession::State);
 String convertEnumerationToString(PlatformMediaSession::InterruptionType);
-
+String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType);
 }
 
 namespace WTF {
@@ -276,6 +276,14 @@ struct LogArgument<WebCore::PlatformMediaSession::InterruptionType> {
     static String toString(const WebCore::PlatformMediaSession::InterruptionType state)
     {
         return convertEnumerationToString(state);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::PlatformMediaSession::RemoteControlCommandType> {
+    static String toString(const WebCore::PlatformMediaSession::RemoteControlCommandType command)
+    {
+        return convertEnumerationToString(command);
     }
 };
 

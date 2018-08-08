@@ -1,3 +1,19 @@
+2018-08-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Add LogArgument template for PlatformMediaSession::RemoteControlCommandType
+        https://bugs.webkit.org/show_bug.cgi?id=188314
+
+        Reviewed by Alex Christensen.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didReceiveRemoteControlCommand): Don't coerce to int for logging.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::convertEnumerationToString): New.
+        (WebCore::PlatformMediaSession::didReceiveRemoteControlCommand): Log command.
+        * platform/audio/PlatformMediaSession.h:
+        (WTF::LogArgument<WebCore::PlatformMediaSession::RemoteControlCommandType>::toString):
+
 2018-08-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: XHR content sometimes shows as error even though load succeeded

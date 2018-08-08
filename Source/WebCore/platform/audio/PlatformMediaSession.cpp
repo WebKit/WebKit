@@ -54,10 +54,10 @@ String convertEnumerationToString(PlatformMediaSession::State state)
         MAKE_STATIC_STRING_IMPL("Interrupted"),
     };
     static_assert(!static_cast<size_t>(PlatformMediaSession::Idle), "PlatformMediaSession::Idle is not 0 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Autoplaying == 1), "PlatformMediaSession::Autoplaying is not 1 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Playing == 2), "PlatformMediaSession::Playing is not 2 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Paused == 3), "PlatformMediaSession::Paused is not 3 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::Interrupted == 4), "PlatformMediaSession::Interrupted is not 4 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Autoplaying) == 1, "PlatformMediaSession::Autoplaying is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Playing) == 2, "PlatformMediaSession::Playing is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Paused) == 3, "PlatformMediaSession::Paused is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::Interrupted) == 4, "PlatformMediaSession::Interrupted is not 4 as expected");
     ASSERT(static_cast<size_t>(state) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(state)];
 }
@@ -74,14 +74,42 @@ String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
         MAKE_STATIC_STRING_IMPL("ProcessInactive"),
     };
     static_assert(!static_cast<size_t>(PlatformMediaSession::NoInterruption), "PlatformMediaSession::NoInterruption is not 0 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SystemSleep == 1), "PlatformMediaSession::SystemSleep is not 1 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::EnteringBackground == 2), "PlatformMediaSession::EnteringBackground is not 2 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SystemInterruption == 3), "PlatformMediaSession::SystemInterruption is not 3 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SuspendedUnderLock == 4), "PlatformMediaSession::SuspendedUnderLock is not 4 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::InvisibleAutoplay == 5), "PlatformMediaSession::InvisibleAutoplay is not 5 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::ProcessInactive == 6), "PlatformMediaSession::ProcessInactive is not 6 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SystemSleep) == 1, "PlatformMediaSession::SystemSleep is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::EnteringBackground) == 2, "PlatformMediaSession::EnteringBackground is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SystemInterruption) == 3, "PlatformMediaSession::SystemInterruption is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SuspendedUnderLock) == 4, "PlatformMediaSession::SuspendedUnderLock is not 4 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::InvisibleAutoplay) == 5, "PlatformMediaSession::InvisibleAutoplay is not 5 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::ProcessInactive) == 6, "PlatformMediaSession::ProcessInactive is not 6 as expected");
     ASSERT(static_cast<size_t>(type) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(type)];
+}
+
+String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType command)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("NoCommand"),
+        MAKE_STATIC_STRING_IMPL("PlayCommand"),
+        MAKE_STATIC_STRING_IMPL("PauseCommand"),
+        MAKE_STATIC_STRING_IMPL("StopCommand"),
+        MAKE_STATIC_STRING_IMPL("TogglePlayPauseCommand"),
+        MAKE_STATIC_STRING_IMPL("BeginSeekingBackwardCommand"),
+        MAKE_STATIC_STRING_IMPL("EndSeekingBackwardCommand"),
+        MAKE_STATIC_STRING_IMPL("BeginSeekingForwardCommand"),
+        MAKE_STATIC_STRING_IMPL("EndSeekingForwardCommand"),
+        MAKE_STATIC_STRING_IMPL("SeekToPlaybackPositionCommand"),
+    };
+    static_assert(!static_cast<size_t>(PlatformMediaSession::NoCommand), "PlatformMediaSession::NoCommand is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::PlayCommand) == 1, "PlatformMediaSession::PlayCommand is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::PauseCommand) == 2, "PlatformMediaSession::PauseCommand is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::StopCommand) == 3, "PlatformMediaSession::StopCommand is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::TogglePlayPauseCommand) == 4, "PlatformMediaSession::TogglePlayPauseCommand is not 4 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::BeginSeekingBackwardCommand) == 5, "PlatformMediaSession::BeginSeekingBackwardCommand is not 5 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::EndSeekingBackwardCommand) == 6, "PlatformMediaSession::EndSeekingBackwardCommand is not 6 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::BeginSeekingForwardCommand) == 7, "PlatformMediaSession::BeginSeekingForwardCommand is not 7 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::EndSeekingForwardCommand) == 8, "PlatformMediaSession::EndSeekingForwardCommand is not 8 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::SeekToPlaybackPositionCommand) == 9, "PlatformMediaSession::SeekToPlaybackPositionCommand is not 9 as expected");
+    ASSERT(static_cast<size_t>(command) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(command)];
 }
 
 #endif
@@ -277,6 +305,8 @@ bool PlatformMediaSession::canReceiveRemoteControlCommands() const
 
 void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
 {
+    INFO_LOG(LOGIDENTIFIER, command);
+
     m_client.didReceiveRemoteControlCommand(command, argument);
 }
 
