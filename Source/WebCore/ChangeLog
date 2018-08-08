@@ -1,3 +1,18 @@
+2018-08-07  Saam Barati  <sbarati@apple.com>
+
+        ResourceUsageOverlay should use physical footprint for its "Footprint" label
+        https://bugs.webkit.org/show_bug.cgi?id=188395
+
+        Reviewed by Simon Fraser.
+
+        Let's use physical footprint on Cocoa for the number we say is "footprint".
+        Before, we were just using the number of dirty pages multiplies by
+        page size. This number was an upper bound on footprint since it
+        doesn't take into account compressed memory.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformDraw):
+
 2018-08-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] More tweaks and refactoring to prepare for ARC
