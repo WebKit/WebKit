@@ -1,3 +1,39 @@
+2018-08-08  Charlie Turner  <cturner@igalia.com>
+
+        Add CENC sanitization
+        https://bugs.webkit.org/show_bug.cgi?id=188376
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch adds support for sanitizing the CENC initialization
+        data, to ensure there are no obviously bogus values in the
+        untrusted input from generateRequest, see
+        https://www.w3.org/TR/encrypted-media/#dom-mediakeysession-generaterequest
+        for more details on sanitization.
+
+        Tested by imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp: The diff looks a
+        bit wonky because I had to reorder extractKeyIDsCenc to come
+        before sanitizeCenc.
+        (WebCore::extractKeyIDsCenc): Added implementation, a nullopt
+        return value here indicates the parsing found an error in the box
+        values.
+        (WebCore::sanitizeCenc): Added implementation, if the box can be
+        parsed, return a copy of the buffer as before, otherwise an error
+        value.
+        * Sources.txt: Add the new PSSH box type.
+        * platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.cpp:
+        Added, parsing methods come from ISO/IEC 23001-7-2016 Section
+        8.1.1.
+        (WebCore::ISOProtectionSystemSpecificHeaderBox::parse): Ditto.
+        * platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.h: Ditto.
+        (WebCore::ISOProtectionSystemSpecificHeaderBox::boxTypeName): Ditto.
+        (WebCore::ISOProtectionSystemSpecificHeaderBox::systemID const): Ditto.
+        (WebCore::ISOProtectionSystemSpecificHeaderBox::keyIDs const):
+        Ditto.
+        (WebCore::ISOProtectionSystemSpecificHeaderBox::data const): Ditto.
+
 2018-08-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add the Nicosia-specific PlatformLayer type alias

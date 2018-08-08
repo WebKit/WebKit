@@ -1700,6 +1700,7 @@ platform/graphics/gpu/GPUTextureDescriptor.cpp
 platform/graphics/iso/ISOBox.cpp
 platform/graphics/iso/ISOOriginalFormatBox.cpp
 platform/graphics/iso/ISOProtectionSchemeInfoBox.cpp
+platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.cpp
 platform/graphics/iso/ISOSchemeInformationBox.cpp
 platform/graphics/iso/ISOSchemeTypeBox.cpp
 platform/graphics/iso/ISOTrackEncryptionBox.cpp

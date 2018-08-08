@@ -13280,6 +13280,8 @@
 		CD871C621FB52B6500F0B965 /* ISOBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOBox.h; sourceTree = "<group>"; };
 		CD871C631FB52B6600F0B965 /* ISOSchemeInformationBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOSchemeInformationBox.cpp; sourceTree = "<group>"; };
 		CD871C641FB52B6700F0B965 /* ISOSchemeInformationBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOSchemeInformationBox.h; sourceTree = "<group>"; };
+		451A49F8F8726BE071518BE2 /* ISOProtectionSystemSpecificHeaderBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOProtectionSystemSpecificHeaderBox.cpp; sourceTree = "<group>"; };
+		12F75A9A86EA03DAF24B7971 /* ISOProtectionSystemSpecificHeaderBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOProtectionSystemSpecificHeaderBox.h; sourceTree = "<group>"; };
 		CD871C651FB52B6700F0B965 /* ISOVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOVTTCue.h; sourceTree = "<group>"; };
 		CD871C661FB52B6800F0B965 /* ISOTrackEncryptionBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOTrackEncryptionBox.h; sourceTree = "<group>"; };
 		CD871C671FB52B6800F0B965 /* ISOOriginalFormatBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOOriginalFormatBox.h; sourceTree = "<group>"; };
@@ -24725,6 +24727,8 @@
 				CD871C671FB52B6800F0B965 /* ISOOriginalFormatBox.h */,
 				CD871C5E1FB52B6400F0B965 /* ISOProtectionSchemeInfoBox.cpp */,
 				CD871C601FB52B6500F0B965 /* ISOProtectionSchemeInfoBox.h */,
+				451A49F8F8726BE071518BE2 /* ISOProtectionSystemSpecificHeaderBox.cpp */,
+				12F75A9A86EA03DAF24B7971 /* ISOProtectionSystemSpecificHeaderBox.h */,
 				CD871C631FB52B6600F0B965 /* ISOSchemeInformationBox.cpp */,
 				CD871C641FB52B6700F0B965 /* ISOSchemeInformationBox.h */,
 				CD871C5F1FB52B6400F0B965 /* ISOSchemeTypeBox.cpp */,

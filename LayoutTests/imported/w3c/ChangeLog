@@ -1,3 +1,15 @@
+2018-08-08  Charlie Turner  <cturner@igalia.com>
+
+        Add CENC sanitization
+        https://bugs.webkit.org/show_bug.cgi?id=188376
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * web-platform-tests/encrypted-media/scripts/generate-request-disallowed-input.js:
+        (runTest): Fixed an incorrect test failure message, added more
+        invalid init data tests to check the new box parsing methods in
+        WebCore.
+
 2018-08-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Update behavior of percentage row tracks and gutters
