@@ -1,3 +1,15 @@
+2018-08-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix possible null dereference in WebBackForwardList::restoreFromState
+        https://bugs.webkit.org/show_bug.cgi?id=188418
+        <rdar://problem/42531726>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::restoreFromState):
+        Null-check m_page like we do everywhere else in this file because it can be set to null when closing the page.
+
 2018-08-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234314, r234320, and r234321.

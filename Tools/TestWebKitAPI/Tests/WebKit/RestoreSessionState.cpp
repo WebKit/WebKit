@@ -126,6 +126,18 @@ TEST(WebKit, RestoreSessionStateContainingScrollRestorationDefaultWithAsyncPolic
     EXPECT_JS_EQ(webView.page(), "history.scrollRestoration", "auto");
 }
 
+TEST(WebKit, RestoreSessionStateAfterClose)
+{
+    auto context = adoptWK(WKContextCreate());
+    PlatformWebView webView(context.get());
+    setPageLoaderClient(webView.page());
+    auto data = createSessionStateData(context.get());
+    EXPECT_NOT_NULL(data);
+    WKPageClose(webView.page());
+    auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));
+    WKPageRestoreFromSessionState(webView.page(), sessionState.get());
+}
+    
 } // namespace TestWebKitAPI
 
 #endif

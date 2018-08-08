@@ -433,6 +433,9 @@ BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool
 
 void WebBackForwardList::restoreFromState(BackForwardListState backForwardListState)
 {
+    if (!m_page)
+        return;
+
     Vector<Ref<WebBackForwardListItem>> items;
     items.reserveInitialCapacity(backForwardListState.items.size());
 
