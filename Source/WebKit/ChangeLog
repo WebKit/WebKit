@@ -1,3 +1,26 @@
+2018-08-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r234314, r234320, and r234321.
+        https://bugs.webkit.org/show_bug.cgi?id=188414
+
+        Caused email sign in issue (Requested by ryanhaddad on
+        #webkit).
+
+        Reverted changesets:
+
+        "Remove unused WKNavigationDelegatePrivate
+        decidePolicyForNavigationAction SPI"
+        https://bugs.webkit.org/show_bug.cgi?id=188077
+        https://trac.webkit.org/changeset/234314
+
+        "Fix API tests after r234314"
+        https://bugs.webkit.org/show_bug.cgi?id=188077
+        https://trac.webkit.org/changeset/234320
+
+        "Fix API tests after r234314"
+        https://bugs.webkit.org/show_bug.cgi?id=188077
+        https://trac.webkit.org/changeset/234321
+
 2018-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         Add a WebKit2 logging channel for ActivityState

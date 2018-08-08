@@ -185,6 +185,7 @@ private:
 
     struct {
         bool webViewDecidePolicyForNavigationActionDecisionHandler : 1;
+        bool webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies : 1;
         bool webViewDecidePolicyForNavigationActionUserInfoDecisionHandlerWebsitePolicies : 1;
         bool webViewDecidePolicyForNavigationResponseDecisionHandler : 1;
 
