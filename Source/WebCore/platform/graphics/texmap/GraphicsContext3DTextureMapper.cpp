@@ -53,7 +53,9 @@
 #include "Extensions3DOpenGL.h"
 #endif
 
+#if USE(NICOSIA)
 #include "NicosiaGC3DLayer.h"
+#endif
 
 namespace WebCore {
 

@@ -1,3 +1,13 @@
+2018-08-08  Don Olmstead  <don.olmstead@sony.com>
+
+        [Nicosia] Add the Nicosia-specific PlatformLayer type alias
+        https://bugs.webkit.org/show_bug.cgi?id=188405
+        <rdar://problem/43039520>
+
+        Unreviewed build fix.
+
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp:
+
 2018-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         Add a WebKit2 logging channel for ActivityState
