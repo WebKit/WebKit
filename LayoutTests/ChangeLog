@@ -1,3 +1,18 @@
+2018-08-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188420
+
+        Unreviewed test gardening.
+
+        Fix test result after r234607 landed. Part 1 for http/tests
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/http/tests/local/file-url-sent-as-referer-expected.txt:
+        * platform/wincairo/http/tests/multipart/invalid-image-data-expected.txt:
+        * platform/wincairo/http/tests/multipart/invalid-image-data-standalone-expected.txt:
+        * platform/wincairo/http/tests/uri/css-href-expected.txt:
+
 2018-08-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: XHR content sometimes shows as error even though load succeeded

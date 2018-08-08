@@ -879,7 +879,6 @@ http/tests/loading [ Skip ]
 http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]
 http/tests/local/formdata [ Skip ]
-http/tests/local/drag-over-remote-content.html [ Failure ]
 
 http/tests/media [ Skip ]
 
@@ -907,8 +906,6 @@ http/tests/webauthn [ Skip ]
 http/tests/webgl [ Skip ]
 http/tests/webrtc [ Skip ]
 
-http/tests/websocket/tests/hybi/close-event.html [ Failure ]
-http/tests/websocket/tests/hybi/close.html [ Failure ]
 http/tests/websocket/tests/hybi/contentextensions [ Failure ]
 http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Pass ]
 http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php [ Pass ]
