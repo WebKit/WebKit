@@ -1,3 +1,17 @@
+2018-08-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        run-builtins-generator-tests does not correctly handle CRLFs from stderr
+        https://bugs.webkit.org/show_bug.cgi?id=188392
+
+        Reviewed by Fujii Hironori.
+
+        Background:
+        file.write converts LF to os.linesep, so if the input string contains CRLF, we end up writing CRCRLF to the file.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.run_command):
+        Normalize CRLF to LF in decoded stdout/stderr data, so that we don't return consumers a platform-specific string.
+
 2018-08-08  Aditya Keerthi  <akeerthi@apple.com>
 
         Unreviewed, add myself to committers list.

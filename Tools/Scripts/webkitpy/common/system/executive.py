@@ -386,9 +386,9 @@ class Executive(AbstractExecutive):
                              close_fds=self._should_close_fds())
         output = process.communicate(string_to_communicate)[0]
 
-        # run_command automatically decodes to unicode() unless explicitly told not to.
+        # run_command automatically decodes to unicode() and converts CRLF to LF unless explicitly told not to.
         if decode_output:
-            output = output.decode(self._child_process_encoding())
+            output = output.decode(self._child_process_encoding()).replace('\r\n', '\n')
 
         # wait() is not threadsafe and can throw OSError due to:
         # http://bugs.python.org/issue1731717
