@@ -44,3 +44,15 @@ PASS: MIMEType should be 'image/png'.
 PASS: Content should be base64Encoded.
 PASS: Image content should be a Blob.
 
+-- Running test case: Network.getResponseBody.XHR.Sync.Text
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'text/plain'.
+PASS: Content should not be base64Encoded.
+PASS: Text content should match data.txt.
+
+-- Running test case: Network.getResponseBody.XHR.Sync.PNG
+PASS: Resource should be XHR type.
+PASS: MIMEType should be 'image/png'.
+PASS: Content should be base64Encoded.
+PASS: Image content should be a Blob.
+

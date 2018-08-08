@@ -90,6 +90,8 @@ public:
         bool forceBufferData() const { return m_forceBufferData; }
         void setForceBufferData(bool force) { m_forceBufferData = force; }
 
+        bool hasBufferedData() const { return m_dataBuffer; }
+
     private:
         bool hasData() const { return m_dataBuffer; }
         size_t dataLength() const;
@@ -122,7 +124,7 @@ public:
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
     void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);
-    void maybeAddResourceData(const String& requestId, const char* data, size_t dataLength);
+    ResourceData const* maybeAddResourceData(const String& requestId, const char* data, size_t dataLength);
     void maybeDecodeDataToContent(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
     void addResourceSharedBuffer(const String& requestId, RefPtr<SharedBuffer>&&, const String& textEncodingName);

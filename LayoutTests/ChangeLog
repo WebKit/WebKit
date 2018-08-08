@@ -1,3 +1,15 @@
+2018-08-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: XHR content sometimes shows as error even though load succeeded
+        https://bugs.webkit.org/show_bug.cgi?id=188385
+        <rdar://problem/42646160>
+
+        Reviewed by Devin Rousso.
+
+        * http/tests/inspector/network/xhr-response-body-expected.txt:
+        * http/tests/inspector/network/xhr-response-body.html:
+        Extend this test to include synchronous XHR for text and non-text resources.
+
 2018-08-08  Truitt Savell  <tsavell@apple.com>
 
         Adjusting test expectations for imported/blink/fast/text/international-iteration-simple-text.html

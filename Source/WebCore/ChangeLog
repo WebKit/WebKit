@@ -1,3 +1,25 @@
+2018-08-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: XHR content sometimes shows as error even though load succeeded
+        https://bugs.webkit.org/show_bug.cgi?id=188385
+        <rdar://problem/42646160>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveData):
+        Avoid a double hash lookup in the common case.
+        Allow synchronous XHR to have text data appended in the normal case.
+        Allow synchronous XHR to set base64 encoded data right here for non-text data.
+
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::hasBufferedData const):
+        Getter to see if data is buffered or not for this resource.
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        Return the updated ResourceData to avoid clients having to do a lookup.
+
 2018-08-08  Sihui Liu  <sihui_liu@apple.com>
 
         Assertion failed in Webcore::Process::setIdentifier()
