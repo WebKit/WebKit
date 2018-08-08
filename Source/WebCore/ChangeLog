@@ -1,3 +1,22 @@
+2018-08-07  Chris Dumez  <cdumez@apple.com>
+
+        navigator.sendBeacon does not work in pagehide callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=188329
+
+        Reviewed by Alex Christensen.
+
+        Add support for sending beacons from pagehide event handlers. We normally do not allow loads because we're
+        about to enter PageCache. However, in case of Beacon, this is fine since it uses PingLoad and does not
+        WebCore to do the load.
+
+        Test: http/wpt/beacon/sendBeacon-in-pagehide.html
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        - Allow Beacon loads to go through even if the document's pageCacheState is AboutToEnterPageCache (i.e.
+        we're firing the 'pagehide' event)
+        - Allow Becon loads to go though even if the FrameLoader's state is provisional (i.e. a load is pending)
+
 2018-08-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Allow href attribute without xlink on SVG elements

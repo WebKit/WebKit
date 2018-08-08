@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/common/utils.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+const RESOURCES_DIR = "/beacon/resources/";
+var id = self.token();
+
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+</script>
+</head>
+<body>
+<script>
+onpagehide = function() {
+    const testUrl = RESOURCES_DIR + "content-type.py?cmd=put&id=" + id;
+    navigator.sendBeacon(testUrl, "test");    
+}
+</script>
+</body>
+</html>

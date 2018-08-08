@@ -1,0 +1,3 @@
+
+PASS Test that beacon sent from pagehide event handler is properly received 
+

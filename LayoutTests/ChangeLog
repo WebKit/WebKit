@@ -1,3 +1,16 @@
+2018-08-07  Chris Dumez  <cdumez@apple.com>
+
+        navigator.sendBeacon does not work in pagehide callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=188329
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * http/wpt/beacon/sendBeacon-in-pagehide-expected.txt: Added.
+        * http/wpt/beacon/sendBeacon-in-pagehide.html: Added.
+        * http/wpt/beacon/support/sendBeacon-onpagehide-window.html: Added.
+
 2018-08-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Allow href attribute without xlink on SVG elements

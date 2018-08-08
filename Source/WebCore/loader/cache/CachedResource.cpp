@@ -201,7 +201,15 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // and their pageCacheState will not reflect the fact that they are about to enter page
     // cache.
     if (auto* topDocument = frame.mainFrame().document()) {
-        if (topDocument->pageCacheState() != Document::NotInPageCache) {
+        switch (topDocument->pageCacheState()) {
+        case Document::NotInPageCache:
+            break;
+        case Document::AboutToEnterPageCache:
+            // Beacons are allowed to go through in 'pagehide' event handlers.
+            if (shouldUsePingLoad(type()))
+                break;
+            FALLTHROUGH;
+        case Document::InPageCache:
             RELEASE_LOG_IF_ALLOWED("load: Already in page cache or being added to it (frame = %p)", &frame);
             failBeforeStarting();
             return;
@@ -209,7 +217,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     }
 
     FrameLoader& frameLoader = frame.loader();
-    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
+    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !shouldUsePingLoad(type()) && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         if (frameLoader.state() == FrameStateProvisional)
             RELEASE_LOG_IF_ALLOWED("load: Failed security check -- state is provisional (frame = %p)", &frame);
         else if (!frameLoader.activeDocumentLoader())
