@@ -432,10 +432,13 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
 #if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(NICOSIA)
+#else
     if (m_platformLayer != platformLayer)
         m_shouldSyncPlatformLayer = true;
 
     m_platformLayer = platformLayer;
+#endif
     notifyFlushRequired();
 #else
     UNUSED_PARAM(platformLayer);
@@ -742,27 +745,33 @@ void CoordinatedGraphicsLayer::syncAnimations()
 
 void CoordinatedGraphicsLayer::syncPlatformLayer()
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
     if (!m_shouldSyncPlatformLayer)
         return;
 
     m_shouldSyncPlatformLayer = false;
+#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(NICOSIA)
+#else
     m_layerState.platformLayerChanged = true;
     if (m_platformLayer)
         m_layerState.platformLayerProxy = m_platformLayer->proxy();
+#endif
 #endif
 }
 
 void CoordinatedGraphicsLayer::updatePlatformLayer()
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
     if (!m_shouldUpdatePlatformLayer)
         return;
 
     m_shouldUpdatePlatformLayer = false;
+#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(NICOSIA)
+#else
     m_layerState.platformLayerUpdated = true;
     if (m_platformLayer)
         m_platformLayer->swapBuffersIfNeeded();
+#endif
 #endif
 }
 

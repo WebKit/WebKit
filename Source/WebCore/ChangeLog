@@ -1,3 +1,97 @@
+2018-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add the Nicosia-specific PlatformLayer type alias
+        https://bugs.webkit.org/show_bug.cgi?id=188405
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a Nicosia-specific PlatformLayer type alias that points to the
+        Nicosia::PlatformLayer type. This is guarded by the USE(NICOSIA) macro,
+        which guards additional code in this patch but will be added to other
+        Nicosia-specific classes later.
+
+        To keep things buildable when USE(NICOSIA) is defined, additional
+        changes are made to classes that operate with platform layers.
+        Cairo-specific ImageBuffer implementation and the related
+        ImageBufferData class are modified to work with a Nicosia::ContentLayer
+        object. This object is using the TextureMapper-specific Impl class which
+        internally keeps a TextureMapperPlatformLayerProxy object. This way
+        we can reuse existing code that also works with an object of this type,
+        only difference is where the proxy object is kept. Main difference is in
+        the ImageBuffer::platformLayer() method, where pointer to the
+        Nicosia::ContentLayer object is returned when USE(NICOSIA) is enabled.
+
+        Similar approach is taked for the MediaPlayerPrivateGStreamerBase class.
+        When USE(NICOSIA) is enabled, a Nicosia::ContentLayer object is
+        constructed, and with the TextureMapper-specific Impl we again operate
+        on the TextureMapperPlatformLayerProxy object like before, so all of
+        the proxy-specific code is bundled into helper lambdas that operate on
+        the given proxy object. In the platformLayer() method, we again return
+        pointer to the Nicosia::ContentLayer object when USE(NICOSIA) is on.
+
+        For the GraphicsContext3D integration, we have to provide a separate
+        class that replicates most of the functionality currently present in the
+        TextureMapperGC3DPlatformLayer class. Main difference is that in the new
+        Nicosia::GC3DLayer class, a Nicosia::ContentLayer object is spawned with
+        the TextureMapper-specific Impl. The proxy object held by that Impl is
+        then again used to push new buffers into the rendering pipeline. As
+        before, pointer to the Nicosia::ContentLayer is returned in the
+        GraphicsContext3D::platformLayer() object.
+
+        Integration of the GraphicsContext3D class into Nicosia layering needs
+        further work in the future. Target should be providing a class that is
+        not specific to the TextureMapper layer. Additionally, when USE(NICOSIA)
+        is enabled, we remove the TextureMapperGC3DPlatformLayer class from
+        compilation since it depends on a PlatformLayer type alias to the
+        TextureMapperPlatformLayerProxyProvider class.
+
+        This patch also doesn't address the abundance of macros that this code
+        now uses. While USE(NICOSIA) is introduced, we have to work around
+        four additional macros in this code: USE(TEXTURE_MAPPER),
+        USE(TEXTURE_MAPPER_GL), USE(COORDINATED_GRAPHICS) and
+        USE(COORDINATED_GRAPHICS_THREADED). In a lot of places these are used
+        interchangeably, but they should be merged and simplified in use. I hope
+        to approach this once the USE(NICOSIA) functionality lands and is turned
+        on for ports that currently build with USE(COORDINATED_GRAPHICS).
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/PlatformLayer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBufferData::~ImageBufferData):
+        (WebCore::ImageBufferData::swapBuffersIfNeeded):
+        (WebCore::ImageBuffer::platformLayer const):
+        * platform/graphics/cairo/ImageBufferDataCairo.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::platformLayer const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::swapBuffersIfNeeded):
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp: Added.
+        (Nicosia::GC3DLayer::GC3DLayer):
+        (Nicosia::GC3DLayer::~GC3DLayer):
+        (Nicosia::GC3DLayer::makeContextCurrent):
+        (Nicosia::GC3DLayer::platformContext):
+        (Nicosia::GC3DLayer::swapBuffersIfNeeded):
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.h: Added.
+        (Nicosia::GC3DLayer::contentLayer const):
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformLayer const):
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::updatePlatformLayer):
+
 2018-08-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Update behavior of percentage row tracks and gutters

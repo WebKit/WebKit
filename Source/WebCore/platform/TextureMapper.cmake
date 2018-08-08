@@ -60,6 +60,7 @@ if (USE_COORDINATED_GRAPHICS)
 
         platform/graphics/nicosia/texmap/NicosiaCompositionLayerTextureMapperImpl.cpp
         platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.cpp
+        platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp
     )
 else ()
     list(APPEND WebCore_SOURCES

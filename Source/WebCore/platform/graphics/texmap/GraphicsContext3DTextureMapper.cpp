@@ -53,6 +53,8 @@
 #include "Extensions3DOpenGL.h"
 #endif
 
+#include "NicosiaGC3DLayer.h"
+
 namespace WebCore {
 
 static const size_t MaxActiveContexts = 16;
@@ -105,7 +107,11 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     : m_attrs(attributes)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
+#if USE(NICOSIA)
+    m_nicosiaLayer = std::make_unique<Nicosia::GC3DLayer>(*this, renderStyle);
+#else
     m_texmapLayer = std::make_unique<TextureMapperGC3DPlatformLayer>(*this, renderStyle);
+#endif
 
     makeContextCurrent();
 
@@ -270,7 +276,11 @@ void GraphicsContext3D::setErrorMessageCallback(std::unique_ptr<ErrorMessageCall
 
 bool GraphicsContext3D::makeContextCurrent()
 {
+#if USE(NICOSIA)
+    return m_nicosiaLayer->makeContextCurrent();
+#else
     return m_texmapLayer->makeContextCurrent();
+#endif
 }
 
 void GraphicsContext3D::checkGPUStatus()
@@ -279,7 +289,11 @@ void GraphicsContext3D::checkGPUStatus()
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
+#if USE(NICOSIA)
+    return m_nicosiaLayer->platformContext();
+#else
     return m_texmapLayer->platformContext();
+#endif
 }
 
 Platform3DObject GraphicsContext3D::platformTexture() const
@@ -298,7 +312,11 @@ bool GraphicsContext3D::isGLES2Compliant() const
 
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
+#if USE(NICOSIA)
+    return &m_nicosiaLayer->contentLayer();
+#else
     return m_texmapLayer.get();
+#endif
 }
 
 #if PLATFORM(GTK)

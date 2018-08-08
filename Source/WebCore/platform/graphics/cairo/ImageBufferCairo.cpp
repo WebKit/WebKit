@@ -91,8 +91,13 @@ ImageBufferData::ImageBufferData(const IntSize& size, RenderingMode renderingMod
 #endif
 {
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(COORDINATED_GRAPHICS_THREADED)
-    if (m_renderingMode == RenderingMode::Accelerated)
+    if (m_renderingMode == RenderingMode::Accelerated) {
+#if USE(NICOSIA)
+        m_nicosiaLayer = Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this));
+#else
         m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxy);
+#endif
+    }
 #endif
 }
 
@@ -102,6 +107,10 @@ ImageBufferData::~ImageBufferData()
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
+#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
+    downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
+#endif
+
     GLContext* previousActiveContext = GLContext::current();
     PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->makeContextCurrent();
 
@@ -139,10 +148,12 @@ void ImageBufferData::createCompositorBuffer()
     cairo_set_antialias(m_compositorCr.get(), CAIRO_ANTIALIAS_NONE);
 }
 
+#if !USE(NICOSIA)
 RefPtr<TextureMapperPlatformLayerProxy> ImageBufferData::proxy() const
 {
     return m_platformLayerProxy.copyRef();
 }
+#endif
 
 void ImageBufferData::swapBuffersIfNeeded()
 {
@@ -150,8 +161,18 @@ void ImageBufferData::swapBuffersIfNeeded()
 
     if (!m_compositorTexture) {
         createCompositorBuffer();
-        LockHolder holder(m_platformLayerProxy->lock());
-        m_platformLayerProxy->pushNextBuffer(std::make_unique<TextureMapperPlatformLayerBuffer>(m_compositorTexture, m_size, TextureMapperGL::ShouldBlend, GL_RGBA));
+
+        auto proxyOperation =
+            [this](TextureMapperPlatformLayerProxy& proxy)
+            {
+                LockHolder holder(proxy.lock());
+                proxy.pushNextBuffer(std::make_unique<TextureMapperPlatformLayerBuffer>(m_compositorTexture, m_size, TextureMapperGL::ShouldBlend, GL_RGBA));
+            };
+#if USE(NICOSIA)
+        proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
+#else
+        proxyOperation(*m_platformLayerProxy);
+#endif
     }
 
     // It would be great if we could just swap the buffers here as we do with webgl, but that breaks the cases
@@ -671,8 +692,13 @@ void ImageBufferData::paintToTextureMapper(TextureMapper& textureMapper, const F
 PlatformLayer* ImageBuffer::platformLayer() const
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
+#if USE(NICOSIA)
+    if (m_data.m_renderingMode == RenderingMode::Accelerated)
+        return m_data.m_nicosiaLayer.get();
+#else
     if (m_data.m_texture)
         return const_cast<ImageBufferData*>(&m_data);
+#endif
 #endif
     return 0;
 }

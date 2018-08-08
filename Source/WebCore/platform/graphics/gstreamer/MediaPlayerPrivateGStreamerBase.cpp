@@ -284,13 +284,21 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_networkState(MediaPlayer::Empty)
     , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint)
 #if USE(TEXTURE_MAPPER_GL)
+#if USE(NICOSIA)
+    , m_nicosiaLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
+#else
     , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxy()))
+#endif
 #endif
 {
 }
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
+#if USE(TEXTURE_MAPPER_GL) && USE(NICOSIA)
+    downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
     m_protectionCondition.notifyAll();
 #endif
@@ -735,6 +743,20 @@ void MediaPlayerPrivateGStreamerBase::acceleratedRenderingStateChanged()
 }
 
 #if USE(TEXTURE_MAPPER_GL)
+PlatformLayer* MediaPlayerPrivateGStreamerBase::platformLayer() const
+{
+#if USE(NICOSIA)
+    return m_nicosiaLayer.ptr();
+#else
+    return const_cast<MediaPlayerPrivateGStreamerBase*>(this);
+#endif
+}
+
+#if USE(NICOSIA)
+void MediaPlayerPrivateGStreamerBase::swapBuffersIfNeeded()
+{
+}
+#else
 RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateGStreamerBase::proxy() const
 {
     return m_platformLayerProxy.copyRef();
@@ -743,6 +765,7 @@ RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateGStreamerBase::proxy()
 void MediaPlayerPrivateGStreamerBase::swapBuffersIfNeeded()
 {
 }
+#endif
 
 void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 {
@@ -750,32 +773,42 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
-    LockHolder holder(m_platformLayerProxy->lock());
+    auto proxyOperation =
+        [this](TextureMapperPlatformLayerProxy& proxy)
+        {
+            LockHolder holder(proxy.lock());
 
-    if (!m_platformLayerProxy->isActive())
-        return;
+            if (!proxy.isActive())
+                return;
 
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation), !m_usingFallbackVideoSink);
+            std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation), !m_usingFallbackVideoSink);
 
 #if USE(GSTREAMER_GL)
-    GLuint textureID = frameHolder->textureID();
-    if (textureID) {
-        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
-        layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
-        m_platformLayerProxy->pushNextBuffer(WTFMove(layerBuffer));
-    } else
+            GLuint textureID = frameHolder->textureID();
+            if (textureID) {
+                std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
+                layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
+                proxy.pushNextBuffer(WTFMove(layerBuffer));
+            } else
 #endif
-    {
-        std::unique_ptr<TextureMapperPlatformLayerBuffer> buffer = m_platformLayerProxy->getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
-        if (UNLIKELY(!buffer)) {
-            auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
-            texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
-            buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
-        }
-        frameHolder->updateTexture(buffer->textureGL());
-        buffer->setExtraFlags(texMapFlagFromOrientation(m_videoSourceOrientation) | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
-        m_platformLayerProxy->pushNextBuffer(WTFMove(buffer));
-    }
+            {
+                std::unique_ptr<TextureMapperPlatformLayerBuffer> buffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
+                if (UNLIKELY(!buffer)) {
+                    auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
+                    texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+                    buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
+                }
+                frameHolder->updateTexture(buffer->textureGL());
+                buffer->setExtraFlags(texMapFlagFromOrientation(m_videoSourceOrientation) | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
+                proxy.pushNextBuffer(WTFMove(buffer));
+            }
+        };
+
+#if USE(NICOSIA)
+    proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
+#else
+    proxyOperation(*m_platformLayerProxy);
+#endif
 }
 #endif // USE(TEXTURE_MAPPER_GL)
 
@@ -818,8 +851,18 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 #if USE(TEXTURE_MAPPER_GL)
     if (m_usingFallbackVideoSink) {
         LockHolder lock(m_drawMutex);
-        if (!m_platformLayerProxy->scheduleUpdateOnCompositorThread([this] { this->pushTextureToCompositor(); }))
+        auto proxyOperation =
+            [this](TextureMapperPlatformLayerProxy& proxy)
+            {
+                return proxy.scheduleUpdateOnCompositorThread([this] { this->pushTextureToCompositor(); });
+            };
+#if USE(NICOSIA)
+        if (!proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy()))
             return;
+#else
+        if (!proxyOperation(*m_platformLayerProxy))
+            return;
+#endif
         m_drawTimer.startOneShot(0_s);
         m_drawCondition.wait(m_drawMutex);
     } else
@@ -881,12 +924,20 @@ void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
     m_sample = adoptGRef(gst_sample_new(nullptr, gst_sample_get_caps(m_sample.get()),
         gst_sample_get_segment(m_sample.get()), info ? gst_structure_copy(info) : nullptr));
 
-    {
-        LockHolder locker(m_platformLayerProxy->lock());
+    auto proxyOperation =
+        [](TextureMapperPlatformLayerProxy& proxy)
+        {
+            LockHolder locker(proxy.lock());
 
-        if (m_platformLayerProxy->isActive())
-            m_platformLayerProxy->dropCurrentBufferWhilePreservingTexture();
-    }
+            if (proxy.isActive())
+                proxy.dropCurrentBufferWhilePreservingTexture();
+        };
+
+#if USE(NICOSIA)
+    proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
+#else
+    proxyOperation(*m_platformLayerProxy);
+#endif
 }
 #endif
 

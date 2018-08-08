@@ -74,6 +74,12 @@ OBJC_CLASS WebGLLayer;
 typedef struct __IOSurface* IOSurfaceRef;
 #endif // PLATFORM(COCOA)
 
+#if USE(NICOSIA)
+namespace Nicosia {
+class GC3DLayer;
+}
+#endif
+
 #if !PLATFORM(COCOA)
 typedef unsigned GLuint;
 typedef void* PlatformGraphicsContext3D;
@@ -1481,7 +1487,10 @@ private:
     // Errors raised by synthesizeGLError().
     ListHashSet<GC3Denum> m_syntheticErrors;
 
-#if USE(TEXTURE_MAPPER)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
+    friend class Nicosia::GC3DLayer;
+    std::unique_ptr<Nicosia::GC3DLayer> m_nicosiaLayer;
+#elif USE(TEXTURE_MAPPER)
     friend class TextureMapperGC3DPlatformLayer;
     std::unique_ptr<TextureMapperGC3DPlatformLayer> m_texmapLayer;
 #else
