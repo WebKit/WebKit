@@ -35,7 +35,7 @@ static std::optional<ProcessIdentifier> globalIdentifier;
 
 void setIdentifier(ProcessIdentifier processIdentifier)
 {
-    ASSERT(isMainThread());
+    ASSERT(isUIThread());
     globalIdentifier = processIdentifier;
 }
 

@@ -1,3 +1,16 @@
+2018-08-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Assertion failed in Webcore::Process::setIdentifier()
+        https://bugs.webkit.org/show_bug.cgi?id=188404
+        <rdar://problem/43029137>
+
+        Reviewed by Chris Dumez.
+
+        App using both WebKit1 and WebKit may crash in WebKit initialization.
+
+        * platform/Process.cpp:
+        (WebCore::Process::setIdentifier):
+
 2018-08-08  Charlie Turner  <cturner@igalia.com>
 
         Add CENC sanitization
