@@ -1,3 +1,102 @@
+2018-08-08  Michael Saboff  <msaboff@apple.com>
+
+        Yarr JIT should include annotations with dumpDisassembly=true
+        https://bugs.webkit.org/show_bug.cgi?id=188415
+
+        Reviewed by Yusuke Suzuki.
+
+        Created a YarrDisassembler class that handles annotations similar to the baseline JIT.
+        Given that the Yarr creates matching code bu going through the YarrPattern ops forward and
+        then the backtracking code through the YarrPattern ops in reverse order, the disassembler
+        needs to do the same think.
+
+        Restructured some of the logging code in YarrPattern to eliminate redundent code and factor
+        out simple methods for what was needed by the YarrDisassembler.
+
+        Here is abbreviated sample output after this change.
+
+        Generated JIT code for 8-bit regular expression /ab*c/:
+            Code at [0x469561c03720, 0x469561c03840):
+                0x469561c03720: push %rbp
+                0x469561c03721: mov %rsp, %rbp
+                ...
+                0x469561c03762: sub $0x40, %rsp
+             == Matching ==
+           0:OpBodyAlternativeBegin minimum size 2
+                0x469561c03766: add $0x2, %esi
+                0x469561c03769: cmp %edx, %esi
+                0x469561c0376b: ja 0x469561c037fa
+           1:OpTerm TypePatternCharacter 'a'
+                0x469561c03771: movzx -0x2(%rdi,%rsi), %eax
+                0x469561c03776: cmp $0x61, %eax
+                0x469561c03779: jnz 0x469561c037e9
+           2:OpTerm TypePatternCharacter 'b' {0,...} greedy
+                0x469561c0377f: xor %r9d, %r9d
+                0x469561c03782: cmp %edx, %esi
+                0x469561c03784: jz 0x469561c037a2
+                ...
+                0x469561c0379d: jmp 0x469561c03782
+                0x469561c037a2: mov %r9, 0x8(%rsp)
+           3:OpTerm TypePatternCharacter 'c'
+                0x469561c037a7: movzx -0x1(%rdi,%rsi), %eax
+                0x469561c037ac: cmp $0x63, %eax
+                0x469561c037af: jnz 0x469561c037d1
+           4:OpBodyAlternativeEnd
+                0x469561c037b5: add $0x40, %rsp
+                ...
+                0x469561c037cf: pop %rbp
+                0x469561c037d0: ret
+             == Backtracking ==
+           4:OpBodyAlternativeEnd
+           3:OpTerm TypePatternCharacter 'c'
+           2:OpTerm TypePatternCharacter 'b' {0,...} greedy
+                0x469561c037d1: mov 0x8(%rsp), %r9
+                ...
+                0x469561c037e4: jmp 0x469561c037a2
+           1:OpTerm TypePatternCharacter 'a'
+           0:OpBodyAlternativeBegin minimum size 2
+                0x469561c037e9: mov %rsi, %rax
+                ...
+                0x469561c0382f: pop %rbp
+                0x469561c03830: ret
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * yarr/YarrDisassembler.cpp: Added.
+        (JSC::Yarr::YarrDisassembler::indentString):
+        (JSC::Yarr::YarrDisassembler::YarrDisassembler):
+        (JSC::Yarr::YarrDisassembler::~YarrDisassembler):
+        (JSC::Yarr::YarrDisassembler::dump):
+        (JSC::Yarr::YarrDisassembler::dumpHeader):
+        (JSC::Yarr::YarrDisassembler::dumpVectorForInstructions):
+        (JSC::Yarr::YarrDisassembler::dumpForInstructions):
+        (JSC::Yarr::YarrDisassembler::dumpDisassembly):
+        * yarr/YarrDisassembler.h: Added.
+        (JSC::Yarr::YarrJITInfo::~YarrJITInfo):
+        (JSC::Yarr::YarrDisassembler::setStartOfCode):
+        (JSC::Yarr::YarrDisassembler::setForGenerate):
+        (JSC::Yarr::YarrDisassembler::setForBacktrack):
+        (JSC::Yarr::YarrDisassembler::setEndOfGenerate):
+        (JSC::Yarr::YarrDisassembler::setEndOfBacktrack):
+        (JSC::Yarr::YarrDisassembler::setEndOfCode):
+        (JSC::Yarr::YarrDisassembler::indentString):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::jitCompile):
+        * yarr/YarrJIT.h:
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::dumpCharacterClass):
+        (JSC::Yarr::PatternTerm::dump):
+        (JSC::Yarr::YarrPattern::dumpPatternString):
+        (JSC::Yarr::YarrPattern::dumpPattern):
+        * yarr/YarrPattern.h:
+
 2018-08-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] More tweaks and refactoring to prepare for ARC

@@ -1169,7 +1169,7 @@ void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* 
     else if (characterClass == pattern->wordcharCharacterClass())
         out.print("<word>");
     else if (characterClass == pattern->wordUnicodeIgnoreCaseCharCharacterClass())
-        out.print("<unicode ignore case>");
+        out.print("<unicode word ignore case>");
     else if (characterClass == pattern->nondigitsCharacterClass())
         out.print("<non-digits>");
     else if (characterClass == pattern->nonspacesCharacterClass())
@@ -1177,7 +1177,7 @@ void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* 
     else if (characterClass == pattern->nonwordcharCharacterClass())
         out.print("<non-word>");
     else if (characterClass == pattern->nonwordUnicodeIgnoreCaseCharCharacterClass())
-        out.print("<unicode non-ignore case>");
+        out.print("<unicode non-word ignore case>");
     else {
         bool needMatchesRangesSeperator = false;
 
@@ -1299,75 +1299,7 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         break;
     case TypeCharacterClass:
         out.print("character class ");
-        if (characterClass->m_anyCharacter)
-            out.print("<any character>");
-        else if (characterClass == thisPattern->newlineCharacterClass())
-            out.print("<newline>");
-        else if (characterClass == thisPattern->digitsCharacterClass())
-            out.print("<digits>");
-        else if (characterClass == thisPattern->spacesCharacterClass())
-            out.print("<whitespace>");
-        else if (characterClass == thisPattern->wordcharCharacterClass())
-            out.print("<word>");
-        else if (characterClass == thisPattern->wordUnicodeIgnoreCaseCharCharacterClass())
-            out.print("<unicode ignore case>");
-        else if (characterClass == thisPattern->nondigitsCharacterClass())
-            out.print("<non-digits>");
-        else if (characterClass == thisPattern->nonspacesCharacterClass())
-            out.print("<non-whitespace>");
-        else if (characterClass == thisPattern->nonwordcharCharacterClass())
-            out.print("<non-word>");
-        else if (characterClass == thisPattern->nonwordUnicodeIgnoreCaseCharCharacterClass())
-            out.print("<unicode non-ignore case>");
-        else {
-            bool needMatchesRangesSeperator = false;
-
-            auto dumpMatches = [&] (const char* prefix, Vector<UChar32> matches) {
-                size_t matchesSize = matches.size();
-                if (matchesSize) {
-                    if (needMatchesRangesSeperator)
-                        out.print(",");
-                    needMatchesRangesSeperator = true;
-
-                    out.print(prefix, ":(");
-                    for (size_t i = 0; i < matchesSize; ++i) {
-                        if (i)
-                            out.print(",");
-                        dumpUChar32(out, matches[i]);
-                    }
-                    out.print(")");
-                }
-            };
-
-            auto dumpRanges = [&] (const char* prefix, Vector<CharacterRange> ranges) {
-                size_t rangeSize = ranges.size();
-                if (rangeSize) {
-                    if (needMatchesRangesSeperator)
-                        out.print(",");
-                    needMatchesRangesSeperator = true;
-
-                    out.print(prefix, " ranges:(");
-                    for (size_t i = 0; i < rangeSize; ++i) {
-                        if (i)
-                            out.print(",");
-                        CharacterRange range = ranges[i];
-                        out.print("(");
-                        dumpUChar32(out, range.begin);
-                        out.print("..");
-                        dumpUChar32(out, range.end);
-                        out.print(")");
-                    }
-                    out.print(")");
-                }
-            };
-
-            out.print("[");
-            dumpMatches("ASCII", characterClass->m_matches);
-            dumpRanges("ASCII", characterClass->m_ranges);
-            dumpMatches("Unicode", characterClass->m_matchesUnicode);
-            dumpRanges("Unicode", characterClass->m_rangesUnicode);
-            out.print("]");
-        }
+        dumpCharacterClass(out, thisPattern, characterClass);
         dumpQuantifier(out);
         if (quantityType != QuantifierFixedCount || thisPattern->unicode())
             out.print(",frame location ", frameLocation);
@@ -1440,16 +1372,10 @@ void PatternDisjunction::dump(PrintStream& out, YarrPattern* thisPattern, unsign
     }
 }
 
-void YarrPattern::dumpPattern(const String& patternString)
+void YarrPattern::dumpPatternString(PrintStream& out, const String& patternString)
 {
-    dumpPattern(WTF::dataFile(), patternString);
-}
+    out.print("/", patternString, "/");
 
-void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
-{
-    out.print("RegExp pattern for /");
-    out.print(patternString);
-    out.print("/");
     if (global())
         out.print("g");
     if (ignoreCase())
@@ -1460,6 +1386,18 @@ void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
         out.print("u");
     if (sticky())
         out.print("y");
+}
+
+void YarrPattern::dumpPattern(const String& patternString)
+{
+    dumpPattern(WTF::dataFile(), patternString);
+}
+
+void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
+{
+    out.print("RegExp pattern for ");
+    dumpPatternString(out, patternString);
+
     if (m_flags != NoFlags) {
         bool printSeperator = false;
         out.print(" (");

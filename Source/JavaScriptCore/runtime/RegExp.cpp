@@ -306,7 +306,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && VM::canUseRegExpJIT()) {
-        Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode);
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, m_regExpJITCode);
         if (!m_regExpJITCode.failureReason()) {
             m_state = JITCode;
             return;
@@ -362,7 +362,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && VM::canUseRegExpJIT()) {
-        Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode, Yarr::MatchOnly);
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, m_regExpJITCode, Yarr::MatchOnly);
         if (!m_regExpJITCode.failureReason()) {
             m_state = JITCode;
             return;

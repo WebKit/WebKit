@@ -3586,6 +3586,8 @@
 		65B8392C1BACA92A0044E824 /* CachedRecovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRecovery.h; sourceTree = "<group>"; };
 		65B8392D1BACA9D30044E824 /* CachedRecovery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedRecovery.cpp; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* Protect.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Protect.h; sourceTree = "<group>"; tabWidth = 8; };
+		65C6BEDF21128C3B006849C3 /* YarrDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrDisassembler.cpp; path = yarr/YarrDisassembler.cpp; sourceTree = "<group>"; };
+		65C6BEE021128C3B006849C3 /* YarrDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrDisassembler.h; path = yarr/YarrDisassembler.h; sourceTree = "<group>"; };
 		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
 		65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWrapperObject.h; sourceTree = "<group>"; };
 		65DA90461F87052A009BC546 /* generateYarrUnicodePropertyTables.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generateYarrUnicodePropertyTables.py; path = Scripts/generateYarrUnicodePropertyTables.py; sourceTree = "<group>"; };
@@ -7119,6 +7121,8 @@
 				863C6D991521111200585E4E /* YarrCanonicalize.h */,
 				863C6D981521111200585E4E /* YarrCanonicalizeUCS2.cpp */,
 				863C6D9A1521111200585E4E /* YarrCanonicalizeUCS2.js */,
+				65C6BEDF21128C3B006849C3 /* YarrDisassembler.cpp */,
+				65C6BEE021128C3B006849C3 /* YarrDisassembler.h */,
 				E3282BB91FE930A300EDAF71 /* YarrErrorCode.cpp */,
 				E3282BBA1FE930A400EDAF71 /* YarrErrorCode.h */,
 				86704B7D12DBA33700A9FE7B /* YarrInterpreter.cpp */,

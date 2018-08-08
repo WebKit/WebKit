@@ -489,6 +489,7 @@ struct YarrPattern {
         return unicodePropertiesCached.get(classID);
     }
 
+    void dumpPatternString(PrintStream& out, const String& patternString);
     void dumpPattern(const String& pattern);
     void dumpPattern(PrintStream& out, const String& pattern);
 

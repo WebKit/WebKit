@@ -32,6 +32,7 @@
 #include "VM.h"
 #include "Yarr.h"
 #include "YarrCanonicalize.h"
+#include "YarrDisassembler.h"
 
 #if ENABLE(YARR_JIT)
 
@@ -40,8 +41,7 @@ using namespace WTF;
 namespace JSC { namespace Yarr {
 
 template<YarrJITCompileMode compileMode>
-class YarrGenerator : private MacroAssembler {
-    friend void jitCompile(VM*, YarrCodeBlock&, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
+class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
 #if CPU(ARM)
     static const RegisterID input = ARMRegisters::r0;
@@ -1856,6 +1856,9 @@ class YarrGenerator : private MacroAssembler {
         size_t opIndex = 0;
 
         do {
+            if (m_disassembler)
+                m_disassembler->setForGenerate(opIndex, label());
+
             YarrOp& op = m_ops[opIndex];
             switch (op.m_op) {
 
@@ -2372,6 +2375,10 @@ class YarrGenerator : private MacroAssembler {
 
         do {
             --opIndex;
+
+            if (m_disassembler)
+                m_disassembler->setForBacktrack(opIndex, label());
+
             YarrOp& op = m_ops[opIndex];
             switch (op.m_op) {
 
@@ -3424,9 +3431,10 @@ class YarrGenerator : private MacroAssembler {
     }
 
 public:
-    YarrGenerator(VM* vm, YarrPattern& pattern, YarrCodeBlock& codeBlock, YarrCharSize charSize)
+    YarrGenerator(VM* vm, YarrPattern& pattern, String& patternString, YarrCodeBlock& codeBlock, YarrCharSize charSize)
         : m_vm(vm)
         , m_pattern(pattern)
+        , m_patternString(patternString)
         , m_codeBlock(codeBlock)
         , m_charSize(charSize)
         , m_decodeSurrogatePairs(m_charSize == Char16 && m_pattern.unicode())
@@ -3463,7 +3471,13 @@ public:
             codeBlock.setFallBackWithFailureReason(*m_failureReason);
             return;
         }
-        
+
+        if (UNLIKELY(Options::dumpDisassembly()))
+            m_disassembler = std::make_unique<YarrDisassembler>(this);
+
+        if (m_disassembler)
+            m_disassembler->setStartOfCode(label());
+
         generateEnter();
 
         Jump hasInput = checkInput();
@@ -3499,11 +3513,18 @@ public:
         }
 
         generate();
+        if (m_disassembler)
+            m_disassembler->setEndOfGenerate(label());
         backtrack();
+        if (m_disassembler)
+            m_disassembler->setEndOfBacktrack(label());
 
         generateTryReadUnicodeCharacterHelper();
 
         generateJITFailReturn();
+
+        if (m_disassembler)
+            m_disassembler->setEndOfCode(label());
 
         LinkBuffer linkBuffer(*this, REGEXP_CODE_ID, JITCompilationCanFail);
         if (linkBuffer.didFailToAllocate()) {
@@ -3520,6 +3541,9 @@ public:
 
         m_backtrackingState.linkDataLabels(linkBuffer);
 
+        if (m_disassembler)
+            m_disassembler->dump(linkBuffer);
+
         if (compileMode == MatchOnly) {
             if (m_charSize == Char8)
                 codeBlock.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"));
@@ -3535,10 +3559,196 @@ public:
             codeBlock.setFallBackWithFailureReason(*m_failureReason);
     }
 
+    const char* variant() override
+    {
+        if (compileMode == MatchOnly) {
+            if (m_charSize == Char8)
+                return "Match-only 8-bit regular expression";
+
+            return "Match-only 16-bit regular expression";
+        }
+
+        if (m_charSize == Char8)
+            return "8-bit regular expression";
+
+        return "16-bit regular expression";
+    }
+
+    unsigned opCount() override
+    {
+        return m_ops.size();
+    }
+
+    void dumpPatternString(PrintStream& out) override
+    {
+        m_pattern.dumpPatternString(out, m_patternString);
+    }
+
+    int dumpFor(PrintStream& out, unsigned opIndex) override
+    {
+        if (opIndex >= opCount())
+            return 0;
+
+        out.printf("%4d:", opIndex);
+
+        YarrOp& op = m_ops[opIndex];
+        PatternTerm* term = op.m_term;
+        switch (op.m_op) {
+        case OpTerm: {
+            out.print("OpTerm ");
+            switch (term->type) {
+            case PatternTerm::TypeAssertionBOL:
+                out.print("Assert BOL");
+                break;
+
+            case PatternTerm::TypeAssertionEOL:
+                out.print("Assert EOL");
+                break;
+
+            case PatternTerm::TypePatternCharacter:
+                out.print("TypePatternCharacter ");
+                dumpUChar32(out, term->patternCharacter);
+                if (m_pattern.ignoreCase())
+                    out.print(" ignore case");
+
+                term->dumpQuantifier(out);
+                break;
+
+            case PatternTerm::TypeCharacterClass:
+                out.print("TypePatternCharacterClass ");
+                if (term->invert())
+                    out.print("not ");
+                dumpCharacterClass(out, &m_pattern, term->characterClass);
+                term->dumpQuantifier(out);
+                break;
+
+            case PatternTerm::TypeAssertionWordBoundary:
+                out.printf("%sword boundary", term->invert() ? "non-" : "");
+                break;
+
+            case PatternTerm::TypeDotStarEnclosure:
+                out.print(".* enclosure");
+                break;
+
+            case PatternTerm::TypeForwardReference:
+            case PatternTerm::TypeBackReference:
+            case PatternTerm::TypeParenthesesSubpattern:
+            case PatternTerm::TypeParentheticalAssertion:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+
+            if (op.m_isDeadCode)
+                out.print(" already handled");
+            out.print("\n");
+            return(0);
+        }
+
+        case OpBodyAlternativeBegin:
+            out.printf("OpBodyAlternativeBegin minimum size %u\n", op.m_alternative->m_minimumSize);
+            return(0);
+
+        case OpBodyAlternativeNext:
+            out.printf("OpBodyAlternativeNext minimum size %u\n", op.m_alternative->m_minimumSize);
+            return(0);
+
+        case OpBodyAlternativeEnd:
+            out.print("OpBodyAlternativeEnd\n");
+            return(0);
+
+        case OpSimpleNestedAlternativeBegin:
+            out.printf("OpSimpleNestedAlternativeBegin minimum size %u\n", op.m_alternative->m_minimumSize);
+            return(1);
+
+        case OpNestedAlternativeBegin:
+            out.printf("OpNestedAlternativeBegin minimum size %u\n", op.m_alternative->m_minimumSize);
+            return(1);
+
+        case OpSimpleNestedAlternativeNext:
+            out.printf("OpSimpleNestedAlternativeNext minimum size %u\n", op.m_alternative->m_minimumSize);
+            return(0);
+
+        case OpNestedAlternativeNext:
+            out.printf("OpNestedAlternativeNext minimum size %u\n", op.m_alternative->m_minimumSize);
+            return(0);
+
+        case OpSimpleNestedAlternativeEnd:
+            out.print("OpSimpleNestedAlternativeEnd");
+            term->dumpQuantifier(out);
+            out.print("\n");
+            return(-1);
+
+        case OpNestedAlternativeEnd:
+            out.print("OpNestedAlternativeEnd");
+            term->dumpQuantifier(out);
+            out.print("\n");
+            return(-1);
+
+        case OpParenthesesSubpatternOnceBegin:
+            out.print("OpParenthesesSubpatternOnceBegin ");
+            if (term->capture())
+                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+            else
+                out.print("non-capturing\n");
+            return(0);
+
+        case OpParenthesesSubpatternOnceEnd:
+            out.print("OpParenthesesSubpatternOnceEnd\n");
+            return(0);
+
+        case OpParenthesesSubpatternTerminalBegin:
+            out.print("OpParenthesesSubpatternTerminalBegin ");
+            if (term->capture())
+                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+            else
+                out.print("non-capturing\n");
+            return(0);
+
+        case OpParenthesesSubpatternTerminalEnd:
+            out.print("OpParenthesesSubpatternTerminalEnd ");
+            if (term->capture())
+                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+            else
+                out.print("non-capturing\n");
+            return(0);
+
+        case OpParenthesesSubpatternBegin:
+            out.print("OpParenthesesSubpatternBegin ");
+            if (term->capture())
+                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+            else
+                out.print("non-capturing\n");
+            return(0);
+
+        case OpParenthesesSubpatternEnd:
+            out.print("OpParenthesesSubpatternEnd ");
+            if (term->capture())
+                out.printf("capturing pattern #%u\n", op.m_term->parentheses.subpatternId);
+            else
+                out.print("non-capturing\n");
+            return(0);
+
+        case OpParentheticalAssertionBegin:
+            out.printf("OpParentheticalAssertionBegin%s\n", op.m_term->invert() ? " inverted" : "");
+            return(0);
+
+        case OpParentheticalAssertionEnd:
+            out.print("OpParentheticalAssertionEnd%s\n", op.m_term->invert() ? " inverted" : "");
+            return(0);
+
+        case OpMatchFailed:
+            out.print("OpMatchFailed\n");
+            return(0);
+        }
+
+        return(0);
+    }
+
 private:
     VM* m_vm;
 
     YarrPattern& m_pattern;
+    String& m_patternString;
 
     YarrCodeBlock& m_codeBlock;
     YarrCharSize m_charSize;
@@ -3576,6 +3786,8 @@ private:
 
     // This class records state whilst generating the backtracking path of code.
     BacktrackingState m_backtrackingState;
+    
+    std::unique_ptr<YarrDisassembler> m_disassembler;
 };
 
 static void dumpCompileFailure(JITFailureReason failure)
@@ -3602,12 +3814,12 @@ static void dumpCompileFailure(JITFailureReason failure)
     }
 }
 
-void jitCompile(YarrPattern& pattern, YarrCharSize charSize, VM* vm, YarrCodeBlock& codeBlock, YarrJITCompileMode mode)
+void jitCompile(YarrPattern& pattern, String& patternString, YarrCharSize charSize, VM* vm, YarrCodeBlock& codeBlock, YarrJITCompileMode mode)
 {
     if (mode == MatchOnly)
-        YarrGenerator<MatchOnly>(vm, pattern, codeBlock, charSize).compile();
+        YarrGenerator<MatchOnly>(vm, pattern, patternString, codeBlock, charSize).compile();
     else
-        YarrGenerator<IncludeSubpatterns>(vm, pattern, codeBlock, charSize).compile();
+        YarrGenerator<IncludeSubpatterns>(vm, pattern, patternString, codeBlock, charSize).compile();
 
     if (auto failureReason = codeBlock.failureReason()) {
         if (Options::dumpCompiledRegExpPatterns())

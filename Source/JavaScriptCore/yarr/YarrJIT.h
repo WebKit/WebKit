@@ -210,7 +210,7 @@ enum YarrJITCompileMode {
     MatchOnly,
     IncludeSubpatterns
 };
-void jitCompile(YarrPattern&, YarrCharSize, VM*, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
+void jitCompile(YarrPattern&, String& patternString, YarrCharSize, VM*, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
 
 } } // namespace JSC::Yarr
 
