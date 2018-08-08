@@ -1,3 +1,13 @@
+2018-08-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] More tweaks and refactoring to prepare for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=188245
+
+        Reviewed by Dan Bernstein.
+
+        * bridge/objc/objc_instance.mm: Updated include for rename: FoundationSPI.h -> objcSPI.h.
+        * platform/ios/wak/WebCoreThread.mm: Ditto.
+
 2018-08-07  Chris Dumez  <cdumez@apple.com>
 
         navigator.sendBeacon does not work in pagehide callbacks

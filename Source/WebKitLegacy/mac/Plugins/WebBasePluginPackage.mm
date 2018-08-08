@@ -131,7 +131,7 @@ using namespace WebCore;
     if (!bundleInfoDictionary)
         return nil;
 
-    return (id)CFDictionaryGetValue(bundleInfoDictionary, key);
+    return (__bridge id)CFDictionaryGetValue(bundleInfoDictionary, (__bridge CFStringRef)key);
 }
 
 - (BOOL)getPluginInfoFromPLists

@@ -77,7 +77,7 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
     if (!webview)
         return nullptr;
 
-    return reinterpret_cast<CFDataRef>(webview._sourceApplicationAuditData);
+    return (__bridge CFDataRef)webview._sourceApplicationAuditData;
 }
 
 String WebFrameNetworkingContext::sourceApplicationIdentifier() const

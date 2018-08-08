@@ -45,13 +45,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 - (NSString *)lookupNamespaceURI:(NSString *)prefix
 {
     return IMPL->lookupNamespaceURI(prefix);

@@ -32,16 +32,13 @@
 
 #import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
-#import "WebFrame.h"
 #import "WebFrameInternal.h"
-#import "WebHTMLView.h"
+#import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
 #import "WebKitVersionChecks.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebSharingServicePickerController.h"
-#import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
-#import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/BitmapImage.h>
 #import <WebCore/ContextMenu.h>
@@ -121,7 +118,7 @@ bool WebContextMenuClient::isSpeaking()
 
 void WebContextMenuClient::speak(const String& string)
 {
-    [NSApp speakString:[[(NSString*)string copy] autorelease]];
+    [NSApp speakString:(NSString *)string];
 }
 
 void WebContextMenuClient::stopSpeaking()

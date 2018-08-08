@@ -923,7 +923,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMetaRefreshEnabled:YES];
 
     if (persistentUserStyleSheetLocation) {
-        [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
+        [preferences setUserStyleSheetLocation:[NSURL URLWithString:(__bridge NSString *)persistentUserStyleSheetLocation.get()]];
         [preferences setUserStyleSheetEnabled:YES];
     } else
         [preferences setUserStyleSheetEnabled:NO];
@@ -1479,7 +1479,7 @@ static NSString *dumpFramesAsText(WebFrame *frame)
     // conversion methods cannot. After the conversion to a buffer, we turn that buffer into
     // a CFString via fromUTF8WithLatin1Fallback().createCFString() which can be appended to
     // the result without any conversion.
-    WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKStringCreateWithCFString((CFStringRef)innerText));
+    WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKStringCreateWithCFString((__bridge CFStringRef)innerText));
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(stringRef.get());
     auto buffer = std::make_unique<char[]>(bufferSize);
     size_t stringLength = WKStringGetUTF8CStringNonStrict(stringRef.get(), buffer.get(), bufferSize);
@@ -1612,10 +1612,7 @@ static const char *methodNameStringForFailedTest()
 
 static void dumpBackForwardListForAllWindows()
 {
-    CFArrayRef openWindows = (CFArrayRef)[DumpRenderTreeWindow openWindows];
-    unsigned count = CFArrayGetCount(openWindows);
-    for (unsigned i = 0; i < count; i++) {
-        NSWindow *window = (NSWindow *)CFArrayGetValueAtIndex(openWindows, i);
+    for (NSWindow *window in [DumpRenderTreeWindow openWindows]) {
 #if !PLATFORM(IOS)
         WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
 #else
@@ -1693,11 +1690,11 @@ void dump()
             resultMimeType = @"application/pdf";
         } else if (gTestRunner->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
-            resultString = CFBridgingRelease(WebCoreTestSupport::createXMLStringFromWebArchiveData((CFDataRef)[webArchive data]));
+            resultString = CFBridgingRelease(WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]));
             resultMimeType = @"application/x-webarchive";
         } else if (gTestRunner->dumpSourceAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
-            resultString = CFBridgingRelease(WebCoreTestSupport::createXMLStringFromWebArchiveData((CFDataRef)[webArchive data]));
+            resultString = CFBridgingRelease(WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]));
             resultMimeType = @"application/x-webarchive";
         } else
             resultString = [mainFrame renderTreeAsExternalRepresentationForPrinting:gTestRunner->isPrinting()];
@@ -1943,7 +1940,7 @@ static void runTest(const string& inputLine)
         testPath = [url absoluteString];
 
     NSString *informationString = [@"CRASHING TEST: " stringByAppendingString:testPath];
-    WebKit::setCrashReportApplicationSpecificInformation((CFStringRef)informationString);
+    WebKit::setCrashReportApplicationSpecificInformation((__bridge CFStringRef)informationString);
 
     TestOptions options { [url isFileURL] ? [url fileSystemRepresentation] : pathOrURL, command.absolutePath };
 
@@ -2085,7 +2082,7 @@ static void runTest(const string& inputLine)
 
     // We should only have our main window left open when we're done
     ASSERT(CFArrayGetCount(openWindowsRef) == 1);
-    ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == [[mainFrame webView] window]);
+    ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == (__bridge CFTypeRef)[[mainFrame webView] window]);
 
     gTestRunner->cleanup();
     gTestRunner = nullptr;

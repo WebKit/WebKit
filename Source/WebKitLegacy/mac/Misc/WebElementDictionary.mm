@@ -53,13 +53,13 @@ static CFMutableDictionaryRef lookupTable = NULL;
 
 static void addLookupKey(NSString *key, SEL selector)
 {
-    CFDictionaryAddValue(lookupTable, key, selector);
+    CFDictionaryAddValue(lookupTable, (__bridge CFStringRef)key, selector);
 }
 
 static void cacheValueForKey(const void *key, const void *value, void *self)
 {
     // calling objectForKey will cache the value in our _cache dictionary
-    [(WebElementDictionary *)self objectForKey:(NSString *)key];
+    [(__bridge WebElementDictionary *)self objectForKey:(__bridge NSString *)key];
 }
 
 @implementation WebElementDictionary
@@ -124,7 +124,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (void)_fillCache
 {
-    CFDictionaryApplyFunction(lookupTable, cacheValueForKey, self);
+    CFDictionaryApplyFunction(lookupTable, cacheValueForKey, (__bridge void*)self);
     _cacheComplete = YES;
 }
 
@@ -148,7 +148,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     if (value || _cacheComplete || [_nilValues containsObject:key])
         return value;
 
-    SEL selector = static_cast<SEL>(const_cast<void*>(CFDictionaryGetValue(lookupTable, key)));
+    SEL selector = static_cast<SEL>(const_cast<void*>(CFDictionaryGetValue(lookupTable, (__bridge CFTypeRef)key)));
     if (!selector)
         return nil;
     value = [self performSelector:selector];

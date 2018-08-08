@@ -1,3 +1,26 @@
+2018-08-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] More tweaks and refactoring to prepare for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=188245
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/cocoa/WKCrashReporter.mm:
+        (WebKit::setCrashLogMessage): Refactor into a separate function for clarity.
+        (WebKit::setCrashReportApplicationSpecificInformation): Use a bridging cast.
+
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forEditing): Use a bridging cast.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::convertToNPNNString): Added. Uses CFStringRef rather than NSString so we can
+        manually manage the autoreleasing.
+        (WebKit::initializeKeyboardEvent): Use convertToNPNNString.
+        (WebKit::NetscapePlugin::sendComplexTextInput): Ditto.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm: Use __unsafe_unretained explicitly
+        for a parent pointer. We could consider moving to __weak after switching to ARC.
+
 2018-08-07  Ben Richards  <benton_richards@apple.com>
 
         Add SPI for launching WebContent process with pre-linked injected bundle

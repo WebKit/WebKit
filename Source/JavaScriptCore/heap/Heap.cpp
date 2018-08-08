@@ -90,7 +90,7 @@
 #endif
 
 #if USE(FOUNDATION)
-#include <wtf/spi/cocoa/FoundationSPI.h>
+#include <wtf/spi/cocoa/objcSPI.h>
 #endif
 
 #if USE(GLIB)

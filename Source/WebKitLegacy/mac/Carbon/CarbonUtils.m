@@ -29,7 +29,7 @@
 #ifndef __LP64__
 
 #include "CarbonUtils.h"
-#import <wtf/spi/cocoa/FoundationSPI.h>
+#import <wtf/spi/cocoa/objcSPI.h>
 
 extern CGImageRef _NSCreateImageRef( unsigned char *const bitmapData[5], int pixelsWide, int pixelsHigh, int bitsPerSample, int samplesPerPixel, int bitsPerPixel, int bytesPerRow, BOOL isPlanar, BOOL hasAlpha, NSString *colorSpaceName, CGColorSpaceRef customColorSpace, id sourceObj);
 

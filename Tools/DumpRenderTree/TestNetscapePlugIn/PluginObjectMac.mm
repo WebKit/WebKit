@@ -42,7 +42,7 @@
 
 @end
 
-void* createCoreAnimationLayer()
+const void* createCoreAnimationLayer()
 {
     CALayer *caLayer = [[TestPluginLayer alloc] init];
 
@@ -93,5 +93,5 @@ void* createCoreAnimationLayer()
                                                       attribute:kCAConstraintMaxX]];
 
     [caLayer addSublayer:sublayer];
-    return caLayer;
+    return CFBridgingRetain(caLayer);
 }

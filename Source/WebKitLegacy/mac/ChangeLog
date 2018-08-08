@@ -1,3 +1,156 @@
+2018-08-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] More tweaks and refactoring to prepare for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=188245
+
+        Reviewed by Dan Bernstein.
+
+        * Carbon/CarbonUtils.m: Updated include for rename: FoundationSPI.h -> objcSPI.h.
+
+        * Carbon/CarbonWindowFrame.m:
+        (-[CarbonWindowFrame dealloc]): Deleted. It was empty.
+
+        * DOM/DOM.mm:
+        (-[DOMElement _imageTIFFRepresentation]): Use a bridging cast.
+        (-[DOMNodeFilter finalize]): Deleted. WebKit no longer supports Objective-C
+        garbage collection so this method isn't useful.
+
+        * DOM/DOMXPath.mm:
+        (-[DOMNativeXPathNSResolver finalize]): Deleted. WebKit no longer supports
+        Objective-C garbage collection so this method isn't useful.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate data]): Allocate an NSData instead of casting from a CFData.
+
+        * Misc/WebElementDictionary.mm:
+        (addLookupKey): Use a bridging cast.
+        (cacheValueForKey): Ditto.
+        (-[WebElementDictionary _fillCache]): Ditto.
+        (-[WebElementDictionary objectForKey:]): Ditto.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]): Use a bridging cast.
+        (-[NSString _web_widthWithFont:]): Ditto.
+        (-[NSString _webkit_stringByTrimmingWhitespace]): Ditto.
+
+        * Misc/WebLocalizableStrings.mm:
+        (WebLocalizedString): Use a bridging cast.
+
+        * Misc/WebNSDataExtras.mm:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]): Use a bridging cast
+        and use CFBridgingRelease instead of calling autorelease directly.
+        (-[NSData _webkit_parseRFC822HeaderFields]): Use NSString methods instead
+        of a mix of CFString and NSString. Also simplified logic a bit, and cut down
+        on the amount of explicit release and autorelease.
+
+        * Misc/WebNSDictionaryExtras.h: Deleted unused methods.
+        * Misc/WebNSDictionaryExtras.m:
+        (-[NSDictionary _webkit_intForKey:]): Deleted.
+        (-[NSMutableDictionary _webkit_setInt:forKey:]): Deleted.
+        (-[NSMutableDictionary _webkit_setFloat:forKey:]): Deleted.
+        (-[NSMutableDictionary _webkit_setBool:forKey:]): Deleted.
+        (-[NSMutableDictionary _webkit_setLongLong:forKey:]): Deleted.
+        (-[NSMutableDictionary _webkit_setUnsignedLongLong:forKey:]): Deleted.
+        (-[NSMutableDictionary _webkit_setUnsignedInt:forKey:]): Deleted.
+
+        * Misc/WebStringTruncator.mm:
+        (fontFromNSFont): Use a bridging cast.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::preferredBundleLocalizationName): Use a bridging cast and CFBridgingRelease.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::cleanup): Use a bridging cast.
+        (WebKit::NetscapePluginInstanceProxy::status): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::loadURL): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::demarshalValueFromArray): Ditto.
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::getPropertyNames): Ditto.
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage _objectForInfoDictionaryKey:]): Ditto.
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::platformWindow): Ditto.
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _initWithPath:]): Ditto.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView _postURL:target:len:buf:file:notifyData:sendNotification:allowHeaders:]):
+        Use bridging casts and use RetainPtr insteead of an explicit CFRelease.
+        (-[WebNetscapePluginView status:]): Use a bridging cast.
+        (-[WebNetscapePluginView popUpContextMenu:]): Ditto.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController _cancelOutstandingChecks]): Use a bridging cast.
+
+        * Plugins/WebPluginDatabase.mm:
+        (checkCandidate): Use explicit __strong for out argument types.
+
+        * Plugins/npapi.mm:
+        (pluginViewForInstance): Use a bridging cast.
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager detailsForDatabase:withOrigin:]): Use modern boxing instead of
+        explicit NSNumber and NSDictionary calls.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::speak): Remove an unnecessary copy/autorelease pair.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleKeyboardEvent): Added a missing typecast.
+        (WebEditorClient::handleInputMethodKeydown): Ditto.
+
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::sourceApplicationAuditData const): Use a bridging cast.
+
+        * WebCoreSupport/WebSecurityOriginPrivate.h: Forward declare WebSecurityOriginPrivate
+        as a struct rather than an Objective-C class, since that's how it's defined.
+
+        * WebInspector/WebNodeHighlighter.mm: Added missing includes.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullScreen:]): Use a bridging cast.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+        Ditto.
+        (-[WebHTMLView pasteboard:provideDataForType:]): Ditto.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController performHitTestAtPoint:]): Removed redundant code to
+        go down to the document and then back to the frame.
+        (-[WebImmediateActionController immediateActionRecognizerDidUpdateAnimation:]): Ditto.
+        (-[WebImmediateActionController immediateActionRecognizerDidCancelAnimation:]): Ditto.
+        (-[WebImmediateActionController immediateActionRecognizerDidCompleteAnimation:]): Ditto.
+
+        * WebView/WebJSPDFDoc.mm:
+        (jsPDFDocInitialize): Removed some unneeded type casting.
+        (jsPDFDocFinalize): Ditto.
+        (jsPDFDocPrint): Use a bridging cast.
+
+        * WebView/WebPDFView.mm:
+        (_applicationInfoForMIMEType): Use bridging casts.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences _setIntegerValue:forKey:]): Use boxing and setObject directly
+        instead of methods from WebNSDictionaryExtras.
+        (-[WebPreferences _setUnsignedIntValue:forKey:]): Ditto.
+        (-[WebPreferences _setFloatValue:forKey:]): Ditto.
+        (-[WebPreferences _setBoolValue:forKey:]): Ditto.
+        (-[WebPreferences _setLongLongValue:forKey:]): Ditto.
+        (-[WebPreferences _setUnsignedLongLongValue:forKey:]): Ditto.
+
+        * WebView/WebView.mm:
+        (-[WebView _removeFromAllWebViewsSet]): Use bridging cast.
+        (-[WebView _addToAllWebViewsSet]): Ditto.
+        (+[WebView closeAllWebViews]): Use a modern for loop instead of NSEnumerator.
+        (-[WebView _windowVisibilityChanged:]): Moved this into the internal category
+        so it can be called from WebViewData methods.
+
+        * WebView/WebViewData.mm: Added an import so we can call an internal WebView
+        method, _windowVisibilityChanged:.
+
+        * WebView/WebViewInternal.h: Declared _windowVisibilityChanged: so it can be
+        called from WebViewData methods.
+
 2018-08-06  Alex Christensen  <achristensen@webkit.org>
 
         Use enum classes and OptionSets for PaintPhase and PaintBehavior

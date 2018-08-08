@@ -31,11 +31,11 @@
 #import "config.h"
 #import "DumpRenderTreePasteboard.h"
 
+#if PLATFORM(MAC)
+
 #import "DumpRenderTreeMac.h"
-
-#if !PLATFORM(IOS)
-
 #import <WebKit/WebTypesInternal.h>
+#import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashMap.h>
 #import <wtf/ListHashSet.h>
@@ -46,8 +46,8 @@
     RetainPtr<NSString> _pasteboardName;
     NSInteger _changeCount;
 
-    ListHashSet<RetainPtr<NSString>, WTF::RetainPtrObjectHash<NSString>> _types;
-    HashMap<RetainPtr<NSString>, RetainPtr<NSData>, WTF::RetainPtrObjectHash<NSString>, WTF::RetainPtrObjectHashTraits<NSString>> _data;
+    ListHashSet<RetainPtr<CFStringRef>, WTF::RetainPtrObjectHash<CFStringRef>> _types;
+    HashMap<RetainPtr<CFStringRef>, RetainPtr<CFDataRef>, WTF::RetainPtrObjectHash<CFStringRef>, WTF::RetainPtrObjectHashTraits<CFStringRef>> _data;
 }
 
 -(id)initWithName:(NSString *)name;
@@ -93,7 +93,8 @@ static NSMutableDictionary *localPasteboards;
 
 + (id)alloc
 {
-    return NSAllocateObject(self, 0, 0);
+    // Need to skip NSPasteboard's alloc, which does not allocate an object.
+    return class_createInstance(self, 0);
 }
 
 - (id)initWithName:(NSString *)name
@@ -129,14 +130,14 @@ static bool isUTI(NSString *type)
     return UTTypeIsDynamic((__bridge CFStringRef)type) || UTTypeIsDeclared((__bridge CFStringRef)type);
 }
 
-static RetainPtr<NSString> toUTI(NSString *type)
+static RetainPtr<CFStringRef> toUTI(NSString *type)
 {
     if (isUTI(type)) {
-        // This is already an UTI.
-        return adoptNS([type copy]);
+        // This is already a UTI.
+        return adoptCF(CFStringCreateCopy(nullptr, (__bridge CFStringRef)type));
     }
 
-    return adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)type, nullptr));
+    return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)type, nullptr));
 }
 
 - (NSInteger)addTypes:(NSArray *)newTypes owner:(id)newOwner
@@ -162,10 +163,10 @@ static RetainPtr<NSString> toUTI(NSString *type)
     auto types = adoptNS([[NSMutableArray alloc] init]);
 
     for (const auto& type : _types) {
-        [types addObject:type.get()];
+        [types addObject:(__bridge NSString *)type.get()];
 
         // Include the pasteboard type as well.
-        if (auto pasteboardType = adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass((CFStringRef)type.get(), kUTTagClassNSPboardType)))
+        if (auto pasteboardType = adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass(type.get(), kUTTagClassNSPboardType)))
             [types addObject:pasteboardType.get()];
     }
 
@@ -175,7 +176,7 @@ static RetainPtr<NSString> toUTI(NSString *type)
 - (NSString *)availableTypeFromArray:(NSArray *)types
 {
     for (NSString *type in types) {
-        if (_types.contains(type))
+        if (_types.contains((__bridge CFStringRef)type))
             return type;
     }
 
@@ -189,45 +190,32 @@ static RetainPtr<NSString> toUTI(NSString *type)
     if (!_types.contains(uti))
         return NO;
 
-    _data.set(WTFMove(uti), data ? data : [NSData data]);
+    _data.set(WTFMove(uti), (__bridge CFDataRef)(data ?: [NSData data]));
     return YES;
 }
 
 - (NSData *)dataForType:(NSString *)dataType
 {
-    if (NSData *data = _data.get(toUTI(dataType)).get())
+    if (NSData *data = (__bridge NSData *)_data.get(toUTI(dataType).get()).get())
         return data;
 
     if (_owner && [_owner respondsToSelector:@selector(pasteboard:provideDataForType:)])
         [_owner pasteboard:self provideDataForType:dataType];
 
-    return _data.get(toUTI(dataType)).get();
+    return (__bridge NSData *)_data.get(toUTI(dataType).get()).get();
 }
 
 - (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType
 {
-    CFDataRef data = NULL;
+    NSData *data = nil;
     if (propertyList)
-        data = CFPropertyListCreateXMLData(NULL, propertyList);
-    BOOL result = [self setData:(NSData *)data forType:dataType];
-    if (data)
-        CFRelease(data);
-    return result;
+        data = [NSPropertyListSerialization dataWithPropertyList:propertyList format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
+    return [self setData:data forType:dataType];
 }
 
 - (BOOL)setString:(NSString *)string forType:(NSString *)dataType
 {
-    CFDataRef data = NULL;
-    if (string) {
-        if (!string.length)
-            data = CFDataCreate(NULL, NULL, 0);
-        else
-            data = CFStringCreateExternalRepresentation(NULL, (CFStringRef)string, kCFStringEncodingUTF8, 0);
-    }
-    BOOL result = [self setData:(NSData *)data forType:dataType];
-    if (data)
-        CFRelease(data);
-    return result;
+    return [self setData:[string dataUsingEncoding:NSUTF8StringEncoding] forType:dataType];
 }
 
 - (BOOL)writeObjects:(NSArray<id <NSPasteboardWriting>> *)objects
@@ -251,4 +239,4 @@ static RetainPtr<NSString> toUTI(NSString *type)
 
 @end
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

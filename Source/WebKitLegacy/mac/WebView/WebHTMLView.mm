@@ -1335,7 +1335,7 @@ static NSControlStateValue kit(TriState state)
     if ([types containsObject:WebArchivePboardType]) {
         if (RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::createFromSelection(core([self _frame]))) {
             if (RetainPtr<CFDataRef> data = coreArchive ? coreArchive->rawDataRepresentation() : 0)
-                [pasteboard setData:(NSData *)data.get() forType:WebArchivePboardType];
+                [pasteboard setData:(__bridge NSData *)data.get() forType:WebArchivePboardType];
         }
     }
 
@@ -2020,7 +2020,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:legacyTIFFPasteboardType()]];
     } else if ([type isEqualToString:legacyTIFFPasteboardType()] && _private->promisedDragTIFFDataSource) {
         if (auto* image = _private->promisedDragTIFFDataSource->image())
-            [pasteboard setData:(NSData *)image->tiffRepresentation() forType:legacyTIFFPasteboardType()];
+            [pasteboard setData:(__bridge NSData *)image->tiffRepresentation() forType:legacyTIFFPasteboardType()];
         [self setPromisedDragTIFFDataSource:nullptr];
     }
 }

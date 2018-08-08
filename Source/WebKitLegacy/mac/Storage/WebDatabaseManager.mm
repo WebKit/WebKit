@@ -118,16 +118,15 @@ static NSString *databasesDirectoryPath();
     if (!origin)
         return nil;
 
-    DatabaseDetails details = DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
+    auto details = DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
     if (details.name().isNull())
         return nil;
-        
-    static const id keys[3] = { WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey };
-    id objects[3];
-    objects[0] = details.displayName().isEmpty() ? databaseIdentifier : (NSString *)details.displayName();
-    objects[1] = [NSNumber numberWithUnsignedLongLong:details.expectedUsage()];
-    objects[2] = [NSNumber numberWithUnsignedLongLong:details.currentUsage()];
-    return [[[NSDictionary alloc] initWithObjects:objects forKeys:keys count:3] autorelease];
+
+    return @{
+        WebDatabaseDisplayNameKey: details.displayName().isEmpty() ? databaseIdentifier : (NSString *)details.displayName(),
+        WebDatabaseExpectedSizeKey: @(details.expectedUsage()),
+        WebDatabaseUsageKey: @(details.currentUsage()),
+    };
 }
 
 - (void)deleteAllDatabases

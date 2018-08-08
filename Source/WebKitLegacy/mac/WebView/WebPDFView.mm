@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import "WebPDFView.h"
+
+#if PLATFORM(MAC)
 
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
@@ -128,12 +128,12 @@ static void _applicationInfoForMIMEType(NSString *type, NSString **name, NSImage
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    OSStatus error = LSCopyApplicationForMIMEType((CFStringRef)type, kLSRolesAll, &appURL);
+    OSStatus error = LSCopyApplicationForMIMEType((__bridge CFStringRef)type, kLSRolesAll, &appURL);
 #pragma clang diagnostic pop
     if (error != noErr)
         return;
     
-    NSString *appPath = [(NSURL *)appURL path];
+    NSString *appPath = [(__bridge NSURL *)appURL path];
     CFRelease(appURL);
     
     *image = [[NSWorkspace sharedWorkspace] iconForFile:appPath];  
@@ -1594,4 +1594,4 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
 
 @end
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

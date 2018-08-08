@@ -26,20 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockWebNotificationProvider_h
-#define MockWebNotificationProvider_h
-
 #import <WebKit/WebNotification.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 
-typedef HashMap<uint64_t, RetainPtr<WebNotification> > NotificationIDMap;
-typedef HashMap<uint64_t, WebView *> NotificationViewMap;
+using NotificationIDMap = HashMap<uint64_t, RetainPtr<WebNotification>>;
+using NotificationViewMap = HashMap<uint64_t, CFTypeRef>;
 
 @interface MockWebNotificationProvider : NSObject <WebNotificationProvider> {
-    HashSet<WebView *> _registeredWebViews;
+    HashSet<CFTypeRef> _registeredWebViews;
     NotificationIDMap _notifications;
     NotificationViewMap _notificationViewMap;
     RetainPtr<NSMutableDictionary> _permissions;
@@ -54,5 +51,3 @@ typedef HashMap<uint64_t, WebView *> NotificationViewMap;
 
 - (void)reset;
 @end
-
-#endif // MockWebNotificationProvider_h

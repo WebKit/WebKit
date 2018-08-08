@@ -1,3 +1,31 @@
+2018-08-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] More tweaks and refactoring to prepare for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=188245
+
+        Reviewed by Dan Bernstein.
+
+        * WTF.xcodeproj/project.pbxproj: Updated for rename: FoundationSPI.h -> objcSPI.h.
+
+        * wtf/BlockPtr.h: Added missing include of "StdLibExtras.h".
+        Also re-sorted includes.
+
+        * wtf/HashFunctions.h: Add function for "__unsafe_unretained id".
+        * wtf/HashTraits.h: Add traits for "__unsafe_unretained id".
+
+        * wtf/PlatformMac.cmake: Updated for rename: FoundationSPI.h -> objcSPI.h.
+
+        * wtf/WeakObjCPtr.h: Use mutable instead of const_cast, and write a version
+        that uses __weak explicitly under ARC. Also moved function declarations from
+        here to objcSPI.h.
+
+        * wtf/cocoa/AutodrainedPool.cpp: Updated include for rename: FoundationSPI.h -> objcSPI.h.
+
+        * wtf/spi/cocoa/objcSPI.h: Renamed from FoundationSPI.h and added the
+        additional functions used by WeakObjCPtr.h. Also changed to both include the
+        internal header and the function definitions when compiling with
+        USE(APPLE_INTERNAL_SDK), helping us check that function definitions match.
+
 2018-08-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Shrink size of PropertyCondition by packing UniquedStringImpl* and Kind

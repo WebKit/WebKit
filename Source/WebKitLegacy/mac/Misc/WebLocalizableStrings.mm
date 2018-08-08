@@ -62,7 +62,7 @@ NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const c
     }
     NSString *notFound = @"localized string not found";
     CFStringRef keyString = CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull);
-    NSString *result = [bundle localizedStringForKey:(NSString *)keyString value:notFound table:nil];
+    NSString *result = [bundle localizedStringForKey:(__bridge NSString *)keyString value:notFound table:nil];
     CFRelease(keyString);
     ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
     return result;

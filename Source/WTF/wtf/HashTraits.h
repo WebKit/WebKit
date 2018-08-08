@@ -29,6 +29,10 @@
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
+#ifdef __OBJC__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace WTF {
 
 template<bool isInteger, typename T> struct GenericHashTraitsBase;
@@ -114,6 +118,16 @@ template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
     static void constructDeletedValue(P*& slot) { slot = reinterpret_cast<P*>(-1); }
     static bool isDeletedValue(P* value) { return value == reinterpret_cast<P*>(-1); }
 };
+
+#ifdef __OBJC__
+
+template<> struct HashTraits<__unsafe_unretained id> : GenericHashTraits<__unsafe_unretained id> {
+    static const bool emptyValueIsZero = true;
+    static void constructDeletedValue(__unsafe_unretained id& slot) { slot = (__bridge __unsafe_unretained id)reinterpret_cast<CFTypeRef>(-1); }
+    static bool isDeletedValue(__unsafe_unretained id value) { return (__bridge CFTypeRef)value == reinterpret_cast<CFTypeRef>(-1); }
+};
+
+#endif
 
 template<typename T> struct SimpleClassHashTraits : GenericHashTraits<T> {
     static const bool emptyValueIsZero = true;

@@ -146,6 +146,8 @@ OBJC_CLASS NSTextAlternatives;
 - (WebSelectionServiceController&)_selectionServiceController;
 #endif
 
+- (void)_windowVisibilityChanged:(NSNotification *)notification;
+
 @end
 
 #endif

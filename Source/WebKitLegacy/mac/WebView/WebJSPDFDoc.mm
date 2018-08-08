@@ -33,19 +33,17 @@
 
 static void jsPDFDocInitialize(JSContextRef ctx, JSObjectRef object)
 {
-    WebDataSource *dataSource = (WebDataSource *)JSObjectGetPrivate(object);
-    CFRetain(dataSource);
+    CFRetain(JSObjectGetPrivate(object));
 }
 
 static void jsPDFDocFinalize(JSObjectRef object)
 {
-    WebDataSource *dataSource = (WebDataSource *)JSObjectGetPrivate(object);
-    CFRelease(dataSource);
+    CFRelease(JSObjectGetPrivate(object));
 }
 
 static JSValueRef jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    WebDataSource *dataSource = (WebDataSource *)JSObjectGetPrivate(thisObject);
+    WebDataSource *dataSource = (__bridge WebDataSource *)JSObjectGetPrivate(thisObject);
 
     WebView *webView = [[dataSource webFrame] webView];
     CallUIDelegate(webView, @selector(webView:printFrameView:), [[dataSource webFrame] frameView]);
@@ -72,5 +70,5 @@ JSObjectRef makeJSPDFDoc(JSContextRef ctx, WebDataSource *dataSource)
 {
     static JSClassRef jsPDFDocClass = JSClassCreate(&jsPDFDocClassDefinition);
 
-    return JSObjectMake(ctx, jsPDFDocClass, dataSource);
+    return JSObjectMake(ctx, jsPDFDocClass, (__bridge void*)dataSource);
 }

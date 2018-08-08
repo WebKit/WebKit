@@ -1,3 +1,178 @@
+2018-08-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] More tweaks and refactoring to prepare for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=188245
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h: Use const void* for a
+        CFTypeRef instead of void*.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObjectMac.mm:
+        (createCoreAnimationLayer): Use CFBridgingRetain.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::lineTextMarkerRangeForTextMarker): Use bridging casts.
+        (AccessibilityUIElement::textMarkerRangeForElement): Ditto.
+        (AccessibilityUIElement::selectedTextMarkerRange): Ditto.
+        (AccessibilityUIElement::textMarkerRangeLength): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute): Ditto.
+        (AccessibilityUIElement::indexForTextMarker): Ditto.
+        (AccessibilityUIElement::textMarkerForIndex): Ditto.
+        (AccessibilityUIElement::isTextMarkerValid): Ditto.
+        (AccessibilityUIElement::previousTextMarker): Ditto.
+        (AccessibilityUIElement::nextTextMarker): Ditto.
+        (AccessibilityUIElement::stringForTextMarkerRange): Ditto.
+        (createJSStringRef): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions): Ditto.
+        (AccessibilityUIElement::textMarkerRangeForMarkers): Ditto.
+        (AccessibilityUIElement::startTextMarkerForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::endTextMarkerForTextMarkerRange): Ditto.
+        (AccessibilityUIElement::endTextMarkerForBounds): Ditto.
+        (AccessibilityUIElement::startTextMarkerForBounds): Ditto.
+        (AccessibilityUIElement::textMarkerForPoint): Ditto.
+        (AccessibilityUIElement::accessibilityElementForTextMarker): Ditto.
+        (AccessibilityUIElement::startTextMarker): Ditto.
+        (AccessibilityUIElement::endTextMarker): Ditto.
+        (AccessibilityUIElement::setSelectedVisibleTextRange): Ditto.
+        (AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker): Ditto.
+        (AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker): Ditto.
+        (AccessibilityUIElement::previousWordStartTextMarkerForTextMarker): Ditto.
+        (AccessibilityUIElement::nextWordEndTextMarkerForTextMarker): Ditto.
+        (AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker): Ditto.
+        (AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker): Ditto.
+        (AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker): Ditto.
+        (AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker): Ditto.
+        (AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker): Ditto.
+        (AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker): Ditto.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues): Use bridging cast.
+        (dumpFramesAsText): Ditto.
+        (dumpBackForwardListForAllWindows): Use a modern for loop instead of
+        CFArray functions to iterate the array.
+        (dump): Use bridging cast.
+        (runTest): Ditto.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (+[LocalPasteboard alloc]): Use class_createInstance instead of NSAllocateObject.
+        (toUTI): Return a RetainPtr<CFStringRef>.
+        (-[LocalPasteboard types]): Use the above and bridging casts.
+        (-[LocalPasteboard availableTypeFromArray:]): Ditto.
+        (-[LocalPasteboard setData:forType:]): Ditto.
+        (-[LocalPasteboard dataForType:]): Ditto.
+        (-[LocalPasteboard setPropertyList:forType:]): Use NSPropertyListSerialization
+        instead of CFPropertyList.
+        (-[LocalPasteboard setString:forType:]): Use NSString method instead of
+        CFStringCreateExternalRepresentation.
+
+        * DumpRenderTree/mac/MockGeolocationProvider.h: Put CFTypeRef in a HashSet
+        instead of an Objective-C object pointer type.
+        * DumpRenderTree/mac/MockGeolocationProvider.mm:
+        (-[MockGeolocationProvider registerWebView:]): Update for above.
+        (-[MockGeolocationProvider unregisterWebView:]): Ditto.
+        (-[MockGeolocationProvider timerFired]): Ditto.
+
+        * DumpRenderTree/mac/MockWebNotificationProvider.h: Use CFTypeRef in
+        HashMap and HashSet instead of an Objective-C object pointer type.
+        * DumpRenderTree/mac/MockWebNotificationProvider.mm:
+        (-[MockWebNotificationProvider registerWebView:]): Update for above.
+        (-[MockWebNotificationProvider unregisterWebView:]): Ditto.
+        (-[MockWebNotificationProvider showNotification:fromWebView:]): Ditto.
+        (-[MockWebNotificationProvider cancelNotification:]): Ditto.
+        (-[MockWebNotificationProvider simulateWebNotificationClick:]): Ditto.
+
+        * DumpRenderTree/mac/ObjCPlugin.m:
+        (-[JSObjC retainObject:]): Use CFRetain instead of -[NSObject retain].
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::addDisallowedURL): Use bridging cast.
+        (TestRunner::applicationCacheDiskUsageForOrigin): Ditto.
+        (TestRunner::clearApplicationCacheForOrigin): Ditto.
+        (originsArrayToJS): Ditto.
+        (TestRunner::copyDecodedHostName): Ditto.
+        (TestRunner::copyEncodedHostName): Ditto.
+        (TestRunner::queueLoad): Ditto.
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme): Ditto.
+        (TestRunner::setMockGeolocationPositionUnavailableError): Ditto.
+        (TestRunner::setUserStyleSheetLocation): Ditto.
+        (TestRunner::setValueForUser): Ditto.
+        (TestRunner::overridePreference): Ditto.
+        (TestRunner::execCommand): Ditto.
+        (TestRunner::findString): Ditto.
+        (TestRunner::isCommandEnabled): Ditto.
+        (TestRunner::addOriginAccessWhitelistEntry): Ditto.
+        (TestRunner::removeOriginAccessWhitelistEntry): Ditto.
+        (TestRunner::addUserScript): Ditto.
+        (TestRunner::addUserStyleSheet): Ditto.
+        (TestRunner::evaluateInWebInspector): Ditto.
+        (TestRunner::evaluateScriptInIsolatedWorld): Ditto.
+        (TestRunner::authenticateSession): Ditto.
+        (TestRunner::grantWebNotificationPermission): Ditto.
+        (TestRunner::denyWebNotificationPermission): Ditto.
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (-[LayoutTestSpellChecker setResultsFromJSObject:inContext:]): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker): Use bridging cast.
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement): Ditto.
+        (WTR::AccessibilityUIElement::previousTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers): Ditto.
+        (WTR::AccessibilityUIElement::selectedTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::endTextMarkerForBounds): Ditto.
+        (WTR::AccessibilityUIElement::startTextMarkerForBounds): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerForPoint): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerForIndex): Ditto.
+        (WTR::AccessibilityUIElement::startTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::endTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::previousWordStartTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker): Ditto.
+
+        * WebKitTestRunner/PlatformMac.cmake: Added WebKitTestRunnerWindow.h and .mm files.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Ditto.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm: Add include of WebKitTestRunnerWindow.h
+        so we can use the type and know it inherits from NSWindow.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm: Add include of WebKitTestRunnerWindow.h
+        so we can use the type and know it inherits from NSWindow. Moved WebKitTestRunnerWindow
+        class into a separate file.
+        (WTR::PlatformWebView::keyWindow): Call +[WebKitTestRunnerWindow _WTR_keyWindow]
+        instead of have a second copy of the implementation.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerEvent.mm: Add include of WebKitTestRunnerWindow.h
+        so we can use the type and know it inherits from NSWindow. Also removed "using namespace".
+        (+[WebKitTestRunnerEvent mouseLocation]): Updated for above.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[LocalPasteboard alloc]): Use class_createInstance instead of NSAllocateObject.
+        (-[LocalPasteboard availableTypeFromArray:]): Use modern for loop.
+        (-[LocalPasteboard setData:forType:]): Reordered method to be a tiny bit more efficient.
+        (-[LocalPasteboard setPropertyList:forType:]): Use NSPropertyListSerialization
+        instead of CFPropertyList.
+        (-[LocalPasteboard setString:forType:]): Use NSString method instead of
+        CFStringCreateExternalRepresentation.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerWindow.h: Moved declaration of
+        WebKitTestRunnerWindow here so it can be included by files that need to know
+        what the type is and that it inherits from NSWindow.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerWindow.mm: Added. Moved implementation here.
+        (+[WebKitTestRunnerWindow _WTR_keyWindow]): Use modern for loop instead of the old,
+        messier implementation.
+
 2018-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Add a test for using SafeBrowsing

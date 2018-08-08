@@ -23,9 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MockGeolocationProvider_h
-#define MockGeolocationProvider_h
-
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
@@ -35,7 +32,7 @@
     BOOL _hasError;
     RetainPtr<NSString> _errorMessage;
     NSTimer *_timer;
-    HashSet<WebView *> _registeredViews;
+    HashSet<CFTypeRef> _registeredViews;
 }
 
 + (MockGeolocationProvider *)shared;
@@ -47,4 +44,3 @@
 - (BOOL)isActive;
 
 @end
-#endif

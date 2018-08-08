@@ -1,3 +1,18 @@
+2018-08-05  Darin Adler  <darin@apple.com>
+
+        [Cocoa] More tweaks and refactoring to prepare for ARC
+        https://bugs.webkit.org/show_bug.cgi?id=188245
+
+        Reviewed by Dan Bernstein.
+
+        * API/JSValue.mm: Use __unsafe_unretained.
+        (JSContainerConvertor::convert): Use auto for compatibility with the above.
+        * API/JSWrapperMap.mm:
+        (allocateConstructorForCustomClass): Use CFTypeRef instead of Protocol *.
+        (-[JSWrapperMap initWithGlobalContextRef:]): Use __unsafe_unretained.
+
+        * heap/Heap.cpp: Updated include for rename: FoundationSPI.h -> objcSPI.h.
+
 2018-08-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Shrink size of PropertyCondition by packing UniquedStringImpl* and Kind

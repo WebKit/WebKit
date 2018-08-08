@@ -48,7 +48,7 @@
 #import <wtf/RecursiveLockAdapter.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
-#import <wtf/spi/cocoa/FoundationSPI.h>
+#import <wtf/spi/cocoa/objcSPI.h>
 #import <wtf/text/AtomicString.h>
 
 #define LOG_MESSAGES 0

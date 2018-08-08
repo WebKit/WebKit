@@ -40,7 +40,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ThreadSpecific.h>
-#import <wtf/spi/cocoa/FoundationSPI.h>
+#import <wtf/spi/cocoa/objcSPI.h>
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)

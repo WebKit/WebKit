@@ -317,7 +317,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     if (!reply || !reply->m_returnValue)
         return;
     
-    NSArray *array = [NSPropertyListSerialization propertyListWithData:(NSData *)reply->m_result.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
+    NSArray *array = [NSPropertyListSerialization propertyListWithData:(__bridge NSData *)reply->m_result.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
     
     for (NSNumber *number in array) {
         IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>([number longLongValue]);

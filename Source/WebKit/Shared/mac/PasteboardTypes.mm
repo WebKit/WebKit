@@ -47,7 +47,7 @@ static inline NSArray *retain(NSArray *array)
 NSArray* PasteboardTypes::forEditing()
 {
     static NSArray *types = retain([NSArray arrayWithObjects:WebArchivePboardType, WebCore::legacyHTMLPasteboardType(), WebCore::legacyFilenamesPasteboardType(), WebCore::legacyTIFFPasteboardType(), WebCore::legacyPDFPasteboardType(),
-        WebCore::legacyURLPasteboardType(), WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType(), WebCore::legacyColorPasteboardType(), kUTTypePNG, nil]);
+        WebCore::legacyURLPasteboardType(), WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType(), WebCore::legacyColorPasteboardType(), (__bridge NSString *)kUTTypePNG, nil]);
     return types;
 }
 

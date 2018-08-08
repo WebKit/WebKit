@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+namespace WTR {
+class PlatformWebView;
+}
 
-#if USE(APPLE_INTERNAL_SDK)
+@interface WebKitTestRunnerWindow : NSWindow {
+    WTR::PlatformWebView* _platformWebView;
+    NSPoint _fakeOrigin;
+}
 
-#include <objc/objc-internal.h>
++ (WebKitTestRunnerWindow *)_WTR_keyWindow;
 
-#else
+@property (nonatomic, assign) WTR::PlatformWebView* platformWebView;
+- (NSRect)frameRespectingFakeOrigin;
 
-WTF_EXTERN_C_BEGIN
-
-void* objc_autoreleasePoolPush(void);
-void objc_autoreleasePoolPop(void* context);
-
-WTF_EXTERN_C_END
-
-#endif
+@end

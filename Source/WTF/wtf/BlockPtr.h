@@ -26,6 +26,10 @@
 #pragma once
 
 #include <Block.h>
+#include <utility>
+#include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
+
 #if CPU(ARM64E)
 #include <WebKitAdditions/BlockQualifiers.h>
 #else
@@ -33,8 +37,6 @@
 #define WTF_DISPOSE_FUNCTION_POINTER_QUALIFIER
 #define WTF_INVOKE_FUNCTION_POINTER_QUALIFIER
 #endif
-#include <utility>
-#include <wtf/Assertions.h>
 
 namespace WTF {
 

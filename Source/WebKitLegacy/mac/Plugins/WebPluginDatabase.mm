@@ -86,7 +86,7 @@ static WebPluginDatabase *sharedDatabase = nil;
     [sharedDatabase close];
 }
 
-static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPackage **candidatePlugin)
+static void checkCandidate(WebBasePluginPackage * __strong *currentPlugin, WebBasePluginPackage * __strong *candidatePlugin)
 {
     if (!*currentPlugin) {
         *currentPlugin = *candidatePlugin;

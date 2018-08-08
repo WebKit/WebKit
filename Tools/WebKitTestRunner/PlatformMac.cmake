@@ -62,6 +62,7 @@ list(APPEND WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerDraggingInfo.mm
     ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerEvent.mm
     ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerPasteboard.mm
+    ${WEBKIT_TESTRUNNER_DIR}/mac/WebKitTestRunnerWindow.mm
     ${WEBKIT_TESTRUNNER_DIR}/mac/main.mm
     
     ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac/EventSerializerMac.mm

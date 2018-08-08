@@ -29,7 +29,7 @@
 #import "config.h"
 #import "AutodrainedPool.h"
 
-#import <wtf/spi/cocoa/FoundationSPI.h>
+#import <wtf/spi/cocoa/objcSPI.h>
 
 namespace WTF {
 

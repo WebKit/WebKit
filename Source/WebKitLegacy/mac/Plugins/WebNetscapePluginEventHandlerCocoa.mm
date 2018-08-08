@@ -210,9 +210,9 @@ void WebNetscapePluginEventHandlerCocoa::focusChanged(bool hasFocus)
         removeKeyEventHandler();
 }
 
-void* WebNetscapePluginEventHandlerCocoa::platformWindow(NSWindow* window)
+void* WebNetscapePluginEventHandlerCocoa::platformWindow(NSWindow *window)
 {
-    return window;
+    return (__bridge void*)window;
 }
 
 bool WebNetscapePluginEventHandlerCocoa::sendEvent(NPCocoaEvent* event)

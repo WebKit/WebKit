@@ -694,7 +694,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (NSData *)cachedImage->imageForRenderer(renderer)->tiffRepresentation();
+    return (__bridge NSData *)cachedImage->imageForRenderer(renderer)->tiffRepresentation();
 }
 
 #endif
@@ -841,13 +841,6 @@ WebCore::NodeFilter* core(DOMNodeFilter *wrapper)
     if (_internal)
         reinterpret_cast<WebCore::NodeFilter*>(_internal)->deref();
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal)
-        reinterpret_cast<WebCore::NodeFilter*>(_internal)->deref();
-    [super finalize];
 }
 
 - (short)acceptNode:(DOMNode *)node

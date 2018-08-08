@@ -251,10 +251,10 @@ static NSTextCheckingType nsTextCheckingType(JSRetainPtr<JSStringRef>&& jsType)
                 }
                 JSPropertyNameArrayRelease(detailsObjectProperties);
             }
-            [resultsForWord addObject:[[[LayoutTestTextCheckingResult alloc] initWithType:nsTextCheckingType(WTFMove(typeValue)) range:NSMakeRange(fromValue, toValue - fromValue) replacement:(NSString *)replacementText.get() details:details.get()] autorelease]];
+            [resultsForWord addObject:[[[LayoutTestTextCheckingResult alloc] initWithType:nsTextCheckingType(WTFMove(typeValue)) range:NSMakeRange(fromValue, toValue - fromValue) replacement:(__bridge NSString *)replacementText.get() details:details.get()] autorelease]];
         }
         auto cfTextToCheck = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, textToCheck));
-        [results setObject:resultsForWord.get() forKey:(NSString *)cfTextToCheck.get()];
+        [results setObject:resultsForWord.get() forKey:(__bridge NSString *)cfTextToCheck.get()];
         JSPropertyNameArrayRelease(resultsArrayPropertyNames);
     }
     JSPropertyNameArrayRelease(properties);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2013 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2005-2018 Apple, Inc.  All rights reserved.
  * Copyright (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -27,6 +27,8 @@
 
 #include "config.h"
 #include "WebKitTestRunnerPasteboard.h"
+
+#include <objc/runtime.h>
 
 @interface LocalPasteboard : NSPasteboard
 {
@@ -86,7 +88,8 @@ static NSMutableDictionary *localPasteboards;
 
 + (id)alloc
 {
-    return NSAllocateObject(self, 0, 0);
+    // Need to skip over [NSPasteboard alloc], which won't allocate a new object.
+    return class_createInstance(self, 0);
 }
 
 - (id)initWithName:(NSString *)name
@@ -158,12 +161,8 @@ static NSMutableDictionary *localPasteboards;
 
 - (NSString *)availableTypeFromArray:(NSArray *)types
 {
-    unsigned count = [types count];
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        NSString *type = [types objectAtIndex:i];
-        NSString *setType = [typesSet member:type];
-        if (setType)
+    for (NSString *type in types) {
+        if (NSString *setType = [typesSet member:type])
             return setType;
     }
     return nil;
@@ -171,10 +170,10 @@ static NSMutableDictionary *localPasteboards;
 
 - (BOOL)setData:(NSData *)data forType:(NSString *)dataType
 {
-    if (data == nil)
-        data = [NSData data];
     if (![typesSet containsObject:dataType])
         return NO;
+    if (!data)
+        data = [NSData data];
     [dataByType setObject:data forKey:dataType];
     ++changeCount;
     return YES;
@@ -187,28 +186,15 @@ static NSMutableDictionary *localPasteboards;
 
 - (BOOL)setPropertyList:(id)propertyList forType:(NSString *)dataType
 {
-    CFDataRef data = 0;
+    NSData *data = nil;
     if (propertyList)
-        data = CFPropertyListCreateXMLData(0, (__bridge CFTypeRef)propertyList);
-    BOOL result = [self setData:(__bridge NSData *)data forType:dataType];
-    if (data)
-        CFRelease(data);
-    return result;
+        data = [NSPropertyListSerialization dataWithPropertyList:propertyList format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
+    return [self setData:data forType:dataType];
 }
 
 - (BOOL)setString:(NSString *)string forType:(NSString *)dataType
 {
-    CFDataRef data = 0;
-    if (string) {
-        if ([string length] == 0)
-            data = CFDataCreate(0, 0, 0);
-        else
-            data = CFStringCreateExternalRepresentation(0, (CFStringRef)string, kCFStringEncodingUTF8, 0);
-    }
-    BOOL result = [self setData:(__bridge NSData *)data forType:dataType];
-    if (data)
-        CFRelease(data);
-    return result;
+    return [self setData:[string dataUsingEncoding:NSUTF8StringEncoding] forType:dataType];
 }
 
 @end

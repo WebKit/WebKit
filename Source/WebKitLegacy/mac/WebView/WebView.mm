@@ -1114,13 +1114,13 @@ static CFMutableSetRef allWebViewsSet;
     if (!allWebViewsSet)
         return;
 
-    [(NSMutableSet *)allWebViewsSet makeObjectsPerformSelector:selector];
+    [(__bridge NSMutableSet *)allWebViewsSet makeObjectsPerformSelector:selector];
 }
 
 - (void)_removeFromAllWebViewsSet
 {
     if (allWebViewsSet)
-        CFSetRemoveValue(allWebViewsSet, self);
+        CFSetRemoveValue(allWebViewsSet, (__bridge CFTypeRef)self);
 }
 
 - (void)_addToAllWebViewsSet
@@ -1128,7 +1128,7 @@ static CFMutableSetRef allWebViewsSet;
     if (!allWebViewsSet)
         allWebViewsSet = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
 
-    CFSetSetValue(allWebViewsSet, self);
+    CFSetSetValue(allWebViewsSet, (__bridge CFTypeRef)self);
 }
 
 @end
@@ -2113,10 +2113,7 @@ static NSMutableSet *knownPluginMIMETypes()
     DOMWindow::dispatchAllPendingUnloadEvents();
 
     // This will close the WebViews in a random order. Change this if close order is important.
-    // Make a new set to avoid mutating the set we are enumerating.
-    NSSet *webViewsToClose = [NSSet setWithSet:(NSSet *)allWebViewsSet]; 
-    NSEnumerator *enumerator = [webViewsToClose objectEnumerator];
-    while (WebView *webView = [enumerator nextObject])
+    for (WebView *webView in [(__bridge NSSet *)allWebViewsSet allObjects])
         [webView close];
 }
 
@@ -6174,11 +6171,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     }
 }
 
-- (void)_windowVisibilityChanged:(NSNotification *)notification
-{
-    [self _updateVisibilityState];
-}
-
 - (void)_windowWillClose:(NSNotification *)notification
 {
     if ([self shouldCloseWithWindow] && ([self window] == [self hostWindow] || ([self window] && ![self hostWindow]) || (![self window] && [self hostWindow])))
@@ -10065,6 +10057,11 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
 }
 
 #endif
+
+- (void)_windowVisibilityChanged:(NSNotification *)notification
+{
+    [self _updateVisibilityState];
+}
 
 @end
 

@@ -76,11 +76,10 @@ using namespace WebCore;
         return NO;
 
 #if USE(PLUGIN_HOST_PROCESS)
-    RetainPtr<CFArrayRef> archs = adoptCF(CFBundleCopyExecutableArchitectures(cfBundle.get()));
-
-    if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureX86_64]])
+    auto archs = adoptCF(CFBundleCopyExecutableArchitectures(cfBundle.get()));
+    if ([(__bridge NSArray *)archs.get() containsObject:@(NSBundleExecutableArchitectureX86_64)])
         pluginHostArchitecture = CPU_TYPE_X86_64;
-    else if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureI386]])
+    else if ([(__bridge NSArray *)archs.get() containsObject:@(NSBundleExecutableArchitectureI386)])
         pluginHostArchitecture = CPU_TYPE_X86;
     else
         return NO;
@@ -94,7 +93,6 @@ using namespace WebCore;
 
      if (![self isNativeLibraryData:data])
          return NO;
-
 #endif
 
     if (![self getPluginInfoFromPLists])
@@ -120,6 +118,7 @@ using namespace WebCore;
 }
 
 #if USE(PLUGIN_HOST_PROCESS)
+
 - (cpu_type_t)pluginHostArchitecture
 {
     return pluginHostArchitecture;

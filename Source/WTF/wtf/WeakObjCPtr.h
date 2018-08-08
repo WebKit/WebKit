@@ -28,38 +28,30 @@
 #include <objc/runtime.h>
 #include <type_traits>
 #include <wtf/RetainPtr.h>
-
-#if __has_include(<objc/objc-internal.h>)
-#include <objc/objc-internal.h>
-#else
-extern "C" {
-id objc_loadWeakRetained(id*);
-id objc_initWeak(id*, id);
-void objc_destroyWeak(id*);
-void objc_copyWeak(id*, id*);
-void objc_moveWeak(id*, id*);
-}
-#endif
+#include <wtf/spi/cocoa/objcSPI.h>
 
 namespace WTF {
 
 template<typename T> class WeakObjCPtr {
 public:
-    typedef typename std::remove_pointer<T>::type ValueType;
+    using ValueType = typename std::remove_pointer<T>::type;
 
-    WeakObjCPtr()
-        : m_weakReference(nullptr)
-    {
-    }
+    WeakObjCPtr() = default;
 
     WeakObjCPtr(ValueType *ptr)
+#if __has_feature(objc_arc)
+        : m_weakReference(ptr)
+#endif
     {
+#if !__has_feature(objc_arc)
         objc_initWeak(&m_weakReference, ptr);
+#endif
     }
 
+#if !__has_feature(objc_arc)
     WeakObjCPtr(const WeakObjCPtr& other)
     {
-        objc_copyWeak(&m_weakReference, const_cast<id*>(&other.m_weakReference));
+        objc_copyWeak(&m_weakReference, &other.m_weakReference);
     }
 
     WeakObjCPtr(WeakObjCPtr&& other)
@@ -71,10 +63,15 @@ public:
     {
         objc_destroyWeak(&m_weakReference);
     }
+#endif
 
     WeakObjCPtr& operator=(ValueType *ptr)
     {
+#if __has_feature(objc_arc)
+        m_weakReference = ptr;
+#else
         objc_storeWeak(&m_weakReference, ptr);
+#endif
 
         return *this;
     }
@@ -86,18 +83,31 @@ public:
 
     RetainPtr<ValueType> get() const
     {
-        return adoptNS(objc_loadWeakRetained(const_cast<id*>(&m_weakReference)));
+#if __has_feature(objc_arc)
+        return static_cast<ValueType *>(m_weakReference);
+#else
+        return adoptNS(objc_loadWeakRetained(&m_weakReference));
+#endif
     }
 
     ValueType *getAutoreleased() const
     {
-        return static_cast<ValueType *>(objc_loadWeak(const_cast<id*>(&m_weakReference)));
+#if __has_feature(objc_arc)
+        return static_cast<ValueType *>(m_weakReference);
+#else
+        return static_cast<ValueType *>(objc_loadWeak(&m_weakReference));
+#endif
+
     }
 
     explicit operator ValueType *() const { return getAutoreleased(); }
 
 private:
-    id m_weakReference;
+#if __has_feature(objc_arc)
+    mutable __weak id m_weakReference { nullptr };
+#else
+    mutable id m_weakReference { nullptr };
+#endif
 };
 
 } // namespace WTF

@@ -127,7 +127,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @interface WKPDFPluginAccessibilityObject : NSObject {
     PDFLayerController *_pdfLayerController;
-    NSObject *_parent;
+    __unsafe_unretained NSObject *_parent;
     WebKit::PDFPlugin* _pdfPlugin;
 }
 

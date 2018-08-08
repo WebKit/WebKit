@@ -224,7 +224,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
         [_webViewPlaceholder.get() setLayer:[CALayer layer]];
         [_webViewPlaceholder.get() setWantsLayer:YES];
     }
-    [[_webViewPlaceholder.get() layer] setContents:(id)webViewContents.get()];
+    [[_webViewPlaceholder.get() layer] setContents:(__bridge id)webViewContents.get()];
     _scrollPosition = [_webView _mainCoreFrame]->view()->scrollPosition();
     [self _swapView:_webView with:_webViewPlaceholder.get()];
     

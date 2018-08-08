@@ -410,7 +410,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 - (void)_cancelOutstandingChecks
 {
     if (_checksInProgress) {
-        CFSetApplyFunction((CFSetRef)_checksInProgress, cancelOutstandingCheck, NULL);
+        CFSetApplyFunction((__bridge CFSetRef)_checksInProgress, cancelOutstandingCheck, NULL);
         [_checksInProgress release];
         _checksInProgress = nil;
     }

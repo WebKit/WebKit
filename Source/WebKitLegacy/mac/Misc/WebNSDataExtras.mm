@@ -36,7 +36,7 @@
 
 - (NSString *)_web_capitalizeRFC822HeaderFieldName
 {
-    CFStringRef name = (CFStringRef)self;
+    CFStringRef name = (__bridge CFStringRef)self;
     NSString *result = nil;
 
     CFIndex len = CFStringGetLength(name);
@@ -82,13 +82,13 @@
     }
     if (somethingChanged) {
         if (useUniCharPtr)
-            result = (NSString *)CFStringCreateWithCharactersNoCopy(NULL, uniCharPtr, len, NULL);
+            result = CFBridgingRelease(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, uniCharPtr, len, nullptr));
         else
-            result = (NSString *)CFStringCreateWithCStringNoCopy(NULL, charPtr, kCFStringEncodingISOLatin1, NULL);
+            result = CFBridgingRelease(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, charPtr, kCFStringEncodingISOLatin1, nullptr));
     } else
-        result = [self retain];
+        result = self;
 
-    return [result autorelease];
+    return result;
 }
 
 @end
@@ -311,44 +311,33 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
             }
             // Merge the continuation of the previous header
             NSString *currentValue = [headerFields objectForKey:lastKey];
-            NSString *newValue = (NSString *)CFStringCreateWithBytes(NULL, line, lineLength, kCFStringEncodingISOLatin1, FALSE);
+            NSString *newValue = [[NSString alloc] initWithBytes:line length:lineLength encoding:NSISOLatin1StringEncoding];
             ASSERT(currentValue);
             ASSERT(newValue);
-            NSString *mergedValue = [[NSString alloc] initWithFormat:@"%@%@", currentValue, newValue];
-            [headerFields setObject:(NSString *)mergedValue forKey:lastKey];
+            [headerFields setObject:[currentValue stringByAppendingString:newValue] forKey:lastKey];
             [newValue release];
-            [mergedValue release];
-            // Note: currentValue is autoreleased
         } else {
             // Brand new header
-            const UInt8 *colon;
+            const UInt8* colon;
             for (colon = line; *colon != ':' && colon != eol; colon++) { }
             if (colon == eol) {
                 // malformed header; ignore it and continue
                 continue;
             }
-            lastKey = (NSString *)CFStringCreateWithBytes(NULL, line, colon - line, kCFStringEncodingISOLatin1, FALSE);
+            lastKey = [[NSString alloc] initWithBytes:line length:colon - line encoding:NSISOLatin1StringEncoding];
             [lastKey autorelease];
-            NSString *value = [lastKey _web_capitalizeRFC822HeaderFieldName];
-            lastKey = value;
+            lastKey = [lastKey _web_capitalizeRFC822HeaderFieldName];
             for (colon++; colon != eol; colon++) {
                 if (*colon != ' ' && *colon != '\t')
                     break;
             }
-            if (colon == eol) {
-                value = [[NSString alloc] initWithString:@""];
+            NSString *value = [[NSString alloc] initWithBytes:colon length:eol - colon encoding:NSISOLatin1StringEncoding];
+            if (NSString *oldValue = [headerFields objectForKey:lastKey]) {
                 [value autorelease];
-            } else {
-                value = (NSString *)CFStringCreateWithBytes(NULL, colon, eol-colon, kCFStringEncodingISOLatin1, FALSE);
-                [value autorelease];
+                value = [[NSString alloc] initWithFormat:@"%@, %@", oldValue, value];
             }
-            NSString *oldValue = [headerFields objectForKey:lastKey];
-            if (oldValue) {
-                NSString *newValue = [[NSString alloc] initWithFormat:@"%@, %@", oldValue, value];
-                value = newValue;
-                [newValue autorelease];
-            }
-            [headerFields setObject:(NSString *)value forKey:lastKey];
+            [headerFields setObject:value forKey:lastKey];
+            [value release];
         }
     }
 

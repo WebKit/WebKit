@@ -31,16 +31,11 @@
 #import <wtf/Assertions.h>
 
 @implementation NSDictionary (WebNSDictionaryExtras)
+
 -(NSNumber *)_webkit_numberForKey:(id)key
 {
     id object = [self objectForKey:key];
     return [object isKindOfClass:[NSNumber class]] ? object : nil;
-}
-
--(int)_webkit_intForKey:(NSString *)key
-{
-    NSNumber *number = [self _webkit_numberForKey:key];
-    return number == nil ? 0 : [number intValue];
 }
 
 -(NSString *)_webkit_stringForKey:(id)key
@@ -80,50 +75,3 @@
 }
 
 @end
-
-@implementation NSMutableDictionary (WebNSDictionaryExtras)
-
--(void)_webkit_setInt:(int)value forKey:(id)key
-{
-    NSNumber *object = [[NSNumber alloc] initWithInt:value];
-    [self setObject:object forKey:key];
-    [object release];
-}
-
--(void)_webkit_setFloat:(float)value forKey:(id)key
-{
-    NSNumber *object = [[NSNumber alloc] initWithFloat:value];
-    [self setObject:object forKey:key];
-    [object release];
-}
-
--(void)_webkit_setBool:(BOOL)value forKey:(id)key
-{
-    NSNumber *object = [[NSNumber alloc] initWithBool:value];
-    [self setObject:object forKey:key];
-    [object release];
-}
-
-- (void)_webkit_setLongLong:(long long)value forKey:(id)key
-{
-    NSNumber *object = [[NSNumber alloc] initWithLongLong:value];
-    [self setObject:object forKey:key];
-    [object release];
-}
-
-- (void)_webkit_setUnsignedLongLong:(unsigned long long)value forKey:(id)key
-{
-    NSNumber *object = [[NSNumber alloc] initWithUnsignedLongLong:value];
-    [self setObject:object forKey:key];
-    [object release];
-}
-
-- (void)_webkit_setUnsignedInt:(unsigned)value forKey:(id)key
-{
-    NSNumber *object = [[NSNumber alloc] initWithUnsignedInt:value];
-    [self setObject:object forKey:key];
-    [object release];
-}
-
-@end
-

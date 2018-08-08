@@ -117,11 +117,11 @@ static NSString *preferredBundleLocalizationName()
     LangCode languageCode;
     RegionCode regionCode;
 
-    Boolean success = CFLocaleGetLanguageRegionEncodingForLocaleIdentifier((CFStringRef)language, &languageCode, &regionCode, nullptr, nullptr);
+    Boolean success = CFLocaleGetLanguageRegionEncodingForLocaleIdentifier((__bridge CFStringRef)language, &languageCode, &regionCode, nullptr, nullptr);
     if (!success)
         return @"en_US";
 
-    return adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes(0, languageCode, regionCode)).bridgingAutorelease();
+    return CFBridgingRelease(CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes(0, languageCode, regionCode));
 }
 
 bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN)

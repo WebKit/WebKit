@@ -33,6 +33,7 @@
 #import "WebPreferenceKeysPrivate.h"
 #import "WebSelectionServiceController.h"
 #import "WebViewGroup.h"
+#import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/HistoryItem.h>

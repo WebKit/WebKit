@@ -49,23 +49,23 @@
 
 - (void)registerWebView:(WebView *)webView
 {
-    ASSERT(!_registeredWebViews.contains(webView));
-    _registeredWebViews.add(webView);
+    ASSERT(!_registeredWebViews.contains((__bridge CFTypeRef)webView));
+    _registeredWebViews.add((__bridge CFTypeRef)webView);
 }
 
 - (void)unregisterWebView:(WebView *)webView
 {
-    ASSERT(_registeredWebViews.contains(webView));
-    _registeredWebViews.remove(webView);
+    ASSERT(_registeredWebViews.contains((__bridge CFTypeRef)webView));
+    _registeredWebViews.remove((__bridge CFTypeRef)webView);
 }
 
 - (void)showNotification:(WebNotification *)notification fromWebView:(WebView *)webView
 {
-    ASSERT(_registeredWebViews.contains(webView));
+    ASSERT(_registeredWebViews.contains((__bridge CFTypeRef)webView));
 
     uint64_t notificationID = [notification notificationID];
     _notifications.add(notificationID, notification);
-    _notificationViewMap.add(notificationID, webView);
+    _notificationViewMap.add(notificationID, (__bridge CFTypeRef)webView);
 
     [webView _notificationDidShow:notificationID];
 }
@@ -75,7 +75,7 @@
     uint64_t notificationID = [notification notificationID];
     ASSERT(_notifications.contains(notificationID));
 
-    [_notificationViewMap.get(notificationID) _notificationsDidClose:[NSArray arrayWithObject:[NSNumber numberWithUnsignedLongLong:notificationID]]];
+    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationsDidClose:[NSArray arrayWithObject:[NSNumber numberWithUnsignedLongLong:notificationID]]];
 }
 
 - (void)notificationDestroyed:(WebNotification *)notification
@@ -118,7 +118,7 @@
 - (void)simulateWebNotificationClick:(uint64_t)notificationID
 {
     ASSERT(_notifications.contains(notificationID));
-    [_notificationViewMap.get(notificationID) _notificationDidClick:notificationID];
+    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationDidClick:notificationID];
 }
 
 - (WebNotificationPermission)policyForOrigin:(WebSecurityOrigin *)origin

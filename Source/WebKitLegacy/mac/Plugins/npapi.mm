@@ -73,7 +73,7 @@ NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 WebNetscapePluginView *pluginViewForInstance(NPP instance)
 {
     if (instance && instance->ndata)
-        return (WebNetscapePluginView *)instance->ndata;
+        return (__bridge WebNetscapePluginView *)instance->ndata;
     else
         return [WebNetscapePluginView currentPluginView];
 }

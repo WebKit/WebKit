@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKCrashReporter.h"
+#pragma once
 
-#import <cstdlib>
-#import "CrashReporterClientSPI.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-// Avoid having to link with libCrashReporterClient.a
-CRASH_REPORTER_CLIENT_HIDDEN
-struct crashreporter_annotations_t gCRAnnotations
-__attribute__((section("__DATA," CRASHREPORTER_ANNOTATIONS_SECTION)))
-    = { CRASHREPORTER_ANNOTATIONS_VERSION, 0, 0, 0, 0, 0, 0, 0 };
+#include <objc/objc-internal.h>
 
-namespace WebKit {
+#endif
 
-static void setCrashLogMessage(const char* message)
-{
-    // We have to copy the string because CRSetCrashLogMessage doesn't.
-    char* copiedMessage = message ? strdup(message) : nullptr;
+WTF_EXTERN_C_BEGIN
 
-    CRSetCrashLogMessage(copiedMessage);
+void* objc_autoreleasePoolPush(void);
+void objc_autoreleasePoolPop(void* context);
 
-    // Delete the message from last time, so we don't keep leaking messages.
-    static char* previousCopiedCrashLogMessage;
-    std::free(std::exchange(previousCopiedCrashLogMessage, copiedMessage));
-}
+#ifdef __OBJC__
+id objc_loadWeakRetained(id*);
+id objc_initWeak(id*, id);
+void objc_destroyWeak(id*);
+void objc_copyWeak(id*, id*);
+void objc_moveWeak(id*, id*);
+#endif
 
-void setCrashReportApplicationSpecificInformation(CFStringRef infoString)
-{
-    setCrashLogMessage([(__bridge NSString *)infoString UTF8String]);
-}
-
-}
+WTF_EXTERN_C_END

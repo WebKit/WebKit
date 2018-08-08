@@ -636,14 +636,14 @@ public:
 
 private:
     JSGlobalContextRef m_context;
-    HashMap<JSValueRef, id> m_objectMap;
+    HashMap<JSValueRef, __unsafe_unretained id> m_objectMap;
     Vector<Task> m_worklist;
     Vector<JSC::Strong<JSC::Unknown>> m_jsValues;
 };
 
 inline id JSContainerConvertor::convert(JSValueRef value)
 {
-    HashMap<JSValueRef, id>::iterator iter = m_objectMap.find(value);
+    auto iter = m_objectMap.find(value);
     if (iter != m_objectMap.end())
         return iter->value;
 
@@ -887,7 +887,7 @@ public:
 
 private:
     JSContext *m_context;
-    HashMap<id, JSValueRef> m_objectMap;
+    HashMap<__unsafe_unretained id, JSValueRef> m_objectMap;
     Vector<Task> m_worklist;
     Vector<JSC::Strong<JSC::Unknown>> m_jsValues;
 };

@@ -128,15 +128,6 @@
 }
 
 
-// Deallocate.
-- (void)dealloc {
-
-    // Simple.
-    [super dealloc];
-    
-}
-
-
 // Sink a method invocation.
 - (void)_setFrameNeedsDisplay:(BOOL)needsDisplay {
     

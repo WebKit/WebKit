@@ -31,6 +31,7 @@
 #import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
+#import "WebKitTestRunnerWindow.h"
 #import <Carbon/Carbon.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>

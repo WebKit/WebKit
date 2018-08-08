@@ -764,7 +764,7 @@ public:
 #if PLATFORM(IOS)
     dispatch_barrier_sync(_private->readWriteQueue, ^{
 #endif
-    [_private->values.get() _webkit_setInt:value forKey:_key];
+    [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS)
     });
 #endif
@@ -787,7 +787,7 @@ public:
 #if PLATFORM(IOS)
     dispatch_barrier_sync(_private->readWriteQueue, ^{
 #endif
-    [_private->values.get() _webkit_setUnsignedInt:value forKey:_key];
+    [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS)
     });
 #endif
@@ -810,7 +810,7 @@ public:
 #if PLATFORM(IOS)
     dispatch_barrier_sync(_private->readWriteQueue, ^{
 #endif
-    [_private->values.get() _webkit_setFloat:value forKey:_key];
+    [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS)
     });
 #endif
@@ -832,7 +832,7 @@ public:
 #if PLATFORM(IOS)
     dispatch_barrier_sync(_private->readWriteQueue, ^{
 #endif
-    [_private->values.get() _webkit_setBool:value forKey:_key];
+    [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS)
     });
 #endif
@@ -855,7 +855,7 @@ public:
 #if PLATFORM(IOS)
     dispatch_barrier_sync(_private->readWriteQueue, ^{
 #endif
-    [_private->values.get() _webkit_setLongLong:value forKey:_key];
+    [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS)
     });
 #endif
@@ -878,7 +878,7 @@ public:
 #if PLATFORM(IOS)
     dispatch_barrier_sync(_private->readWriteQueue, ^{
 #endif
-    [_private->values.get() _webkit_setUnsignedLongLong:value forKey:_key];
+    [_private->values.get() setObject:@(value) forKey:_key];
 #if PLATFORM(IOS)
     });
 #endif

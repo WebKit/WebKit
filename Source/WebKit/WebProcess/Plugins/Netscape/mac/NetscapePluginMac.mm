@@ -741,6 +741,12 @@ static bool isFlagsChangedEvent(const WebKeyboardEvent& keyboardEvent)
     return false;
 }
 
+static NPNSString *convertToNPNNString(const String& string)
+{
+    CFTypeRef releasedString = string.createCFString().autorelease();
+    return static_cast<NPNSString*>(const_cast<void*>(releasedString));
+}
+
 static NPCocoaEvent initializeKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
 {
     NPCocoaEventType eventType;
@@ -763,8 +769,8 @@ static NPCocoaEvent initializeKeyboardEvent(const WebKeyboardEvent& keyboardEven
 
     NPCocoaEvent event = initializeEvent(eventType);
     event.data.key.modifierFlags = modifierFlags(keyboardEvent);
-    event.data.key.characters = reinterpret_cast<NPNSString*>(static_cast<NSString*>(keyboardEvent.text()));
-    event.data.key.charactersIgnoringModifiers = reinterpret_cast<NPNSString*>(static_cast<NSString*>(keyboardEvent.unmodifiedText()));
+    event.data.key.characters = convertToNPNNString(keyboardEvent.text());
+    event.data.key.charactersIgnoringModifiers = convertToNPNNString(keyboardEvent.unmodifiedText());
     event.data.key.isARepeat = keyboardEvent.isAutoRepeat();
     event.data.key.keyCode = keyboardEvent.nativeVirtualKeyCode();
 
@@ -1020,7 +1026,7 @@ void NetscapePlugin::sendComplexTextInput(const String& textInput)
     switch (m_eventModel) {
     case NPEventModelCocoa: {
         NPCocoaEvent event = initializeEvent(NPCocoaEventTextInput);
-        event.data.text.text = reinterpret_cast<NPNSString*>(static_cast<NSString*>(textInput));
+        event.data.text.text = convertToNPNNString(textInput);
         NPP_HandleEvent(&event);
         break;
     }

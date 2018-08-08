@@ -27,17 +27,16 @@
 #import "WebKitTestRunnerEvent.h"
 
 #import "EventSenderProxy.h"
-#import "TestController.h"
 #import "PlatformWebView.h"
-
-using namespace WTR;
+#import "TestController.h"
+#import "WebKitTestRunnerWindow.h"
 
 @implementation WebKitTestRunnerEvent
 
 + (NSPoint)mouseLocation
 {
-    WKPoint location = TestController::singleton().eventSenderProxy()->position();
-    return [TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
+    WKPoint location = WTR::TestController::singleton().eventSenderProxy()->position();
+    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
 }
 
 @end

@@ -29,7 +29,9 @@
 #import "WebNodeHighlighter.h"
 
 #import "DOMNodeInternal.h"
+#import "WebFrameView.h"
 #import "WebNodeHighlight.h"
+#import "WebNodeHighlightView.h"
 #import "WebViewInternal.h"
 #import <WebCore/Page.h>
 

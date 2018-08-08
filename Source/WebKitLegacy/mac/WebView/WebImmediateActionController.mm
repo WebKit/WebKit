@@ -32,7 +32,7 @@
 #import "DOMRangeInternal.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
-#import "WebHTMLView.h"
+#import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
@@ -145,11 +145,12 @@ using namespace WebCore;
 
 - (void)performHitTestAtPoint:(NSPoint)viewPoint
 {
-    Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
+    Frame* coreFrame = core([_webView _selectedOrMainFrame]);
     if (!coreFrame)
         return;
+
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(viewPoint));
-    coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+    coreFrame->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
 
     if (Element* element = _hitTestResult.targetElement())
         _contentPreventsDefault = element->dispatchMouseForceWillBegin();
@@ -205,10 +206,9 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
-    if (!coreFrame)
-        return;
-    coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
+    if (Frame* coreFrame = [_webView _mainCoreFrame])
+        coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
+
     if (_contentPreventsDefault)
         return;
 
@@ -220,12 +220,7 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    NSView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
-    if (![documentView isKindOfClass:[WebHTMLView class]])
-        return;
-
-    Frame* coreFrame = core([(WebHTMLView *)documentView _frame]);
-    if (coreFrame) {
+    if (Frame* coreFrame = [_webView _mainCoreFrame]) {
         ImmediateActionStage lastStage = coreFrame->eventHandler().immediateActionStage();
         if (lastStage == ImmediateActionStage::ActionUpdated)
             coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
@@ -244,10 +239,8 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
-    if (!coreFrame)
-        return;
-    coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
+    if (Frame* coreFrame = [_webView _mainCoreFrame])
+        coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 
     [_webView _setTextIndicatorAnimationProgress:1];
     [_webView _setMaintainsInactiveSelection:NO];

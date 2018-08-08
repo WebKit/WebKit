@@ -68,7 +68,7 @@ typedef struct {
     NPEventModel eventModel;
 #endif
 #ifdef XP_MACOSX
-    void* coreAnimationLayer;
+    const void* coreAnimationLayer;
 #endif
     NPWindow lastWindow;
 } PluginObject;
@@ -83,7 +83,7 @@ extern bool testDocumentOpen(NPP npp);
 extern bool testWindowOpen(NPP npp);
 
 #ifdef XP_MACOSX
-extern void* createCoreAnimationLayer();
+extern const void* createCoreAnimationLayer();
 #endif
 
 #endif

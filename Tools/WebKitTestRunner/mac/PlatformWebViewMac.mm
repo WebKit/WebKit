@@ -29,6 +29,7 @@
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
 #import "WebKitTestRunnerDraggingInfo.h"
+#import "WebKitTestRunnerWindow.h"
 #import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
@@ -37,93 +38,21 @@
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 #if WK_API_ENABLED
-@interface WKWebView (Details)
+@interface WKWebView ()
 - (WKPageRef)_pageForTesting;
 @end
 #endif
 
 using namespace WTR;
 
+// FIXME: Move to NSWindowSPI.h.
 enum {
     _NSBackingStoreUnbuffered = 3
 };
 
-@interface WebKitTestRunnerWindow : NSWindow {
-    PlatformWebView* _platformWebView;
-    NSPoint _fakeOrigin;
-}
-@property (nonatomic, assign) PlatformWebView* platformWebView;
-@end
-
-static Vector<WebKitTestRunnerWindow*> allWindows;
-
-@implementation WebKitTestRunnerWindow
-@synthesize platformWebView = _platformWebView;
-
-+ (NSWindow *)_WTR_keyWindow
-{
-    size_t i = allWindows.size();
-    while (i) {
-        if ([allWindows[i] isKeyWindow])
-            return allWindows[i];
-        --i;
-    }
-
-    return nil;
-}
-
-- (instancetype)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
-{
-    allWindows.append(self);
-    return [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
-}
-
-- (void)dealloc
-{
-    allWindows.removeFirst(self);
-    ASSERT(!allWindows.contains(self));
-    [super dealloc];
-}
-
-- (BOOL)isKeyWindow
-{
-    return _platformWebView ? _platformWebView->windowIsKey() : YES;
-}
-
-- (void)setFrameOrigin:(NSPoint)point
-{
-    _fakeOrigin = point;
-}
-
-- (void)setFrame:(NSRect)windowFrame display:(BOOL)displayViews animate:(BOOL)performAnimation
-{
-    NSRect currentFrame = [super frame];
-
-    _fakeOrigin = windowFrame.origin;
-
-    [super setFrame:NSMakeRect(currentFrame.origin.x, currentFrame.origin.y, windowFrame.size.width, windowFrame.size.height) display:displayViews animate:performAnimation];
-}
-
-- (void)setFrame:(NSRect)windowFrame display:(BOOL)displayViews
-{
-    NSRect currentFrame = [super frame];
-
-    _fakeOrigin = windowFrame.origin;
-
-    [super setFrame:NSMakeRect(currentFrame.origin.x, currentFrame.origin.y, windowFrame.size.width, windowFrame.size.height) display:displayViews];
-}
-
-- (NSRect)frameRespectingFakeOrigin
-{
-    NSRect currentFrame = [self frame];
-    return NSMakeRect(_fakeOrigin.x, _fakeOrigin.y, currentFrame.size.width, currentFrame.size.height);
-}
-@end
-
+// FIXME: Move to NSWindowSPI.h.
 @interface NSWindow ()
-
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
-
 @end
 
 namespace WTR {
@@ -187,14 +116,7 @@ PlatformWebView::~PlatformWebView()
 
 PlatformWindow PlatformWebView::keyWindow()
 {
-    size_t i = allWindows.size();
-    while (i) {
-        --i;
-        if ([allWindows[i] isKeyWindow])
-            return allWindows[i];
-    }
-
-    return nil;
+    return [WebKitTestRunnerWindow _WTR_keyWindow];
 }
 
 WKPageRef PlatformWebView::page()

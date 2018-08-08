@@ -644,10 +644,10 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 - (NSData *)data
 {
     if (_entriesByDate->isEmpty()) {
-        static NSData *emptyHistoryData = (NSData *)CFDataCreate(0, 0, 0);
+        static NSData *emptyHistoryData = [[NSData alloc] init];
         return emptyHistoryData;
     }
-    
+
     // Ignores the date and item count limits; these are respected when loading instead of when saving, so
     // that clients can learn of discarded items by listening to WebHistoryItemsDiscardedWhileLoadingNotification.
     WebHistoryWriter writer(_entriesByDate.get());

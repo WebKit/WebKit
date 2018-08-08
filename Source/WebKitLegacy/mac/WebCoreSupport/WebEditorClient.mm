@@ -45,7 +45,7 @@
 #import "WebEditingDelegatePrivate.h"
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
-#import "WebHTMLView.h"
+#import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
 #import "WebKitLogging.h"
 #import "WebKitVersionChecks.h"
@@ -772,7 +772,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     auto* frame = downcast<Node>(event->target())->document().frame();
 #if !PLATFORM(IOS)
-    WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
+    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:event savingCommands:NO])
         event->setDefaultHandled();
 #else
@@ -787,7 +787,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 #if !PLATFORM(IOS)
     // FIXME: Switch to WebKit2 model, interpreting the event before it's sent down to WebCore.
     auto* frame = downcast<Node>(event->target())->document().frame();
-    WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
+    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:event savingCommands:YES])
         event->setDefaultHandled();
 #else
