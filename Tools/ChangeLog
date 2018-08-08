@@ -1,3 +1,9 @@
+2018-08-08  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unreviewed, add myself to committers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-08-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234314, r234320, and r234321.

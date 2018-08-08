@@ -163,7 +163,8 @@
       ],
       "nicks" : [
          "akeerthi"
-      ]
+      ],
+      "status" : "committer"
    },
    "Adobe Bug Tracker" : {
       "class" : "bot",
