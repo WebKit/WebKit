@@ -200,24 +200,28 @@ IORegistryGPUID gpuIDForDisplay(PlatformDisplayID displayID)
 
 IORegistryGPUID gpuIDForDisplayMask(GLuint displayMask)
 {
-    GLint numRenderers;
-    CGLRendererInfoObj rendererInfo;
+    GLint numRenderers = 0;
+    CGLRendererInfoObj rendererInfo = nullptr;
     CGLError error = CGLQueryRendererInfo(displayMask, &rendererInfo, &numRenderers);
-    ASSERT(error == kCGLNoError);
+    if (!numRenderers || !rendererInfo || error != kCGLNoError)
+        return 0;
 
     // The 0th renderer should not be the software renderer.
     GLint isAccelerated;
     error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPAccelerated, &isAccelerated);
-    ASSERT(error == kCGLNoError);
-    ASSERT(isAccelerated);
+    if (!isAccelerated || error != kCGLNoError)
+        return 0;
 
-    GLint gpuIDLow;
-    GLint gpuIDHigh;
+    GLint gpuIDLow = 0;
+    GLint gpuIDHigh = 0;
 
     error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDLow, &gpuIDLow);
-    ASSERT(error == kCGLNoError);
+    if (error != kCGLNoError)
+        return 0;
+
     error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDHigh, &gpuIDHigh);
-    ASSERT(error == kCGLNoError);
+    if (error != kCGLNoError)
+        return 0;
 
     return (IORegistryGPUID) gpuIDHigh << 32 | gpuIDLow;
 }
