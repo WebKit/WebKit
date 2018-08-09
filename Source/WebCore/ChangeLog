@@ -1,3 +1,14 @@
+2018-08-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        run-bindings-tests is not Win32-compatible
+        https://bugs.webkit.org/show_bug.cgi?id=188424
+
+        Reviewed by Fujii Hironori.
+
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        Ensure that we fall back to cl.exe if CC env var is not set on Windows.
+
 2018-08-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r228260): Events handled by input method invoke default event handler

@@ -1,3 +1,15 @@
+2018-08-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        run-bindings-tests is not Win32-compatible
+        https://bugs.webkit.org/show_bug.cgi?id=188424
+
+        Reviewed by Fujii Hironori.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.main):
+        Stop leaking file descriptors.
+        (See https://www.logilab.org/blogentry/17873 for details, though the solution here is even simpler.)
+
 2018-08-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix possible null dereference in WebBackForwardList::restoreFromState

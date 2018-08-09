@@ -176,31 +176,20 @@ class BindingsTests:
         all_tests_passed = True
 
         input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
-        supplemental_dependency_file = tempfile.mkstemp()[1]
-        window_constructors_file = tempfile.mkstemp()[1]
-        workerglobalscope_constructors_file = tempfile.mkstemp()[1]
-        dedicatedworkerglobalscope_constructors_file = tempfile.mkstemp()[1]
-        serviceworkerglobalscope_constructors_file = tempfile.mkstemp()[1]
-        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file):
+        supplemental_dependency_file = tempfile.NamedTemporaryFile()
+        window_constructors_file = tempfile.NamedTemporaryFile()
+        workerglobalscope_constructors_file = tempfile.NamedTemporaryFile()
+        dedicatedworkerglobalscope_constructors_file = tempfile.NamedTemporaryFile()
+        serviceworkerglobalscope_constructors_file = tempfile.NamedTemporaryFile()
+        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file.name, window_constructors_file.name, workerglobalscope_constructors_file.name, dedicatedworkerglobalscope_constructors_file.name, serviceworkerglobalscope_constructors_file.name):
             print('Failed to generate a supplemental dependency file.')
-            os.remove(supplemental_dependency_file)
-            os.remove(window_constructors_file)
-            os.remove(workerglobalscope_constructors_file)
-            os.remove(dedicatedworkerglobalscope_constructors_file)
-            os.remove(serviceworkerglobalscope_constructors_file)
             return -1
 
         for generator in self.generators:
             input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
             reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
-            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file):
+            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file.name):
                 all_tests_passed = False
-
-        os.remove(supplemental_dependency_file)
-        os.remove(window_constructors_file)
-        os.remove(workerglobalscope_constructors_file)
-        os.remove(dedicatedworkerglobalscope_constructors_file)
-        os.remove(serviceworkerglobalscope_constructors_file)
 
         if self.json_file_name:
             json_data = {
