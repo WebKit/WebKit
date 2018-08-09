@@ -1,3 +1,12 @@
+2018-08-08  Keith Miller  <keith_miller@apple.com>
+
+        Array.prototype.sort should throw TypeError if param is a not callable object
+        https://bugs.webkit.org/show_bug.cgi?id=188382
+
+        Reviewed by Saam Barati.
+
+        * test262/expectations.yaml:
+
 2018-08-01  Andy VanWagoner  <andy@vanwagoner.family>
 
         [INTL] Implement hourCycle in DateTimeFormat
