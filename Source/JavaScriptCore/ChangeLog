@@ -1,5 +1,21 @@
 2018-08-08  Keith Miller  <keith_miller@apple.com>
 
+        Array.prototype.sort should call @toLength instead of ">>> 0"
+        https://bugs.webkit.org/show_bug.cgi?id=188430
+
+        Reviewed by Saam Barati.
+
+        Also add a new function to $vm that will fetch a private
+        property. This can be useful for running builtin helper functions.
+
+        * builtins/ArrayPrototype.js:
+        (sort):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionGetPrivateProperty):
+        (JSC::JSDollarVM::finishCreation):
+
+2018-08-08  Keith Miller  <keith_miller@apple.com>
+
         Array.prototype.sort should throw TypeError if param is a not callable object
         https://bugs.webkit.org/show_bug.cgi?id=188382
 

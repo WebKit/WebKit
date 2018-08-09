@@ -603,7 +603,7 @@ function sort(comparator)
 
     let array = @toObject(this, "Array.prototype.sort requires that |this| not be null or undefined");
 
-    let length = array.length >>> 0;
+    let length = @toLength(array.length);
 
     // For compatibility with Firefox and Chrome, do nothing observable
     // to the target array if it has 0 or 1 sortable properties.

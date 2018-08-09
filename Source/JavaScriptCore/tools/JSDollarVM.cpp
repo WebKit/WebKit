@@ -1676,6 +1676,24 @@ static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     return JSValue::encode(func);
 }
 
+static EncodedJSValue JSC_HOST_CALL functionGetPrivateProperty(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (exec->argumentCount() < 2 || !exec->argument(1).isString())
+        return encodedJSUndefined();
+
+    String str = asString(exec->argument(1))->value(exec);
+
+    const Identifier* ident = vm.propertyNames->lookUpPrivateName(Identifier::fromString(exec, str));
+    if (!ident)
+        return throwVMError(exec, scope, "Unknown private name.");
+
+    scope.release();
+    return JSValue::encode(exec->argument(0).get(exec, *ident));
+}
+
 static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -2020,6 +2038,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createDOMJITCheckSubClassObject", functionCreateDOMJITCheckSubClassObject, 0);
     addFunction(vm, "createDOMJITGetterBaseJSObject", functionCreateDOMJITGetterBaseJSObject, 0);
     addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
+    addFunction(vm, "getPrivateProperty", functionGetPrivateProperty, 2);
     addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
 
     addConstructibleFunction(vm, "Root", functionCreateRoot, 0);

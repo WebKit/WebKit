@@ -94,9 +94,10 @@ if (obj[0] !== "x") {
 }
 
 //CHECK#4
-if (obj[4294967295] !== "y") {
-  testFailed('#4: var obj = {}; obj.sort = Array.prototype.sort; obj[] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; obj.sort(); obj[4294967295] == "y"');
-}
+// This test isn't valid since the spec requires toLength on obj.length now.
+// if (obj[4294967295] !== "y") {
+//   testFailed('#4: var obj = {}; obj.sort = Array.prototype.sort; obj[] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; obj.sort(); obj[4294967295] == "y"');
+// }
 
 } catch (ex) {
     sputnikException = ex;

@@ -1,3 +1,17 @@
+2018-08-08  Keith Miller  <keith_miller@apple.com>
+
+        Array.prototype.sort should call @toLength instead of ">>> 0"
+        https://bugs.webkit.org/show_bug.cgi?id=188430
+
+        Reviewed by Saam Barati.
+
+        Remove invalid conformance test expectations. Array.prototype.sort calls toLength, which
+        does not truncate integers.
+
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.11_Array_prototype_sort/S15.4.4.11_A4_T1.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.11_Array_prototype_sort/S15.4.4.11_A4_T2.html:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.11_Array_prototype_sort/S15.4.4.11_A4_T3.html:
+
 2018-08-09  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r234720.

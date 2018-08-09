@@ -90,19 +90,20 @@ if (obj.length !== -4294967294) {
 }
 
 //CHECK#3
-if (obj[0] !== "y") {
-  testFailed('#3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[0] === "y". Actual: ' + (obj[0]));
-}   
+// This test isn't valid since the spec requires toLength on obj.length now.
+// if (obj[0] !== "y") {
+//   testFailed('#3: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[0] === "y". Actual: ' + (obj[0]));
+// }
 
 //CHECK#4
-if (obj[1] !== "z") {
-  testFailed('#4: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[1] === "z". Actual: ' + (obj[1]));
-} 
+// if (obj[1] !== "z") {
+//   testFailed('#4: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[1] === "z". Actual: ' + (obj[1]));
+// }
 
 //CHECK#5
-if (obj[2] !== "x") {
-  testFailed('#5: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[2] === "x". Actual: ' + (obj[2]));
-}  
+// if (obj[2] !== "x") {
+//   testFailed('#5: var obj = {}; obj.sort = Array.prototype.sort; obj[0] = "z"; obj[1] = "y"; obj[2] = "x"; obj.length = -4294967294; obj.sort(); obj[2] === "x". Actual: ' + (obj[2]));
+// }
 
 } catch (ex) {
     sputnikException = ex;
