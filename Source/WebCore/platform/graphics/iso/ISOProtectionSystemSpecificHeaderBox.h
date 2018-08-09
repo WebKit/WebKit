@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2018 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

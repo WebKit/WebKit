@@ -1,3 +1,18 @@
+2018-08-09  Charlie Turner  <cturner@igalia.com>
+
+        Fix copyright headers on new ISO parsing class
+        https://bugs.webkit.org/show_bug.cgi?id=188432
+
+        Unreviewed fix.
+
+        This was left off from a previous bug by mistake, retrospectively
+        adding the correct copyright headers.
+
+        No tests required.
+
+        * platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.cpp:
+        * platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.h:
+
 2018-08-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         run-bindings-tests is not Win32-compatible
