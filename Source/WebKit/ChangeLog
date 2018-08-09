@@ -1,5 +1,14 @@
 2018-08-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix URLSchemeHandler.SyncXHR API test after r234735.
+        https://bugs.webkit.org/show_bug.cgi?id=188358
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        Return after appending data for synchronous loads.  We used to send unused messages.
+
+2018-08-09  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION(234640) Loading stalls in environments without SafariSafeBrowsing framework
         https://bugs.webkit.org/show_bug.cgi?id=188453
         <rdar://problem/43102553>

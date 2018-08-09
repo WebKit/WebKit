@@ -111,9 +111,10 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionTy
 
     if (isSync()) {
         if (m_syncData)
-            m_syncData->append(buffer);
+            m_syncData->append(WTFMove(buffer));
         else
             m_syncData = WTFMove(buffer);
+        return ExceptionType::None;
     }
 
     m_page->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_identifier, IPC::SharedBufferDataReference(buffer.ptr())));
