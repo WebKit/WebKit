@@ -1,3 +1,12 @@
+2018-08-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed follow-up fix for r234720.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.close_and_remove):
+        (BindingsTests.main):
+        Return to the original approach, since this seems to be the simplest cross-platform solution.
+
 2018-08-09  Ali Juma  <ajuma@chromium.org>
 
         Import WPTs for IntersectionObserver

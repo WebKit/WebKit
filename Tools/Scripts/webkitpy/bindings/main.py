@@ -169,6 +169,10 @@ class BindingsTests:
 
         return passed
 
+    def close_and_remove(self, temporary_file):
+        os.close(temporary_file[0])
+        os.remove(temporary_file[1])
+
     def main(self):
         current_scm = detect_scm_system(os.curdir)
         os.chdir(os.path.join(current_scm.checkout_root, 'Source'))
@@ -176,20 +180,31 @@ class BindingsTests:
         all_tests_passed = True
 
         input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
-        supplemental_dependency_file = tempfile.NamedTemporaryFile()
-        window_constructors_file = tempfile.NamedTemporaryFile()
-        workerglobalscope_constructors_file = tempfile.NamedTemporaryFile()
-        dedicatedworkerglobalscope_constructors_file = tempfile.NamedTemporaryFile()
-        serviceworkerglobalscope_constructors_file = tempfile.NamedTemporaryFile()
-        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file.name, window_constructors_file.name, workerglobalscope_constructors_file.name, dedicatedworkerglobalscope_constructors_file.name, serviceworkerglobalscope_constructors_file.name):
+        supplemental_dependency_file = tempfile.mkstemp()
+        window_constructors_file = tempfile.mkstemp()
+        workerglobalscope_constructors_file = tempfile.mkstemp()
+        dedicatedworkerglobalscope_constructors_file = tempfile.mkstemp()
+        serviceworkerglobalscope_constructors_file = tempfile.mkstemp()
+        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file[1], window_constructors_file[1], workerglobalscope_constructors_file[1], dedicatedworkerglobalscope_constructors_file[1], serviceworkerglobalscope_constructors_file[1]):
             print('Failed to generate a supplemental dependency file.')
+            self.close_and_remove(supplemental_dependency_file)
+            self.close_and_remove(window_constructors_file)
+            self.close_and_remove(workerglobalscope_constructors_file)
+            self.close_and_remove(dedicatedworkerglobalscope_constructors_file)
+            self.close_and_remove(serviceworkerglobalscope_constructors_file)
             return -1
 
         for generator in self.generators:
             input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
             reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
-            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file.name):
+            if not self.run_tests(generator, input_directory, reference_directory, supplemental_dependency_file[1]):
                 all_tests_passed = False
+
+        self.close_and_remove(supplemental_dependency_file)
+        self.close_and_remove(window_constructors_file)
+        self.close_and_remove(workerglobalscope_constructors_file)
+        self.close_and_remove(dedicatedworkerglobalscope_constructors_file)
+        self.close_and_remove(serviceworkerglobalscope_constructors_file)
 
         if self.json_file_name:
             json_data = {
