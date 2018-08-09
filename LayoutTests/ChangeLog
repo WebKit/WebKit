@@ -1,3 +1,10 @@
+2018-08-09  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r234720.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/inspector/network/xhr-response-body-expected.txt:
+
 2018-08-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ and WPE gardening. Add a reftest failure expectation.
