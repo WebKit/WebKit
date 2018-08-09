@@ -135,11 +135,7 @@ void MemoryPressureHandler::platformReleaseMemory(Critical)
 
 std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
-    size_t physical = 0;
-    auto footprint = memoryFootprint();
-    if (footprint)
-        physical = footprint.value();
-    return MemoryUsage {processMemoryUsage(), physical};
+    return MemoryUsage {processMemoryUsage(), memoryFootprint()};
 }
 
 

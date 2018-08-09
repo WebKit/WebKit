@@ -146,7 +146,7 @@ static MemoryUsagePolicy policyForFootprint(size_t footprint)
 
 MemoryUsagePolicy MemoryPressureHandler::currentMemoryUsagePolicy()
 {
-    return policyForFootprint(memoryFootprint().value_or(0));
+    return policyForFootprint(memoryFootprint());
 }
 
 void MemoryPressureHandler::shrinkOrDie()
@@ -154,17 +154,16 @@ void MemoryPressureHandler::shrinkOrDie()
     RELEASE_LOG(MemoryPressure, "Process is above the memory kill threshold. Trying to shrink down.");
     releaseMemory(Critical::Yes, Synchronous::Yes);
 
-    auto footprint = memoryFootprint();
-    RELEASE_ASSERT(footprint);
-    RELEASE_LOG(MemoryPressure, "New memory footprint: %zu MB", footprint.value() / MB);
+    size_t footprint = memoryFootprint();
+    RELEASE_LOG(MemoryPressure, "New memory footprint: %zu MB", footprint / MB);
 
-    if (footprint.value() < thresholdForMemoryKill()) {
+    if (footprint < thresholdForMemoryKill()) {
         RELEASE_LOG(MemoryPressure, "Shrank below memory kill threshold. Process gets to live.");
-        setMemoryUsagePolicyBasedOnFootprint(footprint.value());
+        setMemoryUsagePolicyBasedOnFootprint(footprint);
         return;
     }
 
-    WTFLogAlways("Unable to shrink memory footprint of process (%zu MB) below the kill thresold (%zu MB). Killed\n", footprint.value() / MB, thresholdForMemoryKill() / MB);
+    WTFLogAlways("Unable to shrink memory footprint of process (%zu MB) below the kill thresold (%zu MB). Killed\n", footprint / MB, thresholdForMemoryKill() / MB);
     RELEASE_ASSERT(m_memoryKillCallback);
     m_memoryKillCallback();
 }
@@ -182,17 +181,14 @@ void MemoryPressureHandler::setMemoryUsagePolicyBasedOnFootprint(size_t footprin
 
 void MemoryPressureHandler::measurementTimerFired()
 {
-    auto footprint = memoryFootprint();
-    if (!footprint)
-        return;
-
-    RELEASE_LOG(MemoryPressure, "Current memory footprint: %zu MB", footprint.value() / MB);
-    if (footprint.value() >= thresholdForMemoryKill()) {
+    size_t footprint = memoryFootprint();
+    RELEASE_LOG(MemoryPressure, "Current memory footprint: %zu MB", footprint / MB);
+    if (footprint >= thresholdForMemoryKill()) {
         shrinkOrDie();
         return;
     }
 
-    setMemoryUsagePolicyBasedOnFootprint(footprint.value());
+    setMemoryUsagePolicyBasedOnFootprint(footprint);
 
     switch (m_memoryUsagePolicy) {
     case MemoryUsagePolicy::Unrestricted:
@@ -205,7 +201,7 @@ void MemoryPressureHandler::measurementTimerFired()
         break;
     }
 
-    if (processState() == WebsamProcessState::Active && footprint.value() > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive, m_pageCount))
+    if (processState() == WebsamProcessState::Active && footprint > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive, m_pageCount))
         doesExceedInactiveLimitWhileActive();
     else
         doesNotExceedInactiveLimitWhileActive();

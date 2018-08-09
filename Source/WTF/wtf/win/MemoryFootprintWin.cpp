@@ -35,7 +35,7 @@
 
 namespace WTF {
 
-std::optional<size_t> memoryFootprint()
+size_t memoryFootprint()
 {
     // We would like to calculate size of private working set.
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684891(v=vs.85).aspx
@@ -46,7 +46,7 @@ std::optional<size_t> memoryFootprint()
     // > memory demand increases.
     Win32Handle process(OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, GetCurrentProcessId()));
     if (!process.isValid())
-        return std::nullopt;
+        return 0;
 
     auto countSizeOfPrivateWorkingSet = [] (const PSAPI_WORKING_SET_INFORMATION& workingSets) {
         constexpr const size_t pageSize = 4 * KB;
@@ -81,7 +81,7 @@ std::optional<size_t> memoryFootprint()
             return countSizeOfPrivateWorkingSet(*workingSets);
 
         if (GetLastError() != ERROR_BAD_LENGTH)
-            return std::nullopt;
+            return 0;
         numberOfEntries = updateNumberOfEntries(workingSets->NumberOfEntries);
     }
 }

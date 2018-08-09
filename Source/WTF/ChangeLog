@@ -1,3 +1,37 @@
+2018-08-09  Saam Barati  <sbarati@apple.com>
+
+        memoryFootprint should return size_t not optional<size_t>
+        https://bugs.webkit.org/show_bug.cgi?id=188444
+
+        Reviewed by Simon Fraser.
+
+        We're now going to return zero instead of returning nullopt on failure.
+        There was a lot of code dancing around memoryFootprint failing for no
+        good reason.
+        
+        Users of this API were previously doing this on failure:
+        - Treating it as zero (this was the most common user).
+        - Crashing.
+        - Bailing out early and not changing our memory pressure state. This change
+        has the effect that instead of not changing our memory pressure state on
+        failure, we will go back to thinking we're not under memory pressure. Since
+        we relied on this API not failing to do anything useful (like kill the process
+        or release memory), this won't change our behavior here in a meaningful way.
+
+        * wtf/MemoryFootprint.h:
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::currentMemoryUsagePolicy):
+        (WTF::MemoryPressureHandler::shrinkOrDie):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        * wtf/cocoa/MemoryFootprintCocoa.cpp:
+        (WTF::memoryFootprint):
+        * wtf/linux/MemoryFootprintLinux.cpp:
+        (WTF::memoryFootprint):
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        * wtf/win/MemoryFootprintWin.cpp:
+        (WTF::memoryFootprint):
+
 2018-08-05  Darin Adler  <darin@apple.com>
 
         [Cocoa] More tweaks and refactoring to prepare for ARC

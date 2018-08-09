@@ -1,3 +1,13 @@
+2018-08-09  Saam Barati  <sbarati@apple.com>
+
+        memoryFootprint should return size_t not optional<size_t>
+        https://bugs.webkit.org/show_bug.cgi?id=188444
+
+        Reviewed by Simon Fraser.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformDraw):
+
 2018-08-09  Ali Juma  <ajuma@chromium.org>
 
         Update IDL for IntersectionObserverEntry and IntersectionObserverEntryInit

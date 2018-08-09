@@ -458,10 +458,7 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
 
     static CGColorRef colorForLabels = createColor(0.9, 0.9, 0.9, 1);
     showText(context, 10, 20, colorForLabels, String::format("        CPU: %g", data.cpu.last()));
-    if (auto footprint = memoryFootprint())
-        showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(*footprint));
-    else
-        showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(data.totalDirtySize.last()));
+    showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(memoryFootprint()));
     showText(context, 10, 40, colorForLabels, "   External: " + formatByteNumber(data.totalExternalSize.last()));
 
     float y = 55;

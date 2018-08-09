@@ -47,12 +47,12 @@ static void forEachLine(FILE* file, Functor functor)
 }
 #endif
 
-std::optional<size_t> memoryFootprint()
+size_t memoryFootprint()
 {
 #if OS(LINUX)
     FILE* file = fopen("/proc/self/smaps", "r");
     if (!file)
-        return std::nullopt;
+        return 0;
 
     unsigned long totalPrivateDirtyInKB = 0;
     bool isAnonymous = false;
@@ -87,7 +87,7 @@ std::optional<size_t> memoryFootprint()
     fclose(file);
     return totalPrivateDirtyInKB * KB;
 #endif
-    return std::nullopt;
+    return 0;
 }
 
 }
