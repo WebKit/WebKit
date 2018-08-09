@@ -1,3 +1,12 @@
+2018-08-09  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION (r234330): 3 legacy-animation-engine/compositing tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=188357
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-08-09  Ali Juma  <ajuma@chromium.org>
 
         Update IDL for IntersectionObserverEntry and IntersectionObserverEntryInit
