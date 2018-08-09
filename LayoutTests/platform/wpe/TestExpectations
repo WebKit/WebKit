@@ -1332,3 +1332,5 @@ webkit.org/b/188161 [ Debug ] webgl/1.0.2/conformance/context/context-lost-resto
 
 webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Crash ]
 webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-true.html [ Crash ]
+
+webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]

@@ -1,3 +1,12 @@
+2018-08-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ and WPE gardening. Add a reftest failure expectation.
+        Update a WPT EME test baseline for the WPE port.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https-expected.txt:
+
 2018-08-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r228260): Events handled by input method invoke default event handler

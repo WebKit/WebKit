@@ -3517,6 +3517,8 @@ webkit.org/b/188217 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
 webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
 webkit.org/b/188220 svg/as-image/svg-image-with-data-uri-background.html [ ImageOnlyFailure ]
 
+webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
