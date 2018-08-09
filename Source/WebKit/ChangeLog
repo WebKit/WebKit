@@ -1,3 +1,28 @@
+2018-08-09  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r232083): WKWebView loses first-party cookies on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=188443
+        <rdar://problem/42991584>
+
+        Reviewed by Chris Dumez.
+
+        Revert the change to set sharedCookieStorage for iOS as it is breaking Kayak.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2018-08-09  Per Arne Vollan  <pvollan@apple.com>
 
         DisplayRefreshMonitorMac should hold a weak pointer to WebPage.

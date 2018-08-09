@@ -96,7 +96,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     initializeNetworkSettings();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
 #endif
 
@@ -192,7 +192,7 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, Function<void ()>&& 
     }
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
 void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));

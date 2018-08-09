@@ -84,7 +84,7 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     String javaScriptConfigurationDirectory;
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
 #if PLATFORM(IOS)

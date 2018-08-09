@@ -250,7 +250,7 @@ private:
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif
 

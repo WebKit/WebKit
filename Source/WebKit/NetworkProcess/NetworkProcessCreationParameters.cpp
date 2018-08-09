@@ -52,7 +52,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
 #endif
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
     encoder << defaultSessionPendingCookies;
@@ -144,7 +144,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.shouldEnableNetworkCacheSpeculativeRevalidation))
         return false;
 #endif
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     if (!decoder.decode(result.uiProcessCookieStorageIdentifier))
         return false;
 #endif

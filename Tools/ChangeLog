@@ -1,3 +1,15 @@
+2018-08-09  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r232083): WKWebView loses first-party cookies on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=188443
+        <rdar://problem/42991584>
+
+        Reviewed by Chris Dumez.
+
+        Skip WebKit.WKHTTPCookieStoreWithoutProcessPool on iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+
 2018-08-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed follow-up fix for r234720.
