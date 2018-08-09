@@ -1,3 +1,21 @@
+2018-08-09  Chris Dumez  <cdumez@apple.com>
+
+        InputType should not interact with an HTMLInputElement is no longer associated with
+        https://bugs.webkit.org/show_bug.cgi?id=188410
+
+        Reviewed by Ryosuke Niwa.
+
+        Clear InputType::m_element when the InputType is no longer associated with the HTMLInputElement
+        because the element changed type. We were already dealing with the InputType no longer being
+        associated with an element because the element died by using a WeakPtr. However, it is conceptually
+        better (more correct) to also clear this pointer if the element is still alive but associated with
+        another InputType.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * html/InputType.h:
+        (WebCore::InputType::detachFromElement):
+
 2018-08-09  Jer Noble  <jer.noble@apple.com>
 
         Video playback is using more power

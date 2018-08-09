@@ -77,6 +77,8 @@ public:
     static Ref<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
 
+    void detachFromElement() { m_element = nullptr; }
+
     static bool themeSupportsDataListUI(InputType*);
 
     virtual const AtomicString& formControlType() const = 0;
@@ -314,7 +316,7 @@ private:
     // Helper for stepUp()/stepDown(). Adds step value * count to the current value.
     ExceptionOr<void> applyStep(int count, AnyStepHandling, TextFieldEventBehavior);
 
-    // Raw pointer because the HTMLInputElement object owns this InputType object.
+    // m_element is null if this InputType is no longer associated with an element (either the element died or changed input type).
     WeakPtr<HTMLInputElement> m_element;
 };
 

@@ -521,6 +521,7 @@ void HTMLInputElement::updateType()
     }
 
     m_inputType->destroyShadowSubtree();
+    m_inputType->detachFromElement();
 
     m_inputType = WTFMove(newType);
     m_inputType->createShadowSubtree();
