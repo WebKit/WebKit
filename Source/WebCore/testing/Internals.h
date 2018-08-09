@@ -662,6 +662,7 @@ public:
 #endif
 
     String audioSessionCategory() const;
+    double preferredAudioBufferSize() const;
 
     void clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&&);
     void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);

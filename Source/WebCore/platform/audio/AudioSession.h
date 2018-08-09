@@ -73,7 +73,7 @@ public:
 
     bool tryToSetActive(bool);
 
-    size_t preferredBufferSize() const;
+    WEBCORE_EXPORT size_t preferredBufferSize() const;
     void setPreferredBufferSize(size_t);
 
     class MutedStateObserver {

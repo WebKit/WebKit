@@ -630,6 +630,7 @@ enum CompositingPolicy {
     void setConsoleMessageListener(StringCallback callback);
 
     DOMString audioSessionCategory();
+    double preferredAudioBufferSize();
 
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
     [Conditional=SERVICE_WORKER] void terminateServiceWorker(ServiceWorker worker);

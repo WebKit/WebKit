@@ -1,3 +1,32 @@
+2018-08-09  Jer Noble  <jer.noble@apple.com>
+
+        Video playback is using more power
+        https://bugs.webkit.org/show_bug.cgi?id=188452
+        <rdar://problem/42298937>
+
+        Reviewed by Eric Carlson.
+
+        Test: TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm
+
+        When the meaning of PlatformMediaSession::Video changed to "video-only", we failed to update
+        MediaSessionManagerCocoa::updateSessionState() to use the new PlatformMediaSession::VideoAudio
+        enum, so Video-only sessions were getting the higher audio buffer size (where it's not needed)
+        and Video-and-Audio sessions were getting the default value.
+
+        To enable testing, add a preferredAudioBufferSize property to Internals. Also, the getter for
+        AudioSession::preferredBufferSize was using the wrong CoreAudio property address, and was
+        always returning 0.
+
+        * platform/audio/AudioSession.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (MediaSessionManagerCocoa::updateSessionState):
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::preferredBufferSize const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::preferredAudioBufferSize const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-08-09  Saam Barati  <sbarati@apple.com>
 
         memoryFootprint should return size_t not optional<size_t>

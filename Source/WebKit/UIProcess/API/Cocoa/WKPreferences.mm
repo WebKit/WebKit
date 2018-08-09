@@ -772,6 +772,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->punchOutWhiteBackgroundsInDarkMode();
 }
 
+- (void)_setLowPowerVideoAudioBufferSizeEnabled:(BOOL)enabled
+{
+    _preferences->setLowPowerVideoAudioBufferSizeEnabled(enabled);
+}
+
+- (BOOL)_lowPowerVideoAudioBufferSizeEnabled
+{
+    return _preferences->lowPowerVideoAudioBufferSizeEnabled();
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {

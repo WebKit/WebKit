@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    window.addEventListener('load', async event => {
+        var context = new webkitAudioContext();
+        context.addEventListener('statechange', statechange);
+        node = context.createBufferSource();
+        node.connect(context.destination);
+        context.resume();
+    });
+    
+    function statechange(event) {
+        var context = event.target;
+        var message = context.state === 'running' ? 'playing' : 'not playing';
+        window.webkit.messageHandlers.testHandler.postMessage(message);
+    }
+    </script>
+</head>
+</html>
+

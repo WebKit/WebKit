@@ -48,7 +48,7 @@ void MediaSessionManagerCocoa::updateSessionState()
     // while having a large enough buffer so that the audio rendering remains stable, hence a computation based on sample rate.
     else if (has(PlatformMediaSession::MediaStreamCapturingAudio))
         AudioSession::sharedSession().setPreferredBufferSize(AudioSession::sharedSession().sampleRate() / 50);
-    else if ((has(PlatformMediaSession::Video) || has(PlatformMediaSession::Audio)) && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled()) {
+    else if ((has(PlatformMediaSession::VideoAudio) || has(PlatformMediaSession::Audio)) && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled()) {
         // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
         // causes media LayoutTests to fail on 10.8.
 

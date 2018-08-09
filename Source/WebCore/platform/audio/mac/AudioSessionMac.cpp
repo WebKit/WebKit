@@ -147,7 +147,7 @@ size_t AudioSession::preferredBufferSize() const
     UInt32 bufferSizeSize = sizeof(bufferSize);
 
     AudioObjectPropertyAddress preferredBufferSizeAddress = {
-        kAudioDevicePropertyBufferFrameSizeRange,
+        kAudioDevicePropertyBufferFrameSize,
         kAudioObjectPropertyScopeGlobal,
         kAudioObjectPropertyElementMaster };
     OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &preferredBufferSizeAddress, 0, 0, &bufferSizeSize, &bufferSize);

@@ -1,3 +1,16 @@
+2018-08-09  Jer Noble  <jer.noble@apple.com>
+
+        Video playback is using more power
+        https://bugs.webkit.org/show_bug.cgi?id=188452
+        <rdar://problem/42298937>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm:
+        (PreferredAudioBufferSize::createView):
+        (PreferredAudioBufferSize::preferredAudioBufferSize const):
+        (TEST_F):
+
 2018-08-09  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(234640) Loading stalls in environments without SafariSafeBrowsing framework
