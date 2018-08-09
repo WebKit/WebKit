@@ -3288,7 +3288,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         keyDownEvent.setWindowsVirtualKeyCode(CompositionEventKeyCode);
         keydown = KeyboardEvent::create(keyDownEvent, &m_frame.windowProxy());
         keydown->setTarget(element);
-        keydown->setDefaultHandled();
+        keydown->setIsDefaultEventHandlerIgnored();
     }
     
     if (accessibilityPreventsEventPropagation(keydown))

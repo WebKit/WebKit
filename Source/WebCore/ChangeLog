@@ -1,3 +1,29 @@
+2018-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r228260): Events handled by input method invoke default event handler
+        https://bugs.webkit.org/show_bug.cgi?id=188370
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by the default event handler being invoked for the "virtual" keydown events
+        generated for input methods. Namely, when Japanese or Chinese input methods swallows TAB key,
+        WebKit should not invoke the default event handler and move the focus during input composition.
+
+        Fixed the bug by adding a new boolean on Event indicating whether the default event handler
+        should be invoked, and restoring the behavior prior to r228260 for these virtual keydown events.
+
+        Test: editing/input/press-tab-during-ime-composition.html
+
+        * dom/Event.h:
+        (WebCore::Event::isDefaultEventHandlerIgnored const): Added.
+        (WebCore::Event::setIsDefaultEventHandlerIgnored): Added.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Don't invoke the default event handler if
+        isDefaultEventHandlerIgnored is set.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::internalKeyEvent): Set isDefaultEventHandlerIgnored. This restores WebKit's
+        behavior prior to r228260.
+
 2018-08-08  Justin Fan  <justin_fan@apple.com>
 
         Prevent collectScreenProperties from crashing Base System

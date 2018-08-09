@@ -1,3 +1,18 @@
+2018-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r228260): Events handled by input method invoke default event handler
+        https://bugs.webkit.org/show_bug.cgi?id=188370
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test. Due to the lack of adequate support of textInputController in WebKitTestRunner,
+        the test is only enabled in WebKit1. The WTR fix is tracked by https://webkit.org/b/188428.
+
+        * editing/input/press-tab-during-ime-composition-expected.txt: Added.
+        * editing/input/press-tab-during-ime-composition.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2018-08-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening
