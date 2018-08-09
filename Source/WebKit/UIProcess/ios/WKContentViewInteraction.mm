@@ -291,7 +291,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @end
 
 @implementation WKFormInputSession {
-    WKContentView *_contentView;
+    WeakObjCPtr<WKContentView> _contentView;
     RetainPtr<WKFocusedElementInfo> _focusedElementInfo;
     RetainPtr<UIView> _customInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
@@ -324,7 +324,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 - (BOOL)isValid
 {
-    return _contentView != nil;
+    return !!_contentView;
 }
 
 - (NSString *)accessoryViewCustomButtonTitle
@@ -391,7 +391,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 - (void)setSuggestions:(NSArray<UITextSuggestion *> *)suggestions
 {
-    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
+    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)[_contentView inputDelegate];
     _suggestions = adoptNS([suggestions copy]);
     [suggestionDelegate setSuggestions:suggestions];
 }
@@ -403,7 +403,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 - (void)invalidate
 {
-    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
+    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)[_contentView inputDelegate];
     [suggestionDelegate setSuggestions:nil];
     _contentView = nil;
 }
@@ -4121,8 +4121,10 @@ static bool isAssistableInputType(InputType type)
     bool delegateImplementsWillStartInputSession = [inputDelegate respondsToSelector:@selector(_webView:willStartInputSession:)];
     bool delegateImplementsDidStartInputSession = [inputDelegate respondsToSelector:@selector(_webView:didStartInputSession:)];
 
-    if (delegateImplementsWillStartInputSession || delegateImplementsDidStartInputSession)
+    if (delegateImplementsWillStartInputSession || delegateImplementsDidStartInputSession) {
+        [_formInputSession invalidate];
         _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self focusedElementInfo:focusedElementInfo.get() requiresStrongPasswordAssistance:_focusRequiresStrongPasswordAssistance]);
+    }
 
     if (delegateImplementsWillStartInputSession)
         [inputDelegate _webView:_webView willStartInputSession:_formInputSession.get()];

@@ -1,3 +1,25 @@
+2018-08-08  Tim Horton  <timothy_horton@apple.com>
+
+        Yet more crashes in MobileSafari under -[WKFormInputSession setSuggestions:]
+        https://bugs.webkit.org/show_bug.cgi?id=188427
+        <rdar://problem/43064672>
+
+        Reviewed by Wenson Hsieh.
+
+        Speculatively fix more crashes seen under setSuggestions.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession isValid]):
+        (-[WKFormInputSession setSuggestions:]):
+        (-[WKFormInputSession invalidate]):
+        Belt-and-suspenders fix: use WeakObjCPtr for WKFormInputSession's WKContentView reference.
+
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        Invalidate the WKFormInputSession before replacing it; we theorize that
+        there is a path in which we get here without having previously called stopAssistingNode.
+        Most of the code is OK with this, but this leaves WKFormInputSession
+        with a raw reference to WKContentView which can later become stale.
+
 2018-08-08  Don Olmstead  <don.olmstead@sony.com>
 
         [Curl] Surface additional NetworkLoadMetrics
