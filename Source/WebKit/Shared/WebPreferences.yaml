@@ -655,14 +655,6 @@ MediaPreloadingEnabled:
   defaultValue: false
   webcoreBinding: RuntimeEnabledFeatures
 
-IntersectionObserverEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Intersection Observer"
-  humanReadableDescription: "Enable Intersection Observer support"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(INTERSECTION_OBSERVER)
-
 InteractiveFormValidationEnabled:
   type: bool
   defaultValue: true
@@ -1145,6 +1137,15 @@ ImageBitmapOffscreenCanvasEnabled:
   humanReadableDescription: "Support for the ImageBitmap and OffscreenCanvas APIs"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
+
+IntersectionObserverEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Intersection Observer"
+  humanReadableDescription: "Enable Intersection Observer support"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(INTERSECTION_OBSERVER)
 
 WebRTCLegacyAPIEnabled:
   type: bool

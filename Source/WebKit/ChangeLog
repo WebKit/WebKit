@@ -1,3 +1,15 @@
+2018-08-09  Ali Juma  <ajuma@chromium.org>
+
+        Import WPTs for IntersectionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=188416
+
+        Reviewed by Simon Fraser.
+
+        Make IntersectionObserver an experimental feature, so that it is enabled in
+        WebKitTestRunner.
+
+        * Shared/WebPreferences.yaml:
+
 2018-08-08  Tim Horton  <timothy_horton@apple.com>
 
         Yet more crashes in MobileSafari under -[WKFormInputSession setSuggestions:]

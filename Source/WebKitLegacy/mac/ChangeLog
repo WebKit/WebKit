@@ -1,3 +1,12 @@
+2018-08-09  Ali Juma  <ajuma@chromium.org>
+
+        Import WPTs for IntersectionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=188416
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferencesPrivate.h:
+
 2018-08-08  Jonathan Bedard  <jbedard@apple.com>
 
         Follow-up build fix for r234685

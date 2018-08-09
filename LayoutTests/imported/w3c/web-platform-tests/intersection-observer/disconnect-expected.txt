@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver should not deliver pending notifications after disconnect(). 
+FAIL First rAF. assert_equals: Initial notification. expected 1 but got 0
+FAIL observer.disconnect() assert_equals: No new notifications. expected 1 but got 0
+

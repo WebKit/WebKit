@@ -1,0 +1,8 @@
+
+PASS Verify that not-intersecting notifications are sent when a target is removed from the DOM tree. 
+FAIL First rAF assert_equals: entries.length expected 1 but got 0
+FAIL root.scrollTop = 150 assert_equals: entries.length expected 2 but got 0
+FAIL root.removeChild(target). assert_equals: entries.length expected 3 but got 0
+FAIL root.insertBefore(target, trailingSpace). assert_equals: entries.length expected 3 but got 0
+FAIL root.scrollTop = 150 after reinserting target. assert_equals: entries.length expected 4 but got 0
+

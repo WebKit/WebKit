@@ -576,6 +576,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setWebAuthenticationEnabled:(BOOL)flag;
 - (BOOL)webAuthenticationEnabled;
 
+- (void)setIntersectionObserverEnabled:(BOOL)flag;
+- (BOOL)intersectionObserverEnabled;
+
 - (void)setIsSecureContextAttributeEnabled:(BOOL)flag;
 - (BOOL)isSecureContextAttributeEnabled;
 

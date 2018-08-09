@@ -1,0 +1,7 @@
+
+PASS IntersectionObserver should only report intersections if root is a containing block ancestor of target. 
+FAIL In containing block and intersecting. assert_equals: entries.length expected 1 but got 0
+FAIL In containing block and not intersecting. assert_equals: entries.length expected 2 but got 0
+FAIL Not in containing block and intersecting. assert_equals: entries.length expected 2 but got 0
+FAIL Not in containing block and not intersecting. assert_equals: entries.length expected 2 but got 0
+

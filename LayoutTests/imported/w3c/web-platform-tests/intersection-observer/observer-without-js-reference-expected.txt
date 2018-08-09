@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver that is unreachable in js should still generate notifications. 
+FAIL First rAF assert_equals: One notification. expected 1 but got 0
+FAIL document.scrollingElement.scrollTop = 300 assert_equals: Two notifications. expected 2 but got 0
+

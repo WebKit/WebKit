@@ -867,6 +867,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setColorFilterEnabled:YES];
     [preferences setCrossOriginWindowPolicySupportEnabled:YES];
     [preferences setServerTimingEnabled:YES];
+    [preferences setIntersectionObserverEnabled:YES];
 }
 
 // Called before each test.
@@ -996,7 +997,6 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
 
     preferences.attachmentElementEnabled = options.enableAttachmentElement;
     preferences.acceleratedDrawingEnabled = options.useAcceleratedDrawing;
-    preferences.intersectionObserverEnabled = options.enableIntersectionObserver;
     preferences.menuItemElementEnabled = options.enableMenuItemElement;
     preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
     preferences.webAuthenticationEnabled = options.enableWebAuthentication;

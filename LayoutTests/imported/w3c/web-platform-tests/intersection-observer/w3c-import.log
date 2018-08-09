@@ -1,0 +1,45 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/bounding-box.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/client-rect.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/containing-block.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/disconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/edge-inclusive-intersection.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/inline-client-rect.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/isIntersecting-change-events.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-thresholds.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-in-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-without-js-reference.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/remove-element.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/root-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-no-root.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-root.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-zero-size-target.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/shadow-content.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/text-target.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/timestamp.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/unclipped-root.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/zero-area-element-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/zero-area-element-visible.html

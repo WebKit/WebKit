@@ -711,7 +711,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetMockScrollbarsEnabled(preferences, options.useMockScrollbars);
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences, options.needsSiteSpecificQuirks);
     WKPreferencesSetAttachmentElementEnabled(preferences, options.enableAttachmentElement);
-    WKPreferencesSetIntersectionObserverEnabled(preferences, options.enableIntersectionObserver);
     WKPreferencesSetMenuItemElementEnabled(preferences, options.enableMenuItemElement);
     WKPreferencesSetModernMediaControlsEnabled(preferences, options.enableModernMediaControls);
     WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication);

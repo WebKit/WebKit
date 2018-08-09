@@ -1,0 +1,9 @@
+
+PASS IntersectionObserver in a single document with explicit root. 
+FAIL First rAF assert_equals: entries.length expected 1 but got 0
+FAIL document.scrollingElement.scrollTop = window.innerHeight. assert_equals: No notifications after scrolling frame. expected 1 but got 0
+FAIL root.scrollTop = 150 with root scrolled into view. assert_equals: entries.length expected 2 but got 0
+FAIL document.scrollingElement.scrollTop = 0. assert_equals: entries.length expected 2 but got 0
+FAIL root.scrollTop = 0 assert_equals: entries.length expected 3 but got 0
+FAIL root.scrollTop = 150 with root scrolled out of view. assert_equals: entries.length expected 4 but got 0
+

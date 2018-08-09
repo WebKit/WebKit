@@ -1,0 +1,6 @@
+1 2 3 4 5
+
+PASS Inline target 
+FAIL First rAF assert_equals: entries.length expected 1 but got 0
+FAIL scroller.scrollLeft = 90 assert_equals: entries.length expected 2 but got 0
+

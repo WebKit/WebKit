@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver should send a not-intersecting notification for a target that gets display:none. 
+FAIL Intersecting notification after first rAF. assert_equals: entries.length expected 1 but got 0
+FAIL Not-intersecting notification after setting display:none on target. assert_equals: entries.length expected 2 but got 0
+FAIL Intersecting notification after removing display:none on target. assert_equals: entries.length expected 3 but got 0
+
