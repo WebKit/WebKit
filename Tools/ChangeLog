@@ -1,3 +1,116 @@
+2018-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Rename and refactor DataInteractionTests and DataInteractionSimulator
+        https://bugs.webkit.org/show_bug.cgi?id=188439
+
+        Reviewed by Andy Estes and Megan Gardner.
+
+        Refactor DataInteractionSimulator (currently used for drag and drop testing on iOS) so that it exists across
+        macOS and iOS, and rename it to DragAndDropSimulator. Additionally, rename DataInteractionTests to
+        DragAndDropTests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm: Renamed from Tools/TestWebKitAPI/Tests/ios/DataInteractionTests.mm.
+        (testIconImage):
+        (testZIPArchive):
+        (-[UIItemProvider registerDataRepresentationForTypeIdentifier:withData:]):
+        (-[TestWKWebView editorContainsImageElement]):
+        (-[TestWKWebView editorValue]):
+        (makeCGRectValue):
+        (checkCGRectIsEqualToCGRectWithLogging):
+        (checkSelectionRectsWithLogging):
+        (checkRichTextTypePrecedesPlainTextType):
+        (checkFirstTypeIsPresentAndSecondTypeIsMissing):
+        (checkTypeIdentifierIsRegisteredAtIndex):
+        (checkEstimatedSize):
+        (checkSuggestedNameAndEstimatedSize):
+        (checkStringArraysAreEqual):
+        (checkDragCaretRectIsContainedInRect):
+        (checkJSONWithLogging):
+        (testIconImageData):
+        (runTestWithTemporaryTextFile):
+        (runTestWithTemporaryFolder):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::setUpTestWebViewForDataTransferItems):
+        (TestWebKitAPI::testDragAndDropOntoTargetElements):
+        (TestWebKitAPI::testIconImageData):
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h: Renamed from Tools/TestWebKitAPI/ios/DataInteractionSimulator.h.
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm: Renamed from Tools/TestWebKitAPI/ios/DataInteractionSimulator.mm.
+        (-[WKWebView dropInteractionDelegate]):
+        (-[WKWebView dragInteractionDelegate]):
+        (-[WKWebView dropInteraction]):
+        (-[WKWebView dragInteraction]):
+        (-[MockDragDropSession initWithItems:location:window:allowMove:]):
+        (-[MockDragDropSession allowsMoveOperation]):
+        (-[MockDragDropSession isRestrictedToDraggingApplication]):
+        (-[MockDragDropSession hasItemsConformingToTypeIdentifiers:]):
+        (-[MockDragDropSession canLoadObjectsOfClass:]):
+        (-[MockDragDropSession canLoadObjectsOfClasses:]):
+        (-[MockDragDropSession items]):
+        (-[MockDragDropSession setItems:]):
+        (-[MockDragDropSession addItems:]):
+        (-[MockDragDropSession locationInView:]):
+        (-[MockDropSession initWithProviders:location:window:allowMove:]):
+        (-[MockDropSession isLocal]):
+        (-[MockDropSession progress]):
+        (-[MockDropSession setProgressIndicatorStyle:]):
+        (-[MockDropSession progressIndicatorStyle]):
+        (-[MockDropSession operationMask]):
+        (-[MockDropSession localDragSession]):
+        (-[MockDropSession hasItemsConformingToTypeIdentifier:]):
+        (-[MockDropSession canCreateItemsOfClass:]):
+        (-[MockDropSession loadObjectsOfClass:completion:]):
+        (-[MockDragSession initWithWindow:allowMove:]):
+        (-[MockDragSession localOperationMask]):
+        (-[MockDragSession externalOperationMask]):
+        (-[MockDragSession session]):
+        (-[MockDragSession localContext]):
+        (-[MockDragSession setLocalContext:]):
+        (dragAndDropEventNames):
+        (-[DragAndDropSimulatorApplication _cancelAllTouches]):
+        (-[DragAndDropSimulator initWithWebView:]):
+        (-[DragAndDropSimulator dealloc]):
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator observedEventNames]):
+        (-[DragAndDropSimulator simulateAllTouchesCanceled:]):
+        (-[DragAndDropSimulator runFrom:to:]):
+        (-[DragAndDropSimulator runFrom:to:additionalItemRequestLocations:]):
+        (-[DragAndDropSimulator finalSelectionRects]):
+        (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):
+        (-[DragAndDropSimulator _enqueuePendingAdditionalItemRequestLocations]):
+        (-[DragAndDropSimulator _sendQueuedAdditionalItemRequest]):
+        (-[DragAndDropSimulator _advanceProgress]):
+        (-[DragAndDropSimulator _currentLocation]):
+        (-[DragAndDropSimulator _scheduleAdvanceProgress]):
+        (-[DragAndDropSimulator sourceItemProviders]):
+        (-[DragAndDropSimulator externalItemProviders]):
+        (-[DragAndDropSimulator setExternalItemProviders:]):
+        (-[DragAndDropSimulator phase]):
+        (-[DragAndDropSimulator liftPreviews]):
+        (-[DragAndDropSimulator lastKnownDragCaretRect]):
+        (-[DragAndDropSimulator waitForInputSession]):
+        (-[DragAndDropSimulator insertedAttachments]):
+        (-[DragAndDropSimulator removedAttachments]):
+        (-[DragAndDropSimulator endDataTransfer]):
+        (-[DragAndDropSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+        (-[DragAndDropSimulator _webView:willUpdateDataInteractionOperationToOperation:forSession:]):
+        (-[DragAndDropSimulator _webView:adjustedDataInteractionItemProvidersForItemProvider:representingObjects:additionalData:]):
+        (-[DragAndDropSimulator _webView:showCustomSheetForElement:]):
+        (-[DragAndDropSimulator _webView:willPerformDropWithSession:]):
+        (-[DragAndDropSimulator _webView:didInsertAttachment:]):
+        (-[DragAndDropSimulator _webView:didRemoveAttachment:]):
+        (-[DragAndDropSimulator _webView:focusShouldStartInputSession:]):
+        (-[DragAndDropSimulator _webView:didStartInputSession:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm: Added.
+        (-[DragAndDropSimulator initWithWebView:]):
+        (-[DragAndDropSimulator dealloc]):
+        (-[DragAndDropSimulator runFrom:to:]):
+        (-[DragAndDropSimulator insertedAttachments]):
+        (-[DragAndDropSimulator removedAttachments]):
+
 2018-08-09  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r232083): WKWebView loses first-party cookies on iOS

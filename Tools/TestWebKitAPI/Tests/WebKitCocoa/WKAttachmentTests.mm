@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "DataInteractionSimulator.h"
+#import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -1194,15 +1194,15 @@ TEST(WKAttachmentTestsMac, InsertPastedFileURLsAsAttachments)
 TEST(WKAttachmentTestsIOS, InsertDroppedImageAsAttachment)
 {
     auto webView = webViewForTestingAttachments();
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item registerData:testImageData() type:(NSString *)kUTTypePNG];
-    [draggingSimulator setExternalItemProviders:@[ item.get() ]];
-    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+    [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
+    [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
-    EXPECT_EQ(1U, [draggingSimulator insertedAttachments].count);
-    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
-    auto attachment = retainPtr([draggingSimulator insertedAttachments].firstObject);
+    EXPECT_EQ(1U, [dragAndDropSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [dragAndDropSimulator removedAttachments].count);
+    auto attachment = retainPtr([dragAndDropSimulator insertedAttachments].firstObject);
     [attachment expectRequestedDataToBe:testImageData()];
     EXPECT_WK_STREQ("public.png", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
 
@@ -1217,17 +1217,17 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageAsAttachment)
 TEST(WKAttachmentTestsIOS, InsertDroppedAttributedStringContainingAttachment)
 {
     auto webView = webViewForTestingAttachments();
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:(NSString *)kUTTypePNG]);
     auto item = adoptNS([[NSItemProvider alloc] init]);
     [item registerObject:[NSAttributedString attributedStringWithAttachment:image.get()] visibility:NSItemProviderRepresentationVisibilityAll];
 
-    [draggingSimulator setExternalItemProviders:@[ item.get() ]];
-    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+    [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
+    [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
-    EXPECT_EQ(1U, [draggingSimulator insertedAttachments].count);
-    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
-    auto attachment = retainPtr([draggingSimulator insertedAttachments].firstObject);
+    EXPECT_EQ(1U, [dragAndDropSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [dragAndDropSimulator removedAttachments].count);
+    auto attachment = retainPtr([dragAndDropSimulator insertedAttachments].firstObject);
 
     auto size = platformImageWithData([attachment synchronouslyRequestData:nil]).size;
     EXPECT_EQ(215., size.width);
@@ -1260,14 +1260,14 @@ TEST(WKAttachmentTestsIOS, InsertDroppedRichAndPlainTextFilesAsAttachments)
     [plainTextItem setSuggestedName:@"world.txt"];
 
     auto webView = webViewForTestingAttachments();
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator setExternalItemProviders:@[ richTextItem.get(), plainTextItem.get() ]];
-    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator setExternalItemProviders:@[ richTextItem.get(), plainTextItem.get() ]];
+    [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
-    EXPECT_EQ(2U, [draggingSimulator insertedAttachments].count);
-    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
+    EXPECT_EQ(2U, [dragAndDropSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [dragAndDropSimulator removedAttachments].count);
 
-    for (_WKAttachment *attachment in [draggingSimulator insertedAttachments]) {
+    for (_WKAttachment *attachment in [dragAndDropSimulator insertedAttachments]) {
         NSError *error = nil;
         EXPECT_GT([attachment synchronouslyRequestData:&error].length, 0U);
         EXPECT_TRUE(!error);
@@ -1293,13 +1293,13 @@ TEST(WKAttachmentTestsIOS, InsertDroppedZipArchiveAsAttachment)
     [item setSuggestedName:@"archive.zip"];
 
     auto webView = webViewForTestingAttachments();
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator setExternalItemProviders:@[ item.get() ]];
-    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
+    [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
-    EXPECT_EQ(1U, [draggingSimulator insertedAttachments].count);
-    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
-    [[draggingSimulator insertedAttachments].firstObject expectRequestedDataToBe:data];
+    EXPECT_EQ(1U, [dragAndDropSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [dragAndDropSimulator removedAttachments].count);
+    [[dragAndDropSimulator insertedAttachments].firstObject expectRequestedDataToBe:data];
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment').length"].intValue);
     EXPECT_WK_STREQ("archive.zip", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
     EXPECT_WK_STREQ("application/zip", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
@@ -1323,14 +1323,14 @@ TEST(WKAttachmentTestsIOS, InsertDroppedItemProvidersInOrder)
     [secondAttachmentItem setSuggestedName:@"second.pdf"];
 
     auto webView = webViewForTestingAttachments();
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator setExternalItemProviders:@[ firstAttachmentItem.get(), inlineTextItem.get(), secondAttachmentItem.get() ]];
-    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator setExternalItemProviders:@[ firstAttachmentItem.get(), inlineTextItem.get(), secondAttachmentItem.get() ]];
+    [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
-    EXPECT_EQ(2U, [draggingSimulator insertedAttachments].count);
-    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
+    EXPECT_EQ(2U, [dragAndDropSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [dragAndDropSimulator removedAttachments].count);
 
-    for (_WKAttachment *attachment in [draggingSimulator insertedAttachments]) {
+    for (_WKAttachment *attachment in [dragAndDropSimulator insertedAttachments]) {
         NSError *error = nil;
         EXPECT_GT([attachment synchronouslyRequestData:&error].length, 0U);
         EXPECT_TRUE(!error);
@@ -1355,28 +1355,28 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsFile)
     [item setSuggestedName:@"document.pdf"];
 
     auto webView = webViewForTestingAttachments();
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator setExternalItemProviders:@[ item.get() ]];
-    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator setExternalItemProviders:@[ item.get() ]];
+    [dragAndDropSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
     // First, verify that the attachment was successfully dropped.
-    EXPECT_EQ(1U, [draggingSimulator insertedAttachments].count);
-    _WKAttachment *attachment = [draggingSimulator insertedAttachments].firstObject;
+    EXPECT_EQ(1U, [dragAndDropSimulator insertedAttachments].count);
+    _WKAttachment *attachment = [dragAndDropSimulator insertedAttachments].firstObject;
     [attachment expectRequestedDataToBe:data.get()];
     EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
     EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
 
     [webView evaluateJavaScript:@"getSelection().removeAllRanges()" completionHandler:nil];
-    [draggingSimulator setExternalItemProviders:@[ ]];
-    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
+    [dragAndDropSimulator setExternalItemProviders:@[ ]];
+    [dragAndDropSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
 
     // Next, verify that dragging the attachment produces an item provider with a PDF attachment.
-    EXPECT_EQ(1U, [draggingSimulator sourceItemProviders].count);
-    NSItemProvider *itemProvider = [draggingSimulator sourceItemProviders].firstObject;
+    EXPECT_EQ(1U, [dragAndDropSimulator sourceItemProviders].count);
+    NSItemProvider *itemProvider = [dragAndDropSimulator sourceItemProviders].firstObject;
     EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
     [itemProvider expectType:(NSString *)kUTTypePDF withData:data.get()];
     EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
-    [draggingSimulator endDataTransfer];
+    [dragAndDropSimulator endDataTransfer];
 }
 
 TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
@@ -1396,16 +1396,16 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
 
     [webView evaluateJavaScript:@"getSelection().removeAllRanges()" completionHandler:nil];
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
 
     // Next, verify that dragging the attachment produces an item provider with a PDF attachment.
-    EXPECT_EQ(1U, [draggingSimulator sourceItemProviders].count);
-    NSItemProvider *itemProvider = [draggingSimulator sourceItemProviders].firstObject;
+    EXPECT_EQ(1U, [dragAndDropSimulator sourceItemProviders].count);
+    NSItemProvider *itemProvider = [dragAndDropSimulator sourceItemProviders].firstObject;
     EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
     [itemProvider expectType:(NSString *)kUTTypePDF withData:data.get()];
     EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
-    [draggingSimulator endDataTransfer];
+    [dragAndDropSimulator endDataTransfer];
 }
 
 TEST(WKAttachmentTestsIOS, DragInPlaceVideoAttachmentElement)
@@ -1425,15 +1425,15 @@ TEST(WKAttachmentTestsIOS, DragInPlaceVideoAttachmentElement)
     EXPECT_WK_STREQ("video/mp4", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
 
     [webView evaluateJavaScript:@"getSelection().removeAllRanges()" completionHandler:nil];
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
 
-    EXPECT_EQ(1U, [draggingSimulator sourceItemProviders].count);
-    NSItemProvider *itemProvider = [draggingSimulator sourceItemProviders].firstObject;
+    EXPECT_EQ(1U, [dragAndDropSimulator sourceItemProviders].count);
+    NSItemProvider *itemProvider = [dragAndDropSimulator sourceItemProviders].firstObject;
     EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
     [itemProvider expectType:(NSString *)kUTTypeMPEG4 withData:data.get()];
     EXPECT_WK_STREQ("video.mp4", [itemProvider suggestedName]);
-    [draggingSimulator endDataTransfer];
+    [dragAndDropSimulator endDataTransfer];
 }
 
 TEST(WKAttachmentTestsIOS, MoveAttachmentElementAsIconByDragging)
@@ -1452,16 +1452,16 @@ TEST(WKAttachmentTestsIOS, MoveAttachmentElementAsIconByDragging)
     [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
     [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
 
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 425)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 425)];
 
-    attachment = [[draggingSimulator insertedAttachments] firstObject];
+    attachment = [[dragAndDropSimulator insertedAttachments] firstObject];
     [attachment expectRequestedDataToBe:data.get()];
     EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
     EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
 
     [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
-    [draggingSimulator endDataTransfer];
+    [dragAndDropSimulator endDataTransfer];
 }
 
 TEST(WKAttachmentTestsIOS, MoveInPlaceAttachmentElementByDragging)
@@ -1481,16 +1481,16 @@ TEST(WKAttachmentTestsIOS, MoveInPlaceAttachmentElementByDragging)
     [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
     [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
 
-    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 425)];
+    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [dragAndDropSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 425)];
 
-    attachment = [[draggingSimulator insertedAttachments] firstObject];
+    attachment = [[dragAndDropSimulator insertedAttachments] firstObject];
     [attachment expectRequestedDataToBe:data.get()];
     EXPECT_WK_STREQ("icon.png", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
     EXPECT_WK_STREQ("image/png", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
 
     [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
-    [draggingSimulator endDataTransfer];
+    [dragAndDropSimulator endDataTransfer];
 }
 
 #endif // PLATFORM(IOS)

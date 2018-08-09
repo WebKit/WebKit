@@ -808,6 +808,7 @@
 		F45B63FE1F19D410009D38B9 /* ActionSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */; };
 		F45E15732112CE2900307E82 /* KeyboardInputTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */; };
 		F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15752112CE6200307E82 /* TestInputDelegate.mm */; };
+		F46128B7211C8ED500D9FADB /* DragAndDropSimulatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */; };
 		F464AF9220BB66EA007F9B18 /* RenderingProgressTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */; };
 		F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */; };
 		F46849C01EEF5EF300B937FE /* rich-and-plain-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */; };
@@ -829,8 +830,8 @@
 		F4CD74C620FDACFA00DE3794 /* text-with-async-script.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CD74C520FDACF500DE3794 /* text-with-async-script.html */; };
 		F4CD74C920FDB49600DE3794 /* TestURLSchemeHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */; };
 		F4D2986E20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */; };
-		F4D4F3B61E4E2BCB00BB2767 /* DataInteractionSimulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B41E4E2BCB00BB2767 /* DataInteractionSimulator.mm */; };
-		F4D4F3B91E4E36E400BB2767 /* DataInteractionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DataInteractionTests.mm */; };
+		F4D4F3B61E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */; };
+		F4D4F3B91E4E36E400BB2767 /* DragAndDropTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */; };
 		F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */; };
 		F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */; };
 		F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */; };
@@ -2032,6 +2033,8 @@
 		F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyboardInputTestsIOS.mm; sourceTree = "<group>"; };
 		F45E15742112CE6200307E82 /* TestInputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestInputDelegate.h; sourceTree = "<group>"; };
 		F45E15752112CE6200307E82 /* TestInputDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInputDelegate.mm; sourceTree = "<group>"; };
+		F46128B4211C861A00D9FADB /* DragAndDropSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DragAndDropSimulator.h; path = cocoa/DragAndDropSimulator.h; sourceTree = "<group>"; };
+		F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropSimulatorMac.mm; sourceTree = "<group>"; };
 		F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgressTests.mm; sourceTree = "<group>"; };
 		F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIPasteboardTests.mm; sourceTree = "<group>"; };
 		F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "rich-and-plain-text.html"; sourceTree = "<group>"; };
@@ -2055,9 +2058,8 @@
 		F4CD74C720FDB49600DE3794 /* TestURLSchemeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestURLSchemeHandler.h; sourceTree = "<group>"; };
 		F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestURLSchemeHandler.mm; sourceTree = "<group>"; };
 		F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunScriptAfterDocumentLoad.mm; sourceTree = "<group>"; };
-		F4D4F3B41E4E2BCB00BB2767 /* DataInteractionSimulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataInteractionSimulator.mm; sourceTree = "<group>"; };
-		F4D4F3B51E4E2BCB00BB2767 /* DataInteractionSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataInteractionSimulator.h; sourceTree = "<group>"; };
-		F4D4F3B71E4E36E400BB2767 /* DataInteractionTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataInteractionTests.mm; sourceTree = "<group>"; };
+		F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropSimulatorIOS.mm; sourceTree = "<group>"; };
+		F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsIOS.mm; sourceTree = "<group>"; };
 		F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-clear-selection.html"; sourceTree = "<group>"; };
 		F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "selected-text-image-link-and-editable.html"; sourceTree = "<group>"; };
 		F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "image-in-link-and-input.html"; sourceTree = "<group>"; };
@@ -2195,6 +2197,7 @@
 				A13EBB441B87332B00097110 /* WebProcessPlugIn */,
 				F4517B682054E0AC00C26721 /* ClassMethodSwizzler.h */,
 				F4517B692054E0AC00C26721 /* ClassMethodSwizzler.mm */,
+				F46128B4211C861A00D9FADB /* DragAndDropSimulator.h */,
 				F44D06481F3962E3001A0E29 /* EditingTestHarness.h */,
 				F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */,
 				5C726D6D1D3EE06800C5E1A1 /* InstanceMethodSwizzler.h */,
@@ -2410,8 +2413,7 @@
 		2E9660DC16C07D7B00371B42 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				F4D4F3B51E4E2BCB00BB2767 /* DataInteractionSimulator.h */,
-				F4D4F3B41E4E2BCB00BB2767 /* DataInteractionSimulator.mm */,
+				F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */,
 				2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */,
 				F4517B652054C49500C26721 /* TestWKWebViewController.h */,
 				F4517B662054C49500C26721 /* TestWKWebViewController.mm */,
@@ -2496,7 +2498,7 @@
 				A1C4FB6F1BACCEFA003742D0 /* Resources */,
 				2E205BA31F527746005952DD /* AccessibilityTestsIOS.mm */,
 				F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */,
-				F4D4F3B71E4E36E400BB2767 /* DataInteractionTests.mm */,
+				F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */,
 				F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */,
 				574F55CE204D3763002948C6 /* LocalAuthenticator.mm */,
 				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
@@ -3096,6 +3098,7 @@
 		BCA61C3A11700B9400460D1E /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */,
 				1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */,
 				C081224013FC172400DC39AE /* JavaScriptTestMac.mm */,
 				2E7765CE16C4D81100BA2BB1 /* mainMac.mm */,
@@ -3670,8 +3673,6 @@
 				46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */,
 				751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */,
 				2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */,
-				F4D4F3B61E4E2BCB00BB2767 /* DataInteractionSimulator.mm in Sources */,
-				F4D4F3B91E4E36E400BB2767 /* DataInteractionTests.mm in Sources */,
 				518EE51D20A78D3600E024F3 /* DecidePolicyForNavigationAction.mm in Sources */,
 				2D1646E21D1862CD00015A1A /* DeferredViewInWindowStateChange.mm in Sources */,
 				7CCE7EB91A411A7E00447C4C /* DeviceScaleFactorInDashboardRegions.mm in Sources */,
@@ -3694,6 +3695,9 @@
 				7CCE7F231A411AF600447C4C /* Download.mm in Sources */,
 				7CCE7EEE1A411AE600447C4C /* DownloadDecideDestinationCrash.cpp in Sources */,
 				F4BFA68E1E4AD08000154298 /* DragAndDropPasteboardTests.mm in Sources */,
+				F4D4F3B61E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm in Sources */,
+				F46128B7211C8ED500D9FADB /* DragAndDropSimulatorMac.mm in Sources */,
+				F4D4F3B91E4E36E400BB2767 /* DragAndDropTestsIOS.mm in Sources */,
 				A155022A1E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm in Sources */,
 				7CCE7EBE1A411A7E00447C4C /* DynamicDeviceScaleFactor.mm in Sources */,
 				5C0BF8921DD599B600B00328 /* EarlyKVOCrash.mm in Sources */,

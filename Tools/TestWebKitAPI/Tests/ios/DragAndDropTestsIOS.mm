@@ -25,9 +25,9 @@
 
 #include "config.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS) && WK_API_ENABLED
 
-#import "DataInteractionSimulator.h"
+#import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
@@ -71,7 +71,7 @@ static NSData *testZIPArchive()
     return [NSData dataWithContentsOfURL:zipFileURL];
 }
 
-@implementation UIItemProvider (DataInteractionTests)
+@implementation UIItemProvider (DragAndDropTests)
 
 - (void)registerDataRepresentationForTypeIdentifier:(NSString *)typeIdentifier withData:(NSData *)data
 {
@@ -84,7 +84,7 @@ static NSData *testZIPArchive()
 
 @end
 
-@implementation TestWKWebView (DataInteractionTests)
+@implementation TestWKWebView (DragAndDropTests)
 
 - (BOOL)editorContainsImageElement
 {
@@ -118,7 +118,7 @@ static void checkSelectionRectsWithLogging(NSArray *expected, NSArray *observed)
     EXPECT_TRUE([expected isEqualToArray:observed]);
 }
 
-static void checkRichTextTypePrecedesPlainTextType(DataInteractionSimulator *simulator)
+static void checkRichTextTypePrecedesPlainTextType(DragAndDropSimulator *simulator)
 {
     // At least one of "com.apple.flat-rtfd" or "public.rtf" is expected to have higher precedence than "public.utf8-plain-text".
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
@@ -129,28 +129,28 @@ static void checkRichTextTypePrecedesPlainTextType(DataInteractionSimulator *sim
     EXPECT_TRUE((indexOfRTFType != NSNotFound && indexOfRTFType < indexOfPlainTextType) || (indexOfFlatRTFDType != NSNotFound && indexOfFlatRTFDType < indexOfPlainTextType));
 }
 
-static void checkFirstTypeIsPresentAndSecondTypeIsMissing(DataInteractionSimulator *simulator, CFStringRef firstType, CFStringRef secondType)
+static void checkFirstTypeIsPresentAndSecondTypeIsMissing(DragAndDropSimulator *simulator, CFStringRef firstType, CFStringRef secondType)
 {
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
     EXPECT_TRUE([registeredTypes containsObject:(NSString *)firstType]);
     EXPECT_FALSE([registeredTypes containsObject:(NSString *)secondType]);
 }
 
-static void checkTypeIdentifierIsRegisteredAtIndex(DataInteractionSimulator *simulator, NSString *type, NSUInteger index)
+static void checkTypeIdentifierIsRegisteredAtIndex(DragAndDropSimulator *simulator, NSString *type, NSUInteger index)
 {
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
     EXPECT_GT(registeredTypes.count, index);
     EXPECT_WK_STREQ(type.UTF8String, [registeredTypes[index] UTF8String]);
 }
 
-static void checkEstimatedSize(DataInteractionSimulator *simulator, CGSize estimatedSize)
+static void checkEstimatedSize(DragAndDropSimulator *simulator, CGSize estimatedSize)
 {
     UIItemProvider *sourceItemProvider = [simulator sourceItemProviders].firstObject;
     EXPECT_EQ(estimatedSize.width, sourceItemProvider.preferredPresentationSize.width);
     EXPECT_EQ(estimatedSize.height, sourceItemProvider.preferredPresentationSize.height);
 }
 
-static void checkSuggestedNameAndEstimatedSize(DataInteractionSimulator *simulator, NSString *suggestedName, CGSize estimatedSize)
+static void checkSuggestedNameAndEstimatedSize(DragAndDropSimulator *simulator, NSString *suggestedName, CGSize estimatedSize)
 {
     UIItemProvider *sourceItemProvider = [simulator sourceItemProviders].firstObject;
     EXPECT_WK_STREQ(suggestedName.UTF8String, sourceItemProvider.suggestedName.UTF8String);
@@ -246,144 +246,144 @@ static void runTestWithTemporaryFolder(void(^runTest)(NSURL *folderURL))
 
 namespace TestWebKitAPI {
 
-TEST(DataInteractionTests, ImageToContentEditable)
+TEST(DragAndDropTests, ImageToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_TRUE([webView editorContainsImageElement]);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);
-    checkFirstTypeIsPresentAndSecondTypeIsMissing(dataInteractionSimulator.get(), kUTTypePNG, kUTTypeFileURL);
-    checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [simulator finalSelectionRects]);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypePNG, kUTTypeFileURL);
+    checkEstimatedSize(simulator.get(), { 215, 174 });
 }
 
-TEST(DataInteractionTests, CanStartDragOnEnormousImage)
+TEST(DragAndDropTests, CanStartDragOnEnormousImage)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<img src='enormous.svg'></img>"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
 
-    NSArray *registeredTypes = [[dataInteractionSimulator sourceItemProviders].firstObject registeredTypeIdentifiers];
+    NSArray *registeredTypes = [[simulator sourceItemProviders].firstObject registeredTypeIdentifiers];
     EXPECT_WK_STREQ((NSString *)kUTTypeScalableVectorGraphics, [registeredTypes firstObject]);
 }
 
-TEST(DataInteractionTests, ImageToTextarea)
+TEST(DragAndDropTests, ImageToTextarea)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-and-textarea"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("", [webView editorValue]);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkFirstTypeIsPresentAndSecondTypeIsMissing(dataInteractionSimulator.get(), kUTTypePNG, kUTTypeFileURL);
-    checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypePNG, kUTTypeFileURL);
+    checkEstimatedSize(simulator.get(), { 215, 174 });
 }
 
-TEST(DataInteractionTests, ImageInLinkToInput)
+TEST(DragAndDropTests, ImageInLinkToInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-in-link-and-input"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
-    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
-    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, 0);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [simulator finalSelectionRects]);
+    checkSuggestedNameAndEstimatedSize(simulator.get(), @"icon.png", { 215, 174 });
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (NSString *)kUTTypePNG, 0);
 }
 
-TEST(DataInteractionTests, ImageInLinkWithoutHREFToInput)
+TEST(DragAndDropTests, ImageInLinkWithoutHREFToInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-in-link-and-input"];
     [webView stringByEvaluatingJavaScript:@"link.href = ''"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("", [webView editorValue]);
-    checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
-    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, 0);
+    checkEstimatedSize(simulator.get(), { 215, 174 });
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (NSString *)kUTTypePNG, 0);
 }
 
-TEST(DataInteractionTests, ImageDoesNotUseElementSizeAsEstimatedSize)
+TEST(DragAndDropTests, ImageDoesNotUseElementSizeAsEstimatedSize)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"gif-and-file-input"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom: { 100, 100 } to: { 100, 300 }];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom: { 100, 100 } to: { 100, 300 }];
 
-    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypeGIF, 0);
-    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"apple.gif", { 52, 64 });
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (NSString *)kUTTypeGIF, 0);
+    checkSuggestedNameAndEstimatedSize(simulator.get(), @"apple.gif", { 52, 64 });
     EXPECT_WK_STREQ("apple.gif (image/gif)", [webView stringByEvaluatingJavaScript:@"output.textContent"]);
 }
 
-TEST(DataInteractionTests, ContentEditableToContentEditable)
+TEST(DragAndDropTests, ContentEditableToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"autofocus-contenteditable"];
-    [dataInteractionSimulator waitForInputSession];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    [simulator waitForInputSession];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.textContent"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 961, 227) ], [dataInteractionSimulator finalSelectionRects]);
-    checkRichTextTypePrecedesPlainTextType(dataInteractionSimulator.get());
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 961, 227) ], [simulator finalSelectionRects]);
+    checkRichTextTypePrecedesPlainTextType(simulator.get());
 }
 
-TEST(DataInteractionTests, ContentEditableToTextarea)
+TEST(DragAndDropTests, ContentEditableToTextarea)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"contenteditable-and-textarea"];
-    [dataInteractionSimulator waitForInputSession];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    [simulator waitForInputSession];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.textContent"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView editorValue].UTF8String);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(6, 203, 990, 232) ], [dataInteractionSimulator finalSelectionRects]);
-    checkRichTextTypePrecedesPlainTextType(dataInteractionSimulator.get());
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(6, 203, 990, 232) ], [simulator finalSelectionRects]);
+    checkRichTextTypePrecedesPlainTextType(simulator.get());
 }
 
-TEST(DataInteractionTests, ContentEditableMoveParagraphs)
+TEST(DragAndDropTests, ContentEditableMoveParagraphs)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"two-paragraph-contenteditable"];
-    [dataInteractionSimulator waitForInputSession];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(250, 450)];
+    [simulator waitForInputSession];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(250, 450)];
 
     NSString *finalTextContent = [webView stringByEvaluatingJavaScript:@"editor.textContent"];
     NSUInteger firstParagraphOffset = [finalTextContent rangeOfString:@"This is the first paragraph"].location;
@@ -392,47 +392,47 @@ TEST(DataInteractionTests, ContentEditableMoveParagraphs)
     EXPECT_FALSE(firstParagraphOffset == NSNotFound);
     EXPECT_FALSE(secondParagraphOffset == NSNotFound);
     EXPECT_GT(firstParagraphOffset, secondParagraphOffset);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(190, 100, 130, 20), makeCGRectValue(0, 120, 320, 100), makeCGRectValue(0, 220, 252, 20) ], [dataInteractionSimulator finalSelectionRects]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(190, 100, 130, 20), makeCGRectValue(0, 120, 320, 100), makeCGRectValue(0, 220, 252, 20) ], [simulator finalSelectionRects]);
 }
 
-TEST(DataInteractionTests, DragImageFromContentEditable)
+TEST(DragAndDropTests, DragImageFromContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView synchronouslyLoadTestPageNamed:@"contenteditable-and-target"];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
 }
 
-TEST(DataInteractionTests, TextAreaToInput)
+TEST(DragAndDropTests, TextAreaToInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"textarea-to-input"];
-    [dataInteractionSimulator waitForInputSession];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    [simulator waitForInputSession];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
     EXPECT_WK_STREQ("Hello world", [webView editorValue].UTF8String);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 990, 232) ], [dataInteractionSimulator finalSelectionRects]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 990, 232) ], [simulator finalSelectionRects]);
 }
 
-TEST(DataInteractionTests, SinglePlainTextWordTypeIdentifiers)
+TEST(DragAndDropTests, SinglePlainTextWordTypeIdentifiers)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"textarea-to-input"];
-    [dataInteractionSimulator waitForInputSession];
+    [simulator waitForInputSession];
     [webView stringByEvaluatingJavaScript:@"source.value = 'pneumonoultramicroscopicsilicovolcanoconiosis'"];
     [webView stringByEvaluatingJavaScript:@"source.selectionStart = 0"];
     [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    NSItemProvider *itemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    NSItemProvider *itemProvider = [simulator sourceItemProviders].firstObject;
     NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];
     EXPECT_EQ(1UL, registeredTypes.count);
     EXPECT_WK_STREQ([(NSString *)kUTTypeUTF8PlainText UTF8String], [registeredTypes.firstObject UTF8String]);
@@ -441,19 +441,19 @@ TEST(DataInteractionTests, SinglePlainTextWordTypeIdentifiers)
     EXPECT_WK_STREQ("pneumonoultramicroscopicsilicovolcanoconiosis", [webView editorValue].UTF8String);
 }
 
-TEST(DataInteractionTests, SinglePlainTextURLTypeIdentifiers)
+TEST(DragAndDropTests, SinglePlainTextURLTypeIdentifiers)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"textarea-to-input"];
-    [dataInteractionSimulator waitForInputSession];
+    [simulator waitForInputSession];
     [webView stringByEvaluatingJavaScript:@"source.value = 'https://webkit.org/'"];
     [webView stringByEvaluatingJavaScript:@"source.selectionStart = 0"];
     [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    NSItemProvider *itemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    NSItemProvider *itemProvider = [simulator sourceItemProviders].firstObject;
     NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];
     EXPECT_EQ(2UL, registeredTypes.count);
     EXPECT_WK_STREQ([(NSString *)kUTTypeURL UTF8String], [registeredTypes.firstObject UTF8String]);
@@ -463,18 +463,18 @@ TEST(DataInteractionTests, SinglePlainTextURLTypeIdentifiers)
     EXPECT_WK_STREQ("https://webkit.org/", [webView editorValue].UTF8String);
 }
 
-TEST(DataInteractionTests, LinkToInput)
+TEST(DragAndDropTests, LinkToInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
 
     __block bool doneLoadingURL = false;
-    UIItemProvider *sourceItemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    UIItemProvider *sourceItemProvider = [simulator sourceItemProviders].firstObject;
     [sourceItemProvider loadObjectOfClass:[NSURL class] completionHandler:^(id object, NSError *error) {
         NSURL *url = object;
         EXPECT_WK_STREQ("Hello world", url._title.UTF8String ?: "");
@@ -482,99 +482,99 @@ TEST(DataInteractionTests, LinkToInput)
     }];
     TestWebKitAPI::Util::run(&doneLoadingURL);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 273, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, 0);
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 273, 2057, 232) ], [simulator finalSelectionRects]);
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (NSString *)kUTTypeURL, 0);
 }
 
-TEST(DataInteractionTests, BackgroundImageLinkToInput)
+TEST(DragAndDropTests, BackgroundImageLinkToInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"background-image-link-and-input"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypeURL, 0);
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [simulator finalSelectionRects]);
+    checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (NSString *)kUTTypeURL, 0);
 }
 
-TEST(DataInteractionTests, CanPreventStart)
+TEST(DragAndDropTests, CanPreventStart)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"prevent-start"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
+    EXPECT_EQ(DragAndDropPhaseCancelled, [simulator phase]);
     EXPECT_FALSE([webView editorContainsImageElement]);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_FALSE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_FALSE([observedEventNames containsObject:DataInteractionOverEventName]);
-    checkSelectionRectsWithLogging(@[ ], [dataInteractionSimulator finalSelectionRects]);
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_FALSE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_FALSE([observedEventNames containsObject:@"dragover"]);
+    checkSelectionRectsWithLogging(@[ ], [simulator finalSelectionRects]);
 }
 
-TEST(DataInteractionTests, CanPreventOperation)
+TEST(DragAndDropTests, CanPreventOperation)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"prevent-operation"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_FALSE([webView editorContainsImageElement]);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    checkSelectionRectsWithLogging(@[ ], [dataInteractionSimulator finalSelectionRects]);
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    checkSelectionRectsWithLogging(@[ ], [simulator finalSelectionRects]);
 }
 
-TEST(DataInteractionTests, EnterAndLeaveEvents)
+TEST(DragAndDropTests, EnterAndLeaveEvents)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 450)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 450)];
 
     EXPECT_WK_STREQ("", [webView editorValue].UTF8String);
 
-    NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
-    EXPECT_TRUE([observedEventNames containsObject:DataInteractionLeaveEventName]);
-    EXPECT_FALSE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkSelectionRectsWithLogging(@[ ], [dataInteractionSimulator finalSelectionRects]);
+    NSArray *observedEventNames = [simulator observedEventNames];
+    EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
+    EXPECT_TRUE([observedEventNames containsObject:@"dragleave"]);
+    EXPECT_FALSE([observedEventNames containsObject:@"drop"]);
+    checkSelectionRectsWithLogging(@[ ], [simulator finalSelectionRects]);
 }
 
-TEST(DataInteractionTests, CanStartDragOnDivWithDraggableAttribute)
+TEST(DragAndDropTests, CanStartDragOnDivWithDraggableAttribute)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"custom-draggable-div"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 250)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 250)];
 
-    EXPECT_GT([dataInteractionSimulator sourceItemProviders].count, 0UL);
-    NSItemProvider *itemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    EXPECT_GT([simulator sourceItemProviders].count, 0UL);
+    NSItemProvider *itemProvider = [simulator sourceItemProviders].firstObject;
     EXPECT_EQ(UIPreferredPresentationStyleInline, itemProvider.preferredPresentationStyle);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!destination.querySelector('#item')"]);
     EXPECT_WK_STREQ(@"PASS", [webView stringByEvaluatingJavaScript:@"item.textContent"]);
 }
 
-TEST(DataInteractionTests, ExternalSourcePlainTextToIFrame)
+TEST(DragAndDropTests, ExternalSourcePlainTextToIFrame)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"contenteditable-in-iframe"];
@@ -582,7 +582,7 @@ TEST(DataInteractionTests, ExternalSourcePlainTextToIFrame)
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     [itemProvider registerObject:@"Hello world" visibility:UIItemProviderRepresentationOptionsVisibilityAll];
 
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
     [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(160, 250)];
 
@@ -593,7 +593,7 @@ TEST(DataInteractionTests, ExternalSourcePlainTextToIFrame)
     checkDragCaretRectIsContainedInRect([simulator lastKnownDragCaretRect], CGRectMake(containerLeft, containerTop, containerWidth, containerHeight));
 }
 
-TEST(DataInteractionTests, ExternalSourceInlineTextToFileInput)
+TEST(DragAndDropTests, ExternalSourceInlineTextToFileInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -602,14 +602,14 @@ TEST(DataInteractionTests, ExternalSourceInlineTextToFileInput)
     [simulatedItemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleInline];
     [simulatedItemProvider registerObject:@"This item provider requested inline presentation style." visibility:NSItemProviderRepresentationVisibilityAll];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
-TEST(DataInteractionTests, ExternalSourceJSONToFileInput)
+TEST(DragAndDropTests, ExternalSourceJSONToFileInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -618,14 +618,14 @@ TEST(DataInteractionTests, ExternalSourceJSONToFileInput)
     NSData *jsonData = [@"{ \"foo\": \"bar\",  \"bar\": \"baz\" }" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedJSONItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJSON withData:jsonData];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedJSONItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedJSONItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     EXPECT_WK_STREQ("application/json", [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
-TEST(DataInteractionTests, ExternalSourceImageToFileInput)
+TEST(DragAndDropTests, ExternalSourceImageToFileInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -634,15 +634,15 @@ TEST(DataInteractionTests, ExternalSourceImageToFileInput)
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
     [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedImageItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedImageItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("image/jpeg", outputValue.UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceHTMLToUploadArea)
+TEST(DragAndDropTests, ExternalSourceHTMLToUploadArea)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -652,16 +652,16 @@ TEST(DataInteractionTests, ExternalSourceHTMLToUploadArea)
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
     [simulatedHTMLItemProvider setSuggestedName:@"index.html"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setShouldAllowMoveOperation:NO];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setShouldAllowMoveOperation:NO];
+    [simulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceMoveOperationNotAllowed)
+TEST(DragAndDropTests, ExternalSourceMoveOperationNotAllowed)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -671,15 +671,15 @@ TEST(DataInteractionTests, ExternalSourceMoveOperationNotAllowed)
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setShouldAllowMoveOperation:NO];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setShouldAllowMoveOperation:NO];
+    [simulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
-TEST(DataInteractionTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
+TEST(DragAndDropTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -690,15 +690,15 @@ TEST(DataInteractionTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
     auto urlProvider = adoptNS([[UIItemProvider alloc] init]);
     [urlProvider registerObject:[NSURL URLWithString:@"https://webkit.org"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ archiveProvider.get(), urlProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ archiveProvider.get(), urlProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("application/zip", outputValue.UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceZIPArchiveToUploadArea)
+TEST(DragAndDropTests, ExternalSourceZIPArchiveToUploadArea)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -706,15 +706,15 @@ TEST(DataInteractionTests, ExternalSourceZIPArchiveToUploadArea)
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeZipArchive withData:testZIPArchive()];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("application/zip", outputValue.UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceImageAndHTMLToSingleFileInput)
+TEST(DragAndDropTests, ExternalSourceImageAndHTMLToSingleFileInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -727,15 +727,15 @@ TEST(DataInteractionTests, ExternalSourceImageAndHTMLToSingleFileInput)
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("", outputValue.UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceImageAndHTMLToMultipleFileInput)
+TEST(DragAndDropTests, ExternalSourceImageAndHTMLToMultipleFileInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -749,15 +749,15 @@ TEST(DataInteractionTests, ExternalSourceImageAndHTMLToMultipleFileInput)
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("image/jpeg, text/html", outputValue.UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceImageAndHTMLToUploadArea)
+TEST(DragAndDropTests, ExternalSourceImageAndHTMLToUploadArea)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -774,81 +774,81 @@ TEST(DataInteractionTests, ExternalSourceImageAndHTMLToUploadArea)
     NSData *secondHTMLData = [@"<html><body>hello world</body></html>" dataUsingEncoding:NSUTF8StringEncoding];
     [secondSimulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:secondHTMLData];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setShouldAllowMoveOperation:NO];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedImageItemProvider.get(), firstSimulatedHTMLItemProvider.get(), secondSimulatedHTMLItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setShouldAllowMoveOperation:NO];
+    [simulator setExternalItemProviders:@[ simulatedImageItemProvider.get(), firstSimulatedHTMLItemProvider.get(), secondSimulatedHTMLItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("image/jpeg, text/html, text/html", outputValue.UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceHTMLToContentEditable)
+TEST(DragAndDropTests, ExternalSourceHTMLToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *htmlData = [@"<h1>This is a test</h1>" dataUsingEncoding:NSUTF8StringEncoding];
     [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
-    [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     NSString *textContent = [webView stringByEvaluatingJavaScript:@"editor.textContent"];
     EXPECT_WK_STREQ("This is a test", textContent.UTF8String);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!editor.querySelector('h1')"].boolValue);
 }
 
-TEST(DataInteractionTests, ExternalSourceBoldSystemAttributedStringToContentEditable)
+TEST(DragAndDropTests, ExternalSourceBoldSystemAttributedStringToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     NSDictionary *textAttributes = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:20] };
     NSAttributedString *richText = [[NSAttributedString alloc] initWithString:@"This is a test" attributes:textAttributes];
     auto itemProvider = adoptNS([[UIItemProvider alloc] initWithObject:richText]);
-    [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("This is a test", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceColoredAttributedStringToContentEditable)
+TEST(DragAndDropTests, ExternalSourceColoredAttributedStringToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     NSDictionary *textAttributes = @{ NSForegroundColorAttributeName: [UIColor redColor] };
     NSAttributedString *richText = [[NSAttributedString alloc] initWithString:@"This is a test" attributes:textAttributes];
     auto itemProvider = adoptNS([[UIItemProvider alloc] initWithObject:richText]);
-    [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('p')).color"]);
     EXPECT_WK_STREQ("This is a test", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
 }
 
-TEST(DataInteractionTests, ExternalSourceMultipleURLsToContentEditable)
+TEST(DragAndDropTests, ExternalSourceMultipleURLsToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto firstItem = adoptNS([[UIItemProvider alloc] init]);
     [firstItem registerObject:[NSURL URLWithString:@"https://www.apple.com/iphone/"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
     auto secondItem = adoptNS([[UIItemProvider alloc] init]);
     [secondItem registerObject:[NSURL URLWithString:@"https://www.apple.com/mac/"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
     auto thirdItem = adoptNS([[UIItemProvider alloc] init]);
     [thirdItem registerObject:[NSURL URLWithString:@"https://webkit.org/"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
-    [dataInteractionSimulator setExternalItemProviders:@[ firstItem.get(), secondItem.get(), thirdItem.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ firstItem.get(), secondItem.get(), thirdItem.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     NSArray *droppedURLs = [webView objectByEvaluatingJavaScript:@"Array.from(editor.querySelectorAll('a')).map(a => a.href)"];
     EXPECT_EQ(3UL, droppedURLs.count);
@@ -863,13 +863,13 @@ TEST(DataInteractionTests, ExternalSourceMultipleURLsToContentEditable)
     EXPECT_WK_STREQ("https://webkit.org/", linksSeparatedByLine[2]);
 }
 
-TEST(DataInteractionTests, RespectsExternalSourceFidelityRankings)
+TEST(DragAndDropTests, RespectsExternalSourceFidelityRankings)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     // Here, our source item provider vends two representations: plain text, and then an image. If we don't respect the
     // fidelity order requested by the source, we'll end up assuming that the image is a higher fidelity representation
@@ -878,9 +878,9 @@ TEST(DataInteractionTests, RespectsExternalSourceFidelityRankings)
     auto simulatedItemProviderWithTextFirst = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProviderWithTextFirst registerObject:@"Hello world" visibility:UIItemProviderRepresentationOptionsVisibilityAll];
     [simulatedItemProviderWithTextFirst registerObject:testIconImage() visibility:UIItemProviderRepresentationOptionsVisibilityAll];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProviderWithTextFirst.get() ]];
+    [simulator setExternalItemProviders:@[ simulatedItemProviderWithTextFirst.get() ]];
 
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
     EXPECT_FALSE([webView editorContainsImageElement]);
     [webView stringByEvaluatingJavaScript:@"editor.innerHTML = ''"];
@@ -889,51 +889,51 @@ TEST(DataInteractionTests, RespectsExternalSourceFidelityRankings)
     auto simulatedItemProviderWithImageFirst = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProviderWithImageFirst registerObject:testIconImage() visibility:UIItemProviderRepresentationOptionsVisibilityAll];
     [simulatedItemProviderWithImageFirst registerObject:@"Hello world" visibility:UIItemProviderRepresentationOptionsVisibilityAll];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProviderWithImageFirst.get() ]];
+    [simulator setExternalItemProviders:@[ simulatedItemProviderWithImageFirst.get() ]];
 
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
     EXPECT_TRUE([webView editorContainsImageElement]);
 }
 
-TEST(DataInteractionTests, ExternalSourceUTF8PlainTextOnly)
+TEST(DragAndDropTests, ExternalSourceUTF8PlainTextOnly)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
 
     NSString *textPayload = @"Ceci n'est pas une string";
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
     {
         completionBlock([textPayload dataUsingEncoding:NSUTF8StringEncoding], nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ(textPayload.UTF8String, [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 1936, 227) ], [dataInteractionSimulator finalSelectionRects]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 1936, 227) ], [simulator finalSelectionRects]);
 }
 
-TEST(DataInteractionTests, ExternalSourceJPEGOnly)
+TEST(DragAndDropTests, ExternalSourceJPEGOnly)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
     {
         completionBlock(UIImageJPEGRepresentation(testIconImage(), 0.5), nil);
         return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_TRUE([webView editorContainsImageElement]);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [simulator finalSelectionRects]);
 }
 
-TEST(DataInteractionTests, ExternalSourceTitledNSURL)
+TEST(DragAndDropTests, ExternalSourceTitledNSURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
@@ -944,15 +944,15 @@ TEST(DataInteractionTests, ExternalSourceTitledNSURL)
     auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProvider registerObject:titledURL visibility:UIItemProviderRepresentationOptionsVisibilityAll];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("Apple", [webView stringByEvaluatingJavaScript:@"editor.querySelector('a').textContent"]);
     EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"editor.querySelector('a').href"]);
 }
 
-TEST(DataInteractionTests, ExternalSourceFileURL)
+TEST(DragAndDropTests, ExternalSourceFileURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
@@ -961,15 +961,15 @@ TEST(DataInteractionTests, ExternalSourceFileURL)
     NSURL *URL = [NSURL URLWithString:@"file:///some/file/that/is/not/real"];
     UIItemProvider *simulatedItemProvider = [UIItemProvider itemProviderWithURL:URL title:@""];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedItemProvider ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"!!editor.querySelector('a')"] boolValue]);
     EXPECT_WK_STREQ("Hello world\nfile:///some/file/that/is/not/real", [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
 }
 
-TEST(DataInteractionTests, ExternalSourceOverrideDropFileUpload)
+TEST(DragAndDropTests, ExternalSourceOverrideDropFileUpload)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
@@ -983,8 +983,8 @@ TEST(DataInteractionTests, ExternalSourceOverrideDropFileUpload)
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:firstHTMLData];
     [simulatedHTMLItemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
     {
         EXPECT_EQ(2UL, session.items.count);
         UIDragItem *firstItem = session.items[0];
@@ -993,8 +993,8 @@ TEST(DataInteractionTests, ExternalSourceOverrideDropFileUpload)
         EXPECT_TRUE([secondItem.itemProvider.registeredTypeIdentifiers isEqual:@[ (NSString *)kUTTypeHTML ]]);
         return @[ secondItem ];
     }];
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedImageItemProvider.get(), simulatedHTMLItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ simulatedImageItemProvider.get(), simulatedHTMLItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
@@ -1014,7 +1014,7 @@ static RetainPtr<TestWKWebView> setUpTestWebViewForDataTransferItems()
     return webView;
 }
 
-TEST(DataInteractionTests, ExternalSourceDataTransferItemGetFolderAsEntry)
+TEST(DragAndDropTests, ExternalSourceDataTransferItemGetFolderAsEntry)
 {
     // The expected output is sorted by alphabetical order here for consistent behavior across different test environments.
     // See DataTransferItem-getAsEntry.html for more details.
@@ -1043,16 +1043,16 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetFolderAsEntry)
             return nil;
         }];
 
-        auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-        [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
-        [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
+        auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+        [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+        [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
     });
 
     TestWebKitAPI::Util::run(&done);
     EXPECT_WK_STREQ([expectedOutput componentsJoinedByString:@"\n"], [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
-TEST(DataInteractionTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry)
+TEST(DragAndDropTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry)
 {
     NSArray<NSString *> *expectedOutput = @[
         @"Found data transfer item (kind: 'file', type: 'text/plain')",
@@ -1073,9 +1073,9 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry
             return nil;
         }];
 
-        auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-        [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
-        [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
+        auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+        [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+        [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
     });
 
     TestWebKitAPI::Util::run(&done);
@@ -1084,14 +1084,14 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry
 
 #endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
 
-TEST(DataInteractionTests, ExternalSourceOverrideDropInsertURL)
+TEST(DragAndDropTests, ExternalSourceOverrideDropInsertURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
     {
         NSMutableArray<UIDragItem *> *allowedItems = [NSMutableArray array];
         for (UIDragItem *item in session.items) {
@@ -1106,13 +1106,13 @@ TEST(DataInteractionTests, ExternalSourceOverrideDropInsertURL)
     [firstItemProvider registerObject:@"This is a string." visibility:UIItemProviderRepresentationOptionsVisibilityAll];
     auto secondItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [secondItemProvider registerObject:[NSURL URLWithString:@"https://webkit.org/"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
-    [dataInteractionSimulator setExternalItemProviders:@[ firstItemProvider.get(), secondItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator setExternalItemProviders:@[ firstItemProvider.get(), secondItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://webkit.org/", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 }
 
-TEST(DataInteractionTests, OverrideDataInteractionOperation)
+TEST(DragAndDropTests, OverrideDrop)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
@@ -1121,14 +1121,14 @@ TEST(DataInteractionTests, OverrideDataInteractionOperation)
     [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:[@"<body></body>" dataUsingEncoding:NSUTF8StringEncoding]];
 
     __block bool finishedLoadingData = false;
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [dataInteractionSimulator setOverrideDataInteractionOperationBlock:^NSUInteger(NSUInteger operation, id session)
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [simulator setOverrideDragUpdateBlock:^NSUInteger(NSUInteger operation, id session)
     {
         EXPECT_EQ(0U, operation);
         return UIDropOperationCopy;
     }];
-    [dataInteractionSimulator setDataInteractionOperationCompletionBlock:^(BOOL handled, NSArray *itemProviders) {
+    [simulator setDropCompletionBlock:^(BOOL handled, NSArray *itemProviders) {
         EXPECT_FALSE(handled);
         [itemProviders.firstObject loadDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML completionHandler:^(NSData *data, NSError *error) {
             NSString *text = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
@@ -1137,11 +1137,11 @@ TEST(DataInteractionTests, OverrideDataInteractionOperation)
             finishedLoadingData = true;
         }];
     }];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     TestWebKitAPI::Util::run(&finishedLoadingData);
 }
 
-TEST(DataInteractionTests, InjectedBundleOverridePerformTwoStepDrop)
+TEST(DragAndDropTests, InjectedBundleOverridePerformTwoStepDrop)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
     [configuration.processPool _setObject:@YES forBundleParameter:@"BundleOverridePerformTwoStepDrop"];
@@ -1157,14 +1157,14 @@ TEST(DataInteractionTests, InjectedBundleOverridePerformTwoStepDrop)
         return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_EQ(0UL, [webView stringByEvaluatingJavaScript:@"editor.textContent"].length);
 }
 
-TEST(DataInteractionTests, InjectedBundleAllowPerformTwoStepDrop)
+TEST(DragAndDropTests, InjectedBundleAllowPerformTwoStepDrop)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
     [configuration.processPool _setObject:@NO forBundleParameter:@"BundleOverridePerformTwoStepDrop"];
@@ -1180,14 +1180,14 @@ TEST(DataInteractionTests, InjectedBundleAllowPerformTwoStepDrop)
         return [NSProgress discreteProgressWithTotalUnitCount:100];
     }];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
 }
 
-TEST(DataInteractionTests, InjectedBundleImageElementData)
+TEST(DragAndDropTests, InjectedBundleImageElementData)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
     [configuration _setAttachmentElementEnabled:YES];
@@ -1195,19 +1195,19 @@ TEST(DataInteractionTests, InjectedBundleImageElementData)
     [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
 
     __block RetainPtr<NSString> injectedString;
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *data)
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *data)
     {
         injectedString = adoptNS([[NSString alloc] initWithData:data[InjectedBundlePasteboardDataType] encoding:NSUTF8StringEncoding]);
         return @[ itemProvider ];
     }];
 
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 250)];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 250)];
 
     EXPECT_WK_STREQ("hello", [injectedString UTF8String]);
 }
 
-TEST(DataInteractionTests, InjectedBundleAttachmentElementData)
+TEST(DragAndDropTests, InjectedBundleAttachmentElementData)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"];
     [configuration _setAttachmentElementEnabled:YES];
@@ -1215,20 +1215,20 @@ TEST(DataInteractionTests, InjectedBundleAttachmentElementData)
     [webView synchronouslyLoadTestPageNamed:@"attachment-element"];
 
     __block RetainPtr<NSString> injectedString;
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *data)
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *data)
     {
         injectedString = adoptNS([[NSString alloc] initWithData:data[InjectedBundlePasteboardDataType] encoding:NSUTF8StringEncoding]);
         return @[ itemProvider ];
     }];
 
-    [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400)];
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400)];
 
     EXPECT_WK_STREQ("hello", [injectedString UTF8String]);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
 }
 
-TEST(DataInteractionTests, LargeImageToTargetDiv)
+TEST(DragAndDropTests, LargeImageToTargetDiv)
 {
     auto testWebViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[testWebViewConfiguration preferences] _setLargeImageAsyncDecodingEnabled:NO];
@@ -1236,48 +1236,48 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:testWebViewConfiguration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"div-and-large-image"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
-    checkFirstTypeIsPresentAndSecondTypeIsMissing(dataInteractionSimulator.get(), kUTTypePNG, kUTTypeFileURL);
-    checkEstimatedSize(dataInteractionSimulator.get(), { 2000, 2000 });
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypePNG, kUTTypeFileURL);
+    checkEstimatedSize(simulator.get(), { 2000, 2000 });
 }
 
-TEST(DataInteractionTests, LinkWithEmptyHREF)
+TEST(DragAndDropTests, LinkWithEmptyHREF)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
     [webView stringByEvaluatingJavaScript:@"document.querySelector('a').href = ''"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
+    EXPECT_EQ(DragAndDropPhaseCancelled, [simulator phase]);
     EXPECT_WK_STREQ("", [webView editorValue].UTF8String);
 }
 
-TEST(DataInteractionTests, CancelledLiftDoesNotCauseSubsequentDragsToFail)
+TEST(DragAndDropTests, CancelledLiftDoesNotCauseSubsequentDragsToFail)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-target-div"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *, NSArray *, NSDictionary *)
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *, NSArray *, NSDictionary *)
     {
         return @[ ];
     }];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
-    EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    EXPECT_EQ(DragAndDropPhaseCancelled, [simulator phase]);
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
     NSString *outputText = [webView stringByEvaluatingJavaScript:@"output.textContent"];
     checkStringArraysAreEqual(@[@"dragstart", @"dragend"], [outputText componentsSeparatedByString:@" "]);
 
     [webView stringByEvaluatingJavaScript:@"output.innerHTML = ''"];
-    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *)
+    [simulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *)
     {
         return @[ itemProvider ];
     }];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
     [webView stringByEvaluatingJavaScript:@"output.textContent"];
     checkStringArraysAreEqual(@[@"dragstart", @"dragend"], [outputText componentsSeparatedByString:@" "]);
@@ -1285,7 +1285,7 @@ TEST(DataInteractionTests, CancelledLiftDoesNotCauseSubsequentDragsToFail)
 
 static void testDragAndDropOntoTargetElements(TestWKWebView *webView)
 {
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView]);
     [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 250)];
     EXPECT_WK_STREQ("rgb(0, 128, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(target1).backgroundColor"]);
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target1.textContent"]);
@@ -1299,7 +1299,7 @@ static void testDragAndDropOntoTargetElements(TestWKWebView *webView)
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target3.textContent"]);
 }
 
-TEST(DataInteractionTests, DragEventClientCoordinatesBasic)
+TEST(DragAndDropTests, DragEventClientCoordinatesBasic)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
@@ -1307,7 +1307,7 @@ TEST(DataInteractionTests, DragEventClientCoordinatesBasic)
     testDragAndDropOntoTargetElements(webView.get());
 }
 
-TEST(DataInteractionTests, DragEventClientCoordinatesWithScrollOffset)
+TEST(DragAndDropTests, DragEventClientCoordinatesWithScrollOffset)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
@@ -1318,7 +1318,7 @@ TEST(DataInteractionTests, DragEventClientCoordinatesWithScrollOffset)
     testDragAndDropOntoTargetElements(webView.get());
 }
 
-TEST(DataInteractionTests, DragEventPageCoordinatesBasic)
+TEST(DragAndDropTests, DragEventPageCoordinatesBasic)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
@@ -1327,7 +1327,7 @@ TEST(DataInteractionTests, DragEventPageCoordinatesBasic)
     testDragAndDropOntoTargetElements(webView.get());
 }
 
-TEST(DataInteractionTests, DragEventPageCoordinatesWithScrollOffset)
+TEST(DragAndDropTests, DragEventPageCoordinatesWithScrollOffset)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
@@ -1339,12 +1339,12 @@ TEST(DataInteractionTests, DragEventPageCoordinatesWithScrollOffset)
     testDragAndDropOntoTargetElements(webView.get());
 }
 
-TEST(DataInteractionTests, DoNotCrashWhenSelectionIsClearedInDragStart)
+TEST(DragAndDropTests, DoNotCrashWhenSelectionIsClearedInDragStart)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dragstart-clear-selection"];
 
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
 
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"paragraph.textContent"]);
@@ -1352,29 +1352,29 @@ TEST(DataInteractionTests, DoNotCrashWhenSelectionIsClearedInDragStart)
 
 // FIXME: Re-enable this test once we resolve <https://bugs.webkit.org/show_bug.cgi?id=175204>
 #if __IPHONE_OS_VERSION_MAX_ALLOWED <= 110401
-TEST(DataInteractionTests, CustomActionSheetPopover)
+TEST(DragAndDropTests, CustomActionSheetPopover)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-target-div"];
 
-    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator setShouldEnsureUIApplication:YES];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setShouldEnsureUIApplication:YES];
 
     __block BOOL didInvokeCustomActionSheet = NO;
-    [dataInteractionSimulator setShowCustomActionSheetBlock:^BOOL(_WKActivatedElementInfo *element)
+    [simulator setShowCustomActionSheetBlock:^BOOL(_WKActivatedElementInfo *element)
     {
         EXPECT_EQ(_WKActivatedElementTypeLink, element.type);
         EXPECT_WK_STREQ("Hello world", element.title.UTF8String);
         didInvokeCustomActionSheet = YES;
         return YES;
     }];
-    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
     EXPECT_TRUE(didInvokeCustomActionSheet);
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
 }
 #endif
 
-TEST(DataInteractionTests, UnresponsivePageDoesNotHangUI)
+TEST(DragAndDropTests, UnresponsivePageDoesNotHangUI)
 {
     _WKProcessPoolConfiguration *processPoolConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
     processPoolConfiguration.ignoreSynchronousMessagingTimeoutsForTesting = YES;
@@ -1383,12 +1383,12 @@ TEST(DataInteractionTests, UnresponsivePageDoesNotHangUI)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
 
-    // The test passes if we can prepare for data interaction without timing out.
+    // The test passes if we can prepare for a drag session without timing out.
     auto dragSession = adoptNS([[MockDragSession alloc] init]);
     [(id <UIDragInteractionDelegate_ForWebKitOnly>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^() { }];
 }
 
-TEST(DataInteractionTests, WebItemProviderPasteboardLoading)
+TEST(DragAndDropTests, WebItemProviderPasteboardLoading)
 {
     static NSString *fastString = @"This data loads quickly";
     static NSString *slowString = @"This data loads slowly";
@@ -1434,25 +1434,25 @@ TEST(DataInteractionTests, WebItemProviderPasteboardLoading)
     TestWebKitAPI::Util::run(&hasRunSecondCompletionBlock);
 }
 
-TEST(DataInteractionTests, DoNotCrashWhenSelectionMovesOffscreenAfterDragStart)
+TEST(DragAndDropTests, DoNotCrashWhenSelectionMovesOffscreenAfterDragStart)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dragstart-change-selection-offscreen"];
 
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
 
     EXPECT_WK_STREQ("FAR OFFSCREEN", [webView stringByEvaluatingJavaScript:@"getSelection().getRangeAt(0).toString()"]);
 }
 
-TEST(DataInteractionTests, AdditionalItemsCanBePreventedOnDragStart)
+TEST(DragAndDropTests, AdditionalItemsCanBePreventedOnDragStart)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"selected-text-image-link-and-editable"];
     [webView stringByEvaluatingJavaScript:@"link.addEventListener('dragstart', e => e.preventDefault())"];
     [webView stringByEvaluatingJavaScript:@"image.addEventListener('dragstart', e => e.preventDefault())"];
 
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400) additionalItemRequestLocations:@{
         @0.33: [NSValue valueWithCGPoint:CGPointMake(50, 150)],
         @0.66: [NSValue valueWithCGPoint:CGPointMake(50, 250)]
@@ -1460,12 +1460,12 @@ TEST(DataInteractionTests, AdditionalItemsCanBePreventedOnDragStart)
     EXPECT_WK_STREQ("ABCD", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 }
 
-TEST(DataInteractionTests, AdditionalLinkAndImageIntoContentEditable)
+TEST(DragAndDropTests, AdditionalLinkAndImageIntoContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"selected-text-image-link-and-editable"];
 
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400) additionalItemRequestLocations:@{
         @0.33: [NSValue valueWithCGPoint:CGPointMake(50, 150)],
         @0.66: [NSValue valueWithCGPoint:CGPointMake(50, 250)]
@@ -1475,11 +1475,11 @@ TEST(DataInteractionTests, AdditionalLinkAndImageIntoContentEditable)
     EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"editor.querySelector('a').href"]);
 }
 
-TEST(DataInteractionTests, DragLiftPreviewDataTransferSetDragImage)
+TEST(DragAndDropTests, DragLiftPreviewDataTransferSetDragImage)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"DataTransfer-setDragImage"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     // Use DataTransfer.setDragImage to specify an existing image element in the DOM.
     [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(250, 50)];
@@ -1509,13 +1509,13 @@ static NSData *testIconImageData()
     return [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
 }
 
-TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageAndMarkup)
+TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageAndMarkup)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[webView configuration].preferences, true);
     [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
 
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypePNG withData:testIconImageData()];
     NSString *markupString = @"<script>bar()</script><strong onmousedown=javascript:void(0)>HELLO WORLD</strong>";
@@ -1533,11 +1533,11 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageAndMarkup)
     EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"rawHTMLData.textContent"] containsString:@"script"]);
 }
 
-TEST(DataInteractionTests, DataTransferGetDataWhenDroppingPlainText)
+TEST(DragAndDropTests, DataTransferGetDataWhenDroppingPlainText)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"select(plain)"];
     [simulator runFrom:CGPointMake(50, 75) to:CGPointMake(50, 375)];
@@ -1547,11 +1547,11 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingPlainText)
     });
 }
 
-TEST(DataInteractionTests, DataTransferGetDataWhenDroppingCustomData)
+TEST(DragAndDropTests, DataTransferGetDataWhenDroppingCustomData)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"select(rich)"];
     [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
@@ -1576,11 +1576,11 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingCustomData)
     });
 }
 
-TEST(DataInteractionTests, DataTransferGetDataWhenDroppingURL)
+TEST(DragAndDropTests, DataTransferGetDataWhenDroppingURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"rich.innerHTML = '<a href=\"https://www.apple.com/\">This is a link.</a>'"];
     [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
@@ -1596,11 +1596,11 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingURL)
     });
 }
 
-TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithFileURL)
+TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageWithFileURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSURL *iconURL = [[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
@@ -1620,11 +1620,11 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithFileURL)
     });
 }
 
-TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithHTTPURL)
+TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageWithHTTPURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
@@ -1642,11 +1642,11 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithHTTPURL)
     });
 }
 
-TEST(DataInteractionTests, DataTransferGetDataWhenDroppingRespectsPresentationStyle)
+TEST(DragAndDropTests, DataTransferGetDataWhenDroppingRespectsPresentationStyle)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     runTestWithTemporaryTextFile(^(NSURL *fileURL) {
         auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
@@ -1672,11 +1672,11 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingRespectsPresentationSt
     });
 }
 
-TEST(DataInteractionTests, DataTransferSetDataCannotWritePlatformTypes)
+TEST(DragAndDropTests, DataTransferSetDataCannotWritePlatformTypes)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"select(rich)"];
     [webView stringByEvaluatingJavaScript:@"customData = { 'text/plain' : 'foo', 'com.adobe.pdf' : 'try and decode me!' }"];
@@ -1696,11 +1696,11 @@ TEST(DataInteractionTests, DataTransferSetDataCannotWritePlatformTypes)
     });
 }
 
-TEST(DataInteractionTests, DataTransferGetDataReadPlainAndRichText)
+TEST(DragAndDropTests, DataTransferGetDataReadPlainAndRichText)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSDictionary *textAttributes = @{ NSFontAttributeName: [UIFont boldSystemFontOfSize:20] };
@@ -1720,11 +1720,11 @@ TEST(DataInteractionTests, DataTransferGetDataReadPlainAndRichText)
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
 }
 
-TEST(DataInteractionTests, DataTransferSuppressGetDataDueToPresenceOfTextFile)
+TEST(DragAndDropTests, DataTransferSuppressGetDataDueToPresenceOfTextFile)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     [itemProvider registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
@@ -1741,11 +1741,11 @@ TEST(DataInteractionTests, DataTransferSuppressGetDataDueToPresenceOfTextFile)
     EXPECT_WK_STREQ("('hello.txt', text/plain)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
 }
 
-TEST(DataInteractionTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)
+TEST(DragAndDropTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
     [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeMP3 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
@@ -1767,11 +1767,11 @@ TEST(DataInteractionTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)
     });
 }
 
-TEST(DataInteractionTests, DataTransferSetDataValidURL)
+TEST(DragAndDropTests, DataTransferSetDataValidURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"select(rich)"];
     [webView stringByEvaluatingJavaScript:@"customData = { 'url' : 'https://webkit.org/b/123' }"];
@@ -1804,11 +1804,11 @@ TEST(DataInteractionTests, DataTransferSetDataValidURL)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(DataInteractionTests, DataTransferSetDataUnescapedURL)
+TEST(DragAndDropTests, DataTransferSetDataUnescapedURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"select(rich)"];
     [webView stringByEvaluatingJavaScript:@"customData = { 'url' : 'http://webkit.org/b/\u4F60\u597D;?x=8 + 6' }"];
@@ -1841,11 +1841,11 @@ TEST(DataInteractionTests, DataTransferSetDataUnescapedURL)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(DataInteractionTests, DataTransferSetDataInvalidURL)
+TEST(DragAndDropTests, DataTransferSetDataInvalidURL)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"select(rich)"];
     [webView stringByEvaluatingJavaScript:@"customData = { 'url' : 'some random string' }"];
@@ -1864,11 +1864,11 @@ TEST(DataInteractionTests, DataTransferSetDataInvalidURL)
     });
 }
 
-TEST(DataInteractionTests, DataTransferSanitizeHTML)
+TEST(DragAndDropTests, DataTransferSanitizeHTML)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
-    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     [webView stringByEvaluatingJavaScript:@"select(rich)"];
     [webView stringByEvaluatingJavaScript:@"customData = { 'text/html' : '<meta content=\"secret\">"
@@ -1908,4 +1908,4 @@ TEST(DataInteractionTests, DataTransferSanitizeHTML)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(DATA_INTERACTION)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS) && WK_API_ENABLED
