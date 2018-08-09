@@ -96,7 +96,7 @@ auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> E
     return ExceptionType::None;
 }
 
-auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer> buffer) -> ExceptionType
+auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer>&& buffer) -> ExceptionType
 {
     if (m_stopped)
         return ExceptionType::TaskAlreadyStopped;
@@ -110,9 +110,10 @@ auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer> buffer) -> ExceptionType
     m_dataSent = true;
 
     if (isSync()) {
-        if (!m_syncData)
-            m_syncData = SharedBuffer::create();
-        m_syncData->append(buffer);
+        if (m_syncData)
+            m_syncData->append(buffer);
+        else
+            m_syncData = WTFMove(buffer);
     }
 
     m_page->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_identifier, IPC::SharedBufferDataReference(buffer.ptr())));
@@ -133,7 +134,10 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     m_completed = true;
     
     if (isSync()) {
-        m_syncCompletionHandler(m_syncResponse, error, IPC::DataReference { (const uint8_t*)m_syncData->data(), m_syncData->size() });
+        IPC::DataReference data;
+        if (m_syncData)
+            data = { reinterpret_cast<const uint8_t*>(m_syncData->data()), m_syncData->size() };
+        m_syncCompletionHandler(m_syncResponse, error, data);
         m_syncData = nullptr;
     }
 

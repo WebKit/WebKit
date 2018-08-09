@@ -70,7 +70,7 @@ public:
     };
     ExceptionType didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     ExceptionType didReceiveResponse(const WebCore::ResourceResponse&);
-    ExceptionType didReceiveData(Ref<WebCore::SharedBuffer>);
+    ExceptionType didReceiveData(Ref<WebCore::SharedBuffer>&&);
     ExceptionType didComplete(const WebCore::ResourceError&);
 
     void stop();

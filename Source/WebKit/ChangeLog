@@ -1,3 +1,15 @@
+2018-08-09  Alex Christensen  <achristensen@webkit.org>
+
+        WKURLSchemeHandler crashes when sent errors with sync XHR
+        https://bugs.webkit.org/show_bug.cgi?id=188358
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        * UIProcess/WebURLSchemeTask.h:
+
 2018-08-09  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r232083): WKWebView loses first-party cookies on iOS

@@ -538,5 +538,49 @@ TEST(URLSchemeHandler, SyncXHR)
     TestWebKitAPI::Util::run(&receivedStop);
 }
 
+@interface SyncErrorScheme : NSObject <WKURLSchemeHandler, WKUIDelegate>
+@end
+
+@implementation SyncErrorScheme
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    if ([task.request.URL.absoluteString isEqualToString:@"syncerror:///main.html"]) {
+        static const char* bytes = "<script>var xhr=new XMLHttpRequest();xhr.open('GET','subresource',false);try{xhr.send(null);alert('no error')}catch(e){alert(e)}</script>";
+        [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:strlen(bytes) textEncodingName:nil] autorelease]];
+        [task didReceiveData:[NSData dataWithBytes:bytes length:strlen(bytes)]];
+        [task didFinish];
+    } else {
+        EXPECT_STREQ(task.request.URL.absoluteString.UTF8String, "syncerror:///subresource");
+        [task didReceiveResponse:[[[NSURLResponse alloc] init] autorelease]];
+        [task didFailWithError:[NSError errorWithDomain:@"TestErrorDomain" code:123 userInfo:nil]];
+    }
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    EXPECT_STREQ(message.UTF8String, "NetworkError:  A network error occurred.");
+    completionHandler();
+    done = true;
+}
+
+@end
+
+TEST(URLSchemeHandler, SyncXHRError)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[SyncErrorScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"syncerror"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView setUIDelegate:handler.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"syncerror:///main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+}
+
+
 #endif // WK_API_ENABLED
 
