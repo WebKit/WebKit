@@ -1,3 +1,16 @@
+2018-08-09  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(r234652): fast/scrolling/rtl-scrollbars-animation-property.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=188397
+
+        Reviewed by Tim Horton.
+
+        After r234652, [NSScroller preferredScrollerStyle] is called in the UI process, and we need to set the same
+        user defaults related to scrollbars in the UI process as we do in the WebProcess.
+
+        * WebKitTestRunner/mac/main.mm:
+        (setDefaultsToConsistentValuesForTesting):
+
 2018-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Rename and refactor DataInteractionTests and DataInteractionSimulator
