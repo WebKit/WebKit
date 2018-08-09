@@ -1,3 +1,16 @@
+2018-08-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: SourceCodeTextEditor error/warning text widget is too light
+        https://bugs.webkit.org/show_bug.cgi?id=188126
+        <rdar://problem/42674963>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.source-code.text-editor > .CodeMirror .issue-widget.warning,): Added.
+        (.source-code.text-editor > .CodeMirror .issue-widget.error,): Added.
+
 2018-08-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add another Protocol Version (iOS 12)

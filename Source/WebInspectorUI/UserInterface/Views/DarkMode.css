@@ -1039,10 +1039,12 @@
         --error-background-color: hsl(11, 70%, 32%);
     }
 
+    .source-code.text-editor > .CodeMirror .issue-widget.warning,
     .source-code.text-editor > .CodeMirror .issue-widget.inline.warning {
         background-color: var(--warning-background-color);
     }
 
+    .source-code.text-editor > .CodeMirror .issue-widget.error,
     .source-code.text-editor > .CodeMirror .issue-widget.inline.error {
         background-color: var(--error-background-color);
     }
