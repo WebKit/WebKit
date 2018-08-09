@@ -29,6 +29,7 @@
 
 #import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -143,11 +144,9 @@ static bool done;
 
 @end
 
-namespace TestWebKitAPI {
-
 TEST(WebKit, SafeBrowsing)
 {
-    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [TestLookupContext methodForSelector:@selector(sharedLookupContext)]);
+    TestWebKitAPI::ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [TestLookupContext methodForSelector:@selector(sharedLookupContext)]);
 
     auto navigationDelegate = adoptNS([[SafeBrowsingNavigationDelegate alloc] init]);
     auto webView = adoptNS([[WKWebView alloc] init]);
@@ -158,7 +157,21 @@ TEST(WebKit, SafeBrowsing)
 
     TestWebKitAPI::Util::run(&done);
 }
-    
-} // namespace TestWebKitAPI
+
+@interface NullLookupContext : NSObject
+@end
+@implementation NullLookupContext
++ (NullLookupContext *)sharedLookupContext
+{
+    return nil;
+}
+@end
+
+TEST(WebKit, NoSafeBrowsing)
+{
+    TestWebKitAPI::ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [NullLookupContext methodForSelector:@selector(sharedLookupContext)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+}
 
 #endif // WK_API_ENABLED

@@ -74,7 +74,10 @@ void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::Recent
 void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListenerProxy& listener)
 {
 #if HAVE(SAFE_BROWSING)
-    [[SSBLookupContext sharedLookupContext] lookUpURL:url completionHandler:BlockPtr<void(SSBLookupResult *, NSError *)>::fromCallable([listener = makeRef(listener)] (SSBLookupResult *result, NSError *error) mutable {
+    SSBLookupContext *context = [SSBLookupContext sharedLookupContext];
+    if (!context)
+        return listener.didReceiveSafeBrowsingResults({ });
+    [context lookUpURL:url completionHandler:BlockPtr<void(SSBLookupResult *, NSError *)>::fromCallable([listener = makeRef(listener)] (SSBLookupResult *result, NSError *error) mutable {
         RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error)] {
             if (error) {
                 listener->didReceiveSafeBrowsingResults({ });
