@@ -1,3 +1,13 @@
+2018-08-09  Ali Juma  <ajuma@chromium.org>
+
+        Update IDL for IntersectionObserverEntry and IntersectionObserverEntryInit
+        https://bugs.webkit.org/show_bug.cgi?id=188445
+
+        Reviewed by Simon Fraser.
+
+        * intersection-observer/intersection-observer-entry-interface-expected.txt:
+        * intersection-observer/intersection-observer-entry-interface.html:
+
 2018-08-08  Keith Miller  <keith_miller@apple.com>
 
         Array.prototype.sort should call @toLength instead of ">>> 0"

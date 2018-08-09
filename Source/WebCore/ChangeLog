@@ -1,3 +1,22 @@
+2018-08-09  Ali Juma  <ajuma@chromium.org>
+
+        Update IDL for IntersectionObserverEntry and IntersectionObserverEntryInit
+        https://bugs.webkit.org/show_bug.cgi?id=188445
+
+        Reviewed by Simon Fraser.
+
+        Update IntersectionObserverEntry by making rootBounds nullable, and adding an
+        isIntersecting attribute. Make the same changes to IntersectionObserverEntryInit,
+        and also add an intersectionRatio attribute.
+
+        Tested by intersection-observer/intersection-observer-entry-interface.html
+
+        * page/IntersectionObserverEntry.cpp:
+        (WebCore::IntersectionObserverEntry::IntersectionObserverEntry):
+        * page/IntersectionObserverEntry.h:
+        (WebCore::IntersectionObserverEntry::isIntersecting const):
+        * page/IntersectionObserverEntry.idl:
+
 2018-08-09  Charlie Turner  <cturner@igalia.com>
 
         Fix copyright headers on new ISO parsing class
