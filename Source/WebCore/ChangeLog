@@ -1,5 +1,15 @@
 2018-08-08  Don Olmstead  <don.olmstead@sony.com>
 
+        [Curl] Surface additional NetworkLoadMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=188391
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::getNetworkLoadMetrics):
+
+2018-08-08  Don Olmstead  <don.olmstead@sony.com>
+
         [Nicosia] Add the Nicosia-specific PlatformLayer type alias
         https://bugs.webkit.org/show_bug.cgi?id=188405
         <rdar://problem/43039520>

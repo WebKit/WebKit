@@ -77,6 +77,11 @@ constexpr const char* EnvironmentVariableReader::sscanTemplate<signed>() { retur
 template<>
 constexpr const char* EnvironmentVariableReader::sscanTemplate<unsigned>() { return "%u"; }
 
+// ALPN Protocol ID (RFC7301) https://tools.ietf.org/html/rfc7301
+static const ASCIILiteral httpVersion10 { "http/1.0"_s };
+static const ASCIILiteral httpVersion11 { "http/1.1"_s };
+static const ASCIILiteral httpVersion2 { "h2"_s };
+
 // CurlContext -------------------------------------------------------------------
 
 CurlContext& CurlContext::singleton()
@@ -725,6 +730,13 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
     double connect = 0.0;
     double appConnect = 0.0;
     double startTransfer = 0.0;
+    long requestHeaderSize = 0;
+    curl_off_t requestBodySize = 0;
+    long responseHeaderSize = 0;
+    curl_off_t responseBodySize = 0;
+    long version = 0;
+    char* ip = nullptr;
+    long port = 0;
 
     if (!m_handle)
         return std::nullopt;
@@ -745,6 +757,35 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
+    // FIXME: Gets total request size not just headers https://bugs.webkit.org/show_bug.cgi?id=188363
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_REQUEST_SIZE, &requestHeaderSize);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_UPLOAD_T, &requestBodySize);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_HEADER_SIZE, &responseHeaderSize);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_SIZE_DOWNLOAD_T, &responseBodySize);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_IP, &ip);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_PORT, &port);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
     NetworkLoadMetrics networkLoadMetrics;
 
     networkLoadMetrics.domainLookupStart = Seconds(0);
@@ -759,6 +800,24 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
 
     networkLoadMetrics.requestStart = networkLoadMetrics.connectEnd;
     networkLoadMetrics.responseStart = Seconds(startTransfer);
+
+    networkLoadMetrics.requestHeaderBytesSent = requestHeaderSize;
+    networkLoadMetrics.requestBodyBytesSent = requestBodySize;
+    networkLoadMetrics.responseHeaderBytesReceived = responseHeaderSize;
+    networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
+
+    if (ip) {
+        networkLoadMetrics.remoteAddress = String(ip);
+        if (port)
+            networkLoadMetrics.remoteAddress.append(":" + String::number(port));
+    }
+
+    if (version == CURL_HTTP_VERSION_1_0)
+        networkLoadMetrics.protocol = httpVersion10;
+    else if (version == CURL_HTTP_VERSION_1_1)
+        networkLoadMetrics.protocol = httpVersion11;
+    else if (version == CURL_HTTP_VERSION_2)
+        networkLoadMetrics.protocol = httpVersion2;
 
     return networkLoadMetrics;
 }

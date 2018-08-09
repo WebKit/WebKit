@@ -1,3 +1,13 @@
+2018-08-08  Don Olmstead  <don.olmstead@sony.com>
+
+        [Curl] Surface additional NetworkLoadMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=188391
+
+        Reviewed by Joseph Pecoraro.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::curlDidReceiveResponse):
+
 2018-08-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix possible null dereference in WebBackForwardList::restoreFromState

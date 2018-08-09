@@ -147,13 +147,14 @@ void NetworkDataTaskCurl::curlDidSendData(CurlRequest&, unsigned long long total
     m_client->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
-void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest&, const CurlResponse& receivedResponse)
+void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, const CurlResponse& receivedResponse)
 {
     auto protectedThis = makeRef(*this);
     if (state() == State::Canceling || state() == State::Completed || !m_client)
         return;
 
     m_response = ResourceResponse(receivedResponse);
+    m_response.setDeprecatedNetworkLoadMetrics(request.networkLoadMetrics().isolatedCopy());
 
     handleCookieHeaders(receivedResponse);
 
