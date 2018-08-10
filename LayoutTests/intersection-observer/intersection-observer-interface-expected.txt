@@ -3,7 +3,10 @@ PASS Constructor0
 PASS DefaultRootMargin 
 PASS DefaultRoot 
 PASS DefaultThresholds 
-PASS ExplicitRootMargin 
+PASS ExplicitOneArgumentRootMargin 
+PASS ExplicitTwoArgumentRootMargin 
+PASS ExplicitThreeArgumentRootMargin 
+PASS ExplicitFourArgumentRootMargin 
 PASS ExplicitRoot 
 PASS ExplicitThreshold 
 PASS ExplicitThresholds 

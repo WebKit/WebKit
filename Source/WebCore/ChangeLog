@@ -1,3 +1,28 @@
+2018-08-10  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Implement rootMargin parsing
+        https://bugs.webkit.org/show_bug.cgi?id=188469
+
+        Reviewed by Darin Adler.
+
+        Parse IntersectionObserver's rootMargin argument and throw an exception if it's invalid.
+        Change the stored rootMargin from a String to a LengthBox so that future patches can
+        use this value in intersection logic.
+
+        Tested by: imported/w3c/web-platform-tests/intersection-observer/observer-attributes.html
+                   imported/w3c/web-platform-tests/intersection-observer/observer-exceptions.html
+                   intersection-observer/intersection-observer-interface.html
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::parseRootMargin):
+        (WebCore::IntersectionObserver::create):
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        (WebCore::IntersectionObserver::rootMargin const):
+        * page/IntersectionObserver.h:
+        (WebCore::IntersectionObserver::create): Deleted.
+        (WebCore::IntersectionObserver::rootMargin const): Deleted.
+        * page/IntersectionObserver.idl:
+
 2018-08-09  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault

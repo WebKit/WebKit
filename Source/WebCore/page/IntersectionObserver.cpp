@@ -28,6 +28,9 @@
 #if ENABLE(INTERSECTION_OBSERVER)
 #include "IntersectionObserver.h"
 
+#include "CSSParserTokenRange.h"
+#include "CSSPropertyParserHelpers.h"
+#include "CSSTokenizer.h"
 #include "Element.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
@@ -35,15 +38,84 @@
 
 namespace WebCore {
 
-IntersectionObserver::IntersectionObserver(Ref<IntersectionObserverCallback>&& callback, Init&& init)
+static ExceptionOr<LengthBox> parseRootMargin(String& rootMargin)
+{
+    CSSTokenizer tokenizer(rootMargin);
+    auto tokenRange = tokenizer.tokenRange();
+    Vector<Length, 4> margins;
+    while (!tokenRange.atEnd()) {
+        if (margins.size() == 4)
+            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': Extra text found at the end of rootMargin." };
+        RefPtr<CSSPrimitiveValue> parsedValue = CSSPropertyParserHelpers::consumeLengthOrPercent(tokenRange, HTMLStandardMode, ValueRangeAll);
+        if (!parsedValue || parsedValue->isCalculated())
+            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent." };
+        if (parsedValue->isPercentage())
+            margins.append(Length(parsedValue->doubleValue(), Percent));
+        else if (parsedValue->isPx())
+            margins.append(Length(parsedValue->intValue(), Fixed));
+        else
+            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent." };
+    }
+    switch (margins.size()) {
+    case 0:
+        for (unsigned i = 0; i < 4; ++i)
+            margins.append(Length());
+        break;
+    case 1:
+        for (unsigned i = 0; i < 3; ++i)
+            margins.append(margins[0]);
+        break;
+    case 2:
+        margins.append(margins[0]);
+        margins.append(margins[1]);
+        break;
+    case 3:
+        margins.append(margins[1]);
+        break;
+    case 4:
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return LengthBox(WTFMove(margins[0]), WTFMove(margins[1]), WTFMove(margins[2]), WTFMove(margins[3]));
+}
+
+ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Ref<IntersectionObserverCallback>&& callback, IntersectionObserver::Init&& init)
+{
+    auto rootMarginOrException = parseRootMargin(init.rootMargin);
+    if (rootMarginOrException.hasException())
+        return rootMarginOrException.releaseException();
+
+    return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init), rootMarginOrException.releaseReturnValue()));
+}
+
+IntersectionObserver::IntersectionObserver(Ref<IntersectionObserverCallback>&& callback, Init&& init, LengthBox&& parsedRootMargin)
     : m_root(init.root)
-    , m_rootMargin(WTFMove(init.rootMargin))
+    , m_rootMargin(WTFMove(parsedRootMargin))
     , m_callback(WTFMove(callback))
 {
     if (WTF::holds_alternative<double>(init.threshold))
         m_thresholds.append(WTF::get<double>(init.threshold));
     else
         m_thresholds = WTF::get<Vector<double>>(WTFMove(init.threshold));
+}
+
+String IntersectionObserver::rootMargin() const
+{
+    StringBuilder stringBuilder;
+    PhysicalBoxSide sides[4] = { PhysicalBoxSide::Top, PhysicalBoxSide::Right, PhysicalBoxSide::Bottom, PhysicalBoxSide::Left };
+    for (auto side : sides) {
+        auto& length = m_rootMargin.at(side);
+        stringBuilder.appendNumber(length.intValue());
+        if (length.type() == Percent)
+            stringBuilder.append('%');
+        else
+            stringBuilder.append("px", 2);
+        if (side != PhysicalBoxSide::Left)
+            stringBuilder.append(' ');
+    }
+    return stringBuilder.toString();
 }
 
 void IntersectionObserver::observe(Element&)

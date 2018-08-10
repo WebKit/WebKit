@@ -1,3 +1,13 @@
+2018-08-10  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Implement rootMargin parsing
+        https://bugs.webkit.org/show_bug.cgi?id=188469
+
+        Reviewed by Darin Adler.
+
+        * intersection-observer/intersection-observer-interface-expected.txt:
+        * intersection-observer/intersection-observer-interface.html:
+
 2018-08-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Eliminate remaining instances of "ElCapitan" from LayoutTests / Tools

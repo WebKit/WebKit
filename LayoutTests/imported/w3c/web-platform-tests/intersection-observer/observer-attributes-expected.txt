@@ -2,8 +2,8 @@
 PASS Observer attribute getters. 
 PASS observer.root 
 PASS observer.thresholds 
-FAIL observer.rootMargin assert_equals: expected "0px 0px 0px 0px" but got "0px"
+PASS observer.rootMargin 
 PASS set observer.root 
 PASS set observer.thresholds 
-FAIL set observer.rootMargin assert_equals: expected "10% 20px 10% 20px" but got "10% 20px"
+PASS set observer.rootMargin 
 

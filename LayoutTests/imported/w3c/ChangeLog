@@ -1,3 +1,15 @@
+2018-08-10  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Implement rootMargin parsing
+        https://bugs.webkit.org/show_bug.cgi?id=188469
+
+        Reviewed by Darin Adler.
+
+        Update expectations for newly passing test cases.
+
+        * web-platform-tests/intersection-observer/observer-attributes-expected.txt:
+        * web-platform-tests/intersection-observer/observer-exceptions-expected.txt:
+
 2018-08-09  Ali Juma  <ajuma@chromium.org>
 
         Import WPTs for IntersectionObserver

@@ -29,6 +29,7 @@
 
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
+#include "LengthBox.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
@@ -45,13 +46,10 @@ public:
         Variant<double, Vector<double>> threshold;
     };
 
-    static Ref<IntersectionObserver> create(Ref<IntersectionObserverCallback>&& callback, Init&& init)
-    {
-        return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init)));
-    }
+    static ExceptionOr<Ref<IntersectionObserver>> create(Ref<IntersectionObserverCallback>&&, Init&&);
     
     Element* root() const { return m_root.get(); }
-    String rootMargin() const { return m_rootMargin; }
+    String rootMargin() const;
     const Vector<double>& thresholds() const { return m_thresholds; }
 
     void observe(Element&);
@@ -61,10 +59,10 @@ public:
     Vector<RefPtr<IntersectionObserverEntry>> takeRecords();
 
 private:
-    IntersectionObserver(Ref<IntersectionObserverCallback>&&, Init&&);
+    IntersectionObserver(Ref<IntersectionObserverCallback>&&, Init&&, LengthBox&& parsedRootMargin);
     
     RefPtr<Element> m_root;
-    String m_rootMargin;
+    LengthBox m_rootMargin;
     Vector<double> m_thresholds;
     Ref<IntersectionObserverCallback> m_callback;
 };

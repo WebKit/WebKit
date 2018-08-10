@@ -27,6 +27,7 @@
 
 [
     Conditional=INTERSECTION_OBSERVER,
+    ConstructorMayThrowException,
     Constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options),
     ImplementationLacksVTable,
     EnabledAtRuntime=IntersectionObserver

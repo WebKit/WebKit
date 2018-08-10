@@ -15,7 +15,7 @@
     },'Constructor0');
     test(function() {
         var observer = new IntersectionObserver(function() {});
-        assert_equals(observer.rootMargin, '0px');
+        assert_equals(observer.rootMargin, '0px 0px 0px 0px');
     },'DefaultRootMargin');
     test(function() {
         var observer = new IntersectionObserver(function() {});
@@ -26,9 +26,21 @@
         assert_array_equals(observer.thresholds, [0]);
     },'DefaultThresholds');
     test(function() {
-        var observer = new IntersectionObserver(function() {}, { rootMargin: '33em 10px -120px 3pt' });
-        assert_equals(observer.rootMargin, '33em 10px -120px 3pt');
-    },'ExplicitRootMargin');
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33%' });
+        assert_equals(observer.rootMargin, '33% 33% 33% 33%');
+    },'ExplicitOneArgumentRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33% 10px' });
+        assert_equals(observer.rootMargin, '33% 10px 33% 10px');
+    },'ExplicitTwoArgumentRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33% 10px -120px' });
+        assert_equals(observer.rootMargin, '33% 10px -120px 10px');
+    },'ExplicitThreeArgumentRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33% 10px -120px 3%' });
+        assert_equals(observer.rootMargin, '33% 10px -120px 3%');
+    },'ExplicitFourArgumentRootMargin');
     test(function() {
         var observer = new IntersectionObserver(function() {}, { root: document.body });
         assert_equals(observer.root, document.body);
