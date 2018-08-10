@@ -1,3 +1,12 @@
+2018-08-09  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Add individual test durations to output
+        https://bugs.webkit.org/show_bug.cgi?id=188448
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebGPUShadingLanguageRI/Test.js: Add timing output.
+
 2018-08-09  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault

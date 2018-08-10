@@ -6559,8 +6559,10 @@ function* doTest(testFilter)
         if (s.match(testFilter)) {
             print("TEST: " + s + "...");
             yield;
+            const testBefore = preciseTime();
             tests[s]();
-            print("    OK!");
+            const testAfter = preciseTime();
+            print(`    OK, took ${Math.round((testAfter - testBefore) * 1000)} ms`);
         }
     }
 
