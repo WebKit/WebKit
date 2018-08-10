@@ -1,3 +1,35 @@
+2018-08-10  Daniel Bates  <dabates@apple.com>
+
+        Once <object> is hidden, its content won't be displayed again if its URL has fragment identifier ("#").
+        https://bugs.webkit.org/show_bug.cgi?id=187990
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where an HTML object element that behaves like an iframe and references a resource
+        whose URL contains a fragment would not be repainted when its CSS display property changes. 
+
+        Rendering of an <object> that behaves like an iframe is handled by a widget (FrameView). When
+        the CSS display property for an <object> is set to "none" we detach the widget from its renderer
+        as part of destroying the render tree for the <object>. Subsequently changing the CSS display
+        to a non-"none"/"contents" value will create a new renderer for <object> R. For an <object> that
+        behaves like an iframe, we navigate to the resource associated with the <object> reusing the
+        existing Frame F object created when we first displayed the <object>. Unlike the case where
+        the URL of the resource does not contain a fragment, navigating to a fragment in the same document
+        uses a different code path that does not re-associate the FrameView of F with R before it scrolls
+        the view; => the FrameView of F is not in the view hierarchy. Therefore we do not paint anything
+        for the content of the <object> and hence the scroll is not observable. Instead we need to ensure
+        that the FrameView of F installed in the view hierarchy when navigating to an anchor in the same
+        document.
+
+        As a side benefit of this fix we now also repaint an <object> that is programmatically navigated
+        to a different anchor in the same document.
+
+        Tests: fast/repaint/object-as-iframe-hide-and-show-document-at-anchor.html
+               fast/repaint/object-as-iframe-navigate-to-same-document-anchor-repaint.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument):
+
 2018-08-10  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Implement rootMargin parsing

@@ -1,3 +1,20 @@
+2018-08-10  Daniel Bates  <dabates@apple.com>
+
+        Once <object> is hidden, its content won't be displayed again if its URL has fragment identifier ("#").
+        https://bugs.webkit.org/show_bug.cgi?id=187990
+
+        Reviewed by Simon Fraser.
+
+        Add tests to ensure that we repaint an <object>, whose resource URL contains a fragment, when
+        its CSS display property changes as well as when its navigated to a different anchor in the same
+        document.
+
+        * fast/repaint/object-as-iframe-hide-and-show-document-at-anchor-expected.txt: Added.
+        * fast/repaint/object-as-iframe-hide-and-show-document-at-anchor.html: Added.
+        * fast/repaint/object-as-iframe-navigate-to-same-document-anchor-repaint-expected.txt: Added.
+        * fast/repaint/object-as-iframe-navigate-to-same-document-anchor-repaint.html: Added.
+        * fast/repaint/resources/red-square-on-top-of-green-square.html: Added.
+
 2018-08-10  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Implement rootMargin parsing

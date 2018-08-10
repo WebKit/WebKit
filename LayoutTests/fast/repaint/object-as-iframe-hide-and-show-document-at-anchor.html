@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+object {
+	border: 1px solid black;
+}
+</style>
+<script>
+function runTest()
+{
+	let testElement = document.getElementById("test");
+	testElement.style.display = "none";
+	testElement.style.display = "inline";
+}
+</script>
+</head>
+<body>
+<!-- This test verifies that we paint the contents of an HTML object for a URL with a fragment after setting its CSS display property to "none" and then "inline" (in that order). This test PASSED if you see a green square. Otherwise, it FAILED. -->
+<object id="test" data="resources/red-square-on-top-of-green-square.html#green" width="256" height="256" onload="runTest()"></object>
+</body>
+</html>

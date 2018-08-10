@@ -1149,6 +1149,13 @@ void FrameLoader::loadInSameDocument(const URL& url, SerializedScriptValue* stat
     // Otherwise, the parent frame may think we never finished loading.
     started();
 
+    if (auto* ownerElement = m_frame.ownerElement()) {
+        auto* ownerRenderer = ownerElement->renderer();
+        auto* view = m_frame.view();
+        if (is<RenderWidget>(ownerRenderer) && view)
+            downcast<RenderWidget>(*ownerRenderer).setWidget(view);
+    }
+
     // We need to scroll to the fragment whether or not a hash change occurred, since
     // the user might have scrolled since the previous navigation.
     scrollToFragmentWithParentBoundary(url, isNewNavigation);
