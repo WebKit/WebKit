@@ -92,7 +92,7 @@ webkit.org/b/178272 [ Sierra ] http/tests/security/canvas-remote-read-remote-vid
 webkit.org/b/178272 [ Sierra ] http/tests/security/video-cross-origin-caching.html [ Pass Timeout ]
 
 # rdar://problem/20001985
-[ ElCapitan Sierra ] http/tests/xmlhttprequest/range-test.html [ Failure ]
+[ Sierra ] http/tests/xmlhttprequest/range-test.html [ Failure ]
 
 # rdar://problem/34716163 Breaks subsequent tests using response.xml
 [ HighSierra+ ] http/tests/xmlhttprequest/range-test.html [ Skip ]
@@ -230,9 +230,8 @@ fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
 
-[ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+[ Sierra+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-# This test gives a different output on ElCapitan-wk1 only.
 webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
 
 # DRT can open way more files than the DatabaseProcess with WebKitTestRunner, and the number is reasonable.

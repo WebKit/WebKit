@@ -1,3 +1,14 @@
+2018-08-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Eliminate remaining instances of "ElCapitan" from LayoutTests / Tools
+        https://bugs.webkit.org/show_bug.cgi?id=188458
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-08-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed layout test gardening.

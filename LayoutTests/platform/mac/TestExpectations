@@ -813,7 +813,7 @@ webkit.org/b/131855 media/event-attributes.html [ Pass Failure Timeout ]
 webkit.org/b/133363 media/video-rtl.html [ Pass ImageOnlyFailure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/align.html [ Pass Failure ]
 webkit.org/b/135071 media/video-seek-with-negative-playback.html [ Pass Timeout ]
-webkit.org/b/135160 [ ElCapitan+ ] media/track/track-in-band-subtitles-too-large.html [ Failure ]
+webkit.org/b/135160 [ Sierra+ ] media/track/track-in-band-subtitles-too-large.html [ Failure ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Failure ]
 webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Timeout Crash ]
 webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
@@ -899,7 +899,7 @@ webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Skip ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Skip ]
 
-webkit.org/b/163231 [ ElCapitan+ ] media/controls/airplay-picker.html [ Pass Failure ]
+webkit.org/b/163231 [ Sierra+ ] media/controls/airplay-picker.html [ Pass Failure ]
 
 # --- End media tests ---
 webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
@@ -1028,10 +1028,10 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 webkit.org/b/140022 http/tests/media/track-in-band-hls-metadata.html [ Pass Timeout ]
 
 # <rdar://problem/19893462>
-[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
-[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
-[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
-[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
+[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
+[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
+[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
+[ Sierra+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
 
 # See also: <rdar://problem/20622665>
 webkit.org/b/148597 http/tests/media/video-play-stall.html [ Pass Failure ]
@@ -1122,8 +1122,7 @@ webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 # Touch events is not enabled on Mac
 webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
 
-# Marking test as flaky in El Capitan
-webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
+webkit.org/b/149819 [ Debug Sierra+ ] compositing/video/video-poster.html [ Pass Crash ]
 
 webkit.org/b/168953 [ Release ] compositing/video/video-poster.html [ Pass Failure ]
 
@@ -1166,22 +1165,22 @@ accessibility/mac/selection-element-tabbing-to-link.html [ Pass Failure ]
 
 webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass Timeout ]
 
-webkit.org/b/154709 [ ElCapitan+ ] fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
-webkit.org/b/154709 [ ElCapitan+ ] legacy-animation-engine/fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
+webkit.org/b/154709 [ Sierra+ ] fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
+webkit.org/b/154709 [ Sierra+ ] legacy-animation-engine/fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
 
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
 webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
 webkit.org/b/187103 js/error-should-not-strong-reference-global-object.html [ Pass Failure ]
 
-webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
-webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
+webkit.org/b/155505 [ Sierra+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
+webkit.org/b/155505 [ Sierra+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
 
-webkit.org/b/156112 [ ElCapitan+ ] media/audio-controls-rendering.html [ Pass Failure ]
-webkit.org/b/156112 [ ElCapitan+ ] media/controls-strict.html [ Pass Failure ]
-webkit.org/b/156112 [ ElCapitan+ ] media/controls-without-preload.html [ Pass Failure ]
+webkit.org/b/156112 [ Sierra+ ] media/audio-controls-rendering.html [ Pass Failure ]
+webkit.org/b/156112 [ Sierra+ ] media/controls-strict.html [ Pass Failure ]
+webkit.org/b/156112 [ Sierra+ ] media/controls-without-preload.html [ Pass Failure ]
 
 webkit.org/b/156351 storage/indexeddb/modern/autoincrement-abort-private.html [ Pass Timeout ]
 
@@ -1197,7 +1196,7 @@ webkit.org/b/158101 imported/blink/http/tests/plugins/get-url-notify-on-removal.
 webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ Pass ImageOnlyFailure ]
 
 # These tests hardcode platform-specific font aliases.
-webkit.org/b/158649 [ ElCapitan+ ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
+webkit.org/b/158649 [ Sierra+ ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 webkit.org/b/159003 [ Sierra+ ] fast/text/font-cursive-italic-cjk.html [ Skip ]
 
 webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure Timeout ]
@@ -1237,7 +1236,7 @@ webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html
 webkit.org/b/158747 media/restore-from-page-cache.html [ Pass Failure Crash ]
 
 # See also https://bugs.webkit.org/show_bug.cgi?id=162494
-webkit.org/b/151287 [ ElCapitan+ ] media/controls/inline-elements-dropoff-order.html [ Failure ]
+webkit.org/b/151287 [ Sierra+ ] media/controls/inline-elements-dropoff-order.html [ Failure ]
 
 webkit.org/b/158500 storage/indexeddb/database-close-private.html [ Pass Failure ]
 
@@ -1290,9 +1289,9 @@ webkit.org/b/162830 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Ti
 webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pass Failure ]
 
 # Variation fonts are not implemented earlier than High Sierra.
-[ Sierra ElCapitan ] fast/text/variations [ Pass Failure ImageOnlyFailure ]
-[ Sierra ElCapitan ] animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
-[ Sierra ElCapitan ] legacy-animation-engine/animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
+[ Sierra ] fast/text/variations [ Pass Failure ImageOnlyFailure ]
+[ Sierra ] animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
+[ Sierra ] legacy-animation-engine/animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
 
 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Skip ]
 
@@ -1393,7 +1392,7 @@ webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
 
 webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pass Failure ]
 
-webkit.org/b/171272 [ ElCapitan Sierra ] fast/text/kaithi.html [ ImageOnlyFailure ]
+webkit.org/b/171272 [ Sierra ] fast/text/kaithi.html [ ImageOnlyFailure ]
 
 webkit.org/b/171465 media/track/track-in-band-style.html [ Pass Timeout ]
 
@@ -1432,8 +1431,8 @@ webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-sh
 
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Pass Failure Timeout ]
 
-webkit.org/b/173328 [ ElCapitan Sierra ] fast/text/system-font-fallback-emoji.html [ Failure ]
-webkit.org/b/173328 [ ElCapitan Sierra ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
+webkit.org/b/173328 [ Sierra ] fast/text/system-font-fallback-emoji.html [ Failure ]
+webkit.org/b/173328 [ Sierra ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
@@ -1622,21 +1621,21 @@ webkit.org/b/177826 inspector/dom/csp-big5-hash.html [ Pass Timeout ]
 webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-cookies.html [ Pass Failure ]
 
 # AVContentKeySession not available pre-High Sierra
-[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
-[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]
-[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-createSession.html [ Skip ]
-[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
-[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
+[ Sierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
+[ Sierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]
+[ Sierra ] platform/mac/media/encrypted-media/fps-createSession.html [ Skip ]
+[ Sierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
+[ Sierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
 
 webkit.org/b/165311 [ Sierra+ ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Failure ]
 
 webkit.org/b/176693 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
 
 # User-installed font infrastructure is ony present on certain OSes.
-webkit.org/b/180062 [ ElCapitan Sierra HighSierra ] fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
+webkit.org/b/180062 [ Sierra HighSierra ] fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
-webkit.org/b/187228 [ ElCapitan Sierra HighSierra ] fast/text/user-installed-fonts/local.html [ ImageOnlyFailure ]
+webkit.org/b/187228 [ Sierra HighSierra ] fast/text/user-installed-fonts/local.html [ ImageOnlyFailure ]
 
 
 webkit.org/b/180560 accessibility/mac/html5-input-number.html [ Pass Failure ]
@@ -1653,8 +1652,8 @@ webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.htm
 
 # A lot of GPU hardware simply crashes with these tests, since they allocate a lot of memory.
 # They are enabled on systems that instead return GL_OUT_OF_MEMORY.
-[ ElCapitan Sierra ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
-[ ElCapitan Sierra ] fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Skip ]
+[ Sierra ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
+[ Sierra ] fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Skip ]
 
 webkit.org/b/180260 [ HighSierra ] http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
 

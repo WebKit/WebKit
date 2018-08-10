@@ -1,3 +1,14 @@
+2018-08-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Eliminate remaining instances of "ElCapitan" from LayoutTests / Tools
+        https://bugs.webkit.org/show_bug.cgi?id=188458
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2018-08-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [webkitpy][Win] LayoutTests: test names should be Unix style, separated by slash not backslash
