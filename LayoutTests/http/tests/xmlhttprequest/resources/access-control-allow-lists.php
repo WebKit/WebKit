@@ -2,8 +2,10 @@
 
 $origin = $_GET['origin'];
 
-if ($origin != 'none')
-    header("Access-Control-Allow-Origin: $origin");
+if ($origin != 'none') {
+    // Supress warning when $origin intentionally contains \0 (null) byte in it.
+    @header("Access-Control-Allow-Origin: $origin");
+}
 
 if (isset($_GET['headers']))
     header("Access-Control-Allow-Headers: {$_GET['headers']}");

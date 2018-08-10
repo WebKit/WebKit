@@ -7,14 +7,14 @@ function deleteCookie($value, $name)
 }
 
 if ($queryfunction == "deleteCookiesAndPostMessage") {
-    array_walk($_COOKIE, deleteCookie);
+    array_walk($_COOKIE, 'deleteCookie');
     echo "<script>window.opener.postMessage('done', '*');</script>\n";
     return;
 }
 
 
 if ($queryfunction == "deleteCookies") {
-    array_walk($_COOKIE, deleteCookie);
+    array_walk($_COOKIE, 'deleteCookie');
     echo "Deleted all cookies";
     return;
 }
