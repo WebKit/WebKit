@@ -147,11 +147,11 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
     g_subprocess_launcher_setenv(launcher.get(), "GTK_OVERLAY_SCROLLING", m_capabilities.useOverlayScrollbars.value() ? "1" : "0", TRUE);
 #endif
 
-    const auto& browserArguments = m_capabilities.browserArguments.value();
-    GUniquePtr<char*> args(g_new0(char*, browserArguments.size() + 2));
+    size_t browserArgumentsSize = m_capabilities.browserArguments ? m_capabilities.browserArguments->size() : 0;
+    GUniquePtr<char*> args(g_new0(char*, browserArgumentsSize + 2));
     args.get()[0] = g_strdup(m_capabilities.browserBinary.value().utf8().data());
-    for (unsigned i = 0; i < browserArguments.size(); ++i)
-        args.get()[i + 1] = g_strdup(browserArguments[i].utf8().data());
+    for (unsigned i = 0; i < browserArgumentsSize; ++i)
+        args.get()[i + 1] = g_strdup(m_capabilities.browserArguments.value()[i].utf8().data());
 
     GUniqueOutPtr<GError> error;
     m_browser = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), args.get(), &error.outPtr()));

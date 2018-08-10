@@ -1,3 +1,21 @@
+2018-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] WebDriver: do not use default browser arguments when browser binary has been provided
+        https://bugs.webkit.org/show_bug.cgi?id=188465
+
+        Reviewed by Žan Doberšek.
+
+        We only want to use --automation when no options or no browser binary is provided, because we fallback to
+        MiniBrowser and we know it needs --automation flag.
+
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::launchBrowser): Handle the case of browser arguments being std::nullopt.
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformParseCapabilities const): Initialize browser arguments to std:nullopt if
+        browser binary was provided.
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformParseCapabilities const): Ditto.
+
 2018-08-03  Ms2ger  <Ms2ger@igalia.com>
 
         Fix invalid optional access in WebDriver Session::createTopLevelBrowsingContext.
