@@ -1,3 +1,68 @@
+2018-08-09  Ben Richards  <benton_richards@apple.com>
+
+        We should cache the compiled sandbox profile in a data vault
+        https://bugs.webkit.org/show_bug.cgi?id=184991
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch changes a few things (note: data vaults and sandbox entitlements are only used in internal builds):
+        (1) Instead of compiling a sandbox every time a process is launched, processes now look for a cached sandbox
+            in a process specific data vault on macOS platforms. (ChildProcessMac.mm)
+        (2) If a valid cached sandbox is not found, a process will create the data vault (or ensure that it exists),
+            compile a sandbox, and cache it.
+        (3) In order to create process specific data vaults, each process now has their own <process name>-OSX-sandbox.entitlements
+            file which contains an entitlement with a process specific "storage class" which ensures that each process
+            can only ever access its own data vault. (See the article on confluence "Data Vaults and Restricted Files" for more info)
+        (4) The sandbox entitlements file for the Network, WebContent and Plugin services are loaded dynamically
+            through Scripts/<process name>-process-entitlements.sh which is triggered in a new build phase for each service.
+            The Storage process sandbox entitlements are loaded directly in Configurations/StorageService.xcconfig.
+            The reason that the sandbox entitlements are applied dynamically is so that these sandbox entitlements
+            are only applied when WK_USE_RESTRICTED_ENTITLEMENTS is YES. This means that open source builds will still work.
+
+        * Configurations/Network-OSX-sandbox.entitlements: Added.
+        * Configurations/Storage-OSX-sandbox.entitlements: Added.
+        * Configurations/StorageService.xcconfig:
+        * Configurations/WebContent-OSX-sandbox.entitlements: Added.
+        * Configurations/WebKit.xcconfig:
+        * NetworkProcess/NetworkProcess.h:
+        * PluginProcess/PluginProcess.h:
+        * Scripts/process-network-sandbox-entitlements.sh: Added.
+        * Scripts/process-webcontent-sandbox-entitlements.sh: Added.
+        * Shared/ChildProcess.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/SandboxInitializationParameters.h:
+        (WebKit::SandboxInitializationParameters::setOverrideSandboxProfilePath):
+        (WebKit::SandboxInitializationParameters::overrideSandboxProfilePath const):
+        (WebKit::SandboxInitializationParameters::setSandboxProfile):
+        (WebKit::SandboxInitializationParameters::sandboxProfile const):
+        (): Deleted.
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::SandboxProfileDeleter::operator()):
+        (WebKit::SandboxParametersDeleter::operator()):
+        (WebKit::SandboxInfo::SandboxInfo):
+        (WebKit::fileContents):
+        (WebKit::processStorageClass):
+        (WebKit::setAndSerializeSandboxParameters):
+        (WebKit::sandboxDataVaultParentDirectory):
+        (WebKit::sandboxDirectory):
+        (WebKit::sandboxFilePath):
+        (WebKit::ensureSandboxCacheDirectory):
+        (WebKit::writeSandboxDataToCacheFile):
+        (WebKit::compileAndCacheSandboxProfile):
+        (WebKit::tryApplyCachedSandbox):
+        (WebKit::webKit2Bundle):
+        (WebKit::sandboxProfilePath):
+        (WebKit::compileAndApplySandboxSlowCase):
+        (WebKit::applySandbox):
+        (WebKit::initializeSandboxParameters):
+        (WebKit::ChildProcess::initializeSandbox):
+        * Shared/mac/SandboxInitialiationParametersMac.mm:
+        (WebKit::SandboxInitializationParameters::SandboxInitializationParameters):
+        * StorageProcess/StorageProcess.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.h:
+
 2018-08-09  Jer Noble  <jer.noble@apple.com>
 
         Video playback is using more power
