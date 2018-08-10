@@ -1,3 +1,19 @@
+2018-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Crash under NetworkResourceLoader::convertToDownload()
+        https://bugs.webkit.org/show_bug.cgi?id=188479
+        <rdar://problem/42201724>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage which reproduces the crash by:
+        1. Loading a cacheable plugin while plugins are enabled so that the plugin goes into the disk cache
+        2. Load the plugin again with plugins disabled so that we try to convert the load to a download
+
+        * http/tests/download/convert-cached-load-to-download-expected.txt: Added.
+        * http/tests/download/convert-cached-load-to-download.html: Added.
+        * http/tests/plugins/resources/mock-plugin-cacheable.pl: Added.
+
 2018-08-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] More unreviewed gardening.

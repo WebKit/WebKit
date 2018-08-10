@@ -337,7 +337,13 @@ void NetworkResourceLoader::cleanup(LoadResult result)
 
 void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    ASSERT(m_networkLoad);
+    // This can happen if the resource came from the disk cache.
+    if (!m_networkLoad) {
+        NetworkProcess::singleton().downloadManager().startDownload(m_connection.ptr(), m_parameters.sessionID, downloadID, request);
+        abort();
+        return;
+    }
+
     NetworkProcess::singleton().downloadManager().convertNetworkLoadToDownload(downloadID, std::exchange(m_networkLoad, nullptr), WTFMove(m_fileReferences), request, response);
 }
 

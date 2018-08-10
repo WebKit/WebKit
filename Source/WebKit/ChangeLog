@@ -1,3 +1,18 @@
+2018-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Crash under NetworkResourceLoader::convertToDownload()
+        https://bugs.webkit.org/show_bug.cgi?id=188479
+        <rdar://problem/42201724>
+
+        Reviewed by Alex Christensen.
+
+        In NetworkResourceLoader::convertToDownload(), if m_networkLoad is null then we're trying
+        to convert a load that came from the disk cache. Since we do not currently support converting
+        such a load, cancel the current load and start a fresh download.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::convertToDownload):
+
 2018-08-10  Sihui Liu  <sihui_liu@apple.com>
 
         Incorrect log message in NetworkSession when creating NetworkDataTask

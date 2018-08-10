@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
+  testRunner.setShouldDownloadUndisplayableMIMETypes(true);
+}
+</script>
+</head>
+<body>
+<p>The download should succeed.</p>
+<a id="testLink">Download plugin</a>
+<script>
+const testURL = "/plugins/resources/mock-plugin-cacheable.pl";
+
+function click(elmt)
+{
+    if (!window.eventSender) {
+        alert('Click the link to run the test.');
+        return;
+    }
+    eventSender.mouseMoveTo(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function cacheTestResource(then)
+{
+    let frame = document.createElement("iframe");
+    frame.src = testURL;
+    frame.onload = then;
+    document.body.appendChild(frame);
+}
+
+function runTest()
+{
+    cacheTestResource(function() {
+        if (window.testRunner)
+            testRunner.setPluginsEnabled(false);
+        if (window.internals)
+            internals.clearMemoryCache();
+
+        let link = document.getElementById("testLink");
+        testLink.href = testURL;
+        click(link);
+    });
+}
+runTest();
+</script>
+</body>
+</html>
