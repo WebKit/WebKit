@@ -41,20 +41,28 @@ class DefaultLaunchTimeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         </html>
         '''
 
-    def on_receive_stop_signal(self, data):
+    def get_blank_page(self):
+        return '''<!DOCTYPE html>
+        <html>
+          <head>
+            <title>Launch Time Benchmark</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+          </head>
+        </html>'''
+
+    def on_receive_stop_time(self, time):
         pass
 
     def do_HEAD(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'text/hetml')
         self.end_headers()
 
     def do_GET(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        if not self.path.startswith('/blank'):
-            self.wfile.write(self.get_test_page())
+        self.wfile.write(self.get_blank_page() if self.path == '/blank' else self.get_test_page())
         self.wfile.close()
 
     def do_POST(self):
@@ -65,7 +73,9 @@ class DefaultLaunchTimeHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.wfile.close()
 
         data_string = self.rfile.read(int(self.headers['Content-Length']))
-        self.on_receive_stop_signal(data_string)
+        time = float(data_string)
+
+        self.on_receive_stop_time(time)
 
     def log_message(self, format, *args):
         pass
@@ -167,8 +177,7 @@ class LaunchTimeBenchmark:
     def _standard_deviation(self, results, mean=None):
         if mean is None:
             mean = sum(results) / float(len(results))
-        divisor = float(len(results) - 1) if len(results) > 1 else float(len(results))
-        variance = sum((x - mean) ** 2 for x in results) / divisor
+        variance = sum((x - mean) ** 2 for x in results) / float(len(results) - 1)
         return sqrt(variance)
 
     def _compute_results(self, results):
@@ -188,13 +197,9 @@ class LaunchTimeBenchmark:
         for i in range(self.iteration_groups):
             yield self.wait_time_low + increment_per_group * i
 
-    def open_tab(self, blank=False):
-        if blank:
-            call(['open', '-a', self._browser_bundle_path,
-                'http://localhost:{}/blank/{}'.format(self._port, self._open_count)])
-        else:
-            call(['open', '-a', self._browser_bundle_path,
-                'http://localhost:{}/{}'.format(self._port, self._open_count)])
+    def open_tab(self):
+        call(['open', '-a', self._browser_bundle_path,
+            'http://localhost:{}/{}'.format(self._port, self._open_count)])
         self._open_count += 1
 
     def launch_browser(self):
@@ -268,8 +273,8 @@ class LaunchTimeBenchmark:
                         results_by_iteration_number[i].append(result_in_ms)
                     except KeyboardInterrupt:
                         raise KeyboardInterrupt
-                    except Exception as error:
-                        self._exit_due_to_exception('(Test {} failed) {}: {}\n'.format(i + 1 if self._verbose else i, type(error).__name__, error))
+                    except:
+                        self._exit_due_to_exception('(Test {} failed)\n'.format(i + 1 if self._verbose else i))
                 if not self._verbose:
                     print ''
 

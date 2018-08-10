@@ -1,3 +1,16 @@
+2018-08-10  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r234750.
+
+        Caused 185 perf test failures.
+
+        Reverted changeset:
+
+        "Add ability to ignore process prewarming for launch time
+        benchmark"
+        https://bugs.webkit.org/show_bug.cgi?id=188462
+        https://trac.webkit.org/changeset/234750
+
 2018-08-09  Ben Richards  <benton_richards@apple.com>
 
         Add ability to ignore process prewarming for launch time benchmark

@@ -50,8 +50,8 @@ class StartupBenchmark(LaunchTimeBenchmark):
                 </html>
                 '''
 
-            def on_receive_stop_signal(self, data):
-                startup_benchmark.stop_time = float(data)
+            def on_receive_stop_time(self, stop_time):
+                startup_benchmark.stop_time = stop_time
                 startup_benchmark.stop_signal_was_received.set()
 
         return Handler

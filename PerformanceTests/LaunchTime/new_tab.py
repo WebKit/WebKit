@@ -36,22 +36,16 @@ class NewTabBenchmark(LaunchTimeBenchmark):
         self.start_time = None
         self.stop_time = None
         self.stop_signal_was_received = Event()
-        self.allow_prewarm = True
 
     def run_iteration(self):
-        tabs_to_open = 1 if self.allow_prewarm else 2
-        self.stop_time = None
-        for _ in range(tabs_to_open - 1):
-            self.open_tab(blank=True)
         self.start_time = time.time() * 1000
         self.open_tab()
         while self.stop_time is None:
             self.stop_signal_was_received.wait()
         result = self.stop_time - self.start_time
+        self.stop_time = None
         self.stop_signal_was_received.clear()
-        for _ in range(tabs_to_open):
-            self.close_tab()
-
+        self.close_tab()
         return result
 
     def group_init(self):
@@ -62,16 +56,12 @@ class NewTabBenchmark(LaunchTimeBenchmark):
             help='number of groups of iterations to run (default: {})'.format(self.iteration_groups))
         self.argument_parser.add_argument('-w', '--wait-time', type=self._parse_wait_time,
             help='wait time to use between iterations or range to scan (format is "N" or "N:M" where N < M, default: {}:{})'.format(self.wait_time_low, self.wait_time_high))
-        self.argument_parser.add_argument('--no-prewarm', action='store_true',
-            help='attempt to ignore process prewarming (will most likely raise standard deviation)')
 
     def did_parse_arguments(self, args):
         if args.groups:
             self.iteration_groups = args.groups
         if args.wait_time:
             self.wait_time_low, self.wait_time_high = args.wait_time
-        if args.no_prewarm:
-            self.allow_prewarm = False
 
     @staticmethod
     def ResponseHandler(new_tab_benchmark):
@@ -84,8 +74,8 @@ class NewTabBenchmark(LaunchTimeBenchmark):
                     <meta http-equiv="Content-Type" content="text/html" />
                     <script>
                         function sendDone() {
-                            const time = performance.timing.navigationStart
-                            const request = new XMLHttpRequest();
+                            var time = performance.timing.navigationStart
+                            var request = new XMLHttpRequest();
                             request.open("POST", "done", false);
                             request.setRequestHeader('Content-Type', 'application/json');
                             request.send(JSON.stringify(time));
@@ -99,8 +89,8 @@ class NewTabBenchmark(LaunchTimeBenchmark):
                 </html>
                 '''
 
-            def on_receive_stop_signal(self, data):
-                new_tab_benchmark.stop_time = float(data)
+            def on_receive_stop_time(self, stop_time):
+                new_tab_benchmark.stop_time = stop_time
                 new_tab_benchmark.stop_signal_was_received.set()
 
         return Handler
