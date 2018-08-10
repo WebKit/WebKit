@@ -46,7 +46,7 @@ class SetupGitClone(Command):
 
         username, email = self._get_username_and_email(tool)
 
-        # FIXME: We shouldn't be using a privatd method
+        # FIXME: We shouldn't be using a private method.
         run_git = tool.scm()._run_git
         run_git(["pull"])
         run_git(["svn", "init", "--prefix=origin/", "-T", "trunk", "http://svn.webkit.org/repository/webkit"])
@@ -59,6 +59,8 @@ class SetupGitClone(Command):
         # Better Objective-C diff.
         run_git(["config", "diff.objcpp.xfuncname", "^[-+@a-zA-Z_].*$"])
         run_git(["config", "diff.objcppheader.xfuncname", "^[@a-zA-Z_].*$"])
+
+        run_git(["config", "core.editor", "perl Tools/Scripts/commit-log-editor --regenerate-log"])
 
         if tool.user.confirm("Do you want to auto-color status, diff, and branch? (y/n)"):
             run_git(["config", "color.status", "auto"])

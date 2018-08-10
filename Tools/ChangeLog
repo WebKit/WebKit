@@ -1,3 +1,17 @@
+2018-08-10  Daniel Bates  <dabates@apple.com>
+
+        webkit-patch setup-git-clone should set Git core editor to commit-log-editor
+        https://bugs.webkit.org/show_bug.cgi?id=188473
+
+        Reviewed by Ryosuke Niwa.
+
+        Have "webkit-patch setup-git-clone" set the Git core editor to "perl Tools/Scripts/commit-log-editor --regenerate-log"
+        so that the Git commit message is generated from the ChangeLog for developers that manually
+        generate their ChangeLog using prepare-ChangeLog.
+
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone.execute):
+
 2018-08-10  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r234749.
