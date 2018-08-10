@@ -337,8 +337,6 @@ webkit.org/b/150542 fast/forms/state-restore-per-form.html [ Pass Timeout ]
 
 webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [ Pass Timeout ]
 
-webkit.org/b/155151 [ Debug ElCapitan ] media/track/track-cues-pause-on-exit.html [ Pass Timeout ]
-
 webkit.org/b/155312 inspector/heap/getPreview.html [ Pass Timeout ]
 
 webkit.org/b/156077 inspector/heap/getRemoteObject.html [ Pass Failure ]
@@ -414,18 +412,6 @@ webkit.org/b/139828 svg/animations/animateMotion-additive-2c.svg [ Pass ImageOnl
 webkit.org/b/139828 svg/animations/animateMotion-additive-2d.svg [ Pass ImageOnlyFailure ]
 
 [ Debug ] editing/undo/remove-css-property-and-remove-style.html [ Pass Failure ]
-
-# This test fails every time on El Capitan
-[ ElCapitan ] fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Skip ]
-
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker.html [ Failure ]
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.html [ Failure ]
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Failure ]
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.worker.html [ Failure ]
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.html [ Failure ]
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker.html [ Failure ]
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ Failure ]
-webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.worker.html [ Failure ]
 
 ### END OF (3) Unclassified failures
 ########################################
@@ -579,8 +565,6 @@ webkit.org/b/179455 [ Sierra+ ] fast/scrolling/rtl-scrollbars.html [ Pass ImageO
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 webkit.org/b/162638 [ Sierra+ ] fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ImageOnlyFailure ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
-# This test only produces an RTL token on Sierra.
-[ ElCapitan ] fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 
 # <rdar://problem/25063128>
 [ Sierra+ ] media/media-controls-drag-timeline-set-controls-property.html [ Pass Timeout ]
@@ -634,7 +618,6 @@ webkit.org/b/163453 [ Sierra Release ] http/tests/security/contentSecurityPolicy
 webkit.org/b/163702 platform/mac-wk2/plugins/muted-state.html [ Failure ]
 
 webkit.org/b/164870 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Pass Failure ]
-webkit.org/b/164870 [ ElCapitan Release ] imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Pass Failure ]
 
 webkit.org/b/165352 fast/dom/Window/window-resize-contents.html [ Pass Timeout ]
 
@@ -653,19 +636,11 @@ webkit.org/b/168336 [ Debug ] imported/w3c/web-platform-tests/streams/readable-s
 webkit.org/b/168089 [ Release ] animations/trigger-container-scroll-empty.html [ Pass Failure ]
 webkit.org/b/168089 [ Release ] legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Pass Failure ]
 
-webkit.org/b/168391 [ ElCapitan Debug ] storage/indexeddb/modern/idbcursor-continue-primary-key-1.html [ Pass Timeout ]
-
-
-webkit.org/b/168380 [ ElCapitan Debug ] imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm [ Pass Failure ]
-
 # Skipped because Mac doesn't have a key to show the context menu
 fast/events/context-activated-by-key-event.html [ Skip ]
 
 webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
 webkit.org/b/169760 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Pass Failure ]
-
-# Media loading via network cache requires Sierra or newer.
-[ ElCapitan ] http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
 
 compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
 
@@ -701,19 +676,6 @@ webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
 webkit.org/b/172666 [ Debug ] fast/images/slower-decoding-than-animation-image.html [ Pass Failure ]
 
 webkit.org/b/173188 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
-
-webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbindex_getAll.html [ Pass Failure ]
-
-webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.html [ Pass Failure ]
-
-webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html [ Pass Failure ]
-
-# Beacon is not supported on WK2 for the non NETWORK_SESSION code path.
-[ ElCapitan ] http/tests/blink/sendbeacon/ [ Skip ]
-[ ElCapitan ] http/tests/inspector/network/beacon-type.html [ Skip ]
-[ ElCapitan ] http/wpt/beacon/ [ Skip ]
-[ ElCapitan ] imported/blink/fast/beacon/ [ Skip ]
-[ ElCapitan ] imported/w3c/web-platform-tests/beacon/ [ Skip ]
 
 webkit.org/b/172201 webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
 
@@ -811,11 +773,7 @@ http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private
 # Link preconnect is disabled on pre-High Sierra because the CFNetwork SPI is missing.
 [ ElCapitan Sierra ] http/tests/preconnect [ Skip ]
 
-webkit.org/b/176486 [ ElCapitan Debug ] imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Pass Failure ]
-
 webkit.org/b/171839 [ Debug ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html [ Pass Failure ]
-
-webkit.org/b/177214 [ ElCapitan Debug ] imported/w3c/web-platform-tests/FileAPI/historical.https.html [ Pass Failure ]
 
 webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 

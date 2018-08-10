@@ -1,3 +1,14 @@
+2018-08-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove ElCapitan specific layout test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=188457
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-08-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening

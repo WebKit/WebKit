@@ -980,10 +980,6 @@ webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFail
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 
-# Language-specific font fallback is disabled on certain versions of OS X
-webkit.org/b/147390 [ ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
-webkit.org/b/147390 [ ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
-
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
 # These tests fail on machines with AMD (ATI) graphics cards - that is, on EWS and locally.
@@ -1049,10 +1045,6 @@ http/tests/media/video-throttled-load-metadata.html [ Failure ]
 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 webkit.org/b/150978 fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]
-
-# These tests rely on iOS-specific font fallback.
-[ ElCapitan ] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ Pass ImageOnlyFailure ]
-[ ElCapitan ] fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/173931 inspector/canvas/context-attributes.html [ Pass Timeout ]
 webkit.org/b/178028 inspector/canvas/create-context-2d.html [ Pass Timeout ]
@@ -1148,26 +1140,11 @@ webkit.org/b/150806 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-
 webkit.org/b/150823 imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm [ Pass Failure ]
 webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Skip ]
 
-# WOFF2 is only supported on certain Operating Systems.
-webkit.org/b/150830 [ ElCapitan ] fast/text/woff2.html [ ImageOnlyFailure ]
-
 webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ ImageOnlyFailure ]
 
 webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
 
 webkit.org/b/151469 imported/w3c/web-platform-tests/html/syntax/parsing/template/creating-an-element-for-the-token/template-owner-document.html [ Pass Crash ]
-
-webkit.org/b/152009 [ Debug ElCapitan ] fast/canvas/canvas-too-large-to-draw.html [ Skip ]
-
-# El Capitan does not support font feature coverage queries.
-[ ElCapitan ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-[ ElCapitan ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-[ ElCapitan ] fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
-[ ElCapitan ] css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
-
-# Temporarily disable font feature synthesis tests.
-[ ElCapitan ] css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
-[ ElCapitan ] css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 
 webkit.org/b/153086 sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.3_encodeURI/S15.1.3.3_A2.4_T2.html [ Pass Crash ]
 
@@ -1197,10 +1174,6 @@ webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
 webkit.org/b/187103 js/error-should-not-strong-reference-global-object.html [ Pass Failure ]
 
-# Content Security Policy for media redirects is not supported on some OSes.
-[ ElCapitan ] http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Failure ]
-[ ElCapitan ] http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Failure ]
-
 webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 webkit.org/b/155505 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
@@ -1226,7 +1199,6 @@ webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ 
 # These tests hardcode platform-specific font aliases.
 webkit.org/b/158649 [ ElCapitan+ ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 webkit.org/b/159003 [ Sierra+ ] fast/text/font-cursive-italic-cjk.html [ Skip ]
-webkit.org/b/159003 [ ElCapitan ] fast/text/font-cursive-italic-cjk-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure Timeout ]
 
@@ -1378,20 +1350,6 @@ webkit.org/b/168087 media/video-zoom.html [ Pass Failure ]
 webkit.org/b/168094 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Pass Failure ]
 webkit.org/b/167975 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass Failure ]
 
-# Resource Timing data not available in El Capitan.
-webkit.org/b/168415 [ ElCapitan ] http/wpt/resource-timing/rt-cors.html [ Skip ]
-webkit.org/b/168415 [ ElCapitan ] http/wpt/resource-timing/rt-cors.worker.html [ Skip ]
-
-# Resource Timing networking data not available without Network Session.
-[ ElCapitan ] http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
-[ ElCapitan ] http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
-
-# Request Header networking data not available without Network Session.
-[ ElCapitan ] http/tests/inspector/network/resource-request-headers.html [ Failure ]
-[ ElCapitan ] http/tests/inspector/network/har/har-page.html [ Failure ]
-
-[ ElCapitan ] http/tests/inspector/network/ping-type.html [ Skip ]
-
 # <rdar://problem/30610988>
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html [ Failure ]
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html [ Failure ]
@@ -1431,8 +1389,6 @@ webkit.org/b/170177 fast/images/reset-image-animation.html [ Pass Failure ]
 
 webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass Failure ]
 
-webkit.org/b/170493 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/response/response-trailer.html [ Pass Failure ]
-
 webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
 
 webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pass Failure ]
@@ -1444,8 +1400,6 @@ webkit.org/b/171465 media/track/track-in-band-style.html [ Pass Timeout ]
 webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 
 webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
-
-webkit.org/b/172469 [ ElCapitan ] imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Timeout ]
 
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
@@ -1472,8 +1426,6 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 # on iOS, and the bug it was created to regression-test was iOS-only, so there is no hurry to make it work on Mac.
 media/modern-media-controls/media-documents/background-color-and-centering.html [ Pass ImageOnlyFailure ]
 
-# These tests use Picture-in-Picture which isn't supported on El Capitan.
-[ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/modern-media-controls/pip-support/ipad [ Skip ]
 
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
@@ -1482,8 +1434,6 @@ webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/deriv
 
 webkit.org/b/173328 [ ElCapitan Sierra ] fast/text/system-font-fallback-emoji.html [ Failure ]
 webkit.org/b/173328 [ ElCapitan Sierra ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
-
-webkit.org/b/313156 [ ElCapitan ] fast/text/system-font-japanese-synthetic-italic.html [ ImageOnlyFailure ]
 
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
@@ -1658,9 +1608,6 @@ webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 
 # <rdar://problem/33850189>
 [ HighSierra+ ] http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
-
-# Release logging not supported
-[ ElCapitan ] inspector/console/webcore-logging.html [ Skip ]
 
 webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Failure ]
 

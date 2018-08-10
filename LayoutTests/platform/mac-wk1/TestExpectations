@@ -363,9 +363,6 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 [ Sierra+ ] accessibility/mac/document-attributes.html [ Failure ]
 [ Sierra+ ] accessibility/parent-delete.html [ Failure ]
 
-# rdar://problem/28017216
-[ ElCapitan ] fast/inline-block/003.html [ Failure ]
-
 # rdar://problem/26478296
 [ Sierra+ ] svg/hixie/text/003.html [ Failure ]
 
@@ -374,8 +371,6 @@ webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/XMLHttpRequest/eve
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
 webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Pass Crash ]
-
-webkit.org/b/160227 [ ElCapitan Debug ] inspector/memory/tracking.html [ Pass Crash ]
 
 # rdar://problem/27723718
 [ Sierra+ ] imported/blink/compositing/child-transform-with-anchor-point.html [ ImageOnlyFailure ]
@@ -399,8 +394,6 @@ http/tests/inspector/network/resource-request-headers.html [ Failure ]
 http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 http/tests/inspector/network/resource-sizes-memory-cache.html [ Failure ]
 http/tests/inspector/network/har/har-page.html [ Failure ]
-
-webkit.org/b/164491 [ ElCapitan ] fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]
 
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
