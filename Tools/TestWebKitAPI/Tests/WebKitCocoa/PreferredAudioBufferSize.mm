@@ -76,7 +76,7 @@ TEST_F(PreferredAudioBufferSize, AudioElement)
     EXPECT_EQ(4096, preferredAudioBufferSize());
 }
 
-TEST_F(PreferredAudioBufferSize, WebAudio)
+TEST_F(PreferredAudioBufferSize, DISABLED_WebAudio)
 {
     createView();
     [webView synchronouslyLoadTestPageNamed:@"web-audio-only"];
@@ -100,7 +100,7 @@ TEST_F(PreferredAudioBufferSize, VideoWithAudio)
     EXPECT_EQ(4096, preferredAudioBufferSize());
 }
 
-TEST_F(PreferredAudioBufferSize, AudioWithWebAudio)
+TEST_F(PreferredAudioBufferSize, DISABLED_AudioWithWebAudio)
 {
     createView();
     [webView synchronouslyLoadTestPageNamed:@"audio-with-web-audio"];
