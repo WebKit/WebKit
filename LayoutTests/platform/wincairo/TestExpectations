@@ -850,7 +850,6 @@ imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Pass Timeout ]
 
 http/tests/appcache [ Skip ]
 http/tests/blink/sendbeacon [ Skip ]
-
 http/tests/cache [ Skip ]
 http/tests/cache-storage [ Skip ]
 http/tests/canvas [ Skip ]
@@ -870,8 +869,7 @@ http/tests/frame-throttling [ Skip ]
 
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 
-http/tests/history/back-with-fragment-change.php [ Failure ]
-
+http/tests/history [ Skip ]
 http/tests/images [ Skip ]
 http/tests/incremental [ Skip ]
 http/tests/inspector [ Skip ]
@@ -880,15 +878,20 @@ http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]
 http/tests/local/formdata [ Skip ]
 
+http/tests/local/link-stylesheet-preferred.html [ Failure ]
+
 http/tests/media [ Skip ]
 
 # need to implement content sniffing
 http/tests/mime/mime-type-sniff.html [ Skip ]
 
+http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html [ Failure ]
+
 http/tests/misc [ Skip ]
 
-http/tests/multipart/load-last-non-html-frame.php [ Failure ]
-http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
+[ Release ] http/tests/multipart/load-last-non-html-frame.php [ Failure ]
+[ Release ] http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
+[ Debug ] http/tests/multipart [ Skip ]
 
 http/tests/navigation [ Skip ]
 http/tests/notifications [ Skip ]
@@ -900,6 +903,10 @@ http/tests/preload [ Skip ]
 http/tests/quicklook [ Skip ]
 http/tests/security [ Skip ]
 http/tests/ssl [ Skip ]
+
+[ Release ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Failure ]
+[ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
+
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
 http/tests/webauthn [ Skip ]
@@ -938,6 +945,7 @@ http/tests/xmlhttprequest/auth-reject-protection-space.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-default.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
+http/tests/xmlhttprequest/cache-override.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
@@ -946,6 +954,7 @@ http/tests/xmlhttprequest/logout.html [ Failure ]
 http/tests/xmlhttprequest/methods-async.html [ Failure ]
 http/tests/xmlhttprequest/methods.html [ Failure ]
 http/tests/xmlhttprequest/null-auth.php [ Failure ]
+http/tests/xmlhttprequest/range-test.html [ Failure ]
 http/tests/xmlhttprequest/re-login-async.html [ Failure ]
 http/tests/xmlhttprequest/re-login.html [ Failure ]
 http/tests/xmlhttprequest/redirect-credentials-responseURL.html [ Failure ]
@@ -955,6 +964,7 @@ http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
 http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
+http/tests/xmlhttprequest/response-empty-arraybuffer.html [ Failure ]
 http/tests/xmlhttprequest/upload-onload-event.html [ Failure ]
 http/tests/xmlhttprequest/upload-onloadend-event-after-load.html [ Failure ]
 http/tests/xmlhttprequest/upload-onprogress-event.html [ Failure ]
@@ -966,6 +976,8 @@ http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeo
 http/tests/xmlhttprequest/upload-onabort-progressevent-attributes.html [ Timeout ]
 http/tests/xmlhttprequest/upload-onload-progressevent-attributes.html [ Timeout ]
 http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html [ Timeout ]
+
+[ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Skip ]
 
 http/tests/xmlviewer [ Skip ]
 
@@ -1538,7 +1550,20 @@ editing/pasteboard/entries-api/datatransfer-items-drop-getParent2.html [ Skip ]
 editing/pasteboard/entries-api/datatransfer-items-drop-hidden-file.html [ Skip ]
 
 ###### Selection
-editing/selection/ [ Pass Failure ImageOnlyFailure ]
+editing/selection/5354455-1.html [ Failure ]
+editing/selection/context-menu-on-text.html [ Failure ]
+editing/selection/context-menu-text-selection-lookup.html [ Failure ]
+editing/selection/drag-start-event-client-x-y.html [ Failure ]
+editing/selection/extend-selection-word.html [ Failure ]
+editing/selection/home-end.html [ Failure ]
+editing/selection/move-by-word-visually-mac.html [ Failure ]
+editing/selection/move-left-right.html [ Failure ]
+editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]
+editing/selection/user-select-all-image-with-single-click.html [ Failure ]
+editing/selection/user-select-all-selection.html [ Failure ]
+editing/selection/user-select-all-with-shift.html [ Failure ]
+editing/selection/user-select-all-with-single-click.html [ Failure ]
+[ Debug ] editing/selection/5057506.html [ Failure ]
 
 # Assertion failure in replaySavedEvents
 webkit.org/b/21796 [ Debug ] editing/pasteboard/drop-text-events.html [ Skip ]
@@ -1620,6 +1645,8 @@ webkit.org/b/150684 editing/input/reveal-caret-of-multiline-contenteditable.html
 webkit.org/b/173281 editing/style/set-foreColor-with-color-filter.html [ Skip ]
 webkit.org/b/173281 editing/style/set-backColor-with-color-filter.html [ Skip ]
 webkit.org/b/173281 editing/style/inverse-color-filter.html [ Skip ]
+
+editing/input/press-tab-during-ime-composition.html [ Failure ]
 
 ################################################################################
 ###########################   End Editing Failures   ###########################

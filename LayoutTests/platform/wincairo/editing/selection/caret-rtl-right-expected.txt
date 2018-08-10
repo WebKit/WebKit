@@ -11,8 +11,7 @@ layer at (0,0) size 800x145
         RenderText {#text} at (133,11) size 58x22
           text run at (133,11) width 58 RTL: "\x{5E9}\x{5D3}\x{5D4} \x{5D1}\x{5D5}\x{5E8}"
       RenderBlock (anonymous) at (0,101) size 784x20
-        RenderText {#text} at (0,0) size 177x19
-          text run at (0,0) width 177: "FAIL: selection not collapsed"
-        RenderBR {BR} at (177,0) size 0x19
-selection start: position 0 of child 0 {#text} of child 3 {DIV} of body
-selection end:   position 3 of child 0 {#text} of child 3 {DIV} of body
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "PASS"
+        RenderBR {BR} at (38,0) size 0x19
+caret: position 0 of child 0 {#text} of child 3 {DIV} of body
