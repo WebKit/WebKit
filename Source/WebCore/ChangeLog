@@ -1,3 +1,17 @@
+2018-08-10  Sihui Liu  <sihui_liu@apple.com>
+
+        CrashTracer: com.apple.WebKit.Storage at WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose
+        https://bugs.webkit.org/show_bug.cgi?id=188461
+        <rdar://problem/33555052>
+
+        Reviewed by Chris Dumez.
+
+        When we try to schedule shutdown for database, we should cancel the timer so no 
+        scheduleShutdownForClose will be running after this.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose):
+
 2018-08-10  Daniel Bates  <dabates@apple.com>
 
         Once <object> is hidden, its content won't be displayed again if its URL has fragment identifier ("#").
