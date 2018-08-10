@@ -126,8 +126,8 @@ public:
 
     inline size_t gcSizeEstimateInBytes() const;
 
-    JS_EXPORT_PRIVATE RefPtr<ArrayBuffer> slice(int begin, int end) const;
-    JS_EXPORT_PRIVATE RefPtr<ArrayBuffer> slice(int begin) const;
+    JS_EXPORT_PRIVATE RefPtr<ArrayBuffer> slice(double begin, double end) const;
+    JS_EXPORT_PRIVATE RefPtr<ArrayBuffer> slice(double begin) const;
     
     inline void pin();
     inline void unpin();
@@ -153,8 +153,8 @@ private:
     static RefPtr<ArrayBuffer> tryCreate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy);
     ArrayBuffer(ArrayBufferContents&&);
     RefPtr<ArrayBuffer> sliceImpl(unsigned begin, unsigned end) const;
-    inline unsigned clampIndex(int index) const;
-    static inline int clampValue(int x, int left, int right);
+    inline unsigned clampIndex(double index) const;
+    static inline unsigned clampValue(double x, unsigned left, unsigned right);
 
     void notifyIncommingReferencesOfTransfer(VM&);
 
@@ -168,16 +168,6 @@ private:
 public:
     Weak<JSArrayBuffer> m_wrapper;
 };
-
-int ArrayBuffer::clampValue(int x, int left, int right)
-{
-    ASSERT(left <= right);
-    if (x < left)
-        x = left;
-    if (right < x)
-        x = right;
-    return x;
-}
 
 void* ArrayBuffer::data()
 {
@@ -203,14 +193,6 @@ size_t ArrayBuffer::gcSizeEstimateInBytes() const
 {
     // FIXME: We probably want to scale this by the shared ref count or something.
     return sizeof(ArrayBuffer) + static_cast<size_t>(byteLength());
-}
-
-unsigned ArrayBuffer::clampIndex(int index) const
-{
-    unsigned currentLength = byteLength();
-    if (index < 0)
-        index = currentLength + index;
-    return clampValue(index, 0, currentLength);
 }
 
 void ArrayBuffer::pin()

@@ -708,33 +708,30 @@ test/built-ins/ArrayBuffer/proto-from-ctor-realm.js:
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/ArrayBuffer/prototype/slice/end-default-if-undefined.js:
-  default: 'Test262Error: Expected SameValue(Â«0Â», Â«2Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«2Â») to be true'
-test/built-ins/ArrayBuffer/prototype/slice/end-exceeds-length.js:
-  default: 'Test262Error: slice(2, 0x100000000) Expected SameValue(Â«0Â», Â«6Â») to be true'
-  strict mode: 'Test262Error: slice(2, 0x100000000) Expected SameValue(Â«0Â», Â«6Â») to be true'
-test/built-ins/ArrayBuffer/prototype/slice/species-constructor-is-undefined.js:
-  default: 'TypeError: Slice requires at least one argument.'
-  strict mode: 'TypeError: Slice requires at least one argument.'
-test/built-ins/ArrayBuffer/prototype/slice/species-is-null.js:
-  default: 'TypeError: Slice requires at least one argument.'
-  strict mode: 'TypeError: Slice requires at least one argument.'
-test/built-ins/ArrayBuffer/prototype/slice/species-is-undefined.js:
-  default: 'TypeError: Slice requires at least one argument.'
-  strict mode: 'TypeError: Slice requires at least one argument.'
+test/built-ins/ArrayBuffer/prototype/slice/species-constructor-is-not-object.js:
+  default: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `constructor` value is null Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/ArrayBuffer/prototype/slice/species-is-not-constructor.js:
+  default: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Object Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/ArrayBuffer/prototype/slice/species-is-not-object.js:
+  default: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `constructor[Symbol.species]` value is Boolean Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/ArrayBuffer/prototype/slice/species-returns-larger-arraybuffer.js:
-  default: 'TypeError: Slice requires at least one argument.'
-  strict mode: 'TypeError: Slice requires at least one argument.'
+  default: 'Test262Error: Expected SameValue(Â«8Â», Â«10Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«8Â», Â«10Â») to be true'
+test/built-ins/ArrayBuffer/prototype/slice/species-returns-not-arraybuffer.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/ArrayBuffer/prototype/slice/species-returns-same-arraybuffer.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/ArrayBuffer/prototype/slice/species-returns-smaller-arraybuffer.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/ArrayBuffer/prototype/slice/species.js:
-  default: 'TypeError: Slice requires at least one argument.'
-  strict mode: 'TypeError: Slice requires at least one argument.'
-test/built-ins/ArrayBuffer/prototype/slice/start-default-if-absent.js:
-  default: 'TypeError: Slice requires at least one argument.'
-  strict mode: 'TypeError: Slice requires at least one argument.'
-test/built-ins/ArrayBuffer/prototype/slice/start-exceeds-length.js:
-  default: 'Test262Error: slice(0x100000000, 7) Expected SameValue(Â«7Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: slice(0x100000000, 7) Expected SameValue(Â«7Â», Â«0Â») to be true'
+  default: 'Test262Error: Expected SameValue(Â«[object ArrayBuffer]Â», Â«undefinedÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object ArrayBuffer]Â», Â«undefinedÂ») to be true'
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'

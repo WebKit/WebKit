@@ -43,18 +43,15 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     
     JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, exec->thisValue());
-    if (!thisObject)
-        return throwVMTypeError(exec, scope, "Receiver of slice must be an array buffer."_s);
-    
-    if (!exec->argumentCount())
-        return throwVMTypeError(exec, scope, "Slice requires at least one argument."_s);
-    
-    int32_t begin = exec->argument(0).toInt32(exec);
+    if (!thisObject || thisObject->impl()->isShared())
+        return throwVMTypeError(exec, scope, "Receiver of slice must be an ArrayBuffer."_s);
+
+    double begin = exec->argument(0).toInteger(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
-    int32_t end;
-    if (exec->argumentCount() >= 2) {
-        end = exec->uncheckedArgument(1).toInt32(exec);
+    double end;
+    if (!exec->argument(1).isUndefined()) {
+        end = exec->uncheckedArgument(1).toInteger(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else
         end = thisObject->impl()->byteLength();

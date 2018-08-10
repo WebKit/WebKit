@@ -1,3 +1,14 @@
+2018-08-10  Keith Miller  <keith_miller@apple.com>
+
+        Slicing an ArrayBuffer with a long number returns an ArrayBuffer with byteLength zero
+        https://bugs.webkit.org/show_bug.cgi?id=185127
+
+        Reviewed by Saam Barati.
+
+        Rebaseline the expectations.
+
+        * test262/expectations.yaml:
+
 2018-08-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Date.UTC should not return NaN with only Year param

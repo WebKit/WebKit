@@ -267,12 +267,30 @@ ArrayBuffer::ArrayBuffer(ArrayBufferContents&& contents)
 {
 }
 
-RefPtr<ArrayBuffer> ArrayBuffer::slice(int begin, int end) const
+unsigned ArrayBuffer::clampValue(double x, unsigned left, unsigned right)
+{
+    ASSERT(left <= right);
+    if (x < left)
+        x = left;
+    if (right < x)
+        x = right;
+    return x;
+}
+
+unsigned ArrayBuffer::clampIndex(double index) const
+{
+    unsigned currentLength = byteLength();
+    if (index < 0)
+        index = currentLength + index;
+    return clampValue(index, 0, currentLength);
+}
+
+RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin, double end) const
 {
     return sliceImpl(clampIndex(begin), clampIndex(end));
 }
 
-RefPtr<ArrayBuffer> ArrayBuffer::slice(int begin) const
+RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin) const
 {
     return sliceImpl(clampIndex(begin), byteLength());
 }
