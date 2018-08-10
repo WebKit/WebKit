@@ -1,3 +1,38 @@
+2018-08-10  Ben Richards  <benton_richards@apple.com>
+
+        Add ability to ignore process prewarming for launch time benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=188462
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a flag to the new tab benchmark that will open a blank tab before the tab to be measured in order to ignore process prewarming.
+
+        * LaunchTime/launch_time.py:
+        (DefaultLaunchTimeHandler):
+        (DefaultLaunchTimeHandler.on_receive_stop_time): Deleted.
+        (DefaultLaunchTimeHandler.on_receive_stop_signal):
+        (DefaultLaunchTimeHandler.do_HEAD):
+        (DefaultLaunchTimeHandler.do_GET):
+        (DefaultLaunchTimeHandler.do_POST):
+        (LaunchTimeBenchmark):
+        (LaunchTimeBenchmark._standard_deviation): Fixed divide by zero bug when '-n' is set to 1
+        (LaunchTimeBenchmark.open_tab): Added option to open a blank tab
+        (LaunchTimeBenchmark.run):
+        * LaunchTime/new_tab.py:
+        (NewTabBenchmark.initialize):
+        (NewTabBenchmark.run_iteration):
+        (NewTabBenchmark.will_parse_arguments):
+        (NewTabBenchmark.did_parse_arguments):
+        (NewTabBenchmark.ResponseHandler.Handler.get_test_page):
+        (NewTabBenchmark.ResponseHandler.Handler.on_receive_stop_time): Deleted.
+        (NewTabBenchmark.ResponseHandler.Handler.on_receive_stop_signal):
+        (NewTabBenchmark):
+        * LaunchTime/startup.py:
+        (StartupBenchmark.ResponseHandler.Handler.get_test_page):
+        (StartupBenchmark.ResponseHandler.Handler.on_receive_stop_time): Deleted.
+        (StartupBenchmark.ResponseHandler.Handler.on_receive_stop_signal):
+        (StartupBenchmark):
+
 2018-08-10  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r234750.
