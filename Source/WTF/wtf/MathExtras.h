@@ -192,17 +192,17 @@ inline float normalizedFloat(float value)
     return value;
 }
 
-template<typename T> inline bool hasOneBitSet(T value)
+template<typename T> constexpr bool hasOneBitSet(T value)
 {
     return !((value - 1) & value) && value;
 }
 
-template<typename T> inline bool hasZeroOrOneBitsSet(T value)
+template<typename T> constexpr bool hasZeroOrOneBitsSet(T value)
 {
     return !((value - 1) & value);
 }
 
-template<typename T> inline bool hasTwoOrMoreBitsSet(T value)
+template<typename T> constexpr bool hasTwoOrMoreBitsSet(T value)
 {
     return !hasZeroOrOneBitsSet(value);
 }

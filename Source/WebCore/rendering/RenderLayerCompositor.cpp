@@ -2755,8 +2755,8 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     else
         viewBounds = m_renderView.frameView().rectForFixedPositionLayout();
 
-    LayoutRect layerBounds = layer.calculateLayerBounds(&layer, LayoutSize(), RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxesExcludingCompositing
-        | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
+    LayoutRect layerBounds = layer.calculateLayerBounds(&layer, LayoutSize(), { RenderLayer::UseLocalClipRectIfPossible, RenderLayer::IncludeLayerFilterOutsets, RenderLayer::UseFragmentBoxesExcludingCompositing,
+        RenderLayer::ExcludeHiddenDescendants, RenderLayer::DontConstrainForMask, RenderLayer::IncludeCompositedDescendants });
     // Map to m_renderView to ignore page scale.
     FloatRect absoluteBounds = layer.renderer().localToContainerQuad(FloatRect(layerBounds), &m_renderView).boundingBox();
     if (!viewBounds.intersects(enclosingIntRect(absoluteBounds))) {
@@ -3620,7 +3620,7 @@ static bool canCoordinateScrollingForLayer(const RenderLayer& layer)
 
 void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, OptionSet<ScrollingNodeChangeFlags> changes)
 {
-    LayerScrollCoordinationRoles coordinationRoles = 0;
+    OptionSet<LayerScrollCoordinationRole> coordinationRoles;
     if (isViewportConstrainedFixedOrStickyLayer(layer))
         coordinationRoles |= ViewportConstrained;
 
@@ -3628,7 +3628,7 @@ void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, Op
         coordinationRoles |= Scrolling;
 
     if (layer.isComposited())
-        layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles & ViewportConstrained);
+        layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles.contains(ViewportConstrained));
 
     if (coordinationRoles && canCoordinateScrollingForLayer(layer)) {
         if (m_scrollCoordinatedLayers.add(&layer).isNewEntry)
@@ -3649,7 +3649,7 @@ void RenderLayerCompositor::removeFromScrollCoordinatedLayers(RenderLayer& layer
     m_scrollCoordinatedLayers.remove(&layer);
     m_scrollCoordinatedLayersNeedingUpdate.remove(&layer);
 
-    detachScrollCoordinatedLayer(layer, Scrolling | ViewportConstrained);
+    detachScrollCoordinatedLayer(layer, { Scrolling, ViewportConstrained });
 }
 
 FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer& layer) const
@@ -3807,7 +3807,7 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     return nodeID;
 }
 
-void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, LayerScrollCoordinationRoles roles)
+void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, OptionSet<LayerScrollCoordinationRole> roles)
 {
     auto* backing = layer.backing();
     if (!backing)
@@ -3835,7 +3835,7 @@ void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID
     scrollingCoordinator->updateFrameScrollingNode(nodeID, m_scrollLayer.get(), m_rootContentLayer.get(), fixedRootBackgroundLayer(), clipLayer());
 }
 
-void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, LayerScrollCoordinationRoles reasons, OptionSet<ScrollingNodeChangeFlags> changes)
+void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, OptionSet<LayerScrollCoordinationRole> reasons, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     bool isRenderViewLayer = layer.isRenderViewLayer();
 

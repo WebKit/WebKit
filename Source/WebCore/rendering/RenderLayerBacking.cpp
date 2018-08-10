@@ -245,7 +245,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
     updateScrollingLayers(false);
-    detachFromScrollingCoordinator(Scrolling | ViewportConstrained);
+    detachFromScrollingCoordinator({Scrolling , ViewportConstrained });
     destroyGraphicsLayers();
 }
 
@@ -593,7 +593,7 @@ static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
 
 void RenderLayerBacking::updateCompositedBounds()
 {
-    LayoutRect layerBounds = m_owningLayer.calculateLayerBounds(&m_owningLayer, LayoutSize(), RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
+    LayoutRect layerBounds = m_owningLayer.calculateLayerBounds(&m_owningLayer, LayoutSize(), RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
     // Clip to the size of the document or enclosing overflow-scroll layer.
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
@@ -1774,7 +1774,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
     return true;
 }
 
-void RenderLayerBacking::detachFromScrollingCoordinator(LayerScrollCoordinationRoles roles)
+void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<LayerScrollCoordinationRole> roles)
 {
     if (!m_scrollingNodeID && !m_viewportConstrainedNodeID)
         return;
@@ -2532,7 +2532,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         return;
     }
 
-    RenderLayer::PaintLayerFlags paintFlags = 0;
+    OptionSet<RenderLayer::PaintLayerFlag> paintFlags;
     if (paintingPhase & GraphicsLayerPaintBackground)
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingBackgroundPhase;
     if (paintingPhase & GraphicsLayerPaintForeground)
@@ -2549,7 +2549,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingScrollingPhase;
 
     if (graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
-        paintFlags |= (RenderLayer::PaintLayerPaintingRootBackgroundOnly | RenderLayer::PaintLayerPaintingCompositingForegroundPhase); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
+        paintFlags |= { RenderLayer::PaintLayerPaintingRootBackgroundOnly, RenderLayer::PaintLayerPaintingCompositingForegroundPhase }; // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
     else if (compositor().fixedRootBackgroundLayer())
         paintFlags |= RenderLayer::PaintLayerPaintingSkipRootBackground;
 

@@ -445,8 +445,8 @@ private:
 
     void updateScrollCoordinationForThisFrame(ScrollingNodeID);
     ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
-    void updateScrollCoordinatedLayer(RenderLayer&, LayerScrollCoordinationRoles, OptionSet<ScrollingNodeChangeFlags>);
-    void detachScrollCoordinatedLayer(RenderLayer&, LayerScrollCoordinationRoles);
+    void updateScrollCoordinatedLayer(RenderLayer&, OptionSet<LayerScrollCoordinationRole>, OptionSet<ScrollingNodeChangeFlags>);
+    void detachScrollCoordinatedLayer(RenderLayer&, OptionSet<LayerScrollCoordinationRole>);
     void reattachSubframeScrollLayers();
     
     FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;

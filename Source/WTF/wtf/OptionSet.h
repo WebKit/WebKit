@@ -73,32 +73,19 @@ public:
 
     constexpr OptionSet() = default;
 
-#if ASSERT_DISABLED
     constexpr OptionSet(T t)
         : m_storage(static_cast<StorageType>(t))
     {
+        ASSERT_WITH_MESSAGE(!m_storage || hasOneBitSet(m_storage), "Enumerator is not a zero or a positive power of two.");
     }
 
     constexpr OptionSet(std::initializer_list<T> initializerList)
-    {
-        for (auto& option : initializerList)
-            m_storage |= static_cast<StorageType>(option);
-    }
-#else
-    OptionSet(T t)
-        : m_storage(static_cast<StorageType>(t))
-    {
-        ASSERT_WITH_MESSAGE(!m_storage || hasOneBitSet(static_cast<StorageType>(t)), "Enumerator is not a zero or a positive power of two.");
-    }
-
-    OptionSet(std::initializer_list<T> initializerList)
     {
         for (auto& option : initializerList) {
             ASSERT_WITH_MESSAGE(hasOneBitSet(static_cast<StorageType>(option)), "Enumerator is not a positive power of two.");
             m_storage |= static_cast<StorageType>(option);
         }
     }
-#endif
 
     constexpr StorageType toRaw() const { return m_storage; }
 

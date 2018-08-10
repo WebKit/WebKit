@@ -136,11 +136,11 @@ static constexpr float defaultSignificantRenderedTextMeanLength = 50;
 static constexpr unsigned mainArticleSignificantRenderedTextCharacterThreshold = 1500;
 static constexpr float mainArticleSignificantRenderedTextMeanLength = 25;
 
-static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
+static OptionSet<RenderLayer::UpdateLayerPositionsFlag> updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
 {
-    RenderLayer::UpdateLayerPositionsFlags flags = RenderLayer::defaultFlags;
+    auto flags = RenderLayer::updateLayerPositionsDefaultFlags();
     if (didFullRepaint) {
-        flags &= ~RenderLayer::CheckForRepaint;
+        flags -= RenderLayer::CheckForRepaint;
         flags |= RenderLayer::NeedsFullRepaintInBacking;
     }
     if (isRelayoutingSubtree && layer->enclosingPaginationLayer(RenderLayer::IncludeCompositedPaginatedLayers))
@@ -4163,7 +4163,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
     while (is<RenderInline>(renderer) && !downcast<RenderInline>(*renderer).firstLineBox())
         renderer = renderer->parent();
 
-    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, 0, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly);
+    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, { }, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly);
     if (rootLayer->containsDirtyOverlayScrollbars())
         rootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, renderer);
 

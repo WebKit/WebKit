@@ -1,3 +1,22 @@
+2018-08-10  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for various RenderLayer flags
+        https://bugs.webkit.org/show_bug.cgi?id=188472
+
+        Reviewed by Simon Fraser.
+
+        * wtf/MathExtras.h:
+        (hasOneBitSet):
+        (hasZeroOrOneBitsSet):
+        (hasTwoOrMoreBitsSet):
+
+        Make constexpr.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::OptionSet):
+
+        Always use constexpr, no need for separate debug versions with C++14.
+
 2018-08-09  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault

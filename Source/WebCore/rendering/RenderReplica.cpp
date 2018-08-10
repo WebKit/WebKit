@@ -76,7 +76,7 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         // computing using the wrong rootLayer
         RenderLayer* rootPaintingLayer = layer()->transform() ? layer()->parent() : layer()->enclosingTransformedAncestor();
         RenderLayer::LayerPaintingInfo paintingInfo(rootPaintingLayer, paintInfo.rect, PaintBehavior::Normal, LayoutSize(), 0);
-        RenderLayer::PaintLayerFlags flags = RenderLayer::PaintLayerHaveTransparency | RenderLayer::PaintLayerAppliedTransform | RenderLayer::PaintLayerTemporaryClipRects | RenderLayer::PaintLayerPaintingReflection;
+        OptionSet<RenderLayer::PaintLayerFlag> flags { RenderLayer::PaintLayerHaveTransparency, RenderLayer::PaintLayerAppliedTransform, RenderLayer::PaintLayerTemporaryClipRects, RenderLayer::PaintLayerPaintingReflection };
         layer()->parent()->paintLayer(paintInfo.context(), paintingInfo, flags);
     } else if (paintInfo.phase == PaintPhase::Mask)
         paintMask(paintInfo, adjustedPaintOffset);

@@ -1,3 +1,78 @@
+2018-08-10  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for various RenderLayer flags
+        https://bugs.webkit.org/show_bug.cgi?id=188472
+
+        Reviewed by Simon Fraser.
+
+        Typesafe flags.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * page/FrameView.cpp:
+        (WebCore::updateLayerPositionFlags):
+        (WebCore::FrameView::paintContents):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterLayout):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        (WebCore::RenderLayer::paint):
+        (WebCore::paintForFixedRootBackground):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContentsAndReflection):
+        (WebCore::RenderLayer::filterPainter const):
+        (WebCore::RenderLayer::hasFilterThatIsPainting const):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        (RenderLayer::paintLayerByApplyingTransform):
+        (RenderLayer::paintList):
+        (RenderLayer::updatePaintingInfoForFragments):
+        (RenderLayer::paintTransformedLayerIntoFragments):
+        (RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::paintLayerByApplyingTransform): Deleted.
+        (WebCore::RenderLayer::paintList): Deleted.
+        (WebCore::RenderLayer::enclosingPaginationLayerInSubtree const): Deleted.
+        (WebCore::RenderLayer::collectFragments): Deleted.
+        (WebCore::RenderLayer::updatePaintingInfoForFragments): Deleted.
+        (WebCore::RenderLayer::paintTransformedLayerIntoFragments): Deleted.
+        (WebCore::RenderLayer::paintBackgroundForFragments): Deleted.
+        (WebCore::RenderLayer::paintForegroundForFragments): Deleted.
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase): Deleted.
+        (WebCore::RenderLayer::paintOutlineForFragments): Deleted.
+        (WebCore::RenderLayer::paintMaskForFragments): Deleted.
+        (WebCore::RenderLayer::paintChildClippingMaskForFragments): Deleted.
+        (WebCore::RenderLayer::paintOverflowControlsForFragments): Deleted.
+        (WebCore::RenderLayer::hitTest): Deleted.
+        (WebCore::RenderLayer::enclosingElement const): Deleted.
+        (WebCore::RenderLayer::enclosingFragmentedFlowAncestor const): Deleted.
+        (WebCore::computeZOffset): Deleted.
+        (WebCore::RenderLayer::createLocalTransformState const): Deleted.
+        (WebCore::isHitCandidate): Deleted.
+        (WebCore::RenderLayer::hitTestLayer): Deleted.
+        (WebCore::RenderLayer::hitTestContentsForFragments const): Deleted.
+        (WebCore::RenderLayer::hitTestResizerInFragments const): Deleted.
+        (WebCore::RenderLayer::hitTestTransformedLayerInFragments): Deleted.
+        (WebCore::RenderLayer::hitTestLayerByApplyingTransform): Deleted.
+        (WebCore::RenderLayer::hitTestContents const): Deleted.
+        (WebCore::RenderLayer::hitTestList): Deleted.
+        (WebCore::RenderLayer::updateClipRects): Deleted.
+        (WebCore::RenderLayer::clipRects const): Deleted.
+        (WebCore::RenderLayer::calculateClipRects const): Deleted.
+        (WebCore::showLayerTree): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+
 2018-08-10  Sihui Liu  <sihui_liu@apple.com>
 
         CrashTracer: com.apple.WebKit.Storage at WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose

@@ -106,7 +106,7 @@ public:
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
-    void detachFromScrollingCoordinator(LayerScrollCoordinationRoles);
+    void detachFromScrollingCoordinator(OptionSet<LayerScrollCoordinationRole>);
     
     ScrollingNodeID scrollingNodeIDForRole(LayerScrollCoordinationRole role) const
     {
