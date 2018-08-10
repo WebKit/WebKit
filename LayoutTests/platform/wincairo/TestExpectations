@@ -878,14 +878,10 @@ http/tests/local/blob [ Skip ]
 http/tests/local/fileapi [ Skip ]
 http/tests/local/formdata [ Skip ]
 
-http/tests/local/link-stylesheet-preferred.html [ Failure ]
-
 http/tests/media [ Skip ]
 
 # need to implement content sniffing
 http/tests/mime/mime-type-sniff.html [ Skip ]
-
-http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html [ Failure ]
 
 http/tests/misc [ Skip ]
 
@@ -904,7 +900,6 @@ http/tests/quicklook [ Skip ]
 http/tests/security [ Skip ]
 http/tests/ssl [ Skip ]
 
-[ Release ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Failure ]
 [ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
 
 http/tests/subresource-integrity [ Skip ]
