@@ -490,7 +490,7 @@
 - path: ChakraCore/test/Date/toISO_3.js
   cmd: runChakra :baseline, "NoException", "toISO_3.baseline", []
 - path: ChakraCore/test/Date/dateutc.js
-  cmd: runChakra :baseline, "NoException", "dateutc.baseline", []
+  cmd: runChakra :baseline, "NoException", "dateutc.baseline-jsc", []
 - path: ChakraCore/test/Date/MillisecondTruncationCheckAfterCopyConstructor.js
   cmd: runChakra :baseline, "NoException", "MillisecondTruncationCheckAfterCopyConstructor.es6.baseline", []
   # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=165193 is fixed.

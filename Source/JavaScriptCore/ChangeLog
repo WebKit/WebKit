@@ -1,3 +1,16 @@
+2018-08-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Date.UTC should not return NaN with only Year param
+        https://bugs.webkit.org/show_bug.cgi?id=188378
+
+        Reviewed by Keith Miller.
+
+        Date.UTC requires one argument for |year|. But the other ones are optional.
+        This patch fix this handling.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::millisecondsFromComponents):
+
 2018-08-08  Keith Miller  <keith_miller@apple.com>
 
         Array.prototype.sort should call @toLength instead of ">>> 0"

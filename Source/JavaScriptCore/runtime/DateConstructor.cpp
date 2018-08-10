@@ -88,34 +88,30 @@ static double millisecondsFromComponents(ExecState* exec, const ArgList& args, W
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double doubleArguments[7];
-    for (int i = 0; i < 7; i++) {
+    // Initialize doubleArguments with default values.
+    double doubleArguments[7] {
+        0, 0, 1, 0, 0, 0, 0
+    };
+    unsigned numberOfUsedArguments = std::max(std::min<unsigned>(7U, args.size()), 1U);
+    for (unsigned i = 0; i < numberOfUsedArguments; ++i) {
         doubleArguments[i] = args.at(i).toNumber(exec);
         RETURN_IF_EXCEPTION(scope, 0);
     }
-
-    int numArgs = args.size();
-
-    if ((!std::isfinite(doubleArguments[0]) || (doubleArguments[0] > INT_MAX) || (doubleArguments[0] < INT_MIN))
-        || (!std::isfinite(doubleArguments[1]) || (doubleArguments[1] > INT_MAX) || (doubleArguments[1] < INT_MIN))
-        || (numArgs >= 3 && (!std::isfinite(doubleArguments[2]) || (doubleArguments[2] > INT_MAX) || (doubleArguments[2] < INT_MIN)))
-        || (numArgs >= 4 && (!std::isfinite(doubleArguments[3]) || (doubleArguments[3] > INT_MAX) || (doubleArguments[3] < INT_MIN)))
-        || (numArgs >= 5 && (!std::isfinite(doubleArguments[4]) || (doubleArguments[4] > INT_MAX) || (doubleArguments[4] < INT_MIN)))
-        || (numArgs >= 6 && (!std::isfinite(doubleArguments[5]) || (doubleArguments[5] > INT_MAX) || (doubleArguments[5] < INT_MIN)))
-        || (numArgs >= 7 && (!std::isfinite(doubleArguments[6]) || (doubleArguments[6] > INT_MAX) || (doubleArguments[6] < INT_MIN))))
-        return PNaN;
+    for (unsigned i = 0; i < numberOfUsedArguments; ++i) {
+        if (!std::isfinite(doubleArguments[i]) || (doubleArguments[i] > INT_MAX) || (doubleArguments[i] < INT_MIN))
+            return PNaN;
+    }
 
     GregorianDateTime t;
     int year = JSC::toInt32(doubleArguments[0]);
     t.setYear((year >= 0 && year <= 99) ? (year + 1900) : year);
     t.setMonth(JSC::toInt32(doubleArguments[1]));
-    t.setMonthDay((numArgs >= 3) ? JSC::toInt32(doubleArguments[2]) : 1);
+    t.setMonthDay(JSC::toInt32(doubleArguments[2]));
     t.setHour(JSC::toInt32(doubleArguments[3]));
     t.setMinute(JSC::toInt32(doubleArguments[4]));
     t.setSecond(JSC::toInt32(doubleArguments[5]));
     t.setIsDST(-1);
-    double ms = (numArgs >= 7) ? doubleArguments[6] : 0;
-    return gregorianDateTimeToMS(vm, t, ms, timeType);
+    return gregorianDateTimeToMS(vm, t, doubleArguments[6], timeType);
 }
 
 // ECMA 15.9.3

@@ -855,9 +855,6 @@ test/built-ins/DataView/prototype/setUint8/detached-buffer-before-outofrange-byt
 test/built-ins/DataView/prototype/setUint8/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
-test/built-ins/Date/UTC/return-value.js:
-  default: 'Test262Error: 1970 Expected SameValue(Â«NaNÂ», Â«0Â») to be true'
-  strict mode: 'Test262Error: 1970 Expected SameValue(Â«NaNÂ», Â«0Â») to be true'
 test/built-ins/Date/proto-from-ctor-realm-one.js:
   default: 'TypeError: Type error'
   strict mode: 'TypeError: Type error'
