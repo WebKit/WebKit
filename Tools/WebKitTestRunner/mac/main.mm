@@ -42,6 +42,9 @@ static void setDefaultsToConsistentValuesForTesting()
         @"com.apple.swipescrolldirection": @1,
         @"com.apple.trackpad.forceClick": @1,
         @"WebKitLinkedOnOrAfterEverything": @YES,
+        @"NSScrollAnimationEnabled": @NO,
+        @"NSOverlayScrollersEnabled": @NO,
+        @"AppleShowScrollBars": @"Always",
     };
 
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
