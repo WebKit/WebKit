@@ -31,7 +31,6 @@ for layout tests.
 """
 
 import logging
-import os.path
 import re
 
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
@@ -139,12 +138,11 @@ class TestExpectationParser(object):
         if not self._check_test_exists(expectation_line):
             return
 
-        path = os.path.normpath(expectation_line.name)
-        expectation_line.is_file = self._port.test_isfile(path)
+        expectation_line.is_file = self._port.test_isfile(expectation_line.name)
         if expectation_line.is_file:
-            expectation_line.path = path
+            expectation_line.path = expectation_line.name
         else:
-            expectation_line.path = self._port.normalize_test_name(path)
+            expectation_line.path = self._port.normalize_test_name(expectation_line.name)
 
         self._collect_matching_tests(expectation_line)
 

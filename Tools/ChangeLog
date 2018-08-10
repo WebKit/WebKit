@@ -1,3 +1,32 @@
+2018-08-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [webkitpy][Win] LayoutTests: test names should be Unix style, separated by slash not backslash
+        https://bugs.webkit.org/show_bug.cgi?id=187973
+
+        Reviewed by Alex Christensen.
+
+        In LayoutTests, test names have been canonicalized in Unix style
+        since Bug 63597, for example 'fast/css/001.html'. But, Bug 179219,
+        Bug 179572, Bug 180660 and Bug 181814 have changed to use
+        os.path.seq instead of slash if Windows Python is used.
+
+        Revert parts of those changes. Change relative_test_filename to
+        return a slash sperated test name as well as chromium_win.py used
+        to do.
+
+        This change fixes all 41 test-webkitpy failures in WinCairo port.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._parse_line): Do not convert a test name by using normpath.
+        * Scripts/webkitpy/port/base.py:
+        (Port.normalize_test_name): Use TEST_PATH_SEPARATOR instead of os.path.sep.
+        (Port.relative_test_filename): Replace self.host.filesystem.sep with self.TEST_PATH_SEPARATOR.
+        (Port.abspath_for_test): Split test_name with TEST_PATH_SEPARATOR.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver): Use '/' instead of os.sep.
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort): Do not override TEST_PATH_SEPARATOR.
+
 2018-08-09  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Add individual test durations to output

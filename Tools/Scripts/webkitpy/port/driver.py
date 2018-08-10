@@ -254,10 +254,10 @@ class Driver(object):
             return shlex.split(self._port.get_option('wrapper')) + wrapper_arguments
         return wrapper_arguments
 
-    HTTP_DIR = normpath("http/tests") + os.sep
-    HTTP_LOCAL_DIR = normpath("http/tests/local") + os.sep
-    WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = normpath("http/wpt") + os.sep
-    WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = normpath("WebKit") + os.sep
+    HTTP_DIR = "http/tests/"
+    HTTP_LOCAL_DIR = "http/tests/local/"
+    WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = "http/wpt/"
+    WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = "WebKit/"
 
     def is_http_test(self, test_name):
         return test_name.startswith(self.HTTP_DIR) and not test_name.startswith(self.HTTP_LOCAL_DIR)
