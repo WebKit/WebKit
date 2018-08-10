@@ -700,10 +700,10 @@ class Port(object):
 
     def normalize_test_name(self, test_name):
         """Returns a normalized version of the test name or test directory."""
-        if test_name.endswith(self.TEST_PATH_SEPARATOR):
+        if test_name.endswith(os.path.sep):
             return test_name
         if self.test_isdir(test_name):
-            return test_name + self.TEST_PATH_SEPARATOR
+            return test_name + os.path.sep
         return test_name
 
     def driver_cmd_line_for_logging(self):
@@ -830,9 +830,7 @@ class Port(object):
         # Ports that run on windows need to override this method to deal with
         # filenames with backslashes in them.
         if filename.startswith(self.layout_tests_dir()):
-            path = self.host.filesystem.relpath(filename, self.layout_tests_dir())
-            path = path.replace(self.host.filesystem.sep, self.TEST_PATH_SEPARATOR)
-            return path
+            return self.host.filesystem.relpath(filename, self.layout_tests_dir())
         else:
             return self.host.filesystem.abspath(filename)
 
@@ -841,7 +839,7 @@ class Port(object):
         """Returns the full path to the file for a given test name. This is the
         inverse of relative_test_filename() if no target_host is specified."""
         host = target_host or self.host
-        return host.filesystem.join(host.filesystem.map_base_host_path(self.layout_tests_dir()), *test_name.split(self.TEST_PATH_SEPARATOR))
+        return host.filesystem.join(host.filesystem.map_base_host_path(self.layout_tests_dir()), test_name)
 
     def jsc_results_directory(self):
         return self._build_path()
