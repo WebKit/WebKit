@@ -98,11 +98,6 @@ void CachedFrameBase::restore()
     if (m_document->svgExtensions())
         m_document->accessSVGExtensions().unpauseAnimations();
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        m_document->timeline().resumeAnimations();
-    else
-        frame.animation().resumeAnimationsForDocument(m_document.get());
-
     m_document->resume(ReasonForSuspension::PageCache);
 
     // It is necessary to update any platform script objects after restoring the

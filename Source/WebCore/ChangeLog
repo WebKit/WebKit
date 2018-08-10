@@ -1,3 +1,18 @@
+2018-08-10  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Remove unnecessary code to resume animations from CachedFrameBase::restore()
+        https://bugs.webkit.org/show_bug.cgi?id=188459
+
+        Reviewed by Chris Dumez.
+
+        It is unnessary for CachedFrameBase::restore() to explicitly resume animations on the
+        document as it calls Document::resume(), which already does this.
+
+        No functionality changed. So, no new tests.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+
 2018-08-10  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet for various RenderLayer flags
