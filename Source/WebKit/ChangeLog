@@ -1,3 +1,13 @@
+2018-08-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Incorrect log message in NetworkSession when creating NetworkDataTask
+        https://bugs.webkit.org/show_bug.cgi?id=188463
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+
 2018-08-09  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault
