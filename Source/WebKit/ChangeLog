@@ -1,3 +1,23 @@
+2018-08-10  David Kilzer  <ddkilzer@apple.com>
+
+        [Cocoa] WebKit::PlatformPopupMenuData should use member initialization
+        <https://webkit.org/b/188478>
+        <rdar://problem/43154363>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::PlatformPopupMenuData): Delete
+        implementation.  This constructor caused the warning by never
+        initializing its member variables.
+        * Shared/PlatformPopupMenuData.h:
+        (WebKit::PlatformPopupMenuData::PlatformPopupMenuData):
+        - Use default constructor.
+        (WebKit::PlatformPopupMenuData::shouldPopOver):
+        (WebKit::PlatformPopupMenuData::hideArrows):
+        (WebKit::PlatformPopupMenuData::menuSize):
+        - Add struct member initialization.
+
 2018-08-10  Chris Dumez  <cdumez@apple.com>
 
         Crash under NetworkResourceLoader::convertToDownload()

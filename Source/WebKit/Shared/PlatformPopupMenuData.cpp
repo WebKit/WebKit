@@ -30,10 +30,6 @@
 
 namespace WebKit {
 
-PlatformPopupMenuData::PlatformPopupMenuData()
-{
-}
-
 void PlatformPopupMenuData::encode(IPC::Encoder& encoder) const
 {
 #if PLATFORM(COCOA)
