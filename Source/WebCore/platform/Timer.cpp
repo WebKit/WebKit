@@ -27,6 +27,7 @@
 #include "config.h"
 #include "Timer.h"
 
+#include "RuntimeApplicationChecks.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
@@ -35,6 +36,10 @@
 #include <math.h>
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
+
+#if USE(WEB_THREAD) || PLATFORM(MAC)
+#include <wtf/spi/darwin/dyldSPI.h>
+#endif
 
 namespace WebCore {
 
@@ -184,6 +189,17 @@ inline bool TimerHeapLessThanFunction::operator()(const TimerBase* a, const Time
 
 // ----------------
 
+static bool shouldSuppressThreadSafetyCheck()
+{
+#if USE(WEB_THREAD)
+    return WebThreadIsEnabled();
+#elif PLATFORM(MAC)
+    return !isInWebProcess() && applicationSDKVersion() < DYLD_MACOSX_VERSION_10_14;
+#else
+    return false;
+#endif
+}
+
 TimerBase::TimerBase()
     : m_heapIndex(-1)
     , m_wasDeleted(false)
@@ -192,12 +208,8 @@ TimerBase::TimerBase()
 
 TimerBase::~TimerBase()
 {
-#if USE(WEB_THREAD)
     ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
-    RELEASE_ASSERT(WebThreadIsEnabled() || canAccessThreadLocalDataForThread(m_thread.get()));
-#else
-    RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
-#endif
+    RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()) || shouldSuppressThreadSafetyCheck());
     stop();
     ASSERT(!inHeap());
     m_wasDeleted = true;
@@ -364,12 +376,8 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
-#if USE(WEB_THREAD)
     ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
-    RELEASE_ASSERT(WebThreadIsEnabled() || canAccessThreadLocalDataForThread(m_thread.get()));
-#else
-    RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
-#endif
+    RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()) || shouldSuppressThreadSafetyCheck());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_wasDeleted);
 
     if (m_unalignedNextFireTime != newTime)
