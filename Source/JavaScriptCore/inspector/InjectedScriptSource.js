@@ -1286,12 +1286,15 @@ let RemoteObject = class RemoteObject
         if (object.__proto__ && object.__proto__.__proto__)
             return false;
 
-        // Objects are simple if they have 3 or less simple properties.
+        // Objects are simple if they have 3 or less simple value properties.
         let ownPropertyNames = Object.getOwnPropertyNames(object);
         if (ownPropertyNames.length > 3)
             return false;
         for (let i = 0; i < ownPropertyNames.length; ++i) {
             let propertyName = ownPropertyNames[i];
+            let descriptor = Object.getOwnPropertyDescriptor(object, propertyName);
+            if (descriptor && !("value" in descriptor))
+                return false;
             if (!this._isPreviewableObjectInternal(object[propertyName], knownObjects, depth))
                 return false;
         }
