@@ -1841,8 +1841,6 @@ webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Time
 
 webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/164833 inspector/worker/debugger-pause.html [ Pass Failure Timeout ]
-
 webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Pass Failure ]
 
 webkit.org/b/168373 media/video-seek-past-end-paused.html [ Failure Pass ]

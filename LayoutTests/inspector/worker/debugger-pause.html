@@ -111,8 +111,11 @@ function test()
         }
     });
 
-    window.loadLinesFromSourceCode(workerTarget.mainResource).then(() => {
-        suite.runTestCasesAndFinish();
+    // Turn once to ensure workerTarget.mainResource is loaded.
+    Promise.resolve().then(() => {
+        window.loadLinesFromSourceCode(workerTarget.mainResource).then(() => {
+            suite.runTestCasesAndFinish();
+        });
     });
 }
 </script>
