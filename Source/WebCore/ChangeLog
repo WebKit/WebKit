@@ -1,3 +1,16 @@
+2018-08-10  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for various RenderLayer flags
+        https://bugs.webkit.org/show_bug.cgi?id=188472
+        <rdar://problem/43153059>
+
+        Followup, fix some mistakes.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+
 2018-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         [macOS] Multiple third party apps crash due to the thread safety check in TimerBase::setNextFireTime
