@@ -1,3 +1,16 @@
+2018-08-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Separate queues for Builders and Testers - iOS
+        https://bugs.webkit.org/show_bug.cgi?id=188396
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/config.json: Splitted iOS queues into builders and testers.
+        Also added ews121 and ews122 to match with current EWS configuration.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (TestsFactory): Base classes for various Test factories.
+        (TestsFactory.getProduct): Download and extract the archive.
+
 2018-08-10  Daniel Bates  <dabates@apple.com>
 
         webkit-patch setup-git-clone should set Git core editor to commit-log-editor

@@ -117,6 +117,14 @@
       "platform": "mac-high-sierra"
     },
     {
+      "name": "ews121",
+      "platform": "ios-simulator-11"
+    },
+    {
+      "name": "ews122",
+      "platform": "ios-simulator-11"
+    },
+    {
       "name": "ews123",
       "platform": "ios-simulator-11"
     },
@@ -191,21 +199,29 @@
       "workernames": ["tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
     },
     {
-      "name": "iOS-11-EWS",
-      "factory": "iOSFactory",
+      "name": "iOS-11-Build-EWS",
+      "factory": "iOSBuildFactory",
       "platform": "ios-11",
       "configuration": "release",
       "architectures": ["arm64"],
       "workernames": ["ews108", "ews109"]
     },
     {
-      "name": "iOS-11-Simulator-EWS",
-      "factory": "iOSSimulatorFactory",
+      "name": "iOS-11-Simulator-Build-EWS",
+      "factory": "iOSBuildFactory",
       "platform": "ios-simulator-11",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews"],
-      "workernames": ["ews123", "ews124", "ews125", "ews126"]
+      "triggers": ["api-tests-ios-sim-ews", "ios-11-sim-tests-ews"],
+      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
+    },
+    {
+      "name": "iOS-11-Simulator-Tests-EWS",
+      "factory": "iOSTestsFactory",
+      "platform": "ios-simulator-11",
+      "configuration": "release",
+      "architectures": ["x86_64"],
+      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
       "name": "macOS-Sierra-Release-WK1-EWS",
@@ -302,22 +318,29 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["Style-EWS", "JSC-Tests-EWS", "macOS-Sierra-Release-WK1-EWS", "GTK-Webkit2-EWS", "macOS-Sierra-Release-WK2-EWS",
-                       "macOS-High-Sierra-Release-32bit-WK2-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-EWS", "WinCairo-EWS", "iOS-11-Simulator-EWS",
+                       "macOS-High-Sierra-Release-32bit-WK2-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-Build-EWS", "WinCairo-EWS", "iOS-11-Simulator-Build-EWS",
                        "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-Sierra-Debug-WK1-EWS", "Bindings-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable",
+      "name": "ios-11-sim-tests-ews",
+      "builderNames": [
+        "iOS-11-Simulator-Tests-EWS"
+      ]
     },
     {
       "type": "Triggerable",
       "name": "api-tests-ios-sim-ews",
       "builderNames": [
         "API-Tests-iOS-Simulator-EWS"
-      ]     
+      ]
     },
     {
       "type": "Triggerable",
       "name": "api-tests-mac-ews",
       "builderNames": [
         "API-Tests-macOS-EWS"
-      ]     
+      ]
     }
   ]
 }
