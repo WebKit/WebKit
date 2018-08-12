@@ -1,3 +1,15 @@
+2018-08-12  Karo Gyoker  <karogyoker2+webkit@gmail.com>
+
+        Disable JIT on IA-32 without SSE2
+        https://bugs.webkit.org/show_bug.cgi?id=188476
+
+        Reviewed by Michael Catanzaro.
+
+        Including missing header (MacroAssembler.h) in case of other
+        operating systems than Windows too.
+
+        * runtime/Options.cpp:
+
 2018-08-11  Karo Gyoker  <karogyoker2+webkit@gmail.com>
 
         Disable JIT on IA-32 without SSE2

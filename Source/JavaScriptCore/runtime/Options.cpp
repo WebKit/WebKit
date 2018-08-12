@@ -49,7 +49,7 @@
 #include <crt_externs.h>
 #endif
 
-#if OS(WINDOWS) && ENABLE(JIT)
+#if ENABLE(JIT)
 #include "MacroAssembler.h"
 #endif
 
