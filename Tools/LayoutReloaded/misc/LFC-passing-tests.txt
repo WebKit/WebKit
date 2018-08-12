@@ -46,3 +46,4 @@ fast/block/block-only/floating-lefts-and-rights-simple.html
 fast/block/block-only/floating-multiple-lefts-in-body.html
 fast/block/block-only/floating-multiple-lefts-multiple-lines.html
 fast/block/block-only/floating-multiple-lefts.html
+fast/block/block-only/floating-and-next-previous-inflow-with-margin.html

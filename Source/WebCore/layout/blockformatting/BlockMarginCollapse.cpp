@@ -97,8 +97,8 @@ static bool isMarginTopCollapsedWithParent(const LayoutContext& layoutContext, c
     // We never margin collapse the initial containing block.
     ASSERT(layoutBox.parent());
     auto& parent = *layoutBox.parent();
-    // Is this box the first inlflow child?
-    if (parent.firstInFlowChild() != &layoutBox)
+    // Only the first inlflow child collapses with parent (floating sibling also prevents collapsing). 
+    if (layoutBox.previousInFlowOrFloatingSibling())
         return false;
 
     if (parent.establishesBlockFormattingContext())
@@ -274,8 +274,8 @@ bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(c
     // We never margin collapse the initial containing block.
     ASSERT(layoutBox.parent());
     auto& parent = *layoutBox.parent();
-    // Is this the last inlflow child?
-    if (parent.lastInFlowChild() != &layoutBox)
+    // Only the last inlflow child collapses with parent (floating sibling also prevents collapsing). 
+    if (layoutBox.nextInFlowOrFloatingSibling())
         return false;
 
     if (parent.establishesBlockFormattingContext())

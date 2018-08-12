@@ -1,3 +1,13 @@
+2018-08-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Float prev/next sibling should prevent top/bottom margin collapsing with parent.
+        https://bugs.webkit.org/show_bug.cgi?id=188487
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/floating-and-next-previous-inflow-with-margin-expected.txt: Added.
+        * fast/block/block-only/floating-and-next-previous-inflow-with-margin.html: Added.
+
 2018-08-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.log fires getters for deep properties
