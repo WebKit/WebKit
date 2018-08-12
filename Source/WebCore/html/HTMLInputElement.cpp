@@ -1631,6 +1631,11 @@ void HTMLInputElement::listAttributeTargetChanged()
 
 #endif // ENABLE(DATALIST_ELEMENT)
 
+bool HTMLInputElement::isPresentingAttachedView() const
+{
+    return m_inputType->isPresentingAttachedView();
+}
+
 bool HTMLInputElement::isSteppable() const
 {
     return m_inputType->isSteppable();

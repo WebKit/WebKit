@@ -52,14 +52,20 @@ static const CGFloat colorPickerMatrixNumColumns = 12.0;
 static const CGFloat colorPickerMatrixSwatchWidth = 12.0;
 static const CGFloat colorPickerMatrixBorderWidth = 1.0;
 
+@protocol WKPopoverColorWellDelegate <NSObject>
+- (void)didClosePopover;
+@end
+
 @interface WKPopoverColorWell : NSPopoverColorWell {
     RetainPtr<NSColorList> _suggestedColors;
 }
 
+@property (nonatomic, weak) id<WKPopoverColorWellDelegate> webDelegate;
+
 - (void)setSuggestedColors:(NSColorList *)suggestedColors;
 @end
 
-@interface WKColorPopoverMac : NSObject<WKColorPickerUIMac, NSWindowDelegate> {
+@interface WKColorPopoverMac : NSObject<WKColorPickerUIMac, WKPopoverColorWellDelegate, NSWindowDelegate> {
 @private
     BOOL _lastChangedByUser;
     WebColorPickerMac *_picker;
@@ -89,8 +95,10 @@ Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client,
 
 WebColorPickerMac::~WebColorPickerMac()
 {
-    if (m_colorPickerUI)
-        endPicker();
+    if (m_colorPickerUI) {
+        [m_colorPickerUI invalidate];
+        m_colorPickerUI = nil;
+    }
 }
 
 WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions, NSView *view)
@@ -108,6 +116,7 @@ void WebColorPickerMac::endPicker()
 {
     [m_colorPickerUI invalidate];
     m_colorPickerUI = nil;
+    WebColorPicker::endPicker();
 }
 
 void WebColorPickerMac::setSelectedColor(const WebCore::Color& color)
@@ -198,6 +207,15 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSMinYEdge];
 }
 
+- (void)popoverDidClose:(NSNotification *)notification {
+    [self.webDelegate didClosePopover];
+}
+
+- (NSView *)hitTest:(NSPoint)point
+{
+    return nil;
+}
+
 - (void)setSuggestedColors:(NSColorList *)suggestedColors
 {
     _suggestedColors = suggestedColors;
@@ -226,6 +244,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     _picker = picker;
 
     [_popoverWell setTarget:self];
+    [_popoverWell setWebDelegate:self];
     [_popoverWell setAction:@selector(didChooseColor:)];
     [_popoverWell setColor:color];
 
@@ -238,14 +257,10 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 
     [_popoverWell setSuggestedColors:suggestedColors];
     [_popoverWell _showPopover];
+
+    [[NSColorPanel sharedColorPanel] setDelegate:self];
     
     _lastChangedByUser = YES;
-}
-- (void)dealloc
-{
-    ASSERT(!_popoverWell);
-    ASSERT(!_picker);
-    [super dealloc];
 }
 
 - (void)invalidate
@@ -254,14 +269,26 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     [_popoverWell setTarget:nil];
     [_popoverWell setAction:nil];
     [_popoverWell deactivate];
+    
     _popoverWell = nil;
     _picker = nil;
+
+    NSColorPanel *panel = [NSColorPanel sharedColorPanel];
+    if (panel.delegate == self) {
+        panel.delegate = nil;
+        [panel close];
+    }
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    _lastChangedByUser = YES;
-    _picker->endPicker();
+    if (!_picker)
+        return;
+
+    if (notification.object == [NSColorPanel sharedColorPanel]) {
+        _lastChangedByUser = YES;
+        _picker->endPicker();
+    }
 }
 
 - (void)didChooseColor:(id)sender
@@ -282,6 +309,15 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 {
     _lastChangedByUser = NO;
     [_popoverWell setColor:color];
+}
+
+- (void)didClosePopover
+{
+    if (!_picker)
+        return;
+
+    if (![NSColorPanel sharedColorPanel].isVisible)
+        _picker->endPicker();
 }
 
 @end

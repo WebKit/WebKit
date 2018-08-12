@@ -621,6 +621,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         m_value.valueID = CSSValueApplePayButton;
         break;
 #endif
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+        m_value.valueID = CSSValueColorWell;
+        break;
+#endif
     }
 }
 

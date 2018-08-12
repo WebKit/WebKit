@@ -116,6 +116,9 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case RadioPart:
     case PushButtonPart:
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart: {
         // Border
@@ -200,6 +203,9 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         return adjustRadioStyle(styleResolver, style, element);
     case PushButtonPart:
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart:
         return adjustButtonStyle(styleResolver, style, element);
@@ -300,6 +306,9 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case RadioPart:
     case PushButtonPart:
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart:
     case InnerSpinButtonPart:
@@ -322,6 +331,9 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return paintRadio(box, paintInfo, integralSnappedRect);
     case PushButtonPart:
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart:
         return paintButton(box, paintInfo, integralSnappedRect);
@@ -450,6 +462,9 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     case RadioPart:
     case PushButtonPart:
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart:
     case MenulistPart:
@@ -503,6 +518,9 @@ bool RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     case PushButtonPart:
         return paintPushButtonDecorations(box, paintInfo, integralSnappedRect);
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
         return paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
     case ButtonPart:
         return paintButtonDecorations(box, paintInfo, integralSnappedRect);
@@ -715,6 +733,9 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const BorderData& bo
     switch (style.appearance()) {
     case PushButtonPart:
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart:
     case ListboxPart:
@@ -801,6 +822,8 @@ ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderO
         states |= ControlStates::WindowInactiveState;
     if (isIndeterminate(o))
         states |= ControlStates::IndeterminateState;
+    if (isPresenting(o))
+        states |= ControlStates::PresentingState;
     return states;
 }
 
@@ -883,6 +906,11 @@ bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& renderer) const
     if (!is<SpinButtonElement>(node))
         return false;
     return downcast<SpinButtonElement>(*node).upDownState() == SpinButtonElement::Up;
+}
+
+bool RenderTheme::isPresenting(const RenderObject& o) const
+{
+    return is<HTMLInputElement>(o.node()) && downcast<HTMLInputElement>(*o.node()).isPresentingAttachedView();
 }
 
 bool RenderTheme::isDefault(const RenderObject& o) const

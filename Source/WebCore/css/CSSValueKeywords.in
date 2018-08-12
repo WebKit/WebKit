@@ -836,6 +836,9 @@ image-controls-button
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 -apple-pay-button
 #endif
+#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
+color-well
+#endif
 textarea
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment

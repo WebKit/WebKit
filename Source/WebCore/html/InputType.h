@@ -263,6 +263,7 @@ public:
     virtual String defaultToolTip() const;
     virtual bool matchesIndeterminatePseudoClass() const;
     virtual bool shouldAppearIndeterminate() const;
+    virtual bool isPresentingAttachedView() const;
     virtual bool supportsSelectionAPI() const;
     virtual Color valueAsColor() const;
     virtual void selectColor(StringView);

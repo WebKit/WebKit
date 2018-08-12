@@ -39,18 +39,13 @@ WebColorPicker::~WebColorPicker()
 {
 }
 
-void WebColorPicker::invalidate()
-{
-    endPicker();
-    m_client = 0;
-}
-
 void WebColorPicker::endPicker()
 {
     if (!m_client)
         return;
 
     m_client->didEndColorPicker();
+    m_client = nullptr;
 }
 
 void WebColorPicker::setSelectedColor(const WebCore::Color& color)

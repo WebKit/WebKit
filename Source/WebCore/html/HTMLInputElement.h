@@ -93,6 +93,8 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> stepUp(int = 1);
     WEBCORE_EXPORT ExceptionOr<void> stepDown(int = 1);
 
+    bool isPresentingAttachedView() const;
+
     // stepUp()/stepDown() for user-interaction.
     bool isSteppable() const;
 

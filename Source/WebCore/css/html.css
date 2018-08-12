@@ -873,10 +873,11 @@ select:focus {
 
 input[type="color"] {
 #if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
-    -webkit-appearance: square-button;
+    -webkit-appearance: color-well;
 #endif
     width: 44px;
     height: 23px;
+    outline: none;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -889,7 +890,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 
 input[type="color"]::-webkit-color-swatch {
     background-color: #000000;
-    border: 1px solid #777777;
+    border: 1px solid #8A8A8A;
     flex: 1;
 }
 

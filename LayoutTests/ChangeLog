@@ -1,3 +1,15 @@
+2018-08-12  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Color wells should appear pressed when presenting a color picker
+        https://bugs.webkit.org/show_bug.cgi?id=188477
+
+        Reviewed by Tim Horton.
+
+        Rebaseline tests to match new color-well appearance.
+
+        * platform/mac/fast/forms/color/input-appearance-color-expected.png:
+        * platform/mac/fast/forms/color/input-appearance-color-expected.txt:
+
 2018-08-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Float prev/next sibling should prevent top/bottom margin collapsing with parent.

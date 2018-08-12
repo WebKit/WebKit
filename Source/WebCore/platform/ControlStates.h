@@ -53,6 +53,7 @@ public:
         WindowInactiveState = 1 << 6,
         IndeterminateState = 1 << 7,
         SpinUpState = 1 << 8, // Sub-state for HoverState and PressedState.
+        PresentingState = 1 << 9,
         AllStates = 0xffffffff
     };
 

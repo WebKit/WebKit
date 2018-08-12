@@ -1,3 +1,59 @@
+2018-08-12  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Color wells should appear pressed when presenting a color picker
+        https://bugs.webkit.org/show_bug.cgi?id=188477
+
+        Reviewed by Tim Horton.
+
+        Currently, when clicking on a color well, the color well loses its pressed
+        appearance once the mouse is lifted. Because of this behavior, the color well
+        does not appear to be active when the color picker is displayed.
+
+        Added the color-well -webkit-appearance value to control the drawing of the color
+        well separate from other buttons. Also added a new ControlState, named
+        PresentingState. A control can be in this state whenever it is presenting some
+        attached view. In the case of the color well this is the color picker. The
+        Information as to whether a form control is in the presenting state comes from
+        isPresentingAttachedView() in HTMLInputElement.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        (input[type="color"]::-webkit-color-swatch):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::isPresentingAttachedView const):
+        (WebCore::ColorInputType::elementDidBlur):
+        (WebCore::ColorInputType::didEndChooser):
+        * html/ColorInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isPresentingAttachedView const):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::isPresentingAttachedView const):
+        * html/InputType.h:
+        * platform/ControlStates.h:
+        * platform/ThemeTypes.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::updateStates):
+        (WebCore::setUpButtonCell):
+        (WebCore::paintColorWell):
+        (WebCore::ThemeMac::minimumControlSize const):
+        (WebCore::ThemeMac::controlBorder const):
+        (WebCore::ThemeMac::paint):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::isControlStyled const):
+        (WebCore::RenderTheme::extractControlStatesForRenderer const):
+        (WebCore::RenderTheme::isPresenting const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+
 2018-08-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Float prev/next sibling should prevent top/bottom margin collapsing with parent.

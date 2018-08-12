@@ -1,3 +1,39 @@
+2018-08-12  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Color wells should appear pressed when presenting a color picker
+        https://bugs.webkit.org/show_bug.cgi?id=188477
+
+        Reviewed by Tim Horton.
+
+        In order for the color well to accurately reflect the state of the picker, it is
+        necessary to ensure that the picker is destroyed at the appropriate time.
+
+        Added windowWillClose and didClosePopover delegate methods to destroy the picker
+        it has been closed. Also added a call to WebColorPicker::endPicker in
+        WebColorPickerMac's implementation of endPicker to ensure that the object is
+        destroyed. Removed redundant calls to endPicker in the WebPageProxy.
+
+        The hitTest method was overridden in WKPopoverColorWell to ensure that AppKit's
+        view does not block our drawn color well from receiving click events.
+
+        * UIProcess/WebColorPicker.cpp:
+        (WebKit::WebColorPicker::endPicker):
+        * UIProcess/WebColorPicker.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::endColorPicker):
+        (WebKit::WebPageProxy::didEndColorPicker):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::closeOverlayedViews):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::~WebColorPickerMac):
+        (WebKit::WebColorPickerMac::endPicker):
+        (-[WKPopoverColorWell popoverDidClose:]):
+        (-[WKPopoverColorWell hitTest:]):
+        (-[WKColorPopoverMac setAndShowPicker:withColor:suggestions:]):
+        (-[WKColorPopoverMac invalidate]):
+        (-[WKColorPopoverMac windowWillClose:]):
+        (-[WKColorPopoverMac didClosePopover]):
+
 2018-08-10  David Kilzer  <ddkilzer@apple.com>
 
         [Cocoa] WebKit::PlatformPopupMenuData should use member initialization

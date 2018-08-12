@@ -1,3 +1,15 @@
+2018-08-12  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Color wells should appear pressed when presenting a color picker
+        https://bugs.webkit.org/show_bug.cgi?id=188477
+
+        Reviewed by Tim Horton.
+
+        Add keyword completion for 'color-well'.
+
+        * UserInterface/External/CodeMirror/css.js:
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2018-08-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: SourceCodeTextEditor error/warning text widget is too light

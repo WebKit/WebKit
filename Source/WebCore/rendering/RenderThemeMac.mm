@@ -872,6 +872,9 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+        case ColorWellPart:
+#endif
         case DefaultButtonPart:
         case ButtonPart:
         case InnerSpinButtonPart:

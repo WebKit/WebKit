@@ -941,6 +941,11 @@ bool InputType::shouldAppearIndeterminate() const
     return false;
 }
 
+bool InputType::isPresentingAttachedView() const
+{
+    return false;
+}
+
 bool InputType::supportsSelectionAPI() const
 {
     return false;

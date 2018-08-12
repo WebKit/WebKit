@@ -56,8 +56,6 @@ public:
 
     virtual ~WebColorPicker();
 
-    void invalidate();
-
     virtual void endPicker();
     virtual void setSelectedColor(const WebCore::Color&);
     virtual void showColorPicker(const WebCore::Color&);

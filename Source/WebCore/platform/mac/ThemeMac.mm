@@ -212,6 +212,10 @@ static void updateStates(NSCell* cell, const ControlStates& controlStates, bool 
         [(NSButtonCell*)cell _setState:newState animated:useAnimation];
     }
 
+    // Presenting state
+    if (states & ControlStates::PresentingState)
+        [(NSButtonCell*)cell _setHighlighted:YES animated:NO];
+
     // Window inactive state does not need to be checked explicitly, since we paint parented to 
     // a view in a window whose key state can be detected.
 }
@@ -492,7 +496,11 @@ static void setUpButtonCell(NSButtonCell *cell, ControlPart part, const ControlS
 {
     // Set the control size based off the rectangle we're painting into.
     const std::array<IntSize, 3>& sizes = buttonSizes();
-    if (part == SquareButtonPart || zoomedSize.height() > buttonSizes()[NSControlSizeRegular].height() * zoomFactor) {
+    if (part == SquareButtonPart
+#if ENABLE(INPUT_TYPE_COLOR)
+        || part == ColorWellPart
+#endif
+        || zoomedSize.height() > buttonSizes()[NSControlSizeRegular].height() * zoomFactor) {
         // Use the square button
         if ([cell bezelStyle] != NSBezelStyleShadowlessSquare)
             [cell setBezelStyle:NSBezelStyleShadowlessSquare];
@@ -699,6 +707,46 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
     return needsRepaint;
 }
 
+// Color Well
+
+#if ENABLE(INPUT_TYPE_COLOR)
+static void paintColorWell(ControlStates& controlStates, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    // Determine the width and height needed for the control and prepare the cell for painting.
+    ControlStates::States states = controlStates.states();
+    NSButtonCell *buttonCell = button(ColorWellPart, controlStates, IntSize(zoomedRect.size()), zoomFactor);
+    GraphicsContextStateSaver stateSaver(context);
+
+    NSControlSize controlSize = [buttonCell controlSize];
+    IntSize zoomedSize = buttonSizes()[controlSize];
+    zoomedSize.setWidth(zoomedRect.width()); // Buttons don't ever constrain width, so the zoomed width can just be honored.
+    zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
+    FloatRect inflatedRect = zoomedRect;
+
+    LocalCurrentGraphicsContext localContext(context);
+
+    NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
+    NSWindow *window = [view window];
+    NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
+
+    bool useImageBuffer = pageScaleFactor != 1.0f || zoomFactor != 1.0f;
+    bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states & ControlStates::FocusState, useImageBuffer, deviceScaleFactor);
+    if ([previousDefaultButtonCell isEqual:buttonCell])
+        [window setDefaultButtonCell:nil];
+
+    controlStates.setNeedsRepaint(needsRepaint);
+
+    [buttonCell setControlView:nil];
+
+    if (![previousDefaultButtonCell isEqual:buttonCell])
+        [window setDefaultButtonCell:previousDefaultButtonCell];
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+#endif
+
 // Theme overrides
 
 int ThemeMac::baselinePositionAdjustment(ControlPart part) const
@@ -749,6 +797,9 @@ LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& fon
 {
     switch (part) {
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart:
         return { { 0, Fixed }, { static_cast<int>(15 * zoomFactor), Fixed } };
@@ -766,6 +817,9 @@ LengthBox ThemeMac::controlBorder(ControlPart part, const FontCascade& font, con
 {
     switch (part) {
     case SquareButtonPart:
+#if ENABLE(INPUT_TYPE_COLOR)
+    case ColorWellPart:
+#endif
     case DefaultButtonPart:
     case ButtonPart:
         return LengthBox(0, zoomedBox.right().value(), 0, zoomedBox.left().value());
@@ -865,6 +919,11 @@ void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext& c
         case SquareButtonPart:
             paintButton(part, states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor, pageScaleFactor);
             break;
+#if ENABLE(INPUT_TYPE_COLOR)
+        case ColorWellPart:
+            paintColorWell(states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor, pageScaleFactor);
+            break;
+#endif
         case InnerSpinButtonPart:
             paintStepper(states, context, zoomedRect, zoomFactor, scrollView);
             break;

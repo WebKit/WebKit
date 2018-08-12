@@ -404,6 +404,7 @@ public:
     bool isSpinUpButtonPartPressed(const RenderObject&) const;
     bool isHovered(const RenderObject&) const;
     bool isSpinUpButtonPartHovered(const RenderObject&) const;
+    bool isPresenting(const RenderObject&) const;
     bool isReadOnlyControl(const RenderObject&) const;
     bool isDefault(const RenderObject&) const;
 

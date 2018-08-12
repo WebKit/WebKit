@@ -4800,7 +4800,8 @@ void WebPageProxy::setColorPickerColor(const WebCore::Color& color)
 
 void WebPageProxy::endColorPicker()
 {
-    ASSERT(m_colorPicker);
+    if (!m_colorPicker)
+        return;
 
     m_colorPicker->endPicker();
 }
@@ -4818,13 +4819,7 @@ void WebPageProxy::didEndColorPicker()
     if (!isValid())
         return;
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    if (m_colorPicker) {
-        m_colorPicker->invalidate();
-        m_colorPicker = nullptr;
-    }
-#endif
-
+    m_colorPicker = nullptr;
     m_process->send(Messages::WebPage::DidEndColorPicker(), m_pageID);
 }
 #endif
@@ -6111,13 +6106,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if ENABLE(TOUCH_EVENTS)
     m_touchEventTracking.reset();
-#endif
-
-#if ENABLE(INPUT_TYPE_COLOR)
-    if (m_colorPicker) {
-        m_colorPicker->invalidate();
-        m_colorPicker = nullptr;
-    }
 #endif
 
 #if ENABLE(GEOLOCATION)
@@ -7657,8 +7645,7 @@ void WebPageProxy::closeOverlayedViews()
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER) && ENABLE(INPUT_TYPE_COLOR)
-    if (m_colorPicker)
-        endColorPicker();
+    endColorPicker();
 #endif
 }
 
