@@ -102,7 +102,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_styleRule->wrapperAdoptSelectorList(selectorList);
+    m_styleRule->wrapperAdoptSelectorList(WTFMove(selectorList));
 
     if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);

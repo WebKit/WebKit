@@ -118,9 +118,9 @@ private:
 class StyleRule final : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleRule> create(Ref<StylePropertiesBase>&& properties, bool hasDocumentSecurityOrigin)
+    static Ref<StyleRule> create(Ref<StylePropertiesBase>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
     {
-        return adoptRef(*new StyleRule(WTFMove(properties), hasDocumentSecurityOrigin));
+        return adoptRef(*new StyleRule(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors)));
     }
     
     ~StyleRule();
@@ -133,14 +133,13 @@ public:
 
     using StyleRuleBase::hasDocumentSecurityOrigin;
 
-    void wrapperAdoptSelectorList(CSSSelectorList& selectors)
+    void wrapperAdoptSelectorList(CSSSelectorList&& selectors)
     {
         m_selectorList = WTFMove(selectors);
 #if ENABLE(CSS_SELECTOR_JIT)
         m_compiledSelectors = nullptr;
 #endif
     }
-    void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
 
     Ref<StyleRule> copy() const { return adoptRef(*new StyleRule(*this)); }
 
@@ -162,7 +161,7 @@ public:
     static unsigned averageSizeInBytes();
 
 private:
-    StyleRule(Ref<StylePropertiesBase>&&, bool hasDocumentSecurityOrigin);
+    StyleRule(Ref<StylePropertiesBase>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     StyleRule(const StyleRule&);
 
     static Ref<StyleRule> createForSplitting(const Vector<const CSSSelector*>&, Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin);
@@ -200,7 +199,7 @@ private:
 
 class StyleRulePage final : public StyleRuleBase {
 public:
-    static Ref<StyleRulePage> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRulePage(WTFMove(properties))); }
+    static Ref<StyleRulePage> create(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors) { return adoptRef(*new StyleRulePage(WTFMove(properties), WTFMove(selectors))); }
 
     ~StyleRulePage();
 
@@ -208,12 +207,12 @@ public:
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
-    void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = WTFMove(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList&& selectors) { m_selectorList = WTFMove(selectors); }
 
     Ref<StyleRulePage> copy() const { return adoptRef(*new StyleRulePage(*this)); }
 
 private:
-    explicit StyleRulePage(Ref<StyleProperties>&&);
+    explicit StyleRulePage(Ref<StyleProperties>&&, CSSSelectorList&&);
     StyleRulePage(const StyleRulePage&);
     
     Ref<StyleProperties> m_properties;

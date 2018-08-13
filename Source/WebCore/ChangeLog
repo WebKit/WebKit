@@ -1,3 +1,46 @@
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Make CSSSelectorList a little more sane
+        https://bugs.webkit.org/show_bug.cgi?id=188539
+
+        Reviewed by Simon Fraser.
+
+        This patch does four things:
+        1. Use a UniqueArray<CSSSelector> instead of a raw pointer and manually calling destructors.
+        2. Use move semantics a little bit better.
+        3. Add a CSSSelectorList&& to the StyleRule and StyleRulePage because every time we create either
+        one of those objects we call a setter to give it a CSSSelectorList.  That's what constructor arguments are for.
+        4. Don't use CSSSelectorList.componentCount(), which iterates all components, to determine if it's empty.
+        Use first() instead.
+
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::setSelectorText):
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::componentCount const):
+        (WebCore::CSSSelectorList::listSize const):
+        (WebCore::CSSSelectorList::operator=):
+        (WebCore::CSSSelectorList::deleteSelectors): Deleted.
+        * css/CSSSelectorList.h:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::first const):
+        (WebCore::CSSSelectorList::indexOfNextSelectorAfter const):
+        (WebCore::CSSSelectorList::~CSSSelectorList): Deleted.
+        (WebCore::CSSSelectorList::adoptSelectorArray): Deleted.
+        (WebCore::CSSSelectorList::hasOneSelector const): Deleted.
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::StyleRule):
+        (WebCore::StyleRule::createForSplitting):
+        (WebCore::StyleRulePage::StyleRulePage):
+        * css/StyleRule.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumePageRule):
+        (WebCore::CSSParserImpl::consumeStyleRule):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+
 2018-08-13  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Validate threshold values

@@ -181,9 +181,10 @@ unsigned StyleRule::averageSizeInBytes()
     return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes();
 }
 
-StyleRule::StyleRule(Ref<StylePropertiesBase>&& properties, bool hasDocumentSecurityOrigin)
+StyleRule::StyleRule(Ref<StylePropertiesBase>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors)
     : StyleRuleBase(Style, hasDocumentSecurityOrigin)
     , m_properties(WTFMove(properties))
+    , m_selectorList(WTFMove(selectors))
 {
 }
 
@@ -213,13 +214,11 @@ MutableStyleProperties& StyleRule::mutableProperties()
 Ref<StyleRule> StyleRule::createForSplitting(const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectors.isEmpty());
-    CSSSelector* selectorListArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * selectors.size()));
+    auto selectorListArray = makeUniqueArray<CSSSelector>(selectors.size());
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
     selectorListArray[selectors.size() - 1].setLastInSelectorList();
-    auto rule = StyleRule::create(WTFMove(properties), hasDocumentSecurityOrigin);
-    rule.get().parserAdoptSelectorArray(selectorListArray);
-    return rule;
+    return StyleRule::create(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectorListArray));
 }
 
 Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned maxCount) const
@@ -248,9 +247,10 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
     return rules;
 }
 
-StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties)
+StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)
     : StyleRuleBase(Page)
     , m_properties(WTFMove(properties))
+    , m_selectorList(WTFMove(selectors))
 {
 }
 

@@ -668,9 +668,7 @@ RefPtr<StyleRulePage> CSSParserImpl::consumePageRule(CSSParserTokenRange prelude
 
     consumeDeclarationList(block, StyleRule::Style);
     
-    RefPtr<StyleRulePage> page = StyleRulePage::create(createStyleProperties(m_parsedProperties, m_context.mode));
-    page->wrapperAdoptSelectorList(selectorList);
-    return page;
+    return StyleRulePage::create(createStyleProperties(m_parsedProperties, m_context.mode), WTFMove(selectorList));
 }
 
 // FIXME-NEWPARSER: Support "apply"
@@ -726,7 +724,6 @@ RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, C
     if (!selectorList.isValid())
         return nullptr; // Parse error, invalid selector list
 
-    RefPtr<StyleRule> rule;
     if (m_observerWrapper)
         observeSelectors(*m_observerWrapper, prelude);
     
@@ -738,16 +735,12 @@ RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, C
         CSSParserTokenRange blockCopy = block;
         blockCopy.consumeWhitespace();
         if (!blockCopy.atEnd()) {
-            rule = StyleRule::create(createDeferredStyleProperties(block), m_context.hasDocumentSecurityOrigin);
-            rule->wrapperAdoptSelectorList(selectorList);
-            return rule;
+            return StyleRule::create(createDeferredStyleProperties(block), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList));
         }
     }
 
     consumeDeclarationList(block, StyleRule::Style);
-    rule = StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode), m_context.hasDocumentSecurityOrigin);
-    rule->wrapperAdoptSelectorList(selectorList);
-    return rule;
+    return StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList));
 }
 
 void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRule::Type ruleType)

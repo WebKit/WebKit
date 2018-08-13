@@ -27,6 +27,7 @@
 
 #include "CSSSelector.h"
 #include <memory>
+#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -35,19 +36,16 @@ class CSSParserSelector;
 class CSSSelectorList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSSelectorList() : m_selectorArray(0) { }
+    CSSSelectorList() = default;
     CSSSelectorList(const CSSSelectorList&);
     CSSSelectorList(CSSSelectorList&&);
     CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&&);
-
-    ~CSSSelectorList() { deleteSelectors(); }
-
-    void adoptSelectorArray(CSSSelector* selectors) { ASSERT(!m_selectorArray); m_selectorArray = selectors; }
+    CSSSelectorList(UniqueArray<CSSSelector>&& array)
+        : m_selectorArray(WTFMove(array)) { }
 
     bool isValid() const { return !!m_selectorArray; }
-    const CSSSelector* first() const { return m_selectorArray; }
+    const CSSSelector* first() const { return m_selectorArray.get(); }
     static const CSSSelector* next(const CSSSelector*);
-    bool hasOneSelector() const { return m_selectorArray && !next(m_selectorArray); }
     const CSSSelector* selectorAt(size_t index) const { return &m_selectorArray[index]; }
 
     size_t indexOfNextSelectorAfter(size_t index) const
@@ -56,7 +54,7 @@ public:
         current = next(current);
         if (!current)
             return notFound;
-        return current - m_selectorArray;
+        return current - m_selectorArray.get();
     }
 
     bool selectorsNeedNamespaceResolution();
@@ -75,7 +73,7 @@ private:
 
     // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.
-    CSSSelector* m_selectorArray;
+    UniqueArray<CSSSelector> m_selectorArray;
 };
 
 inline const CSSSelector* CSSSelectorList::next(const CSSSelector* current)
