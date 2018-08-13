@@ -65,7 +65,7 @@ G_DEFINE_BOXED_TYPE(WebKitWebsiteData, webkit_website_data, webkit_website_data_
 
 static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
 {
-    static const OptionSet<WebsiteDataType> typesSupported = {
+    return record.types.containsAny({
         WebsiteDataType::MemoryCache,
         WebsiteDataType::DiskCache,
         WebsiteDataType::OfflineWebApplicationCache,
@@ -77,8 +77,7 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
         WebsiteDataType::PlugInData,
 #endif
         WebsiteDataType::Cookies
-    };
-    return record.types.contains(typesSupported);
+    });
 }
 
 static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType> types)

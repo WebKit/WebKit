@@ -1,3 +1,11 @@
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Fix linux build after r234811
+        https://bugs.webkit.org/show_bug.cgi?id=188501
+
+        * UIProcess/API/glib/WebKitWebsiteData.cpp:
+        (recordContainsSupportedDataTypes):
+
 2018-08-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234747.
