@@ -185,7 +185,7 @@ void FrameSelection::moveWithoutValidationTo(const Position& base, const Positio
     newSelection.setWithoutValidation(base, extent);
     newSelection.setIsDirectional(selectionHasDirection);
     AXTextStateChangeIntent newIntent = intent.type == AXTextStateChangeTypeUnknown ? AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false }) : intent;
-    SetSelectionOptions options = defaultSetSelectionOptions();
+    auto options = defaultSetSelectionOptions();
     if (!shouldSetFocus)
         options |= DoNotSetFocus;
     switch (revealMode) {
@@ -291,10 +291,10 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, intent, AlignCursorOnScrollIfNeeded, granularity);
 }
 
-bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelectionPossiblyWithoutDirection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
+bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelectionPossiblyWithoutDirection, OptionSet<SetSelectionOption> options, CursorAlignOnScroll align, TextGranularity granularity)
 {
-    bool closeTyping = options & CloseTyping;
-    bool shouldClearTypingStyle = options & ClearTypingStyle;
+    bool closeTyping = options.contains(CloseTyping);
+    bool shouldClearTypingStyle = options.contains(ClearTypingStyle);
 
     VisibleSelection newSelection = newSelectionPossiblyWithoutDirection;
     if (shouldAlwaysUseDirectionalSelection(m_frame))
@@ -338,7 +338,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
     if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(newSelection.start()))
-        textControl->selectionChanged(options & FireSelectEvent);
+        textControl->selectionChanged(options.contains(FireSelectEvent));
 
     if (!didMutateSelection)
         return false;
@@ -358,7 +358,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     return true;
 }
 
-void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectionOptions options, AXTextStateChangeIntent intent, CursorAlignOnScroll align, TextGranularity granularity)
+void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<SetSelectionOption> options, AXTextStateChangeIntent intent, CursorAlignOnScroll align, TextGranularity granularity)
 {
     RefPtr<Frame> protectedFrame(m_frame);
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
@@ -1993,15 +1993,22 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
         return false;
 #endif
 
+    OptionSet<SetSelectionOption> selectionOptions {  ClearTypingStyle };
+    if (closeTyping)
+        selectionOptions |= CloseTyping;
+
     if (userTriggered == UserTriggered) {
         FrameSelection trialFrameSelection;
-        trialFrameSelection.setSelection(newSelection, ClearTypingStyle | (closeTyping ? CloseTyping : 0));
+
+        trialFrameSelection.setSelection(newSelection, selectionOptions);
 
         if (!shouldChangeSelection(trialFrameSelection.selection()))
             return false;
+
+        selectionOptions |= IsUserTriggered;
     }
 
-    setSelection(newSelection, ClearTypingStyle | (closeTyping ? CloseTyping : 0) | (userTriggered == UserTriggered ? IsUserTriggered : 0));
+    setSelection(newSelection, selectionOptions);
     return true;
 }
 
@@ -2690,7 +2697,8 @@ void FrameSelection::selectRangeOnElement(unsigned location, unsigned length, No
     resultRange->setStart(node, location);
     resultRange->setEnd(node, location + length);
     VisibleSelection selection = VisibleSelection(*resultRange, SEL_DEFAULT_AFFINITY);
-    setSelection(selection, true);
+    // FIXME: The second argument was "true" which implicitly converted to option "FireSelectEvent". Is this correct?
+    setSelection(selection, { FireSelectEvent });
 }
 
 VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const VisibleSelection& selection)

@@ -1,3 +1,47 @@
+2018-08-13  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet more in editing code
+        https://bugs.webkit.org/show_bug.cgi?id=188500
+
+        Reviewed by Wenson Hsieh.
+
+        Typesafe flags.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::TemporarySelectionChange):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::selectComposition):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        (WebCore::Editor::respondToChangedSelection):
+        * editing/Editor.h:
+        (WebCore::TemporarySelectionChange::TemporarySelectionChange):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveWithoutValidationTo):
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::setSelectedRange):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::defaultSetSelectionOptions):
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::create):
+        * editing/SetSelectionCommand.cpp:
+        (WebCore::SetSelectionCommand::SetSelectionCommand):
+        * editing/SetSelectionCommand.h:
+        (WebCore::SetSelectionCommand::create):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange):
+
 2018-08-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Add basic clearance support

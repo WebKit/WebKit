@@ -32,13 +32,13 @@ namespace WebCore {
 
 class SetSelectionCommand : public SimpleEditCommand {
 public:
-    static Ref<SetSelectionCommand> create(const VisibleSelection& selection, FrameSelection::SetSelectionOptions options)
+    static Ref<SetSelectionCommand> create(const VisibleSelection& selection, OptionSet<FrameSelection::SetSelectionOption> options)
     {
         return adoptRef(*new SetSelectionCommand(selection, options));
     }
 
 private:
-    SetSelectionCommand(const VisibleSelection&, FrameSelection::SetSelectionOptions);
+    SetSelectionCommand(const VisibleSelection&, OptionSet<FrameSelection::SetSelectionOption>);
 
     void doApply() override;
     void doUnapply() override;
@@ -47,7 +47,7 @@ private:
     void getNodesInCommand(HashSet<Node*>&) override { }
 #endif
 
-    FrameSelection::SetSelectionOptions m_options;
+    OptionSet<FrameSelection::SetSelectionOption> m_options;
     VisibleSelection m_selectionToSet;
 };
 

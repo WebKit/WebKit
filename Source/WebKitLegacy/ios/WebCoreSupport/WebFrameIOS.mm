@@ -643,7 +643,7 @@ using namespace WebCore;
             break;
     }
     FrameSelection& frameSelection = _private->coreFrame->selection();
-    frameSelection.setSelection(frameSelection.selection(), wcGranularity);
+    frameSelection.setSelection(frameSelection.selection(), { }, { }, { }, wcGranularity);
 }
 
 static inline bool isAlphaNumericCharacter(UChar32 c)

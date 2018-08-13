@@ -99,9 +99,6 @@ struct AttachmentDisplayOptions;
 #endif
 
 enum TemporarySelectionOption : uint8_t {
-    // By default, no additional options are enabled.
-    TemporarySelectionOptionDefault = 0,
-
     // Scroll to reveal the selection.
     TemporarySelectionOptionRevealSelection = 1 << 0,
 
@@ -112,16 +109,14 @@ enum TemporarySelectionOption : uint8_t {
     TemporarySelectionOptionEnableAppearanceUpdates = 1 << 2
 };
 
-using TemporarySelectionOptions = uint8_t;
-
 class TemporarySelectionChange {
 public:
-    TemporarySelectionChange(Frame&, std::optional<VisibleSelection> = std::nullopt, TemporarySelectionOptions = TemporarySelectionOptionDefault);
+    TemporarySelectionChange(Frame&, std::optional<VisibleSelection> = std::nullopt, OptionSet<TemporarySelectionOption> = { });
     ~TemporarySelectionChange();
 
 private:
     Ref<Frame> m_frame;
-    TemporarySelectionOptions m_options;
+    OptionSet<TemporarySelectionOption> m_options;
     bool m_wasIgnoringSelectionChanges;
 #if PLATFORM(IOS)
     bool m_appearanceUpdatesWereEnabled;
@@ -414,7 +409,7 @@ public:
     WEBCORE_EXPORT IntRect firstRectForRange(Range*) const;
 
     void selectionWillChange();
-    void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
+    void respondToChangedSelection(const VisibleSelection& oldSelection, OptionSet<FrameSelection::SetSelectionOption>);
     WEBCORE_EXPORT void updateEditorUINowIfScheduled();
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
     WEBCORE_EXPORT unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches, Vector<RefPtr<Range>>*);
@@ -541,7 +536,7 @@ private:
     enum SetCompositionMode { ConfirmComposition, CancelComposition };
     void setComposition(const String&, SetCompositionMode);
 
-    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
+    void changeSelectionAfterCommand(const VisibleSelection& newSelection, OptionSet<FrameSelection::SetSelectionOption>);
 
     enum EditorActionSpecifier { CutAction, CopyAction };
     void performCutOrCopy(EditorActionSpecifier);

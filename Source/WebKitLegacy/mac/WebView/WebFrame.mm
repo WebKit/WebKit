@@ -1247,7 +1247,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     RefPtr<Range> domRange = [self _convertToDOMRange:range];
     if (domRange) {
         const VisibleSelection& newSelection = VisibleSelection(*domRange, SEL_DEFAULT_AFFINITY);
-        _private->coreFrame->selection().setSelection(newSelection, 0);
+        _private->coreFrame->selection().setSelection(newSelection, { });
         
         _private->coreFrame->editor().ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
     }

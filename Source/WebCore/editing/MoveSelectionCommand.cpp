@@ -82,7 +82,7 @@ void MoveSelectionCommand::doApply()
         // Document was modified out from under us.
         return;
     }
-    ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::PreventNesting;
+    OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::PreventNesting };
     if (m_smartInsert)
         options |= ReplaceSelectionCommand::SmartReplace;
 
