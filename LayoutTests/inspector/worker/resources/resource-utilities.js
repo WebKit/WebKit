@@ -1,9 +1,9 @@
-function loadResourceXHR() {
+function loadResourceXHR(path) {
     let xhr = new XMLHttpRequest;
-    xhr.open("GET", "dataXHR.json", true);
+    xhr.open("GET", path, true);
     xhr.send();
 }
 
-function loadResourceFetch() {
-    fetch("dataFetch.json");
+function loadResourceFetch(path) {
+    fetch(path);
 }

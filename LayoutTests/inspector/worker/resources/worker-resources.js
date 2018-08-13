@@ -6,9 +6,9 @@ function importScript() {
 
 onmessage = function(event) {
     if (event.data === "loadResourceXHR")
-        loadResourceXHR();
+        loadResourceXHR("dataXHR.json");
     else if (event.data === "loadResourceFetch")
-        loadResourceFetch();
+        loadResourceFetch("dataFetch.json");
     else if (event.data === "importScript")
         importScript();
 }

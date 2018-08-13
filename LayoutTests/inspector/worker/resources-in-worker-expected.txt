@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: TypeError: The requested URL was not found on this server.
 Test for Resources in a Worker.
 
 

@@ -15,7 +15,7 @@ function triggerWorkerStart() {
 }
 
 function triggerMainResourceLoadXHR() {
-    loadResourceXHR();
+    loadResourceXHR("resources/dataXHR.json?main");
 }
 
 function triggerWorkerResourceLoadXHR() {
@@ -23,7 +23,7 @@ function triggerWorkerResourceLoadXHR() {
 }
 
 function triggerMainResourceLoadFetch() {
-    loadResourceFetch();
+    loadResourceFetch("resources/dataFetch.json?main");
 }
 
 function triggerWorkerResourceLoadFetch() {
@@ -55,14 +55,24 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerWorkerStart()");
 
+            let workerIsReady = false;
+            let workerTargetIsSet = false;
+            function attemptResolve() {
+                if (workerIsReady && workerTargetIsSet)
+                    resolve();
+            }
+
             WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                 workerTarget = event.data.target;
                 InspectorTest.assert(workerTarget instanceof WI.Target);
                 InspectorTest.expectEqual(workerTarget.type, WI.Target.Type.Worker, "Added Target should have Worker type.");
+                workerTargetIsSet = true;
+                attemptResolve();
             });
 
             InspectorTest.singleFireEventListener("WorkerIsReady", () => {
-                resolve();
+                workerIsReady = true;
+                attemptResolve();
             });
         }
     });

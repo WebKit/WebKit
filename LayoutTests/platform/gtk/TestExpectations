@@ -3345,8 +3345,6 @@ webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ I
 webkit.org/b/177294 platform/gtk/fonts/fontconfig-aliasing-settings.html [ Failure ]
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 
-webkit.org/b/175661 inspector/worker/resources-in-worker.html [ Failure ]
-
 webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure ]
 
 webkit.org/b/177934 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]

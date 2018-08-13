@@ -1,3 +1,25 @@
+2018-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [macOS debug] LayoutTest inspector/worker/resources-in-worker.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168091
+
+        Reviewed by Devin Rousso.
+
+        * inspector/worker/resources-in-worker-expected.txt:
+        * inspector/worker/resources-in-worker.html:
+        * inspector/worker/resources/resource-utilities.js:
+        * inspector/worker/resources/worker-resources.js:
+        Be a little more careful about proceeding with tests after starting the Worker.
+        Fix the resource load from the main target to actually load a real resource.
+
+        * inspector/dom-debugger/resources/dataXHR.json: Added.
+        * inspector/dom-debugger/xhr-breakpoints.html:
+        Load an actual resource.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        This test always passes for me in Release and Debug. Reset expectations.
+
 2018-08-13  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Validate threshold values
