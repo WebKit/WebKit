@@ -1361,7 +1361,7 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
     // If the element is unselectable, or we are only painting the selection,
     // don't override the foreground color with the selection foreground color.
     if (style().userSelect() == UserSelect::None
-        || (view().frameView().paintBehavior().contains(OptionSet<PaintBehavior>(PaintBehavior::SelectionOnly) | PaintBehavior::SelectionAndBackgroundsOnly)))
+        || (view().frameView().paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly })))
         return Color();
 
     if (std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {

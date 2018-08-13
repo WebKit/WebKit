@@ -44,7 +44,7 @@ namespace WebCore {
 
 inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarker::MarkerType> types)
 {
-    return m_possiblyExistingMarkerTypes.contains(types);
+    return m_possiblyExistingMarkerTypes.containsAny(types);
 }
 
 DocumentMarkerController::DocumentMarkerController(Document& document)

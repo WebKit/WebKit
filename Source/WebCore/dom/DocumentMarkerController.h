@@ -63,7 +63,7 @@ public:
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
     bool hasMarkers() const
     {
-        ASSERT(m_markers.isEmpty() == !m_possiblyExistingMarkerTypes.contains(DocumentMarker::allMarkers()));
+        ASSERT(m_markers.isEmpty() == !m_possiblyExistingMarkerTypes.containsAny(DocumentMarker::allMarkers()));
         return !m_markers.isEmpty();
     }
     bool hasMarkers(Range&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());

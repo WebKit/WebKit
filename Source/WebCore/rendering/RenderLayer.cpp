@@ -4788,7 +4788,7 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     
     // We have to loop through every fragment multiple times, since we have to repaint in each specific phase in order for
     // interleaving of the fragments to work properly.
-    bool selectionOnly = localPaintingInfo.paintBehavior.contains(OptionSet<PaintBehavior>(PaintBehavior::SelectionAndBackgroundsOnly) | PaintBehavior::SelectionOnly);
+    bool selectionOnly = localPaintingInfo.paintBehavior.containsAny({ PaintBehavior::SelectionAndBackgroundsOnly, PaintBehavior::SelectionOnly });
     paintForegroundForFragmentsWithPhase(selectionOnly ? PaintPhase::Selection : PaintPhase::ChildBlockBackgrounds, layerFragments,
         context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
     

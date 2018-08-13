@@ -1,3 +1,21 @@
+2018-08-13  Antti Koivisto  <antti@apple.com>
+
+        Meaning of OptionSet::contains is unclear when used with OptionSet argument
+        https://bugs.webkit.org/show_bug.cgi?id=188501
+
+        Reviewed by Anders Carlsson.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::possiblyHasMarkers):
+        * dom/DocumentMarkerController.h:
+        (WebCore::DocumentMarkerController::hasMarkers const):
+        * platform/FileSystem.h:
+        (WebCore::FileSystem::openAndLockFile):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionColor const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintForegroundForFragments):
+
 2018-08-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234747.

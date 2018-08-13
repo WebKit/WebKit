@@ -1847,7 +1847,7 @@ bool PluginView::shouldCreateTransientPaintingSnapshot() const
         return false;
 
     if (FrameView* frameView = frame()->view()) {
-        if (frameView->paintBehavior().contains(OptionSet<PaintBehavior>(PaintBehavior::SelectionOnly) | PaintBehavior::SelectionAndBackgroundsOnly | PaintBehavior::ForceBlackText)) {
+        if (frameView->paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly, PaintBehavior::ForceBlackText})) {
             // This paint behavior is used when drawing the find indicator and there's no need to
             // snapshot plug-ins, because they can never be painted as part of the find indicator.
             return false;

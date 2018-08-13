@@ -96,9 +96,19 @@ public:
 
     constexpr explicit operator bool() { return !isEmpty(); }
 
-    constexpr bool contains(OptionSet optionSet) const
+    constexpr bool contains(T option) const
     {
-        return m_storage & optionSet.m_storage;
+        return containsAny({ option });
+    }
+
+    constexpr bool containsAny(OptionSet optionSet) const
+    {
+        return !!(*this & optionSet);
+    }
+
+    constexpr bool containsAll(OptionSet optionSet) const
+    {
+        return (*this & optionSet) == optionSet;
     }
 
     constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)
