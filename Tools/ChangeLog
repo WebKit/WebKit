@@ -1,3 +1,16 @@
+2018-08-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r234812.
+        https://bugs.webkit.org/show_bug.cgi?id=188536
+
+        broke the build (Requested by ThomasDenney on #webkit).
+
+        Reverted changeset:
+
+        "Added Thomas Denney to contributors.json."
+        https://bugs.webkit.org/show_bug.cgi?id=188525
+        https://trac.webkit.org/changeset/234812
+
 2018-08-13  Sihui Liu  <sihui_liu@apple.com>
 
         Avoid timeout resulted from calling waitUntilDone when test is not running
