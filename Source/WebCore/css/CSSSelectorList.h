@@ -38,10 +38,10 @@ public:
     CSSSelectorList() : m_selectorArray(0) { }
     CSSSelectorList(const CSSSelectorList&);
     CSSSelectorList(CSSSelectorList&&);
+    CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&&);
 
     ~CSSSelectorList() { deleteSelectors(); }
 
-    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
     void adoptSelectorArray(CSSSelector* selectors) { ASSERT(!m_selectorArray); m_selectorArray = selectors; }
 
     bool isValid() const { return !!m_selectorArray; }

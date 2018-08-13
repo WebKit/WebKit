@@ -1,3 +1,27 @@
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize CSSSelectorList a little
+        https://bugs.webkit.org/show_bug.cgi?id=188527
+
+        Reviewed by Simon Fraser.
+
+        No change in behavior.  Just use make_unique and move semantics a little more.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::adoptSelectorVector): Deleted.
+        * css/CSSSelectorList.h:
+        * css/StyleRule.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parsePageSelector):
+        * css/parser/CSSParserSelector.cpp:
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+        * css/parser/CSSParserSelector.h:
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeComplexSelectorList):
+        (WebCore::CSSSelectorParser::consumeCompoundSelectorList):
+        (WebCore::CSSSelectorParser::consumePseudo):
+
 2018-08-13  Antti Koivisto  <antti@apple.com>
 
         Meaning of OptionSet::contains is unclear when used with OptionSet argument

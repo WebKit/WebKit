@@ -71,7 +71,7 @@ public:
     
     void setPseudoElementType(CSSSelector::PseudoElementType type) { m_selector->setPseudoElementType(type); }
 
-    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
+    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>&&);
     void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 

@@ -282,9 +282,9 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
 
     std::unique_ptr<CSSParserSelector> selector;
     if (!typeSelector.isNull() && pseudo.isNull())
-        selector = std::unique_ptr<CSSParserSelector>(new CSSParserSelector(QualifiedName(nullAtom(), typeSelector, styleSheet->defaultNamespace())));
+        selector = std::make_unique<CSSParserSelector>(QualifiedName(nullAtom(), typeSelector, styleSheet->defaultNamespace()));
     else {
-        selector = std::unique_ptr<CSSParserSelector>(new CSSParserSelector);
+        selector = std::make_unique<CSSParserSelector>();
         if (!pseudo.isNull()) {
             selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePagePseudoSelector(pseudo));
             if (!selector || selector->match() != CSSSelector::PagePseudoClass)
@@ -295,11 +295,7 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
     }
 
     selector->setForPage();
-    Vector<std::unique_ptr<CSSParserSelector>> selectorVector;
-    selectorVector.append(WTFMove(selector));
-    CSSSelectorList selectorList;
-    selectorList.adoptSelectorVector(selectorVector);
-    return selectorList;
+    return { Vector<std::unique_ptr<CSSParserSelector>>::from(WTFMove(selector)) };
 }
 
 std::unique_ptr<Vector<double>> CSSParserImpl::parseKeyframeKeyList(const String& keyList)

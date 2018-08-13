@@ -48,11 +48,10 @@ CSSSelectorList::CSSSelectorList(CSSSelectorList&& other)
     other.m_selectorArray = nullptr;
 }
 
-void CSSSelectorList::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
+CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&& selectorVector)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectorVector.isEmpty());
 
-    deleteSelectors();
     size_t flattenedSize = 0;
     for (size_t i = 0; i < selectorVector.size(); ++i) {
         for (CSSParserSelector* selector = selectorVector[i].get(); selector; selector = selector->tagHistory())
@@ -82,7 +81,6 @@ void CSSSelectorList::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelect
     }
     ASSERT(flattenedSize == arrayIndex);
     m_selectorArray[arrayIndex - 1].setLastInSelectorList();
-    selectorVector.clear();
 }
 
 unsigned CSSSelectorList::componentCount() const

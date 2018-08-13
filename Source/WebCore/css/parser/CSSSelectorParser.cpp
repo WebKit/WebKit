@@ -68,11 +68,9 @@ CSSSelectorList CSSSelectorParser::consumeComplexSelectorList(CSSParserTokenRang
         selectorList.append(WTFMove(selector));
     }
 
-    CSSSelectorList list;
     if (m_failedParsing)
-        return list;
-    list.adoptSelectorVector(selectorList);
-    return list;
+        return { };
+    return { WTFMove(selectorList) };
 }
 
 CSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRange& range)
@@ -92,11 +90,9 @@ CSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRan
         selectorList.append(WTFMove(selector));
     }
 
-    CSSSelectorList list;
     if (m_failedParsing)
-        return list;
-    list.adoptSelectorVector(selectorList);
-    return list;
+        return { };
+    return { WTFMove(selectorList) };
 }
 
 static bool consumeLangArgumentList(std::unique_ptr<Vector<AtomicString>>& argumentList, CSSParserTokenRange& range)
@@ -631,9 +627,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             block.consumeWhitespace();
             if (!innerSelector || !block.atEnd())
                 return nullptr;
-            Vector<std::unique_ptr<CSSParserSelector>> selectorVector;
-            selectorVector.append(WTFMove(innerSelector));
-            selector->adoptSelectorVector(selectorVector);
+            selector->adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>::from(WTFMove(innerSelector)));
             return selector;
         }
         default:
