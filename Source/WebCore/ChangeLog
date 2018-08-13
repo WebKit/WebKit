@@ -1,3 +1,56 @@
+2018-08-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dragging a non-editable text selection into a plain text input inserts HTML markup
+        https://bugs.webkit.org/show_bug.cgi?id=188485
+        <rdar://problem/43168784>
+
+        Reviewed by Tim Horton.
+
+        Before r223678, -typeIdentifiersToLoadForRegisteredTypeIdentifiers:, which is responsible for determining which
+        type identifiers to load upon performing a drop, returned the following when dropping a rich text selection onto
+        a textarea:
+
+            "public.plain-text",
+            "public.html"
+
+        After r223678, we now propagate a custom pasteboard data type when dragging, and the same list now looks like:
+
+            "com.apple.WebKit.custom-pasteboard-data",
+            "public.html",
+            "public.plain-text"
+
+        Subsequently, logic in `-_preLoadedDataConformingToType:…` (responsible for mapping a requested type identifier
+        to data that has been loaded from an item provider) iterates through the aforementioned list of type identifiers
+        and selects the data of the first type identifier in the list that conforms to the requested type identifier.
+        However, this list of type identifiers is currently the result of `-[NSSet allObjects]`, which means that the
+        type identifiers in the list are in no particular order!
+
+        As such, this particular use case only worked by accident prior to r223678, and after that change, this latent
+        bug was surfaced. The patch here makes two adjustments to pasteboard handling on iOS to fix the bug.
+
+        Test: DragAndDropTests.NonEditableTextSelectionToTextarea
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+
+        When reading plain text from the pasteboard, give "public.plain-text" priority over "public.text". This ensures
+        that we don't end up reading markup as "plain text" when there's already more relevant plain text data present
+        in the pasteboard.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard typeIdentifiersToLoadForRegisteredTypeIdentifiers:]):
+
+        Refactor existing logic to enforce a consistent ordering of type identifiers to load. First, we use
+        NSMutableOrderedSet instead of just an NSMutableSet to store type identifiers we've added. Secondly, move all
+        logic to insert type identifiers into this set to the end of the method, where we iterate over all of the type
+        identifiers in order and add each type identifier to the set if needed. This ensures that the order of resulting
+        types is from highest to lowest fidelity.
+
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+        (-[WebItemProviderPasteboard typeIdentifiersToLoadForRegisteredTypeIdentfiers:]): Deleted.
+
+        Fix a typo in the method name.
+
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Use a 1-byte enum class for TextDirection

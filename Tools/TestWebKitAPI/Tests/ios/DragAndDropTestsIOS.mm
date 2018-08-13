@@ -376,6 +376,17 @@ TEST(DragAndDropTests, ContentEditableToTextarea)
     checkRichTextTypePrecedesPlainTextType(simulator.get());
 }
 
+TEST(DragAndDropTests, NonEditableTextSelectionToTextarea)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"selected-text-and-textarea"];
+    [simulator runFrom:CGPointMake(160, 100) to:CGPointMake(160, 300)];
+
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"destination.value"]);
+}
+
 TEST(DragAndDropTests, ContentEditableMoveParagraphs)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

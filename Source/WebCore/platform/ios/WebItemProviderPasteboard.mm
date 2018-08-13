@@ -685,13 +685,14 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     return [fileManager linkItemAtURL:url toURL:destination error:nil] ? destination : nil;
 }
 
-- (NSArray<NSString *> *)typeIdentifiersToLoadForRegisteredTypeIdentfiers:(NSArray<NSString *> *)registeredTypeIdentifiers
+- (NSArray<NSString *> *)typeIdentifiersToLoadForRegisteredTypeIdentifiers:(NSArray<NSString *> *)registeredTypeIdentifiers
 {
-    NSMutableSet *typesToLoad = [NSMutableSet set];
+    auto typesToLoad = adoptNS([[NSMutableOrderedSet alloc] init]);
+    NSString *highestFidelitySupportedType = nil;
     NSString *highestFidelityContentType = nil;
 
     BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:(NSString *)kUTTypeFlatRTFD];
-    // First, we want to either load the highest fidelity supported type or the highest fidelity generic content type.
+    // First, search for the highest fidelity supported type or the highest fidelity generic content type.
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
         if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:(NSString *)kUTTypeRTFD]) {
             // In the case where attachments are enabled and we're accepting all types of content using attachment
@@ -703,34 +704,27 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
             continue;
         }
 
-        if (typeConformsToTypes(registeredTypeIdentifier, _supportedTypeIdentifiers.get())) {
-            [typesToLoad addObject:registeredTypeIdentifier];
-            break;
-        }
+        if (!highestFidelitySupportedType && typeConformsToTypes(registeredTypeIdentifier, _supportedTypeIdentifiers.get()))
+            highestFidelitySupportedType = registeredTypeIdentifier;
 
         if (!highestFidelityContentType && UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeContent))
             highestFidelityContentType = registeredTypeIdentifier;
     }
-    if (!typesToLoad.count && highestFidelityContentType)
-        [typesToLoad addObject:highestFidelityContentType];
 
     // For compatibility with DataTransfer APIs, additionally load web-exposed types. Since this is the only chance to
     // fault in any data at all, we need to load up front any information that the page may ask for later down the line.
     NSString *customPasteboardDataUTI = @(PasteboardCustomData::cocoaType());
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
-        if ([typesToLoad containsObject:registeredTypeIdentifier])
-            continue;
-        if ([registeredTypeIdentifier isEqualToString:customPasteboardDataUTI])
-            [typesToLoad addObject:customPasteboardDataUTI];
-        if (UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeURL))
-            [typesToLoad addObject:(NSString *)kUTTypeURL];
-        if (UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeHTML))
-            [typesToLoad addObject:(NSString *)kUTTypeHTML];
-        if (UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypePlainText))
-            [typesToLoad addObject:(NSString *)kUTTypePlainText];
+        if ([registeredTypeIdentifier isEqualToString:highestFidelityContentType]
+            || [registeredTypeIdentifier isEqualToString:highestFidelitySupportedType]
+            || [registeredTypeIdentifier isEqualToString:customPasteboardDataUTI]
+            || UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeURL)
+            || UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeHTML)
+            || UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypePlainText))
+            [typesToLoad addObject:registeredTypeIdentifier];
     }
 
-    return typesToLoad.allObjects;
+    return [typesToLoad array];
 }
 
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action
@@ -749,7 +743,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     BOOL foundAnyDataToLoad = NO;
     RetainPtr<WebItemProviderPasteboard> protectedSelf = self;
     for (NSItemProvider *itemProvider in _itemProviders.get()) {
-        NSArray<NSString *> *typeIdentifiersToLoad = [protectedSelf typeIdentifiersToLoadForRegisteredTypeIdentfiers:itemProvider.registeredTypeIdentifiers];
+        NSArray<NSString *> *typeIdentifiersToLoad = [protectedSelf typeIdentifiersToLoadForRegisteredTypeIdentifiers:itemProvider.registeredTypeIdentifiers];
         foundAnyDataToLoad |= typeIdentifiersToLoad.count;
         [loadResults addObject:[WebItemProviderLoadResult loadResultWithItemProvider:itemProvider typesToLoad:typeIdentifiersToLoad]];
     }

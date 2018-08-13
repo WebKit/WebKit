@@ -1,3 +1,25 @@
+2018-08-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dragging a non-editable text selection into a plain text input inserts HTML markup
+        https://bugs.webkit.org/show_bug.cgi?id=188485
+        <rdar://problem/43168784>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to verify that dropping selected non-editable rich text into a textarea inserts text as
+        expected, rather than markup.
+
+        It's somewhat interesting to note that this particular use case isn't exercised by any existing tests; the
+        closest test is DragAndDropTests.ContentEditableToTextarea, which drags a rich text selection from a
+        contenteditable element to a text area. However, due to logic in `DragController::concludeEditDrag` that handles
+        drag and drop across editable content differently than drag and drop from non-editable to editable content, the
+        bug that is fixed here doesn't surface in that existing test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/selected-text-and-textarea.html: Added.
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Use a 1-byte enum class for TextDirection
