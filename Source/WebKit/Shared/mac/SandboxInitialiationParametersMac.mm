@@ -29,7 +29,7 @@
 namespace WebKit {
 
 SandboxInitializationParameters::SandboxInitializationParameters()
-    : m_profileSelectionMode(ProfileSelectionMode::UseDefaultSandboxProfilePath)
+    : m_profileSelectionMode(UseDefaultSandboxProfilePath)
 {
 }
 

@@ -112,8 +112,6 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
         Thread::setGlobalMaxQOSClass(QOS_CLASS_UTILITY);
 #endif
 
-    parameters.processType = XPCServiceType::processType;
-
     XPCServiceType::singleton().initialize(parameters);
 }
 
