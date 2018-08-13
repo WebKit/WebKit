@@ -77,7 +77,6 @@ webkit.org/b/186933 webrtc/audio-replace-track.html
 webkit.org/b/186933 webrtc/audio-peer-connection-webaudio.html
 webkit.org/b/186933 webrtc/audio-muted-stats.html
 
-
 # The MediaStream implementation is still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
@@ -262,26 +261,6 @@ webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-encrypt.html [ Skip
 webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-unwrap-key.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-wrap-key.html [ Skip ]
 
-# Missing support for 521-bit elliptic curves.
-webkit.org/b/175199 crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ec-import-spki-key-export-spki-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-generate-export-jwk-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-generate-export-key-pkcs8-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-generate-export-key-raw-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-generate-export-key-spki-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-generate-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-import-jwk-private-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-import-jwk-public-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-import-pkcs8-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-import-raw-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdh-import-spki-key-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdsa-generate-key-sign-verify-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdsa-import-jwk-public-key-alg-521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdsa-import-key-sign-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdsa-import-key-verify-p521.html [ Skip ]
-webkit.org/b/175199 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html [ Skip ]
-
 svg/webarchive [ Skip ]
 svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
 
@@ -298,6 +277,60 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 
 # No WebGPU support yet
 fast/canvas/webgpu [ Skip ]
+
+# This test relies on Mac-specific quirks
+media/document-level-media-user-gesture-quirk.html [ Skip ]
+
+# Skipped due to untestable DRM key system. ClearKey counterparts are tested instead.
+imported/w3c/web-platform-tests/encrypted-media/drm-check-initdata-type.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-events.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-events-session-closed-event.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-expiration.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-generate-request-disallowed-input.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-invalid-license.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-keystatuses.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-keystatuses-multiple-sessions.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-onencrypted.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-destroy-persistent-license.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license-events.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record-events.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-destroy-persistent-license.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-license.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-usage-record.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-clear-encrypted.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-events.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-expired.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multisession.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-two-videos.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-waitingforkey.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-requestmediakeysystemaccess.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-reset-src-after-setmediakeys.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-playback.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-resetting-src.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-at-same-time.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-to-multiple-video-elements.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysession.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeys.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysystemaccess.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-unique-origin.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.https.html [ Skip ]
+imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.https.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -354,7 +387,6 @@ Bug(WPE) fast/lists [ Skip ]
 Bug(WPE) fast/loader [ Skip ]
 Bug(WPE) fast/masking [ Skip ]
 Bug(WPE) fast/media [ Skip ]
-Bug(WPE) fast/mediacapturefromelement [ Skip ]
 Bug(WPE) fast/multicol [ Skip ]
 Bug(WPE) fast/overflow [ Skip ]
 Bug(WPE) fast/picture [ Skip ]
@@ -490,6 +522,20 @@ webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 
+imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-sizing-alignment-001.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -608,6 +654,13 @@ webkit.org/b/188055 svg/filters/hidpi/fePointLight-coordinates.svg [ Timeout Pas
 
 webkit.org/b/188057 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure Pass ]
 
+webkit.org/b/180932 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements [ Pass Crash ]
+
+webkit.org/b/179611 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure ]
+webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]
+webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
+webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -640,6 +693,7 @@ imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
 # 8. TESTS TIMING OUT
 #////////////////////////////////////////////////////////////////////////////////////////
 
+imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -790,8 +844,6 @@ Bug(WPE) security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src
 
 Bug(WPE) userscripts/user-script-plugin-document.html [ Failure ]
 
-imported/w3c/web-platform-tests/dom [ Pass ]
-imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 
 # WPT: cors
 # =========
@@ -800,10 +852,6 @@ webkit.org/b/180693 imported/w3c/web-platform-tests/cors/preflight-failure.htm [
 
 # WPT: css
 # ========
-imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-sizing-alignment-001.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
 
 webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
 webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
@@ -814,14 +862,6 @@ webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 
 webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
-webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 
 Bug(WPE) imported/w3c/web-platform-tests/css/css-color [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/css/css-multicol [ Skip ]
@@ -833,50 +873,15 @@ webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-007.html [ ImageOnlyFailure ]
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
 
-# WPT: cssom
-# ==========
-imported/w3c/web-platform-tests/cssom [ Pass ]
-
-
-# WPT: domparsing
-# ===============
-imported/w3c/web-platform-tests/domparsing [ Pass ]
-
-
-# WPT: encoding
-# =============
-# Note: many of this tests are timing out in Debug. See root TestExpectations file.
-[ Release ] imported/w3c/web-platform-tests/encoding [ Pass ]
-
-# Platform-neutral expectations
-# -----------------------------
 webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
 
-
-# WPT: fetch
-# ==========
-
-# Expectations replated to service worker support
-# -----------------------------------------------
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
 
 webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
 
-
-
-
-# WPT: FileAPI
-# ============
-imported/w3c/web-platform-tests/FileAPI [ Pass ]
-
-# Platform-neutral expectations
-# -----------------------------
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 
-
-# WPT: html
-# =========
 webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight.html [ Failure ]
@@ -891,7 +896,6 @@ webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-obj
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-top-left.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-width-height.html [ Failure ]
 webkit.org/b/177322 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
-webkit.org/b/180932 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements [ Pass Crash ]
 webkit.org/b/180933 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/activeCues.html [ Failure ]
 webkit.org/b/180933 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Failure ]
 webkit.org/b/180352 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg.html [ Failure ]
@@ -909,31 +913,10 @@ webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/180648 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
 
-
-# WPT: streams
-# ============
-
-# Expectations replated to service worker support
-# -----------------------------------------------
-
-# WPT: url
-# ========
-imported/w3c/web-platform-tests/url [ Pass ]
-
-
-# WPT: XMLHttpRequest
-# ===================
-imported/w3c/web-platform-tests/XMLHttpRequest [ Pass ]
-
-# Platform-neutral expectations
-# -----------------------------
-
-# Skipped
 webkit.org/b/127676 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
 
-# Failing
 webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-header-denied.htm [ Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-method-denied.htm [ Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-not-supported.htm [ Failure ]
@@ -944,16 +927,6 @@ webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/send-conditio
 webkit.org/b/179375 imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
 webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cl.htm [ Failure ]
 
-# Flaky
-webkit.org/b/179611 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
-webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Pass Failure ]
-
-# libsoup-specific expectations
-# -----------------------------
-
-# Failing
 webkit.org/b/179663 imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm [ Failure ]
 webkit.org/b/175586 imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub.htm [ Failure ]
 
@@ -973,9 +946,6 @@ Bug(WPE) fast/parser/xml-colon-entity.html [ Failure ]
 Bug(WPE) fast/parser/xml-declaration-missing-ending-mark.html [ Failure ]
 
 Bug(WPE) fast/shapes/shape-outside-floats/shape-outside-clip-path-selection.html [ Failure ]
-
-# This test relies on Mac-specific quirks
-media/document-level-media-user-gesture-quirk.html [ Skip ]
 
 Bug(WPE) fast/viewport/ios [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-handheldfriendly.html [ Failure ]
@@ -1222,57 +1192,6 @@ webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
 
-# ENABLE_ENCRYPTED_MEDIA
-imported/w3c/web-platform-tests/encrypted-media [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/drm-check-initdata-type.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-events.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-events-session-closed-event.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-expiration.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-generate-request-disallowed-input.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-invalid-license.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-keystatuses.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-keystatuses-multiple-sessions.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-onencrypted.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-destroy-persistent-license.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license-events.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record-events.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-destroy-persistent-license.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-license.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-usage-record.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-clear-encrypted.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-events.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-expired.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multisession.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-two-videos.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-waitingforkey.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-requestmediakeysystemaccess.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-reset-src-after-setmediakeys.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-playback.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-resetting-src.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-at-same-time.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-to-multiple-video-elements.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysession.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeys.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysystemaccess.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-unique-origin.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.https.html [ Skip ]
-imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.https.html [ Skip ]
 media/encrypted-media [ Pass ]
 media/encrypted-media/encrypted-media-constants.html [ Skip ]
 media/encrypted-media/encrypted-media-events.html [ Skip ]
@@ -1388,9 +1307,6 @@ webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
 webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
 
 webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
-
-webkit.org/b/184501 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html [ Failure ]
-webkit.org/b/184501 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Failure ]
 
 webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
 webkit.org/b/186100 css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
