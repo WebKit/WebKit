@@ -1,5 +1,15 @@
 2018-08-13  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed WPE gardening. Cleaned up test expectations for tests under
+        fast/dom/, unskipping all tests and then adding the failure or timeout
+        test expectations as appropriate. Missing port-specific baselines are
+        also included.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/dom/: Necessary test expectations added.
+
+2018-08-13  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed WPE gardening.
 
         Removed an unnecessary block of skipped tests that cover WebCrypto API

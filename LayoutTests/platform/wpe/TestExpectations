@@ -332,6 +332,14 @@ imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.https.
 imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.https.html [ Skip ]
 imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.https.html [ Skip ]
 
+# This port doesn't support detecting slow unload handlers.
+Bug(GTK) fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
+Bug(GTK) fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout Failure ]
+
+fast/dom/Window/watchos [ Skip ]
+
+fast/dom/Window/Plug-ins.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -473,6 +481,14 @@ Bug(WPE) imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/media-source [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/notifications [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/webrtc [ Skip ]
+
+Bug(WPE) fast/dom/DeviceMotion [ Skip ]
+Bug(WPE) fast/dom/DeviceOrientation [ Skip ]
+Bug(WPE) fast/dom/Geolocation [ Skip ]
+
+Bug(WPE) js/navigator-set-geolocation.html [ Skip ]
+
+Bug(WPE) fast/dom/HTMLAnchorElement [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 4. TESTS PASSING
@@ -694,6 +710,8 @@ imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
+
+webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -1078,63 +1096,11 @@ webkit.org/b/186879 fast/events/popup-allowed-from-gesture-initiated-event.html 
 webkit.org/b/186879 fast/events/popup-blocked-from-fake-user-gesture.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-blocking-timers1.html [ Timeout ]
 
-
-Bug(WPE) fast/dom/ [ Skip ]
-Bug(WPE) fast/dom/Attr [ Pass ]
-Bug(WPE) fast/dom/CSSStyleDeclaration [ Pass ]
-Bug(WPE) fast/dom/DOMException [ Pass ]
-Bug(WPE) fast/dom/DOMImplementation [ Pass ]
-Bug(WPE) fast/dom/Document [ Pass ]
-Bug(WPE) fast/dom/DocumentFragment [ Pass ]
-Bug(WPE) fast/dom/DocumentType [ Pass ]
-Bug(WPE) fast/dom/Element [ Pass ]
 Bug(WPE) fast/dom/Element/getClientRects.html [ Failure ]
-Bug(WPE) fast/dom/Geolocation [ Skip ]
-Bug(WPE) js/navigator-set-geolocation.html [ Skip ]
-Bug(WPE) fast/dom/HTMLAreaElement [ Pass ]
-Bug(WPE) fast/dom/HTMLBaseElement [ Pass ]
-Bug(WPE) fast/dom/HTMLButtonElement [ Pass ]
-Bug(WPE) fast/dom/HTMLDivElement [ Pass ]
-Bug(WPE) fast/dom/HTMLDocument [ Pass ]
 Bug(WPE) fast/dom/HTMLDocument/hasFocus.html [ Failure ]
-Bug(WPE) fast/dom/HTMLElement [ Pass ]
-Bug(WPE) fast/dom/HTMLFontElement [ Pass ]
-Bug(WPE) fast/dom/HTMLHeadElement [ Pass ]
-Bug(WPE) fast/dom/HTMLHrElement [ Pass ]
-Bug(WPE) fast/dom/HTMLHtmlElement [ Pass ]
-Bug(WPE) fast/dom/HTMLKeygenElement [ Pass ]
-Bug(WPE) fast/dom/HTMLLabelElement [ Pass ]
-Bug(WPE) fast/dom/HTMLMetaElement [ Pass ]
-Bug(WPE) fast/dom/HTMLObjectElement [ Pass ]
-Bug(WPE) fast/dom/HTMLOptionElement [ Pass ]
-Bug(WPE) fast/dom/HTMLOutputElement [ Pass ]
-Bug(WPE) fast/dom/HTMLProgressElement [ Pass ]
-Bug(WPE) fast/dom/HTMLScriptElement [ Pass ]
-Bug(WPE) fast/dom/HTMLSelectElement [ Pass ]
-Bug(WPE) fast/dom/HTMLStyleElement [ Pass ]
-Bug(WPE) fast/dom/HTMLTableColElement [ Pass ]
-Bug(WPE) fast/dom/HTMLTableElement [ Pass ]
-Bug(WPE) fast/dom/HTMLTableRowElement [ Pass ]
-Bug(WPE) fast/dom/HTMLTableSectionElement [ Pass ]
-Bug(WPE) fast/dom/HTMLTemplateElement [ Pass ]
-Bug(WPE) fast/dom/HTMLTextAreaElement [ Pass ]
-Bug(WPE) fast/dom/MutationObserver [ Pass ]
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
-Bug(WPE) fast/dom/NavigatorContentUtils [ Pass ]
 Bug(WPE) fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Failure ]
-Bug(WPE) fast/dom/Node [ Pass ]
-Bug(WPE) fast/dom/NodeList [ Pass ]
-Bug(WPE) fast/dom/Orientation [ Pass ]
-Bug(WPE) fast/dom/Range [ Pass ]
 Bug(WPE) fast/dom/Range/getClientRects.html [ Failure ]
-Bug(WPE) fast/dom/Selection [ Pass ]
-Bug(WPE) fast/dom/SelectorAPI [ Pass ]
-Bug(WPE) fast/dom/StyleSheet [ Pass ]
-Bug(WPE) fast/dom/Text [ Pass ]
-Bug(WPE) fast/dom/TreeWalker [ Pass ]
-Bug(WPE) fast/dom/beforeload [ Pass ]
-Bug(WPE) fast/dom/getElementsByClassName [ Pass ]
-Bug(WPE) fast/dom/nodesFromRect [ Pass ]
 
 Bug(WPE) storage/indexeddb/modern/date-basic-private.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/date-basic.html [ Failure ]
@@ -1326,6 +1292,35 @@ webkit.org/b/188159 svg/text/text-default-font-size.html [ ImageOnlyFailure ]
 webkit.org/b/188159 svg/as-image/svg-image-with-data-uri-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
+
+webkit.org/b/177934 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]
+
+webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
+
+webkit.org/b/188505 fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/188505 fast/dom/title-directionality-removeChild.html [ Failure ]
+webkit.org/b/188505 fast/dom/title-directionality.html [ Failure ]
+webkit.org/b/188505 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/188505 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Timeout ]
+
+webkit.org/b/188506 fast/dom/timer-throttling-hidden-page.html [ Failure ]
+
+webkit.org/b/188507 fast/dom/Window/webkitConvertPoint.html [ Failure ]
+
+webkit.org/b/188508 fast/dom/Window/window-postmessage-clone.html [ Timeout ]
+webkit.org/b/188508 fast/dom/Window/window-postmessage-clone-frames.html [ Timeout ]
+
+webkit.org/b/188509 fast/dom/Window/child-window-focus.html [ Timeout ]
+webkit.org/b/188509 fast/dom/Window/new-window-opener.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/open-window-min-size.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/timeout-released-on-close.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/window-onFocus.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/window-resize.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/window-resize-contents.html [ Timeout ]
+webkit.org/b/188509 fast/dom/Window/window-resize-nan.html [ Failure ]
+webkit.org/b/188509 fast/dom/Window/window-resize-update-scrollbars.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
