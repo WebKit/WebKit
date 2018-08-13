@@ -1,3 +1,11 @@
+2018-08-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Adopt test expectation sections similar to the
+        GTK+ TestExpectations file. Sort some test expectations accordingly,
+        while the rest of the expectations will follow later.
+
+        * platform/wpe/TestExpectations:
+
 2018-08-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening
