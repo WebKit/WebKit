@@ -1,3 +1,68 @@
+2018-08-13  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement flow-relative margin, padding, border and sizing properties
+        https://bugs.webkit.org/show_bug.cgi?id=188386
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        These properties provide the author with the ability to control margins
+        through logical, rather than physical, direction and dimension mappings.
+
+        Only longhand properties and border shorthands for specific sides are
+        implemented as part of this patch.
+
+        The existing prefixed properties become aliases of the new ones.
+
+        The new tests are imported from the WPT test suite for CSS Logical
+        Properties and Values spec.
+
+        The tests still have some failures because sideways writing modes have
+        not been implemented yet.
+
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-logical/META.yml: Added.
+        * web-platform-tests/css/css-logical/animation-001-expected.txt: Added.
+        * web-platform-tests/css/css-logical/animation-001.html: Added.
+        * web-platform-tests/css/css-logical/animation-002-expected.txt: Added.
+        * web-platform-tests/css/css-logical/animation-002.html: Added.
+        * web-platform-tests/css/css-logical/animation-003.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-logical/animation-003.tentative.html: Added.
+        * web-platform-tests/css/css-logical/cascading-001-expected.html: Added.
+        * web-platform-tests/css/css-logical/cascading-001.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-color-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-color.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-shorthands-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-shorthands.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-style-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-style.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-width-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-border-width.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-inset-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-inset.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-margin-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-margin.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-padding-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-padding.html: Added.
+        * web-platform-tests/css/css-logical/logical-box-size-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logical-box-size.html: Added.
+        * web-platform-tests/css/css-logical/logicalprops-block-size-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logicalprops-block-size-vlr-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logicalprops-block-size-vlr.html: Added.
+        * web-platform-tests/css/css-logical/logicalprops-block-size.html: Added.
+        * web-platform-tests/css/css-logical/logicalprops-inline-size-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logicalprops-inline-size-vlr-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logicalprops-inline-size-vlr.html: Added.
+        * web-platform-tests/css/css-logical/logicalprops-inline-size.html: Added.
+        * web-platform-tests/css/css-logical/logicalprops-quirklength-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logicalprops-quirklength.html: Added.
+        * web-platform-tests/css/css-logical/resources/test-box-properties.js: Added.
+        (testCSSValues):
+        (testComputedValues):
+        (makeDeclaration):
+        * web-platform-tests/css/css-logical/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-logical/w3c-import.log: Added.
+
 2018-08-10  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Implement rootMargin parsing

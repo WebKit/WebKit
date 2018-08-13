@@ -1,0 +1,32 @@
+
+PASS .block 1 
+PASS .block 2 
+PASS .block 3 
+PASS .override 1 
+PASS .override 2 
+PASS .tablecell 1 
+PASS .tablecell 2 
+PASS .tablecell 3 
+Maximum and minimim inline sizes in blocks with vertical-lr
+
+inline-size < min-inline-size
+
+min-inline-size < inline-size ≤ max-inline-size
+
+inline-size > max-inline-size
+
+Overridance of height and inline-size in vertical-lr
+
+Check that height overrides inline-size
+
+Check that inline-size overrides height
+
+Maximum and minimim inline sizes in table cells with vertical-lr
+
+inline-size < min-inline-size
+
+min-inline-size < inline-size ≤ max-inline-size
+
+inline-size > max-inline-size
+
+

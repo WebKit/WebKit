@@ -1,0 +1,32 @@
+
+PASS .block 1 
+PASS .block 2 
+PASS .block 3 
+PASS .override 1 
+PASS .override 2 
+PASS .tablecell 1 
+PASS .tablecell 2 
+PASS .tablecell 3 
+Maximum and minimim block sizes in blocks
+
+block-size < min-block-size
+
+min-block-size < block-size ≤ max-block-size
+
+block-size > max-block-size
+
+Overridance of height and block-size
+
+Check that height overrides block-size
+
+Check that block-size overrides height
+
+Maximum and minimim block sizes in table cells
+
+block-size < min-block-size
+
+min-block-size < block-size ≤ max-block-size
+
+block-size > max-block-size
+
+

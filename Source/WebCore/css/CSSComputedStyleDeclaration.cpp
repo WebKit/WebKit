@@ -2320,6 +2320,8 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
         return positionOffsetValueIsRendererDependent(style, renderer);
     case CSSPropertyWidth:
     case CSSPropertyHeight:
+    case CSSPropertyInlineSize:
+    case CSSPropertyBlockSize:
         return renderer && !renderer->isRenderSVGModelObject() && !isNonReplacedInline(*renderer);
     case CSSPropertyPerspectiveOrigin:
     case CSSPropertyTransformOrigin:
@@ -3990,36 +3992,36 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             break;
 
         /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */
-        case CSSPropertyWebkitBorderEnd:
-        case CSSPropertyWebkitBorderEndColor:
-        case CSSPropertyWebkitBorderEndStyle:
-        case CSSPropertyWebkitBorderEndWidth:
-        case CSSPropertyWebkitBorderStart:
-        case CSSPropertyWebkitBorderStartColor:
-        case CSSPropertyWebkitBorderStartStyle:
-        case CSSPropertyWebkitBorderStartWidth:
-        case CSSPropertyWebkitBorderAfter:
-        case CSSPropertyWebkitBorderAfterColor:
-        case CSSPropertyWebkitBorderAfterStyle:
-        case CSSPropertyWebkitBorderAfterWidth:
-        case CSSPropertyWebkitBorderBefore:
-        case CSSPropertyWebkitBorderBeforeColor:
-        case CSSPropertyWebkitBorderBeforeStyle:
-        case CSSPropertyWebkitBorderBeforeWidth:
-        case CSSPropertyWebkitMarginEnd:
-        case CSSPropertyWebkitMarginStart:
-        case CSSPropertyWebkitMarginAfter:
-        case CSSPropertyWebkitMarginBefore:
-        case CSSPropertyWebkitPaddingEnd:
-        case CSSPropertyWebkitPaddingStart:
-        case CSSPropertyWebkitPaddingAfter:
-        case CSSPropertyWebkitPaddingBefore:
-        case CSSPropertyWebkitLogicalWidth:
-        case CSSPropertyWebkitLogicalHeight:
-        case CSSPropertyWebkitMinLogicalWidth:
-        case CSSPropertyWebkitMinLogicalHeight:
-        case CSSPropertyWebkitMaxLogicalWidth:
-        case CSSPropertyWebkitMaxLogicalHeight:
+        case CSSPropertyBorderBlockEnd:
+        case CSSPropertyBorderBlockEndColor:
+        case CSSPropertyBorderBlockEndStyle:
+        case CSSPropertyBorderBlockEndWidth:
+        case CSSPropertyBorderBlockStart:
+        case CSSPropertyBorderBlockStartColor:
+        case CSSPropertyBorderBlockStartStyle:
+        case CSSPropertyBorderBlockStartWidth:
+        case CSSPropertyBorderInlineEnd:
+        case CSSPropertyBorderInlineEndColor:
+        case CSSPropertyBorderInlineEndStyle:
+        case CSSPropertyBorderInlineEndWidth:
+        case CSSPropertyBorderInlineStart:
+        case CSSPropertyBorderInlineStartColor:
+        case CSSPropertyBorderInlineStartStyle:
+        case CSSPropertyBorderInlineStartWidth:
+        case CSSPropertyMarginBlockEnd:
+        case CSSPropertyMarginBlockStart:
+        case CSSPropertyMarginInlineEnd:
+        case CSSPropertyMarginInlineStart:
+        case CSSPropertyPaddingBlockEnd:
+        case CSSPropertyPaddingBlockStart:
+        case CSSPropertyPaddingInlineEnd:
+        case CSSPropertyPaddingInlineStart:
+        case CSSPropertyBlockSize:
+        case CSSPropertyInlineSize:
+        case CSSPropertyMaxBlockSize:
+        case CSSPropertyMaxInlineSize:
+        case CSSPropertyMinBlockSize:
+        case CSSPropertyMinInlineSize:
             ASSERT_NOT_REACHED();
             break;
 

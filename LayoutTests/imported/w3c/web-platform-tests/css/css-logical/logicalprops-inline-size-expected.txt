@@ -1,0 +1,32 @@
+
+PASS .block 1 
+PASS .block 2 
+PASS .block 3 
+PASS .override 1 
+PASS .override 2 
+PASS .tablecell 1 
+PASS .tablecell 2 
+PASS .tablecell 3 
+Maximum and minimim inline sizes in blocks
+
+inline-size < min-inline-size
+
+min-inline-size < inline-size ≤ max-inline-size
+
+inline-size > max-inline-size
+
+Overridance of width and inline-size
+
+Check that width overrides inline-size
+
+Check that inline-size overrides width
+
+Maximum and minimim inline sizes in table cells
+
+inline-size < min-inline-size
+
+min-inline-size < inline-size ≤ max-inline-size
+
+inline-size > max-inline-size
+
+

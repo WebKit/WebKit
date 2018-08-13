@@ -1,3 +1,65 @@
+2018-08-13  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Implement flow-relative margin, padding, border and sizing properties
+        https://bugs.webkit.org/show_bug.cgi?id=188386
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        These properties provide the author with the ability to control margins
+        through logical, rather than physical, direction and dimension mappings.
+
+        Only longhand properties and border shorthands for specific sides are
+        implemented as part of this patch.
+
+        The existing prefixed properties become aliases of the new ones.
+
+        The change in WebCore::isLayoutDependent fixes an existing issue that
+        made getComputedStyle provide an old value for -webkit-logical-height
+        and -webkit-logical-height (see https://crbug.com/849855).
+
+        Tests: imported/w3c/web-platform-tests/css/css-logical/animation-001.html
+               imported/w3c/web-platform-tests/css/css-logical/animation-002.html
+               imported/w3c/web-platform-tests/css/css-logical/animation-003.tentative.html
+               imported/w3c/web-platform-tests/css/css-logical/cascading-001.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-color.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-shorthands.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-style.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-border-width.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-inset.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-margin.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-padding.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-box-size.html
+               imported/w3c/web-platform-tests/css/css-logical/logicalprops-block-size-vlr.html
+               imported/w3c/web-platform-tests/css/css-logical/logicalprops-block-size.html
+               imported/w3c/web-platform-tests/css/css-logical/logicalprops-inline-size-vlr.html
+               imported/w3c/web-platform-tests/css/css-logical/logicalprops-inline-size.html
+               imported/w3c/web-platform-tests/css/css-logical/logicalprops-quirklength.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::resolveDirectionAwareProperty):
+        (WebCore::CSSProperty::isDirectionAwareProperty):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::isColorPropertyID):
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForPresentationAttribute):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeCollapsedStartBorder const):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder const):
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder const):
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder const):
+
 2018-08-12  Sihui Liu  <sihui_liu@apple.com>
 
         CrashTracer: com.apple.WebKit.Storage at WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient(WebCore::IDBServer::UniqueIDBDatabaseConnection&)
