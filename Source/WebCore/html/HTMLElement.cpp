@@ -800,7 +800,7 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 {
     if (!(selfOrAncestorHasDirAutoAttribute() && hasDirectionAuto())) {
         isAuto = false;
-        return LTR;
+        return TextDirection::LTR;
     }
 
     isAuto = true;
@@ -815,7 +815,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
         UCharDirection textDirection = textElement.value().defaultWritingDirection(&hasStrongDirectionality);
         if (strongDirectionalityTextNode)
             *strongDirectionalityTextNode = hasStrongDirectionality ? &textElement : nullptr;
-        return (textDirection == U_LEFT_TO_RIGHT) ? LTR : RTL;
+        return (textDirection == U_LEFT_TO_RIGHT) ? TextDirection::LTR : TextDirection::RTL;
     }
 
     RefPtr<Node> node = firstChild();
@@ -842,14 +842,14 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
             if (hasStrongDirectionality) {
                 if (strongDirectionalityTextNode)
                     *strongDirectionalityTextNode = node.get();
-                return (textDirection == U_LEFT_TO_RIGHT) ? LTR : RTL;
+                return (textDirection == U_LEFT_TO_RIGHT) ? TextDirection::LTR : TextDirection::RTL;
             }
         }
         node = NodeTraversal::next(*node, this);
     }
     if (strongDirectionalityTextNode)
         *strongDirectionalityTextNode = nullptr;
-    return LTR;
+    return TextDirection::LTR;
 }
 
 void HTMLElement::dirAttributeChanged(const AtomicString& value)

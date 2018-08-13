@@ -1,3 +1,22 @@
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Use a 1-byte enum class for TextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=188350
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::WebPopupItem):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView webSelectionRectsForSelectionRects:]):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate):
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::show):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-08-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, silence "enumeral and non-enumeral type in conditional expression" warning

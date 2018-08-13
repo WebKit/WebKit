@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-enum TextDirection { LTR, RTL };
+enum class TextDirection : uint8_t { LTR, RTL };
 
 inline bool isLeftToRightDirection(TextDirection direction)
 {
-    return direction == LTR;
+    return direction == TextDirection::LTR;
 }
 
 enum WritingMode {
@@ -47,19 +47,19 @@ enum WritingMode {
     RightToLeftWritingMode = 3, // vertical-rl
 };
 
-#define MAKE_TEXT_FLOW(writingMode, direction)  ((writingMode) << 1 | (direction))
+#define MAKE_TEXT_FLOW(writingMode, direction)  ((writingMode) << 1 | static_cast<unsigned>(direction))
 
 // Define the text flow in terms of the writing mode and the text direction. The first
 // part is the line growing direction and the second part is the block growing direction.
 enum TextFlow {
-    InlineEastBlockSouth = MAKE_TEXT_FLOW(TopToBottomWritingMode, LTR),
-    InlineWestBlockSouth = MAKE_TEXT_FLOW(TopToBottomWritingMode, RTL),
-    InlineEastBlockNorth = MAKE_TEXT_FLOW(BottomToTopWritingMode, LTR),
-    InlineWestBlockNorth = MAKE_TEXT_FLOW(BottomToTopWritingMode, RTL),
-    InlineSouthBlockEast = MAKE_TEXT_FLOW(LeftToRightWritingMode, LTR),
-    InlineSouthBlockWest = MAKE_TEXT_FLOW(LeftToRightWritingMode, RTL),
-    InlineNorthBlockEast = MAKE_TEXT_FLOW(RightToLeftWritingMode, LTR),
-    InlineNorthBlockWest = MAKE_TEXT_FLOW(RightToLeftWritingMode, RTL)
+    InlineEastBlockSouth = MAKE_TEXT_FLOW(TopToBottomWritingMode, TextDirection::LTR),
+    InlineWestBlockSouth = MAKE_TEXT_FLOW(TopToBottomWritingMode, TextDirection::RTL),
+    InlineEastBlockNorth = MAKE_TEXT_FLOW(BottomToTopWritingMode, TextDirection::LTR),
+    InlineWestBlockNorth = MAKE_TEXT_FLOW(BottomToTopWritingMode, TextDirection::RTL),
+    InlineSouthBlockEast = MAKE_TEXT_FLOW(LeftToRightWritingMode, TextDirection::LTR),
+    InlineSouthBlockWest = MAKE_TEXT_FLOW(LeftToRightWritingMode, TextDirection::RTL),
+    InlineNorthBlockEast = MAKE_TEXT_FLOW(RightToLeftWritingMode, TextDirection::LTR),
+    InlineNorthBlockWest = MAKE_TEXT_FLOW(RightToLeftWritingMode, TextDirection::RTL)
 };
 
 inline TextFlow makeTextFlow(WritingMode writingMode, TextDirection direction)
@@ -91,13 +91,13 @@ inline bool isVerticalTextFlow(TextFlow textflow)
 // Lines have vertical orientation; modes vertical-lr or vertical-rl.
 inline bool isVerticalWritingMode(WritingMode writingMode)
 {
-    return isVerticalTextFlow(makeTextFlow(writingMode, LTR));
+    return isVerticalTextFlow(makeTextFlow(writingMode, TextDirection::LTR));
 }
 
 // Block progression increases in the opposite direction to normal; modes vertical-rl or horizontal-bt.
 inline bool isFlippedWritingMode(WritingMode writingMode)
 {
-    return isFlippedTextFlow(makeTextFlow(writingMode, LTR));
+    return isFlippedTextFlow(makeTextFlow(writingMode, TextDirection::LTR));
 }
 
 // Lines have horizontal orientation; modes horizontal-tb or horizontal-bt.
@@ -161,7 +161,7 @@ inline PhysicalBoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBo
 inline PhysicalBoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalBoxSide logicalSide)
 {
     // Set the direction such that side is mirrored if isFlippedWritingMode() is true
-    TextDirection direction = isFlippedWritingMode(writingMode) ? RTL : LTR;
+    TextDirection direction = isFlippedWritingMode(writingMode) ? TextDirection::RTL : TextDirection::LTR;
     return mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), logicalSide);
 }
 

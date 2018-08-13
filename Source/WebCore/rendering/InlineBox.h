@@ -218,8 +218,8 @@ public:
 
     unsigned char bidiLevel() const { return m_bitfields.bidiEmbeddingLevel(); }
     void setBidiLevel(unsigned char level) { m_bitfields.setBidiEmbeddingLevel(level); }
-    TextDirection direction() const { return bidiLevel() % 2 ? RTL : LTR; }
-    bool isLeftToRightDirection() const { return direction() == LTR; }
+    TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
+    bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
     int caretLeftmostOffset() const { return isLeftToRightDirection() ? caretMinOffset() : caretMaxOffset(); }
     int caretRightmostOffset() const { return isLeftToRightDirection() ? caretMaxOffset() : caretMinOffset(); }
 

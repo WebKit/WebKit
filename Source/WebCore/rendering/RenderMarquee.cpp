@@ -104,9 +104,9 @@ MarqueeDirection RenderMarquee::direction() const
     if (result == MarqueeDirection::Auto)
         result = MarqueeDirection::Backward;
     if (result == MarqueeDirection::Forward)
-        result = (dir == LTR) ? MarqueeDirection::Right : MarqueeDirection::Left;
+        result = (dir == TextDirection::LTR) ? MarqueeDirection::Right : MarqueeDirection::Left;
     if (result == MarqueeDirection::Backward)
-        result = (dir == LTR) ? MarqueeDirection::Left : MarqueeDirection::Right;
+        result = (dir == TextDirection::LTR) ? MarqueeDirection::Left : MarqueeDirection::Right;
     
     // Now we have the real direction.  Next we check to see if the increment is negative.
     // If so, then we reverse the direction.

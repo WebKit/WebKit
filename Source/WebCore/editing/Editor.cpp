@@ -1764,9 +1764,9 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
     }
 
     switch (renderer->style().direction()) {
-    case LTR:
+    case TextDirection::LTR:
         return LeftToRightWritingDirection;
-    case RTL:
+    case TextDirection::RTL:
         return RightToLeftWritingDirection;
     }
     

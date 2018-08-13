@@ -2337,7 +2337,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return;
-    coreFrame->loader().client().dispatchDidReceiveTitle({ title, LTR });
+    coreFrame->loader().client().dispatchDidReceiveTitle({ title, TextDirection::LTR });
 }
 
 #endif // PLATFORM(IOS)

@@ -775,7 +775,7 @@ String HTMLTextFormControlElement::directionForFormData() const
         if (equalLettersIgnoringASCIICase(dirAttributeValue, "auto")) {
             bool isAuto;
             TextDirection textDirection = static_cast<const HTMLElement*>(element)->directionalityIfhasDirAutoAttribute(isAuto);
-            return textDirection == RTL ? "rtl" : "ltr";
+            return textDirection == TextDirection::RTL ? "rtl" : "ltr";
         }
     }
 
@@ -837,7 +837,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
             break;
         }
 
-        textBlockStyle.setDirection(LTR);
+        textBlockStyle.setDirection(TextDirection::LTR);
     }
 #endif
 }

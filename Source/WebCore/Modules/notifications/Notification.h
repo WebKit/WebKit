@@ -73,7 +73,7 @@ public:
     const String& tag() const { return m_tag; }
     const URL& icon() const { return m_icon; }
 
-    TextDirection direction() const { return m_direction == Direction::Rtl ? RTL : LTR; }
+    TextDirection direction() const { return m_direction == Direction::Rtl ? TextDirection::RTL : TextDirection::LTR; }
 
     WEBCORE_EXPORT void dispatchClickEvent();
     WEBCORE_EXPORT void dispatchCloseEvent();

@@ -43,7 +43,7 @@ static void emitTextSelectionChange(AccessibilityObject* object, VisibleSelectio
     // the list item marker is exposed through the text of the accessible list item rather
     // than through a separate accessible object.
     RenderObject* renderer = object->renderer();
-    if (is<RenderListItem>(renderer) && renderer->style().direction() == LTR)
+    if (is<RenderListItem>(renderer) && renderer->style().direction() == TextDirection::LTR)
         offset += downcast<RenderListItem>(*renderer).markerTextWithSuffix().length();
 
     g_signal_emit_by_name(axObject, "text-caret-moved", offset);

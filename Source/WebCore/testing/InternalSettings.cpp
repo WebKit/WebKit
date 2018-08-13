@@ -820,9 +820,9 @@ ExceptionOr<String> InternalSettings::systemLayoutDirection()
     if (!m_page)
         return Exception { InvalidAccessError };
     switch (settings().systemLayoutDirection()) {
-    case LTR:
+    case TextDirection::LTR:
         return String { "LTR"_s };
-    case RTL:
+    case TextDirection::RTL:
         return String { "RTL"_s };
     }
     ASSERT_NOT_REACHED();
@@ -834,11 +834,11 @@ ExceptionOr<void> InternalSettings::setSystemLayoutDirection(const String& direc
     if (!m_page)
         return Exception { InvalidAccessError };
     if (equalLettersIgnoringASCIICase(direction, "ltr")) {
-        settings().setSystemLayoutDirection(LTR);
+        settings().setSystemLayoutDirection(TextDirection::LTR);
         return { };
     }
     if (equalLettersIgnoringASCIICase(direction, "rtl")) {
-        settings().setSystemLayoutDirection(RTL);
+        settings().setSystemLayoutDirection(TextDirection::RTL);
         return { };
     }
     return Exception { InvalidAccessError };

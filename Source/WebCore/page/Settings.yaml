@@ -508,7 +508,7 @@ userInterfaceDirectionPolicy:
   initial: UserInterfaceDirectionPolicy::Content
 systemLayoutDirection:
   type: TextDirection
-  initial: LTR
+  initial: TextDirection::LTR
 
 allowContentSecurityPolicySourceStarToMatchAnyProtocol:
   initial: false

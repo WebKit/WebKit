@@ -408,7 +408,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
 
         bool isWordBreak;
         bool boxHasSameDirectionalityAsBlock = box->direction() == blockDirection;
-        bool movingBackward = (direction == MoveLeft && box->direction() == LTR) || (direction == MoveRight && box->direction() == RTL);
+        bool movingBackward = (direction == MoveLeft && box->direction() == TextDirection::LTR) || (direction == MoveRight && box->direction() == TextDirection::RTL);
         if ((skipsSpaceWhenMovingRight && boxHasSameDirectionalityAsBlock)
             || (!skipsSpaceWhenMovingRight && movingBackward)) {
             bool logicalStartInRenderer = offsetInBox == static_cast<int>(textBox.start()) && previousBoxInDifferentLine;
@@ -439,7 +439,7 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition, bool sk
     // FIXME: How should we handle a non-editable position?
     if (leftWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
         TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-        leftWordBreak = blockDirection == LTR ? startOfEditableContent(visiblePosition) : endOfEditableContent(visiblePosition);
+        leftWordBreak = blockDirection == TextDirection::LTR ? startOfEditableContent(visiblePosition) : endOfEditableContent(visiblePosition);
     }
     return leftWordBreak;
 }
@@ -452,7 +452,7 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition, bool s
     // FIXME: How should we handle a non-editable position?
     if (rightWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
         TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-        rightWordBreak = blockDirection == LTR ? endOfEditableContent(visiblePosition) : startOfEditableContent(visiblePosition);
+        rightWordBreak = blockDirection == TextDirection::LTR ? endOfEditableContent(visiblePosition) : startOfEditableContent(visiblePosition);
     }
     return rightWordBreak;
 }
@@ -1529,12 +1529,12 @@ bool isEndOfEditableOrNonEditableContent(const VisiblePosition& p)
 
 VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direction, bool* reachedBoundary)
 {
-    return direction == LTR ? logicalStartOfLine(c, reachedBoundary) : logicalEndOfLine(c, reachedBoundary);
+    return direction == TextDirection::LTR ? logicalStartOfLine(c, reachedBoundary) : logicalEndOfLine(c, reachedBoundary);
 }
 
 VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection direction, bool* reachedBoundary)
 {
-    return direction == LTR ? logicalEndOfLine(c, reachedBoundary) : logicalStartOfLine(c, reachedBoundary);
+    return direction == TextDirection::LTR ? logicalEndOfLine(c, reachedBoundary) : logicalStartOfLine(c, reachedBoundary);
 }
 
 static bool directionIsDownstream(SelectionDirection direction)

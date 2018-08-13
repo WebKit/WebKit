@@ -593,7 +593,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             if (!isHorizontal()) {
                 textDecorationSelectionClipOutRect.move(0, logicalWidthBeforeRange);
                 textDecorationSelectionClipOutRect.setHeight(logicalSelectionWidth);
-            } else if (direction() == RTL) {
+            } else if (direction() == TextDirection::RTL) {
                 textDecorationSelectionClipOutRect.move(logicalWidthAfterRange, 0);
                 textDecorationSelectionClipOutRect.setWidth(logicalSelectionWidth);
             } else {
@@ -1139,7 +1139,7 @@ void InlineTextBox::paintCompositionUnderlines(PaintInfo& paintInfo, const Float
 
 static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
 {
-    if (direction == LTR)
+    if (direction == TextDirection::LTR)
         return;
     start = logicalWidth - width - start;
 }

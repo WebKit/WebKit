@@ -388,7 +388,7 @@ public:
     TextZoom textZoom() const { return static_cast<TextZoom>(m_rareInheritedData->textZoom); }
 
     TextDirection direction() const { return static_cast<TextDirection>(m_inheritedFlags.direction); }
-    bool isLeftToRightDirection() const { return direction() == LTR; }
+    bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
     bool hasExplicitlySetDirection() const { return m_nonInheritedFlags.hasExplicitlySetDirection; }
 
     const Length& specifiedLineHeight() const;
@@ -1442,7 +1442,7 @@ public:
     static CaptionSide initialCaptionSide() { return CaptionSide::Top; }
     static ColumnAxis initialColumnAxis() { return ColumnAxis::Auto; }
     static ColumnProgression initialColumnProgression() { return ColumnProgression::Normal; }
-    static TextDirection initialDirection() { return LTR; }
+    static TextDirection initialDirection() { return TextDirection::LTR; }
     static WritingMode initialWritingMode() { return TopToBottomWritingMode; }
     static TextCombine initialTextCombine() { return TextCombine::None; }
     static TextOrientation initialTextOrientation() { return TextOrientation::Mixed; }

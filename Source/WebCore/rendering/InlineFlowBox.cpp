@@ -1251,7 +1251,7 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& colo
         // the previous line left off.
         LayoutUnit logicalOffsetOnLine = 0;
         LayoutUnit totalLogicalWidth;
-        if (renderer().style().direction() == LTR) {
+        if (renderer().style().direction() == TextDirection::LTR) {
             for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
                 logicalOffsetOnLine += curr->logicalWidth();
             totalLogicalWidth = logicalOffsetOnLine;

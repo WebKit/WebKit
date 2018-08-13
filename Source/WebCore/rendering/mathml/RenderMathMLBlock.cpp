@@ -89,7 +89,7 @@ LayoutUnit RenderMathMLBlock::mathAxisHeight() const
 
 LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth) const
 {
-    if (style().direction() == RTL)
+    if (style().direction() == TextDirection::RTL)
         return logicalWidth() - boxWidth - horizontalOffset;
 
     return horizontalOffset;

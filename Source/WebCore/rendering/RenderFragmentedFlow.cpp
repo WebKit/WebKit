@@ -168,7 +168,7 @@ void RenderFragmentedFlow::updateLogicalWidth()
     // If the fragments have non-uniform logical widths, then insert inset information for the RenderFragmentedFlow.
     for (auto& fragment : m_fragmentList) {
         LayoutUnit fragmentLogicalWidth = fragment->pageLogicalWidth();
-        LayoutUnit logicalLeft = style().direction() == LTR ? LayoutUnit() : logicalWidth - fragmentLogicalWidth;
+        LayoutUnit logicalLeft = style().direction() == TextDirection::LTR ? LayoutUnit() : logicalWidth - fragmentLogicalWidth;
         fragment->setRenderBoxFragmentInfo(this, logicalLeft, fragmentLogicalWidth, false);
     }
 }
@@ -787,7 +787,7 @@ void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
         LayoutUnit fragmentLogicalWidth = fragment->pageLogicalWidth();
         LayoutUnit fragmentLogicalHeight = std::min<LayoutUnit>(RenderFragmentedFlow::maxLogicalHeight() - logicalHeight, fragment->logicalHeightOfAllFragmentedFlowContent());
 
-        LayoutRect fragmentRect(style().direction() == LTR ? LayoutUnit() : logicalWidth() - fragmentLogicalWidth, logicalHeight, fragmentLogicalWidth, fragmentLogicalHeight);
+        LayoutRect fragmentRect(style().direction() == TextDirection::LTR ? LayoutUnit() : logicalWidth() - fragmentLogicalWidth, logicalHeight, fragmentLogicalWidth, fragmentLogicalHeight);
 
         fragment->setFragmentedFlowPortionRect(isHorizontalWritingMode() ? fragmentRect : fragmentRect.transposedRect());
 

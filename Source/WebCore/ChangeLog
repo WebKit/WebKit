@@ -1,3 +1,164 @@
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Use a 1-byte enum class for TextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=188350
+
+        Reviewed by Simon Fraser.
+
+        * Modules/notifications/Notification.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextDirection const):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAllRules):
+        * dom/Document.cpp:
+        (WebCore::Document::updateTitleFromTitleElement):
+        (WebCore::Document::setTitle):
+        * dom/Position.cpp:
+        (WebCore::Position::primaryDirection const):
+        * dom/Range.cpp:
+        (WebCore::Range::collectSelectionRectsWithoutUnionInteriorLines const):
+        * editing/Editing.cpp:
+        (WebCore::directionOfEnclosingBlock):
+        * editing/Editor.cpp:
+        (WebCore::Editor::baseWritingDirectionForSelectionStart const):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::willBeModified):
+        (WebCore::FrameSelection::modifyExtendingRight):
+        (WebCore::FrameSelection::modifyExtendingForward):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyExtendingLeft):
+        (WebCore::FrameSelection::modifyExtendingBackward):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::textSelectionIntent):
+        (WebCore::FrameSelection::modify):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate const):
+        * editing/VisibleUnits.cpp:
+        (WebCore::visualWordPosition):
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+        (WebCore::leftBoundaryOfLine):
+        (WebCore::rightBoundaryOfLine):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::directionalityIfhasDirAutoAttribute const):
+        (WebCore::HTMLElement::directionality const):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::directionForFormData const):
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle const):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::computedTextWithDirection):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::toTextDirection const):
+        (WebCore::CanvasRenderingContext2D::direction const):
+        (WebCore::CanvasRenderingContext2D::textOffset):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::layout):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip):
+        * page/FrameView.cpp:
+        (WebCore::paginationModeForRenderStyle):
+        * page/Settings.yaml:
+        * platform/RectEdges.h:
+        (WebCore::RectEdges::start):
+        (WebCore::RectEdges::end):
+        (WebCore::RectEdges::start const):
+        (WebCore::RectEdges::end const):
+        (WebCore::RectEdges::setStart):
+        (WebCore::RectEdges::setEnd):
+        * platform/UserInterfaceLayoutDirection.h:
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::computeExpansionOpportunity):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::expansionOpportunityCountInternal):
+        (WebCore::FontCascade::leadingExpansionOpportunity):
+        (WebCore::FontCascade::trailingExpansionOpportunity):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawBidiText):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::rtl const):
+        (WebCore::TextRun::ltr const):
+        (WebCore::TextRun::setDirection):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        * platform/ios/SelectionRect.cpp:
+        (WebCore::SelectionRect::SelectionRect):
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiStatus::BidiStatus):
+        * platform/text/StringWithDirection.h:
+        * platform/text/WritingMode.h:
+        (WebCore::isLeftToRightDirection):
+        (WebCore::isVerticalWritingMode):
+        (WebCore::isFlippedWritingMode):
+        (WebCore::mapLogicalSideToPhysicalSide):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip const):
+        (WebCore::HitTestResult::title const):
+        (WebCore::HitTestResult::innerTextIfTruncated const):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::direction const):
+        (WebCore::InlineBox::isLeftToRightDirection const):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer):
+        * rendering/InlineIterator.h:
+        (WebCore::embedCharFromDirection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::mirrorRTLSegment):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::determineDirectionality):
+        (WebCore::RenderBlockFlow::textAlignmentForLine const):
+        (WebCore::RenderBlockFlow::updateLogicalWidthForAlignment):
+        (WebCore::RenderBlockFlow::handleTrailingSpaces):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        * rendering/RenderBox.cpp:
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing const):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced const):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::updateLogicalWidth):
+        (WebCore::RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft const):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::direction const):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        (RenderMenuList::clientPaddingLeft const):
+        (RenderMenuList::clientPaddingRight const):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::popupInternalPaddingBox const):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeMac::popupInternalPaddingBox const):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::mirrorIfNeeded const):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::layoutBlock):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isLeftToRightDirection const):
+        (WebCore::RenderStyle::initialDirection):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::systemLayoutDirection):
+        (WebCore::InternalSettings::setSystemLayoutDirection):
+        * testing/Internals.h:
+
 2018-08-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r234683): Element::getAttribute() should return the first non-null attribute value

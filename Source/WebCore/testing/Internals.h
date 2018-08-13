@@ -614,7 +614,7 @@ public:
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 
-    enum class UserInterfaceLayoutDirection { LTR, RTL };
+    enum class UserInterfaceLayoutDirection : uint8_t { LTR, RTL };
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
 
     bool userPrefersReducedMotion() const;

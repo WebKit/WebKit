@@ -362,10 +362,10 @@ TextDirection directionOfEnclosingBlock(const Position& position)
 {
     auto block = enclosingBlock(position.containerNode());
     if (!block)
-        return LTR;
+        return TextDirection::LTR;
     auto renderer = block->renderer();
     if (!renderer)
-        return LTR;
+        return TextDirection::LTR;
     return renderer->style().direction();
 }
 

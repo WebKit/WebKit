@@ -683,7 +683,7 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     while (bidiRun) {
         TextRun subrun = run.subRun(bidiRun->start(), bidiRun->stop() - bidiRun->start());
         bool isRTL = bidiRun->level() % 2;
-        subrun.setDirection(isRTL ? RTL : LTR);
+        subrun.setDirection(isRTL ? TextDirection::RTL : TextDirection::LTR);
         subrun.setDirectionalOverride(bidiRun->dirOverride(false));
 
         float width = font.drawText(*this, subrun, currPoint, 0, std::nullopt, customFontNotReadyAction);

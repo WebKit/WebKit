@@ -1388,10 +1388,10 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 TextDirection Position::primaryDirection() const
 {
     if (!m_anchorNode->renderer())
-        return LTR;
+        return TextDirection::LTR;
     if (auto* blockFlow = lineageOfType<RenderBlockFlow>(*m_anchorNode->renderer()).first())
         return blockFlow->style().direction();
-    return LTR;
+    return TextDirection::LTR;
 }
 
 #if ENABLE(TREE_DEBUGGING)

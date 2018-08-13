@@ -44,7 +44,7 @@ struct WidthIterator;
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
         , m_tabSize(0)
         , m_xpos(xpos)
@@ -52,14 +52,14 @@ public:
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
         , m_allowTabs(false)
-        , m_direction(direction)
+        , m_direction(static_cast<unsigned>(direction))
         , m_directionalOverride(directionalOverride)
         , m_characterScanForCodePath(characterScanForCodePath)
         , m_disableSpacing(false)
     {
     }
 
-    explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : TextRun(stringView.toStringWithoutCopying(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
     {
     }
@@ -103,14 +103,14 @@ public:
     float expansion() const { return m_expansion; }
     ExpansionBehavior expansionBehavior() const { return m_expansionBehavior; }
     TextDirection direction() const { return static_cast<TextDirection>(m_direction); }
-    bool rtl() const { return m_direction == RTL; }
-    bool ltr() const { return m_direction == LTR; }
+    bool rtl() const { return static_cast<TextDirection>(m_direction) == TextDirection::RTL; }
+    bool ltr() const { return static_cast<TextDirection>(m_direction) == TextDirection::LTR; }
     bool directionalOverride() const { return m_directionalOverride; }
     bool characterScanForCodePath() const { return m_characterScanForCodePath; }
     bool spacingDisabled() const { return m_disableSpacing; }
 
     void disableSpacing() { m_disableSpacing = true; }
-    void setDirection(TextDirection direction) { m_direction = direction; }
+    void setDirection(TextDirection direction) { m_direction = static_cast<unsigned>(direction); }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
     void setCharacterScanForCodePath(bool scan) { m_characterScanForCodePath = scan; }
     StringView text() const { return m_text; }

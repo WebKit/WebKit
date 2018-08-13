@@ -976,7 +976,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         child->layoutIfNeeded();
 
         // FIXME: For now don't support RTL.
-        if (style().direction() != LTR)
+        if (style().direction() != TextDirection::LTR)
             continue;
 
         // Get the last line

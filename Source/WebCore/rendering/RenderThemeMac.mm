@@ -1487,7 +1487,7 @@ void RenderThemeMac::paintMenuListButtonGradients(const RenderObject& o, const P
 
 bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    bool isRTL = renderer.style().direction() == RTL;
+    bool isRTL = renderer.style().direction() == TextDirection::RTL;
     IntRect bounds = IntRect(rect.x() + renderer.style().borderLeftWidth(),
         rect.y() + renderer.style().borderTopWidth(),
         rect.width() - renderer.style().borderLeftWidth() - renderer.style().borderRightWidth(),
@@ -1596,7 +1596,7 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver& styleResolver, RenderSty
 LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.appearance() == MenulistPart) {
-        const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == RTL);
+        const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);
         return { static_cast<int>(padding[topPadding] * style.effectiveZoom()),
             static_cast<int>(padding[rightPadding] * style.effectiveZoom()),
             static_cast<int>(padding[bottomPadding] * style.effectiveZoom()),
@@ -1607,7 +1607,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
         float arrowWidth = baseArrowWidth * (style.computedFontPixelSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
-        if (style.direction() == RTL)
+        if (style.direction() == TextDirection::RTL)
             std::swap(rightPadding, leftPadding);
         return { static_cast<int>(styledPopupPaddingTop * style.effectiveZoom()),
             static_cast<int>(rightPadding),
@@ -1654,7 +1654,7 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
     // Set the control size based off the rectangle we're painting into.
     setControlSize(popupButton, popupButtonSizes(), buttonSize, o.style().effectiveZoom());
 
-    popupButton.userInterfaceLayoutDirection = o.style().direction() == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
+    popupButton.userInterfaceLayoutDirection = o.style().direction() == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
 
     // Update the various states we respond to.
     updateCheckedState(popupButton, o);
@@ -1935,7 +1935,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
     FloatRect localBounds = adjustedCancelButtonRect([search cancelButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
     // Adjust position based on the content direction.
     float adjustedXPosition;
-    if (box.style().direction() == RTL)
+    if (box.style().direction() == TextDirection::RTL)
         adjustedXPosition = inputBox.contentBoxRect().x();
     else
         adjustedXPosition = inputBox.contentBoxRect().maxX() - localBounds.size().width();
@@ -2071,7 +2071,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
     FloatRect localBounds = adjustedResultButtonRect([search searchButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
     // Adjust position based on the content direction.
     float adjustedXPosition;
-    if (box.style().direction() == RTL)
+    if (box.style().direction() == TextDirection::RTL)
         adjustedXPosition = inputBox.contentBoxRect().maxX() - localBounds.size().width();
     else
         adjustedXPosition = inputBox.contentBoxRect().x();

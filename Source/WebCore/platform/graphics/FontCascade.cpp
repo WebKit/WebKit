@@ -1074,7 +1074,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
         ++count;
         isAfterExpansion = true;
     }
-    if (direction == LTR) {
+    if (direction == TextDirection::LTR) {
         for (unsigned i = 0; i < length; ++i) {
             if (treatAsSpace(characters[i])) {
                 count++;
@@ -1111,7 +1111,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
         ++count;
         isAfterExpansion = true;
     }
-    if (direction == LTR) {
+    if (direction == TextDirection::LTR) {
         for (unsigned i = 0; i < length; ++i) {
             UChar32 character = characters[i];
             if (treatAsSpace(character)) {
@@ -1182,7 +1182,7 @@ bool FontCascade::leadingExpansionOpportunity(const StringView& stringView, Text
         return false;
 
     UChar32 initialCharacter;
-    if (direction == LTR) {
+    if (direction == TextDirection::LTR) {
         initialCharacter = stringView[0];
         if (U16_IS_LEAD(initialCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
             initialCharacter = U16_GET_SUPPLEMENTARY(initialCharacter, stringView[1]);
@@ -1201,7 +1201,7 @@ bool FontCascade::trailingExpansionOpportunity(const StringView& stringView, Tex
         return false;
 
     UChar32 finalCharacter;
-    if (direction == LTR) {
+    if (direction == TextDirection::LTR) {
         finalCharacter = stringView[stringView.length() - 1];
         if (U16_IS_TRAIL(finalCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
             finalCharacter = U16_GET_SUPPLEMENTARY(stringView[stringView.length() - 2], finalCharacter);

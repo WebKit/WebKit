@@ -86,10 +86,10 @@ struct BidiStatus {
     // Creates a BidiStatus representing a new paragraph root with a default direction.
     // Uses TextDirection as it only has two possibilities instead of UCharDirection which has at least 19.
     BidiStatus(TextDirection direction, bool isOverride)
-        : eor(direction == LTR ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT)
+        : eor(direction == TextDirection::LTR ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT)
         , lastStrong(eor)
         , last(eor)
-        , context(BidiContext::create(direction == LTR ? 0 : 1, eor, isOverride))
+        , context(BidiContext::create(direction == TextDirection::LTR ? 0 : 1, eor, isOverride))
     {
     }
 

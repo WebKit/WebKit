@@ -59,18 +59,18 @@ public:
     
     T& before(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::Before)); }
     T& after(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::After)); }
-    T& start(WritingMode writingMode, TextDirection direction = LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
-    T& end(WritingMode writingMode, TextDirection direction = LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
+    T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
+    T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
     
     const T& before(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::Before)); }
     const T& after(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::After)); }
-    const T& start(WritingMode writingMode, TextDirection direction = LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
-    const T& end(WritingMode writingMode, TextDirection direction = LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
+    const T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::Start)); }
+    const T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::End)); }
     
     void setBefore(const T& before, WritingMode writingMode) { this->before(writingMode) = before; }
     void setAfter(const T& after, WritingMode writingMode) { this->after(writingMode) = after; }
-    void setStart(const T& start, WritingMode writingMode, TextDirection direction = LTR) { this->start(writingMode, direction) = start; }
-    void setEnd(const T& end, WritingMode writingMode, TextDirection direction = LTR) { this->end(writingMode, direction) = end; }
+    void setStart(const T& start, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->start(writingMode, direction) = start; }
+    void setEnd(const T& end, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->end(writingMode, direction) = end; }
     
     bool operator==(const RectEdges& other) const { return m_sides == other.m_sides; }
     bool operator!=(const RectEdges& other) const { return m_sides != other.m_sides; }

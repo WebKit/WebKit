@@ -35,7 +35,7 @@ namespace WebKit {
 
 WebPopupItem::WebPopupItem()
     : m_type(Item)
-    , m_textDirection(LTR)
+    , m_textDirection(TextDirection::LTR)
     , m_hasTextDirectionOverride(false)
     , m_isEnabled(true)
     , m_isSelected(false)
@@ -44,7 +44,7 @@ WebPopupItem::WebPopupItem()
 
 WebPopupItem::WebPopupItem(Type type)
     : m_type(type)
-    , m_textDirection(LTR)
+    , m_textDirection(TextDirection::LTR)
     , m_hasTextDirectionOverride(false)
     , m_isEnabled(true)
     , m_isLabel(false)

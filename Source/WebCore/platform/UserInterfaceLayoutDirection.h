@@ -23,13 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserInterfaceLayoutDirection_h
-#define UserInterfaceLayoutDirection_h
+#pragma once
 
 namespace WebCore {
 
-enum class UserInterfaceLayoutDirection { LTR, RTL };
+enum class UserInterfaceLayoutDirection : uint8_t { LTR, RTL };
 
 } // namespace WebCore
-
-#endif // UserInterfaceLayoutDirection_h

@@ -758,9 +758,9 @@ void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver& styleResolver, Ren
 {
     // These are the paddings needed to place the text correctly in the <select> box
     const int dropDownBoxPaddingTop    = 2;
-    const int dropDownBoxPaddingRight  = style.direction() == LTR ? 4 + dropDownButtonWidth : 4;
+    const int dropDownBoxPaddingRight  = style.direction() == TextDirection::LTR ? 4 + dropDownButtonWidth : 4;
     const int dropDownBoxPaddingBottom = 2;
-    const int dropDownBoxPaddingLeft   = style.direction() == LTR ? 4 : 4 + dropDownButtonWidth;
+    const int dropDownBoxPaddingLeft   = style.direction() == TextDirection::LTR ? 4 : 4 + dropDownButtonWidth;
     // The <select> box must be at least 12px high for the button to render nicely on Windows
     const int dropDownBoxMinHeight = 12;
     
@@ -794,7 +794,7 @@ bool RenderThemeWin::paintMenuListButtonDecorations(const RenderBox& renderer, c
     // leaving space for the text field's 1px border
     IntRect buttonRect(rect);
     buttonRect.inflate(-borderThickness);
-    if (renderer.style().direction() == LTR)
+    if (renderer.style().direction() == TextDirection::LTR)
         buttonRect.setX(buttonRect.maxX() - dropDownButtonWidth);
     buttonRect.setWidth(dropDownButtonWidth);
 

@@ -31,49 +31,66 @@
 
 using namespace WebCore;
 
+namespace WebCore {
+
+std::ostream& operator<<(std::ostream& os, const TextDirection& direction)
+{
+    switch (direction) {
+    case TextDirection::LTR:
+        os << "TextDirection::LTR";
+        break;
+    case TextDirection::RTL:
+        os << "TextDirection::RTL";
+        break;
+    }
+    return os;
+}
+
+}
+
 namespace TestWebKitAPI {
 
 TEST(StringWithDirection, TruncateAtEndWithLeftToRightString)
 {
-    StringWithDirection string { "Cappuccino", LTR };
+    StringWithDirection string { "Cappuccino", TextDirection::LTR };
     StringWithDirection result;
 
     result = truncateFromEnd(string, 0);
-    EXPECT_EQ(LTR, result.direction);
+    EXPECT_EQ(TextDirection::LTR, result.direction);
     EXPECT_EQ("", result.string);
 
     result = truncateFromEnd(string, 1);
-    EXPECT_EQ(LTR, result.direction);
+    EXPECT_EQ(TextDirection::LTR, result.direction);
     EXPECT_EQ("C", result.string);
 
     result = truncateFromEnd(string, 2);
-    EXPECT_EQ(LTR, result.direction);
+    EXPECT_EQ(TextDirection::LTR, result.direction);
     EXPECT_EQ("Ca", result.string);
 
     result = truncateFromEnd(string, 1000);
-    EXPECT_EQ(LTR, result.direction);
+    EXPECT_EQ(TextDirection::LTR, result.direction);
     EXPECT_EQ("Cappuccino", result.string);
 }
 
 TEST(StringWithDirection, TruncateAtEndWithRightToLeftString)
 {
-    StringWithDirection string { String::fromUTF8("קָפּוּצִ'ינוֹ"), RTL };
+    StringWithDirection string { String::fromUTF8("קָפּוּצִ'ינוֹ"), TextDirection::RTL };
     StringWithDirection result;
 
     result = truncateFromEnd(string, 0);
-    EXPECT_EQ(RTL, result.direction);
+    EXPECT_EQ(TextDirection::RTL, result.direction);
     EXPECT_EQ("", result.string);
 
     result = truncateFromEnd(string, 1);
-    EXPECT_EQ(RTL, result.direction);
+    EXPECT_EQ(TextDirection::RTL, result.direction);
     EXPECT_EQ(String::fromUTF8("ק"), result.string);
 
     result = truncateFromEnd(string, 2);
-    EXPECT_EQ(RTL, result.direction);
+    EXPECT_EQ(TextDirection::RTL, result.direction);
     EXPECT_EQ(String::fromUTF8("קָ"), result.string);
 
     result = truncateFromEnd(string, 1000);
-    EXPECT_EQ(RTL, result.direction);
+    EXPECT_EQ(TextDirection::RTL, result.direction);
     EXPECT_EQ(String::fromUTF8("קָפּוּצִ'ינוֹ"), result.string);
 }
 

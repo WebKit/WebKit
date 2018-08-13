@@ -109,7 +109,7 @@ std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const Re
     newStyle->setFlexGrow(1);
     newStyle->setMinWidth(Length { 0, Fixed }); // Needed for correct shrinking.
     newStyle->setDisplay(DisplayType::Block);
-    newStyle->setDirection(LTR);
+    newStyle->setDirection(TextDirection::LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
     newStyle->setUserModify(UserModify::ReadOnly);
 

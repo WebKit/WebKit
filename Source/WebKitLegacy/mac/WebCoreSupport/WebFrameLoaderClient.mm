@@ -1494,7 +1494,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
     // will get the proper title.
     if (auto* documentLoader = [dataSource _documentLoader])
-        documentLoader->setTitle({ [dataSource pageTitle], LTR });
+        documentLoader->setTitle({ [dataSource pageTitle], TextDirection::LTR });
 
     if (auto* ownerElement = coreFrame->ownerElement())
         coreFrame->view()->setCanHaveScrollbars(ownerElement->scrollingMode() != ScrollbarAlwaysOff);

@@ -1,3 +1,18 @@
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Use a 1-byte enum class for TextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=188350
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/StringWithDirection.cpp:
+        (WebCore::operator<<):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        (TEST_F):
+
 2018-08-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Add basic clearance support

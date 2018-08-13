@@ -60,11 +60,11 @@ static void determineDirectionality(TextDirection& dir, InlineIterator iter)
         if (UChar current = iter.current()) {
             UCharDirection charDirection = u_charDirection(current);
             if (charDirection == U_LEFT_TO_RIGHT) {
-                dir = LTR;
+                dir = TextDirection::LTR;
                 return;
             }
             if (charDirection == U_RIGHT_TO_LEFT || charDirection == U_RIGHT_TO_LEFT_ARABIC) {
-                dir = RTL;
+                dir = TextDirection::RTL;
                 return;
             }
         }
@@ -348,7 +348,7 @@ TextAlignMode RenderBlockFlow::textAlignmentForLine(bool endsWithSoftBreak) cons
 #if ENABLE(CSS3_TEXT)
     TextJustify textJustify = style().textJustify();
     if (alignment == TextAlignMode::Justify && textJustify == TextJustify::None)
-        return style().direction() == LTR ? TextAlignMode::Left : TextAlignMode::Right;
+        return style().direction() == TextDirection::LTR ? TextAlignMode::Left : TextAlignMode::Right;
 #endif
 
     if (endsWithSoftBreak)
@@ -650,13 +650,13 @@ void RenderBlockFlow::updateLogicalWidthForAlignment(const TextAlignMode& textAl
         }
         FALLTHROUGH;
     case TextAlignMode::Start:
-        if (direction == LTR)
+        if (direction == TextDirection::LTR)
             updateLogicalWidthForLeftAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         else
             updateLogicalWidthForRightAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     case TextAlignMode::End:
-        if (direction == LTR)
+        if (direction == TextDirection::LTR)
             updateLogicalWidthForRightAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         else
             updateLogicalWidthForLeftAlignedBlock(style().isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
@@ -1061,7 +1061,7 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
         return nullptr;
 
     TextDirection direction = style().direction();
-    bool shouldReorder = trailingSpaceRun != (direction == LTR ? bidiRuns.lastRun() : bidiRuns.firstRun());
+    bool shouldReorder = trailingSpaceRun != (direction == TextDirection::LTR ? bidiRuns.lastRun() : bidiRuns.firstRun());
     if (firstSpace != trailingSpaceRun->start()) {
         BidiContext* baseContext = currentContext;
         while (BidiContext* parent = baseContext->parent())
@@ -1070,7 +1070,7 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
         std::unique_ptr<BidiRun> newTrailingRun = std::make_unique<BidiRun>(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->renderer(), baseContext, U_OTHER_NEUTRAL);
         trailingSpaceRun->m_stop = firstSpace;
         trailingSpaceRun = newTrailingRun.get();
-        if (direction == LTR)
+        if (direction == TextDirection::LTR)
             bidiRuns.appendRun(WTFMove(newTrailingRun));
         else
             bidiRuns.prependRun(WTFMove(newTrailingRun));
@@ -1079,7 +1079,7 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
     if (!shouldReorder)
         return trailingSpaceRun;
 
-    if (direction == LTR) {
+    if (direction == TextDirection::LTR) {
         bidiRuns.moveRunToEnd(trailingSpaceRun);
         trailingSpaceRun->m_level = 0;
     } else {
@@ -1378,7 +1378,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
             if (lastRootBox())
                 lastRootBox()->setLineBreakInfo(end.renderer(), end.offset(), resolver.status());
         } else {
-            VisualDirectionOverride override = (styleToUse.rtlOrdering() == Order::Visual ? (styleToUse.direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
+            VisualDirectionOverride override = (styleToUse.rtlOrdering() == Order::Visual ? (styleToUse.direction() == TextDirection::LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
 
             if (isNewUBAParagraph && styleToUse.unicodeBidi() == Plaintext && !resolver.context()->parent()) {
                 TextDirection direction = styleToUse.direction();

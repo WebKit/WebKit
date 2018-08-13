@@ -245,7 +245,7 @@ bool RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft() const
     case UserInterfaceDirectionPolicy::Content:
         return style().shouldPlaceBlockDirectionScrollbarOnLeft();
     case UserInterfaceDirectionPolicy::System:
-        return settings().systemLayoutDirection() == RTL;
+        return settings().systemLayoutDirection() == TextDirection::RTL;
     }
     ASSERT_NOT_REACHED();
     return style().shouldPlaceBlockDirectionScrollbarOnLeft();

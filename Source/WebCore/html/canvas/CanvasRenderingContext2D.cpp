@@ -295,21 +295,21 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
         *computedStyle = style;
     switch (direction) {
     case Direction::Inherit:
-        return style ? style->direction() : LTR;
+        return style ? style->direction() : TextDirection::LTR;
     case Direction::Rtl:
-        return RTL;
+        return TextDirection::RTL;
     case Direction::Ltr:
-        return LTR;
+        return TextDirection::LTR;
     }
     ASSERT_NOT_REACHED();
-    return LTR;
+    return TextDirection::LTR;
 }
 
 CanvasDirection CanvasRenderingContext2D::direction() const
 {
     if (state().direction == Direction::Inherit)
         canvas().document().updateStyleIfNeeded();
-    return toTextDirection(state().direction) == RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
+    return toTextDirection(state().direction) == TextDirection::RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
 }
 
 void CanvasRenderingContext2D::setDirection(CanvasDirection direction)
@@ -429,7 +429,7 @@ FloatPoint CanvasRenderingContext2D::textOffset(float width, TextDirection direc
         break;
     }
 
-    bool isRTL = direction == RTL;
+    bool isRTL = direction == TextDirection::RTL;
     auto align = state().textAlign;
     if (align == StartTextAlign)
         align = isRTL ? RightTextAlign : LeftTextAlign;
