@@ -1626,7 +1626,7 @@ webkit.org/b/133001 fast/workers/worker-context-gc.html [ Pass Timeout ]
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure Pass ]
 webkit.org/b/133866 media/media-controls-cancel-events.html [ Timeout Failure Pass ]
 webkit.org/b/133867 webaudio/audioprocessingevent.html [ Failure Pass ]
-webkit.org/b/133869 media/video-seek-after-end.html [ Failure ]
+webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
 # Crash is webkit.org/b/176802
 webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass Crash ]

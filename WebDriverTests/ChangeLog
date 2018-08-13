@@ -1,3 +1,9 @@
+2018-08-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * TestExpectations.json:
+
 2018-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         More unreviewed GTK test gardening

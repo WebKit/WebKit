@@ -86,7 +86,7 @@
     "imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py": {
         "subtests": {
             "testClickShouldTimeout": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
@@ -991,7 +991,7 @@
     "imported/w3c/webdriver/tests/set_window_rect/set.py": {
         "subtests": {
             "test_fully_exit_fullscreen": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
             },
             "test_negative_x_y": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180418"}}
@@ -1001,14 +1001,14 @@
     "imported/w3c/webdriver/tests/maximize_window/maximize.py": {
         "subtests": {
             "test_fully_exit_fullscreen": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
             }
         }
     },
     "imported/w3c/webdriver/tests/minimize_window/minimize.py": {
         "subtests": {
             "test_fully_exit_fullscreen": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/188118"}}
             }
         }
     },

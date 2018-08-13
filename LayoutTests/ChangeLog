@@ -1,3 +1,11 @@
+2018-08-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/color/input-appearance-color-expected.png:
+        * platform/gtk/fast/forms/color/input-appearance-color-expected.txt:
+
 2018-08-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Break reference cycle in ErrorEvent by using JSValueInWrappedObject
