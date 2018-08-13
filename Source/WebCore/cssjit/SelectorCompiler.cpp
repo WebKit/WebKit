@@ -451,9 +451,6 @@ static inline FunctionType addScrollbarPseudoClassType(const CSSSelector&, Selec
 // Handle the forward :nth-child() and backward :nth-last-child().
 static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext selectorContext, FragmentPositionInRootFragments positionInRootFragments, CSSSelector::PseudoClassType firstMatchAlternative, bool visitedMatchEnabled, Vector<std::pair<int, int>, 2>& simpleCases, Vector<NthChildOfSelectorInfo>& filteredCases, HashSet<unsigned>& pseudoClasses, unsigned& internalSpecificity)
 {
-    if (!selector.parseNth())
-        return FunctionType::CannotMatchAnything;
-
     int a = selector.nthA();
     int b = selector.nthB();
 

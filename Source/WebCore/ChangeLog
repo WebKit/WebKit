@@ -1,5 +1,28 @@
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused CSSSelector::parseNth
+        https://bugs.webkit.org/show_bug.cgi?id=188529
+
+        Reviewed by Simon Fraser.
+
+        This was conceptually replaced by the call to setNth in CSSSelectorParser::consumePseudo.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::setNth):
+        (WebCore::CSSSelector::nthA const):
+        (WebCore::CSSSelector::nthB const):
+        (WebCore::CSSSelector::parseNth const): Deleted.
+        (WebCore::CSSSelector::RareData::parseNth): Deleted.
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addNthChildType):
+
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused code in CSSParserSelector/CSSSelector
         https://bugs.webkit.org/show_bug.cgi?id=188528
 

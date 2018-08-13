@@ -837,8 +837,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             }
             return false;
         case CSSSelector::PseudoClassNthChild:
-            if (!selector.parseNth())
-                break;
             if (auto* parentElement = element.parentElement()) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
                 addStyleRelation(checkingContext, *parentElement, relation);
@@ -867,9 +865,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             }
             break;
         case CSSSelector::PseudoClassNthOfType:
-            if (!selector.parseNth())
-                break;
-
             if (auto* parentElement = element.parentElement()) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
                 addStyleRelation(checkingContext, *parentElement, relation);
@@ -880,8 +875,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             }
             break;
         case CSSSelector::PseudoClassNthLastChild:
-            if (!selector.parseNth())
-                break;
             if (Element* parentElement = element.parentElement()) {
                 if (const CSSSelectorList* selectorList = selector.selectorList()) {
                     unsigned selectorListSpecificity;
@@ -913,8 +906,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             }
             break;
         case CSSSelector::PseudoClassNthLastOfType:
-            if (!selector.parseNth())
-                break;
             if (Element* parentElement = element.parentElement()) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
                 addStyleRelation(checkingContext, *parentElement, relation);

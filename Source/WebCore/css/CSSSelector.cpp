@@ -52,7 +52,6 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     : m_relation(DescendantSpace)
     , m_match(Tag)
     , m_pseudoType(0)
-    , m_parsedNth(false)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
     , m_hasRareData(false)
@@ -780,21 +779,8 @@ void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 void CSSSelector::setNth(int a, int b)
 {
     createRareData();
-    m_parsedNth = true; // FIXME-NEWPARSER: Can remove this parsed boolean once old parser is gone.
     m_data.m_rareData->m_a = a;
     m_data.m_rareData->m_b = b;
-}
-    
-// FIXME-NEWPARSER: All the code to parse nth-child stuff can be removed when
-// the new parser is enabled.
-bool CSSSelector::parseNth() const
-{
-    if (!m_hasRareData)
-        return false;
-    if (m_parsedNth)
-        return true;
-    m_parsedNth = m_data.m_rareData->parseNth();
-    return m_parsedNth;
 }
 
 bool CSSSelector::matchNth(int count) const
@@ -806,14 +792,12 @@ bool CSSSelector::matchNth(int count) const
 int CSSSelector::nthA() const
 {
     ASSERT(m_hasRareData);
-    ASSERT(m_parsedNth);
     return m_data.m_rareData->m_a;
 }
 
 int CSSSelector::nthB() const
 {
     ASSERT(m_hasRareData);
-    ASSERT(m_parsedNth);
     return m_data.m_rareData->m_b;
 }
 
@@ -828,67 +812,6 @@ CSSSelector::RareData::RareData(AtomicString&& value)
 }
 
 CSSSelector::RareData::~RareData() = default;
-
-// a helper function for parsing nth-arguments
-bool CSSSelector::RareData::parseNth()
-{
-    if (m_argument.isEmpty())
-        return false;
-
-    if (equalLettersIgnoringASCIICase(m_argument, "odd")) {
-        m_a = 2;
-        m_b = 1;
-    } else if (equalLettersIgnoringASCIICase(m_argument, "even")) {
-        m_a = 2;
-        m_b = 0;
-    } else {
-        m_a = 0;
-        m_b = 0;
-
-        size_t n = std::min(m_argument.find('n'), m_argument.find('N'));
-        if (n != notFound) {
-            if (m_argument[0] == '-') {
-                if (n == 1)
-                    m_a = -1; // -n == -1n
-                else {
-                    bool ok;
-                    m_a = StringView(m_argument).substring(0, n).toIntStrict(ok);
-                    if (!ok)
-                        return false;
-                }
-            } else if (!n)
-                m_a = 1; // n == 1n
-            else {
-                bool ok;
-                m_a = StringView(m_argument).substring(0, n).toIntStrict(ok);
-                if (!ok)
-                    return false;
-            }
-
-            size_t p = m_argument.find('+', n);
-            if (p != notFound) {
-                bool ok;
-                m_b = StringView(m_argument).substring(p + 1).toIntStrict(ok);
-                if (!ok)
-                    return false;
-            } else {
-                p = m_argument.find('-', n);
-                if (p != notFound) {
-                    bool ok;
-                    m_b = -StringView(m_argument).substring(p + 1).toIntStrict(ok);
-                    if (!ok)
-                        return false;
-                }
-            }
-        } else {
-            bool ok;
-            m_b = m_argument.string().toIntStrict(&ok);
-            if (!ok)
-                return false;
-        }
-    }
-    return true;
-}
 
 // a helper function for checking nth-arguments
 bool CSSSelector::RareData::matchNth(int count)

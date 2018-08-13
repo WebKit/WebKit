@@ -248,7 +248,6 @@ namespace WebCore {
         void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
         void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
-        bool parseNth() const;
         bool matchNth(int count) const;
         int nthA() const;
         int nthB() const;
@@ -323,7 +322,6 @@ namespace WebCore {
         unsigned m_relation              : 4; // enum RelationType.
         mutable unsigned m_match         : 4; // enum Match.
         mutable unsigned m_pseudoType    : 8; // PseudoType.
-        mutable unsigned m_parsedNth     : 1; // Used for :nth-*.
         unsigned m_isLastInSelectorList  : 1;
         unsigned m_isLastInTagHistory    : 1;
         unsigned m_hasRareData           : 1;
@@ -344,7 +342,6 @@ namespace WebCore {
             static Ref<RareData> create(AtomicString&& value) { return adoptRef(*new RareData(WTFMove(value))); }
             ~RareData();
 
-            bool parseNth();
             bool matchNth(int count);
 
             // For quirks mode, class and id are case-insensitive. In the case where uppercase
@@ -481,7 +478,6 @@ inline CSSSelector::CSSSelector()
     : m_relation(DescendantSpace)
     , m_match(Unknown)
     , m_pseudoType(0)
-    , m_parsedNth(false)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
     , m_hasRareData(false)
@@ -499,7 +495,6 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     : m_relation(o.m_relation)
     , m_match(o.m_match)
     , m_pseudoType(o.m_pseudoType)
-    , m_parsedNth(o.m_parsedNth)
     , m_isLastInSelectorList(o.m_isLastInSelectorList)
     , m_isLastInTagHistory(o.m_isLastInTagHistory)
     , m_hasRareData(o.m_hasRareData)
