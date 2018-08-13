@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+using namespace JSC;
+
 static void collectGarbageAfterWindowProxyDestruction()
 {
     // Make sure to GC Extra Soon(tm) during memory pressure conditions

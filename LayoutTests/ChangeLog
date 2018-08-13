@@ -1,3 +1,12 @@
+2018-08-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Break reference cycle in ErrorEvent by using JSValueInWrappedObject
+        https://bugs.webkit.org/show_bug.cgi?id=188491
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/reference-cycle-leaks-expected.txt:
+
 2018-08-12  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Color wells should appear pressed when presenting a color picker

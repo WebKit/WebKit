@@ -7170,6 +7170,7 @@
 		3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportStyleResolver.h; sourceTree = "<group>"; };
 		4107908A1FC3E4F20061B27A /* ClientOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientOrigin.h; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
+		D2CDB5ED638F43AF86F07AA2 /* JSErrorEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorEventCustom.cpp; sourceTree = "<group>"; };
 		41103AA71E39790A00769F03 /* RealtimeOutgoingAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeOutgoingAudioSource.cpp; sourceTree = "<group>"; };
 		41103AA71E39790A00769F14 /* RealtimeOutgoingAudioSourceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeOutgoingAudioSourceCocoa.cpp; sourceTree = "<group>"; };
 		41103AA81E39790A00769F03 /* RealtimeOutgoingAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeOutgoingAudioSource.h; sourceTree = "<group>"; };
@@ -19890,6 +19891,7 @@
 				0F94A3951EF1B10500FBAFFB /* JSDOMQuadCustom.cpp */,
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
 				ADEC78F718EE5308001315C2 /* JSElementCustom.h */,
+				D2CDB5ED638F43AF86F07AA2 /* JSErrorEventCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
 				E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTargetCustom.cpp */,

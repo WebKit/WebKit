@@ -40,13 +40,13 @@
 namespace WebCore {
 using namespace JSC;
 
-ErrorEvent::ErrorEvent(ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+ErrorEvent::ErrorEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_message(initializer.message)
     , m_fileName(initializer.filename)
     , m_lineNumber(initializer.lineno)
     , m_columnNumber(initializer.colno)
-    , m_error(state.vm(), initializer.error)
+    , m_error(initializer.error)
 {
 }
 
@@ -56,7 +56,7 @@ ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned l
     , m_fileName(fileName)
     , m_lineNumber(lineNumber)
     , m_columnNumber(columnNumber)
-    , m_error(error)
+    , m_error(error.get())
 {
 }
 
@@ -69,7 +69,7 @@ EventInterface ErrorEvent::eventInterface() const
 
 JSValue ErrorEvent::error(ExecState& state, JSGlobalObject& globalObject)
 {    
-    auto error = m_error.get();
+    JSValue error = m_error;
     if (!error)
         return jsNull();
 
@@ -87,11 +87,11 @@ JSValue ErrorEvent::error(ExecState& state, JSGlobalObject& globalObject)
 
 RefPtr<SerializedScriptValue> ErrorEvent::trySerializeError(ExecState& exec)
 {
-    if (!m_triedToSerialize) {
-        m_serializedDetail = SerializedScriptValue::create(exec, m_error.get(), SerializationErrorMode::NonThrowing);
+    if (!m_serializedError && !m_triedToSerialize) {
+        m_serializedError = SerializedScriptValue::create(exec, m_error, SerializationErrorMode::NonThrowing);
         m_triedToSerialize = true;
     }
-    return m_serializedDetail;
+    return m_serializedError;
 }
 
 bool ErrorEvent::isErrorEvent() const

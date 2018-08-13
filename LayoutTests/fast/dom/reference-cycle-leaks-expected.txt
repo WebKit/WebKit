@@ -10,7 +10,7 @@ PASS checkForNodeLeaks(createTreeWalkerNodeCycle) is "did not leak"
 PASS checkForNodeLeaks(createTreeWalkerFilterCycle) is "did not leak"
 PASS checkForNodeLeaks(createPromiseCycle) is "did not leak"
 PASS checkForNodeLeaks(createCustomEventDetailsCycle) is "did not leak"
-FAIL checkForNodeLeaks(createErrorEventDataCycle) should be did not leak. Was leaked.
+PASS checkForNodeLeaks(createErrorEventDataCycle) is "did not leak"
 ---- Did not test ExtendableMessageEvent because it is not enabled.
 PASS checkForNodeLeaks(createMessageEventDataCycle) is "did not leak"
 PASS checkForNodeLeaks(createPopStateEventStateCycle) is "did not leak"

@@ -31,8 +31,8 @@
 
 [
     Constructor(DOMString type, optional ErrorEventInit eventInitDict),
-    ConstructorCallWith=ScriptState,
     Exposed=(Window,Worker),
+    JSCustomMarkFunction,
 ] interface ErrorEvent : Event {
     readonly attribute DOMString message;
     readonly attribute USVString filename;

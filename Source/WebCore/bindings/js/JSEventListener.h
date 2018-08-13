@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class DOMWindow;
+class Document;
 class EventTarget;
 class HTMLElement;
 
