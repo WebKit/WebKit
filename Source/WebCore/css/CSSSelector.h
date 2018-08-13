@@ -242,9 +242,6 @@ namespace WebCore {
 
         void setValue(const AtomicString&, bool matchLowerCase = false);
         
-        // FIXME-NEWPARSER: These two methods can go away once the old parser is gone.
-        void setAttribute(const QualifiedName&, bool);
-        void setAttributeValueMatchingIsCaseInsensitive(bool);
         void setAttribute(const QualifiedName&, bool convertToLowercase, AttributeMatchType);
         void setNth(int a, int b);
         void setArgument(const AtomicString&);
@@ -586,12 +583,6 @@ inline const AtomicString& CSSSelector::serializingValue() const
     
     // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
     return *reinterpret_cast<const AtomicString*>(&m_data.m_value);
-}
-
-inline void CSSSelector::setAttributeValueMatchingIsCaseInsensitive(bool isCaseInsensitive)
-{
-    ASSERT(isAttributeSelector() && match() != CSSSelector::Set);
-    m_caseInsensitiveAttributeValueMatching = isCaseInsensitive;
 }
     
 inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const

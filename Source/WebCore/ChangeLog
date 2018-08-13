@@ -1,5 +1,19 @@
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused code in CSSParserSelector/CSSSelector
+        https://bugs.webkit.org/show_bug.cgi?id=188528
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSSelector.cpp:
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::serializingValue const):
+        (WebCore::CSSSelector::setAttributeValueMatchingIsCaseInsensitive): Deleted.
+        * css/parser/CSSParserSelector.h:
+        (WebCore::CSSParserSelector::setAttributeValueMatchingIsCaseInsensitive): Deleted.
+
+2018-08-13  Alex Christensen  <achristensen@webkit.org>
+
         Modernize CSSSelectorList a little
         https://bugs.webkit.org/show_bug.cgi?id=188527
 
