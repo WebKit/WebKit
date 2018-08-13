@@ -1,3 +1,15 @@
+2018-08-13  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Validate threshold values
+        https://bugs.webkit.org/show_bug.cgi?id=188475
+
+        Reviewed by Simon Fraser.
+
+        Add test coverage for interesting floating point threshold values.
+
+        * intersection-observer/intersection-observer-interface-expected.txt:
+        * intersection-observer/intersection-observer-interface.html:
+
 2018-08-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Rebaseline and re-enable svg tests

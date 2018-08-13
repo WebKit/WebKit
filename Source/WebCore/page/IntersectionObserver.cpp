@@ -87,18 +87,28 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Ref<Intersec
     if (rootMarginOrException.hasException())
         return rootMarginOrException.releaseException();
 
-    return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init), rootMarginOrException.releaseReturnValue()));
+    Vector<double> thresholds;
+    WTF::switchOn(init.threshold, [&thresholds] (double initThreshold) {
+        thresholds.reserveInitialCapacity(1);
+        thresholds.uncheckedAppend(initThreshold);
+    }, [&thresholds] (Vector<double>& initThresholds) {
+        thresholds = WTFMove(initThresholds);
+    });
+
+    for (auto threshold : thresholds) {
+        if (!(threshold >= 0 && threshold <= 1))
+            return Exception { RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]." };
+    }
+
+    return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init.root), rootMarginOrException.releaseReturnValue(), WTFMove(thresholds)));
 }
 
-IntersectionObserver::IntersectionObserver(Ref<IntersectionObserverCallback>&& callback, Init&& init, LengthBox&& parsedRootMargin)
-    : m_root(init.root)
+IntersectionObserver::IntersectionObserver(Ref<IntersectionObserverCallback>&& callback, RefPtr<Element>&& root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
+    : m_root(WTFMove(root))
     , m_rootMargin(WTFMove(parsedRootMargin))
+    , m_thresholds(WTFMove(thresholds))
     , m_callback(WTFMove(callback))
 {
-    if (WTF::holds_alternative<double>(init.threshold))
-        m_thresholds.append(WTF::get<double>(init.threshold));
-    else
-        m_thresholds = WTF::get<Vector<double>>(WTFMove(init.threshold));
 }
 
 String IntersectionObserver::rootMargin() const

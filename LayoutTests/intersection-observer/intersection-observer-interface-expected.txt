@@ -10,4 +10,11 @@ PASS ExplicitFourArgumentRootMargin
 PASS ExplicitRoot 
 PASS ExplicitThreshold 
 PASS ExplicitThresholds 
+PASS SmallPositiveThreshold 
+PASS SmallNegativeThreshold 
+PASS LargePositiveThreshold 
+PASS LargeNegativeThreshold 
+PASS PositiveInfinityThreshold 
+PASS NegativeInfinityThreshold 
+PASS NaNThreshold 
 

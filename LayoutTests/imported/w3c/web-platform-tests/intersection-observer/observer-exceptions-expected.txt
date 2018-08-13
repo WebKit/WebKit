@@ -1,9 +1,7 @@
 
-FAIL IntersectionObserver constructor with { threshold: [1.1] } assert_throws: function "function () {
-    new IntersectionObserver(e => {}, {threshold: [1.1]})
-  }" did not throw
+PASS IntersectionObserver constructor with { threshold: [1.1] } 
 PASS IntersectionObserver constructor with { threshold: ["foo"] } 
-PASS IntersectionObserver constructor witth { rootMargin: "1" } 
+PASS IntersectionObserver constructor with { rootMargin: "1" } 
 PASS IntersectionObserver constructor with { rootMargin: "2em" } 
 PASS IntersectionObserver constructor with { rootMargin: "auto" } 
 PASS IntersectionObserver constructor with { rootMargin: "calc(1px + 2px)" } 

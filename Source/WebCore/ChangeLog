@@ -1,3 +1,21 @@
+2018-08-13  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Validate threshold values
+        https://bugs.webkit.org/show_bug.cgi?id=188475
+
+        Reviewed by Simon Fraser.
+
+        Throw an exception if any of an IntersectionObserver's thresholds are outside
+        the range [0, 1].
+
+        Tested by: imported/w3c/web-platform-tests/intersection-observer/observer-exceptions.html
+                   intersection-observer/intersection-observer-interface.html
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::create):
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        * page/IntersectionObserver.h:
+
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused CSSSelector::parseNth

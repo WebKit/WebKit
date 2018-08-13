@@ -1,3 +1,15 @@
+2018-08-13  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Validate threshold values
+        https://bugs.webkit.org/show_bug.cgi?id=188475
+
+        Reviewed by Simon Fraser.
+
+        Update expectation for newly passing test case.
+
+        * web-platform-tests/intersection-observer/observer-exceptions-expected.txt:
+        * web-platform-tests/intersection-observer/observer-exceptions.html: Fix typo already fixed upstream.
+
 2018-08-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Expose CloseEvent and CustomEvent to workers

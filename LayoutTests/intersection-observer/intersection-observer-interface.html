@@ -53,6 +53,40 @@
         var observer = new IntersectionObserver(function() {},  { threshold: [0, 0.33333678, 0.5, 0.76645] });
         assert_array_equals(observer.thresholds, [0, 0.33333678, 0.5, 0.76645]);
     },'ExplicitThresholds');
+    test(function() {
+        var observer = new IntersectionObserver(function() {},  { threshold: Number.MIN_VALUE });
+        assert_array_equals(observer.thresholds, [Number.MIN_VALUE]);
+    },'SmallPositiveThreshold');
+    test(function() {
+        assert_throws(RangeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: -Number.MIN_VALUE });
+        })
+    },'SmallNegativeThreshold');
+    test(function() {
+        assert_throws(RangeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.MAX_VALUE });
+        })
+    },'LargePositiveThreshold');
+    test(function() {
+        assert_throws(RangeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: -Number.MAX_VALUE });
+        })
+    },'LargeNegativeThreshold');
+    test(function() {
+        assert_throws(TypeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.POSITIVE_INFINITY });
+        })
+    },'PositiveInfinityThreshold');
+    test(function() {
+        assert_throws(TypeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.NEGATIVE_INFINITY });
+        })
+    },'NegativeInfinityThreshold');
+    test(function() {
+        assert_throws(TypeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.NaN });
+        })
+    },'NaNThreshold');
 </script>
 </body>
 </html>

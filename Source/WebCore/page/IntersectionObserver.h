@@ -59,7 +59,7 @@ public:
     Vector<RefPtr<IntersectionObserverEntry>> takeRecords();
 
 private:
-    IntersectionObserver(Ref<IntersectionObserverCallback>&&, Init&&, LengthBox&& parsedRootMargin);
+    IntersectionObserver(Ref<IntersectionObserverCallback>&&, RefPtr<Element>&& root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
     
     RefPtr<Element> m_root;
     LengthBox m_rootMargin;
