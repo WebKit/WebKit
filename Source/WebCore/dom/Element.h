@@ -823,7 +823,7 @@ template<typename... QualifiedNames>
 inline const AtomicString& Element::getAttribute(const QualifiedName& name, const QualifiedNames&... names) const
 {
     const AtomicString& value = getAttribute(name);
-    if (!value.isEmpty())
+    if (!value.isNull())
         return value;
     return getAttribute(names...);
 }

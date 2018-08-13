@@ -1,0 +1,19 @@
+Test the possible cases of the svg href attribute value: null string, empty string and non-empty string.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "www.webkit.org"
+PASS window.element.getAttribute('href') is "www.webkit.org"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is ""
+PASS window.element.getAttribute('href') is ""
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "www.build.webkit.org"
+PASS window.element.getAttribute('href') is "www.build.webkit.org"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is ""
+PASS window.element.getAttribute('href') is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

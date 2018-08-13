@@ -1,3 +1,18 @@
+2018-08-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Followup (r234683): Element::getAttribute() should return the first non-null attribute value
+        https://bugs.webkit.org/show_bug.cgi?id=188419
+
+        Reviewed by Darin Adler.
+
+        Element::getAttribute() should return the first non-null attribute value
+        since an empty string is a legitimate attribute value.
+
+        Test: svg/custom/href-svg-namespace-empty.html
+
+        * dom/Element.h:
+        (WebCore::Element::getAttribute const):
+
 2018-08-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, since -Wsign-compare warnings in URL.cpp

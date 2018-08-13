@@ -1,3 +1,13 @@
+2018-08-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Followup (r234683): Element::getAttribute() should return the first non-null attribute value
+        https://bugs.webkit.org/show_bug.cgi?id=188419
+
+        Reviewed by Darin Adler.
+
+        * svg/custom/href-svg-namespace-empty-expected.txt: Added.
+        * svg/custom/href-svg-namespace-empty.html: Added.
+
 2018-08-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Add basic clearance support
