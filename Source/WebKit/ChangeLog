@@ -1,3 +1,10 @@
+2018-08-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence "enumeral and non-enumeral type in conditional expression" warning
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+
 2018-08-12  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Color wells should appear pressed when presenting a color picker
