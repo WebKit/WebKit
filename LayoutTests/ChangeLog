@@ -1,3 +1,14 @@
+2018-08-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] Rebaseline and re-enable svg tests
+        https://bugs.webkit.org/show_bug.cgi?id=180459
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        [ truncated ]
+
 2018-08-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r234683): Element::getAttribute() should return the first non-null attribute value

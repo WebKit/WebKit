@@ -117,7 +117,6 @@ svg/animations/animate-color-fill-currentColor.html
 svg/animations/animate-color-fill-from-by.html
 svg/animations/animate-color-rgba-calcMode-discrete.html
 svg/animations/animate-color-transparent.html
-svg/animations/animate-css-xml-attributeType.html
 svg/animations/animate-currentColor.html
 svg/animations/animate-dynamic-update-attributeName.html
 svg/animations/animate-end-attribute.html
@@ -279,7 +278,6 @@ imported/mozilla/svg/text/text-shadow.svg [ ImageOnlyFailure ]
 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 svg/custom/focus-event-handling-keyboard.xhtml [ Failure ]
 svg/custom/focus-event-handling.xhtml [ Failure ]
-svg/custom/invisible-text-after-scrolling.xhtml [ Failure ]
 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure ]
 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 svg/filters/feTurbulence_bad_seeds.html [ ImageOnlyFailure ]
@@ -889,31 +887,6 @@ imported/w3c/canvas/2d.gradient.interpolate.colouralpha.html [ Failure Pass ]
 imported/w3c/canvas/2d.line.cap.round.html [ Failure Pass ]
 imported/w3c/canvas/2d.line.join.parallel.html [ Failure Pass ]
 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure Pass ]
-svg/as-border-image/svg-as-border-image-2.html [ Failure Pass ]
-svg/as-border-image/svg-as-border-image.html [ Failure Pass ]
-svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html [ Failure Pass ]
-svg/as-image/animated-svg-as-image-same-image.html [ Failure Pass ]
-svg/as-image/animated-svg-as-image.html [ Failure Pass ]
-svg/as-image/animated-svg-repaints-completely-in-hidpi.html [ Failure Pass ]
-svg/as-image/image-preserveAspectRatio-all.svg [ Failure ImageOnlyFailure Pass ]
-svg/as-image/image-respects-deviceScaleFactor.html [ Failure Pass ]
-svg/as-image/image-respects-pageScaleFactor.html [ Failure Pass ]
-svg/as-image/img-preserveAspectRatio-support-1.html [ Failure Pass ]
-svg/as-image/img-preserveAspectRatio-support-2.html [ Failure Pass ]
-svg/as-image/img-relative-width.html [ ImageOnlyFailure Pass ]
-svg/as-image/same-image-two-instances.html [ Failure Pass ]
-svg/as-image/svg-as-image.html [ Failure ImageOnlyFailure Pass ]
-svg/as-image/svg-as-relative-image-with-explicit-size.html [ Failure Pass ]
-svg/as-image/svg-as-relative-image.html [ Failure Pass ]
-svg/as-image/svg-image-change-content-size.xhtml [ Failure Pass ]
-svg/as-image/svg-image-leak-loader.html [ Failure Pass ]
-svg/as-image/svg-non-integer-scaled-image.html [ Failure ImageOnlyFailure Pass ]
-svg/filters/filter-empty-g.svg [ Failure ImageOnlyFailure Pass ]
-svg/hixie/painting/001.xml [ Failure ImageOnlyFailure Pass ]
-svg/transforms/animated-path-inside-transformed-html.xhtml [ Failure Pass ]
-svg/transforms/svg-css-transforms-clip-path.xhtml [ Failure Pass ]
-svg/transforms/svg-css-transforms.xhtml [ Failure Pass ]
-svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ImageOnlyFailure Pass ]
 tables/mozilla_expected_failures/bugs/bug128876.html [ Failure ImageOnlyFailure Pass ]
 tables/mozilla_expected_failures/bugs/bug178855.xml [ Failure ImageOnlyFailure Pass ]
 tables/mozilla_expected_failures/bugs/bug3517.html [ Failure ImageOnlyFailure Pass ]
@@ -949,9 +922,6 @@ http/tests/canvas/philip/tests/security.drawImage.canvas.html
 http/tests/canvas/philip/tests/security.drawImage.image.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
 storage/domstorage/sessionstorage/window-open.html
-svg/webarchive/svg-cursor-subresources.svg
-svg/webarchive/svg-feimage-subresources.svg
-svg/webarchive/svg-script-subresouces.svg
 transitions/cubic-bezier-overflow-transform.html
 legacy-animation-engine/transitions/cubic-bezier-overflow-transform.html
 transitions/default-timing-function.html

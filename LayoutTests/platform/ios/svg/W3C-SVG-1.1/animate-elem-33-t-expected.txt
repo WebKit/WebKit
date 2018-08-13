@@ -95,9 +95,9 @@ layer at (0,0) size 480x360
         RenderSVGEllipse {circle} at (402,147) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=75.00] [cy=0.00] [r=20.00]
         RenderSVGEllipse {circle} at (432,147) size 26x26 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=125.00] [cy=0.00] [r=20.00]
       RenderSVGEllipse {circle} at (402,147) size 26x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
-    RenderSVGText {text} at (5,210) size 365x32 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 365x32
-        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 364.89: "Test of keyPoints and keyTimes."
+    RenderSVGText {text} at (5,210) size 368x32 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 368x32
+        chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 367.83: "Test of keyPoints and keyTimes."
     RenderSVGText {text} at (5,248) size 389x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 389x21
         chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 54 width 388.14: "Number indicates the circle's passing time in seconds."

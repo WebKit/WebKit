@@ -9,11 +9,10 @@ layer at (0,0) size 800x600
             text run at (0,0) width 323: "This page contains the following errors:"
         RenderBlock {div} at (18,62) size 716x14
           RenderText {#text} at (0,0) size 512x13
-            text run at (0,0) width 512: "error on line 1 at column 132: Extra content at the end of the document"
-            text run at (511,0) width 1: " "
+            text run at (0,0) width 512: "error on line 1 at column 210: Extra content at the end of the document"
         RenderBlock {h3} at (18,94) size 716x24
-          RenderText {#text} at (0,0) size 428x22
-            text run at (0,0) width 428: "Below is a rendering of the page up to the first error."
+          RenderText {#text} at (0,0) size 425x22
+            text run at (0,0) width 425: "Below is a rendering of the page up to the first error."
       RenderBlock (anonymous) at (0,153) size 784x606
         RenderSVGRoot {svg} at (8,174) size 342x20
           RenderSVGText {text} at (0,5) size 342x19 contains 1 chunk(s)

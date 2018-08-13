@@ -2,13 +2,13 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGText {text} at (10,304) size 282x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 282x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 281.86: "$Revision: 1.11 $"
+    RenderSVGText {text} at (10,304) size 284x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 284x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 283.34: "$Revision: 1.11 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (130,10) size 220x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 220x18
-        chunk 1 (middle anchor) text run 1 at (130.18,25.00) startOffset 0 endOffset 32 width 219.63: "<animateTransform> on structure,"
+    RenderSVGText {text} at (129,10) size 222x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 221x18
+        chunk 1 (middle anchor) text run 1 at (129.90,25.00) startOffset 0 endOffset 32 width 220.20: "<animateTransform> on structure,"
     RenderSVGText {text} at (141,30) size 198x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 198x18
         chunk 1 (middle anchor) text run 1 at (141.14,45.00) startOffset 0 endOffset 30 width 197.73: "hyperlinking and text elements"

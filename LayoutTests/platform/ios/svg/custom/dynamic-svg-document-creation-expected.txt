@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 541x19
               text run at (0,0) width 541: "This tests assures dynamic SVGDocument creation via DOMParser interface works."
           RenderBlock {div} at (0,20) size 800x20
-            RenderText {#text} at (0,0) size 634x19
-              text run at (0,0) width 634: "DOMParser.parseFromString returned: [object SVGDocument] should be: [object SVGDocument]"
+            RenderText {#text} at (0,0) size 637x19
+              text run at (0,0) width 637: "DOMParser.parseFromString returned: [object XMLDocument] should be: [object SVGDocument]"
           RenderBlock {div} at (0,40) size 800x20
             RenderText {#text} at (0,0) size 616x19
               text run at (0,0) width 616: "SVGDocument's rootElement: [object SVGSVGElement] should be: [object SVGSVGElement]"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 641: "SVGDocument's rootElement first child: [object SVGGElement] should be: [object SVGGElement]"
           RenderBlock {div} at (0,120) size 800x60
             RenderText {#text} at (0,0) size 777x59
-              text run at (0,0) width 761: "XMLSerializer.serializeToString returned: <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\"><g"
+              text run at (0,0) width 758: "XMLSerializer.serializeToString returned: <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\"><g"
               text run at (0,20) width 777: "transform=\"translate(-50, -50)\"><path id=\"path\" onclick=\"mouseHandler(evt)\" fill=\"#FF0000\" stroke=\"#00C000\" d=\"M"
               text run at (0,40) width 730: "250 130 C 185 130 150 80 150 80 S 115 25 50 25 m 0 105 c 65 0 100 -50 100 -50 s 35 -55 100 -55\"/></g></svg>"
           RenderBlock {div} at (0,180) size 800x20

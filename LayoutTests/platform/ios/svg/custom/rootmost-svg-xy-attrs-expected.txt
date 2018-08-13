@@ -4,8 +4,8 @@ layer at (0,0) size 800x311
   RenderBlock {html} at (0,0) size 800x311
     RenderBody {body} at (8,21) size 784x282
       RenderBlock {h1} at (0,0) size 784x38
-        RenderText {#text} at (0,1) size 750x36
-          text run at (0,1) width 750: "Test case for x/y attributes on root-most <svg> element"
+        RenderText {#text} at (0,1) size 746x36
+          text run at (0,1) width 746: "Test case for x/y attributes on root-most <svg> element"
       RenderBlock {p} at (0,59) size 784x61
         RenderText {#text} at (0,0) size 29x19
           text run at (0,0) width 29: "The "
@@ -29,7 +29,7 @@ layer at (0,0) size 800x311
             text run at (718,5) width 40: "<svg>"
         RenderText {#text} at (0,20) size 756x39
           text run at (0,20) width 756: "element is the element at the root of an SVG fragment. For the following test to pass, the green SVG square should be"
-          text run at (0,40) width 636: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
+          text run at (0,40) width 635: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
       RenderBlock {p} at (0,135) size 784x21
         RenderText {#text} at (0,0) size 28x19
           text run at (0,0) width 28: "See "
