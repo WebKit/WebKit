@@ -1,4 +1,12 @@
 ==================
+WebKitGTK+  2.20.5
+==================
+
+What's new in WebKitGTK+ 2.20.5?
+
+  - Fix rendering artifacts in some web sites due to a bug introduced in 2.20.4.
+
+==================
 WebKitGTK+  2.20.4
 ==================
 
