@@ -1,3 +1,16 @@
+2018-08-13  Youenn Fablet  <youenn@apple.com>
+
+        [WPT] Ensure templated tests do set a Content-Type: text/html HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=188523
+
+        Reviewed by Alexey Proskuryakov.
+
+        Importing change made in https://github.com/web-platform-tests/wpt/pull/12450
+        This helps running WPT tests in more platforms.
+
+        * web-platform-tests/tools/serve/serve.py:
+        (HtmlWrapperHandler):
+
 2018-08-13  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Validate threshold values

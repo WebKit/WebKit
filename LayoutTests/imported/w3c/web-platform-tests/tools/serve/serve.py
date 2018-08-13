@@ -118,6 +118,7 @@ class WrapperHandler(object):
 
 
 class HtmlWrapperHandler(WrapperHandler):
+    headers = [('Content-Type', 'text/html')]
     def _meta_replacement(self, key, value):
         if key == b"timeout":
             if value == b"long":
