@@ -1378,6 +1378,7 @@ void WebViewImpl::processDidExit()
         setAcceleratedCompositingRootLayer(nil);
 
     updateRemoteAccessibilityRegistration(false);
+    flushPendingMouseEventCallbacks();
 
     m_gestureController = nullptr;
 }
@@ -3142,6 +3143,29 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
     }
 
     m_page->handleAcceptedCandidate(textCheckingResultFromNSTextCheckingResult(acceptedCandidate));
+}
+
+void WebViewImpl::doAfterProcessingAllPendingMouseEvents(dispatch_block_t action)
+{
+    if (!m_page->isProcessingMouseEvents()) {
+        action();
+        return;
+    }
+
+    m_callbackHandlersAfterProcessingPendingMouseEvents.append(makeBlockPtr(action));
+}
+
+void WebViewImpl::didFinishProcessingAllPendingMouseEvents()
+{
+    flushPendingMouseEventCallbacks();
+}
+
+void WebViewImpl::flushPendingMouseEventCallbacks()
+{
+    for (auto& callback : m_callbackHandlersAfterProcessingPendingMouseEvents)
+        callback();
+
+    m_callbackHandlersAfterProcessingPendingMouseEvents.clear();
 }
 
 void WebViewImpl::preferencesDidChange()

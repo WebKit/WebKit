@@ -6337,6 +6337,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _page->setFooterBannerHeightForTesting(height);
 }
 
+- (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action
+{
+    _impl->doAfterProcessingAllPendingMouseEvents(action);
+}
+
 #endif // PLATFORM(MAC)
 
 - (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger))callback

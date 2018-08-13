@@ -318,6 +318,19 @@ static NSArray *dragAndDropEventNames()
     RetainPtr<UIDropProposal> _currentDropProposal;
 }
 
+- (instancetype)initWithWebViewFrame:(CGRect)frame
+{
+    return [self initWithWebViewFrame:frame configuration:nil];
+}
+
+- (instancetype)initWithWebViewFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (configuration)
+        return [self initWithWebView:[[[TestWKWebView alloc] initWithFrame:frame configuration:configuration] autorelease]];
+
+    return [self initWithWebView:[[[TestWKWebView alloc] initWithFrame:frame] autorelease]];
+}
+
 - (instancetype)initWithWebView:(TestWKWebView *)webView
 {
     if (self = [super init]) {
@@ -621,6 +634,11 @@ static NSArray *dragAndDropEventNames()
 - (void)endDataTransfer
 {
     [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] sessionDidTransferItems:_dragSession.get()];
+}
+
+- (TestWKWebView *)webView
+{
+    return _webView.get();
 }
 
 #pragma mark - WKUIDelegatePrivate

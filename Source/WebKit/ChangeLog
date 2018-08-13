@@ -1,3 +1,55 @@
+2018-08-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] [macOS] Implement a mechanism to test drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=181898
+        <rdar://problem/39181698>
+
+        Reviewed by Simon Fraser.
+
+        Adds a new SPI method, `-_doAfterProcessingAllPendingMouseEvents:`, to WKWebView. This invokes the given
+        callback after all queued mouse events have been handled by the web process. See Tools/ChangeLog for more
+        detail.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _doAfterProcessingAllPendingMouseEvents:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::processDidExit):
+
+        Invoke any outstanding callbacks for processing pending mouse events when the web process is terminated.
+
+        (WebKit::WebViewImpl::doAfterProcessingAllPendingMouseEvents):
+
+        Either invoke the callback immediately if there are no mouse events to be processed, or insert the callback in
+        a queue that will be flushed once all mouse events have been handled.
+
+        (WebKit::WebViewImpl::didFinishProcessingAllPendingMouseEvents):
+        (WebKit::WebViewImpl::flushPendingMouseEventCallbacks):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::pinnedStateWillChange):
+        (WebKit::PageClient::pinnedStateDidChange):
+        (WebKit::PageClient::videoControlsManagerDidChange):
+
+        Drive-by tweaks: remove unnecessary semicolons after empty implementation stubs.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+
+        Notify the page client when there are no remaining mouse events left in the queue.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didFinishProcessingAllPendingMouseEvents):
+
+        Add some plumbing through PageClient, so that WebPageProxy can tell WebViewImpl when it is finished processing
+        all mouse events.
+
+        * UIProcess/win/PageClientImpl.h:
+
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix linux build after r234811

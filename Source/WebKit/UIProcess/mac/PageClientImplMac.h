@@ -238,6 +238,8 @@ private:
     _WKRemoteObjectRegistry *remoteObjectRegistry() override;
 #endif
 
+    void didFinishProcessingAllPendingMouseEvents() final;
+
     NSView *m_view;
     WebViewImpl* m_impl { nullptr };
 #if USE(AUTOCORRECTION_PANEL)

@@ -5538,8 +5538,11 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         if (!m_mouseEventQueue.isEmpty()) {
             LOG(MouseHandling, " UIProcess: handling a queued mouse event from didReceiveEvent");
             processNextQueuedMouseEvent();
-        } else if (auto* automationSession = process().processPool().automationSession())
-            automationSession->mouseEventsFlushedForPage(*this);
+        } else {
+            if (auto* automationSession = process().processPool().automationSession())
+                automationSession->mouseEventsFlushedForPage(*this);
+            m_pageClient.didFinishProcessingAllPendingMouseEvents();
+        }
 
         break;
     }

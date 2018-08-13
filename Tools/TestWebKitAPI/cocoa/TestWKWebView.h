@@ -72,10 +72,12 @@
 #if PLATFORM(MAC)
 @interface TestWKWebView (MacOnly)
 // Simulates clicking with a pressure-sensitive device, if possible.
-- (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure;
-- (void)mouseUpAtPoint:(NSPoint)point;
-- (void)mouseMoveToPoint:(NSPoint)point withFlags:(NSEventModifierFlags)flags;
-- (void)sendClicksAtPoint:(NSPoint)point numberOfClicks:(NSUInteger)numberOfClicks;
+- (void)mouseDownAtPoint:(NSPoint)pointInWindow simulatePressure:(BOOL)simulatePressure;
+- (void)mouseDragToPoint:(NSPoint)pointInWindow;
+- (void)mouseEnterAtPoint:(NSPoint)pointInWindow;
+- (void)mouseUpAtPoint:(NSPoint)pointInWindow;
+- (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags;
+- (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks;
 - (NSWindow *)hostWindow;
 - (void)typeCharacter:(char)character;
 @end

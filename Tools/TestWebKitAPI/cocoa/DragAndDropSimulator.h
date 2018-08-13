@@ -37,6 +37,8 @@
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #endif
 
+#if PLATFORM(IOS)
+
 typedef NS_ENUM(NSInteger, DragAndDropPhase) {
     DragAndDropPhaseCancelled = 0,
     DragAndDropPhaseBeginning = 1,
@@ -44,8 +46,6 @@ typedef NS_ENUM(NSInteger, DragAndDropPhase) {
     DragAndDropPhaseEntered = 3,
     DragAndDropPhasePerformingDrop = 4
 };
-
-#if PLATFORM(IOS)
 
 typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
@@ -75,19 +75,22 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 @interface DragAndDropSimulator : NSObject<WKUIDelegatePrivate, _WKInputDelegate>
 
-- (instancetype)initWithWebView:(TestWKWebView *)webView;
+- (instancetype)initWithWebViewFrame:(CGRect)frame;
+- (instancetype)initWithWebViewFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
 // The start location, end location, and locations of additional item requests are all in window coordinates.
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *insertedAttachments;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *removedAttachments;
-@property (nonatomic, readonly) DragAndDropPhase phase;
+@property (nonatomic, readonly) TestWKWebView *webView;
 
 #if PLATFORM(IOS)
 
+- (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation additionalItemRequestLocations:(ProgressToCGPointValueMap)additionalItemRequestLocations;
 - (void)waitForInputSession;
 - (void)endDataTransfer;
 
+@property (nonatomic, readonly) DragAndDropPhase phase;
 @property (nonatomic) BOOL allowsFocusToStartInputSession;
 @property (nonatomic) BOOL shouldEnsureUIApplication;
 @property (nonatomic) BOOL shouldAllowMoveOperation;
@@ -105,6 +108,17 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) NSArray<UITargetedDragPreview *> *liftPreviews;
 
 #endif // PLATFORM(IOS)
+
+#if PLATFORM(MAC)
+
+@property (nonatomic, readonly) id <NSDraggingInfo> draggingInfo;
+@property (nonatomic, readonly) NSPoint initialDragImageLocationInView;
+@property (nonatomic, readonly) NSDragOperation currentDragOperation;
+@property (nonatomic, strong) NSPasteboard *externalDragPasteboard;
+@property (nonatomic, strong) NSImage *externalDragImage;
+@property (nonatomic, copy) dispatch_block_t willEndDraggingHandler;
+
+#endif // PLATFORM(MAC)
 
 @end
 

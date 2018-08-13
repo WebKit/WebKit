@@ -139,6 +139,8 @@ private:
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
+    void didFinishProcessingAllPendingMouseEvents() final { }
+
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
     WKWPE::View& m_view;

@@ -888,6 +888,11 @@ _WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
 }
 #endif
 
+void PageClientImpl::didFinishProcessingAllPendingMouseEvents()
+{
+    m_impl->didFinishProcessingAllPendingMouseEvents();
+}
+
 void PageClientImpl::didRestoreScrollPosition()
 {
     m_impl->didRestoreScrollPosition();

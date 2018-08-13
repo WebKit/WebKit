@@ -1,3 +1,187 @@
+2018-08-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] [macOS] Implement a mechanism to test drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=181898
+        <rdar://problem/39181698>
+
+        Reviewed by Simon Fraser.
+
+        Implements the currently stubbed DragAndDropSimulator on macOS, and introduces a new API test for r227266. See
+        comments below for more detail.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm: Copied from Tools/TestWebKitAPI/mac/DragAndDropSimulatorMac.mm.
+
+        Introduce a file for cross-platform drag and drop tests, currently for iOS and macOS. Additionally add a test
+        for r227266, which was fixed earlier this year but could not be tested due to a lack of testing mechanism on
+        macOS in WebKit2.
+
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/full-page-dropzone.html: Added.
+
+        Minor tweaks to this test page to add "dragover" and "drop" event handlers.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/image-in-link-and-input.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/link-in-iframe-and-input.html: Added.
+
+        Add a new test page that includes a link embedded within an iframe below a plain text input.
+
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/mac/LegacyDragAndDropTests.mm: Renamed from Tools/TestWebKitAPI/Tests/mac/DragAndDropPasteboardTests.mm.
+
+        Move only existing WebKit2 macOS drag and drop test (DragAndDropPasteboardTests.NumberOfValidItemsForDrop) out
+        of DragAndDropPasteboardTests.mm and into a new file, DragAndDropTestsMac.mm. Additionally, rename
+        DragAndDropPasteboardTests to LegacyDragAndDropTests, since it now only contains two legacy WebView tests for
+        drag and drop.
+
+        (+[FrameLoadCompletionListener listenerWithCompletionBlock:]):
+        (-[FrameLoadCompletionListener initWithCompletionBlock:]):
+        (-[FrameLoadCompletionListener webView:didFinishLoadForFrame:]):
+        (-[DragSource draggingSourceOperationMaskForLocal:]):
+        (-[DragInfo initWithImage:offset:pasteboard:source:destinationWindow:]):
+        (-[DragInfo lastMousePosition]):
+        (-[DragInfo setLastMousePosition:]):
+        (-[DragInfo draggingDestinationWindow]):
+        (-[DragInfo draggingSourceOperationMask]):
+        (-[DragInfo draggingLocation]):
+        (-[DragInfo draggedImageLocation]):
+        (-[DragInfo draggedImage]):
+        (-[DragInfo draggingPasteboard]):
+        (-[DragInfo draggingSource]):
+        (-[DragInfo draggingSequenceNumber]):
+        (-[DragInfo slideDraggedImageTo:]):
+        (-[DragInfo namesOfPromisedFilesDroppedAtDestination:]):
+        (-[DragInfo draggingFormation]):
+        (-[DragInfo setDraggingFormation:]):
+        (-[DragInfo animatesToDestination]):
+        (-[DragInfo setAnimatesToDestination:]):
+        (-[DragInfo numberOfValidItemsForDrop]):
+        (-[DragInfo setNumberOfValidItemsForDrop:]):
+        (-[DragInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        (-[DragInfo springLoadingHighlight]):
+        (-[DragInfo resetSpringLoading]):
+        (TestWebKitAPI::getTestImage):
+        (TestWebKitAPI::webViewAfterPerformingDragOperation):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/full-page-dropzone.html: Removed.
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+
+        Flesh out some of the DragAndDropSimulator API for macOS, exposing (among other things) the drag pasteboard,
+        the current NSDraggingInfo, the initial location of the drag image, and the drag image itself.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView mouseDownAtPoint:simulatePressure:]):
+        (-[TestWKWebView mouseUpAtPoint:]):
+        (-[TestWKWebView mouseMoveToPoint:withFlags:]):
+        (-[TestWKWebView sendClicksAtPoint:numberOfClicks:]):
+        (-[TestWKWebView mouseEnterAtPoint:]):
+        (-[TestWKWebView mouseExitAtPoint:]):
+        (-[TestWKWebView mouseDragToPoint:]):
+        (-[TestWKWebView _mouseEventWithType:atLocation:]):
+        (-[TestWKWebView _mouseEventWithType:atLocation:flags:timestamp:clickCount:]):
+
+        Add TestWKWebView helpers to send MouseMove, MouseEnter and MouseDrag NSEvents to the web view. Additionally,
+        rename parameter names to these helpers to make it more obvious that these locations are all in NSWindow
+        coordinates.
+
+        (-[TestWKWebView typeCharacter:]):
+
+        Drive-by style fix: put this opening brace on the beginning of the next line.
+
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator initWithWebViewFrame:]):
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator webView]):
+
+        Small iOS DragAndDropSimulator adjustments for new DragAndDropSimulator interfaces.
+
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropTestWKWebView initWithFrame:configuration:simulator:]):
+
+        Introduce a WKWebView subclass for testing drag and drop that overrides `-dragImage:at:offset:…`, and instead
+        allows DragAndDropSimulator to take over the drag.
+
+        (-[DragAndDropTestWKWebView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+
+        Override this entry point into drag and drop code, and instead call out to the DragAndDropSimulator to
+        coordinate the drag.
+
+        (-[DragAndDropTestWKWebView waitForPendingMouseEvents]):
+
+        Helper method to wait for the web process to finish handling all in-flight mouse events.
+
+        (defaultExternalDragImage):
+
+        Set this image as the default drag image when simulating an incoming drag session from outside of the web view.
+
+        (-[DragAndDropSimulator initWithWebViewFrame:]):
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator flipAboutXAxisInHostWindow:]):
+
+        Helper method to flip a given point about the X axis of the window.
+
+        (-[DragAndDropSimulator locationInViewForCurrentProgress]):
+
+        Map a progress value (between 0 and 1) to a drag location.
+
+        (-[DragAndDropSimulator initialProgressForMouseDrag]):
+
+        Determines the initial progress value when initiation a drag in web content. This is the initial progress
+        required to ensure that the first mouse drag event exceeds the drag distance hysteresis and causes any drag
+        (if applicable) to begin.
+
+        (-[DragAndDropSimulator runFrom:to:]):
+        (-[DragAndDropSimulator performDragInWebView:atLocation:withImage:pasteboard:source:]):
+
+        Helper to coordinate drag updates in both the cases where we're simulating a drag session entering from outside
+        of the web view, and in the case where we've initiated a drag from the web view itself.
+
+        (-[DragAndDropSimulator webView]):
+        (-[DragAndDropSimulator setExternalDragPasteboard:]):
+        (-[DragAndDropSimulator externalDragPasteboard]):
+
+        Just like its iOS counterpart (setExternalItemProviders:), setting an external drag pasteboard on macOS puts the
+        DragAndDropSimulator in a mode that simulates a drag coming in from outside the web view, using the given
+        pasteboard.
+
+        (-[DragAndDropSimulator setExternalDragImage:]):
+        (-[DragAndDropSimulator externalDragImage]):
+
+        May be optionally set when specifying an external drag pasteboard to specify the drag image used. If no external
+        drag image is specified, falls back to the default image returned by `defaultExternalDragImage()`.
+
+        (-[DragAndDropSimulator draggingInfo]):
+        (-[DragAndDropSimulator willEndDraggingHandler]):
+        (-[DragAndDropSimulator setWillEndDraggingHandler:]):
+
+        Hook to allow tests to run logic right before performing the drop (if the current drag operation is not none) or
+        ending the drag session without performing a drag operation.
+
+        (-[DragAndDropSimulator initWithWebView:]): Deleted.
+        (-[DragAndDropSimulator dealloc]): Deleted.
+        (-[DragAndDropSimulator phase]): Deleted.
+        * TestWebKitAPI/mac/TestDraggingInfo.h: Copied from Tools/TestWebKitAPI/mac/DragAndDropSimulatorMac.mm.
+        * TestWebKitAPI/mac/TestDraggingInfo.mm: Added.
+
+        Mock object conforming to NSDraggingInfo that is passed to WKWebView when invoking -draggingUpdated:,
+        -draggingEntered: and -draggingExited:.
+
+        (-[TestDraggingInfo draggingPasteboard]):
+        (-[TestDraggingInfo setDraggingPasteboard:]):
+        (-[TestDraggingInfo draggingSource]):
+        (-[TestDraggingInfo setDraggingSource:]):
+        (-[TestDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        (-[TestDraggingInfo draggingDestinationWindow]):
+        (-[TestDraggingInfo draggedImage]):
+        (-[TestDraggingInfo setDraggedImage:]):
+        (-[TestDraggingInfo slideDraggedImageTo:]):
+        (-[TestDraggingInfo namesOfPromisedFilesDroppedAtDestination:]):
+        (-[TestDraggingInfo resetSpringLoading]):
+
+        Empty method stubs, to be implemented in the future as needed.
+
 2018-08-13  Thomas Denney  <tdenney@apple.com>
 
         Added Thomas Denney to contributors.json.

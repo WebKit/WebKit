@@ -372,26 +372,52 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 #if PLATFORM(MAC)
 @implementation TestWKWebView (MacOnly)
-- (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure
+- (void)mouseDownAtPoint:(NSPoint)pointInWindow simulatePressure:(BOOL)simulatePressure
 {
-    [_hostWindow _mouseDownAtPoint:point simulatePressure:simulatePressure clickCount:1];
+    [_hostWindow _mouseDownAtPoint:pointInWindow simulatePressure:simulatePressure clickCount:1];
 }
 
-- (void)mouseUpAtPoint:(NSPoint)point
+- (void)mouseUpAtPoint:(NSPoint)pointInWindow
 {
-    [_hostWindow _mouseUpAtPoint:point clickCount:1];
+    [_hostWindow _mouseUpAtPoint:pointInWindow clickCount:1];
 }
 
-- (void)mouseMoveToPoint:(NSPoint)point withFlags:(NSEventModifierFlags)flags
+- (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags
 {
-    [self mouseMoved:[NSEvent mouseEventWithType:NSEventTypeMouseMoved location:point modifierFlags:flags timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:0 pressure:0]];
+    [self mouseMoved:[self _mouseEventWithType:NSEventTypeMouseMoved atLocation:pointInWindow flags:flags timestamp:GetCurrentEventTime() clickCount:0]];
 }
 
-- (void)sendClicksAtPoint:(NSPoint)point numberOfClicks:(NSUInteger)numberOfClicks
+- (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks
 {
     for (NSUInteger clickCount = 1; clickCount <= numberOfClicks; ++clickCount) {
-        [_hostWindow _mouseDownAtPoint:point simulatePressure:NO clickCount:clickCount];
-        [_hostWindow _mouseUpAtPoint:point clickCount:clickCount];
+        [_hostWindow _mouseDownAtPoint:pointInWindow simulatePressure:NO clickCount:clickCount];
+        [_hostWindow _mouseUpAtPoint:pointInWindow clickCount:clickCount];
+    }
+}
+
+- (void)mouseEnterAtPoint:(NSPoint)pointInWindow
+{
+    [self mouseEntered:[self _mouseEventWithType:NSEventTypeMouseEntered atLocation:pointInWindow]];
+}
+
+- (void)mouseDragToPoint:(NSPoint)pointInWindow
+{
+    [self mouseDragged:[self _mouseEventWithType:NSEventTypeLeftMouseDragged atLocation:pointInWindow]];
+}
+
+- (NSEvent *)_mouseEventWithType:(NSEventType)type atLocation:(NSPoint)pointInWindow
+{
+    return [self _mouseEventWithType:type atLocation:pointInWindow flags:0 timestamp:GetCurrentEventTime() clickCount:0];
+}
+
+- (NSEvent *)_mouseEventWithType:(NSEventType)type atLocation:(NSPoint)locationInWindow flags:(NSEventModifierFlags)flags timestamp:(NSTimeInterval)timestamp clickCount:(NSUInteger)clickCount
+{
+    switch (type) {
+    case NSEventTypeMouseEntered:
+    case NSEventTypeMouseExited:
+        return [NSEvent enterExitEventWithType:type location:locationInWindow modifierFlags:flags timestamp:timestamp windowNumber:[_hostWindow windowNumber] context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber trackingNumber:1 userData:nil];
+    default:
+        return [NSEvent mouseEventWithType:type location:locationInWindow modifierFlags:flags timestamp:timestamp windowNumber:[_hostWindow windowNumber] context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:0];
     }
 }
 
@@ -400,7 +426,8 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     return _hostWindow.get();
 }
 
-- (void)typeCharacter:(char)character {
+- (void)typeCharacter:(char)character
+{
     NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
     NSEventType keyDownEventType = NSEventTypeKeyDown;
     NSEventType keyUpEventType = NSEventTypeKeyUp;

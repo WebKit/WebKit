@@ -140,6 +140,8 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
+    void didFinishProcessingAllPendingMouseEvents() final { }
+
     // Members of PageClientImpl class
     DefaultUndoController m_undoController;
 

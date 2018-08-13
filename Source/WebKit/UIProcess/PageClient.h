@@ -393,8 +393,8 @@ public:
     virtual void didChangeBackgroundColor() = 0;
     virtual void isPlayingAudioWillChange() = 0;
     virtual void isPlayingAudioDidChange() = 0;
-    virtual void pinnedStateWillChange() { };
-    virtual void pinnedStateDidChange() { };
+    virtual void pinnedStateWillChange() { }
+    virtual void pinnedStateDidChange() { }
 
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;
@@ -403,8 +403,9 @@ public:
 
     virtual void didHandleAcceptedCandidate() = 0;
 #endif
+    virtual void didFinishProcessingAllPendingMouseEvents() = 0;
 
-    virtual void videoControlsManagerDidChange() { };
+    virtual void videoControlsManagerDidChange() { }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     virtual WebCore::WebMediaSessionManager& mediaSessionManager() = 0;
