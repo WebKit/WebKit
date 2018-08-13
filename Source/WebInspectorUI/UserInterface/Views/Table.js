@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,8 +56,7 @@ WI.Table = class Table extends WI.View
         this._scrollContainerElement.className = "data-container";
         this._scrollContainerElement.addEventListener("scroll", scrollHandler);
         this._scrollContainerElement.addEventListener("mousewheel", scrollHandler);
-        if (this._delegate.tableCellMouseDown)
-            this._scrollContainerElement.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this._scrollContainerElement.addEventListener("mousedown", this._handleMouseDown.bind(this));
         if (this._delegate.tableCellContextMenuClicked)
             this._scrollContainerElement.addEventListener("contextmenu", this._handleContextMenu.bind(this));
 
@@ -1202,7 +1201,10 @@ WI.Table = class Table extends WI.View
         let column = this._visibleColumns[columnIndex];
         let rowIndex = row.__index;
 
-        this._delegate.tableCellMouseDown(this, cell, column, rowIndex, event);
+        if (this._delegate.tableShouldSelectRow && !this._delegate.tableShouldSelectRow(this, cell, column, rowIndex))
+            return;
+
+        this.selectRow(rowIndex);
     }
 
     _handleContextMenu(event)

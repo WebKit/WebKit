@@ -1,3 +1,26 @@
+2018-08-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should handle row selection instead of the table delegate
+        https://bugs.webkit.org/show_bug.cgi?id=188534
+        <rdar://problem/43253335>
+
+        Reviewed by Joseph Pecoraro.
+
+        Row selection should be implemented by Table, rather than its delegate.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.tableShouldSelectRow):
+        (WI.NetworkTableContentView.prototype.tableCellMouseDown): Deleted.
+        Prevent selection unless the clicked cell belongs to the name column.
+
+        * UserInterface/Views/ResourceCookiesContentView.js:
+        (WI.ResourceCookiesContentView.prototype.tableShouldSelectRow):
+        Always prevent selection.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype._handleMouseDown):
+
 2018-08-12  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Color wells should appear pressed when presenting a color picker

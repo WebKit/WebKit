@@ -324,14 +324,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     // Table delegate
 
-    tableCellMouseDown(table, cell, column, rowIndex, event)
-    {
-        if (column !== this._nameColumn)
-            return;
-
-        this._table.selectRow(rowIndex);
-    }
-
     tableCellContextMenuClicked(table, cell, column, rowIndex, event)
     {
         if (column !== this._nameColumn)
@@ -345,6 +337,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         contextMenu.appendSeparator();
         contextMenu.appendItem(WI.UIString("Export HAR"), () => { this._exportHAR(); });
+    }
+
+    tableShouldSelectRow(table, cell, column, rowIndex)
+    {
+        return column === this._nameColumn;
     }
 
     tableSelectedRowChanged(table, rowIndex)

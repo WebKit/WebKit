@@ -58,6 +58,11 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
 
     // Table delegate
 
+    tableShouldSelectRow(table, cell, column, rowIndex)
+    {
+        return false;
+    }
+
     tablePopulateCell(table, cell, column, rowIndex)
     {
         let cookie = this._dataSourceForTable(table)[rowIndex];
