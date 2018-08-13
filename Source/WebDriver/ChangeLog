@@ -1,3 +1,20 @@
+2018-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: do not handle prompts that appear while running scripts
+        https://bugs.webkit.org/show_bug.cgi?id=188468
+
+        Reviewed by Žan Doberšek.
+
+        This changed in the spec, we should just finish the script without handling the alert at all.
+        https://github.com/w3c/webdriver/commit/afb578090bc95718debeab6a6821da8d12b952c8
+
+        "If at any point during the algorithm a user prompt appears, abort all subsequent substeps of this algorithm,
+        and return success with data null."
+        https://w3c.github.io/webdriver/#dfn-execute-a-function-body
+
+        * Session.cpp:
+        (WebDriver::Session::executeScript):
+
 2018-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] WebDriver: do not use default browser arguments when browser binary has been provided

@@ -1859,7 +1859,7 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
             if (response.isError || !response.responseObject) {
                 auto result = CommandResult::fail(WTFMove(response.responseObject));
                 if (result.errorCode() == CommandResult::ErrorCode::UnexpectedAlertOpen)
-                    handleUnexpectedAlertOpen(WTFMove(completionHandler));
+                    completionHandler(CommandResult::success());
                 else
                     completionHandler(WTFMove(result));
                 return;
