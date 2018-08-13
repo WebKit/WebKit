@@ -1,3 +1,15 @@
+2018-08-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Avoid timeout resulted from calling waitUntilDone when test is not running
+        https://bugs.webkit.org/show_bug.cgi?id=188389
+
+        Reviewed by Chris Dumez.
+
+        If test is not running, we should not set the waitUntilDone flag, or it may cause subsequent tests timeout.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::waitUntilDone):
+
 2018-08-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] [macOS] Implement a mechanism to test drag and drop

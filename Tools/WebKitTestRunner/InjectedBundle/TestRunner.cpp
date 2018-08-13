@@ -185,9 +185,12 @@ void TestRunner::waitUntilDownloadFinished()
 
 void TestRunner::waitUntilDone()
 {
+    auto& injectedBundle = InjectedBundle::singleton();
+    RELEASE_ASSERT(injectedBundle.isTestRunning());
+
     setWaitUntilDone(true);
     // FIXME: Watchdog timer should be moved to UI process in order to take the elapsed time in anotehr process into account.
-    if (InjectedBundle::singleton().useWaitToDumpWatchdogTimer())
+    if (injectedBundle.useWaitToDumpWatchdogTimer())
         initializeWaitToDumpWatchdogTimerIfNeeded();
 }
 
