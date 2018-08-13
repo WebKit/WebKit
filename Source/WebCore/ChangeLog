@@ -1,3 +1,16 @@
+2018-08-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, since -Wsign-compare warnings in URL.cpp
+
+        This regressed in r233798 when m_schemeEnd changed to a bitfield. The code looks safe to
+        me, so just silence the warnings with casts.
+
+        * platform/URL.cpp:
+        (WebCore::URL::setHost):
+        (WebCore::URL::setHostAndPort):
+        (WebCore::URL::setUser):
+        (WebCore::URL::setPass):
+
 2018-08-13  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet more in editing code

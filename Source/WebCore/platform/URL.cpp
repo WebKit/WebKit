@@ -441,7 +441,7 @@ void URL::setHost(const String& s)
     if (!appendEncodedHostname(encodedHostName, s))
         return;
     
-    bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
+    bool slashSlashNeeded = m_userStart == static_cast<unsigned>(m_schemeEnd + 1);
     
     StringBuilder builder;
     builder.append(m_string.left(hostStart()));
@@ -499,7 +499,7 @@ void URL::setHostAndPort(const String& hostAndPort)
     if (!appendEncodedHostname(encodedHostName, hostName))
         return;
 
-    bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
+    bool slashSlashNeeded = m_userStart == static_cast<unsigned>(m_schemeEnd + 1);
 
     StringBuilder builder;
     builder.append(m_string.left(hostStart()));
@@ -553,7 +553,7 @@ void URL::setUser(const String& user)
     unsigned end = m_userEnd;
     if (!user.isEmpty()) {
         String u = percentEncodeCharacters(user, URLParser::isInUserInfoEncodeSet);
-        if (m_userStart == m_schemeEnd + 1)
+        if (m_userStart == static_cast<unsigned>(m_schemeEnd + 1))
             u = "//" + u;
         // Add '@' if we didn't have one before.
         if (end == m_hostEnd || (end == m_passwordEnd && m_string[end] != '@'))
@@ -580,7 +580,7 @@ void URL::setPass(const String& password)
     unsigned end = m_passwordEnd;
     if (!password.isEmpty()) {
         String p = ":" + percentEncodeCharacters(password, URLParser::isInUserInfoEncodeSet) + "@";
-        if (m_userEnd == m_schemeEnd + 1)
+        if (m_userEnd == static_cast<unsigned>(m_schemeEnd + 1))
             p = "//" + p;
         // Eat the existing '@' since we are going to add our own.
         if (end != m_hostEnd && m_string[end] == '@')
