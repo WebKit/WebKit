@@ -110,8 +110,10 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
             // Formatting root boxes are special-cased and they don't come here.
             ASSERT(!layoutBox.establishesFormattingContext());
-
             computeHeightAndMargin(layoutContext, layoutBox, displayBox);
+            // Finalize position with clearance.
+            if (layoutBox.hasClearance())
+                computeVerticalPositionWithClearance(floatingContext, layoutBox, displayBox);
             if (!is<Container>(layoutBox))
                 continue;
             auto& container = downcast<Container>(layoutBox);
@@ -157,8 +159,15 @@ void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext,
 void BlockFormattingContext::computeFloatingPosition(FloatingContext& floatingContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
-    displayBox.setTopLeft(floatingContext.computePosition(layoutBox));
+    displayBox.setTopLeft(floatingContext.positionForFloat(layoutBox));
     floatingContext.floatingState().append(layoutBox);
+}
+
+void BlockFormattingContext::computeVerticalPositionWithClearance(const FloatingContext& floatingContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    ASSERT(layoutBox.hasClearance());
+    if (auto verticalPositionWithClearance = floatingContext.verticalPositionWithClearance(layoutBox))
+        displayBox.setTop(*verticalPositionWithClearance);
 }
 
 void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const

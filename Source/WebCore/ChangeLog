@@ -1,3 +1,38 @@
+2018-08-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Add basic clearance support
+        https://bugs.webkit.org/show_bug.cgi?id=188492
+
+        Reviewed by Antti Koivisto.
+
+        Adjust final position of a block level box with clearance when float is present.
+
+        Test: fast/block/block-only/floating-left-and-right-with-clearance.html
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::alignWithContainingBlock const):
+        (WebCore::Layout::FloatingContext::toContainingBlock const):
+        (WebCore::Layout::FloatingContext::computePosition const): Deleted.
+        * layout/FloatingContext.h:
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/FloatingState.h:
+        (WebCore::Layout::FloatingState::leftBottom const):
+        (WebCore::Layout::FloatingState::rightBottom const):
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionWithClearance const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::hasClearance const):
+        * layout/layouttree/LayoutBox.h:
+
 2018-08-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Expose CloseEvent and CustomEvent to workers

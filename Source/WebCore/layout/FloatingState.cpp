@@ -90,7 +90,7 @@ void FloatingState::append(const Box& layoutBox)
     m_floats.append({ layoutBox, *this });
 }
 
-std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot) const
+std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot, Clear type) const
 {
     if (m_floats.isEmpty())
         return { };
@@ -101,6 +101,10 @@ std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot
     for (auto& floatItem : m_floats) {
         // Ignore floats from other formatting contexts when the floating state is inherited.
         if (&formattingContextRoot != &floatItem.layoutBox().formattingContextRoot())
+            continue;
+
+        if ((type == Clear::Left && !floatItem.layoutBox().isLeftFloatingPositioned())
+            || (type == Clear::Right && !floatItem.layoutBox().isRightFloatingPositioned()))
             continue;
 
         auto floatsBottom = floatItem.displayBox().rectWithMargin().bottom();

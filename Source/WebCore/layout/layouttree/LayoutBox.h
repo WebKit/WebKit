@@ -62,6 +62,7 @@ public:
     bool isFloatingPositioned() const;
     bool isLeftFloatingPositioned() const;
     bool isRightFloatingPositioned() const;
+    bool hasClearance() const;
 
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 

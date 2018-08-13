@@ -113,7 +113,7 @@ FloatingContext::FloatingContext(FloatingState& floatingState)
 {
 }
 
-Position FloatingContext::computePosition(const Box& layoutBox) const
+Position FloatingContext::positionForFloat(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
     FloatingState::FloatItem floatItem = { layoutBox, m_floatingState };
@@ -129,6 +129,50 @@ Position FloatingContext::computePosition(const Box& layoutBox) const
     }
 
     return toContainingBlock(floatItem, floatPosition);
+}
+
+std::optional<LayoutUnit> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
+{
+    ASSERT(layoutBox.hasClearance());
+    ASSERT(layoutBox.isBlockLevelBox());
+
+    if (m_floatingState.isEmpty())
+        return { };
+
+    auto bottom = [&](std::optional<LayoutUnit> floatBottom) -> std::optional<LayoutUnit> {
+        // 'bottom' is in the formatting root's coordinate system.
+        if (!floatBottom)
+            return { };
+
+        // 9.5.2 Controlling flow next to floats: the 'clear' property
+        // Then the amount of clearance is set to the greater of:
+        //
+        // 1. The amount necessary to place the border edge of the block even with the bottom outer edge of the lowest float that is to be cleared.
+        // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
+
+        auto absoluteDisplayBox = FormattingContext::mapToAncestor(layoutContext(), layoutBox, downcast<Container>(m_floatingState.root()));
+        if (floatBottom <= absoluteDisplayBox.rectWithMargin().top())
+            return { };
+
+        // The return vertical position is in the containing block's coordinate system.
+        auto* containingBlockDisplayBox = layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
+        return *floatBottom - containingBlockDisplayBox->top();
+    };
+
+    auto clear = layoutBox.style().clear();
+    auto& formattingContextRoot = layoutBox.formattingContextRoot();
+
+    if (clear == Clear::Left)
+        return bottom(m_floatingState.leftBottom(formattingContextRoot));
+
+    if (clear == Clear::Right)
+        return bottom(m_floatingState.rightBottom(formattingContextRoot));
+
+    if (clear == Clear::Both)
+        return bottom(m_floatingState.bottom(formattingContextRoot));
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 Position FloatingContext::floatingPosition(const FloatingState::FloatItem& floatItem) const
@@ -176,13 +220,13 @@ LayoutUnit FloatingContext::alignWithContainingBlock(const FloatingState::FloatI
 {
     // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
     // (Either there's no floats at all or this box does not fit at any vertical positions where the floats are.)
-    auto& containgBlockDisplayBox = floatItem.containingBlockDisplayBox();
-    auto containingBlockContentBoxLeft = containgBlockDisplayBox.left() + containgBlockDisplayBox.contentBoxLeft();
+    auto& containingBlockDisplayBox = floatItem.containingBlockDisplayBox();
+    auto containingBlockContentBoxLeft = containingBlockDisplayBox.left() + containingBlockDisplayBox.contentBoxLeft();
 
     if (floatItem.layoutBox().isLeftFloatingPositioned())
         return containingBlockContentBoxLeft;
 
-    return containingBlockContentBoxLeft + containgBlockDisplayBox.contentBoxWidth() - floatItem.displayBox().marginBox().width();
+    return containingBlockContentBoxLeft + containingBlockDisplayBox.contentBoxWidth() - floatItem.displayBox().marginBox().width();
 }
 
 LayoutUnit FloatingContext::alignWithFloatings(const FloatingPair& floatingPair, const FloatingState::FloatItem& floatItem) const
@@ -227,8 +271,8 @@ Position FloatingContext::toContainingBlock(const FloatingState::FloatItem& floa
     if (&floatItem.containingBlock() == &m_floatingState.root())
         return position;
 
-    auto& containgBlockDisplayBox = floatItem.containingBlockDisplayBox();
-    return { position.x - containgBlockDisplayBox.left(), position.y - containgBlockDisplayBox.top() };
+    auto& containingBlockDisplayBox = floatItem.containingBlockDisplayBox();
+    return { position.x - containingBlockDisplayBox.left(), position.y - containingBlockDisplayBox.top() };
 }
 
 FloatingPair::FloatingPair(const FloatingState::FloatList& floats)

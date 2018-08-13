@@ -51,6 +51,9 @@ public:
     void remove(const Box& layoutBox);
 
     bool isEmpty() const { return m_floats.isEmpty(); }
+
+    std::optional<LayoutUnit> leftBottom(const Box& formattingContextRoot) const;
+    std::optional<LayoutUnit> rightBottom(const Box& formattingContextRoot) const;
     std::optional<LayoutUnit> bottom(const Box& formattingContextRoot) const;
 
     class FloatItem {
@@ -81,10 +84,27 @@ private:
     LayoutContext& layoutContext() const { return m_layoutContext; }
     const Box& root() const { return *m_formattingContextRoot; }
 
+    std::optional<LayoutUnit> bottom(const Box& formattingContextRoot, Clear) const;
+
     LayoutContext& m_layoutContext;
     WeakPtr<Box> m_formattingContextRoot;
     FloatList m_floats;
 };
+
+inline std::optional<LayoutUnit> FloatingState::leftBottom(const Box& formattingContextRoot) const
+{ 
+    return bottom(formattingContextRoot, Clear::Left);
+}
+
+inline std::optional<LayoutUnit> FloatingState::rightBottom(const Box& formattingContextRoot) const
+{
+    return bottom(formattingContextRoot, Clear::Right);
+}
+
+inline std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot) const
+{
+    return bottom(formattingContextRoot, Clear::Both);
+}
 
 }
 }

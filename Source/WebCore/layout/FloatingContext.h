@@ -49,7 +49,8 @@ public:
 
     FloatingState& floatingState() const { return m_floatingState; }
 
-    Position computePosition(const Box&) const;
+    Position positionForFloat(const Box&) const;
+    std::optional<LayoutUnit> verticalPositionWithClearance(const Box&) const;
 
 private:
     LayoutContext& layoutContext() const { return m_floatingState.layoutContext(); }
