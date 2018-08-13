@@ -1,3 +1,12 @@
+2018-08-13  Thomas Denney  <tdenney@apple.com>
+
+        Added Thomas Denney to contributors.json.
+        https://bugs.webkit.org/show_bug.cgi?id=188525
+
+        Reviewed by Myles C. Maxfield.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-08-13  Antti Koivisto  <antti@apple.com>
 
         Meaning of OptionSet::contains is unclear when used with OptionSet argument

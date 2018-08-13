@@ -5438,6 +5438,18 @@
       ],
       "status" : "committer"
    },
+   "Thomas Denney": {
+       "emails": [
+           "tdenney@apple.com",
+           "me@thomasdenney.co.uk"
+       ],
+       "expertise": "WebGPU",
+       "nicks": [
+           "ThomasDenney",
+           "thomasdenney3"
+       ],
+       "status": "contributor"
+   },
    "Thomas Sepez" : {
       "emails" : [
          "tsepez@chromium.org"
