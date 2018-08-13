@@ -1,3 +1,23 @@
+2018-08-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Expose CloseEvent and CustomEvent to workers
+        https://bugs.webkit.org/show_bug.cgi?id=188493
+
+        Reviewed by Sam Weinig.
+
+        This patch exposes CloseEvent and CustomEvent to workers.
+        It is OK since they do not depend on things in the main thread.
+        For example, we cannot expose FormData right now since it depends
+        on Page.
+
+        We do not expose PromiseRejectionEvent in this patch since it will
+        be done in [1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=188265
+
+        * Modules/websockets/CloseEvent.idl:
+        * dom/CustomEvent.idl:
+
 2018-08-13  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding, border and sizing properties

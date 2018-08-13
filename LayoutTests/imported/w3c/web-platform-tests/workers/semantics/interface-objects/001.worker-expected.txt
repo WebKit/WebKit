@@ -15,7 +15,7 @@ PASS The Path2D interface object should be exposed.
 FAIL The PromiseRejectionEvent interface object should be exposed. assert_own_property: expected property "PromiseRejectionEvent" missing
 PASS The EventSource interface object should be exposed. 
 PASS The WebSocket interface object should be exposed. 
-FAIL The CloseEvent interface object should be exposed. assert_own_property: expected property "CloseEvent" missing
+PASS The CloseEvent interface object should be exposed. 
 FAIL The BroadcastChannel interface object should be exposed. assert_own_property: expected property "BroadcastChannel" missing
 PASS The ArrayBuffer interface object should be exposed. 
 PASS The Int8Array interface object should be exposed. 
@@ -43,7 +43,7 @@ PASS The FileReaderSync interface object should be exposed.
 PASS The EventTarget interface object should be exposed. 
 PASS The ErrorEvent interface object should be exposed. 
 PASS The Event interface object should be exposed. 
-FAIL The CustomEvent interface object should be exposed. assert_own_property: expected property "CustomEvent" missing
+PASS The CustomEvent interface object should be exposed. 
 PASS The DOMException interface object should be exposed. 
 PASS The ReadableStream interface object should be exposed. 
 FAIL The WritableStream interface object should be exposed. assert_own_property: expected property "WritableStream" missing

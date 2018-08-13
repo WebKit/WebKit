@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// FIXME: This should be exposed to workers as well.
 [
     Constructor(DOMString type, optional CustomEventInit eventInitDict),
+    Exposed=(Window,Worker),
     JSCustomMarkFunction,
 ] interface CustomEvent : Event {
     [CustomGetter] readonly attribute any detail;

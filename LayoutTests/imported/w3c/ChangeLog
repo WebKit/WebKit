@@ -1,3 +1,12 @@
+2018-08-13  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Expose CloseEvent and CustomEvent to workers
+        https://bugs.webkit.org/show_bug.cgi?id=188493
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt:
+
 2018-08-13  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Implement flow-relative margin, padding, border and sizing properties
