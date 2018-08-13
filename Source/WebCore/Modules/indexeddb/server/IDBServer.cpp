@@ -510,7 +510,7 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime, 
 
     HashSet<UniqueIDBDatabase*> openDatabases;
     for (auto* connection : m_databaseConnections.values())
-        openDatabases.add(&connection->database());
+        openDatabases.add(connection->database());
 
     for (auto& database : openDatabases)
         database->immediateCloseForUserDelete();
@@ -526,10 +526,13 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
 
     HashSet<UniqueIDBDatabase*> openDatabases;
     for (auto* connection : m_databaseConnections.values()) {
-        const auto& identifier = connection->database().identifier();
+        auto database = connection->database();
+        ASSERT(database);
+
+        const auto& identifier = database->identifier();
         for (auto& origin : origins) {
             if (identifier.isRelatedToOrigin(origin)) {
-                openDatabases.add(&connection->database());
+                openDatabases.add(database);
                 break;
             }
         }

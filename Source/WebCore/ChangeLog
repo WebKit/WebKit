@@ -1,3 +1,63 @@
+2018-08-12  Sihui Liu  <sihui_liu@apple.com>
+
+        CrashTracer: com.apple.WebKit.Storage at WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient(WebCore::IDBServer::UniqueIDBDatabaseConnection&)
+        https://bugs.webkit.org/show_bug.cgi?id=188474
+
+        Reviewed by Chris Dumez.
+
+        UniqueIDBDatabaseConnection is refcounted by UniqueIDBDatabaseTransaction and it refcounts
+        UniqueIDBDatabaseTransaction. This cycle could make UniqueIDBDatabaseConnection outlives
+        UniqueIDBDatabase, so its reference to UniqueIDBDatabase may be stale. Calling a function
+        on a stale object is probably the reason of recent various storage process crashes in
+        indexedDB.
+
+        This patch makes m_database a WeakPtr and adds assertions that could help us debug the
+        crashes.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesForOrigins):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::abortTransactionWithoutCallback):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::confirmDidCloseFromServer):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFireVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFinishHandlingVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::createVersionChangeTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::establishTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didAbortTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::database):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abort):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::commit):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::objectStoreIdentifiers):
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::openDatabaseSuccess):
+        (WebCore::IDBResultData::openDatabaseUpgradeNeeded):
+
 2018-08-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Break reference cycle in ErrorEvent by using JSValueInWrappedObject
