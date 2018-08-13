@@ -111,7 +111,6 @@ class CommittersTest(unittest.TestCase):
     def test_contributors_by_fuzzy_match(self):
         self._assert_fuzz_match('Geof Garen', 'Geoffrey Garen', 4)
         self._assert_fuzz_match('Sam', 'Sam Weinig', 0)
-        self._assert_fuzz_match('me', None, 2)
 
     # The remaining tests test that certain names are resolved in a specific way.
     # We break this up into multiple tests so that each is faster and they can
