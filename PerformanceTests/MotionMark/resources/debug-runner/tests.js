@@ -191,10 +191,6 @@ Suites.push(new Suite("HTML suite",
             name: "CSS bouncing tagged images"
         },
         {
-            url: "dom/leaves.html",
-            name: "Leaves 2.0"
-        },
-        {
             url: "dom/focus.html",
             name: "Focus 2.0"
         },
@@ -264,6 +260,23 @@ Suites.push(new Suite("SVG suite",
             url: "bouncing-particles/bouncing-svg-images.html?particleWidth=80&particleHeight=80&imageSrc=../resources/yin-yang.png",
             name: "SVG bouncing PNG images"
         },
+    ]
+));
+
+Suites.push(new Suite("Leaves suite",
+    [
+        {
+            url: "dom/leaves.html?style=simple",
+            name: "Translate-only Leaves"
+        },
+        {
+            url: "dom/leaves.html?style=scale",
+            name: "Translate + Scale Leaves"
+        },
+        {
+            url: "dom/leaves.html?style=opacity",
+            name: "Translate + Opacity Leaves"
+        }
     ]
 ));
 

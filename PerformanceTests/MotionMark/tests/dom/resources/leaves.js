@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,47 +22,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-Leaf = Utilities.createSubclass(Particle,
+(function() {
+
+var SuperLeaf = window.Leaf;
+var SimpleLeaf = Utilities.createSubclass(SuperLeaf,
     function(stage)
     {
-        this.element = document.createElement("img");
-        this.element.setAttribute("src", Stage.randomElementInArray(stage.images).src);
-        stage.element.appendChild(this.element);
+        SuperLeaf.call(this, stage);
+    }, {
 
-        Particle.call(this, stage);
+    sizeMinimum: 25,
+    sizeRange: 0,
+    usesOpacity: false,
+
+    move: function()
+    {
+        this.element.style.transform = "translate(" + this._position.x + "px, " + this._position.y + "px)" + this.rotater.rotateZ();
+    }
+});
+
+var ScaleLeaf = Utilities.createSubclass(SuperLeaf,
+    function(stage)
+    {
+        SuperLeaf.call(this, stage);
     }, {
 
     sizeMinimum: 20,
-    sizeRange: 40,
+    sizeRange: 30,
+    usesOpacity: false,
 
-    reset: function()
+    move: function()
     {
-        Particle.prototype.reset.call(this);
-        this.element.style.width = this.size.x + "px";
-        this.element.style.height = this.size.y + "px";
-        this._opacity = .01;
-        this._opacityRate = 0.02 * Stage.random(1, 6);
-        this._position = new Point(Stage.random(0, this.maxPosition.x), Stage.random(-this.size.height, this.maxPosition.y));
-        this._velocity = new Point(Stage.random(-6, -2), .1 * this.size.y + Stage.random(-1, 1));
-    },
+        this.element.style.transform = "translate(" + this._position.x + "px, " + this._position.y + "px)" + this.rotater.rotateZ();
+    }
+});
 
-    animate: function(timeDelta)
+var OpacityLeaf = Utilities.createSubclass(SuperLeaf,
+    function(stage)
     {
-        this.rotater.next(timeDelta);
+        SuperLeaf.call(this, stage);
+    }, {
 
-        this._position.x += this._velocity.x + 8 * this.stage.focusX;
-        this._position.y += this._velocity.y;
-        this._opacity += this._opacityRate;
-        if (this._opacity > 1) {
-            this._opacity = 1;
-            this._opacityRate *= -1;
-        } else if (this._opacity < 0 || this._position.y > this.stage.size.height)
-            this.reset();
-
-        if (this._position.x < -this.size.width || this._position.x > this.stage.size.width)
-            this._position.x = this._position.x - Math.sign(this._position.x) * (this.size.width + this.stage.size.width);
-        this.move();
-    },
+    sizeMinimum: 25,
+    sizeRange: 0,
+    usesOpacity: true,
 
     move: function()
     {
@@ -70,3 +73,27 @@ Leaf = Utilities.createSubclass(Particle,
         this.element.style.opacity = this._opacity;
     }
 });
+
+
+var LeavesBenchmark = window.benchmarkClass;
+var LeavesDerivedBenchmark = Utilities.createSubclass(LeavesBenchmark,
+    function(options)
+    {
+        switch (options["style"]) {
+        case "simple":
+            window.Leaf = SimpleLeaf;
+            break;
+        case "scale":
+            window.Leaf = ScaleLeaf;
+            break;
+        case "opacity":
+            window.Leaf = OpacityLeaf;
+            break;
+        }
+        LeavesBenchmark.call(this, options);
+    }
+);
+
+window.benchmarkClass = LeavesDerivedBenchmark;
+
+})();

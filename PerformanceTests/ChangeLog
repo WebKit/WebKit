@@ -1,3 +1,19 @@
+2018-08-13  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] Update Leaves test
+        https://bugs.webkit.org/show_bug.cgi?id=188530
+        <rdar://problem/43251862>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Update Leaves test to include opacity and scale. Add new Leaves suite that isolate those components
+        for debugging purposes.
+
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/dom/leaves.html:
+        * MotionMark/tests/dom/resources/leaves.js:
+        * MotionMark/tests/master/resources/leaves.js:
+
 2018-08-10  Ben Richards  <benton_richards@apple.com>
 
         Add ability to ignore process prewarming for launch time benchmark
