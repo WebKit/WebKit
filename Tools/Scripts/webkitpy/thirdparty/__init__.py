@@ -146,6 +146,8 @@ class AutoinstallImportHook(object):
                               "py-1.5.2/py")
         self._install("https://pypi.python.org/packages/11/bf/cbeb8cdfaffa9f2ea154a30ae31a9d04a1209312e2919138b4171a1f8199/pluggy-0.6.0.tar.gz",
                               "pluggy-0.6.0/pluggy")
+        self._install("https://pypi.python.org/packages/a1/e1/2d9bc76838e6e6667fde5814aa25d7feb93d6fa471bf6816daac2596e8b2/atomicwrites-1.1.5.tar.gz",
+                              "atomicwrites-1.1.5/atomicwrites")
         self._install("https://pypi.python.org/packages/94/4a/db842e7a0545de1cdb0439bb80e6e42dfe82aaeaadd4072f2263a4fbed23/funcsigs-1.0.2.tar.gz",
                               "funcsigs-1.0.2/funcsigs")
         self._install("https://pypi.python.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
