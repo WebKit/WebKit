@@ -1,5 +1,22 @@
 2018-08-13  Jon Lee  <jonlee@apple.com>
 
+        [MotionMark] Update Multiply test
+        https://bugs.webkit.org/show_bug.cgi?id=188532
+        <rdar://problem/43252151>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Update Multiply test to have a larger upper limit of number of particles. Cycle through three
+        different ways of hiding an element. Add new Multiple suite that isolates those components for
+        debugging purposes.
+
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/dom/multiply.html: Added.
+        * MotionMark/tests/dom/resources/multiply.js: Added.
+        * MotionMark/tests/master/resources/multiply.js:
+
+2018-08-13  Jon Lee  <jonlee@apple.com>
+
         [MotionMark] Update Leaves test
         https://bugs.webkit.org/show_bug.cgi?id=188530
         <rdar://problem/43251862>

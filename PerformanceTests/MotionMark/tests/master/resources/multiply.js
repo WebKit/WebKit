@@ -32,10 +32,19 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         this._offsetIndex = 0;
     }, {
 
+    visibleCSS: [
+        ["visibility", "hidden", "visible"],
+        ["opacity", 0, 1],
+        ["display", "none", "block"]
+    ],
+    totalRows: 45,
+
     initialize: function(benchmark, options)
     {
         Stage.prototype.initialize.call(this, benchmark, options);
-        var tileSize = Math.round(this.size.height / 25);
+        var tileSize = Math.round(this.size.height / this.totalRows);
+        if (options.visibleCSS)
+            this.visibleCSS = options.visibleCSS;
 
         // Fill the scene with elements
         var x = Math.round((this.size.width - tileSize) / 2);
@@ -83,7 +92,8 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         tile.style.top = y + 'px';
         tile.style.width = tileSize + 'px';
         tile.style.height = tileSize + 'px';
-        tile.style.visibility = "hidden";
+        var visibleCSS = this.visibleCSS[this.tiles.length % this.visibleCSS.length];
+        tile.style[visibleCSS[0]] = visibleCSS[1];
 
         var distance = 1 / tileSize * this.size.multiply(0.5).subtract(new Point(x + halfTileSize, y + halfTileSize)).length();
         this.tiles.push({
@@ -91,7 +101,8 @@ var MultiplyStage = Utilities.createSubclass(Stage,
             rotate: rotateDeg,
             step: Math.max(3, distance / 1.5),
             distance: distance,
-            active: false
+            active: false,
+            visibleCSS: visibleCSS,
         });
     },
 
@@ -116,7 +127,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         for (var i = 0; i < this._offsetIndex; ++i) {
             var tile = this.tiles[i];
             tile.active = true;
-            tile.element.style.visibility = "";
+            tile.element.style[tile.visibleCSS[0]] = tile.visibleCSS[2];
             tile.rotate += tile.step;
             tile.element.style.transform = "rotate(" + tile.rotate + "deg)";
 
@@ -125,8 +136,9 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         }
 
         for (var i = this._offsetIndex; i < this.tiles.length && this.tiles[i].active; ++i) {
-            this.tiles[i].active = false;
-            this.tiles[i].element.style.visibility = "hidden";
+            var tile = this.tiles[i];
+            tile.active = false;
+            tile.element.style[tile.visibleCSS[0]] = tile.visibleCSS[1];
         }
     }
 });

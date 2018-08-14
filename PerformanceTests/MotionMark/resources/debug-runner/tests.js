@@ -280,6 +280,23 @@ Suites.push(new Suite("Leaves suite",
     ]
 ));
 
+Suites.push(new Suite("Multiply suite",
+    [
+        {
+            url: "dom/multiply.html?style=opacity",
+            name: "Multiply: CSS opacity only"
+        },
+        {
+            url: "dom/multiply.html?style=display",
+            name: "Multiply: CSS display only"
+        },
+        {
+            url: "dom/multiply.html?style=visibility",
+            name: "Multiply: CSS visibility only"
+        }
+    ]
+));
+
 Suites.push(new Suite("Text suite",
     [
         {
