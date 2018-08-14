@@ -1,5 +1,18 @@
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [DFG] DFGPredictionPropagation should set PrimaryPass when processing invariants
+        https://bugs.webkit.org/show_bug.cgi?id=188557
+
+        Reviewed by Mark Lam.
+
+        DFGPredictionPropagationPhase should set PrimaryPass before processing invariants since
+        processing for ArithRound etc.'s invariants requires `m_pass` load. This issue is found
+        in UBSan's result.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [JSC] Should not rotate constant with 64
         https://bugs.webkit.org/show_bug.cgi?id=188556
 

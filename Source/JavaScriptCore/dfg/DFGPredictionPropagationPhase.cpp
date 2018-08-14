@@ -50,11 +50,12 @@ public:
         ASSERT(m_graph.m_form == ThreadedCPS);
         ASSERT(m_graph.m_unificationState == GloballyUnified);
 
+        m_pass = PrimaryPass;
+
         propagateThroughArgumentPositions();
 
         processInvariants();
 
-        m_pass = PrimaryPass;
         propagateToFixpoint();
         
         m_pass = RareCasePass;
@@ -1263,8 +1264,8 @@ private:
 
     Vector<Node*> m_dependentNodes;
     Node* m_currentNode;
-    bool m_changed;
-    PredictionPass m_pass; // We use different logic for considering predictions depending on how far along we are in propagation.
+    bool m_changed { false };
+    PredictionPass m_pass { PrimaryPass }; // We use different logic for considering predictions depending on how far along we are in propagation.
 };
 
 } // Anonymous namespace.
