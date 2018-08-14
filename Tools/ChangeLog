@@ -1,3 +1,30 @@
+2018-08-14  Darshan Kadu  <dkadu@igalia.com>
+
+        Enhancement request: Make export-w3c-test-changes add the PR to "See Also" links
+        https://bugs.webkit.org/show_bug.cgi?id=186140
+
+        Reviewed by Youenn Fablet.
+
+        Added an optional parameter see_also to post_comment_to_bug function and used it for adding see_also variable's content in "See Also"
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.post_comment_to_bug):
+        Modified mock for see_also parameter
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla.post_comment_to_bug):
+        Made following unit tests to have see_also in bug comment
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        (SheriffTest.test_post_blame_comment_on_bug):
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/steps/applywatchlist_unittest.py:
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter.make_pull_request):
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py:
+        (TestExporterTest.MockBugzilla.post_comment_to_bug):
+        (TestExporterTest.test_export):
+
 2018-08-14  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add support for max_builds parameter for workers

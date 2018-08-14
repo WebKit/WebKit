@@ -324,7 +324,8 @@ class WebPlatformTestExporter(object):
                 _log.warning(e)
                 _log.info('Could not add label "%s" to pr #%s. User "%s" may not have permission to update labels in the %s/%s repo.' % (WEBKIT_EXPORT_PR_LABEL, pr_number, self.username, WPT_GH_ORG, WPT_GH_REPO_NAME))
         if self._bug_id and pr_number:
-            self._bugzilla.post_comment_to_bug(self._bug_id, "Submitted web-platform-tests pull request: " + WPT_PR_URL + str(pr_number))
+            pr_url = WPT_PR_URL + str(pr_number)
+            self._bugzilla.post_comment_to_bug(self._bug_id, "Submitted web-platform-tests pull request: " + pr_url, see_also=[pr_url])
 
     def create_wpt_pull_request(self, remote_branch_name, title, body):
         pr_number = None

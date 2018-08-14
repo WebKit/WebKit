@@ -468,9 +468,9 @@ class MockBugzilla(object):
         _log.info("MOCK setting flag '%s' to '%s' on attachment '%s' with comment '%s'" % (
                   flag_name, flag_value, attachment_id, comment_text))
 
-    def post_comment_to_bug(self, bug_id, comment_text, cc=None):
-        _log.info("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
-                  bug_id, cc, comment_text))
+    def post_comment_to_bug(self, bug_id, comment_text, cc=None, see_also=None):
+        _log.info("MOCK bug comment: bug_id=%s, cc=%s, see_also=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
+                  bug_id, cc, see_also, comment_text))
 
     def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
         _log.info("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s mimetype=%s" %

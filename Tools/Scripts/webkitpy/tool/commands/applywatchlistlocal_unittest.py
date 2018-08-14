@@ -43,7 +43,7 @@ Message2."
 
     def test_args_parsing_with_bug(self):
         expected_logs = """MockWatchList: determine_cc_and_messages
-MOCK bug comment: bug_id=50002, cc=set(['eric@webkit.org', 'levin@chromium.org', 'abarth@webkit.org'])
+MOCK bug comment: bug_id=50002, cc=set(['eric@webkit.org', 'levin@chromium.org', 'abarth@webkit.org']), see_also=None
 --- Begin comment ---
 Message1.
 

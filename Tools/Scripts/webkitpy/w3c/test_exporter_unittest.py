@@ -41,7 +41,9 @@ class TestExporterTest(unittest.TestCase):
             self.calls.append('fetch bug ' + id)
             return {"title": "my bug title"}
 
-        def post_comment_to_bug(self, id, comment):
+        def post_comment_to_bug(self, id, comment, see_also=None):
+            if see_also:
+                self.calls.append("Append %s to see also list" % ", ".join(see_also))
             self.calls.append('post comment to bug ' + id + ' : ' + comment)
             return True
 
@@ -148,6 +150,7 @@ class TestExporterTest(unittest.TestCase):
             'reset hard origin/master'])
         self.assertEquals(exporter._bugzilla.calls, [
             'fetch bug 1234',
+            'Append https://github.com/web-platform-tests/wpt/pull/5678 to see also list',
             'post comment to bug 1234 : Submitted web-platform-tests pull request: https://github.com/web-platform-tests/wpt/pull/5678'])
         self.assertEquals(mock_linter.calls, ['/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests', 'lint'])
 

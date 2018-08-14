@@ -42,7 +42,7 @@ class ApplyWatchListTest(unittest.TestCase):
             'diff': 'The diff',
         }
         expected_logs = """MockWatchList: determine_cc_and_messages
-MOCK bug comment: bug_id=50001, cc=set(['levin@chromium.org'])
+MOCK bug comment: bug_id=50001, cc=set(['levin@chromium.org']), see_also=None
 --- Begin comment ---
 Message2.
 --- End comment ---

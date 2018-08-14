@@ -424,14 +424,14 @@ MOCK: release_work_item: commit-queue 10000
 
     def test_report_flaky_tests(self):
         queue = TestCommitQueue(MockTool())
-        expected_logs = """MOCK bug comment: bug_id=50002, cc=None
+        expected_logs = """MOCK bug comment: bug_id=50002, cc=None, see_also=None
 --- Begin comment ---
 The commit-queue just saw foo/bar.html flake (text diff) while processing attachment 10000 on bug 50000.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
 MOCK add_attachment_to_bug: bug_id=50002, description=Failure diff from bot filename=failure.diff mimetype=None
-MOCK bug comment: bug_id=50002, cc=None
+MOCK bug comment: bug_id=50002, cc=None, see_also=None
 --- Begin comment ---
 The commit-queue just saw bar/baz.html flake (text diff) while processing attachment 10000 on bug 50000.
 Port: MockPort  Platform: MockPlatform 1.0
@@ -439,7 +439,7 @@ Port: MockPort  Platform: MockPlatform 1.0
 
 bar/baz-diffs.txt does not exist in results archive, uploading entire archive.
 MOCK add_attachment_to_bug: bug_id=50002, description=Archive of layout-test-results from bot filename=layout-test-results.zip mimetype=None
-MOCK bug comment: bug_id=50000, cc=None
+MOCK bug comment: bug_id=50000, cc=None, see_also=None
 --- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 10000:
 

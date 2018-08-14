@@ -860,13 +860,16 @@ class Bugzilla(object):
         self.browser["keywords"] = keyword
         self.browser.submit()
 
-    def post_comment_to_bug(self, bug_id, comment_text, cc=None):
+    def post_comment_to_bug(self, bug_id, comment_text, cc=None, see_also=None):
         self.authenticate()
 
         _log.info("Adding comment to bug %s" % bug_id)
         self.open_url(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         self.browser["comment"] = comment_text
+        if see_also:
+            _log.info("Adding PR link to See Also List for bug %s" % bug_id)
+            self.browser["see_also"] = ", ".join(see_also)
         if cc:
             self.browser["newcc"] = ", ".join(cc)
         self.browser.submit()

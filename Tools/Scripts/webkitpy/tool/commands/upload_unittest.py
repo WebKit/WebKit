@@ -194,7 +194,7 @@ Revision: 9876
 MOCK: user.open_url: http://example.com/50000
 Is this correct?
 Adding comment to Bug 50000.
-MOCK bug comment: bug_id=50000, cc=None
+MOCK bug comment: bug_id=50000, cc=None, see_also=None
 --- Begin comment ---
 MOCK comment
 
