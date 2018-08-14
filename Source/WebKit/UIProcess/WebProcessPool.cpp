@@ -421,7 +421,7 @@ void WebProcessPool::setMaximumNumberOfPrewarmedProcesses(unsigned maximumNumber
 void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& customWebContentServiceBundleIdentifier)
 {
     // Guard against API misuse.
-    if (m_processes.size() || !customWebContentServiceBundleIdentifier.isAllASCII())
+    if (!customWebContentServiceBundleIdentifier.isAllASCII())
         CRASH();
 
     m_configuration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
